@@ -80,19 +80,8 @@
    ;; This slot holds a list of global symbol macro entries.  These
    ;; entries are all base entries.
    (%symbol-macros :initform '() :accessor symbol-macros)
-   ;; This slot holds a list of global function entries.  These entries
-   ;; are all base entries.
-   (%functions :initform '() :accessor functions)
-   ;; This slot holds a list of global macro entries.  These entries
-   ;; are all base entries.
-   (%macros :initform '() :accessor macros)
-   ;; This slot holds a list of special operator entries.  These
-   ;; entries are all base entries.
-   (%special-operators :initform '() :accessor special-operators)
-   ;; This slot holds a list of compiler macro entries.  These entries
-   ;; are auxiliary entries, and an entry in this list refers to a
-   ;; base entry either in the FUNCTIONS slot, or in the MACROS slot.
-   (%compiler-macros :initform '() :accessor compiler-macros)
+   ;; This slot holds a list of function entries.
+   (%function-entries :initform '() :accessor function-entries)
    ;; Some entries in this list are base entries, such as OPTIMIZE and
    ;; DECLARATION.  Others are auxiliary entries such as TYPE, INLINE,
    ;; DYNAMIC-EXTENT.
@@ -358,196 +347,51 @@
 ;;;
 ;;; Class FUNCTION-ENTRY.
 ;;;
-;;; Function entries are base entries.  They occur in the list
-;;; contained in the FUNCTIONS slot of a global environment.  A
-;;; function entry represents a globally defined ordinary function, as
-;;; opposed to a macro or a special operator.
+;;; A function entry represents information of a name used as a
+;;; function, whether it is an ordinary function, a generic function,
+;;; a macro, or a special operator.
 ;;;
-;;; If a function entry exists for some name N, then there can not
-;;; simultaneously be a special operator entry for N.  An attempt to
-;;; create a function entry when there is already a special
-;;; operator entry will fail.
-;;; 
-;;; Creating a function entry with a name N when there is
-;;; already a macro entry with the name N causes the
-;;; macro entry to be removed.  However, creating a macro entry
-;;; with a name N when there is already a function entry with a
-;;; name N doesn not cause the function entry to be removed.
-;;; The reason for not removing it is that it might be referred to by
-;;; existing code and when that code was compiled, it was assumed that
-;;; the name N referred to a function.  For that reason, the entry can
-;;; not be removed.  Therefore, it is possible that there
-;;; simultaneously exist a macro entry and a function
-;;; entry for the same name N.  However, in that case, the storage
-;;; cell of the location of the function entry always contains
-;;; +funbound+.
-;;;
-;;; A function entry can come into existence in several ways:
-;;; 
-;;;  * Using (SETF FDEFINITION) on a name that is not the name of a
-;;;    special operator.  A LOCATION for the entry is created, and the
-;;;    storage cell will be set to the new definition.
-;;;
-;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC-EXTENT with
-;;;    FUNCTION using the name.  Again, A LOCATION for the entry is
-;;;    created, but the storage cell will be set to +funbound+.  The
-;;;    appropriate auxiliary entry is created and will refer to the
-;;;    base entry.
-;;;
-;;;  * When the compiler sees a compound form with the CAR containing
-;;;    a symbol that is not associated with an entry in the FUNCTION
-;;;    namespace.  In this case, a LOCATION for the entry is created
-;;;    and the storage cell of the entry is initialized to +funbound+.
-;;;    A warning is also signaled, indicating that the function is
-;;;    undefined.
-;;;
-;;; A function entry is never removed for reasons mentioned
-;;; above.
+;;; Whenever some non-trivial information about some function name is
+;;; required, an instance of this class is created, and then never
+;;; removed.
 
-(defclass function-entry
-    (base-entry named-entry location-entry)
-  (;; The AST is present if the function was declared INLINE when it
-   ;; was defined.  Otherwise, the value of this slot is NIL.
-   (%ast :initform nil :initarg :ast :accessor ast)
-   ;; When the AST i present (i.e., non-NIL), this slot is valid and
-   ;; contains a list of LEXICAL-ASTs, one for each required
-   ;; parameter.
-   (%parameters :initform nil :initarg :parameters :accessor parameters)
-   (%lambda-list :initform :none :initarg :lambda-list :accessor lambda-list)))
+(defclass function-entry (base-entry named-entry)
+  (;; The value of this slot is a CONS cell in which the CAR is always
+   ;; a function.  When the function is unbound, it contains the
+   ;; function in the UNBOUND slot, which signals an error.
+   (%function-cell :initform (list nil) :reader function-cell)
+   ;; The value of this slot is a function that signals an error
+   ;; indicating that the function is unbound.  The function
+   ;; represented by this entry is unbound if and only if the function
+   ;; in this slot is the contents of the CAR of the function cell in
+   ;; the FUNCTION-CELL slot.
+   (%unbound :reader unbound)
+   ;; The value of this slot is either a macro function, or NIL if
+   ;; this entry does not currently represent a macro. 
+   (%macro-function :initform nil :accessor macro-function)
+   ;; The value of this slot is a generalized boolean indicating
+   ;; whether this entry represents a special operator.
+   (%special-operator :initform nil :accessor special-operator)))
 
-(defgeneric function-entry-p (object))
-
-(defmethod function-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod function-entry-p ((object function-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class MACRO-ENTRY.
-;;;
-;;; Macro entries are base entries.  They occur in list
-;;; contained in the MACROS slot of a global environment.  A
-;;; macro entry represents a globally defined macro, as opposed to an
-;;; ordinary function or a special operator.
-;;;
-;;; There can simultaneously be a macro entry and either a
-;;; special operator entry or a function entry (but not both)
-;;; with the same name.  The HyperSpec specifically allows for a macro
-;;; and a special operator for the same name to exist.  A
-;;; function entry can exist at the same time as a macro entry
-;;; as a result of the macro entry being created using (SETF
-;;; MACRO-FUNCTION) but the function entry could not be removed,
-;;; for reasons indicated above.
-;;;
-;;; The only type of auxiliary entry that can refer to a macro
-;;; entry is a compiler-macro entry.
-;;;
-;;; A macro entry can only come into existence by the use of
-;;; (SETF MACRO-FUNCTION).  
-;;;
-;;; A macro entry may be removed in the following situations: 
-;;;
-;;;  * When (SETF FDEFINITION) is used to either create a
-;;;    function entry, or to making an existing function entry
-;;;    FBOUND by storing a new definition in its storage cell. 
-;;;
-;;;  * As a result of calling FMAKUNBOUND on the name of the entry. 
-
-(defclass macro-entry (base-entry named-entry definition-entry)
-  ())
-
-(defgeneric macro-entry-p (object)
+(defgeneric function-entry-p (object)
   (:method (object)
     (declare (ignore object))
     nil)
-  (:method ((object macro-entry))
+  (:method ((object function-entry))
     (declare (ignorable object))
     t))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class SPECIAL-OPERATOR-ENTRY.
-;;;
-;;; Special operator entries are base entries.  They occur in the list
-;;; contained in the SPECIAL-OPERATORS list of a global environment.
-;;; A special operator entry represents a special operator, as opposed
-;;; to an ordinary function or a macro.
-;;;
-;;; The HyperSpec makes no provision for creating or removing special
-;;; operators, so we assume that all special operator entries that
-;;; will ever exist are created when the global environment is
-;;; created.
+(defun find-function-entry (environment name)
+  (find name (function-entries environment)
+	:test #'equal :key #'name))
 
-(defclass special-operator-entry
-    (base-entry named-entry)
-  ())
-
-(defgeneric special-operator-entry-p (object))
-
-(defmethod special-operator-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod special-operator-entry-p ((object special-operator-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class COMPILER-MACRO-ENTRY.
-;;;
-;;; The HyperSpec is very skimpy when it comes to compiler macros.  In
-;;; section 3.2.2.1 it says that "A compiler macro can be defined for
-;;; a name that also names a function or a macro."  This sentence can
-;;; be interpreted in several ways, but we take it to mean that when a
-;;; compiler macro is defined, there must already be a function or a
-;;; macro with the same name.  As a consequence, we make compiler
-;;; macro entries AUXILIARY, and such an entry refers either to a
-;;; global function entry or to a global macro entry.
-;;;
-;;; Compiler macro entries are thus auxiliary entries.  They occur in
-;;; the list contained in the COMPILER-MACROS slot of a global
-;;; environment.  A compiler macro entry refers either to a global
-;;; function entry or to a global macro entry.  Compiler macros are by
-;;; definition global.  The HyperSpec makes no provision for creating
-;;; local compiler macros.
-;;; 
-;;; A compiler macro entry is created as a result of a call to (SETF
-;;; COMPILER-MACRO-FUNCTION).  If there is a global macro entry with
-;;; the same name, then that global macro entry becomes the base entry
-;;; for the compiler macro entry.  If not, and there is a global
-;;; function entry with the same name, and that global function entry
-;;; has a location where the storage cell is not +funbound+, then that
-;;; global function entry becomes the base entry for the compiler
-;;; macro entry.
-;;; 
-;;; It appears from the HyperSpec that a compiler macro can be removed
-;;; by giving the argument NIL to (SETF COMPILER-MACRO-FUNCTION).  As
-;;; a consequence, the entry (if it exists) is removed as a result of
-;;; such a call.  A compiler macro entry is also removed as a result
-;;; of calling FMAKUNBOUND on the name, and as a result of calling
-;;; (SETF MACRO-FUNCTION) when base entry of the compiler macro entry
-;;; is a global function entry, and as a result of calling (SETF
-;;; FDEFINITION) or (SETF SYMBOL-FUNCTION) when the base entry of the
-;;; compiler entry is a global macro entry.
-
-(defclass compiler-macro-entry
-    (auxiliary-entry definition-entry)
-  ())
-
-(defgeneric compiler-macro-entry-p (object))
-
-(defmethod compiler-macro-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod compiler-macro-entry-p ((object compiler-macro-entry))
-  (declare (ignorable object))
-  t)
+(defun ensure-function-entry (environment name)
+  (let ((entry (find-function-entry environment name)))
+    (when (null entry)
+      (setf entry
+	    (make-instance 'function-entry))
+      (push entry (function-entries environment)))
+    entry))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
