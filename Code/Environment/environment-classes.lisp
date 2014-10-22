@@ -371,7 +371,11 @@
    (%macro-function :initform nil :accessor macro-function)
    ;; The value of this slot is a generalized boolean indicating
    ;; whether this entry represents a special operator.
-   (%special-operator :initform nil :accessor special-operator)))
+   (%special-operator :initform nil :accessor special-operator)
+   ;; The value of this slot is either a compiler macro function, or
+   ;; NIL if this entry does not currently have a compiler macro
+   ;; associated with it.
+   (%compiler-macro-function :initform nil :accessor compiler-macro-function)))
 
 (defgeneric function-entry-p (object)
   (:method (object)
