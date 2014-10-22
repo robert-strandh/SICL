@@ -132,6 +132,11 @@
 ;;; type of that function is lost.  In other words, if at some later
 ;;; point SYMBOL is again defined as a function, its proclaimed type
 ;;; will be T.
+;;;
+;;; If SYMBOL already names a function, then any INLINE or NOTINLINE
+;;; proclamation of the type of that function is lost.  In other
+;;; words, if at some later point SYMBOL is again defined as a
+;;; function, its proclaimed inline information will be NIL. 
 
 (defgeneric (setf macro-function) (new-function symbol environment))
 
