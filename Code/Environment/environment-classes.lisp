@@ -297,19 +297,6 @@
   (declare (ignorable object))
   t)
 
-(defclass location-declaration-entry (declaration-entry)
-  ((%location :initarg :location :reader location)))
-
-(defgeneric location-declaration-entry-p (object))
-
-(defmethod location-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod location-declaration-entry-p ((object location-declaration-entry))
-  (declare (ignorable object))
-  t)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TYPE-DECLARATION-ENTRY.
