@@ -371,6 +371,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF VARIABLE-TYPE).
+;;;
+;;; This generic function is used to set the proclaimed type of the
+;;; variable associated with SYMBOL in ENVIRONMENT.
+;;;
+;;; If SYMBOL has a definition as a constant variable in ENVIRONMENT,
+;;; then an error is signaled.
+;;;
+;;; It is meaningful to set the proclaimed type even if SYMBOL has not
+;;; previously been defined as a special variable or as a symbol
+;;; macro, because it is meaningful to use (SETF SYMBOL-VALUE) on such
+;;; a symbol.
+;;; 
+;;; Recall that the HyperSpec defines the meaning of proclaiming the
+;;; type of a symbol macro.  Therefore, it is meaningful to call this
+;;; function when SYMBOL has a definition as a symbol macro in
+;;; ENVIRONMENT.
+
+(defgeneric (setf variable-type) (new-type symbol environment)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FIND-CLASS.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
