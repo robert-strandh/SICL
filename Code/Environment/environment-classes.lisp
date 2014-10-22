@@ -77,26 +77,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Locations. 
-;;;
-;;; Locations are the values of slots of entries representing places
-;;; that need to be accessed at runtime.  This is the case for
-;;; variables (special and lexical) and functions (global and
-;;; lexical).  A location can be a global location, a lexical
-;;; location, or a special location.
-
-(defclass location ()
-  ((%name :initarg :name :reader name)))
-
-;;; Like a global location, a special location also has storage
-;;; associated with it, but it serves a somewhat different purpose.
-;;; It is used only when an attempt to find a special binding in the
-;;; dynamic environment fails.  
-(defclass special-location (location)
-  ((%storage :initform (list +unbound+) :reader storage)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Environment entries.
 
 (defclass entry ()
