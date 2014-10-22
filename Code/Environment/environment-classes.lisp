@@ -471,40 +471,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class IGNORE-DECLARATION-ENTRY.
-
-(defclass ignore-declaration-entry (auxiliary-entry)
-  ())
-
-(defgeneric ignore-declaration-entry-p (object))
-
-(defmethod ignore-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod ignore-declaration-entry-p ((object ignore-declaration-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class IGNORABLE-DECLARATION-ENTRY.
-
-(defclass ignorable-declaration-entry (auxiliary-entry)
-  ())
-
-(defgeneric ignorable-declaration-entry-p (object))
-
-(defmethod ignorable-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod ignorable-declaration-entry-p ((object ignorable-declaration-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class AUTONOMOUS-DECLARATION-ENTRY.
 ;;;
 ;;; This class is the base class for declaration entries that are base
