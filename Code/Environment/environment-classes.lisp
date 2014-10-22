@@ -375,7 +375,10 @@
    ;; The value of this slot is either a compiler macro function, or
    ;; NIL if this entry does not currently have a compiler macro
    ;; associated with it.
-   (%compiler-macro-function :initform nil :accessor compiler-macro-function)))
+   (%compiler-macro-function :initform nil :accessor compiler-macro-function)
+   ;; The value of this slot is the proclaimed type of the function
+   ;; whenever this entry has a function associated with it.
+   (%type :initform t :accessor type)))
 
 (defgeneric function-entry-p (object)
   (:method (object)
