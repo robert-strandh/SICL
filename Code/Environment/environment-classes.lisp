@@ -104,27 +104,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AUXILIARY-ENTRY.
-;;; 
-;;; An auxiliary entry contains a reference to a base entry.  Type
-;;; declarations, dynamic-extent declarations, and ignore declarations
-;;; are examples of auxiliary entries, because they all refer to some
-;;; other entity (a variable name or a function name).
-(defclass auxiliary-entry (entry)
-  ((%base-entry :initarg :base-entry :reader base-entry)))
-
-(defgeneric auxiliary-entry-p (entry))
-
-(defmethod auxiliary-entry-p (entry)
-  (declare (ignore entry))
-  nil)
-
-(defmethod auxiliary-entry-p ((entry auxiliary-entry))
-  (declare (ignorable entry))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; NAMED-ENTRY.
 ;;; 
 ;;; A mixin class for entries having a name associated with them. 
