@@ -431,3 +431,23 @@
 ;;; expander in ENVIRONMENT, then NIL is returned.
 
 (defgeneric setf-expander (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF SETF-EXPANDER).
+;;;
+;;; This generic function is used to set the setf expander associated
+;;; with SYMBOL in ENVIRONMENT.
+;;;
+;;; If SYMBOL is not associated with an ordinary function, a generic
+;;; function, or a macro in ENVIRONMENT, then an error is signaled.  
+;;;
+;;; If there is already a setf expander associated with SYMBOL in
+;;; ENVIRONMENT, then the old setf expander is lost. 
+;;; 
+;;; If a value of NIL is given for NEW-EXPANDER, then any current setf
+;;; expander associated with SYMBOL is removed.  In this case, no
+;;; error is signaled, even if SYMBOL is not associated with any
+;;; ordinary function, generic function, or macro in ENVIRONMENT.
+
+(defgeneric (setf setf-expander) (new-expander symbol environment))
