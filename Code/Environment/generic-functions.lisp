@@ -355,6 +355,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function VARIABLE-TYPE.
+;;;
+;;; This generic function returns the proclaimed type of the variable
+;;; associated with SYMBOL in ENVIRONMENT.
+;;;
+;;; If SYMBOL has a definition as a constant variable in ENVIRONMENT,
+;;; then the result of calling TYPE-OF on its value is returned. 
+;;;
+;;; If SYMBOL does not have a definition as a constant variable in
+;;; ENVIRONMENT, and no previous type proclamation has been made for
+;;; SYMBOL in ENVIRONMENT, then this function returns T.
+
+(defgeneric variable-type (symbol environment)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FIND-CLASS.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
