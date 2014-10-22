@@ -471,62 +471,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class INLINE-OR-NOTINLINE-DECLARATION-ENTRY.
-;;;
-;;; This class is not meant to be directly instantiated.  It just
-;;; serves as a base class for the two classes
-;;; INLINE-DECLARATION-ENTRY and NOTINLINE-DECLARATION-ENTRY. 
-
-(defclass inline-or-notinline-declaration-entry (auxiliary-entry)
-  ())
-
-(defgeneric inline-or-notinline-declaration-entry-p (object))
-
-(defmethod inline-or-notinline-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod inline-or-notinline-declaration-entry-p
-    ((object inline-or-notinline-declaration-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class INLINE-DECLARATION-ENTRY.
-
-(defclass inline-declaration-entry (inline-or-notinline-declaration-entry)
-  ())
-
-(defgeneric inline-declaration-entry-p (object))
-
-(defmethod inline-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod inline-declaration-entry-p ((object inline-declaration-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class NOTINLINE-DECLARATION-ENTRY.
-
-(defclass notinline-declaration-entry (inline-or-notinline-declaration-entry)
-  ())
-
-(defgeneric notinline-declaration-entry-p (object))
-
-(defmethod notinline-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod notinline-declaration-entry-p ((object notinline-declaration-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class DYNAMIC-EXTENT-DECLARATION-ENTRY.
 
 (defclass dynamic-extent-declaration-entry (auxiliary-entry)
