@@ -58,15 +58,8 @@
    (%classes :initform '() :accessor classes)
    ;; The type namespace.
    (%types :initform '() :accessor types)
-   ;; This slot holds a list of special variable entries.  These
-   ;; entries are all base entries.
-   (%special-variables :initform '() :accessor special-variables)
-   ;; This slot holds a list of constant variable entries.  These
-   ;; entries are all base entries.
-   (%constant-variables :initform '() :accessor constant-variables)
-   ;; This slot holds a list of global symbol macro entries.  These
-   ;; entries are all base entries.
-   (%symbol-macros :initform '() :accessor symbol-macros)
+   ;; This slot holds a list of variable entries.
+   (%variable-entries :initform '() :accessor variable-entries)
    ;; This slot holds a list of function entries.
    (%function-entries :initform '() :accessor function-entries)
    ;; Some entries in this list are base entries, such as OPTIMIZE and
