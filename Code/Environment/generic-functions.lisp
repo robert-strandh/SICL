@@ -124,9 +124,14 @@
 ;;; function (SETF CL:MACRO-FUNCTION).
 ;;;
 ;;; NEW-FUNCTION must be a macro expansion function.  A call to this
-;;; function then always succeeds.  If the symbol already names a
-;;; macro or a function, then the previous definition is lost.  If the
-;;; symbol already names a special operator, that definition is kept.
+;;; function then always succeeds.  If SYMBOL already names a macro or
+;;; a function, then the previous definition is lost.  If SYMBOL
+;;; already names a special operator, that definition is kept.
+;;;
+;;; If SYMBOL already names a function, then any proclamation of the
+;;; type of that function is lost.  In other words, if at some later
+;;; point SYMBOL is again defined as a function, its proclaimed type
+;;; will be T.
 
 (defgeneric (setf macro-function) (new-function symbol environment))
 
