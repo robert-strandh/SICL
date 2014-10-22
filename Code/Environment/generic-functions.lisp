@@ -272,6 +272,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF SYMBOL-MACRO).
+;;;
+;;; This function is used in order to define SYMBOL as a symbol macro
+;;; with the given EXPANSION in ENVIRONMENT. 
+;;;
+;;; If SYMBOL already has a definition as a constant variable, or as a
+;;; special variable, then an error of type PROGRAM-ERROR is signaled.
+
+(defgeneric (setf symbol-macro) (expansion symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FIND-CLASS.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
