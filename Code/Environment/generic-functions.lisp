@@ -421,3 +421,13 @@
 ;;; class in ENVIRONMENT.
 
 (defgeneric (setf find-class) (new-class symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function SETF-EXPANDER.
+;;;
+;;; This generic function returns the setf expander associated with
+;;; SYMBOL in ENVIRONMENT.  If SYMBOL is not associated with any setf
+;;; expander in ENVIRONMENT, then NIL is returned.
+
+(defgeneric setf-expander (symbol environment))
