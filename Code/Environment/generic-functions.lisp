@@ -256,6 +256,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function SYMBOL-MACRO.
+;;;
+;;; This function returns two values.  The first value is a macro
+;;; expansion function associated with the symbol macro named by
+;;; SYMBOL, or NIL if SYMBOL does not have a definition as a symbol
+;;; macro.  The second value is the form that SYMBOL expands to as a
+;;; macro, or NIL if symbol does not have a definition as a symbol macro. 
+;;;
+;;; It is guaranteed that the same (in the sense of EQ) function is
+;;; returned by two consecutive calls as the first argument as long as
+;;; the definition of SYMBOL does not change.
+
+(defgeneric symbol-macro (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FIND-CLASS.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
