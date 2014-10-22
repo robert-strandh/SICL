@@ -279,25 +279,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class TYPE-DECLARATION-ENTRY.
-;;;
-;;; We do not have a separate declaration entry for FTYPE.
-
-(defclass type-declaration-entry (auxiliary-entry)
-  ((%type :initarg :type :reader type)))
-
-(defgeneric type-declaration-entry-p (object))
-
-(defmethod type-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod type-declaration-entry-p ((object type-declaration-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class AUTONOMOUS-DECLARATION-ENTRY.
 ;;;
 ;;; This class is the base class for declaration entries that are base
