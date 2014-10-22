@@ -206,6 +206,33 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class VARIABLE-ENTRY.
+
+(defclass variable-entry (base-entry named-entry)
+  (;; This slot contains true if and only if this entry represents a
+   ;; constant variable.
+   (%constantp :initform nil :accessor constantp)
+   ;; This slot contains true if and only if this entry represents a
+   ;; special variable.
+   (%specialp :initform nil :accessor specialp)
+   ;; This slot contains the value associated with the variable.  If
+   ;; there is no value associated with the variable, then this slot
+   ;; contains the value of the variable +UNBOUND+.
+   (%value :initform +unbound+ :accessor value)
+   ;; The value of this slot is either a macro function, or NIL if
+   ;; this entry does not currently represent a symbol macro.
+   (%macro-function :initform nil :accessor macro-function)
+   ;; When this entry represents a symbol macro, then this slot
+   ;; contains the expansion for that symbol macro, i.e., a form that
+   ;; the symbol macro expands to.  When this entry does not represent
+   ;; a symbol macro, this slot contains NIL.
+   (%expansion :initform nil :accessor expansion)
+   ;; The value of this slot is the proclaimed type of the variable
+   ;; whenever this entry is associated with a variable.
+   (%type :initform t :accessor type)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CONSTANT-VARIABLE-ENTRY.
 ;;;
 ;;; These entries are base entreis.  They occur in a list contained in
