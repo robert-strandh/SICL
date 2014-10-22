@@ -471,24 +471,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class DYNAMIC-EXTENT-DECLARATION-ENTRY.
-
-(defclass dynamic-extent-declaration-entry (auxiliary-entry)
-  ())
-
-(defgeneric dynamic-extent-declaration-entry-p (object))
-
-(defmethod dynamic-extent-declaration-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod dynamic-extent-declaration-entry-p
-    ((object dynamic-extent-declaration-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class IGNORE-DECLARATION-ENTRY.
 
 (defclass ignore-declaration-entry (auxiliary-entry)
