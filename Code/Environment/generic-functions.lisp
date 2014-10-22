@@ -173,6 +173,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FUNCTION-TYPE.
+;;;
+;;; This generic function returns the proclaimed type of the function
+;;; associated with FUNCTION-NAME in ENVIRONMENT.
+;;;
+;;; If FUNCTION-NAME is not associated with an ordinary function or a
+;;; generic function in ENVIRONMENT, then an error is signaled.  
+;;;
+;;; If FUNCTION-NAME is associated with an ordinary function or a
+;;; generic function in ENVIRONMENT, but no type proclamation for that
+;;; function has been made, then this generic function returns T.
+
+(defgeneric function-type (function-name environment)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
