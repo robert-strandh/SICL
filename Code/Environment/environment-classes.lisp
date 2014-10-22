@@ -84,26 +84,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; BASE-ENTRY.
-;;; 
-;;; A base entry is an entry that does not refer to any other entry.
-;;; Entries that represent functions, variables, macros, and optimize
-;;; declarations are examples of base entries. 
-(defclass base-entry (entry)
-  ())
-
-(defgeneric base-entry-p (entry))
-
-(defmethod base-entry-p (entry)
-  (declare (ignore entry))
-  nil)
-
-(defmethod base-entry-p ((entry base-entry))
-  (declare (ignorable entry))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; NAMED-ENTRY.
 ;;; 
 ;;; A mixin class for entries having a name associated with them. 
@@ -139,7 +119,7 @@
 ;;;
 ;;; Class VARIABLE-ENTRY.
 
-(defclass variable-entry (base-entry named-entry)
+(defclass variable-entry (named-entry)
   (;; This slot contains true if and only if this entry represents a
    ;; constant variable.
    (%constantp :initform nil :accessor constantp)
@@ -174,7 +154,7 @@
 ;;; required, an instance of this class is created, and then never
 ;;; removed.
 
-(defclass function-entry (base-entry named-entry)
+(defclass function-entry (named-entry)
   (;; The value of this slot is a CONS cell in which the CAR is always
    ;; a function.  When the function is unbound, it contains the
    ;; function in the UNBOUND slot, which signals an error.
@@ -226,8 +206,7 @@
 ;;;
 ;;; Class TYPE-ENTRY.
 
-(defclass type-entry
-    (base-entry named-entry definition-entry)
+(defclass type-entry (named-entry definition-entry)
   ())
 
 (defgeneric type-entry-p (object))
@@ -271,7 +250,7 @@
 ;;;
 ;;; Class OPTIMIZE-DECLARATION-ENTRY.
 
-(defclass optimize-declaration-entry (base-entry)
+(defclass optimize-declaration-entry ()
   ((%quality :initarg :quality)
    (%value :initarg :value)))
 
@@ -290,7 +269,7 @@
 ;;;
 ;;; Class DECLARATION-DECLARATION-ENTRY.
 
-(defclass declaration-declaration-entry (base-entry named-entry)
+(defclass declaration-declaration-entry (named-entry)
   ((%name :initarg :name :reader name)))
 
 (defgeneric declaration-declaration-entry-p (object))
