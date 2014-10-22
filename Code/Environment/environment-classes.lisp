@@ -37,19 +37,6 @@
 
 (cl:defvar +unbound+ (list nil))
 
-;;; For function entries, we use a particular function to mean that
-;;; the function entry with a particular name is not fbound.  That
-;;; particular function accepts an arbitrary number of arguments, and
-;;; signals an error.  With this method, code that calls a named
-;;; function in the normal way, does not have to check whether the
-;;; cell contains a valid function.
-
-(cl:defvar +funbound+
-  (lambda (&rest arguments)
-    (declare (ignore arguments))
-    ;; Fixme, do something much smarter here.
-    (error "Attempt to call an undefined function.")))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Global environment.
@@ -107,12 +94,6 @@
 
 (defclass location ()
   ((%name :initarg :name :reader name)))
-
-;;; A global location is a location that has global storage associated
-;;; with it, and that storage is allocated directly in the global
-;;; environment.  This is the case for globally defined functions.
-(defclass global-location (location)
-  ((%storage :initarg :storage :initform (list +funbound+) :reader storage)))
 
 ;;; Like a global location, a special location also has storage
 ;;; associated with it, but it serves a somewhat different purpose.
