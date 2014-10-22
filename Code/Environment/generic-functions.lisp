@@ -97,6 +97,9 @@
 ;;; a function or a macro, then the previous definition is lost.  If
 ;;; FUNCTION-NAME already names a special operator, then an error is
 ;;; signaled.
+;;;
+;;; If FUNCTION-NAME is a symbol and it has an associated setf
+;;; expander, then that setf expander is preserved.
 
 (defgeneric (setf fdefinition) (new-definition function-name environment))
 
@@ -137,6 +140,9 @@
 ;;; proclamation of the type of that function is lost.  In other
 ;;; words, if at some later point SYMBOL is again defined as a
 ;;; function, its proclaimed inline information will be NIL. 
+;;;
+;;; If FUNCTION-NAME is a symbol and it has an associated setf
+;;; expander, then that setf expander is preserved.
 
 (defgeneric (setf macro-function) (new-function symbol environment))
 
