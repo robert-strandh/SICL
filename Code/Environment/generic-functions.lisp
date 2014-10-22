@@ -189,6 +189,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF FUNCTION-TYPE).
+;;;
+;;; This generic function is used to set the proclaimed type of the
+;;; function associated with FUNCTION-NAME in ENVIRONMENT to NEW-TYPE.
+;;;
+;;; If FUNCTION-NAME is not associated with an ordinary function or a
+;;; generic function in ENVIRONMENT, then an error is signaled.  
+
+(defgeneric (setf function-type) (new-type function-name environment)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
