@@ -178,27 +178,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LOCATION-ENTRY.
-;;;
-;;; This type of entry has some kind of location associated with it.
-;;; This is the case for special variables, lexical variables, and
-;;; functions.
-
-(defclass location-entry ()
-  ((%location :initarg :location :reader location)))
-
-(defgeneric location-entry-p (object))
-
-(defmethod location-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod location-entry-p ((object location-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class VARIABLE-ENTRY.
 
 (defclass variable-entry (base-entry named-entry)
