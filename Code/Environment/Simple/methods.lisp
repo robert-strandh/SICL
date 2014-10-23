@@ -74,3 +74,13 @@
     (if (null entry)
 	nil
 	(macro-function entry))))
+
+(defmethod (setf sicl-env:macro-function)
+    (new-definition function-name (env simple-environment))
+  (assert (functionp new-definition))
+  (let ((entry (ensure-function-entry env function-name)))
+    (progn (setf (car (function-cell entry)) (unbound entry))
+	   (setf (macro-function entry) new-definition)
+	   (setf (type entry) t)
+	   (setf (inline entry) nil))))
+
