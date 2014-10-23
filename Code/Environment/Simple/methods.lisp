@@ -11,6 +11,17 @@
 	     (not (null (macro-function entry)))
 	     (not (null (special-operator entry)))))))
 
+(defmethod sicl-env:fmakunbound (function-name (env simple-environment))
+  (let ((entry (find-function-entry env function-name)))
+    (unless (null entry)
+      (setf (car (function-cell entry))
+	    (unbound entry))
+      (setf (macro-function entry) nil)
+      (setf (special-operator entry) nil)
+      (setf (type entry) t)
+      (setf (compiler-macro-function entry) nil)
+      (setf (inline entry) nil))))
+
 (defmethod sicl-env:fdefinition (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
     (cond ((null entry)
