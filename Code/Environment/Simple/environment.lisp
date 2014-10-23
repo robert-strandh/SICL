@@ -51,7 +51,7 @@
 ;;; of special variable entries, constant variable entries and global
 ;;; symbol macro entries.
 
-(defclass global-environment ()
+(defclass simple-environment ()
   (;; The package namespace.  A list of packages.
    (%packages :initform '() :accessor packages)
    ;; The class namespace.  A list of classes.
