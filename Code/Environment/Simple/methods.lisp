@@ -102,3 +102,11 @@
 	    (eq (car (function-cell entry)) (unbound entry)))
 	(error 'undefined-function :name function-name)
 	(type entry))))
+
+(defmethod (setf sicl-env:function-type)
+    (new-type function-name (env simple-environment))
+  (let ((entry (find-function-entry env function-name)))
+    (if (or (null entry)
+	    (eq (car (function-cell entry)) (unbound entry)))
+	(error 'undefined-function :name function-name)
+	(setf (type entry) new-type))))
