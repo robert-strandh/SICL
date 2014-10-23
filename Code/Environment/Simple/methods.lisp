@@ -95,3 +95,10 @@
   (assert (or (functionp new-definition) (null new-definition)))
   (let ((entry (ensure-function-entry env function-name)))
     (setf (compiler-macro-function entry) new-definition)))
+
+(defmethod sicl-env:function-type (function-name (env simple-environment))
+  (let ((entry (find-function-entry env function-name)))
+    (if (or (null entry)
+	    (eq (car (function-cell entry)) (unbound entry)))
+	(error 'undefined-function :name function-name)
+	(type entry))))
