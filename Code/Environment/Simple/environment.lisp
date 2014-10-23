@@ -192,7 +192,8 @@
 				       &key &allow-other-keys)
   (let* ((expr `(lambda (&rest args)
 		  (declare (ignore args))
-		  (error "Unbound function: ~s" ',(name entry))))
+		  (error 'undefined-function
+			 :name ',(name entry))))
 	 (fun (compile nil expr)))
     (reinitialize-instance entry :unbound fun)
     (setf (car (function-cell entry)) fun)))
