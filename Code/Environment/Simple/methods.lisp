@@ -56,3 +56,15 @@
 	   `(cl:special (special-operator entry)))
 	  (t
 	   (error 'undefined-function :name function-name)))))
+
+(defmethod (setf sicl-env:fdefinition)
+    (new-definition function-name (env simple-environment))
+  (assert (functionp new-definition))
+  (let ((entry (ensure-function-entry env function-name)))
+    (if (not (null (special-operator entry)))
+	(error "The name ~s has a definition as a special operator"
+	       function-name)
+	(progn (setf (car (function-cell entry)) new-definition)
+	       (setf (macro-function entry) nil)
+	       (setf (type entry) t)
+	       (setf (inline entry) nil)))))
