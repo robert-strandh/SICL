@@ -131,6 +131,10 @@
    ;; whenever this entry is associated with a variable.
    (%type :initform t :accessor type)))
 
+(defun find-variable-entry (environment name)
+  (find name (variable-entries environment)
+	:test #'eq :key #'name))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class FUNCTION-ENTRY.
