@@ -68,3 +68,9 @@
 	       (setf (macro-function entry) nil)
 	       (setf (type entry) t)
 	       (setf (inline entry) nil)))))
+
+(defmethod sicl-env:macro-function (symbol (env simple-environment))
+  (let ((entry (find-function-entry env symbol)))
+    (if (null entry)
+	nil
+	(macro-function entry))))
