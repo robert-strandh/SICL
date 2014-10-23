@@ -22,6 +22,12 @@
       (setf (compiler-macro-function entry) nil)
       (setf (inline entry) nil))))
 
+(defmethod sicl-env:special-operator (function-name (env simple-environment))
+  (let ((entry (find-function-entry env function-name)))
+    (if (null entry)
+	nil
+	(special-operator entry))))
+
 (defmethod sicl-env:fdefinition (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
     (cond ((null entry)
