@@ -135,6 +135,16 @@
   (find name (variable-entries environment)
 	:test #'eq :key #'name))
 
+(defun ensure-variable-entry (environment name)
+  (let ((entry (find-variable-entry environment name)))
+    (when (null entry)
+      (setf entry
+	    (make-instance 'variable-entry
+	      :name name
+	      :value (unbound environment)))
+      (push entry (variable-entries environment)))
+    entry))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class FUNCTION-ENTRY.
