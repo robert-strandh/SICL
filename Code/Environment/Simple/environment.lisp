@@ -1,4 +1,4 @@
-(in-package #:sicl-global-environment)
+(in-package #:sicl-simple-environment)
 
 ;;;; This file contains definitions of classes, functions, and
 ;;;; variables for creating and manipulating global environments.  It
@@ -180,7 +180,7 @@
    (%type :initform t :accessor type)
    ;; The value of this slot is the proclaimed inline information
    ;; whenever this entry has a function associated with it.
-   (%inline :initform nil :accessor inline))
+   (%inline :initform nil :accessor inline)))
 
 (defgeneric function-entry-p (object)
   (:method (object)
