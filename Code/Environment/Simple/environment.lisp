@@ -182,6 +182,21 @@
    ;; whenever this entry has a function associated with it.
    (%inline :initform nil :accessor inline)))
 
+;;; When an instance of FUNCTION-ENTRY is created, we need to set the
+;;; slot UNBOUND to a function that calls ERROR.  We can not make this
+;;; function an :INITFORM because it must contain the name of the
+;;; entry which is not known until after the instance has been
+;;; created.  We also need to set the CAR of the FUNCTION-CELL to the
+;;; newly created function.
+(defmethod initialize-instance :after ((entry function-entry)
+				       &key &allow-other-keys)
+  (let* ((expr `(lambda (&rest args)
+		  (declare (ignore args))
+		  (error "Unbound function: ~s" ',(name entry))))
+	 (fun (compile nil expr)))
+    (reinitialize-instance entry :unbound fun)
+    (setf (car (function-cell entry)) fun)))
+
 (defgeneric function-entry-p (object)
   (:method (object)
     (declare (ignore object))
