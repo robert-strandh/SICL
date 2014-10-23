@@ -90,3 +90,8 @@
 	nil
 	(compiler-macro-function entry))))
 
+(defmethod (setf sicl-env:compiler-macro-function)
+    (new-definition function-name (env simple-environment))
+  (assert (or (functionp new-definition) (null new-definition)))
+  (let ((entry (ensure-function-entry env function-name)))
+    (setf (compiler-macro-function entry) new-definition)))
