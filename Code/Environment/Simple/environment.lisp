@@ -217,7 +217,8 @@
   (let ((entry (find-function-entry environment name)))
     (when (null entry)
       (setf entry
-	    (make-instance 'function-entry))
+	    (make-instance 'function-entry
+	      :name name))
       (push entry (function-entries environment)))
     entry))
 
