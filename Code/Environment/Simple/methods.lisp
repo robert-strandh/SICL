@@ -118,3 +118,11 @@
 	(error 'undefined-function :name function-name)
 	(inline entry))))
 
+(defmethod (setf sicl-env:function-inline)
+    (new-inline function-name (env simple-environment))
+  (assert (member new-inline '(nil cl:inline cl:notinline)))
+  (let ((entry (find-function-entry env function-name)))
+    (if (or (null entry)
+	    (eq (car (function-cell entry)) (unbound entry)))
+	(error 'undefined-function :name function-name)
+	(setf (inline entry) new-inline))))
