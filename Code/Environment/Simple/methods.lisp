@@ -28,6 +28,21 @@
 	nil
 	(special-operator entry))))
 
+(defmethod (setf sicl-env:special-operator)
+    (new-definition function-name (env simple-environment))
+  (let ((entry (find-function-entry env function-name)))
+    (cond ((and (null entry) (null new-definition))
+	   nil)
+	  ((null entry)
+	   (setf entry (ensure-function-entry env function-name))
+	   (setf (special-operator entry) new-definition))
+	  ((or (not (eq (car (function-cell entry))
+			(unbound entry)))
+	       (not (null (macro-function entry))))
+	   (error "The name ~s already has a definition." function-name))
+	  (t
+	   (setf (special-operator entry) new-definition)))))
+
 (defmethod sicl-env:fdefinition (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
     (cond ((null entry)
