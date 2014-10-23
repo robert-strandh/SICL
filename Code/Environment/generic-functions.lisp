@@ -191,7 +191,7 @@
 ;;; generic function in ENVIRONMENT, but no type proclamation for that
 ;;; function has been made, then this generic function returns T.
 
-(defgeneric function-type (function-name environment)
+(defgeneric function-type (function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -203,7 +203,7 @@
 ;;; If FUNCTION-NAME is not associated with an ordinary function or a
 ;;; generic function in ENVIRONMENT, then an error is signaled.  
 
-(defgeneric (setf function-type) (new-type function-name environment)
+(defgeneric (setf function-type) (new-type function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -221,7 +221,7 @@
 ;;; proclamation has been made, then this generic function returns
 ;;; NIL.
 
-(defgeneric function-inline (function-name environment)
+(defgeneric function-inline (function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -236,7 +236,7 @@
 ;;; If FUNCTION-NAME is not associated with an ordinary function or a
 ;;; generic function in ENVIRONMENT, then an error is signaled.  
 
-(defgeneric (setf function-inline) (new-inline function-name environment)
+(defgeneric (setf function-inline) (new-inline function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -329,7 +329,7 @@
 ;;; special variable SYMBOL. 
 
 (defgeneric (setf special-variable)
-    (value symbol environment &optional (initialize-p t)))
+    (value symbol environment &optional initialize-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -373,7 +373,7 @@
 ;;; ENVIRONMENT, and no previous type proclamation has been made for
 ;;; SYMBOL in ENVIRONMENT, then this function returns T.
 
-(defgeneric variable-type (symbol environment)
+(defgeneric variable-type (symbol environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -395,7 +395,7 @@
 ;;; function when SYMBOL has a definition as a symbol macro in
 ;;; ENVIRONMENT.
 
-(defgeneric (setf variable-type) (new-type symbol environment)
+(defgeneric (setf variable-type) (new-type symbol environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
