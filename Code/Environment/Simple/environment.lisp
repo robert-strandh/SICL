@@ -26,19 +26,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Unbound cells.
-;;;
-;;; We do not have a single universal bit pattern indicating that a
-;;; cell is unbound.
-;;; 
-;;; In the native environment, we use a special immediate value for
-;;; variable values and slot values.  In the cross compiler, we use a
-;;; unique CONS cell.
-
-(cl:defvar +unbound+ (list nil))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Global environment.
 ;;;
 ;;; The global environment is divided into namespaces, but a namespace
@@ -52,7 +39,9 @@
 ;;; symbol macro entries.
 
 (defclass simple-environment ()
-  (;; The package namespace.  A list of packages.
+  (;; A value used in this environment for unbound variables. 
+   (%unbound :initform (list nil) :reader unbound)
+   ;; The package namespace.  A list of packages.
    (%packages :initform '() :accessor packages)
    ;; The class namespace.  A list of classes.
    (%classes :initform '() :accessor classes)
@@ -128,8 +117,8 @@
    (%specialp :initform nil :accessor specialp)
    ;; This slot contains the value associated with the variable.  If
    ;; there is no value associated with the variable, then this slot
-   ;; contains the value of the variable +UNBOUND+.
-   (%value :initform +unbound+ :accessor value)
+   ;; contains the contents of the UNBOUND slot in the environment.
+   (%value :initarg :value :accessor value)
    ;; The value of this slot is either a macro function, or NIL if
    ;; this entry does not currently represent a symbol macro.
    (%macro-function :initform nil :accessor macro-function)
