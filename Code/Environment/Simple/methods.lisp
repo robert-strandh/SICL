@@ -228,3 +228,13 @@
     (if (null entry)
 	nil
 	(setf-expander entry))))
+
+(defmethod (setf sicl-env:setf-expander)
+    (new-expander symbol (env simple-environment))
+  (let ((entry (find-function-entry env symbol)))
+    (if (or (null entry)
+	    (and (null (macro-function entry))
+		 (eq (car (function-cell entry)) (unbound entry))))
+	(error "Attempt to assign a SETF expander when no function exists.")
+	(setf (setf-expander entry)
+	      new-expander))))
