@@ -28,8 +28,8 @@
 ;;;      maximum depth of any of its lexical parents. 
 
 (defun data (instruction)
-  (append (cleavir-mir:inputs instruction)
-	  (cleavir-mir:outputs instruction)))
+  (append (cleavir-ir:inputs instruction)
+	  (cleavir-ir:outputs instruction)))
 
 (defvar *ownerships*)
 
@@ -59,10 +59,10 @@
 		    (loop for datum in (data instruction)
 			  do (when (null (owner datum))
 			       (setf (owner datum) enter-instruction)))
-		    (when (typep instruction 'cleavir-mir:enclose-instruction)
-		      (let ((code (cleavir-mir:code instruction)))
+		    (when (typep instruction 'cleavir-ir:enclose-instruction)
+		      (let ((code (cleavir-ir:code instruction)))
 			(setf worklist (append worklist (list code)))))
-		    (mapc #'traverse (cleavir-mir:successors instruction)))))
+		    (mapc #'traverse (cleavir-ir:successors instruction)))))
 	     (traverse enter-instruction))))
       (loop until (null worklist)
 	    do (process-function (pop worklist))))
@@ -99,8 +99,8 @@
 		 ((traverse (instruction)
 		    (unless (gethash instruction visited)
 		      (setf (gethash instruction visited) t)
-		      (when (typep instruction 'cleavir-mir:enclose-instruction)
-			(let ((code (cleavir-mir:code instruction)))
+		      (when (typep instruction 'cleavir-ir:enclose-instruction)
+			(let ((code (cleavir-ir:code instruction)))
 			  (setf worklist (append worklist (list code)))))
 		      (loop with i-owner = (owner instruction)
 			    for datum in (data instruction)
@@ -110,7 +110,7 @@
 				       (max (lexical-depth enter-instruction)
 					    (1+ (lexical-depth d-owner))))))
 		      (loop with i-owner = (owner instruction)
-			    for successor in (cleavir-mir:successors instruction)
+			    for successor in (cleavir-ir:successors instruction)
 			    for s-owner = (owner successor)
 			    do (if (eq i-owner s-owner)
 				   (traverse successor)
@@ -144,17 +144,17 @@
     (labels ((traverse (instruction)
 	       (unless (gethash instruction visited)
 		 (setf (gethash instruction visited) t)
-		 (loop with type = 'cleavir-mir:lexical-location
+		 (loop with type = 'cleavir-ir:lexical-location
 		       for datum in (data instruction)
 		       do (when (and (typep datum type)
 				     (/= (lexical-depth datum)
 					 (lexical-depth instruction)))
 			    (change-class datum
-					  'cleavir-mir:indefinite-lexical-location)))
-		 (loop for succ in (cleavir-mir:successors instruction)
+					  'cleavir-ir:indefinite-lexical-location)))
+		 (loop for succ in (cleavir-ir:successors instruction)
 		       do (traverse succ))
-		 (when (typep instruction 'cleavir-mir:enclose-instruction)
-		   (traverse (cleavir-mir:code instruction))))))
+		 (when (typep instruction 'cleavir-ir:enclose-instruction)
+		   (traverse (cleavir-ir:code instruction))))))
       (traverse enter-instruction))
     ;; Next find all lexical locations that were not converted in the
     ;; first step, and convert them to simple lexical locations.  It
@@ -165,16 +165,16 @@
     (labels ((traverse (instruction)
 	       (unless (gethash instruction visited)
 		 (setf (gethash instruction visited) t)
-		 (loop with type = '(and cleavir-mir:lexical-location
-				         (not cleavir-mir:indefinite-lexical-location))
-		       for datum in (cleavir-mir:outputs instruction)
+		 (loop with type = '(and cleavir-ir:lexical-location
+				         (not cleavir-ir:indefinite-lexical-location))
+		       for datum in (cleavir-ir:outputs instruction)
 		       do (when (typep datum type)
 			    (change-class datum
-					  'cleavir-mir:dynamic-lexical-location)))
-		 (loop for succ in (cleavir-mir:successors instruction)
+					  'cleavir-ir:dynamic-lexical-location)))
+		 (loop for succ in (cleavir-ir:successors instruction)
 		       do (traverse succ))
-		 (when (typep instruction 'cleavir-mir:enclose-instruction)
-		   (traverse (cleavir-mir:code instruction))))))
+		 (when (typep instruction 'cleavir-ir:enclose-instruction)
+		   (traverse (cleavir-ir:code instruction))))))
       (traverse enter-instruction))
     (incf *ld3-call-count*)
     (incf *ld3-node-count* (hash-table-count visited))
