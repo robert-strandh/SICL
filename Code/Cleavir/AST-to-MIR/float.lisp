@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-ast-to-mir)
+(cl:in-package #:cleavir-ast-to-hir)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -30,7 +30,7 @@
      (check-context-for-one-value-ast context)
      (let* ((arguments (cleavir-ast:children ast))
 	    (temps (make-temps arguments))
-	    (temp (cleavir-mir:new-temporary))
+	    (temp (cleavir-hir:new-temporary))
 	    (successor (make-instance ',box-instruction-class
 			 :inputs (list temp)
 			 :outputs (results context))))
@@ -44,144 +44,144 @@
 	  :successors (list successor))))))
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-add-ast
-			      cleavir-mir:short-float-add-instruction
-			      cleavir-mir:short-float-unbox-instruction
-			      cleavir-mir:short-float-box-instruction)
+			      cleavir-hir:short-float-add-instruction
+			      cleavir-hir:short-float-unbox-instruction
+			      cleavir-hir:short-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-sub-ast
-			      cleavir-mir:short-float-sub-instruction
-			      cleavir-mir:short-float-unbox-instruction
-			      cleavir-mir:short-float-box-instruction)
+			      cleavir-hir:short-float-sub-instruction
+			      cleavir-hir:short-float-unbox-instruction
+			      cleavir-hir:short-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-mul-ast
-			      cleavir-mir:short-float-mul-instruction
-			      cleavir-mir:short-float-unbox-instruction
-			      cleavir-mir:short-float-box-instruction)
+			      cleavir-hir:short-float-mul-instruction
+			      cleavir-hir:short-float-unbox-instruction
+			      cleavir-hir:short-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-div-ast
-			      cleavir-mir:short-float-div-instruction
-			      cleavir-mir:short-float-unbox-instruction
-			      cleavir-mir:short-float-box-instruction)
+			      cleavir-hir:short-float-div-instruction
+			      cleavir-hir:short-float-unbox-instruction
+			      cleavir-hir:short-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-sin-ast
-			      cleavir-mir:short-float-sin-instruction
-			      cleavir-mir:short-float-unbox-instruction
-			      cleavir-mir:short-float-box-instruction)
+			      cleavir-hir:short-float-sin-instruction
+			      cleavir-hir:short-float-unbox-instruction
+			      cleavir-hir:short-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-cos-ast
-			      cleavir-mir:short-float-cos-instruction
-			      cleavir-mir:short-float-unbox-instruction
-			      cleavir-mir:short-float-box-instruction)
+			      cleavir-hir:short-float-cos-instruction
+			      cleavir-hir:short-float-unbox-instruction
+			      cleavir-hir:short-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-sqrt-ast
-			      cleavir-mir:short-float-sqrt-instruction
-			      cleavir-mir:short-float-unbox-instruction
-			      cleavir-mir:short-float-box-instruction)
+			      cleavir-hir:short-float-sqrt-instruction
+			      cleavir-hir:short-float-unbox-instruction
+			      cleavir-hir:short-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:single-float-add-ast
-			      cleavir-mir:single-float-add-instruction
-			      cleavir-mir:single-float-unbox-instruction
-			      cleavir-mir:single-float-box-instruction)
+			      cleavir-hir:single-float-add-instruction
+			      cleavir-hir:single-float-unbox-instruction
+			      cleavir-hir:single-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:single-float-sub-ast
-			      cleavir-mir:single-float-sub-instruction
-			      cleavir-mir:single-float-unbox-instruction
-			      cleavir-mir:single-float-box-instruction)
+			      cleavir-hir:single-float-sub-instruction
+			      cleavir-hir:single-float-unbox-instruction
+			      cleavir-hir:single-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:single-float-mul-ast
-			      cleavir-mir:single-float-mul-instruction
-			      cleavir-mir:single-float-unbox-instruction
-			      cleavir-mir:single-float-box-instruction)
+			      cleavir-hir:single-float-mul-instruction
+			      cleavir-hir:single-float-unbox-instruction
+			      cleavir-hir:single-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:single-float-div-ast
-			      cleavir-mir:single-float-div-instruction
-			      cleavir-mir:single-float-unbox-instruction
-			      cleavir-mir:single-float-box-instruction)
+			      cleavir-hir:single-float-div-instruction
+			      cleavir-hir:single-float-unbox-instruction
+			      cleavir-hir:single-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:single-float-sin-ast
-			      cleavir-mir:single-float-sin-instruction
-			      cleavir-mir:single-float-unbox-instruction
-			      cleavir-mir:single-float-box-instruction)
+			      cleavir-hir:single-float-sin-instruction
+			      cleavir-hir:single-float-unbox-instruction
+			      cleavir-hir:single-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:single-float-cos-ast
-			      cleavir-mir:single-float-cos-instruction
-			      cleavir-mir:single-float-unbox-instruction
-			      cleavir-mir:single-float-box-instruction)
+			      cleavir-hir:single-float-cos-instruction
+			      cleavir-hir:single-float-unbox-instruction
+			      cleavir-hir:single-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:single-float-sqrt-ast
-			      cleavir-mir:single-float-sqrt-instruction
-			      cleavir-mir:single-float-unbox-instruction
-			      cleavir-mir:single-float-box-instruction)
+			      cleavir-hir:single-float-sqrt-instruction
+			      cleavir-hir:single-float-unbox-instruction
+			      cleavir-hir:single-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:double-float-add-ast
-			      cleavir-mir:double-float-add-instruction
-			      cleavir-mir:double-float-unbox-instruction
-			      cleavir-mir:double-float-box-instruction)
+			      cleavir-hir:double-float-add-instruction
+			      cleavir-hir:double-float-unbox-instruction
+			      cleavir-hir:double-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:double-float-sub-ast
-			      cleavir-mir:double-float-sub-instruction
-			      cleavir-mir:double-float-unbox-instruction
-			      cleavir-mir:double-float-box-instruction)
+			      cleavir-hir:double-float-sub-instruction
+			      cleavir-hir:double-float-unbox-instruction
+			      cleavir-hir:double-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:double-float-mul-ast
-			      cleavir-mir:double-float-mul-instruction
-			      cleavir-mir:double-float-unbox-instruction
-			      cleavir-mir:double-float-box-instruction)
+			      cleavir-hir:double-float-mul-instruction
+			      cleavir-hir:double-float-unbox-instruction
+			      cleavir-hir:double-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:double-float-div-ast
-			      cleavir-mir:double-float-div-instruction
-			      cleavir-mir:double-float-unbox-instruction
-			      cleavir-mir:double-float-box-instruction)
+			      cleavir-hir:double-float-div-instruction
+			      cleavir-hir:double-float-unbox-instruction
+			      cleavir-hir:double-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:double-float-sin-ast
-			      cleavir-mir:double-float-sin-instruction
-			      cleavir-mir:double-float-unbox-instruction
-			      cleavir-mir:double-float-box-instruction)
+			      cleavir-hir:double-float-sin-instruction
+			      cleavir-hir:double-float-unbox-instruction
+			      cleavir-hir:double-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:double-float-cos-ast
-			      cleavir-mir:double-float-cos-instruction
-			      cleavir-mir:double-float-unbox-instruction
-			      cleavir-mir:double-float-box-instruction)
+			      cleavir-hir:double-float-cos-instruction
+			      cleavir-hir:double-float-unbox-instruction
+			      cleavir-hir:double-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:double-float-sqrt-ast
-			      cleavir-mir:double-float-sqrt-instruction
-			      cleavir-mir:double-float-unbox-instruction
-			      cleavir-mir:double-float-box-instruction)
+			      cleavir-hir:double-float-sqrt-instruction
+			      cleavir-hir:double-float-unbox-instruction
+			      cleavir-hir:double-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:long-float-add-ast
-			      cleavir-mir:long-float-add-instruction
-			      cleavir-mir:long-float-unbox-instruction
-			      cleavir-mir:long-float-box-instruction)
+			      cleavir-hir:long-float-add-instruction
+			      cleavir-hir:long-float-unbox-instruction
+			      cleavir-hir:long-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:long-float-sub-ast
-			      cleavir-mir:long-float-sub-instruction
-			      cleavir-mir:long-float-unbox-instruction
-			      cleavir-mir:long-float-box-instruction)
+			      cleavir-hir:long-float-sub-instruction
+			      cleavir-hir:long-float-unbox-instruction
+			      cleavir-hir:long-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:long-float-mul-ast
-			      cleavir-mir:long-float-mul-instruction
-			      cleavir-mir:long-float-unbox-instruction
-			      cleavir-mir:long-float-box-instruction)
+			      cleavir-hir:long-float-mul-instruction
+			      cleavir-hir:long-float-unbox-instruction
+			      cleavir-hir:long-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:long-float-div-ast
-			      cleavir-mir:long-float-div-instruction
-			      cleavir-mir:long-float-unbox-instruction
-			      cleavir-mir:long-float-box-instruction)
+			      cleavir-hir:long-float-div-instruction
+			      cleavir-hir:long-float-unbox-instruction
+			      cleavir-hir:long-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:long-float-sin-ast
-			      cleavir-mir:long-float-sin-instruction
-			      cleavir-mir:long-float-unbox-instruction
-			      cleavir-mir:long-float-box-instruction)
+			      cleavir-hir:long-float-sin-instruction
+			      cleavir-hir:long-float-unbox-instruction
+			      cleavir-hir:long-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:long-float-cos-ast
-			      cleavir-mir:long-float-cos-instruction
-			      cleavir-mir:long-float-unbox-instruction
-			      cleavir-mir:long-float-box-instruction)
+			      cleavir-hir:long-float-cos-instruction
+			      cleavir-hir:long-float-unbox-instruction
+			      cleavir-hir:long-float-box-instruction)
 
 (compile-float-arithmetic-ast cleavir-ast:long-float-sqrt-ast
-			      cleavir-mir:long-float-sqrt-instruction
-			      cleavir-mir:long-float-unbox-instruction
-			      cleavir-mir:long-float-box-instruction)
+			      cleavir-hir:long-float-sqrt-instruction
+			      cleavir-hir:long-float-unbox-instruction
+			      cleavir-hir:long-float-box-instruction)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -203,102 +203,102 @@
 	  :successors (successors context))))))
 
 (compile-float-comparison-ast cleavir-ast:short-float-less-ast
-			      cleavir-mir:short-float-less-instruction
-			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-hir:short-float-less-instruction
+			      cleavir-hir:short-float-unbox-instruction
 			      identity)
      
 (compile-float-comparison-ast cleavir-ast:short-float-not-greater-ast
-			      cleavir-mir:short-float-not-greater-instruction
-			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-hir:short-float-not-greater-instruction
+			      cleavir-hir:short-float-unbox-instruction
 			      identity)
 
 (compile-float-comparison-ast cleavir-ast:short-float-greater-ast
-			      cleavir-mir:short-float-less-instruction
-			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-hir:short-float-less-instruction
+			      cleavir-hir:short-float-unbox-instruction
 			      reverse)
      
 (compile-float-comparison-ast cleavir-ast:short-float-not-less-ast
-			      cleavir-mir:short-float-not-greater-instruction
-			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-hir:short-float-not-greater-instruction
+			      cleavir-hir:short-float-unbox-instruction
 			      reverse)
 
 (compile-float-comparison-ast cleavir-ast:short-float-equal-ast
-			      cleavir-mir:short-float-equal-instruction
-			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-hir:short-float-equal-instruction
+			      cleavir-hir:short-float-unbox-instruction
 			      identity)
 
 (compile-float-comparison-ast cleavir-ast:single-float-less-ast
-			      cleavir-mir:single-float-less-instruction
-			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-hir:single-float-less-instruction
+			      cleavir-hir:single-float-unbox-instruction
 			      identity)
      
 (compile-float-comparison-ast cleavir-ast:single-float-not-greater-ast
-			      cleavir-mir:single-float-not-greater-instruction
-			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-hir:single-float-not-greater-instruction
+			      cleavir-hir:single-float-unbox-instruction
 			      identity)
 
 (compile-float-comparison-ast cleavir-ast:single-float-greater-ast
-			      cleavir-mir:single-float-less-instruction
-			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-hir:single-float-less-instruction
+			      cleavir-hir:single-float-unbox-instruction
 			      reverse)
      
 (compile-float-comparison-ast cleavir-ast:single-float-not-less-ast
-			      cleavir-mir:single-float-not-greater-instruction
-			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-hir:single-float-not-greater-instruction
+			      cleavir-hir:single-float-unbox-instruction
 			      reverse)
 
 (compile-float-comparison-ast cleavir-ast:single-float-equal-ast
-			      cleavir-mir:single-float-equal-instruction
-			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-hir:single-float-equal-instruction
+			      cleavir-hir:single-float-unbox-instruction
 			      identity)
 
 (compile-float-comparison-ast cleavir-ast:double-float-less-ast
-			      cleavir-mir:double-float-less-instruction
-			      cleavir-mir:double-float-unbox-instruction
+			      cleavir-hir:double-float-less-instruction
+			      cleavir-hir:double-float-unbox-instruction
 			      identity)
      
 (compile-float-comparison-ast cleavir-ast:double-float-not-greater-ast
-			      cleavir-mir:double-float-not-greater-instruction
-			      cleavir-mir:double-float-unbox-instruction
+			      cleavir-hir:double-float-not-greater-instruction
+			      cleavir-hir:double-float-unbox-instruction
 			      identity)
 
 (compile-float-comparison-ast cleavir-ast:double-float-greater-ast
-			      cleavir-mir:double-float-less-instruction
-			      cleavir-mir:double-float-unbox-instruction
+			      cleavir-hir:double-float-less-instruction
+			      cleavir-hir:double-float-unbox-instruction
 			      reverse)
      
 (compile-float-comparison-ast cleavir-ast:double-float-not-less-ast
-			      cleavir-mir:double-float-not-greater-instruction
-			      cleavir-mir:double-float-unbox-instruction
+			      cleavir-hir:double-float-not-greater-instruction
+			      cleavir-hir:double-float-unbox-instruction
 			      reverse)
 
 (compile-float-comparison-ast cleavir-ast:double-float-equal-ast
-			      cleavir-mir:double-float-equal-instruction
-			      cleavir-mir:double-float-unbox-instruction
+			      cleavir-hir:double-float-equal-instruction
+			      cleavir-hir:double-float-unbox-instruction
 			      identity)
 
 (compile-float-comparison-ast cleavir-ast:long-float-less-ast
-			      cleavir-mir:long-float-less-instruction
-			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-hir:long-float-less-instruction
+			      cleavir-hir:long-float-unbox-instruction
 			      identity)
      
 (compile-float-comparison-ast cleavir-ast:long-float-not-greater-ast
-			      cleavir-mir:long-float-not-greater-instruction
-			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-hir:long-float-not-greater-instruction
+			      cleavir-hir:long-float-unbox-instruction
 			      identity)
 
 (compile-float-comparison-ast cleavir-ast:long-float-greater-ast
-			      cleavir-mir:long-float-less-instruction
-			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-hir:long-float-less-instruction
+			      cleavir-hir:long-float-unbox-instruction
 			      reverse)
      
 (compile-float-comparison-ast cleavir-ast:long-float-not-less-ast
-			      cleavir-mir:long-float-not-greater-instruction
-			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-hir:long-float-not-greater-instruction
+			      cleavir-hir:long-float-unbox-instruction
 			      reverse)
 
 (compile-float-comparison-ast cleavir-ast:long-float-equal-ast
-			      cleavir-mir:long-float-equal-instruction
-			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-hir:long-float-equal-instruction
+			      cleavir-hir:long-float-unbox-instruction
 			      identity)
 

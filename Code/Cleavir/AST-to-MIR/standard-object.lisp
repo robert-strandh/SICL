@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-ast-to-mir)
+(cl:in-package #:cleavir-ast-to-hir)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -15,7 +15,7 @@
       (list (compile-ast
 	     (cleavir-ast:slot-number-ast ast)
 	     (context (list temp2)
-		      (list (make-instance 'cleavir-mir:slot-read-instruction
+		      (list (make-instance 'cleavir-hir:slot-read-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs (results context)
 			      :successors (successors context))))))))))
@@ -41,7 +41,7 @@
 	       (cleavir-ast:value-ast ast)
 	       (context
 		(list temp3)
-		(list (make-instance 'cleavir-mir:slot-write-instruction
+		(list (make-instance 'cleavir-hir:slot-write-instruction
 			:inputs (list temp1 temp2 temp3)
 			:outputs '()
 			:successors (successors context))))))))))))
