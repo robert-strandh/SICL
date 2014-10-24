@@ -20,6 +20,7 @@
       (setf (special-operator entry) nil)
       (setf (type entry) t)
       (setf (compiler-macro-function entry) nil)
+      (setf (setf-expander entry) nil)
       (setf (inline entry) nil))))
 
 (defmethod sicl-env:special-operator (function-name (env simple-environment))
