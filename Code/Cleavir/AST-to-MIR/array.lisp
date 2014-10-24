@@ -15,7 +15,7 @@
       (list (compile-ast
 	     (cleavir-ast:index-ast ast)
 	     (context (list temp2)
-		      (list (make-instance 'cleavir-hir:t-aref-instruction
+		      (list (make-instance 'cleavir-ir:t-aref-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs (results context)
 			      :successors (successors context))))))))))
@@ -41,7 +41,7 @@
 	       (cleavir-ast:value-ast ast)
 	       (context
 		(list temp3)
-		(list (make-instance 'cleavir-hir:t-aset-instruction
+		(list (make-instance 'cleavir-ir:t-aset-instruction
 			:inputs (list temp1 temp2 temp3)
 			:outputs '()
 			:successors (successors context))))))))))))
@@ -75,24 +75,24 @@
 				 :successors (successors context)))))))))))))
 
 (compile-specialized-aref-ast cleavir-ast:bit-aref-ast
-			      cleavir-hir:bit-aref-instruction
-			      cleavir-hir:bit-box-instruction)
+			      cleavir-ir:bit-aref-instruction
+			      cleavir-ir:bit-box-instruction)
 
 (compile-specialized-aref-ast cleavir-ast:short-float-aref-ast
-			      cleavir-hir:short-float-aref-instruction
-			      cleavir-hir:short-float-box-instruction)
+			      cleavir-ir:short-float-aref-instruction
+			      cleavir-ir:short-float-box-instruction)
 
 (compile-specialized-aref-ast cleavir-ast:single-float-aref-ast
-			      cleavir-hir:single-float-aref-instruction
-			      cleavir-hir:single-float-box-instruction)
+			      cleavir-ir:single-float-aref-instruction
+			      cleavir-ir:single-float-box-instruction)
 
 (compile-specialized-aref-ast cleavir-ast:double-float-aref-ast
-			      cleavir-hir:double-float-aref-instruction
-			      cleavir-hir:double-float-box-instruction)
+			      cleavir-ir:double-float-aref-instruction
+			      cleavir-ir:double-float-box-instruction)
 
 (compile-specialized-aref-ast cleavir-ast:long-float-aref-ast
-			      cleavir-hir:long-float-aref-instruction
-			      cleavir-hir:long-float-box-instruction)
+			      cleavir-ir:long-float-aref-instruction
+			      cleavir-ir:long-float-box-instruction)
 
 (defmacro compile-specialized-aset-ast
     (ast-class aset-instruction-class unbox-instruction-class)
@@ -124,21 +124,21 @@
 				   :successors (successors context)))))))))))))))
 
 (compile-specialized-aset-ast cleavir-ast:bit-aset-ast
-			      cleavir-hir:bit-aset-instruction
-			      cleavir-hir:bit-unbox-instruction)
+			      cleavir-ir:bit-aset-instruction
+			      cleavir-ir:bit-unbox-instruction)
 
 (compile-specialized-aset-ast cleavir-ast:short-float-aset-ast
-			      cleavir-hir:short-float-aset-instruction
-			      cleavir-hir:short-float-unbox-instruction)
+			      cleavir-ir:short-float-aset-instruction
+			      cleavir-ir:short-float-unbox-instruction)
 
 (compile-specialized-aset-ast cleavir-ast:single-float-aset-ast
-			      cleavir-hir:single-float-aset-instruction
-			      cleavir-hir:single-float-unbox-instruction)
+			      cleavir-ir:single-float-aset-instruction
+			      cleavir-ir:single-float-unbox-instruction)
 
 (compile-specialized-aset-ast cleavir-ast:double-float-aset-ast
-			      cleavir-hir:double-float-aset-instruction
-			      cleavir-hir:double-float-unbox-instruction)
+			      cleavir-ir:double-float-aset-instruction
+			      cleavir-ir:double-float-unbox-instruction)
 
 (compile-specialized-aset-ast cleavir-ast:long-float-aset-ast
-			      cleavir-hir:long-float-aset-instruction
-			      cleavir-hir:long-float-unbox-instruction)
+			      cleavir-ir:long-float-aset-instruction
+			      cleavir-ir:long-float-unbox-instruction)

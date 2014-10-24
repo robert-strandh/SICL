@@ -20,7 +20,7 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-hir:make-fixnum-add-instruction
+				(cleavir-ir:make-fixnum-add-instruction
 				 (list temp1 temp2)
 				 (list result)
 				 successors)))))))))
@@ -45,7 +45,7 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-hir:make-fixnum-sub-instruction
+				(cleavir-ir:make-fixnum-sub-instruction
 				 (list temp1 temp2)
 				 (list result)
 				 successors)))))))))
@@ -69,7 +69,7 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-hir:make-fixnum-less-instruction
+				(cleavir-ir:make-fixnum-less-instruction
 				 (list temp1 temp2)
 				 successors)))))))))
 
@@ -92,7 +92,7 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-hir:make-fixnum-not-greater-instruction
+				(cleavir-ir:make-fixnum-not-greater-instruction
 				 (list temp1 temp2)
 				 successors)))))))))
 
@@ -115,7 +115,7 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-hir:make-fixnum-less-instruction
+				(cleavir-ir:make-fixnum-less-instruction
 				 (list temp2 temp1)
 				 successors)))))))))
 
@@ -138,7 +138,7 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-hir:make-fixnum-not-greater-instruction
+				(cleavir-ir:make-fixnum-not-greater-instruction
 				 (list temp2 temp1)
 				 successors)))))))))
 
@@ -161,6 +161,6 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-hir:make-fixnum-equal-instruction
+				(cleavir-ir:make-fixnum-equal-instruction
 				 (list temp2 temp1)
 				 successors)))))))))

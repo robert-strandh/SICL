@@ -10,7 +10,7 @@
     (compile-ast
      (cleavir-ast:cons-ast ast)
      (context (list temp)
-	      (list (make-instance 'cleavir-hir:car-instruction
+	      (list (make-instance 'cleavir-ir:car-instruction
 		      :inputs (list temp)
 		      :outputs (results context)
 		      :successors (successors context)))))))
@@ -25,7 +25,7 @@
     (compile-ast
      (cleavir-ast:cons-ast ast)
      (context (list temp)
-	      (list (make-instance 'cleavir-hir:cdr-instruction
+	      (list (make-instance 'cleavir-ir:cdr-instruction
 		      :inputs (list temp)
 		      :outputs (results context)
 		      :successors (successors context)))))))
@@ -45,7 +45,7 @@
       (list (compile-ast
 	     (cleavir-ast:object-ast ast)
 	     (context (list temp2)
-		      (list (make-instance 'cleavir-hir:rplaca-instruction
+		      (list (make-instance 'cleavir-ir:rplaca-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs '()
 			      :successors (successors context))))))))))
@@ -65,7 +65,7 @@
       (list (compile-ast
 	     (cleavir-ast:object-ast ast)
 	     (context (list temp2)
-		      (list (make-instance 'cleavir-hir:rplacd-instruction
+		      (list (make-instance 'cleavir-ir:rplacd-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs '()
 			      :successors (successors context))))))))))
