@@ -181,3 +181,8 @@
 	   (when initialize-p
 	     (setf (car (value-cell entry)) value))))))
 
+(defmethod sicl-env:symbol-macro (symbol (env simple-environment))
+  (let ((entry (find-variable-entry env symbol)))
+    (if (or (null entry) (null (macro-function entry)))
+	(values nil nil)
+	(values (macro-function entry) (expansion entry)))))
