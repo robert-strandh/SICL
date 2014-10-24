@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem :cleavir-ast-to-mir
-  :depends-on (:cleavir-ast :cleavir-mir)
+(asdf:defsystem :cleavir-ast-to-hir
+  :depends-on (:cleavir-ast :cleavir-hir)
   :serial t
   :components
   ((:file "packages")
