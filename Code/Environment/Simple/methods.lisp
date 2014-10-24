@@ -186,3 +186,15 @@
     (if (or (null entry) (null (macro-function entry)))
 	(values nil nil)
 	(values (macro-function entry) (expansion entry)))))
+
+(defmethod (setf sicl-env:symbol-macro)
+    (expansion symbol (env simple-environment))
+  (let ((entry (ensure-variable-entry env symbol)))
+    (cond ((or (specialp entry) (constantp entry))
+	   (error 'program-error))
+	  (t
+	   (setf (expansion entry) expansion)
+	   (setf (macro-function entry)
+		 (lambda (form environment)
+		   (declare (ignore form environment))
+		   expansion))))))
