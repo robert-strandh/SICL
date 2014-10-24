@@ -198,3 +198,9 @@
 		 (lambda (form environment)
 		   (declare (ignore form environment))
 		   expansion))))))
+
+(defmethod sicl-env:variable-type (symbol (env simple-environment))
+  (let ((entry (find-variable-entry env symbol)))
+    (if (null entry)
+	t
+	(type entry))))
