@@ -133,3 +133,12 @@
 	 (or (not (null (macro-function entry)))
 	     (not (eq (car (value-cell entry)) (unbound env)))))))
 
+(defmethod sicl-env:makunbound (symbol (env simple-environment))
+  (let ((entry (find-variable-entry env symbol)))
+    (unless (null entry)
+      (setf (macro-function entry) nil)
+      ;; Free up the expansion so that the garbage collector can
+      ;; recycle it.
+      (setf (expansion entry) nil)
+      (setf (constantp entry) nil)
+      (setf (car (value-cell entry)) (unbound env)))))
