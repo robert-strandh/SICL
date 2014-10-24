@@ -214,3 +214,10 @@
 
 (defmethod sicl-env:find-class (symbol (env simple-environment))
   (cdr (assoc symbol (classes env) :test #'eq)))
+
+(defmethod (setf sicl-env:find-class)
+    (new-class symbol (env simple-environment))
+  (let ((association (assoc symbol (classes env) :test #'eq)))
+    (if (null association)
+	(push (cons symbol new-class) (classes env))
+	(setf (cdr association) new-class))))
