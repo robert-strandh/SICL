@@ -222,3 +222,9 @@
     (if (null association)
 	(push (cons symbol new-class) (classes env))
 	(setf (cdr association) new-class))))
+
+(defmethod sicl-env:setf-expander (symbol (env simple-environment))
+  (let ((entry (find-function-entry env symbol)))
+    (if (null entry)
+	nil
+	(setf-expander entry))))
