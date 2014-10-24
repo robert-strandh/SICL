@@ -161,3 +161,11 @@
 	  (t
 	   (setf (constantp entry) t)
 	   (setf (car (value-cell entry)) value)))))
+
+(defmethod sicl-env:special-variable (symbol (env simple-environment))
+  (let ((entry (find-variable-entry env symbol)))
+    (if (or (null entry)
+	    (not (specialp entry))
+	    (eq (car (value-cell entry)) (unbound env)))
+	(values nil nil)
+	(values (car (value-cell entry)) t))))
