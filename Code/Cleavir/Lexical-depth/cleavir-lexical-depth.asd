@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :cleavir-lexical-depth
-  :depends-on (:cleavir-mir)
+  :depends-on (:cleavir-hir)
   :serial t
   :components
   ((:file "packages")
