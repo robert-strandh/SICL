@@ -43,10 +43,12 @@
    (%unbound :initform (list nil) :reader unbound)
    ;; The package namespace.  A list of packages.
    (%packages :initform '() :accessor packages)
-   ;; The class namespace.  A list of classes.
+   ;; The class namespace.  An association list mapping names to
+   ;; classes.
    (%classes :initform '() :accessor classes)
-   ;; The type namespace.
-   (%types :initform '() :accessor types)
+   ;; This slot holds an association list, mapping symbols to
+   ;; type-expander functions.
+   (%type-expanders :initform '() :accessor type-expanders)
    ;; This slot holds a list of variable entries.
    (%variable-entries :initform '() :accessor variable-entries)
    ;; This slot holds a list of function entries.
