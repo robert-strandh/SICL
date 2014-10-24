@@ -211,3 +211,6 @@
     (if (constantp entry)
 	(error "Attempt to set the type of a constant variable.")
 	(setf (type entry) new-type))))
+
+(defmethod sicl-env:find-class (symbol (env simple-environment))
+  (cdr (assoc symbol (classes env) :test #'eq)))
