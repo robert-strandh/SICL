@@ -169,3 +169,15 @@
 	    (eq (car (value-cell entry)) (unbound env)))
 	(values nil nil)
 	(values (car (value-cell entry)) t))))
+
+(defmethod (setf sicl-env:special-variable)
+    (value symbol (env simple-environment) initialize-p)
+  (let ((entry (ensure-variable-entry env symbol)))
+    (cond ((or (not (null (macro-function entry)))
+	       (constantp entry))
+	   (error "Attempt to turn a symbol macro or a constant variable into a special variable"))
+	  (t
+	   (setf (specialp entry) t)
+	   (when initialize-p
+	     (setf (car (value-cell entry)) value))))))
+
