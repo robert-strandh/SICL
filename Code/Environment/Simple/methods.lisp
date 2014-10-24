@@ -149,3 +149,15 @@
 	(values nil nil)
 	(values (car (value-cell entry)) t))))
 
+(defmethod (setf sicl-env:constant-variable)
+    (value symbol (env simple-environment))
+  (let ((entry (ensure-variable-entry env symbol)))
+    (cond ((or (not (null (macro-function entry)))
+	       (specialp entry))
+	   (error "Attempt to turn a symbol macro or a special variable into a constant variable"))
+	  ((and (constantp entry)
+		(not (eql (car (value-cell entry)) value)))
+	   (error "Attempt to change the value of a constant variable"))
+	  (t
+	   (setf (constantp entry) t)
+	   (setf (car (value-cell entry)) value)))))
