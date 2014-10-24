@@ -115,10 +115,12 @@
    ;; This slot contains true if and only if this entry represents a
    ;; special variable.
    (%specialp :initform nil :accessor specialp)
-   ;; This slot contains the value associated with the variable.  If
-   ;; there is no value associated with the variable, then this slot
+   ;; This slot contains a CONS cell which is the value cell
+   ;; associated with the variable.  The CAR of the CONS cell contains
+   ;; the global value of the variable.  If there is no value
+   ;; associated with the variable, then the CAR of the value cell
    ;; contains the contents of the UNBOUND slot in the environment.
-   (%value :initarg :value :accessor value)
+   (%value-cell :initform (list nil) :reader value-cell)
    ;; The value of this slot is either a macro function, or NIL if
    ;; this entry does not currently represent a symbol macro.
    (%macro-function :initform nil :accessor macro-function)
@@ -139,9 +141,9 @@
   (let ((entry (find-variable-entry environment name)))
     (when (null entry)
       (setf entry
-	    (make-instance 'variable-entry
-	      :name name
-	      :value (unbound environment)))
+	    (make-instance 'variable-entry :name name))
+      (setf (car (value-cell entry))
+	    (unbound environment))
       (push entry (variable-entries environment)))
     entry))
 
