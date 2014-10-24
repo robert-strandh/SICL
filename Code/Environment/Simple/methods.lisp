@@ -142,3 +142,10 @@
       (setf (expansion entry) nil)
       (setf (constantp entry) nil)
       (setf (car (value-cell entry)) (unbound env)))))
+
+(defmethod sicl-env:constant-variable (symbol (env simple-environment))
+  (let ((entry (find-variable-entry env symbol)))
+    (if (or (null entry) (not (constantp entry)))
+	(values nil nil)
+	(values (car (value-cell entry)) t))))
+
