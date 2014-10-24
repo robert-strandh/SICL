@@ -204,3 +204,10 @@
     (if (null entry)
 	t
 	(type entry))))
+
+(defmethod (setf sicl-env:variable-type)
+    (new-type symbol (env simple-environment))
+  (let ((entry (ensure-variable-entry env symbol)))
+    (if (constantp entry)
+	(error "Attempt to set the type of a constant variable.")
+	(setf (type entry) new-type))))
