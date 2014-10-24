@@ -25,6 +25,9 @@
 ;;; If FUNCTION-NAME already has a definition in ENVIRONMENT as an
 ;;; ordinary function, as a generic function, as a macro, or as a
 ;;; special operator, then that definition is lost.
+;;;
+;;; If FUNCTION-NAME has a SETF expander associated with it, then that
+;;; SETF expander is lost.
 
 (defgeneric fboundp (function-name environment))
 
