@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem :cleavir-mir-interpreter
-  :depends-on (:cleavir-mir
+(asdf:defsystem :cleavir-hir-interpreter
+  :depends-on (:cleavir-hir
 	       :cleavir-lexical-depth)
   :serial t
   :components

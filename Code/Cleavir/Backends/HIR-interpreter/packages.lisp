@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:cleavir-mir-interpreter
+(defpackage #:cleavir-hir-interpreter
   (:use #:common-lisp)
   (:export
-   #:interpret-mir
+   #:interpret-hir
    ))
