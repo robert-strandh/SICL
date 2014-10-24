@@ -57,9 +57,6 @@
    ;; DECLARATION.  Others are auxiliary entries such as TYPE, INLINE,
    ;; DYNAMIC-EXTENT.
    (%proclamations :initform '() :accessor proclamations)
-   ;; This slot holds an association list, mapping names to SETF
-   ;; expanders.
-   (%setf-expanders :initform '() :accessor setf-expanders)
    ;; This slot holds an association list, mapping names to method
    ;; combinations.
    (%method-combinations :initform '() :accessor method-combinations)))
