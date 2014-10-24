@@ -326,10 +326,9 @@
 ;;; then it remains unbound.
 ;;;
 ;;; If INITIALIZE-P is true, then VALUE becomes the new value of the
-;;; special variable SYMBOL. 
+;;; special variable SYMBOL.
 
-(defgeneric (setf special-variable)
-    (value symbol environment &optional initialize-p))
+(defgeneric (setf special-variable) (value symbol environment initialize-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
