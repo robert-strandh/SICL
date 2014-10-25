@@ -473,3 +473,15 @@
 ;;; expander in ENVIRONMENT, then NIL is returned.
 
 (defgeneric type-expander (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (TYPE TYPE-EXPANDER).
+;;;
+;;; This generic function is used to set the type expander associated
+;;; with SYMBOL in ENVIRONMENT.
+;;;
+;;; If there is already a type expander associated with SYMBOL in
+;;; ENVIRONMENT, then the old type expander is lost. 
+
+(defgeneric (setf type-expander) (new-expander symbol environment))
