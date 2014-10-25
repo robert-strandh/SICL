@@ -29,7 +29,7 @@
 ;;; If FUNCTION-NAME has a SETF expander associated with it, then that
 ;;; SETF expander is lost.
 
-(defgeneric fboundp (function-name environment))
+(defgeneric fmakunbound (function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -129,10 +129,12 @@
 ;;; This generic function is a generic version of the Common Lisp
 ;;; function (SETF CL:MACRO-FUNCTION).
 ;;;
-;;; NEW-FUNCTION must be a macro expansion function.  A call to this
-;;; function then always succeeds.  If SYMBOL already names a macro or
-;;; a function, then the previous definition is lost.  If SYMBOL
-;;; already names a special operator, that definition is kept.
+;;; NEW-FUNCTION must be a macro expansion function or NIL.  A call to
+;;; this function then always succeeds.  A value of NIL means that the
+;;; SYMBOL no longer has a macro function associated with it.  If
+;;; SYMBOL already names a macro or a function, then the previous
+;;; definition is lost.  If SYMBOL already names a special operator,
+;;; that definition is kept.
 ;;;
 ;;; If SYMBOL already names a function, then any proclamation of the
 ;;; type of that function is lost.  In other words, if at some later
