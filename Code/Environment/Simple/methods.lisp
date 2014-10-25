@@ -228,6 +228,10 @@
 (defmethod sicl-env:find-class (symbol (env simple-environment))
   (cdr (assoc symbol (classes env) :test #'eq)))
 
+(defmethod sicl-env:variable-unbound (symbol (env simple-environment))
+  (let ((entry (ensure-variable-entry env symbol)))
+    (unbound entry)))
+
 (defmethod (setf sicl-env:find-class)
     (new-class symbol (env simple-environment))
   (let ((association (assoc symbol (classes env) :test #'eq)))
