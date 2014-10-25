@@ -436,6 +436,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function VARIABLE-CELL.
+;;;
+;;; A call to this function always succeeds.  It returns a CONS cell,
+;;; in which the CAR always holds the current definition of the
+;;; variable named SYMBOL.  When SYMBOL has no definition as a
+;;; variable, the CAR of this cell will contain an object that
+;;; indicates that the variable is unbound.  This object is the return
+;;; value of the function VARIABLE-UNBOUND.  The return value of this
+;;; function is always the same (in the sense of EQ) when it is passed
+;;; the same environment.
+
+(defgeneric function-cell (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FIND-CLASS.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
