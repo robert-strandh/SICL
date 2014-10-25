@@ -29,3 +29,18 @@
    ;; A list of Lisp objects.  The arguments that were passed to the
    ;; function call that resulted in the creation of this frame.
    (%arguments :initarg :arguments :reader arguments)))
+
+(defclass dynamic-environment-entry () ())
+
+(defclass variable-binding (dynamic-environment-entry)
+  ((%symbol :initarg :symbol :reader symbol)
+   (%value :initarg :value :reader value)))
+
+(defclass unwind-protect (dynamic-environment-entry)
+  ((%thunk :initarg :thunk :reader thunk)
+   (%frame :initarg :frame :reader frame)))
+
+(defclass catch-tag (dynamic-environment-entry)
+  ((%value :initarg :value :reader value)
+   (%frame :initarg :frame :reader frame)
+   (%next-instruction :initarg :next-instruction :reader next-instruction)))
