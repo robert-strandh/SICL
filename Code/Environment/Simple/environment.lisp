@@ -53,6 +53,9 @@
    (%variable-entries :initform '() :accessor variable-entries)
    ;; This slot holds a list of function entries.
    (%function-entries :initform '() :accessor function-entries)
+   ;; This slot holds an association list, mapping function names to
+   ;; compiler-macro functions.
+   (%compiler-macro-expanders :initform '() :accessor compiler-macro-expanders)
    ;; Some entries in this list are base entries, such as OPTIMIZE and
    ;; DECLARATION.  Others are auxiliary entries such as TYPE, INLINE,
    ;; DYNAMIC-EXTENT.
@@ -175,10 +178,6 @@
    ;; The value of this slot is a generalized boolean indicating
    ;; whether this entry represents a special operator.
    (%special-operator :initform nil :accessor special-operator)
-   ;; The value of this slot is either a compiler macro function, or
-   ;; NIL if this entry does not currently have a compiler macro
-   ;; associated with it.
-   (%compiler-macro-function :initform nil :accessor compiler-macro-function)
    ;; The value of this slot is the proclaimed type of the function
    ;; whenever this entry has a function associated with it.
    (%type :initform t :accessor type)
