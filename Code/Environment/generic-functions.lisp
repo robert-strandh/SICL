@@ -463,3 +463,13 @@
 ;;; ordinary function, generic function, or macro in ENVIRONMENT.
 
 (defgeneric (setf setf-expander) (new-expander symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function TYPE-EXPANDER.
+;;;
+;;; This generic function returns the type expander associated with
+;;; SYMBOL in ENVIRONMENT.  If SYMBOL is not associated with any type
+;;; expander in ENVIRONMENT, then NIL is returned.
+
+(defgeneric type-expander (symbol environment))
