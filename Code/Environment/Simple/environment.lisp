@@ -38,7 +38,7 @@
 ;;; of special variable entries, constant variable entries and global
 ;;; symbol macro entries.
 
-(defclass simple-environment ()
+(defclass simple-environment (sicl-global-environment:environment)
   (;; A value used in this environment for unbound variables. 
    (%unbound :initform (list nil) :reader unbound)
    ;; The package namespace.  A list of packages.
