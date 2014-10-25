@@ -44,3 +44,9 @@
   ((%value :initarg :value :reader value)
    (%frame :initarg :frame :reader frame)
    (%next-instruction :initarg :next-instruction :reader next-instruction)))
+
+(defclass process ()
+  (;; The global runtime environment. 
+   (%global-env :initarg :global-env :reader global-env)
+   ;; The stack is a list of stack frames. 
+   (%stack :initarg :stack :accessor stack)))
