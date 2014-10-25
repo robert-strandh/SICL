@@ -24,6 +24,8 @@
    #:compiler-macro-function
    #:function-type
    #:function-inline
+   #:function-cell
+   #:function-unbound
    #:constant-variable
    #:special-variable
    #:symbol-macro
@@ -33,6 +35,8 @@
    #:boundp
    #:makunbound
    #:fmakunbound
+   #:variable-cell
+   #:variable-unbound
    #:find-class
    #:special-operator
    ))
