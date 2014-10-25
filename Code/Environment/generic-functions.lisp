@@ -255,7 +255,8 @@
 ;;; definition as a function, the CAR of this cell will contain a
 ;;; function that, when called, signals an error of type
 ;;; UNDEFINED-FUNCTION.  The return value of this function is always
-;;; the same (in the sense of EQ) when it is passed the same
+;;; the same (in the sense of EQ) when it is passed the same (in the
+;;; sense of EQUAL) function name and the same (in the sense of EQ)
 ;;; environment.
 
 (defgeneric function-cell (function-name environment))
@@ -269,12 +270,14 @@
 ;;; When FUNCTION-NAME has no definition as a function, the return
 ;;; value of this function is the contents of the CONS cell returned
 ;;; by FUNCTION-CELL.  The return value of this function is always the
-;;; same (in the sense of EQ) when it is passed the same environment.
-;;; Client code can use the return value of this function to determine
-;;; whether FUNCTION-NAME is unbound and if so signal an error when an
-;;; attempt is made to evaluate the form (FUNCTION FUNCTION-NAME).
+;;; same (in the sense of EQ) when it is passed the same (in the sense
+;;; of EQUAL) function name and the same (in the sense of EQ)
+;;; environment.  Client code can use the return value of this
+;;; function to determine whether FUNCTION-NAME is unbound and if so
+;;; signal an error when an attempt is made to evaluate the form
+;;; (FUNCTION FUNCTION-NAME).
 
-(defgeneric function-cell (function-name environment))
+(defgeneric function-unbound (function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
