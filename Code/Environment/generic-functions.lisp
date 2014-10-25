@@ -447,7 +447,22 @@
 ;;; function is always the same (in the sense of EQ) when it is passed
 ;;; the same environment.
 
-(defgeneric function-cell (symbol environment))
+(defgeneric variable-cell (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function VARIABLE-UNBOUND.
+;;;
+;;; A call to this function always succeeds.  It returns an object
+;;; that indicates that the variable is unbound.  The CONS cell
+;;; returned by the function VARIABLE-CELL contains this object
+;;; whenever the variable named SYMBOL is unbound.  The return value
+;;; of this function is always the same (in the sense of EQ) when it
+;;; is passed the same symbol and the same environment.  Client code
+;;; can use the return value of this function to determine whether
+;;; SYMBOL is unbound.
+
+(defgeneric variable-unbound (symbol environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
