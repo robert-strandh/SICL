@@ -247,6 +247,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FUNCTION-CELL.
+;;;
+;;; A call to this function always succeeds.  It returns a CONS cell,
+;;; in which the CAR always holds the current definition of the
+;;; function named FUNCTION-NAME.  When FUNCTION-NAME has no
+;;; definition as a function, the CAR of this cell will contain a
+;;; function that, when called, signals an error of type
+;;; UNDEFINED-FUNCTION.  The return value of this function is always
+;;; the same (in the sense of EQ) when it is passed the same
+;;; environment.
+
+(defgeneric function-cell (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FUNCTION-UNBOUND.
+;;;
+;;; A call to this function always succeeds.  It returns a function
+;;; that, when called, signals an error of type UNDEFINED-FUNCTION.
+;;; When FUNCTION-NAME has no definition as a function, the return
+;;; value of this function is the contents of the CONS cell returned
+;;; by FUNCTION-CELL.  The return value of this function is always the
+;;; same (in the sense of EQ) when it is passed the same environment.
+;;; Client code can use the return value of this function to determine
+;;; whether FUNCTION-NAME is unbound and if so signal an error when an
+;;; attempt is made to evaluate the form (FUNCTION FUNCTION-NAME).
+
+(defgeneric function-cell (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
