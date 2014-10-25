@@ -19,7 +19,6 @@
       (setf (macro-function entry) nil)
       (setf (special-operator entry) nil)
       (setf (type entry) t)
-      (setf (compiler-macro-function entry) nil)
       (setf (setf-expander entry) nil)
       (setf (inline entry) nil))))
 
