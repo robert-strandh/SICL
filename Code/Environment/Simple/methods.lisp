@@ -128,6 +128,10 @@
 	(error 'undefined-function :name function-name)
 	(setf (inline entry) new-inline))))
 
+(defmethod sicl-env:function-cell (function-name (env simple-environment))
+  (let ((entry (ensure-function-entry env function-name)))
+    (function-cell entry)))
+
 (defmethod sicl-env:boundp (symbol (env simple-environment))
   (let ((entry (find-variable-entry env symbol)))
     (and (not (null entry))
