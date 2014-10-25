@@ -28,6 +28,7 @@
    #:symbol-macro
    #:variable-type
    #:setf-expander
+   #:type-expander
    #:boundp
    #:makunbound
    #:fmakunbound
