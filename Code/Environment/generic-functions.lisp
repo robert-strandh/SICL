@@ -281,6 +281,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FUNCTION-LAMBDA-LIST.
+;;;
+;;; This function returns two values.  The first value is an ordinary
+;;; lambda list, or NIL if no lambda list has been defined for
+;;; FUNCTION-NAME.  The second value is true if and only if a lambda
+;;; list has been defined for function-name. 
+
+(defgeneric function-lambda-list (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
