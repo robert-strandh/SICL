@@ -445,7 +445,7 @@
 ;;; indicates that the variable is unbound.  This object is the return
 ;;; value of the function VARIABLE-UNBOUND.  The return value of this
 ;;; function is always the same (in the sense of EQ) when it is passed
-;;; the same environment.
+;;; the same symbol and the same environment.
 
 (defgeneric variable-cell (symbol environment))
 
