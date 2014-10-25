@@ -238,3 +238,6 @@
 	(error "Attempt to assign a SETF expander when no function exists.")
 	(setf (setf-expander entry)
 	      new-expander))))
+
+(defmethod sicl-env:type-expander (symbol (env simple-environment))
+  (cdr (assoc symbol (type-expanders env) :test #'eq)))
