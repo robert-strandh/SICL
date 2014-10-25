@@ -84,17 +84,27 @@
     (setf (type entry) t)
     (setf (inline entry) nil)))
 
-(defmethod sicl-env:compiler-macro-function (symbol (env simple-environment))
-  (let ((entry (find-function-entry env symbol)))
+(defmethod sicl-env:compiler-macro-function
+    (function-name (env simple-environment))
+  (let ((entry (assoc function-name (compiler-macro-expanders env)
+		      :test #'equal)))
     (if (null entry)
 	nil
-	(compiler-macro-function entry))))
+	(cdr entry))))
 
 (defmethod (setf sicl-env:compiler-macro-function)
     (new-definition function-name (env simple-environment))
   (assert (or (functionp new-definition) (null new-definition)))
-  (let ((entry (ensure-function-entry env function-name)))
-    (setf (compiler-macro-function entry) new-definition)))
+  (if (null new-definition)
+      (setf (compiler-macro-expanders env)
+	    (remove function-name (compiler-macro-expanders env)
+		    :key #'car :test #'equal))
+      (let ((entry (assoc function-name (compiler-macro-expanders env)
+			  :test #'equal)))
+	(if (null entry)
+	    (push (cons function-name new-definition)
+		  (compiler-macro-expanders env))
+	    (setf (cdr entry) new-definition)))))
 
 (defmethod sicl-env:function-type (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
