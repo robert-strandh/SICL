@@ -17,6 +17,7 @@
 	   #:find-class
 	   )
   (:export
+   #:environment
    #:fboundp
    #:fdefinition
    #:macro-function
