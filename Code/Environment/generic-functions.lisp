@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-global-environment)
 
+(defclass environment () ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function FBOUNDP.
