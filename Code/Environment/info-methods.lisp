@@ -40,3 +40,26 @@
 			;; This symbol does not seem to be defined.
 			;; Return NIL as Cleavir requires.
 			nil))))))))
+
+(defmethod cleavir-env:function-info ((env environment) function-name)
+  (if (fboundp function-name env)
+      ;; It is bound, but to what?  First check whether it is bound
+      ;; to a macro.
+      (let ((binding (fdefinition function-name env)))
+	(cond ((functionp binding)
+	       (make-instance 'cleavir-env:global-function-info
+		 :name function-name
+		 :dynamic-extent nil
+		 :ignore nil
+		 :compiler-macro (compiler-macro-function function-name env)
+		 :inline (function-inline function-name env)
+		 :type (function-type function-name env)))
+	      ((eq (first binding) 'cl:macro-function)
+	       (make-instance 'cleavir-env:global-macro-info
+		 :name function-name
+		 :expander (second binding)
+		 :compiler-macro (compiler-macro-function function-name env)))
+	      (t
+	       (make-instance 'cleavir-env:special-operator-info
+		 :name function-name))))
+      nil))
