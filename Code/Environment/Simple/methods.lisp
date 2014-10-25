@@ -132,6 +132,10 @@
   (let ((entry (ensure-function-entry env function-name)))
     (function-cell entry)))
 
+(defmethod sicl-env:function-unbound (function-name (env simple-environment))
+  (let ((entry (ensure-function-entry env function-name)))
+    (unbound entry)))
+
 (defmethod sicl-env:boundp (symbol (env simple-environment))
   (let ((entry (find-variable-entry env symbol)))
     (and (not (null entry))
