@@ -241,3 +241,10 @@
 
 (defmethod sicl-env:type-expander (symbol (env simple-environment))
   (cdr (assoc symbol (type-expanders env) :test #'eq)))
+
+(defmethod (setf sicl-env:type-expander)
+    (new-class symbol (env simple-environment))
+  (let ((association (assoc symbol (type-expanders env) :test #'eq)))
+    (if (null association)
+	(push (cons symbol new-class) (type-expanders env))
+	(setf (cdr association) new-class))))
