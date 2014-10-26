@@ -118,35 +118,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Auxiliary function ENSURE-DEFINED-VARIABLE.
-;;;
-;;; This function checks whether there is an entry for a name as a
-;;; special variable in the global environment, and if not creates
-;;; such an entry.  If the entry exists, but is not marked as DEFINED,
-;;; then this function marks it as such.
-;;;
-;;; If the name is already that of a constant variable, then an error
-;;; is signaled.
-;;;
-;;; If there is an entry for the name as a global macro then an error
-;;; is signaled.
-
-(defun ensure-defined-variable (name)
-  (when (constantp name)
-    (error "Attempt to redefine a constant variable."))
-  (unless (null (find name (symbol-macros *global-environment*)
-		      :key #'name :test #'eq))
-    (error "Attempt to redefine a global symbol macro as a variable."))
-  (let ((entry (find name (special-variables *global-environment*)
-		     :key #'name :test #'eq)))
-    (if (null entry)
-	(push (make-special-variable-entry name t)
-	      (special-variables *global-environment*))
-	(setf (defined-p entry) t)))
-  nil)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function (SETF SYMBOL-VALUE).
 ;;;
 ;;; Signal an error if an attempt is made to call this function with
