@@ -72,9 +72,6 @@
 (declaim (ftype (function (function-name) (cons t null))
 		find-function-cell))
 
-(declaim (ftype (function (symbol) null)
-		ensure-defined-variable))
-
 ;;; FIXME: do something better for the generalized boolean value.
 (declaim (ftype (function (symbol) t)
 		special-operator-p))
