@@ -43,3 +43,18 @@
      process)
   (setf (lexical-value (first outputs) process)
 	(lexical-value (first inputs) process)))
+
+(defmethod execute-simple-instruction
+    ((instruction cleavir-ir:return-instruction)
+     inputs outputs
+     process)
+  (let ((return-values (loop for output in outputs
+			     collect (lexical-value output process))))
+    (pop (stack process))
+    ;; Set all variables to nil in case there are fewer values than
+    ;; outputs.
+    (loop for return-var in (return-variables (stack process))
+	  do (setf (lexical-value return-var process) nil))
+    (loop for value in return-values
+	  for return-var in (return-variables (stack process))
+	  do (setf (lexical-value return-var process) value))))
