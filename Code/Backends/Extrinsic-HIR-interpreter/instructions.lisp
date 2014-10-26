@@ -27,3 +27,12 @@
   (declare (ignore inputs outputs))
   (setf (next-instruction (stack process))
 	(first (cleavir-ir:successors instruction))))
+  
+(defmethod execute-simple-instruction
+    ((instruction cleavir-ir:enclose-instruction)
+     inputs outputs
+     process)
+  (setf (lexical-value (first outputs) process)
+	(make-instance 'interpreted-function
+	  :entry-point (cleavir-ir:code instruction)
+	  :environment (static-env (stack process)))))
