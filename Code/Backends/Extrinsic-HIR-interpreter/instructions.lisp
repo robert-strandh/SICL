@@ -174,3 +174,6 @@
   (parse-arguments (arguments (stack process))
 		   (cleavir-ir:lambda-list instruction)
 		   process))
+
+(defgeneric execute-call-instruction
+    (instruction function inputs outputs process))
