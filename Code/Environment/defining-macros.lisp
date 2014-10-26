@@ -34,17 +34,18 @@
 ;;; documentation for now.
 
 (defmacro defvar
-    (name &optional (initial-value nil initial-value-p) documentation)
+    (&environment env name
+     &optional (initial-value nil initial-value-p) documentation)
   (declare (ignore documentation))
   (if initial-value-p
       `(progn
 	 (eval-when (:compile-toplevel)
-	   (ensure-defined-variable ,name))
+	   (setf (special-variable ,name ,env nil) nil))
 	 (eval-when (:load-toplevel :execute)
-	   (unless (boundp ,name)
-	     (setf (symbol-value ,name) ,initial-value))))
+	   (unless (boundp ,name ,env)
+	     (setf (special-variable ,name ,env t) ,initial-value))))
       `(eval-when (:compile-toplevel :load-toplevel :execute)
-	 (ensure-defined-variable ,name))))
+	 (setf (special-variable ,name ,env nil) nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
