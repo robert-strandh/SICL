@@ -206,3 +206,11 @@
 		      :next-instruction (entry-point function)
 		      :arguments args)))
     (push new-frame (stack process))))
+
+(defmethod execute-simple-instruction
+    ((instruction cleavir-ir:funcall-instruction)
+     inputs outputs
+     process)
+  (let ((function (lexical-value (first inputs) process)))
+    (execute-call-instruction
+     instruction function (rest inputs) outputs process)))
