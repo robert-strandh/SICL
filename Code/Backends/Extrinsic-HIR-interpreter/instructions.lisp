@@ -21,3 +21,9 @@
 	       (return-from lexical-value)))))
 
 (defgeneric execute-simple-instruction (instruction inputs outputs process))
+
+(defmethod execute-simple-instruction :before
+    (instruction inputs outputs process)
+  (declare (ignore inputs outputs))
+  (setf (next-instruction (stack process))
+	(first (cleavir-ir:successors instruction))))
