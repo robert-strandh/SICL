@@ -41,3 +41,8 @@
    #:special-operator
    ))
 
+(defpackage #:sicl-standard-environment-functions
+  (:use #:common-lisp))
+
+(defpackage #:sicl-standard-environmtent-macros
+  (:use #:common-lisp))
