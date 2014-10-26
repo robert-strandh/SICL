@@ -36,3 +36,10 @@
 	(make-instance 'interpreted-function
 	  :entry-point (cleavir-ir:code instruction)
 	  :environment (static-env (stack process)))))
+
+(defmethod execute-simple-instruction
+    ((instruction cleavir-ir:assignment-instruction)
+     inputs outputs
+     process)
+  (setf (lexical-value (first outputs) process)
+	(lexical-value (first inputs) process)))
