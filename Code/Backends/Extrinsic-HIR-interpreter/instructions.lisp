@@ -65,3 +65,10 @@
      process)
   (setf (lexical-value (first outputs) process)
 	(car (lexical-value (first inputs) process))))
+
+(defmethod execute-simple-instruction
+    ((instruction cleavir-ir:cdr-instruction)
+     inputs outputs
+     process)
+  (setf (lexical-value (first outputs) process)
+	(cdr (lexical-value (first inputs) process))))
