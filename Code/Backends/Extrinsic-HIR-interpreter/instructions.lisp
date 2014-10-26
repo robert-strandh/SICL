@@ -191,3 +191,18 @@
     (loop for value in values
 	  for output in outputs
 	  do (setf (lexical-value output process) value))))
+
+(defmethod execute-call-instruction
+    (instruction (function interpreted-function) inputs outputs process)
+  (setf (return-variables (stack process)) outputs)
+  (let* ((dynamic-env (dynamic-env (car (stack process))))
+	 (static-env (cons (make-hash-table :test #'eq)
+			   (environment function)))
+	 (args (loop for input in inputs
+		     collect (lexical-value input process)))
+	 (new-frame (make-instance 'stack-frame
+		      :static-env static-env
+		      :dynamic-env dynamic-env
+		      :next-instruction (entry-point function)
+		      :arguments args)))
+    (push new-frame (stack process))))
