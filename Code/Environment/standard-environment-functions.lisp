@@ -1,5 +1,20 @@
 (cl:in-package #:sicl-standard-environment-functions)
 
+(defvar *global-environment*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function CONSTANTP.
+
+(defun constantp (form &optional (environment *global-environment*))
+  (or (and (not (symbolp form))
+	   (not (consp form)))
+      (keywordp form)
+      (and (symbolp form)
+	   (nth-value 1 (sicl-env:constant-variable form environment)))
+      (and (consp form)
+	   (eq (car form) 'quote))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function BOUNDP.
