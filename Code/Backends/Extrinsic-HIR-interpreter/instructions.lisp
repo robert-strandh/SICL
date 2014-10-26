@@ -10,3 +10,12 @@
 	     (when present-p
 	       (return-from lexical-value value))))
   (error "unknown variable ~s" lexical-variable))
+
+(defun (setf lexical-value) (value lexical-variable process)
+  (loop for table in (static-env (stack process))
+	do (multiple-value-bind (old-value present-p)
+	       (gethash lexical-variable table)
+	     (declare (ignore old-value))
+	     (when present-p
+	       (setf (gethash lexical-variable table) value)
+	       (return-from lexical-value)))))
