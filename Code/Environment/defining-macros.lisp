@@ -15,10 +15,11 @@
 ;;; This is not the final version of the macro.  For one thing, we
 ;;; need to handle the optional DOCUMENTATION argument.
 
-(defmacro defconstant (name initial-value &optional documentation)
+(defmacro defconstant
+    (&environment env name initial-value &optional documentation)
   (declare (ignore documentation))
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (defconstant-function ',name ,initial-value)))
+     (setf (constant-variable ,name ,env) ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
