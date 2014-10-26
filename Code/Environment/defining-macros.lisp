@@ -60,10 +60,11 @@
 ;;; This is not the final version of DEFPARAMETER, because we ignore
 ;;; the documentation for now.
 
-(defmacro defparameter (name initial-value &optional documentation)
+(defmacro defparameter
+    (&environment env name initial-value &optional documentation)
   (declare (ignore documentation))
   `(progn
      (eval-when (:compile-toplevel)
-       (ensure-defined-variable ,name))
+       (setf (special-variable ,name ,env nil) nil))
      (eval-when (:load-toplevel :execute)
-       (setf (symbol-value ,name) ,initial-value))))
+       (setf (special-variable ,name ,env t) ,initial-value))))
