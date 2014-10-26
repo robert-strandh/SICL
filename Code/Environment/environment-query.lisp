@@ -280,27 +280,3 @@
 (defun in-package-function (string-designator)
   (declare ((or character symbol string) string-designator))
   (setq *package* (find-package string-designator)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; The expansion of the macro DEFCONSTANT results in a call to this
-;;; function.
-
-(defun defconstant-function (name initial-value)
-  (unless (null (find name (special-variables *global-environment*)
-		      :key #'name :test #'eq))
-    (error "attempt to redefine a special variable as a constant variable."))
-  (unless (null (find name (symbol-macros *global-environment*)
-		      :key #'name :test #'eq))
-    (error "attempt to redefine a global symbol macro as a constant variable."))
-  (let ((existing-entry (find name (constant-variables *global-environment*)
-			      :key #'name :test #'eq)))
-    (cond ((null existing-entry)
-	   (push (make-constant-variable-entry name initial-value)
-		 (constant-variables *global-environment*)))
-	  ((not (eql initial-value (definition existing-entry)))
-	   (error "attempt to redefine a constant variable"))
-	  (t
-	   nil)))
-  ;; Return the name as the HyperSpec requires
-  name)

@@ -61,11 +61,6 @@
 (declaim (ftype (function (string-designator) package)
 		in-package-function))
 
-;;; The function DEFCONSTANT-FUNCTION is used in the expansion of
-;;; DEFCONSTANT.
-(declaim (ftype (function (symbol t) symbol)
-		defconstant-function))
-
 ;;; FIXME: do something better for the optional environment. 
 ;;; FIXME: do something better for the generalized boolean value.
 (declaim (ftype (function (t &optional t) t)
