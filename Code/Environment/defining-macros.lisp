@@ -1,4 +1,4 @@
-(in-package #:sicl-global-environment)
+(in-package #:sicl-standard-environment-macros)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
