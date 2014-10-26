@@ -19,3 +19,5 @@
 	     (when present-p
 	       (setf (gethash lexical-variable table) value)
 	       (return-from lexical-value)))))
+
+(defgeneric execute-simple-instruction (instruction inputs outputs process))
