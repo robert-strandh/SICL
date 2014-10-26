@@ -160,3 +160,17 @@
 		    (pop remaining-lambda-list)
 		    (go key)))))
      out)))
+
+(defmethod execute-simple-instruction 
+    ((instruction enter-instruction)
+     inputs outputs
+     process)
+  ;; Fill the top level of the static environment with
+  ;; the owned variables of the enter instruction.
+  (loop with static-env = (static-env (stack process))
+	for variable in (owned-variables instruction)
+	do (setf (gethash variable (car static-env)) nil))
+  ;; Parse the argument list
+  (parse-arguments (arguments (stack process))
+		   (cleavir-ir:lambda-list instruction)
+		   process))
