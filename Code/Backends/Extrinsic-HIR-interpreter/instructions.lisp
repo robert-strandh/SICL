@@ -58,3 +58,10 @@
     (loop for value in return-values
 	  for return-var in (return-variables (stack process))
 	  do (setf (lexical-value return-var process) value))))
+
+(defmethod execute-simple-instruction
+    ((instruction cleavir-ir:car-instruction)
+     inputs outputs
+     process)
+  (setf (lexical-value (first outputs) process)
+	(car (lexical-value (first inputs) process))))
