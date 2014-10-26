@@ -177,3 +177,17 @@
 
 (defgeneric execute-call-instruction
     (instruction function inputs outputs process))
+
+(defmethod execute-call-instruction
+    (instruction (function built-in-function) inputs outputs process)
+  (let* ((fun (host-function function))
+	 (args (loop for input in inputs
+		     collect (lexical-value input process)))
+	 (values (multiple-value-list (apply fun args))))
+    ;; Set all outputs to nil in case there are fewer values than
+    ;; outputs.
+    (loop for output in outputs
+	  do (setf (lexical-value output process) nil))
+    (loop for value in values
+	  for output in outputs
+	  do (setf (lexical-value output process) value))))
