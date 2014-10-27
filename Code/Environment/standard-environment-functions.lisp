@@ -131,6 +131,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function FDEFINITION.
+
+(defun fdefinition (function-name)
+  (declare (type function-name function-name))
+  (sicl-env:fdefinition function-name *global-environment*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function SPECIAL-OPERATOR-P.
 
 (defun special-operator-p (symbol)

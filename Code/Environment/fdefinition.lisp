@@ -2,64 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function FDEFINITION.
-;;;
-;;; The HyperSpec has some important things to say about this
-;;; function.
-;;;
-;;; For one thing, it says that "An error of type UNDEFINED-FUNCTION
-;;; is signaled [...] if FUNCTION-NAME is not fbound".
-;;;
-;;; Furthermore, it says that the return value "... may be a function
-;;; or may be an object representing a special form or macro.  The
-;;; value returned by fdefinition when fboundp returns true but the
-;;; function-name denotes a macro or special form is not well-defined,
-;;; but fdefinition does not signal an error."  In other words, we
-;;; must decide what to return in the case of a macro or a special
-;;; operator.  We decide that for a macro, it returns its expander
-;;; function, and for a special operator, it returns the name. 
-;;;
-;;; Recall that we may simultaneously have a global function entry and
-;;; a global macro for the name.  If that is the case, then the global
-;;; macro entry is the one that is valid.  
-
-(defun fdefinition (function-name)
-  (declare (cl:type function-name function-name))
-  ;; First see if there is a global macro entry with the right name.
-  (let ((macro-entry
-	  ;; We can use EQ to test the name because names
-	  ;; of macros may only be symbols. 
-	  (find function-name (macros *global-environment*)
-		:key #'name :test #'eq)))
-    (if (not (null macro-entry))
-	;; We found a global macro entry with the right name.
-	;; Return the expansion function associated with it.
-	(definition macro-entry)
-	;; If we did not find a global macro entry, see if there might
-	;; be a global function entry with the right name.
-	(let ((function-entry
-		(find function-name (functions *global-environment*)
-		      :key #'name :test #'equal)))
-	  (if (not (null function-entry))
-	      ;; We found a global function entry with the right name.
-	      ;; In this case, there can not also be a special
-	      ;; operator entry for the same name.
-	      (let ((value (car (storage (location function-entry)))))
-		(if (eq value  +funbound+)
-		    (error 'undefined-function :name function-name)
-		    value))
-	      ;; If we did not find a global function entry, see if
-	      ;; there might be a special operator entry.
-	      (let ((specop-entry
-		      (find function-name
-			    (special-operators *global-environment*)
-			    :key #'name :test #'eq)))
-		(if (null specop-entry)
-		    (error 'undefined-function :name function-name)
-		    function-name)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function (SETF FDEFINITION).
 ;;;
 ;;; They HyperSpec says that this function can be used "to replace a
