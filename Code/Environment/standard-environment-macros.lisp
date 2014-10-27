@@ -85,5 +85,14 @@
 		       body))
 	   ',name)))
 
-		     
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro DEFINE-COMPILER-MACRO.
 
+(defmacro define-compiler-macro (name lambda-list &body body)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (setf (sicl-env:compiler-macro-function ,name *global-environment*)
+	   (function ,(sicl-code-utilities:parse-macro
+		       name
+		       lambda-list
+		       body)))))
