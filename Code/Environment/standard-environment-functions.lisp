@@ -147,6 +147,14 @@
   (setf (sicl-env:fdefinition function-name *global-environment*)
 	new-definition))
   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function SYMBOL-FUNCTION.
+
+(defun symbol-function (symbol)
+  (declare (type symbol symbol))
+  (sicl-env:fdefinition symbol *global-environment*))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function SPECIAL-OPERATOR-P.
