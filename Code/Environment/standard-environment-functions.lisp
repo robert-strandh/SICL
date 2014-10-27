@@ -92,6 +92,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function (SETF MACRO-FUNCTION).
+;;;
+;;; The HyperSpec says that the consequences are undefined if a
+;;; non-nil environment is given.  We define those consequences to be
+;;; that the environment is considered to be a first-class global
+;;; environment.
+
+(defun (setf macro-function) (new-function symbol &optional environment)
+  (declare (type symbol symbol)
+	   (type function new-function))
+  (when (null environment)
+    (setf environment *global-environment*))
+  (setf (sicl-env:macro-function symbol environment)
+	new-function))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function FIND-CLASS.
 
 (defun find-class (symbol &optional (errorp t) environment)
