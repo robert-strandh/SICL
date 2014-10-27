@@ -180,6 +180,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function COMPILER-MACRO-FUNCTION
+
+(defun compiler-macro-function (name &optional environment)
+  (if (null environment)
+      (sicl-env:compiler-macro-function name *global-environment*)
+      (cleavir-env:compiler-macro-function name environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function GET-SETF-EXPANSION.
 
 (defun get-setf-expansion (place &optional environment)
