@@ -109,6 +109,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function SPECIAL-OPERATOR-P.
+
+(defun special-operator-p (symbol)
+  (declare (type symbol symbol))
+  (sicl-env:special-operator symbol *global-environment*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function FIND-CLASS.
 
 (defun find-class (symbol &optional (errorp t) environment)
