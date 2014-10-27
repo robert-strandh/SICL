@@ -124,12 +124,57 @@
 (defmethod macro-function (symbol (environment entry))
   (macro-function symbol (next environment)))
 
-;;; This method captures is invoked when the environment is of type
-;;; MACRO so it might potentially contain the macro function that we
-;;; are looking for.  It is the one we are looking for if and only if
-;;; the NAME of the environment is the symbol we are passed as an
-;;; argument.  If not, we continue searching in the next environment.
+;;; This method is invoked when the environment is of type MACRO so it
+;;; might potentially contain the macro function that we are looking
+;;; for.  It is the one we are looking for if and only if the NAME of
+;;; the environment is the symbol we are passed as an argument.  If
+;;; not, we continue searching in the next environment.
 (defmethod macro-function (symbol (environment macro))
   (if (eq symbol (name environment))
       (expander environment)
       (macro-function symbol (next environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function COMPILER-MACRO-FUNCTION
+;;;
+;;; The standard Common Lisp function MACRO-FUNCTION takes an optional
+;;; ENVIRONMENT argument.  When that argument is a local environment
+;;; in which there is a local function or macro definition with the
+;;; same name, then that local definition shadows any existing global
+;;; macro function.  For that reason, we must first search the local
+;;; environment and return NIL if we see a local function or macro
+;;; definition.  We accomplish this by defining a generic function,
+;;; also called COMPILER-MACRO-FUNCTION.  We supply methods on that
+;;; generic function that return NIL when called with a local function
+;;; or macro definition with the right name.
+;;;
+;;; Implementations should define a method on this generic function
+;;; that accomplishes the task for the specific global environment. 
+
+(defgeneric compiler-macro-function (function-name environment))
+
+;;; The default method specialized to ENTRY is called for entries that
+;;; are not of type MACRO or FUNCTION.  This method just makes a
+;;; recursive call, passing the next environment as an argument.
+(defmethod macro-function (symbol (environment entry))
+  (macro-function symbol (next environment)))
+
+;;; This method is invoked when the environment is of type MACRO so it
+;;; might potentially contain a macro function with the same name as
+;;; the compiler macro.  If it does, we return NIL.  If not, we
+;;; continue searching in the next environment.
+(defmethod compiler-macro-function (function-name (environment macro))
+  (if (eq function-name (name environment))
+      nil
+      (compiler-macro-function function-name (next environment))))
+
+;;; This method is invoked when the environment is of type FUNCTION so
+;;; it might potentially contain a function with the same name as the
+;;; compiler macro.  If it does, we return NIL.  If not, we continue
+;;; searching in the next environment.
+(defmethod compiler-macro-function (function-name (environment function))
+  (if (eq function-name (name environment))
+      nil
+      (compiler-macro-function function-name (next environment))))
+
