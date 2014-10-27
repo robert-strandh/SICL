@@ -10,9 +10,13 @@
 	     (get-setf-expansion place)
 	   (declare (ignore reader-form))
 	   `(let* ,(mapcar #'list variables values)
-	      (multiple-value-bind ,store-variables
-		  ,new-value-form
-		,writer-form))))
+	      ;; Optimize a bit when there is only one store variable.
+	      ,(if (= 1 (length store-variables))
+		   `(let ((,(first store-variables) ,new-value-form))
+		      ,writer-form)
+		   `(multiple-value-bind ,store-variables
+			,new-value-form
+		      ,writer-form)))))
 	((not (null (cdr more-pairs)))
 	 `(progn (setf ,place ,new-value-form)
 		 (setf ,@more-pairs)))
