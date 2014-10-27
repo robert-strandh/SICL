@@ -157,7 +157,7 @@
 ;;; The default method specialized to ENTRY is called for entries that
 ;;; are not of type MACRO or FUNCTION.  This method just makes a
 ;;; recursive call, passing the next environment as an argument.
-(defmethod macro-function (symbol (environment entry))
+(defmethod compiler-macro-function (symbol (environment entry))
   (macro-function symbol (next environment)))
 
 ;;; This method is invoked when the environment is of type MACRO so it
