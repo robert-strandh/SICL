@@ -180,6 +180,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function GET-SETF-EXPANSION.
+
+(defun get-setf-expansion (place &optional environment)
+  (when (null environment)
+    (setf environment *global-environment*))
+  (let ((expander (sicl-env:setf-expander environment)))
+    (if (null expander)
+	(let ((temps (loop for arg in (rest place)
+			   collect (gensym)))
+	      (new (gensym)))
+	  (values temps
+		  (rest place)
+		  (list new)
+		  `(funcall #'(setf ,(first place)) ,new ,@temps)
+		  `(,(first place) ,@temps)))
+	(funcall expander place environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function FIND-CLASS.
 
 (defun find-class (symbol &optional (errorp t) environment)
