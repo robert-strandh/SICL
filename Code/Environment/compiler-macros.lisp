@@ -24,25 +24,3 @@
 	      (compiler-macros *global-environment*)))))
   ;; Return the new value as required by the HyperSpec.
   new-function)
-
-;;; FIXME: we probably won't need this function, so maybe remove it.
-(defun compiler-macroexpand-1 (form &optional env)
-  (if (symbolp (car form))
-      (let ((entry (find-if (lambda (entry)
-			      (eq (name (base-entry entry)) (car form)))
-			    (compiler-macros env))))
-	(if (null entry)
-	    form
-	    (funcall (coerce *macroexpand-hook* 'function)
-		     (definition entry)
-		     form
-		     env)))
-      form))
-
-;;; FIXME: we probably won't need this function, so maybe remove it.
-(defun compiler-macroexpand (form &optional env)
-  (loop for expanded-form = (compiler-macroexpand-1 form env)
-	until (eq expanded-form form)
-	do (setf form expanded-form))
-  form)
-
