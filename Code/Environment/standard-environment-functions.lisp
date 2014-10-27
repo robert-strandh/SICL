@@ -102,5 +102,13 @@
 	(error "There is no class named ~s" symbol)
 	class)))
 
-	    
-	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function (SETF FIND-CLASS).
+
+(defun (setf find-class) (new-class symbol &optional errorp environment)
+  (declare (ignore errorp))
+  (when (null environment)
+    (setf environment *global-environment*))
+  (setf (sicl-env:find-class symbol environment)
+	new-class))
