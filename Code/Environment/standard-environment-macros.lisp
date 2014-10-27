@@ -71,3 +71,19 @@
      (eval-when (:load-toplevel :execute)
        (setf (sicl-env:special-variable ,name *global-environment* t)
 	     ,initial-value))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro DEFTYPE.
+
+(defmacro deftype (name lambda-list &body body)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (setf (sicl-env:type-expander ,name *global-environment*)
+	   (function ,(sicl-code-utilities:parse-deftype 
+		       name
+		       lambda-list
+		       body))
+	   ',name)))
+
+		     
+
