@@ -109,6 +109,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function FBOUNDP.
+;;;
+;;; According to the HyperSpec, this function should return any true
+;;; value if the name is fbound in the global environment.  From the
+;;; glossary, we learn that "fbound" means that the name has a
+;;; definition as either a function, a macro, or a special operator in
+;;; the global environment.
+
+(defun fboundp (function-name)
+  (declare (type function-name function-name))
+  (sicl-env:fboundp function-name *global-environment*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function SPECIAL-OPERATOR-P.
 
 (defun special-operator-p (symbol)

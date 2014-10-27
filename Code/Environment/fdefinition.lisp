@@ -2,38 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function FBOUNDP.
-;;;
-;;; According to the HyperSpec, this function should return any true
-;;; value if the name is fbound in the global environment.  From the
-;;; glossary, we learn that "fbound" means that the name has a
-;;; definition as either a function, a macro, or a special operator in
-;;; the global environment.
-;;;
-;;; We could return something more useful than T, but since conforming
-;;; code can not count on anything else, we might as well just return
-;;; T.
-
-(defun fboundp (function-name)
-  (declare (cl:type function-name function-name))
-  (let ((entry (find function-name
-		     (append (macros *global-environment*)
-			     (functions *global-environment*)
-			     (special-operators *global-environment*))
-		     :key #'name
-		     :test #'equal)))
-    (typecase entry
-      (function-entry
-       (not (eq (car (storage (location entry))) +funbound+)))
-      (macro-entry
-       t)
-      (special-operator-entry
-       t)
-      (t
-       nil))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function FMAKUNBOUND.
 ;;;
 ;;; The description of this function in the HyperSpec say: "Removes
