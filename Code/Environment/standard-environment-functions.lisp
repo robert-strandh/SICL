@@ -89,3 +89,18 @@
 ;;; define a symbol macro with a name of an existing special variable.
 ;;; For that reason, we think it is reasonable to signal an error in
 ;;; this case too.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FIND-CLASS.
+
+(defun find-class (symbol &optional (errorp t) environment)
+  (when (null environment)
+    (setf environment *global-environment*))
+  (let ((class (sicl-env:find-class symbol environment)))
+    (if (and (null class) errorp)
+	(error "There is no class named ~s" symbol)
+	class)))
+
+	    
+	
