@@ -139,6 +139,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function (SETF FDEFINITION).
+
+(defun (setf fdefinition) (new-definition function-name)
+  (declare (type function-name function-name)
+	   (type function new-definition))
+  (setf (sicl-env:fdefinition function-name *global-environment*)
+	new-definition))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function SPECIAL-OPERATOR-P.
 
 (defun special-operator-p (symbol)
