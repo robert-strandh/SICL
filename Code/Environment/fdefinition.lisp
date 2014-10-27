@@ -2,63 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function FMAKUNBOUND.
-;;;
-;;; The description of this function in the HyperSpec say: "Removes
-;;; the function or macro definition, if any, of name in the global
-;;; environment.", and it adds that the consequences are undefined it
-;;; the name is a special operator.
-;;;
-;;; For a special operator we do nothing.
-;;;
-;;; Recall that we may simultaneously have a global function entry and
-;;; a global macro for the name.  Furthermore, one of those entries
-;;; may have a compiler macro auxiliar entry referring to it. 
-;;;
-;;; Either way, we remove the compiler macro entry.
-;;;
-;;; If there is a base entry and that entry is a macro entry, we
-;;; remove it too.
-;;;
-;;; If there is a base entry and that entry is a global function
-;;; entry, we just mark it as +funbound+, but we remove any auxiliary
-;;; entry that refers to it in PROCLAMATIONS.  This means that if
-;;; anyone uses FMAKUNBOUND with the intention of later giving the
-;;; function a new definition, then they must again proclaim its type,
-;;; inline, etc.
-
-(defun fmakunbound (function-name)
-  (declare (cl:type function-name function-name))
-  ;; Remove any compiler macro entry that refers to a base entry with 
-  ;; this name.
-  (setf (compiler-macros *global-environment*)
-	(remove-if (lambda (entry)
-		     (equal (name (base-entry entry)) function-name))
-		   (compiler-macros *global-environment*)))
-  ;; See if there is a global macro entry with the right name.
-  (let ((macro-entry (find function-name (macros *global-environment*)
-			   :key #'name :test #'equal)))
-    (unless (null macro-entry)
-      ;; We found such an entry.  Remove it. 
-      (setf (macros *global-environment*)
-	    (delete macro-entry (macros *global-environment*) :test #'eq))))
-  ;; Next, see if there is a global function entry.
-  (let ((function-entry (find function-name (functions *global-environment*)
-			      :key #'name :test #'equal)))
-    (unless (null function-entry)
-      ;; We found such an entry.  Make sure it is unbound.
-      (setf (car (storage (location function-entry))) +funbound+)
-      ;; Remove any proclamations that refer to this entry
-      (setf (proclamations *global-environment*)
-	    (remove-if (lambda (entry)
-			 (and (typep entry 'auxiliary-entry)
-			      (eq (base-entry entry) function-entry)))
-		       (proclamations *global-environment*)))))
-  ;; Return the function name, as required by the HyperSpec.
-  function-name)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function FDEFINITION.
 ;;;
 ;;; The HyperSpec has some important things to say about this
