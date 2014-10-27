@@ -155,6 +155,21 @@
   (declare (type symbol symbol))
   (sicl-env:fdefinition symbol *global-environment*))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function (SETF SYMBOL-FUNCTION).
+;;;
+;;; According to the HyperSpec, (SETF SYMBOL-FUNCTION) is just like
+;;; (SETF FDEFINITION), except that it only accepts a symbol as its
+;;; argument.  It suffices thus to check that the argument is a
+;;; symbol, and then to call (SETF FDEFINITION) to do the work.
+
+(defun (setf symbol-function) (new-definition symbol)
+  (declare (type function new-definition)
+	   (type symbol symbol))
+  (setf (sicl-env:fdefinition symbol *global-environment*)
+	new-definition))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function SPECIAL-OPERATOR-P.
