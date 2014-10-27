@@ -39,12 +39,15 @@
   (if initial-value-p
       `(progn
 	 (eval-when (:compile-toplevel)
-	   (setf (sicl-env:special-variable ,name ,env nil) nil))
+	   (setf (sicl-env:special-variable ,name *global-environment* nil)
+		 nil))
 	 (eval-when (:load-toplevel :execute)
-	   (unless (sicl-env:boundp ,name ,env)
-	     (setf (sicl-env:special-variable ,name ,env t) ,initial-value))))
+	   (unless (sicl-env:boundp ,name *global-environment*)
+	     (setf (sicl-env:special-variable ,name *global-environment* t)
+		   ,initial-value))))
       `(eval-when (:compile-toplevel :load-toplevel :execute)
-	 (setf (sicl-env:special-variable ,name ,env nil) nil))))
+	 (setf (sicl-env:special-variable ,name *global-environment* nil)
+	       nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
