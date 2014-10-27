@@ -15,11 +15,11 @@
 ;;; This is not the final version of the macro.  For one thing, we
 ;;; need to handle the optional DOCUMENTATION argument.
 
-(defmacro defconstant
-    (&environment env name initial-value &optional documentation)
+(defmacro defconstant (name initial-value &optional documentation)
   (declare (ignore documentation))
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf (sicl-env:constant-variable ,name ,env) ,initial-value)))
+     (setf (sicl-env:constant-variable ,name *global-environment*)
+	   ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -34,8 +34,7 @@
 ;;; documentation for now.
 
 (defmacro defvar
-    (&environment env name
-     &optional (initial-value nil initial-value-p) documentation)
+    (name &optional (initial-value nil initial-value-p) documentation)
   (declare (ignore documentation))
   (if initial-value-p
       `(progn
