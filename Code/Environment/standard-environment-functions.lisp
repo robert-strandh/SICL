@@ -180,12 +180,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function COMPILER-MACRO-FUNCTION
+;;; Function COMPILER-MACRO-FUNCTION.
 
 (defun compiler-macro-function (name &optional environment)
   (if (null environment)
       (sicl-env:compiler-macro-function name *global-environment*)
       (cleavir-env:compiler-macro-function name environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function (SETF COMPILER-MACRO-FUNCTION).
+
+(defun (setf compiler-macro-function)
+    (new-definition name &optional environment)
+  (when (null environment)
+    (setf environment *global-environment*))
+  (setf (sicl-env:compiler-macro-function name environment)
+	new-definition))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
