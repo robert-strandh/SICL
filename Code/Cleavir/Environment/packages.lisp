@@ -15,6 +15,7 @@
 	   #:debug
 	   #:eval
 	   #:macro-function
+	   #:compiler-macro-function
 	   #:function
 	   #:block
 	   #:inline
@@ -70,6 +71,7 @@
    #:add-inline
    #:eval
    #:macro-function
+   #:compiler-macro-function
    #:lexical-variable
    #:special-variable
    #:global-p
