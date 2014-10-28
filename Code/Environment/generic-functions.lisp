@@ -547,7 +547,16 @@
 ;;; used when the function SETF-EXPANDER returns NIL.  This function
 ;;; always returns a valid SETF expander.
 
-(defgeneric setf-expander (symbol environment))
+(defgeneric default-setf-expander (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF DEFAULT-SETF-EXPANDER).
+;;;
+;;; This generic function is used to set the default SETF expander
+;;; in ENVIRONMENT.  
+
+(defgeneric (setf default-setf-expander) (new-expander environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
