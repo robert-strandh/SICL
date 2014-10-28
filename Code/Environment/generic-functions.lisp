@@ -541,6 +541,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function DEFAULT-SETF-EXPANDER.
+;;;
+;;; This generic function returns the default SETF expander, to be
+;;; used when the function SETF-EXPANDER returns NIL.  This function
+;;; always returns a valid SETF expander.
+
+(defgeneric setf-expander (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function TYPE-EXPANDER.
 ;;;
 ;;; This generic function returns the type expander associated with
