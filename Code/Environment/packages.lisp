@@ -15,6 +15,7 @@
 	   #:makunbound
 	   #:fmakunbound
 	   #:find-class
+	   #:get-setf-expansion
 	   )
   (:export
    #:environment
@@ -40,6 +41,7 @@
    #:variable-unbound
    #:find-class
    #:special-operator
+   #:get-setf-expansion
    ))
 
 (defpackage #:sicl-standard-environment-functions
