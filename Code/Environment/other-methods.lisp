@@ -5,3 +5,6 @@
 
 (defmethod cleavier-env:compiler-macro-function (name (env environment))
   (compiler-macro-function name env))
+
+(defmethod cleavir-env:symbol-macro-expansion (name (env environment))
+  (nth-value 1 (symbol-macro name env)))
