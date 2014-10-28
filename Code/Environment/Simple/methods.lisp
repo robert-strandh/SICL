@@ -19,7 +19,6 @@
       (setf (macro-function entry) nil)
       (setf (special-operator entry) nil)
       (setf (type entry) t)
-      (setf (setf-expander entry) nil)
       (setf (inline entry) nil))))
 
 (defmethod sicl-env:special-operator (function-name (env simple-environment))
@@ -249,20 +248,14 @@
 	(setf (cdr association) new-class))))
 
 (defmethod sicl-env:setf-expander (symbol (env simple-environment))
-  (let ((entry (find-function-entry env symbol)))
-    (if (null entry)
-	nil
-	(setf-expander entry))))
+  (cdr (assoc symbol (setf-expanders env) :test #'eq)))
 
 (defmethod (setf sicl-env:setf-expander)
     (new-expander symbol (env simple-environment))
-  (let ((entry (find-function-entry env symbol)))
-    (if (or (null entry)
-	    (and (null (macro-function entry))
-		 (eq (car (function-cell entry)) (unbound entry))))
-	(error "Attempt to assign a SETF expander when no function exists.")
-	(setf (setf-expander entry)
-	      new-expander))))
+  (let ((association (assoc symbol (setf-expanders env) :test #'eq)))
+    (if (null association)
+	(push (cons symbol new-expander) (setf-expanders env))
+	(setf (cdr association) new-expander))))
 
 (defmethod sicl-env:type-expander (symbol (env simple-environment))
   (cdr (assoc symbol (type-expanders env) :test #'eq)))
