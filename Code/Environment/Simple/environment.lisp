@@ -62,7 +62,14 @@
    (%proclamations :initform '() :accessor proclamations)
    ;; This slot holds an association list, mapping names to method
    ;; combinations.
-   (%method-combinations :initform '() :accessor method-combinations)))
+   (%method-combinations :initform '() :accessor method-combinations)
+   ;; The value of this slot is either a SETF expander function, or
+   ;; NIL if the function name of this entry does not have a SETF
+   ;; expander associated with it.
+   (%setf-expanders :initform nil :accessor setf-expanders)
+   ;; The default SETF expander, to be used when no other SETF
+   ;; expander exists.
+   (%default-setf-expander :initform nil :accessor default-setf-expander)))
 
 (cl:defvar *global-environment*)
 
@@ -183,11 +190,7 @@
    (%type :initform t :accessor type)
    ;; The value of this slot is the proclaimed inline information
    ;; whenever this entry has a function associated with it.
-   (%inline :initform nil :accessor inline)
-   ;; The value of this slot is either a SETF expander function, or
-   ;; NIL if the function name of this entry does not have a SETF
-   ;; expander associated with it.
-   (%setf-expander :initform nil :accessor setf-expander)))
+   (%inline :initform nil :accessor inline)))
 
 ;;; When an instance of FUNCTION-ENTRY is created, we need to set the
 ;;; slot UNBOUND to a function that calls ERROR.  We can not make this
