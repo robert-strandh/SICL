@@ -31,6 +31,7 @@
    #:symbol-macro
    #:variable-type
    #:setf-expander
+   #:default-setf-expander
    #:type-expander
    #:boundp
    #:makunbound
