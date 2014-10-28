@@ -232,7 +232,7 @@
 
 (defmethod sicl-env:variable-cell (symbol (env simple-environment))
   (let ((entry (ensure-variable-entry env symbol)))
-    (variable-cell entry)))
+    (value-cell entry)))
 
 (defmethod sicl-env:find-class (symbol (env simple-environment))
   (cdr (assoc symbol (classes env) :test #'eq)))
