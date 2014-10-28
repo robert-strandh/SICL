@@ -171,7 +171,7 @@
    ;; represented by this entry is unbound if and only if the function
    ;; in this slot is the contents of the CAR of the function cell in
    ;; the FUNCTION-CELL slot.
-   (%unbound :reader unbound)
+   (%unbound :initarg :unbound :reader unbound)
    ;; The value of this slot is either a macro function, or NIL if
    ;; this entry does not currently represent a macro. 
    (%macro-function :initform nil :accessor macro-function)
