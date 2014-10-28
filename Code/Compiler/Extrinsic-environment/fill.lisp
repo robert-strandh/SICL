@@ -9,13 +9,13 @@
 
 (setf (sicl-env:macro-function 'defmacro *environment*)
       (compile nil
-	       (sicl-code-utilities:parse-macro
+	       (cleavir-code-utilities:parse-macro
 		'defmacro
 		'(name lambda-list &body body)
-		'(`(eval-when (:compile-toplevel :load-toplevel :execute)
-		     (funcall #'(setf macro-function)
-			      (function ,(sicl-code-utilities:parse-macro
-					  name
-					  lambda-list
-					  body))
-			      ',name))))))
+		`((eval-when (:compile-toplevel :load-toplevel :execute)
+		    (setf (sicl-env:macro-function name *environment*)
+			  (compile nil
+				   (cleavir-code-utilities:parse-macro
+				    name
+				    lambda-list
+				    body))))))))
