@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-global-environment)
 
+(defvar *global-environment*)
+
 (defun expand-place (place environment)
   (when (null environment) 
     (setf environment *global-environment*))
