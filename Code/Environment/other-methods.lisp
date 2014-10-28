@@ -7,4 +7,8 @@
   (compiler-macro-function name env))
 
 (defmethod cleavir-env:symbol-macro-expansion (name (env environment))
-  (nth-value 1 (symbol-macro name env)))
+  (multiple-value-bind (expander expansion)
+      (symbol-macro name env)
+    (if (null expander)
+	name
+	expansion)))
