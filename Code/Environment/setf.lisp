@@ -1,14 +1,13 @@
 (in-package #:sicl-global-environment)
 
-(defmacro setf (place new-value-form &rest more-pairs)
+(defmacro setf (&environment env place new-value-form &rest more-pairs)
   (cond ((null more-pairs)
 	 (multiple-value-bind (variables
 			       values
 			       store-variables
 			       writer-form
 			       reader-form)
-	     (get-setf-expansion place)
-	   (declare (ignore reader-form))
+	     (sicl-env:get-setf-expansion place env)
 	   `(let* ,(mapcar #'list variables values)
 	      ;; Optimize a bit when there is only one store variable.
 	      ,(if (= 1 (length store-variables))
@@ -22,6 +21,4 @@
 		 (setf ,@more-pairs)))
 	(t
 	 (error "Odd number of arguments to SETF."))))
-
-		
 		
