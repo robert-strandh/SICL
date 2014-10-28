@@ -13,7 +13,7 @@
 						     environment)))
 	   (if (null expander)
 	       place
-	       (expand-place (funcall expander place environment)))))
+	       (expand-place (funcall expander place environment) environment))))
 	(t
 	 (error "Invalid place ~s" place))))
 
