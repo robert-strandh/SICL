@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-(defclass environment (sicl-global-environment:global-environment)
+(defclass environment (sicl-simple-environment:simple-environment)
   ())
 
 (defmethod cleavir-env:eval (form environment1 (environment2 environment))
