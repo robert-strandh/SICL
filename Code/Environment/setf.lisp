@@ -8,6 +8,7 @@
 			       writer-form
 			       reader-form)
 	     (sicl-env:get-setf-expansion place env)
+	   (declare (ignire reader-form))
 	   `(let* ,(mapcar #'list variables values)
 	      ;; Optimize a bit when there is only one store variable.
 	      ,(if (= 1 (length store-variables))
