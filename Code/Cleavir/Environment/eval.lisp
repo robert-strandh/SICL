@@ -178,3 +178,16 @@
       nil
       (compiler-macro-function function-name (next environment))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function SYMBOL-MACRO-EXPANSION.
+
+(defgeneric symbol-macro-expansion (symbol environment))
+
+(defmethod symbol-macro-expansion (symbol (environment entry))
+  (symbol-macro-expansion symbol (next environment)))
+
+(defmethod symbol-macro-expansion (symbol (environment symbol-macro))
+  (if (eq symbol (name environment))
+      (expansion environment)
+      (symbol-macro-expansion symbol (next environment))))
