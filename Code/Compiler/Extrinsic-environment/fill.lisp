@@ -19,3 +19,22 @@
 				    name
 				    lambda-list
 				    body))))))))
+
+(setf (sicl-env:default-setf-expander *environment*)
+      (lambda (form)
+	(if (symbolp form)
+	    (let ((new (gensym)))
+	      (values '()
+		      '()
+		      `(,new)
+		      `(setq ,form ,new)
+		      form))
+	    (let ((temps (loop for arg in (rest form) collect (gensym)))
+		  (new (gensym)))
+	      (values temps
+		      (rest form)
+		      `(,new)
+		      `(funcall #'(setf ,(first form) ,new ,@temps))
+		      `(,(first form) ,@temps))))))
+
+		    
