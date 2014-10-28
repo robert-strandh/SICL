@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-extrinsic-environment
   (:use #:common-lisp)
-  (:export))
+  (:export #:*environment*))
