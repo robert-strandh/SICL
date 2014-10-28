@@ -72,6 +72,7 @@
    #:eval
    #:macro-function
    #:compiler-macro-function
+   #:symbol-macro-expansion
    #:lexical-variable
    #:special-variable
    #:global-p
