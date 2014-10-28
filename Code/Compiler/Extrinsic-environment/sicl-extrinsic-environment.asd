@@ -4,9 +4,10 @@
   :depends-on (:cleavir-environment
 	       :cleavir-generate-ast
 	       :cleavir-ast-interpreter
-	       :sicl-environment)
+	       :sicl-simple-environment)
   :serial t
   :components
   ((:file "packages")
    (:file "customization")
-   (:file "create")))
+   (:file "create")
+   (:file "fill")))
