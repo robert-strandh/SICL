@@ -80,7 +80,7 @@
 ;;; its min and max arity, where NIL means unbounded.
 (defparameter *lambda-list-keywords*
   `((&whole 1 1)
-    (&environment 1 1)
+    (&environment 1 nil)
     (&optional 0 nil)
     (&rest 1 1)
     (&body 1 1)
