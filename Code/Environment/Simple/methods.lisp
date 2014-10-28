@@ -257,6 +257,13 @@
 	(push (cons symbol new-expander) (setf-expanders env))
 	(setf (cdr association) new-expander))))
 
+(defmethod sicl-env:default-setf-expander ((env simple-environment))
+  (default-setf-expander env))
+
+(defmethod (setf sicl-env:default-setf-expander)
+    (new-expander (env simple-environment))
+  (setf (default-setf-expander env) new-expander))
+
 (defmethod sicl-env:type-expander (symbol (env simple-environment))
   (cdr (assoc symbol (type-expanders env) :test #'eq)))
 
