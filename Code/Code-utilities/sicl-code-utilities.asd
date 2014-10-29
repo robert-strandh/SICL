@@ -5,6 +5,5 @@
 	       #:sicl-additional-conditions)
   :components
   ((:file "packages")
-   (:file "conditions" :depends-on ("packages"))
    (:file "declarations" :depends-on ("packages"))
    (:file "environment" :depends-on ("packages"))))
