@@ -2,12 +2,10 @@
 
 (defclass sicl () ())
 
-(defclass x86-64 () ())
-
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:car-instruction)
      (implementation sicl)
-     (processor x86-64)
+     (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
   (let* ((successor (first (cleavir-ir:successors instruction)))
@@ -18,7 +16,7 @@
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:cdr-instruction)
      (implementation sicl)
-     (processor x86-64)
+     (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
   (let* ((successor (first (cleavir-ir:successors instruction)))
@@ -29,7 +27,7 @@
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:rplaca-instruction)
      (implementation sicl)
-     (processor x86-64)
+     (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
   (let* ((successor (first (cleavir-ir:successors instruction)))
@@ -41,7 +39,7 @@
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:rplacd-instruction)
      (implementation sicl)
-     (processor x86-64)
+     (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
   (let* ((successor (first (cleavir-ir:successors instruction)))
