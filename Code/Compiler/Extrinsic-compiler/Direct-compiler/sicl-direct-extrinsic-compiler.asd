@@ -9,7 +9,8 @@
 (asdf:defsystem :sicl-direct-extrinsic-compiler
   :depends-on (:sicl-extrinsic-environment
 	       :cleavir-generate-ast
-	       :cleavir-ast-to-hir)
+	       :cleavir-ast-to-hir
+	       :sicl-hir-to-mir)
   :serial t
   :components
   ((:file "packages")
