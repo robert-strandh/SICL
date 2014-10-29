@@ -7,7 +7,9 @@
 ;;;; turned into target binary code in a straightforward way.
 
 (asdf:defsystem :sicl-direct-extrinsic-compiler
-  :depends-on (:sicl-extrinsic-environment)
+  :depends-on (:sicl-extrinsic-environment
+	       :cleavir-generate-ast
+	       :cleavir-ast-to-hir)
   :serial t
   :components
   ((:file "packages")
