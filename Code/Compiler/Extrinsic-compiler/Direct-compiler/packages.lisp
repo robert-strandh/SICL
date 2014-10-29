@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-direct-extrinsic-compiler
   (:use #:common-lisp)
+  (:shadow #:function)
   (:export #:compile))
