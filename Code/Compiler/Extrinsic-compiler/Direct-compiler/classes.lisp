@@ -43,3 +43,14 @@
    ;; an instance of CELL-INFO to be a constant, so we need to
    ;; distinguish between those two cases.
    (%linkage-info :initarg :linkage-info :reader linkage-info)))
+
+;;; An instance of this class is added as an element to the vector
+;;; that is located in the first element of the static environment to
+;;; indicate that the corresponding element should be replaced by a
+;;; value cell or a function cell from the environment at link time. 
+(defclass cell-info ()
+  (;; Depending on whether this is an instance of VALUE-CELL-INFO or
+   ;; FUNCTION-CELL-INFO, this slot either contains a a variable name
+   ;; (a symbol) or a function name (either a symbol or a list of the
+   ;; form (SETF <symbol>).
+   (%name :initarg :name :reader name)))
