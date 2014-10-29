@@ -59,3 +59,8 @@
 ;;; in the final runtime environment should be the global value cell
 ;;; of a variable from the global environment.
 (defclass variable-cell-info (cell-info) ())
+
+;;; An instance of this class indicates that the corresponding element
+;;; in the final runtime environment should be a function cell from
+;;; the global environment. 
+(defclass function-cell-info (cell-info) ())
