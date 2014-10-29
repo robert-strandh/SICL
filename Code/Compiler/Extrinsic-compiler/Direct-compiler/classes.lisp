@@ -54,3 +54,8 @@
    ;; (a symbol) or a function name (either a symbol or a list of the
    ;; form (SETF <symbol>).
    (%name :initarg :name :reader name)))
+
+;;; An instance of this class indicates that the corresponding element
+;;; in the final runtime environment should be the global value cell
+;;; of a variable from the global environment.
+(defclass variable-cell-info (cell-info) ())
