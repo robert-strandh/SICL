@@ -42,6 +42,7 @@
    #:find-class
    #:special-operator
    #:get-setf-expansion
+   #:*global-environment*
    ))
 
 (defpackage #:sicl-standard-environment-functions
