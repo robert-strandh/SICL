@@ -6,6 +6,5 @@
   :components
   ((:file "packages")
    (:file "conditions" :depends-on ("packages"))
-   (:file "destructuring" :depends-on ("packages"))
    (:file "declarations" :depends-on ("packages"))
    (:file "environment" :depends-on ("packages"))))
