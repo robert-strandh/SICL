@@ -28,7 +28,18 @@
    ;; The environment of a function is a list of simple vectors.  When
    ;; the direct extrinsic compiler produces a function, the list
    ;; contains a single simple vector.  That vector holds the code as
-   ;; its first element.  Remaining elements hold constants, function
-   ;; cells, and value cells that are needed for the execution of the
-   ;; function.
-   (%environment :initarg :environment :reader environment)))
+   ;; its first element.  Each remaining element holds either a
+   ;; constant, or an instance of the class CELL-INFO. 
+   (%environment :initarg :environment :reader environment)
+   ;; This slot has no analogue slot in the target system.  It
+   ;; contains a bit vector that has the same length as the vector in
+   ;; the first element of the environment list.  When a bit is `1' in
+   ;; this bit vector, the corresponding element of the environment
+   ;; vector contains an instance of the class CELL-INFO, to be used
+   ;; to link the function to a particular environment.  When the bit
+   ;; is `0', the corresponding element of the environment vector
+   ;; contains a literal constant that needs no action at linkage
+   ;; time.  This vector is needed because it is entirely possible for
+   ;; an instance of CELL-INFO to be a constant, so we need to
+   ;; distinguish between those two cases.
+   (%linkage-info :initarg :linkage-info :reader linkage-info)))
