@@ -40,7 +40,21 @@ Robert Strandh\\
 \maketitle
 
 \begin{abstract}
+The concept of an \emph{environment} is mentioned in many places in
+the \commonlisp{} standard, but the nature of the object is not
+specified.  For the purpose of this paper, an environment is a mapping
+from \emph{names} to \emph{meanings}.  In a typical \commonlisp{}
+implementation the \emph{global environment} is not a first-class
+object.
 
+In this paper, we argue in favor of first-class global environments.
+We state several advantages in terms of bootstrapping, sandboxing, and
+more.  We show an implementation where there is no performance penalty
+associated with making the environment first class.  For performance
+purposes, the essence of the implementation relies on the environment
+containing \emph{cells} (an ordinary \texttt{cons} cell in our
+implementation) holding bindings of names to functions and global
+values that are likely to be heavily solicited at runtime.
 \end{abstract}
 
 \category{D.3.4}{Programming Languages}{Processors}
@@ -48,7 +62,7 @@ Robert Strandh\\
 
 \terms{Algorithms, Languages}
 
-\keywords{\clos{}, \cl{}, Environment}
+\keywords{\clos{}, \commonlisp{}, Environment}
 
 \inputtex{sec-introduction.tex}
 \inputtex{sec-previous.tex}
@@ -58,3 +72,5 @@ Robert Strandh\\
 \bibliographystyle{abbrv}
 \bibliography{environments}
 \end{document}
+
+%%  LocalWords:  sandboxing runtime
