@@ -15,7 +15,7 @@
 ;;;; See the file conditionals.text for a description of the module.
 
 (defpackage #:sicl-conditionals
-  (:use #:common-lisp #:sicl-code-utilities)
+  (:use #:common-lisp #:cleavir-code-utilities)
   (:export #:or #:and #:when #:unless #:cond
 	   #:case #:ccase #:ecase
 	   #:typecase #:ctypecase #:etypecase))

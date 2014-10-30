@@ -17,7 +17,7 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-conditionals
-  :depends-on (:sicl-code-utilities)
+  :depends-on (:cleavir-code-utilities)
   :serial t
   :components
   ((:file "packages")

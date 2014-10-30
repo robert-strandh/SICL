@@ -62,7 +62,7 @@
 		 :name 'case
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (sicl-code-utilities:proper-list-p clause)
+	    (unless (and (cleavir-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-case-clause
 		     :name 'case
@@ -82,7 +82,7 @@
 		      `(if (eql ,variable ,keys)
 			   (progn ,@forms)
 			   ,(expand-case-clauses (cdr clauses) variable))
-		      (if (not (sicl-code-utilities:proper-list-p keys))
+		      (if (not (cleavir-code-utilities:proper-list-p keys))
 			  (error 'malformed-keys
 				 :name 'case
 				 :keys keys)
@@ -100,7 +100,7 @@
 	 (if (and (atom keys)
 		  (not (null keys)))
 	     (list keys)
-	     (if (not (sicl-code-utilities:proper-list-p keys))
+	     (if (not (cleavir-code-utilities:proper-list-p keys))
 		 (error 'malformed-keys
 			:name name
 			:keys keys)
@@ -119,7 +119,7 @@
 		 :name name
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (sicl-code-utilities:proper-list-p clause)
+	    (unless (and (cleavir-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-case-clause
 		     :name name
@@ -157,7 +157,7 @@
 		 :name 'typecase
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (sicl-code-utilities:proper-list-p clause)
+	    (unless (and (cleavir-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-typecase-clause
 		     :name 'typecase
@@ -197,7 +197,7 @@
 		 :name name
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (sicl-code-utilities:proper-list-p clause)
+	    (unless (and (cleavir-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-typecase-clause
 		     :name name

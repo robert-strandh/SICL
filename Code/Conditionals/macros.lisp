@@ -83,7 +83,7 @@
 	     (if (null clauses)
 		 nil
 		 (let ((clause (car clauses)))
-		   (if (not (and (sicl-code-utilities:proper-list-p clause)
+		   (if (not (and (cleavir-code-utilities:proper-list-p clause)
 				 (not (null clause))))
 		       (error 'malformed-cond-clause
 			      :name 'cond
