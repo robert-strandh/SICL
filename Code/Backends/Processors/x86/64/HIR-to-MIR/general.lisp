@@ -1,10 +1,8 @@
 (cl:in-package #:sicl-hir-to-mir)
 
-(defclass sicl () ())
-
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:car-instruction)
-     (implementation sicl)
+     (implementation sicl-target-sicl:sicl
      (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
@@ -15,7 +13,7 @@
 
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:cdr-instruction)
-     (implementation sicl)
+     (implementation sicl-target-sicl:sicl
      (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
@@ -26,7 +24,7 @@
 
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:rplaca-instruction)
-     (implementation sicl)
+     (implementation sicl-target-sicl:sicl
      (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
@@ -38,7 +36,7 @@
 
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:rplacd-instruction)
-     (implementation sicl)
+     (implementation sicl-target-sicl:sicl
      (processor cleavir-processor-x86-64:x86-64)
      os)
   (declare (ignore os))
