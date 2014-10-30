@@ -10,7 +10,8 @@
   :depends-on (:sicl-extrinsic-environment
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
-	       :sicl-hir-to-mir)
+	       :sicl-hir-to-mir
+	       :cleavir-eliminate-typeq)
   :serial t
   :components
   ((:file "packages")
