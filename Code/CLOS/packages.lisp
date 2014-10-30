@@ -4,7 +4,7 @@
 
 (defpackage #:sicl-clos
   (:use #:common-lisp)
-  (:import-from #:sicl-code-utilities
+  (:import-from #:cleavir-code-utilities
 		#:proper-list-p
 		#:parse-generic-function-lambda-list
 		#:parse-ordinary-lambda-list
