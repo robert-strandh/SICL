@@ -1,1 +1,8 @@
 \section{Our technique}
+
+A binding of a function name to a function object contains an
+indirection in the form of a \emph{function cell}.  The same holds for
+the binding of a variable name (a symbol) to its \emph{global value}.
+In our implementation, these cells are ordinary \texttt{cons} cells
+with the \texttt{car} containing the value of the binding, and the
+\texttt{cdr} contains \texttt{nil}.
