@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-reader-simple
-  :depends-on (:sicl-code-utilities)
+  :depends-on (:cleavir-code-utilities)
   :components
   ((:file "packages")
    (:file "more-variables"
