@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-ir)
+(cl:in-package #:cleavir-ir-graphviz)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
