@@ -33,7 +33,7 @@
 (proclaim '(notinline char=))
 
 (define-compiler-macro char= (&whole form &rest arguments)
-  (cond ((not (and (sicl-code-utilities:proper-list-p arguments)
+  (cond ((not (and (cleavir-code-utilities:proper-list-p arguments)
 	       (>= (length arguments) 1)))
 	 form)
 	((= (length arguments) 1)
@@ -83,7 +83,7 @@
 (proclaim '(notinline char<))
 
 (define-compiler-macro char< (&whole form &rest arguments)
-  (cond ((not (and (sicl-code-utilities:proper-list-p arguments)
+  (cond ((not (and (cleavir-code-utilities:proper-list-p arguments)
 	       (>= (length arguments) 1)))
 	 form)
 	((= (length arguments) 1)
@@ -123,7 +123,7 @@
 (proclaim '(notinline char<=))
 
 (define-compiler-macro char<= (&whole form &rest arguments)
-  (cond ((not (and (sicl-code-utilities:proper-list-p arguments)
+  (cond ((not (and (cleavir-code-utilities:proper-list-p arguments)
 	       (>= (length arguments) 1)))
 	 form)
 	((= (length arguments) 1)
@@ -163,7 +163,7 @@
 (proclaim '(notinline char>))
 
 (define-compiler-macro char> (&whole form &rest arguments)
-  (cond ((not (and (sicl-code-utilities:proper-list-p arguments)
+  (cond ((not (and (cleavir-code-utilities:proper-list-p arguments)
 	       (>= (length arguments) 1)))
 	 form)
 	((= (length arguments) 1)
@@ -203,7 +203,7 @@
 (proclaim '(notinline char>=))
 
 (define-compiler-macro char>= (&whole form &rest arguments)
-  (cond ((not (and (sicl-code-utilities:proper-list-p arguments)
+  (cond ((not (and (cleavir-code-utilities:proper-list-p arguments)
 	       (>= (length arguments) 1)))
 	 form)
 	((= (length arguments) 1)
