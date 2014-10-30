@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem #:cleavir-eliminate-typeq
+(asdf:defsystem :cleavir-eliminate-typeq
   :depends-on (:cleavir-mir)
   :serial t
   :components
