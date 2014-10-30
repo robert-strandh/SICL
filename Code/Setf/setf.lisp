@@ -1,7 +1,7 @@
 (in-package #:sicl-setf)
 
 (defmacro define-setf-expander (name lambda-list &body body)
-  `(let ((expander ,(sicl-code-utilities:parse-macro name lambda-list body)))
+  `(let ((expander ,(cleavir-code-utilities:parse-macro name lambda-list body)))
      (setf (find-setf-expander ',name) expander)))
 
 (defun get-setf-expansion (place &optional environment)
