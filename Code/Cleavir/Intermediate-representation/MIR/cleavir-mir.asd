@@ -3,4 +3,5 @@
 (asdf:defsystem :cleavir-mir
   :serial t
   :components
-  ((:file "general")))
+  ((:file "general")
+   (:file "graphviz-drawing")))
