@@ -6,5 +6,5 @@
 	 (sicl (make-instance 'sicl-target-sicl:sicl))
 	 (ast (cleavir-generate-ast:generate-ast form environment))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast))
-	 (mir (cleavir-ir:hir-to-mir sicl processor os)))
+	 (mir (cleavir-ir:hir-to-mir hir sicl processor os)))
     mir))
