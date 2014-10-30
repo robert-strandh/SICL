@@ -7,7 +7,7 @@
 (defmacro deftype (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (type-function ',name)
-	   ,(sicl-code-utilities:parse-deftype
+	   ,(cleavir-code-utilities:parse-deftype
 	     name
 	     lambda-list
 	     body))))
@@ -23,7 +23,7 @@
   (cl:defmacro deftype (name lambda-list &body body)
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        (setf (type-function ',name)
-	     ,(sicl-code-utilities:parse-deftype
+	     ,(cleavir-code-utilities:parse-deftype
 	       name
 	       lambda-list
 	       body)))))

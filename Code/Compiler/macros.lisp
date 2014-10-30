@@ -10,12 +10,12 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (setf (macro-function 'defmacro)
 	(compile nil
-		 (sicl-code-utilities:parse-macro
+		 (cleavir-code-utilities:parse-macro
 		  'defmacro
 		  '(name lambda-list &body body)
 		  '(`(eval-when (:compile-toplevel :load-toplevel :execute)
 		       (setf (macro-function ',name)
-			     ,(sicl-code-utilities:parse-macro
+			     ,(cleavir-code-utilities:parse-macro
 			       name
 			       lambda-list
 			       body))))))))
@@ -31,7 +31,7 @@
   (cl:defmacro defmacro (name lambda-list &body body)
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        (setf (macro-function ',name)
-	     ,(sicl-code-utilities:parse-macro
+	     ,(cleavir-code-utilities:parse-macro
 	       name
 	       lambda-list
 	       body)))))
@@ -47,7 +47,7 @@
 
 (defmacro defun (name lambda-list &body body)
   (multiple-value-bind (declarations documentation forms)
-      (sicl-code-utilities:separate-function-body body)
+      (cleavir-code-utilities:separate-function-body body)
     `(funcall #'(setf fdefinition)
 	      (lambda ,lambda-list
 		,@(if (null documentation)

@@ -110,7 +110,7 @@
 ;;; itself.
 
 (defmethod process-compound-form ((head (eql 'progn)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-form-proper-list form)
   (loop for subform in (rest form)
 	do (process-top-level-form subform environment)))
 
@@ -123,9 +123,9 @@
 ;;; an environment that has been augmented by the declarations.
 
 (defmethod process-compound-form ((head (eql 'locally)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-form-proper-list form)
   (multiple-value-bind (declarations forms)
-      (sicl-code-utilities:separate-ordinary-body (rest form))
+      (cleavir-code-utilities:separate-ordinary-body (rest form))
     (let ((new-env (sicl-env:augment-environment-with-declarations
 		    environment declarations)))
       (loop for subform in forms
@@ -140,8 +140,8 @@
 ;;; in an environment that has been augmented by the macro definitions. 
 
 (defmethod process-compound-form ((head (eql 'symbol-macrolet)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 nil)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (definitions . forms) (rest form)
     ;; FIXME check that each definition is a proper list of 2 elements.
     (let ((new-env environment))
@@ -163,8 +163,8 @@
 
 (defmethod process-compound-form ((head (eql 'macrolet)) form environment)
   (declare (ignore environment))
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 nil)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil)
   (error "MACROLET not implemented yet."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -172,10 +172,10 @@
 ;;; Process EVAL-WHEN.
 
 (defmethod process-compound-form ((head (eql 'eval-when)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 nil)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (situations . forms) (rest form)
-    (unless (sicl-code-utilities:proper-list-p situations)
+    (unless (cleavir-code-utilities:proper-list-p situations)
       (error 'situations-must-be-proper-list
 	     :expr situations))
     ;; Check each situation

@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-compiler
-  :depends-on (:sicl-code-utilities
+  :depends-on (:cleavir-code-utilities
 	       :sicl-environment
 	       :sicl-reader-simple
 	       :sicl-generate-ast
