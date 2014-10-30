@@ -13,7 +13,7 @@
 
 (defmacro multiple-value-bind (variables values-form &body body)
   ;; FIXME: do these checks better.
-  (assert (sicl-code-utilities:proper-list-p variables))
+  (assert (cleavir-code-utilities:proper-list-p variables))
   (assert (every #'symbolp variables))
   (let ((rest-variable (gensym)))
     `(multiple-value-call

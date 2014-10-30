@@ -43,12 +43,12 @@
   (funcall
    #'(setf macro-function)
    (compile nil
-	    (sicl-code-utilities:parse-macro
+	    (cleavir-code-utilities:parse-macro
 	     'defmacro
 	     '(name lambda-list &body body)
 	     '(`(eval-when (:compile-toplevel)
 		  (funcall #'(setf macro-function)
-			   (function ,(sicl-code-utilities:parse-macro
+			   (function ,(cleavir-code-utilities:parse-macro
 				       name
 				       lambda-list
 				       body))

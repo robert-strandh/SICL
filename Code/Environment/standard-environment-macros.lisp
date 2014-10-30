@@ -106,7 +106,7 @@
 (defmacro deftype (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (sicl-env:type-expander ,name *global-environment*)
-	   (function ,(sicl-code-utilities:parse-deftype 
+	   (function ,(cleavir-code-utilities:parse-deftype 
 		       name
 		       lambda-list
 		       body))
@@ -119,7 +119,7 @@
 (defmacro define-compiler-macro (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (sicl-env:compiler-macro-function ,name *global-environment*)
-	   (function ,(sicl-code-utilities:parse-macro
+	   (function ,(cleavir-code-utilities:parse-macro
 		       name
 		       lambda-list
 		       body)))))

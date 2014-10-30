@@ -2,7 +2,7 @@
 
 (defmacro defun (name lambda-list &body body)
   (multiple-value-bind (declarations documentation forms)
-      (sicl-code-utilities:separate-function-body body)
+      (cleavir-code-utilities:separate-function-body body)
     ;; FIXME: handle documentation
     (declare (ignore documentation))
     (let ((definition `(lambda ,lambda-list
