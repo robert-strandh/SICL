@@ -4,8 +4,26 @@
 
 \subsection{Native compilation}
 
+The \commonlisp{} standards suggests that the \emph{startup
+  environment} and the \emph{evaluation environment} may be
+different.%
+\footnote{Recall that the startup environment is the global
+environment as it was when the compilation was initiated, and that the
+evaluation environment is the global environment in which evaluations
+initiated by the compiler are accomplished.}
+Our method allows most evaluations by the compiler to have no
+influence in the startup environment.  It suffices to \emph{clone} the
+startup environment in order to obtains the evaluation environment. 
+
+With the method described in the previous section, some evaluations
+by the compiler would have side effects in the startup environment.
+In particular, the value cells and function cells are shared.
+Therefore, executing code at compile time that alters the global
+binding of a function or a variable will also be seen in the startup
+environment.  
+
 \subsection{Bootstrapping}
 
 \subsection{Sanboxing}
 
-%%  LocalWords:  Sanboxing
+%%  LocalWords:  Sanboxing startup
