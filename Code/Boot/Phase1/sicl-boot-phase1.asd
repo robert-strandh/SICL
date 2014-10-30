@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-boot-phase1
-  :depends-on (:sicl-code-utilities
+  :depends-on (:cleavir-code-utilities
 	       :sicl-additional-conditions)
   :serial t
   :components

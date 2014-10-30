@@ -2,7 +2,7 @@
 
 (defpackage #:sicl-boot-phase3
   (:use #:common-lisp #:aspiring-sicl-clos #:sicl-boot-common)
-  (:import-from #:sicl-code-utilities
+  (:import-from #:cleavir-code-utilities
 		#:proper-list-p
 		#:parse-generic-function-lambda-list
 		#:parse-ordinary-lambda-list
