@@ -5,4 +5,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "eliminate-typeq")))
+   (:file "eliminate-typeq")
+   (:file "segregate-lexicals")))
+
