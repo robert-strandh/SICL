@@ -7,7 +7,7 @@
      os)
   (declare (ignore os))
   (cleavir-ir:make-equal-instruction
-   :inputs inputs (cleavir-ir:inputs instruction)
+   :inputs cleavir-ir:inputs instruction)
    :successors (cleavir-ir:successors instruction)))
 
 (defmethod cleavir-ir:specialize
