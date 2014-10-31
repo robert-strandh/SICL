@@ -179,3 +179,7 @@
     (incf *ld3-call-count*)
     (incf *ld3-node-count* (hash-table-count visited))
     (incf *ld3-time* (- (get-internal-run-time) time))))
+
+(defun segregate-lexicals (enter-instruction)
+  (let ((lexical-depths (lexical-depths enter-instruction)))
+    (distinguish-lexical-variables enter-instruction lexical-depths)))
