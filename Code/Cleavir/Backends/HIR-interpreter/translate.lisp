@@ -103,7 +103,7 @@
 (defun translate (initial-instruction)
   (let* ((enter-inst
 	   (cleavir-ir:make-enter-instruction '() initial-instruction))
-	 (*ownerships* (cleavir-lexical-depth:compute-ownerships enter-inst))
+	 (*ownerships* (cleavir-hir-transformations:compute-ownerships enter-inst))
 	 (*tags* (make-hash-table :test #'eq))
 	 (*vars* (make-hash-table :test #'eq)))
     (layout-procedure enter-inst)))

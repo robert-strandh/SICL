@@ -2,7 +2,7 @@
 
 (asdf:defsystem :cleavir-hir-interpreter
   :depends-on (:cleavir-hir
-	       :cleavir-lexical-depth)
+	       :cleavir-hir-transformations)
   :serial t
   :components
   ((:file "packages")
