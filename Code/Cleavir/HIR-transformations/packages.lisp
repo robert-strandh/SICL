@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export
    #:eliminate-typeq
+   #:compute-ownerships
    #:segregate-lexicals))
 
 
