@@ -19,3 +19,13 @@
   (cleavir-ir:make-signed-sub-instruction
    :inputs inputs (cleavir-ir:inputs instruction)
    :successors (cleavir-ir:successors instruction)))
+
+(defmethod cleavir-ir:specialize
+    ((instruction cleavir-ir:fixnum-less-instruction)
+     (implementation sicl-target-sicl:sicl)
+     (processor cleavir-processor-x86-64:x86-64)
+     os)
+  (declare (ignore os))
+  (cleavir-ir:make-signed-less-instruction
+   :inputs inputs (cleavir-ir:inputs instruction)
+   :successors (cleavir-ir:successors instruction)))
