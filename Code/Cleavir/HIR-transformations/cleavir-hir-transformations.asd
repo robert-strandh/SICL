@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "inline-calls")
+   (:file "type-inference")
    (:file "eliminate-typeq")
    (:file "segregate-lexicals")))
 
