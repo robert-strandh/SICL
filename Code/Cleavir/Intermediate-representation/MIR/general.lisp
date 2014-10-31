@@ -113,7 +113,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction MEMREF1-INSTRUCTION
+;;; MIR instruction MEMREF1-INSTRUCTION
 ;;;
 ;;; This instruction loads a memory location.  It takes a single input
 ;;; containing the address of the word to load.  It has a single
@@ -131,7 +131,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction MEMREF2-INSTRUCTION
+;;; MIR instruction MEMREF2-INSTRUCTION
 ;;;
 ;;; This instruction loads a memory location.  It takes a two inputs.
 ;;; The first input contains the base address of the datum to load.
@@ -151,7 +151,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction MEMSET1-INSTRUCTION
+;;; MIR instruction MEMSET1-INSTRUCTION
 ;;;
 ;;; This instruction stores an item in a memory location.  It takes
 ;;; two inputs.  The first input is the address of a location in
@@ -169,7 +169,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction MEMSET2-INSTRUCTION
+;;; MIR instruction MEMSET2-INSTRUCTION
 ;;;
 ;;; This instruction stores an item in a memory location.  It takes
 ;;; three inputs.  The first input is the base address of a location
@@ -188,7 +188,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction SIGNED-ADD-INSTRUCTION
+;;; MIR instruction SIGNED-ADD-INSTRUCTION
 
 (defclass signed-add-instruction (instruction two-successors-mixin)
   ())
@@ -209,7 +209,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction SIGNED-SUB-INSTRUCTION
+;;; MIR instruction SIGNED-SUB-INSTRUCTION
 
 (defclass signed-sub-instruction (instruction two-successors-mixin)
   ())
@@ -230,7 +230,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction SIGNED-LESS-INSTRUCTION
+;;; MIR instruction SIGNED-LESS-INSTRUCTION
 
 (defclass signed-less-instruction (instruction two-successors-mixin)
   ())
@@ -249,7 +249,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction SIGNED-NOT-GREATER-INSTRUCTION
+;;; MIR instruction SIGNED-NOT-GREATER-INSTRUCTION
 
 (defclass signed-not-greater-instruction (instruction two-successors-mixin)
   ())
@@ -268,7 +268,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction UNSIGNED-ADD-INSTRUCTION
+;;; MIR instruction UNSIGNED-ADD-INSTRUCTION
 
 (defclass unsigned-add-instruction (instruction two-successors-mixin)
   ())
@@ -289,7 +289,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction UNSIGNED-SUB-INSTRUCTION
+;;; MIR instruction UNSIGNED-SUB-INSTRUCTION
 
 (defclass unsigned-sub-instruction (instruction two-successors-mixin)
   ())
@@ -310,7 +310,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction UNSIGNED-LESS-INSTRUCTION
+;;; MIR instruction UNSIGNED-LESS-INSTRUCTION
 
 (defclass unsigned-less-instruction (instruction two-successors-mixin)
   ())
@@ -329,7 +329,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction UNSIGNED-NOT-GREATER-INSTRUCTION
+;;; MIR instruction UNSIGNED-NOT-GREATER-INSTRUCTION
 
 (defclass unsigned-not-greater-instruction (instruction two-successors-mixin)
   ())
@@ -348,7 +348,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction EQUAL-INSTRUCTION
+;;; MIR instruction EQUAL-INSTRUCTION
 
 (defclass signed-equal-instruction (instruction two-successors-mixin)
   ())
