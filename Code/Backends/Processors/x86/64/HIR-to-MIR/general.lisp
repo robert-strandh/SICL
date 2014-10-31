@@ -1,6 +1,16 @@
 (cl:in-package #:sicl-hir-to-mir)
 
 (defmethod cleavir-ir:specialize
+    ((instruction cleavir-ir:eq-instruction)
+     (implementation sicl-target-sicl:sicl)
+     (processor cleavir-processor-x86-64:x86-64)
+     os)
+  (declare (ignore os))
+  (cleavir-ir:make-equal-instruction
+   :inputs inputs (cleavir-ir:inputs instruction)
+   :successors (cleavir-ir:successors instruction)))
+
+(defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:car-instruction)
      (implementation sicl-target-sicl:sicl)
      (processor cleavir-processor-x86-64:x86-64)
