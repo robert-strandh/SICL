@@ -7,8 +7,8 @@
      os)
   (declare (ignore os))
   (cleavir-ir:make-signed-add-instruction
-   :inputs cleavir-ir:inputs instruction)
-   :successors (cleavir-ir:successors instruction))
+   :inputs (cleavir-ir:inputs instruction)
+   :successors (cleavir-ir:successors instruction)))
 
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:fixnum-sub-instruction)
@@ -17,8 +17,8 @@
      os)
   (declare (ignore os))
   (cleavir-ir:make-signed-sub-instruction
-   :inputs cleavir-ir:inputs instruction)
-   :successors (cleavir-ir:successors instruction))
+   :inputs (cleavir-ir:inputs instruction)
+   :successors (cleavir-ir:successors instruction)))
 
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:fixnum-less-instruction)
@@ -27,8 +27,8 @@
      os)
   (declare (ignore os))
   (cleavir-ir:make-signed-less-instruction
-   :inputs cleavir-ir:inputs instruction)
-   :successors (cleavir-ir:successors instruction))
+   :inputs (cleavir-ir:inputs instruction)
+   :successors (cleavir-ir:successors instruction)))
 
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:fixnum-not-greater-instruction)
@@ -37,8 +37,8 @@
      os)
   (declare (ignore os))
   (cleavir-ir:make-signed-not-greater-instruction
-   :inputs cleavir-ir:inputs instruction)
-   :successors (cleavir-ir:successors instruction))
+   :inputs (cleavir-ir:inputs instruction)
+   :successors (cleavir-ir:successors instruction)))
 
 (defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:fixnum-equal-instruction)
@@ -47,5 +47,5 @@
      os)
   (declare (ignore os))
   (cleavir-ir:make-equal-instruction
-   :inputs cleavir-ir:inputs instruction)
-   :successors (cleavir-ir:successors instruction))
+   :inputs (cleavir-ir:inputs instruction)
+   :successors (cleavir-ir:successors instruction)))
