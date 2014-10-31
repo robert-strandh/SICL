@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "inline-calls")
    (:file "eliminate-typeq")
    (:file "segregate-lexicals")))
 
