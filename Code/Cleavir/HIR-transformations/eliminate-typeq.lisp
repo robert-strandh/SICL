@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-eliminate-typeq)
+(cl:in-package #:cleavir-hir-transformations)
 
 (defvar *table*)
 

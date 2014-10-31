@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-lexical-depth)
+(cl:in-package #:cleavir-hir-transformations)
 
 ;;;; Recall that an ENTER-INSTRUCTION is the successor of no other
 ;;;; instruction.

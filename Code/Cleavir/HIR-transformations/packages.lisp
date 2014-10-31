@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:cleavir-eliminate-typeq
+(defpackage #:cleavir-hir-transformations
   (:use #:common-lisp)
   (:export
    #:eliminate-typeq))
