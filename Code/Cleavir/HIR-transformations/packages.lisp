@@ -3,5 +3,7 @@
 (defpackage #:cleavir-hir-transformations
   (:use #:common-lisp)
   (:export
-   #:eliminate-typeq))
+   #:eliminate-typeq
+   #:segregate-lexicals))
+
 
