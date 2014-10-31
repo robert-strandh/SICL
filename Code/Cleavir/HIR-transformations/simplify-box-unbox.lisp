@@ -1,4 +1,4 @@
-(cl:in-package #:hir-transformations)
+(cl:in-package #:cleavir-hir-transformations)
 
 ;;;; We simplify boxing and unboxing in the following way: For each
 ;;;; unboxing instruction U, we check how the input was generated.  If
