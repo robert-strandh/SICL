@@ -112,31 +112,27 @@ Normal call to a top-level internal function (i.e., a function with
 the same code object as the caller):
 
 \begin{enumerate}
-\item (caller) Subtract $4 \cdot (N + 5)$ from \texttt{ESP} where $N$
-  is the number of arguments to be passed.  The number $5$ is the
-  number of words required for the caller \texttt{EBP}, the return
-  address, the static environment, the dynamic environment, and the
-  current code object.
+\item (caller) Subtract $4 \cdot (N + 4)$ from \texttt{ESP} where $N$
+  is the number of arguments to be passed.
 \item (caller) Store the arguments to be passed in
   \texttt{[ESP$+ 4 \cdot 0$]},
   \texttt{[ESP$+ 4 \cdot 1$]},
   $\ldots$
   \texttt{[ESP$+ 4 \cdot (N - 1)$]}.
-  Copy the code object stored in
-  \texttt{[EBP$- 4 \cdot 4$]} to
-  \texttt{[ESP$+ 4 \cdot N$]}.
   Copy the dynamic environment in
-  \texttt{[EBP$-4 \cdot 5$]} to
+  \texttt{[EBP$-4 \cdot 3$]} to
+  \texttt{[ESP$+4 \cdot N$]}.
+  Compute the static environment of the callee as a suffix of the
+  current static environment and 
+  store it in
   \texttt{[ESP$+4 \cdot (N + 1)$]}.
-  Store \texttt{NIL} (the static environment) in
-  \texttt{[ESP$+4 \cdot (N + 2)$]}.
   Store \texttt{EBP} in
-  \texttt{[ESP$+4 \cdot (N + 4)$]}.
+  \texttt{[ESP$+4 \cdot (N + 3)$]}.
   These operations can be done in any order.
-\item (caller) Store \texttt{ESP$+4 \cdot (N + 4)$} in \texttt{EBP},
+\item (caller) Store \texttt{ESP$+4 \cdot (N + 3)$} in \texttt{EBP},
   establishing the stack frame of the callee.
 \item (caller) Use the \texttt{CALL} instruction to make a relative
-  call a code snippet still within the caller.  That code snippet pops
+  call to a code snippet still within the caller.  That code snippet pops
   the return address off of the top of the stack,
   and stores it in \texttt{[EBP$- 4 \cdot 1$]}.  Finally, it uses the
   \texttt{JMP} instruction to jump to an appropriate location in the
