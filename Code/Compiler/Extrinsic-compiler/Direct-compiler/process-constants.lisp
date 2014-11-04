@@ -82,5 +82,6 @@
 		       (process-instruction
 			instruction static-env constants))
 		 (mapc #'traverse (cleavir-ir:successors instruction)))))
-      (traverse initial-instruction))))
+      (traverse initial-instruction))
+    constants))
 
