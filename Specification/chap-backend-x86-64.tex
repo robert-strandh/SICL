@@ -55,9 +55,8 @@ R15 & Register variable & Callee\\
 
 \section{Representation of function objects}
 
-For this backend, a function object contains its static environment
-and linkage rack as usual.  In addition, every function object has
-$8$ entry points:
+For this backend, a function object contains its static environment as
+usual.  In addition, every function object has $8$ entry points:
 
 \begin{itemize}
 \item Five entry points used for calls (ordinary calls or tail calls)
@@ -150,8 +149,6 @@ Tail call to external function, passing at most $5$ arguments:
 \item Compute the callee function object and the arguments into
   temporary locations.
 \item Store the arguments in RDI, RSI, RDX, RCX, and R8.
-\item Load the linkage rack of the callee from the callee
-  function object into R9.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Copy the value of RBP$ - 8$ to RSP, establishing the stack frame
@@ -174,12 +171,9 @@ callee in order to optimize it in the context of the caller.  This
 prefix contains argument count checking and type checking of
 arguments.  The address to use for the call is computed statically as
 an offset from the current program counter, so that a CALL instruction
-with a fixed relative address can be used.  The linkage rack of the
-caller and the callee are the same, so no linkage rack argument
-needs to be passed.  Furthermore, the caller might be able to avoid
-loading the static environment if it is known that the callee uses the
-same static environment (most often the NULL static environment) as
-the caller.
+with a fixed relative address can be used.  Furthermore, the caller
+might be able to avoid loading the static environment if it is known
+that the callee uses the same static environment as the caller.
 
 Upon function entry, when the entry point is the one used for ordinary
 calls with more than $4$ arguments, the callee must pop the return
