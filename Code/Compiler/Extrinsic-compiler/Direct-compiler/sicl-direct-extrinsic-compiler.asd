@@ -11,7 +11,7 @@
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
 	       :sicl-hir-to-mir
-	       :cleavir-eliminate-typeq)
+	       :cleavir-hir-transformations)
   :serial t
   :components
   ((:file "packages")
