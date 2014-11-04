@@ -16,4 +16,5 @@
   :components
   ((:file "packages")
    (:file "classes")
+   (:file "introduce-immediates")
    (:file "compile")))
