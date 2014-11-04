@@ -57,11 +57,11 @@ R15 & Register variable & Callee\\
 
 For this backend, a function object contains its static environment
 and linkage rack as usual.  In addition, every function object has
-$7$ entry points:
+$8$ entry points:
 
 \begin{itemize}
 \item Five entry points used for calls (ordinary calls or tail calls)
-  with $0 - 4$ arguments.
+  with $0 - 5$ arguments.
 \item One entry point used for ordinary calls with more than $4$
   arguments.
 \item One entry point used for tail calls with more than $4$
@@ -84,14 +84,12 @@ count in the vast majority of cases.%
 Stack frame for the x86-64 backend.}
 \end{figure}
 
-Normal call to external function, passing at most $4$ arguments:
+Normal call to external function, passing at most $5$ arguments:
 
 \begin{enumerate}
 \item Compute the callee function object and the arguments into
   temporary locations.
-\item Store the arguments in RDI, RSI, RDX, and RCX.
-\item Load the linkage rack of the callee from the callee
-  function object into R9.
+\item Store the arguments in RDI, RSI, RDX, RCX, and R8.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Push the value of RBP on the stack.
@@ -113,12 +111,10 @@ Normal call to external function, passing at more than $4$ arguments:
 \item Subtract $8(N - 2)$ from RSP, where $N$ is the number of
   arguments to pass, thus leaving room in the callee stack frame for
   the $N - 4$ arguments, the return address, and the caller RBP. 
-\item Store the first $4$ arguments in RDI, RSI, RDX, and RCX.
+\item Store the first $5$ arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the remaining arguments in [RSP$ + 0$], [RSP$ + 8$],
-  $\ldots$, [RSP$ + 8(N - 5)$].
-\item Store the argument count in R8 as a fixnum.
-\item Load the linkage rack of the callee from the callee
-  function object into R9.
+  $\ldots$, [RSP$ + 8(N - 6)$].
+\item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Store the value of RBP into [RSP + 8(N - 3)]
@@ -126,7 +122,7 @@ Normal call to external function, passing at more than $4$ arguments:
   stack frame for the callee.  The instruction LEA can be used for
   this purpose.
 \item Load the entry point address (i.e. the entry point to be used
-  for ordinary calls with more than $4$ arguments) of the callee from
+  for ordinary calls with more than $5$ arguments) of the callee from
   the callee function object into an available scratch register,
   typically RAX.
 \item Use the CALL instruction with that register as an argument,
