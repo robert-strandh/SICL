@@ -73,24 +73,20 @@ Tail call to an external function:
 
 \begin{enumerate}
 \item Make sure \texttt{EBP}$-$\texttt{ESP} is at least $4 \cdot (N +
-  5)$ where $N$ is the number of arguments to be passed.  This
+  4)$ where $N$ is the number of arguments to be passed.  This
   difference is typically greater, because temporary space might be
   needed in order to compute the arguments.
 \item Store the arguments in
+  \texttt{[EBP$- 4 \cdot 4$]},
   \texttt{[EBP$- 4 \cdot 5$]},
-  \texttt{[EBP$- 4 \cdot 6$]},
   $\ldots$
-  \texttt{[EBP$- 4 \cdot (N + 4$]},
-  from left to right.  Store the code object of the to be called in
-  \texttt{[EBP$- 4 \cdot 4$]}.
+  \texttt{[EBP$- 4 \cdot (N + 3$]},
+  from left to right.
   Restore the original dynamic environment in
   \texttt{[EBP$- 4 \cdot 3$]}
-  if it was modified.  Clear
-  \texttt{[EBP$- 4 \cdot 2$]} if a static environment was
-  established, so as to avoid that it is kept alive by the GC.
-\item Compute the call address into a scratch register as above, and
-  add the fixed amount to it that is determined by the first step of
-  the callee code for a full call.
+  if it was modified.  Store the static environment of the callee in
+  \texttt{[EBP$- 4 \cdot 2$]}.
+\item Load the entry point into a scratch register as above.
 \item Use the JMP instruction to jump the address previously computed.
   Nothing is pushed on the stack.
   \begin{enumerate}
