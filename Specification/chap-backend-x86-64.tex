@@ -144,12 +144,12 @@ final place for the return address is marked ``unused'' in
 Stack frame at entry with more than 5 arguments.}
 \end{figure}
 
-Tail call to external function, passing at most $4$ arguments:
+Tail call to external function, passing at most $5$ arguments:
 
 \begin{enumerate}
 \item Compute the callee function object and the arguments into
   temporary locations.
-\item Store the arguments in RDI, RSI, RDX, and RCX.
+\item Store the arguments in RDI, RSI, RDX, RCX, and R8.
 \item Load the linkage rack of the callee from the callee
   function object into R9.
 \item Load the static environment of the callee from the callee
@@ -164,7 +164,7 @@ Tail call to external function, passing at most $4$ arguments:
   transferring control to the callee.
 \end{enumerate}
 
-Tail call to external function, passing at more than $4$ arguments:%
+Tail call to external function, passing at more than $5$ arguments:%
 \fixme{Determine the protocol.}
 
 For \emph{internal calls} there is greater freedom, because the caller
