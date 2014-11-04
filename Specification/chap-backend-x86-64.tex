@@ -110,10 +110,10 @@ Normal call to external function, passing at more than $4$ arguments:
   temporary locations.
 \item Subtract $8(N - 2)$ from RSP, where $N$ is the number of
   arguments to pass, thus leaving room in the callee stack frame for
-  the $N - 4$ arguments, the return address, and the caller RBP.
+  the $N - 5$ arguments, the return address, and the caller RBP.
 \item Store the first $5$ arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the remaining arguments in [RSP$ + 0$], [RSP$ + 8$],
-  $\ldots$, [RSP$ + 8(N - 6)$].
+  $\ldots$, [RSP$ + 8(N - 7)$].
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
@@ -141,7 +141,7 @@ final place for the return address is marked ``unused'' in
 \inputfig{fig-x86-64-stack-frame-at-entry.pdf_t}
 \end{center}
 \caption{\label{fig-x86-64-stack-frame-at-entry}
-Stack frame at entry with more than 4 arguments.}
+Stack frame at entry with more than 5 arguments.}
 \end{figure}
 
 Tail call to external function, passing at most $4$ arguments:
