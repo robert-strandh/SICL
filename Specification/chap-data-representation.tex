@@ -3,75 +3,56 @@
 
 \section{Low-level tag bits}
 
-On 32-bit backends, the two least significant bits of a machine word
-are used to represent four different \emph{tags} as follows:
-
-\begin{itemize}
-\item \texttt{00}.  This tag is used for fixnums.  The remaining bits
-  represent a signed integer in two's complement representation.  On a
-  32-bit machine, a fixnum is thus in the interval $[2^{-29}, 2^{29} -
-    1]$.
-\item \texttt{01}.  This tag is used for \texttt{cons} cells.  A
-  pointer to a \texttt{cons} cell is thus a pointer aligned to a
-  double word to which the machine integer $1$ has been added.  The
-  bit representing $2^2$ will always have the value $0$.
-\item \texttt{10}.  This tag is used for various \emph{immediate}
-  objects.  In particular for \emph{characters}, but also a
-  distinguished bit pattern that is used to initialize \emph{unbound}
-  variables and slots.  Floats of type \texttt{short-float} are
-  represented as immediate values. 
-\item \texttt{11}.  This tag is used for all heap-allocated objects
-  other than \texttt{cons} cells.  A heap allocated object like this
-  is called a \emph{general instance}.
-\end{itemize}
-
-On 64-bit backends, the three least significant bits are used as tag
-bits as follows:
+The three least significant bits of a machine word are used to
+represent four different \emph{tags} as follows:
 
 \begin{itemize}
 \item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
   tags are used for fixnums.  The bits except the last one represent
-  integer in two's complement representation.  On a 64-bit machine, a
-  fixnum is thus in the interval $[2^{-62}, 2^{62} - 1]$.
+  integer in two's complement representation.  fixnum is thus in the
+  interval $[2^{-62}, 2^{62} - 1]$.  On a 32-bit machine, a fixnum is
+  thus in the interval $[2^{-30}, 2^{30} - 1]$.  On a 64-bit machine
+  the corresponding interval is $[2^{-62}, 2^{62} - 1]$.
 \item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
   pointer to a \texttt{cons} cell is thus a pointer aligned to a
-  double word to which the machine integer $1$ has been added.  The
-  bit representing will always have the value $0$.
-\item \texttt{011}, \texttt{101}.  These tags are used for various
-  \emph{immediate} objects.  In particular for \emph{characters}, but
-  also a distinguished bit pattern that is used to initialize
-  \emph{unbound} variables and slots.  Floats of type
-  \texttt{short-float} and \texttt{single-float} are represented as
-  immediate values.
-\item \texttt{111}.  This tag is used for all heap-allocated objects
+  double word to which the machine integer $1$ has been added.
+\item \texttt{011}.  This tag is used for various \emph{immediate}
+  objects, and in particular for \emph{characters}.
+\item \texttt{101}.  This tag is used for all heap-allocated objects
   other than \texttt{cons} cells.  A heap allocated object like this
   is called a \emph{general instance}.
+\item \texttt{111}.  This tag is unused. 
 \end{itemize}
+
+On a 32-bit machine, floats of type \texttt{short-float} are
+represented as immediate values.  On a 64-bit machine, floats of type
+\texttt{short-float} and \texttt{single-float} are represented as
+immediate values.
+
+On 64-bit backends, the three least significant bits are used as tag
+bits as follows:
 
 \section{Immediate objects}
 
-On 32-bit backends, immediate objects are all objects with \texttt{10}
-in the lower two bits.  Two more bits are used to distinguish between
-different kinds of immediate objects, giving the following four low
-bits:
+Immediate objects are all objects with \texttt{011} in the lower two
+bits.  Two more bits are used to distinguish between different kinds
+of immediate objects, giving the following four low bits:
 
 \begin{itemize}
-\item \texttt{0010}.  This tag is used for Unicode characters.  When
-  shifted four positions to the right, the value gives the Unicode
+\item \texttt{00011}.  This tag is used for Unicode characters.  When
+  shifted five positions to the right, the value gives the Unicode
   code point. 
-\item \texttt{0110}.  This tag is used short floats.  
-\item \texttt{1010}.  This tag is used for single floats (64-bit
+\item \texttt{01011}.  This tag is used short floats.  
+\item \texttt{10011}.  This tag is used for single floats (64-bit
   platforms only). 
-\item \texttt{1110}.  This tag is used for various unique immediate
-  objects, in particular for the object that is stored in various
-  locations to indicate that the location is \emph{unbound}. 
+\item \texttt{11011}.  This tag is unused. 
 \end{itemize}
 
 \subsection{Characters}
 
-As indicated above, the low four bits of a character have the value
-\texttt{0010}, and the corresponding Unicode code point is obtained by
-shifting the value of the character four bits to the right. 
+As indicated above, the low five bits of a character have the value
+\texttt{00011}, and the corresponding Unicode code point is obtained by
+shifting the value of the character five positions to the right. 
 
 We currently do not plan to supply a module for Unicode support.
 Instead we are relying on the support available in the Unicode library
@@ -79,31 +60,21 @@ by Edi Weitz.
 
 \subsection{Short floats}
 
-A short float is an immediate floating-point value that does not fall
-into any of the IEEE floating-point categories.  On a 32-bit platform,
-it is similar to a single-precision IEEE floating-point value, with
-the difference that four fewer bits are used for the mantissa.  On a
-65-bit platform, it is similar to a double-precision IEEE
-floating-point value, again with the difference that four fewer bits
-are used for the mantissa.  Notice that on a 64-bit platform, a short
-float is more precise than a single float. 
+On a 32-bit platform, a short float is an immediate floating-point
+value that does not fall into any of the IEEE floating-point
+categories.  It is similar to a single-precision
+IEEE floating-point value, with the difference that five fewer bits
+are used for the mantissa.
+
+On a 64-bit platform, a short float corresponds to a single-precision
+IEEE floating-point value.  The value is stored in the
+most-significant half of the word. 
 
 \subsection{Single floats}
 
-A single float is an IEEE single-precision (32-bit) floating-point
-value stored in the most significant half of a 64-bit word.  The least
-significant half of the word is unused except for the tag bits. 
-
-\subsection{Unbound}
-\label{data-representation-unbound}
-
-The unbound object is represented as a word in which every bit except
-the least significant one is equal to 1.  As a signed machine integer,
-this value is equal to $-2$.  The unbound immediate object is used
-as the value of special variables and of slots in arrays and instances
-of (subclasses of) \texttt{standard-object}.  It is \emph{not} used to
-indicate that a \emph{function name} is unbound.  For that purpose, a
-special function that signals an error is used instead. 
+On a 64-bit platform, a single float is similar to a double-precision
+IEEE floating-point value, with the difference that five fewer bits
+are used for the mantissa.  
 
 \section{Representation of \texttt{cons} cells}
 
