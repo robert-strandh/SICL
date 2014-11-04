@@ -154,20 +154,20 @@ function with the same code object as the caller):
 
 \begin{enumerate}
 \item Make sure \texttt{EBP}$-$\texttt{ESP} is at least $4 \cdot (N +
-  5)$ where $N$ is the number of arguments to be passed.  This
+  4)$ where $N$ is the number of arguments to be passed.  This
   difference is typically greater, because temporary space might be
   needed in order to compute the arguments.
 \item Store the arguments in
+  \texttt{[EBP$- 4 \cdot 4$]},
   \texttt{[EBP$- 4 \cdot 5$]},
-  \texttt{[EBP$- 4 \cdot 6$]},
   $\ldots$
-  \texttt{[EBP$- 4 \cdot (N + 4$]},
+  \texttt{[EBP$- 4 \cdot (N + 3$]},
   from left to right.
   Restore the original dynamic environment in
   \texttt{[EBP$- 4 \cdot 3$]}
-  if it was modified.  Clear
-  \texttt{[EBP$- 4 \cdot 2$]} if a static environment was
-  established, so as to avoid that it is kept alive by the GC.
+  if it was modified.  Compute the static environment of the callee as
+  a suffix of the current static environment and store it in
+  \texttt{[EBP$- 4 \cdot 2$]}.
 \item Use the JMP instruction to jump to an appropriate location in
   the callee.  That appropriate location is typically after some
   initial code that checks for argument count, etc.  Nothing is pushed
