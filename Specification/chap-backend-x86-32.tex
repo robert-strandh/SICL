@@ -1,28 +1,13 @@
 \chapter{x86-32}
 \label{chap-backend-x86}
 
-A \emph{code object} contains:
-
-\begin{itemize}
-\item A linkage rack containing external objects that the running
-  code needs to access.
-\item A code vector which is a byte vector of machine-code instructions.  
-\item Debugging information.
-\end{itemize}
-
 A \emph{function} contains:
 
 \begin{itemize}
-\item A code object.
-\item A captured static environment. 
-\item An offset into the code vector in the code object.  That offset
-  indicates the entry point for the function, i.e. the first
-  instruction of the function. 
+\item A static environment. 
+\item The entry point of the function as a raw machine address.  Since
+  entry points are word aligned, this value looks like a fixnum. 
 \end{itemize}
-
-A code object can be shared by several functions.  In particular, the
-file compiler generates a single code object for all the code in the
-file. 
 
 \section{Calling conventions}
 
@@ -39,30 +24,26 @@ Stack frame for the x86-32 backend.}
 Normal call to an external function:
 
 \begin{enumerate}
-\item (caller) Subtract $4 \cdot (N + 5)$ from \texttt{ESP} where $N$
-  is the number of arguments to be passed.  The number $5$ is the
-  number of words required for the caller \texttt{EBP}, the return
-  address, the static environment, the dynamic environment, and the
-  current code object.
+\item (caller) Subtract $4 \cdot (N + 4)$ from \texttt{ESP} where $N$
+  is the number of arguments to be passed.  The number $4$ to be added
+  to $N$ is the number of words required for the caller \texttt{EBP},
+  the return address, the static environment, and the dynamic environment.
 \item (caller) Store the arguments to be passed in
   \texttt{[ESP$+ 4 \cdot 0$]}, 
   \texttt{[ESP$+ 4 \cdot 1$]}, 
   $\ldots$
   \texttt{[ESP$+ 4 \cdot (N - 1)$]}.
-  Store the code object of the function to be called in 
-  \texttt{[ESP$+4 \cdot N$]}.  
   Copy the dynamic environment in 
-  \texttt{[EBP$-4 \cdot 5$]} to 
-  \texttt{[ESP$+4 \cdot (N + 1)$]}.  
+  \texttt{[EBP$-4 \cdot 3$]} to 
+  \texttt{[ESP$+4 \cdot N$]}.  
   Store the static environment of the function to be called in 
-  \texttt{[ESP$+4 \cdot (N + 2)$]}.    
+  \texttt{[ESP$+4 \cdot (N + 1)$]}.    
   Store \texttt{EBP} in  
-  \texttt{[ESP$+4 \cdot (N + 4)$]}.  
+  \texttt{[ESP$+4 \cdot (N + 3)$]}.  
   These operations can be done in any order.
-\item (caller) Compute the address to call as the address of the first
-  element in the byte vector plus the entry point and put it in a
-  scratch register.
-\item (caller) Store \texttt{ESP$+4 \cdot (N + 4)$} in \texttt{EBP},
+\item (caller) Load the entry point of the function into a scratch
+  register.
+\item (caller) Store \texttt{ESP$+4 \cdot (N + 3)$} in \texttt{EBP},
   establishing the stack frame of the callee.
 \item (caller) Use the \texttt{CALL} instruction to call the address
   previously computed.  The return address is then pushed on the
