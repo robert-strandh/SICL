@@ -637,96 +637,13 @@
 ;;; eql elements of the list, so we might as well take the first one
 ;;; as in the case from-end=false
 
-(defun |find seq-type=list from-end=true end=other test=eql key=other|
-    (item list start end key)
-  (loop with value = nil
-        for index from start
-	for remaining = (skip-to-start 'find list start) then (cdr remaining)
-	until (or (atom remaining) (>= index end))
-	for element = (car remaining)
-        when (eql item (funcall key element))
-          do (setf value element)
-        finally (tail-must-be-proper-list-with-end
-		     'find list remaining end index)
-		(return value)))
-
-(defun |find seq-type=list from-end=true end=other test-not=eql key=identity|
-    (item list start end)
-  (loop with value = nil
-        for index from start
-	for remaining = (skip-to-start 'find list start) then (cdr remaining)
-	until (or (atom remaining) (>= index end))
-	for element = (car remaining)
-        when (not (eql item element))
-          do (setf value element)
-        finally (tail-must-be-proper-list-with-end
-		     'find list remaining end index)
-		(return value)))
-
-(defun |find seq-type=list from-end=true end=other test-not=eql key=other|
-    (item list start end key)
-  (loop with value = nil
-        for index from start
-	for remaining = (skip-to-start 'find list start) then (cdr remaining)
-	until (or (atom remaining) (>= index end))
-	for element = (car remaining)
-        when (not (eql item (funcall key element)))
-          do (setf value element)
-        finally (tail-must-be-proper-list-with-end
-		     'find list remaining end index)
-		(return value)))
-
-(defun |find seq-type=list from-end=true end=other test=other key=identity|
-    (item list start end test)
-  (loop with value = nil
-        for index from start
-	for remaining = (skip-to-start 'find list start) then (cdr remaining)
-	until (or (atom remaining) (>= index end))
-	for element = (car remaining)
-        when (funcall test item element)
-          do (setf value element)
-        finally (tail-must-be-proper-list-with-end
-		     'find list remaining end index)
-		(return value)))
-
-(defun |find seq-type=list from-end=true end=other test=other key=other|
-    (item list start end test key)
-  (loop with value = nil
-        for index from start
-	for remaining = (skip-to-start 'find list start) then (cdr remaining)
-	until (or (atom remaining) (>= index end))
-	for element = (car remaining)
-        when (funcall test item (funcall key element))
-          do (setf value element)
-        finally (tail-must-be-proper-list-with-end
-		     'find list remaining end index)
-		(return value)))
-
-(defun |find seq-type=list from-end=true end=other test-not=other key=identity|
-    (item list start end test)
-  (loop with value = nil
-        for index from start
-	for remaining = (skip-to-start 'find list start) then (cdr remaining)
-	until (or (atom remaining) (>= index end))
-	for element = (car remaining)
-        when (not (funcall test item element))
-          do (setf value element)
-        finally (tail-must-be-proper-list-with-end
-		     'find list remaining end index)
-		(return value)))
-
-(defun |find seq-type=list from-end=true end=other test-not=other key=other|
-    (item list start end test key)
-  (loop with value = nil
-        for index from start
-	for remaining = (skip-to-start 'find list start) then (cdr remaining)
-	until (or (atom remaining) (>= index end))
-	for element = (car remaining)
-        when (not (funcall test item (funcall key element)))
-          do (setf value element)
-        finally (tail-must-be-proper-list-with-end
-		     'find list remaining end index)
-		(return value)))
+(define-find-list-variant :from-end true :end other :test eql :key other)
+(define-find-list-variant :from-end true :end other :test-not eql :key identity)
+(define-find-list-variant :from-end true :end other :test-not eql :key other)
+(define-find-list-variant :from-end true :end other :test other :key identity)
+(define-find-list-variant :from-end true :end other :test other :key other)
+(define-find-list-variant :from-end true :end other :test-not other :key identity)
+(define-find-list-variant :from-end true :end other :test-not other :key other)
 
 (defun |find seq-type=vector from=end=nil test=eq key=identity|
     (item vector start end)
