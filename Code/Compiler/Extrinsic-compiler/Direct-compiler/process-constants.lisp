@@ -1,5 +1,18 @@
 (cl:in-package #:sicl-direct-extrinsic-compiler)
 
+;;;; The purpose of this component is to remove non-trivial literal
+;;;; constants.  Here, non-trivial means that it can not be
+;;;; represented as an immediate value for the particular processor.  
+;;;;
+;;;; It is assumed that trivial constants have already been replaced
+;;;; by immediate inputs, so that the constants remaining in the
+;;;; program are all non-trivial.
+;;;;
+;;;; There are two types of constants that we eliminate.  The first
+;;;; type consists of constant function names as input to the
+;;;; FDEFINITION-INSTRUCTION.  The second type consists of literal
+;;;; inputs to other instructions.
+
 (defun process-fdefinition-instruction (instruction static-env constants)
   (let* ((inputs (cleavir-ir:inputs instruction))
 	 (function-name (cleavir-ir:value (first inputs)))
