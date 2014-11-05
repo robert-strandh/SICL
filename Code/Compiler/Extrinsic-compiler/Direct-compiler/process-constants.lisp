@@ -85,6 +85,9 @@
 	(values temp (cons `(constant ,(cleavir-ir:value input)) constants)))
       (values input constants)))
 
+;;; For each constant input of the instruction, add instructions to
+;;; access the static environment in which the constant will be stored
+;;; at runtime.  Return the updated list of constant entries.
 (defun process-constant-inputs (instruction static-env constants)
   (setf (cleavir-ir:inputs instruction)
 	(loop for input in (cleavir-ir:inputs instruction)
