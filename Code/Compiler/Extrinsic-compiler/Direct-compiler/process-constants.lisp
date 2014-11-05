@@ -62,6 +62,11 @@
     ;; Return the modified constants list
     (cons `(function ,function-name) constants)))
 
+;;; Process a single input of INSTRUCTION.  If that input is a
+;;; constant input, then add instructions to access that constant in
+;;; the static environment.  Return two values: the new input which is
+;;; always a lexical variable, and the updated list of constant
+;;; entries.
 (defun process-input (instruction input static-env constants)
   (if (typep input 'cleavir-ir:constant-input)
       (let ((temp (cleavir-ir:new-temporary)))
