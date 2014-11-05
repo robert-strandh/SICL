@@ -11,6 +11,9 @@
 ;;; careful because the relation is symmetric, so that if (L1 . L2) is
 ;;; a conflict in the set, we do not want to add (L2 . L1) because it
 ;;; is the same conflict.
+;;;
+;;; Conflicts are computed only for lexical variables.  Other types of
+;;; locations are ignored.
 
 (defun same-conflict-p (c1 c2)
   (or (and (eq (car c1) (car c2))
