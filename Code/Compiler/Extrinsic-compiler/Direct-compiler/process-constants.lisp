@@ -101,6 +101,19 @@
 	  (t
 	   (process-constant-inputs instruction static-env constants))))
 	     
+;;; Replace remaining constants in the flow chart starting at
+;;; INITIAL-INSTRUCTION.  
+;;; 
+;;; We add a new lexical variable as output to the initial
+;;; instruction, which will contain a reference to the static
+;;; environment at runtime.
+;;;
+;;; Then, we replace all constants in the code by references to the
+;;; static environment, accessed through the new lexical variable.
+;;; Constants that are replaced in the program are collected in a list
+;;; of ENTRIES.  Each entry is either of the form (FUNCTION
+;;; <function-name>) or (CONSTANT <constant>).  The list of entries is
+;;; returned. 
 (defun process-constants (initial-instruction)
   (let ((static-env (cleavir-ir:new-temporary))
 	(table (make-hash-table :test #'eq))
