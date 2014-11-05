@@ -680,60 +680,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute a set of conflicts for the register allocator.  Recall
-;;; that two items generate a conflict when one is live at the point
-;;; where the other is written to.  Furthermore, all items that are
-;;; written to by the same instruction conflict with each other.
-;;;
-;;; We do not want to include conflicts between two registers in our
-;;; set.  Nor do we want multiple copies of some conflict.  We have to
-;;; be careful because the relation is symmetric, so that if (L1 . L2)
-;;; is a conflict in the set, we do not want to add (L2 . L1) because
-;;; it is the same conflict.
-
-(defun same-conflict-p (c1 c2)
-  (or (and (eq (car c1) (car c2))
-	   (eq (cdr c1) (cdr c2)))
-      (and (eq (car c1) (cdr c2))
-	   (eq (cdr c1) (car c2)))))
-
-(defun compute-conflicts (program)
-  (let ((*program* program)
-	(conflicts '()))
-    (let ((liveness (sicl-compiler-liveness:liveness
-		     (initial-instruction program)
-		     #'local-successors
-		     (lambda (instruction)
-		       (remove-if-not
-			(lambda (input)
-			  (or (typep input 'sicl-mir:lexical-location)
-			      (typep input 'sicl-mir:register-location)))
-			(inputs instruction))) 
-		     (lambda (instruction)
-		       (remove-if-not
-			(lambda (output)
-			  (or (typep output 'sicl-mir:lexical-location)
-			      (typep output 'sicl-mir:register-location)))
-			(outputs instruction))))))
-      (map-instructions
-       (lambda (instruction)
-	 (loop for output in (outputs instruction)
-	       do (when (or (typep output 'sicl-mir:lexical-location)
-			    (typep output 'sicl-mir:register-location))
-		    (loop for live in (sicl-compiler-liveness:live-after
-				       liveness instruction)
-			  do (when (or (typep output 'sicl-mir:lexical-location)
-				       (typep live 'sicl-mir:lexical-location))
-			       (pushnew
-				(if (typep live 'sicl-mir:register-location)
-				    (cons output live)
-				    (cons live output))
-				conflicts
-				:test #'same-conflict-p))))))))
-    conflicts))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compute the spill cost of every lexical location.
 ;;;
 ;;; The spill cost is computed once all new lexical locations have
