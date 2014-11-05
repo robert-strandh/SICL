@@ -13,6 +13,24 @@
 ;;;; FDEFINITION-INSTRUCTION.  The second type consists of literal
 ;;;; inputs to other instructions.
 
+;;; An FDEFINITION-INSTRUCTION with a constant function name as input
+;;; is replaced by a reference to an item in the static environment.
+;;; That item is assumed to be a CONS cell where the CAR contains the
+;;; function to be called or otherwise referred to. 
+;;;
+;;; At the moment, we assume that the function cell is located in the
+;;; vector that is the CAR of the list representing the static
+;;; environment.  Later, we will remove this assumption.
+;;;
+;;; STATIC-ENVIRONMENT is a lexical location that holds the static
+;;; environment at runtime.  CONSTANTS is a list of constants
+;;; collected so far.  The length of that list determines the index in
+;;; the environment vector of the function cell.
+;;;
+;;; This function returns the list of constants, augmented with an
+;;; entry for the function cell.  Right now, the new entry is added
+;;; unconditionally.  Later we will add it only if there is not
+;;; already a similar entry in the list of contestants.
 (defun process-fdefinition-instruction (instruction static-env constants)
   (let* ((inputs (cleavir-ir:inputs instruction))
 	 (function-name (cleavir-ir:value (first inputs)))
