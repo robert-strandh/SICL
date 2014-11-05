@@ -93,6 +93,12 @@
 			(setf constants new-constants)
 			new-input))))
 
+;;; Process a single instruction.  If it is a FDEFINITION instruction
+;;; with a constant function name, then call the function
+;;; PROCESS-FDEFINITION-INSTRUCTION to replace the instruction with
+;;; one that accesses the static environment.  If it is some other
+;;; function, then call process-constant-inputs to replace any
+;;; constant input by a reference to the static environment.
 (defun process-instruction (instruction static-env constants)
     (cond ((and (typep instruction 'cleavir-ir:fdefinition-instruction)
 		(typep (first (cleavir-ir:inputs instruction))
