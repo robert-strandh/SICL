@@ -91,7 +91,8 @@
 	      collect (multiple-value-bind (new-input new-constants)
 			  (process-input instruction input static-env constants)
 			(setf constants new-constants)
-			new-input))))
+			new-input)))
+  constants)
 
 ;;; Process a single instruction.  If it is a FDEFINITION instruction
 ;;; with a constant function name, then call the function
