@@ -2,7 +2,7 @@
 
 ;;;; The purpose of this component is to remove non-trivial literal
 ;;;; constants.  Here, non-trivial means that it can not be
-;;;; represented as an immediate value for the particular processor.  
+;;;; represented as an immediate value for the particular processor.
 ;;;;
 ;;;; It is assumed that trivial constants have already been replaced
 ;;;; by immediate inputs, so that the constants remaining in the
@@ -16,7 +16,7 @@
 ;;; An FDEFINITION-INSTRUCTION with a constant function name as input
 ;;; is replaced by a reference to an item in the static environment.
 ;;; That item is assumed to be a CONS cell where the CAR contains the
-;;; function to be called or otherwise referred to. 
+;;; function to be called or otherwise referred to.
 ;;;
 ;;; At the moment, we assume that the function cell is located in the
 ;;; vector that is the CAR of the list representing the static
@@ -38,7 +38,7 @@
 	 (temp1 (cleavir-ir:new-temporary))
 	 (temp2 (cleavir-ir:new-temporary)))
     ;; Insert the instruction that takes the CAR of the
-    ;; function cell. 
+    ;; function cell.
     (cleavir-ir:insert-instruction-before
      (cleavir-ir:make-car-instruction
       temp1 output instruction)
@@ -54,14 +54,14 @@
      instruction)
     ;; Insert the instruction that takes the CAR of the
     ;; static runtime environment to access the first vector
-    ;; FIXME: it is not always the first vector. 
+    ;; FIXME: it is not always the first vector.
     (cleavir-ir:insert-instruction-before
      (cleavir-ir:make-car-instruction
       static-env temp2 instruction)
      instruction)
     ;; Return the modified constants list
     (cons `(function ,function-name) constants)))
-  
+
 (defun process-input (instruction input static-env constants)
   (if (typep input 'cleavir-ir:constant-input)
       (let ((temp (cleavir-ir:new-temporary)))
@@ -77,7 +77,7 @@
 	 instruction)
 	;; Insert the instruction that takes the CAR of the
 	;; static runtime environment to access the first vector
-	;; FIXME: it is not always the first vector. 
+	;; FIXME: it is not always the first vector.
 	(cleavir-ir:insert-instruction-before
 	 (cleavir-ir:make-car-instruction
 	  static-env temp instruction)
@@ -100,10 +100,10 @@
 	   (process-fdefinition-instruction instruction static-env constants))
 	  (t
 	   (process-constant-inputs instruction static-env constants))))
-	     
+
 ;;; Replace remaining constants in the flow chart starting at
-;;; INITIAL-INSTRUCTION.  
-;;; 
+;;; INITIAL-INSTRUCTION.
+;;;
 ;;; We add a new lexical variable as output to the initial
 ;;; instruction, which will contain a reference to the static
 ;;; environment at runtime.
@@ -113,7 +113,7 @@
 ;;; Constants that are replaced in the program are collected in a list
 ;;; of ENTRIES.  Each entry is either of the form (FUNCTION
 ;;; <function-name>) or (CONSTANT <constant>).  The list of entries is
-;;; returned. 
+;;; returned.
 (defun process-constants (initial-instruction)
   (let ((static-env (cleavir-ir:new-temporary))
 	(table (make-hash-table :test #'eq))
