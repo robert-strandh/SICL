@@ -41,12 +41,14 @@
 
 ;;; An input/output of a node can be any type of object as long as two
 ;;; such objects can be compared with EQ.  INPUT-FUN is a function
-;;; that takes a node and returns the inputs of that node.
-;;; Similarly,k OUTPUT-FUN is a function that take a node and return
-;;; the outputs of that node.
+;;; that takes a node and returns the inputs of that node.  Similarly,
+;;; OUTPUT-FUN is a function that take a node and return the outputs
+;;; of that node.
 ;;;
-;;; The return value is a hash table that maps nodes to lists of items
-;;; that are live after that node.
+;;; The return value is an instance of the class LIVENESS.  This
+;;; return value should be considered to be an opaque object, only to
+;;; be used as the first argument of the functions LIVE-BEFORE and
+;;; LIVE-AFTER.
 (defun liveness (start-node successor-fun input-fun output-fun)
   (let ((predecessor-fun (cleavir-utilities:predecessor-function
 			  start-node successor-fun))
