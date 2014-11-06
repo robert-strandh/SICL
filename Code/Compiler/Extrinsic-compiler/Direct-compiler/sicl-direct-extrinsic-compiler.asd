@@ -11,7 +11,9 @@
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
 	       :sicl-hir-to-mir
-	       :cleavir-hir-transformations)
+	       :cleavir-hir-transformations
+	       :cleavir-liveness
+	       :cleavir-register-allocation)
   :serial t
   :components
   ((:file "packages")
