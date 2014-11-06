@@ -7,3 +7,7 @@
 (defmethod argument-registers ((processor x86-64))
   (loop for i in '(7 6 3 2 8)
 	collect (cleavir-processor-x86-64:gpr processor i)))
+
+(defmethod callee-saved-registers ((processor x86-64))
+  (loop for i in '(1 12 13 14 15)
+	collect (cleavir-processor-x86-64:gpr processor i)))
