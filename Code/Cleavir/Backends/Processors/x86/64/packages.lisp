@@ -7,4 +7,4 @@
 	   #:gprs #:gpr
 	   #:argument-registers
 	   #:available-registers
-	   #:callee-saved-register))
+	   #:callee-saved-registers))
