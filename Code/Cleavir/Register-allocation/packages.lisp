@@ -3,4 +3,5 @@
   (:export
    #:degree
    #:solve
+   #:compute-conflicts
    ))
