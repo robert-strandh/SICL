@@ -4,6 +4,8 @@
 
 (defgeneric gprs (processor))
 
+(defgeneric gpr (processor register-number))
+
 (defgeneric argument-registers (processor))
 
 (defgeneric available-registers (processor))
