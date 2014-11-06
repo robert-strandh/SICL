@@ -23,3 +23,5 @@
 	(loop for i from 8 to 15
 	      do (setf (reg i) (make-reg (format nil "R~a" i))))))))
 
+(defmethod gpr ((processor x86-64) register-number)
+  (aref (gprs processor) register-number))
