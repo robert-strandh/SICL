@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:export #:x86-64
 	   #:implementation
-	   #:gprs
+	   #:gprs #:gpr
 	   #:argument-registers
 	   #:available-registers
 	   #:callee-saved-register))
