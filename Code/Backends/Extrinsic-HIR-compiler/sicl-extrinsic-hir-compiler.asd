@@ -3,7 +3,8 @@
 (asdf:defsystem :sicl-extrinsic-hir-compiler
   :depends-on (:sicl-environment
 	       :sicl-simple-environment
-	       :cleavir-hir)
+	       :cleavir-hir
+	       :sicl-extrinsic-environment)
   :serial t
   :components
   ((:file "packages")
