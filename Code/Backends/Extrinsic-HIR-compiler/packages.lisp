@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:shadow #:unwind-protect
 	   #:symbol
-	   #:function)
+	   #:function
+	   #:throw)
   (:export
    ))
