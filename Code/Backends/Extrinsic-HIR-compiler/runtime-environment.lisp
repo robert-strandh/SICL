@@ -49,11 +49,11 @@
 
 ;;; A target CATCH is implemented like this:
 ;;;
-;;; (CL:CATCH <tag> <form>*) => 
-;;; (CL:BLOCK <symbol> 
-;;;   (CATCH <tag> 
-;;;     (CL:LAMBDA (VALUES) 
-;;;       (CL:RETURN-FROM <symbol> 
+;;; (CL:CATCH <tag> <form>*) =>
+;;; (CL:BLOCK <symbol>
+;;;   (CATCH <tag>
+;;;     (CL:LAMBDA (VALUES)
+;;;       (CL:RETURN-FROM <symbol>
 ;;;         (CL:APPLY #'CL:VALUES VALUES)))
 ;;;     (CL:LAMBDA ()
 ;;;       <form>*)))
