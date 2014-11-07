@@ -1,6 +1,5 @@
 (cl:in-package #:sicl-extrinsic-hir-compiler)
 
-(defparameter *global-environment*
-  (make-instance 'environment))
+(defparameter *environment* (make-instance 'environment))
 
 
