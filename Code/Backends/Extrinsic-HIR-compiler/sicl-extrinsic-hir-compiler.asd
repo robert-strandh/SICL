@@ -7,5 +7,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "global-environment")
    (:file "runtime-environment")))
 
