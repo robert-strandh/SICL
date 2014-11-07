@@ -33,6 +33,18 @@
 		   (traverse (cleavir-ir:code instruction))))))
       (traverse initial-instruction))))
 
+;;; For a given ENTER-INSTRUCTION, return a list of all the lexical
+;;; variables that are owned by that instruction.
+(defun compute-owned-variables (enter-instruction)
+  (let ((result '()))
+    (maphash (lambda (instruction-or-datum owner)
+	       (when (and (typep instruction-or-datum
+				 'cleavir-ir:lexical-location)
+			  (eq owner enter-instruction))
+		 (push instruction-or-datum result)))
+	     *ownerships*)
+    result))
+
 (defvar *tags*)
 (defvar *vars*)
 
