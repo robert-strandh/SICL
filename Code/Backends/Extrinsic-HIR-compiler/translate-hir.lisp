@@ -10,6 +10,8 @@
 
 (defgeneric translate-branch-instruction (instruction inputs outputs successors))
 
+;;; This variable holds an EQ hash table mapping each instruction and
+;;; each datum to its owner.  The owner is an ENTER-INSTRUCTION.
 (defvar *ownerships*)
 
 ;;; This variable contains a list of instructions that have a
