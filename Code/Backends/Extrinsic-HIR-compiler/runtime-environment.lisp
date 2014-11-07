@@ -65,3 +65,17 @@
 		  :function throw-fun))
 	 (*dynamic-environment* (cons entry *dynamic-environment*)))
     (funcall body-fun)))
+
+;;; A target UNWIND-PROTECT is implemented like this:
+;;;
+;;; (CL:UNWIND-PROTECT <protected-form> <cleanup-form>*) =>
+;;; (UNWIND-PROTECT
+;;;   (CL:LAMBDA () <protected-form>)
+;;;   (CL:LAMBDA () <cleanup-form>*))
+;;;
+;;; Where UNWIND-PROTECT is this function:
+(defun unwind-protect (protect-fun cleanup-fun)
+  (let* ((entry (make-instance 'unwind-protect
+		  :thunk cleanup-fun))
+	 (*dynamic-environment* (cons entry *dynamic-environment*)))
+    (funcall protect-fun)))
