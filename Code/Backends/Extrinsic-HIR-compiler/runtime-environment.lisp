@@ -11,9 +11,11 @@
 
 (defclass catch-tag (dynamic-environment-entry)
   ((%value :initarg :value :reader value)
-   ;; The thunk in this slot executes a non-local GO in the host,
-   ;; which unwinds the host stack. 
-   (%thunk :initarg :thunk :reader thunk)))
+   ;; The function in this slot takes a single argument which must be
+   ;; a list of values to return from the CATCH.  When invoked, this
+   ;; function executes the host form (RETURN-FROM <block-name> (APPLY
+   ;; #'VALUES ARG)).
+   (%function :initarg :function :reader function)))
 
 ;;; The dynamic environment is a list of instances of the class
 ;;; DYNAMIC-ENVIRONMENT-ENTRY.
