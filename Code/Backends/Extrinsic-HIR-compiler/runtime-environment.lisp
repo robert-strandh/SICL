@@ -31,3 +31,18 @@
 	do (pop *dynamic-environment*)
 	   (when (typep entry 'unwind-protect)
 	     (funcall (thunk entry)))))
+
+;;; VALUES is a list of values that should be returned by the CATCH.
+(defun throw (tag values)
+  ;; Find the entry with the corresponding CATCH tag.  Right now we
+  ;; signal an error in the host if the entry is not found.  Later, we
+  ;; should signal an entry in the target environment instead.
+  (let ((suffix (loop for suffix on *dynamic-environment*
+		      for entry = (car suffix)
+		      when (and (typep entry 'catch-tag)
+				(eq (value entry) tag))
+			return suffix
+		      finally (error "no such tag ~s" tag))))
+    (let ((function (function (car suffix))))
+      (unwind (cdr suffix))
+      (funcall function values))))
