@@ -5,6 +5,7 @@
   (:shadow #:unwind-protect
 	   #:symbol
 	   #:function
+	   #:catch
 	   #:throw)
   (:export
    ))
