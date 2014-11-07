@@ -11,6 +11,26 @@
 (defgeneric translate-branch-instruction (instruction inputs outputs successors))
 
 (defvar *ownerships*)
+
+;;; This variable contains a list of instructions that have a
+;;; predecessor with a different owner.
+(defvar *non-local-transfer-targets*)
+
+(defun find-non-local-transfer-targets (initial-instruction)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (when (some (lambda (pred)
+			       (not (eq (gethash pred *ownerships*)
+					(gethash instruction *ownerships*))))
+			     (cleavir-ir:predecessors instruction))
+		   (push instruction *non-local-transfer-targets*))
+		 (mapc #'traverse (cleavir-ir:successors instruction))
+		 (when (typep instruction 'cleavir-ir:enclose-instruction)
+		   (traverse (cleavir-ir:code instruction))))))
+      (traverse initial-instruction))))
+
 (defvar *tags*)
 (defvar *vars*)
 
