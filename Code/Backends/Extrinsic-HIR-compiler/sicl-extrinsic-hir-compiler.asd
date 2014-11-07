@@ -6,4 +6,4 @@
 	       :cleavir-hir)
   :serial t
   :components
-  ())
+  ((:file "packages")))
