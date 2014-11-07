@@ -46,3 +46,22 @@
     (let ((function (function (car suffix))))
       (unwind (cdr suffix))
       (funcall function values))))
+
+;;; A target CATCH is implemented like this:
+;;;
+;;; (CL:CATCH <tag> <form>*) => 
+;;; (CL:BLOCK <symbol> 
+;;;   (CATCH <tag> 
+;;;     (CL:LAMBDA (VALUES) 
+;;;       (CL:RETURN-FROM <symbol> 
+;;;         (CL:APPLY #'CL:VALUES VALUES)))
+;;;     (CL:LAMBDA ()
+;;;       <form>*)))
+;;;
+;;; where CATCH is this function:
+(defun catch (tag throw-fun body-fun)
+  (let* ((entry (make-instance 'catch-tag
+		  :value tag
+		  :function throw-fun))
+	 (*dynamic-environment* (cons entry *dynamic-environment*)))
+    (funcall body-fun)))
