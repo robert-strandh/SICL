@@ -9,6 +9,6 @@
   :components
   ((:file "packages")
    (:file "define-global-environment")
-   (:file "global-environment")
+   (:file "create-global-environment")
    (:file "runtime-environment")))
 
