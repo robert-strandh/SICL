@@ -4,7 +4,8 @@
   :depends-on (:sicl-environment
 	       :sicl-simple-environment
 	       :cleavir-hir
-	       :sicl-extrinsic-environment)
+	       :sicl-extrinsic-environment
+	       :cleavir-hir-transformations)
   :serial t
   :components
   ((:file "packages")
@@ -12,4 +13,3 @@
    (:file "create-global-environment")
    (:file "fill-global-environment")
    (:file "runtime-environment")))
-
