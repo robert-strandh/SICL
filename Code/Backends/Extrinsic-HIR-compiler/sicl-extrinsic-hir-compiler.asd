@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "define-global-environment")
    (:file "global-environment")
    (:file "runtime-environment")))
 
