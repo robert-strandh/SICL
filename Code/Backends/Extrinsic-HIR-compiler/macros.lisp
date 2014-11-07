@@ -13,3 +13,8 @@
 (defmacro cl:throw (tag result-form)
   `(throw tag
      (multiple-value-list ,result-form)))
+
+(defmacro cl:unwind-protect (protected-form &body cleanup-forms)
+  `(unwind-protect
+     (lambda () ,protected-form)
+     (lambda () ,@cleanup-forms)))
