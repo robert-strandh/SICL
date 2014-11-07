@@ -2,5 +2,7 @@
 
 (defpackage #:sicl-extrinsic-hir-compiler
   (:use #:common-lisp)
+  (:shadow #:unwind-protect
+	   #:symbol)
   (:export
    ))
