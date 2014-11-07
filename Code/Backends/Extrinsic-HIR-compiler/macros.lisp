@@ -9,3 +9,7 @@
 	     (apply #'values values)))
 	 (lambda ()
 	   ,@forms)))))
+
+(defmacro cl:throw (tag result-form)
+  `(throw tag
+     (multiple-value-list ,result-form)))
