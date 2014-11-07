@@ -12,4 +12,5 @@
    (:file "define-global-environment")
    (:file "create-global-environment")
    (:file "fill-global-environment")
-   (:file "runtime-environment")))
+   (:file "runtime-environment")
+   (:file "translate-hir")))
