@@ -50,3 +50,4 @@
 ;;; Import some simple functions to from the host to the target
 ;;; environment.
 (defprimitive cl:consp (t))
+(defprimitive cl:cons (t t))
