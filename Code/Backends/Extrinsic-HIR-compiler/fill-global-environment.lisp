@@ -59,3 +59,6 @@
 (defprimitive cl:null (t))
 
 (defprimitive cl:symbolp (t))
+
+(defprimitive cl:characterp (t))
+
