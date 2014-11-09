@@ -46,3 +46,7 @@
 ;;; the host stack and the target runtime environment. 
 (setf (sicl-env:fdefinition 'cl:error *environment*)
       #'error)
+
+;;; Import some simple functions to from the host to the target
+;;; environment.
+(defprimitive cl:consp (t))
