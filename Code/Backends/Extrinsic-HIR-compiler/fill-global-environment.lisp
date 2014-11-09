@@ -55,3 +55,7 @@
 (defprimitive cl:numberp (t))
 (defprimitive cl:integerp (t))
 (defprimitive cl:rationalp (t))
+
+(defprimitive cl:null (t))
+
+(defprimitive cl:symbolp (t))
