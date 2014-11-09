@@ -51,3 +51,7 @@
 ;;; environment.
 (defprimitive cl:consp (t))
 (defprimitive cl:cons (t t))
+
+(defprimitive cl:numberp (t))
+(defprimitive cl:integerp (t))
+(defprimitive cl:rationalp (t))
