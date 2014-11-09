@@ -62,3 +62,4 @@
 
 (defprimitive cl:characterp (t))
 
+(defprimitive cl:stringp (t))
