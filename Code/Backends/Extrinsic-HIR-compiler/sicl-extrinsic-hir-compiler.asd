@@ -12,6 +12,7 @@
    (:file "define-global-environment")
    (:file "create-global-environment")
    (:file "error")
+   (:file "primitive-function")
    (:file "fill-global-environment")
    (:file "runtime-environment")
    (:file "translate-hir")))
