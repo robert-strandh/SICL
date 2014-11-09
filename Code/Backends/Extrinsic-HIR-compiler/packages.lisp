@@ -6,6 +6,7 @@
 	   #:symbol
 	   #:function
 	   #:catch
-	   #:throw)
+	   #:throw
+	   #:error)
   (:export
    ))
