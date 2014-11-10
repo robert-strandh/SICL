@@ -62,5 +62,6 @@
 
 (defprimitive cl:characterp (t))
 (defprimitive cl:char-code (character))
+(defprimitive cl:alphanumericp (character))
 
 (defprimitive cl:stringp (t))
