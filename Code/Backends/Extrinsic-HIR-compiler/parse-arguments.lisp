@@ -19,7 +19,9 @@
 		     ((eq first '&key)
 		      (go key))
 		     (t
-		      (push `(setq ,first (pop ,var))
+		      (push `(if (null ,var)
+				 (funcall ,error "too few arguments")
+				 (setq ,first (pop ,var)))
 			    result)
 		      (go required)))))
        optional
