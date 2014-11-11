@@ -15,4 +15,5 @@
    (:file "primitive-function")
    (:file "fill-global-environment")
    (:file "runtime-environment")
+   (:file "parse-arguments")
    (:file "translate-hir")))
