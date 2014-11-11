@@ -49,7 +49,9 @@
 			     (funcall ,error "too many arguments"))
 			  result)
 		    (go out))
-	     (go key))
+	     ;; The first element of REST must be &key.
+	     (progn (pop rest)
+		    (go key)))
        key
 	 (if (null rest)
 	     (progn (push `(unless (or (null ,var)
@@ -75,7 +77,7 @@
        out)
       (reverse result))))
 
-(defmacro build-argument-parsin-code (lambda-list argument-variable error default)
+(defmacro build-argument-parsing-code (lambda-list argument-variable error default)
   (let ((remaining-argument-variable (gensym)))
     `(let ((,remaining-argument-variable ,argument-variable))
        ,@(parse lambda-list remaining-argument-variable error default))))
