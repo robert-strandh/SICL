@@ -31,7 +31,9 @@
 		       (when (or (/= (length preds) 1)
 				 (> (length (successors (car preds))) 1))
 			 (setf (gethash node leaders) t))
-		       (mapc #'traverse (successors node))))))
+		       (mapc #'traverse (successors node))
+		       (when (typep node 'cleavir-ir:enter-instruction)
+			 (traverse (cleavir-ir:code node)))))))
 	  (traverse start-node)))
       (loop for first being each hash-key of leaders
 	    collect (loop for last = first then (car (successors last))
