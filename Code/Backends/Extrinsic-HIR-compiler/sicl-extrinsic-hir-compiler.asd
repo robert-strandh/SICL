@@ -5,7 +5,8 @@
 	       :sicl-simple-environment
 	       :cleavir-hir
 	       :sicl-extrinsic-environment
-	       :cleavir-hir-transformations)
+	       :cleavir-hir-transformations
+	       :cleavir-basic-blocks)
   :serial t
   :components
   ((:file "packages")
