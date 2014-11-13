@@ -3,12 +3,17 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defclass bogus-environment () ()))
 
-;;; Any variable not otherwise mentioned explicitly is considered to
-;;; be a special variable.
+;;; A variable is considered special if its name has at least 3
+;;; characters in it, and has earmuffs.
 (defmethod cleavir-env:variable-info
     ((environment bogus-environment) symbol)
-  (make-instance 'cleavir-env:special-variable-info
-    :name symbol))
+  (let ((name (symbol-name symbol)))
+    (if (and (>= (length name) 3)
+	     (char= (char name 0) #\*)
+	     (char= (char name (1- (length name))) #\*))
+	(make-instance 'cleavir-env:special-variable-info
+	  :name symbol)
+	nil)))
 
 ;;; Any function not otherwise mentioned explicitly is considered to
 ;;; be a global function.
