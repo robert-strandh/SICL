@@ -45,6 +45,10 @@
     :name symbol
     :identity identity))
 
+(defmethod print-object ((object lexical-variable) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (identity object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SPECIAL-VARIABLE.
@@ -69,6 +73,10 @@
     :next environment
     :name symbol))
 
+(defmethod print-object ((object special-variable) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (name object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SYMBOL-MACRO.
@@ -85,6 +93,10 @@
     :next environment
     :name symbol
     :expansion expansion))
+
+(defmethod print-object ((object symbol-macro) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (expansion object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -105,6 +117,10 @@
     :name function-name
     :identity identity))
 
+(defmethod print-object ((object function) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (identity object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; MACRO.
@@ -120,6 +136,10 @@
     :next environment
     :name symbol
     :expander expander))
+
+(defmethod print-object ((object macro) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (name object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -139,6 +159,10 @@
     :name symbol
     :identity identity))
 
+(defmethod print-object ((object block) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (identity object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; TAG.
@@ -157,6 +181,10 @@
     :name symbol
     :identity identity))
 
+(defmethod print-object ((object tag) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (identity object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; VARIABLE-TYPE.
@@ -173,6 +201,10 @@
     :next environment
     :name symbol
     :type type))
+
+(defmethod print-object ((object variable-type) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (type object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -191,6 +223,10 @@
     :name function-name
     :type type))
 
+(defmethod print-object ((object function-type) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (type object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; VARIABLE-IGNORE.
@@ -207,6 +243,10 @@
     :next environment
     :name symbol
     :ignore ignore))
+
+(defmethod print-object ((object variable-ignore) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (ignore object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -225,6 +265,10 @@
     :name function-name
     :ignore ignore))
 
+(defmethod print-object ((object function-ignore) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (ignore object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; VARIABLE-DYNAMIC-EXTENT.
@@ -240,6 +284,10 @@
     :next environment
     :name symbol))
 
+(defmethod print-object ((object variable-dynamic-extent) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (name object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; FUNCTION-DYNAMIC-EXTENT.
@@ -254,6 +302,10 @@
   (make-instance 'function-dynamic-extent
     :next environment
     :name function-name))
+
+(defmethod print-object ((object function-dynamic-extent) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (name object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -272,6 +324,10 @@
     :quality quality
     :value value))
 
+(defmethod print-object ((object optimize) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (quality object) (value object))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; INLINE.
@@ -288,3 +344,8 @@
     :next environment
     :name function-name
     :inline inline))
+
+(defmethod print-object ((object inline) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (inline object))))
+
