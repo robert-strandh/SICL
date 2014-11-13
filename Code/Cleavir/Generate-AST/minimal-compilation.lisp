@@ -139,6 +139,14 @@
 	(t
 	 (minimally-compile-lambda-call form env))))
 
+(defun minimally-compile (form env)
+  (handler-bind
+      ((cleavir-env:no-variable-info
+	 (lambda (condition)
+	   (declare (ignore condition))
+	   (invoke-restart 'consider-special))))
+    (minimally-compile-aux form env)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on MINIMALLY-COMPILE-FORM.
