@@ -373,7 +373,8 @@
 (defclass enter-instruction (instruction one-successor-mixin)
   ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
-(defun make-enter-instruction (lambda-list successor)
+(defun make-enter-instruction
+    (lambda-list &optional (successor nil successor-p))
   (let* ((outputs (loop for item in lambda-list
 			append (cond ((member item lambda-list-keywords) '())
 				     ((consp item) item)
@@ -381,7 +382,7 @@
     (make-instance 'enter-instruction
       :lambda-list lambda-list
       :outputs outputs
-      :successors (list successor))))
+      :successors (if successor-p (list successor) '()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
