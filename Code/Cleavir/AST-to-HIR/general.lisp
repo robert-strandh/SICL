@@ -326,16 +326,58 @@
 ;;;
 ;;; Compile a RETURN-FROM-AST.
 ;;;
-;;; A RETURN-FROM-AST is compiled as follows: The context is ignored,
-;;; because the RETURN-FROM does not return a value in its own
-;;; context.  Instead, the FORM-AST of the RETURN-FROM-AST is compiled
-;;; in the same context as the corresponding BLOCK-AST was compiled
-;;; in.
+;;; We must determine whether this RETURN-FROM represents a local
+;;; control transfer or a non-local control transfer.  To determine
+;;; that, we compare the INVOCATION of the context in which the
+;;; corresponding BLOCK-AST was compiled to the INVOCATION of the
+;;; current CONTEXT.  If they are the same, we have a local control
+;;; transfer.  If not, we have a non-local control transfer.
+;;;
+;;; If we have a local control transfer, we compile the
+;;; RETURN-FROM-AST is as follows: The context is ignored, because the
+;;; RETURN-FROM does not return a value in its own context.  Instead,
+;;; the FORM-AST of the RETURN-FROM-AST is compiled in the same
+;;; context as the corresponding BLOCK-AST was compiled in.
+;;;
+;;; If we have a non-local control transfer, things might get messy In
+;;; the most general case, the corresponding BLOCK-AST was compiled in
+;;; a context where all values are needed, AND we can not determine
+;;; how many values are returned from the FORM-AST of this
+;;; RETURN-FROM-AST.  Then, we must compile the FORM-AST in a context
+;;; where we save all the return values in some temporary place.
+;;; Following that, we must unwind the stack by executing an
+;;; UNWIND-INSTRUCTION.  Finally we must return the saved return
+;;; values from that invocation.  We must probably let each
+;;; implementation customize how this is done.
+;;;
+;;; There are some important special cases though.  For instance, if
+;;; the BLOCK-AST was compiled in a context where a fixed number of
+;;; values are required, then we can compile the FORM-AST of this
+;;; RETURN-FROM-AST in a context where the same number of values are
+;;; required, save those values in lexical variables, unwind the
+;;; stack, and then copy the saved values into the lexical variables
+;;; of the target context.  
+;;;
+;;; The other important special case is when the BLOCK-AST was
+;;; compiled in a context where all values are required, but we can
+;;; determine how many values are returned by the FORM-AST.  We can
+;;; then again save those values in lexical variables, unwind the
+;;; stack, and then execute a RETURN-INSTRUCTION with those values as
+;;; inputs.  We can determine the number of values returned by the
+;;; FORM-AST if it is either a CONSTANT-AST, a LEXICAL-AST, or a
+;;; CALL-AST where the function called is VALUES.
+;;;
+;;; It might be good to apply some transformations to the AST before
+;;; it is compiled.  For instance (return-from b (progn f1 f2 f3))
+;;; could be transformed into (progn f1 f2 (return-from b f3)) so as
+;;; to expose the possibility of f3 to be covered by a special case. 
 
 (defmethod compile-ast ((ast cleavir-ast:return-from-ast) context)
-  (declare (ignore context))
-  (let ((block-context (gethash (cleavir-ast:block-ast ast) *block-info*)))
-    (compile-ast (cleavir-ast:form-ast ast) block-context)))
+  (let ((block-context (block-info (cleavir-ast:block-ast ast))))
+    (if (eq (invocation context)
+	    (invocation block-context))
+	(compile-ast (cleavir-ast:form-ast ast) block-context)
+	(error "can't handle non-local RETURN-FROM yet."))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
