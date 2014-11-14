@@ -354,24 +354,39 @@
 ;;;     at least one element, then the successor is the first
 ;;;     instruction in a sequence of instructions that fill the
 ;;;     results with NIL.
-;;; 
-;;; For each TAG-AST in the tagbody, a NOP instruction is created and
-;;; that instruction is entered into the hash table *GO-INFO* using
-;;; the TAG-AST as a key.  Then the items are compiled in the reverse
-;;; order, stacking new instructions before the successor computed
-;;; previously.  Compiling a TAG-AST results in the successor of the
-;;; corresponding NOP instruction being modified to point to the
-;;; remining instructions already computed.  Compiling something else
-;;; is done in a context with an empty list of results, using the
-;;; remaining instructions already computed as a single successor.
 
+;;; During AST-to-HIR translation, this variable contains a hash table
+;;; that maps a TAG-AST to information about the tag.  The information
+;;; is a list of two elements.  The first element is the NOP
+;;; instruction that will be the target of any GO instruction to that
+;;; tag.  The second element is the INVOCATION of the compilation
+;;; context, which is used to determine whether the GO to this tag is
+;;; local or non-local.
 (defparameter *go-info* nil)
 
+(defun go-info (tag-ast)
+  (gethash tag-ast *go-info*))
+
+(defun (setf go-info) (new-info tag-ast)
+  (setf (gethash tag-ast *go-info*) new-info))
+
+;;; For each TAG-AST in the tagbody, a NOP instruction is created.  A
+;;; list containing this instruction and the INVOCATION of the current
+;;; context is created.  That list is entered into the hash table
+;;; *GO-INFO* using the TAG-AST as a key.  Then the items are compiled
+;;; in the reverse order, stacking new instructions before the
+;;; successor computed previously.  Compiling a TAG-AST results in the
+;;; successor of the corresponding NOP instruction being modified to
+;;; point to the remining instructions already computed.  Compiling
+;;; something else is done in a context with an empty list of results,
+;;; using the remaining instructions already computed as a single
+;;; successor.
 (defmethod compile-ast ((ast cleavir-ast:tagbody-ast) context)
   (loop for item-ast in (cleavir-ast:item-asts ast)
 	do (when (typep item-ast 'cleavir-ast:tag-ast)
-	     (setf (gethash item-ast *go-info*)
-		   (cleavir-ir:make-nop-instruction nil))))
+	     (setf (go-info item-ast)
+		   (list (cleavir-ir:make-nop-instruction nil)
+			 (invocation context)))))
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -385,7 +400,7 @@
       (loop for item-ast in (reverse (cleavir-ast:item-asts ast))
 	    do (setf next
 		     (if (typep item-ast 'cleavir-ast:tag-ast)
-			 (let ((instruction (gethash item-ast *go-info*)))
+			 (let ((instruction (first (go-info item-ast))))
 			   (setf (cleavir-ir:successors instruction)
 				 (list next))
 			   instruction)
@@ -404,8 +419,10 @@
 ;;; the TAGBODY-AST was compiled.
 
 (defmethod compile-ast ((ast cleavir-ast:go-ast) context)
-  (declare (ignore context))
-  (gethash (cleavir-ast:tag-ast ast) *go-info*))
+  (let ((info (go-info (cleavir-ast:tag-ast ast))))
+    (if (eq (second info) (invocation context))
+	(first info)
+	(cleavir-ir:make-unwind-instruction (first info) (second info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
