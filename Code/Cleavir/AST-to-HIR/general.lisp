@@ -312,6 +312,12 @@
 
 (defparameter *block-info* nil)
 
+(defun block-info (block-ast)
+  (gethash block-ast *block-info*))
+
+(defun (setf block-info) (new-info block-ast)
+  (setf (gethash block-ast *block-info*) new-info))
+
 (defmethod compile-ast ((ast cleavir-ast:block-ast) context)
   (setf (gethash ast *block-info*) context)
   (compile-ast (cleavir-ast:body-ast ast) context))
