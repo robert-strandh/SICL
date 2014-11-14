@@ -1,18 +1,18 @@
 (cl:in-package #:cleavir-basic-blocks)
 
-;;;; Compute the basic blocks of a flow chart. 
+;;;; Compute the basic blocks of a flow chart.
 ;;;;
 ;;;; To compute the basic blocks, we proceed in two steps:
-;;;; 
+;;;;
 ;;;;   * We first identify the LEADERS.  An instructions that fulfils
 ;;;;     at least one of the following conditions is a leader:
-;;;; 
+;;;;
 ;;;;     - It does not have a single predecessor.
 ;;;;
-;;;;     - It has an UNWIND-INSTRUCTION as its predecessor. 
+;;;;     - It has an UNWIND-INSTRUCTION as its predecessor.
 ;;;;
 ;;;;     Every leader defines exactly one basic block.
-;;;; 
+;;;;
 ;;;;   * Next, for each leader, we initialize a basic block consisting
 ;;;;     of that leader as its first instruction AND its last
 ;;;;     instruction.  We then extend the basic block as long as the
@@ -20,7 +20,7 @@
 ;;;;     not a leader.
 
 ;;; Return a list of basic blocks.  Each basic block is represented as
-;;; a CONS of the FIRST and the LAST nodes of the block. 
+;;; a CONS of the FIRST and the LAST nodes of the block.
 (defun basic-blocks (start-node)
   (let ((leaders (make-hash-table :test #'eq)))
     (flet ((successors (node)
@@ -46,4 +46,3 @@
 			  until (or (/= (length successors) 1)
 				    (gethash (first successors) leaders))
 			  finally (return (cons first last)))))))
-			  
