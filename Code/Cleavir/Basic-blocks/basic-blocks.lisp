@@ -4,10 +4,14 @@
 ;;;;
 ;;;; To compute the basic blocks, we proceed in two steps:
 ;;;; 
-;;;;   * We first identify the LEADERS.  A leader is an instruction
-;;;;     that either does not have exactly one predecessor, or whose
-;;;;     predecessor has more than one successor.  A leader
-;;;;     corresponds to exactly one basic block.
+;;;;   * We first identify the LEADERS.  An instructions that fulfils
+;;;;     at least one of the following conditions is a leader:
+;;;; 
+;;;;     - It does not have a single predecessor.
+;;;;
+;;;;     - It has an UNWIND-INSTRUCTION as its predecessor. 
+;;;;
+;;;;     Every leader defines exactly one basic block.
 ;;;; 
 ;;;;   * Next, for each leader, we initialize a basic block consisting
 ;;;;     of that leader as its first instruction AND its last
@@ -29,7 +33,8 @@
 		     (setf (gethash node table) t)
 		     (let ((preds (predecessors node)))
 		       (when (or (/= (length preds) 1)
-				 (> (length (successors (car preds))) 1))
+				 (typep (first preds)
+					'cleavir-ir:unwind-instruction))
 			 (setf (gethash node leaders) t))
 		       (mapc #'traverse (successors node))
 		       (when (typep node 'cleavir-ir:enter-instruction)
@@ -37,7 +42,8 @@
 	  (traverse start-node)))
       (loop for first being each hash-key of leaders
 	    collect (loop for last = first then (car (successors last))
-			  until (or (/= (length (successors last)) 1)
-				    (gethash (car (successors last)) leaders))
+			  for successors = (successors last)
+			  until (or (/= (length successors) 1)
+				    (gethash (first successors) leaders))
 			  finally (return (cons first last)))))))
 			  
