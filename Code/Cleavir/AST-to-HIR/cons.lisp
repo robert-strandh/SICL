@@ -13,7 +13,8 @@
 	      (list (make-instance 'cleavir-ir:car-instruction
 		      :inputs (list temp)
 		      :outputs (results context)
-		      :successors (successors context)))))))
+		      :successors (successors context)))
+	      (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -28,7 +29,8 @@
 	      (list (make-instance 'cleavir-ir:cdr-instruction
 		      :inputs (list temp)
 		      :outputs (results context)
-		      :successors (successors context)))))))
+		      :successors (successors context)))
+	      (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -48,7 +50,9 @@
 		      (list (make-instance 'cleavir-ir:rplaca-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs '()
-			      :successors (successors context))))))))))
+			      :successors (successors context)))
+		      (invocation context))))
+      (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -68,4 +72,6 @@
 		      (list (make-instance 'cleavir-ir:rplacd-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs '()
-			      :successors (successors context))))))))))
+			      :successors (successors context)))
+		      (invocation context))))
+      (invocation context)))))

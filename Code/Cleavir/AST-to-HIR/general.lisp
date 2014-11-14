@@ -62,9 +62,10 @@
 
 (defclass context ()
   ((%results :initarg :results :reader results)
-   (%successors :initarg :successors :accessor successors)))
+   (%successors :initarg :successors :accessor successors)
+   (%invocation :initarg :invocation :reader invocation)))
 
-(defun context (results successors)
+(defun context (results successors invocation)
   (unless (and (listp results)
 	       (every (lambda (result)
 			(typep result 'cleavir-ir:lexical-location))
@@ -77,9 +78,13 @@
     (error "illegal successors: ~s" results))
   (when (and (null successors) (not (null results)))
     (error "Illegal combination of results and successors"))
+  (unless (or (null invocation)
+	      (typep invocation 'cleavir-ir:enter-instruction))
+    (error "Illegal invocation"))
   (make-instance 'context
     :results results
-    :successors successors))
+    :successors successors
+    :invocation invocation))
 
 (defmethod print-object ((obj context) stream)
   (print-unreadable-object (obj stream)
@@ -152,7 +157,10 @@
 			      :inputs (list false)
 			      :outputs (list result)
 			      :successors (list successor))))
-	 (call-next-method ast (context '() (list true-branch false-branch)))))
+	 (call-next-method ast
+			   (context '()
+				    (list true-branch false-branch)
+				    (invocation context)))))
       (2
        (call-next-method)))))
 
@@ -173,7 +181,10 @@
        ;; the AST in that context instead.
        (let* ((temp (cleavir-ir:new-temporary))
 	      (successor (cleavir-ir:make-return-instruction (list temp))))
-	 (call-next-method ast (context (list temp) (list successor)))))
+	 (call-next-method ast
+			   (context (list temp)
+				    (list successor)
+				    (invocation context)))))
       (1
        ;; We have a context with one successor, so the list of results
        ;; can have any length.
@@ -188,13 +199,18 @@
 		 (car successors))
 	       ;; We allocate a temporary variable to receive the
 	       ;; result, and that variable will not be used.
-	       (call-next-method ast (context (list (make-temp nil)) successors)))
+	       (call-next-method ast
+				 (context (list (make-temp nil))
+					  successors
+					  (invocation context))))
 	   ;; We have at least one result.  In case there is more than
 	   ;; one, we generate a successor where all but the first one
 	   ;; are filled with NIL. 
 	   (let ((successor (nil-fill (cdr results) (car successors))))
-	     (call-next-method ast (context (list (car results))
-					    (list successor))))))
+	     (call-next-method ast
+			       (context (list (car results))
+					(list successor)
+					(invocation context))))))
       (2
        ;; We have a context where a test of a Boolean is required.  We
        ;; create a new context where the result is compared to NIL
@@ -206,7 +222,10 @@
 			   :inputs (list temp false)
 			   :outputs '()
 			   :successors (reverse successors))))
-	 (call-next-method ast (context (list temp) (list successor))))))))
+	 (call-next-method ast
+			   (context (list temp)
+				    (list successor)
+				    (invocation context))))))))
 
 (defun check-context-for-one-value-ast (context)
   (assert (and (= (length (results context)) 1)
@@ -259,7 +278,9 @@
   (let ((then-branch (compile-ast (cleavir-ast:then-ast ast) context))
 	(else-branch (compile-ast (cleavir-ast:else-ast ast) context)))
     (compile-ast (cleavir-ast:test-ast ast)
-		 (context '() (list then-branch else-branch)))))
+		 (context '()
+			  (list then-branch else-branch)
+			  (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -273,7 +294,10 @@
 (defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
   (let ((next (compile-ast (car (last (cleavir-ast:form-asts ast))) context)))
     (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
-	  do (setf next (compile-ast sub-ast (context '() (list next)))))
+	  do (setf next (compile-ast sub-ast
+				     (context '()
+					      (list next)
+					      (invocation context)))))
     next))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -365,7 +389,10 @@
 			   (setf (cleavir-ir:successors instruction)
 				 (list next))
 			   instruction)
-			 (compile-ast item-ast (context '() (list next))))))
+			 (compile-ast item-ast
+				      (context '()
+					       (list next)
+					       (invocation context))))))
       next)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -419,7 +446,8 @@
 	      (make-instance 'cleavir-ir:funcall-instruction
 		:inputs temps
 		:outputs (list temp)
-		:successors (list successor)))))))))
+		:successors (list successor)))))
+       (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -444,15 +472,29 @@
 		      (t
 		       (find-or-create-location item)))))
 
+
+;;; The logic of this method is a bit twisted.  The reason is that we
+;;; must create the ENTER-INSTRUCTION before we compile the body of
+;;; the FUNCTION-AST.  The reason for that is that the
+;;; ENTER-INSTRUCTION should be the value of the INVOCATION of the
+;;; context when the body is compiled.  On the other hand, the result
+;;; of compiling the body must be the successor of the ENTER-INSTRUCTION.  
+;;;
+;;; We solve this problem by creating the ENTER-INSTRUCTION with a
+;;; dummy successor.  Once the body has been compiled, we call
+;;; REINITIALIZE-INSTANCE on the ENTER-INSTRUCTION to set the slots to
+;;; their final values. 
 (defmethod compile-ast ((ast cleavir-ast:function-ast) context)
   (check-context-for-one-value-ast context)
-  (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
-	 (ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-	 (function (cleavir-ir:make-enter-instruction ll body)))
+  (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
+	 (enter (cleavir-ir:make-enter-instruction ll))
+	 (body-context (context '() '() enter))
+	 (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
+    (reinitialize-instance enter :successors (list body))
     (cleavir-ir:make-enclose-instruction
      (first (results context))
      (first (successors context))
-     function)))
+     enter)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -465,7 +507,8 @@
      (cleavir-ast:value-ast ast)
      (context
       (list location)
-      (successors context)))))
+      (successors context)
+      (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -484,10 +527,12 @@
 			  (cleavir-ir:make-constant-input :datum)
 			  var
 			  (cleavir-ir:make-constant-input :expected-type)
-			  type-input))))))
+			  type-input)
+		    '())))))
     (cleavir-ir:make-typeq-instruction
-     (list var type-input)
-     (list error-branch successor))))
+     var
+     (list error-branch successor)
+     type-input)))
 
 (defmethod compile-ast ((ast cleavir-ast:the-ast) context)
   (with-accessors ((results results)
@@ -529,7 +574,8 @@
 		 (list temp)
 		 (list (cleavir-ir:make-eq-instruction
 			(list temp (cleavir-ir:make-constant-input 'nil))
-			successors)))))
+			successors))
+		 (invocation context))))
 	     (compile-ast
 	      ast
 	      (context
@@ -539,7 +585,8 @@
 		      (cleavir-ir:make-eq-instruction
 		       (list (car results)
 			     (cleavir-ir:make-constant-input 'nil))
-		       successors)))))))))))
+		       successors)))
+	       (invocation context)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -555,7 +602,8 @@
       (list (make-instance 'cleavir-ir:symbol-value-instruction
 	      :inputs (list temp)
 	      :outputs (results context)
-	      :successors (successors context)))))))
+	      :successors (successors context)))
+      (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -576,7 +624,9 @@
 	      (list (make-instance 'cleavir-ir:set-symbol-value-instruction
 		      :inputs (list temp1 temp2)
 		      :outputs ()
-		      :successors (successors context))))))))))
+		      :successors (successors context)))
+	      (invocation context))))
+      (invocation context)))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -592,7 +642,8 @@
       (list (make-instance 'cleavir-ir:fdefinition-instruction
 	      :inputs (list temp)
 	      :outputs (results context)
-	      :successors (successors context)))))))
+	      :successors (successors context)))
+      (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -600,7 +651,7 @@
 
 (defun make-boolean (boolean result successor)
   (cleavir-ir:make-assignment-instruction
-   (cleavir-ir:make-external-input boolean)
+   (cleavir-ir:make-constant-input boolean)
    result
    successor))
 
@@ -620,10 +671,10 @@
 	  (context
 	   (list temp2)
 	   (list (cleavir-ir:make-typeq-instruction
-		  (list temp2
-			(cleavir-ir:make-constant-input
-			 (cleavir-ast:type-specifier ast)))
-		  (list false true)))))))
+		  temp2
+		  (list false true)
+		  (cleavir-ast:type-specifier ast)))
+	   (invocation context)))))
       (1 (if (null results)
 	     (progn (warn "test compiled in a context with no results")
 		    (car successors))
@@ -638,10 +689,10 @@
 		  (nil-fill
 		   (cdr results)
 		   (cleavir-ir:make-typeq-instruction
-		    (list temp
-			  (cleavir-ir:make-constant-input
-			   (cleavir-ast:type-specifier ast)))
-		    (list false true)))))))))
+		    temp
+		    (list false true)
+		    (cleavir-ast:type-specifier ast))))
+		 (invocation context))))))
       (2 (if (null results)
 	     (let ((temp (make-temp nil)))
 	       (compile-ast
@@ -649,10 +700,10 @@
 		(context
 		 (list temp)
 		 (list (cleavir-ir:make-typeq-instruction
-			(list temp
-			      (cleavir-ir:make-constant-input
-			       (cleavir-ast:type-specifier ast)))
-			successors)))))
+			temp
+			successors
+			(cleavir-ast:type-specifier ast)))
+		 (invocation context))))
 	     (let ((false (make-boolean nil (car results) (car successors)))
 		   (true (make-boolean t (car results) (cadr successors)))
 		   (temp (make-temp nil)))
@@ -664,10 +715,10 @@
 		  (nil-fill
 		   (cdr results)
 		   (cleavir-ir:make-typeq-instruction
-		    (list temp
-			  (cleavir-ir:make-constant-input
-			   (cleavir-ast:type-specifier ast)))
-		    (list false true))))))))))))
+		    temp
+		    (list false true)
+		    (cleavir-ast:type-specifier ast))))
+		 (invocation context)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -690,7 +741,7 @@
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq)))
-    (compile-ast ast (context '() '()))))
+    (compile-ast ast (context '() '() nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -700,13 +751,14 @@
   (loop for argument in arguments
 	collect (make-temp argument)))
 
-(defun compile-arguments (arguments temps successor)
+(defun compile-arguments (arguments temps successor invocation)
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
-	do (unless (or (typep temp 'cleavir-ir:immediate-input)
-		       (typep temp 'cleavir-ir:external-input))
-	     (setf succ (compile-ast arg (context `(,temp) `(,succ)))))
+	do (setf succ (compile-ast arg
+				   (context `(,temp)
+					    `(,succ)
+					    invocation)))
 	finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

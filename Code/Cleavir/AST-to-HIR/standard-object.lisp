@@ -18,7 +18,9 @@
 		      (list (make-instance 'cleavir-ir:slot-read-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs (results context)
-			      :successors (successors context))))))))))
+			      :successors (successors context)))
+		      (invocation context))))
+      (invocation context)))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -44,4 +46,7 @@
 		(list (make-instance 'cleavir-ir:slot-write-instruction
 			:inputs (list temp1 temp2 temp3)
 			:outputs '()
-			:successors (successors context))))))))))))
+			:successors (successors context)))
+		(invocation context)))
+	      (invocation context))))
+      (invocation context)))))
