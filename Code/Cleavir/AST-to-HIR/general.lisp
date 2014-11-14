@@ -414,9 +414,22 @@
 ;;;
 ;;; Compile a GO-AST.
 ;;;
-;;; The CONTEXT is ignored.  Instead, the successor becomes the NOP
-;;; instruction that was entered into the hash table *GO-INFO* when
-;;; the TAGBODY-AST was compiled.
+;;; We obtain the GO-INFO that was stored when the TAG-AST of this
+;;; GO-AST was compiled.  This info is a list of two elements.  The
+;;; first element is the NOP instruction that resulted from the
+;;; compilation of the TAG-AST.  The second element is the INVOCATION
+;;; of the compilation context when the TAG-AST was compiled.
+;;;
+;;; The INVOCATION of the parameter CONTEXT is compared to the
+;;; invocation in which the target TAG-AST of this GO-AST was
+;;; compiled, which is the second element of the GO-INFO list.  If
+;;; they are the same, we have a local transfer of control, so we just
+;;; return the NOP instruction that resulted from the compilation of
+;;; the TAG-AST.  If they are not the same, we generate an
+;;; UNWIND-INSTRUCTION with that NOP instruction as its successor, and
+;;; we store the INVOCATION of the compilation context when the
+;;; TAG-AST was compiled in the UNWIND-INSTRUCTION so that we know how
+;;; far to unwind.
 
 (defmethod compile-ast ((ast cleavir-ast:go-ast) context)
   (let ((info (go-info (cleavir-ast:tag-ast ast))))
