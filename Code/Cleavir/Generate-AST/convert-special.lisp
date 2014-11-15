@@ -469,6 +469,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting TAGBODY.
+;;;
+;;; The TAGBODY special form always returns NIL.  We generate a PROGN
+;;; with the TAGBODY-AST and a CONSTANT-AST in it, because the
+;;; TAGBODY-AST (unlike hte TAGBODY special form) does not generate a
+;;; value.
 
 (defmethod convert-special
     ((symbol (eql 'tagbody)) form env)
@@ -484,7 +489,9 @@
 		       collect (if (symbolp item)
 				   (pop tag-asts)
 				   (convert item new-env)))))
-      (cleavir-ast:make-tagbody-ast items))))
+      (cleavir-ast:make-progn-ast
+       (list (cleavir-ast:make-tagbody-ast items)
+	     (cleavir-ast:make-constant-ast nil))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
