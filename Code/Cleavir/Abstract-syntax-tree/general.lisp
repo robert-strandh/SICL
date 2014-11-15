@@ -404,7 +404,7 @@
 ;;;
 ;;; Class TAGBODY-AST.
 
-(defclass tagbody-ast (ast)
+(defclass tagbody-ast (ast no-value-ast-mixin)
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
 (defun make-tagbody-ast (item-asts)
