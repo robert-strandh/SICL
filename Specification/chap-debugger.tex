@@ -3,7 +3,7 @@
 
 Part of the reason for SICL is to have a system that provides
 excellent debugging facilities for the programmer.  In this chapter,
-we describe how we imagine such facilities would be accomplished.  
+we describe how we imagine such facilities would be accomplished.
 
 Under normal circumstances, when a function is compiled, no matter
 what the \texttt{debug} settings are, the compiler will generate two
@@ -51,7 +51,7 @@ a few dozen entries at most.
 The two entry points are swapped so that the debugging entry point is
 used if there exists a thread that has flagged the function as being
 debugged.  When no thread has flagged the function as being debugged,
-the normal entry point is used. 
+the normal entry point is used.
 
 The \emph{auxiliary function} that is called before and after the
 evaluation of each form in the debugging version of the function body
@@ -60,20 +60,20 @@ particular point in the execution.  That action can be to suspend the
 thread and give control to the debugging thread (as in the case of a
 breakpoint), display some information (as in the case of the function
 being traced), test the value of a local variable (as in the case of a
-watch point), or anything else that the debugger interface allows. 
+watch point), or anything else that the debugger interface allows.
 
 Clearly, a function being flagged by some thread as being debugged is
 going to be significantly slower \emph{when executing in one of the
   threads having flagged it}.  However a thread would flag a function
 as being debugged only if it expects to set breakpoints in it, or
 extract some other information, so the slower execution will probably
-be dwarfed by the time it takes to process the desired information. 
+be dwarfed by the time it takes to process the desired information.
 
 %% Part of the reason for SICL is to have a system that provides
 %% excellent debugging facilities for the programmer.  We imagine that a
 %% thread will be debugged by a debugger running in a different thread.
 %% The debugger should be able to set breakpoints before and after
-%% expressions, and at the beginning or the end of a function.  
+%% expressions, and at the beginning or the end of a function.
 %% We imagine this being done by a conditional branch at strategic points
 %% in the code, perhaps implemented as a ``skip the next instruction if
 %% condition is false'' instruction, if that should turn out to be faster
@@ -82,14 +82,14 @@ be dwarfed by the time it takes to process the desired information.
 %% whether there is a breakpoint at this place.  If not, it returns and
 %% execution continues as usual.  If there is a breakpoint, then
 %% execution stops and the debugger thread is given the possibility to
-%% inspect the state of the debugged thread. 
+%% inspect the state of the debugged thread.
 
 %% For the highest debug level, the conditional branch should be
 %% generated before and after each expression, including each variable
 %% reference.  This can be a bit costly for local variables because it
 %% would slow down execution significantly.  Lower debug levels may
 %% generate the conditional branch only when the cost of the branch is
-%% negligible compared to the cost of evaluating the expression. 
+%% negligible compared to the cost of evaluating the expression.
 
 %% In order not to slow down the execution too much, there should be a
 %% quick test to determine that there is no breakpoint at a particular
@@ -98,11 +98,11 @@ be dwarfed by the time it takes to process the desired information.
 %% entirely accurate, perhaps based on intervals of values of the program
 %% counter (say, take PC, shift it right by some number of bits, check a
 %% bitvector to see if the corresponding bit is set, if not, there is no
-%% breakpoint here). 
+%% breakpoint here).
 
 %% For each possible breakpoint, the system must keep a description of
 %% the lexical environment.  This includes mappings from variable names
 %% to registers or stack locations, information about liveness of
 %% registers and stack location, how a variable is stored in a location
-%% (immediate value, pointer, with or without type tag, etc). 
+%% (immediate value, pointer, with or without type tag, etc).
 
