@@ -428,15 +428,24 @@
 ;;;
 ;;; Converting SETQ.
 
+(defgeneric convert-setq (info form-ast))
+
+(defmethod convert-setq ((info cleavir-env:constant-variable-info) form-ast)
+  (error 'setq-constant-variable
+	 :form (cleavir-env:name info)))
+
+(defmethod convert-setq ((info cleavir-env:lexical-variable-info) form-ast)
+  (cleavir-ast:make-setq-ast
+   (cleavir-env:identity info)
+   form-ast))
+
+(defmethod convert-setq ((info cleavir-env:special-variable-info) form-ast)
+  (cleavir-ast:make-set-symbol-value-ast
+   (cleavir-ast:make-constant-ast (cleavir-env:name info))
+   form-ast))
+
 (defun convert-elementary-setq (var form env)
-  (let* ((info (variable-info env var))
-	 (identity (cleavir-env:identity info)))
-    (if (typep info 'cleavir-env:constant-variable-info)
-	(error 'setq-constant-variable
-	       :form var)
-	(cleavir-ast:make-setq-ast
-	 identity
-	 (convert form env)))))
+  (convert-setq (variable-info env var) (convert form env)))
   
 (defmethod convert-special
     ((symbol (eql 'setq)) form environment)
