@@ -421,13 +421,10 @@
 ;;; Converting RETURN-FROM.
 
 (defmethod convert-special ((symbol (eql 'return-from)) form env)
-  (let ((info (cleavir-env:block-info env (cadr form))))
-    (if (null info)
-	(error 'block-name-unknown
-	       :expr (cadr form))
-	(cleavir-ast:make-return-from-ast
-	 (cleavir-env:identity info)
-	 (convert (caddr form) env)))))
+  (let ((info (block-info env (cadr form))))
+    (cleavir-ast:make-return-from-ast
+     (cleavir-env:identity info)
+     (convert (caddr form) env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
