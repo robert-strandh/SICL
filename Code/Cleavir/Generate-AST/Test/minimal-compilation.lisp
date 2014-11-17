@@ -471,10 +471,10 @@
 
 (defun test-symbol-macrolet ()
   (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(symbol-macrolet ((gsm1 (bla bla)))
+		  '(symbol-macrolet ((gsm1 (list* bla)))
 		    gsm1 gsm2)
 		  *e*)
-		 `(locally (bla bla) (bla bla)))))
+		 `(locally (list* bla) (list* bla)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
