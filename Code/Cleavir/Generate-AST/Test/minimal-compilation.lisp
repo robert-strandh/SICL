@@ -137,7 +137,7 @@
 		  '(flet ((gm1 (x) (gm1 x)))
 		    (gm1 x))
 		  *e*)
-		 '(flet ((gm1 (x) (hello x)))
+		 '(flet ((gm1 (x) (numberp x)))
 		   (gm1 x))))
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(flet ((fun1 (x &optional (y gsm1))
