@@ -434,7 +434,7 @@
 ;;; Converting SETQ.
 
 (defun convert-elementary-setq (var form env)
-  (let* ((info (cleavir-env:variable-info env var))
+  (let* ((info (variable-info env var))
 	 (identity (cleavir-env:identity info)))
     (if (typep info 'cleavir-env:constant-variable-info)
 	(error 'setq-constant-variable
