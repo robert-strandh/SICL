@@ -587,22 +587,21 @@
 
 (defclass multiple-value-prog1-ast (ast)
   ((%first-form-ast :initarg :first-form-ast :reader first-form-ast)
-   ;; If there are several forms after the first form in the original
-   ;; form, then the BODY-AST will be a PROGN-AST.
-   (%body-ast :initarg :body-ast :reader body-ast)))
+   ;; A list of ASTs
+   (%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-multiple-value-prog1-ast (first-form-ast body-ast)
+(defun make-multiple-value-prog1-ast (first-form-ast form-asts)
   (make-instance 'multiple-value-prog1-ast
     :first-form-ast first-form-ast
-    :body-ast body-ast))
+    :form-asts form-asts))
 
 (cleavir-io:define-save-info multiple-value-prog1-ast
   (:first-form-ast first-form-ast)
-  (:body-ast body-ast))
+  (:form-asts form-asts))
 
 (defmethod children ((ast multiple-value-prog1-ast))
   (cons (first-form-ast ast)
-	(body-ast ast)))
+	(form-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
