@@ -4,7 +4,8 @@
   :depends-on (:cleavir-ir)
   :serial t
   :components
-  ((:file "general")
+  ((:file "data")
+   (:file "general")
    (:file "fixnum")
    (:file "integer")
    (:file "float")
