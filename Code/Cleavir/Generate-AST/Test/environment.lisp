@@ -16,11 +16,11 @@
 	nil)))
 
 ;;; Any function not otherwise mentioned explicitly is considered to
-;;; be a global function, provided it is either a list or that it has
-;;; at least 5 characters in its name.
+;;; be a global function if and only if it has a definition in the
+;;; host environment.
 (defmethod cleavir-env:function-info
     ((environment bogus-environment) name)
-  (if (or (consp name) (> (length (symbol-name name)) 5))
+  (if (cl:fboundp name)
       (make-instance 'cleavir-env:global-function-info
 	:name name)
       nil))
