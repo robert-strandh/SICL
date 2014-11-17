@@ -146,11 +146,11 @@
 			   (f x y gsm1)))
 		    gsm1)
 		  *e*)
-		 '(flet ((fun1 (x &optional (y (hello1 hello2)))
-			  (f x y (hello1 hello2)))
-			 (fun2 (x &key ((:y y) (hello1 hello2) gsm1))
+		 '(flet ((fun1 (x &optional (y (consp hello2)))
+			  (f x y (consp hello2)))
+			 (fun2 (x &key ((:y y) (consp hello2) gsm1))
 			  (f x y gsm1)))
-		   (hello1 hello2)))))
+		   (consp hello2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -205,7 +205,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (gsm1 &optional (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that a required parameter of the local function shadows the
   ;; global symbol macro in the &KEY part of the lambda list of
   ;; the local function, but not in the body of the LABELS.
@@ -214,7 +214,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (gsm1 &key ((:x x) gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that a required parameter of the local function shadows the
   ;; global symbol macro in the &AUX part of the lambda list of
   ;; the local function, but not in the body of the LABELS.
@@ -223,7 +223,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (gsm1 &aux (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that a required parameter of the local function shadows the
   ;; global symbol macro in the body of the local function, but not in
   ;; the body of the LABELS.
@@ -232,7 +232,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (gsm1) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &OPTIONAL parameter of the local function shadows
   ;; the global symbol macro in the &KEY part of the lambda list of
   ;; the local function, but not in the body of the LABELS.
@@ -241,7 +241,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&optional (gsm1 12) &key ((:x x) gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &OPTIONAL parameter of the local function shadows
   ;; the global symbol macro in the remaining &OPTIONAL part of the
   ;; lambda list of the local function, but not in the body of the
@@ -251,7 +251,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&optional (gsm1 12) (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &OPTIONAL parameter of the local function shadows
   ;; the global symbol macro in the &AUX part of the lambda list of
   ;; the local function, but not in the body of the LABELS.
@@ -260,7 +260,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&optional (gsm1 12) &aux (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &OPTIONAL parameter of the local function shadows
   ;; the global symbol macro in body of the local function, but not in
   ;; the body of the LABELS.
@@ -269,7 +269,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&optional (gsm1 12)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &KEY parameter of the local function shadows the
   ;; global symbol macro in the remaining &KEY part of the lambda list
   ;; of the local function, but not in the body of the LABELS.
@@ -278,7 +278,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&key ((:gsm1 gsm1) 12) ((:x x) gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &KEY parameter of the local function shadows the
   ;; global symbol macro in the &AUX part of the lambda list of the
   ;; local function, but not in the body of the LABELS.
@@ -287,7 +287,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&key ((:gsm1 gsm1) 12) &aux (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &KEY parameter of the local function shadows the
   ;; global symbol macro in the body of the local function, but not in
   ;; the body of the LABELS.
@@ -296,7 +296,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&key ((:gsm1 gsm1) 12)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &AUX parameter of the local function shadows
   ;; the global symbol macro in the remaining &AUX part of the
   ;; lambda list of the local function, but not in the body of the
@@ -306,7 +306,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&aux (gsm1 12) (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that an &AUX parameter of the local function shadows the
   ;; global symbol macro in the body of the local function, but not in
   ;; the body of the LABELS.
@@ -315,7 +315,7 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&aux (gsm1 12)) gsm1))
-		    (fun (hello1 hello2)))))
+		    (fun (consp hello2)))))
   ;; Test that the name of the local function shadows the global macro
   ;; both in the body of the LABELS and in the body of the local
   ;; function.
@@ -362,7 +362,7 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(load-time-value gsm1 t)
 		  *e*)
-		 '(load-time-value (hello1 hello2) t))))
+		 '(load-time-value (consp hello2) t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -393,7 +393,7 @@
 		  '(multiple-value-call gsm1 gsm1 gsm1)
 		  *e*)
 		 '(multiple-value-call
-		   (hello1 hello2) (hello1 hello2) (hello1 hello2)))))
+		   (consp hello2) (consp hello2) (consp hello2)))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -404,7 +404,7 @@
 		  '(multiple-value-prog1 gsm1 gsm1 gsm1)
 		  *e*)
 		 '(multiple-value-prog1
-		   (hello1 hello2) (hello1 hello2) (hello1 hello2)))))
+		   (consp hello2) (consp hello2) (consp hello2)))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -414,7 +414,7 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(progn gsm1 gsm1)
 		  *e*)
-		 '(progn (hello1 hello2) (hello1 hello2)))))
+		 '(progn (consp hello2) (consp hello2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -424,8 +424,8 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(progv gsm1 gsm1 gsm1 gsm1)
 		  *e*)
-		 '(progv (hello1 hello2) (hello1 hello2)
-		   (hello1 hello2) (hello1 hello2)))))
+		 '(progv (consp hello2) (consp hello2)
+		   (consp hello2) (consp hello2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -445,7 +445,7 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(return-from gsm1 gsm1)
 		  *e*)
-		 '(return-from gsm1 (hello1 hello2)))))
+		 '(return-from gsm1 (consp hello2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -455,15 +455,15 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(setq x gsm1 y gsm1)
 		  *e*)
-		 `(progn (setq x (hello1 hello2))
-			 (setq y (hello1 hello2)))))
+		 `(progn (setq x (consp hello2))
+			 (setq y (consp hello2)))))
   ;; Check that the second gsm1 is expanded.  SETQ is handled as SETF
   ;; if the variable is defined as a symbol macro.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(setq x gsm1 gsm1 z)
 		  *e*)
-		 `(progn (setq x (hello1 hello2))
-			 (setf (hello1 hello2) z)))))
+		 `(progn (setq x (consp hello2))
+			 (setf (consp hello2) z)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -485,8 +485,8 @@
 		  '(tagbody gsm1 (progn gsm1) gsm1 (progn gsm1))
 		  *e*)
 		 `(tagbody
-		   gsm1 (progn (hello1 hello2))
-		   gsm1 (progn (hello1 hello2))))))
+		   gsm1 (progn (consp hello2))
+		   gsm1 (progn (consp hello2))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -496,7 +496,7 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(the gsm1 gsm1)
 		  *e*)
-		 `(the gsm1 (hello1 hello2)))))
+		 `(the gsm1 (consp hello2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -506,7 +506,7 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(throw gsm1 gsm1)
 		  *e*)
-		 '(throw (hello1 hello2) (hello1 hello2)))))
+		 '(throw (consp hello2) (consp hello2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -516,9 +516,9 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(unwind-protect gsm1 gsm1 gsm1)
 		  *e*)
-		 '(unwind-protect (hello1 hello2)
-		   (hello1 hello2)
-		   (hello1 hello2)))))
+		 '(unwind-protect (consp hello2)
+		   (consp hello2)
+		   (consp hello2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -562,19 +562,19 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'gsm1
 		  *e*)
-		 '(hello1 hello2)))
+		 '(consp hello2)))
   ;; Check that the symbol macro is expanded correctly and that the
   ;; expansion is then minimally compiled.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'gsm2
 		  *e*)
-		 '(hello1 hello2)))
+		 '(consp hello2)))
   ;; Check that the symbol macro is expanded in an argument position,
   ;; but not in a function position.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(gsm1 gsm1)
 		  *e*)
-		 '(gsm1 (hello1 hello2))))
+		 '(gsm1 (consp hello2))))
   (format t "Tests passed~%"))
 
 (run-tests)
