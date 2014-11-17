@@ -79,11 +79,9 @@
 ;;; representation as ASTs.  These are: LOCALLY, MACROLET, and
 ;;; SYMBOL-MACROLET.
 ;;;
-;;; The LET special form is compiled into a function call of a LAMBDA
-;;; expression.  LET* is compiled as nested LETs.  FLET and LABELS are
-;;; like LET except that the symbols the bind are in the function
-;;; namespace, but the distinciton between namespeces no longer exists
-;;; in the AST.
+;;; FLET and LABELS are like LET except that the symbols the bind are
+;;; in the function namespace, but the distinciton between namespeces
+;;; no longer exists in the AST.
 ;;; 
 ;;; A LAMBDA expression, either inside (FUNCTION (LAMBDA ...)) or when
 ;;; it is the CAR of a compound form, compiles into a FUNCTION-AST.
