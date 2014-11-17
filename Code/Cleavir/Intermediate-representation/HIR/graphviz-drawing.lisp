@@ -58,6 +58,16 @@
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
 	  (datum-id datum) (name datum)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Drawing datum VALUES-LOCATION.
+
+(defmethod draw-datum ((datum values-location) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
+  (format stream "   ~a [fillcolor = blue, label = \"V\"]~%"
+	  (datum-id datum)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing instructions.
