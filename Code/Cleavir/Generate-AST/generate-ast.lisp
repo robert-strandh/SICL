@@ -199,7 +199,7 @@
 	((and (symbolp form) (constantp form))
 	 (cleavir-ast:make-constant-ast (symbol-value form)))
 	((symbolp form)
-	 (let ((info (cleavir-env:variable-info environment form)))
+	 (let ((info (variable-info environment form)))
 	   (convert-form form info environment)))
 	((symbolp (car form))
 	 (let ((info (cleavir-env:function-info environment (car form))))
