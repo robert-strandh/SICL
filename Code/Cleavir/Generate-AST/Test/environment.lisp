@@ -67,6 +67,12 @@
 		`(numberp ,(second form)))
     :compiler-macro nil))
 
+;;; Define GSM1 as a global function.
+(defmethod cleavir-env:function-info
+    ((environment bogus-environment) (name (eql 'gsm1)))
+  (make-instance 'cleavir-env:global-function-info
+    :name name))
+
 ;;; Define UNLESS as a macro.  It is used automatically for parsing
 ;;; optional and keyword arguments.
 (defmethod cleavir-env:function-info
