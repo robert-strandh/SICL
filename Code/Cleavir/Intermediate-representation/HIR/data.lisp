@@ -7,11 +7,21 @@
 ;;; Only Common Lisp objects are used as data in the high-level
 ;;; intermediate representation, but they can be BOXED or UNBOXED. 
 ;;;
-;;; Two kinds of data are possible in the high-level intermediate
-;;; representation.  The first kind is called CONSTANT-INPUT and is
-;;; used for any Common Lisp object considered to be literal data.
-;;; The second kind is called LEXICAL-LOCATION and is used both as
-;;; input and output to instructions. 
+;;; Three kinds of data are possible in the high-level intermediate
+;;; representation:
+;;;
+;;;   * CONSTANT-INPUT.  This type of data can only be used as input
+;;;     to instructions.  It is used for any Common Lisp object
+;;;     considered to be literal data.
+;;;
+;;;   * LEXICAL-LOCATION.  This type of data can be used both as input
+;;;     and output to instructions.  It holds a single Lisp datum, but
+;;;     that datum can be BOXED or UNBOXED.
+;;;
+;;;   * VALUES-LOCATION.  This type of data can be used both as input
+;;;     and output to instructions.  It holds a an arbitrary number of
+;;;     Lisp values.  The number of values it holds is statically
+;;;     unknown.
 ;;;
 ;;; An instruction I REFERS TO a lexical location L if and only if L
 ;;; is either one of the inputs or one of the outputs of I.
@@ -125,4 +135,3 @@
 (defun make-load-time-input (initial-instruction)
   (make-instance 'load-time-input
     :initial-instruction initial-instruction))
-
