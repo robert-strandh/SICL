@@ -33,12 +33,12 @@
 
 ;;; When the name GSM1 is used as a global variable, then it is
 ;;; considered a global symbol macro that expands to the following
-;;; form: (HELLO1 HELLO2)
+;;; form: (CONSP HELLO2)
 (defmethod cleavir-env:variable-info
     ((environment bogus-environment) (name (eql 'gsm1)))
   (make-instance 'cleavir-env:symbol-macro-info 
     :name name
-    :expansion '(hello1 hello2)))
+    :expansion '(consp hello2)))
 
 ;;; When the name GSM2 is used as a global variable, then it is
 ;;; considered a global symbol macro that expands to the following
