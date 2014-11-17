@@ -520,3 +520,14 @@
     (cleavir-ast:make-multiple-value-call-ast
      (convert function-form environment)
      (convert-sequence forms environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting MULTIPLE-VALUE-CALL.
+
+(defmethod convert-special
+    ((symbol (eql 'multiple-value-prog1)) form environment)
+  (destructuring-bind (first-form . forms) (rest form)
+    (cleavir-ast:make-multiple-value-prog1-ast
+     (convert first-form environment)
+     (convert-sequence forms environment))))
