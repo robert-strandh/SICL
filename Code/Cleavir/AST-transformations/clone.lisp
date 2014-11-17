@@ -20,12 +20,6 @@
 	       (fixup clone original dictionary))
 	     dictionary)))
 			
-(defmethod fixup :after ((clone cleavir-ast:immediate-ast) original dictionary)
-  (declare (ignore dictionary))
-  (reinitialize-instance
-   clone
-   :value (cleavir-ast:value original)))
-
 (defmethod fixup :after ((clone cleavir-ast:constant-ast) original dictionary)
   (declare (ignore dictionary))
   (reinitialize-instance
