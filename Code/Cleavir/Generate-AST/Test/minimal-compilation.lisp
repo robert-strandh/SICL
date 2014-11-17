@@ -555,9 +555,9 @@
 		  *e*)
 		 'hello))
   (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(hello)
+		  '(list)
 		  *e*)
-		 '(hello)))
+		 '(list)))
   ;; Check that the symbol macro is expanded correctly.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'gsm1
