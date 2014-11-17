@@ -12,6 +12,7 @@
    #:dynamic-lexical-location #:make-dynamic-lexical-location #:new-temporary
    #:indefinite-lexical-location #:make-indefinite-lexical-location
    #:name
+   #:values-location #:make-values-location
    #:external-input #:make-external-input
    #:register-location
    #:static-location

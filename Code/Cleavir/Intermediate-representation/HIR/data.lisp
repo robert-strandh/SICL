@@ -114,3 +114,13 @@
 (defun make-indefinite-lexical-location (name)
   (make-instance 'indefinite-lexical-location
     :name name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum class VALUES-LOCATION.
+
+(defclass values-location (datum)
+  ())
+
+(defun make-values-location ()
+  (make-instance 'values-location))
