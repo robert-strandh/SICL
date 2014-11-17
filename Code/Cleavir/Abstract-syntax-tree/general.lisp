@@ -583,6 +583,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class MULTIPLE-VALUE-PROG1-AST.
+
+(defclass multiple-value-prog1-ast (ast)
+  ((%first-form-ast :initarg :first-form-ast :reader first-form-ast)
+   ;; If there are several forms after the first form in the original
+   ;; form, then the BODY-AST will be a PROGN-AST.
+   (%body-ast :initarg :body-ast :reader body-ast)))
+
+(defun make-multiple-value-prog1-ast (first-form-ast body-ast)
+  (make-instance 'multiple-value-prog1-ast
+    :first-form-ast first-form-ast
+    :body-ast body-ast))
+
+(cleavir-io:define-save-info multiple-value-prog1-ast
+  (:first-form-ast first-form-ast)
+  (:body-ast body-ast))
+
+(defmethod children ((ast multiple-value-prog1-ast))
+  (cons (first-form-ast ast)
+	(body-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class BIND-AST.
 ;;;
 ;;; This AST is used to create a dynamic binding for a symbol for the
