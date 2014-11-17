@@ -52,16 +52,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing an IMMEDIATE-AST. 
-
-(defmethod stream-draw-ast ((ast immediate-ast) stream)
-  (format stream "   ~a [style = filled, fillcolor = aquamarine];~%" (id ast))
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (value ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing a CONSTANT-AST.
 
 (defmethod stream-draw-ast ((ast constant-ast) stream)
