@@ -10,7 +10,6 @@
    #:one-value-ast-mixin
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
-   #:immediate-ast #:make-immediate-ast
    #:constant-ast #:make-constant-ast #:value
    #:lexical-ast #:make-lexical-ast
    #:symbol-value-ast #:make-symbol-value-ast #:symbol-ast
