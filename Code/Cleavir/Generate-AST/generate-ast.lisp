@@ -202,7 +202,7 @@
 	 (let ((info (variable-info environment form)))
 	   (convert-form form info environment)))
 	((symbolp (car form))
-	 (let ((info (cleavir-env:function-info environment (car form))))
+	 (let ((info (function-info environment (car form))))
 	   (convert-form form info environment)))
 	(t
 	 (convert-lambda-call form environment))))
