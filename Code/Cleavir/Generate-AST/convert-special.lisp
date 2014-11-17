@@ -136,11 +136,9 @@
 ;;; Converting GO.
 
 (defmethod convert-special ((symbol (eql 'go)) form env)
-  (let ((info (cleavir-env:tag-info env (cadr form))))
-    (if (null info)
-	(error "undefined go tag: ~s" form)
-	(cleavir-ast:make-go-ast
-	 (cleavir-env:identity info)))))
+  (let ((info (tag-info env (cadr form))))
+    (cleavir-ast:make-go-ast
+     (cleavir-env:identity info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
