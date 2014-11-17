@@ -199,11 +199,11 @@
     :symbol-ast symbol-ast
     :value-ast value-ast))
 
-(cleavir-io:define-save-info symbol-value-ast
+(cleavir-io:define-save-info set-symbol-value-ast
   (:symbol-ast symbol-ast)
   (:value-ast value-ast))
 
-(defmethod children ((ast symbol-value-ast))
+(defmethod children ((ast set-symbol-value-ast))
   (list (symbol-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
