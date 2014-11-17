@@ -45,7 +45,7 @@
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
    #:catch-instruction #:make-catch-instruction
-   #:unwind-instruction #:make-unwind-instruction
+   #:unwind-instruction #:make-unwind-instruction #:invocation
    #:eq-instruction #:make-eq-instruction
    #:phi-instruction #:make-phi-instruction
    #:fixnum-add-instruction #:make-fixnum-add-instruction
@@ -132,7 +132,7 @@
    #:signed-add-instruction #:make-signed-add-instruction
    #:signed-sub-instruction #:make-signed-sub-instruction
    #:signed-less-instruction #:make-signed-less-instruction
-   #:signed-not-greater-instruction :#make-signed-not-greater-instruction
+   #:signed-not-greater-instruction #:make-signed-not-greater-instruction
    #:unsigned-add-instruction #:make-unsigned-add-instruction
    #:unsigned-sub-instruction #:make-unsigned-sub-instruction
    #:unsigned-less-instruction #:make-unsigned-less-instruction 

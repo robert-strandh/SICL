@@ -172,9 +172,15 @@
 	  (gethash (code instruction) *instruction-table*)
 	  (instruction-id instruction)))
 
-(defmethod label ((instruction catch-instruction)) "catch")
+(defmethod draw-instruction ((instruction unwind-instruction) stream)
+  (format stream "   ~a [label = \"unwind\"];~%"
+	  (instruction-id instruction))
+  (draw-instruction (code instruction) stream)
+  (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
+	  (instruction-id instruction)
+	  (gethash (invocation instruction) *instruction-table*)))
 
-(defmethod label ((instruction unwind-instruction)) "unwind")
+(defmethod label ((instruction catch-instruction)) "catch")
 
 (defmethod label ((instruction eq-instruction)) "eq")
 

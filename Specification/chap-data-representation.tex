@@ -3,75 +3,56 @@
 
 \section{Low-level tag bits}
 
-On 32-bit backends, the two least significant bits of a machine word
-are used to represent four different \emph{tags} as follows:
-
-\begin{itemize}
-\item \texttt{00}.  This tag is used for fixnums.  The remaining bits
-  represent a signed integer in two's complement representation.  On a
-  32-bit machine, a fixnum is thus in the interval $[2^{-29}, 2^{29} -
-    1]$.
-\item \texttt{01}.  This tag is used for \texttt{cons} cells.  A
-  pointer to a \texttt{cons} cell is thus a pointer aligned to a
-  double word to which the machine integer $1$ has been added.  The
-  bit representing $2^2$ will always have the value $0$.
-\item \texttt{10}.  This tag is used for various \emph{immediate}
-  objects.  In particular for \emph{characters}, but also a
-  distinguished bit pattern that is used to initialize \emph{unbound}
-  variables and slots.  Floats of type \texttt{short-float} are
-  represented as immediate values. 
-\item \texttt{11}.  This tag is used for all heap-allocated objects
-  other than \texttt{cons} cells.  A heap allocated object like this
-  is called a \emph{general instance}.
-\end{itemize}
-
-On 64-bit backends, the three least significant bits are used as tag
-bits as follows:
+The three least significant bits of a machine word are used to
+represent four different \emph{tags} as follows:
 
 \begin{itemize}
 \item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
   tags are used for fixnums.  The bits except the last one represent
-  integer in two's complement representation.  On a 64-bit machine, a
-  fixnum is thus in the interval $[2^{-62}, 2^{62} - 1]$.
+  integer in two's complement representation.  fixnum is thus in the
+  interval $[2^{-62}, 2^{62} - 1]$.  On a 32-bit machine, a fixnum is
+  thus in the interval $[2^{-30}, 2^{30} - 1]$.  On a 64-bit machine
+  the corresponding interval is $[2^{-62}, 2^{62} - 1]$.
 \item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
   pointer to a \texttt{cons} cell is thus a pointer aligned to a
-  double word to which the machine integer $1$ has been added.  The
-  bit representing will always have the value $0$.
-\item \texttt{011}, \texttt{101}.  These tags are used for various
-  \emph{immediate} objects.  In particular for \emph{characters}, but
-  also a distinguished bit pattern that is used to initialize
-  \emph{unbound} variables and slots.  Floats of type
-  \texttt{short-float} and \texttt{single-float} are represented as
-  immediate values.
-\item \texttt{111}.  This tag is used for all heap-allocated objects
+  double word to which the machine integer $1$ has been added.
+\item \texttt{011}.  This tag is used for various \emph{immediate}
+  objects, and in particular for \emph{characters}.
+\item \texttt{101}.  This tag is used for all heap-allocated objects
   other than \texttt{cons} cells.  A heap allocated object like this
   is called a \emph{general instance}.
+\item \texttt{111}.  This tag is unused.
 \end{itemize}
+
+On a 32-bit machine, floats of type \texttt{short-float} are
+represented as immediate values.  On a 64-bit machine, floats of type
+\texttt{short-float} and \texttt{single-float} are represented as
+immediate values.
+
+On 64-bit backends, the three least significant bits are used as tag
+bits as follows:
 
 \section{Immediate objects}
 
-On 32-bit backends, immediate objects are all objects with \texttt{10}
-in the lower two bits.  Two more bits are used to distinguish between
-different kinds of immediate objects, giving the following four low
-bits:
+Immediate objects are all objects with \texttt{011} in the lower two
+bits.  Two more bits are used to distinguish between different kinds
+of immediate objects, giving the following four low bits:
 
 \begin{itemize}
-\item \texttt{0010}.  This tag is used for Unicode characters.  When
-  shifted four positions to the right, the value gives the Unicode
-  code point. 
-\item \texttt{0110}.  This tag is used short floats.  
-\item \texttt{1010}.  This tag is used for single floats (64-bit
-  platforms only). 
-\item \texttt{1110}.  This tag is used for various unique immediate
-  objects, in particular for the object that is stored in various
-  locations to indicate that the location is \emph{unbound}. 
+\item \texttt{00011}.  This tag is used for Unicode characters.  When
+  shifted five positions to the right, the value gives the Unicode
+  code point.
+\item \texttt{01011}.  This tag is used short floats.
+\item \texttt{10011}.  This tag is used for single floats (64-bit
+  platforms only).
+\item \texttt{11011}.  This tag is unused.
 \end{itemize}
 
 \subsection{Characters}
 
-As indicated above, the low four bits of a character have the value
-\texttt{0010}, and the corresponding Unicode code point is obtained by
-shifting the value of the character four bits to the right. 
+As indicated above, the low five bits of a character have the value
+\texttt{00011}, and the corresponding Unicode code point is obtained by
+shifting the value of the character five positions to the right.
 
 We currently do not plan to supply a module for Unicode support.
 Instead we are relying on the support available in the Unicode library
@@ -79,31 +60,21 @@ by Edi Weitz.
 
 \subsection{Short floats}
 
-A short float is an immediate floating-point value that does not fall
-into any of the IEEE floating-point categories.  On a 32-bit platform,
-it is similar to a single-precision IEEE floating-point value, with
-the difference that four fewer bits are used for the mantissa.  On a
-65-bit platform, it is similar to a double-precision IEEE
-floating-point value, again with the difference that four fewer bits
-are used for the mantissa.  Notice that on a 64-bit platform, a short
-float is more precise than a single float. 
+On a 32-bit platform, a short float is an immediate floating-point
+value that does not fall into any of the IEEE floating-point
+categories.  It is similar to a single-precision
+IEEE floating-point value, with the difference that five fewer bits
+are used for the mantissa.
+
+On a 64-bit platform, a short float corresponds to a single-precision
+IEEE floating-point value.  The value is stored in the
+most-significant half of the word.
 
 \subsection{Single floats}
 
-A single float is an IEEE single-precision (32-bit) floating-point
-value stored in the most significant half of a 64-bit word.  The least
-significant half of the word is unused except for the tag bits. 
-
-\subsection{Unbound}
-\label{data-representation-unbound}
-
-The unbound object is represented as a word in which every bit except
-the least significant one is equal to 1.  As a signed machine integer,
-this value is equal to $-2$.  The unbound immediate object is used
-as the value of special variables and of slots in arrays and instances
-of (subclasses of) \texttt{standard-object}.  It is \emph{not} used to
-indicate that a \emph{function name} is unbound.  For that purpose, a
-special function that signals an error is used instead. 
+On a 64-bit platform, a single float is similar to a double-precision
+IEEE floating-point value, with the difference that five fewer bits
+are used for the mantissa.
 
 \section{Representation of \texttt{cons} cells}
 
@@ -114,7 +85,7 @@ words aligned on a double-word boundary.
 \label{sec-data-representation-general-instances}
 
 Recall that a \emph{general instance} is a heap allocated object that
-is not a \texttt{cons} cell.  
+is not a \texttt{cons} cell.
 All general instances are represented in (at
 least) two parts, a \emph{header object} and a \emph{rack}.
 The header object always consists of two consecutive words aligned on
@@ -177,7 +148,7 @@ other threads from invoking a partially updated generic function.  In
 would be allocated and the modifications would be made there,
 leaving the original generic function intact until the final
 instruction to store a reference to the the new rack in the
-header object. 
+header object.
 
 A general instance can be \emph{rigid} or \emph{flexible}.  A rigid
 instance is an instance of a class that can not change, typically a
@@ -185,7 +156,7 @@ built-in class.  A flexible instance is an instance of a class that
 may be modified, makings its instances \emph{obsolete}.  Standard
 objects are flexible instances, but other instances might be flexible
 too.  In \sysname{}, structure objects are flexible too, for
-instance. 
+instance.
 
 In the following sections we give the details of the representation
 for all possible general instances.
@@ -193,7 +164,7 @@ for all possible general instances.
 \section{Flexible instances}
 \label{sec-data-representation-flexible-instances}
 
-a flexible instance must allow for its class to be redefined, making
+A flexible instance must allow for its class to be redefined, making
 it necessary for the instance to be updated before used again.  The
 standard specifically allows for these updates to be delayed and not
 happen as a direct result of the class redefinition.  They must happen
@@ -242,7 +213,7 @@ of the object.
 By definition, a \emph{standard object} is an instance of a subclass
 of the class with the name \texttt{standard-object}.  Standard objects
 are \emph{flexible instances}.
-\seesec{sec-data-representation-flexible-instances} 
+\seesec{sec-data-representation-flexible-instances}
 
 Subclasses of \texttt{standard-object} must allow for the class of an
 instance to be changed to some other class (\texttt{change-class}) and
@@ -300,14 +271,14 @@ by all generic functions, thus avoiding a test for a special case.
 
 \section{Instance of built-in classes}
 
-Instances of a built-in classes are \emph{rigid instances}. 
+Instances of a built-in classes are \emph{rigid instances}.
 \seesec{sec-data-representation-rigid-instances}
 
 \subsection{Instances of \texttt{sequence}}
 
 The system class \texttt{sequence} can not be directly instantiated.
 Instead, it serves as a superclass for the classes \texttt{list} and
-\texttt{vector}.  
+\texttt{vector}.
 
 The \hs{} is a bit contradictory here, because
 in some places it says that \texttt{list} and \texttt{vector}
@@ -316,7 +287,7 @@ represent an exhaustive partition of \texttt{sequence}%
 but in other places it explicitly allows for other subtypes of
 \texttt{sequence}.%
 \footnote{See the definition of the system class \texttt{sequence}.}
-The general consensus seems to be that other subtypes are allowed. 
+The general consensus seems to be that other subtypes are allowed.
 
 
 \subsection{Arrays}
@@ -335,17 +306,17 @@ of the rack.  Finally, if the array is displaced to another
 array, the rack contains two words with the array to which
 this one is displaced, and the displacement offset.  If the array is
 not displaced, then the elements of the array follow.  The size of the
-rack is rounded up to the nearest multiple of a word. 
+rack is rounded up to the nearest multiple of a word.
 
 The exact class of the array differs according to whether the array is
-simple, has a fill pointer, or is displaced. 
+simple, has a fill pointer, or is displaced.
 
 All arrays are \emph{adjustable} thanks to the split representation
 with a header object and a rack.  Adjusting the array
-typically requires allocating a new rack. 
+typically requires allocating a new rack.
 
 The element type of the array is determined by the exact class of the
-array. 
+array.
 
 We suggest providing specialized arrays for the following data types:
 
@@ -355,26 +326,26 @@ We suggest providing specialized arrays for the following data types:
 \item \texttt{(unsigned-byte 64)}.
 \item \texttt{(signed-byte 64)}.
 \item \texttt{(unsigned-byte 32)}.
-\item \texttt{(signed-byte 32)}.  
+\item \texttt{(signed-byte 32)}.
 \item \texttt{(unsigned-byte 8)}, used for code, interface with the
-  operating system, etc. 
+  operating system, etc.
 \item \texttt{character} (i.e., strings) as required by the \hs{}.
 \item \texttt{bit}, as required by the \hs{}.
 \end{itemize}
 
 Since the element type determines where an element is located and how
 to access it, \texttt{aref} and \texttt{(setf aref)} are \emph{generic
-  functions} that specialize on the type of the array. 
+  functions} that specialize on the type of the array.
 
 \subsubsection{System class \texttt{vector}}
 
 A vector is a one-dimensional array.  As such, a vector has a rack
 where the second word is a proper list of a single element,
-namely the \emph{length} of the vector represented as a fixnum. 
+namely the \emph{length} of the vector represented as a fixnum.
 
 The remaining words of the rack contain an optional fill
 pointer, and then either the elements of the vector or displacement
-information as indicated above. 
+information as indicated above.
 
 \subsubsection{System class \texttt{string}}
 
@@ -386,7 +357,7 @@ could be represented in a single byte.  Thus the rack of a
 \begin{itemize}
 \item The obligatory \emph{stamp}.
 \item A list of a single element corresponding to the \emph{length} of
-  the string. 
+  the string.
 \item A number of consecutive words, each holding a tagged immediate
   object representing a Unicode character.
 \end{itemize}
@@ -421,11 +392,11 @@ rack of 8 words:
 \item The \emph{name} of the package.  The value of this slot is a
   string.
 \item The \emph{nicknames} of the package.  The value of this slot is
-  a list of strings. 
+  a list of strings.
 \item The \emph{use list} of the package.  The value of this slot is a
-  proper list of packages that are used by this package. 
+  proper list of packages that are used by this package.
 \item The \emph{used-by list} of the package.  The value of this slot
-is a proper list of packages that use this package. 
+is a proper list of packages that use this package.
 \item The \emph{external symbols} of the package.  The value of this
   slot is a proper list of symbols that are both present in and
   exported from this package.
@@ -433,7 +404,7 @@ is a proper list of packages that use this package.
   slot is a proper list of symbols that are present in the package but
   that are not exported.
 \item The \emph{shadowing symbols} of the package.  The value of this
-  slot is a proper list of symbols. 
+  slot is a proper list of symbols.
 \end{enumerate}
 
 \subsection{Hash tables}
@@ -447,7 +418,7 @@ The \emph{class} of a function is a subclass of \texttt{function}.
 
 In order to obtain reasonable performance, we represent functions in a
 somewhat complex way, as illustrated by
-\refFig{fig-function-representation}. 
+\refFig{fig-function-representation}.
 
 \begin{figure}
 \begin{center}
@@ -474,7 +445,7 @@ rack with three slots:
   contains \emph{constants} and \emph{storage cells of global
     functions} that are referenced by the function.  The first element
   of the linkage vector is the \emph{code object} of the function (see
-  below).  Several functions may share the same linkage vector. 
+  below).  Several functions may share the same linkage vector.
 \item The \emph{entry point}.  The each entry
   point is a \emph{raw address} of an aligned word in the vector
   containing the instructions of the function.  The garbage collector
@@ -487,11 +458,11 @@ simple vector, and it is the last element of the proper list that
 makes up the \emph{static environment} of the function.  The most
 important purpose of the linkage vector is to contain \emph{constants}
 and \emph{storage cells} for global functions that are referenced by
-the function.  
+the function.
 
 Since raw addresses are word aligned, they show up as \texttt{fixnum}s
 when inspected by tools that are unaware of their special
-signification.  
+signification.
 
 A \emph{code object} is represented as a two-word header (as usual)
 and a rack containing (in addition to inherited slots):
@@ -504,10 +475,10 @@ and a rack containing (in addition to inherited slots):
   instructions for one or more functions.
 \item Correspondence between values of the program counter
   (represented as offsets into the byte vector of instructions) and
-  source code locations.  
+  source code locations.
 \item Correspondence between values of the program counter and the
   contents of the local environment.  This information is used by the
-  garbage collector and by the debugger. 
+  garbage collector and by the debugger.
 \end{enumerate}
 
 By having several functions share the same linkage vector, we can
@@ -533,7 +504,7 @@ can occur:
   attempted, and \texttt{funcall} is responsible for determining
   whether the object is a function, a name that designates a function,
   or an object that does not designate a function in which an error is
-  signaled. 
+  signaled.
 \item When it can be determined statically that the object called is a
   function (i.e. its class is a subclass of the class
   \texttt{function}), but nothing else is know about it, then an

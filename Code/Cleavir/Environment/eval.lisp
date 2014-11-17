@@ -115,6 +115,11 @@
 ;;;     the global environment (for implementations that do not have
 ;;;     first-class global environments).  These methods should return
 ;;;     NIL when no macro function is found.
+;;;
+;;;   * Also, if CL:MACRO-FUNCTION will still be called with
+;;;     implementation-specific lexical environments, supply one or
+;;;     more methods on the generic MACRO-FUNCTION specialized to the
+;;;     implementations-specific lexical environment classes.
 
 (defgeneric macro-function (symbol environment))
 

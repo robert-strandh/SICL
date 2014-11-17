@@ -373,7 +373,8 @@
 (defclass enter-instruction (instruction one-successor-mixin)
   ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
-(defun make-enter-instruction (lambda-list successor)
+(defun make-enter-instruction
+    (lambda-list &optional (successor nil successor-p))
   (let* ((outputs (loop for item in lambda-list
 			append (cond ((member item lambda-list-keywords) '())
 				     ((consp item) item)
@@ -381,7 +382,7 @@
     (make-instance 'enter-instruction
       :lambda-list lambda-list
       :outputs outputs
-      :successors (list successor))))
+      :successors (if successor-p (list successor) '()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -543,25 +544,22 @@
 ;;;
 ;;; Instruction UNWIND-INSTRUCTION.
 ;;;
-;;; This instruction is used to unwind the stack.  It takes a single
-;;; input and it has a single successor.  It has no outputs.
-;;;
-;;; To implement the Common Lisp THROW special operator, it suffices
-;;; to have this instruction with the value of the tag as an input and
-;;; a RETURN-INSTRUCTION as its single successor.
-;;;
-;;; This instruction can also be used together with the
-;;; CATCH-INSTRUCTION to implement lexical non-local control transfers
-;;; such as RETURN-FROM and GO.  See comment for CATCH-INSTRUCTION for
-;;; details.
+;;; This instruction is used to indicate a lexical non-local transfer
+;;; of control resulting form a GO or a RETURN-FROM form.
 
 (defclass unwind-instruction (instruction one-successor-mixin)
-  ())
+  (;; The invocation of the UNWIND-INSTRUCTION is the
+   ;; ENTER-INSTRUCTION that represents the function invocation at
+   ;; which execution should continue after the stack has been
+   ;; unwound.
+   (%invocation :initarg invocation :reader invocation)))
 
-(defun make-unwind-instruction (input &optional (successor nil successor-p))
+(defun make-unwind-instruction (successor invocation)
   (make-instance 'unwind-instruction
-    :inputs (list input)
-    :successors (if successor-p (list successor) '())))
+    :inputs '()
+    :outputs '()
+    :successors (list successor)
+    :invocation invocation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -230,13 +230,6 @@
   (:shadowing-import-from #:sicl-global-environment
 			  #:proclaim))
 
-(defpackage #:sicl-graph-coloring
-  (:use #:common-lisp)
-  (:export
-   #:degree
-   #:solve
-   ))
-
 (defpackage #:sicl-compiler-types
   (:use #:common-lisp)
   (:export

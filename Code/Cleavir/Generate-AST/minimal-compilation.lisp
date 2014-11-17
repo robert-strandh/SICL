@@ -9,13 +9,13 @@
 
 (defun minimally-compile-sequence (sequence env)
   (loop for form in sequence
-	collect (minimally-compile form env)))
+	collect (minimally-compile-aux form env)))
 
 (defun handle-optional (item env)
   (let ((new-env env))
     (values
      `(,(first item)
-       ,(prog1 (minimally-compile (second item) env)
+       ,(prog1 (minimally-compile-aux (second item) env)
 	  (setf new-env
 		(cleavir-env:add-lexical-variable new-env (first item))))
        ,@(if (null (rest (rest item)))
@@ -29,7 +29,7 @@
   (let ((new-env env))
     (values
      `(,(first item)
-       ,(prog1 (minimally-compile (second item) env)
+       ,(prog1 (minimally-compile-aux (second item) env)
 	  (setf new-env
 		(cleavir-env:add-lexical-variable new-env (second (first item)))))
        ,@(if (null (rest (rest item)))
@@ -80,7 +80,7 @@
 	       `(&aux
 		 ,@(loop for (var form) in aux
 			 collect `(,var
-				   ,(minimally-compile form new-env))
+				   ,(minimally-compile-aux form new-env))
 			 do (setf new-env
 				  (cleavir-env:add-lexical-variable
 				   new-env var)))))))
@@ -127,7 +127,7 @@
 ;;;
 ;;; Function MINIMALLY-COMPILE.  The main entry point.
 
-(defun minimally-compile (form env)
+(defun minimally-compile-aux (form env)
   (cond ((and (not (consp form)) (not (symbolp form)))
 	 form)
 	((symbolp form)
@@ -138,6 +138,14 @@
 	   (minimally-compile-form form info env)))
 	(t
 	 (minimally-compile-lambda-call form env))))
+
+(defun minimally-compile (form env)
+  (handler-bind
+      ((cleavir-env:no-variable-info
+	 (lambda (condition)
+	   (declare (ignore condition))
+	   (invoke-restart 'consider-special))))
+    (minimally-compile-aux form env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -153,7 +161,7 @@
 			      (cleavir-env:expansion info))
 			    form
 			    env)))
-    (minimally-compile expansion env)))
+    (minimally-compile-aux expansion env)))
 
 ;;; Minimally compiling a symbol that has a definition as a constant
 ;;; variable.
@@ -188,7 +196,7 @@
 			    (cleavir-env:expander info)
 			    form
 			    env)))
-    (minimally-compile expansion env)))
+    (minimally-compile-aux expansion env)))
 
 ;;; Minimally compiling a compound form that calls a global macro.
 (defmethod minimally-compile-form
@@ -197,11 +205,11 @@
     (if (null compiler-macro)
 	;; There is no compiler macro, so we just apply the macro
 	;; expander, and then minimally compile the resulting form.
-	(minimally-compile (funcall (coerce *macroexpand-hook* 'function)
-				    (cleavir-env:expander info)
-				    form
-				    env)
-			   env)
+	(minimally-compile-aux (funcall (coerce *macroexpand-hook* 'function)
+					(cleavir-env:expander info)
+					form
+					env)
+			       env)
 	;; There is a compiler macro, so we must see whether it will
 	;; accept or decline.
 	(let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
@@ -213,16 +221,16 @@
 	      ;; declined.  Then we appply the macro function, and
 	      ;; then minimally compile the resulting form, just like
 	      ;; we did when there was no compiler macro present.
-	      (minimally-compile (funcall (coerce *macroexpand-hook* 'function)
-					  (cleavir-env:expander info)
-					  expanded-form
-					  env)
-				 env)
+	      (minimally-compile-aux (funcall (coerce *macroexpand-hook* 'function)
+					      (cleavir-env:expander info)
+					      expanded-form
+					      env)
+				     env)
 	      ;; If the two are not EQ, this means that the compiler
 	      ;; macro replaced the original form with a new form.
 	      ;; This new form must then again be minimally compiled
 	      ;; without taking into account the real macro expander.
-	      (minimally-compile expanded-form env))))))
+	      (minimally-compile-aux expanded-form env))))))
 
 ;;; Minimally compiling a compound form that calls a local function.
 ;;; A local function can not have a compiler macro associated with it.
@@ -265,7 +273,7 @@
 	      ;; If the two are not EQ, this means that the compiler
 	      ;; macro replaced the original form with a new form.
 	      ;; This new form must then be minimally compiled.
-	      (minimally-compile expanded-form env))))))
+	      (minimally-compile-aux expanded-form env))))))
 
 (defgeneric minimally-compile-special-form (symbol form env))
 
@@ -385,11 +393,11 @@
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'if)) form env)
-  `(if ,(minimally-compile (second form) env)
-       ,(minimally-compile (third form) env)
+  `(if ,(minimally-compile-aux (second form) env)
+       ,(minimally-compile-aux (third form) env)
        ,(if (null (nthcdr 3 form))
 	    nil
-	    (minimally-compile (fourth form) env))))
+	    (minimally-compile-aux (fourth form) env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -408,7 +416,7 @@
       `(,(first binding)
 	,(if (null (rest binding))
 	     nil
-	     (minimally-compile (second binding) env)))))
+	     (minimally-compile-aux (second binding) env)))))
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'let)) form env)
@@ -450,7 +458,7 @@
 (defmethod minimally-compile-special-form
     ((symbol (eql 'load-time-value)) form env)
   `(load-time-value
-    ,(minimally-compile (second form) env)
+    ,(minimally-compile-aux (second form) env)
     ,@(if (null (rest (rest form)))
 	  '()
 	  (list (third form)))))
@@ -518,7 +526,7 @@
     ((head (eql 'multiple-value-call)) form env)
   (destructuring-bind (function-form . body) (rest form)
     `(multiple-value-call
-	 ,(minimally-compile function-form env)
+	 ,(minimally-compile-aux function-form env)
        ,@(minimally-compile-sequence body env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -529,7 +537,7 @@
     ((head (eql 'multiple-value-prog1)) form env)
   (destructuring-bind (first-form . body) (rest form)
     `(multiple-value-prog1
-	 ,(minimally-compile first-form env)
+	 ,(minimally-compile-aux first-form env)
        ,@(minimally-compile-sequence body env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -549,8 +557,8 @@
     ((head (eql 'progv)) form env)
   (destructuring-bind (symbols values . forms) (rest form)
     `(progv
-	 ,(minimally-compile symbols env)
-	 ,(minimally-compile values env)
+	 ,(minimally-compile-aux symbols env)
+	 ,(minimally-compile-aux values env)
        ,@(minimally-compile-sequence forms env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -561,7 +569,7 @@
     ((symbol (eql 'return-from)) form env)
   (destructuring-bind (return-from block-name result) form
     (declare (ignore return-from))
-    `(return-from ,block-name ,(minimally-compile result env))))
+    `(return-from ,block-name ,(minimally-compile-aux result env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -571,8 +579,8 @@
   (let ((info (cleavir-env:variable-info env var)))
     (if (and (typep info 'cleavir-env:symbol-macro-info)
 	     (eq var (cleavir-env:name info)))
-	(minimally-compile `(setf ,(cleavir-env:expansion info) ,form) env)
-	`(setq ,var ,(minimally-compile form env)))))
+	(minimally-compile-aux `(setf ,(cleavir-env:expansion info) ,form) env)
+	`(setq ,var ,(minimally-compile-aux form env)))))
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'setq)) form env)
@@ -590,7 +598,7 @@
     (loop for (name expansion) in (second form)
 	  do (setf new-env
 		   (cleavir-env:add-local-symbol-macro new-env name expansion)))
-    (minimally-compile `(locally ,@(rest (rest form))) new-env)))
+    (minimally-compile-aux `(locally ,@(rest (rest form))) new-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -602,7 +610,7 @@
       ,@(loop for item in (rest form)
 	      collect (if (symbolp item)
 			  item
-			  (minimally-compile item env)))))
+			  (minimally-compile-aux item env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -611,7 +619,7 @@
 (defmethod minimally-compile-special-form
     ((symbol (eql 'the)) form env)
   `(the ,(second form)
-	,(minimally-compile (third form) env)))
+	,(minimally-compile-aux (third form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -620,8 +628,8 @@
 (defmethod minimally-compile-special-form
     ((symbol (eql 'throw)) form env)
   (destructuring-bind (tag result-form) (rest form)
-    `(throw ,(minimally-compile tag env)
-       ,(minimally-compile result-form env))))
+    `(throw ,(minimally-compile-aux tag env)
+       ,(minimally-compile-aux result-form env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -630,7 +638,7 @@
 (defmethod minimally-compile-special-form
     ((symbol (eql 'unwind-protect)) form env)
   (destructuring-bind (protected-form . cleanup-forms) (rest form)
-    `(unwind-protect ,(minimally-compile protected-form env)
+    `(unwind-protect ,(minimally-compile-aux protected-form env)
        ,@(minimally-compile-sequence cleanup-forms env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

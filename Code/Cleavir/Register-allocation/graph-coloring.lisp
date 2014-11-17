@@ -1,4 +1,4 @@
-(in-package #:sicl-graph-coloring)
+(in-package #:cleavir-register-allocation)
 
 ;;; The degree of a lexical is the number of times it appears in
 ;;; the conflicts, either as the CAR or as the CDR of a conflict. 

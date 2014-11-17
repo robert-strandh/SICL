@@ -7,7 +7,7 @@
 ;;; compiled in a context with a single successor and a single result.
 
 (defun compile-and-unbox-arguments
-    (arguments temps unbox-instruction-class successor)
+    (arguments temps unbox-instruction-class successor invocation)
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
@@ -17,7 +17,8 @@
 		   :inputs (list inter)
 		   :outputs (list temp)
 		   :successors (list succ)))
-	   (setf succ (compile-ast arg (context `(,inter) `(,succ))))
+	   (setf succ
+		 (compile-ast arg (context `(,inter) `(,succ) invocation)))
 	finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -41,7 +42,8 @@
 	(make-instance ',instruction-class
 	  :inputs temps
 	  :outputs (car (results context))
-	  :successors (list successor))))))
+	  :successors (list successor))
+	(invocation context)))))
 
 (compile-float-arithmetic-ast cleavir-ast:short-float-add-ast
 			      cleavir-ir:short-float-add-instruction
@@ -200,7 +202,8 @@
 	(make-instance ',instruction-class
 	  :inputs (,input-transformer temps)
 	  :outputs '()
-	  :successors (successors context))))))
+	  :successors (successors context))
+	(invocation context)))))
 
 (compile-float-comparison-ast cleavir-ast:short-float-less-ast
 			      cleavir-ir:short-float-less-instruction

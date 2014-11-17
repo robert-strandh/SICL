@@ -1,32 +1,17 @@
 \chapter{x86-32}
 \label{chap-backend-x86}
 
-A \emph{code object} contains:
-
-\begin{itemize}
-\item A linkage rack containing external objects that the running
-  code needs to access.
-\item A code vector which is a byte vector of machine-code instructions.  
-\item Debugging information.
-\end{itemize}
-
 A \emph{function} contains:
 
 \begin{itemize}
-\item A code object.
-\item A captured static environment. 
-\item An offset into the code vector in the code object.  That offset
-  indicates the entry point for the function, i.e. the first
-  instruction of the function. 
+\item A static environment.
+\item The entry point of the function as a raw machine address.  Since
+  entry points are word aligned, this value looks like a fixnum.
 \end{itemize}
-
-A code object can be shared by several functions.  In particular, the
-file compiler generates a single code object for all the code in the
-file. 
 
 \section{Calling conventions}
 
-\refFig{fig-x86-32-stack-frame} shows the layout of a stack frame. 
+\refFig{fig-x86-32-stack-frame} shows the layout of a stack frame.
 
 \begin{figure}
 \begin{center}
@@ -39,34 +24,30 @@ Stack frame for the x86-32 backend.}
 Normal call to an external function:
 
 \begin{enumerate}
-\item (caller) Subtract $4 \cdot (N + 5)$ from \texttt{ESP} where $N$
-  is the number of arguments to be passed.  The number $5$ is the
-  number of words required for the caller \texttt{EBP}, the return
-  address, the static environment, the dynamic environment, and the
-  current code object.
+\item (caller) Subtract $4 \cdot (N + 4)$ from \texttt{ESP} where $N$
+  is the number of arguments to be passed.  The number $4$ to be added
+  to $N$ is the number of words required for the caller \texttt{EBP},
+  the return address, the static environment, and the dynamic environment.
 \item (caller) Store the arguments to be passed in
-  \texttt{[ESP$+ 4 \cdot 0$]}, 
-  \texttt{[ESP$+ 4 \cdot 1$]}, 
+  \texttt{[ESP$+ 4 \cdot 0$]},
+  \texttt{[ESP$+ 4 \cdot 1$]},
   $\ldots$
   \texttt{[ESP$+ 4 \cdot (N - 1)$]}.
-  Store the code object of the function to be called in 
-  \texttt{[ESP$+4 \cdot N$]}.  
-  Copy the dynamic environment in 
-  \texttt{[EBP$-4 \cdot 5$]} to 
-  \texttt{[ESP$+4 \cdot (N + 1)$]}.  
-  Store the static environment of the function to be called in 
-  \texttt{[ESP$+4 \cdot (N + 2)$]}.    
-  Store \texttt{EBP} in  
-  \texttt{[ESP$+4 \cdot (N + 4)$]}.  
+  Copy the dynamic environment in
+  \texttt{[EBP$-4 \cdot 3$]} to
+  \texttt{[ESP$+4 \cdot N$]}.
+  Store the static environment of the function to be called in
+  \texttt{[ESP$+4 \cdot (N + 1)$]}.
+  Store \texttt{EBP} in
+  \texttt{[ESP$+4 \cdot (N + 3)$]}.
   These operations can be done in any order.
-\item (caller) Compute the address to call as the address of the first
-  element in the byte vector plus the entry point and put it in a
-  scratch register.
-\item (caller) Store \texttt{ESP$+4 \cdot (N + 4)$} in \texttt{EBP},
+\item (caller) Load the entry point of the function into a scratch
+  register.
+\item (caller) Store \texttt{ESP$+4 \cdot (N + 3)$} in \texttt{EBP},
   establishing the stack frame of the callee.
 \item (caller) Use the \texttt{CALL} instruction to call the address
   previously computed.  The return address is then pushed on the
-  stack. 
+  stack.
   \begin{enumerate}
   \item (callee) Pop the return address off of the top of the stack,
     and store it in \texttt{[EBP$- 4 \cdot 1$]}.  The code for this
@@ -86,32 +67,28 @@ By using a \texttt{CALL}/\texttt{RET} pair instead of (say) the caller
 storing the return address in its final place using some other method,
 we make sure that the predictor for the return address of the
 processor makes the right guess about the eventual address to be
-used. 
+used.
 
 Tail call to an external function:
 
 \begin{enumerate}
 \item Make sure \texttt{EBP}$-$\texttt{ESP} is at least $4 \cdot (N +
-  5)$ where $N$ is the number of arguments to be passed.  This
+  4)$ where $N$ is the number of arguments to be passed.  This
   difference is typically greater, because temporary space might be
   needed in order to compute the arguments.
-\item Store the arguments in 
-  \texttt{[EBP$- 4 \cdot 5$]}, 
-  \texttt{[EBP$- 4 \cdot 6$]}, 
+\item Store the arguments in
+  \texttt{[EBP$- 4 \cdot 4$]},
+  \texttt{[EBP$- 4 \cdot 5$]},
   $\ldots$
-  \texttt{[EBP$- 4 \cdot (N + 4$]},
-  from left to right.  Store the code object of the to be called in
-  \texttt{[EBP$- 4 \cdot 4$]}.  
-  Restore the original dynamic environment in 
+  \texttt{[EBP$- 4 \cdot (N + 3$]},
+  from left to right.
+  Restore the original dynamic environment in
   \texttt{[EBP$- 4 \cdot 3$]}
-  if it was modified.  Clear 
-  \texttt{[EBP$- 4 \cdot 2$]} if a static environment was
-  established, so as to avoid that it is kept alive by the GC.
-\item Compute the call address into a scratch register as above, and
-  add the fixed amount to it that is determined by the first step of
-  the callee code for a full call.
+  if it was modified.  Store the static environment of the callee in
+  \texttt{[EBP$- 4 \cdot 2$]}.
+\item Load the entry point into a scratch register as above.
 \item Use the JMP instruction to jump the address previously computed.
-  Nothing is pushed on the stack. 
+  Nothing is pushed on the stack.
   \begin{enumerate}
   \item (callee) Do some useful computation.
   \item (callee) Store \texttt{EBP$- 4 \cdot 1$} in \texttt{ESP},
@@ -129,42 +106,38 @@ file refers to that function, unless that function has been declared
 such calls.  For instance, in most cases it is not necessary to check
 the argument count.  Furthermore, the compiler generates a single code
 object for all function in one file.  The entry point of the callee
-can therefore be computed by the compiler. 
+can therefore be computed by the compiler.
 
 Normal call to a top-level internal function (i.e., a function with
 the same code object as the caller):
 
 \begin{enumerate}
-\item (caller) Subtract $4 \cdot (N + 5)$ from \texttt{ESP} where $N$
-  is the number of arguments to be passed.  The number $5$ is the
-  number of words required for the caller \texttt{EBP}, the return
-  address, the static environment, the dynamic environment, and the
-  current code object.
+\item (caller) Subtract $4 \cdot (N + 4)$ from \texttt{ESP} where $N$
+  is the number of arguments to be passed.
 \item (caller) Store the arguments to be passed in
-  \texttt{[ESP$+ 4 \cdot 0$]}, 
-  \texttt{[ESP$+ 4 \cdot 1$]}, 
+  \texttt{[ESP$+ 4 \cdot 0$]},
+  \texttt{[ESP$+ 4 \cdot 1$]},
   $\ldots$
   \texttt{[ESP$+ 4 \cdot (N - 1)$]}.
-  Copy the code object stored in
-  \texttt{[EBP$- 4 \cdot 4$]} to 
-  \texttt{[ESP$+ 4 \cdot N$]}.  
-  Copy the dynamic environment in 
-  \texttt{[EBP$-4 \cdot 5$]} to 
-  \texttt{[ESP$+4 \cdot (N + 1)$]}.  
-  Store \texttt{NIL} (the static environment) in
-  \texttt{[ESP$+4 \cdot (N + 2)$]}.    
-  Store \texttt{EBP} in  
-  \texttt{[ESP$+4 \cdot (N + 4)$]}.  
+  Copy the dynamic environment in
+  \texttt{[EBP$-4 \cdot 3$]} to
+  \texttt{[ESP$+4 \cdot N$]}.
+  Compute the static environment of the callee as a suffix of the
+  current static environment and 
+  store it in
+  \texttt{[ESP$+4 \cdot (N + 1)$]}.
+  Store \texttt{EBP} in
+  \texttt{[ESP$+4 \cdot (N + 3)$]}.
   These operations can be done in any order.
-\item (caller) Store \texttt{ESP$+4 \cdot (N + 4)$} in \texttt{EBP},
+\item (caller) Store \texttt{ESP$+4 \cdot (N + 3)$} in \texttt{EBP},
   establishing the stack frame of the callee.
 \item (caller) Use the \texttt{CALL} instruction to make a relative
-  call a code snippet still within the caller.  That code snippet pops
+  call to a code snippet still within the caller.  That code snippet pops
   the return address off of the top of the stack,
   and stores it in \texttt{[EBP$- 4 \cdot 1$]}.  Finally, it uses the
   \texttt{JMP} instruction to jump to an appropriate location in the
   callee.  That appropriate location is typically after some initial
-  code that checks for argument count, etc. 
+  code that checks for argument count, etc.
   \begin{enumerate}
   \item (callee) Do some useful computation.
   \item (callee) Store \texttt{EBP$- 4 \cdot 1$} in \texttt{ESP},
@@ -181,20 +154,20 @@ function with the same code object as the caller):
 
 \begin{enumerate}
 \item Make sure \texttt{EBP}$-$\texttt{ESP} is at least $4 \cdot (N +
-  5)$ where $N$ is the number of arguments to be passed.  This
+  4)$ where $N$ is the number of arguments to be passed.  This
   difference is typically greater, because temporary space might be
   needed in order to compute the arguments.
-\item Store the arguments in 
-  \texttt{[EBP$- 4 \cdot 5$]}, 
-  \texttt{[EBP$- 4 \cdot 6$]}, 
+\item Store the arguments in
+  \texttt{[EBP$- 4 \cdot 4$]},
+  \texttt{[EBP$- 4 \cdot 5$]},
   $\ldots$
-  \texttt{[EBP$- 4 \cdot (N + 4$]},
+  \texttt{[EBP$- 4 \cdot (N + 3$]},
   from left to right.
-  Restore the original dynamic environment in 
+  Restore the original dynamic environment in
   \texttt{[EBP$- 4 \cdot 3$]}
-  if it was modified.  Clear 
-  \texttt{[EBP$- 4 \cdot 2$]} if a static environment was
-  established, so as to avoid that it is kept alive by the GC.
+  if it was modified.  Compute the static environment of the callee as
+  a suffix of the current static environment and store it in
+  \texttt{[EBP$- 4 \cdot 2$]}.
 \item Use the JMP instruction to jump to an appropriate location in
   the callee.  That appropriate location is typically after some
   initial code that checks for argument count, etc.  Nothing is pushed
@@ -229,7 +202,7 @@ default values may require the evaluation of arbitrary expressions,
 and those expressions might refer to the values of required parameters
 or of \&optional arguments further left in the lambda list.  Such
 expression can also refer to local variables in enclosing
-environments.  
+environments.
 
 The first return value is passed in \texttt{EAX}, and the number of
 return values is passed in \texttt{EBX} as a \texttt{fixnum}.  If the
@@ -292,7 +265,7 @@ ebp value in the entry.
 establishes a \texttt{CATCH} tag and calls a thunk containing the body
 of the \texttt{CATCH} form.  The \texttt{CATCH} tag is established by
 allocating (as dynamic local data on the stack) an entry of the second
-type and making \texttt{[EBP$-4 \cdot 4$]} point to it as shown in 
+type and making \texttt{[EBP$-4 \cdot 4$]} point to it as shown in
 \refFig{fig-x86-32-catch}
 
 \begin{figure}
@@ -317,7 +290,7 @@ implemented as a call to a function, in a way similar to the way
 \texttt{CATCH} is implemented.  The function establishes a
 \texttt{BLOCK}/\texttt{TAGBODY} entry with a fresh time stamp.  The
 time stamp is also stored in a lexical varible in the static
-environment.  \refFig{fig-x86-32-block-tag} shows this situation. 
+environment.  \refFig{fig-x86-32-block-tag} shows this situation.
 
 \begin{figure}
 \begin{center}
@@ -394,7 +367,7 @@ Because of the presence of \emph{optional arguments} and \emph{keyword
   arguments} that arbitrary forms to evaluate, argument parsing is a
 fairly complicated process.  The process is further complicated by the
 fact that some of the parameters of the function might be
-\emph{special variables} rather than \emph{lexical variables}.  
+\emph{special variables} rather than \emph{lexical variables}.
 
 Conceptually, upon entry to a function, a new level of the lexical
 runtime environment is created in order to hold the lexical variables
@@ -413,7 +386,7 @@ part of the argument-passing process.  The reason is that in all cases
 where the stack might be unwound so that the binding is undone, then
 the entire invocation of the function must be unwound as well.  Then,
 the binding can be part of the current stack frame rather than
-requiring its own stack frame. 
+requiring its own stack frame.
 
 Most of the time, there are lexical variables and temporaries that are
 not closed over.  Such variables need not be allocated in a level of
@@ -431,22 +404,22 @@ are complicated by the fact that as part of the argument-parsing
 process, entries for dynamic variables may have been created.
 Removing the arguments, then, consists of moving those entries to
 clobber the arguments on the stack, and adjusting the dynamic
-environment word to reflect this move. 
+environment word to reflect this move.
 
 As a special case of the scenario in the previous paragraph,
 \emph{all} lexical variables and temporaries can be allocated on the
 stack.  Then, no level of the lexical runtime environment will be
 created at all, and the hole in the stack frame will be big enough to
-hold all such variables.  
+hold all such variables.
 
 Also as a special case of the scenario in that same paragraph, it is
 common that some \emph{prefix} of the parameters of the function
 contains variables that are not closed over.  The variables in this
 prefix are already in their ultimate places, so only the remaining
-arguments need to be moved. 
+arguments need to be moved.
 
 When a function takes only required parameters and none of those
 parameters are closed over, then the argument-parsing process is
 reduced to \emph{nothing}, and all that needs to be done upon function
-entry is to allocate space in the stack frame for temporaries. 
+entry is to allocate space in the stack frame for temporaries.
 

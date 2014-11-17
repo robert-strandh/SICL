@@ -2,22 +2,21 @@
 
 ;;;; Liveness analysis
 ;;;;
-;;;; An item I is LIVE at some point P in a program if and only if
-;;;; there exists an execution path from P to the end of the flow
-;;;; chart on which I is used before it is defined.
-;;;;
-;;;; Liveness is going to be represented as two sets of items for each
-;;;; node; the items that are live BEFORE the node, and the items that
-;;;; are live AFTER the node.
+;;;; Each instruction I in a flow chart representing some program
+;;;; defines a PROGRAM POINT, which is located IMMEDIATELY BEFORE I.
+;;;; A variable V is LIVE at some program point P if and only if there
+;;;; exists an execution path from P to the end of the flow chart on
+;;;; which V is used before it is defined.
 ;;;;
 ;;;; Computing liveness is a dataflow problem that is best computed
-;;;; from the end of the program to the beginning of the program.
-;;;; Given the set A of live items AFTER some node I, the set B of
-;;;; items live BEFORE the node is computed as A intersected with the
-;;;; items written to by I and then unioned by the items used by I.
-;;;; Given the set Bi of live items live before each successor i of
-;;;; some node I, the set A of live items after I is computed as the
-;;;; union of all the Bi.
+;;;; from the end of the program to the beginning of the program.  Let
+;;;; I be some instruction with successors S1, S2, ... Sn.  And also
+;;;; let B(Si) be the set of live variables at the program point
+;;;; defined by Si, for 1 <= i <= n.  To compute the set B(I) of live
+;;;; variables of the program point defined by I, first compute A(I)
+;;;; as the union of every B(Si).  Then intersect A(I) with the
+;;;; variables written by I, and finally compute the union of the
+;;;; resulting set with the variables used by I.
 ;;;;
 ;;;; Initially the sets A(I) and B(I) for each node are empty.  The
 ;;;; computation is iterated until a fixpoint is reached.
@@ -42,12 +41,14 @@
 
 ;;; An input/output of a node can be any type of object as long as two
 ;;; such objects can be compared with EQ.  INPUT-FUN is a function
-;;; that takes a node and returns the inputs of that node.
-;;; Similarly,k OUTPUT-FUN is a function that take a node and return
-;;; the outputs of that node.
+;;; that takes a node and returns the inputs of that node.  Similarly,
+;;; OUTPUT-FUN is a function that take a node and return the outputs
+;;; of that node.
 ;;;
-;;; The return value is a hash table that maps nodes to lists of items
-;;; that are live after that node.
+;;; The return value is an instance of the class LIVENESS.  This
+;;; return value should be considered to be an opaque object, only to
+;;; be used as the first argument of the functions LIVE-BEFORE and
+;;; LIVE-AFTER.
 (defun liveness (start-node successor-fun input-fun output-fun)
   (let ((predecessor-fun (cleavir-utilities:predecessor-function
 			  start-node successor-fun))
@@ -100,3 +101,5 @@
 
 (defun live-after (liveness node)
   (gethash node (atable liveness)))
+
+;;  LocalWords:  liveness dataflow fixpoint bitvector bitvectors

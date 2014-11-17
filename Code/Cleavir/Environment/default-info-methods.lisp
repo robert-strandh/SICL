@@ -62,7 +62,7 @@
   (if (eq symbol (name environment))
       (make-instance 'special-variable-info
 	:name symbol
-	:identity (identity environment))
+	:global-p nil)
       (defining-variable-info (next environment) symbol)))
 
 (defmethod defining-variable-info ((environment symbol-macro) symbol)
@@ -296,6 +296,7 @@
   (make-instance 'special-variable-info
     :name (name defining-info)
     :type (cons 'and (variable-type environment defining-info))
+    :global-p (global-p defining-info)
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
       (if (null entry) nil (ignore entry)))))
@@ -318,7 +319,14 @@
 
 (defmethod variable-info ((environment entry) symbol)
   (let ((defining-info (defining-variable-info environment symbol)))
-    (make-info environment defining-info)))
+    (if (null defining-info)
+	;; If DEFINING-INFO is NIL, this means that VARIABLE-INFO
+	;; returned NIL when called with the global environment, which
+	;; means that there was no information for this symbol.  We
+	;; must then also respect the protocol and return nil to our
+	;; caller.
+	nil
+	(make-info environment defining-info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -676,7 +684,14 @@
 
 (defmethod function-info ((environment entry) symbol)
   (let ((defining-info (defining-function-info environment symbol)))
-    (make-info environment defining-info)))
+    (if (null defining-info)
+	;; If DEFINING-INFO is NIL, this means that FUNCTION-INFO
+	;; returned NIL when called with the global environment, which
+	;; means that there was no information for this symbol.  We
+	;; must then also respect the protocol and return nil to our
+	;; caller.
+	nil
+	(make-info environment defining-info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

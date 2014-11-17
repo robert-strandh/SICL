@@ -1,0 +1,65 @@
+\documentclass{acm_proc_article-sp}
+\usepackage[utf8]{inputenc}
+
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+\def\inputal#1{\input #1}
+\def\inputcode#1{\input #1}
+
+\inputtex{logos.tex}
+\inputtex{refmacros.tex}
+\inputtex{other-macros.tex}
+
+\begin{document}
+\title{Processing List Elements in Reverse Order}
+\numberofauthors{1}
+\author{\alignauthor
+Robert Strandh\\
+\affaddr{University of Bordeaux}\\
+\affaddr{351, Cours de la Libération}\\
+\affaddr{Talence, France}\\
+\email{robert.strandh@u-bordeaux1.fr}}
+
+\toappear{Permission to make digital or hard copies of all or part of
+  this work for personal or classroom use is granted without fee
+  provided that copies are not made or distributed for profit or
+  commercial advantage and that copies bear this notice and the full
+  citation on the first page. Copyrights for components of this work
+  owned by others than the author(s) must be honored. Abstracting with
+  credit is permitted. To copy otherwise, or republish, to post on
+  servers or to redistribute to lists, requires prior specific
+  permission and/or a fee. Request permissions from
+  Permissions@acm.org.
+
+%  ELS '15, April 20 - 21 2015, London, UK
+%  Copyright is held by the owner/author(s). Publication rights licensed to ACM.
+%  ACM 978-1-4503-2931-6/14/08\$15.00.???
+%  http://dx.doi.org/10.1145/2635648.2635656
+}
+
+\maketitle
+
+\begin{abstract}
+The \commonlisp{} sequence functions accept a keyword parameter called
+\texttt{from-end}.  In the case of \texttt{count}, it is required that
+the elements are processed in reverse order. 
+\end{abstract}
+
+\category{D.3.4}{Programming Languages}{Processors}
+[Code generation, Run-time environments]
+
+\terms{Algorithms, Languages}
+
+\keywords{\commonlisp{}, List processing}
+
+\inputtex{sec-introduction.tex}
+\inputtex{sec-previous.tex}
+\inputtex{sec-our-method.tex}
+\inputtex{sec-benefits.tex}
+\inputtex{sec-conclusions.tex}
+
+\bibliographystyle{abbrv}
+\bibliography{reverse-order}
+\end{document}
+
+%%  LocalWords:  sandboxing runtime

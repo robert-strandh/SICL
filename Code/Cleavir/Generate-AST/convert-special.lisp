@@ -136,11 +136,9 @@
 ;;; Converting GO.
 
 (defmethod convert-special ((symbol (eql 'go)) form env)
-  (let ((info (cleavir-env:tag-info env (cadr form))))
-    (if (null info)
-	(error "undefined go tag: ~s" form)
-	(cleavir-ast:make-go-ast
-	 (cleavir-env:identity info)))))
+  (let ((info (tag-info env (cadr form))))
+    (cleavir-ast:make-go-ast
+     (cleavir-env:identity info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -222,14 +220,10 @@
 ;;; the LET form is compiled, return true if and only if the variable
 ;;; to be bound is special.  Return a second value indicating whether
 ;;; the variable is globally special.
-;;;
-;;; FIXME: also return information indicating whether the variable is
-;;; globally special.
 (defun variable-is-special-p (variable declarations env)
   (let ((existing-var-info (cleavir-env:variable-info env variable)))
-    (cond ((and (and (not (null existing-var-info))
-		     (typep existing-var-info
-			    'cleavir-env:special-variable-info))
+    (cond ((and (typep existing-var-info
+		       'cleavir-env:special-variable-info)
 		(cleavir-env:global-p existing-var-info))
 	   ;; If it is globally special, it is special inside the LET
 	   ;; or LET* as well, no matter how it is declared.
@@ -245,10 +239,18 @@
 ;;; canonicalized declaration specifiers concerning that variable,
 ;;; return a new environment that contains information about that
 ;;; variable.  
-(defun augment-environment-with-variable (variable declarations env)
+;;;
+;;; ENV is the environment to be augmented.  If the LET form has
+;;; several bindings, it will contain entries for the variables
+;;; preceding the one that is currently treated.  
+;;;
+;;; ORIG-ENV is the environment in which the LET form is converted.
+;;; It is used to check whether the variable is globally special. 
+(defun augment-environment-with-variable
+    (variable declarations env orig-env)
   (let ((new-env env))
     (multiple-value-bind (special-p globally-p)
-	(variable-is-special-p variable declarations env)
+	(variable-is-special-p variable declarations orig-env)
       (if (and special-p (not globally-p))
 	  (setf new-env
 		(cleavir-env:add-special-variable new-env variable))
@@ -270,11 +272,12 @@
 ;;; which the LET form is converted.  It is used in order to determine
 ;;; whether any variable is globally special. 
 (defun construct-let-body-environment (variables declarations env)
-  (flet ((augment (env variable)
-	   (augment-environment-with-variable variable declarations env)))
+  (flet ((augment (variable env orig-env)
+	   (augment-environment-with-variable
+	    variable declarations env orig-env)))
     (loop for variable in variables
-	  for new-env = (augment env variable)
-	    then (augment new-env variable)
+	  for new-env = (augment variable env env)
+	    then (augment variable new-env env)
 	  finally (return new-env))))
 
 (defmethod convert-special
@@ -321,12 +324,12 @@
 					  binding
 					  (first binding))))
 	     (environments
-	       (flet ((augment (env variable)
+	       (flet ((augment (variable env)
 			(augment-environment-with-variable
-			 variable canonical-declarations env)))
+			 variable canonical-declarations env env)))
 		 (loop for variable in variables
-		       for new-env = (augment env variable)
-			 then (augment new-env variable)
+		       for new-env = (augment variable env)
+			 then (augment variable new-env)
 		       collect new-env)))
 	     (ast (cleavir-ast:make-progn-ast
 		   (convert-sequence forms (first (last environments))))))
@@ -416,27 +419,33 @@
 ;;; Converting RETURN-FROM.
 
 (defmethod convert-special ((symbol (eql 'return-from)) form env)
-  (let ((info (cleavir-env:block-info env (cadr form))))
-    (if (null info)
-	(error 'block-name-unknown
-	       :expr (cadr form))
-	(cleavir-ast:make-return-from-ast
-	 (cleavir-env:identity info)
-	 (convert (caddr form) env)))))
+  (let ((info (block-info env (cadr form))))
+    (cleavir-ast:make-return-from-ast
+     (cleavir-env:identity info)
+     (convert (caddr form) env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting SETQ.
 
+(defgeneric convert-setq (info form-ast))
+
+(defmethod convert-setq ((info cleavir-env:constant-variable-info) form-ast)
+  (error 'setq-constant-variable
+	 :form (cleavir-env:name info)))
+
+(defmethod convert-setq ((info cleavir-env:lexical-variable-info) form-ast)
+  (cleavir-ast:make-setq-ast
+   (cleavir-env:identity info)
+   form-ast))
+
+(defmethod convert-setq ((info cleavir-env:special-variable-info) form-ast)
+  (cleavir-ast:make-set-symbol-value-ast
+   (cleavir-ast:make-constant-ast (cleavir-env:name info))
+   form-ast))
+
 (defun convert-elementary-setq (var form env)
-  (let* ((info (cleavir-env:variable-info env var))
-	 (identity (cleavir-env:identity info)))
-    (if (typep info 'cleavir-env:constant-variable-info)
-	(error 'setq-constant-variable
-	       :form var)
-	(cleavir-ast:make-setq-ast
-	 identity
-	 (convert form env)))))
+  (convert-setq (variable-info env var) (convert form env)))
   
 (defmethod convert-special
     ((symbol (eql 'setq)) form environment)
@@ -464,6 +473,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting TAGBODY.
+;;;
+;;; The TAGBODY special form always returns NIL.  We generate a PROGN
+;;; with the TAGBODY-AST and a CONSTANT-AST in it, because the
+;;; TAGBODY-AST (unlike hte TAGBODY special form) does not generate a
+;;; value.
 
 (defmethod convert-special
     ((symbol (eql 'tagbody)) form env)
@@ -479,7 +493,9 @@
 		       collect (if (symbolp item)
 				   (pop tag-asts)
 				   (convert item new-env)))))
-      (cleavir-ast:make-tagbody-ast items))))
+      (cleavir-ast:make-progn-ast
+       (list (cleavir-ast:make-tagbody-ast items)
+	     (cleavir-ast:make-constant-ast nil))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

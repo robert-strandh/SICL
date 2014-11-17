@@ -11,9 +11,13 @@
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
 	       :sicl-hir-to-mir
-	       :cleavir-eliminate-typeq)
+	       :cleavir-hir-transformations
+	       :cleavir-liveness
+	       :cleavir-register-allocation)
   :serial t
   :components
   ((:file "packages")
    (:file "classes")
+   (:file "introduce-immediates")
+   (:file "process-constants")
    (:file "compile")))

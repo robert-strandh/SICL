@@ -26,9 +26,14 @@
 	 ;; it might be a special variable.  We can start by checking
 	 ;; whether it is bound.
 	 (boundp symbol)
-	 ;; In that case, it is definitely special.
+	 ;; It may or may not be special.  It is not special if it has
+	 ;; not been proclaimed as such but it has been set using
+	 ;; (SETF SYMBOL-VALUE).  We have no way of checking that, so
+	 ;; we assume that it has been proclaimed special, since that
+	 ;; is probably the most common case.
 	 (make-instance 'cleavir-env:special-variable-info
-	   :name symbol))
+	   :name symbol
+	   :global-p t)
 	(;; If it is not bound, it could still be special.  If so, it
 	 ;; might have a restricted type on it.  It will then likely
 	 ;; fail to bind it to an object of some type that we
@@ -42,7 +47,8 @@
 	 ;; It is a special variable.  However, we don't know its
 	 ;; type, so we assume it is T, which is the default.
 	 (make-instance 'cleavir-env:special-variable-info
-	   :name symbol))
+	   :name symbol
+	   :global-p t))
 	(;; If the previous test fails, it could still be special
 	 ;; without any type restriction on it.  We can try to
 	 ;; determine whether this is the case by checking whether the
@@ -56,7 +62,8 @@
 	 ;; It is a special variable.  However, we don't know its
 	 ;; type, so we assume it is T, which is the default.
 	 (make-instance 'cleavir-env:special-variable-info
-	   :name symbol))
+	   :name symbol
+	   :global-p t))
 	(;; Otherwise, this symbol does not have any variable
 	 ;; information associated with it.
 	 t

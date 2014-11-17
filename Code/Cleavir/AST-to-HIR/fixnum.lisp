@@ -23,7 +23,9 @@
 				(cleavir-ir:make-fixnum-add-instruction
 				 (list temp1 temp2)
 				 (list result)
-				 successors)))))))))
+				 successors)
+				(invocation context))))
+		(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -48,7 +50,9 @@
 				(cleavir-ir:make-fixnum-sub-instruction
 				 (list temp1 temp2)
 				 (list result)
-				 successors)))))))))
+				 successors)
+				(invocation context))))
+		(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -71,7 +75,9 @@
 		       (context (list temp2)
 				(cleavir-ir:make-fixnum-less-instruction
 				 (list temp1 temp2)
-				 successors)))))))))
+				 successors)
+				(invocation context))))
+		(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -94,7 +100,9 @@
 		       (context (list temp2)
 				(cleavir-ir:make-fixnum-not-greater-instruction
 				 (list temp1 temp2)
-				 successors)))))))))
+				 successors)
+				(invocation context))))
+		(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -117,7 +125,9 @@
 		       (context (list temp2)
 				(cleavir-ir:make-fixnum-less-instruction
 				 (list temp2 temp1)
-				 successors)))))))))
+				 successors)
+				(invocation context))))
+		(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -140,7 +150,9 @@
 		       (context (list temp2)
 				(cleavir-ir:make-fixnum-not-greater-instruction
 				 (list temp2 temp1)
-				 successors)))))))))
+				 successors)
+				(invocation context))))
+		(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -163,4 +175,6 @@
 		       (context (list temp2)
 				(cleavir-ir:make-fixnum-equal-instruction
 				 (list temp2 temp1)
-				 successors)))))))))
+				 successors)
+				(invocation context))))
+		(invocation context))))))
