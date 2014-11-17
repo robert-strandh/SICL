@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "context")
    (:file "general")
    (:file "fixnum")
    (:file "float")
