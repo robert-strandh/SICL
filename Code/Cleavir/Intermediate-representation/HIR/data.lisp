@@ -114,24 +114,3 @@
 (defun make-indefinite-lexical-location (name)
   (make-instance 'indefinite-lexical-location
     :name name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class LOAD-TIME-INPUT.
-;;;
-;;; This datum typically corresponds to a LOAD-TIME-VALUE in source
-;;; code.
-;;;
-;;; A datum of this type contains code to be run when the compiled
-;;; file is loaded.
-
-(defclass load-time-input (datum)
-  (;; The first instruction of an instruction graph that, when
-   ;; called, returns the value to put into the linkage vector.
-   (%initial-instruction
-    :initarg :initial-instruction
-    :reader initial-instruction)))
-
-(defun make-load-time-input (initial-instruction)
-  (make-instance 'load-time-input
-    :initial-instruction initial-instruction))
