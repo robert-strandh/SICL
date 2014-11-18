@@ -207,9 +207,13 @@
 	(cleavir-code-utilities:preprocess-lambda-list parsed-lambda-list)
       (let* ((new-env (add-lambda-list-to-env entry-lambda-list env))
 	     (ast-lambda-list (build-ast-lambda-list entry-lambda-list new-env)))
-	(cleavir-ast:make-function-ast
-	 (convert `(progn ,@initforms ,@body) new-env)
-	 ast-lambda-list)))))
+	(multiple-value-bind (declarations documentation forms)
+	    (cleavir-code-utilities:separate-function-body body)
+	  ;; FIXME: Handle declarations and documentation
+	  (declare (ignore declarations documentation))
+	  (cleavir-ast:make-function-ast
+	   (convert `(progn ,@initforms ,@forms) new-env)
+	   ast-lambda-list))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
