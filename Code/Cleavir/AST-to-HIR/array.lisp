@@ -6,8 +6,8 @@
 
 (defmethod compile-ast ((ast cleavir-ast:t-aref-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp1 (make-temp nil))
-	(temp2 (make-temp nil)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp)))
     (compile-ast
      (cleavir-ast:array-ast ast)
      (context
@@ -28,9 +28,9 @@
 
 (defmethod compile-ast ((ast cleavir-ast:t-aset-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((temp1 (make-temp nil))
-	(temp2 (make-temp nil))
-	(temp3 (make-temp nil)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp))
+	(temp3 (make-temp)))
     (compile-ast
      (cleavir-ast:array-ast ast)
      (context
@@ -59,9 +59,9 @@
     (ast-class aref-instruction-class box-instruction-class)
   `(defmethod compile-ast ((ast ,ast-class) context)
      (check-context-for-one-value-ast context)
-     (let ((temp1 (make-temp nil))
-	   (temp2 (make-temp nil))
-	   (temp3 (make-temp nil)))
+     (let ((temp1 (make-temp))
+	   (temp2 (make-temp))
+	   (temp3 (make-temp)))
        (compile-ast
 	(cleavir-ast:array-ast ast)
 	(context
@@ -105,10 +105,10 @@
     (ast-class aset-instruction-class unbox-instruction-class)
   `(defmethod compile-ast ((ast ,ast-class) context)
      (check-context-for-no-value-ast context)
-     (let ((temp1 (make-temp nil))
-	   (temp2 (make-temp nil))
-	   (temp3 (make-temp nil))
-	   (temp4 (make-temp nil)))
+     (let ((temp1 (make-temp))
+	   (temp2 (make-temp))
+	   (temp3 (make-temp))
+	   (temp4 (make-temp)))
        (compile-ast
 	(cleavir-ast:array-ast ast)
 	(context

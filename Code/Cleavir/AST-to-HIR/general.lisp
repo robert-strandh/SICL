@@ -17,8 +17,8 @@
 		  (cleavir-ast:name ast))))))
 	(setf (gethash ast *location-info*) location))))
 
-(defun make-temp (argument)
-  (declare (ignore argument))
+;;; Convenience function to avoid having long function names. 
+(defun make-temp ()
   (cleavir-ir:new-temporary))
 
 ;;; Given a list of results and a successor, generate a sequence of
@@ -91,7 +91,7 @@
 	       ;; We allocate a temporary variable to receive the
 	       ;; result, and that variable will not be used.
 	       (call-next-method ast
-				 (context (list (make-temp nil))
+				 (context (list (make-temp))
 					  successors
 					  (invocation context))))
 	   ;; We have at least one result.  In case there is more than
@@ -138,11 +138,11 @@
       (1
        (if (null results)
 	   (values (car successors)
-		   (make-temp nil))
+		   (make-temp))
 	   (values (nil-fill (cdr results) (car successors))
 		   (car results))))
       (2
-       (let ((location (if (null results) (make-temp nil) (car results))))
+       (let ((location (if (null results) (make-temp) (car results))))
 	 (values (cleavir-ir:make-eq-instruction
 		  (list location (cleavir-ir:make-constant-input 'nil))
 		  successors)
@@ -480,7 +480,7 @@
 
 (defun make-type-check (type-specifier var successor)
   (let* ((type-input (cleavir-ir:make-constant-input type-specifier))
-	 (temp (make-temp nil))
+	 (temp (make-temp))
 	 (error-branch
 	   (make-instance 'cleavir-ir:fdefinition-instruction
 	     :inputs (list (cleavir-ir:make-constant-input 'error))
@@ -524,7 +524,7 @@
 	     next)))
 	(2
 	 (if (null results)
-	     (let ((temp (make-temp nil)))
+	     (let ((temp (make-temp)))
 	       (compile-ast
 		ast
 		(context
@@ -551,7 +551,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp (make-temp nil)))
+  (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:symbol-ast ast)
      (context 
@@ -568,8 +568,8 @@
 
 (defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((temp1 (make-temp nil))
-	(temp2 (make-temp nil)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp)))
     (compile-ast
      (cleavir-ast:symbol-ast ast)
      (context 
@@ -591,7 +591,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:fdefinition-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp (make-temp nil)))
+  (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:name-ast ast)
      (context 
@@ -622,7 +622,7 @@
 		    (car successors))
 	     (let* ((false (make-boolean nil (car results) (car successors)))
 		    (true (make-boolean t (car results) (car successors)))
-		    (temp (make-temp nil)))
+		    (temp (make-temp)))
 	       (compile-ast
 		(cleavir-ast:form-ast ast)
 		(context
@@ -636,7 +636,7 @@
 		    (cleavir-ast:type-specifier ast))))
 		 (invocation context))))))
       (2 (if (null results)
-	     (let ((temp (make-temp nil)))
+	     (let ((temp (make-temp)))
 	       (compile-ast
 		(cleavir-ast:form-ast ast)
 		(context
@@ -648,7 +648,7 @@
 		 (invocation context))))
 	     (let ((false (make-boolean nil (car results) (car successors)))
 		   (true (make-boolean t (car results) (cadr successors)))
-		   (temp (make-temp nil)))
+		   (temp (make-temp)))
 	       (compile-ast
 		(cleavir-ast:form-ast ast)
 		(context
@@ -693,7 +693,7 @@
 
 (defun make-temps (arguments)
   (loop for argument in arguments
-	collect (make-temp argument)))
+	collect (make-temp)))
 
 (defun compile-arguments (arguments temps successor invocation)
   (loop with succ = successor

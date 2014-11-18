@@ -11,7 +11,7 @@
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
-	for inter = (make-temp nil)
+	for inter = (make-temp)
 	do (setf succ
 		 (make-instance unbox-instruction-class
 		   :inputs (list inter)

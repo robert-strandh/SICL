@@ -6,8 +6,8 @@
 
 (defmethod compile-ast ((ast cleavir-ast:slot-read-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp1 (make-temp nil))
-	(temp2 (make-temp nil)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp)))
     (compile-ast
      (cleavir-ast:object-ast ast)
      (context
@@ -28,9 +28,9 @@
 
 (defmethod compile-ast ((ast cleavir-ast:slot-write-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((temp1 (make-temp nil))
-	(temp2 (make-temp nil))
-	(temp3 (make-temp nil)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp))
+	(temp3 (make-temp)))
     (compile-ast
      (cleavir-ast:object-ast ast)
      (context

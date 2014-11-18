@@ -6,7 +6,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:car-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp (make-temp nil)))
+  (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:cons-ast ast)
      (context (list temp)
@@ -22,7 +22,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:cdr-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp (make-temp nil)))
+  (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:cons-ast ast)
      (context (list temp)
@@ -38,8 +38,8 @@
 
 (defmethod compile-ast ((ast cleavir-ast:rplaca-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((temp1 (make-temp nil))
-	(temp2 (make-temp nil)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp)))
     (compile-ast
      (cleavir-ast:cons-ast ast)
      (context
@@ -60,8 +60,8 @@
 
 (defmethod compile-ast ((ast cleavir-ast:rplacd-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((temp1 (make-temp nil))
-	(temp2 (make-temp nil)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp)))
     (compile-ast
      (cleavir-ast:cons-ast ast)
      (context
