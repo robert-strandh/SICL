@@ -8,7 +8,7 @@
 ;;;
 ;;; The destructuring itself is typically done when a macro function
 ;;; is run, and the purpose is to take the macro form apart and assign
-;;; parts of it to the parameter of the lambda list of the macro. 
+;;; parts of it to the parameter of the lambda list of the macro.
 ;;;
 ;;; The function DESTRUCTURE-LAMBDA-LIST generates the code for doing
 ;;; the destrucuring.  It is typically run by the expansion of
@@ -28,7 +28,7 @@
 ;;; We assume that the lambda-list/pattern are syntactically correct.
 ;;; They should be, because this function takes as input not the raw
 ;;; lambda list, but a PARSED lambda list in the form of a
-;;; standard-object.  
+;;; standard-object.
 
 ;;; The function DESTRUCTURE-REQUIRED and DESTRUCTURE-OPTIONALS return
 ;;; two values:
@@ -37,7 +37,7 @@
 ;;;
 ;;;  * A variable to be used to destructure the remaining pattern.
 
-;;; Destructure the required parameters of a lambda list.  
+;;; Destructure the required parameters of a lambda list.
 ;;;
 ;;; Recall that the required parameters of a parsed lambda list is
 ;;; either the keyword :NONE, or a list of patterns.
@@ -56,7 +56,7 @@
 			  bindings)
 		  rest-var)))))
 
-;;; Destructure the optional parameters of a lambda list.  
+;;; Destructure the optional parameters of a lambda list.
 ;;;
 ;;; Recall that the optional parameters of a parsed lambda list is
 ;;; either the keyword :none, or it is a list of &optional entries.
@@ -111,7 +111,7 @@
 			    ;; we give it the value TRUE whenever the
 			    ;; object is a CONS, even though later
 			    ;; an error might be signaled because there
-			    ;; is no match. 
+			    ;; is no match.
 			    ,@(if (consp (cddr optional))
 				  `((,(caddr optional) (consp ,var)))))
 			  (destructure-pattern (car optional) temp2)
@@ -128,7 +128,7 @@
 ;;; A &key entry is either:
 ;;;
 ;;;  * ((keyword pattern) init-form)
-;;; 
+;;;
 ;;;  * ((keyword pattern) init-form supplied-p-parameter)
 ;;;
 ;;; The HyperSpec is pretty skimpy about what happens with keyword
@@ -148,7 +148,7 @@
 	(append `(;; What we do in step 1 depends on whether there is
 		  ;; a supplied-p-parameter or not.  If there is, then
 		  ;; in step 1, we return a list of two things:
-		  ;; 
+		  ;;
 		  ;;  * a boolean indicating whether we found the
 		  ;;    keyword.
 		  ;;
@@ -199,7 +199,7 @@
 	(destructure-optionals (optionals lambda-list) var1)
       (let ((error-check-bindings '())
 	    (variables-to-ignore '()))
-	;; Generate bindings that check some conditions. 
+	;; Generate bindings that check some conditions.
 	(cond ((and (eq (rest-body lambda-list) :none)
 		    (eq (keys lambda-list) :none))
 	       ;; If there is neither a &rest/&body nor any keyword
@@ -425,16 +425,16 @@
 	 (block nil
 	   (tagbody
 	      ;; In phase 1 we search for the first
-	      ;; occurrence of :allow-other-keys. 
+	      ;; occurrence of :allow-other-keys.
 	    phase1
 	      (when (>= ,counter ,arg-count-var)
 		;; We ran out of arguments without finding any
 		;; :allow-other-keys.  We must now go check that
-		;; each keyword argument is a valid one. 
+		;; each keyword argument is a valid one.
 		(go phase2))
 	      (if (eq (,arg-op ,counter) :allow-other-keys)
 		  ;; We found the first :allow-other-keys.
-		  ;; We look no further. 
+		  ;; We look no further.
 		  (if (,arg-op (1+ ,counter))
 		      ;; The argument following :allow-other keys is
 		      ;; true.  Then any keyword is allowed, so we are
@@ -518,7 +518,7 @@
 				(not (eq rest-body :none))
 				(not (eq keys :none)))
 	       (match-required required arg-op)
-	       (match-optionals optionals 
+	       (match-optionals optionals
 				(if (eq required :none) 0 (length required))
 				arg-count-var
 				arg-op)
@@ -561,7 +561,7 @@
 
 ;;; Make sure that every &OPTIONAL and &KEY parameter of
 ;;; PARSED-LAMBDA-LIST has not only an INIT-FORM but also a SUPPLIED-P
-;;; parameter.  
+;;; parameter.
 (defun ensure-supplied-p-parameters (parsed-lambda-list)
   (let ((required (required parsed-lambda-list))
 	(optionals (optionals parsed-lambda-list))
@@ -585,9 +585,24 @@
 
 ;;; Given a parsed lambda list where all the &OPTIONAL and &KEY
 ;;; parameters are known to have not only an INIT-FORM but also a
-;;; SUPPLIED-P parameter, generate code that tests each SUPPLIED-P
-;;; parameter and sets the parameter to the value of the INIT-FORM if
-;;; it turns out the SUPPLIED-P parameter is false.
+;;; SUPPLIED-P parameter, create an unparsed lambda list of the
+;;; following form:
+;;;
+;;; ([r1 .. rl [&optional o1 ..om] [&key k1 .. kn &allow-other-keys]]])
+;;;
+;;; where:
+;;;
+;;;   - Each ri is a symbol
+;;;
+;;;   - Each oi is a list of two symbols.  The second of the
+;;;     two conceptually contains a Boolean value indicating whether
+;;;     the first one contains a value supplied by the caller.
+;;;
+;;;   - Each ki is a list of three symbols.  The first symbol is the
+;;;     keyword-name that a caller must supply in order to pass the
+;;;     corresponding argument.  The third symbol conceptually
+;;;     contains a Boolean value indicating whether the first
+;;;     LEXICAL-AST contains a value supplied by the caller.
 (defun extract-entry-lambda-list (parsed-lambda-list)
   (let ((required (required parsed-lambda-list))
 	(optionals (optionals parsed-lambda-list))
@@ -607,6 +622,11 @@
 		     collect (list keyword name supplied-p))))
      (if allow-other-keys '(&allow-other-keys) '()))))
 
+;;; Given a parsed lambda list where all the &OPTIONAL and &KEY
+;;; parameters are known to have not only an INIT-FORM but also a
+;;; SUPPLIED-P parameter, generate code that tests each SUPPLIED-P
+;;; parameter and sets the parameter to the value of the INIT-FORM if
+;;; it turns out the SUPPLIED-P parameter is false.
 (defun extract-initforms (parsed-lambda-list)
   (let ((optionals (optionals parsed-lambda-list))
 	(keys (keys parsed-lambda-list)))
@@ -647,7 +667,7 @@
 	 ;; we IGNORE the GENSYMed parameter to avoid warnings.
 	 ;; If the lambda list does contain &envionrment, we do
 	 ;; not want to make it IGNORABLE because we would want a
-	 ;; warning if it is not used then. 
+	 ;; warning if it is not used then.
 	 ,@(if (eq env-var :none)
 	       `((declare (ignore ,final-env-var)))
 	       `())
@@ -656,7 +676,7 @@
 	     (declare (ignore ,@ignored-variables))
 	     ,@body))))))
 
-	 
+	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; PARSE-DEFTYPE
@@ -676,7 +696,7 @@
 	 ;; we IGNORE the GENSYMed parameter to avoid warnings.
 	 ;; If the lambda list does contain &envionrment, we do
 	 ;; not want to make it IGNORABLE because we would want a
-	 ;; warning if it is not used then. 
+	 ;; warning if it is not used then.
 	 ,@(if (eq env-var :none)
 	       `((declare (ignore ,final-env-var)))
 	       `())
@@ -684,5 +704,3 @@
 	   (let* ,bindings
 	     (declare (ignore ,@ignored-variables))
 	     ,@body))))))
-
-	 
