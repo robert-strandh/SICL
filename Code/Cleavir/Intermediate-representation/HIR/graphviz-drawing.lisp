@@ -345,3 +345,11 @@
 (defmethod label ((instruction double-float-aset-instruction)) "df aset")
 
 (defmethod label ((instruction long-float-aset-instruction)) "lf aset")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instructions for multiple values.
+
+(defmethod label ((instruction multiple-to-fixed)) "M->F")
+
+(defmethod label ((instruction fixed-to-multiple)) "F->M")
