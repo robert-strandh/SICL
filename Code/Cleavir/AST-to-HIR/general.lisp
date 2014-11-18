@@ -43,7 +43,9 @@
 ;;; or more values are needed, we generate two branches; one where NIL
 ;;; is assigned to the first result and one where T is assigned to it
 ;;; (remaining results are filled with NIL).  Then we compile the AST
-;;; in a context with the two branches and no result.
+;;; in a context with the two branches and no result.  This way, we
+;;; can be sure that the primary methods for compiling all Boolean
+;;; ASTs are passed a context with two successors and no results. 
 (defmethod compile-ast :around ((ast cleavir-ast:boolean-ast-mixin) context)
   (with-accessors ((results results)
 		   (successors successors))
@@ -73,6 +75,12 @@
   (assert (and (zerop (length (results context)))
 	       (= (length (successors context)) 2))))
 
+;;; This :AROUND method serves as an adapter for the compilation of
+;;; ASTs that generate a single value.  If such an AST is compiled in
+;;; a unfit context (i.e, a context other than one that has a single
+;;; successor and a single required value), this method creates a
+;;; perfect context for compiling that AST together with instructions
+;;; for satisfying the unfit context.
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
   (with-accessors ((results results)
 		   (successors successors))
@@ -82,29 +90,42 @@
        ;; We have a context with one successor, so RESULTS can be a
        ;; list of any length, or it can be a values location,
        ;; indicating that all results are needed.
-       (if (null results)
-	   ;; We don't need the result.  This situation typically
-	   ;; happens when we compile a form other than the last of a
-	   ;; PROGN-AST.
-	   (if (cleavir-ast:side-effect-free-p ast)
-	       (progn
-		 ;; Warn an generate no code.
-		 (warn "Form compiled in a context requiring no value.")
-		 (car successors))
-	       ;; We allocate a temporary variable to receive the
-	       ;; result, and that variable will not be used.
-	       (call-next-method ast
-				 (context (list (make-temp))
-					  successors
-					  (invocation context))))
-	   ;; We have at least one result.  In case there is more than
-	   ;; one, we generate a successor where all but the first one
-	   ;; are filled with NIL. 
-	   (let ((successor (nil-fill (cdr results) (car successors))))
-	     (call-next-method ast
-			       (context (list (car results))
-					(list successor)
-					(invocation context))))))
+       (cond ((typep results 'cleavir-ir:values-location)
+	      ;; The context is such that all multiple values are
+	      ;; required.
+	      (let ((temp (make-temp)))
+		(call-next-method
+		 ast
+		 (context (list temp)
+			  (list (cleavir-ir:make-fixed-to-multiple-instruction
+				 (list temp)
+				 results
+				 (first successors)))
+			  (invocation context)))))
+	     ((null results)
+	      ;; We don't need the result.  This situation typically
+	      ;; happens when we compile a form other than the last of
+	      ;; a PROGN-AST.
+	      (if (cleavir-ast:side-effect-free-p ast)
+		  (progn
+		    ;; Warn an generate no code.
+		    (warn "Form compiled in a context requiring no value.")
+		    (first successors))
+		  ;; We allocate a temporary variable to receive the
+		  ;; result, and that variable will not be used.
+		  (call-next-method ast
+				    (context (list (make-temp))
+					     successors
+					     (invocation context)))))
+	     (t
+	      ;; We have at least one result.  In case there is more
+	      ;; than one, we generate a successor where all but the
+	      ;; first one are filled with NIL.
+	      (let ((successor (nil-fill (rest results) (first successors))))
+		(call-next-method ast
+				  (context (list (first results))
+					   (list successor)
+					   (invocation context)))))))
       (2
        ;; We have a context where a test of a Boolean is required.  We
        ;; create a new context where the result is compared to NIL
