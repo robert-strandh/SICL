@@ -14,7 +14,7 @@
 ;;; contained in the VALUES-LOCATION, then the remaining ordinary
 ;;; lexical locations are assigned to NIL.
 
-(defclass multiple-to-fixed (instruction one-successor-mixin)
+(defclass multiple-to-fixed-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-multiple-to-fixed-instruction
@@ -35,12 +35,12 @@
 ;;; that all the inputs are preserved, and the number of inputs is
 ;;; kept with the output.
 
-(defclass fixed-to-multiple (instruction one-successor-mixin)
+(defclass fixed-to-multiple-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-fixed-to-multiple-instruction
     (inputs output &optional (successor nil successor-p))
-  (make-instance 'fdefinition-instruction
+  (make-instance 'fixed-to-multiple-instruction
     :inputs inputs
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
