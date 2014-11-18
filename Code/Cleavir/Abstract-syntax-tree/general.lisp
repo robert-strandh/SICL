@@ -107,7 +107,7 @@
 ;;; value here represents the value of that constant variable at
 ;;; compile time.
 
-(defclass constant-ast (ast side-effect-free-ast-mixin)
+(defclass constant-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
 (defun make-constant-ast (value)
