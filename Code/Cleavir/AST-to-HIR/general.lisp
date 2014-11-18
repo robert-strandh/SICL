@@ -1,12 +1,13 @@
 (cl:in-package #:cleavir-ast-to-hir)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; During compilation, this variable contains a hash table that maps
 ;;; ASTs representing locations to HIR locations.
-
 (defvar *location-info*)
 
+;;; Given an AST of type LEXICAL-LOCATION, return a corresponding HIR
+;;; lexical location.  If no corresponding HIR location is found, one
+;;; is created and retured, and made to correspond to the AST in
+;;; future invocations.
 (defun find-or-create-location (ast)
   (or (gethash ast *location-info*)
       (let ((location
