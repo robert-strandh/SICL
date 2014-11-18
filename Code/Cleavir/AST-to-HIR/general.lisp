@@ -681,27 +681,15 @@
 ;;;
 ;;; Compile a CONSTANT-AST.
 ;;;
+;;; The CONSTANT-AST is a subclass of ONE-VALUE-AST-MIXIN, so the
+;;; :AROUND method on COMPILE-AST has adapted the context so that it
+;;; has a single result.
 
 (defmethod compile-ast ((ast cleavir-ast:constant-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (ecase (length successors)
-      (1 (if (null results)
-	     (progn
-	       (warn "constant compiled in a context with no values")
-	       (car successors))
-	     (cleavir-ir:make-assignment-instruction
-	      (cleavir-ir:make-constant-input (cleavir-ast:value ast))
-	      (car results)
-	      (nil-fill (cdr results) (car successors)))))
-      (2 (if (null results)
-	     (if (null (cleavir-ast:value ast))
-		 (car successors)
-		 (cadr successors))
-	     (cleavir-ir:make-assignment-instruction
-	      (cleavir-ir:make-constant-input (cleavir-ast:value ast))
-	      (car results)
-	      (if (null (cleavir-ast:value ast))
-		  (car successors)
-		  (cadr successors))))))))
+    (cleavir-ir:make-assignment-instruction
+     (cleavir-ir:make-constant-input (cleavir-ast:value ast))
+     (first results)
+     (first successors))))
