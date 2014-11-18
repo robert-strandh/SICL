@@ -350,6 +350,6 @@
 ;;;
 ;;; Instructions for multiple values.
 
-(defmethod label ((instruction multiple-to-fixed)) "M->F")
+(defmethod label ((instruction multiple-to-fixed-instruction)) "M->F")
 
-(defmethod label ((instruction fixed-to-multiple)) "F->M")
+(defmethod label ((instruction fixed-to-multiple-instruction)) "F->M")
