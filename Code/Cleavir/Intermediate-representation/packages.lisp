@@ -138,6 +138,8 @@
    #:unsigned-less-instruction #:make-unsigned-less-instruction 
    #:unsigned-not-greater-instruction #:make-unsigned-not-greater-instruction
    #:equal-instruction #:make-equal-instruction
+   #:multiple-to-fixed-instruction #:make-multiple-to-fixed-instruction
+   #:fixed-to-multiple-instruction #:make-fixed-to-multiple-instruction
    #:hir-to-mir #:specialize))
 
 (defpackage #:cleavir-ir-graphviz
