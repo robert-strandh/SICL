@@ -33,6 +33,9 @@
 		    value next))
 	  finally (return next))))
 
+;;; The generic function called on various AST types.  It compiles AST
+;;; in the compilation context CONTEXT and returns the first
+;;; instruction resulting from the compilation. 
 (defgeneric compile-ast (ast context))
 
 ;;; When an AST that is meant for a test (as indicated by it being an
