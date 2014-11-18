@@ -150,28 +150,6 @@
   (assert (and (zerop (length (results context)))
 	       (= (length (successors context)) 1))))
 
-;;; This function is used by compile methods that need a single
-;;; successor and that produce a single result.  It takes an arbitrary
-;;; context as an argument and returns two values, the successor and a
-;;; location for the result. 
-(defun adapt-context-1-1 (context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (ecase (length successors)
-      (1
-       (if (null results)
-	   (values (car successors)
-		   (make-temp))
-	   (values (nil-fill (cdr results) (car successors))
-		   (car results))))
-      (2
-       (let ((location (if (null results) (make-temp) (car results))))
-	 (values (cleavir-ir:make-eq-instruction
-		  (list location (cleavir-ir:make-constant-input 'nil))
-		  successors)
-		 location))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile ASTs that represent Common Lisp operations. 
