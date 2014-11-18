@@ -20,14 +20,6 @@
   (declare (ignore argument))
   (cleavir-ir:new-temporary))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile an abstract syntax tree in a compilation context.
-;;;
-;;; The result of the compilation is a single value, namely the first
-;;; instruction of the instruction graph resulting from the
-;;; compilation of the entire AST.
-
 ;;; Given a list of results and a successor, generate a sequence of
 ;;; instructions preceding that successor, and that assign NIL to each
 ;;; result in the list.
@@ -685,6 +677,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; COMPILE-TOPLEVEL
+;;;
+;;; This is the main entry point.
 
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
