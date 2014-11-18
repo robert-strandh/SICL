@@ -259,25 +259,11 @@
 ;;;
 ;;; Compile a TAGBODY-AST.
 ;;;
-;;; A TAGBODY-AST is compiled as follows: 
-;;;
-;;; A single successor is determined as follows:
-;;;
-;;;   * If the context has no successors, then a RETURN-INSTRUCTION
-;;;     which returns a single NIL value is generated, and that
-;;;     RETURN-INSTRUCTION becomes the successor.
-;;; 
-;;;   * If the context has one or more successors and RESULTS is an
-;;;     empty list, the successor will be the first in the list.  The
-;;;     reason that this method always works, is that if there are
-;;;     several successors, then the first one should be chosen when
-;;;     the AST yields NIL, which is always the case for the
-;;;     TAGBODY-AST.
-;;; 
-;;;   * If the context has one or more successors and RESULTS contains
-;;;     at least one element, then the successor is the first
-;;;     instruction in a sequence of instructions that fill the
-;;;     results with NIL.
+;;; The TAGBODY-AST is always the first AST of two ASTs in a
+;;; PROGN-AST.  The second AST in the PROGN-AST is a CONSTANT-AST
+;;; containing NIL.  Therefore, we know that the TAGBODY-AST is always
+;;; compiled in a context where no values are required and that has a
+;;; single successor.
 
 ;;; During AST-to-HIR translation, this variable contains a hash table
 ;;; that maps a TAG-AST to information about the tag.  The information
@@ -311,16 +297,9 @@
 	     (setf (go-info item-ast)
 		   (list (cleavir-ir:make-nop-instruction nil)
 			 (invocation context)))))
-  (with-accessors ((results results)
-		   (successors successors))
+  (with-accessors ((successors successors))
       context
-    (let ((next (cond ((null successors)
-		       (cleavir-ir:make-return-instruction
-			(list (cleavir-ir:make-constant-input 'nil))))
-		      ((null results)
-		       (car successors))
-		      (t
-		       (nil-fill results (car successors))))))
+    (let ((next (first successors)))
       (loop for item-ast in (reverse (cleavir-ast:item-asts ast))
 	    do (setf next
 		     (if (typep item-ast 'cleavir-ast:tag-ast)
