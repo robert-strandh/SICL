@@ -12,4 +12,5 @@
    (:file "cons")
    (:file "standard-object")
    (:file "array")
+   (:file "multiple-values")
    (:file "graphviz-drawing")))
