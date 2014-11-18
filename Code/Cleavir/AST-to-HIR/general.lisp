@@ -82,21 +82,10 @@
 		   (successors successors))
       context
     (ecase (length successors)
-      (0
-       ;; There are no successors, which means that this AST is
-       ;; compiled in a context where the value(s) should be returned
-       ;; to the caller.  We deal with this situation by creating a
-       ;; context that has a RETURN-INSTRUCTION in it, and we compile
-       ;; the AST in that context instead.
-       (let* ((temp (cleavir-ir:new-temporary))
-	      (successor (cleavir-ir:make-return-instruction (list temp))))
-	 (call-next-method ast
-			   (context (list temp)
-				    (list successor)
-				    (invocation context)))))
       (1
-       ;; We have a context with one successor, so the list of results
-       ;; can have any length.
+       ;; We have a context with one successor, so RESULTS can be a
+       ;; list of any length, or it can be a values location,
+       ;; indicating that all results are needed.
        (if (null results)
 	   ;; We don't need the result.  This situation typically
 	   ;; happens when we compile a form other than the last of a
@@ -153,10 +142,6 @@
 		   (successors successors))
       context
     (ecase (length successors)
-      (0
-       (let ((location (make-temp nil)))
-	 (values (cleavir-ir:make-return-instruction (list location))
-		 location)))
       (1
        (if (null results)
 	   (values (car successors)
@@ -419,7 +404,6 @@
        all-args
        temps
        (ecase (length successors)
-	 (0 (cleavir-ir:make-tailcall-instruction temps))
 	 (1 (make-instance 'cleavir-ir:funcall-instruction
 	      :inputs temps
 	      :outputs results
@@ -528,13 +512,6 @@
     (let ((form-ast (cleavir-ast:form-ast ast))
 	  (type-specifiers (cleavir-ast:type-specifiers ast)))
       (ecase (length successors)
-	(0
-	 ;; This case is a bit hard to handle, because we don't know a
-	 ;; priori how many values are returned by the FORM-AST if the
-	 ;; THE-AST.  For now, do what we are allowed to do according to
-	 ;; the HyperSpec (i.e., don't check the types).  Eventually we
-	 ;; hope to implement a better solution.
-	 (compile-ast form-ast context))
 	(1
 	 (let* ((temp-count (max (length results) (length type-specifiers)))
 		(temps (make-temps (make-list temp-count))))
@@ -647,21 +624,6 @@
 		   (successors successors))
       context
     (ecase (length successors)
-      (0 
-       (let* ((temp1 (make-temp nil))
-	      (next (cleavir-ir:make-return-instruction (list temp1)))
-	      (false (make-boolean nil temp1 next))
-	      (true (make-boolean t temp1 next))
-	      (temp2 (make-temp nil)))
-	 (compile-ast
-	  (cleavir-ast:form-ast ast)
-	  (context
-	   (list temp2)
-	   (list (cleavir-ir:make-typeq-instruction
-		  temp2
-		  (list false true)
-		  (cleavir-ast:type-specifier ast)))
-	   (invocation context)))))
       (1 (if (null results)
 	     (progn (warn "test compiled in a context with no results")
 		    (car successors))
@@ -758,8 +720,6 @@
 		   (successors successors))
       context
     (ecase (length successors)
-      (0 (cleavir-ir:make-return-instruction
-	  (list (cleavir-ir:make-constant-input (cleavir-ast:value ast)))))
       (1 (if (null results)
 	     (progn 
 	       (warn "constant compiled in a context with no values")
