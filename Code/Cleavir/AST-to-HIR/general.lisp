@@ -5,7 +5,7 @@
 ;;; During compilation, this variable contains a hash table that maps
 ;;; ASTs representing locations to HIR locations.
 
-(defparameter *location-info* nil)
+(defvar *location-info*)
 
 (defun find-or-create-location (ast)
   (or (gethash ast *location-info*)
