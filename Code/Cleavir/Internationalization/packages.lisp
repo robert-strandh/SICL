@@ -6,4 +6,5 @@
   (:use #:common-lisp)
   (:export
    #:condition
+   #:locale
    ))
