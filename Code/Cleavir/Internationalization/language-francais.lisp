@@ -8,25 +8,25 @@
 ;;; Methods on LONG-DAY-NAME.
 
 (defmethod long-day-name ((day (eql 1)) (language francais))
-  "Lundi")
+  "lundi")
 
 (defmethod long-day-name ((day (eql 2)) (language francais))
-  "Mardi")
+  "mardi")
 
 (defmethod long-day-name ((day (eql 3)) (language francais))
-  "Mercredi")
+  "mercredi")
 
 (defmethod long-day-name ((day (eql 4)) (language francais))
-  "Jeudi")
+  "jeudi")
 
 (defmethod long-day-name ((day (eql 5)) (language francais))
-  "Vendredi")
+  "vendredi")
 
 (defmethod long-day-name ((day (eql 6)) (language francais))
-  "Samedi")
+  "samedi")
 
 (defmethod long-day-name ((day (eql 7)) (language francais))
-  "Dimanche")
+  "dimanche")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
