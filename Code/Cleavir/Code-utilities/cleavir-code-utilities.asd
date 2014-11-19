@@ -1,6 +1,7 @@
 (in-package #:common-lisp-user)
 
 (asdf:defsystem cleavir-code-utilities
+  :depends-on (:cleavir-internationalization)
   :serial t
   :components
   ((:file "packages")
