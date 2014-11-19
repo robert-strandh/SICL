@@ -8,4 +8,10 @@
    #:condition
    #:locale
    #:*locale*
+   #:language
+   #:english
+   #:francais
+   #:svenska
+   #:deutsch
+   #:tieng-viet
    ))
