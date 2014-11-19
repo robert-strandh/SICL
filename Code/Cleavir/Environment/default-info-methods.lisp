@@ -756,7 +756,7 @@
 ;;; just making a recursive call, passing the next entry in the
 ;;; environment.
 (defmethod tag-info ((environment entry) symbol)
-  (tag-info (next environment)))
+  (tag-info (next environment) symbol))
 
 ;;; This method implements the action to take when the argument is the
 ;;; global environment.  We detect this situation by the fact that the
