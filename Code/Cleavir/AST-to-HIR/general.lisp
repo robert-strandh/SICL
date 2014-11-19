@@ -359,7 +359,7 @@
 	  (if (typep results 'cleavir-ir:values-location)
 	      (make-instance 'cleavir-ir:funcall-instruction
 		:inputs temps
-		:outputs results
+		:outputs (list results)
 		:successors successors)
 	      (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
 		(make-instance 'cleavir-ir:funcall-instruction
