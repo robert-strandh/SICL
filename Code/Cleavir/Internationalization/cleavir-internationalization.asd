@@ -6,4 +6,5 @@
   ((:file "packages")
    (:file "locale")
    (:file "language")
-   (:file "condition")))
+   (:file "condition")
+   (:file "init")))
