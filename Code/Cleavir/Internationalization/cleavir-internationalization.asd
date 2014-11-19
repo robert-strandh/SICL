@@ -3,4 +3,5 @@
 (asdf:defsystem :cleavir-internationalization
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "locale")))
