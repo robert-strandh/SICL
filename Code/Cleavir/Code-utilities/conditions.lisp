@@ -11,6 +11,8 @@
    (%min-argcount :initarg :min-argcount :reader min-argcount)
    (%max-argcount :initarg :max-argcount :reader max-argcount)))
 
+;;; FIXME: improve these conditions!
+
 (define-condition too-few-arguments
     (program-error cleavir-i18n:condition)
   ())
