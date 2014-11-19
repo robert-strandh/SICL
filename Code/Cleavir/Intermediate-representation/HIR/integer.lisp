@@ -9,7 +9,7 @@
 ;;; which is the corresponding unboxed BIT value.
 
 (defclass bit-unbox-instruction
-    (instruction one-successors-mixin unbox-instruction-mixin)
+    (instruction one-successor-mixin unbox-instruction-mixin)
   ())
 
 (defun make-bit-unbox-instruction (input output successor)
@@ -27,7 +27,7 @@
 ;;; boxed BIT value, i.e., FIXNUM with a value of 0 or 1.
 
 (defclass bit-box-instruction
-    (instruction one-successors-mixin box-instruction-mixin)
+    (instruction one-successor-mixin box-instruction-mixin)
   ())
 
 (defun make-bit-box-instruction (input output successor)
@@ -46,7 +46,7 @@
 ;;; (UNSIGNED-BYTE 8) value.
 
 (defclass unsigned-byte-8-unbox-instruction
-    (instruction one-successors-mixin unbox-instruction-mixin)
+    (instruction one-successor-mixin unbox-instruction-mixin)
   ())
 
 (defun make-unsigned-byte-8-unbox-instruction (input output successor)
@@ -65,7 +65,7 @@
 ;;; value between 0 and 255.
 
 (defclass unsigned-byte-8-box-instruction
-    (instruction one-successors-mixin box-instruction-mixin)
+    (instruction one-successor-mixin box-instruction-mixin)
   ())
 
 (defun make-unsigned-byte-8-box-instruction (input output successor)

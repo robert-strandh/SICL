@@ -12,7 +12,7 @@
 ;;; SHORT-FLOAT data type.
 
 (defclass short-float-unbox-instruction
-    (instruction one-successors-mixin unbox-instruction-mixin)
+    (instruction one-successor-mixin unbox-instruction-mixin)
   ())
 
 (defun make-short-float-unbox-instruction (input output successor)
@@ -33,7 +33,7 @@
 ;;; SHORT-FLOAT data type.
 
 (defclass short-float-box-instruction
-    (instruction one-successors-mixin box-instruction-mixin)
+    (instruction one-successor-mixin box-instruction-mixin)
   ())
 
 (defun make-short-float-box-instruction (input output successor)
@@ -53,7 +53,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
 
-(defclass short-float-add-instruction (instruction one-successors-mixin)
+(defclass short-float-add-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-short-float-add-instruction (input1 input2 output successor)
@@ -73,7 +73,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
 
-(defclass short-float-sub-instruction (instruction one-successors-mixin)
+(defclass short-float-sub-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-short-float-sub-instruction (input1 input2 output successor)
@@ -93,7 +93,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
 
-(defclass short-float-mul-instruction (instruction one-successors-mixin)
+(defclass short-float-mul-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-short-float-mul-instruction (input1 input2 output successor)
@@ -113,7 +113,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
 
-(defclass short-float-div-instruction (instruction one-successors-mixin)
+(defclass short-float-div-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-short-float-div-instruction (input1 input2 output successor)
@@ -197,7 +197,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
 
-(defclass short-float-sin-instruction (instruction one-successors-mixin)
+(defclass short-float-sin-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-short-float-sin-instruction (input output successor)
@@ -217,7 +217,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
 
-(defclass short-float-cos-instruction (instruction one-successors-mixin)
+(defclass short-float-cos-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-short-float-cos-instruction (input output successor)
@@ -237,7 +237,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
 
-(defclass short-float-sqrt-instruction (instruction one-successors-mixin)
+(defclass short-float-sqrt-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-short-float-sqrt-instruction (input output successor)
@@ -255,7 +255,7 @@
 ;;; unboxed SINGLE-FLOAT value.
 
 (defclass single-float-unbox-instruction
-    (instruction one-successors-mixin unbox-instruction-mixin)
+    (instruction one-successor-mixin unbox-instruction-mixin)
   ())
 
 (defun make-single-float-unbox-instruction (input output successor)
@@ -273,7 +273,7 @@
 ;;; boxed SINGLE-FLOAT value.
 
 (defclass single-float-box-instruction
-    (instruction one-successors-mixin box-instruction-mixin)
+    (instruction one-successor-mixin box-instruction-mixin)
   ())
 
 (defun make-single-float-box-instruction (input output successor)
@@ -290,7 +290,7 @@
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unboxed SINGLE-FLOAT sum of the two inputs.
 
-(defclass single-float-add-instruction (instruction one-successors-mixin)
+(defclass single-float-add-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-single-float-add-instruction (input1 input2 output successor)
@@ -307,7 +307,7 @@
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unboxed SINGLE-FLOAT difference between the two inputs.
 
-(defclass single-float-sub-instruction (instruction one-successors-mixin)
+(defclass single-float-sub-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-single-float-sub-instruction (input1 input2 output successor)
@@ -324,7 +324,7 @@
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unboxed SINGLE-FLOAT product of the two inputs.
 
-(defclass single-float-mul-instruction (instruction one-successors-mixin)
+(defclass single-float-mul-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-single-float-mul-instruction (input1 input2 output successor)
@@ -341,7 +341,7 @@
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unboxed SINGLE-FLOAT quotient of the two inputs.
 
-(defclass single-float-div-instruction (instruction one-successors-mixin)
+(defclass single-float-div-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-single-float-div-instruction (input1 input2 output successor)
@@ -425,7 +425,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SINGLE-FLOAT data type.
 
-(defclass single-float-sin-instruction (instruction one-successors-mixin)
+(defclass single-float-sin-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-single-float-sin-instruction (input output successor)
@@ -445,7 +445,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SINGLE-FLOAT data type.
 
-(defclass single-float-cos-instruction (instruction one-successors-mixin)
+(defclass single-float-cos-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-single-float-cos-instruction (input output successor)
@@ -465,7 +465,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; SINGLE-FLOAT data type.
 
-(defclass single-float-sqrt-instruction (instruction one-successors-mixin)
+(defclass single-float-sqrt-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-single-float-sqrt-instruction (input output successor)
@@ -486,7 +486,7 @@
 ;;; DOUBLE-FLOAT data type.
 
 (defclass double-float-unbox-instruction
-    (instruction one-successors-mixin unbox-instruction-mixin)
+    (instruction one-successor-mixin unbox-instruction-mixin)
   ())
 
 (defun make-double-float-unbox-instruction (input output successor)
@@ -507,7 +507,7 @@
 ;;; DOUBLE-FLOAT data type.
 
 (defclass double-float-box-instruction
-    (instruction one-successors-mixin box-instruction-mixin)
+    (instruction one-successor-mixin box-instruction-mixin)
   ())
 
 (defun make-double-float-box-instruction (input output successor)
@@ -527,7 +527,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
 
-(defclass double-float-add-instruction (instruction one-successors-mixin)
+(defclass double-float-add-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-double-float-add-instruction (input1 input2 output successor)
@@ -547,7 +547,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
 
-(defclass double-float-sub-instruction (instruction one-successors-mixin)
+(defclass double-float-sub-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-double-float-sub-instruction (input1 input2 output successor)
@@ -567,7 +567,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
 
-(defclass double-float-mul-instruction (instruction one-successors-mixin)
+(defclass double-float-mul-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-double-float-mul-instruction (input1 input2 output successor)
@@ -587,7 +587,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
 
-(defclass double-float-div-instruction (instruction one-successors-mixin)
+(defclass double-float-div-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-double-float-div-instruction (input1 input2 output successor)
@@ -671,7 +671,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
 
-(defclass double-float-sin-instruction (instruction one-successors-mixin)
+(defclass double-float-sin-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-double-float-sin-instruction (input output successor)
@@ -691,7 +691,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
 
-(defclass double-float-cos-instruction (instruction one-successors-mixin)
+(defclass double-float-cos-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-double-float-cos-instruction (input output successor)
@@ -711,7 +711,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
 
-(defclass double-float-sqrt-instruction (instruction one-successors-mixin)
+(defclass double-float-sqrt-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-double-float-sqrt-instruction (input output successor)
@@ -732,7 +732,7 @@
 ;;; LONG-FLOAT data type.
 
 (defclass long-float-unbox-instruction
-    (instruction one-successors-mixin unbox-instruction-mixin)
+    (instruction one-successor-mixin unbox-instruction-mixin)
   ())
 
 (defun make-long-float-unbox-instruction (input output successor)
@@ -753,7 +753,7 @@
 ;;; LONG-FLOAT data type.
 
 (defclass long-float-box-instruction
-    (instruction one-successors-mixin box-instruction-mixin)
+    (instruction one-successor-mixin box-instruction-mixin)
   ())
 
 (defun make-long-float-box-instruction (input output successor)
@@ -773,7 +773,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
 
-(defclass long-float-add-instruction (instruction one-successors-mixin)
+(defclass long-float-add-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-long-float-add-instruction (input1 input2 output successor)
@@ -793,7 +793,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
 
-(defclass long-float-sub-instruction (instruction one-successors-mixin)
+(defclass long-float-sub-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-long-float-sub-instruction (input1 input2 output successor)
@@ -813,7 +813,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
 
-(defclass long-float-mul-instruction (instruction one-successors-mixin)
+(defclass long-float-mul-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-long-float-mul-instruction (input1 input2 output successor)
@@ -833,7 +833,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
 
-(defclass long-float-div-instruction (instruction one-successors-mixin)
+(defclass long-float-div-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-long-float-div-instruction (input1 input2 output successor)
@@ -917,7 +917,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
 
-(defclass long-float-sin-instruction (instruction one-successors-mixin)
+(defclass long-float-sin-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-long-float-sin-instruction (input output successor)
@@ -937,7 +937,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
 
-(defclass long-float-cos-instruction (instruction one-successors-mixin)
+(defclass long-float-cos-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-long-float-cos-instruction (input output successor)
@@ -957,7 +957,7 @@
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
 
-(defclass long-float-sqrt-instruction (instruction one-successors-mixin)
+(defclass long-float-sqrt-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-long-float-sqrt-instruction (input output successor)
