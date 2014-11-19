@@ -427,6 +427,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting SETQ.
+;;;
+;;; Recall that the SETQ-AST is a NO-VALUE-AST-MIXIN.  We must
+;;; therefore make sure it is always compiled in a context where its
+;;; value is not needed.  We do that by wrapping a PROGN around it.
 
 (defgeneric convert-setq (info form-ast))
 
@@ -435,10 +439,14 @@
 	 :form (cleavir-env:name info)))
 
 (defmethod convert-setq ((info cleavir-env:lexical-variable-info) form-ast)
-  (cleavir-ast:make-setq-ast
-   (cleavir-env:identity info)
-   form-ast))
+  (cleavir-ast:make-progn-ast 
+   (list (cleavir-ast:make-setq-ast
+	  (cleavir-env:identity info)
+	  form-ast)
+	 (cleavir-env:identity info))))
 
+;;; FIXME: Make sure the MAKE-SET-SYMBOL-VALUE-AST is in a context
+;;; where its value is not required.
 (defmethod convert-setq ((info cleavir-env:special-variable-info) form-ast)
   (cleavir-ast:make-set-symbol-value-ast
    (cleavir-ast:make-constant-ast (cleavir-env:name info))
