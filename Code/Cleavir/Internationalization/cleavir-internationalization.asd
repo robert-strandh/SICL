@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "locale")))
+   (:file "locale")
+   (:file "language")))
