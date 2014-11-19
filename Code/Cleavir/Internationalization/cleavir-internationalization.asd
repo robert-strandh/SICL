@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "locale")
-   (:file "language")))
+   (:file "language")
+   (:file "condition")))
