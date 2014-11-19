@@ -175,19 +175,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Mixin classes for successor count.
-
-;;; Mixin class for instructions with no successors. 
-(defclass no-successors-mixin () ())
-
-;;; Mixin class for instructions with a single successor.
-(defclass one-successor-mixin () ())
-
-;;; Mixin class for instructions with tow successors.
-(defclass two-successors-mixin () ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Mixin classes for boxing instructions.
 
 ;;; Mixin class for instructions that box unboxed data. 
@@ -499,7 +486,7 @@
 ;;; also a PHI-INSTRUCTION with N inputs.  If A has more than one
 ;;; predecessor, then it has N predecessors.
 
-(defclass phi-instruction (instruction one-successors-mixin)
+(defclass phi-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-phi-instruction (inputs output successor)
