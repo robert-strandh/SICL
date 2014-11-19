@@ -364,7 +364,7 @@
 	      (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
 		(make-instance 'cleavir-ir:funcall-instruction
 		  :inputs temps
-		  :outputs values-temp
+		  :outputs (list values-temp)
 		  :successors
 		  (list (cleavir-ir:make-multiple-to-fixed-instruction
 			 values-temp results (first successors)))))))
