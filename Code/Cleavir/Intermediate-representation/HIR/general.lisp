@@ -413,7 +413,7 @@
    ;; ENTER-INSTRUCTION that represents the function invocation at
    ;; which execution should continue after the stack has been
    ;; unwound.
-   (%invocation :initarg invocation :reader invocation)))
+   (%invocation :initarg :invocation :reader invocation)))
 
 (defun make-unwind-instruction (successor invocation)
   (make-instance 'unwind-instruction
