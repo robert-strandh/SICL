@@ -7,4 +7,5 @@
   (:export
    #:condition
    #:locale
+   #:*locale*
    ))
