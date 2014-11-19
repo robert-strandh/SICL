@@ -657,7 +657,9 @@
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq)))
-    (compile-ast ast (context '() '() nil))))
+    (let* ((values (cleavir-ir:make-values-location))
+	   (return (cleavir-ir:make-return-instruction (list values))))
+      (compile-ast ast (context values (list return) nil)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
