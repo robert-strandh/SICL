@@ -9,6 +9,8 @@
    #:report-condition
    #:locale
    #:*locale*
+   #:long-day-name
+   #:short-day-name
    #:language
    #:english
    #:francais
