@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "condition-reporters-english")
    (:file "argcount")
    (:file "form")
    (:file "general")
