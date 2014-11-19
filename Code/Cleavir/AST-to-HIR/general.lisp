@@ -424,7 +424,9 @@
   (check-context-for-one-value-ast context)
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
 	 (enter (cleavir-ir:make-enter-instruction ll))
-	 (body-context (context '() '() enter))
+	 (values (cleavir-ir:make-values-location))
+	 (return (cleavir-ir:make-return-instruction (list values)))
+	 (body-context (context values (list return) enter))
 	 (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
     (cleavir-ir:make-enclose-instruction
