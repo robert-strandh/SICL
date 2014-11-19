@@ -3,9 +3,6 @@
 (defclass language ()
   ())
 
-(defclass english (language)
-  ())
-
 (defclass francais (language)
   ())
 
