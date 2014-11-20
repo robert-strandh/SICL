@@ -3,29 +3,48 @@
 ;;;; Recall that an ENTER-INSTRUCTION is the successor of no other
 ;;;; instruction.
 ;;;;
-;;;; The OWNER of an instruction A is the outermost ENTER-INSTRUCTION
-;;;; of all the ENTER-INSTRUCTIONs from which A is reachable.  The
-;;;; owner of a datum D is the outermost ENTER-INSTRUCTION of all the
-;;;; owners of all the instructions using D.
+;;;; The ENTER-INSTRUCTIONs of a program constitute a directed tree.
+;;;; An ENTER-INSTRUCTION I closer to the root of the tree than some
+;;;; other ENTER-INSTRUCTION J is said to be located FURTHER OUT than
+;;;; J.
+;;;;
+;;;; We introduce the concept of OWNERSHIP.  This concept is defined
+;;;; for lexical variables and for instructions.  The OWNER of an
+;;;; instruction or a lexical variable is an ENTER-INSTRUCTION.
+;;;;
+;;;; Ownership for instructions is defined as follows:
+;;;;
+;;;;   * The owner of an ENTER-INSTRUCTION is itself.
+;;;;
+;;;;   * For all instruction types, EXCEPT the UNWIND-INSTRUCTION, the
+;;;;     owner of the successors of an instruction I is the same as
+;;;;     the owner of I.
+;;;;
+;;;;   * The owner of the successor of an UNWIND-INSTRUCTION I is the
+;;;;     value returned by calling (INVOCATION I).
+;;;;
+;;;; The owner of a datum D is the outermost ENTER-INSTRUCTION of all
+;;;; the owners of all the instructions using D.
 ;;;;
 ;;;; Each ENTER-INSTRUCTION A defines a PROCEDURE which is a the set
 ;;;; of all the instructions owned by A.  We extend the definition of
 ;;;; ownership so that a procedure P is the owner of some instruction
 ;;;; or datum X if an only if the unique ENTER-INSTRUCTION of P is the
-;;;; owner of X. 
+;;;; owner of X.
 ;;;;
-;;;; A procedure P is a LEXICAL PARENT of a procedure Q if and only if
-;;;; either some instruction in P is the direct successor of some
-;;;; instruction in Q, or some instruction A in Q refers to a datum
-;;;; owned by P. 
+;;;; A procedure P is a LEXICAL ANCESTOR of a procedure Q if and only
+;;;; if either some instruction owned by P is the direct successor of
+;;;; some instruction (which must then be an UNWIND-INSTRUCTION) owned
+;;;; by Q, or some instruction I owned by Q refers to a datum owned by
+;;;; P.
 ;;;;
 ;;;; The LEXICAL DEPTH of a procedure P is defined recursively as
 ;;;; follows:
-;;;; 
-;;;;   * If P has no lexical parent then its lexical depth is 0.
+;;;;
+;;;;   * If P has no lexical ancestor then its lexical depth is 0.
 ;;;;
 ;;;;   * Otherwise, the lexical depth of P is d+1, where d is the
-;;;      maximum depth of any of its lexical parents. 
+;;;      maximum depth of any of its lexical ancestors.
 
 (defun data (instruction)
   (append (cleavir-ir:inputs instruction)
@@ -46,24 +65,24 @@
 ;;; Compute the owner of each instruction and each datum.  The return
 ;;; value is an EQ hash table mapping an instruction or a datum to its
 ;;; owner.
-(defun compute-ownerships (enter-instruction)
+(defun compute-ownerships (initial-instruction)
   (let ((time (get-internal-run-time))
-	(worklist (list enter-instruction))
+	(worklist (list initial-instruction))
 	(*ownerships* (make-hash-table :test #'eq)))
     (flet
-	((process-function (enter-instruction)
+	((process-function (initial-instruction)
 	   (labels
 	       ((traverse (instruction)
 		  (when  (null (owner instruction))
-		    (setf (owner instruction) enter-instruction)
+		    (setf (owner instruction) initial-instruction)
 		    (loop for datum in (data instruction)
 			  do (when (null (owner datum))
-			       (setf (owner datum) enter-instruction)))
+			       (setf (owner datum) initial-instruction)))
 		    (when (typep instruction 'cleavir-ir:enclose-instruction)
 		      (let ((code (cleavir-ir:code instruction)))
 			(setf worklist (append worklist (list code)))))
 		    (mapc #'traverse (cleavir-ir:successors instruction)))))
-	     (traverse enter-instruction))))
+	     (traverse initial-instruction))))
       (loop until (null worklist)
 	    do (process-function (pop worklist))))
     (incf *ld1-call-count*)
