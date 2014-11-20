@@ -374,11 +374,11 @@
 		 (false (cleavir-ir:make-constant-input nil)))
 	    (make-instance 'cleavir-ir:funcall-instruction
 	      :inputs temps
-	      :outputs (list temp)
+	      :outputs (list values-temp)
 	      :successors
 	      (list (cleavir-ir:make-multiple-to-fixed-instruction
 		     values-temp
-		     temp
+		     (list temp)
 		     (make-instance 'cleavir-ir:eq-instruction
 		       :inputs (list temp false)
 		       :outputs '()
