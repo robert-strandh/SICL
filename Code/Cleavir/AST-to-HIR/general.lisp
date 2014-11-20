@@ -651,6 +651,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Once the graph is generated, set the predecessor correctly.
+
+(defun set-predecessors (initial-instruction)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (setf (cleavir-ir:predecessors instruction) '())
+		 (mapc #'traverse (cleavir-ir:successors instruction))
+		 (when (typep instruction 'cleavir-ir:enclose-instruction)
+		   (traverse (cleavir-ir:code instruction))))))
+      (traverse initial-instruction)))
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop for successor in (cleavir-ir:successors instruction)
+		       do (push instruction (cleavir-ir:predecessors successor)))
+		 (mapc #'traverse (cleavir-ir:successors instruction))
+		 (when (typep instruction 'cleavir-ir:enclose-instruction)
+		   (traverse (cleavir-ir:code instruction))))))
+      (traverse initial-instruction)))
+  initial-instruction)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; COMPILE-TOPLEVEL
 ;;;
 ;;; This is the main entry point.
@@ -661,7 +687,8 @@
 	(*location-info* (make-hash-table :test #'eq)))
     (let* ((values (cleavir-ir:make-values-location))
 	   (return (cleavir-ir:make-return-instruction (list values))))
-      (compile-ast ast (context values (list return) nil)))))
+      (set-predecessors
+       (compile-ast ast (context values (list return) nil))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
