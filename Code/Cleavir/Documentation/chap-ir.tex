@@ -4,10 +4,11 @@
 \section{Instruction graph}
 
 The compiler translates an abstract syntax tree into a \emph{graph} of
-\emph{instructions} in a language named \emph{MIR}.  This graph is a
-variation on a \emph{control flow graph}.  As such, it has a unique
-instruction called the \emph{initial instruction} which is the
-instruction where the execution of the MIR program starts. 
+\emph{instructions} in a language named \emph{HIR} which stands for
+High-level Intermediate Representation.  This graph is a variation on
+a \emph{control flow graph}.  As such, it has a unique instruction
+called the \emph{initial instruction} which is the instruction where
+the execution of the MIR program starts.
 
 In general an instruction can have zero, one, or more
 \emph{successors}, and zero, one, or more \emph{predecessors}.
@@ -19,18 +20,18 @@ value or a \emph{lexical variable}.%
   \texttt{enclose-instruction} has an \texttt{enter-instruction} as
   its input.}  An output may only be a lexical variable.
 
-The execution of a a MIR instruction consists of generating the
+The execution of a a HIR instruction consists of generating the
 outputs as a function of the inputs, and also of choosing a successor
 based on the inputs.
 
-The execution of a MIR program consists of starting execution at the
+The execution of a HIR program consists of starting execution at the
 \emph{initial instruction} and executing a sequence of instructions
 where an instruction in the sequence is the successor chosen during
 the execution of the preceding instruction in the sequence.
 
 A MIR program is said to be \emph{well formed} if and only if the
 restrictions on each of the instructions are respected, as defined in
-\refSec{sec-mir-instructions}.
+\refSec{sec-ir-instructions}.
 
 It is possible for a well-formed MIR program to contain instructions
 that are not \emph{reachable} in that there is no execution path from
@@ -152,7 +153,7 @@ backend.
 This is the level where \emph{register allocation} is accomplished.
 
 \section{Definition of MIR instructions}
-\label{sec-mir-instructions}
+\label{sec-ir-instructions}
 
 \subsection{Instruction \texttt{enter-instruction}}
 \label{mir-instruction-enter}
