@@ -147,7 +147,7 @@
 	       (= (length (successors context)) 1))))
 
 (defun check-context-for-no-value-ast (context)
-  (assert (and (zerop (length (results context)))
+  (assert (and (null (results context))
 	       (= (length (successors context)) 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
