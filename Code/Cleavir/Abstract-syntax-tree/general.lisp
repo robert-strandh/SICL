@@ -595,7 +595,7 @@
    (%body-ast :initarg :body-ast :reader body-ast)))
 
 (defun make-bind-ast (symbol value-ast body-ast)
-  (make-instance 'bind-at
+  (make-instance 'bind-ast
     :symbol symbol
     :value-ast value-ast
     :body-ast body-ast))
