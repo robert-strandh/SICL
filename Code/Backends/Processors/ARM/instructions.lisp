@@ -6,7 +6,7 @@
 ;;;  
 ;;; An instruction descriptor is a string that describes the
 ;;; bit-fields of an instruction word.  An instruction descriptor
-;;; contains exactly 65 characters.  The character \#| (vertical bar)
+;;; contains exactly 65 characters.  The character #\| (vertical bar)
 ;;; is the first and the last character of the instruction descriptor,
 ;;; and it is also used to separate FIELDS in the descriptor.  Every
 ;;; vertical bar character in the descriptor occurs at an even
