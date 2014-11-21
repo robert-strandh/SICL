@@ -91,6 +91,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Drawing a BIND-AST.
+
+(defmethod stream-draw-ast ((ast bind-ast) stream)
+  (format stream "   ~a [shape = box, label = \"bind\"];~%"
+	  (id ast))
+  (let ((symbol-id (gensym)))
+    (format stream "   ~a [shape = ellipse, label = \"~a\"];~%"
+	    symbol-id (symbol ast))
+    (format stream "   ~a -> ~a [label = \"0\"];~%"
+	    (id ast) symbol-id)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Labels for unspecialized array ASTs
 
 (deflabel t-aref-ast "t aref")
