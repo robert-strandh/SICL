@@ -12,7 +12,8 @@
 	     (char= (char name 0) #\*)
 	     (char= (char name (1- (length name))) #\*))
 	(make-instance 'cleavir-env:special-variable-info
-	  :name symbol)
+	  :name symbol
+	  :global-p t)
 	nil)))
 
 ;;; Any function not otherwise mentioned explicitly is considered to
