@@ -99,6 +99,12 @@
 ;;; Separate a body such as a defun, flet, or lables that may contain
 ;;; both declarations and a documentation string into the
 ;;; declarations, the documentation, and the executable forms.
+;;;
+;;; Return three values.  The first value is a list of declarations.
+;;; Each element of the list is a complete declaration, including the
+;;; symbol DECLARE.  The second value is a the documentation as a
+;;; string, or NIL if no documentation was found.  The last value is a
+;;; list of forms.
 
 (defun separate-function-body (body)
   (unless (proper-list-p body)
