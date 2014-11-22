@@ -80,3 +80,63 @@
     (loop for spec in canonicalized-declaration-specifiers
 	  do (setf new-env (augment-environment-with-declaration spec new-env)))
     new-env))
+
+;;; Given a single variable bound by some binding form, a list of
+;;; canonicalized declaration specifiers, and an environment in which
+;;; the binding form is compiled, return true if and only if the
+;;; variable to be bound is special.  Return a second value indicating
+;;; whether the variable is globally special.
+(defun variable-is-special-p (variable declarations env)
+  (let ((existing-var-info (cleavir-env:variable-info env variable)))
+    (cond ((typep existing-var-info 'cleavir-env:special-variable-info)
+	   ;; It is mentioned in the environment as special.
+	   (values t (cleavir-env:global-p existing-var-info)))
+	  ((member `(special ,variable) declarations :test #'equal)
+	   ;; If it is not mentioned in the environment, then it is
+	   ;; special only if it is declared special.
+	   (values t nil))
+	  (t
+	   (values nil nil)))))
+
+;;; Given a list of canonicalized declaration specifiers for a single
+;;; varible.  Return a type specifier resulting from all the type
+;;; declarations present in the list.
+(defun declared-type (declarations)
+  `(and ,@(loop for declaration in declarations
+		when (eq (car declaration) 'type)
+		  collect (cadr declaration))))
+
+;;; Given a single variable bound by some binding form like LET or
+;;; LET*, and a list of canonicalized declaration specifiers
+;;; concerning that variable, return a new environment that contains
+;;; information about that variable.
+;;;
+;;; ENV is the environment to be augmented.  If the binding form has
+;;; several bindings, it will contain entries for the variables
+;;; preceding the one that is currently treated.  
+;;;
+;;; ORIG-ENV is the environment in which we check whether the variable
+;;; is globally special.  For a LET form, this is the environment in
+;;; which the entire LET form was converted.  For a LET* form, it is
+;;; the same as ENV.
+(defun augment-environment-with-variable
+    (variable declarations env orig-env)
+  (let ((new-env env))
+    (multiple-value-bind (special-p globally-p)
+	(variable-is-special-p variable declarations orig-env)
+      (if special-p
+	  (unless globally-p
+	    (setf new-env
+		  (cleavir-env:add-special-variable new-env variable)))
+	  (let ((var-ast (cleavir-ast:make-lexical-ast variable)))
+	    (setf new-env
+		  (cleavir-env:add-lexical-variable new-env variable var-ast)))))
+    (let ((type (declared-type declarations)))
+      (unless (equal type '(and))
+	(setf new-env
+	      (cleavir-env:add-variable-type new-env variable type))))
+    (when (member 'dynamic-extent declarations :test #'eq :key #'car)
+      (setf new-env
+	    (cleavir-env:add-variable-dynamic-extent new-env 'variable)))
+    new-env))
+

@@ -207,65 +207,6 @@
 	  collect spec into second
 	finally (return (values first second))))
 
-;;; Given a list of canonicalized declaration specifiers for a single
-;;; varible.  Return a type specifier resulting from all the type
-;;; declarations present in the list.
-(defun declared-type (declarations)
-  `(and ,@(loop for declaration in declarations
-		when (eq (car declaration) 'type)
-		  collect (cadr declaration))))
-
-;;; Given a single variable bound by a LET form, a list of
-;;; canonicalized declaration specifiers, and an environment in which
-;;; the LET form is compiled, return true if and only if the variable
-;;; to be bound is special.  Return a second value indicating whether
-;;; the variable is globally special.
-(defun variable-is-special-p (variable declarations env)
-  (let ((existing-var-info (cleavir-env:variable-info env variable)))
-    (cond ((and (typep existing-var-info
-		       'cleavir-env:special-variable-info)
-		(cleavir-env:global-p existing-var-info))
-	   ;; If it is globally special, it is special inside the LET
-	   ;; or LET* as well, no matter how it is declared.
-	   (values t t))
-	  ((member 'special declarations :key #'car)
-	   ;; If it is not globally special, it is special only if it
-	   ;; is declared special.
-	   (values t nil))
-	  (t
-	   (values nil nil)))))
-
-;;; Given a single variable bound by the LET form, and a list of
-;;; canonicalized declaration specifiers concerning that variable,
-;;; return a new environment that contains information about that
-;;; variable.  
-;;;
-;;; ENV is the environment to be augmented.  If the LET form has
-;;; several bindings, it will contain entries for the variables
-;;; preceding the one that is currently treated.  
-;;;
-;;; ORIG-ENV is the environment in which the LET form is converted.
-;;; It is used to check whether the variable is globally special. 
-(defun augment-environment-with-variable
-    (variable declarations env orig-env)
-  (let ((new-env env))
-    (multiple-value-bind (special-p globally-p)
-	(variable-is-special-p variable declarations orig-env)
-      (if (and special-p (not globally-p))
-	  (setf new-env
-		(cleavir-env:add-special-variable new-env variable))
-	  (let ((var-ast (cleavir-ast:make-lexical-ast variable)))
-	    (setf new-env
-		  (cleavir-env:add-lexical-variable new-env variable var-ast)))))
-    (let ((type (declared-type declarations)))
-      (unless (equal type '(and))
-	(setf new-env
-	      (cleavir-env:add-variable-type new-env variable type))))
-    (when (member 'dynamic-extent declarations :test #'eq :key #'car)
-      (setf new-env
-	    (cleavir-env:add-variable-dynamic-extent new-env 'variable)))
-    new-env))
-
 ;;; Given a list of variables bound by the LET form, and a list of
 ;;; canonicalized declarations specifiers, return an environment to be
 ;;; used to compile the body.  The ENV parameter is the environment in
