@@ -2,87 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Convenience functions for augmenting the environment with a set of
-;;; canonicalized declaration specifiers.
-;;;
-;;; Recall that a canonicalized declaration specifier is one of
-;;; following:
-;;;
-;;;   * (declaration name)
-;;;   * (dynamic-extent var)
-;;;   * (dynamic-extent (function fn))
-;;;   * (ftype type function-name)
-;;;   * (ignore var)
-;;;   * (ignore (function fn))
-;;;   * (ignorable var)
-;;;   * (ignorable (function fn))
-;;;   * (inline function-name)
-;;;   * (notinline function-name)
-;;;   * (optimize (quality value))
-;;;   * (special var)
-;;;   * (type typespec var)
-
-;;; Augment the environment with a single canonicalized declartion
-;;; specifier.
-(defun augment-environment-with-declaration
-    (canonicalized-declaration-specifier environment)
-  (destructuring-bind (head . rest) canonicalized-declaration-specifier
-    (case head
-      ;; (declaration
-      ;; (make-declaration-declaration-entry (car rest)))
-      (dynamic-extent
-       (let ((var-or-function (car rest)))
-	 (if (consp var-or-function)
-	     (cleavir-env:add-function-dynamic-extent
-	      environment (cadr var-or-function))
-	     (cleavir-env:add-variable-dynamic-extent
-	      environment (car var-or-function)))))
-      (ftype
-       (cleavir-env:add-function-type
-	environment (cadr rest) (car rest)))
-      ((ignore ignorable)
-       (if (consp (car rest))
-	   (cleavir-env:add-function-ignore
-	    environment (cadr (car rest)) head)
-	   (cleavir-env:add-variable-ignore
-	    environment (car rest) head)))
-      ((inline notinline)
-       (cleavir-env:add-inline
-	environment (car rest) head))
-      (optimize
-       (destructuring-bind (quality value) (car rest)
-	 (cleavir-env:add-optimize environment quality value)))
-      (special
-       ;; This case is a bit tricky, because if the
-       ;; variable is globally special, nothing should
-       ;; be added to the environment.
-       (let ((info (cleavir-env:variable-info environment (car rest))))
-	 (if (and (typep info 'cleavir-env:special-variable-info)
-		  (cleavir-env:global-p info))
-	     environment
-	     (cleavir-env:add-special-variable environment (car rest)))))
-      (type
-       (cleavir-env:add-function-type
-	environment (cadr rest) (car rest)))
-      (t
-       (warn "Unable to handle declarations specifier: ~s"
-	     canonicalized-declaration-specifier)
-       environment))))
-
-;;; Augment the environment with a list of canonicalized declartion
-;;; specifiers.
-(defun augment-environment-with-declarations
-    (environment declaration-specifiers)
-  (let ((canonicalized-declaration-specifiers
-	  (cleavir-code-utilities:canonicalize-declaration-specifiers
-	   (reduce #'append (mapcar #'cdr declaration-specifiers))))
-	(new-env environment))
-    (loop for spec in canonicalized-declaration-specifiers
-	  do (setf new-env (augment-environment-with-declaration spec new-env)))
-    new-env))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Converting code to an abstract syntax tree.
 
 ;;; The main entry point for converting a form.
@@ -200,20 +119,224 @@
      out)
     (nreverse result)))
 
+;;; ENV is an environment that is known to contain information about
+;;; the variable VARIABLE, but we don't know whether it is special or
+;;; lexical.  VALUE-AST is an AST that computes the value to be given
+;;; to VARIABLE.  NEXT-AST is an AST that represents the computation
+;;; to take place after the variable has been given its value.  If the
+;;; variable is special, this function creates a BIND-AST with
+;;; NEXT-AST as its body.  If the variable is lexical, this function
+;;; creates a PROGN-AST with two ASTs in it.  The first one is a
+;;; SETQ-AST that assigns the value to the variable, and the second
+;;; one is the NEXT-AST.
+(defun set-or-bind-variable (variable value-ast next-ast env)
+  (let ((info (cleavir-env:variable-info env variable)))
+    (assert (not (null info)))
+    (if (typep info 'cleavir-env:special-variable-info)
+	(cleavir-ast:make-bind-ast variable value-ast next-ast)
+	(cleavir-ast:make-progn-ast
+	 (list (cleavir-ast:make-setq-ast
+		(cleavir-env:identity info)
+		value-ast)
+	       next-ast)))))
+
+(defun process-remaining-aux (aux dspecs forms env)
+  (if (null aux)
+      (cleavir-ast:make-progn-ast (convert-sequence forms env))
+      (destructuring-bind (var init) (first aux)
+	(let* ((new-env (augment-environment-with-variable
+			 var dspecs env env))
+	       (value-ast (convert init env))
+	       (next-ast (process-remaining-aux (rest aux) dspecs forms new-env)))
+	  (set-or-bind-variable var value-ast next-ast new-env)))))
+
+(defun process-aux (parsed-lambda-list dspecs forms env)
+  (let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
+    (if (eq aux :none)
+	(cleavir-ast:make-progn-ast (convert-sequence forms env))
+	(process-remaining-aux aux dspecs forms env))))
+
+;;; VAR-AST and SUPPLIED-P-AST are LEXICAL-ASTs that will be set by
+;;; the implementation-specific argument-parsing code, according to
+;;; what arguments were given.  VALUE-AST is an AST that computes the
+;;; initialization for of the variable.  This function generates the
+;;; code for testing whether SUPPLIED-P-AST computes NIL or T, and for
+;;; assigning the value computed by VALUE-AST to VAR-AST if
+;;; SUPPLIED-P-AST computes NIL.
+(defun generate-initialization (var-ast supplied-p-ast value-ast)
+  (cleavir-ast:make-if-ast
+   (cleavir-ast:make-eq-ast
+    supplied-p-ast
+    (cleavir-ast:make-constant-ast nil))
+   (cleavir-ast:make-setq-ast var-ast value-ast)
+   (cleavir-ast:make-constant-ast nil)))
+
+;;; VAR and SUPPLIED-P are symbols representing a parameter variable
+;;; and its associated SUPPLIED-P variable. If no associated
+;;; SUPPLIED-P variable is present in the lambda list then SUPPLIED-P
+;;; is NIL.  INIT-FORM is the form to be assigned to VAR if no
+;;; argument was supplied for it.  DSPECS is a list of canonicalized
+;;; declarations specifiers, and is used together with ENV to
+;;; determine whether VAR and/or SUPPLIED-P are special variables.
+;;; ENV is the environment in which this parameter is to be processed.
+;;; NEXT-AST is an AST that represents the computation to follow this
+;;; one.
+;;;
+;;; This function returns two values.  The first value is an AST that
+;;; represents both the processing of this parameter AND the
+;;; computation that follows.  We can not return an AST only for this
+;;; computation, because if either VAR or SUPPLIED-P is special, then
+;;; NEXT-AST must be in the body of a BIND-AST generated by this
+;;; function.  The second return value is a list of two LEXICAL-ASTs.
+;;; The first lexical AST corresponds to VAR and the second to
+;;; SUPPLIED-P.  The implementation-specific argument-parsing code is
+;;; responsible for assigning to those LEXICAL-ASTs according to what
+;;; arguments were given to the function.
+(defun process-init-parameter (var supplied-p init-form dspecs env next-ast)
+  (let ((new-env (augment-environment-with-variable var dspecs env env))
+	(lexical-var-ast (cleavir-ast:make-lexical-ast var))
+	(lexical-supplied-p-ast (cleavir-ast:make-lexical-ast supplied-p)))
+    (unless (null supplied-p)
+      (setf new-env
+	    (augment-environment-with-variable
+	     supplied-p dspecs new-env new-env)))
+    (values (cleavir-ast:make-progn-ast
+	     (list (generate-initialization lexical-var-ast
+					    lexical-supplied-p-ast
+					    (convert init-form env))
+		   (set-or-bind-variable
+		    var
+		    lexical-var-ast
+		    (if (null supplied-p)
+			next-ast
+			(set-or-bind-variable
+			 supplied-p
+			 lexical-supplied-p-ast
+			 next-ast
+			 new-env))
+		    new-env)))
+	    (list lexical-var-ast lexical-supplied-p-ast))))
+
+(defun process-allow-other-keys (parsed-lambda-list dspecs forms env)
+  (multiple-value-bind (ast lexicals)
+      (process-aux parsed-lambda-list dspecs forms env)
+    (values ast
+	    (if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
+		(cons '&allow-other-keys lexicals)
+		lexicals))))
+
+(defun augment-environment-with-parameter (var supplied-p dspecs env)
+  (let ((new-env (augment-environment-with-variable
+		  var dspecs env env)))
+    (if (null supplied-p)
+	new-env
+	(augment-environment-with-variable supplied-p dspecs new-env new-env))))
+
+(defun process-remaining-keys (keys parsed-lambda-list dspecs forms env)
+  (if (null keys)
+      (values (process-allow-other-keys parsed-lambda-list dspecs forms env)
+	      '())
+      (destructuring-bind ((keyword var) init &optional supplied-p)
+ 	  (first keys)
+	(let ((new-env (augment-environment-with-parameter
+			var supplied-p dspecs env)))
+	  (multiple-value-bind (next-ast next-lexical-parameters)
+	      (process-remaining-keys (rest keys)
+				      parsed-lambda-list
+				      dspecs
+				      forms
+				      new-env)
+	    (multiple-value-bind (ast lexical-locations)
+		(process-init-parameter var supplied-p init dspecs env next-ast)
+	      (values ast
+		      (cons (cons keyword lexical-locations)
+			    next-lexical-parameters))))))))
+
+(defun process-keys (parsed-lambda-list dspecs forms env)
+  (let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
+    (if (eq keys :none)
+	(process-aux parsed-lambda-list dspecs forms env)
+	(multiple-value-bind (ast lexicals)
+	    (process-remaining-keys keys parsed-lambda-list dspecs forms env)
+	  (values ast (cons '&key lexicals))))))
+
+(defun process-rest (parsed-lambda-list dspecs forms env)
+  (let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
+    (if (eq rest :none)
+	(process-keys parsed-lambda-list dspecs forms env)
+	(let ((new-env (augment-environment-with-variable rest dspecs env env)))
+	  (multiple-value-bind (next-ast next-lexical-parameters)
+	      (process-keys parsed-lambda-list
+			    dspecs
+			    forms
+			    new-env)
+	    (let ((lexical-ast (cleavir-ast:make-lexical-ast rest)))
+	      (values (set-or-bind-variable rest lexical-ast next-ast new-env)
+		      (list* '&rest lexical-ast next-lexical-parameters))))))))
+
+(defun process-remaining-optionals (optionals parsed-lambda-list dspecs forms env)
+  (if (null optionals)
+      (process-rest parsed-lambda-list dspecs forms env)
+      (destructuring-bind (var init &optional supplied-p)
+ 	  (first optionals)
+	(let ((new-env (augment-environment-with-parameter
+			var supplied-p dspecs env)))
+	  (multiple-value-bind (next-ast next-lexical-parameters)
+	      (process-remaining-optionals (rest optionals)
+					   parsed-lambda-list
+					   dspecs
+					   forms
+					   new-env)
+	    (multiple-value-bind (ast lexical-locations)
+		(process-init-parameter var supplied-p init dspecs env next-ast)
+	      (values ast
+		      (cons lexical-locations next-lexical-parameters))))))))
+
+(defun process-optionals (parsed-lambda-list dspecs forms env)
+  (let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
+    (if (eq optionals :none)
+	(process-keys parsed-lambda-list dspecs forms env)
+	(multiple-value-bind (ast lexicals)
+	    (process-remaining-optionals optionals
+					 parsed-lambda-list
+					 dspecs
+					 forms
+					 env)
+	  (values ast (cons '&optional lexicals))))))
+
+(defun process-required (required parsed-lambda-list dspecs forms env)
+  (if (null required)
+      (process-optionals parsed-lambda-list dspecs forms env)
+      (let* ((var (first required))
+	     (lexical-ast (cleavir-ast:make-lexical-ast var))
+	     (new-env (augment-environment-with-variable
+		       var dspecs env env)))
+	(multiple-value-bind (next-ast next-lexical-parameters)
+	    (process-required (rest required)
+			      parsed-lambda-list
+			      dspecs
+			      forms
+			      new-env)
+	  (values (set-or-bind-variable var lexical-ast next-ast new-env)
+		  (cons lexical-ast next-lexical-parameters))))))
+
 (defun convert-code (lambda-list body env)
   (let ((parsed-lambda-list
 	  (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
-    (multiple-value-bind (entry-lambda-list initforms)
-	(cleavir-code-utilities:preprocess-lambda-list parsed-lambda-list)
-      (let* ((new-env (add-lambda-list-to-env entry-lambda-list env))
-	     (ast-lambda-list (build-ast-lambda-list entry-lambda-list new-env)))
-	(multiple-value-bind (declarations documentation forms)
-	    (cleavir-code-utilities:separate-function-body body)
-	  ;; FIXME: Handle declarations and documentation
-	  (declare (ignore declarations documentation))
-	  (cleavir-ast:make-function-ast
-	   (convert `(progn ,@initforms ,@forms) new-env)
-	   ast-lambda-list))))))
+    (multiple-value-bind (declarations documentation forms)
+	(cleavir-code-utilities:separate-function-body body)
+      ;; FIXME: Handle documentation
+      (declare (ignore documentation))
+      (let ((canonicalized-declaration-specifiers
+	      (cleavir-code-utilities:canonicalize-declaration-specifiers
+	       (reduce #'append (mapcar #'cdr declarations)))))
+	(multiple-value-bind (ast lexical-lambda-list)
+	    (process-required (cleavir-code-utilities:required parsed-lambda-list)
+			      parsed-lambda-list
+			      canonicalized-declaration-specifiers
+			      forms
+			      env)
+	  (cleavir-ast:make-function-ast ast lexical-lambda-list))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -253,19 +376,19 @@
 (defvar *compiler*)
 
 ;;; This variable indicates whether a form should be evaluated in
-;;; addition to be being processed by the compiler. 
+;;; addition to be being processed by the compiler.
 (defparameter *compile-time-too* nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Managing top-level forms.
-;;; 
+;;;
 ;;; We need to be able to test whether a form is a top-level form or
 ;;; not.  A few special forms (LOCALLY, MACROLET, SYMBOL-MACROLET)
 ;;; preserve this property in that if the special form itself is a
 ;;; top-level form, then the body of the special form is also a
 ;;; top-level form.  For all other forms, any subform of the form is
-;;; not considered a top-level form.  
+;;; not considered a top-level form.
 
 ;;; This variable is true if and only if the form to be compiled is a
 ;;; top-level form.
