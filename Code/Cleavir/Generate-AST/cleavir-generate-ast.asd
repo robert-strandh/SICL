@@ -11,6 +11,7 @@
    (:file "conditions")
    (:file "check-special-form-syntax")
    (:file "environment-query")
+   (:file "utilities")
    (:file "minimal-compilation")
    (:file "generate-ast")
    (:file "convert-form")
