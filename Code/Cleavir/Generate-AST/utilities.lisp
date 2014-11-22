@@ -113,7 +113,7 @@
 ;;;
 ;;; ENV is the environment to be augmented.  If the binding form has
 ;;; several bindings, it will contain entries for the variables
-;;; preceding the one that is currently treated.  
+;;; preceding the one that is currently treated. 
 ;;;
 ;;; ORIG-ENV is the environment in which we check whether the variable
 ;;; is globally special.  For a LET form, this is the environment in
