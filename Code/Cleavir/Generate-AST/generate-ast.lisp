@@ -102,10 +102,20 @@
 	  ;; remaining computation as components.
 	  (set-or-bind-variable var value-ast next-ast new-env)))))
 
+;;; This function is called when we have processed all the &KEY
+;;; parameters, so if there are any &AUX "parameters", they should be
+;;; processed by this function.
 (defun process-aux (parsed-lambda-list dspecs forms env)
   (let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
     (if (eq aux :none)
+	;; This lambda list has no &AUX "parameters".  We must build
+	;; an AST for the body of the function.
 	(cleavir-ast:make-progn-ast (convert-sequence forms env))
+	;; This lambda list has the &AUX keyword in it.  There may or
+	;; may not be any &AUX "parameters" following that keyword.
+	;; We call PROCESS-REMAINING-AUX with the list of these &AUX
+	;; "parameters", and we return the AST that
+	;; PROCESS-REMAINING-AUX builds.
 	(process-remaining-aux aux dspecs forms env))))
 
 ;;; VAR-AST and SUPPLIED-P-AST are LEXICAL-ASTs that will be set by
