@@ -176,12 +176,10 @@
 	    (list lexical-var-ast lexical-supplied-p-ast))))
 
 (defun process-allow-other-keys (parsed-lambda-list dspecs forms env)
-  (multiple-value-bind (ast lexicals)
-      (process-aux parsed-lambda-list dspecs forms env)
-    (values ast
-	    (if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
-		(cons '&allow-other-keys lexicals)
-		lexicals))))
+  (values (process-aux parsed-lambda-list dspecs forms env)
+	  (if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
+	      '(&allow-other-keys)
+	      '())))
 
 (defun augment-environment-with-parameter (var supplied-p dspecs env)
   (let ((new-env (augment-environment-with-variable
