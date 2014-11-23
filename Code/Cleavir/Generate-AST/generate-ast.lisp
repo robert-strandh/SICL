@@ -175,6 +175,12 @@
 		    env)))
 	    (list lexical-var-ast lexical-supplied-p-ast))))
 
+;;; This function just returns the AST produced by calling
+;;; PROCESS-AUX, together with a second return value which is the list
+;;; containing the lambda-list keyword &ALLOW-OTHER-KEYS in case that
+;;; keyword is present in PARSED-LAMBDA-LIST, and the empty list
+;;; otherwise.  This works because in the lambda list we create, there
+;;; are no &AUX "parameters".
 (defun process-allow-other-keys (parsed-lambda-list dspecs forms env)
   (values (process-aux parsed-lambda-list dspecs forms env)
 	  (if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
