@@ -32,46 +32,6 @@
   (let ((info (cleavir-env:variable-info env var)))
     (cleavir-env:identity info)))
 
-(defun build-ast-lambda-list (lambda-list env)
-  (let ((rest lambda-list)
-	(result nil))
-    (tagbody
-     required
-       (cond ((null rest)
-	      (go out))
-	     ((eq (car rest) '&optional)
-	      (push (pop rest) result)
-	      (go optional))
-	     ((eq (car rest) '&key)
-	      (push (pop rest) result)
-	      (go key))
-	     (t (push (var-to-lexical-identity (pop rest) env) result)
-		(go required)))
-     optional
-       (cond ((null rest)
-	      (go out))
-	     ((eq (car rest) '&key)
-	      (push (pop rest) result)
-	      (go key))
-	     (t (push (list (var-to-lexical-identity (first (first rest)) env)
-			    (var-to-lexical-identity (second (first rest)) env))
-		      result)
-		(pop rest)
-		(go optional)))
-     key
-       (cond ((null rest)
-	      (go out))
-	     ((eq (car rest) '&allow-other-keys)
-	      (push '&allow-other-keys result))
-	     (t (push (list (first (first rest))
-			    (var-to-lexical-identity (second (first rest)) env)
-			    (var-to-lexical-identity (third (first rest)) env))
-		      result)
-		(pop rest)
-		(go key)))
-     out)
-    (nreverse result)))
-
 ;;; ENV is an environment that is known to contain information about
 ;;; the variable VARIABLE, but we don't know whether it is special or
 ;;; lexical.  VALUE-AST is an AST that computes the value to be given
