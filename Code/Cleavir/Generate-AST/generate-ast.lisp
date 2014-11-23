@@ -242,11 +242,25 @@
 		      (cons (cons keyword lexical-locations)
 			    next-lexical-parameters))))))))
 
+;;; This function is called when we have processed a possible &REST
+;;; parameter, so if there are any &KEY parameters, they should be
+;;; processed by this function.
 (defun process-keys (parsed-lambda-list dspecs forms env)
   (let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
     (if (eq keys :none)
-	(process-aux parsed-lambda-list dspecs forms env)
+	;; There was no lambda-list keyword &KEY in this lambda list.
+	;; Just call the function PROCESS-AUX to create the AST for
+	;; the remaining analysis, together with an empty modified
+	;; lambda list.
+	(values (process-aux parsed-lambda-list dspecs forms env)
+		'())
 	(multiple-value-bind (ast lexicals)
+	    ;; This lambda list has the lambda-list keyword &KEY in
+	    ;; it.  There may or may not be any &KEY parameters
+	    ;; following that keyword.  We call PROCESS-REMAINING-KEYS
+	    ;; with the list of these &KEY parameters., and we return
+	    ;; the AST that PROCESS-REMAINING-KEYS builds and the
+	    ;; modified lambda list that it returns.
 	    (process-remaining-keys keys parsed-lambda-list dspecs forms env)
 	  (values ast (cons '&key lexicals))))))
 
