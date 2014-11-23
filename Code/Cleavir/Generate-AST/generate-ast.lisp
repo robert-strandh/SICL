@@ -28,10 +28,6 @@
      (convert-code lambda-list body env)
      (convert-sequence args env))))
 
-(defun var-to-lexical-identity (var env)
-  (let ((info (cleavir-env:variable-info env var)))
-    (cleavir-env:identity info)))
-
 ;;; ENV is an environment that is known to contain information about
 ;;; the variable VARIABLE, but we don't know whether it is special or
 ;;; lexical.  VALUE-AST is an AST that computes the value to be given
