@@ -128,12 +128,7 @@
 ;;; and its associated SUPPLIED-P variable. If no associated
 ;;; SUPPLIED-P variable is present in the lambda list then SUPPLIED-P
 ;;; is NIL.  INIT-FORM is the form to be assigned to VAR if no
-;;; argument was supplied for it.  DSPECS is a list of canonicalized
-;;; declarations specifiers, and is used together with ENV to
-;;; determine whether VAR and/or SUPPLIED-P are special variables.
-;;; ENV is the environment in which this parameter is to be processed.
-;;; NEXT-AST is an AST that represents the computation to follow this
-;;; one.
+;;; argument was supplied for it.
 ;;;
 ;;; This function returns two values.  The first value is an AST that
 ;;; represents both the processing of this parameter AND the
@@ -145,22 +140,17 @@
 ;;; SUPPLIED-P.  The implementation-specific argument-parsing code is
 ;;; responsible for assigning to those LEXICAL-ASTs according to what
 ;;; arguments were given to the function.
-(defun process-init-parameter (var supplied-p init-form dspecs env next-ast)
-  (let* ((new-env (augment-environment-with-variable var dspecs env env))
-	 (name1 (make-symbol (string-downcase var)))
+(defun process-init-parameter (var supplied-p init-ast env next-ast)
+  (let* ((name1 (make-symbol (string-downcase var)))
 	 (lexical-var-ast (cleavir-ast:make-lexical-ast name1))
 	 (name2 (if (null supplied-p)
 		    (gensym)
 		    (make-symbol (string-downcase supplied-p))))
 	 (lexical-supplied-p-ast (cleavir-ast:make-lexical-ast name2)))
-    (unless (null supplied-p)
-      (setf new-env
-	    (augment-environment-with-variable
-	     supplied-p dspecs new-env new-env)))
     (values (cleavir-ast:make-progn-ast
 	     (list (generate-initialization lexical-var-ast
 					    lexical-supplied-p-ast
-					    (convert init-form env))
+					    init-ast)
 		   (set-or-bind-variable
 		    var
 		    lexical-var-ast
@@ -170,8 +160,8 @@
 			 supplied-p
 			 lexical-supplied-p-ast
 			 next-ast
-			 new-env))
-		    new-env)))
+			 env))
+		    env)))
 	    (list lexical-var-ast lexical-supplied-p-ast))))
 
 (defun process-allow-other-keys (parsed-lambda-list dspecs forms env)
@@ -196,7 +186,8 @@
       (destructuring-bind ((keyword var) init &optional supplied-p)
  	  (first keys)
 	(let ((new-env (augment-environment-with-parameter
-			var supplied-p dspecs env)))
+			var supplied-p dspecs env))
+	      (init-ast (convert init env)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
 	      (process-remaining-keys (rest keys)
 				      parsed-lambda-list
@@ -204,7 +195,8 @@
 				      forms
 				      new-env)
 	    (multiple-value-bind (ast lexical-locations)
-		(process-init-parameter var supplied-p init dspecs env next-ast)
+		(process-init-parameter
+		 var supplied-p init-ast new-env next-ast)
 	      (values ast
 		      (cons (cons keyword lexical-locations)
 			    next-lexical-parameters))))))))
@@ -238,7 +230,8 @@
       (destructuring-bind (var init &optional supplied-p)
  	  (first optionals)
 	(let ((new-env (augment-environment-with-parameter
-			var supplied-p dspecs env)))
+			var supplied-p dspecs env))
+	      (init-ast (convert init env)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
 	      (process-remaining-optionals (rest optionals)
 					   parsed-lambda-list
@@ -246,7 +239,8 @@
 					   forms
 					   new-env)
 	    (multiple-value-bind (ast lexical-locations)
-		(process-init-parameter var supplied-p init dspecs env next-ast)
+		(process-init-parameter
+		 var supplied-p init-ast new-env next-ast)
 	      (values ast
 		      (cons lexical-locations next-lexical-parameters))))))))
 
