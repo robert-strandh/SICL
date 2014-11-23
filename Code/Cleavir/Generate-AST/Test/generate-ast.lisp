@@ -142,7 +142,12 @@
 	20)
   (test '(flet ((f (&key (x 10 x-p) &allow-other-keys) (list x x-p)))
 	  (f :y 30))
-	'(10 nil)))
+	'(10 nil))
+  (test '(flet ((f (y &optional (x y x-p) (z x) &rest rest &key k1 (k2 x-p) &allow-other-keys &aux (zz 234))
+		 (declare (special x))
+		 x))
+	  (f 10 20 30))
+	20))
 
 (defun test-labels ()
   (test '(labels ((f () 1))
