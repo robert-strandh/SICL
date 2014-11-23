@@ -386,12 +386,14 @@
 	  form-ast)
 	 (cleavir-env:identity info))))
 
-;;; FIXME: Make sure the MAKE-SET-SYMBOL-VALUE-AST is in a context
-;;; where its value is not required.
 (defmethod convert-setq ((info cleavir-env:special-variable-info) form-ast)
-  (cleavir-ast:make-set-symbol-value-ast
-   (cleavir-ast:make-constant-ast (cleavir-env:name info))
-   form-ast))
+  (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
+    (cleavir-ast:make-progn-ast
+     (list (cleavir-ast:make-setq-ast temp form-ast)
+	   (cleavir-ast:make-set-symbol-value-ast
+	    (cleavir-ast:make-constant-ast (cleavir-env:name info))
+	    temp)
+	   temp))))
 
 (defun convert-elementary-setq (var form env)
   (convert-setq (variable-info env var) (convert form env)))
