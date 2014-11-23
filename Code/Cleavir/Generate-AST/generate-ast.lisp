@@ -28,58 +28,6 @@
      (convert-code lambda-list body env)
      (convert-sequence args env))))
 
-(defun add-lambda-list-to-env (lambda-list env)
-  (let ((rest lambda-list)
-	(new-env env))
-    (tagbody
-     required
-       (cond ((null rest) (go out))
-	     ((eq (car rest) '&optional) (pop rest) (go optional))
-	     ((eq (car rest) '&key) (pop rest) (go key))
-	     (t (let* ((var (pop rest))
-		       (name (make-symbol (string-downcase var)))
-		       (var-ast (cleavir-ast:make-lexical-ast name)))
-		  (setq new-env
-			(cleavir-env:add-lexical-variable
-			 new-env var var-ast)))
-		(go required)))
-     optional
-       (cond ((null rest) (go out))
-	     ((eq (car rest) '&key) (pop rest) (go key))
-	     (t (let* ((var1 (first (first rest)))
-		       (name1 (make-symbol (string-downcase var1)))
-		       (var1-ast (cleavir-ast:make-lexical-ast name1))
-		       (var2 (second (first rest)))
-		       (name2 (make-symbol (string-downcase var2)))
-		       (var2-ast (cleavir-ast:make-lexical-ast name2)))
-		  (setq new-env
-			(cleavir-env:add-lexical-variable
-			 new-env var1 var1-ast))
-		  (setq new-env
-			(cleavir-env:add-lexical-variable
-			 new-env var2 var2-ast)))
-		(pop rest)
-		(go optional)))
-     key
-       (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
-	      (go out))
-	     (t (let* ((var1 (second (first rest)))
-		       (name1 (make-symbol (string-downcase var1)))
-		       (var1-ast (cleavir-ast:make-lexical-ast name1))
-		       (var2 (third (first rest)))
-		       (name2 (make-symbol (string-downcase var2)))
-		       (var2-ast (cleavir-ast:make-lexical-ast name2)))
-		  (setq new-env
-			(cleavir-env:add-lexical-variable
-			 new-env var1 var1-ast))
-		  (setq new-env
-			(cleavir-env:add-lexical-variable
-			 new-env var2 var2-ast)))
-		(pop rest)
-		(go key)))
-     out)
-    new-env))
-
 (defun var-to-lexical-identity (var env)
   (let ((info (cleavir-env:variable-info env var)))
     (cleavir-env:identity info)))
