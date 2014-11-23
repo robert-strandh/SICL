@@ -201,7 +201,9 @@
   (let* ((new-env (augment-environment-with-variable var dspecs env env))
 	 (name1 (make-symbol (string-downcase var)))
 	 (lexical-var-ast (cleavir-ast:make-lexical-ast name1))
-	 (name2 (make-symbol (string-downcase supplied-p)))
+	 (name2 (if (null supplied-p)
+		    (gensym)
+		    (make-symbol (string-downcase supplied-p))))
 	 (lexical-supplied-p-ast (cleavir-ast:make-lexical-ast name2)))
     (unless (null supplied-p)
       (setf new-env
