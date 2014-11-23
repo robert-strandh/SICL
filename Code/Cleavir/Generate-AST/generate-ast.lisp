@@ -200,21 +200,42 @@
 	new-env
 	(augment-environment-with-variable supplied-p dspecs new-env new-env))))
 
+;;; We have already detected there is an &KEY lambda-list keyword in
+;;; the lambda list, and this function recursively processes the
+;;; remaining &KEY parameters.  FORMS is a sequence of forms
+;;; constituting the body of the function.
 (defun process-remaining-keys (keys parsed-lambda-list dspecs forms env)
   (if (null keys)
+      ;; We ran out of &KEY parameters.  Call PROCESS-ALLOW-OTHER-KEYS
+      ;; to deal with a possible &ALLOW-OTHER-KEYS lambda-list
+      ;; keyword, and return the AST and the modified lambda list
+      ;; returned by that function. 
       (process-allow-other-keys parsed-lambda-list dspecs forms env)
       (destructuring-bind ((keyword var) init &optional supplied-p)
  	  (first keys)
-	(let ((new-env (augment-environment-with-parameter
+	(let (;; Compute an augmented environment to be used to
+	      ;; compute the AST for the remaining computation after
+	      ;; this parameter has been processed.
+	      (new-env (augment-environment-with-parameter
 			var supplied-p dspecs env))
+	      ;; Construct the AST for representing the computation of
+	      ;; the initialization argument.  It must be computed in
+	      ;; the original environment, i.e. before the parameter
+	      ;; variables were added to it.
 	      (init-ast (convert init env)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
+	      ;; Make a recursive call to process the remaining keys
+	      ;; in the augmented environment that contains this
+	      ;; parameter variable and possibly the associated
+	      ;; supplied-p variable.
 	      (process-remaining-keys (rest keys)
 				      parsed-lambda-list
 				      dspecs
 				      forms
 				      new-env)
 	    (multiple-value-bind (ast lexical-locations)
+		;; Combine the AST for the remaining computation with
+		;; the effect of this parameter.
 		(process-init-parameter
 		 var supplied-p init-ast new-env next-ast)
 	      (values ast
