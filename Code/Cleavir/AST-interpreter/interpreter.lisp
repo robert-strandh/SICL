@@ -296,6 +296,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Interpret EQ-AST.
+
+(defmethod interpret-ast ((ast cleavir-ast:eq-ast) env)
+  (eq (interpret-ast (cleavir-ast:arg1-ast ast) env)
+      (interpret-ast (cleavir-ast:arg2-ast ast) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Interpret THE-AST.
 ;;;
 ;;; Recall that the THE-AST contains a list of type specifiers.  This
