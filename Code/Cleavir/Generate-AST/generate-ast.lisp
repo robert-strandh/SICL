@@ -181,8 +181,7 @@
 
 (defun process-remaining-keys (keys parsed-lambda-list dspecs forms env)
   (if (null keys)
-      (values (process-allow-other-keys parsed-lambda-list dspecs forms env)
-	      '())
+      (process-allow-other-keys parsed-lambda-list dspecs forms env)
       (destructuring-bind ((keyword var) init &optional supplied-p)
  	  (first keys)
 	(let ((new-env (augment-environment-with-parameter
