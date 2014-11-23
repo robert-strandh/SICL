@@ -55,7 +55,8 @@
 ;;; that we pass to the recursive call.  The call returns two values:
 ;;; the AST that was built and modified lambda list, containing the
 ;;; lambda list keywords, and the lexical variables that were
-;;; introduced.
+;;; introduced.  The exception is that processing &AUX entries does
+;;; not return any lambda list, because it will always be empty.
 ;;;
 ;;; The reason we do it this way is that, if a parameter turns out to
 ;;; be a special variable, the entire rest of the lambda list and
@@ -65,15 +66,40 @@
 ;;; of a BIND-AST that indicates that the special variable should be
 ;;; bound.  This recursive method makes sure that the child exists
 ;;; before the BIND-AST is created.
+;;;
+;;; The parameter DSPECS that is used in several functions is a list
+;;; of canonicalized declaration specifiers.  This list is used to
+;;; determine whether a variable is declared special.
 
+;;; We have already detected there is an &AUX lambda-list keyword in
+;;; the lambda list, and this function recursively processes the
+;;; remaining &AUX "parameters".  FORMS is a sequence of forms
+;;; constituting the body of the function.
 (defun process-remaining-aux (aux dspecs forms env)
   (if (null aux)
+      ;; We ran out of &AUX "parameters".  We must build an AST for
+      ;; the body of the function.
       (cleavir-ast:make-progn-ast (convert-sequence forms env))
+      ;; We have at least one more &AUX "parameter".
       (destructuring-bind (var init) (first aux)
-	(let* ((new-env (augment-environment-with-variable
+	(let* (;; We enter the new parameter variable into the
+	       ;; environment in order to process remaining parameters
+	       ;; and ultimately the body of the function.
+	       (new-env (augment-environment-with-variable
 			 var dspecs env env))
+	       ;; The initform of the &AUX parameter is turned into an
+	       ;; AST in the original environment, i.e. the one that
+	       ;; does not have the parameter variable in it.
 	       (value-ast (convert init env))
+	       ;; We compute the AST of the remaining computation by
+	       ;; recursively calling this same function with the
+	       ;; remaining &AUX entries (if any) and the environment
+	       ;; that we obtained by augmenting the original one with
+	       ;; the parameter variable.
 	       (next-ast (process-remaining-aux (rest aux) dspecs forms new-env)))
+	  ;; All that is left to do now, is to construct the AST to
+	  ;; return by using the &AUX "parameter" and the AST of the
+	  ;; remaining computation as components.
 	  (set-or-bind-variable var value-ast next-ast new-env)))))
 
 (defun process-aux (parsed-lambda-list dspecs forms env)
