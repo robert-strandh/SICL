@@ -187,6 +187,12 @@
 	      '(&allow-other-keys)
 	      '())))
 
+;;; The only purpose of this function is to call the function
+;;; AUGMENT-ENVIRONMENT-WITH-VARIABLE twice, once for the parameter
+;;; variable and once for its associated supplied-p parameter, except
+;;; that it also tests whether the supplied-p parameter is NIL,
+;;; indicating that no supplied-p parameter was given.  This function
+;;; returns the augmented environment.
 (defun augment-environment-with-parameter (var supplied-p dspecs env)
   (let ((new-env (augment-environment-with-variable
 		  var dspecs env env)))
