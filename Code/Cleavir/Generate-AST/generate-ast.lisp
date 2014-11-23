@@ -136,8 +136,10 @@
 ;;; VAR and SUPPLIED-P are symbols representing a parameter variable
 ;;; and its associated SUPPLIED-P variable. If no associated
 ;;; SUPPLIED-P variable is present in the lambda list then SUPPLIED-P
-;;; is NIL.  INIT-FORM is the form to be assigned to VAR if no
-;;; argument was supplied for it.
+;;; is NIL.  INIT-AST is the AST that computes the value to be
+;;; assigned to VAR if no argument was supplied for it.  ENV is an
+;;; environment that already contains VAR and SUPPLIED-P (if it is not
+;;; NIL).
 ;;;
 ;;; This function returns two values.  The first value is an AST that
 ;;; represents both the processing of this parameter AND the
