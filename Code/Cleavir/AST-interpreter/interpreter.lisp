@@ -120,44 +120,29 @@
        (cond ((null remaining)
 	      ;; We ran out of arguments. 
 	      (cond ((null ll)
-		     ;; There are no more parameters in the lambda
-		     ;; list.  We are done.
+		     ;; There are no more arguments, and no more
+		     ;; parameters in the lambda list.  We are done.
 		     (go end))
-		    ((eq (first ll) '&optional)
-		     ;; There might be &optional parameters and maybe
-		     ;; also &key parameters.  The corresponding
-		     ;; SUPPLIED-P parameters must then be initialized
-		     ;; to NIL.
-		     (pop ll)
-		     (go no-optional))
-		    ((eq (first ll) '&key)
-		     ;; There might be &key parameters.  The
-		     ;; corresponding SUPPLIED-P parameters must then
-		     ;; be initialized to NIL.
-		     (pop ll)
-		     (go no-key))
+		    ((member (first ll) lambda-list-keywords :test #'eq)
+		     ;; There are no more arguments and no more
+		     ;; required parameters in the lambda list, but
+		     ;; there it at least one of &OPTIONAL, &REST, or
+		     ;; &KEY.
+		     (go maybe-optional))
 		    (t
-		     ;; There are more required parameters in the
-		     ;; lambda list, even though there are no more
-		     ;; arguments.
+		     ;; There are no more arguments, but there are
+		     ;; more required parameters in the lambda list.
 		     (error "Too few arguments"))))
 	     ((null ll)
 	      ;; There are more arguments, but the remaining lambda
 	      ;; list is empty, so there are no parameters to match
 	      ;; those arguments to.  
 	      (error "Too many arguments"))
-	     ((eq (first ll) '&optional)
+	     ((member (first ll) lambda-list-keywords :test #'eq)
 	      ;; There are more arguments, the lambda list has more
 	      ;; entries in it, and the first entry in the lambda list
-	      ;; is the lambda-list keyword &OPTIONAL.
-	      (pop ll)
-	      (go optional))
-	     ((eq (first ll) '&key)
-	      ;; There are more arguments, the lambda list has more
-	      ;; entries in it, and the first entry in the lambda list
-	      ;; is the lambda-list keyword &KEY.
-	      (pop ll)
-	      (go key))
+	      ;; is a lambda-list keyword.
+	      (go maybe-optional))
 	     (t
 	      ;; There are more arguments, the lambda list has more
 	      ;; entries in it, and the first entry in the lambda list
@@ -166,112 +151,112 @@
 	      ;; to the hash table representing the environment.
 	      (setf (gethash (pop ll) table) (pop remaining))
 	      (go required)))
+     maybe-optional
+       ;; The first element of the lambda list is a lambda-list
+       ;; keyword, but we don't know which one.  It could be
+       ;; &optional, &rest, or &key
+       (if (eq (first ll) '&optional)
+	   (progn (pop ll)
+		  (go optional))
+	   (go maybe-rest))
      optional
-       (cond ((null remaining)
-	      ;; We ran out of arguments.  But there might be more
-	      ;; &optional and perhaps also &key parameters left in
-	      ;; the lambda list.  We must initialize the
-	      ;; corresponding SUPPLIED-P parameters of those to NIL.
-	      (go no-optional))
-	     ((null ll)
-	      ;; There are more arguments, but the remaining lambda
-	      ;; list is empty, so there are no parameters to match
-	      ;; those arguments to.  
-	      (error "Too many arguments"))
-	     ((eq (first ll) '&key)
-	      ;; There are more arguments, the lambda list has more
-	      ;; entries in it, and the first entry in the lambda list
-	      ;; is the lambda-list keyword &KEY.
-	      (pop ll)
-	      (go key))
-	     (t
-	      ;; There are more arguments, the lambda list has more
-	      ;; entries in it, and the first entry in the lambda list
-	      ;; is an optional parameter in the form of a list of two
-	      ;; lexical variables, one for the argument itself, and
-	      ;; one indicating that the argument has been supplied.
-	      ;; Add the first of the remaining arguments to the hash
-	      ;; table representing the environment.
-	      (setf (gethash (first (first ll)) table) (pop remaining))
-	      (setf (gethash (second (pop ll)) table) t)
-	      (go optional)))
-     key
-       (let ((default (list nil))) ; for use with GETF
-	 (cond ((null remaining)
-		;; We ran out of arguments.  But there might be more
-		;; &key parameters left in the lambda list.  We must
-		;; initialize the corresponding SUPPLIED-P parameters
-		;; of those to NIL.
-		(go no-key))
-	       ((null ll)
-		;; There are more arguments, but the remaining lambda
-		;; list is empty, so there are no parameters to match
-		;; those arguments to.
-		(if (getf remaining :allow-other-keys)
-		    ;; The caller disabled mandatory keyword matching.
-		    (go end)
-		    (error "Too many arguments")))
-	       ((eq (first ll) '&allow-other-keys)
-		(go end))
-	       (t
-		;; There are more arguments, the lambda list has more
-		;; entries in it, and the first entry in the lambda
-		;; list is a key parameter in the form of a list of a
-		;; keyword and two lexical variables, one for the
-		;; argument itself, and one indicating that the
-		;; argument has been supplied.
-		(let* ((keyword (first (first ll)))
-		       ;; See if there is an argument for this parameter. 
-		       (arg (getf remaining keyword default)))
-		  (if (eq arg default)
-		      ;; No argument was supplied for this keyword parameter
-		      (progn (setf (gethash (third (pop ll)) table) nil)
-			     (go key))
-		      ;; We found an argument for this keyword parameter.
-		      (progn 
-			;; Enter the argument into the environment
-			(setf (gethash (second (first ll)) table)
-			      arg)
-			;; Set the supplied-p parameter to T.
-			(setf (gethash (third (pop ll)) table) t)
-			;; Remove any keyword arguments with the same
-			;; key from the remaining argument list.
-			(loop while (remf remaining keyword))
-			(go key)))))))
-     no-optional
-       ;; We come here when we have run out of arguments, but we might
-       ;; have more &optional parameters, and perhaps also &key
-       ;; parameters.  We must initialize the corresponding SUPPLIED-P
-       ;; parameters to NIL.
+       ;; We have already seen and removed the lambda-list keyword
+       ;; &optional, and we are about to process any remaining
+       ;; optional parameters.
        (cond ((null ll)
-	      ;; We ran out of parameters.
-	      (go end))
-	     ((eq (first ll) '&key)
-	      ;; We ran out of &optional parameters, but there might
-	      ;; still be &key parameters left.
-	      (pop ll)
-	      (go no-key))
+	      ;; There are no more parameters in the lambda list.
+	      (cond ((null remaining)
+		     ;; We also have no more arguments.  We are done.
+		     (go end))
+		    (t
+		     ;; There are more arguments, but the remaining lambda
+		     ;; list is empty, so there are no parameters to match
+		     ;; those arguments to.  
+		     (error "Too many arguments"))))
+	     ((member (first ll) lambda-list-keywords :test #'eq)
+	      ;; The lambda list has more entries in it, and the first
+	      ;; entry in the lambda list is a lambda-list keyword.
+	      (go maybe-rest))
 	     (t
-	      ;; We have at last one &optional parameter.  We must
-	      ;; initialize the corresponding SUPPLIED-P parameter to
-	      ;; NIL.
-	      (setf (gethash (second (pop ll)) table) nil)
-	      ;; There might be more &optional parameters. 
-	      (go no-optional)))
-     no-key
-       ;; We come here when we have run out of arguments, but we might
-       ;; have more &key parameters.  We must initialize the
-       ;; corresponding SUPPLIED-P parameters to NIL.
-       (cond ((or (null ll) (eq (car ll) '&allow-other-keys))
-	      ;; We ran out of parameters.
+	      ;; We have more optional parameters.
+	      (destructuring-bind (var supplied-p) (pop ll)
+		(cond ((null remaining)
+		       ;; We ran out of arguments.
+		       (setf (gethash var table) nil)
+		       (setf (gethash supplied-p table) nil))
+		      (t
+		       (setf (gethash var table) (pop remaining))
+		       (setf (gethash supplied-p table) t))))
+	      ;; There might be even optional parameters.
+	      (go optional)))
+     maybe-rest
+       ;; The first element of the lambda list is a lambda-list
+       ;; keyword, but we don't know which one.  It could be &rest or
+       ;; &key.
+       (when (eq (first ll) '&rest)
+	 (pop ll)
+	 (setf (gethash (pop ll) table)
+	       (copy-list remaining)))
+       (if (null ll)
+	   (go end)
+	   ;; If the lambda list is not empty, the first element must
+	   ;; be &key.  Pop it off and start processing the keyword
+	   ;; parameters.
+	   (progn (pop ll)
+		  (go key)))
+     key
+       ;; We have already seen and removed the lambda-list keyword
+       ;; &key, and we are about to process any remaining key
+       ;; parameters.
+       (cond ((null ll)
+	      ;; There are no more parameters in the lambda list.
+	      (cond ((null remaining)
+		     ;; We also have no more arguments.  We are done.
+		     (go end))
+		    (t
+		     ;; There are more arguments, but the remaining lambda
+		     ;; list is empty, so there are no parameters to match
+		     ;; those arguments to.  
+		     (error "Illegal keyword argument"))))
+	     ((eq (first ll) '&allow-other-keys)
+	      ;; The lambda list has more entries in it, and the first
+	      ;; entry in the lambda list is the lambda-list keyword
+	      ;; &allow-other-keys.  No matter whether there are more
+	      ;; arguments, we are done.
 	      (go end))
 	     (t
-	      ;; We have at least one &key parameter.  We must
-	      ;; initialize the corresponding SUPPLIED-P parameter to
-	      ;; NIL.
-	      (setf (gethash (third (pop ll)) table) nil)
-	      ;; There might be more &key parameters.
-	      (go no-key)))
+	      ;; We have more key parameters.
+	      (let ((default (list nil))) ; for use with GETF
+		(destructuring-bind (keyword var supplied-p) (pop ll)
+		  (cond ((null remaining)
+			 ;; We ran out of arguments.
+			 (setf (gethash var table) nil)
+			 (setf (gethash supplied-p table) nil)
+			 ;; There may be more keyword parameters in the
+			 ;; lambda list.
+			 (go key))
+			(t
+			 ;; There are more arguments, the lambda list
+			 ;; has more entries in it, and the first
+			 ;; entry in the lambda list is a key
+			 ;; parameter in the form of a list of a
+			 ;; keyword and two lexical variables, one for
+			 ;; the argument itself, and one indicating
+			 ;; that the argument has been supplied.
+			 (let ((arg (getf remaining keyword default)))
+			   (cond ((eq arg default)
+				  (setf (gethash var table) nil)
+				  (setf (gethash supplied-p table) nil))
+				 (t
+				  (setf (gethash var table) arg)
+				  (setf (gethash supplied-p table) t)
+				  ;; Remove any keyword arguments with
+				  ;; the same key from the remaining
+				  ;; argument list.
+				  (loop while (remf remaining keyword)))))
+			 ;; There may be more keyword parameters in
+			 ;; the lambda list.
+			 (go key)))))))
      end)
     (cons table environment)))
 
