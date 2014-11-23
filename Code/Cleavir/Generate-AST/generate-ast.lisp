@@ -264,17 +264,41 @@
 	    (process-remaining-keys keys parsed-lambda-list dspecs forms env)
 	  (values ast (cons '&key lexicals))))))
 
+;;; This function is called when we have processed a possible
+;;; &OPTIONAL parameter, so if there is a &REST parameter, it should
+;;; be processed by this function.
 (defun process-rest (parsed-lambda-list dspecs forms env)
   (let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
     (if (eq rest :none)
+	;; There was no lambda-list keyword &REST or &BODY in this
+	;; lambda list.  Just call the function PROCESS-KEYS to create
+	;; the AST for the remaining analysis and the modified lambda
+	;; list.
 	(process-keys parsed-lambda-list dspecs forms env)
-	(let ((new-env (augment-environment-with-variable rest dspecs env env)))
+	;; This lambda list has the lambda-list &REST or &BODY in it.
+	;; It is followed by a single variable to hold the rest of the
+	;; arguments.
+	(let (;; Create a new environment by augmenting the original
+	      ;; one with the &REST parameter variable. 
+	      (new-env (augment-environment-with-variable rest dspecs env env)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
+	      ;; Create the AST and the modified lambda list that
+	      ;; results from processing the remaining lambda list. 
 	      (process-keys parsed-lambda-list
 			    dspecs
 			    forms
 			    new-env)
-	    (let* ((name (make-symbol (string-downcase rest)))
+	    (let* (;; We must create a LEXICAL-AST that the
+		   ;; implementation-specific argument-parsing code
+		   ;; will assign to, so we must give it a name.
+		   ;; Ideally, it should have the same name as the
+		   ;; parameter variable, but until the code is known
+		   ;; to be stable, it is better to distinguish them,
+		   ;; so that the have a different appearance in the
+		   ;; Graphviz drawing of the AST.  For that reason,
+		   ;; we give the LEXICAL-AST the lower-cased version
+		   ;; of the name of the parameter variable.
+		   (name (make-symbol (string-downcase rest)))
 		   (lexical-ast (cleavir-ast:make-lexical-ast name)))
 	      (values (set-or-bind-variable rest lexical-ast next-ast new-env)
 		      (list* '&rest lexical-ast next-lexical-parameters))))))))
