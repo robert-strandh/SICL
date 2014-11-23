@@ -37,7 +37,8 @@
 	     ((eq (car rest) '&optional) (pop rest) (go optional))
 	     ((eq (car rest) '&key) (pop rest) (go key))
 	     (t (let* ((var (pop rest))
-		       (var-ast (cleavir-ast:make-lexical-ast var)))
+		       (name (make-symbol (string-downcase var)))
+		       (var-ast (cleavir-ast:make-lexical-ast name)))
 		  (setq new-env
 			(cleavir-env:add-lexical-variable
 			 new-env var var-ast)))
@@ -46,9 +47,11 @@
        (cond ((null rest) (go out))
 	     ((eq (car rest) '&key) (pop rest) (go key))
 	     (t (let* ((var1 (first (first rest)))
-		       (var1-ast (cleavir-ast:make-lexical-ast var1))
+		       (name1 (make-symbol (string-downcase var1)))
+		       (var1-ast (cleavir-ast:make-lexical-ast name1))
 		       (var2 (second (first rest)))
-		       (var2-ast (cleavir-ast:make-lexical-ast var2)))
+		       (name2 (make-symbol (string-downcase var2)))
+		       (var2-ast (cleavir-ast:make-lexical-ast name2)))
 		  (setq new-env
 			(cleavir-env:add-lexical-variable
 			 new-env var1 var1-ast))
@@ -61,9 +64,11 @@
        (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
 	      (go out))
 	     (t (let* ((var1 (second (first rest)))
-		       (var1-ast (cleavir-ast:make-lexical-ast var1))
+		       (name1 (make-symbol (string-downcase var1)))
+		       (var1-ast (cleavir-ast:make-lexical-ast name1))
 		       (var2 (third (first rest)))
-		       (var2-ast (cleavir-ast:make-lexical-ast var2)))
+		       (name2 (make-symbol (string-downcase var2)))
+		       (var2-ast (cleavir-ast:make-lexical-ast name2)))
 		  (setq new-env
 			(cleavir-env:add-lexical-variable
 			 new-env var1 var1-ast))
@@ -193,9 +198,11 @@
 ;;; responsible for assigning to those LEXICAL-ASTs according to what
 ;;; arguments were given to the function.
 (defun process-init-parameter (var supplied-p init-form dspecs env next-ast)
-  (let ((new-env (augment-environment-with-variable var dspecs env env))
-	(lexical-var-ast (cleavir-ast:make-lexical-ast var))
-	(lexical-supplied-p-ast (cleavir-ast:make-lexical-ast supplied-p)))
+  (let* ((new-env (augment-environment-with-variable var dspecs env env))
+	 (name1 (make-symbol (string-downcase var)))
+	 (lexical-var-ast (cleavir-ast:make-lexical-ast name1))
+	 (name2 (make-symbol (string-downcase supplied-p)))
+	 (lexical-supplied-p-ast (cleavir-ast:make-lexical-ast name2)))
     (unless (null supplied-p)
       (setf new-env
 	    (augment-environment-with-variable
@@ -270,7 +277,8 @@
 			    dspecs
 			    forms
 			    new-env)
-	    (let ((lexical-ast (cleavir-ast:make-lexical-ast rest)))
+	    (let* ((name (make-symbol (string-downcase rest)))
+		   (lexical-ast (cleavir-ast:make-lexical-ast name)))
 	      (values (set-or-bind-variable rest lexical-ast next-ast new-env)
 		      (list* '&rest lexical-ast next-lexical-parameters))))))))
 
@@ -308,7 +316,8 @@
   (if (null required)
       (process-optionals parsed-lambda-list dspecs forms env)
       (let* ((var (first required))
-	     (lexical-ast (cleavir-ast:make-lexical-ast var))
+	     (name (make-symbol (string-downcase var)))
+	     (lexical-ast (cleavir-ast:make-lexical-ast name))
 	     (new-env (augment-environment-with-variable
 		       var dspecs env env)))
 	(multiple-value-bind (next-ast next-lexical-parameters)
