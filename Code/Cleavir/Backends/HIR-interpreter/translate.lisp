@@ -124,7 +124,7 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:return-instruction) inputs outputs)
-  `(return (values ,@inputs)))
+  `(return (apply #'values ,(first inputs))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs)
