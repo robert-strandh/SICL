@@ -128,12 +128,8 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs)
-  (let ((temps (loop for output in outputs collect (gensym))))
-    `(multiple-value-bind ,temps (funcall ,(first inputs) ,@(rest inputs))
-       (setq ,@(loop for out in outputs
-		     for temp in temps
-		     collect out
-		     collect temp)))))
+  `(setf ,(first outputs)
+	 (multiple-value-list (funcall ,(first inputs) ,@(rest inputs)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:tailcall-instruction) inputs outputs)
