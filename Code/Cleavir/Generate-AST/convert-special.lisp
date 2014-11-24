@@ -305,6 +305,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LOCALLY.
+;;;
+;;; According to section 3.2.3.1 of the HyperSpec, LOCALLY processes
+;;; its subforms the same way as the form itself.
 
 (defmethod convert-special
     ((symbol (eql 'locally)) form env)
@@ -326,9 +329,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting MACROLET.
-
-;; According to section 3.2.3.1 of the HyperSpec, MACROLET processes
-;; its subforms the same way as the form itself.
+;;;
+;;; According to section 3.2.3.1 of the HyperSpec, MACROLET processes
+;;; its subforms the same way as the form itself.
 
 (defmethod convert-special
     ((symbol (eql 'macrolet)) form env)
@@ -349,9 +352,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting PROGN.
+;;;
+;;; According to section 3.2.3.1 of the HyperSpec, PROGN processes
+;;; its subforms the same way as the form itself.
 
 (defmethod convert-special
     ((head (eql 'progn)) form environment)
+  ;; The following expression means "if this form is a top-level
+  ;; form, then make sure that forms compiled by a recursive call
+  ;; to CONVERT are also top-level forms".
+  (setf *top-level-form-p* *old-top-level-form-p*)
   (cleavir-ast:make-progn-ast
    (convert-sequence (cdr form) environment)))
 
