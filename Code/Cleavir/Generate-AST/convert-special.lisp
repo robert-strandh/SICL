@@ -311,10 +311,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'locally)) form env)
-  ;; The following expression means "if this form is a top-level form,
-  ;; then make sure that forms compiled by a recursive call to CONVERT
-  ;; are also top-level forms".
-  (setf *top-level-form-p* *old-top-level-form-p*)
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body (cdr form))
     (let ((new-env (augment-environment-with-declarations
