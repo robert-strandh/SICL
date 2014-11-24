@@ -44,3 +44,23 @@
     :inputs inputs
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction MULTIPLE-VALUE-CALL-INSTRUCTION.
+;;;
+;;; The first input of this instruction is an ordinary lexical
+;;; location.  The remaining inputs are of type VALUES-LOCATION, and
+;;; each represents multiple values returned form the evaluation of
+;;; some form.  This instruction has a single output, also of the type
+;;; VALUES-LOCATION.
+
+(defclass multiple-value-call-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-multiple-value-call-instruction
+    (inputs output &optional (successor nil successor-p))
+  (make-instance 'multiple-value-call-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (if successor-p (list successor) '())))
