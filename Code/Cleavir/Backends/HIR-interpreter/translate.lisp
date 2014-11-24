@@ -250,6 +250,11 @@
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:fixed-to-multiple-instruction) inputs outputs)
+  `(setq ,(first outputs)
+	 (list ,@inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
