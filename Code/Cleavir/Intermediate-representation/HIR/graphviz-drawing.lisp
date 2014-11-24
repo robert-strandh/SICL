@@ -352,3 +352,5 @@
 (defmethod label ((instruction multiple-to-fixed-instruction)) "M->F")
 
 (defmethod label ((instruction fixed-to-multiple-instruction)) "F->M")
+
+(defmethod label ((instruction multiple-value-call-instruction)) "MVC")
