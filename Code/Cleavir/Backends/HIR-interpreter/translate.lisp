@@ -255,6 +255,13 @@
   `(setq ,(first outputs)
 	 (list ,@inputs)))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:multiple-to-fixed-instruction) inputs outputs)
+  (let ((temp (gensym)))
+    `(let ((,temp ,(first inputs)))
+       ,@(loop for output in outputs
+	       collect `(setf ,output (pop ,temp))))))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
