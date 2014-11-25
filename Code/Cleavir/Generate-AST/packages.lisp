@@ -5,4 +5,6 @@
   (:export #:generate-ast
 	   #:minimally-compile
 	   #:*top-level-form-p*
-	   #:*compiler*))
+	   #:*compiler*
+	   #:ast-from-file
+	   #:ast-from-stream))
