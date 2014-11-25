@@ -16,4 +16,5 @@
    (:file "generate-ast")
    (:file "convert-form")
    (:file "convert-special")
-   (:file "convert-primop")))
+   (:file "convert-primop")
+   (:file "ast-from-file")))
