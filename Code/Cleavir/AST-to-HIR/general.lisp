@@ -498,27 +498,15 @@
 		   do (setf next (make-type-check type-specifier temp next)))
 	     next)))
 	(2
-	 (if (null results)
-	     (let ((temp (make-temp)))
-	       (compile-ast
-		ast
-		(context
-		 (list temp)
-		 (list (cleavir-ir:make-eq-instruction
-			(list temp (cleavir-ir:make-constant-input 'nil))
-			successors))
-		 (invocation context))))
-	     (compile-ast
-	      ast
-	      (context
-	       (list (car results))
-	       (list (nil-fill
-		      (cdr results)
-		      (cleavir-ir:make-eq-instruction
-		       (list (car results)
-			     (cleavir-ir:make-constant-input 'nil))
-		       successors)))
-	       (invocation context)))))))))
+	 (let ((temp (make-temp)))
+	   (compile-ast
+	    ast
+	    (context
+	     (list temp)
+	     (list (cleavir-ir:make-eq-instruction
+		    (list temp (cleavir-ir:make-constant-input 'nil))
+		    successors))
+	     (invocation context)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
