@@ -84,7 +84,8 @@
 ;;; for satisfying the unfit context.
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
   (with-accessors ((results results)
-		   (successors successors))
+		   (successors successors)
+		   (invocation invocation))
       context
     (ecase (length successors)
       (1
@@ -102,7 +103,7 @@
 				 (list temp)
 				 results
 				 (first successors)))
-			  (invocation context)))))
+			  invocation))))
 	     ((null results)
 	      ;; We don't need the result.  This situation typically
 	      ;; happens when we compile a form other than the last of
@@ -117,7 +118,7 @@
 		  (call-next-method ast
 				    (context (list (make-temp))
 					     successors
-					     (invocation context)))))
+					     invocation))))
 	     (t
 	      ;; We have at least one result.  In case there is more
 	      ;; than one, we generate a successor where all but the
@@ -126,7 +127,7 @@
 		(call-next-method ast
 				  (context (list (first results))
 					   (list successor)
-					   (invocation context)))))))
+					   invocation))))))
       (2
        ;; We have a context where a test of a Boolean is required.  We
        ;; create a new context where the result is compared to NIL
