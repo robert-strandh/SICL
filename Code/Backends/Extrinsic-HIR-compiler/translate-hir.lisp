@@ -14,17 +14,23 @@
 ;;; each datum to its owner.  The owner is an ENTER-INSTRUCTION.
 (defvar *ownerships*)
 
-;;; For a given ENTER-INSTRUCTION, return a list of all the lexical
-;;; variables that are owned by that instruction.
-(defun compute-owned-variables (enter-instruction)
-  (let ((result '()))
-    (maphash (lambda (instruction-or-datum owner)
-	       (when (and (typep instruction-or-datum
-				 'cleavir-ir:lexical-location)
-			  (eq owner enter-instruction))
-		 (push instruction-or-datum result)))
-	     *ownerships*)
-    result))
+;;; For a given owner (which can be an ENTER-INSTRUCTION or NIL),
+;;; return a list of all the variables (lexical or values) that are
+;;; owned by that instruction.
+(defun compute-owned-variables (owner)
+  (let ((function-p (typep owner 'cleavir-ir:enter-instruction)))
+    (loop for var being each hash-key of *ownerships*
+	    using (hash-value owner)
+	  when (and (typep var '(or
+				 cleavir-ir:lexical-location
+				 cleavir-ir:values-location))
+		    (eq owner (if function-p
+				  owner
+				  nil))
+		    (not (and function-p
+			      (member var (cleavir-ir:outputs
+					   owner)))))
+	    collect (translate-datum var))))
 
 (defvar *tags*)
 (defvar *vars*)
@@ -116,12 +122,11 @@
 	      ,@(layout (first (cleavir-ir:successors initial-instruction)))))))))
 
 (defun translate (initial-instruction)
-  (let* ((enter-inst
-	   (cleavir-ir:make-enter-instruction '() initial-instruction))
-	 (*ownerships* (cleavir-hir-transformations:compute-ownerships enter-inst))
-	 (*tags* (make-hash-table :test #'eq))
-	 (*vars* (make-hash-table :test #'eq)))
-    (layout-procedure enter-inst)))
+  (let ((*ownerships*
+	  (cleavir-hir-transformations:compute-ownerships initial-instruction))
+	(*tags* (make-hash-table :test #'eq))
+	(*vars* (make-hash-table :test #'eq)))
+    (layout-procedure initial-instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
