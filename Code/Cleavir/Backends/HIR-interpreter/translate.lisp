@@ -136,6 +136,13 @@
 	 (multiple-value-list (funcall ,(first inputs) ,@(rest inputs)))))
 
 (defmethod translate-simple-instruction
+    ((instruction cleavir-ir:multiple-value-call-instruction) inputs outputs)
+  `(setf ,(first outputs)
+	 (multiple-value-list
+	  (funcall ,(first inputs)
+		   (append ,@(rest inputs))))))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:tailcall-instruction) inputs outputs)
   (declare (ignore outputs))
   `(return (funcall ,(first inputs) ,@(rest inputs))))
