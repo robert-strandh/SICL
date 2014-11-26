@@ -159,11 +159,6 @@
 	    :datum ,(first inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:fdefinition-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (fdefinition ,(first inputs))))
-
-(defmethod translate-simple-instruction
     ((instruction cleavir-ir:car-instruction) inputs outputs)
   `(setq ,(first outputs)
 	 (car ,(first inputs))))
