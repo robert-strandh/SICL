@@ -724,3 +724,55 @@
      (cleavir-ir:make-constant-input (cleavir-ast:value ast))
      (first results)
      (first successors))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MULTIPLE-VALUE-CALL-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:multiple-value-call-ast) context)
+  (with-accessors ((results results)
+		   (successors successors)
+		   (invocation invocation))
+      context
+    (let ((function-temp (cleavir-ir:new-temporary))
+	  (form-temps (loop repeat (length (cleavir-ast:form-asts ast))
+			    collect (cleavir-ir:make-values-location))))
+      (let ((successor
+	      (ecase (length successors)
+		(1
+		 (if (typep results 'cleavir-ir:values-location)
+		     (make-instance 'cleavir-ir:multiple-value-call-instruction
+		       :inputs (cons function-temp form-temps)
+		       :outputs (list results)
+		       :successors successors)
+		     (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
+		       (make-instance 'cleavir-ir:multiple-value-call-instruction
+			 :inputs (cons function-temp form-temps)
+			 :outputs (list values-temp)
+			 :successors
+			 (list (cleavir-ir:make-multiple-to-fixed-instruction
+				values-temp results (first successors)))))))
+		(2
+		 (let* ((temp (cleavir-ir:new-temporary))
+			(values-temp (make-instance 'cleavir-ir:values-location))
+			(false (cleavir-ir:make-constant-input nil)))
+		   (make-instance 'cleavir-ir:multiple-value-call-instruction
+		     :inputs (cons function-temp form-temps)
+		     :outputs (list values-temp)
+		     :successors
+		     (list (cleavir-ir:make-multiple-to-fixed-instruction
+			    values-temp
+			    (list temp)
+			    (make-instance 'cleavir-ir:eq-instruction
+			      :inputs (list temp false)
+			      :outputs '()
+			      :successors (reverse successors))))))))))
+	(loop for form-ast in (reverse (cleavir-ast:form-asts ast))
+	      for form-temp in (reverse form-temps)
+	      do (setf successor
+		       (compile-ast
+			form-ast
+			(context form-temp (list successor) invocation))))
+	(compile-ast
+	 (cleavir-ast:function-form-ast ast)
+	 (context (list function-temp) successor invocation))))))
