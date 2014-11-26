@@ -346,4 +346,4 @@
 ;;; Main entry point.
 
 (defun interpret-hir (initial-instruction)
-  (funcall (compile nil (translate initial-instruction))))
+  (funcall (compile nil `(lambda () ,(translate initial-instruction)))))
