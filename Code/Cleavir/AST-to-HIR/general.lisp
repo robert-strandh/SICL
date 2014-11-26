@@ -48,7 +48,8 @@
 ;;; ASTs are passed a context with two successors and no results.
 (defmethod compile-ast :around ((ast cleavir-ast:boolean-ast-mixin) context)
   (with-accessors ((results results)
-		   (successors successors))
+		   (successors successors)
+		   (invocation invocation))
       context
     (ecase (length successors)
       (1
@@ -67,7 +68,7 @@
 	 (call-next-method ast
 			   (context '()
 				    (list true-branch false-branch)
-				    (invocation context)))))
+				    invocation))))
       (2
        (call-next-method)))))
 
