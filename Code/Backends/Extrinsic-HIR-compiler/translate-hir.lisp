@@ -10,6 +10,8 @@
 
 (defgeneric translate-branch-instruction (instruction inputs outputs successors))
 
+(defvar *basic-blocks*)
+
 ;;; This variable holds an EQ hash table mapping each instruction and
 ;;; each datum to its owner.  The owner is an ENTER-INSTRUCTION.
 (defvar *ownerships*)
@@ -62,64 +64,52 @@
 (defun translate-lambda-list (lambda-list)
   (mapcar #'translate-lambda-list-item lambda-list))
 
+(defun layout-basic-block (basic-block)
+  (destructuring-bind (first last owner) basic-block
+    (declare (ignore owner))
+    (append (loop for instruction = first
+		    then (first (cleavir-ir:successors instruction))
+		  for inputs = (cleavir-ir:inputs instruction)
+		  for input-vars = (mapcar #'translate-datum inputs)
+		  for outputs = (cleavir-ir:outputs instruction)
+		  for output-vars = (mapcar #'translate-datum outputs)
+		  until (eq instruction last)
+		  collect (translate-simple-instruction
+			   instruction input-vars output-vars))
+	    (let* ((inputs (cleavir-ir:inputs last))
+		   (input-vars (mapcar #'translate-datum inputs))
+		   (outputs (cleavir-ir:outputs last))
+		   (output-vars (mapcar #'translate-datum outputs))
+		   (successors (cleavir-ir:successors last))
+		   (successor-tags (loop for successor in successors
+					 collect (gethash successor *tags*))))
+	      (if (= (length successors) 1)
+		  (list (translate-simple-instruction
+			 last input-vars output-vars)
+			`(go ,(gethash (first successors) *tags*)))
+		  (list (translate-branch-instruction
+			 last input-vars output-vars successor-tags)))))))
+
 (defun layout-procedure (initial-instruction)
-  (labels ((layout (instruction)
-	     (let ((tag (gethash instruction *tags*)))
-	       (when (null tag)
-		 (setf (gethash instruction *tags*) (gensym))
-		 (let ((inputs (loop for i in (cleavir-ir:inputs instruction)
-				     collect (translate-datum i)))
-		       (outputs (loop for o in (cleavir-ir:outputs instruction)
-				      collect (translate-datum o))))
-		   (ecase (length (cleavir-ir:successors instruction))
-		     (0
-		      (list (translate-simple-instruction
-			     instruction inputs outputs)))
-		     (1
-		      (let* ((succ (first (cleavir-ir:successors instruction)))
-			     (preds (cleavir-ir:predecessors succ)))
-			(if (eq (gethash instruction *ownerships*)
-				(gethash succ *ownerships*))
-			    (if (gethash succ *tags*)
-				(list* (translate-simple-instruction
-					instruction inputs outputs)
-				       `(go ,(gethash succ *tags*))
-				       (layout succ))
-				(if (> (length preds) 1)
-				    (list* (translate-simple-instruction
-					    instruction inputs outputs)
-					   (gethash succ *tags*)
-					   (layout succ))
-				    (cons (translate-simple-instruction
-					   instruction inputs outputs)
-					  (layout succ))))
-			    (list* (translate-simple-instruction
-				    instruction inputs outputs)
-				   `(go (gethash succ *tags*))
-				   (layout succ)))))
-		     (2
-		      (let ((successors (cleavir-ir:successors instruction)))
-			(destructuring-bind (true false) successors
-			  (let ((tt (layout true))
-				(ff (layout false)))
-			    (cons (translate-branch-instruction
-				   instruction inputs outputs successors)
-				  (append (list (gethash true *tags*))
-					  tt
-					  (list (gethash false *tags*))
-					  ff))))))))))))
-    `(lambda ,(translate-lambda-list
-	       (cleavir-ir:lambda-list initial-instruction))
-       (block nil
-	 (let ,(loop for var being each hash-key of *ownerships*
-		     using (hash-value owner)
-		     when (and (typep var 'cleavir-ir:lexical-location)
-			       (eq owner initial-instruction)
-			       (not (member var (cleavir-ir:outputs
-						 initial-instruction))))
-		       collect (translate-datum var))
-	   (tagbody 
-	      ,@(layout (first (cleavir-ir:successors initial-instruction)))))))))
+  (let* ((function-p (typep initial-instruction 'cleavir-ir:enter-instruction))
+	 (basic-blocks (remove (if function-p initial-instruction nil)
+			       *basic-blocks*
+			       :test-not #'eq :key #'third))
+	 (first (find initial-instruction basic-blocks
+		      :test #'eq :key #'first))
+	 (rest (remove first basic-blocks :test #'eq)))
+    ;; Assign tags to all basic block except the first one
+    (loop for block in rest
+	  for instruction = (first block)
+	  do (setf (gethash instruction *tags*) (gensym)))
+    `(block nil
+       (let ,(compute-owned-variables (if function-p initial-instruction nil))
+	 (tagbody
+	    ,@(layout-basic-block first)
+	    ,@(loop for basic-block in rest
+		    collect (gethash (first basic-block) *tags*)
+		    append (layout-basic-block basic-block)))))))
+
 
 (defun translate (initial-instruction)
   (let ((*ownerships*
