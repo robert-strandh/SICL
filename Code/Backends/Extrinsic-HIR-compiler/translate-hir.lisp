@@ -43,23 +43,9 @@
 	  (setf (gethash datum *vars*) var))
 	var)))
 
-(defun translate-lambda-list-item (item)
-  (cond ((symbolp item)
-	 item)
-	((consp item)
-	 (ecase (length item)
-	   (2 (list (translate-datum (first item))
-		    nil
-		    (translate-datum (second item))))
-	   (3 (list (list (first item)
-			  (translate-datum (second item)))
-		    nil
-		    (translate-datum (third item))))))
-	(t
-	 (translate-datum item))))
-
 (defun translate-lambda-list (lambda-list)
-  (mapcar #'translate-lambda-list-item lambda-list))
+  `(lambda (&rest args)
+     ,(build-argument-parsing-code lambda-list 'args 'error 'default)))
 
 (defun layout-basic-block (basic-block)
   (destructuring-bind (first last owner) basic-block
@@ -122,8 +108,11 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:enclose-instruction) inputs outputs)
   (declare (ignore inputs))
-  `(setq ,(first outputs)
-	 ,(layout-procedure (cleavir-ir:code instruction))))
+  (let ((enter-instruction (cleavir-ir:code instruction)))
+    `(setq ,(first outputs)
+	   (lambda ,(translate-lambda-list
+		     (cleavir-ir:lambda-list enter-instruction))
+	     ,(layout-procedure enter-instruction)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:assignment-instruction) inputs outputs)
