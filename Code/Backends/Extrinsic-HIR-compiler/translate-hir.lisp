@@ -44,8 +44,21 @@
 	var)))
 
 (defun translate-lambda-list (lambda-list)
-  `(lambda (&rest args)
-     ,(build-argument-parsing-code lambda-list 'args 'error 'default)))
+  (let ((ll (loop for item in lambda-list
+		  collect (cond ((member item lambda-list-keywords)
+				 item)
+				((and (listp item) (= (length item) 2))
+				 (list (translate-datum (first item))
+				       (translate-datum (second item))))
+				((and (listp item) (= (length item) 3))
+				 (list (first item)
+				       (translate-datum (second item))
+				       (translate-datum (third item))))
+				(t
+				 (translate-datum item))))))
+    (break)
+    `(lambda (&rest args)
+       ,(build-argument-parsing-code ll 'args 'error 'default))))
 
 (defun layout-basic-block (basic-block)
   (destructuring-bind (first last owner) basic-block
@@ -114,6 +127,11 @@
 	   (lambda ,(translate-lambda-list
 		     (cleavir-ir:lambda-list enter-instruction))
 	     ,(layout-procedure enter-instruction)))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:enter-instruction) inputs outputs)
+  (declare (ignore inputs outputs))
+  (gensym))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:assignment-instruction) inputs outputs)
