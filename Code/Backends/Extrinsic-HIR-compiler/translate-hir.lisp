@@ -37,6 +37,24 @@
 (defvar *tags*)
 (defvar *vars*)
 
+;;; Find the "origin" of the input of the fdefinition instruction by
+;;; following inputs and assignment instructrions until either a
+;;; constant input is found or some instruction other than an
+;;; assignment instruction is found.  Return the constant if it is
+;;; found, NIL otherwise.
+(defun fdefinition-constant-input-p (fdefinition-instruction)
+  (loop with input = (first (cleavir-ir:inputs fdefinition-instruction))
+	until (typep input 'cleavir-ir:constant-input)
+        until (plusp (length (cleavir-ir:defining-instructions input)))
+	while (typep (first (cleavir-ir:defining-instructions input))
+		     'cleavir-ir:assignment-instruction)
+	do (let* ((assignment (first (cleavir-ir:defining-instructions input)))
+		  (new-input (first (cleavir-ir:inputs assignment))))
+	     (setf input new-input))
+	finally (return (if (typep input 'cleavir-ir:constant-input)
+			    input
+			    nil))))
+
 (defun find-fdefinition-instructions (initial-instruction)
   (let ((result '())
 	(table (make-hash-table :test #'eq)))
