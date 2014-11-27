@@ -111,7 +111,7 @@
 		   (translate-lambda-list
 		    (cleavir-ir:lambda-list initial-instruction))
 		   'args
-		   '(funcall fdefinition 'error))
+		   '(funcall fdefinition 'cl:error))
 		 ,tagbody)))
 	  `(block nil
 	     (let ,owned-vars
