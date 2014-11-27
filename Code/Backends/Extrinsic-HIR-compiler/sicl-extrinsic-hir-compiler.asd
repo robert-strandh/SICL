@@ -17,4 +17,5 @@
    (:file "fill-global-environment")
    (:file "runtime-environment")
    (:file "parse-arguments")
-   (:file "translate-hir")))
+   (:file "translate-hir")
+   (:file "eval")))
