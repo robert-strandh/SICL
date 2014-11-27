@@ -120,10 +120,6 @@
   `(setq ,(first outputs) ,(first inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:return-instruction) inputs outputs)
-  `(return (values ,@inputs)))
-
-(defmethod translate-simple-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs)
   (let ((temps (loop for output in outputs collect (gensym))))
     `(multiple-value-bind ,temps (funcall ,(first inputs) ,@(rest inputs))
@@ -315,6 +311,11 @@
   `(if (= ,(first inputs) ,(second inputs))
        (go ,(gethash (first successors) *tags*))
        (go ,(gethash (second successors) *tags*))))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:return-instruction) inputs outputs successors)
+  (declare (ignore successors))
+  `(return (apply #'values ,(first inputs))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
