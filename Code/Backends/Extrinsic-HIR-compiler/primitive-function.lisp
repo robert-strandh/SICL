@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-extrinsic-hir-compiler)
 
 ;;; This macro allows us to import simple functions from the host
-;;; environment to the taget environment.  The functions are simple in
+;;; environment to the target environment.  The functions are simple in
 ;;; that they can only have required arguments.  
 ;;;
 ;;; ARGUMENT-TYPES is a list of type specifiers.
@@ -11,7 +11,7 @@
 ;;; the same arguments as the ones supplied to the target function,
 ;;; the number of arguments and the type of each argument is checked.
 ;;; If there is a problem, the function CL:ERROR in the target
-;;; environmetn is called.
+;;; environment is called.
 (defmacro defprimitive (name argument-types)
   `(setf (sicl-env:fdefinition ',name *environment*)
 	 (lambda (&rest arguments)
