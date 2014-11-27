@@ -23,6 +23,7 @@
    #:insert-instruction-after
    #:delete-instruction
    #:reinitialize-data
+   #:defining-instructions #:using-instructions
    #:instruction
    #:no-successors-mixin
    #:one-successor-mixin
