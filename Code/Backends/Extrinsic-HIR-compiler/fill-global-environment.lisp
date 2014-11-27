@@ -47,6 +47,30 @@
 (setf (sicl-env:fdefinition 'cl:error *environment*)
       #'error)
 
+;;; We need to be able to add new functions to the environment, so we
+;;; need a definition of (SETF FDEFINITION).
+(setf (sicl-env:fdefinition '(setf fdefinition) *environment*)
+      (lambda (&rest args)
+	(unless (= (length args) 2)
+	  (funcall (sicl-env:fdefinition 'error *environment*)
+		   "wrong number of arguments"))
+	(destructuring-bind (new-function name) args
+	  (unless (functionp new-function)
+	    (funcall (sicl-env:fdefinition 'error *environment*)
+		   "Argument to (SETF FDEFINITION) must be a function ~s"
+		   new-function))
+	  (unless (or (symbolp name)
+		      (and (consp name)
+			   (consp (cdr name))
+			   (null (cddr name))
+			   (eq (car name) 'setf)
+			   (symbolp (cadr name))))
+	    (funcall (sicl-env:fdefinition 'error *environment*)
+		     "(SETF FDEFINITION) must be given a function name, not ~s"
+		     name))
+	  (setf (sicl-env:fdefinition name *environment*)
+		new-function))))
+
 ;;; Import some simple functions to from the host to the target
 ;;; environment.
 (defprimitive cl:consp (t))
