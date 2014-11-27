@@ -22,11 +22,11 @@
 (defun compute-owned-variables (owner)
   (let ((function-p (typep owner 'cleavir-ir:enter-instruction)))
     (loop for var being each hash-key of *ownerships*
-	    using (hash-value owner)
+	    using (hash-value value)
 	  when (and (typep var '(or
 				 cleavir-ir:lexical-location
 				 cleavir-ir:values-location))
-		    (eq owner (if function-p
+		    (eq value (if function-p
 				  owner
 				  nil)))
 	    collect (translate-datum var))))
@@ -44,21 +44,18 @@
 	var)))
 
 (defun translate-lambda-list (lambda-list)
-  (let ((ll (loop for item in lambda-list
-		  collect (cond ((member item lambda-list-keywords)
-				 item)
-				((and (listp item) (= (length item) 2))
-				 (list (translate-datum (first item))
-				       (translate-datum (second item))))
-				((and (listp item) (= (length item) 3))
-				 (list (first item)
-				       (translate-datum (second item))
-				       (translate-datum (third item))))
-				(t
-				 (translate-datum item))))))
-    (break)
-    `(lambda (&rest args)
-       ,(build-argument-parsing-code ll 'args 'error 'default))))
+  (loop for item in lambda-list
+	collect (cond ((member item lambda-list-keywords)
+		       item)
+		      ((and (listp item) (= (length item) 2))
+		       (list (translate-datum (first item))
+			     (translate-datum (second item))))
+		      ((and (listp item) (= (length item) 3))
+		       (list (first item)
+			     (translate-datum (second item))
+			     (translate-datum (third item))))
+		      (t
+		       (translate-datum item)))))
 
 (defun layout-basic-block (basic-block)
   (destructuring-bind (first last owner) basic-block
@@ -98,14 +95,28 @@
     (loop for block in rest
 	  for instruction = (first block)
 	  do (setf (gethash instruction *tags*) (gensym)))
-    `(block nil
-       (let ,(compute-owned-variables (if function-p initial-instruction nil))
-	 (tagbody
-	    ,@(layout-basic-block first)
-	    ,@(loop for basic-block in rest
-		    collect (gethash (first basic-block) *tags*)
-		    append (layout-basic-block basic-block)))))))
-
+    (let ((tagbody
+	     `(tagbody
+		 ,@(layout-basic-block first)
+		 ,@(loop for basic-block in rest
+			 collect (gethash (first basic-block) *tags*)
+			 append (layout-basic-block basic-block))))
+	  (owned-vars (compute-owned-variables
+		       (if function-p initial-instruction nil))))
+      (if function-p
+	  `(lambda (&rest args)
+	     (block nil
+	       (let ,owned-vars
+		 ,(build-argument-parsing-code
+		   (translate-lambda-list
+		    (cleavir-ir:lambda-list initial-instruction))
+		   'args
+		   '(funcall fdefinition 'error) 
+		   'default)
+		 ,tagbody)))
+	  `(block nil
+	     (let ,owned-vars
+	       ,tagbody))))))
 
 (defun translate (initial-instruction)
   (let ((*ownerships*
@@ -124,9 +135,7 @@
   (declare (ignore inputs))
   (let ((enter-instruction (cleavir-ir:code instruction)))
     `(setq ,(first outputs)
-	   (lambda ,(translate-lambda-list
-		     (cleavir-ir:lambda-list enter-instruction))
-	     ,(layout-procedure enter-instruction)))))
+	   ,(layout-procedure enter-instruction))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:enter-instruction) inputs outputs)
