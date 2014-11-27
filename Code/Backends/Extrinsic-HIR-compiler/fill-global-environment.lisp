@@ -71,6 +71,20 @@
 	  (setf (sicl-env:fdefinition name *environment*)
 		new-function))))
 
+;;; We also need the function FUNCALL, because that is what is used by
+;;; the default SETF expander.  At the momement, it only handles
+;;; functions as its first argument.
+(setf (sicl-env:fdefinition 'funcall *environment*)
+      (lambda (&rest args)
+	(unless (plusp (length args))
+	  (funcall (sicl-env:fdefinition 'error *environment*)
+		   "wrong number of arguments"))
+	(unless (functionp (first args))
+	  (funcall (sicl-env:fdefinition 'error *environment*)
+		   "First argument to must be a function ~s"
+		   (first args)))
+	(funcall (first args) (rest args))))
+
 ;;; Import some simple functions to from the host to the target
 ;;; environment.
 (defprimitive cl:consp (t))
