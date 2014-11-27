@@ -52,11 +52,11 @@
 (setf (sicl-env:fdefinition '(setf fdefinition) *environment*)
       (lambda (&rest args)
 	(unless (= (length args) 2)
-	  (funcall (sicl-env:fdefinition 'error *environment*)
+	  (funcall (sicl-env:fdefinition 'cl:error *environment*)
 		   "wrong number of arguments"))
 	(destructuring-bind (new-function name) args
 	  (unless (functionp new-function)
-	    (funcall (sicl-env:fdefinition 'error *environment*)
+	    (funcall (sicl-env:fdefinition 'cl:error *environment*)
 		   "Argument to (SETF FDEFINITION) must be a function ~s"
 		   new-function))
 	  (unless (or (symbolp name)
@@ -65,7 +65,7 @@
 			   (null (cddr name))
 			   (eq (car name) 'setf)
 			   (symbolp (cadr name))))
-	    (funcall (sicl-env:fdefinition 'error *environment*)
+	    (funcall (sicl-env:fdefinition 'cl:error *environment*)
 		     "(SETF FDEFINITION) must be given a function name, not ~s"
 		     name))
 	  (setf (sicl-env:fdefinition name *environment*)
@@ -77,10 +77,10 @@
 (setf (sicl-env:fdefinition 'funcall *environment*)
       (lambda (&rest args)
 	(unless (plusp (length args))
-	  (funcall (sicl-env:fdefinition 'error *environment*)
+	  (funcall (sicl-env:fdefinition 'cl:error *environment*)
 		   "wrong number of arguments"))
 	(unless (functionp (first args))
-	  (funcall (sicl-env:fdefinition 'error *environment*)
+	  (funcall (sicl-env:fdefinition 'cl:error *environment*)
 		   "First argument to must be a function ~s"
 		   (first args)))
 	(funcall (first args) (rest args))))
