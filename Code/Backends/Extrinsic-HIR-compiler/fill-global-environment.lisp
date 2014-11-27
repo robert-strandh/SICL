@@ -83,7 +83,7 @@
 	  (funcall (sicl-env:fdefinition 'cl:error *environment*)
 		   "First argument to must be a function ~s"
 		   (first args)))
-	(funcall (first args) (rest args))))
+	(apply (first args) (rest args))))
 
 ;;; Import some simple functions to from the host to the target
 ;;; environment.
