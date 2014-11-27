@@ -28,10 +28,7 @@
 				 cleavir-ir:values-location))
 		    (eq owner (if function-p
 				  owner
-				  nil))
-		    (not (and function-p
-			      (member var (cleavir-ir:outputs
-					   owner)))))
+				  nil)))
 	    collect (translate-datum var))))
 
 (defvar *tags*)
