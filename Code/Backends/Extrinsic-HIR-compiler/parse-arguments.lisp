@@ -31,13 +31,10 @@
 ;;;
 ;;; ERROR is the name of a variable (a symbol) that holds the function
 ;;; ERROR to be called in case an error is detected.
-;;;
-;;; DEFAULT is the name of a variable (a symbol) that holds a unique
-;;; value that should be used to pass to GETF, and that GETF will
-;;; return in case the corresponding key was not found.
-(defun parse (lambda-list var error default)
+(defun parse (lambda-list var error)
   (let ((result '())
-	(rest lambda-list))
+	(rest lambda-list)
+	(default (list nil)))
     (tagbody
      required
        (if (null rest)
@@ -122,14 +119,10 @@
 ;;; ERROR is the name of a variable (a symbol) that holds the function
 ;;; ERROR to be called in case an error is detected.
 ;;;
-;;; DEFAULT is the name of a variable (a symbol) that holds a unique
-;;; value that should be used to pass to GETF, and that GETF will
-;;; return in case the corresponding key was not found.
-;;;
 ;;; In order to avoid modifying the value of the &REST parameter of
 ;;; the resulting code, we generate a temporary variable that will be
 ;;; modified as argument parsing progresses.
-(defun build-argument-parsing-code (lambda-list argument-variable error default)
+(defun build-argument-parsing-code (lambda-list argument-variable error)
   (let ((remaining-argument-variable (gensym)))
     `(let ((,remaining-argument-variable ,argument-variable))
-       ,@(parse lambda-list remaining-argument-variable error default))))
+       ,@(parse lambda-list remaining-argument-variable error))))
