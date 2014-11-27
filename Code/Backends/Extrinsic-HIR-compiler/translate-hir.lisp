@@ -287,6 +287,11 @@
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:fdefinition-instruction) inputs outputs)
+  `(setf ,(first outputs)
+	 (funcall fdefinition ,(first inputs))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
