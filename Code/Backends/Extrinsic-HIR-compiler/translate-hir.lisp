@@ -250,14 +250,14 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:eq-instruction) inputs outputs successors)
   `(if (eq ,(first inputs) ,(second inputs))
-       (go ,(gethash (first successors) *tags*))
-       (go ,(gethash (second successors) *tags*))))
+       (go ,(first successors))
+       (go ,(second successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
   `(if (typep ,(first inputs) ',(cleavir-ir:value-type instruction))
-       (go ,(gethash (first successors) *tags*))
-       (go ,(gethash (second successors) *tags*))))
+       (go ,(first successors))
+       (go ,(second successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnum-add-instruction) inputs outputs successors)
@@ -265,15 +265,15 @@
     `(let ((,result (+ ,(first inputs) ,(second inputs))))
        (cond ((typep result 'fixnum)
 	      (setq ,(first outputs) ,result)
-	      (go ,(gethash (first successors) *tags*)))
+	      (go ,(first successors)))
 	     ((plusp ,result)
 	      (setq ,(first outputs)
 		    (+ ,result (* 2 most-negative-fixnum)))
-	      (go ,(gethash (second successors) *tags*)))
+	      (go ,(second successors)))
 	     (t
 	      (setq ,(first outputs)
 		    (- ,result (* 2 most-negative-fixnum)))
-	      (go ,(gethash (second successors) *tags*)))))))
+	      (go ,(second successors)))))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnum-sub-instruction) inputs outputs successors)
@@ -281,36 +281,36 @@
     `(let ((,result (- ,(first inputs) ,(second inputs))))
        (cond ((typep result 'fixnum)
 	      (setq ,(first outputs) ,result)
-	      (go ,(gethash (first successors) *tags*)))
+	      (go ,(first successors)))
 	     ((plusp ,result)
 	      (setq ,(first outputs)
 		    (+ ,result (* 2 most-negative-fixnum)))
-	      (go ,(gethash (second successors) *tags*)))
+	      (go ,(second successors)))
 	     (t
 	      (setq ,(first outputs)
 		    (- ,result (* 2 most-negative-fixnum)))
-	      (go ,(gethash (second successors) *tags*)))))))
+	      (go ,(second successors)))))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnum-less-instruction) inputs outputs successors)
   (declare (ignore outputs))
   `(if (< ,(first inputs) ,(second inputs))
-       (go ,(gethash (first successors) *tags*))
-       (go ,(gethash (second successors) *tags*))))
+       (go ,(first successors))
+       (go ,(second successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnum-not-greater-instruction) inputs outputs successors)
   (declare (ignore outputs))
   `(if (<= ,(first inputs) ,(second inputs))
-       (go ,(gethash (first successors) *tags*))
-       (go ,(gethash (second successors) *tags*))))
+       (go ,(first successors))
+       (go ,(second successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnum-equal-instruction) inputs outputs successors)
   (declare (ignore outputs))
   `(if (= ,(first inputs) ,(second inputs))
-       (go ,(gethash (first successors) *tags*))
-       (go ,(gethash (second successors) *tags*))))
+       (go ,(first successors))
+       (go ,(second successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:return-instruction) inputs outputs successors)
