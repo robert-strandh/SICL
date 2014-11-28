@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-extrinsic-hir-compiler)
 
+;;; Enter every Common Lisp special operator into the environment.
+;;; We can take them from the host environment.
 (loop for symbol being each external-symbol in '#:common-lisp
       when (special-operator-p symbol)
 	do (setf (sicl-env:special-operator symbol *environment*) t))
