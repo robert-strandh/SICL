@@ -85,6 +85,11 @@
 		   (first args)))
 	(apply (first args) (rest args))))
 
+;;; We need a definition of the function VALUES, and the host one is
+;;; just fine for this.
+(setf (sicl-env:fdefinition 'values *environment*)
+      #'values)
+
 ;;; This definition allows us to find the definition of any host function.
 ;;; It is not ideal right now because it can fail and call ERROR.
 (setf (sicl-env:fdefinition 'host-fdefinition *environment*)
