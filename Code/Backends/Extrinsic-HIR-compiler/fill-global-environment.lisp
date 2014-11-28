@@ -90,6 +90,28 @@
 (setf (sicl-env:fdefinition 'values *environment*)
       #'values)
 
+;;; Function SYMBOL-VALUE.  It searches the runtime stack to see
+;;; whether there is a binding for the variable.  If no binding is
+;;; found, it uses the variable-cell in the global environment.
+;;;
+;;; FIXME: Check argument count etc.
+(setf (sicl-env:fdefinition 'symbol-value *environment*)
+      (let ((env *environment*))
+	(lambda (symbol)
+	  (loop with unbound = (sicl-env:variable-unbound symbol env)
+		with cell = (sicl-env:variable-cell symbol env)
+		with error = (sicl-env:fdefinition 'cl:error env)
+		for entry in *dynamic-environment*
+		do (when (and (typep entry 'variable-binding)
+			      (eq (symbol entry) symbol))
+		     (if (eq (value entry) unbound)
+			 (funcall error "unbound variable ~s" symbol)
+			 (return (value entry))))
+		finally
+		   (if (eq (car cell) unbound)
+		       (funcall error "unbound variable ~s" symbol)
+		       (return (car cell)))))))
+
 ;;; This definition allows us to find the definition of any host function.
 ;;; It is not ideal right now because it can fail and call ERROR.
 (setf (sicl-env:fdefinition 'host-fdefinition *environment*)
