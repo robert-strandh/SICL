@@ -8,7 +8,9 @@
 	   #:catch
 	   #:throw
 	   #:error
-	   #:eval)
+	   #:eval
+	   #:load)
   (:export
    #:eval
+   #:load
    ))
