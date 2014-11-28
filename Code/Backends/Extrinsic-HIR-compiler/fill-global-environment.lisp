@@ -6,6 +6,7 @@
       when (special-operator-p symbol)
 	do (setf (sicl-env:special-operator symbol *environment*) t))
 
+;;; Define NIL and T as constant variables.
 (setf (sicl-env:constant-variable t *environment*) t)
 (setf (sicl-env:constant-variable nil *environment*) nil)
 
