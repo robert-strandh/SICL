@@ -10,6 +10,15 @@
 (setf (sicl-env:constant-variable t *environment*) t)
 (setf (sicl-env:constant-variable nil *environment*) nil)
 
+;;; Add every environment function into the environment.
+(loop for symbol being each external-symbol in '#:sicl-env
+      when (fboundp symbol)
+	do (setf (sicl-env:fdefinition symbol *environment*)
+		 (fdefinition symbol))
+      when (fboundp `(setf ,symbol))
+	do (setf (sicl-env:fdefinition `(setf ,symbol) *environment*)
+		 (fdefinition `(setf ,symbol))))
+
 (setf (sicl-env:macro-function 'defmacro *environment*)
       (compile nil
 	       (cleavir-code-utilities:parse-macro
