@@ -112,6 +112,12 @@
 		       (funcall error "unbound variable ~s" symbol)
 		       (return (car cell)))))))
 
+;;; Set the variable *ENVIRONMENT* in the environment.  Right now,
+;;; this is the variable in the current package.  We need to think about
+;;; which package it should be in.
+(setf (sicl-env:special-variable '*environment* *environment* t)
+      *environment*)
+
 ;;; This definition allows us to find the definition of any host function.
 ;;; It is not ideal right now because it can fail and call ERROR.
 (setf (sicl-env:fdefinition 'host-fdefinition *environment*)
