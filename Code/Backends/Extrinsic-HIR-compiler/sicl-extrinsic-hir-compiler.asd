@@ -18,4 +18,5 @@
    (:file "runtime-environment")
    (:file "parse-arguments")
    (:file "translate-hir")
-   (:file "eval")))
+   (:file "eval")
+   (:file "load")))
