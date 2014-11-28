@@ -3,6 +3,7 @@
 (asdf:defsystem :sicl-extrinsic-hir-compiler
   :depends-on (:sicl-environment
 	       :sicl-simple-environment
+	       :sicl-reader-simple
 	       :cleavir-hir
 	       :sicl-extrinsic-environment
 	       :cleavir-hir-transformations
