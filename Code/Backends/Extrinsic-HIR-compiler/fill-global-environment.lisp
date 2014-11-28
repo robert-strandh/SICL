@@ -85,6 +85,11 @@
 		   (first args)))
 	(apply (first args) (rest args))))
 
+;;; This definition allows us to find the definition of any host function.
+;;; It is not ideal right now because it can fail and call ERROR.
+(setf (sicl-env:fdefinition 'host-fdefinition *environment*)
+      #'fdefinition)
+
 ;;; Import some simple functions to from the host to the target
 ;;; environment.
 (defprimitive cl:consp (t))
