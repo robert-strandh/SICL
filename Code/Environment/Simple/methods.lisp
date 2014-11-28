@@ -237,8 +237,8 @@
   (cdr (assoc symbol (classes env) :test #'eq)))
 
 (defmethod sicl-env:variable-unbound (symbol (env simple-environment))
-  (let ((entry (ensure-variable-entry env symbol)))
-    (unbound entry)))
+  (declare (ignore symbol))
+  (unbound env))
 
 (defmethod (setf sicl-env:find-class)
     (new-class symbol (env simple-environment))
