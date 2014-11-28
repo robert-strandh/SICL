@@ -285,6 +285,11 @@
        ,@(loop for output in outputs
 	       collect `(setf ,output (pop ,temp))))))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:symbol-value-instruction) inputs outputs)
+  `(setf ,(first outputs)
+	 (funcall (funcall fdefinition 'symbol-value) ,(first inputs))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
