@@ -405,8 +405,8 @@
 			   (list (first item)
 				 (find-or-create-location (second item))
 				 (find-or-create-location (third item)))
-			   (list (find-or-create-location (second item))
-				 (find-or-create-location (third item)))))
+			   (list (find-or-create-location (first item))
+				 (find-or-create-location (second item)))))
 		      (t
 		       (find-or-create-location item)))))
 
@@ -811,3 +811,30 @@
 	(compile-ast
 	 (cleavir-ast:function-form-ast ast)
 	 (context (list function-temp) (list successor) invocation))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;; Compile an EQ-AST
+
+(defmethod compile-ast ((ast cleavir-ast:eq-ast) context)
+  (check-context-for-boolean-ast context)
+  (with-accessors ((successors successors)
+		   (invocation invocation))
+      context
+    (let ((arg1-ast (cleavir-ast:arg1-ast ast))
+	  (arg2-ast (cleavir-ast:arg2-ast ast))
+	  (temp1 (cleavir-ir:new-temporary))
+	  (temp2 (cleavir-ir:new-temporary)))
+      (compile-ast
+       arg1-ast
+       (context
+	(list temp1)
+	(list (compile-ast
+	       arg2-ast
+	       (context
+		(list temp2)
+		(list (cleavir-ir:make-eq-instruction
+		       (list temp1 temp2)
+		       successors))
+		invocation)))
+	invocation)))))
