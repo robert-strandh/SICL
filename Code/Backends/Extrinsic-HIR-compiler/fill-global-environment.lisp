@@ -59,7 +59,12 @@
       delete delete-if delete-if-not
       remove-duplicates delete-duplicates
       ;; From the Conditions dictionary
-      error warn)))
+      error warn
+      ;; From the Numbers dictionary
+      = /= < > <= >= max min minusp plusp zerop
+      floor ceiling truncate round
+      * + - / 1+ 1- abs evenp oddp exp expt
+      mod rem numberp integerp rationalp)))
 
 (loop for symbol in *imported-functions*
       do (setf (sicl-env:fdefinition symbol *environment*)
