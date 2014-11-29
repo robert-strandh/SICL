@@ -10,6 +10,46 @@
 (setf (sicl-env:constant-variable t *environment*) t)
 (setf (sicl-env:constant-variable nil *environment*) nil)
 
+;;; Initially, we enter lots of functions from the host environment
+;;; into the target environment.  The reason for that is so that we
+;;; can run the macroexpanders of the target macros that we will
+;;; define.  Later, we gradually replace these functions with target
+;;; versions.
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *imported-functions*
+    '(;; From the Conses dictionary
+      cons consp atom
+      rplaca rplacd
+      car cdr rest
+      caar cadr cdar cddr
+      caaar caadr cadar caddr
+      cdaar cdadr cddar cddr
+      caaaar caaadr caadar caaddr cadaar cadadr caddar caddr
+      cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cdddr
+      first second third
+      fourth fifth sixth
+      seventh eighth ninth
+      tenth
+      copy-tree sublis nsublis
+      subst subst-if subst-if-not nsubst nsubst-if nsubst-if-not
+      tree-equal copy-list list list* list-length listp
+      make-list nth endp null nconc
+      append revappend nreconc butlast nbutlast last
+      ldiff tailp nthcdr
+      member member-if member-if-not
+      mapc mapcar mapcan mapl maplist mapcon
+      acons assoc assoc-if assoc-if-not copy-alist
+      pairlis rassoc rassoc-if rassoc-if-not
+      get-properties getf
+      intersection nintersection adjoin
+      set-difference nset-difference
+      set-exclusive-or nset-exclusive-or
+      subsetp union nunion)))
+
+(loop for symbol in *imported-functions*
+      do (setf (sicl-env:fdefinition symbol *environment*)
+	       (fdefinition symbol)))
+
 ;;; Add every environment function into the environment.
 (loop for symbol being each external-symbol in '#:sicl-env
       when (fboundp symbol)
