@@ -102,16 +102,6 @@
 		      `(funcall #'(setf ,(first form) ,new ,@temps))
 		      `(,(first form) ,@temps))))))
 
-;;; Many very basic functions will refer to CL:ERROR, so before we can
-;;; start filling the environment with those basic functions, it is
-;;; good to have a preliminary definition of CL:ERROR in the
-;;; environment.  That preliminary definition can not do much at this
-;;; point, so it just calls the host function named CL:ERROR in a way
-;;; that can't fail.  This way of doing it at least lets us inspect
-;;; the host stack and the target runtime environment. 
-(setf (sicl-env:fdefinition 'cl:error *environment*)
-      #'error)
-
 ;;; We need to be able to add new functions to the environment, so we
 ;;; need a definition of (SETF FDEFINITION).
 (setf (sicl-env:fdefinition '(setf fdefinition) *environment*)

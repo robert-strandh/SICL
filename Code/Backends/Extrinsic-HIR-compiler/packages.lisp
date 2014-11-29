@@ -7,7 +7,6 @@
 	   #:function
 	   #:catch
 	   #:throw
-	   #:error
 	   #:eval
 	   #:load)
   (:export
