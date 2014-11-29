@@ -290,6 +290,13 @@
   `(setf ,(first outputs)
 	 (funcall (funcall fdefinition 'symbol-value) ,(first inputs))))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:set-symbol-value-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(funcall (funcall fdefinition '(setf symbol-value))
+	    ,(first inputs)
+	    ,(second inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
