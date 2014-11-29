@@ -1,6 +1,6 @@
 (in-package #:sicl-global-environment)
 
-(defmacro setf (&environment env place new-value-form &rest more-pairs)
+(defmacro setf (&whole form &environment env place new-value-form &rest more-pairs)
   (cond ((null more-pairs)
 	 (multiple-value-bind (variables
 			       values
@@ -21,5 +21,5 @@
 	 `(progn (setf ,place ,new-value-form)
 		 (setf ,@more-pairs)))
 	(t
-	 (error "Odd number of arguments to SETF."))))
+	 (error 'odd-number-of-arguments-to-setf :form form))))
 		
