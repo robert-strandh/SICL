@@ -19,4 +19,5 @@
    (:file "parse-arguments")
    (:file "translate-hir")
    (:file "eval")
-   (:file "load")))
+   (:file "load")
+   (:file "load-files")))
