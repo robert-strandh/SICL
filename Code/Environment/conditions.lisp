@@ -8,3 +8,6 @@
 
 (define-condition variables-must-be-proper-list (program-error)
   ((%variables :initarg :variables :reader variables)))
+
+(define-condition variable-must-be-symbol (program-error)
+  ((%variable :initarg :variable :reader variable)))
