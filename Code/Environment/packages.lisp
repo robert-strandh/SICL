@@ -46,6 +46,7 @@
    ))
 
 (defpackage #:sicl-standard-environment-functions
+  (:shadow #:variable)
   (:use #:common-lisp))
 
 (defpackage #:sicl-standard-environmtent-macros
