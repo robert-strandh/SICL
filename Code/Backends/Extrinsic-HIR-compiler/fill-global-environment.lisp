@@ -57,7 +57,9 @@
       concatenate merge
       remove remove-if remove-if-not
       delete delete-if delete-if-not
-      remove-duplicates delete-duplicates)))
+      remove-duplicates delete-duplicates
+      ;; From the Conditions dictionary
+      error warn)))
 
 (loop for symbol in *imported-functions*
       do (setf (sicl-env:fdefinition symbol *environment*)
