@@ -243,7 +243,7 @@
     (setf environment *global-environment*))
   (let ((class (sicl-env:find-class symbol environment)))
     (if (and (null class) errorp)
-	(error "There is no class named ~s" symbol)
+	(error 'no-such-class symbol)
 	class)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
