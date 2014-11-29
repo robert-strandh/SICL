@@ -13,3 +13,13 @@
            in the following form:~@
            ~s"
           (form condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition variables-must-be-proper-list)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The variables to be bound by MULTIPLE-VALUE-BIND must~@
+           be a proper list, but the following was found instead:~@
+           ~s"
+         (variables condition)))
