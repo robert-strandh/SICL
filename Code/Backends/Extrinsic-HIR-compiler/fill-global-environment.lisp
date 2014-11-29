@@ -184,6 +184,22 @@
 		       (funcall error "unbound variable ~s" symbol)
 		       (return (car cell)))))))
 
+;;; Function (SETF SYMBOL-VALUE).  It searches the runtime stack to
+;;; see whether there is a binding for the variable.  If no binding is
+;;; found, it uses the variable-cell in the global environment.
+(setf (sicl-env:fdefinition '(setf symbol-value) *environment*)
+      (let ((env *environment*))
+	(lambda (value symbol)
+	  (loop with cell = (sicl-env:variable-cell symbol env)
+		for entry in *dynamic-environment*
+		do (when (and (typep entry 'variable-binding)
+			      (eq (symbol entry) symbol))
+		     (setf (value entry) value)
+		     (return value))
+		finally
+		   (setf (car cell) value)
+		   (return value)))))
+
 ;;; Set the variable SICL-ENV:*ENVIRONMENT* in the environment.
 (setf (sicl-env:special-variable 'sicl-env:*global-environment* *environment* t)
       *environment*)
