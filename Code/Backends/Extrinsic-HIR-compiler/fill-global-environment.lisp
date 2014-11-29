@@ -44,7 +44,20 @@
       intersection nintersection adjoin
       set-difference nset-difference
       set-exclusive-or nset-exclusive-or
-      subsetp union nunion)))
+      subsetp union nunion
+      ;; From the Sequences dictionary
+      copy-seq elt fill make-sequence subseq map map-into reduce
+      count count-if count-if-not
+      length reverse nreverse sort stable-sort
+      find find-if find-if-not
+      position position-if position-if-not
+      search mismatch replace
+      substitute substitute-if substitute-if-not
+      nsubstitute nsubstitute-if nsubstitute-if-not
+      concatenate merge
+      remove remove-if remove-if-not
+      delete delete-if delete-if-not
+      remove-duplicates delete-duplicates)))
 
 (loop for symbol in *imported-functions*
       do (setf (sicl-env:fdefinition symbol *environment*)
