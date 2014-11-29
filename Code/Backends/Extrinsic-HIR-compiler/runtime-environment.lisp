@@ -4,7 +4,7 @@
 
 (defclass variable-binding (dynamic-environment-entry)
   ((%symbol :initarg :symbol :reader symbol)
-   (%value :initarg :value :reader value)))
+   (%value :initarg :value :accessor value)))
 
 (defclass unwind-protect (dynamic-environment-entry)
   ((%thunk :initarg :thunk :reader thunk)))
