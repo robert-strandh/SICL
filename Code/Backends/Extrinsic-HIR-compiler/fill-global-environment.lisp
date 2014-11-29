@@ -64,7 +64,11 @@
       = /= < > <= >= max min minusp plusp zerop
       floor ceiling truncate round
       * + - / 1+ 1- abs evenp oddp exp expt
-      mod rem numberp integerp rationalp)))
+      mod rem numberp integerp rationalp
+      ;; From the Packages dictionary
+      find-symbol find-package find-all-symbols
+      import export intern
+      packagep)))
 
 (loop for symbol in *imported-functions*
       do (setf (sicl-env:fdefinition symbol *environment*)
@@ -91,6 +95,12 @@
 				    name
 				    lambda-list
 				    body))))))))
+
+(setf (sicl-env:macro-function 'in-package *environment*)
+      (lambda (form environment)
+	(declare (ignore environment))
+	(setq *package* (find-package (cadr form)))
+	`(setq *package* (find-package ',(cadr form)))))
 
 (setf (sicl-env:default-setf-expander *environment*)
       (lambda (form)
