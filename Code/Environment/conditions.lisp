@@ -6,5 +6,5 @@
 (define-condition odd-number-of-arguments-to-setf (program-error)
   ((%form :initarg :form :reader form)))
 
-(define-condition variables-must-be proper-list (program-error)
-  ((%form :initarg :form :reader form)))
+(define-condition variables-must-be-proper-list (program-error)
+  ((%variables :initarg :variables :reader variables)))
