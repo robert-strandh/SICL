@@ -81,7 +81,7 @@
 	       (every (lambda (successor)
 			(typep successor 'cleavir-ir:instruction))
 		      successors))
-    (error "illegal successors: ~s" results))
+    (error "illegal successors: ~s" successors))
   (when (and (= (length successors) 2) (not (null results)))
     (error "Illegal combination of results and successors"))
   (unless (or (null invocation)
