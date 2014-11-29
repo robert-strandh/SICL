@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "condition-reporters-english")
    (:file "generic-functions")
    (:file "info-methods")
    (:file "other-methods")
