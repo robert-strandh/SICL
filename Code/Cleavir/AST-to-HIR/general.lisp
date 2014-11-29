@@ -810,4 +810,4 @@
 			(context form-temp (list successor) invocation))))
 	(compile-ast
 	 (cleavir-ast:function-form-ast ast)
-	 (context (list function-temp) successor invocation))))))
+	 (context (list function-temp) (list successor) invocation))))))
