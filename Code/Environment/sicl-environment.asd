@@ -1,7 +1,9 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-environment
-  :depends-on (:cleavir-code-utilities :cleavir-environment)
+  :depends-on (:cleavir-code-utilities
+	       :cleavir-environment
+	       :cleavir-internationalization)
   :serial t
   :components
   ((:file "packages")
