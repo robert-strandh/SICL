@@ -5,6 +5,7 @@
 	       :sicl-simple-environment
 	       :sicl-reader-simple
 	       :cleavir-hir
+	       :cleavir-ast-to-hir
 	       :sicl-extrinsic-environment
 	       :cleavir-hir-transformations
 	       :cleavir-basic-blocks)
