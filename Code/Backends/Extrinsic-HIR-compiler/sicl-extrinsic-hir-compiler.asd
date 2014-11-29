@@ -15,7 +15,6 @@
    (:file "define-global-environment")
    (:file "create-global-environment")
    (:file "runtime-environment")
-   (:file "primitive-function")
    (:file "fill-global-environment")
    (:file "parse-arguments")
    (:file "translate-hir")

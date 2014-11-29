@@ -182,22 +182,3 @@
 ;;; It is not ideal right now because it can fail and call ERROR.
 (setf (sicl-env:fdefinition 'host-fdefinition *environment*)
       #'fdefinition)
-
-;;; Import some simple functions to from the host to the target
-;;; environment.
-(defprimitive cl:consp (t))
-(defprimitive cl:cons (t t))
-
-(defprimitive cl:numberp (t))
-(defprimitive cl:integerp (t))
-(defprimitive cl:rationalp (t))
-
-(defprimitive cl:null (t))
-
-(defprimitive cl:symbolp (t))
-
-(defprimitive cl:characterp (t))
-(defprimitive cl:char-code (character))
-(defprimitive cl:alphanumericp (character))
-
-(defprimitive cl:stringp (t))
