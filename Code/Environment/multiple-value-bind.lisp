@@ -12,10 +12,11 @@
 ;;; handling MULTIPLE-VALUE-BIND as a special operator. 
 
 (defmacro multiple-value-bind (variables values-form &body body)
-  ;; FIXME: do these checks better.
   (unless (cleavir-code-utilities:proper-list-p variables)
     (error 'variables-must-be-proper-list :variables variables))
-  (assert (every #'symbolp variables))
+  (let ((non-symbol (find-if-not #'symbolp variables)))
+    (unless (null non-symbol)
+      (error 'variable-must-be-symbol :variable non-symbol)))
   (let ((rest-variable (gensym)))
     `(multiple-value-call
 	 (lambda (&optional ,@variables &rest ,rest-variable)
