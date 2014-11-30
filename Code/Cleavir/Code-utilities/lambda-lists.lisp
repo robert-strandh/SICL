@@ -860,7 +860,7 @@
 		  (progn
 		    (setf (values (whole result) positions)
 			  (parse-whole lambda-list positions))
-		    (if (eq (cadddr lambda-list) '&environment)
+		    (if (eq (caddr lambda-list) '&environment)
 			(progn
 			  (setf (values (environment result) positions)
 				(parse-environment lambda-list positions))
@@ -917,7 +917,7 @@
 		  (progn
 		    (setf (values (whole result) positions)
 			  (parse-whole lambda-list positions))
-		    (if (eq (cadddr lambda-list) '&environment)
+		    (if (eq (caddr lambda-list) '&environment)
 			(progn
 			  (setf (values (environment result) positions)
 				(parse-environment lambda-list positions))
@@ -1074,7 +1074,7 @@
 		  (progn
 		    (setf (values (whole result) positions)
 			  (parse-whole lambda-list positions))
-		    (if (eq (cadddr lambda-list) '&environment)
+		    (if (eq (caddr lambda-list) '&environment)
 			(progn
 			  (setf (values (environment result) positions)
 				(parse-environment lambda-list positions))
@@ -1131,7 +1131,7 @@
 		  (progn
 		    (setf (values (whole result) positions)
 			  (parse-whole lambda-list positions))
-		    (if (eq (cadddr lambda-list) '&environment)
+		    (if (eq (caddr lambda-list) '&environment)
 			(progn
 			  (setf (values (environment result) positions)
 				(parse-environment lambda-list positions))
