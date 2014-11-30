@@ -33,7 +33,7 @@
 	      (values temps
 		      (rest form)
 		      `(,new)
-		      `(funcall #'(setf ,(first form) ,new ,@temps))
+		      `(funcall #'(setf ,(first form)) ,new ,@temps)
 		      `(,(first form) ,@temps))))))
 
 ;;; We need to be able to add new functions to the environment, so we
