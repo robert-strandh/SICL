@@ -805,3 +805,16 @@
     :space (quality-value environment 'space)
     :compilation-speed (quality-value environment 'compilation-speed)
     :safety (quality-value environment 'safety)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; GLOBAL-ENVIRONMENT.
+
+;;; This method is called on the global environment.
+(defmethod global-environment (environment)
+  environment)
+
+;;; This method is called when the environment is an instance of
+;;; ENTRY, i.e., anything except the global environment.
+(defmethod global-environment ((environment entry))
+  (global-environment (next environment)))
