@@ -1448,3 +1448,28 @@
 		   `(&key)))))
     (values unparsed-lambda-list
 	    parsed-lambda-list)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Given an ordinary lambda list, create an argument type specifier
+;;; that is correctly describes calls to functions with such a lambda
+;;; list.
+
+(defun lambda-list-type-specifier (lambda-list)
+  (let ((parsed-lambda-list (parse-ordinary-lambda-list lambda-list))
+	(result '()))
+    (loop repeat (length (required parsed-lambda-list))
+	  do (push t result))
+    (unless (eq (optionals parsed-lambda-list) :none)
+      (push '&optional result)
+      (loop repeat (length (optionals parsed-lambda-list))
+	    do (push t result)))
+    (unless (eq (keys parsed-lambda-list) :none)
+      (push '&key result)
+      (loop for key in (keys parsed-lambda-list)
+	    do (push (list (first (first key)) t) result))
+      (when (allow-other-keys parsed-lambda-list)
+	(push '&allow-other-keys result)))
+    (reverse result)))
+    
+

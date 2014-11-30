@@ -39,6 +39,7 @@
 	   #:parse-deftype
 	   #:lambda-lists-congruent-p
 	   #:generate-congruent-lambda-list
+	   #:lambda-list-type-specifier
 	   #:canonicalize-declaration-specifiers
 	   #:separate-ordinary-body
 	   #:separate-function-body))
