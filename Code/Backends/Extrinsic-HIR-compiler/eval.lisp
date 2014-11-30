@@ -8,7 +8,8 @@
   (lambda (name) (sicl-env:fdefinition name *environment*)))
 
 (defun eval (form)
-  (let* ((ast (cleavir-generate-ast:generate-ast form *environment*))
+  (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
+	 (ast (cleavir-generate-ast:generate-ast form *environment*))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
     (funcall
      (funcall 
@@ -20,7 +21,8 @@
 	    (lambda () ,(translate hir)))))))))
 
 (defmethod cleavir-env:eval (form environment1 (environment2 environment))
-  (let* ((ast (cleavir-generate-ast:generate-ast form environment1))
+  (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
+	 (ast (cleavir-generate-ast:generate-ast form environment1))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
     (funcall
      (funcall
