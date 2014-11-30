@@ -15,6 +15,7 @@
    (:file "define-global-environment")
    (:file "create-global-environment")
    (:file "runtime-environment")
+   (:file "import-from-host")
    (:file "fill-global-environment")
    (:file "parse-arguments")
    (:file "translate-hir")
