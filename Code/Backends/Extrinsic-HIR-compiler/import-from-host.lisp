@@ -74,6 +74,13 @@
       do (setf (sicl-env:fdefinition symbol *environment*)
 	       (fdefinition symbol)))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *imported-variables*
+    '(*package*
+      *standard-input* *standard-output* *error-output*
+      *terminal-io* *trace-output* *query-io*
+      *print-base* *read-base*)))
+
 ;;; Set the variable CL:*PACKAGE* in the environment.
 (setf (sicl-env:special-variable 'cl:*package* *environment* t)
       (find-package '#:common-lisp-user))
