@@ -7,7 +7,7 @@
 ;;;; compilation of the entire AST.
 
 (asdf:defsystem :cleavir-ast-to-hir
-  :depends-on (:cleavir-ast :cleavir-hir)
+  :depends-on (:cleavir-ast :cleavir-hir :cleavir-primop)
   :serial t
   :components
   ((:file "packages")
