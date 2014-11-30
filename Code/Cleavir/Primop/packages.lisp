@@ -7,4 +7,5 @@
    #:fixnum-arithmetic #:fixnum-+ #:fixnum--
    #:fixnum-< #:fixnum-<= #:fixnum-> #:fixnum->= #:fixnum-=
    #:slot-read #:slot-write
-   #:aref #:aset))
+   #:aref #:aset
+   #:call-with-variable-bound))
