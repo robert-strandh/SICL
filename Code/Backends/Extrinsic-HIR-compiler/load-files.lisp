@@ -6,3 +6,4 @@
 (load (rp "../../Evaluation-and-compilation/lambda.lisp"))
 (load (rp "../../Environment/multiple-value-bind.lisp"))
 (load (rp "../../Data-and-control-flow/setf.lisp"))
+(load (rp "../../Environment/defun.lisp"))
