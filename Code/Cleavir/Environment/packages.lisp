@@ -35,6 +35,7 @@
    #:block-info
    #:tag-info
    #:optimize-info
+   #:global-environment
    #:name
    #:identity
    #:type
