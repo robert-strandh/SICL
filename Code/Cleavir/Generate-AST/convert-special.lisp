@@ -273,7 +273,7 @@
 			 then (augment variable new-env)
 		       collect new-env)))
 	     (ast (cleavir-ast:make-progn-ast
-		   (convert-sequence forms (first (last environments))))))
+		   (convert-sequence forms (first (last (cons env environments)))))))
 	(loop for binding in (reverse bindings)
 	      for var in (reverse variables)
 	      for (new old) on (reverse (cons env environments))
