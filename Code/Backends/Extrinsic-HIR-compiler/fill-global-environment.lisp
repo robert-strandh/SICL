@@ -121,10 +121,6 @@
 (setf (sicl-env:special-variable 'sicl-env:*global-environment* *environment* t)
       *environment*)
 
-;;; Set the variable CL:*PACKAGE* in the environment.
-(setf (sicl-env:special-variable 'cl:*package* *environment* t)
-      (find-package '#:common-lisp-user))
-
 ;;; This definition allows us to find the definition of any host function.
 ;;; It is not ideal right now because it can fail and call ERROR.
 (setf (sicl-env:fdefinition 'host-fdefinition *environment*)
