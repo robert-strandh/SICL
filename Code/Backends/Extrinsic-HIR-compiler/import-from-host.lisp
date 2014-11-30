@@ -76,10 +76,13 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *imported-variables*
-    '(*package*
-      *standard-input* *standard-output* *error-output*
+    '(*standard-input* *standard-output* *error-output*
       *terminal-io* *trace-output* *query-io*
       *print-base* *read-base*)))
+
+(loop for symbol in *imported-variables*
+      do (setf (sicl-env:special-variable 'cl:*package* *environment* t)
+	       (symbol-value symbol)))
 
 ;;; Set the variable CL:*PACKAGE* in the environment.
 (setf (sicl-env:special-variable 'cl:*package* *environment* t)
