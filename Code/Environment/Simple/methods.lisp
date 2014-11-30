@@ -114,11 +114,15 @@
 
 (defmethod (setf sicl-env:function-type)
     (new-type function-name (env simple-environment))
-  (let ((entry (find-function-entry env function-name)))
-    (if (or (null entry)
-	    (eq (car (function-cell entry)) (unbound entry)))
-	(error 'undefined-function :name function-name)
-	(setf (type entry) new-type))))
+  (let ((entry (ensure-function-entry env function-name)))
+    (cond ((not (null (special-operator entry)))
+	   (error 'attempt-to-proclaim-type-of-special-operator
+		  :name  function-name))
+	  ((not (null (macro-function entry)))
+	   (error 'attempt-to-proclaim-type-of-macro
+		  :name  function-name))
+	  (t
+	   (setf (type entry) new-type)))))
 
 (defmethod sicl-env:function-inline (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
