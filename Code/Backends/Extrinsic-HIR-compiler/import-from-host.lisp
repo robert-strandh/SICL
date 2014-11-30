@@ -96,3 +96,7 @@
       when (fboundp `(setf ,symbol))
 	do (setf (sicl-env:fdefinition `(setf ,symbol) *environment*)
 		 (fdefinition `(setf ,symbol))))
+
+;;; Import the SICL reader as CL:READ.
+(setf (sicl-env:fdefinition 'read *environment*)
+      (fdefinition 'sicl-reader:read))
