@@ -265,3 +265,12 @@
 		       :reader compilation-speed)))
 
 (defgeneric type-expand (environment type))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function GLOBAL-ENVIRONMENT.
+;;;
+;;; Given any environment object, this function returns the part of
+;;; the environment that constitutes the global environment.
+
+(defgeneric global-environment (environment))
