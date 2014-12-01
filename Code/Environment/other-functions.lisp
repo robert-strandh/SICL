@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-global-environment)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function SICL-ENV:GET-SETF-EXPANSION.
+;;;
+;;; This function differs fro CL:GET-SETF-EXPANSION in that both its
+;;; parameters are required.
+
 (defun expand-place (place environment)
   (cond ((symbolp place)
 	 (let ((expansion (cleavir-env:symbol-macro-expansion place environment)))
