@@ -1,10 +1,6 @@
 (cl:in-package #:sicl-global-environment)
 
-(defvar *global-environment*)
-
 (defun expand-place (place environment)
-  (when (null environment) 
-    (setf environment *global-environment*))
   (cond ((symbolp place)
 	 (let ((expansion (cleavir-env:symbol-macro-expansion place environment)))
 	   (if (eq place expansion)
@@ -19,9 +15,7 @@
 	(t
 	 (error "Invalid place ~s" place))))
 
-(defun get-setf-expansion (place &optional environment)
-  (when (null environment) 
-    (setf environment *global-environment*))
+(defun get-setf-expansion (place environment)
   (let* ((global-environment (cleavir-env:global-environment environment))
 	 (expanded-place (expand-place place environment))
 	 (expander (if (symbolp expanded-place)
