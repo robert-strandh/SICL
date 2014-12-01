@@ -587,4 +587,4 @@
 ;;; Contrary to CL:FIND-PACKAGE, this function does not accept a
 ;;; package object as its argument.  It has to be a string.
 
-(defgeneric find-package (name environmen))
+(defgeneric find-package (name environment))
