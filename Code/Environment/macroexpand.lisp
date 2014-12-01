@@ -1,21 +1,20 @@
 (in-package #:sicl-global-environment)
 
+;;;; Macro expansion.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro expansion.
+;;; Method on CLEAVIR-ENV:MACRO-FUNCTION.
+;;;
+;;; If we want to use the augmentation environments provided by
+;;; Cleavir, we must supply a method on this generic function,
+;;; specialized to our global environment.
+;;;
+;;; In this case, the method simply calls the generic function that is
+;;; part of our environment protocol.
 
-(defun macro-function (symbol &optional env)
-  (let ((entry (find-if (lambda (entry)
-			  (and (typep entry 'macro-entry)
-			       (eq (name entry) symbol)))
-			(append env (macros *global-environment*)))))
-    (if (null entry)
-	nil
-	(definition entry))))
-
-(cl:defparameter *macroexpand-hook*
-  (lambda (macro-function macro-form environment)
-    (funcall macro-function macro-form environment)))
+(defmethod cleavir-env:macro-function (symbol (env environment))
+  (macro-function symbol env))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
