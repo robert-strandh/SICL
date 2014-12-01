@@ -84,6 +84,7 @@
   :components
   ((:file "packages")
    (:file "datum")
+   (:file "instruction")
    (:file "general")
    (:file "instruction-mixin-classes")
    (:file "graphviz-drawing")))
