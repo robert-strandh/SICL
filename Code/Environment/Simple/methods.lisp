@@ -277,3 +277,10 @@
     (if (null association)
 	(push (cons symbol new-class) (type-expanders env))
 	(setf (cdr association) new-class))))
+
+(defmethod sicl-env:find-package (name (env simple-environment))
+  (loop for package in (packages env)
+	when (or (string= (package-name package) name)
+		 (member name (package-nicknames package)
+			 :test #'string=))
+	  return package))
