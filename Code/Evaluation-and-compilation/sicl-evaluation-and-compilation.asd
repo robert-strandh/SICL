@@ -9,8 +9,9 @@
 ;;; definitions are directly related to the environment.
 
 (asdf:defsystem :sicl-evaluation-and-compilation
+  :depends-on (:cleavir-internationalization)
   :serial t
   :components
   ((:file "packages")
-   (:file "conditions")))
-
+   (:file "conditions")
+   (:file "condition-reporters-english")))
