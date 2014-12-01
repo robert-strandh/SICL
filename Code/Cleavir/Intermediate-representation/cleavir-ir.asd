@@ -85,6 +85,6 @@
   ((:file "packages")
    (:file "datum")
    (:file "instruction")
-   (:file "general")
+   (:file "graph-modifications")
    (:file "instruction-mixin-classes")
    (:file "graphviz-drawing")))
