@@ -14,7 +14,7 @@
    (:file "context")
    (:file "compile-general-purpose-asts")
    (:file "compile-fixnum-related-asts")
-   (:file "float")
+   (:file "compile-float-related-asts")
    (:file "cons")
    (:file "standard-object")
    (:file "compile-array-related-asts")))
