@@ -9,7 +9,7 @@
    (:file "condition-reporters-english")
    (:file "argcount")
    (:file "form")
-   (:file "general")
+   (:file "list-structure")
    (:file "declarations")
    (:file "lambda-lists")
    (:file "destructuring")))
