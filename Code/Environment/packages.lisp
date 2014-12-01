@@ -15,6 +15,7 @@
 	   #:makunbound
 	   #:fmakunbound
 	   #:find-class
+	   #:find-package
 	   #:get-setf-expansion
 	   )
   (:export
@@ -40,6 +41,7 @@
    #:variable-cell
    #:variable-unbound
    #:find-class
+   #:find-package
    #:special-operator
    #:get-setf-expansion
    #:*global-environment*

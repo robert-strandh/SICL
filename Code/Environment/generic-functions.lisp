@@ -579,3 +579,12 @@
 ;;; ENVIRONMENT, then the old type expander is lost. 
 
 (defgeneric (setf type-expander) (new-expander symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FIND-PACKAGE.
+;;;
+;;; Contrary to CL:FIND-PACKAGE, this function does not accept a
+;;; package object as its argument.  It has to be a string.
+
+(defgeneric find-package (name environmen))
