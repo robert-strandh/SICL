@@ -12,9 +12,9 @@
   :components
   ((:file "packages")
    (:file "context")
-   (:file "general")
-   (:file "fixnum")
+   (:file "compile-general-purpose-asts")
+   (:file "compile-fixnum-related-asts")
    (:file "float")
    (:file "cons")
    (:file "standard-object")
-   (:file "array")))
+   (:file "compile-array-related-asts")))
