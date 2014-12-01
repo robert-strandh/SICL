@@ -83,6 +83,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "datum")
    (:file "general")
    (:file "instruction-mixin-classes")
    (:file "graphviz-drawing")))
