@@ -11,4 +11,6 @@
 (asdf:defsystem :sicl-evaluation-and-compilation
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "conditions")))
+
