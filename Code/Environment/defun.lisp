@@ -7,7 +7,7 @@
 	  (arg-type
 	    (cleavir-code-utilities:lambda-list-type-specifier lambda-list)))
       `(progn
-	 (eval-when (:compile-toplevel)
+	 (eval-when (:compile-toplevel :load-toplevel :execute)
 	   (setf (sicl-env:function-type ',name ,global-env)
 		 `(function ,arg-type t)))
 	 (eval-when (:load-toplevel :execute)
