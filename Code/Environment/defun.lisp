@@ -17,5 +17,5 @@
 		   ,@(if (null documentation)
 			 '()
 			 (list documentation))
-		   (block ,name
+		   (block ,(if (symbolp name) name (second name))
 		     ,@forms))))))))
