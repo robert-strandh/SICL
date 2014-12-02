@@ -7,7 +7,7 @@
   ((:file "data")
    (:file "box-unbox-mixins")
    (:file "side-effect-mixins")
-   (:file "general")
+   (:file "general-purpose-instructions")
    (:file "fixnum")
    (:file "integer")
    (:file "float")
