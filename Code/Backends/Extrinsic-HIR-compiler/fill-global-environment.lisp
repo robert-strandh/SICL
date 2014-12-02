@@ -36,30 +36,6 @@
 		      `(funcall #'(setf ,(first form)) ,new ,@temps)
 		      `(,(first form) ,@temps))))))
 
-;;; We need to be able to add new functions to the environment, so we
-;;; need a definition of (SETF FDEFINITION).
-(setf (sicl-env:fdefinition '(setf fdefinition) *environment*)
-      (lambda (&rest args)
-	(unless (= (length args) 2)
-	  (funcall (sicl-env:fdefinition 'cl:error *environment*)
-		   "wrong number of arguments"))
-	(destructuring-bind (new-function name) args
-	  (unless (functionp new-function)
-	    (funcall (sicl-env:fdefinition 'cl:error *environment*)
-		   "Argument to (SETF FDEFINITION) must be a function ~s"
-		   new-function))
-	  (unless (or (symbolp name)
-		      (and (consp name)
-			   (consp (cdr name))
-			   (null (cddr name))
-			   (eq (car name) 'setf)
-			   (symbolp (cadr name))))
-	    (funcall (sicl-env:fdefinition 'cl:error *environment*)
-		     "(SETF FDEFINITION) must be given a function name, not ~s"
-		     name))
-	  (setf (sicl-env:fdefinition name *environment*)
-		new-function))))
-
 ;;; We also need the function FUNCALL, because that is what is used by
 ;;; the default SETF expander.  At the momement, it only handles
 ;;; functions as its first argument.
