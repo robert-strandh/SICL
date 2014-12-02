@@ -6,6 +6,7 @@
   :components
   ((:file "data")
    (:file "box-unbox-mixins")
+   (:file "side-effect-mixins")
    (:file "general")
    (:file "fixnum")
    (:file "integer")
