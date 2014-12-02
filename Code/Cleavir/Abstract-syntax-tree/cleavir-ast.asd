@@ -5,7 +5,7 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "general")
+   (:file "general-purpose-asts")
    (:file "fixnum")
    (:file "float")
    (:file "cons")
