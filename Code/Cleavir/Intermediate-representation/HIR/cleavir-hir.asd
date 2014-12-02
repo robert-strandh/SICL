@@ -14,5 +14,5 @@
    (:file "cons-related-instructions")
    (:file "standard-object-related-instructions")
    (:file "array-related-instructions")
-   (:file "multiple-values")
+   (:file "multiple-value-related-instructions")
    (:file "graphviz-drawing")))
