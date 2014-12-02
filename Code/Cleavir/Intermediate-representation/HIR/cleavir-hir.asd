@@ -8,7 +8,7 @@
    (:file "box-unbox-mixins")
    (:file "side-effect-mixins")
    (:file "general-purpose-instructions")
-   (:file "fixnum")
+   (:file "fixnum-related-instructions")
    (:file "integer")
    (:file "float")
    (:file "cons")
