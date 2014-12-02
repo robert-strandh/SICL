@@ -10,3 +10,4 @@
 (load (rp "../../Data-and-control-flow/fboundp.lisp"))
 (load (rp "../../Data-and-control-flow/fdefinition.lisp"))
 (load (rp "../../Data-and-control-flow/setf-fdefinition.lisp"))
+(load (rp "ensure-generic-function.lisp"))
