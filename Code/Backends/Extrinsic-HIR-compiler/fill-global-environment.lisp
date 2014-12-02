@@ -36,11 +36,6 @@
 		      `(funcall #'(setf ,(first form)) ,new ,@temps)
 		      `(,(first form) ,@temps))))))
 
-;;; Defined FBOUNDP in the extrinsic environment.
-(setf (sicl-env:fdefinition 'fboundp *environment*)
-      (lambda (name)
-	(sicl-env:fboundp name *environment*)))
-
 ;;; Defined FDEFINITION in the extrinsic environment.
 (setf (sicl-env:fdefinition 'fdefinition *environment*)
       (lambda (name)
