@@ -10,7 +10,7 @@
    (:file "general-purpose-instructions")
    (:file "fixnum-related-instructions")
    (:file "integer-related-instructions")
-   (:file "float")
+   (:file "float-related-instructions")
    (:file "cons")
    (:file "standard-object")
    (:file "array")
