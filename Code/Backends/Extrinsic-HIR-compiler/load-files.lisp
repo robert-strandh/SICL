@@ -8,3 +8,4 @@
 (load (rp "../../Data-and-control-flow/setf.lisp"))
 (load (rp "../../Environment/defun.lisp"))
 (load (rp "../../Data-and-control-flow/fboundp.lisp"))
+(load (rp "../../Data-and-control-flow/fdefinition.lisp"))
