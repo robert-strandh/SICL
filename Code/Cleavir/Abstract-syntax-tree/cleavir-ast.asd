@@ -8,7 +8,7 @@
    (:file "general-purpose-asts")
    (:file "fixnum-related-asts")
    (:file "float-related-asts")
-   (:file "cons")
+   (:file "cons-related-asts")
    (:file "standard-object")
    (:file "array")
    (:file "graphviz-drawing")))
