@@ -99,8 +99,8 @@
 		 (go out)
 		 (destructuring-bind (keyword variable supplied-p) first
 		   (push `(if (eq (setq ,variable
-					(getf ,var ,keyword ,default))
-				  ,default)
+					(getf ,var ,keyword ',default))
+				  ',default)
 			      (setq ,supplied-p nil
 				    ,variable nil)
 			      (progn (setq ,supplied-p t)
