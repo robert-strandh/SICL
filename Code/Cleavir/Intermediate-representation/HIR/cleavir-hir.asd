@@ -13,6 +13,6 @@
    (:file "float-related-instructions")
    (:file "cons-related-instructions")
    (:file "standard-object-related-instructions")
-   (:file "array")
+   (:file "array-related-instructions")
    (:file "multiple-values")
    (:file "graphviz-drawing")))
