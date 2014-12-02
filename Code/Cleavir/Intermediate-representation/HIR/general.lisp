@@ -238,7 +238,10 @@
     (lambda-list &optional (successor nil successor-p))
   (let* ((outputs (loop for item in lambda-list
 			append (cond ((member item lambda-list-keywords) '())
-				     ((consp item) item)
+				     ((consp item)
+				      (if (= (length item) 3)
+					  (cdr item)
+					  item))
 				     (t (list item))))))
     (make-instance 'enter-instruction
       :lambda-list lambda-list
