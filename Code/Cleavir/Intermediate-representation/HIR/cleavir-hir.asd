@@ -9,7 +9,7 @@
    (:file "side-effect-mixins")
    (:file "general-purpose-instructions")
    (:file "fixnum-related-instructions")
-   (:file "integer")
+   (:file "integer-related-instructions")
    (:file "float")
    (:file "cons")
    (:file "standard-object")
