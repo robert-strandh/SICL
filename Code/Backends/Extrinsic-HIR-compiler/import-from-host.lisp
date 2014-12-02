@@ -68,7 +68,9 @@
       ;; From the Packages dictionary
       find-symbol find-package find-all-symbols
       import export intern
-      packagep)))
+      packagep
+      ;; From the Objects dictionary
+      make-instance)))
 
 (loop for symbol in *imported-functions*
       do (setf (sicl-env:fdefinition symbol *environment*)
