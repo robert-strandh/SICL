@@ -7,7 +7,7 @@
   ((:file "packages")
    (:file "general-purpose-asts")
    (:file "fixnum-related-asts")
-   (:file "float")
+   (:file "float-related-asts")
    (:file "cons")
    (:file "standard-object")
    (:file "array")
