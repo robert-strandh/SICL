@@ -10,5 +10,5 @@
    (:file "float-related-asts")
    (:file "cons-related-asts")
    (:file "standard-object-related-asts")
-   (:file "array")
+   (:file "array-related-asts")
    (:file "graphviz-drawing")))
