@@ -12,7 +12,7 @@
    (:file "integer-related-instructions")
    (:file "float-related-instructions")
    (:file "cons-related-instructions")
-   (:file "standard-object")
+   (:file "standard-object-related-instructions")
    (:file "array")
    (:file "multiple-values")
    (:file "graphviz-drawing")))
