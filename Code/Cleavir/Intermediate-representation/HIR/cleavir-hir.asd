@@ -11,7 +11,7 @@
    (:file "fixnum-related-instructions")
    (:file "integer-related-instructions")
    (:file "float-related-instructions")
-   (:file "cons")
+   (:file "cons-related-instructions")
    (:file "standard-object")
    (:file "array")
    (:file "multiple-values")
