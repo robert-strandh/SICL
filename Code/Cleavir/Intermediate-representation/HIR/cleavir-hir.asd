@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "data")
+   (:file "box-unbox-mixins")
    (:file "general")
    (:file "fixnum")
    (:file "integer")
