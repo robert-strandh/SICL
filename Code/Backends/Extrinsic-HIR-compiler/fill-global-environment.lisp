@@ -41,6 +41,11 @@
       (lambda (name)
 	(sicl-env:fboundp name *environment*)))
 
+;;; Defined FDEFINITION in the extrinsic environment.
+(setf (sicl-env:fdefinition 'fdefinition *environment*)
+      (lambda (name)
+	(sicl-env:fdefinition name *environment*)))
+
 ;;; We need to be able to add new functions to the environment, so we
 ;;; need a definition of (SETF FDEFINITION).
 (setf (sicl-env:fdefinition '(setf fdefinition) *environment*)
