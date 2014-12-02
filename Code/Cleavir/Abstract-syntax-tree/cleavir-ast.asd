@@ -6,7 +6,7 @@
   :components
   ((:file "packages")
    (:file "general-purpose-asts")
-   (:file "fixnum")
+   (:file "fixnum-related-asts")
    (:file "float")
    (:file "cons")
    (:file "standard-object")
