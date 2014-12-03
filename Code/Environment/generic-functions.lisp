@@ -292,6 +292,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FUNCTION-HIR.
+;;;
+;;; This function returns if information about the high-level
+;;; intermediate code (HIR) associated with FUNCTION-NAME, or NIL if
+;;; there is not such information associated with the function.
+
+(defgeneric function-hir (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
