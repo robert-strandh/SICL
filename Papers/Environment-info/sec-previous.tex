@@ -1,1 +1,34 @@
 \section{Previous work}
+
+Section 8.5 of ``Common Lisp, the Language, second edition'' describes
+a set of functions for obtaining information from environment
+objects and some other operators related to environments.
+
+For environment query, it describes three functions.  We describe them
+briefly here.
+
+The function \texttt{variable-information} takes a symbol and an
+optional environment object as arguments.  It returns three values.
+The first value indicates the type of the binding (lexical variable,
+special variable, symbol macro, constant variable) or \texttt{nil} if
+there is no binding or definition in the environment for that symbol
+The second value is a Boolean, indicating whether the binding is local
+or global.  The third argument is an association list containing
+declarations that apply to the binding.
+
+The function \texttt{function-information} takes a function name and
+an optional environment as arguments.  Again, three values are
+returned.  The first value indicates the type of the binding
+(function, macro, special operator\footnote{The term used in the book
+  is \emph{special form}, but the terminology has been improved since
+  then}) or \texttt{nil} if there is no binding or definition in the
+environment for that function name.  As before, the second value
+indicates whether the definition is local or global, and the third
+value is an association list of declarations that apply.
+
+The function \texttt{declaration-information} takes a
+\emph{declaration name} and an optional environment as arguments.  The
+declaration name can be the symbol \texttt{optimize}, the symbol
+\texttt{declaration}, or some implementation-defined declaration
+names.  It returns a single value that contains information related to
+the corresponding declaration name.
