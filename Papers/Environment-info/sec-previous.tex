@@ -1,5 +1,7 @@
 \section{Previous work}
 
+\subsection{Environment query}
+
 Section 8.5 of ``Common Lisp, the Language, second edition'' describes
 a set of functions for obtaining information from environment
 objects and some other operators related to environments.
@@ -32,3 +34,9 @@ declaration name can be the symbol \texttt{optimize}, the symbol
 \texttt{declaration}, or some implementation-defined declaration
 names.  It returns a single value that contains information related to
 the corresponding declaration name.
+
+\subsection{Environment augmentation}
+
+For augmenting an environment, i.e., creating a new, augmented,
+environment from an existing one, the same section describes the
+function \texttt{augment-environment}.
