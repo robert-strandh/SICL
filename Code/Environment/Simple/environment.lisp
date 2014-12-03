@@ -188,6 +188,10 @@
    ;; The value of this slot is the proclaimed type of the function
    ;; whenever this entry has a function associated with it.
    (%type :initform t :accessor type)
+   ;; The value of this slot is either a HIR program represented by an
+   ;; ENTRY-INSTRUCTION, or NIL if there is no HIR program associated
+   ;; with this function entry.
+   (%hir :initform nil :initarg :hir :accessor hir)
    ;; The value of this slot is the proclaimed inline information
    ;; whenever this entry has a function associated with it.
    (%inline :initform nil :accessor inline)))
