@@ -1,0 +1,78 @@
+\documentclass{acm_proc_article-sp}
+\usepackage[utf8]{inputenc}
+
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+\def\inputal#1{\input #1}
+\def\inputcode#1{\input #1}
+
+\inputtex{logos.tex}
+\inputtex{refmacros.tex}
+\inputtex{other-macros.tex}
+
+\begin{document}
+\title{A CLOS Version of the CLtL2 Environment Protocol}
+\numberofauthors{1}
+\author{\alignauthor
+Robert Strandh\\
+\affaddr{University of Bordeaux}\\
+\affaddr{351, Cours de la Libération}\\
+\affaddr{Talence, France}\\
+\email{robert.strandh@u-bordeaux1.fr}}
+
+\toappear{Permission to make digital or hard copies of all or part of
+  this work for personal or classroom use is granted without fee
+  provided that copies are not made or distributed for profit or
+  commercial advantage and that copies bear this notice and the full
+  citation on the first page. Copyrights for components of this work
+  owned by others than the author(s) must be honored. Abstracting with
+  credit is permitted. To copy otherwise, or republish, to post on
+  servers or to redistribute to lists, requires prior specific
+  permission and/or a fee. Request permissions from
+  Permissions@acm.org.
+
+%  ELS '15, April 20 - 21 2015, London, UK
+%  Copyright is held by the owner/author(s). Publication rights licensed to ACM.
+%  ACM 978-1-4503-2931-6/14/08\$15.00.???
+%  http://dx.doi.org/10.1145/2635648.2635656
+}
+
+\maketitle
+
+\begin{abstract}
+The concept of an \emph{environment} is mentioned in many places in
+the \commonlisp{} standard, but the nature of the object is not
+specified.  For the purpose of this paper, an environment is a mapping
+from \emph{names} to \emph{meanings}.
+object.
+
+In this paper, we propose a replacement for the protocol documented in
+the book Common Lisp the Language, second edition.  Rather than using
+multiple values as that protocol does, the protocol suggested in this
+paper returns class instances.  Accessor functions on those supply the
+information that the compiler needs. 
+
+The advantage of this approach is that it is easier to extend than the
+previous protocol, so that implementations can suggest additional
+functionality on these objects.  Furthermore, CLOS dispatch can be
+used on these objects, thus enabling object-oriented techniques.
+\end{abstract}
+
+\category{D.3.4}{Programming Languages}{Processors}
+[Code generation, Run-time environments]
+
+\terms{Algorithms, Languages}
+
+\keywords{\clos{}, \commonlisp{}, Environment}
+
+\inputtex{sec-introduction.tex}
+\inputtex{sec-previous.tex}
+\inputtex{sec-our-method.tex}
+\inputtex{sec-benefits.tex}
+\inputtex{sec-conclusions.tex}
+
+\bibliographystyle{abbrv}
+\bibliography{environment-info}
+\end{document}
+
+%%  LocalWords:  sandboxing runtime
