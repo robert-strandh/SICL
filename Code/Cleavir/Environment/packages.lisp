@@ -40,6 +40,7 @@
    #:identity
    #:type
    #:ignore
+   #:hir
    #:dynamic-extent
    #:value
    #:expansion
