@@ -35,6 +35,13 @@ declaration name can be the symbol \texttt{optimize}, the symbol
 names.  It returns a single value that contains information related to
 the corresponding declaration name.
 
+To begin with, it is clear that this set of functions is insufficient
+to process all \commonlisp{} code, because no mechanism is described
+for querying the environment for information related to \emph{blocks}
+and \emph{go tags}.  Functions for this purpose are provided as
+extensions by Allegro Common Lisp.\footnote{FIXME: add
+  citation}\footnote{FIXME: describe changes to the protocol by ACL}
+
 \subsection{Environment augmentation}
 
 For augmenting an environment, i.e., creating a new, augmented,
