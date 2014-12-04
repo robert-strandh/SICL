@@ -13,7 +13,7 @@
 	 (eval-when (:load-toplevel :execute)
 	   (setf (sicl-env:fdefinition ',name ,global-env)
 		 (lambda ,lambda-list
-		   ,declarations
+		   ,@declarations
 		   ,@(if (null documentation)
 			 '()
 			 (list documentation))
