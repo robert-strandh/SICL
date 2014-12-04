@@ -267,7 +267,7 @@
   (destructuring-bind (bindings &rest body) (cdr form)
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
-      (let* ((canonical-declarations
+      (let* ((canonical-dspecs
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (loop for binding in bindings
@@ -275,7 +275,7 @@
 					  binding
 					  (first binding))))
 	     (body-env (construct-let-body-environment
-			variables canonical-declarations env))
+			variables canonical-dspecs env))
 	     (ast (cleavir-ast:make-progn-ast
 		   (convert-sequence forms body-env))))
 	(loop for binding in (reverse bindings)
@@ -285,7 +285,7 @@
 	      for init-ast = (convert init env)
 	      do (setf ast
 		       (if (variable-is-special-p
-			    var canonical-declarations env)
+			    var canonical-dspecs env)
 			   (cleavir-ast:make-bind-ast var init-ast ast)
 			   (let ((lexical (cleavir-env:identity info)))
 			     (cleavir-ast:make-progn-ast 
@@ -298,7 +298,7 @@
   (destructuring-bind (bindings &rest body) (cdr form)
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
-      (let* ((canonical-declarations
+      (let* ((canonical-dspecs
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (loop for binding in bindings
@@ -308,7 +308,7 @@
 	     (environments
 	       (flet ((augment (variable env)
 			(augment-environment-with-variable
-			 variable canonical-declarations env env)))
+			 variable canonical-dspecs env env)))
 		 (loop for variable in variables
 		       for new-env = (augment variable env)
 			 then (augment variable new-env)
@@ -323,7 +323,7 @@
 	      for init-ast = (convert init old)
 	      do (setf ast
 		       (if (variable-is-special-p
-			    var canonical-declarations env)
+			    var canonical-dspecs env)
 			   (cleavir-ast:make-bind-ast var init-ast ast)
 			   (let ((lexical (cleavir-env:identity info)))
 			     (cleavir-ast:make-progn-ast 
