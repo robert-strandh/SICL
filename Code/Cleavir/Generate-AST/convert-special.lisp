@@ -248,20 +248,6 @@
 	  ;; remaining computation as components.
 	  (set-or-bind-variable var lexical-ast next-ast new-env)))))
 
-;;; Given a list of variables bound by the LET form, and a list of
-;;; canonicalized declarations specifiers, return an environment to be
-;;; used to compile the body.  The ENV parameter is the environment in
-;;; which the LET form is converted.  It is used in order to determine
-;;; whether any variable is globally special. 
-(defun construct-let-body-environment (variables declarations env)
-  (flet ((augment (variable env orig-env)
-	   (augment-environment-with-variable
-	    variable declarations env orig-env)))
-    (loop for variable in variables
-	  for new-env = (augment variable env env)
-	    then (augment variable new-env env)
-	  finally (return new-env))))
-
 (defmethod convert-special
     ((symbol (eql 'let)) form env)
   (destructuring-bind (bindings &rest body) (cdr form)
