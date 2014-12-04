@@ -75,18 +75,19 @@
 ;;; the lambda list, and this function recursively processes the
 ;;; remaining &AUX "parameters".  FORMS is a sequence of forms
 ;;; constituting the body of the function.
-(defun process-remaining-aux (aux dspecs forms env)
+(defun process-remaining-aux (aux idspecs rdspecs forms env)
   (if (null aux)
       ;; We ran out of &AUX "parameters".  We must build an AST for
       ;; the body of the function.
-      (cleavir-ast:make-progn-ast (convert-sequence forms env))
+      (let ((new-env (augment-environment-with-declarations env rdspecs)))
+	(cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
       ;; We have at least one more &AUX "parameter".
       (destructuring-bind (var init) (first aux)
 	(let* (;; We enter the new parameter variable into the
 	       ;; environment in order to process remaining parameters
 	       ;; and ultimately the body of the function.
 	       (new-env (augment-environment-with-variable
-			 var dspecs env env))
+			 var (first idspecs) env env))
 	       ;; The initform of the &AUX parameter is turned into an
 	       ;; AST in the original environment, i.e. the one that
 	       ;; does not have the parameter variable in it.
@@ -96,7 +97,11 @@
 	       ;; remaining &AUX entries (if any) and the environment
 	       ;; that we obtained by augmenting the original one with
 	       ;; the parameter variable.
-	       (next-ast (process-remaining-aux (rest aux) dspecs forms new-env)))
+	       (next-ast (process-remaining-aux (rest aux)
+						(rest idspecs)
+						rdspecs
+						forms
+						new-env)))
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the &AUX "parameter" and the AST of the
 	  ;; remaining computation as components.
@@ -105,18 +110,19 @@
 ;;; This function is called when we have processed all the &KEY
 ;;; parameters, so if there are any &AUX "parameters", they should be
 ;;; processed by this function.
-(defun process-aux (parsed-lambda-list dspecs forms env)
+(defun process-aux (parsed-lambda-list idspecs rdspecs forms env)
   (let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
     (if (eq aux :none)
 	;; This lambda list has no &AUX "parameters".  We must build
 	;; an AST for the body of the function.
-	(cleavir-ast:make-progn-ast (convert-sequence forms env))
+	(let ((new-env (augment-environment-with-declarations env rdspecs)))
+	  (cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
 	;; This lambda list has the &AUX keyword in it.  There may or
 	;; may not be any &AUX "parameters" following that keyword.
 	;; We call PROCESS-REMAINING-AUX with the list of these &AUX
 	;; "parameters", and we return the AST that
 	;; PROCESS-REMAINING-AUX builds.
-	(process-remaining-aux aux dspecs forms env))))
+	(process-remaining-aux aux idspecs rdspecs forms env))))
 
 ;;; VAR-AST and SUPPLIED-P-AST are LEXICAL-ASTs that will be set by
 ;;; the implementation-specific argument-parsing code, according to
@@ -181,8 +187,8 @@
 ;;; keyword is present in PARSED-LAMBDA-LIST, and the empty list
 ;;; otherwise.  This works because in the lambda list we create, there
 ;;; are no &AUX "parameters".
-(defun process-allow-other-keys (parsed-lambda-list dspecs forms env)
-  (values (process-aux parsed-lambda-list dspecs forms env)
+(defun process-allow-other-keys (parsed-lambda-list idspecs rdspecs  forms env)
+  (values (process-aux parsed-lambda-list idspecs rdspecs forms env)
 	  (if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
 	      '(&allow-other-keys)
 	      '())))
@@ -204,20 +210,20 @@
 ;;; the lambda list, and this function recursively processes the
 ;;; remaining &KEY parameters.  FORMS is a sequence of forms
 ;;; constituting the body of the function.
-(defun process-remaining-keys (keys parsed-lambda-list dspecs forms env)
+(defun process-remaining-keys (keys parsed-lambda-list idspecs rdspecs forms env)
   (if (null keys)
       ;; We ran out of &KEY parameters.  Call PROCESS-ALLOW-OTHER-KEYS
       ;; to deal with a possible &ALLOW-OTHER-KEYS lambda-list
       ;; keyword, and return the AST and the modified lambda list
       ;; returned by that function. 
-      (process-allow-other-keys parsed-lambda-list dspecs forms env)
+      (process-allow-other-keys parsed-lambda-list idspecs rdspecs forms env)
       (destructuring-bind ((keyword var) init &optional supplied-p)
  	  (first keys)
 	(let (;; Compute an augmented environment to be used to
 	      ;; compute the AST for the remaining computation after
 	      ;; this parameter has been processed.
 	      (new-env (augment-environment-with-parameter
-			var supplied-p dspecs env))
+			var supplied-p (first idspecs) env))
 	      ;; Construct the AST for representing the computation of
 	      ;; the initialization argument.  It must be computed in
 	      ;; the original environment, i.e. before the parameter
@@ -230,7 +236,8 @@
 	      ;; supplied-p variable.
 	      (process-remaining-keys (rest keys)
 				      parsed-lambda-list
-				      dspecs
+				      (rest idspecs)
+				      rdspecs
 				      forms
 				      new-env)
 	    (multiple-value-bind (ast lexical-locations)
@@ -245,14 +252,14 @@
 ;;; This function is called when we have processed a possible &REST
 ;;; parameter, so if there are any &KEY parameters, they should be
 ;;; processed by this function.
-(defun process-keys (parsed-lambda-list dspecs forms env)
+(defun process-keys (parsed-lambda-list idspecs rdspecs forms env)
   (let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
     (if (eq keys :none)
 	;; There was no lambda-list keyword &KEY in this lambda list.
 	;; Just call the function PROCESS-AUX to create the AST for
 	;; the remaining analysis, together with an empty modified
 	;; lambda list.
-	(values (process-aux parsed-lambda-list dspecs forms env)
+	(values (process-aux parsed-lambda-list idspecs rdspecs forms env)
 		'())
 	(multiple-value-bind (ast lexicals)
 	    ;; This lambda list has the lambda-list keyword &KEY in
@@ -261,31 +268,34 @@
 	    ;; with the list of these &KEY parameters., and we return
 	    ;; the AST that PROCESS-REMAINING-KEYS builds and the
 	    ;; modified lambda list that it returns.
-	    (process-remaining-keys keys parsed-lambda-list dspecs forms env)
+	    (process-remaining-keys
+	     keys parsed-lambda-list idspecs rdspecs forms env)
 	  (values ast (cons '&key lexicals))))))
 
 ;;; This function is called when we have processed a possible
 ;;; &OPTIONAL parameter, so if there is a &REST parameter, it should
 ;;; be processed by this function.
-(defun process-rest (parsed-lambda-list dspecs forms env)
+(defun process-rest (parsed-lambda-list idspecs rdspecs forms env)
   (let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
     (if (eq rest :none)
 	;; There was no lambda-list keyword &REST or &BODY in this
 	;; lambda list.  Just call the function PROCESS-KEYS to create
 	;; the AST for the remaining analysis and the modified lambda
 	;; list.
-	(process-keys parsed-lambda-list dspecs forms env)
+	(process-keys parsed-lambda-list idspecs rdspecs forms env)
 	;; This lambda list has the lambda-list &REST or &BODY in it.
 	;; It is followed by a single variable to hold the rest of the
 	;; arguments.
 	(let (;; Create a new environment by augmenting the original
 	      ;; one with the &REST parameter variable. 
-	      (new-env (augment-environment-with-variable rest dspecs env env)))
+	      (new-env (augment-environment-with-variable
+			rest (first idspecs) env env)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
 	      ;; Create the AST and the modified lambda list that
 	      ;; results from processing the remaining lambda list. 
 	      (process-keys parsed-lambda-list
-			    dspecs
+			    (rest idspecs)
+			    rdspecs
 			    forms
 			    new-env)
 	    (let* (;; We must create a LEXICAL-AST that the
@@ -303,18 +313,20 @@
 	      (values (set-or-bind-variable rest lexical-ast next-ast new-env)
 		      (list* '&rest lexical-ast next-lexical-parameters))))))))
 
-(defun process-remaining-optionals (optionals parsed-lambda-list dspecs forms env)
+(defun process-remaining-optionals
+    (optionals parsed-lambda-list idspecs rdspecs forms env)
   (if (null optionals)
-      (process-rest parsed-lambda-list dspecs forms env)
+      (process-rest parsed-lambda-list idspecs rdspecs forms env)
       (destructuring-bind (var init &optional supplied-p)
  	  (first optionals)
 	(let ((new-env (augment-environment-with-parameter
-			var supplied-p dspecs env))
+			var supplied-p (first idspecs) env))
 	      (init-ast (convert init env)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
 	      (process-remaining-optionals (rest optionals)
 					   parsed-lambda-list
-					   dspecs
+					   (rest idspecs)
+					   rdspecs
 					   forms
 					   new-env)
 	    (multiple-value-bind (ast lexical-locations)
@@ -323,30 +335,33 @@
 	      (values ast
 		      (cons lexical-locations next-lexical-parameters))))))))
 
-(defun process-optionals (parsed-lambda-list dspecs forms env)
+(defun process-optionals (parsed-lambda-list idspecs rdspecs forms env)
   (let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
     (if (eq optionals :none)
-	(process-keys parsed-lambda-list dspecs forms env)
+	(process-keys parsed-lambda-list idspecs rdspecs forms env)
 	(multiple-value-bind (ast lexicals)
 	    (process-remaining-optionals optionals
 					 parsed-lambda-list
-					 dspecs
+					 idspecs
+					 rdspecs
 					 forms
 					 env)
 	  (values ast (cons '&optional lexicals))))))
 
-(defun process-required (required parsed-lambda-list dspecs forms env)
+(defun process-required
+    (required parsed-lambda-list idspecs rdspecs forms env)
   (if (null required)
-      (process-optionals parsed-lambda-list dspecs forms env)
+      (process-optionals parsed-lambda-list idspecs rdspecs forms env)
       (let* ((var (first required))
 	     (name (make-symbol (string-downcase var)))
 	     (lexical-ast (cleavir-ast:make-lexical-ast name))
 	     (new-env (augment-environment-with-variable
-		       var dspecs env env)))
+		       var (first idspecs) env env)))
 	(multiple-value-bind (next-ast next-lexical-parameters)
 	    (process-required (rest required)
 			      parsed-lambda-list
-			      dspecs
+			      (rest idspecs)
+			      rdspecs
 			      forms
 			      new-env)
 	  (values (set-or-bind-variable var lexical-ast next-ast new-env)
@@ -368,7 +383,7 @@
 	(aux (cleavir-code-utilities:aux parsed-lambda-list))
 	(result '()))
     (unless (eq aux :none)
-      (setf result (append (mapcar #'first aux) result)))
+      (setf result (append (mapcar #'list (mapcar #'first aux)) result)))
     (unless (eq keys :none)
       (loop for key in (reverse keys)
 	    do (push (if (= (length key) 3)
@@ -384,11 +399,12 @@
 			 (list (first optional) (third optional))
 			 (list (first optional)))
 		     result)))
-    (append required result)))
+    (append (mapcar #'list required) result)))
 
 (defun convert-code (lambda-list body env)
-  (let ((parsed-lambda-list
-	  (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
+  (let* ((parsed-lambda-list
+	   (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list))
+	 (required (cleavir-code-utilities:required parsed-lambda-list)))
     (multiple-value-bind (declarations documentation forms)
 	(cleavir-code-utilities:separate-function-body body)
       ;; FIXME: Handle documentation
@@ -396,13 +412,18 @@
       (let ((canonicalized-dspecs
 	      (cleavir-code-utilities:canonicalize-declaration-specifiers
 	       (reduce #'append (mapcar #'cdr declarations)))))
-	(multiple-value-bind (ast lexical-lambda-list)
-	    (process-required (cleavir-code-utilities:required parsed-lambda-list)
-			      parsed-lambda-list
-			      canonicalized-dspecs
-			      forms
-			      env)
-	  (cleavir-ast:make-function-ast ast lexical-lambda-list))))))
+	(multiple-value-bind (idspecs rdspecs)
+	    (itemize-declaration-specifiers
+	     (itemize-lambda-list parsed-lambda-list)
+	     canonicalized-dspecs)
+	  (multiple-value-bind (ast lexical-lambda-list)
+	      (process-required required
+				parsed-lambda-list
+				idspecs
+				rdspecs
+				forms
+				env)
+	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
