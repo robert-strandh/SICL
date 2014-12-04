@@ -375,12 +375,12 @@
 ;;;   * var
 ;;;   * (var)
 ;;;   * (var init-form)
-;;;   * (var init-from supplied-p-parameter)
+;;;   * (var init-form supplied-p-parameter)
 ;;;
 ;;; we boil it down to 2:
 ;;;
 ;;;   * (var init-form)
-;;;   * (var init-from supplied-p-parameter)
+;;;   * (var init-form supplied-p-parameter)
 ;;;
 ;;; by replacing var or (var) by (var nil)
 (defun parse-ordinary-optional (optional)
@@ -441,12 +441,12 @@
 ;;;   * var
 ;;;   * (pattern)
 ;;;   * (pattern init-form)
-;;;   * (pattern init-from supplied-p-parameter)
+;;;   * (pattern init-form supplied-p-parameter)
 ;;;
 ;;; we boil it down to 2:
 ;;;
 ;;;   * (pattern init-form)
-;;;   * (pattern init-from supplied-p-parameter)
+;;;   * (pattern init-form supplied-p-parameter)
 ;;;
 ;;; by replacing var by (var <default>) and (pattern) by (pattern nil).
 (defun parse-destructuring/deftype-optional (optional default)
@@ -497,7 +497,7 @@
 ;;;   * var
 ;;;   * (var)
 ;;;   * (var init-form)
-;;;   * (var init-from supplied-p-parameter)
+;;;   * (var init-form supplied-p-parameter)
 ;;;   * ((keyword var))
 ;;;   * ((keyword var) init-form)
 ;;;   * ((keyword var) init-form supplied-p-parameter)
@@ -586,7 +586,7 @@
 ;;;   * var
 ;;;   * (var)
 ;;;   * (var init-form)
-;;;   * (var init-from supplied-p-parameter)
+;;;   * (var init-form supplied-p-parameter)
 ;;;   * ((keyword pattern))
 ;;;   * ((keyword pattern) init-form)
 ;;;   * ((keyword pattern) init-form supplied-p-parameter)
