@@ -271,24 +271,25 @@
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (mapcar #'binding-var bindings))
-	     (body-env (construct-let-body-environment
-			variables canonical-dspecs env))
-	     (ast (cleavir-ast:make-progn-ast
-		   (convert-sequence forms body-env))))
-	(loop for binding in (reverse bindings)
-	      for var in (reverse variables)
-	      for info = (cleavir-env:variable-info body-env var)
-	      for init = (if (symbolp binding) nil (second binding))
-	      for init-ast = (convert init env)
-	      do (setf ast
-		       (if (variable-is-special-p
-			    var canonical-dspecs env)
-			   (cleavir-ast:make-bind-ast var init-ast ast)
-			   (let ((lexical (cleavir-env:identity info)))
-			     (cleavir-ast:make-progn-ast 
-			      (list (cleavir-ast:make-setq-ast lexical init-ast)
-				    ast))))))
-	ast))))
+	     (temp-asts (loop for var in variables
+			      collect (cleavir-ast:make-lexical-ast (gensym))))
+	     (init-asts (loop for binding in bindings
+			      for init-form = (binding-init-form binding)
+			      for temp-ast in temp-asts
+			      collect (cleavir-ast:make-setq-ast
+				       temp-ast (convert init-form  env)))))
+	(multiple-value-bind (idspecs rdspecs)
+	    (itemize-declaration-specifiers
+	     (mapcar #'list variables)
+	     canonical-dspecs)
+	  (cleavir-ast:make-progn-ast
+	   (append init-asts
+		   (list (process-remaining-let-bindings
+			  (pairlis variables temp-asts)
+			  idspecs
+			  rdspecs
+			  forms
+			  env)))))))))
 
 (defmethod convert-special
     ((symbol (eql 'let*)) form env)
