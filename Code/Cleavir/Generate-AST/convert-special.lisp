@@ -203,6 +203,50 @@
       binding
       (first binding)))
 
+;;; For converting LET, we use a method that is very close to the
+;;; exact wording of the Common Lisp HyperSpec, in that we first
+;;; evaluate the INIT-FORMs in the original environment and save the
+;;; resulting values.  We save those resulting values in
+;;; freshly-created lexical variables.  Then we bind each original
+;;; variable, either by using a SETQ-AST or a BIND-AST according to
+;;; whether the variable to be bound is lexical or special.
+
+;;; BINDINGS is a list of CONS cells.  The CAR of each CONS cell is a
+;;; variable to be bound.  The CDR of each CONS cell is an AST that
+;;; computes the initial value for that variable.  IDSPECS is a list
+;;; with the same length as BINDINGS of itemized canonicalized
+;;; declaration specifiers.  Each item in the list is a list of
+;;; canonicalized declaration specifiers associated with the
+;;; corresponding variable in the BINDINGS list.  RDSPECS is a list of
+;;; remaining canonicalized declaration specifiers that apply to the
+;;; environment in which the FORMS are to be processed.
+(defun process-remaining-let-bindings (bindings idspecs rdspecs forms env)
+  (if (null bindings)
+      ;; We ran out of bindings.  We must build an AST for the body of
+      ;; the function.
+      (let ((new-env (augment-environment-with-declarations env rdspecs)))
+	(cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
+      (destructuring-bind (var . init-ast) (first bindings)
+	(let* (;; We enter the new variable into the environment and
+	       ;; then we process remaining parameters and ultimately
+	       ;; the body of the function.
+	       (new-env (augment-environment-with-variable
+			 var (first idspecs) env env))
+	       ;; We compute the AST of the remaining computation by
+	       ;; recursively calling this same function with the
+	       ;; remaining bindings (if any) and the environment that
+	       ;; we obtained by augmenting the original one with the
+	       ;; parameter variable.
+	       (next-ast (process-remaining-let-bindings (rest bindings)
+							 (rest idspecs)
+							 rdspecs
+							 forms
+							 new-env)))
+	  ;; All that is left to do now, is to construct the AST to
+	  ;; return by using the new variable and the AST of the
+	  ;; remaining computation as components.
+	  (set-or-bind-variable var init-ast next-ast new-env)))))
+
 ;;; Given a list of variables bound by the LET form, and a list of
 ;;; canonicalized declarations specifiers, return an environment to be
 ;;; used to compile the body.  The ENV parameter is the environment in
