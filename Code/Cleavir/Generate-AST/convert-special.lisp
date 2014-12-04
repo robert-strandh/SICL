@@ -270,10 +270,7 @@
       (let* ((canonical-dspecs
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
-	     (variables (loop for binding in bindings
-			      collect (if (symbolp binding)
-					  binding
-					  (first binding))))
+	     (variables (mapcar #'binding-var bindings))
 	     (body-env (construct-let-body-environment
 			variables canonical-dspecs env))
 	     (ast (cleavir-ast:make-progn-ast
@@ -301,10 +298,7 @@
       (let* ((canonical-dspecs
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
-	     (variables (loop for binding in bindings
-			      collect (if (symbolp binding)
-					  binding
-					  (first binding))))
+	     (variables (mapcar #'binding-var bindings))
 	     (environments
 	       (flet ((augment (variable env)
 			(augment-environment-with-variable
