@@ -277,6 +277,46 @@
 			  forms
 			  env)))))))))
 
+;;; BINDINGS is a list of CONS cells.  The CAR of each CONS cell is a
+;;; variable to be bound.  The CDR of each CONS cell is an init-form
+;;; computing the initial value for that variable.  IDSPECS is a list
+;;; with the same length as BINDINGS of itemized canonicalized
+;;; declaration specifiers.  Each item in the list is a list of
+;;; canonicalized declaration specifiers associated with the
+;;; corresponding variable in the BINDINGS list.  RDSPECS is a list of
+;;; remaining canonicalized declaration specifiers that apply to the
+;;; environment in which the FORMS are to be processed.
+(defun process-remaining-let*-bindings (bindings idspecs rdspecs forms env)
+  (if (null bindings)
+      ;; We ran out of bindings.  We must build an AST for the body of
+      ;; the function.
+      (let ((new-env (augment-environment-with-declarations env rdspecs)))
+	(cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
+      (destructuring-bind (var . init-form) (first bindings)
+	(let* (;; We enter the new variable into the environment and
+	       ;; then we process remaining parameters and ultimately
+	       ;; the body of the function.
+	       (new-env (augment-environment-with-variable
+			 var (first idspecs) env env))
+	       ;; The initform of the &AUX parameter is turned into an
+	       ;; AST in the original environment, i.e. the one that
+	       ;; does not have the parameter variable in it.
+	       (value-ast (convert init-form env))
+	       ;; We compute the AST of the remaining computation by
+	       ;; recursively calling this same function with the
+	       ;; remaining bindings (if any) and the environment that
+	       ;; we obtained by augmenting the original one with the
+	       ;; parameter variable.
+	       (next-ast (process-remaining-let*-bindings (rest bindings)
+							  (rest idspecs)
+							  rdspecs
+							  forms
+							  new-env)))
+	  ;; All that is left to do now, is to construct the AST to
+	  ;; return by using the new variable and the AST of the
+	  ;; remaining computation as components.
+	  (set-or-bind-variable var value-ast next-ast new-env)))))
+
 (defmethod convert-special
     ((symbol (eql 'let*)) form env)
   (destructuring-bind (bindings &rest body) (cdr form)
@@ -286,31 +326,16 @@
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (mapcar #'binding-var bindings))
-	     (environments
-	       (flet ((augment (variable env)
-			(augment-environment-with-variable
-			 variable canonical-dspecs env env)))
-		 (loop for variable in variables
-		       for new-env = (augment variable env)
-			 then (augment variable new-env)
-		       collect new-env)))
-	     (ast (cleavir-ast:make-progn-ast
-		   (convert-sequence forms (first (last (cons env environments)))))))
-	(loop for binding in (reverse bindings)
-	      for var in (reverse variables)
-	      for (new old) on (reverse (cons env environments))
-	      for info = (cleavir-env:variable-info new var)
-	      for init = (if (symbolp binding) nil (second binding))
-	      for init-ast = (convert init old)
-	      do (setf ast
-		       (if (variable-is-special-p
-			    var canonical-dspecs env)
-			   (cleavir-ast:make-bind-ast var init-ast ast)
-			   (let ((lexical (cleavir-env:identity info)))
-			     (cleavir-ast:make-progn-ast 
-			      (list (cleavir-ast:make-setq-ast lexical init-ast)
-				    ast))))))
-	ast))))
+	     (init-forms (mapcar #'binding-init-form bindings)))
+	(multiple-value-bind (idspecs rdspecs)
+	    (itemize-declaration-specifiers
+	     (mapcar #'list variables)
+	     canonical-dspecs)
+	  (process-remaining-let*-bindings (pairlis variables init-forms)
+					   idspecs
+					   rdspecs
+					   forms
+					   env))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
