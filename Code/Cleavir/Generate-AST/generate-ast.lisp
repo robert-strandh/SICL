@@ -359,13 +359,13 @@
 	(cleavir-code-utilities:separate-function-body body)
       ;; FIXME: Handle documentation
       (declare (ignore documentation))
-      (let ((canonicalized-declaration-specifiers
+      (let ((canonicalized-dspecs
 	      (cleavir-code-utilities:canonicalize-declaration-specifiers
 	       (reduce #'append (mapcar #'cdr declarations)))))
 	(multiple-value-bind (ast lexical-lambda-list)
 	    (process-required (cleavir-code-utilities:required parsed-lambda-list)
 			      parsed-lambda-list
-			      canonicalized-declaration-specifiers
+			      canonicalized-dspecs
 			      forms
 			      env)
 	  (cleavir-ast:make-function-ast ast lexical-lambda-list))))))
