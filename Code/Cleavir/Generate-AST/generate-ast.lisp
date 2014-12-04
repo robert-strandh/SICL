@@ -352,6 +352,40 @@
 	  (values (set-or-bind-variable var lexical-ast next-ast new-env)
 		  (cons lexical-ast next-lexical-parameters))))))
 
+;;; Given a parsed lambda list, return a list of items.  There are as
+;;; many items in the list as there are bindings in the lambda list.
+;;; In this case, an occurrence of a parameter together with a
+;;; supplied-p parameter is considered to be a single item.  Each item
+;;; is a list of one or two variables.  For a parameter with an
+;;; associated supplied-p parameter, the item contains both the
+;;; parameter and the associated supplied-p parameter.  Otherwise, the
+;;; item contains just the parameter.
+(defun itemize-lambda-list (parsed-lambda-list)
+  (let ((required (cleavir-code-utilities:required parsed-lambda-list))
+	(optionals (cleavir-code-utilities:optionals parsed-lambda-list))
+	(rest-body (cleavir-code-utilities:rest-body parsed-lambda-list))
+	(keys (cleavir-code-utilities:keys parsed-lambda-list))
+	(aux (cleavir-code-utilities:aux parsed-lambda-list))
+	(result '()))
+    (unless (eq aux :none)
+      (setf result (append (mapcar #'first aux) result)))
+    (unless (eq keys :none)
+      (loop for key in (reverse keys)
+	    do (push (if (= (length key) 3)
+			 (list (second (first key)) (third key))
+			 (list (second (first key))))
+		     result)))
+    (unless (eq rest-body :none)
+      (push (list rest-body)
+	    result))
+    (unless (eq optionals :none)
+      (loop for optional in (reverse optionals)
+	    do (push (if (= (length optional) 3)
+			 (list (first optional) (third optional))
+			 (list (first optional)))
+		     result)))
+    (append required result)))
+
 (defun convert-code (lambda-list body env)
   (let ((parsed-lambda-list
 	  (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
