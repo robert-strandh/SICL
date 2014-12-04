@@ -317,7 +317,7 @@
 (defun process-optionals (parsed-lambda-list idspecs rdspecs forms env)
   (let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
     (if (eq optionals :none)
-	(process-keys parsed-lambda-list idspecs rdspecs forms env)
+	(process-rest parsed-lambda-list idspecs rdspecs forms env)
 	(multiple-value-bind (ast lexicals)
 	    (process-remaining-optionals optionals
 					 parsed-lambda-list
