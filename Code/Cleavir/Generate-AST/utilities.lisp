@@ -71,13 +71,9 @@
 
 ;;; Augment the environment with a list of canonicalized declartion
 ;;; specifiers.
-(defun augment-environment-with-declarations
-    (environment declarations)
-  (let ((canonicalized-declaration-specifiers
-	  (cleavir-code-utilities:canonicalize-declaration-specifiers
-	   (reduce #'append (mapcar #'cdr declarations))))
-	(new-env environment))
-    (loop for spec in canonicalized-declaration-specifiers
+(defun augment-environment-with-declarations (environment canonicalized-dspecs)
+  (let ((new-env environment))
+    (loop for spec in canonicalized-dspecs
 	  do (setf new-env (augment-environment-with-declaration spec new-env)))
     new-env))
 
