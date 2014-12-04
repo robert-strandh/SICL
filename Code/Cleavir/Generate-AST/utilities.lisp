@@ -140,3 +140,23 @@
 	    (cleavir-env:add-variable-dynamic-extent new-env 'variable)))
     new-env))
 
+;;; Separate a list of canonicalized declaration specifiers into two
+;;; disjoint sets, returned as two values.  The first set contains All
+;;; the declerations specifiers that concern an ordinary variable
+;;; named NAME, and the second set the remaining declaration specifiers.
+(defun separate-declarations (canonicalized-declaration-specifiers name)
+  (loop for spec in canonicalized-declaration-specifiers
+	if (or (and (eq (first spec) 'ignore)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'ignorable)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'dynamic-extent)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'special)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'type)
+		    (eq (third spec) name)))
+	  collect spec into first
+	else
+	  collect spec into second
+	finally (return (values first second))))
