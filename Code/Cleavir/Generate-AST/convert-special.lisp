@@ -198,6 +198,11 @@
       nil
       (cadr binding)))
 
+(defun binding-var (binding)
+  (if (symbolp binding)
+      binding
+      (first binding)))
+
 ;;; Given a list of variables bound by the LET form, and a list of
 ;;; canonicalized declarations specifiers, return an environment to be
 ;;; used to compile the body.  The ENV parameter is the environment in
