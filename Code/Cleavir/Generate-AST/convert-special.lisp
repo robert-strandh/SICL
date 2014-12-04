@@ -269,7 +269,7 @@
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let* ((canonical-declarations
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
-		(mapcar #'cdr declarations)))
+		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (loop for binding in bindings
 			      collect (if (symbolp binding)
 					  binding
@@ -300,7 +300,7 @@
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let* ((canonical-declarations
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
-		(mapcar #'cdr declarations)))
+		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (loop for binding in bindings
 			      collect (if (symbolp binding)
 					  binding
