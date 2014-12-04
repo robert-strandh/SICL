@@ -212,9 +212,10 @@
 ;;; whether the variable to be bound is lexical or special.
 
 ;;; BINDINGS is a list of CONS cells.  The CAR of each CONS cell is a
-;;; variable to be bound.  The CDR of each CONS cell is an AST that
-;;; computes the initial value for that variable.  IDSPECS is a list
-;;; with the same length as BINDINGS of itemized canonicalized
+;;; variable to be bound.  The CDR of each CONS cell is a LEXICAL-AST
+;;; that corresponds to a lexical variable holding the result of the
+;;; computation of the initial value for that variable.  IDSPECS is a
+;;; list with the same length as BINDINGS of itemized canonicalized
 ;;; declaration specifiers.  Each item in the list is a list of
 ;;; canonicalized declaration specifiers associated with the
 ;;; corresponding variable in the BINDINGS list.  RDSPECS is a list of
@@ -226,7 +227,7 @@
       ;; the function.
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
 	(cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
-      (destructuring-bind (var . init-ast) (first bindings)
+      (destructuring-bind (var . lexical-ast) (first bindings)
 	(let* (;; We enter the new variable into the environment and
 	       ;; then we process remaining parameters and ultimately
 	       ;; the body of the function.
@@ -245,7 +246,7 @@
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the new variable and the AST of the
 	  ;; remaining computation as components.
-	  (set-or-bind-variable var init-ast next-ast new-env)))))
+	  (set-or-bind-variable var lexical-ast next-ast new-env)))))
 
 ;;; Given a list of variables bound by the LET form, and a list of
 ;;; canonicalized declarations specifiers, return an environment to be
