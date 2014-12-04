@@ -193,7 +193,7 @@
 ;;;
 ;;; Converting LET and LET*
 
-(defun init-form (binding)
+(defun binding-init-form (binding)
   (if (or (symbolp binding) (null (cdr binding)))
       nil
       (cadr binding)))
