@@ -209,6 +209,45 @@
     (incf *ld3-node-count* (hash-table-count visited))
     (incf *ld3-time* (- (get-internal-run-time) time))))
 
-(defun segregate-lexicals (enter-instruction)
-  (let ((lexical-depths (lexical-depths enter-instruction)))
-    (distinguish-lexical-variables enter-instruction lexical-depths)))
+;;; By SEGREGATING lexical locations, we mean taking each lexical
+;;; location and turning it into either a dynamic lexical location
+;;; (which can be allocated in a register or on the stack) or an
+;;; indefinite lexical location (which must be allocated in some other
+;;; place, possibly on the heap).
+;;;
+;;; The method used here is very simple, and not particularly
+;;; sophisticated.  It assumes that every nested function can escape
+;;; in arbitrary ways, so that every lexical location that is shared
+;;; by some function F and some other function G nested inside F must
+;;; be an indefinite lexical location.
+;;;
+;;; We detect whether a lexical location is shared in this way by
+;;; looking at the instructions that define it and use it.  If these
+;;; instructions all have the same nesting depth, then the lexical
+;;; location is not shared, otherwise it is.
+
+(defun process-lexical (lexical nesting-depth)
+  (let ((depths (loop with def = (cleavir-ir:defining-instructions lexical)
+		      with use = (cleavir-ir:using-instructions lexical)
+		      for instruction in (append def use)
+		      collect (gethash instruction nesting-depth))))
+    (change-class lexical
+		  (if (> (length (remove-duplicates depths)) 1)
+		      'cleavir-ir:indefinite-lexical-location
+		      'cleavir-ir:dynamic-lexical-location))))
+
+(defun segregate-lexicals (initial-instruction)
+  ;; Make sure everything is up to date.
+  (cleavir-ir:reinitialize-data initial-instruction)
+  (let ((nesting-depth (compute-nesting-depth initial-instruction))
+	(table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop with inputs = (cleavir-ir:inputs instruction)
+		       with outputs = (cleavir-ir:outputs instruction)
+		       for datum in (append inputs outputs)
+		       do (when (eq (class-of datum)
+				    (find-class 'cleavir-ir:lexical-location))
+			    (process-lexical datum nesting-depth))))))
+      (traverse initial-instruction))))
