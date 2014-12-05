@@ -160,55 +160,6 @@
     (incf *ld2-time* (- (get-internal-run-time) time))
     *lexical-depths*))
 
-(defparameter *ld3-call-count* 0)
-(defparameter *ld3-node-count* 0)
-(defparameter *ld3-time* 0)
-
-(defun distinguish-lexical-variables (enter-instruction lexical-depths)
-  (let ((time (get-internal-run-time))
-	(*lexical-depths* lexical-depths)
-	(visited (make-hash-table :test #'eq)))
-    ;; First find all lexical locations that should be turned
-    ;; into indefinite lexical locations.
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction visited)
-		 (setf (gethash instruction visited) t)
-		 (loop with type = 'cleavir-ir:lexical-location
-		       for datum in (data instruction)
-		       do (when (and (typep datum type)
-				     (/= (lexical-depth datum)
-					 (lexical-depth instruction)))
-			    (change-class datum
-					  'cleavir-ir:indefinite-lexical-location)))
-		 (loop for succ in (cleavir-ir:successors instruction)
-		       do (traverse succ))
-		 (when (typep instruction 'cleavir-ir:enclose-instruction)
-		   (traverse (cleavir-ir:code instruction))))))
-      (traverse enter-instruction))
-    ;; Next find all lexical locations that were not converted in the
-    ;; first step, and convert them to simple lexical locations.  It
-    ;; is enough to check the outputs of each instruction because each
-    ;; lexical location must be the output of at least one
-    ;; instruction.
-    (clrhash visited)
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction visited)
-		 (setf (gethash instruction visited) t)
-		 (loop with type = '(and cleavir-ir:lexical-location
-				         (not cleavir-ir:indefinite-lexical-location))
-		       for datum in (cleavir-ir:outputs instruction)
-		       do (when (typep datum type)
-			    (change-class datum
-					  'cleavir-ir:dynamic-lexical-location)))
-		 (loop for succ in (cleavir-ir:successors instruction)
-		       do (traverse succ))
-		 (when (typep instruction 'cleavir-ir:enclose-instruction)
-		   (traverse (cleavir-ir:code instruction))))))
-      (traverse enter-instruction))
-    (incf *ld3-call-count*)
-    (incf *ld3-node-count* (hash-table-count visited))
-    (incf *ld3-time* (- (get-internal-run-time) time))))
-
 ;;; By SEGREGATING lexical locations, we mean taking each lexical
 ;;; location and turning it into either a dynamic lexical location
 ;;; (which can be allocated in a register or on the stack) or an
