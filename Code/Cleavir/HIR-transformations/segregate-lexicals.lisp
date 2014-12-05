@@ -32,19 +32,30 @@
 ;;;; or datum X if an only if the unique ENTER-INSTRUCTION of P is the
 ;;;; owner of X.
 ;;;;
-;;;; A procedure P is a LEXICAL ANCESTOR of a procedure Q if and only
-;;;; if either some instruction owned by P is the direct successor of
-;;;; some instruction (which must then be an UNWIND-INSTRUCTION) owned
-;;;; by Q, or some instruction I owned by Q refers to a datum owned by
-;;;; P.
+;;;; A procedure P is said to DEPEND on a different procedure Q if and
+;;;; only if P or any of its descendants owns an instruction I (which
+;;;; must then be an UNWIND-INSTRUCTION) with a successor owned by Q,
+;;;; or if some instruction I owned by P or any of its descendants
+;;;; refers to a datum owned by Q.
 ;;;;
-;;;; The LEXICAL DEPTH of a procedure P is defined recursively as
-;;;; follows:
+;;;; The DROP of a procedure P is defined recursively as follows:
 ;;;;
-;;;;   * If P has no lexical ancestor then its lexical depth is 0.
+;;;;   * If P depends on no other procedure then its drop is 0.
 ;;;;
-;;;;   * Otherwise, the lexical depth of P is d+1, where d is the
-;;;      maximum depth of any of its lexical ancestors.
+;;;;   * Otherwise, the drop of P is d+1, where d is the
+;;;;     maximum drop of any of the procedures it depends on.
+;;;;
+;;;; The drop is important for the following reason.  The runtime
+;;;; environment could be organized as a list of LEVELS, where each
+;;;; level is a vector.  A procedure P then has a runtime environment
+;;;; with N = d+1 levels in it where d is the drop of P.  When some
+;;;; procedure P with drop d executes an ENCLOSE-INSTRUCTION with some
+;;;; procedure Q with drop e as an argument, then the top d-e+1 levels
+;;;; of the static runtime environment of P should be discarded in
+;;;; order to obtain the enclosed runtime environment.  Furthermore if
+;;;; some procedure P with drop d accesses a variable owned by a
+;;;; procedure Q with drop e, then level d-e of the static runtime
+;;;; should be consulted.
 
 (defun data (instruction)
   (append (cleavir-ir:inputs instruction)
