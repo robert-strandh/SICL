@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "compute-nesting-depth")
    (:file "inline-calls")
    (:file "static-few-assignments")
    (:file "type-inference")
