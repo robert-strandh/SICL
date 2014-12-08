@@ -47,3 +47,28 @@
   (make-instance 'remove-activation-record-instruction
     :inputs (list env-input)
     :outputs (list env-output)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-FROM-STATIC-ENVIRONMENT-INSTRUCTION
+;;;
+;;; The purpose of this instruction is to access a value stored in the
+;;; static runtime environment and copy it into a dynamic lexical
+;;; location.
+;;;
+;;; This instruction takes two inputs.  The first input is a dynamic
+;;; lexical location that holds a static runtime environment.  The
+;;; second input is either an immediate input or a dynamic lexical
+;;; location with a non-negative integer value that indicates what
+;;; variable in the topmost activation record should be loaded.  The
+;;; output is a dynamic lexical location.
+
+(defclass load-from-static-environment-instruction
+    (instruction one-successor-mixin)
+  ())
+
+(defun make-load-from-static-environment-instruction
+    (env-input offset-input output)
+  (make-instance 'load-from-static-environment-instruction
+    :inputs (list env-input offset-input)
+    :outputs (list output)))
