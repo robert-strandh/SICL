@@ -101,12 +101,11 @@
 ;;; Datum class STATIC-LEXICAL-LOCATION.
 ;;;
 ;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
-;;; for locations that are only referred to within several functions,
-;;; so that the location has static extent.  Whether a location of
-;;; this type can be allocated in a register or on the stack depends
-;;; on further analyses.  To be safe, client code might want to turn
-;;; this location into a STATIC-LOCATION so that it is allocated in
-;;; the static environment.
+;;; for locations that are referred to from within several functions.
+;;; Whether a location of this type has dynamic extent (so that it can
+;;; be allocated on the stack, or perhaps even in a register) or
+;;; indefinite extent (so that it must be allocated on the heap)
+;;; depends on further analyses.
 
 (defclass static-lexical-location (lexical-location)
   ())
