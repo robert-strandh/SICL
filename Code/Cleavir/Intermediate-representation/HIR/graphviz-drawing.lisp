@@ -354,3 +354,17 @@
 (defmethod label ((instruction fixed-to-multiple-instruction)) "F->M")
 
 (defmethod label ((instruction multiple-value-call-instruction)) "MVC")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instructions related to the static runtime environment.
+
+(defmethod label ((instruction add-activation-record-instruction)) "AddAR")
+
+(defmethod label ((instruction remove-activation-record-instruction)) "RemAR")
+
+(defmethod label ((instruction load-from-static-environment-instruction))
+  "Load")
+
+(defmethod label ((instruction store-to-static-environment-instruction))
+  "Store")
