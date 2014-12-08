@@ -82,21 +82,3 @@
 (defmethod print-object ((object register-location) stream)
   (print-unreadable-object (object stream :type t)
     (format stream "~a" (name object))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class STATIC-LOCATION.
-;;;
-;;; This datum corresponds to a places in the static runtime
-;;; envirionment.  That environment is organized in LAYERS, with each
-;;; layer being a vector of values.  
-
-(defclass static-location (datum)
-  ((%layer :initarg :layer :reader layer)
-   (%index :initarg :index :reader index)))
-
-(defun make-static-location (layer index)
-  (make-instance 'static-location
-    :layer layer
-    :index index))
-

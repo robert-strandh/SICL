@@ -15,7 +15,6 @@
    #:values-location #:make-values-location
    #:external-input #:make-external-input
    #:register-location
-   #:static-location
    #:dynamic-location
    #:layer #:index
    #:insert-instruction-before
