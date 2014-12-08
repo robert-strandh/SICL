@@ -174,8 +174,9 @@
 ;;; By SEGREGATING lexical locations, we mean taking each lexical
 ;;; location and turning it into either a dynamic lexical location
 ;;; (which can be allocated in a register or on the stack) or an
-;;; static lexical location (which must be allocated in some other
-;;; place, possibly on the heap).
+;;; static lexical location (which may or may not be possible to
+;;; allocate on the stack, and might have to be allocated in some
+;;; other place, possibly on the heap).
 ;;;
 ;;; The method used here is very simple, and not particularly
 ;;; sophisticated.  It assumes that every nested function can escape
