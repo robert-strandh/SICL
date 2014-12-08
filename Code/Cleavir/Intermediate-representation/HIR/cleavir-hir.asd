@@ -15,5 +15,5 @@
    (:file "standard-object-related-instructions")
    (:file "array-related-instructions")
    (:file "multiple-value-related-instructions")
-   (:file "environment-instructions")
+   (:file "environment-related-instructions")
    (:file "graphviz-drawing")))
