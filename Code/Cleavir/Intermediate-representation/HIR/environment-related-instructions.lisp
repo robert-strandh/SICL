@@ -72,3 +72,30 @@
   (make-instance 'load-from-static-environment-instruction
     :inputs (list env-input offset-input)
     :outputs (list output)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction STORE-TO-STATIC-ENVIRONMENT-INSTRUCTION
+;;;
+;;; The purpose of this instruction is to copy a value from a dynamic
+;;; lexical location or a constant input to the static runtime
+;;; environment.
+;;;
+;;; This instruction takes three inputs.  The first input is a dynamic
+;;; lexical location that holds a static runtime environment.  The
+;;; second input is either an immediate input or a dynamic lexical
+;;; location with a non-negative integer value that indicates what
+;;; variable in the topmost activation record should be stored to.
+;;; The third input is a dynamic lexical location or a constant input
+;;; to be copied.
+
+(defclass store-to-static-environment-instruction
+    (instruction one-successor-mixin)
+  ())
+
+(defun make-store-to-static-environment-instruction
+    (env-input offset-input value-input)
+  (make-instance 'store-to-static-environment-instruction
+    :inputs (list env-input offset-input value-input)
+    :outputs '()))
