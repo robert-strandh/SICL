@@ -131,7 +131,6 @@
    #:load-time-input #:make-load-time-input #:initial-instruction
    #:external-input #:make-external-input #:value
    #:register-location #:make-register-location
-   #:static-location #:make-static-location #:layer #:index
    #:dynamic-location #:make-dynamic-location
    #:linkage-location #:make-linkage-location
    #:instruction #:predecessors #:successors #:inputs #:outputs
