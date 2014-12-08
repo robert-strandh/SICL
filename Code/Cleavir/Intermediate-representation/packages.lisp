@@ -142,6 +142,14 @@
    #:multiple-to-fixed-instruction #:make-multiple-to-fixed-instruction
    #:fixed-to-multiple-instruction #:make-fixed-to-multiple-instruction
    #:multiple-value-call-instruction #:make-multiple-value-call-instruction
+   #:add-activation-record-instruction
+   #:make-add-activation-record-instruction
+   #:remove-activation-record-instruction
+   #:make-remove-activation-record-instruction
+   #:load-from-static-environment-instruction
+   #:make-load-from-static-environment-instruction
+   #:store-to-static-environment-instruction
+   #:make-store-to-static-environment-instruction
    #:hir-to-mir #:specialize))
 
 (defpackage #:cleavir-ir-graphviz
