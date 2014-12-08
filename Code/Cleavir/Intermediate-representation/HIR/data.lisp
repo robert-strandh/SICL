@@ -98,21 +98,21 @@
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class INDEFINITE-LEXICAL-LOCATION.
+;;; Datum class STATIC-LEXICAL-LOCATION.
 ;;;
 ;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
 ;;; for locations that are only referred to within several functions,
-;;; so that the location has indefinite extent.  Whether a location of
+;;; so that the location has static extent.  Whether a location of
 ;;; this type can be allocated in a register or on the stack depends
 ;;; on further analyses.  To be safe, client code might want to turn
 ;;; this location into a STATIC-LOCATION so that it is allocated in
 ;;; the static environment.
 
-(defclass indefinite-lexical-location (lexical-location)
+(defclass static-lexical-location (lexical-location)
   ())
 
-(defun make-indefinite-lexical-location (name)
-  (make-instance 'indefinite-lexical-location
+(defun make-static-lexical-location (name)
+  (make-instance 'static-lexical-location
     :name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

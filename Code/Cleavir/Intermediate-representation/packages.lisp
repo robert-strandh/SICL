@@ -10,7 +10,7 @@
    #:value
    #:lexical-location #:make-lexical-location
    #:dynamic-lexical-location #:make-dynamic-lexical-location #:new-temporary
-   #:indefinite-lexical-location #:make-indefinite-lexical-location
+   #:static-lexical-location #:make-static-lexical-location
    #:name
    #:values-location #:make-values-location
    #:external-input #:make-external-input

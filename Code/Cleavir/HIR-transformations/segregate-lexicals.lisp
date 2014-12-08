@@ -174,14 +174,14 @@
 ;;; By SEGREGATING lexical locations, we mean taking each lexical
 ;;; location and turning it into either a dynamic lexical location
 ;;; (which can be allocated in a register or on the stack) or an
-;;; indefinite lexical location (which must be allocated in some other
+;;; static lexical location (which must be allocated in some other
 ;;; place, possibly on the heap).
 ;;;
 ;;; The method used here is very simple, and not particularly
 ;;; sophisticated.  It assumes that every nested function can escape
 ;;; in arbitrary ways, so that every lexical location that is shared
 ;;; by some function F and some other function G nested inside F must
-;;; be an indefinite lexical location.
+;;; be an static lexical location.
 ;;;
 ;;; We detect whether a lexical location is shared in this way by
 ;;; looking at the instructions that define it and use it.  If these
@@ -195,7 +195,7 @@
 		      collect (gethash instruction nesting-depth))))
     (change-class lexical
 		  (if (> (length (remove-duplicates depths)) 1)
-		      'cleavir-ir:indefinite-lexical-location
+		      'cleavir-ir:static-lexical-location
 		      'cleavir-ir:dynamic-lexical-location))))
 
 (defun segregate-lexicals (initial-instruction)

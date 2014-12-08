@@ -50,9 +50,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum INDEFINITE-LEXICAL-LOCATION.
+;;; Drawing datum STATIC-LEXICAL-LOCATION.
 
-(defmethod draw-datum ((datum indefinite-lexical-location) stream)
+(defmethod draw-datum ((datum static-lexical-location) stream)
   (format stream "  ~a [shape = octagon, style = filled];~%"
 	  (datum-id datum))
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
