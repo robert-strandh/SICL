@@ -9,8 +9,9 @@
 ;;;
 ;;; This instruction takes two inputs.  The first input is a dynamic
 ;;; lexical location that holds a static runtime environment.  The
-;;; second input is the size of the activation record to add.  This
-;;; instruction has a single output, which is a dynamic lexical
+;;; second input is either an immediate input or a dynamic lexical
+;;; location that holds the size of the activation record to add.
+;;; This instruction has a single output, which is a dynamic lexical
 ;;; location that holds the new static runtime environment that has
 ;;; the additional activation record on it.  Notice that the input
 ;;; dynamic lexical location remains valid and is subject to register
