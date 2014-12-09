@@ -13,12 +13,13 @@
 (in-package #:cl-user)
 
 (asdf:defsystem :sicl-loop
-  :depends-on ("sicl-additional-conditions")
+  :depends-on (:sicl-additional-conditions
+	       :cleavir-internationalization)
   :serial t
   :components
   ((:file "packages")
-   (:file "conditions")
-   (:file "condition-reporters-en")
+   (:file "compile-time-conditions")
+   (:file "condition-reporters-english")
    (:file "utilities")
    (:file "clause")
    (:file "expansion")
