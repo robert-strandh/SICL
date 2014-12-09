@@ -36,20 +36,20 @@
 	(when (not (null second-name-clause))
 	  (error 'multiple-name-clauses))))
     ;; Check that there is not a variable-clause (other than an
-    ;; initially-clause or a finally-clause) following a name clause
-    ;; (other than an initially-clause or a finally-clause). 
+    ;; initial-clause or a final-clause) following a name clause
+    ;; (other than an initial-clause or a final-clause).
     (let ((last-variable-clause-position
 	   (position-if (lambda (clause)
 			  (and (typep clause 'variable-clause-mixin)
-			       (not (typep clause 'initially-clause))
-			       (not (typep clause 'finally-clause))))
+			       (not (typep clause 'initial-clause))
+			       (not (typep clause 'final-clause))))
 			clauses
 			:from-end t))
 	  (first-main-clause-position
 	   (position-if (lambda (clause)
 			  (and (typep clause 'main-clause-mixin)
-			       (not (typep clause 'initially-clause))
-			       (not (typep clause 'finally-clause))))
+			       (not (typep clause 'initial-clause))
+			       (not (typep clause 'final-clause))))
 			clauses)))
       (when (and (not (null last-variable-clause-position))
 		 (not (null first-main-clause-position))
