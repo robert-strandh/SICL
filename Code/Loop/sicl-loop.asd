@@ -19,6 +19,7 @@
   :components
   ((:file "packages")
    (:file "compile-time-conditions")
+   (:file "run-time-conditions")
    (:file "condition-reporters-english")
    (:file "utilities")
    (:file "clause")
