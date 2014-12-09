@@ -5,3 +5,6 @@
 
 (define-condition sum-argument-must-be-number (type-error loop-runtime-error)
   ())
+
+(define-condition max-argument-must-be-real (type-error loop-runtime-error)
+  ())
