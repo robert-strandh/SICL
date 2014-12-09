@@ -92,3 +92,18 @@
    (%accumulation-variable :initform nil :accessor accumulation-variable)
    (%accumulation-list-tail :initform nil :accessor accumulation-list-tail)
    (%accumulation-type :initform nil :accessor accumulation-type)))
+
+;;; Create a list of clauses from the body of the LOOP form.
+(defun parse-loop-body (body)
+  (let ((remaining-body body)
+	(clauses '()))
+    (loop until (null remaining-body)
+	  do (multiple-value-bind (success-p clause rest)
+		 (parse-clause remaining-body)
+	       (if success-p
+		   (progn (setf remaining-body rest)
+			  (push clause clauses))
+		   ;; FIXME: this is not the right error to signal.
+		   (error 'expected-keyword-but-found
+			  :found (car rest)))))
+    (reverse clauses)))
