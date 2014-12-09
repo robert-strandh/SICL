@@ -17,3 +17,12 @@
 	   :datum y))
 	   :expected-type 'real
   (max x y))
+
+;;; This function is called in a MIN clause in order to compute the
+;;; min of the accumulated value and the new one.
+(defun minimize (x y)
+  (unless (realp y)
+    (error 'min-argument-must-be-real
+	   :datum y))
+	   :expected-type 'real
+  (min x y))
