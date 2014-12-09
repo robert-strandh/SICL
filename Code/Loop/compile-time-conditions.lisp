@@ -116,7 +116,8 @@
 ;;;        conditions.
 
 ;;; The root of all syntax errors.
-(define-condition loop-syntax-error (program-error) ())
+(define-condition loop-syntax-error (program-error cleavir-i18n:condition)
+  ())
 
 ;;; This condition is signaled when a name-clause is found
 ;;; and the first clause is not a name-clause. 
@@ -132,5 +133,6 @@
 (define-condition invalid-clause-order (loop-syntax-error) ())
 
 ;;; The root of all semantic errors.
-(define-condition loop-semantic-error (program-error) ())
+(define-condition loop-semantic-error (program-error cleavir-i18n:condition)
+  ())
 
