@@ -23,19 +23,19 @@
 ;;; 
 ;;; The reason the HyperSpec defines main-clause is because the loop
 ;;; body is a name-clause followed by zero or more variable-clauses
-;;; followed by zero or more main-clauses, and initia-final is one
+;;; followed by zero or more main-clauses, and initial-final is one
 ;;; possibility both for variable-clause and main-clause.  This means
 ;;; that an initially-clause or a finally-clause can appear anywhere
 ;;; after a name-clause.
 
-;;; The HyperSpec defines varible-clause like this:
+;;; The HyperSpec defines variable-clause like this:
 ;;;
 ;;;    variable-clause::= with-clause | initial-final | for-as-clause 
 ;;; 
 ;;; and we follow this example.  The reason the HyperSpec defines
 ;;; variable-clause is because the loop body is a name-clause
 ;;; followed by zero or more variable-clauses followed by zero or more
-;;; main-clauses, and initia-final is one possibility both for
+;;; main-clauses, and initial-final is one possibility both for
 ;;; variable-clause and main-clause.  This means that an
 ;;; initially-clause or a finally-clause can appear anywhere after a
 ;;; name-clause.
@@ -49,8 +49,8 @@
 ;;; more variable-clauses, followed by zero or more main clauses.  One
 ;;; might think from this that a main-clause cannot precede a
 ;;; variable-clause, but this is not true, because initially-clauses
-;;; and finally-clauses are possibilites for both variable-clause and
-;;; main-clause, and it is indeed possible for an initally-clause or a
+;;; and finally-clauses are possibilities for both variable-clause and
+;;; main-clause, and it is indeed possible for an initially-clause or a
 ;;; finally-clause to precede another variable-clause or to follow
 ;;; another main-clause.  
 
@@ -69,7 +69,7 @@
     (if (eq rest1 body)
 	;; Failed parsing the body according to the parser we
 	;; received.  Indicate failure by returning the empty list and
-	;; the same body as we recieved as argument.
+	;; the same body as we received as argument.
 	(values '() body)
 	;; We succeeded parsing the body according to the parser we
 	;; received.  Parse the remainder of the body recursively, and
@@ -238,7 +238,7 @@
 ;;; single with-clause by destructuring the value of the corresponding
 ;;; form.
 ;;;
-;;; When there are several consecutive with-claues, the execution is
+;;; When there are several consecutive with-clauses, the execution is
 ;;; done sequentially, so that variables created in one with-clause
 ;;; can be used in the forms of subsequent with-clauses.  If parallel
 ;;; creation of variables is wanted, then the with-clause can be
@@ -953,7 +953,7 @@
 ;;; but here it would be more like:
 ;;;
 ;;;    initial-final ::= initial | final
-;;;    initial ::= initially compund-form+
+;;;    initial ::= initially compound-form+
 ;;;    final ::= finally compound-form+
 
 (defun parse-initial-final (body)
@@ -968,7 +968,7 @@
 ;;; The HyperSpec does not have an explicit do-clause, but we do here,
 ;;; and we define the syntax to be:
 ;;;
-;;;    do-clause ::= {do | doing} compund-form+
+;;;    do-clause ::= {do | doing} compound-form+
 
 (defclass do-clause
     (clause main-clause-mixin compound-forms-mixin) ())
@@ -1042,7 +1042,7 @@
 ;;;    conditional ::= if/when | unless
 ;;;
 ;;; except that it does not introduce the names if/when and unless.  We find it
-;;; practical to do so so that we can give a name to each individual parser.
+;;; practical to do so that we can give a name to each individual parser.
 
 (defclass conditional-clause (clause main-clause)
   ((%test-form :initarg :test-form :reader test-form)
@@ -1172,7 +1172,7 @@
 ;;; Loop parser
 
 ;;; At this level, we do not impose any order between the clauses, and
-;;; we just store all the cluses as we find them.  Later, we verify
+;;; we just store all the clauses as we find them.  Later, we verify
 ;;; that the order is correct.
 ;;;
 ;;; The reason for doing it that way is so that it is common that
