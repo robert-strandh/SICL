@@ -284,3 +284,11 @@
   (format stream
 	  "A NAME loop clause was found, but it was~@
            not the first clause."))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition multiple-name-clauses)
+     stream
+     (language cleavir-i18n:english))
+  (declare (ignorable condition))
+  (format stream
+	  "Multiple NAME clauses where found."))
