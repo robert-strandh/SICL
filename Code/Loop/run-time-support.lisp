@@ -8,3 +8,12 @@
 	   :datum y))
 	   :expected-type 'number
   (+ x y))
+
+;;; This function is called in a MAX clause in order to compute the
+;;; max of the accumulated value and the new one.
+(defun maximize (x y)
+  (unless (realp y)
+    (error 'max-argument-must-be-real
+	   :datum y))
+	   :expected-type 'real
+  (max x y))
