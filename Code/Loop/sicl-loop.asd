@@ -53,4 +53,5 @@
    (:file "for-as-across-clause")
    (:file "for-as-hash-clause")
    (:file "for-as-package-clause")
-   (:file "analysis")))
+   (:file "analysis")
+   (:file "run-time-support"))
