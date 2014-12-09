@@ -12,6 +12,10 @@
 
 (cl:in-package #:sicl-loop)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Condition reporters for parse errors.
+
 (defmethod cleavir-i18n:report-condition
     ((condition expected-var-spec-but-end)
      stream
@@ -267,3 +271,16 @@
   (declare (ignorable condition))
   (format stream
 	  "Conflicting stepping directions."))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Condition reporters for syntax errors.
+
+(defmethod cleavir-i18n:report-condition
+    ((condition name-clause-not-first)
+     stream
+     (language cleavir-i18n:english))
+  (declare (ignorable condition))
+  (format stream
+	  "A NAME loop clause was found, but it was~@
+           not the first clause."))
