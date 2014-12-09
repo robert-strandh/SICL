@@ -2,3 +2,6 @@
 
 (define-condition loop-runtime-error (error cleavir-i18n:condition)
   ())
+
+(define-condition sum-argument-must-be-number (loop-runtime-error)
+  ())
