@@ -80,3 +80,15 @@
 	     (when successp
 	       (return (values t result rest))))
 	finally (return (values nil nil tokens))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOOP-BODY.
+;;;
+;;; An instance of this class is the result of parsing the clauses.
+
+(defclass loop-body ()
+  ((%clauses :initform '() :initarg :clauses :accessor clauses)
+   (%accumulation-variable :initform nil :accessor accumulation-variable)
+   (%accumulation-list-tail :initform nil :accessor accumulation-list-tail)
+   (%accumulation-type :initform nil :accessor accumulation-type)))
