@@ -29,3 +29,17 @@
 
 (defclass name-clause (clause)
   ((%name :initarg :name :reader name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parser.
+
+(define-parser name-clause-parser
+  (consecutive (lambda (named name)
+		 (declare (ignore named))
+		 (make-instance 'name-clause
+		   :name name))
+	       (keyword-parser 'named)
+	       (singleton #'identity #'symbolp)))
+
+(add-clause-parser 'name-clause-parser)
