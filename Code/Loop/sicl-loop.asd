@@ -54,4 +54,4 @@
    (:file "for-as-hash-clause")
    (:file "for-as-package-clause")
    (:file "analysis")
-   (:file "run-time-support"))
+   (:file "run-time-support")))
