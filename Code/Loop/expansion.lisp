@@ -12,6 +12,12 @@
 
 (in-package #:sicl-loop)
 
+(defgeneric declarations (clause))
+
+(defmethod declarations (clause)
+  (declare (ignore clause))
+  '())
+
 (defgeneric bindings (clause))
 
 (defmethod bindings (clause)
@@ -60,12 +66,12 @@
 		 `(progn ,@(mapcar #'prologue all-clauses)
 			 (tagbody
 			  start
-			    ,@(mapcar #'termination all-clauses)
-			    ,@(mapcar #'body all-clauses)
-			    ,@(reduce #'append
-				      (mapcar #'step all-clauses)
-				      :from-end t)
-			    ,@(mapcar #'epilogue all-clauses)
+			    (progn ,@(mapcar #'termination all-clauses))
+			    (progn ,@(mapcar #'body all-clauses))
+			    (progn ,@(reduce #'append
+					     (mapcar #'step all-clauses)
+					     :from-end t))
+			    (progn ,@(mapcar #'epilogue all-clauses))
 			    (go start)
 			  end))
 		 `(let ,(bindings (car clauses))
