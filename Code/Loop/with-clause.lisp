@@ -27,7 +27,7 @@
 ;;; single with-clause by destructuring the value of the corresponding
 ;;; form.
 ;;;
-;;; When there are several consecutive with-claues, the execution is
+;;; When there are several consecutive with-clause, the execution is
 ;;; done sequentially, so that variables created in one with-clause
 ;;; can be used in the forms of subsequent with-clauses.  If parallel
 ;;; creation of variables is wanted, then the with-clause can be
