@@ -42,7 +42,7 @@
 ;;; error is signaled.
 (defun list-cdr (x)
   (if (listp x)
-      (car x)
+      (cdr x)
       (error 'value-must-be-list
 	     :datum x
 	     :expected-type 'list)))
