@@ -74,7 +74,7 @@
 			    (progn ,@(mapcar #'epilogue all-clauses))
 			    (go start)
 			  end))
-		 `(let ,(bindings (car clauses))
+		 `(let* ,(bindings (car clauses))
 		    (declare ,@(declarations (car clauses)))
 		    ,(do-bindings (cdr clauses))))))
     (do-bindings all-clauses)))
