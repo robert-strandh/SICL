@@ -36,3 +36,13 @@
       (error 'value-must-be-list
 	     :datum x
 	     :expected-type 'list)))
+
+;;; This function is called during restructuring to compute the CDR of
+;;; some value.  If that value turns out not to be a LIST, then an
+;;; error is signaled.
+(defun list-cdr (x)
+  (if (listp x)
+      (car x)
+      (error 'value-must-be-list
+	     :datum x
+	     :expected-type 'list)))
