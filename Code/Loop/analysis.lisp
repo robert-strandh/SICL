@@ -55,29 +55,3 @@
 		 (not (null first-main-clause-position))
 		 (> last-variable-clause-position first-main-clause-position))
 	(error 'invalid-clause-order)))))
-
-;;; Extract variables
-(defun extract-variables (d-var-spec d-type-spec)
-  (let ((result '()))
-    (labels ((extract-aux (d-var-spec d-type-spec)
-	       (cond ((null d-var-spec)
-		      nil)
-		     ((symbolp d-var-spec)
-		      (push (list d-var-spec (or d-type-spec t)) result))
-		     ((symbolp d-type-spec)
-		      (if (not (consp d-var-spec))
-			  (error 'expected-var-spec-but-found
-				 :found d-var-spec)
-			  (progn (extract-aux (car d-var-spec) d-type-spec)
-				 (extract-aux (cdr d-var-spec) d-type-spec))))
-		     ((not (consp d-var-spec))
-		      (error 'expected-var-spec-but-found
-			     :found d-var-spec))
-		     ((not (consp d-type-spec))
-		      (error 'expected-type-spec-but-found
-			     :found d-type-spec))
-		     (t
-		      (extract-aux (car d-var-spec) (car d-type-spec))
-		      (extract-aux (cdr d-var-spec) (cdr d-type-spec))))))
-      (extract-aux d-var-spec d-type-spec)
-      result)))
