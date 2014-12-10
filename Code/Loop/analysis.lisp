@@ -56,29 +56,6 @@
 		 (> last-variable-clause-position first-main-clause-position))
 	(error 'invalid-clause-order)))))
 
-(defun destructure-variables (d-var-spec root)
-  (let ((bindings '())
-	(ignorables '()))
-    (labels ((destructure-aux (d-var-spec root)
-	       (cond ((null d-var-spec)
-		      nil)
-		     ((symbolp d-var-spec)
-		      (push `(,d-var-spec ,root) bindings))
-		     ((not (consp d-var-spec))
-		      (error 'expected-var-spec-but-found
-			     :found d-var-spec))
-		     (t
-		      (let ((head (gensym))
-			    (tail (gensym)))
-			(push head ignorables)
-			(push tail ignorables)
-			(push `(,head (car ,root)) bindings)
-			(push `(,tail (cdr ,root)) bindings)
-			(destructure-aux (car d-var-spec) head)
-			(destructure-aux (cdr d-var-spec) tail))))))
-      (destructure-aux d-var-spec root)
-      (values (nreverse bindings) (nreverse ignorables)))))
-
 ;;; Extract variables
 (defun extract-variables (d-var-spec d-type-spec)
   (let ((result '()))
@@ -104,4 +81,3 @@
 		      (extract-aux (cdr d-var-spec) (cdr d-type-spec))))))
       (extract-aux d-var-spec d-type-spec)
       result)))
-
