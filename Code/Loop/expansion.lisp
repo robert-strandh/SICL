@@ -27,11 +27,6 @@
     (declare (ignore clause))
     '()))
 
-(defgeneric prologue (clause)
-  (:method (clause)
-    (declare (ignore clause))
-    '()))
-
 (defgeneric termination (clause)
   (:method (clause)
     (declare (ignore clause))
