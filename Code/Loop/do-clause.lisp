@@ -25,7 +25,7 @@
 
 (defclass do-clause
     (clause variable-clause-mixin main-clause-mixin)
-  ((%form :initarg :form :reader form)))
+  ((%body :initarg :body :reader body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -35,7 +35,7 @@
   (consecutive (lambda (do compound+)
 		 (declare (ignore do))
 		 (make-instance 'do-clause
-		   :form compound+))
+		   :body compound+))
 	       (alternative (keyword-parser 'do)
 			    (keyword-parser 'doing))
 	       'compound+))
