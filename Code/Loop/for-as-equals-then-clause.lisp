@@ -87,3 +87,15 @@
        (setq ,@(loop for (original . temp) in dictionary
 		     collect original
 		     collect temp)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the step.
+
+(defmethod step ((clause for-as-equals-then))
+  (multiple-value-bind (temp-tree dictionary)
+      (fresh-variables (var-spec clause))
+    `(let* ,(destructure-variables temp-tree (subsequent-form clause))
+       (setq ,@(loop for (original . temp) in dictionary
+		     collect original
+		     collect temp)))))
