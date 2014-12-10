@@ -75,3 +75,15 @@
 	with d-type-spec = (type-spec clause)
 	for (variable type) in (extract-variables d-var-spec d-type-spec)
 	collect `(type (or null ,type) ,variable)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the prologue.
+
+(defmethod prologue ((clause for-as-equals-then))
+  (multiple-value-bind (temp-tree dictionary)
+      (fresh-variables (var-spec clause))
+    `(let* ,(destructure-variables temp-tree (initial-form clause))
+       (setq ,@(loop for (original . temp) in dictionary
+		     collect original
+		     collect temp)))))
