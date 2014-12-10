@@ -11,3 +11,6 @@
 
 (define-condition min-argument-must-be-real (type-error loop-runtime-error)
   ())
+
+(define-condition value-must-be-list (type-error loop-runtime-error)
+  ())
