@@ -111,3 +111,26 @@
 			'with-subclause-and-parser)))
 
 (add-clause-parser 'with-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the bindings.
+
+(defmethod bindings ((clause with-clause))
+  (reduce #'append (mapcar #'bindings (subclauses clause))
+	  :from-end t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the declarations.
+
+(defmethod declarations ((clause with-clause))
+  (reduce #'append (mapcar #'declarations (subclauses clause))
+	  :from-end t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the prologue.
+
+(defmethod prologue ((clause with-clause))
+  `(progn ,@(mapcar #'prologue (subclauses clause))))
