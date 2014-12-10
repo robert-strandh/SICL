@@ -12,53 +12,45 @@
 
 (in-package #:sicl-loop)
 
-(defgeneric declarations (clause))
+(defgeneric declarations (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
-(defmethod declarations (clause)
-  (declare (ignore clause))
-  '())
+(defgeneric bindings (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
-(defgeneric bindings (clause))
+(defgeneric prologue (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
-(defmethod bindings (clause)
-  (declare (ignore clause))
-  '())
+(defgeneric prologue (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
-(defgeneric prologue (clause))
+(defgeneric termination (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
-(defmethod prologue (clause)
-  (declare (ignore clause))
-  '())
+(defgeneric body (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
-(defgeneric prologue (clause))
+(defgeneric step (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
-(defmethod prologue (clause)
-  (declare (ignore clause))
-  '())
-
-(defgeneric termination (clause))
-
-(defmethod termination (clause)
-  (declare (ignore clause))
-  '())
-
-(defgeneric body (clause))
-
-(defmethod body (clause)
-  (declare (ignore clause))
-  '())
-
-(defgeneric step (clause))
-
-(defmethod step (clause)
-  (declare (ignore clause))
-  '())
-
-(defgeneric epilogue (clause))
-
-(defmethod epilogue (clause)
-  (declare (ignore clause))
-  '())
+(defgeneric epilogue (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
 
 (defun expand-clauses (all-clauses)
   (labels ((do-bindings (clauses)
