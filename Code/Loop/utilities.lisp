@@ -70,3 +70,26 @@
 			    (traverse (cdr d-var-spec)))))))
       (values (traverse d-var-spec)
 	      (reverse dictionary)))))
+
+;;; ASSIGNMENTS is a list of pairs.  Each pair is a CONS cell.  The
+;;; CAR of the CONS cell is a D-VAR-SPEC and the CDR of the CONS cell
+;;; is a form to be destructured according to the corresponding
+;;; D-VAR-SPEC.  These destructurings have to be done in parallel, as
+;;; when the loop keyword AND was given.  This function returns a list
+;;; of bindings to be used with a single LET* form that accomplishes
+;;; these destructurings.  The technique we use is to first generate
+;;; fresh variables and do the assignments to them, and only at the
+;;; end, assign the original variables to the fresh ones.
+(defun compute-bindings (assignments)
+  (let* ((temps
+	   (loop for (d-var-spec) in assignments
+		 collect (multiple-value-list (fresh-variables d-var-spec))))
+	 (initial-bindings
+	   (loop for (d-var-spec) in temps
+		 for (nil . form) in assignments
+		 append (destructure-variables d-var-spec form)))
+	 (final-bindings
+	   (loop for (nil dictionary) in temps
+		 append (loop for (var . val) in dictionary
+			      collect `(,var ,val)))))
+    (append initial-bindings final-bindings)))
