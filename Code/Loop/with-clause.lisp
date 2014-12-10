@@ -57,6 +57,10 @@
 (defclass with-subclause-with-form (with-subclause)
   ((%form :initarg :form :reader form)))
 
+;;; The default form is NIL.
+(defmethod form ((subclause with-subclause))
+  nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
@@ -117,8 +121,10 @@
 ;;; Compute the bindings.
 
 (defmethod bindings ((clause with-clause))
-  (reduce #'append (mapcar #'bindings (subclauses clause))
-	  :from-end t))
+  (let ((assignments
+	  (loop for subclause in (subclauses clause)
+		collect (cons (var-spec subclause) (form subclause)))))
+    (compute-bindings assignments)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -127,10 +133,3 @@
 (defmethod declarations ((clause with-clause))
   (reduce #'append (mapcar #'declarations (subclauses clause))
 	  :from-end t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute the prologue.
-
-(defmethod prologue ((clause with-clause))
-  `(progn ,@(mapcar #'prologue (subclauses clause))))
