@@ -16,34 +16,42 @@
 ;;;
 ;;; Clause FOR-AS-EQUALS-THEN.
 
-(defclass for-as-equals-then (for-as-subclause) ())
+(defclass for-as-equals-then (for-as-subclause)
+  ((%initial-form :initarg :initial-form :reader initial-form)
+   (%subsequent-form :initarg :subsequent-form :reader subsequent-form)))
 
-(define-parser then-parser
-  (consecutive 'project-form (keyword-parser 'then) 'anything-parser))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parsers.
 
 (define-parser for-as-equals-then-parser-1
-  (consecutive (lambda (var type-spec = form1 then)
-		 ;; FIXME: handle var and type-spec
-		 (declare (ignore = var type-spec))
-		 (let ((iteration-var (gensym)))
-		   (make-instance 'for-equals-then
-		     :bindings `((,iteration-var ,form1))
-		     :termination nil
-		     :step `(setf ,iteration-var ,then))))
+  (consecutive (lambda (var-spec type-spec = form1 then form2)
+		 (declare (ignore = then))
+		 (make-instance 'for-as-equals-then
+		   :var-spec var-spec
+		   :type-spec type-spec
+		   :initial-form form1
+		   :subsequent-form form2))
 	       'd-var-spec-parser
 	       'type-spec-parser
 	       (keyword-parser '=)
-	       'then-parser))
+	       (singleton #'identity (constantly t))
+	       (keyword-parser 'then)
+	       (singleton #'identity (constantly t))))
+
+(add-for-as-subclause-parser 'for-as-equals-then-parser-1)
 
 (define-parser for-as-equals-then-parser-2
-  (consecutive (lambda (var type-spec = form1)
-		 ;; FIXME: handle var and type-spec
-		 (declare (ignore = var type-spec))
-		 (let ((iteration-var (gensym)))
-		   (make-instance 'for-equals-then
-		     :bindings `((,iteration-var ,form1))
-		     :termination nil
-		     :step `(setf ,iteration-var ,form1))))
+  (consecutive (lambda (var-spec type-spec = form1)
+		 (declare (ignore =))
+		 (make-instance 'for-as-equals-then
+		   :var-spec var-spec
+		   :type-spec type-spec
+		   :initial-form form1
+		   :subsequent-form form1))
 	       'd-var-spec-parser
 	       'type-spec-parser
-	       (keyword-parser '=)))
+	       (keyword-parser '=)
+	       (singleton #'identity (constantly t))))
+
+(add-for-as-subclause-parser 'for-as-equals-then-parser-2)
