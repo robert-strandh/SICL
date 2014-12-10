@@ -32,14 +32,13 @@
 		   :type-spec type-spec
 		   :initial-form form1
 		   :subsequent-form form2))
-	       'd-var-spec-parser
-	       'type-spec-parser
+	       ;; Accept anything for now.  Analyze later.
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
 	       (keyword-parser '=)
 	       (singleton #'identity (constantly t))
 	       (keyword-parser 'then)
 	       (singleton #'identity (constantly t))))
-
-(add-for-as-subclause-parser 'for-as-equals-then-parser-1)
 
 (define-parser for-as-equals-then-parser-2
   (consecutive (lambda (var-spec type-spec = form1)
@@ -49,12 +48,16 @@
 		   :type-spec type-spec
 		   :initial-form form1
 		   :subsequent-form form1))
-	       'd-var-spec-parser
-	       'type-spec-parser
+	       ;; Accept anything for now.  Analyze later.
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
 	       (keyword-parser '=)
 	       (singleton #'identity (constantly t))))
 
+;;; Make sure parser 1 is tried first.  For that, it must be added
+;;; last.
 (add-for-as-subclause-parser 'for-as-equals-then-parser-2)
+(add-for-as-subclause-parser 'for-as-equals-then-parser-1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
