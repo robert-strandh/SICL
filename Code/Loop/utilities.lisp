@@ -49,3 +49,24 @@
 			(traverse (cdr d-var-spec) `(list-cdr ,temp)))))))
       (traverse d-var-spec form)
       (reverse bindings))))
+
+;;; Given a D-VAR-SPEC, compute a D-VAR-SPEC with the same structure
+;;; as the one given as argument, except that the non-NIL leaves
+;;; (i.e., the variables names) have been replaced by fresh symbols.
+;;; Return two values: the new D-VAR-SPEC and a dictionary in the form
+;;; of an association list that gives the correspondence between the
+;;; original and the new variables.
+(defun fresh-variables (d-var-spec)
+  (let* ((dictionary '()))
+    (labels ((traverse (d-var-spec)
+	       (cond ((null d-var-spec)
+		      nil)
+		     ((symbolp d-var-spec)
+		      (let ((temp (gensym)))
+			(push (cons d-var-spec temp) dictionary)
+			temp))
+		     (t
+		      (cons (traverse (car d-var-spec))
+			    (traverse (cdr d-var-spec)))))))
+      (values (traverse d-var-spec)
+	      (reverse dictionary)))))
