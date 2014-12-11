@@ -1,75 +1,81 @@
 (in-package #:sicl-loop-test)
 
-(define-test loop-until-t
-  (assert-equal nil (sicl-loop:loop until t)))
+(defun loop-until-t ()
+  (assert (equal (loop until t)
+		 nil)))
 
-(define-test loop-while-nil
-  (assert-equal nil (sicl-loop:loop while nil)))
+(defun loop-while-nil ()
+  (assert (equal (loop while nil)
+		 nil)))
 
-(define-test loop-until-expr
-  (assert-equal 10
-                (let ((n 0))
-                  (sicl-loop:loop until (= (incf n) 10))
-                  n)))
+;; (defun loop-until-expr ()
+;;   (assert (equal (let ((n 0))
+;; 		   (loop until (= (incf n) 10))
+;; 		   n)
+;; 		 10)))
 
-(define-test loop-while-expr
-  (assert-equal 10
-                (let ((n 0))
-                  (sicl-loop:loop while (< (incf n) 10))
-                  n)))
+;; (defun loop-while-expr ()
+;;   (assert (equal (let ((n 0))
+;; 		   (loop while (< (incf n) 10))
+;; 		   n)
+;; 		 10)))
 
-(define-test loop-until-do
-  (assert-equal 10
-                (let ((n 0))
-                  (sicl-loop:loop until (= n 10)
-                                  do (incf n))
-                  n)))
+;; (defun loop-until-do ()
+;;   (assert (equal (let ((n 0))
+;; 		   (loop until (= n 10)
+;; 			 do (incf n))
+;; 		   n)
+;; 		 10)))
 
-(define-test loop-repeat-do
-  (assert-equal 10
-                (let ((n 0))
-                  (sicl-loop:loop repeat 5
-                                  do (incf n 2))
-                  n)))
+;; (defun loop-repeat-do ()
+;;   (assert (equal (let ((n 0))
+;; 		   (loop repeat 5
+;; 			 do (incf n 2))
+;; 		   n)
+;; 		 10)))
 
-(define-test loop-with-repeat-do
-  (assert-equal 10
-                (let ((n 0))
-                  (sicl-loop:loop with step = 2
-                                  repeat 5
-                                  do (incf n step))
-                  n)))
+;; (defun loop-with-repeat-do ()
+;;   (assert (equal (let ((n 0))
+;; 		   (loop with step = 2
+;; 			 repeat 5
+;; 			 do (incf n step))
+;; 		   n)
+;; 		 10)))
 
-(define-test loop-initially-repeat-do
-  (assert-equal 40
-                (let ((n 0))
-                  (sicl-loop:loop initially (incf n 10)
-                                  repeat 2
-                                  do (setf n (* n 2)))
-                  n)))
+;; (defun loop-initially-repeat-do ()
+;;   (assert (equal (let ((n 0))
+;; 		   (loop initially (incf n 10)
+;; 			 repeat 2
+;; 			 do (setf n (* n 2)))
+;; 		   n)
+;; 		 40)))
 
-(define-test loop-repeat-do-finally
-  (assert-equal 40
-                (let ((n 0))
-                  (sicl-loop:loop repeat 2
-                                  do (incf n 10)
-                                  finally (setf n (* n 2)))
-                  n)))
+;; (defun loop-repeat-do-finally ()
+;;   (assert (equal (let ((n 0))
+;; 		   (loop repeat 2
+;; 			 do (incf n 10)
+;; 			 finally (setf n (* n 2)))
+;; 		   n)
+;; 		 40)))
 
-(define-test loop-with-repeat-do-collect-finally
-  (assert-equal '(1 2 3 4)
-                (let ((result nil))
-                  (sicl-loop:loop with n = 0
-                                  repeat 4
-                                  do (incf n) 
-                                  collect n into foo
-                                  finally (setf result foo))
-                  result)))
+;; (defun loop-with-repeat-do-collect-finally ()
+;;   (assert (equal (let ((result nil))
+;; 		   (loop with n = 0
+;; 			 repeat 4
+;; 			 do (incf n)
+;; 			 collect n into foo
+;; 			 finally (setf result foo))
+;; 		   result)
+;; 		 '(1 2 3 4))))
 
-(define-test loop-repeat-sum-finally
-  (assert-equal 10
-                (let ((result nil))
-                  (sicl-loop:loop repeat 5
-                                  sum 2 into foo
-                                  finally (setf result foo))
-                  result)))
+;; (defun loop-repeat-sum-finally ()
+;;   (assert (equal (let ((result nil))
+;; 		   (loop repeat 5
+;; 			 sum 2 into foo
+;; 			 finally (setf result foo))
+;; 		   result)
+;; 		 10)))
+
+(defun loop-test ()
+  (loop-until-t)
+  (loop-while-nil))
