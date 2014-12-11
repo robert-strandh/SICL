@@ -12,7 +12,7 @@
 
 (in-package #:cl-user)
 
-(asdf:defsystem :sicl-loop
+(asdf:defsystem :sicl-loop-support
   :depends-on (:sicl-additional-conditions
 	       :cleavir-internationalization)
   :serial t
