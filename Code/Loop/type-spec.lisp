@@ -12,14 +12,6 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass type-spec () ())
-
-(defclass simple-type-spec (type-spec)
-  ((%type :initarg :type :reader type)))
-
-(defclass destructured-type-spec (type-spec)
-  ((%tree :initarg :tree :reader tree)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser
@@ -29,16 +21,14 @@
     (if (and (not (null tokens))
 	     (member (car tokens) '(fixnum float t nil)))
 	(values t
-		(make-instance 'simple-type-spec
-		  :type (car tokens))
+		(car tokens)
 		(cdr tokens))
 	(values nil nil tokens))))
 
 (define-parser destructured-type-spec-parser
   (consecutive (lambda (of-type tree)
 		 (declare (ignore of-type))
-		 (make-instance 'destructured-type-spec
-		   :tree tree))
+		 tree)
 	       (keyword-parser 'of-type)
 	       (singleton #'identity (constantly t))))
 
@@ -46,6 +36,4 @@
   (alternative 'simple-type-spec-parser 'destructured-type-spec-parser))
 
 (define-parser optional-type-spec-parser
-  (optional (make-instance 'simple-type-spec :type t)
-	    'type-spec-parser))
-
+  (optional t 'type-spec-parser))
