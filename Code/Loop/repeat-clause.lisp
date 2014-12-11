@@ -29,3 +29,10 @@
 	       (singleton #'identity (constantly t))))
 
 (add-clause-parser 'repeat-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the bindings.
+
+(defmethod bindings ((clause repeat-clause))
+  `((,(var-spec clause) 0) (,(form-value-var clause) ,(form clause))))
