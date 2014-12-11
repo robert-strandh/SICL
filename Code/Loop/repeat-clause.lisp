@@ -34,7 +34,7 @@
 ;;;
 ;;; Compute the bindings.
 
-(defmethod bindings ((clause repeat-clause))
+(defmethod initial-bindings ((clause repeat-clause))
   `((,(var-spec clause) 0) (,(form-value-var clause) ,(form clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
