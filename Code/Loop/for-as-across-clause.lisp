@@ -14,10 +14,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS-ACROSS-CLAUSE and FOR-AS-ACROSS
+;;; Clause FOR-AS-ACROSS
 
-(defclass for-as-across-clause (for-as-clause) ())
-
-(defclass for-as-across (for-as-subclause) 
-  ((%array-form :initarg :array-form :reader array-form)))
-
+(defclass for-as-across (for-as-subclause var-and-type-spec-mixin)
+  ((%array-form :initarg :array-form :reader array-form)
+   (%form-var :initform (gensym) :reader form-var)
+   (%length-var  :initform (gensym) :reader length-var)
+   (%index-var  :initform (gensym) :reader index-var)))
