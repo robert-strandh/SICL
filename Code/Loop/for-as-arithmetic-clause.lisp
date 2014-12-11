@@ -83,12 +83,6 @@
 ;;;
 ;;; Parsers.
 
-(define-parser for-as-arithmetic-parser
-  (alternative 'arithmetic-up-parser
-	       'arithmetic-down-parser))
-
-(add-for-as-subclause-parser 'for-as-arithmetic-parser)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser for simple variable.
