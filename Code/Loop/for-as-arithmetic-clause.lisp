@@ -16,7 +16,30 @@
 ;;;
 ;;; Clause FOR-AS-ARITHMETIC.
 
-(defclass for-as-arithmetic (for-as-subclause) ())
+(defclass for-as-arithmetic (for-as-subclause var-and-type-spec-mixin)
+  (;; The form that was given after one of the LOOP keywords FROM,
+   ;; UPFROM, or DOWNFROM, or 0 if none of these LOOP keywords was
+   ;; given.
+   (%start-form :initform 0 :initarg :start-form :reader start-form)
+   ;; The form that was after one of the LOOP keywords TO, UPTO,
+   ;; DOWNTO, BELOW, or ABOVE, or NIL if none of these LOOP keywords
+   ;; was given.
+   (%end-form :initform nil :initarg :end-form :reader end-form)
+   ;; The form that was after the LOOP keyword BY, or 0 if this
+   ;; keyword was not given.
+   (%by-form :initform 1 :initarg :by-form :reader by-form)
+   ;; If termination is TO, UPTO, or DOWNTO, then this slot contains
+   ;; the symbol <=.  If termination is ABOVE or BELOW, then this slot
+   ;; contains the symbol <.
+   (%termination-test :initform '<=
+		      :initarg :termination-test
+		      :reader termination-test)))
+
+(defclass for-as-arithmetic-up (for-as-arithmetic) ()
+  (:default-initargs :termination-test '<=))
+
+(defclass for-as-arithmetic-down (for-as-arithmetic) ()
+  (:default-initargs :termination-test '>=))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -94,35 +117,35 @@
 (define-parser to-parser
   (consecutive (lambda (keyword form)
 		 (declare (ignore keyword))
-		 (cons '= form))
+		 (cons '<= form))
 	       (keyword-parser 'to)
 	       'anything-parser))
 
 (define-parser upto-parser
   (consecutive (lambda (keyword form)
 		 (declare (ignore keyword))
-		 (cons '= form))
+		 (cons '<= form))
 	       (keyword-parser 'upto)
 	       'anything-parser))
 
 (define-parser below-parser
   (consecutive (lambda (keyword form)
 		 (declare (ignore keyword))
-		 (cons '/= form))
+		 (cons '< form))
 	       (keyword-parser 'below)
 	       'anything-parser))
 
 (define-parser downto-parser
   (consecutive (lambda (keyword form)
 		 (declare (ignore keyword))
-		 (cons '= form))
+		 (cons '<= form))
 	       (keyword-parser 'downto)
 	       'anything-parser))
 
 (define-parser above-parser
   (consecutive (lambda (keyword form)
 		 (declare (ignore keyword))
-		 (cons '/= form))
+		 (cons '< form))
 	       (keyword-parser 'above)
 	       'anything-parser))
 
@@ -142,22 +165,13 @@
 ;;; Order is FROM TO BY.
 (define-parser arithmetic-up-1-parser
   (consecutive (lambda (var type-spec from to by)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,to-var ,initial-value)
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (setq ,to-var ,(cdr to))
-					 (setq ,by-var ,by))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -167,22 +181,13 @@
 ;;; Order is FROM BY TO.
 (define-parser arithmetic-up-2-parser
   (consecutive (lambda (var type-spec from by to)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,by-var ,initial-value)
-				   (,to-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (setq ,by-var ,by)
-					 (setq ,to-var ,(cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -192,22 +197,13 @@
 ;;; Order is TO FROM BY.
 (define-parser arithmetic-up-3-parser
   (consecutive (lambda (var type-spec to from by)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,to-var ,initial-value)
-				   (,var ,initial-value)
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,to-var ,(cdr to))
-					 (setq ,var ,from)
-					 (setq ,by-var ,by))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -217,22 +213,13 @@
 ;;; Order is TO BY FROM.
 (define-parser arithmetic-up-4-parser
   (consecutive (lambda (var type-spec to by from)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,to-var ,initial-value)
-				   (,by-var ,initial-value)
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,to-var ,(cdr to))
-					 (setq ,by-var ,by)
-					 (setq ,var ,from))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -242,22 +229,13 @@
 ;;; Order is BY FROM TO.
 (define-parser arithmetic-up-5-parser
   (consecutive (lambda (var type-spec by from to)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,by-var ,initial-value)
-				   (,var ,initial-value)
-				   (,to-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (setq ,var ,from)
-					 (setq ,to-var ,(cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -267,22 +245,13 @@
 ;;; Order is BY TO FROM.
 (define-parser arithmetic-up-6-parser
   (consecutive (lambda (var type-spec by to from)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,by-var ,initial-value)
-				   (,to-var ,initial-value)
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (setq ,to-var ,(cdr to))
-					 (setq ,var ,from))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -298,19 +267,12 @@
 ;;; Order is FROM TO.
 (define-parser arithmetic-up-7-parser
   (consecutive (lambda (var type-spec from to)
-		 (let ((to-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,to-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (setq ,to-var ,(cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -319,19 +281,12 @@
 ;;; Order is TO FROM.
 (define-parser arithmetic-up-8-parser
   (consecutive (lambda (var type-spec to from)
-		 (let ((to-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,to-var ,initial-value)
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,to-var ,(cdr to))
-					 (setq ,var ,from))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -346,17 +301,11 @@
 ;;; Order is FROM BY.
 (define-parser arithmetic-up-9-parser
   (consecutive (lambda (var type-spec from by)
-		 (let ((by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (setq ,by-var ,by))
-		       :termination nil
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :by-form by))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -365,17 +314,11 @@
 ;;; Order is BY FROM.
 (define-parser arithmetic-up-10-parser
   (consecutive (lambda (var type-spec by from)
-		 (let ((by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,by-var ,initial-value)
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (setq ,var ,from))
-		       :termination nil
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :by-form by))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -390,19 +333,12 @@
 ;;; Order is TO BY.
 (define-parser arithmetic-up-11-parser
   (consecutive (lambda (var type-spec to by)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var 0)
-				   (,to-var ,initial-value)
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,to-var ,(cdr to))
-					 (setq ,by-var ,by))
-		       :termination nil
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -411,19 +347,12 @@
 ;;; Order is BY TO.
 (define-parser arithmetic-up-12-parser
   (consecutive (lambda (var type-spec by to)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var 0)
-				   (,by-var ,initial-value)
-				   (,to-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (setq ,to-var ,(cdr to)))
-		       :termination nil
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -436,14 +365,10 @@
 
 (define-parser arithmetic-up-13-parser
   (consecutive (lambda (var type-spec from)
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from))
-		       :termination nil
-		       :step `((incf ,var)))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)))
@@ -453,21 +378,12 @@
 ;;; Parser where only TO/UPTO/BELOW appears (FROM/UPFROM and BY are
 ;;; omitted).
 
-(define-parser arithmetic-up-13-parser
+(define-parser arithmetic-up-14-parser
   (consecutive (lambda (var type-spec to)
-		 (let ((to-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,0)
-				   (,to-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (,var ,0)
-					 (setq ,to-var ,(cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
-			  (go end))
-		       :step `((incf ,var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :end-form (second to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
@@ -477,29 +393,15 @@
 ;;; Parser where only BY appears (FROM/UPFROM and TO/UPTO/BELOW are
 ;;; omitted).
 
-(define-parser arithmetic-up-13-parser
+(define-parser arithmetic-up-15-parser
   (consecutive (lambda (var type-spec by)
-		 (let ((by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,0)
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (,var ,0)
-					 (setq ,by-var ,by))
-		       :termination nil
-		       :step `((incf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-up
+		   :var-spec var
+		   :type-spec type-spec
+		   :by-form by))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Parsers for arithmetic down.
-;;;
-;;; There is no default start value for decremental stepping, so
-;;; either FROM or DOWNFROM must always be supplied.
 
 (define-parser arithmetic-up-parser
   (alternative 'arithmetic-up-1-parser
@@ -516,6 +418,13 @@
 	       'arithmetic-up-12-parser
 	       'arithmetic-up-13-parser))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parsers for arithmetic down.
+;;;
+;;; There is no default start value for decremental stepping, so
+;;; either FROM or DOWNFROM must always be supplied.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers where FROM/DOWNFROM TO/DOWNTO/ABOVE and BY are all present.
@@ -525,22 +434,13 @@
 ;;; FROM/DOWNFROM - DOWNTO/ABOVE - BY
 (define-parser arithmetic-down-1-parser
   (consecutive (lambda (var type-spec from to by)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,to-var (cdr to))
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (,to-var (cdr to))
-					 (setq ,by-var ,by))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'downfrom-parser)
@@ -550,22 +450,13 @@
 ;;; FROM/DOWNFROM - BY - DOWNTO/ABOVE 
 (define-parser arithmetic-down-2-parser
   (consecutive (lambda (var type-spec from by to)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,by-var ,initial-value)
-				   (,to-var (cdr to)))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (setq ,by-var ,by)
-					 (,to-var (cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'downfrom-parser)
@@ -575,22 +466,13 @@
 ;;; DOWNTO/ABOVE - FROM/DOWNFROM - BY
 (define-parser arithmetic-down-3-parser
   (consecutive (lambda (var type-spec to from by)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,to-var (cdr to))
-				   (,var ,initial-value)
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (,to-var (cdr to))
-					 (setq ,var ,from)
-					 (setq ,by-var ,by))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'downto-parser 'above-parser)
@@ -600,22 +482,13 @@
 ;;; DOWNTO/ABOVE - BY - FROM/DOWNFROM
 (define-parser arithmetic-down-4-parser
   (consecutive (lambda (var type-spec to by from)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,to-var (cdr to))
-				   (,by-var ,initial-value)
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (,to-var (cdr to))
-					 (setq ,by-var ,by)
-					 (setq ,var ,from))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'downto-parser 'above-parser)
@@ -625,22 +498,13 @@
 ;;; BY- FROM/DOWNFROM - DOWNTO/ABOVE
 (define-parser arithmetic-down-5-parser
   (consecutive (lambda (var type-spec by from to)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,by-var ,initial-value)
-				   (,var ,initial-value)
-				   (,to-var (cdr to)))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (setq ,var ,from)
-					 (,to-var (cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -650,22 +514,13 @@
 ;;; BY- DOWNTO/ABOVE - FROM/DOWNFROM 
 (define-parser arithmetic-down-6-parser
   (consecutive (lambda (var type-spec by to from)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,by-var ,initial-value)
-				   (,to-var (cdr to))
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (,to-var (cdr to))
-					 (setq ,var ,from))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -675,22 +530,13 @@
 ;;; DOWNFROM - TO/DOWNTO/ABOVE - BY
 (define-parser arithmetic-down-7-parser
   (consecutive (lambda (var type-spec from to by)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,to-var (cdr to))
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (,to-var (cdr to))
-					 (setq ,by-var ,by))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'downfrom-parser
@@ -700,22 +546,13 @@
 ;;; DOWNFROM - BY - TO/DOWNTO/ABOVE 
 (define-parser arithmetic-down-8-parser
   (consecutive (lambda (var type-spec from by to)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,var ,initial-value)
-				   (,by-var ,initial-value)
-				   (,to-var (cdr to)))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,var ,from)
-					 (setq ,by-var ,by)
-					 (,to-var (cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'downfrom-parser
@@ -725,22 +562,13 @@
 ;;; TO/DOWNTO/ABOVE - DOWNFROM - BY
 (define-parser arithmetic-down-9-parser
   (consecutive (lambda (var type-spec to from by)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,to-var (cdr to))
-				   (,var ,initial-value)
-				   (,by-var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (,to-var (cdr to))
-					 (setq ,var ,from)
-					 (setq ,by-var ,by))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
@@ -750,22 +578,13 @@
 ;;; TO/DOWNTO/ABOVE - BY - DOWNFROM
 (define-parser arithmetic-down-10-parser
   (consecutive (lambda (var type-spec to by from)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,to-var (cdr to))
-				   (,by-var ,initial-value)
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (,to-var (cdr to))
-					 (setq ,by-var ,by)
-					 (setq ,var ,from))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
@@ -775,22 +594,13 @@
 ;;; BY- DOWNFROM - TO/DOWNTO/ABOVE
 (define-parser arithmetic-down-11-parser
   (consecutive (lambda (var type-spec by from to)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,by-var ,initial-value)
-				   (,var ,initial-value)
-				   (,to-var (cdr to)))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (setq ,var ,from)
-					 (,to-var (cdr to)))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -800,22 +610,13 @@
 ;;; BY- TO/DOWNTO/ABOVE - DOWNFROM 
 (define-parser arithmetic-down-12-parser
   (consecutive (lambda (var type-spec by to from)
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
-		   (multiple-value-bind (initial-value type)
-		       (arithmetic-value-and-type type-spec)
-		     (make-instance 'for-as-arithmetic
-		       :bindings `((,by-var ,initial-value)
-				   (,to-var (cdr to))
-				   (,var ,initial-value))
-		       :declarations `((cl:type ,type ,var))
-		       :prologue `(progn (setq ,by-var ,by)
-					 (,to-var (cdr to))
-					 (setq ,var ,from))
-		       :termination
-		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
-			  (go end))
-		       :step `((decf ,var ,by-var))))))
+		 (make-instance 'for-as-arithmetic-down
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (second to)
+		   :by-form by
+		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
