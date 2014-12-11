@@ -100,3 +100,10 @@
 (defmethod termination ((clause for-as-across))
   `(when (>= ,(index-var clause) ,(length-var clause))
      (go end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute step.
+
+(defmethod step ((clause for-as-across))
+  `(incf ,(index-var clause)))
