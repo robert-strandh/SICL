@@ -653,3 +653,10 @@
 
 (defmethod final-bindings ((clause for-as-arithmetic))
   `((,(var-spec clause) ,(start-var clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the declarations.
+
+(defmethod declarations ((clause for-as-arithmetic))
+  `((cl:type ,(type-spec clause) ,(var-spec clause))))
