@@ -648,7 +648,7 @@
   `((,(start-var clause) ,(start-form clause))
     ,@(if (null (end-form clause))
 	  '()
-	  `((,end-var clause) ,(end-form clause)))
+	  `(,(end-var clause) ,(end-form clause)))
     (,(by-var clause) ,(by-form clause))))
 
 (defmethod final-bindings ((clause for-as-arithmetic))
