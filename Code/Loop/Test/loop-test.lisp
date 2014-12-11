@@ -36,12 +36,12 @@
 		   n)
 		 10)))
 
-;; (defun loop-repeat-do ()
-;;   (assert (equal (let ((n 0))
-;; 		   (loop repeat 5
-;; 			 do (incf n 2))
-;; 		   n)
-;; 		 10)))
+(defun loop-repeat-do ()
+  (assert (equal (let ((n 0))
+		   (loop repeat 5
+			 do (incf n 2))
+		   n)
+		 10)))
 
 ;; (defun loop-with-repeat-do ()
 ;;   (assert (equal (let ((n 0))
@@ -91,4 +91,5 @@
   (loop-until-expr)
   (loop-while-expr)
   (loop-do)
-  (loop-until-do))
+  (loop-until-do)
+  (loop-repeat-do))
