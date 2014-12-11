@@ -12,8 +12,10 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass repeat-clause (clause)
-  ((%form :initarg :form :reader form)))
+(defclass repeat-clause (clause var-and-type-spec-mixin)
+  ((%form :initarg :form :reader form)
+   (%form-value-var :initform (gensym) :reader form-value-var))
+  (:default-initargs :var-spec (gensym) :type-spec 'real))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -22,8 +24,7 @@
 (define-parser repeat-clause-parser
   (consecutive (lambda (repeat form)
 		 (declare (ignore repeat))
-		 (make-instance 'repeat-clause
-		   :form form))
+		 (make-instance 'repeat-clause :form form))
 	       (keyword-parser 'repeat)
 	       (singleton #'identity (constantly t))))
 
