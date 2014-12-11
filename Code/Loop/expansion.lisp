@@ -66,8 +66,8 @@
 			    (progn ,@(mapcar #'body all-clauses))
 			    (progn ,@(mapcar #'step all-clauses))
 			    (go start)
-			    (progn ,@(mapcar #'epilogue all-clauses))
-			  end))
+			  end
+			    (progn ,@(mapcar #'epilogue all-clauses))))
 		 `(let* ,(bindings (car clauses))
 		    (declare ,@(declarations (car clauses)))
 		    ,(do-bindings (cdr clauses))))))
