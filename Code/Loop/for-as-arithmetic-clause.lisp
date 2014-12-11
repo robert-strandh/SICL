@@ -676,3 +676,13 @@
 	    ,(form-value-var clause)
 	    ,(var-spec clause))
      (go end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination.
+
+(defmethod step ((clause for-as-arithmetic-up))
+  `(incf ,(var-spec clause) ,(by-var clause)))
+
+(defmethod step ((clause for-as-arithmetic-down))
+  `(decf ,(var-spec clause) ,(by-var clause)))
