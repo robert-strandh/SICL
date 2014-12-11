@@ -63,7 +63,7 @@
    (%dictionary :initarg :dictionary :reader dictionary)))
 
 (defmethod initialize-instance :after
-    ((clause with-clause) &key &allow-other-keys)
+    ((clause with-subclause) &key &allow-other-keys)
   (multiple-value-bind (temp-vars dictionary)
       (fresh-variables (var-spec clause))
     (reinitialize-instance clause
@@ -137,9 +137,15 @@
 ;;; Compute the bindings.
 
 (defmethod initial-bindings ((clause with-clause))
+  (reduce #'append (mapcar #'initial-bindings (subclauses clause))))
+
+(defmethod final-bindings ((clause with-clause))
+  (reduce #'append (mapcar #'final-bindings (subclauses clause))))
+
+(defmethod initial-bindings ((clause with-subclause))
   (destructure-variables (temp-vars clause) (form clause)))
 
-(defmethod final-bindigs ((clause with-clause))
+(defmethod final-bindings ((clause with-subclause))
   (loop for (real-var . temp-var) in (dictionary clause)
 	collect `(,real-var ,temp-var)))
 
@@ -147,6 +153,6 @@
 ;;;
 ;;; Compute the declarations.
 
-(defmethod declarations ((clause with-clause))
+(defmethod declarations ((clause with-subclause))
   (reduce #'append (mapcar #'declarations (subclauses clause))
 	  :from-end t))
