@@ -17,7 +17,23 @@
 ;;; Clause FOR-AS-ACROSS
 
 (defclass for-as-across (for-as-subclause var-and-type-spec-mixin)
-  ((%array-form :initarg :array-form :reader array-form)
+  ((%vector-form :initarg :vector-form :reader vector-form)
    (%form-var :initform (gensym) :reader form-var)
-   (%length-var  :initform (gensym) :reader length-var)
-   (%index-var  :initform (gensym) :reader index-var)))
+   (%length-var :initform (gensym) :reader length-var)
+   (%index-var :initform (gensym) :reader index-var)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parser
+
+(define-parser for-as-across-parser
+  (consecutive (lambda (var type-spec across vector-form)
+		 (declare (ignore across))
+		 (make-instance 'for-as-across
+		   :var-spec var
+		   :type-spec type-spec
+		   :vector-form vector))
+	       'd-var-spec-parser
+	       'optional-type-spec-parser
+	       (keyword-parser 'across)
+	       (singleton #'identity (constantly t))))
