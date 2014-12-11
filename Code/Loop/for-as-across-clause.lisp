@@ -69,7 +69,7 @@
 ;;;
 ;;; Compute prologue.
 
-(defmethod prologue ((clause for-as-clause))
+(defmethod prologue ((clause for-as-across))
   `(progn (when (>= ,(index-var clause) ,(length-var clause))
 	    (go end))
 	  (let* ,(destructure-variables (var-spec clause)
@@ -77,3 +77,11 @@
 					       ,(index-var clause)))
 	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
 			  append `(,real-var ,temp-var))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute termination.
+
+(defmethod termination ((clause for-as-across))
+  `(when (>= ,(index-var clause) ,(length-var clause))
+     (go end)))
