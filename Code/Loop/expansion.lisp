@@ -55,9 +55,7 @@
 			  start
 			    (progn ,@(mapcar #'termination all-clauses))
 			    (progn ,@(mapcar #'body all-clauses))
-			    (progn ,@(reduce #'append
-					     (mapcar #'step all-clauses)
-					     :from-end t))
+			    (progn ,@(mapcar #'step all-clauses))
 			    (progn ,@(mapcar #'epilogue all-clauses))
 			    (go start)
 			  end))
