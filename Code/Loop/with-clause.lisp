@@ -52,7 +52,23 @@
 
 (defclass with-subclause ()
   ((%var-spec :initarg :var-spec :reader var-spec)
-   (%type-spec :initarg :type-spec :reader type-spec)))
+   (%type-spec :initarg :type-spec :reader type-spec)
+   ;; This slot contains a copy of the tree contained in the VAR-SPEC
+   ;; slot except that the non-NIL leaves have been replaced by
+   ;; GENSYMs.
+   (%temp-vars :initarg :temp-vars :reader temp-vars)
+   ;; This slot contains a list of pairs.  Each pair is a CONS cell
+   ;; where the CAR is a variable in VAR-SPEC and the CDR is the
+   ;; corresponding variable in TEMP-VARS.
+   (%dictionary :initarg :dictionary :reader dictionary)))
+
+(defmethod initialize-instance :after
+    ((clause with-clause) &key &allow-other-keys)
+  (multiple-value-bind (temp-vars dictionary)
+      (fresh-variables (var-spec clause))
+    (reinitialize-instance clause
+			   :temp-vars temp-vars
+			   :dictionary dictionary)))
 
 (defclass with-subclause-with-form (with-subclause)
   ((%form :initarg :form :reader form)))
@@ -120,11 +136,12 @@
 ;;;
 ;;; Compute the bindings.
 
-(defmethod bindings ((clause with-clause))
-  (let ((assignments
-	  (loop for subclause in (subclauses clause)
-		collect (cons (var-spec subclause) (form subclause)))))
-    (compute-bindings assignments)))
+(defmethod initial-bindings ((clause with-clause))
+  (destructure-variables (temp-vars clause) (form clause)))
+
+(defmethod final-bindigs ((clause with-clause))
+  (loop for (real-var . temp-var) in (dictionary clause)
+	collect `(,real-var ,temp-var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
