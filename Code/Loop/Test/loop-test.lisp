@@ -20,6 +20,15 @@
 		   n)
 		 10)))
 
+(defun loop-do ()
+  (assert (equal (let ((n 0))
+		   (block abc
+		     (loop do (progn (incf n)
+				     (when (= n 10)
+				       (return-from abc nil)))))
+		   n)
+		 10)))
+
 ;; (defun loop-until-do ()
 ;;   (assert (equal (let ((n 0))
 ;; 		   (loop until (= n 10)
@@ -80,4 +89,5 @@
   (loop-until-t)
   (loop-while-nil)
   (loop-until-expr)
-  (loop-while-expr))
+  (loop-while-expr)
+  (loop-do))
