@@ -17,10 +17,19 @@
     (declare (ignore clause))
     '()))
 
-(defgeneric bindings (clause)
+(defgeneric initial-bindings (clause)
   (:method (clause)
     (declare (ignore clause))
     '()))
+
+(defgeneric final-bindings (clause)
+  (:method (clause)
+    (declare (ignore clause))
+    '()))
+
+(defgeneric bindings (clause)
+  (:method (clause)
+    (append (initial-bindings clause) (final-bindings clause))))
 
 (defgeneric prologue (clause)
   (:method (clause)
