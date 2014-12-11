@@ -84,7 +84,7 @@
 (defun for-as-across-prologue-or-body (clause)
   `(progn (when (>= ,(index-var clause) ,(length-var clause))
 	    (go end))
-	  (let* ,(destructure-variables (var-spec clause)
+	  (let* ,(destructure-variables (temp-vars clause)
 					`(aref ,(form-var clause)
 					       ,(index-var clause)))
 	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
