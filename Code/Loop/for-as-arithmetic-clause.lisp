@@ -30,7 +30,7 @@
    ;; The form that was after the LOOP keyword BY, or 0 if this
    ;; keyword was not given.
    (%by-form :initform 1 :initarg :by-form :reader by-form)
-   (%by-var :initform (gensym) :reader :by-var)
+   (%by-var :initform (gensym) :reader by-var)
    ;; If termination is TO, UPTO, or DOWNTO, then this slot contains
    ;; the symbol <=.  If termination is ABOVE or BELOW, then this slot
    ;; contains the symbol <.
