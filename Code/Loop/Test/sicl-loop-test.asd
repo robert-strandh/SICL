@@ -1,6 +1,9 @@
 (in-package #:cl-user)
 
 (asdf:defsystem :sicl-loop-test
-  :depends-on (:sicl-loop)
+  :depends-on (:sicl-loop-support)
+  :serial t
   :components
-  ((:file "loop-test" :depends-on ())))
+  ((:file "test-packages")
+   (:file "loop-defmacro")
+   (:file "loop-test")))
