@@ -76,9 +76,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute prologue.
+;;; Compute prologue and body
 
-(defmethod prologue ((clause for-as-across))
+(defun for-as-across-prologue-or-body (clause)
   `(progn (when (>= ,(index-var clause) ,(length-var clause))
 	    (go end))
 	  (let* ,(destructure-variables (var-spec clause)
@@ -86,6 +86,12 @@
 					       ,(index-var clause)))
 	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
 			  append `(,real-var ,temp-var))))))
+
+(defmethod prologue ((clause for-as-across))
+  (for-as-across-prologue-or-body clause))
+
+(defmethod body ((clause for-as-across))
+  (for-as-across-prologue-or-body clause))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
