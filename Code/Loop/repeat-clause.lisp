@@ -52,3 +52,10 @@
 (defmethod termination ((clause repeat-clause))
   `(unless (< ,(var-spec clause) ,(form-value-var clause))
      (go end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the step.
+
+(defmethod step ((clause repeat-clause))
+  `(incf ,(var-spec clause)))
