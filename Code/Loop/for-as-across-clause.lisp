@@ -64,3 +64,16 @@
     (,(index-var 0))
     ,@(loop for (real-var) in (dictionary clause)
 	    collect `(,real-var nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute prologue.
+
+(defmethod prologue ((clause for-as-clause))
+  `(progn (when (>= ,(index-var clause) ,(length-var clause))
+	    (go end))
+	  (let* ,(destructure-variables (var-spec clause)
+					`(aref ,(form-var clause)
+					       ,(index-var clause)))
+	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
+			  append `(,real-var ,temp-var))))))
