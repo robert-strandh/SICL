@@ -662,6 +662,8 @@
 	       'two-keyword-up-parser
 	       'single-keyword-up-parser))
 
+(add-clause-parser 'for-as-arithmetic-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the bindings.
