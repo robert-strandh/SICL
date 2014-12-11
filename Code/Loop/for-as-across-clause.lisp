@@ -49,7 +49,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :vector-form vector-form))
-	       'd-var-spec-parser
+	       (singleton #'identity (constantly t))
 	       'optional-type-spec-parser
 	       (keyword-parser 'across)
 	       (singleton #'identity (constantly t))))
@@ -63,7 +63,7 @@
 (defmethod initial-bindings ((clause for-as-across))
   `((,(form-var clause) ,(vector-form clause))
     (,(length-var clause) (length ,(form-var clause)))
-    (,(index-var 0))
+    (,(index-var clause) 0)
     ,@(loop for (real-var) in (dictionary clause)
 	    collect `(,real-var nil))))
 
