@@ -54,6 +54,8 @@
 	       (keyword-parser 'across)
 	       (singleton #'identity (constantly t))))
 
+(add-for-as-subclause-parser 'for-as-across-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute bindings.
