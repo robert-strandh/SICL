@@ -660,3 +660,19 @@
 
 (defmethod declarations ((clause for-as-arithmetic))
   `((cl:type ,(type-spec clause) ,(var-spec clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination.
+
+(defmethod termination ((clause for-as-arithmetic-up))
+  `(unless (,(termination-test clause)
+	    ,(var-spec clause)
+	    ,(form-value-var clause))
+     (go end)))
+
+(defmethod termination ((clause for-as-arithmetic-down))
+  `(unless (,(termination-test clause)
+	    ,(form-value-var clause)
+	    ,(var-spec clause))
+     (go end)))
