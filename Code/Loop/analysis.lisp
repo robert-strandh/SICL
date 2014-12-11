@@ -54,3 +54,7 @@
 	       (not (null first-main-clause-position))
 	       (> last-variable-clause-position first-main-clause-position))
       (error 'invalid-clause-order))))
+
+;;; FIXME: Add more analyses.
+(defun analyse-clauses (clauses)
+  (verify-clause-order clauses))
