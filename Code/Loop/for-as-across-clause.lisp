@@ -69,6 +69,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compute declarations.
+
+(defmethod declarations ((clause for-as-across))
+  (extract-variables (var-spec clause) (d-type-spec clause)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compute prologue.
 
 (defmethod prologue ((clause for-as-across))
