@@ -261,6 +261,14 @@
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       (alternative 'from-parser 'upfrom-parser)))
 
+(define-parser three-keyword-up-parser
+  (alternative 'arithmetic-up-1-parser
+	       'arithmetic-up-2-parser
+	       'arithmetic-up-3-parser
+	       'arithmetic-up-4-parser
+	       'arithmetic-up-5-parser
+	       'arithmetic-up-6-parser))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers where only FROM/UPFROM and TO/UPTO/BELOW appear (BY is
@@ -361,6 +369,14 @@
 	       'by-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
+(define-parser two-keyword-up-parser
+  (alternative 'arithmetic-up-7-parser
+	       'arithmetic-up-8-parser
+	       'arithmetic-up-9-parser
+	       'arithmetic-up-10-parser
+	       'arithmetic-up-11-parser
+	       'arithmetic-up-12-parser))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser where only FROM/UPFROM appears (TO/UPTO/BELOW and BY are
@@ -406,20 +422,10 @@
 	       'optional-type-spec-parser
 	       'by-parser))
 
-(define-parser arithmetic-up-parser
-  (alternative 'arithmetic-up-1-parser
-	       'arithmetic-up-2-parser
-	       'arithmetic-up-3-parser
-	       'arithmetic-up-4-parser
-	       'arithmetic-up-5-parser
-	       'arithmetic-up-6-parser
-	       'arithmetic-up-7-parser
-	       'arithmetic-up-8-parser
-	       'arithmetic-up-9-parser
-	       'arithmetic-up-10-parser
-	       'arithmetic-up-11-parser
-	       'arithmetic-up-12-parser
-	       'arithmetic-up-13-parser))
+(define-parser one-keyword-up-parser
+  (alternative 'arithmetic-up-13-parser
+	       'arithmetic-up-14-parser
+	       'arithmetic-up-15-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -626,7 +632,7 @@
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'downfrom-parser))
 
-(define-parser arithmetic-down-parser
+(define-parser three-keyword-down-parser
   (alternative 'arithmetic-down-1-parser
 	       'arithmetic-down-2-parser
 	       'arithmetic-down-3-parser
@@ -639,6 +645,22 @@
 	       'arithmetic-down-10-parser
 	       'arithmetic-down-11-parser
 	       'arithmetic-down-12-parser))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Define a global parser that tries all the arithmetic parsers until
+;;; one succeeds.  We define it so that the parsers that require the
+;;; largest number of tokens are tested first.  We must do it that
+;;; way, because otherwise, a parser requiring a smaller number of
+;;; tokens may succeed without having parsed the following tokens.
+;;; Those unparsed tokens will then provoke a parse failure when an
+;;; attempt is made to parse them as a clause.
+
+(define-parser for-as-arithmetic-parser
+  (alternative 'three-keyword-up-parser
+	       'three-keyword-down-parser
+	       'two-keyword-up-parser
+	       'single-keyword-up-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
