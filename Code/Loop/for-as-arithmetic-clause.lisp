@@ -639,3 +639,17 @@
 	       'arithmetic-down-10-parser
 	       'arithmetic-down-11-parser
 	       'arithmetic-down-12-parser))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the bindings.
+
+(defmethod initial-bindings ((clause for-as-arithmetic))
+  `((,(start-var clause) ,(start-form clause))
+    ,@(if (null (end-form clause))
+	  '()
+	  `((,end-var clause) ,(end-form clause)))
+    (,(by-var clause) ,(by-form clause))))
+
+(defmethod final-bindings ((clause for-as-arithmetic))
+  `((,(var-spec clause) ,(start-var clause))))
