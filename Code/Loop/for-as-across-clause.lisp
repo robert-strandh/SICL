@@ -48,7 +48,7 @@
 		 (make-instance 'for-as-across
 		   :var-spec var
 		   :type-spec type-spec
-		   :vector-form vector))
+		   :vector-form vector-form))
 	       'd-var-spec-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'across)
@@ -72,7 +72,7 @@
 ;;; Compute declarations.
 
 (defmethod declarations ((clause for-as-across))
-  (extract-variables (var-spec clause) (d-type-spec clause)))
+  (extract-variables (var-spec clause) (type-spec clause)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
