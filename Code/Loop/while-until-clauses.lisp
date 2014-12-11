@@ -38,3 +38,11 @@
 	       (singleton #'identity (constantly t))))
   
 (add-clause-parser 'until-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination.
+
+(defmethod termination ((clause while-clause))
+  `(unless ,(form clause)
+     (go end)))
