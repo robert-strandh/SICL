@@ -126,8 +126,12 @@
 ;;;
 ;;; Compute the bindings.
 
-(defmethod bindings ((clause for-as-clause))
-  (reduce #'append (mapcar #'bindings (subclauses clause))
+(defmethod initial-bindings ((clause for-as-clause))
+  (reduce #'append (mapcar #'initial-bindings (subclauses clause))
+	  :from-end t))
+
+(defmethod final-bindings ((clause for-as-clause))
+  (reduce #'append (mapcar #'final-bindings (subclauses clause))
 	  :from-end t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
