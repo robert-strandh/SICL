@@ -40,3 +40,10 @@
 	       'compound+))
 
 (add-clause-parser 'initial-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute prologue.
+
+(defmethod prologue ((clause initial-clause))
+  (form clause))
