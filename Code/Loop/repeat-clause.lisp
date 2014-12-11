@@ -44,3 +44,11 @@
 (defmethod declarations ((clause repeat-clause))
   `((cl:type real ,(form-value-var clause))
     (cl:type (integer 0) ,(var-spec clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination.
+
+(defmethod termination ((clause repeat-clause))
+  `(unless (< ,(var-spec clause) ,(form-value-var clause))
+     (go end)))
