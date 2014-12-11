@@ -72,3 +72,8 @@
 		    (declare ,@(declarations (car clauses)))
 		    ,(do-bindings (cdr clauses))))))
     (do-bindings all-clauses)))
+
+(defun expand-body (loop-body)
+  (let ((clauses (parse-loop-body loop-body)))
+    (analyse-clauses clauses)
+    (expand-clauses clauses)))
