@@ -63,7 +63,7 @@
 ;;;
 ;;; Compute the bindings.
 
-(defmethod bindings ((clause for-as-equals-then))
+(defmethod initial-bindings ((clause for-as-equals-then))
   (loop with d-var-spec = (var-spec clause)
 	with d-type-spec = (type-spec clause)
 	for (variable) in (extract-variables d-var-spec d-type-spec)
