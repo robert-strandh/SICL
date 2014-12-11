@@ -654,7 +654,7 @@
   (alternative 'three-keyword-up-parser
 	       'three-keyword-down-parser
 	       'two-keyword-up-parser
-	       'single-keyword-up-parser))
+	       'one-keyword-up-parser))
 
 (add-for-as-subclause-parser 'for-as-arithmetic-parser)
 
