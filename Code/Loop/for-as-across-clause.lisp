@@ -30,6 +30,14 @@
    (%length-var :initform (gensym) :reader length-var)
    (%index-var :initform (gensym) :reader index-var)))
 
+(defmethod initialize-instance :after
+    ((clause for-as-across) &key &allow-other-keys)
+  (multiple-value-bind (temp-vars dictionary)
+      (fresh-variables (var-spec clause))
+    (reinitialize-instance clause
+			   :temp-vars temp-vars
+			   :dictionary dictionary)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser
