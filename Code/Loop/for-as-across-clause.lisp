@@ -17,7 +17,15 @@
 ;;; Clause FOR-AS-ACROSS
 
 (defclass for-as-across (for-as-subclause var-and-type-spec-mixin)
-  ((%vector-form :initarg :vector-form :reader vector-form)
+  (;; This slot contains a copy of the tree contained in the VAR-SPEC
+   ;; slot except that the non-NIL leaves have been replaced by
+   ;; GENSYMs.
+   (%temp-vars :initarg :temp-vars :reader temp-vars)
+   ;; This slot contains a list of pairs.  Each pair is a CONS cell
+   ;; where the CAR is a variable in VAR-SPEC and the CDR is the
+   ;; corresponding variable in TEMP-VARS.
+   (%dictionary :initarg :dictionary :reader dictionary)
+   (%vector-form :initarg :vector-form :reader vector-form)
    (%form-var :initform (gensym) :reader form-var)
    (%length-var :initform (gensym) :reader length-var)
    (%index-var :initform (gensym) :reader index-var)))
