@@ -59,13 +59,13 @@
 		   n)
 		 40)))
 
-;; (defun loop-repeat-do-finally ()
-;;   (assert (equal (let ((n 0))
-;; 		   (loop repeat 2
-;; 			 do (incf n 10)
-;; 			 finally (setf n (* n 2)))
-;; 		   n)
-;; 		 40)))
+(defun loop-repeat-do-finally ()
+  (assert (equal (let ((n 0))
+		   (loop repeat 2
+			 do (incf n 10)
+			 finally (setf n (* n 2)))
+		   n)
+		 40)))
 
 ;; (defun loop-with-repeat-do-collect-finally ()
 ;;   (assert (equal (let ((result nil))
@@ -94,4 +94,5 @@
   (loop-until-do)
   (loop-repeat-do)
   (loop-with-repeat-do)
-  (loop-initially-repeat-do))
+  (loop-initially-repeat-do)
+  (loop-repeat-do-finally))
