@@ -36,3 +36,11 @@
 
 (defmethod bindings ((clause repeat-clause))
   `((,(var-spec clause) 0) (,(form-value-var clause) ,(form clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the declarations.
+
+(defmethod declarations ((clause repeat-clause))
+  `((cl:type real ,(form-value-var clause))
+    (cl:type (integer 0) ,(var-spec clause))))
