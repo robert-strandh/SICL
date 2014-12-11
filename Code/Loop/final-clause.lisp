@@ -40,3 +40,10 @@
 	       'compound+))
 
 (add-clause-parser 'final-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute epilogue.
+
+(defmethod epilogue ((clause final-clause))
+  (form clause))
