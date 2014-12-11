@@ -21,12 +21,12 @@
    ;; UPFROM, or DOWNFROM, or 0 if none of these LOOP keywords was
    ;; given.
    (%start-form :initform 0 :initarg :start-form :reader start-form)
-   (%start-var :initform (gensym) :reader :start-var)
+   (%start-var :initform (gensym) :reader start-var)
    ;; The form that was after one of the LOOP keywords TO, UPTO,
    ;; DOWNTO, BELOW, or ABOVE, or NIL if none of these LOOP keywords
    ;; was given.
    (%end-form :initform nil :initarg :end-form :reader end-form)
-   (%end-var :initform (gensym) :reader :end-var)
+   (%end-var :initform (gensym) :reader end-var)
    ;; The form that was after the LOOP keyword BY, or 0 if this
    ;; keyword was not given.
    (%by-form :initform 1 :initarg :by-form :reader by-form)
