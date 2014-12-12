@@ -344,6 +344,19 @@
   (declare (ignore successors))
   `(return (apply #'values ,(first inputs))))
 
+;;; When the FUNCALL-INSTRUCTION is the last instruction of a basic
+;;; block, it is because there is a call to a function that will never
+;;; return, such as ERROR, and the instruction then has no successors
+;;; (which is why it is at the end of the basic block).
+;;;
+;;; We therefore must provide a method on TRANSLATE-BRANCH-INSTRUCTION
+;;; (in addition to the method on TRANSLATE-SIMPLE-INSTRUCTION)
+;;; specialized to FUNCALL-INSTRUCTION.
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:funcall-instruction) inputs outputs successors)
+  (declare (ignore outputs successors))
+  `(funcall ,(first inputs) ,@(rest inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Main entry point.
