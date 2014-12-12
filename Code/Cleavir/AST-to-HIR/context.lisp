@@ -28,11 +28,8 @@
 ;;; VALUES-LOCATION, which means that ALL values are required and
 ;;; should be stored in that location.
 ;;;
-;;; 3. INVOCATION, an ENTER-INSTRUCTION or NIL.  When it is an
-;;; ENTER-INSTRUCTION, it indicates the function to which the code to
-;;; be compiled belongs. When it is NIL, it means that the initial
-;;; instruction was not an ENTER-INSTRUCTION and the code belongs to
-;;; the top-level evaluation context.
+;;; 3. INVOCATION, alway an ENTER-INSTRUCTION.  It indicates the
+;;; function to which the code to be compiled belongs.
 ;;;
 ;;; The following combinations of SUCCESSORS and RESULTS can occur:
 ;;;
@@ -84,8 +81,7 @@
     (error "illegal successors: ~s" successors))
   (when (and (= (length successors) 2) (not (null results)))
     (error "Illegal combination of results and successors"))
-  (unless (or (null invocation)
-	      (typep invocation 'cleavir-ir:enter-instruction))
+  (unless (typep invocation 'cleavir-ir:enter-instruction)
     (error "Illegal invocation"))
   (make-instance 'context
     :results results
