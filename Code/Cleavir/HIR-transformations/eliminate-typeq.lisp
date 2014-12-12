@@ -31,7 +31,7 @@
 	 (type-descriptor-constant (cleavir-ir:make-constant-input type))
 	 (boolean-value (cleavir-ir:new-temporary))
 	 (call (cleavir-ir:make-funcall-instruction
-		(list fdefinition object type-descriptor-constant)
+		(list typep-function object type-descriptor-constant)
 		(list boolean-value)))
 	 (nil-constant (cleavir-ir:make-constant-input 'nil)))
     (cleavir-ir:insert-instruction-before fdefinition instruction)
