@@ -472,7 +472,7 @@
     (cleavir-ir:make-typeq-instruction
      var
      (list error-branch successor)
-     type-input)))
+     type-specifier)))
 
 (defmethod compile-ast ((ast cleavir-ast:the-ast) context)
   (with-accessors ((results results)
