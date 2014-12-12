@@ -37,7 +37,8 @@
 	(cleavir-env:identity info)
 	;; Otherwise, we are not sure whether the type is equivalent
 	;; to T, so we wrap it.
-	(cleavir-ast:make-the-ast (cleavir-env:identity info) type))))
+	(cleavir-ast:make-the-ast (cleavir-env:identity info)
+				  (list type)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
