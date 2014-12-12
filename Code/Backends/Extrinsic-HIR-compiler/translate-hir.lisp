@@ -84,8 +84,7 @@
 			 last input-vars output-vars successor-tags)))))))
 
 (defun layout-procedure (initial-instruction)
-  (let* ((function-p (typep initial-instruction 'cleavir-ir:enter-instruction))
-	 (basic-blocks (remove (if function-p initial-instruction nil)
+  (let* ((basic-blocks (remove initial-instruction
 			       *basic-blocks*
 			       :test-not #'eq :key #'third))
 	 (first (find initial-instruction basic-blocks
@@ -101,21 +100,16 @@
 		 ,@(loop for basic-block in rest
 			 collect (gethash (first basic-block) *tags*)
 			 append (layout-basic-block basic-block))))
-	  (owned-vars (compute-owned-variables
-		       (if function-p initial-instruction nil))))
-      (if function-p
-	  `(lambda (&rest args)
-	     (block nil
-	       (let ,owned-vars
-		 ,(build-argument-parsing-code
-		   (translate-lambda-list
-		    (cleavir-ir:lambda-list initial-instruction))
-		   'args
-		   '(funcall fdefinition 'cl:error))
-		 ,tagbody)))
-	  `(block nil
-	     (let ,owned-vars
-	       ,tagbody))))))
+	  (owned-vars (compute-owned-variables initial-instruction)))
+      `(lambda (&rest args)
+	 (block nil
+	   (let ,owned-vars
+	     ,(build-argument-parsing-code
+	       (translate-lambda-list
+		(cleavir-ir:lambda-list initial-instruction))
+	       'args
+	       '(funcall fdefinition 'cl:error))
+	     ,tagbody))))))
 
 (defun translate (initial-instruction)
   (let ((*ownerships*
