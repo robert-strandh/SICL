@@ -720,12 +720,19 @@
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq)))
-    (let* ((values (cleavir-ir:make-values-location))
-	   (return (cleavir-ir:make-return-instruction (list values))))
-      (set-predecessors
-       (cleavir-ir:make-enter-instruction
-	'()
-	(compile-ast ast (context values (list return) nil)))))))
+    (let* (;; We must create the ENTER-INSTRUCTION first because it must
+	   ;; become the INVOCATION of the context for compiling the AST.
+	   (enter (cleavir-ir:make-enter-instruction '()))
+	   (values (cleavir-ir:make-values-location))
+	   (return (cleavir-ir:make-return-instruction (list values)))
+	   (result (compile-ast ast (context values (list return) enter))))
+      ;; Now we must set the successors of the ENTER-INSTRUCTION to a
+      ;; list of the result of compiling the AST.
+      (reinitialize-instance enter :successors (list result))
+      ;; Make sure the list of predecessors of each instruction is
+      ;; initialized correctly.
+      (set-predecessors enter)
+      enter)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
