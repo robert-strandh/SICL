@@ -434,7 +434,7 @@
   (:type-specifiers type-specifiers))
 
 (defmethod children ((ast the-ast))
-  (list* (form-ast ast) (type-specifiers ast)))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
