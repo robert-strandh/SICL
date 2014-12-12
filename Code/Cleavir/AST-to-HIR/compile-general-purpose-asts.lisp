@@ -723,7 +723,9 @@
     (let* ((values (cleavir-ir:make-values-location))
 	   (return (cleavir-ir:make-return-instruction (list values))))
       (set-predecessors
-       (compile-ast ast (context values (list return) nil))))))
+       (cleavir-ir:make-enter-instruction
+	'()
+	(compile-ast ast (context values (list return) nil)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
