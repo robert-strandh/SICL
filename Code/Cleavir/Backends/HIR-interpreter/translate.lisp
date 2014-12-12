@@ -69,8 +69,7 @@
 			 last input-vars output-vars successor-tags)))))))
 
 (defun layout-procedure (initial-instruction)
-  (let* ((function-p (typep initial-instruction 'cleavir-ir:enter-instruction))
-	 (basic-blocks (remove (if function-p initial-instruction nil)
+  (let* ((basic-blocks (remove initial-instruction
 			       *basic-blocks*
 			       :test-not #'eq :key #'third))
 	 (first (find initial-instruction basic-blocks
@@ -86,12 +85,9 @@
 		   when (and (typep var '(or
 					  cleavir-ir:lexical-location
 					  cleavir-ir:values-location))
-			     (eq owner (if function-p
-					   initial-instruction
-					   nil))
-			     (not (and function-p
-				       (member var (cleavir-ir:outputs
-						    initial-instruction)))))
+			     (eq owner initial-instruction)
+			     (not (member var (cleavir-ir:outputs
+					       initial-instruction))))
 		     collect (translate-datum var))
 	 (tagbody
 	    ,@(layout-basic-block first)
