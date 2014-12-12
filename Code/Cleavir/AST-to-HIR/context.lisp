@@ -28,7 +28,7 @@
 ;;; VALUES-LOCATION, which means that ALL values are required and
 ;;; should be stored in that location.
 ;;;
-;;; 3. INVOCATION, alway an ENTER-INSTRUCTION.  It indicates the
+;;; 3. INVOCATION, always an ENTER-INSTRUCTION.  It indicates the
 ;;; function to which the code to be compiled belongs.
 ;;;
 ;;; The following combinations of SUCCESSORS and RESULTS can occur:
@@ -58,7 +58,7 @@
 ;;;   is compiled in a context like this.
 ;;;
 ;;;   SUCCESSORS has more than two elements.  This possibility is
-;;;   currently not used.  It is mean to be used for forms like CASE,
+;;;   currently not used.  It is meant to be used for forms like CASE,
 ;;;   TYPECASE, etc.  Again, the RESULTS would be the empty list.
 
 (defclass context ()
