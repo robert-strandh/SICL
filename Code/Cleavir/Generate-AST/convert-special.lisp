@@ -271,7 +271,7 @@
 	  (cleavir-ast:make-progn-ast
 	   (append init-asts
 		   (list (process-remaining-let-bindings
-			  (pairlis variables temp-asts)
+			  (mapcar #'cons variables temp-asts)
 			  idspecs
 			  rdspecs
 			  forms
