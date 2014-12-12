@@ -331,7 +331,7 @@
 	    (itemize-declaration-specifiers
 	     (mapcar #'list variables)
 	     canonical-dspecs)
-	  (process-remaining-let*-bindings (pairlis variables init-forms)
+	  (process-remaining-let*-bindings (mapcar #'cons variables init-forms)
 					   idspecs
 					   rdspecs
 					   forms
