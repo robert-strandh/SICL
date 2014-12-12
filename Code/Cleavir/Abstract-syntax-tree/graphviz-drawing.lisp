@@ -104,6 +104,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Drawing a THE-AST.
+
+(defmethod stream-draw-ast ((ast the-ast) stream)
+  (format stream "   ~a [label = \"the ~s\"];~%"
+	  (id ast)
+	  (cleavir-ast:type-specifiers ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Labels for unspecialized array ASTs
 
 (deflabel t-aref-ast "t aref")
