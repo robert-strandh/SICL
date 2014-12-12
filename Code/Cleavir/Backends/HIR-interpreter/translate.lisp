@@ -283,8 +283,8 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
   `(if (typep ,(first inputs) ',(cleavir-ir:value-type instruction))
-       (go ,(first successors))
-       (go ,(second successors))))
+       (go ,(second successors))
+       (go ,(first successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnum-add-instruction) inputs outputs successors)
