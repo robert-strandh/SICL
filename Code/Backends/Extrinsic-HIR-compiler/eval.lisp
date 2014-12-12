@@ -18,7 +18,7 @@
        `(lambda ()
 	  (let ((fdefinition *fdefinition*))
 	    (declare (ignorable fdefinition))
-	    (lambda () ,(translate hir)))))))))
+	    ,(translate hir))))))))
 
 (defmethod cleavir-env:eval (form environment1 (environment2 environment))
   (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
@@ -31,4 +31,4 @@
        `(lambda ()
 	  (let ((fdefinition *fdefinition*))
 	    (declare (ignorable fdefinition))
-	    (lambda () ,(translate hir)))))))))
+	    ,(translate hir))))))))
