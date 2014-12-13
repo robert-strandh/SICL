@@ -54,7 +54,7 @@ verify this hypothesis:
         (t (recursive-find x (cdr list)))))
 \end{verbatim}
 
-On \sbcl{} executing this function on a list with $4000$ elements
+On \sbcl{} executing this function on a list with $40000$ elements
 where the last element is the only one satisfying the test is slightly
 faster than an explicit loop from the beginning of the list, and
 around $4$ times as fast as calling \texttt{find}.%
