@@ -20,5 +20,21 @@ the test has no side effects and cannot fail, as is the case of
 functions such as \texttt{eq} or \texttt{eql}, testing from the
 beginning is arguably conforming behavior.
 
+Processing list elements from the beginning to the end could, however,
+have a significant additional cost associated with it when processing
+from the end would require fewer executions of the test function, and
+the additional cost increases with the complexity of the test.
+
+The premise of this paper is that the programmer who supplies a true
+value to the keyword argument \texttt{:from-end} has an inkling that
+it would be more efficient to process the elements from the end, even
+when the standard explicitly allows the implementation to violate that
+processing order.  At the very least, a programmer that supplies a
+true value would have to take into account that at least \emph{some}
+implementation may \emph{actually} process the elements from the end.
+Therefore, it is likely that the programmer who definitely does not
+want elements to be processed form the end, either does not supply a
+true value, or would write a special-case version of the sequence
+function in question.
 
 %%  LocalWords:  startup runtime
