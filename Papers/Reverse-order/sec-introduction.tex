@@ -1,5 +1,24 @@
 \section{Introduction}
 
-\commonlisp{} ...
+The \commonlisp{} \emph{sequence} functions are defined to work on
+lists as well as vectors.  Furthermore, many of these sequence
+functions accept a keyword argument \texttt{from-end} that alters the
+behavior in that elements toward the end of the sequence are favored
+over elements toward the beginning of the sequence.
+
+Most sequence functions are not required to process the elements from
+the end of the sequence.  For example, it is allowed for \texttt{find}
+to compare elements from the beginning of the sequence and return the
+\emph{last} element that \emph{satisfies the test}%
+\footnote{The phrase \emph{satisfy the test} has a precise meaning in
+  the \commonlisp{} standard as shown in section 17.2 in that
+  document.}
+even if the test has side effects.  There is one exception this
+requirement, however:  The \texttt{count} function is required by the
+standard to test the elements from the end of the sequence.  Though if
+the test has no side effects and cannot fail, as is the case of
+functions such as \texttt{eq} or \texttt{eql}, testing from the
+beginning is arguably conforming behavior.
+
 
 %%  LocalWords:  startup runtime
