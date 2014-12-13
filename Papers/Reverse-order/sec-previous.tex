@@ -1,1 +1,18 @@
 \section{Previous work}
+
+We will frequently refer to techniques used by \sbcl{} because of its
+reputation as a high-performance implementation.  We will however also
+use other high-performance implementations for comparison when we have
+information on the techniques used by those implementations, or when
+we can reasonably guess these techniques from other evidence.
+
+For its implementation of \texttt{find}, \sbcl{} takes advantage of
+the freedom given by the standard, by processing elements from the
+beginning, and remembering the last element that satisfies the test.
+For implementations where the technique is unknown, it suffices to
+write a test function that counts the number of times it is invoked
+and run it on a list where only the last element satisfies the test.
+
+For its implementation of \texttt{count}, \sbcl{} uses the simple
+technique of reversing the list first and then processing the elements
+of the reversed list from the beginning.
