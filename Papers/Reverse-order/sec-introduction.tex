@@ -78,4 +78,18 @@ modern processors.  For that reason, we will use recursion as the
 basis of the technique described in this paper, but with fairly few
 recursive calls so that the additional extra space is modest.
 
+Throughout this paper, we assume that the lists to be processed have a
+large number of elements, for several reasons:
+
+\begin{itemize}
+\item We do not want the list to be small enough to fit in the cache,
+  because cache performance depends on other workload as well.
+\item For short lists, performance may be dominated by the overhead of
+  calling a few functions, or by loop prologues and epilogues.  By
+  using long lists, we make sure that performance is dominated by
+  traversing the list and computing the test.
+\item We need for the list to have orders of magnitude more elements
+  than can be processed by a simple recursive technique.
+\end{itemize}
+
 %%  LocalWords:  startup runtime allocator
