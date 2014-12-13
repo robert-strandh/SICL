@@ -37,4 +37,40 @@ want elements to be processed form the end, either does not supply a
 true value, or would write a special-case version of the sequence
 function in question.
 
-%%  LocalWords:  startup runtime
+For the remainder of this paper, we therefore assume that when a true
+value was supplied to the keyword argument \texttt{:from-end}, then
+the elements should be processed from the end, unless the following
+criteria simultaneously hold:
+
+\begin{itemize}
+\item The test is side-effect free
+\item The test can not fail (which excludes functions such as numeric
+  comparison).
+\item Processing from the beginning is guaranteed to be less costly in
+  terms of performance.
+\end{itemize}
+
+There are of course some very simple methods for processing elements
+from the end of a list.
+
+One such method would be to start by reversing the list%
+\footnote{By \emph{reversing the list} we do not mean modifying the
+  list as \texttt{nreverse} would do, but creating a new list with the
+  elements in reverse order as \texttt{reverse} would do.  The reason
+  for excluding modifications to the list is that doing so might
+  influence the semantics of other functions, including perhaps the
+  test function or the view of the list by other threads.}
+and processing the elements from the beginning in the reversed list.
+We consider such a solution unacceptable, because of the $O(n)$
+additional space required, and the additional execution time required
+by the memory allocator and the garbage collector.
+
+Another simple method would be to traverse the list \emph{recursively}
+and testing the elements during the \emph{backtracking} phase of the
+recursion.  Again, $O(n)$ extra space is required, even though this
+time the memory allocator and the garbage collector are not solicited,
+at least in most implementations.  Worse, many implementations have a
+fairly small call stack, especially in multi-threaded implementations
+where each thread must have a dedicated stack.
+
+%%  LocalWords:  startup runtime allocator
