@@ -1,3 +1,17 @@
 \section{Our technique}
 
-Our method consists of...
+To illustrate our technique, we first show a very simple version of it
+in the form of the following code:
+
+{\small\begin{verbatim}
+(defun find-from-end (x list)
+  (labels ((aux (x list n)
+             (if (= n 1)
+                 (when (eq x (car list))
+                   (return-from find-from-end x))
+                 (let* ((n/2 (ash n -1))
+                        (half (nthcdr n/2 list)))
+                   (aux x half (- n n/2))
+                   (aux x list n/2)))))
+    (aux x list (length list))))))
+\end{verbatim}}
