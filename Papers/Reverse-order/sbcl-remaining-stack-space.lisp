@@ -1,3 +1,3 @@
 (defun remaining-stack-space ()
-  (- (/ (sb-sys:sap-int (sb-kernel:control-stack-pointer-sap)) 2)
-     sb-vm:*control-stack-start*))
+  (- sb-vm:*control-stack-end* sb-vm:*control-stack-start*
+     (sb-kernel::control-stack-usage)))
