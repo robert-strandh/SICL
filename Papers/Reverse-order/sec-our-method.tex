@@ -44,8 +44,8 @@ case), each \texttt{cons} cell is processed twice; once to compute the
 length of the list, and once again as part of the recursive traversal.
 When the item to be found is the \emph{first} element of the list
 (worst case), the number of \texttt{cdr} operations can be
-approximately expressed as $n\thinspace (1 + {1 \over
-  2}\mathsf{lb}\thinspace n)$.
+approximately expressed as $n\thinspace (1 +
+\frac{1}{2}\mathsf{lb}\thinspace n)$.
 
 The best case for this function is very efficient indeed.%
 \FIXME{Add a table comparing execution times}
@@ -79,3 +79,14 @@ multiple list traversals required by the basic technique.
                      (aux x list n/2)))))
       (aux x list (length list)))))
 \end{verbatim}}
+
+\subsection{Other improvements}
+
+Excluding the initial traversal of the list in order to compute the
+length, the number of \texttt{cdr} operations of the basic technique
+can be expressed with this recursive equation:%
+\FIXME{Add the base case.}
+
+$$f(n) = \left\lfloor\frac{n}{2}\right\rfloor
++ f(\left\lfloor\frac{n}{2}\right\rfloor)4.
++ f(\left\lceil\frac{n}{2}\right\rceil)$$
