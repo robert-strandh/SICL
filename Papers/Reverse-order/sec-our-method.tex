@@ -1,5 +1,7 @@
 \section{Our technique}
 
+\subsection{Basic technique}
+
 To illustrate our technique, we first show a very simple version of it
 in the form of the following code:
 
@@ -50,3 +52,30 @@ The best case for this function is very efficient indeed.%
 The worst case is unacceptably slow.  Even for a list of some
 reasonable length such as a million elements, the execution time is a
 factor $20$ slower than for the best case.
+
+The remainder of this section is dedicated to ways of improving on the
+worst-case performance of the basic technique.
+
+\subsection{Using more stack space}
+
+By far the most important improvement to the basic technique is to
+take advantage of the available stack space to decrease the number of
+multiple list traversals required by the basic technique.
+
+{\small\begin{verbatim}
+(defun find-2 (x list)
+  (labels ((recursive (x list n)
+             (if (zerop n)
+                 nil
+                 (progn (recursive x (cdr list) (1- n))
+                        (when (eq x (car list))
+                          (return-from find-2 x))))))
+    (labels ((aux (x list n)
+               (if (< n 10000)
+                   (recursive x list n)
+                   (let* ((n/2 (ash n -1))
+                          (half (nthcdr n/2 list)))
+                     (aux x half (- n n/2))
+                     (aux x list n/2)))))
+      (aux x list (length list)))))
+\end{verbatim}}
