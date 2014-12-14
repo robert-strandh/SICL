@@ -1,5 +1,8 @@
 (defun find-from-end (x list)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (declare (type list list))
   (labels ((aux (x list n)
+	     (declare (type fixnum n))
 	     (if (= n 1)
 		 (when (eq x (car list))
 		   (return-from find-from-end x))
