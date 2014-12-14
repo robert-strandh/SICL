@@ -28,3 +28,25 @@ a single element in it.  Then this element is compared to the argument
   exact nature of the test is unimportant for illustrating our general
   technique.}
 then the element is returned form the function.
+
+The main feature of our technique is that it trades fewer recursive
+calls for multiple traversals of the list.  The maximum number% of
+simultaneous active invocations of this simple function is around
+$\mathsf{lb}\thinspace n$, where $n$ is the length of the list.  The
+maximum value of this number is quite modest.  On a 64-bit processor,
+it can never exceed $60$ and it is significantly smaller in practice
+of course.  The number of times this function computes the
+\texttt{cdr} of a list depends on where in the list the item to be
+found is located.  If it is the \emph{last} element of the list (best
+case), each \texttt{cons} cell is processed twice; once to compute the
+length of the list, and once again as part of the recursive traversal.
+When the item to be found is the \emph{first} element of the list
+(worst case), the number of \texttt{cdr} operations can be
+approximately expressed as $n\thinspace (1 + {1 \over
+  2}\mathsf{lb}\thinspace n)$.
+
+The best case for this function is very efficient indeed.%
+\FIXME{Add a table comparing execution times}
+The worst case is unacceptably slow.  Even for a list of some
+reasonable length such as a million elements, the execution time is a
+factor $20$ slower than for the best case.
