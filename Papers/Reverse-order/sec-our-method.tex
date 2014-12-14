@@ -15,3 +15,16 @@ in the form of the following code:
                    (aux x list n/2)))))
     (aux x list (length list))))))
 \end{verbatim}}
+
+This function starts by computing the length of the list and then
+calling the auxiliary function with the original arguments and the
+length.  The auxiliary function calls \texttt{nthcdr} in order to get
+a reference to about half the list it was passed.  Then it makes two
+recursive calls, first with the second half of the list and then with
+the firs half of the list.  The recursion terminates when the list has
+a single element in it.  Then this element is compared to the argument
+\texttt{x} and if they are the same,%
+\footnote{We use \texttt{eq} for the comparison here, because the
+  exact nature of the test is unimportant for illustrating our general
+  technique.}
+then the element is returned form the function.
