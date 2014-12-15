@@ -11,5 +11,5 @@
    (:file "type-inference")
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
-   (:file "segregate-lexicals")))
-
+   (:file "segregate-lexicals")
+   (:file "hir-transformations")))
