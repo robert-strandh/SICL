@@ -214,3 +214,39 @@
 				    (find-class 'cleavir-ir:lexical-location))
 			    (process-lexical datum nesting-depth))))))
       (traverse initial-instruction))))
+
+(defun find-imports (initial-instruction)
+  (let ((ownerships (compute-ownerships initial-instruction))
+	(table (make-hash-table :test #'eq)))
+    (flet ((process-datum (procedure-enter-instruction datum)
+	     (when (and (typep datum 'cleavir-ir:static-lexical-location)
+			(not (eq (gethash datum ownerships)
+				 procedure-enter-instruction)))
+	       (pushnew datum (cleavir-ir:imports procedure-enter-instruction)
+			:test #'eq))))
+      (labels ((traverse (procedure-enter-instruction instruction)
+		 (unless (gethash instruction table)
+		   (setf (gethash instruction table) t)
+		   (loop for datum in (cleavir-ir:inputs instruction)
+			 do (process-datum procedure-enter-instruction datum))
+		   (loop for datum in (cleavir-ir:outputs instruction)
+			 do (process-datum procedure-enter-instruction datum))
+		   (let ((successors (cleavir-ir:successors instruction)))
+		     (cond ((typep instruction 'cleavir-ir:unwind-instruction)
+			    (traverse (cleavir-ir:invocation instruction)
+				      (first successors)))
+			   ((typep instruction 'cleavir-ir:enclose-instruction)
+			    (let ((code (cleavir-ir:code instruction)))
+			      (loop for import in (cleavir-ir:imports code)
+				    do (process-datum
+					procedure-enter-instruction
+					import))
+			      (loop for successor in successors
+				    do (traverse procedure-enter-instruction
+						 successor))
+			      (traverse code code)))
+			   (t
+			    (loop for successor in successors
+				  do (traverse procedure-enter-instruction
+					       successor))))))))
+	(traverse initial-instruction initial-instruction)))))
