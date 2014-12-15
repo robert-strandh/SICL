@@ -251,35 +251,46 @@
 					       successor))))))))
 	(traverse initial-instruction initial-instruction)))))
 
-;;; For a particular ENTER-INSTRUCTION, create a list of pairs (an
-;;; association list) where the CAR of each CONS cell is a
-;;; STATIC-LEXICAL-LOCATION and the CDR is a DYNAMIC-LEXICAL-LOCATION.
-;;; The meaning of a pair of the list is that the CELL that holds the
-;;; value of the STATIC-LEXICAL-LOCATION is value of the
-;;; DYNAMIC-LEXICAL-LOCATION.  The static lexical locations in the
-;;; list are those that are used by the instructions owned by the
-;;; corresponding ENTER-INSTRUCTION.  The dynamic lexical locations
-;;; are freshly created by this function.
+;;; Create a "static map" for each ENTER-INSTRUCTION in a program.  A
+;;; static map is a list of pairs (an association list) where the CAR
+;;; of each CONS cell is a STATIC-LEXICAL-LOCATION and the CDR is a
+;;; DYNAMIC-LEXICAL-LOCATION.  The meaning of a pair of the list is
+;;; that the CELL that holds the value of the STATIC-LEXICAL-LOCATION
+;;; is value of the DYNAMIC-LEXICAL-LOCATION.  The static lexical
+;;; locations in the list are those that are used by the instructions
+;;; owned by the corresponding ENTER-INSTRUCTION.  The dynamic lexical
+;;; locations are freshly created by this function.
+;;;
+;;; The return value is an EQ hash table with the ENTER-INSTRUCTIONS
+;;; as keys, and the associated hash value is the static map.
 (defun create-static-map (enter-instruction)
   (let ((table (make-hash-table :test #'eq))
-	(result '()))
-    (flet ((process-datum (datum)
+	(result (make-hash-table :test #'eq)))
+    (flet ((process-datum (owner datum)
 	     (when (and (typep datum 'cleavir-ir:static-lexical-location)
-			(not (member datum result :test #'eq :key #'car)))
+			(not (member datum (gethash owner result)
+				     :test #'eq :key #'car)))
 	       (let* ((name (cleavir-ir:name datum))
 		      (var (cleavir-ir:make-dynamic-lexical-location name)))
-		 (push (cons datum var) result)))))
-      (loop for import in (cleavir-ir:imports enter-instruction)
-	    do (process-datum import))
-      (labels ((traverse (instruction)
+		 (push (cons datum var)
+		       (gethash owner result))))))
+      (labels ((traverse (owner instruction)
 		 (unless (gethash instruction table)
 		   (setf (gethash instruction table) t)
 		   (loop for datum in (cleavir-ir:inputs instruction)
-			 do (process-datum datum))
+			 do (process-datum owner datum))
 		   (loop for datum in (cleavir-ir:outputs instruction)
-			 do (process-datum datum))
-		   (unless (typep instruction 'cleavir-ir:unwind-instruction)
-		     (loop for successor in (cleavir-ir:successors instruction)
-			   do (traverse successor))))))
-	(traverse enter-instruction)))))
-		 
+			 do (process-datum owner datum))
+		   (let ((successors (cleavir-ir:successors instruction)))
+		     (cond ((typep instruction 'cleavir-ir:unwind-instruction)
+			    (traverse (cleavir-ir:invocation instruction)
+				      (first successors)))
+			   ((typep instruction 'cleavir-ir:enclose-instruction)
+			    (traverse (cleavir-ir:invocation instruction)
+				      (first successors))
+			    (let ((code (cleavir-ir:code instruction)))
+			      (traverse code code)))
+			   (t
+			    (loop for successor in successors
+				  do (traverse owner successor))))))))
+	(traverse enter-instruction enter-instruction)))))
