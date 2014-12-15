@@ -250,3 +250,36 @@
 				  do (traverse procedure-enter-instruction
 					       successor))))))))
 	(traverse initial-instruction initial-instruction)))))
+
+;;; For a particular ENTER-INSTRUCTION, create a list of pairs (an
+;;; association list) where the CAR of each CONS cell is a
+;;; STATIC-LEXICAL-LOCATION and the CDR is a DYNAMIC-LEXICAL-LOCATION.
+;;; The meaning of a pair of the list is that the CELL that holds the
+;;; value of the STATIC-LEXICAL-LOCATION is value of the
+;;; DYNAMIC-LEXICAL-LOCATION.  The static lexical locations in the
+;;; list are those that are used by the instructions owned by the
+;;; corresponding ENTER-INSTRUCTION.  The dynamic lexical locations
+;;; are freshly created by this function.
+(defun create-static-map (enter-instruction)
+  (let ((table (make-hash-table :test #'eq))
+	(result '()))
+    (flet ((process-datum (datum)
+	     (when (and (typep datum 'cleavir-ir:static-lexical-location)
+			(not (member datum result :test #'eq :key #'car)))
+	       (let* ((name (cleavir-ir:name datum))
+		      (var (cleavir-ir:make-dynamic-lexical-location name)))
+		 (push (cons datum var) result)))))
+      (loop for import in (cleavir-ir:imports enter-instruction)
+	    do (process-datum import))
+      (labels ((traverse (instruction)
+		 (unless (gethash instruction table)
+		   (setf (gethash instruction table) t)
+		   (loop for datum in (cleavir-ir:inputs instruction)
+			 do (process-datum datum))
+		   (loop for datum in (cleavir-ir:outputs instruction)
+			 do (process-datum datum))
+		   (unless (typep instruction 'cleavir-ir:unwind-instruction)
+		     (loop for successor in (cleavir-ir:successors instruction)
+			   do (traverse successor))))))
+	(traverse enter-instruction)))))
+		 
