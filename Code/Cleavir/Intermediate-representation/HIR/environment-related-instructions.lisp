@@ -28,6 +28,29 @@
     :outputs (list output)
     :successors (if (null successor) nil (list successor))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction READ-CELL-INSTRUCTION.
+;;;
+;;; Since the structure of a CELL holding the value of a closed-over
+;;; variable is unspecified, we use this instruction to obtain the
+;;; value held in such a CELL.
+;;;
+;;; This instruction takes a single input, namely a dynamic lexical
+;;; location holding the cell to be read from.  This instruction has a
+;;; single output, namely a dynamic lexical location to hold the value
+;;; of the variable.
+
+(defclass read-cell-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-read-cell-instruction (input output &optional successor)
+  (make-instance 'read-cell-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (if (null successor) nil (list successor))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction ADD-ACTIVATION-RECORD-INSTRUCTION.
