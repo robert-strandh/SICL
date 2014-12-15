@@ -361,6 +361,8 @@
 
 (defmethod label ((instruction fetch-instruction)) "Fetch")
 
+(defmethod label ((instruction read-cell-instruction)) "Read cell")
+
 (defmethod label ((instruction add-activation-record-instruction)) "AddAR")
 
 (defmethod label ((instruction remove-activation-record-instruction)) "RemAR")
