@@ -7,4 +7,8 @@
 ;;;; customize type inference for each implementation, and propose
 ;;;; helpful defaults.
 
+(defun type-inference (initial-instruction)
+  (declare (ignore initial-instruction))
+  nil)
+
 ;;  LocalWords:  inlining
