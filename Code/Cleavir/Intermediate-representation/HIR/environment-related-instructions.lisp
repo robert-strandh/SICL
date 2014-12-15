@@ -2,6 +2,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction FETCH-INSTRUCTION.
+;;;
+;;; This instruction is used when the static environment is
+;;; represented as a single vector containing an entry for each
+;;; closed-over variable.  Such an entry is either a CELL (with
+;;; unspecified representation) if the corresponding variable is
+;;; modified, or the entry can be the variable itself if it is not
+;;; modified.
+;;;
+;;; This instruction takes two inputs.  The first input is a dynamic
+;;; lexical location that holds the static environment.  The second
+;;; input is an immediate input containing a non-negative integer and
+;;; which serves ad an index into the static environment.  This
+;;; instruction has a single output, which is a dynamic lexical
+;;; location.
+
+(defclass fetch-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-fetch-instruction
+    (env-input index-input output &optional successor)
+  (make-instance 'fetch-instruction
+    :inputs (list env-input index-input)
+    :outputs (list output)
+    :successors (if (null successor) nil (list successor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction ADD-ACTIVATION-RECORD-INSTRUCTION.
 ;;;
 ;;; The purpose of this instruction is to add an activation record on
