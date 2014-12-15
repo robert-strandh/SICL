@@ -2,4 +2,5 @@
 
 (defun hir-transformations (initial-instruction)
   (type-inference initial-instruction)
-  (eliminate-typeq initial-instruction))
+  (eliminate-typeq initial-instruction)
+  (segregate-lexicals initial-instruction))
