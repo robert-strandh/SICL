@@ -53,6 +53,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction WRITE-CELL-INSTRUCTION.
+;;;
+;;; Since the structure of a CELL holding the value of a closed-over
+;;; variable is unspecified, we use this instruction to write the
+;;; value held in such a CELL.
+;;;
+;;; This instruction takes two inputs. The first input is a dynamic
+;;;  lexical location holding the cell to be written to.  The second
+;;;  input is a constant input or a dynamic lexical input holding the
+;;;  value to write to the cell.  This instruction has no outputs. 
+
+(defclass write-cell-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-write-cell-instruction (cell-input value-input &optional successor)
+  (make-instance 'write-cell-instruction
+    :inputs (list cell-input value-input)
+    :outputs '()
+    :successors (if (null successor) nil (list successor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction ADD-ACTIVATION-RECORD-INSTRUCTION.
 ;;;
 ;;; The purpose of this instruction is to add an activation record on
