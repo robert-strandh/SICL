@@ -143,6 +143,7 @@
    #:multiple-value-call-instruction #:make-multiple-value-call-instruction
    #:fetch-instruction #:make-fetch-instruction
    #:read-cell-instruction #:make-read-cell-instruction 
+   #:write-cell-instruction #:make-write-cell-instruction 
    #:add-activation-record-instruction
    #:make-add-activation-record-instruction
    #:remove-activation-record-instruction
