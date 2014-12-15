@@ -264,8 +264,7 @@
 ;;; The return value is an EQ hash table with the ENTER-INSTRUCTIONS
 ;;; as keys, and the associated hash value is the static map.
 (defun create-static-map (enter-instruction)
-  (let ((table (make-hash-table :test #'eq))
-	(result (make-hash-table :test #'eq)))
+  (let ((result (make-hash-table :test #'eq)))
     (flet ((process-datum (owner datum)
 	     (when (and (typep datum 'cleavir-ir:static-lexical-location)
 			(not (member datum (gethash owner result)
@@ -274,22 +273,9 @@
 		      (var (cleavir-ir:make-dynamic-lexical-location name)))
 		 (push (cons datum var)
 		       (gethash owner result))))))
-      (labels ((traverse (owner instruction)
-		 (unless (gethash instruction table)
-		   (setf (gethash instruction table) t)
+      (traverse enter-instruction
+		(lambda (instruction owner)
 		   (loop for datum in (cleavir-ir:inputs instruction)
 			 do (process-datum owner datum))
 		   (loop for datum in (cleavir-ir:outputs instruction)
-			 do (process-datum owner datum))
-		   (let ((successors (cleavir-ir:successors instruction)))
-		     (cond ((typep instruction 'cleavir-ir:unwind-instruction)
-			    (traverse (cleavir-ir:invocation instruction)
-				      (first successors)))
-			   ((typep instruction 'cleavir-ir:enclose-instruction)
-			    (traverse owner (first successors))
-			    (let ((code (cleavir-ir:code instruction)))
-			      (traverse code code)))
-			   (t
-			    (loop for successor in successors
-				  do (traverse owner successor))))))))
-	(traverse enter-instruction enter-instruction)))))
+			 do (process-datum owner datum)))))))
