@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-hir-transformations)
 
-(defun traverse (instruction owner function)
+(defun traverse (instruction function)
   (let ((table (make-hash-table :test #'eq)))
     (labels ((aux (instruction owner)
 	       (unless (gethash instruction table)
@@ -17,4 +17,4 @@
 			 (t
 			  (loop for successor in successors
 				do (aux successor owner))))))))
-      (aux instruction owner))))
+      (aux instruction instruction))))
