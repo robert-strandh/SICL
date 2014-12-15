@@ -49,19 +49,20 @@ verify this hypothesis:
 {\small\begin{verbatim}
 (defun recursive-find (x list)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
-  (cond ((null list) nil)
-        ((eq x (car list)) x)
-        (t (recursive-find x (cdr list)))))
+  (if (null list)
+      nil
+      (progn (recursive-find x (cdr list))
+             (when (eq (car list) x)
+               (return-from recursive-find x)))))
 \end{verbatim}}
 
-On \sbcl{} executing this function on a list with $40000$ elements
-where the last element is the only one satisfying the test is slightly
-faster than an explicit loop from the beginning of the list, and
-around $4$ times as fast as calling \texttt{find}.%
+On \sbcl{} executing this function on a list with $50000$ elements
+where no element satisfies the test takes around $4$ns per element
+compared to around $1.5$ns for an explicit loop from the beginning of
+the list, and around twice as fast as calling \texttt{find}.%
 \FIXME{There has got to be a way to convince \sbcl{} \texttt{find} to
-  run faster on this test.}
-This result indicates that we should use recursion whenever the size
-of the stack allows it, though there is of course no portable way of
-testing how much stack space is available.  However, each
-implementation might have a specific way, which would then be good
-enough.
+  run faster on this test.}  This result indicates that we should use
+recursion whenever the size of the stack allows it, though there is of
+course no portable way of testing how much stack space is available.
+However, each implementation might have a specific way, which would
+then be good enough.
