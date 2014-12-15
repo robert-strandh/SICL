@@ -363,6 +363,8 @@
 
 (defmethod label ((instruction read-cell-instruction)) "Read cell")
 
+(defmethod label ((instruction write-cell-instruction)) "Write cell")
+
 (defmethod label ((instruction add-activation-record-instruction)) "AddAR")
 
 (defmethod label ((instruction remove-activation-record-instruction)) "RemAR")
