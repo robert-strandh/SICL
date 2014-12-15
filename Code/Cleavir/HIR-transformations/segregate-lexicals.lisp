@@ -286,8 +286,7 @@
 			    (traverse (cleavir-ir:invocation instruction)
 				      (first successors)))
 			   ((typep instruction 'cleavir-ir:enclose-instruction)
-			    (traverse (cleavir-ir:invocation instruction)
-				      (first successors))
+			    (traverse owner (first successors))
 			    (let ((code (cleavir-ir:code instruction)))
 			      (traverse code code)))
 			   (t
