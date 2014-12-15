@@ -1,0 +1,20 @@
+(cl:in-package #:cleavir-hir-transformations)
+
+(defun traverse (instruction owner function)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((aux (instruction owner)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (funcall function instruction owner)
+		 (let ((successors (cleavir-ir:successors instruction)))
+		   (cond ((typep instruction 'cleavir-ir:unwind-instruction)
+			  (aux (first successors)
+			       (cleavir-ir:invocation instruction)))
+			 ((typep instruction 'cleavir-ir:enclose-instruction)
+			  (aux (first successors) owner)
+			  (let ((code (cleavir-ir:code instruction)))
+			    (aux code code)))
+			 (t
+			  (loop for successor in successors
+				do (aux successor owner))))))))
+      (aux instruction owner))))
