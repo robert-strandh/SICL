@@ -359,6 +359,8 @@
 ;;;
 ;;; Instructions related to the static runtime environment.
 
+(defmethod label ((instruction fetch-instruction)) "Fetch")
+
 (defmethod label ((instruction add-activation-record-instruction)) "AddAR")
 
 (defmethod label ((instruction remove-activation-record-instruction)) "RemAR")
