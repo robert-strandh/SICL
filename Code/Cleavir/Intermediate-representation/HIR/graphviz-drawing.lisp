@@ -68,6 +68,16 @@
   (format stream "   ~a [fillcolor = blue, label = \"V\"]~%"
 	  (datum-id datum)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Drawing datum IMMEDIATE-INPUT.
+
+(defmethod draw-datum ((datum immediate-input) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
+  (format stream "   ~a [fillcolor = aquamarine, label = \"~a\"]~%"
+	  (datum-id datum) (value datum)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing instructions.
