@@ -120,10 +120,9 @@
 (defgeneric convert-function (info))
 
 (defmethod convert-function ((info cleavir-env:global-function-info))
-  (let* ((name (cleavir-env:name info))
-	 (name-ast (cleavir-ast:make-constant-ast name)))
+  (let ((name (cleavir-env:name info)))
     (make-instance 'cleavir-ast:fdefinition-ast
-      :name-ast name-ast)))
+      :name name)))
 
 (defmethod convert-function ((info cleavir-env:local-function-info))
   (cleavir-env:identity info))

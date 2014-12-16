@@ -124,10 +124,9 @@
     (if (null compiler-macro)
 	;; There is no compiler macro.  Create a CALL-AST.
 	(let* ((name (cleavir-env:name info))
-	       (name-ast (cleavir-ast:make-constant-ast name))
 	       (function-ast
 		 (make-instance 'cleavir-ast:fdefinition-ast
-		   :name-ast name-ast))
+		   :name name))
 	       (argument-asts (convert-sequence (cdr form) env)))
 	  (cleavir-ast:make-call-ast function-ast argument-asts))
 	;; There is a compiler macro.  We must see whether it will
@@ -142,10 +141,9 @@
 	      ;; Create a CALL-AST, just as if there were no compiler
 	      ;; macro present.
 	      (let* ((name (cleavir-env:name info))
-		     (name-ast (cleavir-ast:make-constant-ast name))
 		     (function-ast
 		       (make-instance 'cleavir-ast:fdefinition-ast
-			 :name-ast name-ast))
+			 :name name))
 		     (argument-asts (convert-sequence (cdr form) env)))
 		(cleavir-ast:make-call-ast function-ast argument-asts))
 	      ;; If the two are not EQ, this means that the compiler
