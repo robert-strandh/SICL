@@ -191,10 +191,14 @@
 ;;; NAME is not an AST but just a function name. 
 
 (defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%name :initarg :name :reader name)))
+  (;; This slot contains the function name.
+   (%name :initarg :name :reader name)
+   ;; This slot contains the INFO instance that was returned form
+   ;; the environment query.
+   (%info :initarg :info :reader info)))
 
-(defun make-fdefinition-ast (name)
-  (make-instance 'fdefinition-ast :name name))
+(defun make-fdefinition-ast (name info)
+  (make-instance 'fdefinition-ast :name name :info info))
 
 (cleavir-io:define-save-info fdefinition-ast
   (:name name))
