@@ -591,10 +591,10 @@
 (defmethod compile-ast ((ast cleavir-ast:fdefinition-ast) context)
   (check-context-for-one-value-ast context)
   (let ((name (cleavir-ast:name ast))) 
-    (list (make-instance 'cleavir-ir:fdefinition-instruction
-	    :inputs (list (cleavir-ir:make-constant-input name))
-	    :outputs (results context)
-	    :successors (successors context)))))
+    (make-instance 'cleavir-ir:fdefinition-instruction
+      :inputs (list (cleavir-ir:make-constant-input name))
+      :outputs (results context)
+      :successors (successors context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
