@@ -600,16 +600,11 @@
 
 (defmethod compile-ast ((ast cleavir-ast:fdefinition-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp (make-temp)))
-    (compile-ast
-     (cleavir-ast:name-ast ast)
-     (context
-      (list temp)
-      (list (make-instance 'cleavir-ir:fdefinition-instruction
-	      :inputs (list temp)
-	      :outputs (results context)
-	      :successors (successors context)))
-      (invocation context)))))
+  (let ((name (cleavir-ast:name ast))) 
+    (list (make-instance 'cleavir-ir:fdefinition-instruction
+	    :inputs (list (cleavir-ir:make-constant-input name))
+	    :outputs (results context)
+	    :successors (successors context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -865,8 +860,7 @@
 
 (defmethod compile-ast ((ast cleavir-ast:bind-ast) context)
   (let* ((fname 'cleavir-primop:call-with-variable-bound)
-	 (fname-ast (cleavir-ast:make-constant-ast fname))
-	 (fdefinition-ast (cleavir-ast:make-fdefinition-ast fname-ast))
+	 (fdefinition-ast (cleavir-ast:make-fdefinition-ast fname))
 	 (symbol-ast (cleavir-ast:make-constant-ast (cleavir-ast:symbol ast)))
 	 (value-ast (cleavir-ast:value-ast ast))
 	 (body-ast (cleavir-ast:body-ast ast))
