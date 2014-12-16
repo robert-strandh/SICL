@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:export
    #:datum
-   #:immediate-input
+   #:immediate-input #:make-immediate-input
    #:word-input
    #:constant-input #:make-constant-input
    #:value
