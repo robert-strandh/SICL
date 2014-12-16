@@ -37,8 +37,7 @@
   (lookup-lexical ast env))
 
 (defmethod interpret-ast ((ast cleavir-ast:symbol-value-ast) env)
-  (let ((symbol (interpret-ast (cleavir-ast:symbol-ast ast) env)))
-    (symbol-value symbol)))
+  (symbol-value (cleavir-ast:symbol ast)))
 
 (defmethod interpret-ast ((ast cleavir-ast:block-ast) env)
   (let ((tag (list nil)))
