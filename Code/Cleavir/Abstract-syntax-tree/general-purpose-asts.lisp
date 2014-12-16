@@ -187,20 +187,20 @@
 ;;;
 ;;; Class FDEFINITION-AST.
 ;;;
-;;; This AST can be generated from a call to FDEFINITION or a
-;;; reference to a global function.
+;;; This AST is generated from a reference to a global function.
+;;; NAME is not an AST but just a function name. 
 
 (defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%name-ast :initarg :name-ast :reader name-ast)))
+  ((%name :initarg :name :reader name)))
 
-(defun make-fdefinition-ast (name-ast)
-  (make-instance 'fdefinition-ast :name-ast name-ast))
+(defun make-fdefinition-ast (name)
+  (make-instance 'fdefinition-ast :name name))
 
 (cleavir-io:define-save-info fdefinition-ast
-  (:name-ast name-ast))
+  (:name name))
 
 (defmethod children ((ast fdefinition-ast))
-  (list (name-ast ast)))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
