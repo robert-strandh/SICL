@@ -560,16 +560,11 @@
 
 (defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((temp (make-temp)))
-    (compile-ast
-     (cleavir-ast:symbol-ast ast)
-     (context
-      (list temp)
-      (list (make-instance 'cleavir-ir:symbol-value-instruction
-	      :inputs (list temp)
-	      :outputs (results context)
-	      :successors (successors context)))
-      (invocation context)))))
+  (let ((symbol (cleavir-ast:symbol ast)))
+    (make-instance 'cleavir-ir:symbol-value-instruction
+      :inputs (list (cleavir-ir:make-constant-input symbol))
+      :outputs (results context)
+      :successors (successors context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -577,21 +572,16 @@
 
 (defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((temp1 (make-temp))
-	(temp2 (make-temp)))
+  (let ((temp (make-temp))
+	(symbol (cleavir-ast:symbol ast)))
     (compile-ast
-     (cleavir-ast:symbol-ast ast)
+     (cleavir-ast:value-ast ast)
      (context
-      (list temp1)
-      (list (compile-ast
-	     (cleavir-ast:value-ast ast)
-	     (context
-	      (list temp2)
-	      (list (make-instance 'cleavir-ir:set-symbol-value-instruction
-		      :inputs (list temp1 temp2)
-		      :outputs ()
-		      :successors (successors context)))
-	      (invocation context))))
+      (list temp)
+      (list (make-instance 'cleavir-ir:set-symbol-value-instruction
+	      :inputs (list (cleavir-ir:make-constant-input symbol) temp)
+	      :outputs ()
+	      :successors (successors context)))
       (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
