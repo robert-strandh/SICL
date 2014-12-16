@@ -860,7 +860,8 @@
 
 (defmethod compile-ast ((ast cleavir-ast:bind-ast) context)
   (let* ((fname 'cleavir-primop:call-with-variable-bound)
-	 (fdefinition-ast (cleavir-ast:make-fdefinition-ast fname))
+	 ;; FIXME: provide something more useful for the second argument.
+	 (fdefinition-ast (cleavir-ast:make-fdefinition-ast fname nil))
 	 (symbol-ast (cleavir-ast:make-constant-ast (cleavir-ast:symbol ast)))
 	 (value-ast (cleavir-ast:value-ast ast))
 	 (body-ast (cleavir-ast:body-ast ast))
