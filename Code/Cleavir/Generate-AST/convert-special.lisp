@@ -446,7 +446,7 @@
     (cleavir-ast:make-progn-ast
      (list (cleavir-ast:make-setq-ast temp form-ast)
 	   (cleavir-ast:make-set-symbol-value-ast
-	    (cleavir-ast:make-constant-ast (cleavir-env:name info))
+	    (cleavir-env:name info)
 	    temp)
 	   temp))))
 
