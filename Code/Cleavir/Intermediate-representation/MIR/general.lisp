@@ -70,13 +70,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class IMMEDIATE-INPUT.
-
-(defclass immediate-input (datum)
-  ((%value :initarg :value :reader value)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class RAW-DATUM.
 ;;;
 ;;; This class is the base class for all raw data.  It contains a size
