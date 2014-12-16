@@ -126,7 +126,7 @@
 	(let* ((name (cleavir-env:name info))
 	       (function-ast
 		 (make-instance 'cleavir-ast:fdefinition-ast
-		   :name name))
+		   :name name :info info))
 	       (argument-asts (convert-sequence (cdr form) env)))
 	  (cleavir-ast:make-call-ast function-ast argument-asts))
 	;; There is a compiler macro.  We must see whether it will
@@ -143,7 +143,7 @@
 	      (let* ((name (cleavir-env:name info))
 		     (function-ast
 		       (make-instance 'cleavir-ast:fdefinition-ast
-			 :name name))
+			 :name name :info info))
 		     (argument-asts (convert-sequence (cdr form) env)))
 		(cleavir-ast:make-call-ast function-ast argument-asts))
 	      ;; If the two are not EQ, this means that the compiler
