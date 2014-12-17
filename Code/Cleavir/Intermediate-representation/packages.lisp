@@ -35,7 +35,7 @@
    #:symbol-value-instruction #:make-symbol-value-instruction
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
-   #:enter-instruction #:make-enter-instruction #:lambda-list #:imports
+   #:enter-instruction #:make-enter-instruction #:lambda-list
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction

@@ -13,13 +13,7 @@
 ;;; arguments.  It has a single successor.
 
 (defclass enter-instruction (instruction one-successor-mixin)
-  ((%lambda-list :initarg :lambda-list :accessor lambda-list)
-   ;; This slot is meant to contain a list of closed-over variables
-   ;; that are not owned by this ENTER-INSTRUCTION, but that are used
-   ;; by the instructions owned by this ENTER-INSTRUCTION.  We
-   ;; initialize it to the empty list and during later phases we push
-   ;; elements onto that list.
-   (%imports :initform '() :accessor imports)))
+  ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
 (defun make-enter-instruction
     (lambda-list &optional (successor nil successor-p))
