@@ -4,4 +4,4 @@
   (type-inference initial-instruction)
   (eliminate-typeq initial-instruction)
   (introduce-immediates initial-instruction implementation processor os)
-  (segregate-lexicals initial-instruction))
+  (process-captured-variables initial-instruction))
