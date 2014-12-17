@@ -49,6 +49,11 @@
 	       (keyword-parser 'in)
 	       (singleton #'identity (constantly t))))
 
+;;; Define a parser that tries the longer form first
+(define-parser for-as-in-list-parser
+  (alternative 'for-as-in-list-parser-1
+	       'for-as-in-list-parser-2))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause FOR-AS-ON-LIST.
@@ -81,3 +86,8 @@
 	       'type-spec-parser
 	       (keyword-parser 'on)
 	       (singleton #'identity (constantly t))))
+
+;;; Define a parser that tries the longer form first
+(define-parser for-as-on-list-parser
+  (alternative 'for-as-on-list-parser-1
+	       'for-as-on-list-parser-2))
