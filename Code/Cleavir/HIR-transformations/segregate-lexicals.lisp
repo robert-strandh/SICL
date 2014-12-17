@@ -216,6 +216,7 @@
 		 'cleavir-ir:dynamic-lexical-location))))))
 
 (defun process-captured-variables (initial-instruction)
+  (segregate-lexicals initial-instruction)
   (let ((owners (make-hash-table :test #'eq))
 	;; This table maps each ENTER-INSTRUCTION to a list of
 	;; imported static lexical locations that it needs.
