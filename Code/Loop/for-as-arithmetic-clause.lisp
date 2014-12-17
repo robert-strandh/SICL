@@ -681,23 +681,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination.
+;;; Compute the termination-forms.
 
-(defmethod termination ((clause for-as-arithmetic-up))
+(defmethod termination-forms ((clause for-as-arithmetic-up) end-tag)
   `(unless (,(termination-test clause)
 	    ,(var-spec clause)
 	    ,(form-value-var clause))
-     (go end)))
+     (go ,end-tag)))
 
-(defmethod termination ((clause for-as-arithmetic-down))
+(defmethod termination-forms ((clause for-as-arithmetic-down) end-tag)
   `(unless (,(termination-test clause)
 	    ,(form-value-var clause)
 	    ,(var-spec clause))
-     (go end)))
+     (go ,end-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination.
+;;; Compute the step-forms.
 
 (defmethod step ((clause for-as-arithmetic-up))
   `(incf ,(var-spec clause) ,(by-var clause)))

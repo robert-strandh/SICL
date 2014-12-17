@@ -134,10 +134,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination.
+;;; Compute the termination-forms.
 
-(defmethod termination ((clause for-as-clause))
-  `(progn ,@(mapcar #'termination (subclauses clause))))
+(defmethod termination-forms ((clause for-as-clause) end-tag)
+  `(progn ,@(mapcar (lambda (subclause)
+		      (termination-forms subclause end-tag))
+		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

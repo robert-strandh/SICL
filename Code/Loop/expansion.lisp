@@ -36,9 +36,9 @@
     (declare (ignore clause end-tag))
     '()))
 
-(defgeneric termination (clause)
-  (:method (clause)
-    (declare (ignore clause))
+(defgeneric termination-forms (clause end-tag)
+  (:method (clause end-tag)
+    (declare (ignore clause end-tag))
     '()))
 
 (defgeneric body-forms (clause end-tag)
@@ -58,24 +58,27 @@
 
 (defun expand-clauses (all-clauses)
   (let ((end-tag (gensym)))
-    (labels ((do-bindings (clauses)
-	       (if (null clauses)
-		   `(progn ,@(mapcar (lambda (clause)
-				       (prologue-forms clause end-tag))
-				     all-clauses)
-			   (tagbody
-			    start
-			      (progn ,@(mapcar #'termination all-clauses))
-			      (progn ,@(mapcar (lambda (clause)
-						 (body-forms clause end-tag))
-					       all-clauses))
-			      (progn ,@(mapcar #'step all-clauses))
-			      (go start)
-			    ,end-tag
-			      (progn ,@(mapcar #'epilogue all-clauses))))
-		   `(let* ,(bindings (car clauses))
-		      (declare ,@(declarations (car clauses)))
-		      ,(do-bindings (cdr clauses))))))
+    (labels
+	((do-bindings (clauses)
+	   (if (null clauses)
+	       `(progn ,@(mapcar (lambda (clause)
+				   (prologue-forms clause end-tag))
+				 all-clauses)
+		       (tagbody
+			start
+			  (progn ,@(mapcar (lambda (clause)
+					     (termination-forms clause end-tag))
+					   all-clauses))
+			  (progn ,@(mapcar (lambda (clause)
+					     (body-forms clause end-tag))
+					   all-clauses))
+			  (progn ,@(mapcar #'step all-clauses))
+			  (go start)
+			  ,end-tag
+			  (progn ,@(mapcar #'epilogue all-clauses))))
+	       `(let* ,(bindings (car clauses))
+		  (declare ,@(declarations (car clauses)))
+		  ,(do-bindings (cdr clauses))))))
       (do-bindings all-clauses))))
 
 (defun expand-body (loop-body)

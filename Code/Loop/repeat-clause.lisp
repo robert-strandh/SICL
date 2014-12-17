@@ -47,11 +47,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination.
+;;; Compute the termination-forms.
 
-(defmethod termination ((clause repeat-clause))
+(defmethod termination-forms ((clause repeat-clause) end-clause)
   `(unless (< ,(var-spec clause) ,(form-value-var clause))
-     (go end)))
+     (go ,end-clause)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

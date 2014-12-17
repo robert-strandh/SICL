@@ -98,11 +98,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute termination.
+;;; Compute termination-forms
 
-(defmethod termination ((clause for-as-across))
+(defmethod termination-forms ((clause for-as-across) end-tag)
   `(when (>= ,(index-var clause) ,(length-var clause))
-     (go end)))
+     (go ,end-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
