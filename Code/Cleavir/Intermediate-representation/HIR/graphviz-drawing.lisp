@@ -369,6 +369,8 @@
 ;;;
 ;;; Instructions related to the static runtime environment.
 
+(defmethod label ((instruction create-cell-instruction)) "Create cell")
+
 (defmethod label ((instruction fetch-instruction)) "Fetch")
 
 (defmethod label ((instruction read-cell-instruction)) "Read cell")
