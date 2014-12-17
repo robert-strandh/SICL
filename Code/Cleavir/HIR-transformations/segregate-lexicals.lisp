@@ -257,104 +257,114 @@
        (lambda (instruction owner)
 	 (setf (cleavir-ir:inputs instruction)
 	       (loop for input in (cleavir-ir:inputs instruction)
+		     do (when (null (gethash input owners))
+			  (setf (gethash input owners) owner))
 		     collect
 		     (if (typep input 'cleavir-ir:static-lexical-location)
-			 (if (eq (gethash input owners) owner)
-			     ;; The owner of this instruction is also
-			     ;; the owner of the captured variable.
-			     ;; This means that we already allocated a
-			     ;; dynamic lexical location for it.
-			     (let* ((location (gethash (cons owner input)
-						       cell-locations))
-				    (temp (cleavir-ir:new-temporary))
-				    (inst (cleavir-ir:make-read-cell-instruction
-					   location temp)))
-			       ;; Insert the READ-CELL instruction
-			       ;; before the current one.
-			       (cleavir-ir:insert-instruction-before
-				inst instruction)
-			       ;; Return the new input to this instruction. 
-			       temp)
-			     ;; The owner of this instruction is not
-			     ;; the owner of the captured variable.
-			     ;; We need to fetch the cell from our
-			     ;; static environment.
-			     (let ((cell-location (fetch-cell instruction
-							      owner
-							      input)))
-			     ;; We must now generate a READ-CELL
-			     ;; instruction to read the value into a
-			     ;; temporary location.
-			     (let ((temp (cleavir-ir:new-temporary)))
-			       (cleavir-ir:insert-instruction-before
-				(cleavir-ir:make-read-cell-instruction
-				 cell-location temp)
-				instruction)
-			       ;; Return the new input to this
-			       ;; instruction.
-			       temp)))
+			 (let ((input-owner (gethash input owners)))
+			   (when (null input-owner)
+			     (setf input-owner owner)
+			     (setf (gethash input owners) input-owner))
+			   (if (eq input-owner owner)
+			       ;; The owner of this instruction is also
+			       ;; the owner of the captured variable.
+			       ;; This means that we already allocated a
+			       ;; dynamic lexical location for it.
+			       (let* ((location (gethash (cons owner input)
+							 cell-locations))
+				      (temp (cleavir-ir:new-temporary))
+				      (inst (cleavir-ir:make-read-cell-instruction
+					     location temp)))
+				 ;; Insert the READ-CELL instruction
+				 ;; before the current one.
+				 (cleavir-ir:insert-instruction-before
+				  inst instruction)
+				 ;; Return the new input to this instruction. 
+				 temp)
+			       ;; The owner of this instruction is not
+			       ;; the owner of the captured variable.
+			       ;; We need to fetch the cell from our
+			       ;; static environment.
+			       (let ((cell-location (fetch-cell instruction
+								owner
+								input)))
+				 ;; We must now generate a READ-CELL
+				 ;; instruction to read the value into a
+				 ;; temporary location.
+				 (let ((temp (cleavir-ir:new-temporary)))
+				   (cleavir-ir:insert-instruction-before
+				    (cleavir-ir:make-read-cell-instruction
+				     cell-location temp)
+				    instruction)
+				   ;; Return the new input to this
+				   ;; instruction.
+				   temp))))
 			 ;; This input is not a captured variable,
 			 ;; return it unchanged
 			 input)))
-       ;; Now process the outputs of this instruction
-       (setf (cleavir-ir:outputs instruction)
-	     (loop for output in (cleavir-ir:outputs instruction)
-		   collect
-		   (if (typep output 'cleavir-ir:static-lexical-location)
-		       (if (eq (gethash output owners) owner)
-			   ;; The owner of this instruction is also
-			   ;; the owner of the captured variable.
-			   ;; Check whether we have written to it
-			   ;; before.  If we have, then we have
-			   ;; allocated a location for the
-			   ;; corresponding cell.
-			   (let ((location (gethash (cons owner output)
-						    cell-locations)))
-			     (when (null location)
-			       ;; This write is the defining write to
-			       ;; the variable, so we must allocate a
-			       ;; location for its cell.
-			       (setf location (cleavir-ir:new-temporary))
-			       (setf (gethash (cons owner output)
-					      cell-locations)
-				     location))
-			     ;; We must now change the current output
-			     ;; to a temporary dynamic lexical
-			     ;; location, and then add a WRITE-CELL
-			     ;; instruction after this one to write
-			     ;; the contents of the temporary to the
-			     ;; cell.
-			     (let ((temp (cleavir-ir:new-temporary))
-				   (succs (cleavir-ir:successors instruction)))
-			       (cleavir-ir:insert-instruction-after
-				(cleavir-ir:make-write-cell-instruction
-				 location temp (first succs))
-				instruction)
-			       ;; Finally return the temporary location.
-			       temp))
-			   ;; the owner if this instruction is not the
-			   ;; owner of the captured variable.  We need
-			   ;; to fetch the cell from our static
-			   ;; environment.
-			   (let ((cell-location (fetch-cell instruction
-							    owner
-							    output)))
-			     ;; We must now change the current output
-			     ;; to a temporary dynamic lexical
-			     ;; location, and then add a WRITE-CELL
-			     ;; instruction to write the contents of
-			     ;; that temporary location to the cell.
-			     (let ((temp (cleavir-ir:new-temporary)))
-			       (cleavir-ir:insert-instruction-after
-				(cleavir-ir:make-write-cell-instruction
-				 cell-location temp)
-				instruction)
-			       ;; Return the new input to this
-			       ;; instruction.
-			       temp)))
-		       ;; This input is not a captured variable,
-		       ;; return it unchanged.
-		       output)))))
+	 ;; Now process the outputs of this instruction
+	 (setf (cleavir-ir:outputs instruction)
+	       (loop for output in (cleavir-ir:outputs instruction)
+		     collect
+		     (if (typep output 'cleavir-ir:static-lexical-location)
+			 (let ((output-owner (gethash output owners)))
+			   (when (null output-owner)
+			     (setf output-owner owner)
+			     (setf (gethash output owners) output-owner))
+			   (if (eq output-owner owner)
+			       ;; The owner of this instruction is also
+			       ;; the owner of the captured variable.
+			       ;; Check whether we have written to it
+			       ;; before.  If we have, then we have
+			       ;; allocated a location for the
+			       ;; corresponding cell.
+			       (let ((location (gethash (cons owner output)
+							cell-locations)))
+				 (when (null location)
+				   ;; This write is the defining write to
+				   ;; the variable, so we must allocate a
+				   ;; location for its cell.
+				   (setf location (cleavir-ir:new-temporary))
+				   (setf (gethash (cons owner output)
+						  cell-locations)
+					 location))
+				 ;; We must now change the current output
+				 ;; to a temporary dynamic lexical
+				 ;; location, and then add a WRITE-CELL
+				 ;; instruction after this one to write
+				 ;; the contents of the temporary to the
+				 ;; cell.
+				 (let ((temp (cleavir-ir:new-temporary))
+				       (succs (cleavir-ir:successors instruction)))
+				   (cleavir-ir:insert-instruction-after
+				    (cleavir-ir:make-write-cell-instruction
+				     location temp (first succs))
+				    instruction)
+				   ;; Finally return the temporary location.
+				   temp))
+			       ;; the owner if this instruction is not the
+			       ;; owner of the captured variable.  We need
+			       ;; to fetch the cell from our static
+			       ;; environment.
+			       (let ((cell-location (fetch-cell instruction
+								owner
+								output)))
+				 ;; We must now change the current output
+				 ;; to a temporary dynamic lexical
+				 ;; location, and then add a WRITE-CELL
+				 ;; instruction to write the contents of
+				 ;; that temporary location to the cell.
+				 (let ((temp (cleavir-ir:new-temporary)))
+				   (cleavir-ir:insert-instruction-after
+				    (cleavir-ir:make-write-cell-instruction
+				     cell-location temp)
+				    instruction)
+				   ;; Return the new input to this
+				   ;; instruction.
+				   temp))))
+			 ;; This input is not a captured variable,
+			 ;; return it unchanged.
+			 output)))))
       ;; For each ENCLOSE-INSTRUCTION of the program, add inputs
       ;; corresponding to the cells of the captured variables that the
       ;; corresponding ENTER-INSTRUCTION imports.  We can't use the
