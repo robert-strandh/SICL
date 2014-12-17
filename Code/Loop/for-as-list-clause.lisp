@@ -117,3 +117,15 @@
 
 (defmethod declarations ((clause for-as-list))
   `((cl:type ,(type-spec clause) ,(var-spec clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination-forms.
+
+(defmethod termination-forms ((clause for-as-in-list) end-tag)
+  `(when (endp ,(var-spec clause))
+     (go ,end-tag)))
+
+(defmethod termination-forms ((clause for-as-on-list) end-tag)
+  `(when (atom ,(var-spec clause))
+     (go ,end-tag)))
