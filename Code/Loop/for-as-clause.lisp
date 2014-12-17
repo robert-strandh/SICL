@@ -140,10 +140,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the body.
+;;; Compute the body-forms.
 
-(defmethod body ((clause for-as-clause))
-  `(progn ,@(mapcar #'body (subclauses clause))))
+(defmethod body-forms ((clause for-as-clause) end-tag)
+  `(progn ,@(mapcar (lambda (subclause)
+		      (body-forms subclause end-tag))
+		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

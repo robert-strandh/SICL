@@ -81,9 +81,9 @@
 ;;;
 ;;; Compute prologue and body
 
-(defun for-as-across-prologue-or-body (clause)
+(defun for-as-across-prologue-or-body (clause end-tag)
   `(progn (when (>= ,(index-var clause) ,(length-var clause))
-	    (go end))
+	    (go ,end-tag))
 	  (let* ,(destructure-variables (temp-vars clause)
 					`(aref ,(form-var clause)
 					       ,(index-var clause)))
@@ -91,10 +91,10 @@
 			  append `(,real-var ,temp-var))))))
 
 (defmethod prologue ((clause for-as-across) end-tag)
-  (for-as-across-prologue-or-body clause))
+  (for-as-across-prologue-or-body clause end-tag))
 
-(defmethod body ((clause for-as-across))
-  (for-as-across-prologue-or-body clause))
+(defmethod body-forms ((clause for-as-across) end-tag)
+  (for-as-across-prologue-or-body clause end-tag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
