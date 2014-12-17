@@ -45,5 +45,6 @@
 ;;;
 ;;; Compute prologue.
 
-(defmethod prologue ((clause initial-clause))
+(defmethod prologue ((clause initial-clause) end-tag)
+  (declare (ignore end-tag))
   (form clause))

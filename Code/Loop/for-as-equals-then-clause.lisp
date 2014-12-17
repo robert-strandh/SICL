@@ -83,7 +83,8 @@
 ;;;
 ;;; Compute the prologue.
 
-(defmethod prologue ((clause for-as-equals-then))
+(defmethod prologue ((clause for-as-equals-then) end-tag)
+  (declare (ignore end-tag))
   (multiple-value-bind (temp-tree dictionary)
       (fresh-variables (var-spec clause))
     `(let* ,(destructure-variables temp-tree (initial-form clause))

@@ -90,7 +90,7 @@
 	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
 			  append `(,real-var ,temp-var))))))
 
-(defmethod prologue ((clause for-as-across))
+(defmethod prologue ((clause for-as-across) end-tag)
   (for-as-across-prologue-or-body clause))
 
 (defmethod body ((clause for-as-across))

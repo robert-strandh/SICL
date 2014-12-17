@@ -127,8 +127,9 @@
 ;;;
 ;;; Compute the prologue.
 
-(defmethod prologue ((clause for-as-clause))
-  `(progn ,@(mapcar #'prologue (subclauses clause))))
+(defmethod prologue ((clause for-as-clause) end-tag)
+  `(progn ,@(mapcar (lambda (subclause) (prologue sub-clause end-tag))
+		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
