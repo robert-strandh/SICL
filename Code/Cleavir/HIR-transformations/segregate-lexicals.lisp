@@ -327,7 +327,14 @@
 				   (setf location (cleavir-ir:new-temporary))
 				   (setf (gethash (cons owner output)
 						  cell-locations)
-					 location))
+					 location)
+				   ;; We must also insert the
+				   ;; instruction for creating the
+				   ;; cell.
+				   (cleavir-ir:insert-instruction-before
+				    (cleavir-ir:make-create-cell-instruction
+				     location)
+				    instruction))
 				 ;; We must now change the current output
 				 ;; to a temporary dynamic lexical
 				 ;; location, and then add a WRITE-CELL
