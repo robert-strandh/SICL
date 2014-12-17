@@ -31,7 +31,7 @@
   (:method (clause)
     (append (initial-bindings clause) (final-bindings clause))))
 
-(defgeneric prologue (clause end-tag)
+(defgeneric prologue-forms (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
     '()))
@@ -60,7 +60,8 @@
   (let ((end-tag (gensym)))
     (labels ((do-bindings (clauses)
 	       (if (null clauses)
-		   `(progn ,@(mapcar (lambda (clause) (prologue clause end-tag))
+		   `(progn ,@(mapcar (lambda (clause)
+				       (prologue-forms clause end-tag))
 				     all-clauses)
 			   (tagbody
 			    start

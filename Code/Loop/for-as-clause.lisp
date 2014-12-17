@@ -125,10 +125,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the prologue.
+;;; Compute the prologue-forms.
 
-(defmethod prologue ((clause for-as-clause) end-tag)
-  `(progn ,@(mapcar (lambda (subclause) (prologue sub-clause end-tag))
+(defmethod prologue-forms ((clause for-as-clause) end-tag)
+  `(progn ,@(mapcar (lambda (subclause)
+		      (prologue-forms subclause end-tag))
 		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

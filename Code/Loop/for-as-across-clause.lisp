@@ -79,7 +79,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute prologue and body
+;;; Compute prologue-forms and body-forms.
 
 (defun for-as-across-prologue-or-body (clause end-tag)
   `(progn (when (>= ,(index-var clause) ,(length-var clause))
@@ -90,7 +90,7 @@
 	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
 			  append `(,real-var ,temp-var))))))
 
-(defmethod prologue ((clause for-as-across) end-tag)
+(defmethod prologue-forms ((clause for-as-across) end-tag)
   (for-as-across-prologue-or-body clause end-tag))
 
 (defmethod body-forms ((clause for-as-across) end-tag)

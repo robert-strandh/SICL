@@ -43,8 +43,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute prologue.
+;;; Compute prologue-forms.
 
-(defmethod prologue ((clause initial-clause) end-tag)
+(defmethod prologue-forms ((clause initial-clause) end-tag)
   (declare (ignore end-tag))
   (form clause))

@@ -81,9 +81,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the prologue.
+;;; Compute the prologue-forms.
 
-(defmethod prologue ((clause for-as-equals-then) end-tag)
+(defmethod prologue-forms ((clause for-as-equals-then) end-tag)
   (declare (ignore end-tag))
   (multiple-value-bind (temp-tree dictionary)
       (fresh-variables (var-spec clause))
