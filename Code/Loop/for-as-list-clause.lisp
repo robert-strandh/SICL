@@ -14,7 +14,9 @@
 
 (defclass for-as-list (for-as-subclause)
   ((%list-form :initarg :list-form :reader list-form)
-   (%by-form :initarg :by-form :reader by-form)))
+   (%list-var :initform (gensym) :reader list-var)
+   (%by-form :initarg :by-form :reader by-form)
+   (%by-var :initform (gensym) :reader by-var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
