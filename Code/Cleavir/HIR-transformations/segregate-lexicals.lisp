@@ -217,6 +217,8 @@
 
 (defun process-captured-variables (initial-instruction)
   (let ((owners (make-hash-table :test #'eq))
+	;; This table maps each ENTER-INSTRUCTION to a list of
+	;; imported static lexical locations that it needs.
 	(imports (make-hash-table :test #'eq))
 	;; This table maps pairs of the form
 	;; (<enter-instruction> . <static-lexical-location>)
@@ -247,6 +249,9 @@
 		 (cleavir-ir:insert-instruction-before fetch instruction)
 		 ;; Return the temporary holding the cell.
 		 temp))))
+      ;; Replace every reference to a static lexical location by a
+      ;; combination of dynamic lexical locations and new instructions
+      ;; for allocating the cell holding the value of the variable.
       (traverse
        initial-instruction
        (lambda (instruction owner)
@@ -349,4 +354,38 @@
 			       temp)))
 		       ;; This input is not a captured variable,
 		       ;; return it unchanged.
-		       output))))))))
+		       output)))))
+      ;; For each ENCLOSE-INSTRUCTION of the program, add inputs
+      ;; corresponding to the cells of the captured variables that the
+      ;; corresponding ENTER-INSTRUCTION imports.  We can't use the
+      ;; ordinary traversal here, because that one processes
+      ;; successors before the nested functions
+      (flet ((handle-enclose-instruction (enclose owner)
+	       (setf (cleavir-ir:inputs enclose)
+		     (loop with enter = (cleavir-ir:code enclose)
+			   for import in (gethash enter imports)
+			   collect
+			   (if (eq (gethash import owners) owner)
+			       (gethash (cons owner import) cell-locations)
+			       (fetch-cell enclose owner import))))))
+	(let ((table (make-hash-table :test #'eq)))
+	  (labels
+	      ((traverse (instruction owner)
+		 (unless (gethash instruction table)
+		   (setf (gethash instruction table) t)
+		   (let ((successors (cleavir-ir:successors instruction)))
+		     (cond ((typep instruction 'cleavir-ir:enclose-instruction)
+			    ;; When we see an ENTER-INSTRUCTION, we
+			    ;; start by recursively traversing it.
+			    (let ((code (cleavir-ir:code instruction)))
+			      (traverse code code))
+			    (handle-enclose-instruction instruction owner)
+			    (loop for successor in successors
+				  do (traverse successor owner)))
+			   ((typep instruction 'cleavir-ir:unwind-instruction)
+			    (traverse (first successors)
+				      (cleavir-ir:invocation instruction)))
+			   (t
+			    (loop for successor in successors
+				  do (traverse successor owner))))))))
+	    (traverse initial-instruction initial-instruction)))))))
