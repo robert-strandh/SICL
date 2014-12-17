@@ -97,3 +97,16 @@
 	       'for-as-on-list-parser-2))
 
 (add-for-as-subclause-parser 'for-as-on-list-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the bindings.
+
+(defmethod initial-bindings ((clause for-as-list))
+  `((,(list-var clause) ,(list-form clause))
+    ,@(if (member (by-form clause) (list #'cdr #'cddr))
+	  '()
+	  `(,(by-var clause) ,(by-form clause)))))
+
+(defmethod final-bindings ((clause for-as-list))
+  `((,(var-spec clause) nil)))
