@@ -32,7 +32,9 @@
 				     (t (list item))))))
     (make-instance 'enter-instruction
       :lambda-list lambda-list
-      :outputs outputs
+      ;; We add an additional output that will hold the static
+      ;; environment.
+      :outputs (cons (new-temporary) outputs)
       :successors (if successor-p (list successor) '()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
