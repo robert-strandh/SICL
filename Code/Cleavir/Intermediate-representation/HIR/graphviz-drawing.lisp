@@ -169,7 +169,7 @@
 
 (defmethod label ((instruction enter-instruction))
   (with-output-to-string (stream)
-    (format stream "enter ~s"
+    (format stream "enter ~a"
 	    (mapcar #'format-item (cleavir-ir:lambda-list instruction)))))
 
 (defmethod label ((instruction nop-instruction)) "nop")
