@@ -110,3 +110,10 @@
 
 (defmethod final-bindings ((clause for-as-list))
   `((,(var-spec clause) nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the declarations.
+
+(defmethod declarations ((clause for-as-list))
+  `((cl:type ,(type-spec clause) ,(var-spec clause))))
