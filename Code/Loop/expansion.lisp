@@ -57,7 +57,8 @@
     '()))
 
 (defun expand-clauses (all-clauses)
-  (let ((end-tag (gensym)))
+  (let ((start-tag (gensym))
+	(end-tag (gensym)))
     (labels
 	((do-bindings (clauses)
 	   (if (null clauses)
@@ -65,7 +66,7 @@
 				   (prologue-forms clause end-tag))
 				 all-clauses)
 		       (tagbody
-			start
+			,start-tag
 			  (progn ,@(mapcar (lambda (clause)
 					     (termination-forms clause end-tag))
 					   all-clauses))
@@ -73,8 +74,8 @@
 					     (body-forms clause end-tag))
 					   all-clauses))
 			  (progn ,@(mapcar #'step-forms all-clauses))
-			  (go start)
-			  ,end-tag
+			  (go ,start-tag)
+                        ,end-tag
 			  (progn ,@(mapcar #'epilogue all-clauses))))
 	       `(let* ,(bindings (car clauses))
 		  (declare ,@(declarations (car clauses)))
