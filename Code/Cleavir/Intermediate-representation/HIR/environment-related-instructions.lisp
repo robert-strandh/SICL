@@ -2,6 +2,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction CREATE-CELL-INSTRUCTION.
+
+(defclass create-cell-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-create-cell-instruction (output &optional successor)
+  (make-instance 'create-cell-instruction
+    :inputs '()
+    :outputs (list output)
+    :successors (if (null successor) nil (list successor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction FETCH-INSTRUCTION.
 ;;;
 ;;; This instruction is used when the static environment is
