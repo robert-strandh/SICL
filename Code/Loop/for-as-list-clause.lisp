@@ -54,6 +54,8 @@
   (alternative 'for-as-in-list-parser-1
 	       'for-as-in-list-parser-2))
 
+(add-for-as-subclause-parser 'for-as-in-list-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause FOR-AS-ON-LIST.
@@ -91,3 +93,5 @@
 (define-parser for-as-on-list-parser
   (alternative 'for-as-on-list-parser-1
 	       'for-as-on-list-parser-2))
+
+(add-for-as-subclause-parser 'for-as-on-list-parser)
