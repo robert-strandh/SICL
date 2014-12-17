@@ -12,76 +12,72 @@
 
 (in-package #:sicl-loop)
 
+(defclass for-as-list (for-as-subclause)
+  ((%list-form :initarg :list-form :reader list-form)
+   (%by-form :initarg :by-form :reader by-form)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause FOR-AS-IN-LIST.
 
-(defclass for-as-in-list (for-as-subclause) ())
+(defclass for-as-in-list (for-as-list) ())
 
 (define-parser for-as-in-list-parser-1
-  (consecutive (lambda (var type-spec in list by)
-		 ;; FIXME: handle the var and the type-spec
-		 (declare (ignore in var type-spec))
-		 (let ((list-var (gensym))
-		       (by-var (gensym)))
-		   (make-instance 'for-as-in-list
-		     :bindings `((,list-var ,list)
-				 (,by-var ,by))
-		     :termination `(when (endp ,list-var)
-				     (go end))
-		     :step `(setf ,list-var (funcall ,by-var ,list-var)))))
-	       'd-var-spec-parser
-	       'type-spec-parser
+  (consecutive (lambda (var type-spec in list-form by-form)
+		 (declare (ignore in))
+		 (make-instance 'for-as-in-list
+		   :var-spec var
+		   :type-spec type-spec
+		   :list-form list-form
+		   :by-form by-form))
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
 	       (keyword-parser 'in)
+	       (singleton #'identity (constantly t))
 	       'by-parser))
 
 (define-parser for-as-in-list-parser-2
-  (consecutive (lambda (var type-spec in list)
-		 ;; FIXME: handle the var and the the type-spec
-		 (declare (ignore in var type-spec))
-		 (let ((list-var (gensym)))
-		   (make-instance 'for-as-in-list
-		     :bindings `((,list-var ,list))
-		     :termination `(when (endp ,list-var)
-				     (go end))
-		     :step `(pop ,list-var))))
+  (consecutive (lambda (var type-spec in list-form)
+		 (declare (ignore in))
+		 (make-instance 'for-as-in-list
+		   :var-spec var
+		   :type-spec type-spec
+		   :list-form list-form
+		   :by-form #'cdr))
 	       'd-var-spec-parser
 	       'type-spec-parser
-	       (keyword-parser 'in)))
+	       (keyword-parser 'in)
+	       (singleton #'identity (constantly t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause FOR-AS-ON-LIST.
 
-(defclass for-as-on-list (for-as-subclause) ())
+(defclass for-as-on-list (for-as-list) ())
 
 (define-parser for-as-on-list-parser-1
-  (consecutive (lambda (var type-spec on list by)
-		 ;; FIXME: handle the var and the type-spec
-		 (declare (ignore on var type-spec))
-		 (let ((list-var (gensym))
-		       (by-var (gensym)))
-		   (make-instance 'for-as-on-list
-		     :bindings `((,list-var ,list)
-				 (,by-var ,by))
-		     :termination `(when (endp ,list-var)
-				     (go end))
-		     :step `(setf ,list-var (funcall ,by-var ,list-var)))))
-	       'd-var-spec-parser
-	       'type-spec-parser
+  (consecutive (lambda (var type-spec on list-form by-form)
+		 (declare (ignore on))
+		 (make-instance 'for-as-on-list
+		   :var-spec var
+		   :type-spec type-spec
+		   :list-form list-form
+		   :by-form by-form))
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
 	       (keyword-parser 'on)
+	       (singleton #'identity (constantly t))
 	       'by-parser))
 
 (define-parser for-as-on-list-parser-2
-  (consecutive (lambda (var type-spec on list)
-		 ;; FIXME: handle the var and the the type-spec
-		 (declare (ignore on var type-spec))
-		 (let ((list-var (gensym)))
-		   (make-instance 'for-as-on-list
-		     :bindings `((,list-var ,list))
-		     :termination `(when (endp ,list-var)
-				     (go end))
-		     :step `(pop ,list-var))))
+  (consecutive (lambda (var type-spec on list-form)
+		 (declare (ignore on))
+		 (make-instance 'for-as-on-list
+		   :var-spec var
+		   :type-spec type-spec
+		   :list-form list-form
+		   :by-form #'cdr))
 	       'd-var-spec-parser
 	       'type-spec-parser
-	       (keyword-parser 'on)))
+	       (keyword-parser 'on)
+	       (singleton #'identity (constantly t))))
