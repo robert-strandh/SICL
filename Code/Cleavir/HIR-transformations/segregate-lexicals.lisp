@@ -183,37 +183,37 @@
 ;;; in arbitrary ways, so that every lexical location that is shared
 ;;; by some function F and some other function G nested inside F must
 ;;; be an static lexical location.
-;;;
-;;; We detect whether a lexical location is shared in this way by
-;;; looking at the instructions that define it and use it.  If these
-;;; instructions all have the same nesting depth, then the lexical
-;;; location is not shared, otherwise it is.
-
-(defun process-lexical (lexical nesting-depth)
-  (let ((depths (loop with def = (cleavir-ir:defining-instructions lexical)
-		      with use = (cleavir-ir:using-instructions lexical)
-		      for instruction in (append def use)
-		      collect (gethash instruction nesting-depth))))
-    (change-class lexical
-		  (if (> (length (remove-duplicates depths)) 1)
-		      'cleavir-ir:static-lexical-location
-		      'cleavir-ir:dynamic-lexical-location))))
 
 (defun segregate-lexicals (initial-instruction)
   ;; Make sure everything is up to date.
   (cleavir-ir:reinitialize-data initial-instruction)
-  (let ((nesting-depth (compute-nesting-depth initial-instruction))
-	(table (make-hash-table :test #'eq)))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (loop with inputs = (cleavir-ir:inputs instruction)
-		       with outputs = (cleavir-ir:outputs instruction)
-		       for datum in (append inputs outputs)
-		       do (when (eq (class-of datum)
+  (let ((owners (make-hash-table :test #'eq)))
+    (traverse
+     initial-instruction
+     (lambda (instruction owner)
+       (loop for datum in (append (cleavir-ir:inputs instruction)
+				  (cleavir-ir:outputs instruction))
+	     do (when (eq (class-of datum)
 				    (find-class 'cleavir-ir:lexical-location))
-			    (process-lexical datum nesting-depth))))))
-      (traverse initial-instruction))))
+		  (cond ((null (gethash datum owners))
+			 (setf (gethash datum owners) owner))
+			((eq owner (gethash datum owners))
+			 nil)
+			(t
+			 (change-class
+			  datum
+			  'cleavir-ir:static-lexical-location))))))))
+  (traverse
+   initial-instruction
+   (lambda (instruction owner)
+     (declare (ignore owner))
+     (loop for datum in (append (cleavir-ir:inputs instruction)
+				(cleavir-ir:outputs instruction))
+	   do (when (eq (class-of datum)
+			(find-class 'cleavir-ir:lexical-location))
+		(change-class
+		 datum
+		 'cleavir-ir:dynamic-lexical-location))))))
 
 (defun process-captured-variables (initial-instruction)
   (let ((owners (make-hash-table :test #'eq))
