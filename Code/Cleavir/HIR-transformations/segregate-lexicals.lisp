@@ -215,35 +215,6 @@
 			    (process-lexical datum nesting-depth))))))
       (traverse initial-instruction))))
 
-;;; Create a "static map" for each ENTER-INSTRUCTION in a program.  A
-;;; static map is a list of pairs (an association list) where the CAR
-;;; of each CONS cell is a STATIC-LEXICAL-LOCATION and the CDR is a
-;;; DYNAMIC-LEXICAL-LOCATION.  The meaning of a pair of the list is
-;;; that the CELL that holds the value of the STATIC-LEXICAL-LOCATION
-;;; is value of the DYNAMIC-LEXICAL-LOCATION.  The static lexical
-;;; locations in the list are those that are used by the instructions
-;;; owned by the corresponding ENTER-INSTRUCTION.  The dynamic lexical
-;;; locations are freshly created by this function.
-;;;
-;;; The return value is an EQ hash table with the ENTER-INSTRUCTIONS
-;;; as keys, and the associated hash value is the static map.
-(defun create-static-map (enter-instruction)
-  (let ((result (make-hash-table :test #'eq)))
-    (flet ((process-datum (owner datum)
-	     (when (and (typep datum 'cleavir-ir:static-lexical-location)
-			(not (member datum (gethash owner result)
-				     :test #'eq :key #'car)))
-	       (let* ((name (cleavir-ir:name datum))
-		      (var (cleavir-ir:make-dynamic-lexical-location name)))
-		 (push (cons datum var)
-		       (gethash owner result))))))
-      (traverse enter-instruction
-		(lambda (instruction owner)
-		   (loop for datum in (cleavir-ir:inputs instruction)
-			 do (process-datum owner datum))
-		   (loop for datum in (cleavir-ir:outputs instruction)
-			 do (process-datum owner datum)))))))
-
 (defun process-captured-variables (initial-instruction)
   (let ((owners (make-hash-table :test #'eq))
 	(imports (make-hash-table :test #'eq))
