@@ -141,6 +141,7 @@
    #:multiple-to-fixed-instruction #:make-multiple-to-fixed-instruction
    #:fixed-to-multiple-instruction #:make-fixed-to-multiple-instruction
    #:multiple-value-call-instruction #:make-multiple-value-call-instruction
+   #:create-cell-instruction #:make-create-cell-instruction
    #:fetch-instruction #:make-fetch-instruction
    #:read-cell-instruction #:make-read-cell-instruction 
    #:write-cell-instruction #:make-write-cell-instruction 
