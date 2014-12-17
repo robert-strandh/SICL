@@ -699,8 +699,8 @@
 ;;;
 ;;; Compute the step-forms.
 
-(defmethod step ((clause for-as-arithmetic-up))
+(defmethod step-forms ((clause for-as-arithmetic-up))
   `(incf ,(var-spec clause) ,(by-var clause)))
 
-(defmethod step ((clause for-as-arithmetic-down))
+(defmethod step-forms ((clause for-as-arithmetic-down))
   `(decf ,(var-spec clause) ,(by-var clause)))

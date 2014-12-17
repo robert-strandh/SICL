@@ -55,7 +55,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the step.
+;;; Compute the step-forms.
 
-(defmethod step ((clause repeat-clause))
+(defmethod step-forms ((clause repeat-clause))
   `(incf ,(var-spec clause)))

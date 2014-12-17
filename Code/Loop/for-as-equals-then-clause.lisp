@@ -94,9 +94,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the step.
+;;; Compute the step-forms.
 
-(defmethod step ((clause for-as-equals-then))
+(defmethod step-forms ((clause for-as-equals-then))
   (multiple-value-bind (temp-tree dictionary)
       (fresh-variables (var-spec clause))
     `(let* ,(destructure-variables temp-tree (subsequent-form clause))

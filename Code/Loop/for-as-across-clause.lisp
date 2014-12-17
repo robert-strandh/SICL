@@ -106,7 +106,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute step.
+;;; Compute step-forms.
 
-(defmethod step ((clause for-as-across))
+(defmethod step-forms ((clause for-as-across))
   `(incf ,(index-var clause)))
