@@ -41,3 +41,10 @@
 	       'compound+))
 
 (add-clause-parser 'do-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the body-form.
+
+(defmethod body-form ((clause do-clause))
+  (body clause))
