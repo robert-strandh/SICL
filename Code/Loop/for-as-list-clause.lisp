@@ -105,6 +105,7 @@
 
 (defmethod initial-bindings ((clause for-as-list))
   `((,(list-var clause) ,(list-form clause))
+    (,(rest-var clause) ,(list-var clause))
     ,@(if (member (by-form clause) (list #'cdr #'cddr))
 	  '()
 	  `(,(by-var clause) ,(by-form clause)))))
@@ -117,7 +118,10 @@
 ;;; Compute the declarations.
 
 (defmethod declarations ((clause for-as-list))
-  `((cl:type ,(type-spec clause) ,(var-spec clause))))
+  (loop with d-var-spec = (var-spec clause)
+	with d-type-spec = (type-spec clause)
+	for (variable type) in (extract-variables d-var-spec d-type-spec)
+	collect `(type (or null ,type) ,variable)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
