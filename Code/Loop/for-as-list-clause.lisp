@@ -132,10 +132,6 @@
 	for (variable) in (extract-variables d-var-spec d-type-spec)
 	collect `(,variable nil)))
 
-;;  (loop for (real-var) in (dictionary clause)
-;;	collect `(,real-var nil)))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the declarations.
@@ -144,16 +140,7 @@
   (loop with d-var-spec = (var-spec clause)
 	with d-type-spec = (type-spec clause)
 	for (variable type) in (extract-variables d-var-spec d-type-spec)
-	collect `(type (or null ,type) ,variable)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute the prologue-form.
-
-(defmethod prologue-form ((clause for-as-list) end-tag)
-  `(progn ,(termination-form clause end-tag)
-	  ,(body-form clause)
-	  ,(step-form clause)))
+	collect `(cl:type (or null ,type) ,variable)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
