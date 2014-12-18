@@ -124,7 +124,9 @@
     (,(rest-var clause) ,(list-var clause))
     ,@(if (member (by-form clause) (list #'cdr #'cddr))
 	  '()
-	  `(,(by-var clause) ,(by-form clause)))))
+	  `(,(by-var clause) ,(by-form clause)))
+    ,@(loop for (real-var) in (dictionary clause)
+	    collect `(,real-var nil))))
 
 (defmethod final-bindings ((clause for-as-list))
   `((,(var-spec clause) nil)))
