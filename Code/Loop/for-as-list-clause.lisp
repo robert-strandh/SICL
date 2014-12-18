@@ -128,9 +128,9 @@
 ;;; Compute the termination-forms.
 
 (defmethod termination-forms ((clause for-as-in-list) end-tag)
-  `(when (endp ,(var-spec clause))
+  `(when (endp ,(rest-var clause))
      (go ,end-tag)))
 
 (defmethod termination-forms ((clause for-as-on-list) end-tag)
-  `(when (atom ,(var-spec clause))
+  `(when (atom ,(rest-var clause))
      (go ,end-tag)))
