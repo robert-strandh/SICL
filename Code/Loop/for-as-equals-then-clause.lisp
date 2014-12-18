@@ -81,9 +81,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the prologue-forms.
+;;; Compute the prologue-form.
 
-(defmethod prologue-forms ((clause for-as-equals-then) end-tag)
+(defmethod prologue-form ((clause for-as-equals-then) end-tag)
   (declare (ignore end-tag))
   (multiple-value-bind (temp-tree dictionary)
       (fresh-variables (var-spec clause))
@@ -94,9 +94,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the step-forms.
+;;; Compute the step-form.
 
-(defmethod step-forms ((clause for-as-equals-then))
+(defmethod step-form ((clause for-as-equals-then))
   (multiple-value-bind (temp-tree dictionary)
       (fresh-variables (var-spec clause))
     `(let* ,(destructure-variables temp-tree (subsequent-form clause))

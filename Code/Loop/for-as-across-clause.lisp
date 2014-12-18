@@ -79,7 +79,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute prologue-forms and body-forms.
+;;; Compute prologue-form and body-form.
 
 (defun for-as-across-prologue-or-body (clause end-tag)
   `(progn (when (>= ,(index-var clause) ,(length-var clause))
@@ -90,23 +90,23 @@
 	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
 			  append `(,real-var ,temp-var))))))
 
-(defmethod prologue-forms ((clause for-as-across) end-tag)
+(defmethod prologue-form ((clause for-as-across) end-tag)
   (for-as-across-prologue-or-body clause end-tag))
 
-(defmethod body-forms ((clause for-as-across) end-tag)
+(defmethod body-form ((clause for-as-across) end-tag)
   (for-as-across-prologue-or-body clause end-tag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute termination-forms
+;;; Compute termination-form
 
-(defmethod termination-forms ((clause for-as-across) end-tag)
+(defmethod termination-form ((clause for-as-across) end-tag)
   `(when (>= ,(index-var clause) ,(length-var clause))
      (go ,end-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute step-forms.
+;;; Compute step-form.
 
-(defmethod step-forms ((clause for-as-across))
+(defmethod step-form ((clause for-as-across))
   `(incf ,(index-var clause)))

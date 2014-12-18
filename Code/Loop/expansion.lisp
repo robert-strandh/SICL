@@ -31,22 +31,22 @@
   (:method (clause)
     (append (initial-bindings clause) (final-bindings clause))))
 
-(defgeneric prologue-forms (clause end-tag)
+(defgeneric prologue-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
     '()))
 
-(defgeneric termination-forms (clause end-tag)
+(defgeneric termination-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
     '()))
 
-(defgeneric body-forms (clause end-tag)
+(defgeneric body-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
     '()))
 
-(defgeneric step-forms (clause)
+(defgeneric step-form (clause)
   (:method (clause)
     (declare (ignore clause))
     '()))
@@ -63,17 +63,17 @@
 	((do-bindings (clauses)
 	   (if (null clauses)
 	       `(progn ,@(mapcar (lambda (clause)
-				   (prologue-forms clause end-tag))
+				   (prologue-form clause end-tag))
 				 all-clauses)
 		       (tagbody
 			,start-tag
 			  (progn ,@(mapcar (lambda (clause)
-					     (termination-forms clause end-tag))
+					     (termination-form clause end-tag))
 					   all-clauses))
 			  (progn ,@(mapcar (lambda (clause)
-					     (body-forms clause end-tag))
+					     (body-form clause end-tag))
 					   all-clauses))
-			  (progn ,@(mapcar #'step-forms all-clauses))
+			  (progn ,@(mapcar #'step-form all-clauses))
 			  (go ,start-tag)
                         ,end-tag
 			  (progn ,@(mapcar #'epilogue all-clauses))))

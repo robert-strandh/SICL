@@ -47,15 +47,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination-forms.
+;;; Compute the termination-form.
 
-(defmethod termination-forms ((clause repeat-clause) end-clause)
+(defmethod termination-form ((clause repeat-clause) end-clause)
   `(unless (< ,(var-spec clause) ,(form-value-var clause))
      (go ,end-clause)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the step-forms.
+;;; Compute the step-form.
 
-(defmethod step-forms ((clause repeat-clause))
+(defmethod step-form ((clause repeat-clause))
   `(incf ,(var-spec clause)))

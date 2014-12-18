@@ -41,8 +41,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination-forms
+;;; Compute the termination-form
 
-(defmethod termination-forms ((clause while-clause) end-tag)
+(defmethod termination-form ((clause while-clause) end-tag)
   `(unless ,(form clause)
      (go ,end-tag)))

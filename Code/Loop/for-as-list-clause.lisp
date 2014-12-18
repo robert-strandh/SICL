@@ -143,12 +143,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination-forms.
+;;; Compute the termination-form.
 
-(defmethod termination-forms ((clause for-as-in-list) end-tag)
+(defmethod termination-form ((clause for-as-in-list) end-tag)
   `(when (endp ,(rest-var clause))
      (go ,end-tag)))
 
-(defmethod termination-forms ((clause for-as-on-list) end-tag)
+(defmethod termination-form ((clause for-as-on-list) end-tag)
   `(when (atom ,(rest-var clause))
      (go ,end-tag)))

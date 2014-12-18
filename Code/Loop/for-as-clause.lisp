@@ -125,35 +125,35 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the prologue-forms.
+;;; Compute the prologue-form.
 
-(defmethod prologue-forms ((clause for-as-clause) end-tag)
+(defmethod prologue-form ((clause for-as-clause) end-tag)
   `(progn ,@(mapcar (lambda (subclause)
-		      (prologue-forms subclause end-tag))
+		      (prologue-form subclause end-tag))
 		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the termination-forms.
+;;; Compute the termination-form.
 
-(defmethod termination-forms ((clause for-as-clause) end-tag)
+(defmethod termination-form ((clause for-as-clause) end-tag)
   `(progn ,@(mapcar (lambda (subclause)
-		      (termination-forms subclause end-tag))
+		      (termination-form subclause end-tag))
 		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the body-forms.
+;;; Compute the body-form.
 
-(defmethod body-forms ((clause for-as-clause) end-tag)
+(defmethod body-form ((clause for-as-clause) end-tag)
   `(progn ,@(mapcar (lambda (subclause)
-		      (body-forms subclause end-tag))
+		      (body-form subclause end-tag))
 		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Step a FOR-AS clause.
 
-(defmethod step-forms ((clause for-as-clause))
-  (reduce #'append (mapcar #'step-forms (subclauses clause))
+(defmethod step-form ((clause for-as-clause))
+  (reduce #'append (mapcar #'step-form (subclauses clause))
 	  :from-end t))
