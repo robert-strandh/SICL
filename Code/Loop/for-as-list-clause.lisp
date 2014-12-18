@@ -63,8 +63,8 @@
 		   :type-spec type-spec
 		   :list-form list-form
 		   :by-form #'cdr))
-	       'd-var-spec-parser
-	       'type-spec-parser
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
 	       (keyword-parser 'in)
 	       (singleton #'identity (constantly t))))
 
@@ -103,8 +103,8 @@
 		   :type-spec type-spec
 		   :list-form list-form
 		   :by-form #'cdr))
-	       'd-var-spec-parser
-	       'type-spec-parser
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
 	       (keyword-parser 'on)
 	       (singleton #'identity (constantly t))))
 
@@ -124,12 +124,17 @@
     (,(rest-var clause) ,(list-var clause))
     ,@(if (member (by-form clause) (list #'cdr #'cddr))
 	  '()
-	  `(,(by-var clause) ,(by-form clause)))
-    ,@(loop for (real-var) in (dictionary clause)
-	    collect `(,real-var nil))))
+	  `(,(by-var clause) ,(by-form clause)))))
 
 (defmethod final-bindings ((clause for-as-list))
-  `((,(var-spec clause) nil)))
+  (loop with d-var-spec = (var-spec clause)
+	with d-type-spec = (type-spec clause)
+	for (variable) in (extract-variables d-var-spec d-type-spec)
+	collect `(,variable nil)))
+
+;;  (loop for (real-var) in (dictionary clause)
+;;	collect `(,real-var nil)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
