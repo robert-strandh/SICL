@@ -25,7 +25,7 @@
    (%list-var :initform (gensym) :reader list-var)
    (%by-form :initarg :by-form :reader by-form)
    (%by-var :initform (gensym) :reader by-var)
-   (%rest-var :initform (rest-var) :reader rest-var)))
+   (%rest-var :initform (gensym) :reader rest-var)))
 
 (defmethod initialize-instance :after
     ((clause for-as-list) &key &allow-other-keys)
@@ -143,6 +143,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compute the prologue-form.
+
+(defmethod prologue-form ((clause for-as-list) end-tag)
+  `(progn ,(termination-form clause end-tag)
+	  ,(body-form clause)
+	  ,(step-form clause)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the body-form.
+
+(defmethod body-form ((clause for-as-in-list))
+  (generate-assignments (var-spec clause) `(car ,(rest-var clause))))
+
+(defmethod body-form ((clause for-as-on-list))
+  (generate-assignments (var-spec clause) (rest-var clause)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compute the termination-form.
 
 (defmethod termination-form ((clause for-as-in-list) end-tag)
@@ -152,3 +171,10 @@
 (defmethod termination-form ((clause for-as-on-list) end-tag)
   `(when (atom ,(rest-var clause))
      (go ,end-tag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the step-form.
+
+(defmethod step-form ((clause for-as-list))
+  `(setq ,(rest-var clause) (cdr ,(rest-var clause))))
