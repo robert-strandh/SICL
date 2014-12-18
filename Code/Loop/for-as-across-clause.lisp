@@ -79,22 +79,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute prologue-form and body-form.
-
-(defun for-as-across-prologue-or-body (clause end-tag)
-  `(progn (when (>= ,(index-var clause) ,(length-var clause))
-	    (go ,end-tag))
-	  (let* ,(destructure-variables (temp-vars clause)
-					`(aref ,(form-var clause)
-					       ,(index-var clause)))
-	    (setf ,@(loop for (real-var . temp-var) in (dictionary clause)
-			  append `(,real-var ,temp-var))))))
+;;; Compute prologue-form.
 
 (defmethod prologue-form ((clause for-as-across) end-tag)
-  (for-as-across-prologue-or-body clause end-tag))
+  `(progn ,(termination-form clause end-tag)
+	  ,(body-form clause)
+	  ,(step-form clause)))
 
-(defmethod body-form ((clause for-as-across) end-tag)
-  (for-as-across-prologue-or-body clause end-tag))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute body-form.
+
+(defmethod body-form ((clause for-as-across))
+  (generate-assignments (var-spec clause)
+			`(aref ,(form-var clause)
+			       ,(index-var clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
