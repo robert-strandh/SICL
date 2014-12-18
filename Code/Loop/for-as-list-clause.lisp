@@ -27,6 +27,14 @@
    (%by-var :initform (gensym) :reader by-var)
    (%rest-var :initform (rest-var) :reader rest-var)))
 
+(defmethod initialize-instance :after
+    ((clause for-as-list) &key &allow-other-keys)
+  (multiple-value-bind (temp-vars dictionary)
+      (fresh-variables (var-spec clause))
+    (reinitialize-instance clause
+			   :temp-vars temp-vars
+			   :dictionary dictionary)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause FOR-AS-IN-LIST.
