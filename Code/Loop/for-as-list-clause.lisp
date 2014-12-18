@@ -16,7 +16,8 @@
   ((%list-form :initarg :list-form :reader list-form)
    (%list-var :initform (gensym) :reader list-var)
    (%by-form :initarg :by-form :reader by-form)
-   (%by-var :initform (gensym) :reader by-var)))
+   (%by-var :initform (gensym) :reader by-var)
+   (%rest-var :initform (rest-var) :reader rest-var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
