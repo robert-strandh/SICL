@@ -318,12 +318,3 @@
     :initform '()
     :reader specializer-direct-methods
     :writer (setf s-direct-methods))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class EQL-SPECIALIZER.
-
-(defclass eql-specializer (specializer)
-  ((%object 
-    :initarg :object 
-    :reader eql-specializer-object)))
