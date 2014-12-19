@@ -667,10 +667,3 @@
    (%storage
     :initform (list nil)
     :reader slot-definition-storage)))
-
-(defclass effective-slot-definition (slot-definition)
-  ((%location 
-    :initform nil
-    :initarg :location 
-    :reader slot-definition-location
-    :writer (setf location))))
