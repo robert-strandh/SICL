@@ -80,9 +80,3 @@
   ((%entry-point :initarg :entry-point)
    (%linkage-rack :initarg :linkage-rack)
    (%environment :initform nil :initarg :environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class STANDARD-OBJECT.
-
-(defclass standard-object (t) ())
