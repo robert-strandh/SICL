@@ -289,10 +289,3 @@
 
 (defclass standard-writer-method (standard-accessor-method)
   ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class METHOD-COMBINATION.
-
-(defclass method-combination (metaobject)
-  ())
