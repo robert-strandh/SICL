@@ -282,10 +282,3 @@
 
 (defclass standard-reader-method (standard-accessor-method)
   ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class STANDARD-WRITER-METHOD.
-
-(defclass standard-writer-method (standard-accessor-method)
-  ())
