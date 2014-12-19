@@ -624,27 +624,3 @@
 ;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/slot-definition-location.html
 (defgeneric slot-definition-location (slot-definition))
-
-(defclass slot-definition (metaobject)
-  ((%name 
-    :initarg :name
-    :reader slot-definition-name)
-   (%allocation 
-    :initarg :allocation
-    :initform :instance
-    :reader slot-definition-allocation)
-   (%type 
-    :initarg :type
-    :initform t
-    :reader slot-definition-type)
-   (%initargs 
-    :initform '()
-    :initarg :initargs 
-    :reader slot-definition-initargs)
-   (%initform 
-    :initarg :initform 
-    :reader slot-definition-initform)
-   (%initfunction 
-    :initform nil
-    :initarg :initfunction
-    :reader slot-definition-initfunction)))
