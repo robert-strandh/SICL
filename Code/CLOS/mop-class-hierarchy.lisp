@@ -93,10 +93,3 @@
 
 (defclass funcallable-standard-object (standard-object function)
   ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class METAOBJECT.
-
-(defclass metaobject (standard-object)
-  ())
