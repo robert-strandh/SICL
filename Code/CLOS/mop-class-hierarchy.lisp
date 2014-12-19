@@ -275,10 +275,3 @@
   ((%slot-definition 
     :initarg :slot-definition
     :reader accessor-method-slot-definition)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class STANDARD-READER-METHOD.
-
-(defclass standard-reader-method (standard-accessor-method)
-  ())
