@@ -308,13 +308,3 @@
 (defgeneric specializer-direct-methods (specializer))
 
 (defgeneric eql-specializer-object (eql-specializer))
-
-(defclass specializer (metaobject)
-  ((%direct-generic-functions
-    :initform '()
-    :reader specializer-direct-generic-functions
-    :writer (setf direct-generic-functions))
-   (%direct-methods
-    :initform '()
-    :reader specializer-direct-methods
-    :writer (setf s-direct-methods))))
