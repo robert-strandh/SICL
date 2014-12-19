@@ -105,4 +105,4 @@
 ;;; Enter the class CL:STANDARD-GENERIC-FUNCTION into the global
 ;;; environment.
 (setf (sicl-env:find-class 'standard-generic-function *environment*)
-      (find-class 'standard-generic-function))
+      (find-class 'sicl-clos::my-standard-generic-function))
