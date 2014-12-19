@@ -674,6 +674,3 @@
     :initarg :location 
     :reader slot-definition-location
     :writer (setf location))))
-
-(defclass standard-slot-definition (slot-definition)
-  ())
