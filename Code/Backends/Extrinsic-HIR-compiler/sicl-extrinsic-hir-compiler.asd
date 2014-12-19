@@ -1,7 +1,8 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-extrinsic-hir-compiler
-  :depends-on (:sicl-environment
+  :depends-on (:sicl-clos-package
+	       :sicl-environment
 	       :sicl-simple-environment
 	       :sicl-evaluation-and-compilation
 	       :sicl-data-and-control-flow
@@ -18,7 +19,6 @@
    (:file "create-global-environment")
    (:file "runtime-environment")
    (:file "import-from-host")
-   (:file "clos-package")
    (:file "standard-generic-function")
    (:file "fill-global-environment")
    (:file "parse-arguments")
