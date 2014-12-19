@@ -681,7 +681,3 @@
 (defclass standard-direct-slot-definition
     (standard-slot-definition direct-slot-definition)
   ())
-
-(defclass standard-effective-slot-definition
-    (standard-slot-definition effective-slot-definition)
-  ())
