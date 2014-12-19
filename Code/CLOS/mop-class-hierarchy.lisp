@@ -259,10 +259,3 @@
    (%documentation 
     :initform nil
     :accessor method-documentation)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class STANDARD-METHOD.
-
-(defclass standard-method (method)
-  ())
