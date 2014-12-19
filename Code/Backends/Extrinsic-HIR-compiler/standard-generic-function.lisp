@@ -1,5 +1,13 @@
 (in-package #:sicl-clos)
 
+;;; This definition is a temporary definition of the class
+;;; STANDARD-GENERIC-FUNCTION.  We can't name it that in DEFCLASS, so
+;;; we name it something else.  This class definition will be entered
+;;; into the extrinsic environment associated under the name
+;;; CL:STANDARD-GENERIC-FUNCTION.  The slot accessors will also be
+;;; entered into the extrinsic environment with their proper names.
+;;; These names are symbol in the package SICL-CLOS.
+
 (defclass my-standard-generic-function (sb-mop:funcallable-standard-object)
   ((%argument-precedence-order
     :initarg :argument-precedence-order
