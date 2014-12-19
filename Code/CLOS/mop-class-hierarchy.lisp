@@ -86,10 +86,3 @@
 ;;; Class STANDARD-OBJECT.
 
 (defclass standard-object (t) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class FUNCALLABLE-STANDARD-OBJECT.
-
-(defclass funcallable-standard-object (standard-object function)
-  ())
