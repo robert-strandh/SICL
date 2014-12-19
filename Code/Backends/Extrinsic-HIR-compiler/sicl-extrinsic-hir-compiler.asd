@@ -19,6 +19,7 @@
    (:file "runtime-environment")
    (:file "import-from-host")
    (:file "clos-package")
+   (:file "standard-generic-function")
    (:file "fill-global-environment")
    (:file "parse-arguments")
    (:file "translate-hir")
