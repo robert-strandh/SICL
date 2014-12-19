@@ -100,12 +100,3 @@
 
 (defclass metaobject (standard-object)
   ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Classes GENERIC-FUNCTION and STANDARD-GENERIC-FUNCTION.
-;;;
-;;; FIXME: I can not remember why I decided not to use initargs for
-;;; the slots here, and instead calling explicit writers in :AFTER
-;;; methods on INITIALIZE-INSTANCE and REINITIALIZE-INSTANCE.
-
