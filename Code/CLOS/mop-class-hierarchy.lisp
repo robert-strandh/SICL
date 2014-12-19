@@ -473,10 +473,3 @@
    (%dependents
     :initform '()
     :accessor dependents)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; STANDARD-CLASS.
-
-(defclass standard-class (regular-class)
-  ())
