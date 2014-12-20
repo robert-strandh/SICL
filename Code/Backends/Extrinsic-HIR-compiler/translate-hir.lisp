@@ -104,6 +104,7 @@
       `(lambda (&rest args)
 	 (block nil
 	   (let ,owned-vars
+	     (declare (ignorable ,@owned-vars))
 	     ,(build-argument-parsing-code
 	       (translate-lambda-list
 		(cleavir-ir:lambda-list initial-instruction))
