@@ -7,6 +7,7 @@
 (load (rp "../../Environment/multiple-value-bind.lisp"))
 (load (rp "../../Data-and-control-flow/setf.lisp"))
 (load (rp "../../Environment/defun.lisp"))
+(load (rp "../../Environment/standard-environment-macros.lisp"))
 (load (rp "../../Data-and-control-flow/fboundp.lisp"))
 (load (rp "../../Data-and-control-flow/fdefinition.lisp"))
 (load (rp "../../Data-and-control-flow/setf-fdefinition.lisp"))
