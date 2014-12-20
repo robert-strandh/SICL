@@ -26,4 +26,5 @@
    (:file "translate-hir")
    (:file "eval")
    (:file "load")
-   (:file "load-files")))
+   (:file "load-files")
+   (:file "repl")))
