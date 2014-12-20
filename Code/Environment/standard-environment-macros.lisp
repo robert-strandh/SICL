@@ -45,7 +45,7 @@
 (defmacro defconstant (name initial-value &optional documentation)
   (declare (ignore documentation))
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf (sicl-env:constant-variable ,name *global-environment*)
+     (setf (sicl-env:constant-variable ',name *global-environment*)
 	   ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -66,14 +66,14 @@
   (if initial-value-p
       `(progn
 	 (eval-when (:compile-toplevel)
-	   (setf (sicl-env:special-variable ,name *global-environment* nil)
+	   (setf (sicl-env:special-variable ',name *global-environment* nil)
 		 nil))
 	 (eval-when (:load-toplevel :execute)
-	   (unless (sicl-env:boundp ,name *global-environment*)
-	     (setf (sicl-env:special-variable ,name *global-environment* t)
+	   (unless (sicl-env:boundp ',name *global-environment*)
+	     (setf (sicl-env:special-variable ',name *global-environment* t)
 		   ,initial-value))))
       `(eval-when (:compile-toplevel :load-toplevel :execute)
-	 (setf (sicl-env:special-variable ,name *global-environment* nil)
+	 (setf (sicl-env:special-variable ',name *global-environment* nil)
 	       nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,10 +93,10 @@
   (declare (ignore documentation))
   `(progn
      (eval-when (:compile-toplevel)
-       (setf (sicl-env:special-variable ,name *global-environment* nil)
+       (setf (sicl-env:special-variable ',name *global-environment* nil)
 	     nil))
      (eval-when (:load-toplevel :execute)
-       (setf (sicl-env:special-variable ,name *global-environment* t)
+       (setf (sicl-env:special-variable ',name *global-environment* t)
 	     ,initial-value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -105,7 +105,7 @@
 
 (defmacro deftype (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf (sicl-env:type-expander ,name *global-environment*)
+     (setf (sicl-env:type-expander ',name *global-environment*)
 	   (function ,(cleavir-code-utilities:parse-deftype 
 		       name
 		       lambda-list
