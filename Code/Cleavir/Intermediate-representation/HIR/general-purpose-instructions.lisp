@@ -240,9 +240,9 @@
 (defclass set-symbol-value-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-set-symbol-value-instruction (inputs successor)
-  (make-instance 'symbol-value-instruction
-    :inputs inputs
+(defun make-set-symbol-value-instruction (symbol-input value-input successor)
+  (make-instance 'set-symbol-value-instruction
+    :inputs (list symbol-input value-input)
     :outputs '()
     :successors (list successor)))
 
