@@ -52,5 +52,5 @@
   (:shadow #:variable)
   (:use #:common-lisp))
 
-(defpackage #:sicl-standard-environmtent-macros
+(defpackage #:sicl-standard-environment-macros
   (:use #:common-lisp))
