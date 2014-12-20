@@ -15,6 +15,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "host-cl-package")
    (:file "define-global-environment")
    (:file "create-global-environment")
    (:file "runtime-environment")
