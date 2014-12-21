@@ -45,53 +45,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function SYMBOL-VALUE.
-;;;
-;;; The HyperSpec specifically allows for SYMBOL-VALUE to be used on
-;;; constant variables.  
-
-(defun symbol-value (symbol)
-  (declare (cl:type symbol symbol))
-  ;; Handle keyword symbols specially here.
-  (if (keywordp symbol)
-      symbol
-      ;; Next check whether the symbol has a defintion as a constant
-      ;; variable. 
-      (let ((constant-variable-entry
-	      (find symbol
-		    (sicl-env:constant-variables sicl-env:*global-environment*)
-		    :key #'name :test #'eq)))
-	(if (not (null constant-variable-entry))
-	    (sicl-env:definition constant-variable-entry)
-	    ;; Check whether the symbol has a definition as a special
-	    ;; variable, and check whether it is bound. 
-	    (let ((special-variable-entry
-		    (find symbol (sicl-env:special-variables
-				  sicl-env:*global-environment*)
-			  :key #'name :test #'eq)))
-	      (if (not (null special-variable-entry))
-		  (let ((val (car (storage (location special-variable-entry)))))
-		    (if (eq val +unbound+)
-			(error 'unbound-variable :name symbol)
-			val))))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function (SETF SYMBOL-VALUE).
-;;;
-;;; Signal an error if an attempt is made to call this function with
-;;; the name of a constant variable.
-;;;
-;;; The Hyperspec does not indicate what should be done if this
-;;; function is called and the name already has a definition as a
-;;; global symbol macro.  However, it does say that an error is
-;;; signaled in the opposite situation, i.e., if an attempt is made to
-;;; define a symbol macro with a name of an existing special variable.
-;;; For that reason, we think it is reasonable to signal an error in
-;;; this case too.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function (SETF MACRO-FUNCTION).
 ;;;
 ;;; The HyperSpec says that the consequences are undefined if a
