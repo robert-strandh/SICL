@@ -1,12 +1,10 @@
 (cl:in-package #:sicl-standard-environment-functions)
 
-(defvar *global-environment*)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CONSTANTP.
 
-(defun constantp (form &optional (environment *global-environment*))
+(defun constantp (form &optional (environment sicl-env:*global-environment*))
   (or (and (not (symbolp form))
 	   (not (consp form)))
       (keywordp form)
@@ -60,14 +58,14 @@
       ;; Next check whether the symbol has a defintion as a constant
       ;; variable. 
       (let ((constant-variable-entry
-	      (find symbol (constant-variables *global-environment*)
+	      (find symbol (constant-variables sicl-env:*global-environment*)
 		    :key #'name :test #'eq)))
 	(if (not (null constant-variable-entry))
 	    (definition constant-variable-entry)
 	    ;; Check whether the symbol has a definition as a special
 	    ;; variable, and check whether it is bound. 
 	    (let ((special-variable-entry
-		    (find symbol (special-variables *global-environment*)
+		    (find symbol (special-variables sicl-env:*global-environment*)
 			  :key #'name :test #'eq)))
 	      (if (not (null special-variable-entry))
 		  (let ((val (car (storage (location special-variable-entry)))))
@@ -103,7 +101,7 @@
   (declare (type symbol symbol)
 	   (type function new-function))
   (when (null environment)
-    (setf environment *global-environment*))
+    (setf environment sicl-env:*global-environment*))
   (setf (sicl-env:macro-function symbol environment)
 	new-function))
 
@@ -119,7 +117,7 @@
 
 (defun fboundp (function-name)
   (declare (type function-name function-name))
-  (sicl-env:fboundp function-name *global-environment*))
+  (sicl-env:fboundp function-name sicl-env:*global-environment*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -127,7 +125,7 @@
 
 (defun fmakunbound (function-name)
   (declare (type function-name function-name))
-  (sicl-env:fmakunbound function-name *global-environment*))
+  (sicl-env:fmakunbound function-name sicl-env:*global-environment*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -135,7 +133,7 @@
 
 (defun fdefinition (function-name)
   (declare (type function-name function-name))
-  (sicl-env:fdefinition function-name *global-environment*))
+  (sicl-env:fdefinition function-name sicl-env:*global-environment*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -144,7 +142,7 @@
 (defun (setf fdefinition) (new-definition function-name)
   (declare (type function-name function-name)
 	   (type function new-definition))
-  (setf (sicl-env:fdefinition function-name *global-environment*)
+  (setf (sicl-env:fdefinition function-name sicl-env:*global-environment*)
 	new-definition))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -153,7 +151,7 @@
 
 (defun symbol-function (symbol)
   (declare (type symbol symbol))
-  (sicl-env:fdefinition symbol *global-environment*))
+  (sicl-env:fdefinition symbol sicl-env:*global-environment*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -167,7 +165,7 @@
 (defun (setf symbol-function) (new-definition symbol)
   (declare (type function new-definition)
 	   (type symbol symbol))
-  (setf (sicl-env:fdefinition symbol *global-environment*)
+  (setf (sicl-env:fdefinition symbol sicl-env:*global-environment*)
 	new-definition))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,7 +174,7 @@
 
 (defun special-operator-p (symbol)
   (declare (type symbol symbol))
-  (sicl-env:special-operator symbol *global-environment*))
+  (sicl-env:special-operator symbol sicl-env:*global-environment*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -201,7 +199,7 @@
 
 (defun compiler-macro-function (name &optional environment)
   (if (null environment)
-      (sicl-env:compiler-macro-function name *global-environment*)
+      (sicl-env:compiler-macro-function name sicl-env:*global-environment*)
       (cleavir-env:compiler-macro-function name environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -211,7 +209,7 @@
 (defun (setf compiler-macro-function)
     (new-definition name &optional environment)
   (when (null environment)
-    (setf environment *global-environment*))
+    (setf environment sicl-env:*global-environment*))
   (setf (sicl-env:compiler-macro-function name environment)
 	new-definition))
 
@@ -221,7 +219,7 @@
 
 (defun get-setf-expansion (place &optional environment)
   (when (null environment)
-    (setf environment *global-environment*))
+    (setf environment sicl-env:*global-environment*))
   (let ((expander (sicl-env:setf-expander environment)))
     (if (null expander)
 	(let ((temps (loop for arg in (rest place)
@@ -240,7 +238,7 @@
 
 (defun find-class (symbol &optional (errorp t) environment)
   (when (null environment)
-    (setf environment *global-environment*))
+    (setf environment sicl-env:*global-environment*))
   (let ((class (sicl-env:find-class symbol environment)))
     (if (and (null class) errorp)
 	(error 'no-such-class symbol)
@@ -253,6 +251,6 @@
 (defun (setf find-class) (new-class symbol &optional errorp environment)
   (declare (ignore errorp))
   (when (null environment)
-    (setf environment *global-environment*))
+    (setf environment sicl-env:*global-environment*))
   (setf (sicl-env:find-class symbol environment)
 	new-class))
