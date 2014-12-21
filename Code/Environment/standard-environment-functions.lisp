@@ -161,8 +161,8 @@
     (setf environment sicl-env:*global-environment*))
   (let ((expander (sicl-env:setf-expander environment)))
     (if (null expander)
-	(let ((temps (loop for arg in (rest place)
-			   collect (gensym)))
+	(let ((temps (mapcar (lambda (p) (declare (ignore p)) (gensym))
+			     (rest place)))
 	      (new (gensym)))
 	  (values temps
 		  (rest place)
