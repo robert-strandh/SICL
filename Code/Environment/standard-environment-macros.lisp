@@ -129,8 +129,7 @@
 	   (function ,(cleavir-code-utilities:parse-deftype 
 		       name
 		       lambda-list
-		       body))
-	   ',name)))
+		       body)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
