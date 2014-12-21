@@ -1,7 +1,8 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-extrinsic-hir-compiler
-  :depends-on (:sicl-clos-package
+  :depends-on (:sicl-conditionals-support
+	       :sicl-clos-package
 	       :sicl-environment
 	       :sicl-simple-environment
 	       :sicl-evaluation-and-compilation
