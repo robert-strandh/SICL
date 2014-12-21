@@ -10,6 +10,7 @@
 (load (rp "../../Data-and-control-flow/nth-value.lisp"))
 (load (rp "../../Environment/defun.lisp"))
 (load (rp "../../Conditionals/macros.lisp"))
+(load (rp "../../Environment/standard-environment-functions.lisp"))
 (load (rp "../../Environment/standard-environment-macros.lisp"))
 (load (rp "../../Data-and-control-flow/fboundp.lisp"))
 (load (rp "../../Data-and-control-flow/fdefinition.lisp"))
