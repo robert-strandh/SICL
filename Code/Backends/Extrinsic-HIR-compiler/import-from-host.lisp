@@ -4,12 +4,6 @@
 ;;; available in the environment under the same names, but in the
 ;;; package HOST-COMMON-LISP.
 (loop for symbol being each external-symbol in '#:common-lisp
-      when (special-operator-p symbol)
-	do (setf (sicl-env:special-operator
-		  (find-symbol (symbol-name symbol)
-			       '#:host-common-lisp)
-		  *environment*)
-		 t)
       when (and (fboundp symbol)
 		(not (special-operator-p symbol))
 		(null (macro-function symbol)))
@@ -24,14 +18,7 @@
 			(find-symbol (symbol-name symbol)
 				     '#:host-common-lisp))
 		  *environment*)
-		 (fdefinition (list 'setf symbol)))
-      when (and (not (null (macro-function symbol)))
-		(not (special-operator-p symbol)))
-	do (setf (sicl-env:macro-function
-		  (find-symbol (symbol-name symbol)
-			       '#:host-common-lisp)
-		  *environment*)
-		 (macro-function symbol)))
+		 (fdefinition (list 'setf symbol))))
 
 ;;; Enter every Common Lisp special operator into the environment.
 ;;; We can take them from the host environment.
