@@ -134,28 +134,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function COMPILER-MACRO-FUNCTION.
-;;;
-;;; Since compiler macros are shadowed by local functions and macros,
-;;; we must first check the local environment for such shadowing
-;;; definitions, and only if no such shadowing definition is found
-;;; must we search the global environment. 
-;;;
-;;; The Cleavir environment functions allow this by defining a generic
-;;; function named CLEAVIR-ENV:COMPILER-MACRO-FUNCTION.  That function
-;;; returns NIL if there is a shadowing definition, and otherwise
-;;; calls itself with the global environment object as an argument.
-;;; For that reason, there is a method (not in this file) specialized
-;;; to SICL-ENV:ENVIRONMENT that calls
-;;; SICL-ENV:COMPILER-MACRO-FUNCTION with the same argument. 
-;;;
-;;; Here, we just recognize a shortcut when the optional ENVIRONMENT
-;;; argument is NIL, in which case we just call SICL-ENV function
-;;; directly.
 
 (defun compiler-macro-function (name &optional environment)
-  (if (null environment)
-      (sicl-env:compiler-macro-function name sicl-env:*global-environment*)
-      (cleavir-env:compiler-macro-function name environment)))
+  (let ((info (cleavir-env:function-info environment name)))
+    (if (null info)
+	nil
+	(cleavir-env:compiler-macro info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
