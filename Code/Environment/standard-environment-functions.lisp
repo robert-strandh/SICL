@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-standard-environment-functions)
 
+(deftype function-name ()
+  `(or symbol (cons (eql setf) (cons symbol null))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CONSTANTP.
