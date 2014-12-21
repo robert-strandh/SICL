@@ -58,14 +58,16 @@
       ;; Next check whether the symbol has a defintion as a constant
       ;; variable. 
       (let ((constant-variable-entry
-	      (find symbol (constant-variables sicl-env:*global-environment*)
+	      (find symbol
+		    (sicl-env:constant-variables sicl-env:*global-environment*)
 		    :key #'name :test #'eq)))
 	(if (not (null constant-variable-entry))
-	    (definition constant-variable-entry)
+	    (sicl-env:definition constant-variable-entry)
 	    ;; Check whether the symbol has a definition as a special
 	    ;; variable, and check whether it is bound. 
 	    (let ((special-variable-entry
-		    (find symbol (special-variables sicl-env:*global-environment*)
+		    (find symbol (sicl-env:special-variables
+				  sicl-env:*global-environment*)
 			  :key #'name :test #'eq)))
 	      (if (not (null special-variable-entry))
 		  (let ((val (car (storage (location special-variable-entry)))))
