@@ -464,6 +464,7 @@
 	     :successors
 	     (list (cleavir-ir:make-funcall-instruction
 		    (list temp
+			  (cleavir-ir:make-constant-input 'type-error)
 			  (cleavir-ir:make-constant-input :datum)
 			  var
 			  (cleavir-ir:make-constant-input :expected-type)
@@ -493,7 +494,7 @@
 				  (make-type-check type-specifier temp successor)))
 		   (setf successor
 			 (cleavir-ir:make-multiple-to-fixed-instruction
-			  (list results)
+			  results
 			  temps
 			  successor))
 		   (compile-ast
