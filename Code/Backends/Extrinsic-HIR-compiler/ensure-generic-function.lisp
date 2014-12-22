@@ -15,6 +15,7 @@
       (let ((result (make-instance
 			(sicl-env:find-class 'standard-generic-function
 					     environment)
+		      :name name
 		      :lambda-list lambda-list)))
 	(setf (sicl-env:fdefinition name environment)
 	      result)
