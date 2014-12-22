@@ -160,7 +160,9 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:the-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(unless (typep ,(first inputs) ',(cleavir-ir:value-type instruction))
+  `(unless (funcall (funcall fdefinition 'typep)
+		    ,(first inputs)
+		    ',(cleavir-ir:value-type instruction))
      (error 'type-error
 	    :expected-type ',(cleavir-ir:value-type instruction)
 	    :datum ,(first inputs))))
@@ -304,7 +306,9 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
-  `(if (typep ,(first inputs) ',(cleavir-ir:value-type instruction))
+  `(if (funcall (funcall fdefinition 'typep)
+		,(first inputs)
+		',(cleavir-ir:value-type instruction))
        (go ,(second successors))
        (go ,(first successors))))
 
