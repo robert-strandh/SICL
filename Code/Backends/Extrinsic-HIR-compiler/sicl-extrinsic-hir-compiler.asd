@@ -12,6 +12,7 @@
 	       :cleavir-hir
 	       :cleavir-ast-to-hir
 	       :sicl-extrinsic-environment
+	       :cleavir-primop
 	       :cleavir-hir-transformations
 	       :cleavir-basic-blocks)
   :serial t
@@ -24,6 +25,7 @@
    (:file "import-from-host")
    (:file "import-from-conditionals")
    (:file "import-from-cleavir-env")
+   (:file "define-primops")
    (:file "standard-generic-function")
    (:file "fill-global-environment")
    (:file "parse-arguments")
