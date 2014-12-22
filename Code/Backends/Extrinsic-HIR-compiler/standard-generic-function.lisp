@@ -9,7 +9,13 @@
 ;;; These names are symbol in the package SICL-CLOS.
 
 (defclass my-standard-generic-function (sb-mop:funcallable-standard-object)
-  ((%argument-precedence-order
+  ((%name
+    :initarg :name
+    :reader generic-function-name)
+   (%lambda-list
+    :initarg :lambda-list
+    :reader generic-function-lambda-list)
+   (%argument-precedence-order
     :initarg :argument-precedence-order
     :reader generic-function-argument-precedence-order)
    (%declarations 
