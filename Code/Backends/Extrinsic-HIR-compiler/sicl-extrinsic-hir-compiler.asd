@@ -3,6 +3,7 @@
 (asdf:defsystem :sicl-extrinsic-hir-compiler
   :depends-on (:sicl-conditionals-support
 	       :sicl-clos-package
+	       :sicl-cons-package
 	       :sicl-environment
 	       :sicl-simple-environment
 	       :sicl-evaluation-and-compilation
