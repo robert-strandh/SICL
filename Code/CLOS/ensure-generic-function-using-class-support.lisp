@@ -51,6 +51,7 @@
        (generic-function-class (find-class 'standard-generic-function))
        (method-class nil method-class-p)
      &allow-other-keys)
+  (declare (ignore function-name))
   (cond ((symbolp generic-function-class)
 	 (let ((class (find-class generic-function-class nil)))
 	   (when (null class)
