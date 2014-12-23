@@ -39,7 +39,7 @@
      required
        (if (null rest)
 	   (progn (push `(unless (null ,var)
-			   (funcall ,error "too many arguments"))
+			   (traced-funcall ,error "too many arguments"))
 			result)
 		  (go out))
 	   (let ((first (pop rest)))
@@ -51,14 +51,14 @@
 		    (go key))
 		   (t
 		    (push `(if (null ,var)
-			       (funcall ,error "too few arguments")
+			       (traced-funcall ,error "too few arguments")
 			       (setq ,first (pop ,var)))
 			  result)
 		    (go required)))))
      optional
        (if (null rest)
 	   (progn (push `(unless (null ,var)
-			   (funcall ,error "too many arguments"))
+			   (traced-funcall ,error "too many arguments"))
 			result)
 		  (go out))
 	   (let ((first (pop rest)))
@@ -79,7 +79,7 @@
 	     result)
        (if (null rest)
 	   (progn (push `(unless (null ,var)
-			   (funcall ,error "too many arguments"))
+			   (traced-funcall ,error "too many arguments"))
 			result)
 		  (go out))
 	   ;; The first element of REST must be &key.
@@ -89,7 +89,7 @@
        (if (null rest)
 	   (progn (push `(unless (or (null ,var)
 				     (getf ,var :allow-other-keys))
-			   (funcall ,error
+			   (traced-funcall ,error
 				    "unknown keyword argument"
 				    (first ,var)))
 			result)

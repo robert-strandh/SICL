@@ -143,7 +143,7 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs)
   `(setf ,(first outputs)
-	 (multiple-value-list (funcall ,(first inputs) ,@(rest inputs)))))
+	 (multiple-value-list (traced-funcall ,(first inputs) ,@(rest inputs)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:multiple-value-call-instruction) inputs outputs)
@@ -155,12 +155,12 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:tailcall-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(return (funcall ,(first inputs) ,@(rest inputs))))
+  `(return (traced-funcall ,(first inputs) ,@(rest inputs))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:the-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(unless (funcall (funcall fdefinition 'typep)
+  `(unless (traced-funcall (funcall fdefinition 'typep)
 		    ,(first inputs)
 		    ',(cleavir-ir:value-type instruction))
      (error 'type-error
@@ -285,12 +285,12 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:symbol-value-instruction) inputs outputs)
   `(setq ,(first outputs)
-	 (funcall (funcall fdefinition 'symbol-value) ,(first inputs))))
+	 (traced-funcall (funcall fdefinition 'symbol-value) ,(first inputs))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:set-symbol-value-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(funcall (funcall fdefinition '(setf symbol-value))
+  `(traced-funcall (funcall fdefinition '(setf symbol-value))
 	    ,(second inputs)
 	    ,(first inputs)))
 
@@ -306,7 +306,7 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
-  `(if (funcall (funcall fdefinition 'typep)
+  `(if (traced-funcall (funcall fdefinition 'typep)
 		,(first inputs)
 		',(cleavir-ir:value-type instruction))
        (go ,(second successors))
@@ -381,4 +381,4 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs successors)
   (declare (ignore outputs successors))
-  `(funcall ,(first inputs) ,@(rest inputs)))
+  `(traced-funcall ,(first inputs) ,@(rest inputs)))
