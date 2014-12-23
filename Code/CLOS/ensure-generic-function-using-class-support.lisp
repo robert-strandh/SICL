@@ -6,8 +6,7 @@
      &rest
        all-keyword-arguments
      &key
-       (generic-function-class
-	*standard-generic-function*)
+       (generic-function-class (find-class 'standard-generic-function))
        (method-class nil method-class-p)
      &allow-other-keys)
   (cond ((symbolp generic-function-class)
@@ -32,15 +31,16 @@
 	   (error "method class must be a class or a name"))))
   (let ((remaining-keys (copy-list all-keyword-arguments)))
     (loop while (remf remaining-keys :generic-function-class))
-    (if method-class-p
-	(apply #'make-instance generic-function-class
-	       ;; The AMOP does
-	       :name function-name
-	       :method-class method-class
-	       remaining-keys)
-	(apply #'make-instance generic-function-class
-	       :name function-name
-	       remaining-keys))))
+    (setf (fdefinition function-name)
+	  (if method-class-p
+	      (apply #'make-instance generic-function-class
+		     ;; The AMOP does
+		     :name function-name
+		     :method-class method-class
+		     remaining-keys)
+	      (apply #'make-instance generic-function-class
+		     :name function-name
+		     remaining-keys)))))
 
 (defun ensure-generic-function-using-class-generic-function
     (generic-function
@@ -48,7 +48,7 @@
      &rest
        all-keyword-arguments
      &key
-       (generic-function-class *standard-generic-function*)
+       (generic-function-class (find-class 'standard-generic-function))
        (method-class nil method-class-p)
      &allow-other-keys)
   (cond ((symbolp generic-function-class)
