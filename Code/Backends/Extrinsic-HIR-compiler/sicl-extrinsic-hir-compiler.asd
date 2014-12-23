@@ -27,7 +27,6 @@
    (:file "import-from-cleavir-env")
    (:file "funcall")
    (:file "define-primops")
-   (:file "standard-generic-function")
    (:file "fill-global-environment")
    (:file "parse-arguments")
    (:file "translate-hir")
