@@ -15,7 +15,7 @@
 	     (error "no such generic-function-class ~s"
 		    generic-function-class))
 	   (setf generic-function-class class)))
-	((classp generic-function-class)
+	((typep generic-function-class 'class)
 	 nil)
 	(t
 	 (error "generic function class must be a class or a name")))
@@ -25,7 +25,7 @@
 	     (when (null class)
 	       (error "no such method class ~s" method-class))
 	     (setf method-class class)))
-	  ((classp method-class)
+	  ((typep method-class 'class)
 	   nil)
 	  (t
 	   (error "method class must be a class or a name"))))
@@ -57,7 +57,7 @@
 	     (error "no such generic-function-class ~s"
 		    generic-function-class))
 	   (setf generic-function-class class)))
-	((classp generic-function-class)
+	((typep generic-function-class 'class)
 	 nil)
 	(t
 	 (error "generic function class must be a class or a name")))
@@ -69,7 +69,7 @@
 	     (when (null class)
 	       (error "no such method class ~s" method-class))
 	     (setf method-class class)))
-	  ((classp method-class)
+	  ((typep method-class 'class)
 	   nil)
 	  (t
 	   (error "method class must be a class or a name"))))
