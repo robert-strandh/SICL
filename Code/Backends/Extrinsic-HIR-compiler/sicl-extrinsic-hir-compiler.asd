@@ -7,9 +7,10 @@
 ;;;; of course the entire memory management functionality.
 ;;;;
 ;;;; There are some things that we HAVE TO import from the host, for
-;;;; instance CONS, ALLOCATE-INSTANCE, and SHARED-INITIALIZE, because
-;;;; they depend on how the basic data types are represented.  We must
-;;;; also import fundamental predicates such as CONSP, SYMBOLP, etc.
+;;;; instance CONS, ALLOCATE-INSTANCE, and STANDARD-INSTANCE-ACCESS,
+;;;; because they depend on how the basic data types are represented.
+;;;; We must also import fundamental predicates such as CONSP,
+;;;; SYMBOLP, etc.
 ;;;;
 ;;;; Similarly, there are things we absolution CAN NOT import from the
 ;;;; host.  This is true for macros that may expand to
@@ -33,9 +34,10 @@
 ;;;; argument mismatch.  We solve this problem by defining our own
 ;;;; versions of these functions, so that arguments will be checked,
 ;;;; but these versions then call the analogous host function to
-;;;; accomplish its task.  It is not practical to do this with all
-;;;; functions that can fail, so there might be situations where the
-;;;; host ERROR function is called rather than the SICL version of it.
+;;;; accomplish its task.  It might not be practical to do this with
+;;;; all functions that can fail, so there might be situations where
+;;;; the host ERROR function is called rather than the SICL version of
+;;;; it.
 ;;;;
 ;;;; The way this extrinsic environment is created is that we
 ;;;; initially import all functions from the host, and not only
@@ -46,7 +48,6 @@
 ;;;; compiled by the host compiler.  Ultimately, most of the code that
 ;;;; was initially imported from the host is replaced by SICL code
 ;;;; that has been compiled with the SICL compiler.
-
 
 (asdf:defsystem :sicl-extrinsic-hir-compiler
   :depends-on (:sicl-conditionals-support
