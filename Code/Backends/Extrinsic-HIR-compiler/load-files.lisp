@@ -17,4 +17,5 @@
 (load (rp "../../Data-and-control-flow/fdefinition.lisp"))
 (load (rp "../../Data-and-control-flow/setf-fdefinition.lisp"))
 (load (rp "../../Cons/low.lisp"))
+(load (rp "../../Cons/high.lisp"))
 (load (rp "ensure-generic-function.lisp"))
