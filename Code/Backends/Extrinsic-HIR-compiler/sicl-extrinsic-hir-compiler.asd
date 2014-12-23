@@ -25,6 +25,7 @@
    (:file "import-from-host")
    (:file "import-from-conditionals")
    (:file "import-from-cleavir-env")
+   (:file "funcall")
    (:file "define-primops")
    (:file "standard-generic-function")
    (:file "fill-global-environment")
