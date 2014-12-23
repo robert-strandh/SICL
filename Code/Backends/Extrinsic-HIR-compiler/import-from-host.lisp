@@ -34,6 +34,13 @@
       when (special-operator-p symbol)
 	do (setf (sicl-env:special-operator symbol *environment*) t))
 
+;;; Enter every Common Lisp class into the environment.
+(loop for symbol being each external-symbol in '#:common-lisp
+      for class = (find-class symbol nil)
+      unless (null class)
+	do (setf (sicl-env:find-class symbol *environment*)
+		 class))
+
 ;;; Define NIL and T as constant variables.
 (setf (sicl-env:constant-variable t *environment*) t)
 (setf (sicl-env:constant-variable nil *environment*) nil)
