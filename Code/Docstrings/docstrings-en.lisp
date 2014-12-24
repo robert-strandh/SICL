@@ -868,12 +868,12 @@
 (fundoc 'rationalp
 	(fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is of type RATIONAL.~@
-              Retrurn falise otherwise."))
+              Return falise otherwise."))
 
 (fundoc 'realp
 	(fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is of type REAL.~@
-              Retrurn falise otherwise."))
+              Return falise otherwise."))
 
 (fundoc 'row-major-aref
 	(fmt "Lambda list: (ARRAY INDEX).~@
