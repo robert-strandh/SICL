@@ -63,9 +63,9 @@
 	((do-bindings (clauses)
 	   (if (null clauses)
 	       `(tagbody
-		   ,@(mapcar (lambda (clause)
-			       (prologue-form clause end-tag))
-			     all-clauses)
+		   (progn ,@(mapcar (lambda (clause)
+				      (prologue-form clause end-tag))
+				    all-clauses))
 		   ,start-tag
 		   (progn ,@(mapcar (lambda (clause)
 				      (body-form clause end-tag))
