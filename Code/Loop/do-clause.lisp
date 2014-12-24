@@ -24,7 +24,7 @@
 ;;;    do-clause ::= do compound-form+
 
 (defclass do-clause
-    (clause variable-clause-mixin main-clause-mixin)
+    (clause main-clause-mixin)
   ((%body :initarg :body :reader body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
