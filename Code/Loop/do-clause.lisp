@@ -46,5 +46,6 @@
 ;;;
 ;;; Compute the body-form.
 
-(defmethod body-form ((clause do-clause))
+(defmethod body-form ((clause do-clause) end-tag)
+  (declare (ignore end-tag))
   (body clause))

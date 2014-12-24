@@ -17,7 +17,8 @@
 ;;; Clause FOR-AS-ARITHMETIC.
 
 (defclass for-as-arithmetic (for-as-subclause var-and-type-spec-mixin)
-  (;; The form that was given after one of the LOOP keywords FROM,
+  ((%form-value-var :initform (gensym) :reader form-value-var)
+   ;; The form that was given after one of the LOOP keywords FROM,
    ;; UPFROM, or DOWNFROM, or 0 if none of these LOOP keywords was
    ;; given.
    (%start-form :initform 0 :initarg :start-form :reader start-form)

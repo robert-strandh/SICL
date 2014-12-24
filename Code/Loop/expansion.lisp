@@ -41,9 +41,9 @@
     (declare (ignore clause end-tag))
     '()))
 
-(defgeneric body-form (clause)
-  (:method (clause)
-    (declare (ignore clause))
+(defgeneric body-form (clause end-tag)
+  (:method (clause end-tag)
+    (declare (ignore clause end-tag))
     '()))
 
 (defgeneric step-form (clause)
@@ -67,7 +67,9 @@
 			       (prologue-form clause end-tag))
 			     all-clauses)
 		   ,start-tag
-		   (progn ,@(mapcar #'body-form all-clauses))
+		   (progn ,@(mapcar (lambda (clause)
+				      (body-form clause end-tag))
+				    all-clauses))
 		   (progn ,@(mapcar (lambda (clause)
 				      (termination-form clause end-tag))
 				    all-clauses))

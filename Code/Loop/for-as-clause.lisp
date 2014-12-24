@@ -145,8 +145,10 @@
 ;;;
 ;;; Compute the body-form.
 
-(defmethod body-form ((clause for-as-clause))
-  `(progn ,@(mapcar #'body-form
+(defmethod body-form ((clause for-as-clause) end-tag)
+  (declare (ignore end-tag))
+  `(progn ,@(mapcar (lambda (clause)
+		      (body-form clause end-tag))
 		    (subclauses clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

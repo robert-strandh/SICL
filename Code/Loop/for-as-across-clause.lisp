@@ -85,14 +85,15 @@
 
 (defmethod prologue-form ((clause for-as-across) end-tag)
   `(progn ,(termination-form clause end-tag)
-	  ,(body-form clause)
+	  ,(body-form clause end-tag)
 	  ,(step-form clause)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute body-form.
 
-(defmethod body-form ((clause for-as-across))
+(defmethod body-form ((clause for-as-across) end-tag)
+  (declare (ignore end-tag))
   (generate-assignments (var-spec clause)
 			`(aref ,(form-var clause)
 			       ,(index-var clause))))
