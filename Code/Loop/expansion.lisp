@@ -62,19 +62,19 @@
     (labels
 	((do-bindings (clauses)
 	   (if (null clauses)
-	       `(progn ,@(mapcar (lambda (clause)
-				   (prologue-form clause end-tag))
-				 all-clauses)
-		       (tagbody
-			,start-tag
-			  (progn ,@(mapcar (lambda (clause)
-					     (termination-form clause end-tag))
-					   all-clauses))
-			  (progn ,@(mapcar #'body-form all-clauses))
-			  (progn ,@(mapcar #'step-form all-clauses))
-			  (go ,start-tag)
-                        ,end-tag
-			  (progn ,@(mapcar #'epilogue all-clauses))))
+	       `(tagbody
+		   ,@(mapcar (lambda (clause)
+			       (prologue-form clause end-tag))
+			     all-clauses)
+		   ,start-tag
+		   (progn ,@(mapcar #'body-form all-clauses))
+		   (progn ,@(mapcar (lambda (clause)
+				      (termination-form clause end-tag))
+				    all-clauses))
+		   (progn ,@(mapcar #'step-form all-clauses))
+		   (go ,start-tag)
+		   ,end-tag
+		   (progn ,@(mapcar #'epilogue all-clauses)))
 	       `(let* ,(bindings (car clauses))
 		  (declare ,@(declarations (car clauses)))
 		  ,(do-bindings (cdr clauses))))))
