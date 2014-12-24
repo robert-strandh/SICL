@@ -35,7 +35,7 @@
       (when (not (null second-name-clause))
 	(error 'multiple-name-clauses))))
   ;; Check that there is not a variable-clause (other than an
-  ;; initial-clause or a final-clause) following a name clause
+  ;; initial-clause or a final-clause) following a main clause
   ;; (other than an initial-clause or a final-clause).
   (let ((last-variable-clause-position
 	  (position-if (lambda (clause)
