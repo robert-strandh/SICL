@@ -34,27 +34,27 @@
 (defgeneric prologue-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
-    '()))
+    nil))
 
 (defgeneric termination-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
-    '()))
+    nil))
 
 (defgeneric body-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
-    '()))
+    nil))
 
 (defgeneric step-form (clause)
   (:method (clause)
     (declare (ignore clause))
-    '()))
+    nil))
 
 (defgeneric epilogue (clause)
   (:method (clause)
     (declare (ignore clause))
-    '()))
+    nil))
 
 (defun expand-clauses (all-clauses)
   (let ((start-tag (gensym))
