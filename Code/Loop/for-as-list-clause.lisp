@@ -144,13 +144,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the body-form.
+;;; Compute the prologue.
 
-(defmethod body-form ((clause for-as-in-list))
-  (generate-assignments (var-spec clause) `(car ,(rest-var clause))))
+(defmethod prologue-form ((clause for-as-in-list) end-tag)
+  `(progn (when (endp ,(rest-var clause))
+	    (go ,end-tag))
+	  ,(generate-assignments (var-spec clause) `(car ,(rest-var clause)))
+	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
 
-(defmethod body-form ((clause for-as-on-list))
-  (generate-assignments (var-spec clause) (rest-var clause)))
+(defmethod prologue-form ((clause for-as-on-list) end-tag)
+  `(progn (when (atom ,(rest-var clause))
+	    (go ,end-tag))
+	  ,(generate-assignments (var-spec clause) (rest-var clause))
+	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -168,5 +174,10 @@
 ;;;
 ;;; Compute the step-form.
 
-(defmethod step-form ((clause for-as-list))
-  `(setq ,(rest-var clause) (cdr ,(rest-var clause))))
+(defmethod step-form ((clause for-as-in-list))
+  `(progn ,(generate-assignments (var-spec clause) `(car ,(rest-var clause)))
+	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
+
+(defmethod step-form ((clause for-as-on-list))
+  `(progn ,(generate-assignments (var-spec clause) (rest-var clause))
+	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
