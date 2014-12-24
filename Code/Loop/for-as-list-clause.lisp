@@ -147,14 +147,12 @@
 ;;; Compute the prologue.
 
 (defmethod prologue-form ((clause for-as-in-list) end-tag)
-  `(progn (when (endp ,(rest-var clause))
-	    (go ,end-tag))
+  `(progn ,(termination-form clause end-tag)
 	  ,(generate-assignments (var-spec clause) `(car ,(rest-var clause)))
 	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
 
 (defmethod prologue-form ((clause for-as-on-list) end-tag)
-  `(progn (when (atom ,(rest-var clause))
-	    (go ,end-tag))
+  `(progn ,(termination-form clause end-tag)
 	  ,(generate-assignments (var-spec clause) (rest-var clause))
 	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
 
