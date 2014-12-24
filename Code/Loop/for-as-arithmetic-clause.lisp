@@ -172,7 +172,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -189,7 +189,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -206,7 +206,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -223,7 +223,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -240,7 +240,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -257,7 +257,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -288,7 +288,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
@@ -303,7 +303,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :termination-test (first to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
@@ -357,7 +357,7 @@
 		   :order '(to by from)
 		   :var-spec var
 		   :type-spec type-spec
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -372,7 +372,7 @@
 		   :order '(by to from)
 		   :var-spec var
 		   :type-spec type-spec
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -415,7 +415,7 @@
 		   :order '(to from by)
 		   :var-spec var
 		   :type-spec type-spec
-		   :end-form (second to)))
+		   :end-form (cdr to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
@@ -462,7 +462,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -479,7 +479,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -496,7 +496,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -513,7 +513,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -530,7 +530,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -547,7 +547,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -564,7 +564,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -581,7 +581,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -598,7 +598,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -615,7 +615,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -632,7 +632,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -649,7 +649,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
-		   :end-form (second to)
+		   :end-form (cdr to)
 		   :by-form by
 		   :termination-test (first to)))
 	       'simple-var-parser
@@ -710,6 +710,13 @@
 
 (defmethod declarations ((clause for-as-arithmetic))
   `((cl:type ,(type-spec clause) ,(var-spec clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the prologue-form.
+
+(defmethod prologue-form ((clause for-as-arithmetic) end-tag)
+  (termination-form clause end-tag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
