@@ -17,7 +17,11 @@
 ;;; Clause FOR-AS-ARITHMETIC.
 
 (defclass for-as-arithmetic (for-as-subclause var-and-type-spec-mixin)
-  ((%form-value-var :initform (gensym) :reader form-value-var)
+  (;; The order in which the forms are given.  This is a list of three
+   ;; elements FROM, TO, and BY in the order that they were given in
+   ;; the clause.
+   (%order :initarg :order :reader order)
+   (%form-value-var :initform (gensym) :reader form-value-var)
    ;; The form that was given after one of the LOOP keywords FROM,
    ;; UPFROM, or DOWNFROM, or 0 if none of these LOOP keywords was
    ;; given.
@@ -164,6 +168,7 @@
 (define-parser arithmetic-up-1-parser
   (consecutive (lambda (var type-spec from to by)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(from to by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -180,6 +185,7 @@
 (define-parser arithmetic-up-2-parser
   (consecutive (lambda (var type-spec from by to)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(from by to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -196,6 +202,7 @@
 (define-parser arithmetic-up-3-parser
   (consecutive (lambda (var type-spec to from by)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(to from by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -212,6 +219,7 @@
 (define-parser arithmetic-up-4-parser
   (consecutive (lambda (var type-spec to by from)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(to by from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -228,6 +236,7 @@
 (define-parser arithmetic-up-5-parser
   (consecutive (lambda (var type-spec by from to)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(by from to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -244,6 +253,7 @@
 (define-parser arithmetic-up-6-parser
   (consecutive (lambda (var type-spec by to from)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(by to from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -274,6 +284,7 @@
 (define-parser arithmetic-up-7-parser
   (consecutive (lambda (var type-spec from to)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(from to by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -288,6 +299,7 @@
 (define-parser arithmetic-up-8-parser
   (consecutive (lambda (var type-spec to from)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(to from by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -308,6 +320,7 @@
 (define-parser arithmetic-up-9-parser
   (consecutive (lambda (var type-spec from by)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(from by to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -321,6 +334,7 @@
 (define-parser arithmetic-up-10-parser
   (consecutive (lambda (var type-spec by from)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(by from to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -340,6 +354,7 @@
 (define-parser arithmetic-up-11-parser
   (consecutive (lambda (var type-spec to by)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(to by from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :end-form (second to)
@@ -354,6 +369,7 @@
 (define-parser arithmetic-up-12-parser
   (consecutive (lambda (var type-spec by to)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(by to from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :end-form (second to)
@@ -380,6 +396,7 @@
 (define-parser arithmetic-up-13-parser
   (consecutive (lambda (var type-spec from)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(from to by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from))
@@ -395,6 +412,7 @@
 (define-parser arithmetic-up-14-parser
   (consecutive (lambda (var type-spec to)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(to from by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :end-form (second to)))
@@ -410,6 +428,7 @@
 (define-parser arithmetic-up-15-parser
   (consecutive (lambda (var type-spec by)
 		 (make-instance 'for-as-arithmetic-up
+		   :order '(by to from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :by-form by))
@@ -439,6 +458,7 @@
 (define-parser arithmetic-down-1-parser
   (consecutive (lambda (var type-spec from to by)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(from to by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -455,6 +475,7 @@
 (define-parser arithmetic-down-2-parser
   (consecutive (lambda (var type-spec from by to)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(from by to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -471,6 +492,7 @@
 (define-parser arithmetic-down-3-parser
   (consecutive (lambda (var type-spec to from by)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(to from by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -487,6 +509,7 @@
 (define-parser arithmetic-down-4-parser
   (consecutive (lambda (var type-spec to by from)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(to by from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -503,6 +526,7 @@
 (define-parser arithmetic-down-5-parser
   (consecutive (lambda (var type-spec by from to)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(by from to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -519,6 +543,7 @@
 (define-parser arithmetic-down-6-parser
   (consecutive (lambda (var type-spec by to from)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(by to from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -535,6 +560,7 @@
 (define-parser arithmetic-down-7-parser
   (consecutive (lambda (var type-spec from to by)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(from to by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -551,6 +577,7 @@
 (define-parser arithmetic-down-8-parser
   (consecutive (lambda (var type-spec from by to)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(from by to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -567,6 +594,7 @@
 (define-parser arithmetic-down-9-parser
   (consecutive (lambda (var type-spec to from by)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(to from by)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -583,6 +611,7 @@
 (define-parser arithmetic-down-10-parser
   (consecutive (lambda (var type-spec to by from)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(to by from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -599,6 +628,7 @@
 (define-parser arithmetic-down-11-parser
   (consecutive (lambda (var type-spec by from to)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(by from to)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
@@ -615,6 +645,7 @@
 (define-parser arithmetic-down-12-parser
   (consecutive (lambda (var type-spec by to from)
 		 (make-instance 'for-as-arithmetic-down
+		   :order '(by to from)
 		   :var-spec var
 		   :type-spec type-spec
 		   :start-form from
