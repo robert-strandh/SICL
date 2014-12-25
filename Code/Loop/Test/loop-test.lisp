@@ -47,6 +47,14 @@
       n)
   10)
 
+;;; Simple loops
+(deftest sloop.1
+  (loop (return 'a))
+  a)
+
+(deftest sloop.2
+  (loop (return (cl:values))))
+
 (defun loop-until-do ()
   (assert (equal (let ((n 0))
 		   (loop until (= n 10)
