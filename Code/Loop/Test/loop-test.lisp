@@ -32,11 +32,11 @@
       n)
   10)
 
-(defun loop-while-expr ()
-  (assert (equal (let ((n 0))
-		   (loop while (< (incf n) 10))
-		   n)
-		 10)))
+(deftest loop-while-expr
+    (let ((n 0))
+      (loop while (< (incf n) 10))
+      n)
+  10)
 
 (defun loop-do ()
   (assert (equal (let ((n 0))
@@ -106,5 +106,3 @@
 (defun loop-test ()
   (mapc #'run-test *tests*)
   nil)
-
-
