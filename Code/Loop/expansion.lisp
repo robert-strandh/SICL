@@ -85,11 +85,18 @@
 (defvar *loop-name*)
 
 (defun expand-body (loop-body)
-  (let ((clauses (parse-loop-body loop-body)))
-    (analyse-clauses clauses)
-    (let* ((name (if (typep (car clauses) 'name-clause)
-		     (name (car clauses))
-		     nil))
-	   (*loop-name* name))
-      `(block ,name
-	 ,(expand-clauses clauses)))))
+  (if (every #'consp loop-body)
+      (let ((tag (gensym)))
+	`(block nil
+	   (tagbody
+	      ,tag
+	      ,@loop-body
+	      (go ,tag))))
+      (let ((clauses (parse-loop-body loop-body)))
+	(analyse-clauses clauses)
+	(let* ((name (if (typep (car clauses) 'name-clause)
+			 (name (car clauses))
+			 nil))
+	       (*loop-name* name))
+	  `(block ,name
+	     ,(expand-clauses clauses))))))
