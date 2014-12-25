@@ -73,6 +73,25 @@
 
 (defclass main-clause-mixin () ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin for clauses that make the loop return a value.
+
+(defclass loop-return-clause-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin for accumulation clauses.
+
+(defclass accumulation-clause-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin for accumulation clauses that accumulate into a default
+;;; variable.
+
+(defclass default-accumulation-clause-mixin () ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Accumulation clauses
