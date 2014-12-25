@@ -20,6 +20,7 @@
 
 (defun symbol-equal (symbol1 symbol2)
   (and (symbolp symbol1)
+       (symbolp symbol2)
        (string= symbol1 symbol2)))
 
 ;;; This function generates code for destructuring a value according
