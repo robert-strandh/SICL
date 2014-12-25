@@ -38,14 +38,14 @@
       n)
   10)
 
-(defun loop-do ()
-  (assert (equal (let ((n 0))
-		   (block abc
-		     (loop do (progn (incf n)
-				     (when (= n 10)
-				       (return-from abc nil)))))
-		   n)
-		 10)))
+(deftest loop-do
+    (let ((n 0))
+      (block abc
+	(loop do (progn (incf n)
+			(when (= n 10)
+			  (return-from abc nil)))))
+      n)
+  10)
 
 (defun loop-until-do ()
   (assert (equal (let ((n 0))
