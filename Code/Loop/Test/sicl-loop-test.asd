@@ -6,4 +6,6 @@
   :components
   ((:file "test-packages")
    (:file "loop-defmacro")
-   (:file "loop-test")))
+   (:file "loop-test")
+   (:file "simple-loop")))
+
