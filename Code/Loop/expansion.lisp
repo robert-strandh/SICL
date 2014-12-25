@@ -85,7 +85,8 @@
 (defun expand-body (loop-body)
   (let ((clauses (parse-loop-body loop-body)))
     (analyse-clauses clauses)
-    `(block ,(if (typep (car clauses) 'name-clause)
-		 (name (car clauses))
-		 nil)
-       ,(expand-clauses clauses))))
+    (let ((name (if (typep (car clauses) 'name-clause)
+		    (name (car clauses))
+		    nil)))
+      `(block ,name
+	 ,(expand-clauses clauses)))))
