@@ -84,6 +84,8 @@
 
 (defvar *loop-name*)
 
+(defvar *accumulation-variable*)
+
 (defun expand-body (loop-body)
   (if (every #'consp loop-body)
       (let ((tag (gensym)))
@@ -97,6 +99,7 @@
 	(let* ((name (if (typep (car clauses) 'name-clause)
 			 (name (car clauses))
 			 nil))
-	       (*loop-name* name))
+	       (*loop-name* name)
+	       (*accumulation-variable* (gensym)))
 	  `(block ,name
 	     ,(expand-clauses clauses))))))
