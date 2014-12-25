@@ -82,11 +82,14 @@
 		  ,(do-bindings (cdr clauses))))))
       (do-bindings all-clauses))))
 
+(defvar *loop-name*)
+
 (defun expand-body (loop-body)
   (let ((clauses (parse-loop-body loop-body)))
     (analyse-clauses clauses)
-    (let ((name (if (typep (car clauses) 'name-clause)
-		    (name (car clauses))
-		    nil)))
+    (let* ((name (if (typep (car clauses) 'name-clause)
+		     (name (car clauses))
+		     nil))
+	   (*loop-name* name))
       `(block ,name
 	 ,(expand-clauses clauses)))))
