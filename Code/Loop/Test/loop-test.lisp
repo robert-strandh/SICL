@@ -1,18 +1,36 @@
 (in-package #:sicl-loop-test)
 
-(defun loop-until-t ()
-  (assert (equal (loop until t)
-		 nil)))
+(defclass test ()
+  ((%name :initarg :name :reader name)
+   (%form :initarg :form :reader form)
+   (%values :initarg :values :reader values)))
 
-(defun loop-while-nil ()
-  (assert (equal (loop while nil)
-		 nil)))
+(defparameter *tests* '())
 
-(defun loop-until-expr ()
-  (assert (equal (let ((n 0))
-		   (loop until (= (incf n) 10))
-		   n)
-		 10)))
+(defmacro deftest (name form &rest values)
+  `(push (make-instance 'test
+	   :name ',name
+	   :form ',form
+	   :values ',values)
+	 *tests*))
+
+(defun run-test (test)
+  (assert (equal (multiple-value-list (eval (form test)))
+		 (values test))))
+
+(deftest loop-until-t
+    (loop until t)
+  nil)
+
+(deftest loop-while-nil
+    (loop while nil)
+  nil)
+
+(deftest loop-until-expr
+    (let ((n 0))
+      (loop until (= (incf n) 10))
+      n)
+  10)
 
 (defun loop-while-expr ()
   (assert (equal (let ((n 0))
@@ -86,13 +104,7 @@
 ;; 		 10)))
 
 (defun loop-test ()
-  (loop-until-t)
-  (loop-while-nil)
-  (loop-until-expr)
-  (loop-while-expr)
-  (loop-do)
-  (loop-until-do)
-  (loop-repeat-do)
-  (loop-with-repeat-do)
-  (loop-initially-repeat-do)
-  (loop-repeat-do-finally))
+  (mapc #'run-test *tests*)
+  nil)
+
+
