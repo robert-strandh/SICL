@@ -47,7 +47,7 @@
 (define-parser return-form-clause-parser
   (consecutive (lambda (return form)
 		 (declare (ignore return))
-		 (make-instance 'return-clause
+		 (make-instance 'return-form-clause
 		   :form form))
 	       (keyword-parser 'return)
 	       (singleton #'identity (constantly t))))
@@ -58,3 +58,10 @@
 
 (add-clause-parser 'return-clause-parser)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute body-form.
+
+(defmethod body-form ((clause return-clause) end-tag)
+  (declare (ignore end-tag))
+  `(return-from ,*loop-name* ,(form clause)))
