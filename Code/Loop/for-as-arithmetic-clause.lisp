@@ -672,6 +672,21 @@
 	       (alternative 'from-parser 'downfrom-parser)
 	       (alternative 'downto-parser 'above-parser)))
 
+;;; DOWNFROM - TO/DOWNTO
+(define-parser arithmetic-down-14-parser
+  (consecutive (lambda (var type-spec from to)
+		 (make-instance 'for-as-arithmetic-down
+		   :order '(from to by)
+		   :var-spec var
+		   :type-spec type-spec
+		   :start-form from
+		   :end-form (cdr to)
+		   :termination-test (car to)))
+	       'simple-var-parser
+	       'optional-type-spec-parser
+	       'downfrom-parser
+	       (alternative 'downto-parser 'to-parser)))
+
 (define-parser three-keyword-down-parser
   (alternative 'arithmetic-down-1-parser
 	       'arithmetic-down-2-parser
@@ -685,7 +700,8 @@
 	       'arithmetic-down-10-parser
 	       'arithmetic-down-11-parser
 	       'arithmetic-down-12-parser
-	       'arithmetic-down-13-parser))
+	       'arithmetic-down-13-parser
+	       'arithmetic-down-14-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
