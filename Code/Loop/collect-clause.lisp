@@ -82,3 +82,18 @@
 	       'collect-form-into-clause-parser
 	       'collect-form-clause-parser))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute body-form.
+
+(defmethod body-form ((clause collect-form-clause) end-tag)
+  (declare (ignore end-tag))
+  `(if (null ,*list-tail-accumulation-variable*)
+       (progn (setq ,*list-tail-accumulation-variable*
+		    (list ,(form clause)))
+	      (setq ,*accumulation-variable*
+		    ,*list-tail-accumulation-variable*))
+       (progn (rplacd ,*list-tail-accumulation-variable*
+		      (list ,(form clause)))
+	      (setq ,*list-tail-accumulation-variable*
+		    (cdr ,*list-tail-accumulation-variable*)))))
