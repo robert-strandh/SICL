@@ -45,9 +45,9 @@
   (loop for x from 1 to 9 by 2 collect x)
   (1 3 5 7 9))
 
-;; (deftest loop.1.10
-;;   (loop for x from 1 to 10 by 2 collect x)
-;;   (1 3 5 7 9))
+(deftest loop.1.10
+  (loop for x from 1 to 10 by 2 collect x)
+  (1 3 5 7 9))
 
 ;; (deftest loop.1.11
 ;;   (loop for x to 10 from 1 collect x)
