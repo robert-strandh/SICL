@@ -76,7 +76,9 @@
 		   (progn ,@(mapcar #'step-form all-clauses))
 		   (go ,start-tag)
 		   ,end-tag
-		   (progn ,@(mapcar #'epilogue all-clauses)))
+		   (progn ,@(mapcar #'epilogue all-clauses)
+			  (return-from ,*loop-name*
+			    ,*accumulation-variable*)))
 	       `(let* ,(bindings (car clauses))
 		  (declare ,@(declarations (car clauses)))
 		  ,(do-bindings (cdr clauses))))))
