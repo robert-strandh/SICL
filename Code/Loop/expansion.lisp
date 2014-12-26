@@ -86,6 +86,8 @@
 
 (defvar *accumulation-variable*)
 
+(defvar *list-tail-accumulation-variable*)
+
 (defun expand-body (loop-body)
   (if (every #'consp loop-body)
       (let ((tag (gensym)))
@@ -100,6 +102,7 @@
 			 (name (car clauses))
 			 nil))
 	       (*loop-name* name)
-	       (*accumulation-variable* (gensym)))
+	       (*accumulation-variable* (gensym))
+	       (*list-tail-accumulation-variable* (gensym)))
 	  `(block ,name
 	     ,(expand-clauses clauses))))))
