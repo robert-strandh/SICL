@@ -82,6 +82,8 @@
 	       'collect-form-into-clause-parser
 	       'collect-form-clause-parser))
 
+(add-clause-parser 'collect-clause-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute body-form.
