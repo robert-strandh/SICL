@@ -21,9 +21,9 @@
   (loop for x from 1 to 1 collect x)
   (1))
 
-;; (deftest loop.1.4
-;;   (loop for x from 1 to 0 collect x)
-;;   nil)
+(deftest loop.1.4
+  (loop for x from 1 to 0 collect x)
+  nil)
 
 ;; (deftest loop.1.5
 ;;   (loop for x to 5 collect x)
