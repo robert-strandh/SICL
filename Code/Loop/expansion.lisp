@@ -82,7 +82,10 @@
 	       `(let* ,(bindings (car clauses))
 		  (declare ,@(declarations (car clauses)))
 		  ,(do-bindings (cdr clauses))))))
-      (do-bindings all-clauses))))
+      `(let ((,*accumulation-variable* nil)
+	     (,*list-tail-accumulation-variable* nil))
+	 (declare (ignorable ,*list-tail-accumulation-variable*))
+	 ,(do-bindings all-clauses)))))
 
 (defvar *loop-name*)
 
