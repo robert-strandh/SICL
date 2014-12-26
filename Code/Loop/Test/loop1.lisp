@@ -41,9 +41,9 @@
 ;;   (loop for x from 1.0 to 5.0 count x)
 ;;   5)
 
-;; (deftest loop.1.9
-;;   (loop for x from 1 to 9 by 2 collect x)
-;;   (1 3 5 7 9))
+(deftest loop.1.9
+  (loop for x from 1 to 9 by 2 collect x)
+  (1 3 5 7 9))
 
 ;; (deftest loop.1.10
 ;;   (loop for x from 1 to 10 by 2 collect x)
