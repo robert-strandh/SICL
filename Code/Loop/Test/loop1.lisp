@@ -17,9 +17,9 @@
   (loop for x from 6 downto 1 collect x)
   (6 5 4 3 2 1))
 
-;; (deftest loop.1.3
-;;   (loop for x from 1 to 1 collect x)
-;;   (1))
+(deftest loop.1.3
+  (loop for x from 1 to 1 collect x)
+  (1))
 
 ;; (deftest loop.1.4
 ;;   (loop for x from 1 to 0 collect x)
