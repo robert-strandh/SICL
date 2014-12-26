@@ -13,9 +13,9 @@
   (loop for x from 1 to 10 collect x)
   (1 2 3 4 5 6 7 8 9 10))
 
-;; (deftest loop.1.2
-;;   (loop for x from 6 downto 1 collect x)
-;;   (6 5 4 3 2 1))
+(deftest loop.1.2
+  (loop for x from 6 downto 1 collect x)
+  (6 5 4 3 2 1))
 
 ;; (deftest loop.1.3
 ;;   (loop for x from 1 to 1 collect x)
