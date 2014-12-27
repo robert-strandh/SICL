@@ -80,4 +80,4 @@
   (alternative 'sum-it-into-clause-parser
 	       'sum-it-clause-parser
 	       'sum-form-into-clause-parser
-	       'sum-form-clause-parser
+	       'sum-form-clause-parser))
