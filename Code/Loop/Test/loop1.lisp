@@ -37,9 +37,9 @@
   (loop for x upfrom 1 to 5 collect x)
   (1 2 3 4 5))
 
-;; (deftest loop.1.8
-;;   (loop for x from 1.0 to 5.0 count x)
-;;   5)
+(deftest loop.1.8
+  (loop for x from 1.0 to 5.0 count x)
+  5)
 
 (deftest loop.1.9
   (loop for x from 1 to 9 by 2 collect x)
