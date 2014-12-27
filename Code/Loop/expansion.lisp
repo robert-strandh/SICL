@@ -93,7 +93,8 @@
 	       `(let* ,(bindings (car clauses))
 		  (declare ,@(declarations (car clauses)))
 		  ,(do-bindings (cdr clauses))))))
-      `(let ((,*accumulation-variable* nil)
+      `(let ((,*accumulation-variable*
+	       ,(accumulation-initial-value all-clauses))
 	     (,*list-tail-accumulation-variable* nil))
 	 (declare (ignorable ,*list-tail-accumulation-variable*))
 	 ,(do-bindings all-clauses)))))
