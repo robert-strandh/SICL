@@ -79,10 +79,10 @@
     (loop for x to (+ n 5) from (incf n) collect x))
   (1 2 3 4 5))
 
-;; (deftest loop.1.18
-;;   (let ((n 0))
-;;     (loop for x from (incf n) to (+ n 9) by (incf n) collect x))
-;;   (1 3 5 7 9))
+(deftest loop.1.18
+  (let ((n 0))
+    (loop for x from (incf n) to (+ n 9) by (incf n) collect x))
+  (1 3 5 7 9))
 
 ;; (deftest loop.1.19
 ;;   (let ((n 0))
