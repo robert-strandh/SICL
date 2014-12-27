@@ -81,3 +81,5 @@
 	       'count-it-clause-parser
 	       'count-form-into-clause-parser
 	       'count-form-clause-parser))
+
+(add-clause-parser 'count-clause-parser)
