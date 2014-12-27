@@ -103,9 +103,9 @@
   (loop for x from 1 below 5 collect x)
   (1 2 3 4))
 
-;; (deftest loop.1.23
-;;   (loop for x from 1 below 5.01 collect x)
-;;   (1 2 3 4 5))
+(deftest loop.1.23
+  (loop for x from 1 below 5.01 collect x)
+  (1 2 3 4 5))
 
 ;; (deftest loop.1.24
 ;;   (loop for x below 5 from 2 collect x)
