@@ -95,9 +95,9 @@
           collect (progn (incf a) (incf b 2) (incf c 3) x)))
   (0 1 2 3 4 5))
 
-;; (deftest loop.1.21
-;;   (loop for x from 0 to 5 by 1/2 collect x)
-;;   (0 1/2 1 3/2 2 5/2 3 7/2 4 9/2 5))
+(deftest loop.1.21
+  (loop for x from 0 to 5 by 1/2 collect x)
+  (0 1/2 1 3/2 2 5/2 3 7/2 4 9/2 5))
 
 ;; (deftest loop.1.22
 ;;   (loop for x from 1 below 5 collect x)
