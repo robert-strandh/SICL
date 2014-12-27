@@ -56,6 +56,17 @@
     (declare (ignore clause))
     nil))
 
+;;; Determine the initial value for the main loop accumulation
+;;; variable.  If there is a default SUM or a default COUNT clause,
+;;; then the initial value is 0.  Otherwise it is NIL.
+(defun accumulation-initial-value (clauses)
+  (if (find-if (lambda (clause)
+		 (or (typep clause 'count-form-clause)
+		     (typep clause 'sum-form-clause)))
+	       clauses)
+      0
+      nil))
+
 (defun expand-clauses (all-clauses)
   (let ((start-tag (gensym))
 	(end-tag (gensym)))
