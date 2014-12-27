@@ -65,9 +65,9 @@
   (loop for x by 2 to 10 collect x)
   (0 2 4 6 8 10))
 
-;; (deftest loop.1.15
-;;   (loop for x to 10 by 2 collect x)
-;;   (0 2 4 6 8 10))
+(deftest loop.1.15
+  (loop for x to 10 by 2 collect x)
+  (0 2 4 6 8 10))
 
 ;; (deftest loop.1.16
 ;;   (let ((n 0))
