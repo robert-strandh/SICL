@@ -83,3 +83,13 @@
 	       'count-form-clause-parser))
 
 (add-clause-parser 'count-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the BODY-FORM.
+
+(defmethod body-form ((clause count-form-clause) end-tag)
+  (declare (ignore end-tag))
+  `(when ,(form clause)
+     (setq ,*accumulation-variable*
+	   (1+ ,*accumulation-variable*))))
