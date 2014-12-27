@@ -89,11 +89,11 @@
     (loop for x from (incf n) by (incf n) to (+ n 9) collect x))
   (1 3 5 7 9 11))
 
-;; (deftest loop.1.20
-;;   (let ((a 0) (b 5) (c 1))
-;;     (loop for x from a to b by c
-;;           collect (progn (incf a) (incf b 2) (incf c 3) x)))
-;;   (0 1 2 3 4 5))
+(deftest loop.1.20
+  (let ((a 0) (b 5) (c 1))
+    (loop for x from a to b by c
+          collect (progn (incf a) (incf b 2) (incf c 3) x)))
+  (0 1 2 3 4 5))
 
 ;; (deftest loop.1.21
 ;;   (loop for x from 0 to 5 by 1/2 collect x)
