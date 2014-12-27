@@ -38,6 +38,7 @@
    (:file "append-clause")
    (:file "nconc-clause")
    (:file "count-clause")
+   (:file "sum-clause")
    (:file "maximize-clause")
    (:file "minimize-clause")
    (:file "conditional-clause")
