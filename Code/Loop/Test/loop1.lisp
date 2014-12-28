@@ -161,17 +161,17 @@
   (0 2 4 6 8)
   3 1 2 3)
 
-;; (deftest loop.1.32
-;;   (let (a b c (i 0))
-;;     (values
-;;      (loop for x
-;;            by (progn (setq c (incf i)) 2)
-;;            below (progn (setq b (incf i)) 9)
-;;            from (progn (setq a (incf i)) 0)
-;;            collect x)
-;;      a b c i))
-;;   (0 2 4 6 8)
-;;   3 2 1 3)
+(deftest loop.1.32
+  (let (a b c (i 0))
+    (cl:values
+     (loop for x
+           by (progn (setq c (incf i)) 2)
+           below (progn (setq b (incf i)) 9)
+           from (progn (setq a (incf i)) 0)
+           collect x)
+     a b c i))
+  (0 2 4 6 8)
+  3 2 1 3)
 
 ;; (deftest loop.1.33
 ;;   (loop for x from 1 upto 5 collect x)
