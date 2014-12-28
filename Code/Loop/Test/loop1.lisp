@@ -193,9 +193,9 @@
   (loop for x by 3 below 20 collect x)
   (0 3 6 9 12 15 18))
 
-;; (deftest loop.1.38
-;;   (loop for x of-type fixnum from 1 to 5 collect x)
-;;   (1 2 3 4 5))
+(deftest loop.1.38
+  (loop for x of-type fixnum from 1 to 5 collect x)
+  (1 2 3 4 5))
 
 ;; #|
 ;; ;;; The following provides an example where an incorrect
