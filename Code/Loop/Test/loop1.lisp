@@ -127,16 +127,16 @@
   (loop for x downfrom 16 above 7 by 3 collect x)
   (16 13 10))
 
-;; (deftest loop.1.29
-;;   (let (a b c (i 0))
-;;     (values
-;;      (loop for x from (progn (setq a (incf i)) 0)
-;;            below (progn (setq b (incf i)) 9)
-;;            by (progn (setq c (incf i)) 2)
-;;            collect x)
-;;      a b c i))
-;;   (0 2 4 6 8)
-;;   1 2 3 3)
+(deftest loop.1.29
+  (let (a b c (i 0))
+    (cl:values
+     (loop for x from (progn (setq a (incf i)) 0)
+           below (progn (setq b (incf i)) 9)
+           by (progn (setq c (incf i)) 2)
+           collect x)
+     a b c i))
+  (0 2 4 6 8)
+  1 2 3 3)
 
 ;; (deftest loop.1.30
 ;;   (let (a b c (i 0))
