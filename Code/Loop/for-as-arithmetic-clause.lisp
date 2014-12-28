@@ -414,7 +414,8 @@
 		   :order '(to from by)
 		   :var-spec var
 		   :type-spec type-spec
-		   :end-form (cdr to)))
+		   :end-form (cdr to)
+		   :termination-test (car to)))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
