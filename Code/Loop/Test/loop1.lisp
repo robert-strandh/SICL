@@ -119,9 +119,9 @@
   (loop for x from 14 above 6 by 2 collect x)
   (14 12 10 8))
 
-;; (deftest loop.1.27
-;;   (loop for x above 6 from 14 by 2 collect x)
-;;   (14 12 10 8))
+(deftest loop.1.27
+  (loop for x above 6 from 14 by 2 collect x)
+  (14 12 10 8))
 
 ;; (deftest loop.1.28
 ;;   (loop for x downfrom 16 above 7 by 3 collect x)
