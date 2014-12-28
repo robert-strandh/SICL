@@ -181,9 +181,9 @@
   (loop for x from 1 to 4.0 collect x)
   (1 2 3 4))
 
-;; (deftest loop.1.35
-;;   (loop for x below 5 collect x)
-;;   (0 1 2 3 4))
+(deftest loop.1.35
+  (loop for x below 5 collect x)
+  (0 1 2 3 4))
 
 ;; (deftest loop.1.36
 ;;   (loop for x below 20 by 3 collect x)
