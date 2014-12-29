@@ -785,16 +785,18 @@
 ;;; Compute the prologue-form.
 
 (defmethod prologue-form ((clause for-as-arithmetic-up) end-tag)
-  `(unless (,(termination-test clause)
-	    ,(var-spec clause)
-	    ,(end-var clause))
-     (go ,end-tag)))
+  `(if (,(termination-test clause)
+	,(var-spec clause)
+	,(end-var clause))
+       (incf ,(temp-var clause) ,(by-var clause))
+       (go ,end-tag)))
 
 (defmethod prologue-form ((clause for-as-arithmetic-down) end-tag)
-  `(unless (,(termination-test clause)
-	    ,(end-var clause)
-	    ,(var-spec clause))
-     (go ,end-tag)))
+  `(if (,(termination-test clause)
+	,(end-var clause)
+	,(var-spec clause))
+       (decf ,(temp-var clause) ,(by-var clause))
+       (go ,end-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
