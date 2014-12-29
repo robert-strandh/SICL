@@ -804,14 +804,14 @@
 
 (defmethod termination-form ((clause for-as-arithmetic-up) end-tag)
   `(unless (,(termination-test clause)
-	    (+ ,(var-spec clause) ,(by-var clause))
+	    ,(temp-var clause)
 	    ,(end-var clause))
      (go ,end-tag)))
 
 (defmethod termination-form ((clause for-as-arithmetic-down) end-tag)
   `(unless (,(termination-test clause)
 	    ,(end-var clause)
-	    (- ,(var-spec clause) ,(by-var clause)))
+	    ,(temp-var clause))
      (go ,end-tag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
