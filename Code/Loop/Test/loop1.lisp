@@ -251,9 +251,9 @@
   (loop for i from 1 to 5 for c upfrom #c(0 1) collect c)
   (#c(0 1) #c(1 1) #c(2 1) #c(3 1) #c(4 1)))
 
-;; (deftest loop.1.49
-;;   (loop for i from 1 to 5 for c upfrom #c(0 1) by 2 collect c)
-;;   (#c(0 1) #c(2 1) #c(4 1) #c(6 1) #c(8 1)))
+(deftest loop.1.49
+  (loop for i from 1 to 5 for c upfrom #c(0 1) by 2 collect c)
+  (#c(0 1) #c(2 1) #c(4 1) #c(6 1) #c(8 1)))
 
 ;; ;;; The variable in the loop for-as-arithmetic clause
 ;; ;;; can be a d-var-spec, so 'NIL' should mean don't bind anything
