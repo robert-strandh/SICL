@@ -780,7 +780,9 @@
 ;;; Compute the declarations.
 
 (defmethod declarations ((clause for-as-arithmetic))
-  `((cl:type ,(type-spec clause) ,(var-spec clause))))
+  (if (null (var-spec clause))
+      '()
+      `((cl:type ,(type-spec clause) ,(var-spec clause)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
