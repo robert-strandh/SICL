@@ -13,27 +13,11 @@
 (in-package #:sicl-loop)
 
 (defclass for-as-list (for-as-subclause)
-  (;; This slot contains a copy of the tree contained in the VAR-SPEC
-   ;; slot except that the non-NIL leaves have been replaced by
-   ;; GENSYMs.
-   (%temp-vars :initarg :temp-vars :reader temp-vars)
-   ;; This slot contains a list of pairs.  Each pair is a CONS cell
-   ;; where the CAR is a variable in VAR-SPEC and the CDR is the
-   ;; corresponding variable in TEMP-VARS.
-   (%dictionary :initarg :dictionary :reader dictionary)
-   (%list-form :initarg :list-form :reader list-form)
+  ((%list-form :initarg :list-form :reader list-form)
    (%list-var :initform (gensym) :reader list-var)
    (%by-form :initarg :by-form :reader by-form)
    (%by-var :initform (gensym) :reader by-var)
    (%rest-var :initform (gensym) :reader rest-var)))
-
-(defmethod initialize-instance :after
-    ((clause for-as-list) &key &allow-other-keys)
-  (multiple-value-bind (temp-vars dictionary)
-      (fresh-variables (var-spec clause))
-    (reinitialize-instance clause
-			   :temp-vars temp-vars
-			   :dictionary dictionary)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
