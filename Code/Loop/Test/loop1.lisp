@@ -258,10 +258,10 @@
 ;; ;;; The variable in the loop for-as-arithmetic clause
 ;; ;;; can be a d-var-spec, so 'NIL' should mean don't bind anything
 
-;; (deftest loop.1.50
-;;   (let ((i 0))
-;;     (loop for nil from 10 to 15 collect (incf i)))
-;;   (1 2 3 4 5 6))
+(deftest loop.1.50
+  (let ((i 0))
+    (loop for nil from 10 to 15 collect (incf i)))
+  (1 2 3 4 5 6))
 
 ;; (deftest loop.1.51
 ;;   (let ((i 0))
