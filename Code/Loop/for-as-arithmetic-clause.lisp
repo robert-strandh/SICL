@@ -789,34 +789,42 @@
 ;;; Compute the prologue-form.
 
 (defmethod prologue-form ((clause for-as-arithmetic-up) end-tag)
-  `(if (,(termination-test clause)
-	,(temp-var clause)
-	,(end-var clause))
-       (incf ,(temp-var clause) ,(by-var clause))
-       (go ,end-tag)))
+  (if (null (termination-test clause))
+      `(incf ,(temp-var clause) ,(by-var clause))
+      `(if (,(termination-test clause)
+	    ,(temp-var clause)
+	    ,(end-var clause))
+	   (incf ,(temp-var clause) ,(by-var clause))
+	   (go ,end-tag))))
 
 (defmethod prologue-form ((clause for-as-arithmetic-down) end-tag)
-  `(if (,(termination-test clause)
-	,(end-var clause)
-	,(temp-var clause))
-       (decf ,(temp-var clause) ,(by-var clause))
-       (go ,end-tag)))
+  (if (null (termination-test clause))
+      `(decf ,(temp-var clause) ,(by-var clause))
+      `(if (,(termination-test clause)
+	    ,(end-var clause)
+	    ,(temp-var clause))
+	   (decf ,(temp-var clause) ,(by-var clause))
+	   (go ,end-tag))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the termination-form.
 
 (defmethod termination-form ((clause for-as-arithmetic-up) end-tag)
-  `(unless (,(termination-test clause)
-	    ,(temp-var clause)
-	    ,(end-var clause))
-     (go ,end-tag)))
+  (if (null (termination-test clause))
+      nil
+      `(unless (,(termination-test clause)
+		,(temp-var clause)
+		,(end-var clause))
+	 (go ,end-tag))))
 
 (defmethod termination-form ((clause for-as-arithmetic-down) end-tag)
-  `(unless (,(termination-test clause)
-	    ,(end-var clause)
-	    ,(temp-var clause))
-     (go ,end-tag)))
+  (if (null (termination-test clause))
+      nil
+      `(unless (,(termination-test clause)
+		,(end-var clause)
+		,(temp-var clause))
+	 (go ,end-tag))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
