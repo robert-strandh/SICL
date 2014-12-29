@@ -48,11 +48,9 @@
    ;; is never assigned to any iteration variable.
    (%temp-var :initform (gensym) :reader temp-var)))
 
-(defclass for-as-arithmetic-up (for-as-arithmetic) ()
-  (:default-initargs :termination-test '<=))
+(defclass for-as-arithmetic-up (for-as-arithmetic) ())
 
-(defclass for-as-arithmetic-down (for-as-arithmetic) ()
-  (:default-initargs :termination-test '>=))
+(defclass for-as-arithmetic-down (for-as-arithmetic) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
