@@ -819,7 +819,9 @@
 ;;; Compute the step-form.
 
 (defmethod step-form ((clause for-as-arithmetic-up))
-  `(incf ,(var-spec clause) ,(by-var clause)))
+  `(progn (setq ,(var-spec clause) ,(temp-var clause))
+	  (incf ,(temp-var clause) ,(by-var clause))))
 
 (defmethod step-form ((clause for-as-arithmetic-down))
-  `(decf ,(var-spec clause) ,(by-var clause)))
+  `(progn (setq ,(var-spec clause) ,(temp-var clause))
+	  (decf ,(temp-var clause) ,(by-var clause))))
