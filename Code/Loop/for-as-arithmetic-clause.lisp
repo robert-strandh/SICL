@@ -97,7 +97,10 @@
 
 (define-parser simple-var-parser
   (singleton #'identity
-	     (lambda (x) (and (symbolp x) (not (constantp x))))))
+	     (lambda (x)
+	       (or (null x)
+		   (and (symbolp x)
+			(not (constantp x)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
