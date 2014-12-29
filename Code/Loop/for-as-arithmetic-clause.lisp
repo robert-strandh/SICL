@@ -37,8 +37,10 @@
    (%by-var :initform (gensym) :reader by-var)
    ;; If termination is TO, UPTO, or DOWNTO, then this slot contains
    ;; the symbol <=.  If termination is ABOVE or BELOW, then this slot
-   ;; contains the symbol <.
-   (%termination-test :initform '<=
+   ;; contains the symbol <.  If there is TO/UPTO/DOWNTO/ABOVE/BELOW,
+   ;; then the loop does not terminate because of this clause, and
+   ;; then this slot contains NIL.
+   (%termination-test :initform nil
 		      :initarg :termination-test
 		      :reader termination-test)
    ;; This variable is one step ahead of the iteration variable, and
