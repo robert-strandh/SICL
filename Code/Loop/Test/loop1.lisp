@@ -268,9 +268,9 @@
     (loop for nil from 10 below 15 collect (incf i)))
   (1 2 3 4 5))
 
-;; (deftest loop.1.52
-;;   (loop for nil from 10 to 0 collect 'a)
-;;   nil)
+(deftest loop.1.52
+  (loop for nil from 10 to 0 collect 'a)
+  nil)
 
 ;; (deftest loop.1.53
 ;;   (let ((i 0))
