@@ -40,7 +40,11 @@
    ;; contains the symbol <.
    (%termination-test :initform '<=
 		      :initarg :termination-test
-		      :reader termination-test)))
+		      :reader termination-test)
+   ;; This variable is one step ahead of the iteration variable, and
+   ;; when the iteration variable is NIL, the value of this variable
+   ;; is never assigned to any iteration variable.
+   (%temp-var :initform (gensym) :reader temp-var)))
 
 (defclass for-as-arithmetic-up (for-as-arithmetic) ()
   (:default-initargs :termination-test '<=))
