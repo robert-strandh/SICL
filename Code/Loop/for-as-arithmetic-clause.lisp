@@ -770,7 +770,8 @@
 	     (,(start-var clause) ,(start-form clause)))))))
 
 (defmethod final-bindings ((clause for-as-arithmetic))
-  `((,(var-spec clause) ,(start-var clause))))
+  `((,(temp-var clause) ,(start-var clause))
+    (,(var-spec clause) ,(temp-var clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
