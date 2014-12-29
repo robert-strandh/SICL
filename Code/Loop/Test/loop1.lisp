@@ -239,9 +239,9 @@
   (loop for i from 1 to 5 for c from #c(0 1) by 2 collect c)
   (#c(0 1) #c(2 1) #c(4 1) #c(6 1) #c(8 1)))
 
-;; (deftest loop.1.46
-;;   (loop for i from 1 to 5 for c downfrom #c(5 1) collect c)
-;;   (#c(5 1) #c(4 1) #c(3 1) #c(2 1) #c(1 1)))
+(deftest loop.1.46
+  (loop for i from 1 to 5 for c downfrom #c(5 1) collect c)
+  (#c(5 1) #c(4 1) #c(3 1) #c(2 1) #c(1 1)))
 
 ;; (deftest loop.1.47
 ;;   (loop for i from 1 to 5 for c downfrom #c(10 1) by 2 collect c)
