@@ -231,9 +231,9 @@
 ;; ;;; numbers.)  Comparing these for termination could be problematic,
 ;; ;;; but a clause without termination should work just fine.
 
-;; (deftest loop.1.44
-;;   (loop for i from 1 to 5 for c from #c(0 1) collect c)
-;;   (#c(0 1) #c(1 1) #c(2 1) #c(3 1) #c(4 1)))
+(deftest loop.1.44
+  (loop for i from 1 to 5 for c from #c(0 1) collect c)
+  (#c(0 1) #c(1 1) #c(2 1) #c(3 1) #c(4 1)))
 
 ;; (deftest loop.1.45
 ;;   (loop for i from 1 to 5 for c from #c(0 1) by 2 collect c)
