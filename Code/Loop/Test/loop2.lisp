@@ -47,10 +47,10 @@
         collect (list x y))
   ((a b) (c d) (e f)))
 
-;; (deftest loop.2.9
-;;   (loop for (x nil y) in '((a b c) (d e f) (g h i))
-;;         collect (list x y))
-;;   ((a c) (d f) (g i)))
+(deftest loop.2.9
+  (loop for (x nil y) in '((a b c) (d e f) (g h i))
+        collect (list x y))
+  ((a c) (d f) (g i)))
 
 ;; (deftest loop.2.10
 ;;   (loop for (x y) of-type fixnum in '((1 2) (3 4) (5 6))
