@@ -89,15 +89,15 @@
   (loop for nil in nil do (return t))
   nil)
 
-;; (deftest loop.2.17
-;;   (let ((x '(a b c)))
-;;     (values
-;;      x
-;;      (loop for x in '(d e f) collect (list x))
-;;      x))
-;;   (a b c)
-;;   ((d) (e) (f))
-;;   (a b c))
+(deftest loop.2.17
+  (let ((x '(a b c)))
+    (values
+     x
+     (loop for x in '(d e f) collect (list x))
+     x))
+  (a b c)
+  ((d) (e) (f))
+  (a b c))
 
 ;; (deftest loop.2.18
 ;;   (loop for x of-type (integer 0 10) in '(2 4 6 7) sum x)
