@@ -8,5 +8,5 @@
    (:file "loop-defmacro")
    (:file "loop-test")
    (:file "simple-loop")
-   (:file "loop1")))
-
+   (:file "loop1")
+   (:file "loop2")))
