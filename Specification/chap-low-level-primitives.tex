@@ -1,7 +1,7 @@
 \chapter{Low-level primitives}
 \label{chap-low-level-primitives}
 
-A large number of the operators of the \cl{} language are directly
+A large number of the operators of the \commonlisp{} language are directly
 defined in terms of operators at an even lower level.  At the lowest
 level of abstraction, we find operations such as \texttt{car} and
 \texttt{svref} that can be defined in terms of lower level operations
@@ -10,11 +10,11 @@ cells and simple vectors is known.
 
 For a particular implementation such as \sysname{}, however, this
 representation is known, so it is reasonable to attempt to define the
-lowest-level \cl{} operations in terms of even more primitive
+lowest-level \commonlisp{} operations in terms of even more primitive
 operations. 
 
 For \sysname{}, we define a collection of operators that are used
-in the same way that ordinary \cl{} functions are used, i.e., they are
+in the same way that ordinary \commonlisp{} functions are used, i.e., they are
 represented in source code as S-expressions.  The symbols that name
 these operators all live in a package called \texttt{sicl-word}.  
 

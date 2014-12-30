@@ -3,13 +3,13 @@
 
 In this chapter, we discuss issues specific to \emph{cross
   compilation}, i.e. when a compiler produces code for a system other
-than the host \cl{} system it runs in.  For general compilation
+than the host \commonlisp{} system it runs in.  For general compilation
 topics, see \refChap{chap-compiler}.
 
 \section{General issues with cross compilation}
 
 While it may seem obvious and straightforward (though perhaps not
-easy) to write a cross compiler for \cl{}, there are some minor issues
+easy) to write a cross compiler for \commonlisp{}, there are some minor issues
 that have to be considered. 
 
 Perhaps the most important extrinsic compiler is the \emph{extrinsic
@@ -95,7 +95,7 @@ same as the \emph{target startup environment} so that any side effects
 on the compilation environment as a result of the cross compilation
 persist after the compilation terminates.  
 
-The relevant functions of the target startup environment are all \cl{}
+The relevant functions of the target startup environment are all \commonlisp{}
 functions that access or modify the environment, such as
 \texttt{fdefinition}, \texttt{proclaim}, \texttt{(setf
   macro-function)}, etc., but also implementation-specific functions
@@ -142,7 +142,7 @@ is imported from the package \texttt{common-lisp}.
 \section{Compile-time processing of standard macros}
 
 In \refApp{app-all-standard-macros}, we show a complete list of all
-the standard \cl{} macros. 
+the standard \commonlisp{} macros. 
 
 Most of those macros have no side effects at compile time.  They
 simply expand to some other code to be processed instead.  Some of
@@ -162,7 +162,7 @@ of the following cases applies for those macros:
   the cross compiler.
 \end{itemize}
 
-The standard \cl{} macros with compile-time side effects are:
+The standard \commonlisp{} macros with compile-time side effects are:
 \texttt{declaim}, \texttt{defclass}, \texttt{defconstant},
 \texttt{defgeneric}, \texttt{define-compiler-macro},
 \texttt{define-condition}, \texttt{define-method-combination},
@@ -207,7 +207,7 @@ compile time.
 
 Now, according to the specification of the metaobject protocol,
 \texttt{defclass} expands to a call to \texttt{ensure-class} (not a
-standard \cl{} function).  Our solution is thus to provide a
+standard \commonlisp{} function).  Our solution is thus to provide a
 compile-time version of \texttt{sicl-clos:ensure-class} that only
 makes the \emph{class name} available.
 

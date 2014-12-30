@@ -1,9 +1,9 @@
 \chapter{Environments}
 \label{chap-environments}
 
-\cl{} has a concept of \emph{environments}, and in fact several
+\commonlisp{} has a concept of \emph{environments}, and in fact several
 different environments and several different \emph{kinds} of
-environment are mentioned in the \hs{}.  However, \cl{} does not
+environment are mentioned in the \hs{}.  However, \commonlisp{} does not
 mandate any particular representation of these environments, nor does
 it mention any particular \emph{operations} on environments other than
 the implicit operations of defining functions, variables, macros,
@@ -12,7 +12,7 @@ types, etc.
 \section{The global environment}
 \label{sec-the-global-environment}
 
-In many \cl{} systems the global environment is \emph{spread out} in
+In many \commonlisp{} systems the global environment is \emph{spread out} in
 that it does not have an explicit definition as a data type.  Parts of
 it might be contained in global locations such as the set of packages
 or the set of classes.  Other parts of it may be stored in symbols
@@ -228,7 +228,7 @@ If that function is passed as an argument to another function which is
 known not to hold on to its argument for longer than the duration of
 the function invocation, then there is no capture.  The typical
 situation would be when a \texttt{lambda} expression is passed to a
-standard \cl{} function such as one of the \emph{sequence} functions
+standard \commonlisp{} function such as one of the \emph{sequence} functions
 that is known to have this property.  
 
 In other cases, it might be too risky for the compiler to assume
@@ -242,7 +242,7 @@ to trust this, because the function might be redefined later.%
 When the compiler must assume that some variable has indefinite
 extent, then code must be generated to store that variable in a
 heap-allocated environment.  We represent this environment as a proper
-\cl{} list of simple vectors.  
+\commonlisp{} list of simple vectors.  
 
 This representation might seem wasteful, because a simple vector is
 represented as a header object and a rack containing the

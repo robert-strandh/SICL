@@ -100,7 +100,7 @@ value of some slot.  In this case, we say that we have a
 \emph{disembodied} pointer to a rack.  An object containing
 such a disembodied pointer must be known to the garbage collector, and
 the object must also contain (directly or indirectly) an ordinary
-tagged \cl{} pointer to a header object containing that rack..%
+tagged \commonlisp{} pointer to a header object containing that rack..%
 \footnote{The reason for this restriction is that it must always be possible
   to find the header object of a rack so as to determine
   the class of which the object is an instance.  If we could have
@@ -468,9 +468,9 @@ A \emph{code object} is represented as a two-word header (as usual)
 and a rack containing (in addition to inherited slots):
 
 \begin{enumerate}
-\item The \emph{linkage vector} which is an ordinary \cl{} simple
+\item The \emph{linkage vector} which is an ordinary \commonlisp{} simple
   vector.
-\item The \emph{code vector} which is an ordinary \cl{} vector with
+\item The \emph{code vector} which is an ordinary \commonlisp{} vector with
   elements of type \texttt{(unsigned-byte 8)} containing the machine
   instructions for one or more functions.
 \item Correspondence between values of the program counter

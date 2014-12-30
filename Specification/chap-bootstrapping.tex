@@ -1,7 +1,7 @@
 \chapter{Bootstrapping}
 
 An image I is said to be \emph{viable} if and only if it is possible
-to obtain a complete \cl{} system by starting with I and loading a
+to obtain a complete \commonlisp{} system by starting with I and loading a
 sequence of ordinary compiled files.
 
 There are many ways of making a viable image.  We are interested in
@@ -438,7 +438,7 @@ successful, the following must be true:
 \item All the \emph{macros} that occur in macro forms that are
   \emph{compiled} as a result of the call to \texttt{eval} must
   exist.  These are the macros of the expansion code; in our example
-  only \texttt{cond}.  Clearly, if only standard \cl{} macros are
+  only \texttt{cond}.  Clearly, if only standard \commonlisp{} macros are
   used in the expansion code of macros, this requirement is
   automatically fulfilled.
 \item It is \emph{preferable}, though not absolutely necessary for the
@@ -447,7 +447,7 @@ successful, the following must be true:
   they do not exist, the compilation will succeed, but a warning will
   probably be issued.  These functions are the functions of the
   expansion code; in our example \texttt{car}, \texttt{cdr}, and
-  \texttt{null}.  Again, if only standard \cl{} function are used in
+  \texttt{null}.  Again, if only standard \commonlisp{} function are used in
   the expansion code of macros, this requirement is automatically
   fulfilled.  It is common, however, for other functions to be used as
   well.  In that case, those functions should preferably have been
@@ -472,7 +472,7 @@ successful, the following must be true:
   cross compiler to exist, this is typically not the case.%
   \fixme{Investigate the possibility of first compiling a bunch of
     \texttt{declaim} forms containing type signatures of most
-    standard \cl{} functions used in macro expansion code.}
+    standard \commonlisp{} functions used in macro expansion code.}
   As a
   result, the cross compiler will emit warnings about undefined
   functions.  The generated code will still work, however.

@@ -1,24 +1,24 @@
 \chapter{Condition system}
 
 This module is located in the \texttt{Code/Conditions} directory.  It
-it meant to contain the complete \cl{} condition system.  The module
+it meant to contain the complete \commonlisp{} condition system.  The module
 is fairly complete.  There are three main items in this module
 
 \begin{itemize}
-\item A complete portable implementation of the \cl{} condition
+\item A complete portable implementation of the \commonlisp{} condition
   system signaling mechanism.
-\item Definitions of standard \cl{} conditions.
+\item Definitions of standard \commonlisp{} conditions.
 \item Definitions of additional \sysname{} conditions.
 \end{itemize}
 
-As it turns out, the \cl{} condition signaling mechanism can be
+As it turns out, the \commonlisp{} condition signaling mechanism can be
 implemented in a completely portable way, using only special variables
 as the underlying mechanism.  In addition, this implementation method
 is likely to exhibit acceptable performance, because condition
 signaling is assumed to be fairly infrequent anyway.  
 
 The module assumes the existence of the \texttt{define-condition}
-macro.  The full hierarchy of \cl{} conditions is implemented, and
+macro.  The full hierarchy of \commonlisp{} conditions is implemented, and
 there is a file containing condition reporters for those conditions
 when the English language is used.
 

@@ -9,7 +9,7 @@ different compilers:
 
 \begin{itemize}
 \item The \emph{file compiler}.  This compiler is invoked by
-  \texttt{compile-file}.  It takes a \cl{} source file and generates a
+  \texttt{compile-file}.  It takes a \commonlisp{} source file and generates a
   file containing object code (a so-called \emph{fasl} file). 
 \item The \emph{lambda expression compiler}.  This compiler is invoked
   when \texttt{compile} is called with arguments \texttt{nil} and a
@@ -27,9 +27,9 @@ compilers along an orthogonal dimension:
 
 \begin{itemize}
 \item A \emph{native} compiler is a compiler that produces code for
-  its host \cl{} system. 
+  its host \commonlisp{} system. 
 \item An \emph{extrinsic} compiler is a compiler that produces code
-  for a \cl{} system other than its host system.  An extrinsic
+  for a \commonlisp{} system other than its host system.  An extrinsic
   compiler is also known as a \emph{cross compiler}.
 \end{itemize}
 
@@ -170,7 +170,7 @@ a fixpoint is obtained.  If any variable has the type \texttt{NIL} on
 some arc, then that arc represents an impossible transition and it can
 be removed. 
 
-Type descriptors represent not only \cl{} types, but also types such
+Type descriptors represent not only \commonlisp{} types, but also types such
 as \emph{raw pointer}, \emph{unboxed floats}, etc.  The type
 information computed by the type inference phase is stored in the
 \emph{code object} for use by the garbage collector, but also by tools
@@ -217,7 +217,7 @@ variables, except simpler since no special binding can exist for such
 accesses.  While it is not very probable that anyone attempts to use
 global functions for synchronization purposes, this can not be
 excluded either.  An exception to the rule is when the global function
-is a standard \cl{} function, in which case it can not be replaced, so
+is a standard \commonlisp{} function, in which case it can not be replaced, so
 it is safe to cache the function in a register. 
 
 \subsection{Access to array elements}

@@ -77,12 +77,12 @@ cannot be done portably.
 Another (minor) problem with respect to portability has to do with the
 \emph{backquote} facility.  The \hs{} explicitly encourages
 implementations to use more specific constructs than the standard
-\cl{} functions \texttt{append}, \texttt{list}, and \texttt{cons} as a
+\commonlisp{} functions \texttt{append}, \texttt{list}, and \texttt{cons} as a
 result of parsing the \emph{backquote} reader macro.  The reason for
 is so that the \emph{pretty printer} can print such forms in a more
 convenient way (i.e. using the backquote and comma characters).
 However, the result is often an implementation-specific encoding that
-would have to be translated into standard \cl{} constructs by the
+would have to be translated into standard \commonlisp{} constructs by the
 compiler, for instance by writing macros for this encoding.  Such
 macros would then necessarily be implementation specific, which is a
 problem for bootstrapping \sysname{}.  
