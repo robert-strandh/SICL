@@ -108,7 +108,7 @@
     (,(rest-var clause) ,(list-var clause))
     ,@(if (member (by-form clause) (list #'cdr #'cddr))
 	  '()
-	  `(,(by-var clause) ,(by-form clause)))))
+	  `((,(by-var clause) ,(by-form clause))))))
 
 (defmethod final-bindings ((clause for-as-list))
   (loop with d-var-spec = (var-spec clause)
