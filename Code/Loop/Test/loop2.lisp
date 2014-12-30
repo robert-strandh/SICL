@@ -42,10 +42,10 @@
         collect e)
   (a a a a a a))
 
-;; (deftest loop.2.8
-;;   (loop for (x . y) in '((a . b) (c . d) (e . f))
-;;         collect (list x y))
-;;   ((a b) (c d) (e f)))
+(deftest loop.2.8
+  (loop for (x . y) in '((a . b) (c . d) (e . f))
+        collect (list x y))
+  ((a b) (c d) (e f)))
 
 ;; (deftest loop.2.9
 ;;   (loop for (x nil y) in '((a b c) (d e f) (g h i))
