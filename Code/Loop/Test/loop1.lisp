@@ -281,10 +281,10 @@
           for nil from 1 to 10 collect (incf i)))
   (1 2 3 4))
 
-;; (deftest loop.1.55
-;;   (let ((i 0))
-;;     (loop for nil from 5 downto 0 collect (incf i)))
-;;   (1 2 3 4 5 6))
+(deftest loop.1.55
+  (let ((i 0))
+    (loop for nil from 5 downto 0 collect (incf i)))
+  (1 2 3 4 5 6))
 
 ;; (deftest loop.1.56
 ;;   (let ((i 0))
