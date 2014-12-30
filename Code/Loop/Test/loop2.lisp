@@ -20,11 +20,11 @@
 ;;                  type-error)
 ;;   t)
 
-;; (deftest loop.2.4
-;;   (let ((x nil))
-;;     (loop for e in '(a b c d) do (push e x))
-;;     x)
-;;   (d c b a))
+(deftest loop.2.4
+  (let ((x nil))
+    (loop for e in '(a b c d) do (push e x))
+    x)
+  (d c b a))
 
 ;; (deftest loop.2.5
 ;;   (loop for e in '(a b c d e f) by #'cddr
