@@ -31,10 +31,10 @@
         collect e)
   (a c e))
 
-;; (deftest loop.2.6
-;;   (loop for e in '(a b c d e f g) by #'cddr
-;;         collect e)
-;;   (a c e g))
+(deftest loop.2.6
+  (loop for e in '(a b c d e f g) by #'cddr
+        collect e)
+  (a c e g))
 
 ;; (deftest loop.2.7
 ;;   (loop for e in '(a b c d e f)
