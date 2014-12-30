@@ -26,10 +26,10 @@
     x)
   (d c b a))
 
-;; (deftest loop.2.5
-;;   (loop for e in '(a b c d e f) by #'cddr
-;;         collect e)
-;;   (a c e))
+(deftest loop.2.5
+  (loop for e in '(a b c d e f) by #'cddr
+        collect e)
+  (a c e))
 
 ;; (deftest loop.2.6
 ;;   (loop for e in '(a b c d e f g) by #'cddr
