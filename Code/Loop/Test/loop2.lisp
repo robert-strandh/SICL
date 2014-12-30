@@ -10,10 +10,10 @@
   (loop for x in '(1 2 3) sum x)
   6)
 
-;; (deftest loop.2.2
-;;   (loop for x in '(1 2 3 4)
-;;         do (when (evenp x) (return x)))
-;;   2)
+(deftest loop.2.2
+  (loop for x in '(1 2 3 4)
+        do (when (evenp x) (return x)))
+  2)
 
 ;; (deftest loop.2.3
 ;;   (signals-error (loop for x in '(a . b) collect x)
