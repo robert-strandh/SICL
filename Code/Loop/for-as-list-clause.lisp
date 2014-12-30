@@ -46,7 +46,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :list-form list-form
-		   :by-form #'cdr))
+		   :by-form '#'cdr))
 	       (singleton #'identity (constantly t))
 	       'optional-type-spec-parser
 	       (keyword-parser 'in)
@@ -86,7 +86,7 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :list-form list-form
-		   :by-form #'cdr))
+		   :by-form '#'cdr))
 	       (singleton #'identity (constantly t))
 	       'optional-type-spec-parser
 	       (keyword-parser 'on)
@@ -106,7 +106,7 @@
 (defmethod initial-bindings ((clause for-as-list))
   `((,(list-var clause) ,(list-form clause))
     (,(rest-var clause) ,(list-var clause))
-    ,@(if (member (by-form clause) (list #'cdr #'cddr))
+    ,@(if (member (by-form clause) '(#'cdr #'cddr) :test #'equal)
 	  '()
 	  `((,(by-var clause) ,(by-form clause))))))
 
@@ -133,12 +133,20 @@
 (defmethod prologue-form ((clause for-as-in-list) end-tag)
   `(progn ,(termination-form clause end-tag)
 	  ,(generate-assignments (var-spec clause) `(car ,(rest-var clause)))
-	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
+	  ,(if (member (by-form clause) '(#'cdr #'cddr) :test #'equal)
+	       `(setq ,(rest-var clause)
+		      (,(cadr (by-form clause)) ,(rest-var clause)))
+	       `(setq ,(rest-var clause)
+		      (funcall ,(by-var clause) ,(rest-var clause))))))
 
 (defmethod prologue-form ((clause for-as-on-list) end-tag)
   `(progn ,(termination-form clause end-tag)
 	  ,(generate-assignments (var-spec clause) (rest-var clause))
-	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
+	  ,(if (member (by-form clause) '(#'cdr #'cddr) :test #'equal)
+	       `(setq ,(rest-var clause)
+		      (,(cadr (by-form clause)) ,(rest-var clause)))
+	       `(setq ,(rest-var clause)
+		      (funcall ,(by-var clause) ,(rest-var clause))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -158,8 +166,16 @@
 
 (defmethod step-form ((clause for-as-in-list))
   `(progn ,(generate-assignments (var-spec clause) `(car ,(rest-var clause)))
-	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
+	  ,(if (member (by-form clause) '(#'cdr #'cddr) :test #'equal)
+	       `(setq ,(rest-var clause)
+		      (,(cadr (by-form clause)) ,(rest-var clause)))
+	       `(setq ,(rest-var clause)
+		      (funcall ,(by-var clause) ,(rest-var clause))))))
 
 (defmethod step-form ((clause for-as-on-list))
   `(progn ,(generate-assignments (var-spec clause) (rest-var clause))
-	  (setq ,(rest-var clause) (cdr ,(rest-var clause)))))
+	  ,(if (member (by-form clause) '(#'cdr #'cddr) :test #'equal)
+	       `(setq ,(rest-var clause)
+		      (,(cadr (by-form clause)) ,(rest-var clause)))
+	       `(setq ,(rest-var clause)
+		      (funcall ,(by-var clause) ,(rest-var clause))))))
