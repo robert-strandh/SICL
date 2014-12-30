@@ -204,11 +204,11 @@
   (loop for x of-type (integer 1 5) from 1 to 5 collect x)
   (1 2 3 4 5))
 
-;; ;;; Test that the index variable achieves the inclusive
-;; ;;; upper bound, but does not exceed it.
-;; (deftest loop.1.40
-;;   (loop for x from 1 to 5 do nil finally (return x))
-;;   5)
+;;; Test that the index variable achieves the inclusive
+;;; upper bound, but does not exceed it.
+(deftest loop.1.40
+  (loop for x from 1 to 5 do (progn) finally (return x))
+  5)
 
 ;; ;;; Test that the index variable acheives the exclusive
 ;; ;;; upper bound, but does not exceed it.
