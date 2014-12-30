@@ -129,7 +129,7 @@
 
 (deftest loop.1.29
   (let (a b c (i 0))
-    (cl:values
+    (values
      (loop for x from (progn (setq a (incf i)) 0)
            below (progn (setq b (incf i)) 9)
            by (progn (setq c (incf i)) 2)
@@ -140,7 +140,7 @@
 
 (deftest loop.1.30
   (let (a b c (i 0))
-    (cl:values
+    (values
      (loop for x from (progn (setq a (incf i)) 0)
            by (progn (setq c (incf i)) 2)
            below (progn (setq b (incf i)) 9)
@@ -151,7 +151,7 @@
 
 (deftest loop.1.31
   (let (a b c (i 0))
-    (cl:values
+    (values
      (loop for x
            below (progn (setq b (incf i)) 9)
            by (progn (setq c (incf i)) 2)
@@ -163,7 +163,7 @@
 
 (deftest loop.1.32
   (let (a b c (i 0))
-    (cl:values
+    (values
      (loop for x
            by (progn (setq c (incf i)) 2)
            below (progn (setq b (incf i)) 9)

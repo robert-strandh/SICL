@@ -3,20 +3,20 @@
 (defclass test ()
   ((%name :initarg :name :reader name)
    (%form :initarg :form :reader form)
-   (%values :initarg :values :reader values)))
+   (%results :initarg :results :reader results)))
 
 (defparameter *tests* '())
 
-(defmacro deftest (name form &rest values)
+(defmacro deftest (name form &rest results)
   `(push (make-instance 'test
 	   :name ',name
 	   :form ',form
-	   :values ',values)
+	   :results ',results)
 	 *tests*))
 
 (defun run-test (test)
   (assert (equal (multiple-value-list (eval (form test)))
-		 (values test))))
+		 (results test))))
 
 (deftest loop-until-t
     (loop until t)
