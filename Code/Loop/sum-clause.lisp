@@ -81,3 +81,5 @@
 	       'sum-it-clause-parser
 	       'sum-form-into-clause-parser
 	       'sum-form-clause-parser))
+
+(add-clause-parser 'sum-clause-parser)
