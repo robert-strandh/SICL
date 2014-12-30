@@ -105,9 +105,9 @@
 
 ;; ;;; Tests of the 'AS' form
 
-;; (deftest loop.2.19
-;;   (loop as x in '(1 2 3) sum x)
-;;   6)
+(deftest loop.2.19
+  (loop as x in '(1 2 3) sum x)
+  6)
 
 ;; (deftest loop.2.20
 ;;   (loop as x in '(a b c)
