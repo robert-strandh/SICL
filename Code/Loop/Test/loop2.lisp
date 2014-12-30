@@ -127,17 +127,16 @@
         collect (list x y))
   ((a 1) (b 2) (c 3)))
 
-;; (deftest loop.2.23
-;;   (let (a b (i 0))
-;;     (values
-;;      (loop for e in (progn (setf a (incf i))
-;;                            '(a b c d e f g))
-;;            by (progn (setf b (incf i)) #'cddr)
-;;            collect e)
-;;      a b i))
-;;   (a c e g)
-;;   1 2 2)
-
+(deftest loop.2.23
+  (let (a b (i 0))
+    (values
+     (loop for e in (progn (setf a (incf i))
+                           '(a b c d e f g))
+           by (progn (setf b (incf i)) #'cddr)
+           collect e)
+     a b i))
+  (a c e g)
+  1 2 2)
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
