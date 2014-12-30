@@ -217,12 +217,12 @@
   4)
 
 (deftest loop.1.42
-  (loop for x from 10 downto 0 do nil finally (return x))
+  (loop for x from 10 downto 0 do (progn) finally (return x))
   0)
 
-;; (deftest loop.1.43
-;;   (loop for x from 10 above 0 do nil finally (return x))
-;;   1)
+(deftest loop.1.43
+  (loop for x from 10 above 0 do (progn) finally (return x))
+  1)
 
 ;; ;;; The arithmetic loop form says the types are numbers, not
 ;; ;;; reals, so arguably they should work on complexes (which are
