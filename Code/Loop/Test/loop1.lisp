@@ -224,10 +224,10 @@
   (loop for x from 10 above 0 do (progn) finally (return x))
   1)
 
-;; ;;; The arithmetic loop form says the types are numbers, not
-;; ;;; reals, so arguably they should work on complexes (which are
-;; ;;; numbers.)  Comparing these for termination could be problematic,
-;; ;;; but a clause without termination should work just fine.
+;;; The arithmetic loop form says the types are numbers, not
+;;; reals, so arguably they should work on complexes (which are
+;;; numbers.)  Comparing these for termination could be problematic,
+;;; but a clause without termination should work just fine.
 
 (deftest loop.1.44
   (loop for i from 1 to 5 for c from #c(0 1) collect c)
