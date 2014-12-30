@@ -1,33 +1,69 @@
-\chapter{MIR interpreter with host data}
+\chapter{HIR compiler with host data}
 
-This backend is an interpreter for the medium-level intermediate
-representation (MIR) presented in \refChap{chap-mir}.  All objects
-such as symbols, numbers, packages, etc. are host objects.  There are
-three kinds of functions:
+\section{Characteristics}
 
-\begin{itemize}
-\item Primitive functions.  These are essentially host functions that
-  have been wrapped so that they obey the function-call protocol of
-  the backend. 
-\item Interpreted ordinary functions.  An interpreted ordinary
-  function contains a lexical environment and a MIR program
-  representing a function.  
-\item Interpreted generic functions.  Such a function contains an
-  interpreted ordinary function for the discriminating function, and
-  methods that also contain ordinary interpreted functions. 
-\end{itemize}
+This backend is characterized by the fact that source code is compiled
+to the high-level intermediate representation (HIR), and then
+translated to very rudimentary \commonlisp{} which is compiled using
+the host compiler.  Recall that the high-level intermediate code only
+manipulates \commonlisp{} objects so that all address calculations are
+implicit.  All objects such as symbols, numbers, packages, etc. are
+host objects.
 
-Primitive functions can be arbitrarily complex, allowing us to
-gradually test \sysname{} functions by incrementally moving code from
-complex primitive functions to collections of interpreted functions.
-So for instance, the functions \texttt{read} and \texttt{print} will
-initially be primitive functions, and then gradually replaced by
-target implementations as collections of interpreted functions.
+At the center of this backend is a \sysname{} first-class global
+environment represented as a host class instance.  This environment
+contains mappings from names to all objects that are part of any
+global environment, such as functions, macros, variables, classes,
+packages, types, \texttt{setf} expanders, etc.
 
-Macros such as global standard macros and macros introduced by
-\texttt{macrolet} have macro functions represented as primitive
-functions.  Only macros introduced by executing compiled calls to
-\texttt{(setf macro-function)} will have macro functions represented
-as interpreted ordinary functions.  This way, we can pre-load the
-global environment with standard macros, allowing us to turn source
-code into abstract syntax trees and then to MIR code. 
+\section{Bootstrapping}
+
+A host function can be imported into the target environment.  However,
+such imports must be temporary, because if a host function detects an
+error, it will call the host function \texttt{error} which uses the
+binding stack of the host to search for handlers.  Therefore, in the
+complete backend, as many host functions as possible must be replaced
+by equivalent target functions.
+
+Notice that it is not generally possible to import host \emph{macros}
+into the target environment.  The reason is that host macros might
+expand into host-specific code, which the target environment can not
+process.  Some host macros (such as some simple conditional macros)
+expand into completely portable code, but since this set can vary
+between different hosts, to be on the safe side, we use only target
+macros.
+
+This backend is created as follows:
+
+\begin{enumerate}
+\item All standard \commonlisp{} functions are imported from the host
+  and given the same name in the target environment.
+\item Similarly, all generic functions that are part of the protocol
+  for first-class global environments are imported.  The names of
+  these functions are in the package named
+  \texttt{sicl-global-environment}, aliased \texttt{sicl-env}.
+\item The target macro \texttt{defmacro} is created artificially by
+  creating an explicit host macro function and associating it with the
+  name \texttt{defmacro} in the target environment.
+\item Using the now-existing macro \texttt{defmacro}, other macros
+  that are needed early are created, such as \texttt{defun},
+  \texttt{defparameter}, etc.  If any new macros need support code in
+  the form of functions, these functions are imported first as host
+  functions.
+\item Remaining macros such as the conditional macros and
+  \texttt{setf}-related macros, are created the same way.
+\item Functions that manipulate the environment are defined as target
+  functions using the \texttt{defun} macro.  Examples of such
+  functions are \texttt{fdefinition}, \texttt{(setf fdefinition)},
+  \texttt{fboundp}, etc.  These functions call the host functions
+  imported in step 2.
+\item A temporary simplified version of the function
+  \texttt{ensure-generic-function} is created as a target function.
+  We can not use the equivalent host function, because the
+  specifications for this function include the creation of a function
+  binding in the environment.  In some sense, it is therefore in the
+  same category as the other environment-manipulating functions.  This
+  version always creates a new generic function by calling the
+  imported host function \texttt{make-instance} on the class named
+  \texttt{standard-generic-function}.
+\end{enumerate}
