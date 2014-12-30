@@ -103,17 +103,17 @@
   (loop for x of-type (integer 0 10) in '(2 4 6 7) sum x)
   19)
 
-;; ;;; Tests of the 'AS' form
+;;; Tests of the 'AS' form
 
 (deftest loop.2.19
   (loop as x in '(1 2 3) sum x)
   6)
 
-;; (deftest loop.2.20
-;;   (loop as x in '(a b c)
-;;         as y in '(1 2 3)
-;;         collect (list x y))
-;;   ((a 1) (b 2) (c 3)))
+(deftest loop.2.20
+  (loop as x in '(a b c)
+        as y in '(1 2 3)
+        collect (list x y))
+  ((a 1) (b 2) (c 3)))
 
 ;; (deftest loop.2.21
 ;;   (loop as x in '(a b c)
