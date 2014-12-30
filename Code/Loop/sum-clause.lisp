@@ -83,3 +83,12 @@
 	       'sum-form-clause-parser))
 
 (add-clause-parser 'sum-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the BODY-FORM.
+
+(defmethod body-form ((clause sum-form-clause) end-tag)
+  (declare (ignore end-tag))
+  `(setq ,*accumulation-variable*
+	 (+ ,*accumulation-variable* ,(form clause))))
