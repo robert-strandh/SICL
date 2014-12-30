@@ -67,10 +67,10 @@
         collect (+ x y))
   (3 7 11))
 
-;; (deftest loop.2.13
-;;   (loop for (x . y) of-type (fixnum . fixnum) in '((1 . 2) (3 . 4) (5 . 6))
-;;         collect (+ x y))
-;;   (3 7 11))
+(deftest loop.2.13
+  (loop for (x . y) of-type (fixnum . fixnum) in '((1 . 2) (3 . 4) (5 . 6))
+        collect (+ x y))
+  (3 7 11))
 
 ;; (deftest loop.2.14
 ;;   (signals-error
