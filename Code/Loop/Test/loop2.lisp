@@ -121,11 +121,11 @@
         collect (list x y))
   ((a 1) (b 2) (c 3)))
 
-;; (deftest loop.2.22
-;;   (loop for x in '(a b c)
-;;         as y in '(1 2 3)
-;;         collect (list x y))
-;;   ((a 1) (b 2) (c 3)))
+(deftest loop.2.22
+  (loop for x in '(a b c)
+        as y in '(1 2 3)
+        collect (list x y))
+  ((a 1) (b 2) (c 3)))
 
 ;; (deftest loop.2.23
 ;;   (let (a b (i 0))
