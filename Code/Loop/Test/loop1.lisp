@@ -286,10 +286,10 @@
     (loop for nil from 5 downto 0 collect (incf i)))
   (1 2 3 4 5 6))
 
-;; (deftest loop.1.56
-;;   (let ((i 0))
-;;     (loop for nil from 5 above 0 collect (incf i)))
-;;   (1 2 3 4 5))
+(deftest loop.1.56
+  (let ((i 0))
+    (loop for nil from 5 above 0 collect (incf i)))
+  (1 2 3 4 5))
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
