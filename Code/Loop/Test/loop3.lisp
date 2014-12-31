@@ -5,9 +5,9 @@
 
 (in-package :sicl-loop-test)
 
-;; (deftest loop.3.1
-;;   (loop for x on '(1 2 3) sum (car x))
-;;   6)
+(deftest loop.3.1
+  (loop for x on '(1 2 3) sum (car x))
+  6)
 
 ;; (deftest loop.3.2
 ;;   (loop for x on '(1 2 3 4)
