@@ -306,11 +306,11 @@
    (loop for i from 1 to (expand-in-current-env (%m 5)) collect i))
   (1 2 3 4 5))
 
-;; (deftest loop.1.59
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i from 1 to 5 by (expand-in-current-env (%m 2)) collect i))
-;;   (1 3 5))
+(deftest loop.1.59
+  (macrolet
+   ((%m (z) z))
+   (loop for i from 1 to 5 by (expand-in-current-env (%m 2)) collect i))
+  (1 3 5))
 
 ;; (deftest loop.1.60
 ;;   (macrolet
