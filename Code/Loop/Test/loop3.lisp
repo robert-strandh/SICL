@@ -51,10 +51,10 @@
         collect (list x y))
   ((a c) (d f) (g i)))
 
-;; (deftest loop.3.10
-;;   (loop for ((x y)) of-type (fixnum) on '((1 2) (3 4) (5 6))
-;;         collect (+ x y))
-;;   (3 7 11))
+(deftest loop.3.10
+  (loop for ((x y)) of-type (fixnum) on '((1 2) (3 4) (5 6))
+        collect (+ x y))
+  (3 7 11))
 
 ;; (deftest loop.3.11
 ;;   (loop for ((x y)) of-type (fixnum) on '((1 2) (3 4) (5 6))
