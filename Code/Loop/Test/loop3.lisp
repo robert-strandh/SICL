@@ -83,9 +83,9 @@
 ;;                  program-error)
 ;;   t)
 
-;; (deftest loop.3.16
-;;   (loop for nil on nil do (return t))
-;;   nil)
+(deftest loop.3.16
+  (loop for nil on nil do (return t))
+  nil)
 
 ;; (deftest loop.3.17
 ;;   (let ((x '(a b c)))
