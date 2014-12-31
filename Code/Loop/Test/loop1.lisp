@@ -350,8 +350,8 @@
    (loop for i from (expand-in-current-env (%m 1)) below 5 collect i))
   (1 2 3 4))
 
-;; (deftest loop.1.65
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i from 1 below (expand-in-current-env (%m 5)) collect i))
-;;   (1 2 3 4))
+(deftest loop.1.65
+  (macrolet
+   ((%m (z) z))
+   (loop for i from 1 below (expand-in-current-env (%m 5)) collect i))
+  (1 2 3 4))
