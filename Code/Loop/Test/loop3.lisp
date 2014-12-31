@@ -30,10 +30,10 @@
         collect (car e))
   (a c e))
 
-;; (deftest loop.3.6
-;;   (loop for e on '(a b c d e f g) by #'cddr
-;;         collect (car e))
-;;   (a c e g))
+(deftest loop.3.6
+  (loop for e on '(a b c d e f g) by #'cddr
+        collect (car e))
+  (a c e g))
 
 ;; (deftest loop.3.7
 ;;   (loop for e on '(a b c d e f)
