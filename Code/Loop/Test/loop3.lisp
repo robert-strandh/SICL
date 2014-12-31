@@ -15,9 +15,9 @@
   (2 3 4))
 
 
-;; (deftest loop.3.3
-;;   (loop for x on '(a b c . d) collect (car x))
-;;   (a b c))
+(deftest loop.3.3
+  (loop for x on '(a b c . d) collect (car x))
+  (a b c))
 
 ;; (deftest loop.3.4
 ;;   (let ((x nil))
