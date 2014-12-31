@@ -46,10 +46,10 @@
         collect (list x y))
   ((a b) (c d) (e f)))
 
-;; (deftest loop.3.9
-;;   (loop for ((x nil y)) on '((a b c) (d e f) (g h i))
-;;         collect (list x y))
-;;   ((a c) (d f) (g i)))
+(deftest loop.3.9
+  (loop for ((x nil y)) on '((a b c) (d e f) (g h i))
+        collect (list x y))
+  ((a c) (d f) (g i)))
 
 ;; (deftest loop.3.10
 ;;   (loop for ((x y)) of-type (fixnum) on '((1 2) (3 4) (5 6))
