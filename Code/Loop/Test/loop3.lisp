@@ -97,9 +97,9 @@
   ((d e f) (e f) (f))
   (a b c))
 
-;; (deftest loop.3.18
-;;   (loop for (x) of-type ((integer 0 10)) on '(2 4 6 7) sum x)
-;;   19)
+(deftest loop.3.18
+  (loop for (x) of-type ((integer 0 10)) on '(2 4 6 7) sum x)
+  19)
 
 ;; ;;; Tests of the 'AS' form
 
