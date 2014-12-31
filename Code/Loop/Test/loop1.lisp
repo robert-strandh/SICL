@@ -344,11 +344,11 @@
          collect i))
   (10 9 8 7 6 5 4 3))
 
-;; (deftest loop.1.64
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i from (expand-in-current-env (%m 1)) below 5 collect i))
-;;   (1 2 3 4))
+(deftest loop.1.64
+  (macrolet
+   ((%m (z) z))
+   (loop for i from (expand-in-current-env (%m 1)) below 5 collect i))
+  (1 2 3 4))
 
 ;; (deftest loop.1.65
 ;;   (macrolet
