@@ -41,10 +41,10 @@
         collect (car e))
   (a a a a a a))
 
-;; (deftest loop.3.8
-;;   (loop for ((x . y)) on '((a . b) (c . d) (e . f))
-;;         collect (list x y))
-;;   ((a b) (c d) (e f)))
+(deftest loop.3.8
+  (loop for ((x . y)) on '((a . b) (c . d) (e . f))
+        collect (list x y))
+  ((a b) (c d) (e f)))
 
 ;; (deftest loop.3.9
 ;;   (loop for ((x nil y)) on '((a b c) (d e f) (g h i))
