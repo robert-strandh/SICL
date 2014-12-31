@@ -77,7 +77,7 @@
   (loop with d-var-spec = (var-spec clause)
 	with d-type-spec = (type-spec clause)
 	for (variable type) in (extract-variables d-var-spec d-type-spec)
-	collect `(type (or null ,type) ,variable)))
+	collect `(cl:type (or null ,type) ,variable)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
