@@ -19,11 +19,11 @@
   (loop for x on '(a b c . d) collect (car x))
   (a b c))
 
-;; (deftest loop.3.4
-;;   (let ((x nil))
-;;     (loop for e on '(a b c d) do (push (car e) x))
-;;     x)
-;;   (d c b a))
+(deftest loop.3.4
+  (let ((x nil))
+    (loop for e on '(a b c d) do (push (car e) x))
+    x)
+  (d c b a))
 
 ;; (deftest loop.3.5
 ;;   (loop for e on '(a b c d e f) by #'cddr
