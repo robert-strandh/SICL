@@ -35,11 +35,11 @@
         collect (car e))
   (a c e g))
 
-;; (deftest loop.3.7
-;;   (loop for e on '(a b c d e f)
-;;         by #'(lambda (l) (and (cdr l) (cons (car l) (cddr l))))
-;;         collect (car e))
-;;   (a a a a a a))
+(deftest loop.3.7
+  (loop for e on '(a b c d e f)
+        by #'(lambda (l) (and (cdr l) (cons (car l) (cddr l))))
+        collect (car e))
+  (a a a a a a))
 
 ;; (deftest loop.3.8
 ;;   (loop for ((x . y)) on '((a . b) (c . d) (e . f))
