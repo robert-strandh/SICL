@@ -5,12 +5,12 @@
 
 (in-package :sicl-loop-test)
 
-;; (deftest loop.4.1
-;;   (loop
-;;    for x = 1 then (1+ x)
-;;    until (> x 5)
-;;    collect x)
-;;   (1 2 3 4 5))
+(deftest loop.4.1
+  (loop
+   for x = 1 then (1+ x)
+   until (> x 5)
+   collect x)
+  (1 2 3 4 5))
 
 ;; (deftest loop.4.2
 ;;   (loop
