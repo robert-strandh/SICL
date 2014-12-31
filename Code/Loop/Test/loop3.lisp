@@ -9,10 +9,10 @@
   (loop for x on '(1 2 3) sum (car x))
   6)
 
-;; (deftest loop.3.2
-;;   (loop for x on '(1 2 3 4)
-;;         do (when (evenp (car x)) (return x)))
-;;   (2 3 4))
+(deftest loop.3.2
+  (loop for x on '(1 2 3 4)
+        do (when (evenp (car x)) (return x)))
+  (2 3 4))
 
 
 ;; (deftest loop.3.3
