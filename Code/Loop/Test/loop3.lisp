@@ -119,11 +119,11 @@
         collect (list (car x) (car y)))
   ((a 1) (b 2) (c 3)))
 
-;; (deftest loop.3.22
-;;   (loop for x on '(a b c)
-;;         as y on '(1 2 3)
-;;         collect (list (car x) (car y)))
-;;   ((a 1) (b 2) (c 3)))
+(deftest loop.3.22
+  (loop for x on '(a b c)
+        as y on '(1 2 3)
+        collect (list (car x) (car y)))
+  ((a 1) (b 2) (c 3)))
 
 ;; (deftest loop.3.23
 ;;   (let (a b (i 0))
