@@ -14,6 +14,9 @@
 	   :results ',results)
 	 *tests*))
 
+(defmacro expand-in-current-env (macro-form &environment env)
+  (macroexpand macro-form env))
+
 (defun run-test (test)
   (assert (equal (multiple-value-list (eval (form test)))
 		 (results test))))
