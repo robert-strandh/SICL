@@ -101,11 +101,11 @@
   (loop for (x) of-type ((integer 0 10)) on '(2 4 6 7) sum x)
   19)
 
-;; ;;; Tests of the 'AS' form
+;;; Tests of the 'AS' form
 
-;; (deftest loop.3.19
-;;   (loop as x on '(1 2 3) sum (car x))
-;;   6)
+(deftest loop.3.19
+  (loop as x on '(1 2 3) sum (car x))
+  6)
 
 ;; (deftest loop.3.20
 ;;   (loop as x on '(a b c)
