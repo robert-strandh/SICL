@@ -30,11 +30,11 @@
         collect x)
   (a b c d e))
 
-;; (deftest loop.4.5
-;;   (loop for (x . y) = '(a b c d e) then y
-;;         while x
-;;         collect x)
-;;   (a b c d e))
+(deftest loop.4.5
+  (loop for (x . y) = '(a b c d e) then y
+        while x
+        collect x)
+  (a b c d e))
 
 ;; ;;; Error cases
 
