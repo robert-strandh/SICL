@@ -291,14 +291,14 @@
     (loop for nil from 5 above 0 collect (incf i)))
   (1 2 3 4 5))
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
-;; (deftest loop.1.57
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i from (expand-in-current-env (%m 1)) to 5 collect i))
-;;   (1 2 3 4 5))
+(deftest loop.1.57
+  (macrolet
+   ((%m (z) z))
+   (loop for i from (expand-in-current-env (%m 1)) to 5 collect i))
+  (1 2 3 4 5))
 
 ;; (deftest loop.1.58
 ;;   (macrolet
