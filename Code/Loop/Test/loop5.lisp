@@ -114,14 +114,14 @@
         sum e)
   6)
 
-;; ;;; Loop across displaced vectors
+;;; Loop across displaced vectors
 
-;; (deftest loop.5.36
-;;   (let* ((a (make-array '(10) :initial-contents '(a b c d e f g h i j)))
-;;          (da (make-array '(5) :displaced-to a
-;;                          :displaced-index-offset 2)))
-;;     (loop for e across da collect e))
-;;   (c d e f g))
+(deftest loop.5.36
+  (let* ((a (make-array '(10) :initial-contents '(a b c d e f g h i j)))
+         (da (make-array '(5) :displaced-to a
+                         :displaced-index-offset 2)))
+    (loop for e across da collect e))
+  (c d e f g))
 
 ;; (deftest loop.5.37
 ;;   (let* ((a (make-array '(10) :element-type 'base-char
