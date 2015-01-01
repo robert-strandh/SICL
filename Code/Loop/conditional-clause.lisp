@@ -100,6 +100,12 @@
 	       (singleton #'identity (constantly t))
 	       'then-or-else-parser))
 
+(define-parser if-when-parser
+  (alternative 'if-else-end-clause-parser
+	       'if-end-clause-parser
+	       'if-else-clause-parser
+	       'if-clause-parser))
+
 (define-parser unless-else-end-clause-parser
   (consecutive (lambda (unless form else-clauses else then-clauses end)
 		 (declare (ignore unless else end))
