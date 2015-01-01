@@ -17,9 +17,9 @@
   (let ((x "abcd")) (loop for e across (the simple-string x) collect e))
   (#\a #\b #\c #\d))
 
-;; (deftest loop.5.4
-;;   (loop for e across "abcd" collect e)
-;;   (#\a #\b #\c #\d))
+(deftest loop.5.4
+  (loop for e across "abcd" collect e)
+  (#\a #\b #\c #\d))
 
 ;; (deftest loop.5.5
 ;;   (loop for e across "abcd"
