@@ -86,11 +86,11 @@
     (loop for (e) across x collect e))
   (a b c d))
 
-;; (deftest loop.5.30
-;;   (let ((x (make-array '(5) :initial-contents '(a b c d e)
-;;                   :adjustable t)))
-;;     (loop for e across x collect e))
-;;   (a b c d e))
+(deftest loop.5.30
+  (let ((x (make-array '(5) :initial-contents '(a b c d e)
+                  :adjustable t)))
+    (loop for e across x collect e))
+  (a b c d e))
 
 ;; (deftest loop.5.32
 ;;   (let* ((x (make-array '(5) :initial-contents '(a b c d e)))
