@@ -188,14 +188,14 @@
           collect (list fvals r)))
   nil)
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
-;; (deftest loop.5.44
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for x across (expand-in-current-env (%m "148X")) collect x))
-;;   (#\1 #\4 #\8 #\X))
+(deftest loop.5.44
+  (macrolet
+   ((%m (z) z))
+   (loop for x across (expand-in-current-env (%m "148X")) collect x))
+  (#\1 #\4 #\8 #\X))
 
 ;; (deftest loop.5.45
 ;;   (macrolet
