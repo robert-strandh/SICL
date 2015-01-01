@@ -98,11 +98,11 @@
     collect x))
   (1 2 3 4 5))
 
-;; (deftest loop.4.13
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop
-;;     for x = 1 then (1+ x)
-;;     until (> x 5)
-;;     collect (expand-in-current-env (%m x))))
-;;   (1 2 3 4 5))
+(deftest loop.4.13
+  (macrolet
+   ((%m (z) z))
+   (loop
+    for x = 1 then (1+ x)
+    until (> x 5)
+    collect (expand-in-current-env (%m x))))
+  (1 2 3 4 5))
