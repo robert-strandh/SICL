@@ -105,9 +105,9 @@
   (loop as e across "abc" collect e)
   (#\a #\b #\c))
 
-;; (deftest loop.5.34
-;;   (loop as e of-type character across "abc" collect e)
-;;   (#\a #\b #\c))
+(deftest loop.5.34
+  (loop as e of-type character across "abc" collect e)
+  (#\a #\b #\c))
 
 ;; (deftest loop.5.35
 ;;   (loop as e of-type integer across (the simple-vector (coerce '(1 2 3) 'simple-vector))
