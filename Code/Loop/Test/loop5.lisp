@@ -99,11 +99,11 @@
     (loop for e across y collect e))
   (b c d))
 
-;; ;;; tests of 'as' form
+;;; tests of 'as' form
 
-;; (deftest loop.5.33
-;;   (loop as e across "abc" collect e)
-;;   (#\a #\b #\c))
+(deftest loop.5.33
+  (loop as e across "abc" collect e)
+  (#\a #\b #\c))
 
 ;; (deftest loop.5.34
 ;;   (loop as e of-type character across "abc" collect e)
