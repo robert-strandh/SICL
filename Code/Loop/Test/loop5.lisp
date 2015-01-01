@@ -177,16 +177,16 @@
           collect (list fvals r)))
   nil)
 
-;; (deftest loop.5.43
-;;   (let ((vals '(0 0 1 1 0 1 1 1 0 0)))
-;;     (loop for etype in '(short-float single-float double-float long-float)
-;;           for type = `(complex ,etype)
-;;           for fvals = (loop for v in vals collect (coerce v type))
-;;           for v = (make-array '(10) :initial-contents fvals :element-type type)
-;;           for r = (loop for x across v collect x)
-;;           unless (equal r fvals)
-;;           collect (list fvals r)))
-;;   nil)
+(deftest loop.5.43
+  (let ((vals '(0 0 1 1 0 1 1 1 0 0)))
+    (loop for etype in '(short-float single-float double-float long-float)
+          for type = `(complex ,etype)
+          for fvals = (loop for v in vals collect (coerce v type))
+          for v = (make-array '(10) :initial-contents fvals :element-type type)
+          for r = (loop for x across v collect x)
+          unless (equal r fvals)
+          collect (list fvals r)))
+  nil)
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
