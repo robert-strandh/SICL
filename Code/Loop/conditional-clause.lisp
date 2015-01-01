@@ -168,3 +168,18 @@
 	       'unless-parser))
 
 (add-clause-parser 'conditional-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute body-form.
+
+(defmethod body-form ((clause conditional-clause) end-tag)
+  `(if ,(condition clause)
+       (progn
+	 ,@(mapcar (lambda (clause)
+		     (body-form clause end-tag))
+		   (then-clauses clause)))
+       (progn
+	 ,@(mapcar (lambda (clause)
+		     (body-form clause end-tag))
+		   (else-clauses clause)))))
