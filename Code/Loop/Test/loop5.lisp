@@ -36,9 +36,9 @@
     (loop for e across (the base-string x) collect e))
   (#\a #\b #\c #\d))
 
-;; (deftest loop.5.8
-;;   (let ((x "abcd")) (loop for e of-type character across x collect e))
-;;   (#\a #\b #\c #\d))
+(deftest loop.5.8
+  (let ((x "abcd")) (loop for e of-type character across x collect e))
+  (#\a #\b #\c #\d))
 
 ;; (deftest loop.5.10
 ;;   (let ((x #*00010110))
