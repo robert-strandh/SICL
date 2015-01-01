@@ -132,14 +132,14 @@
     (loop for e across da collect e))
   (#\c #\d #\e #\f #\g))
 
-;; (deftest loop.5.38
-;;   (let* ((a (make-array '(10) :element-type 'bit
-;;                         :initial-contents '(0 1 1 0 0 1 0 1 1 1)))
-;;          (da (make-array '(5) :element-type 'bit
-;;                          :displaced-to a
-;;                          :displaced-index-offset 2)))
-;;     (loop for e across da collect e))
-;;   (1 0 0 1 0))
+(deftest loop.5.38
+  (let* ((a (make-array '(10) :element-type 'bit
+                        :initial-contents '(0 1 1 0 0 1 0 1 1 1)))
+         (da (make-array '(5) :element-type 'bit
+                         :displaced-to a
+                         :displaced-index-offset 2)))
+    (loop for e across da collect e))
+  (1 0 0 1 0))
 
 ;; (deftest loop.5.39
 ;;   (let ((v (make-array '(10) :initial-contents '(1 2 3 4 5 6 7 8 9 10)
