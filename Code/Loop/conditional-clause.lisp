@@ -162,3 +162,7 @@
 	       'unless-end-clause-parser
 	       'unless-else-clause-parser
 	       'unless-clause-parser))
+
+(define-parser if-when-unless-parser
+  (alternative 'if-when-parser
+	       'unless-parser))
