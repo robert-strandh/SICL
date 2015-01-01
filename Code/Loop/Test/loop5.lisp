@@ -66,10 +66,10 @@
           for i from 1 to 4 collect e))
   (0 0 0 1))
 
-;; (deftest loop.5.20
-;;   (let ((x (vector 'a 'b 'c 'd)))
-;;     (loop for e across x collect e))
-;;   (a b c d))
+(deftest loop.5.20
+  (let ((x (vector 'a 'b 'c 'd)))
+    (loop for e across x collect e))
+  (a b c d))
 
 ;; (deftest loop.5.21
 ;;   (let ((x (vector 'a 'b 'c 'd)))
