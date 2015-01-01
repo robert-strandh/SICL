@@ -157,3 +157,8 @@
 	       (singleton #'identity (constantly t))
 	       'then-or-else-parser))
 
+(define-parser unless-parser
+  (alternative 'unless-else-end-clause-parser
+	       'unless-end-clause-parser
+	       'unless-else-clause-parser
+	       'unless-clause-parser))
