@@ -60,12 +60,11 @@
     (loop for e of-type bit across (the simple-bit-vector x) collect e))
   (0 0 0 1 0 1 1 0))
 
-;; (deftest loop.5.14
-;;   (let ((x #*00010110))
-;;     (loop for e of-type bit across x
-;;           for i from 1 to 4 collect e))
-;;   (0 0 0 1))
-
+(deftest loop.5.14
+  (let ((x #*00010110))
+    (loop for e of-type bit across x
+          for i from 1 to 4 collect e))
+  (0 0 0 1))
 
 ;; (deftest loop.5.20
 ;;   (let ((x (vector 'a 'b 'c 'd)))
