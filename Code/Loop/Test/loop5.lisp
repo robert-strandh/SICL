@@ -92,12 +92,12 @@
     (loop for e across x collect e))
   (a b c d e))
 
-;; (deftest loop.5.32
-;;   (let* ((x (make-array '(5) :initial-contents '(a b c d e)))
-;;          (y (make-array '(3) :displaced-to x
-;;                    :displaced-index-offset 1)))
-;;     (loop for e across y collect e))
-;;   (b c d))
+(deftest loop.5.32
+  (let* ((x (make-array '(5) :initial-contents '(a b c d e)))
+         (y (make-array '(3) :displaced-to x
+                   :displaced-index-offset 1)))
+    (loop for e across y collect e))
+  (b c d))
 
 ;; ;;; tests of 'as' form
 
