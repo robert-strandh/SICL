@@ -123,14 +123,14 @@
     (loop for e across da collect e))
   (c d e f g))
 
-;; (deftest loop.5.37
-;;   (let* ((a (make-array '(10) :element-type 'base-char
-;;                         :initial-contents "abcdefghij"))
-;;          (da (make-array '(5) :element-type 'base-char
-;;                          :displaced-to a
-;;                          :displaced-index-offset 2)))
-;;     (loop for e across da collect e))
-;;   (#\c #\d #\e #\f #\g))
+(deftest loop.5.37
+  (let* ((a (make-array '(10) :element-type 'base-char
+                        :initial-contents "abcdefghij"))
+         (da (make-array '(5) :element-type 'base-char
+                         :displaced-to a
+                         :displaced-index-offset 2)))
+    (loop for e across da collect e))
+  (#\c #\d #\e #\f #\g))
 
 ;; (deftest loop.5.38
 ;;   (let* ((a (make-array '(10) :element-type 'bit
