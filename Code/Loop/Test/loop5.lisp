@@ -81,11 +81,10 @@
     (loop for e across (the simple-vector x) collect e))
   (a b c d))
 
-;; (deftest loop.5.23
-;;   (let ((x (vector '(a) '(b) '(c) '(d))))
-;;     (loop for (e) across x collect e))
-;;   (a b c d))
-
+(deftest loop.5.23
+  (let ((x (vector '(a) '(b) '(c) '(d))))
+    (loop for (e) across x collect e))
+  (a b c d))
 
 ;; (deftest loop.5.30
 ;;   (let ((x (make-array '(5) :initial-contents '(a b c d e)
