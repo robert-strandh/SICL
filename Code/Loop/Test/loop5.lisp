@@ -26,10 +26,10 @@
         for i from 1 to 3 collect e)
   (#\a #\b #\c))
 
-;; (deftest loop.5.6
-;;   (loop for e of-type base-char across "abcd"
-;;         for i from 1 to 3 collect e)
-;;   (#\a #\b #\c))
+(deftest loop.5.6
+  (loop for e of-type base-char across "abcd"
+        for i from 1 to 3 collect e)
+  (#\a #\b #\c))
 
 ;; (deftest loop.5.7
 ;;   (let ((x (make-array '(4) :initial-contents "abcd" :element-type 'base-char)))
