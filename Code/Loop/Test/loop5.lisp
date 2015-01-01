@@ -21,10 +21,10 @@
   (loop for e across "abcd" collect e)
   (#\a #\b #\c #\d))
 
-;; (deftest loop.5.5
-;;   (loop for e across "abcd"
-;;         for i from 1 to 3 collect e)
-;;   (#\a #\b #\c))
+(deftest loop.5.5
+  (loop for e across "abcd"
+        for i from 1 to 3 collect e)
+  (#\a #\b #\c))
 
 ;; (deftest loop.5.6
 ;;   (loop for e of-type base-char across "abcd"
