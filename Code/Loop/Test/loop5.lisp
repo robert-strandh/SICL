@@ -45,10 +45,10 @@
     (loop for e across x collect e))
   (0 0 0 1 0 1 1 0))
 
-;; (deftest loop.5.11
-;;   (let ((x #*00010110))
-;;     (loop for e across (the bit-vector x) collect e))
-;;   (0 0 0 1 0 1 1 0))
+(deftest loop.5.11
+  (let ((x #*00010110))
+    (loop for e across (the bit-vector x) collect e))
+  (0 0 0 1 0 1 1 0))
 
 ;; (deftest loop.5.12
 ;;   (let ((x #*00010110))
