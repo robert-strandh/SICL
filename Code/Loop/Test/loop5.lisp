@@ -167,15 +167,15 @@
         collect (list i r))
   nil)
 
-;; (deftest loop.5.42
-;;   (let ((vals '(0 0 1 1 0 1 1 1 0 0)))
-;;     (loop for type in '(short-float single-float double-float long-float)
-;;           for fvals = (loop for v in vals collect (coerce v type))
-;;           for v = (make-array '(10) :initial-contents fvals :element-type type)
-;;           for r = (loop for x across v collect x)
-;;           unless (equal r fvals)
-;;           collect (list fvals r)))
-;;   nil)
+(deftest loop.5.42
+  (let ((vals '(0 0 1 1 0 1 1 1 0 0)))
+    (loop for type in '(short-float single-float double-float long-float)
+          for fvals = (loop for v in vals collect (coerce v type))
+          for v = (make-array '(10) :initial-contents fvals :element-type type)
+          for r = (loop for x across v collect x)
+          unless (equal r fvals)
+          collect (list fvals r)))
+  nil)
 
 ;; (deftest loop.5.43
 ;;   (let ((vals '(0 0 1 1 0 1 1 1 0 0)))
