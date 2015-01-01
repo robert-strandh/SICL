@@ -5,9 +5,9 @@
 
 (in-package :sicl-loop-test)
 
-;; (deftest loop.5.1
-;;   (let ((x "abcd")) (loop for e across x collect e))
-;;   (#\a #\b #\c #\d))
+(deftest loop.5.1
+  (let ((x "abcd")) (loop for e across x collect e))
+  (#\a #\b #\c #\d))
 
 ;; (deftest loop.5.2
 ;;   (let ((x "abcd")) (loop for e across (the string x) collect e))
