@@ -59,17 +59,17 @@
 ;;    program-error)
 ;;   t)
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
-;; (deftest loop.4.9
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop
-;;     for x = (expand-in-current-env (%m 1)) then (1+ x)
-;;     until (> x 5)
-;;     collect x))
-;;   (1 2 3 4 5))
+(deftest loop.4.9
+  (macrolet
+   ((%m (z) z))
+   (loop
+    for x = (expand-in-current-env (%m 1)) then (1+ x)
+    until (> x 5)
+    collect x))
+  (1 2 3 4 5))
 
 ;; (deftest loop.4.10
 ;;   (macrolet
