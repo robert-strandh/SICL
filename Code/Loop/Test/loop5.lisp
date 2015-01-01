@@ -141,11 +141,11 @@
     (loop for e across da collect e))
   (1 0 0 1 0))
 
-;; (deftest loop.5.39
-;;   (let ((v (make-array '(10) :initial-contents '(1 2 3 4 5 6 7 8 9 10)
-;;                        :fill-pointer 6)))
-;;     (loop for x across v collect x))
-;;   (1 2 3 4 5 6))
+(deftest loop.5.39
+  (let ((v (make-array '(10) :initial-contents '(1 2 3 4 5 6 7 8 9 10)
+                       :fill-pointer 6)))
+    (loop for x across v collect x))
+  (1 2 3 4 5 6))
 
 ;; (deftest loop.5.40
 ;;   (loop for i from 1 to 40
