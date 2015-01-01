@@ -55,10 +55,10 @@
     (loop for e across (the simple-bit-vector x) collect e))
   (0 0 0 1 0 1 1 0))
 
-;; (deftest loop.5.13
-;;   (let ((x #*00010110))
-;;     (loop for e of-type bit across (the simple-bit-vector x) collect e))
-;;   (0 0 0 1 0 1 1 0))
+(deftest loop.5.13
+  (let ((x #*00010110))
+    (loop for e of-type bit across (the simple-bit-vector x) collect e))
+  (0 0 0 1 0 1 1 0))
 
 ;; (deftest loop.5.14
 ;;   (let ((x #*00010110))
