@@ -197,11 +197,11 @@
    (loop for x across (expand-in-current-env (%m "148X")) collect x))
   (#\1 #\4 #\8 #\X))
 
-;; (deftest loop.5.45
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop as x across (expand-in-current-env (%m #*00110110)) collect x))
-;;   (0 0 1 1 0 1 1 0))
+(deftest loop.5.45
+  (macrolet
+   ((%m (z) z))
+   (loop as x across (expand-in-current-env (%m #*00110110)) collect x))
+  (0 0 1 1 0 1 1 0))
 
 ;; ;;; FIXME
 ;; ;;; Add tests for other specialized array types (integer types, floats, complex)
