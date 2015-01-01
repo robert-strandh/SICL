@@ -157,15 +157,15 @@
         collect (list i r))
   nil)
 
-;; (deftest loop.5.41
-;;   (loop for i from 1 to 40
-;;         for type = `(signed-byte ,i)
-;;         for v = (make-array '(10) :initial-contents '(0 0 -1 -1 0 -1 -1 -1 0 0)
-;;                             :element-type type)
-;;         for r = (loop for x across v collect x)
-;;         unless (equal r '(0 0 -1 -1 0 -1 -1 -1 0 0))
-;;         collect (list i r))
-;;   nil)
+(deftest loop.5.41
+  (loop for i from 1 to 40
+        for type = `(signed-byte ,i)
+        for v = (make-array '(10) :initial-contents '(0 0 -1 -1 0 -1 -1 -1 0 0)
+                            :element-type type)
+        for r = (loop for x across v collect x)
+        unless (equal r '(0 0 -1 -1 0 -1 -1 -1 0 0))
+        collect (list i r))
+  nil)
 
 ;; (deftest loop.5.42
 ;;   (let ((vals '(0 0 1 1 0 1 1 1 0 0)))
