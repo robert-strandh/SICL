@@ -81,9 +81,9 @@
   (loop for x being the hash-values of *loop.6.hash.1* sum x)
   6)
 
-;; (deftest loop.6.3
-;;   (loop for x being each hash-value of *loop.6.hash.1* sum x)
-;;   6)
+(deftest loop.6.3
+  (loop for x being each hash-value of *loop.6.hash.1* sum x)
+  6)
 
 ;; (deftest loop.6.4
 ;;   (loop for x being each hash-values of *loop.6.hash.1* sum x)
