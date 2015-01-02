@@ -223,9 +223,9 @@
   (loop for k float being the hash-keys of *loop.6.hash.7* sum k)
   6.0)
 
-;; (deftest loop.6.34
-;;   (loop for k of-type float being the hash-keys of *loop.6.hash.7* sum k)
-;;   6.0)
+(deftest loop.6.34
+  (loop for k of-type float being the hash-keys of *loop.6.hash.7* sum k)
+  6.0)
 
 ;; (deftest loop.6.35
 ;;   (loop for (k1 . k2) of-type (integer . integer) being the hash-keys
