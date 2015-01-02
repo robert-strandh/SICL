@@ -191,9 +191,9 @@
   (loop for k fixnum being the hash-keys of *loop.6.hash.5* sum k)
   6)
 
-;; (deftest loop.6.26
-;;   (loop for k of-type fixnum being the hash-keys of *loop.6.hash.5* sum k)
-;;   6)
+(deftest loop.6.26
+  (loop for k of-type fixnum being the hash-keys of *loop.6.hash.5* sum k)
+  6)
 
 ;; (deftest loop.6.27
 ;;   (loop for k t being the hash-keys of *loop.6.hash.5* sum k)
