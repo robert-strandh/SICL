@@ -174,7 +174,7 @@
 ;;; Compute the initial bindings.
 
 (defmethod initial-bindings ((clause for-as-hash))
-  `((,(hash-table-var clause) ,(hash-table-form clause))
+  `((,(hash-table-var clause) ,(hash-table-form clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -206,49 +206,44 @@
 
 (defmethod prologue-form ((subclause for-as-hash-key) end-tag)
   `(progn (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
+	      ,(iterator-var subclause)
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause value)))
+		  ,(temp-value-var subclause) value))
 	  (unless ,(temp-entry-p-var subclause)
 	    (go ,end-tag))
 	  ,(generate-assignments (var-spec subclause)
-				 (temp-key-var sublcause))
+				 (temp-key-var subclause))
 	  ,(generate-assignments (other-var-spec subclause)
-				 (temp-value-var sublcause))
+				 (temp-value-var subclause))
 	  (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
+	      ,(iterator-var subclause)
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause value)))))
+		  ,(temp-value-var subclause) value))))
 
 (defmethod prologue-form ((subclause for-as-hash-value) end-tag)
   `(progn (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
+	      ,(iterator-var subclause)
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause value)))
+		  ,(temp-value-var subclause) value))
 	  (unless ,(temp-entry-p-var subclause)
 	    (go ,end-tag))
 	  ,(generate-assignments (var-spec subclause)
-				 (temp-value-var sublcause))
+				 (temp-value-var subclause))
 	  ,(generate-assignments (other-var-spec subclause)
-				 (temp-key-var sublcause))
+				 (temp-key-var subclause))
 	  (multiple-value-bind (entry-p key value)
-	      (,(iterator-var subclause))
+	      ,(iterator-var subclause)
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
-		  ,(temp-value-var subclause value)))))
+		  ,(temp-value-var subclause) value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the termination form.
 
 (defmethod termination-form ((subclause for-as-hash) end-tag)
-  (unless ,(temp-entry-p-var subclause)
-    (go ,end-tag)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute the step form.
-
+  `(unless ,(temp-entry-p-var subclause)
+     (go ,end-tag)))
