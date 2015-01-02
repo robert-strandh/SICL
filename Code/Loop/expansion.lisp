@@ -88,6 +88,13 @@
 	       (return-from ,*loop-name*
 		 ,*accumulation-variable*)))))
 
+(defgeneric wrap-clause (clause inner-form))
+
+(defmethod wrap-clause (clause inner-form)
+  `(let* ,(bindings clause)
+     (declare ,@(declarations clause))
+     ,inner-form))
+
 (defun do-clauses (all-clauses remaining-clauses)
   (if (null remaining-clauses)
       (prologue-body-epilogue all-clauses)
