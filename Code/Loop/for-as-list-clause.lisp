@@ -105,16 +105,16 @@
 
 (defmethod initial-bindings ((clause for-as-list))
   `((,(list-var clause) ,(list-form clause))
-    (,(rest-var clause) ,(list-var clause))
     ,@(if (member (by-form clause) '(#'cdr #'cddr) :test #'equal)
 	  '()
 	  `((,(by-var clause) ,(by-form clause))))))
 
 (defmethod final-bindings ((clause for-as-list))
-  (loop with d-var-spec = (var-spec clause)
-	with d-type-spec = (type-spec clause)
-	for (variable) in (extract-variables d-var-spec d-type-spec)
-	collect `(,variable nil)))
+  `((,(rest-var clause) ,(list-var clause))
+    ,@(loop with d-var-spec = (var-spec clause)
+	    with d-type-spec = (type-spec clause)
+	    for (variable) in (extract-variables d-var-spec d-type-spec)
+	    collect `(,variable nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
