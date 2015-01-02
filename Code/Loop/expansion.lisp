@@ -95,19 +95,19 @@
      (declare ,@(declarations clause))
      ,inner-form))
 
-(defun do-clauses (all-clauses remaining-clauses)
-  (if (null remaining-clauses)
-      (prologue-body-epilogue all-clauses)
-      `(let* ,(bindings (car remaining-clauses))
-	 (declare ,@(declarations (car remaining-clauses)))
-	 ,(do-clauses all-clauses (cdr remaining-clauses)))))
+(defun do-clauses (all-clauses)
+  (let ((result (prologue-body-epilogue all-clauses)))
+    (mapc (lambda (clause)
+	    (setf result (wrap-clause clause result)))
+	  (reverse all-clauses))
+    result))
 
 (defun expand-clauses (all-clauses)
   `(let ((,*accumulation-variable*
 	   ,(accumulation-initial-value all-clauses))
 	 (,*list-tail-accumulation-variable* nil))
      (declare (ignorable ,*list-tail-accumulation-variable*))
-     ,(do-clauses all-clauses all-clauses)))
+     ,(do-clauses all-clauses)))
 
 (defvar *loop-name*)
 
