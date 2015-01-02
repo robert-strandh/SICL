@@ -121,10 +121,10 @@
         #'symbol<)
   (a b c))
 
-;; (deftest loop.6.11
-;;   (sort (loop for (u . v) being the hash-keys of *loop.6.hash.3* collect u)
-;;         #'symbol<)
-;;   (a1 b1 c1))
+(deftest loop.6.11
+  (sort (loop for (u . v) being the hash-keys of *loop.6.hash.3* collect u)
+        #'symbol<)
+  (a1 b1 c1))
 
 ;; (deftest loop.6.12
 ;;   (sort (loop for (u . v) being the hash-keys of *loop.6.hash.3* collect v)
