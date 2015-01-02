@@ -203,9 +203,9 @@
   (loop for k of-type t being the hash-keys of *loop.6.hash.5* sum k)
   6)
 
-;; (deftest loop.6.29
-;;   (loop for v t being the hash-values of *loop.6.hash.1* sum v)
-;;   6)
+(deftest loop.6.29
+  (loop for v t being the hash-values of *loop.6.hash.1* sum v)
+  6)
 
 ;; (deftest loop.6.30
 ;;   (loop for v of-type t being the hash-values of *loop.6.hash.1* sum v)
