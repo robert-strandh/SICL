@@ -800,20 +800,18 @@
 		   `((,(end-var clause) ,(end-form clause))))
 	     (,(start-var clause) ,(start-form clause)))))))
 
-(defmethod final-bindings ((clause for-as-arithmetic))
-  (if (null (var-spec clause))
-      `((,(temp-var clause) ,(start-var clause)))
-      `((,(temp-var clause) ,(start-var clause))
-	(,(var-spec clause) ,(start-var clause)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the declarations.
+;;; Compute subclause wrapping.
 
-(defmethod declarations ((clause for-as-arithmetic))
-  (if (null (var-spec clause))
-      '()
-      `((cl:type ,(type-spec clause) ,(var-spec clause)))))
+(defmethod wrap-subclause ((subclause for-as-arithmetic) inner-form)
+  (if (null (var-spec subclause))
+      `(let ((,(temp-var subclause) ,(start-var subclause)))
+	 ,inner-form)
+      `(let ((,(temp-var subclause) ,(start-var subclause))
+	     (,(var-spec subclause) ,(start-var subclause)))
+	 (declare (cl:type ,(type-spec subclause) ,(var-spec subclause)))
+	 ,inner-form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
