@@ -164,3 +164,10 @@
 	       'hash-value-parser))
 
 (add-for-as-subclause-parser 'for-as-hash-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the initial bindings.
+
+(defmethod initial-bindings ((clause for-as-hash))
+  `((,(hash-table-var clause) ,(hash-table-form clause))
