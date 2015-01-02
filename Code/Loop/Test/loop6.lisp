@@ -5,6 +5,9 @@
 
 (in-package :sicl-loop-test)
 
+(defun symbol< (s1 s2)
+  (string< (string s1) (string s2)))
+
 (defparameter *loop.6.alist*
   '((a . 1) (b . 2) (c . 3)))
 
@@ -93,10 +96,10 @@
   (loop for x being the hash-values in *loop.6.hash.1* sum x)
   6)
 
-;; (deftest loop.6.6
-;;   (sort (loop for x being the hash-key of *loop.6.hash.1* collect x)
-;;         #'symbol<)
-;;   (a b c))
+(deftest loop.6.6
+  (sort (loop for x being the hash-key of *loop.6.hash.1* collect x)
+        #'symbol<)
+  (a b c))
 
 ;; (deftest loop.6.7
 ;;   (sort (loop for x being the hash-keys of *loop.6.hash.1* collect x)
