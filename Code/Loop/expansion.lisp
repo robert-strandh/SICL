@@ -90,10 +90,24 @@
 
 (defgeneric wrap-clause (clause inner-form))
 
+(defgeneric wrap-subclause (subclause inner-form))
+
+(defmethod wrap-subclause (subclause inner-form)
+  (declare (ignore subclause))
+  inner-form)
+
 (defmethod wrap-clause (clause inner-form)
   `(let* ,(bindings clause)
      (declare ,@(declarations clause))
      ,inner-form))
+
+(defmethod wrap-clause ((clause subclauses-mixin) inner-form)
+  (let ((result inner-form))
+    (mapc (lambda (subclause)
+	    (setf result (wrap-subclause subclause result)))
+	  (reverse (subclauses clause)))
+    `(let* ,(bindings clause)
+       ,result)))
 
 (defun do-clauses (all-clauses)
   (let ((result (prologue-body-epilogue all-clauses)))
