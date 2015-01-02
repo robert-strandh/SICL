@@ -163,9 +163,9 @@
         #'symbol<)
   (a2 b2 c2))
 
-;; (deftest loop.6.19
-;;   (loop for nil being the hash-values of *loop.6.hash.5* count t)
-;;   3)
+(deftest loop.6.19
+  (loop for nil being the hash-values of *loop.6.hash.5* count t)
+  3)
 
 ;; (deftest loop.6.20
 ;;   (loop for nil being the hash-keys of *loop.6.hash.5* count t)
