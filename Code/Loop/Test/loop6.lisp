@@ -89,9 +89,9 @@
   (loop for x being each hash-values of *loop.6.hash.1* sum x)
   6)
 
-;; (deftest loop.6.5
-;;   (loop for x being the hash-values in *loop.6.hash.1* sum x)
-;;   6)
+(deftest loop.6.5
+  (loop for x being the hash-values in *loop.6.hash.1* sum x)
+  6)
 
 ;; (deftest loop.6.6
 ;;   (sort (loop for x being the hash-key of *loop.6.hash.1* collect x)
