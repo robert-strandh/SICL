@@ -229,3 +229,11 @@
 				 (temp-value-var sublcause))
 	  ,(generate-assignments (other-var-spec subclause)
 				 (temp-key-var sublcause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination form.
+
+(defmethod termination-form ((subclause for-as-hash) end-tag)
+  (unless ,(temp-entry-p-var subclause)
+    (go ,end-tag)))
