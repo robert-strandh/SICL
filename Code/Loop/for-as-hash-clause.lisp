@@ -125,7 +125,7 @@
 			hash-table-form
 			using)
 		 (declare (ignore being each hash-key of))
-		 (make-instance 'for-as-hash-key
+		 (make-instance 'for-as-hash-value
 		   :var-spec var-spec
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
@@ -148,7 +148,7 @@
 			of
 			hash-table-form)
 		 (declare (ignore being each hash-key of))
-		 (make-instance 'for-as-hash-key
+		 (make-instance 'for-as-hash-value
 		   :var-spec var-spec
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
@@ -206,7 +206,7 @@
 
 (defmethod prologue-form ((subclause for-as-hash-key) end-tag)
   `(progn (multiple-value-bind (entry-p key value)
-	      ,(iterator-var subclause)
+	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
 		  ,(temp-value-var subclause) value))
@@ -217,14 +217,14 @@
 	  ,(generate-assignments (other-var-spec subclause)
 				 (temp-value-var subclause))
 	  (multiple-value-bind (entry-p key value)
-	      ,(iterator-var subclause)
+	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
 		  ,(temp-value-var subclause) value))))
 
 (defmethod prologue-form ((subclause for-as-hash-value) end-tag)
   `(progn (multiple-value-bind (entry-p key value)
-	      ,(iterator-var subclause)
+	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
 		  ,(temp-value-var subclause) value))
@@ -235,7 +235,7 @@
 	  ,(generate-assignments (other-var-spec subclause)
 				 (temp-key-var subclause))
 	  (multiple-value-bind (entry-p key value)
-	      ,(iterator-var subclause)
+	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
 		  ,(temp-value-var subclause) value))))
@@ -258,7 +258,7 @@
 	  ,(generate-assignments (other-var-spec subclause)
 				 (temp-value-var subclause))
 	  (multiple-value-bind (entry-p key value)
-	      ,(iterator-var subclause)
+	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
 		  ,(temp-value-var subclause) value))))
@@ -269,7 +269,7 @@
 	  ,(generate-assignments (other-var-spec subclause)
 				 (temp-key-var subclause))
 	  (multiple-value-bind (entry-p key value)
-	      ,(iterator-var subclause)
+	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-key-var subclause) key
 		  ,(temp-value-var subclause) value))))
