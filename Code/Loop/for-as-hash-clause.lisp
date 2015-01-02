@@ -37,3 +37,7 @@
 (define-parser hash-key-parser
   (alternative (keyword-parser 'hash-key)
 	       (keyword-parser 'hash-keys)))
+
+(define-parser hash-value-parser
+  (alternative (keyword-parser 'hash-value)
+	       (keyword-parser 'hash-values)))
