@@ -158,10 +158,10 @@
         #'symbol<)
   (a1 b1 c1))
 
-;; (deftest loop.6.18
-;;   (sort (loop for (nil . v) being the hash-values of *loop.6.hash.5* collect v)
-;;         #'symbol<)
-;;   (a2 b2 c2))
+(deftest loop.6.18
+  (sort (loop for (nil . v) being the hash-values of *loop.6.hash.5* collect v)
+        #'symbol<)
+  (a2 b2 c2))
 
 ;; (deftest loop.6.19
 ;;   (loop for nil being the hash-values of *loop.6.hash.5* count t)
