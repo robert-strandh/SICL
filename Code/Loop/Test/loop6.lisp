@@ -73,9 +73,9 @@
 
 ;;; being {each | the} {hash-value | hash-values | hash-key | hash-keys} {in | of }
 
-;; (deftest loop.6.1
-;;   (loop for x being the hash-value of *loop.6.hash.1* sum x)
-;;   6)
+(deftest loop.6.1
+  (loop for x being the hash-value of *loop.6.hash.1* sum x)
+  6)
 
 ;; (deftest loop.6.2
 ;;   (loop for x being the hash-values of *loop.6.hash.1* sum x)
