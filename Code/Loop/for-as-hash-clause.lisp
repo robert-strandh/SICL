@@ -151,3 +151,9 @@
 	       'hash-value-parser
 	       'in-of-parser
 	       (singleton #'identity (constantly t))))
+
+(define-parser for-as-hash-parser
+  (alternative 'hash-key-using-parser
+	       'hash-key-parser
+	       'hash-value-using-parser
+	       'hash-value-parser))
