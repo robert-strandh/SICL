@@ -116,10 +116,10 @@
         #'symbol<)
   (a b c))
 
-;; (deftest loop.6.10
-;;   (sort (loop for x being each hash-keys in *loop.6.hash.1* collect x)
-;;         #'symbol<)
-;;   (a b c))
+(deftest loop.6.10
+  (sort (loop for x being each hash-keys in *loop.6.hash.1* collect x)
+        #'symbol<)
+  (a b c))
 
 ;; (deftest loop.6.11
 ;;   (sort (loop for (u . v) being the hash-keys of *loop.6.hash.3* collect u)
