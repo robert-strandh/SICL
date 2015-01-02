@@ -157,3 +157,5 @@
 	       'hash-key-parser
 	       'hash-value-using-parser
 	       'hash-value-parser))
+
+(add-for-as-subclause-parser 'for-as-hash-parser)
