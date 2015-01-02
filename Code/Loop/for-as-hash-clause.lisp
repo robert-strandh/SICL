@@ -25,3 +25,11 @@
 (defclass for-as-hash-key (for-as-hash) ())
 
 (defclass for-as-hash-value (for-as-hash) ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parsers
+
+(define-parser each-the-parser
+  (alternative (keyword-parser 'each)
+	       (keyword-parser 'the)))
