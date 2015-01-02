@@ -24,6 +24,7 @@
    (%temp-entry-p-var :initform (gensym) :reader temp-entry-p-var)
    (%temp-key-var :initform (gensym) :reader temp-key-var)
    (%temp-value-var :initform (gensym) :reader temp-value-var)
+   (%iterator-var :initform (gensym) :reader iterator-var)
    (%other-var-spec :initarg :other-var-spec :reader other-var-spec)))
 
 (defclass for-as-hash-key (for-as-hash) ())
