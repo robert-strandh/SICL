@@ -247,3 +247,29 @@
 (defmethod termination-form ((subclause for-as-hash) end-tag)
   `(unless ,(temp-entry-p-var subclause)
      (go ,end-tag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the step form.
+
+(defmethod step-form ((subclause for-as-hash-key))
+  `(progn ,(generate-assignments (var-spec subclause)
+				 (temp-key-var subclause))
+	  ,(generate-assignments (other-var-spec subclause)
+				 (temp-value-var subclause))
+	  (multiple-value-bind (entry-p key value)
+	      ,(iterator-var subclause)
+	    (setq ,(temp-entry-p-var subclause) entry-p
+		  ,(temp-key-var subclause) key
+		  ,(temp-value-var subclause) value))))
+
+(defmethod step-form ((subclause for-as-hash-value))
+  `(progn ,(generate-assignments (var-spec subclause)
+				 (temp-value-var subclause))
+	  ,(generate-assignments (other-var-spec subclause)
+				 (temp-key-var subclause))
+	  (multiple-value-bind (entry-p key value)
+	      ,(iterator-var subclause)
+	    (setq ,(temp-entry-p-var subclause) entry-p
+		  ,(temp-key-var subclause) key
+		  ,(temp-value-var subclause) value))))
