@@ -67,37 +67,37 @@
       0
       nil))
 
+(defun do-clauses (all-clauses remaining-clauses start-tag end-tag)
+  (if (null remaining-clauses)
+      `(tagbody
+	  (progn ,@(mapcar (lambda (clause)
+			     (prologue-form clause end-tag))
+			   all-clauses))
+	  ,start-tag
+	  (progn ,@(mapcar (lambda (clause)
+			     (body-form clause end-tag))
+			   all-clauses))
+	  (progn ,@(mapcar (lambda (clause)
+			     (termination-form clause end-tag))
+			   all-clauses))
+	  (progn ,@(mapcar #'step-form all-clauses))
+	  (go ,start-tag)
+	  ,end-tag
+	  (progn ,@(mapcar #'epilogue all-clauses)
+		 (return-from ,*loop-name*
+		   ,*accumulation-variable*)))
+      `(let* ,(bindings (car remaining-clauses))
+	 (declare ,@(declarations (car remaining-clauses)))
+	 ,(do-clauses all-clauses (cdr remaining-clauses) start-tag end-tag))))
+
 (defun expand-clauses (all-clauses)
   (let ((start-tag (gensym))
 	(end-tag (gensym)))
-    (labels
-	((do-bindings (clauses)
-	   (if (null clauses)
-	       `(tagbody
-		   (progn ,@(mapcar (lambda (clause)
-				      (prologue-form clause end-tag))
-				    all-clauses))
-		   ,start-tag
-		   (progn ,@(mapcar (lambda (clause)
-				      (body-form clause end-tag))
-				    all-clauses))
-		   (progn ,@(mapcar (lambda (clause)
-				      (termination-form clause end-tag))
-				    all-clauses))
-		   (progn ,@(mapcar #'step-form all-clauses))
-		   (go ,start-tag)
-		   ,end-tag
-		   (progn ,@(mapcar #'epilogue all-clauses)
-			  (return-from ,*loop-name*
-			    ,*accumulation-variable*)))
-	       `(let* ,(bindings (car clauses))
-		  (declare ,@(declarations (car clauses)))
-		  ,(do-bindings (cdr clauses))))))
-      `(let ((,*accumulation-variable*
-	       ,(accumulation-initial-value all-clauses))
-	     (,*list-tail-accumulation-variable* nil))
-	 (declare (ignorable ,*list-tail-accumulation-variable*))
-	 ,(do-bindings all-clauses)))))
+    `(let ((,*accumulation-variable*
+	     ,(accumulation-initial-value all-clauses))
+	   (,*list-tail-accumulation-variable* nil))
+       (declare (ignorable ,*list-tail-accumulation-variable*))
+       ,(do-clauses all-clauses all-clauses start-tag end-tag))))
 
 (defvar *loop-name*)
 
