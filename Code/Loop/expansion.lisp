@@ -67,27 +67,30 @@
       0
       nil))
 
+(defun prologue-body-epilogue (clauses)
+  (let ((start-tag (gensym))
+	(end-tag (gensym)))
+    `(tagbody
+	(progn ,@(mapcar (lambda (clause)
+			   (prologue-form clause end-tag))
+			 clauses))
+	,start-tag
+	(progn ,@(mapcar (lambda (clause)
+			   (body-form clause end-tag))
+			 clauses))
+	(progn ,@(mapcar (lambda (clause)
+			   (termination-form clause end-tag))
+			 clauses))
+	(progn ,@(mapcar #'step-form clauses))
+	(go ,start-tag)
+	,end-tag
+	(progn ,@(mapcar #'epilogue clauses)
+	       (return-from ,*loop-name*
+		 ,*accumulation-variable*)))))
+
 (defun do-clauses (all-clauses remaining-clauses)
   (if (null remaining-clauses)
-      (let ((start-tag (gensym))
-	    (end-tag (gensym)))
-	`(tagbody
-	    (progn ,@(mapcar (lambda (clause)
-			       (prologue-form clause end-tag))
-			     all-clauses))
-	    ,start-tag
-	    (progn ,@(mapcar (lambda (clause)
-			       (body-form clause end-tag))
-			     all-clauses))
-	    (progn ,@(mapcar (lambda (clause)
-			       (termination-form clause end-tag))
-			     all-clauses))
-	    (progn ,@(mapcar #'step-form all-clauses))
-	    (go ,start-tag)
-	    ,end-tag
-	    (progn ,@(mapcar #'epilogue all-clauses)
-		   (return-from ,*loop-name*
-		     ,*accumulation-variable*))))
+      (prologue-body-epilogue all-clauses)
       `(let* ,(bindings (car remaining-clauses))
 	 (declare ,@(declarations (car remaining-clauses)))
 	 ,(do-clauses all-clauses (cdr remaining-clauses)))))
