@@ -21,6 +21,9 @@
 (defclass for-as-hash (for-as-subclause)
   ((%hash-table-form :initarg :hash-table-form :reader hash-table-form)
    (%hash-table-var :initform (gensym) :reader hash-table-var)
+   (%temp-entry-p-var :initform (gensym) :reader temp-entry-p-var)
+   (%temp-key-var :initform (gensym) :reader temp-key-var)
+   (%temp-value-var :initform (gensym) :reader temp-value-var)
    (%other-var-spec :initarg :other-var-spec :reader other-var-spec)))
 
 (defclass for-as-hash-key (for-as-hash) ())
