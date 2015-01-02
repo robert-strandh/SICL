@@ -59,3 +59,27 @@
 		    (null (cddr token))
 		    (symbolp (car token))
 		    (equal (symbol-name (car token)) (string '#:hash-key))))))
+
+(define-parser hash-key-using-parser
+  (consecutive (lambda (var-spec
+			type-spec
+			being
+			each
+			hash-key
+			of
+			hash-table-form
+			using)
+		 (declare (ignore being each hash-key of))
+		 (make-instance 'for-as-hash-key
+		   :var-spec var-spec
+		   :type-spec type-spec
+		   :hash-table-form hash-table-form
+		   :other-var-spec using))
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
+	       (keyword-parser 'being)
+	       'each-the-parser
+	       'hash-key-parser
+	       'in-of-parser
+	       (singleton #'identity (constantly t))
+	       'hash-value-other-parser))
