@@ -216,3 +216,16 @@
 				 (temp-key-var sublcause))
 	  ,(generate-assignments (other-var-spec subclause)
 				 (temp-value-var sublcause))))
+
+(defmethod prologue-form ((subclause for-as-hash-value) end-tag)
+  `(progn (multiple-value-bind (entry-p key value)
+	      (,(iterator-var subclause))
+	    (setq ,(temp-entry-p-var subclause) entry-p
+		  ,(temp-key-var subclause) key
+		  ,(temp-value-var subclause value)))
+	  (unless ,(temp-entry-p-var subclause)
+	    (go ,end-tag))
+	  ,(generate-assignments (var-spec subclause)
+				 (temp-value-var sublcause))
+	  ,(generate-assignments (other-var-spec subclause)
+				 (temp-key-var sublcause))))
