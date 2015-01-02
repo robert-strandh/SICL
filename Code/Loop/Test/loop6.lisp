@@ -141,11 +141,11 @@
         #'symbol<)
   (a2 b2 c2))
 
-;; (deftest loop.6.15
-;;   (sort (loop for k being the hash-keys of *loop.6.hash.1* using (hash-value v)
-;;               collect (list k v))
-;;         #'< :key #'second)
-;;   ((a 1) (b 2) (c 3)))
+(deftest loop.6.15
+  (sort (loop for k being the hash-keys of *loop.6.hash.1* using (hash-value v)
+              collect (list k v))
+        #'< :key #'second)
+  ((a 1) (b 2) (c 3)))
 
 ;; (deftest loop.6.16
 ;;   (sort (loop for v being the hash-values of *loop.6.hash.1* using (hash-key k)
