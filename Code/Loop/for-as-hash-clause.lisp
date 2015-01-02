@@ -20,7 +20,7 @@
 
 (defclass for-as-hash (for-as-subclause)
   ((%hash-table-form :initarg :hash-table-form :reader hash-table-form)
-   (%other-var :initarg :other-var :reader other-var)))
+   (%other-var-spec :initarg :other-var-spec :reader other-var-spec)))
 
 (defclass for-as-hash-key (for-as-hash) ())
 
