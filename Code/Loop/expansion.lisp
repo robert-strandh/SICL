@@ -98,7 +98,6 @@
 
 (defmethod wrap-clause (clause inner-form)
   `(let* ,(bindings clause)
-     (declare ,@(declarations clause))
      ,inner-form))
 
 (defmethod wrap-clause ((clause subclauses-mixin) inner-form)
