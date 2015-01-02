@@ -804,7 +804,7 @@
   (if (null (var-spec clause))
       `((,(temp-var clause) ,(start-var clause)))
       `((,(temp-var clause) ,(start-var clause))
-	(,(var-spec clause) ,(temp-var clause)))))
+	(,(var-spec clause) ,(start-var clause)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
