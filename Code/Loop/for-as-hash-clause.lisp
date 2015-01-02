@@ -77,13 +77,14 @@
 			hash-key
 			of
 			hash-table-form
-			using)
-		 (declare (ignore being each hash-key of))
+			using
+			other)
+		 (declare (ignore being each hash-key of using))
 		 (make-instance 'for-as-hash-key
 		   :var-spec var-spec
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
-		   :other-var-spec using))
+		   :other-var-spec other))
 	       (singleton #'identity (constantly t))
 	       'optional-type-spec-parser
 	       (keyword-parser 'being)
@@ -91,6 +92,7 @@
 	       'hash-key-parser
 	       'in-of-parser
 	       (singleton #'identity (constantly t))
+	       (keyword-parser 'using)
 	       'hash-value-other-parser))
 
 (define-parser hash-key-no-using-parser
@@ -123,13 +125,14 @@
 			hash-key
 			of
 			hash-table-form
-			using)
-		 (declare (ignore being each hash-key of))
+			using
+			other)
+		 (declare (ignore being each hash-key of using))
 		 (make-instance 'for-as-hash-value
 		   :var-spec var-spec
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
-		   :other-var-spec using))
+		   :other-var-spec other))
 	       (singleton #'identity (constantly t))
 	       'optional-type-spec-parser
 	       (keyword-parser 'being)
@@ -137,6 +140,7 @@
 	       'hash-value-parser
 	       'in-of-parser
 	       (singleton #'identity (constantly t))
+	       (keyword-parser 'using)
 	       'hash-key-other-parser))
 
 (define-parser hash-value-no-using-parser
