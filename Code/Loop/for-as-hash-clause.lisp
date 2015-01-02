@@ -175,3 +175,27 @@
 
 (defmethod initial-bindings ((clause for-as-hash))
   `((,(hash-table-var clause) ,(hash-table-form clause))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the subclause wrapper.
+
+(defmethod wrap-subclause ((subclause for-as-hash) inner-form)
+  `(let ((,(temp-entry-p-var subclause) nil)
+	 (,(temp-key-var subclause) nil)
+	 (,(temp-value-var subclause) nil)
+	 ,@(loop with d-var-spec = (var-spec subclause)
+		 with d-type-spec = (type-spec subclause)
+		 for (variable) in (extract-variables d-var-spec d-type-spec)
+		 collect `(,variable nil))
+	 ,@(loop with other-var-spec = (other-var-spec subclause)
+		 for (variable) in (extract-variables other-var-spec nil)
+		 collect `(,variable nil)))
+     (declare ,@(loop with d-var-spec = (var-spec subclause)
+		      with d-type-spec = (type-spec subclause)
+		      for (variable type)
+			in (extract-variables d-var-spec d-type-spec)
+		      collect `(cl:type (or null ,type) ,variable)))
+     (with-hash-table-iterator
+	 (,(iterator-var subclause) ,(hash-table-var subclause))
+       ,inner-form)))
