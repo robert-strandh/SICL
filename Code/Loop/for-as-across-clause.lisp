@@ -62,12 +62,12 @@
 
 (defmethod initial-bindings ((clause for-as-across))
   `((,(form-var clause) ,(vector-form clause))
-    (,(length-var clause) (length ,(form-var clause)))
     (,(index-var clause) 0)))
 
 (defmethod final-bindings ((clause for-as-across))
-  (loop for (real-var) in (dictionary clause)
-	collect `(,real-var nil)))
+  `((,(length-var clause) (length ,(form-var clause)))
+    ,@(loop for (real-var) in (dictionary clause)
+	    collect `(,real-var nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
