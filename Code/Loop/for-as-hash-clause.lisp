@@ -50,3 +50,12 @@
 		    (null (cddr token))
 		    (symbolp (car token))
 		    (equal (symbol-name (car token)) (string '#:hash-value))))))
+
+(define-parser hash-key-other-parser
+  (singleton #'second
+	     (lambda (token)
+	       (and (consp token)
+		    (consp (cdr token))
+		    (null (cddr token))
+		    (symbolp (car token))
+		    (equal (symbol-name (car token)) (string '#:hash-key))))))
