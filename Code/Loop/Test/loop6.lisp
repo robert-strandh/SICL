@@ -215,9 +215,9 @@
   (loop for v float being the hash-values of *loop.6.hash.6* sum v)
   6.0)
 
-;; (deftest loop.6.32
-;;   (loop for v of-type float being the hash-values of *loop.6.hash.6* sum v)
-;;   6.0)
+(deftest loop.6.32
+  (loop for v of-type float being the hash-values of *loop.6.hash.6* sum v)
+  6.0)
 
 ;; (deftest loop.6.33
 ;;   (loop for k float being the hash-keys of *loop.6.hash.7* sum k)
