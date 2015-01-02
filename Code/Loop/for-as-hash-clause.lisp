@@ -41,3 +41,12 @@
 (define-parser hash-value-parser
   (alternative (keyword-parser 'hash-value)
 	       (keyword-parser 'hash-values)))
+
+(define-parser hash-value-other-parser
+  (singleton #'second
+	     (lambda (token)
+	       (and (consp token)
+		    (consp (cdr token))
+		    (null (cddr token))
+		    (symbolp (car token))
+		    (equal (symbol-name (car token)) (string '#:hash-value))))))
