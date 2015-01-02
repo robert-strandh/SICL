@@ -93,8 +93,8 @@
 (defgeneric wrap-subclause (subclause inner-form))
 
 (defmethod wrap-subclause (subclause inner-form)
-  (declare (ignore subclause))
-  inner-form)
+  `(let ,(final-bindings subclause)
+     ,inner-form))
 
 (defmethod wrap-clause (clause inner-form)
   `(let* ,(bindings clause)
@@ -105,7 +105,7 @@
     (mapc (lambda (subclause)
 	    (setf result (wrap-subclause subclause result)))
 	  (reverse (subclauses clause)))
-    `(let* ,(bindings clause)
+    `(let ,(initial-bindings clause)
        ,result)))
 
 (defun do-clauses (all-clauses)
