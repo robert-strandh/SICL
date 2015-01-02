@@ -147,11 +147,11 @@
         #'< :key #'second)
   ((a 1) (b 2) (c 3)))
 
-;; (deftest loop.6.16
-;;   (sort (loop for v being the hash-values of *loop.6.hash.1* using (hash-key k)
-;;               collect (list k v))
-;;         #'< :key #'second)
-;;   ((a 1) (b 2) (c 3)))
+(deftest loop.6.16
+  (sort (loop for v being the hash-values of *loop.6.hash.1* using (hash-key k)
+              collect (list k v))
+        #'< :key #'second)
+  ((a 1) (b 2) (c 3)))
 
 ;; (deftest loop.6.17
 ;;   (sort (loop for (u . nil) being the hash-values of *loop.6.hash.5* collect u)
