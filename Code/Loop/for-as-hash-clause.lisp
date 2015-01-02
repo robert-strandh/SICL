@@ -105,3 +105,27 @@
 	       'hash-key-parser
 	       'in-of-parser
 	       (singleton #'identity (constantly t))))
+
+(define-parser hash-value-using-parser
+  (consecutive (lambda (var-spec
+			type-spec
+			being
+			each
+			hash-key
+			of
+			hash-table-form
+			using)
+		 (declare (ignore being each hash-key of))
+		 (make-instance 'for-as-hash-key
+		   :var-spec var-spec
+		   :type-spec type-spec
+		   :hash-table-form hash-table-form
+		   :other-var-spec using))
+	       (singleton #'identity (constantly t))
+	       'optional-type-spec-parser
+	       (keyword-parser 'being)
+	       'each-the-parser
+	       'hash-value-parser
+	       'in-of-parser
+	       (singleton #'identity (constantly t))
+	       'hash-key-other-parser))
