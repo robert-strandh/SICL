@@ -153,10 +153,10 @@
         #'< :key #'second)
   ((a 1) (b 2) (c 3)))
 
-;; (deftest loop.6.17
-;;   (sort (loop for (u . nil) being the hash-values of *loop.6.hash.5* collect u)
-;;         #'symbol<)
-;;   (a1 b1 c1))
+(deftest loop.6.17
+  (sort (loop for (u . nil) being the hash-values of *loop.6.hash.5* collect u)
+        #'symbol<)
+  (a1 b1 c1))
 
 ;; (deftest loop.6.18
 ;;   (sort (loop for (nil . v) being the hash-values of *loop.6.hash.5* collect v)
