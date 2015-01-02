@@ -175,9 +175,9 @@
   (loop for v being the hash-values of *loop.6.hash.5* using (hash-key nil) count t)
   3)
 
-;; (deftest loop.6.22
-;;   (loop for k being the hash-keys of *loop.6.hash.5* using (hash-value nil) count t)
-;;   3)
+(deftest loop.6.22
+  (loop for k being the hash-keys of *loop.6.hash.5* using (hash-value nil) count t)
+  3)
 
 ;; (deftest loop.6.23
 ;;   (loop for v fixnum being the hash-values of *loop.6.hash.1* sum v)
