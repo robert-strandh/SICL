@@ -93,7 +93,7 @@
 	       (singleton #'identity (constantly t))
 	       'hash-value-other-parser))
 
-(define-parser hash-key-parser
+(define-parser hash-key-no-using-parser
   (consecutive (lambda (var-spec
 			type-spec
 			being
@@ -139,7 +139,7 @@
 	       (singleton #'identity (constantly t))
 	       'hash-key-other-parser))
 
-(define-parser hash-value-parser
+(define-parser hash-value-no-using-parser
   (consecutive (lambda (var-spec
 			type-spec
 			being
@@ -163,9 +163,9 @@
 
 (define-parser for-as-hash-parser
   (alternative 'hash-key-using-parser
-	       'hash-key-parser
+	       'hash-key-no-using-parser
 	       'hash-value-using-parser
-	       'hash-value-parser))
+	       'hash-value-no-using-parser))
 
 (add-for-as-subclause-parser 'for-as-hash-parser)
 
