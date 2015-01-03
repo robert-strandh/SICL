@@ -12,20 +12,22 @@
 
 (cl:in-package #:sicl-loop)
 
+(defclass nconc-clause (accumulation-clause) ())
+
 (defclass nconc-it-clause
-    (accumulate-it-clause list-accumulation-mixin)
+    (nconc-clause accumulate-it-clause list-accumulation-mixin)
   ())
 
 (defclass nconc-form-clause
-    (accumulate-form-clause list-accumulation-mixin)
+    (nconc-clause accumulate-form-clause list-accumulation-mixin)
   ())
 
 (defclass nconc-it-into-clause
-    (accumulate-it-into-clause list-accumulation-mixin)
+    (nconc-clause accumulate-it-into-clause list-accumulation-mixin)
   ())
 
 (defclass nconc-form-into-clause
-    (accumulate-form-into-clause list-accumulation-mixin)
+    (nconc-clause accumulate-form-into-clause list-accumulation-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
