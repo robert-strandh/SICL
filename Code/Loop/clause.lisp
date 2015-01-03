@@ -39,6 +39,9 @@
 
 (defclass selectable-clause (clause) ())
 
+(defmethod bound-variables ((clause selectable-clause))
+  '())
+
 (defclass unconditional-clause (selectable-clause) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
