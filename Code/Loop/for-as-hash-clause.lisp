@@ -35,7 +35,6 @@
   (mapcar #'car
 	  (append (extract-variables (var-spec subclause) nil)
 		  (extract-variables (other-var-spec subclause) nil))))
-		  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
