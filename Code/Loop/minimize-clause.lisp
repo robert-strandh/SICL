@@ -12,20 +12,22 @@
 
 (cl:in-package #:sicl-loop)
 
+(defclass minimize-clause (accumulation-clause) ())
+
 (defclass minimize-it-clause
-    (accumulate-it-clause numeric-accumulation-mixin)
+    (minimize-clause accumulate-it-clause numeric-accumulation-mixin)
   ())
 
 (defclass minimize-form-clause
-    (accumulate-form-clause numeric-accumulation-mixin)
+    (minimize-clause accumulate-form-clause numeric-accumulation-mixin)
   ())
 
 (defclass minimize-it-into-clause
-    (accumulate-it-into-clause numeric-accumulation-mixin)
+    (minimize-clause accumulate-it-into-clause numeric-accumulation-mixin)
   ())
 
 (defclass minimize-form-into-clause
-    (accumulate-form-into-clause numeric-accumulation-mixin)
+    (minimize-clause accumulate-form-into-clause numeric-accumulation-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
