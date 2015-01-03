@@ -23,8 +23,7 @@
 ;;;
 ;;;    do-clause ::= do compound-form+
 
-(defclass do-clause
-    (clause main-clause-mixin)
+(defclass do-clause (unconditional-clause main-clause-mixin)
   ((%body :initarg :body :reader body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
