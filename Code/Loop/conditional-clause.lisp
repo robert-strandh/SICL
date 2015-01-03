@@ -42,6 +42,11 @@
    (%then-clauses :initarg :then-clauses :reader then-clauses)
    (%else-clauses :initarg :else-clauses :reader else-clauses)))
 
+;;; A conditional clause does not introduce any bindings for any
+;;; variables, so this method should return the empty list.
+(defmethod bound-variables ((clause conditional-clause))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
