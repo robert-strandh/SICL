@@ -237,10 +237,10 @@
         of *loop.6.hash.9* sum (+ v1 v2))
   21)
 
-;; (deftest loop.6.37
-;;   (loop for v being the hash-values of *loop.6.hash.8*
-;;         using (hash-key (k1 . k2)) sum (+ k1 k2))
-;;   21)
+(deftest loop.6.37
+  (loop for v being the hash-values of *loop.6.hash.8*
+        using (hash-key (k1 . k2)) sum (+ k1 k2))
+  21)
 
 ;; (deftest loop.6.38
 ;;   (loop for k being the hash-keys of *loop.6.hash.9*
