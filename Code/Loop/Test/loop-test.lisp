@@ -14,6 +14,12 @@
 	   :results ',results)
 	 *tests*))
 
+(defmacro signals-error (form error-type)
+  `(handler-case (eval ,form)
+     (,error-type () t)
+     (condition () nil)
+     (:no-error (&rest values) (declare (ignore values)) nil)))
+
 (defmacro expand-in-current-env (macro-form &environment env)
   (macroexpand macro-form env))
 
