@@ -38,6 +38,13 @@
 			   :temp-vars temp-vars
 			   :dictionary dictionary)))
 
+;;; The FOR-AS-ACROSS clasue binds all the variables in the VAR-SPEC
+;;; of the clause, so this method should return a list of all those
+;;; variables.
+(defmethod bound-variables ((clause for-as-across))
+  (mapcar #'car
+	  (extract-variables (var-spec clause) nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser
