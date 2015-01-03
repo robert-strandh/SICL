@@ -39,6 +39,8 @@
 
 (defclass selectable-clause (clause) ())
 
+(defclass unconditional-clause (selectable-clause) ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin for variable clauses
