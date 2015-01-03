@@ -256,15 +256,15 @@
         #'symbol<)
   (a b c))
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
-;; (deftest loop.6.41
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for x being the hash-value of
-;;          (expand-in-current-env (%m *loop.6.hash.1*)) sum x))
-;;   6)
+(deftest loop.6.41
+  (macrolet
+   ((%m (z) z))
+   (loop for x being the hash-value of
+         (expand-in-current-env (%m *loop.6.hash.1*)) sum x))
+  6)
 
 ;; (deftest loop.6.42
 ;;   (macrolet
