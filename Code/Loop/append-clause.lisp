@@ -12,20 +12,22 @@
 
 (cl:in-package #:sicl-loop)
 
+(defclass append-clause (accumulation-clause) ())
+
 (defclass append-it-clause
-    (accumulate-it-clause list-accumulation-mixin)
+    (append-clause accumulate-it-clause list-accumulation-mixin)
   ())
 
 (defclass append-form-clause
-    (accumulate-form-clause list-accumulation-mixin)
+    (append-clause accumulate-form-clause list-accumulation-mixin)
   ())
 
 (defclass append-it-into-clause
-    (accumulate-it-into-clause list-accumulation-mixin)
+    (append-clause accumulate-it-into-clause list-accumulation-mixin)
   ())
 
 (defclass append-form-into-clause
-    (accumulate-form-into-clause list-accumulation-mixin)
+    (append-clause accumulate-form-into-clause list-accumulation-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
