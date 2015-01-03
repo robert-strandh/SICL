@@ -77,6 +77,15 @@
 (defmethod form ((subclause with-subclause))
   nil)
 
+(defmethod bound-variables ((clause with-clause))
+  (reduce #'append
+	  (mapcar #'bound-variables (subclauses clause))
+	  :from-end t))
+
+(defmethod bound-variables ((subclause with-subclause))
+  (mapcar #'car
+	  (extract-variables (var-spec subclause) nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
