@@ -266,13 +266,13 @@
          (expand-in-current-env (%m *loop.6.hash.1*)) sum x))
   6)
 
-;; (deftest loop.6.42
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (sort (loop for x being the hash-key of
-;;                (expand-in-current-env (%m *loop.6.hash.1*)) collect x)
-;;          #'symbol<))
-;;   (a b c))
+(deftest loop.6.42
+  (macrolet
+   ((%m (z) z))
+   (sort (loop for x being the hash-key of
+               (expand-in-current-env (%m *loop.6.hash.1*)) collect x)
+         #'symbol<))
+  (a b c))
 
 ;; ;;; Error tests
 
