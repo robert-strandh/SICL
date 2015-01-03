@@ -37,7 +37,7 @@
 	       (repeat* #'list
 			'and-selectable-clause-parser)))
 
-(defclass conditional-clause (clause)
+(defclass conditional-clause (selectable-clause)
   ((%condition :initarg :condition :reader condition)
    (%then-clauses :initarg :then-clauses :reader then-clauses)
    (%else-clauses :initarg :else-clauses :reader else-clauses)))
