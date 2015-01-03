@@ -12,6 +12,12 @@
 
 (in-package #:sicl-loop)
 
+;;; The purpose of this generic function is to generate a list of all
+;;; bound variables in a clause.  The same variable occurs as many
+;;; times in the list as the number of times it is bound in the
+;;; clause.
+(defgeneric bound-variables (clause))
+
 (defgeneric declarations (clause)
   (:method (clause)
     (declare (ignore clause))
