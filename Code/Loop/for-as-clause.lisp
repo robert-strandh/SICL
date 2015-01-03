@@ -58,6 +58,11 @@
 (defclass for-as-subclause (var-and-type-spec-mixin)
   ())
 
+(defmethod bound-variables ((clause for-as-clause))
+  (reduce #'append
+	  (mapcar #'bound-variables (subclauses clause))
+	  :from-end t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Manage a list of FOR-AS subclause parsers. 
