@@ -247,9 +247,9 @@
         using (hash-value (v1 . v2)) sum (+ v1 v2))
   21)
 
-;; (deftest loop.6.39
-;;   (loop as x being the hash-value of *loop.6.hash.1* sum x)
-;;   6)
+(deftest loop.6.39
+  (loop as x being the hash-value of *loop.6.hash.1* sum x)
+  6)
 
 ;; (deftest loop.6.40
 ;;   (sort (loop as x being the hash-key of *loop.6.hash.1* collect x)
