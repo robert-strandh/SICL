@@ -37,6 +37,8 @@
 (defclass compound-forms-mixin ()
   ((%forms :initarg :forms :reader forms)))
 
+(defclass selectable-clause (clause) ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin for variable clauses
