@@ -52,6 +52,10 @@
 
 (defclass for-as-arithmetic-down (for-as-arithmetic) ())
 
+(defmethod bound-variables ((subclause for-as-arithmetic))
+  (mapcar #'car
+	  (extract-variables (var-spec subclause) nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; From a TYPE-SPEC determine a value used for variable
