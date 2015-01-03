@@ -251,10 +251,10 @@
   (loop as x being the hash-value of *loop.6.hash.1* sum x)
   6)
 
-;; (deftest loop.6.40
-;;   (sort (loop as x being the hash-key of *loop.6.hash.1* collect x)
-;;         #'symbol<)
-;;   (a b c))
+(deftest loop.6.40
+  (sort (loop as x being the hash-key of *loop.6.hash.1* collect x)
+        #'symbol<)
+  (a b c))
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
