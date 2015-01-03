@@ -25,6 +25,10 @@
 
 (defclass for-as-in-list (for-as-list) ())
 
+(defmethod bound-variables ((subclause for-as-list))
+  (mapcar #'car
+	  (extract-variables (var-spec subclause) nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
