@@ -31,6 +31,12 @@
 
 (defclass for-as-hash-value (for-as-hash) ())
 
+(defmethod bound-variables ((subclause for-as-hash))
+  (mapcar #'car
+	  (append (extract-variables (var-spec subclause) nil)
+		  (extract-variables (other-var-spec subclause) nil))))
+		  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers
