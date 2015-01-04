@@ -37,13 +37,6 @@
 (defclass compound-forms-mixin ()
   ((%forms :initarg :forms :reader forms)))
 
-(defclass selectable-clause (clause) ())
-
-(defmethod bound-variables ((clause selectable-clause))
-  '())
-
-(defclass unconditional-clause (selectable-clause) ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin for variable clauses
@@ -85,39 +78,3 @@
 ;;; Mixin for clauses that make the loop return a value.
 
 (defclass loop-return-clause-mixin () ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin for accumulation clauses.
-
-(defclass accumulation-clause-mixin () ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin for accumulation clauses that accumulate into a default
-;;; variable.
-
-(defclass default-accumulation-clause-mixin () ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Accumulation clauses
-
-(defclass accumulation-clause (selectable-clause main-clause-mixin)
-  ())
-
-(defclass accumulate-it-clause (accumulation-clause)
-  ())
-
-(defclass accumulate-form-clause (accumulation-clause)
-  ((%form :initform nil :initarg :form :accessor form)))
-
-(defclass accumulate-it-into-clause (accumulate-it-clause)
-  ((%into-var :initform nil :initarg :into-var :accessor into-var)))
-
-(defclass accumulate-form-into-clause (accumulate-form-clause)
-  ((%into-var :initform nil :initarg :into-var :accessor into-var)))
-
-(defclass list-accumulation-mixin () ())
-
-(defclass numeric-accumulation-mixin () ())
