@@ -12,19 +12,6 @@
 
 (cl:in-package #:sicl-loop)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin for accumulation clauses.
-
-(defclass accumulation-clause-mixin () ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin for accumulation clauses that accumulate into a default
-;;; variable.
-
-(defclass default-accumulation-clause-mixin () ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Accumulation clauses
