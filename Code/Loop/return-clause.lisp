@@ -23,8 +23,7 @@
 ;;;
 ;;;    return-clause ::= return {form | it}
 
-(defclass return-clause
-    (unconditional-clause variable-clause-mixin main-clause-mixin)
+(defclass return-clause (unconditional-clause variable-clause-mixin)
   ())
 
 (defclass return-it-clause (return-clause)

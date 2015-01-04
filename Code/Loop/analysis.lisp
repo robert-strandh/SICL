@@ -46,7 +46,7 @@
 		       :from-end t))
 	(first-main-clause-position
 	  (position-if (lambda (clause)
-			 (and (typep clause 'main-clause-mixin)
+			 (and (typep clause 'main-clause)
 			      (not (typep clause 'initial-clause))
 			      (not (typep clause 'final-clause))))
 		       clauses)))

@@ -23,8 +23,7 @@
 ;;;
 ;;;    initial-clause ::= initially compound-form+
 
-(defclass initial-clause
-    (clause variable-clause-mixin main-clause-mixin)
+(defclass initial-clause (clause variable-clause-mixin)
   ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -57,24 +57,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Mixin for main clauses 
-;;;
-;;; The HyperSpec defines main-clause like this:
-;;;
-;;;    main-clause::= unconditional | accumulation | conditional |
-;;;                   termination-test | initial-final              
-;;; 
-;;; The reason the HyperSpec defines main-clause is because the loop
-;;; body is a name-clause followed by zero or more variable-clauses
-;;; followed by zero or more main-clauses, and initial-final is one
-;;; possibility both for variable-clause and main-clause.  This means
-;;; that an initially-clause or a finally-clause can appear anywhere
-;;; after a name-clause.
-
-(defclass main-clause-mixin () ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Mixin for clauses that make the loop return a value.
 
 (defclass loop-return-clause-mixin () ())

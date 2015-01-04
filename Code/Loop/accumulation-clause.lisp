@@ -29,7 +29,7 @@
 ;;;
 ;;; Accumulation clauses
 
-(defclass accumulation-clause (selectable-clause main-clause-mixin)
+(defclass accumulation-clause (selectable-clause)
   ())
 
 (defclass accumulate-it-clause (accumulation-clause)
