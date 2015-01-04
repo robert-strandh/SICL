@@ -24,6 +24,7 @@
    (:file "utilities")
    (:file "clause")
    (:file "expansion")
+   (:file "main-clause")
    (:file "combinatory-parsing")
    (:file "parse-common")
    (:file "var-spec")
