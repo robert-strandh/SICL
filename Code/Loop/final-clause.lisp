@@ -23,7 +23,7 @@
 ;;;
 ;;;    final-clause ::= finally compound-form+
 
-(defclass final-clause (clause variable-clause-mixin)
+(defclass final-clause (clause)
   ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

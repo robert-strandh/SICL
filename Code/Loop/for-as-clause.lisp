@@ -53,7 +53,7 @@
 ;;;    for-as-package-clause ::=
 ;;;      {for | as} for-as-package {and for-as-subclause}* 
 
-(defclass for-as-clause (clause subclauses-mixin variable-clause-mixin) ())
+(defclass for-as-clause (variable-clause subclauses-mixin) ())
 
 (defclass for-as-subclause (var-and-type-spec-mixin)
   ())

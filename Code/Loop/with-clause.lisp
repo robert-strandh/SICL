@@ -48,7 +48,7 @@
 ;;; Class WITH-CLAUSE.
 ;;;
 
-(defclass with-clause (clause subclauses-mixin variable-clause-mixin) ())
+(defclass with-clause (variable-clause subclauses-mixin) ())
 
 (defclass with-subclause ()
   ((%var-spec :initarg :var-spec :reader var-spec)

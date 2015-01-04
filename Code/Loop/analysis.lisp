@@ -39,7 +39,7 @@
   ;; (other than an initial-clause or a final-clause).
   (let ((last-variable-clause-position
 	  (position-if (lambda (clause)
-			 (and (typep clause 'variable-clause-mixin)
+			 (and (typep clause 'variable-clause)
 			      (not (typep clause 'initial-clause))
 			      (not (typep clause 'final-clause))))
 		       clauses

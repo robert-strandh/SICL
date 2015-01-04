@@ -39,24 +39,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Mixin for variable clauses
-;;;
-;;; The HyperSpec defines varible-clause like this:
-;;;
-;;;    variable-clause::= with-clause | initial-final | for-as-clause 
-;;; 
-;;; and we follow this example.  The reason the HyperSpec defines
-;;; variable-clause is because the loop body is a name-clause followed
-;;; by zero or more variable-clauses followed by zero or more
-;;; main-clauses, and initial-final is one possibility both for
-;;; variable-clause and main-clause.  This means that an
-;;; initially-clause or a finally-clause can appear anywhere after a
-;;; name-clause.
-
-(defclass variable-clause-mixin () ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Mixin for clauses that make the loop return a value.
 
 (defclass loop-return-clause-mixin () ())
