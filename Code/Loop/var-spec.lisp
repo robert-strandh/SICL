@@ -32,6 +32,3 @@
       (and (consp object)
 	   (d-var-spec-p (car object))
 	   (d-var-spec-p (cdr object)))))
-
-(define-parser d-var-spec-parser
-  (singleton #'identity 'd-var-spec-p))
