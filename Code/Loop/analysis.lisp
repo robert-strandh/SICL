@@ -36,7 +36,7 @@
 	(error 'multiple-name-clauses))))
   ;; Check that there is not a variable-clausefollowing a main clause.
   ;; Recall that we diverge from the BNF grammar in the HyperSpec so
-  ;; that INITALLY and FINALLY are neither main clauses nor variable
+  ;; that INITIALLY and FINALLY are neither main clauses nor variable
   ;; clauses.
   (let ((last-variable-clause-position
 	  (position-if (lambda (clause)
