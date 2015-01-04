@@ -114,9 +114,6 @@
   (declare (ignore keyword))
   form)
 
-(define-parser anything-parser
-  (singleton #'identity (constantly t)))
-
 (define-parser from-parser
   (consecutive 'project-form (keyword-parser 'from) 'anything-parser))
 

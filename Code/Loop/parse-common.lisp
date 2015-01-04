@@ -24,6 +24,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Parser for anything, i.e. a parser that succeeds whenever the list
+;;; of tokens is not empty.  It returns the first token as a result of
+;;; the parse, and the list of tokens with the first one removed as
+;;; the list of remaining tokens.
+
+(define-parser anything-parser
+  (singleton #'identity (constantly t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Parser for COMPOUND-FORM+, i.e. a non-empty sequence of compound
 ;;; forms.
 
