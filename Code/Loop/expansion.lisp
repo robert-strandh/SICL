@@ -73,6 +73,12 @@
       0
       nil))
 
+(defvar *accumulation-variable*)
+
+(defvar *list-tail-accumulation-variable*)
+
+(defvar *loop-name*)
+
 (defun prologue-body-epilogue (clauses)
   (let ((start-tag (gensym))
 	(end-tag (gensym)))
@@ -127,12 +133,6 @@
 	 (,*list-tail-accumulation-variable* nil))
      (declare (ignorable ,*list-tail-accumulation-variable*))
      ,(do-clauses all-clauses)))
-
-(defvar *loop-name*)
-
-(defvar *accumulation-variable*)
-
-(defvar *list-tail-accumulation-variable*)
 
 (defun expand-body (loop-body)
   (if (every #'consp loop-body)
