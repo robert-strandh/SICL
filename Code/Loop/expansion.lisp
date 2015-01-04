@@ -143,7 +143,7 @@
 	      ,@loop-body
 	      (go ,tag))))
       (let ((clauses (parse-loop-body loop-body)))
-	(analyse-clauses clauses)
+	(analyze-clauses clauses)
 	(let* ((name (if (typep (car clauses) 'name-clause)
 			 (name (car clauses))
 			 nil))

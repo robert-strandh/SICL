@@ -53,5 +53,5 @@
       (error 'invalid-clause-order))))
 
 ;;; FIXME: Add more analyses.
-(defun analyse-clauses (clauses)
+(defun analyze-clauses (clauses)
   (verify-clause-order clauses))
