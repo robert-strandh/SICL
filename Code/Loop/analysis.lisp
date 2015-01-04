@@ -34,21 +34,18 @@
 		     (cdr clauses))))
       (when (not (null second-name-clause))
 	(error 'multiple-name-clauses))))
-  ;; Check that there is not a variable-clause (other than an
-  ;; initial-clause or a final-clause) following a main clause
-  ;; (other than an initial-clause or a final-clause).
+  ;; Check that there is not a variable-clausefollowing a main clause.
+  ;; Recall that we diverge from the BNF grammar in the HyperSpec so
+  ;; that INITALLY and FINALLY are neither main clauses nor variable
+  ;; clauses.
   (let ((last-variable-clause-position
 	  (position-if (lambda (clause)
-			 (and (typep clause 'variable-clause)
-			      (not (typep clause 'initial-clause))
-			      (not (typep clause 'final-clause))))
+			 (typep clause 'variable-clause))
 		       clauses
 		       :from-end t))
 	(first-main-clause-position
 	  (position-if (lambda (clause)
-			 (and (typep clause 'main-clause)
-			      (not (typep clause 'initial-clause))
-			      (not (typep clause 'final-clause))))
+			 (typep clause 'main-clause))
 		       clauses)))
     (when (and (not (null last-variable-clause-position))
 	       (not (null first-main-clause-position))
