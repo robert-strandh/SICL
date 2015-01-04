@@ -63,7 +63,7 @@
 		   :into-var var))
 	       (alternative (keyword-parser 'collect)
 			    (keyword-parser 'collecting))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
@@ -76,7 +76,7 @@
 		   :form form))
 	       (alternative (keyword-parser 'collect)
 			    (keyword-parser 'collecting))
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser collect-clause-parser
   (alternative 'collect-it-into-clause-parser

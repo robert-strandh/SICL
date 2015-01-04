@@ -25,6 +25,6 @@
 		 (make-instance 'never-clause
 		   :form form))
 	       (keyword-parser 'never)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (add-clause-parser 'never-clause-parser)

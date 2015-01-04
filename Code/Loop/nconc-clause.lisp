@@ -63,7 +63,7 @@
 		   :into-var var))
 	       (alternative (keyword-parser 'nconc)
 			    (keyword-parser 'nconcing))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
@@ -76,7 +76,7 @@
 		   :form form))
 	       (alternative (keyword-parser 'nconc)
 			    (keyword-parser 'nconcing))
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser nconc-clause-parser
   (alternative 'nconc-it-into-clause-parser

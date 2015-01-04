@@ -63,7 +63,7 @@
 		   :into-var var))
 	       (alternative (keyword-parser 'append)
 			    (keyword-parser 'appending))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
@@ -76,7 +76,7 @@
 		   :form form))
 	       (alternative (keyword-parser 'append)
 			    (keyword-parser 'appending))
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser append-clause-parser
   (alternative 'append-it-into-clause-parser

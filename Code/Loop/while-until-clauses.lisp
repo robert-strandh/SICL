@@ -25,7 +25,7 @@
 		 (make-instance 'while-clause
 		   :form form))
 	       (keyword-parser 'while)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (add-clause-parser 'while-clause-parser)
 
@@ -35,7 +35,7 @@
 		 (make-instance 'while-clause
 		   :form `(not ,form)))
 	       (keyword-parser 'until)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
   
 (add-clause-parser 'until-clause-parser)
 

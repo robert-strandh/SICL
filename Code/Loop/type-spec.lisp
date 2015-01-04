@@ -30,7 +30,7 @@
 		 (declare (ignore of-type))
 		 tree)
 	       (keyword-parser 'of-type)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser type-spec-parser
   (alternative 'simple-type-spec-parser 'destructured-type-spec-parser))

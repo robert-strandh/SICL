@@ -100,10 +100,10 @@
 		   :type-spec type-spec
 		   :form form))
 	       ;; Accept anything for now.  Analyze later. 
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser '=)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 ;;; Parser for var [type-spec]
 (define-parser with-subclause-type-2-parser
@@ -112,7 +112,7 @@
 		   :var-spec var-spec
 		   :type-spec type-spec))
 	       ;; Accept anything for now.  Analyze later. 
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser))
 
 ;;; Parser for any type of with subclause without the leading keyword

@@ -41,10 +41,10 @@
 		   :type-spec type-spec
 		   :list-form list-form
 		   :by-form by-form))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'in)
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'by-parser))
 
 (define-parser for-as-in-list-parser-2
@@ -55,10 +55,10 @@
 		   :type-spec type-spec
 		   :list-form list-form
 		   :by-form '#'cdr))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'in)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 ;;; Define a parser that tries the longer form first
 (define-parser for-as-in-list-parser
@@ -81,10 +81,10 @@
 		   :type-spec type-spec
 		   :list-form list-form
 		   :by-form by-form))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'on)
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'by-parser))
 
 (define-parser for-as-on-list-parser-2
@@ -95,10 +95,10 @@
 		   :type-spec type-spec
 		   :list-form list-form
 		   :by-form '#'cdr))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'on)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 ;;; Define a parser that tries the longer form first
 (define-parser for-as-on-list-parser

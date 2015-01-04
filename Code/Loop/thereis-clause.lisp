@@ -25,6 +25,6 @@
 		 (make-instance 'thereis-clause
 		   :form form))
 	       (keyword-parser 'thereis)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (add-clause-parser 'thereis-clause-parser)

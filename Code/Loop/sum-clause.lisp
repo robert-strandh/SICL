@@ -63,7 +63,7 @@
 		   :into-var var))
 	       (alternative (keyword-parser 'sum)
 			    (keyword-parser 'summing))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
@@ -76,7 +76,7 @@
 		   :form form))
 	       (alternative (keyword-parser 'sum)
 			    (keyword-parser 'summing))
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser sum-clause-parser
   (alternative 'sum-it-into-clause-parser

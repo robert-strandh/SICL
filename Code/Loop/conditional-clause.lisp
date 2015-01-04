@@ -60,7 +60,7 @@
 		   :else-clauses else-clauses))
 	       (alternative (keyword-parser 'if)
 			    (keyword-parser 'when))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser
 	       (keyword-parser 'else)
 	       'then-or-else-parser
@@ -75,7 +75,7 @@
 		   :else-clauses nil))
 	       (alternative (keyword-parser 'if)
 			    (keyword-parser 'when))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser
 	       (keyword-parser 'end)))
 	       
@@ -88,7 +88,7 @@
 		   :else-clauses else-clauses))
 	       (alternative (keyword-parser 'if)
 			    (keyword-parser 'when))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser
 	       (keyword-parser 'else)
 	       'then-or-else-parser))
@@ -102,7 +102,7 @@
 		   :else-clauses nil))
 	       (alternative (keyword-parser 'if)
 			    (keyword-parser 'when))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser))
 
 (define-parser if-when-parser
@@ -119,7 +119,7 @@
 		   :then-clauses then-clauses
 		   :else-clauses else-clauses))
 	       (keyword-parser 'unless)
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser
 	       (keyword-parser 'else)
 	       'then-or-else-parser
@@ -133,7 +133,7 @@
 		   :then-clauses nil
 		   :else-clauses else-clauses))
 	       (keyword-parser 'unless)
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser
 	       (keyword-parser 'end)))
 	       
@@ -145,7 +145,7 @@
 		   :then-clauses then-clauses
 		   :else-clauses else-clauses))
 	       (keyword-parser 'unless)
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser
 	       (keyword-parser 'else)
 	       'then-or-else-parser))
@@ -159,7 +159,7 @@
 		   :else-clauses else-clauses))
 	       (alternative (keyword-parser 'unless)
 			    (keyword-parser 'when))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'then-or-else-parser))
 
 (define-parser unless-parser

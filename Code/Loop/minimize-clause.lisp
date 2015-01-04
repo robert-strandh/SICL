@@ -63,7 +63,7 @@
 		   :into-var var))
 	       (alternative (keyword-parser 'minimize)
 			    (keyword-parser 'minimizing))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
@@ -76,7 +76,7 @@
 		   :form form))
 	       (alternative (keyword-parser 'minimize)
 			    (keyword-parser 'minimizing))
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser minimize-clause-parser
   (alternative 'minimize-it-into-clause-parser

@@ -90,13 +90,13 @@
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
 		   :other-var-spec other))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'being)
 	       'each-the-parser
 	       'hash-key-parser
 	       'in-of-parser
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'using)
 	       'hash-value-other-parser))
 
@@ -114,13 +114,13 @@
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
 		   :other-var-spec nil))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'being)
 	       'each-the-parser
 	       'hash-key-parser
 	       'in-of-parser
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser hash-value-using-parser
   (consecutive (lambda (var-spec
@@ -138,13 +138,13 @@
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
 		   :other-var-spec other))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'being)
 	       'each-the-parser
 	       'hash-value-parser
 	       'in-of-parser
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'using)
 	       'hash-key-other-parser))
 
@@ -162,13 +162,13 @@
 		   :type-spec type-spec
 		   :hash-table-form hash-table-form
 		   :other-var-spec nil))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'being)
 	       'each-the-parser
 	       'hash-value-parser
 	       'in-of-parser
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser for-as-hash-parser
   (alternative 'hash-key-using-parser

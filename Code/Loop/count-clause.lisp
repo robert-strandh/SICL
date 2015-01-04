@@ -63,7 +63,7 @@
 		   :into-var var))
 	       (alternative (keyword-parser 'count)
 			    (keyword-parser 'counting))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
@@ -76,7 +76,7 @@
 		   :form form))
 	       (alternative (keyword-parser 'count)
 			    (keyword-parser 'counting))
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser count-clause-parser
   (alternative 'count-it-into-clause-parser

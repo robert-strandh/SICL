@@ -49,7 +49,7 @@
 		 (make-instance 'return-form-clause
 		   :form form))
 	       (keyword-parser 'return)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser return-clause-parser
   (alternative 'return-it-clause-parser

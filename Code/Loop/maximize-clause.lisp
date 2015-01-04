@@ -63,7 +63,7 @@
 		   :into-var var))
 	       (alternative (keyword-parser 'maximize)
 			    (keyword-parser 'maximizing))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
@@ -76,7 +76,7 @@
 		   :form form))
 	       (alternative (keyword-parser 'maximize)
 			    (keyword-parser 'maximizing))
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser maximize-clause-parser
   (alternative 'maximize-it-into-clause-parser

@@ -25,7 +25,7 @@
 		 (declare (ignore repeat))
 		 (make-instance 'repeat-clause :form form))
 	       (keyword-parser 'repeat)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (add-clause-parser 'repeat-clause-parser)
 

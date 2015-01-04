@@ -33,12 +33,12 @@
 		   :initial-form form1
 		   :subsequent-form form2))
 	       ;; Accept anything for now.  Analyze later.
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser '=)
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       (keyword-parser 'then)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (define-parser for-as-equals-then-parser-2
   (consecutive (lambda (var-spec type-spec = form1)
@@ -49,10 +49,10 @@
 		   :initial-form form1
 		   :subsequent-form form1))
 	       ;; Accept anything for now.  Analyze later.
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser '=)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 ;;; Make sure parser 1 is tried first.  For that, it must be added
 ;;; last.

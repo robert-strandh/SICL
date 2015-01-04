@@ -56,10 +56,10 @@
 		   :var-spec var
 		   :type-spec type-spec
 		   :vector-form vector-form))
-	       (singleton #'identity (constantly t))
+	       'anything-parser
 	       'optional-type-spec-parser
 	       (keyword-parser 'across)
-	       (singleton #'identity (constantly t))))
+	       'anything-parser))
 
 (add-for-as-subclause-parser 'for-as-across-parser)
 
