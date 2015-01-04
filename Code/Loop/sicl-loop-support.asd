@@ -25,6 +25,7 @@
    (:file "clause")
    (:file "expansion")
    (:file "main-clause")
+   (:file "variable-clause")
    (:file "selectable-clause")
    (:file "unconditional-clause")
    (:file "accumulation-clause")
