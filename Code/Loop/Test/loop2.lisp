@@ -79,11 +79,11 @@
    program-error)
   t)
 
-;; (deftest loop.2.15
-;;   (signals-error
-;;    (loop for (x . x) in '((a b) (c d)) collect x)
-;;    program-error)
-;;   t)
+(deftest loop.2.15
+  (signals-error
+   (loop for (x . x) in '((a b) (c d)) collect x)
+   program-error)
+  t)
 
 (deftest loop.2.16
   (loop for nil in nil do (return t))
