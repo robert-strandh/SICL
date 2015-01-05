@@ -26,6 +26,10 @@
 (defclass final-clause (clause)
   ((%form :initarg :form :reader form)))
 
+;;; The final clause does not bind any variables.
+(defmethod bound-variables ((clause final-clause))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser
