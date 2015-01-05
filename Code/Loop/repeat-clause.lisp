@@ -12,7 +12,7 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass repeat-clause (clause var-and-type-spec-mixin)
+(defclass repeat-clause (termination-test-clause var-and-type-spec-mixin)
   ((%form :initarg :form :reader form))
   (:default-initargs :var-spec (gensym) :type-spec 'real))
 

@@ -12,7 +12,7 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass while-clause (clause)
+(defclass while-clause (termination-test-clause)
   ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

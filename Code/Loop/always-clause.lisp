@@ -12,7 +12,7 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass always-clause (clause)
+(defclass always-clause (termination-test-clause)
   ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

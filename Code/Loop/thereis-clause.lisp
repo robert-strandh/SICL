@@ -12,7 +12,7 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass thereis-clause (clause)
+(defclass thereis-clause (termination-test-clause)
   ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
