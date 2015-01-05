@@ -25,12 +25,11 @@
     (when (and (not (null name-clause-position)) (plusp name-clause-position))
       (error 'name-clause-not-first))))
 
-(defun verify-clause-order (clauses)
-  (check-name-clause-position clauses)
-  ;; Check that there is not a variable-clausefollowing a main clause.
-  ;; Recall that we diverge from the BNF grammar in the HyperSpec so
-  ;; that INITIALLY and FINALLY are neither main clauses nor variable
-  ;; clauses.
+;;; Check that there is not a variable-clause following a main clause.
+;;; Recall that we diverge from the BNF grammar in the HyperSpec so
+;;; that INITIALLY and FINALLY are neither main clauses nor variable
+;;; clauses.
+(defun check-order-variable-clause-main-clause (clauses)
   (let ((last-variable-clause-position
 	  (position-if (lambda (clause)
 			 (typep clause 'variable-clause))
@@ -44,6 +43,10 @@
 	       (not (null first-main-clause-position))
 	       (> last-variable-clause-position first-main-clause-position))
       (error 'invalid-clause-order))))
+
+(defun verify-clause-order (clauses)
+  (check-name-clause-position clauses)
+  (check-order-variable-clause-main-clause clauses))
 
 ;;; FIXME: Add more analyses.
 (defun analyze-clauses (clauses)
