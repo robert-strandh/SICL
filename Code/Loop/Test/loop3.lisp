@@ -71,12 +71,12 @@
         collect (+ x y))
   (3 7 11))
 
-;; (deftest loop.3.14
-;;   (signals-error
-;;    (loop for x on '(a b c)
-;;          for x on '(d e f) collect x)
-;;    program-error)
-;;   t)
+(deftest loop.3.14
+  (signals-error
+   (loop for x on '(a b c)
+         for x on '(d e f) collect x)
+   program-error)
+  t)
 
 ;; (deftest loop.3.15
 ;;   (signals-error (loop for (x . x) on '((a b) (c d)) collect x)
