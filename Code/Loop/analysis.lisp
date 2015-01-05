@@ -48,6 +48,18 @@
   (check-name-clause-position clauses)
   (check-order-variable-clause-main-clause clauses))
 
+(defun check-variable-uniqueness (clauses)
+  (let* ((variables (reduce #'append (mapcar #'bound-variables clauses)
+			    :from-end t))
+	 (unique-variables (remove-duplicates variables :test #'eq)))
+    (unless (= (length variables)
+	       (length unique-variables))
+      (loop for var in unique-variables
+	    do (when (> (count var variables :test #'eq) 1)
+		 (error 'multiple-variable-occurrences
+			:bound-variable var))))))
+
 ;;; FIXME: Add more analyses.
 (defun analyze-clauses (clauses)
-  (verify-clause-order clauses))
+  (verify-clause-order clauses)
+  (check-variable-uniqueness clauses))
