@@ -132,6 +132,11 @@
 ;;; (other than an initially-clause or a finally-clause).  
 (define-condition invalid-clause-order (loop-syntax-error) ())
 
+;;; This condition is signaled when there are multiple occurrences of
+;;; a variable to be bound by any loop clause.
+(define-condition multiple-variable-occurrences (loop-syntax-error)
+  ((%bound-variable :initarg :bound-variable :reader bound-variable)))
+
 ;;; The root of all semantic errors.
 (define-condition loop-semantic-error (program-error cleavir-i18n:condition)
   ())
