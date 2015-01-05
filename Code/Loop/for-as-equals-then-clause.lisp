@@ -20,6 +20,10 @@
   ((%initial-form :initarg :initial-form :reader initial-form)
    (%subsequent-form :initarg :subsequent-form :reader subsequent-form)))
 
+(defmethod bound-variables ((subclause for-as-equals-then))
+  (mapcar #'car
+	  (extract-variables (var-spec subclause) nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
