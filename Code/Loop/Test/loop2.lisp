@@ -15,10 +15,10 @@
         do (when (evenp x) (return x)))
   2)
 
-;; (deftest loop.2.3
-;;   (signals-error (loop for x in '(a . b) collect x)
-;;                  type-error)
-;;   t)
+(deftest loop.2.3
+  (signals-error (loop for x in '(a . b) collect x)
+                 type-error)
+  t)
 
 (deftest loop.2.4
   (let ((x nil))
