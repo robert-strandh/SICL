@@ -299,13 +299,13 @@
    program-error)
   t)
 
-;; (deftest loop.6.error.4
-;;   (signals-error
-;;    (loop for k being the hash-keys of *loop.6.hash.3*
-;;          using (hash-value k)
-;;          count t)
-;;    program-error)
-;;   t)
+(deftest loop.6.error.4
+  (signals-error
+   (loop for k being the hash-keys of *loop.6.hash.3*
+         using (hash-value k)
+         count t)
+   program-error)
+  t)
 
 ;; (deftest loop.6.error.5
 ;;   (signals-error
