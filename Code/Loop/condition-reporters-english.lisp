@@ -292,3 +292,12 @@
   (declare (ignorable condition))
   (format stream
 	  "Multiple NAME clauses where found."))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition multiple-variable-occurrences)
+     stream
+     (language cleavir-i18n:english))
+  (format stream
+	  "Multiple occurrences of the following variable were found:~@
+           ~s"
+	  (bound-variable condition)))
