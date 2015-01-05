@@ -307,10 +307,10 @@
    program-error)
   t)
 
-;; (deftest loop.6.error.5
-;;   (signals-error
-;;    (loop for k being the hash-values of *loop.6.hash.3*
-;;          using (hash-key k)
-;;          count t)
-;;    program-error)
-;;   t)
+(deftest loop.6.error.5
+  (signals-error
+   (loop for k being the hash-values of *loop.6.hash.3*
+         using (hash-key k)
+         count t)
+   program-error)
+  t)
