@@ -29,6 +29,7 @@
    (:file "selectable-clause")
    (:file "unconditional-clause")
    (:file "accumulation-clause")
+   (:file "termination-test-clause")
    (:file "combinatory-parsing")
    (:file "parse-common")
    (:file "var-spec")
