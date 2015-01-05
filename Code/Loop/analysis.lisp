@@ -16,24 +16,17 @@
 ;;;
 ;;; Syntactic and semantic analysis
 
-(defun verify-clause-order (clauses)
-  ;; Check that if there is a name-clause, the first one is in
-  ;; position 0.  For now, we do not care if there is more than one
-  ;; name-clause.
+;;; Check that if there is a name-clause, the last one is in position
+;;; zero.
+(defun check-name-clause-position (clauses)
   (let ((name-clause-position
-	  (position-if (lambda (clause) (typep clause 'name-clause))
-		       clauses)))
+	  (position-if (lambda (clause) (typep clause 'name-clause)) clauses
+		       :from-end t)))
     (when (and (not (null name-clause-position)) (plusp name-clause-position))
-      (error 'name-clause-not-first)))
-  ;; Check that, if the first clause is a name-clause, there is not
-  ;; a second name-clause.  We have already tested the case when
-  ;; there is a name-clause other than in the first position.
-  (when (typep (car clauses) 'name-clause)
-    (let ((second-name-clause
-	    (find-if (lambda (clause) (typep clause 'name-clause))
-		     (cdr clauses))))
-      (when (not (null second-name-clause))
-	(error 'multiple-name-clauses))))
+      (error 'name-clause-not-first))))
+
+(defun verify-clause-order (clauses)
+  (check-name-clause-position clauses)
   ;; Check that there is not a variable-clausefollowing a main clause.
   ;; Recall that we diverge from the BNF grammar in the HyperSpec so
   ;; that INITIALLY and FINALLY are neither main clauses nor variable
