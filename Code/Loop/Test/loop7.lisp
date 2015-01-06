@@ -86,11 +86,11 @@
         #'string<)
   ("A" "B" "C"))
 
-;; (deftest loop.7.13
-;;   (sort (mapcar #'symbol-name
-;;                 (loop for x being the symbols of "LOOP.CL-TEST.2" collect x))
-;;         #'string<)
-;;   ("A" "B" "C" "X" "Y" "Z"))
+(deftest loop.7.13
+  (sort (mapcar #'symbol-name
+                (loop for x being the symbols of "LOOP.CL-TEST.2" collect x))
+        #'string<)
+  ("A" "B" "C" "X" "Y" "Z"))
 
 ;; (deftest loop.7.14
 ;;   (sort (mapcar #'symbol-name
