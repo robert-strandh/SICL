@@ -46,10 +46,6 @@
   (alternative (keyword-parser 'hash-value)
 	       (keyword-parser 'hash-values)))
 
-(define-parser in-of-parser
-  (alternative (keyword-parser 'in)
-	       (keyword-parser 'of)))
-
 (define-parser hash-value-other-parser
   (singleton #'second
 	     (lambda (token)
