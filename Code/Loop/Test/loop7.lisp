@@ -68,11 +68,11 @@
         #'string<)
   ("A" "B" "C"))
 
-;; (deftest loop.7.10
-;;   (sort (mapcar #'symbol-name
-;;                 (loop for x being each external-symbol in "LOOP.CL-TEST.1" collect x))
-;;         #'string<)
-;;   ("A" "B" "C"))
+(deftest loop.7.10
+  (sort (mapcar #'symbol-name
+                (loop for x being each external-symbol in "LOOP.CL-TEST.1" collect x))
+        #'string<)
+  ("A" "B" "C"))
 
 ;; (deftest loop.7.11
 ;;   (sort (mapcar #'symbol-name
