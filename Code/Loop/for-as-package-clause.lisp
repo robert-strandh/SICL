@@ -53,7 +53,7 @@
 			of
 			package-form)
 		 (declare (ignore being each symbol of))
-		 (make-instance 'for-as-package-symbols
+		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
 		   :package-form package-form
@@ -75,7 +75,7 @@
 			of
 			package-form)
 		 (declare (ignore being each present-symbol of))
-		 (make-instance 'for-as-package-present-symbols
+		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
 		   :package-form package-form
@@ -98,7 +98,7 @@
 			of
 			package-form)
 		 (declare (ignore being each external-symbol of))
-		 (make-instance 'for-as-package-external-symbols
+		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
 		   :package-form package-form
