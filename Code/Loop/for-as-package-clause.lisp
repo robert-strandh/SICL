@@ -69,3 +69,24 @@
 	       'symbol-parser
 	       'in-of-parser
 	       'anything-parser))
+
+(define-parser package-present-symbol-parser
+  (consecutive (lambda (var-spec
+			type-spec
+			being
+			each
+			present-symbol
+			of
+			package-form)
+		 (declare (ignore being each present-symbol of))
+		 (make-instance 'for-as-package-present-symbols
+		   :var-spec var-spec
+		   :type-spec type-spec
+		   :package-form package-form))
+	       'anything-parser
+	       'optional-type-spec-parser
+	       'being-parser
+	       'each-the-parser
+	       'present-symbol-parser
+	       'in-of-parser
+	       'anything-parser))
