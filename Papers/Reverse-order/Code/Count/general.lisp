@@ -54,110 +54,32 @@
 (defun more-zeros (n l)
   (nconc (make-zeros n) l))
 
-(defun mouline-next-stream (stream reverse-count-fun n &key (step 1) (start 1) (times 1))
+(defun mouline-stream (stream reverse-count-fun n &key (step 1) (start 1) (times 1))
   (loop
     repeat n
     for k from start by step
     for list = (make-zeros start) then (more-zeros step list)
     do (format stream "~3D ~A~%" k (evaluate-time (funcall reverse-count-fun 0 list) times))))
 
-(defun mouline-next-file (reverse-count-fun n &key (step 1) (start 1) (times 1))
+(defun mouline-file (file reverse-count-fun n &key (step 1) (start 1) (times 1))
   (with-open-file (stream (date-string file)
 			  :direction :output :if-does-not-exist :create :if-exists :supersede)
     (mouline-next-stream stream reverse-count-fun n :step step :start start :times times)))
 
-(defun mouline-stream
-    (automaton n stream graph-fun &key (start 1) (step 1) (fois 1) (enum t))
-  (loop
-    for i from start
-    for k from start by step
-    repeat n
-    do (let ((time (evaluate-time (funcall graph-fun k) automaton :fois fois :enum enum)))
-	 (format stream "~3D ~10,5F~%" k time)
-	 (unless (eq stream t)
-	   (format *trace-output* "~3D ~A~%" k time)))))
-
-(defun mouline-file (automaton n file graph-fun
-		     &key (start 1) (step 1) (fois 1) (enum t))
-  (with-open-file (stream file :direction :output :if-does-not-exist :create :if-exists :supersede)
-    (mouline-stream automaton n stream graph-fun
-		    :start start :step step :fois fois :enum enum)))
-
-(defun mouline-truc-versus-machin-stream
-    (truc-automaton machin-automaton
-     i j truc-stream machin-stream graph-fun &key (step 1) (fois 1) (enum t))
-  (loop
-    for k from i to j by step
-    do (let* ((term (funcall graph-fun k))
-	      (truc-time (evaluate-time (funcall  :fois fois :enum enum))
-	      (machin-time (eval-time-aut-term term machin-automaton :fois fois :enum enum)))
-	 (format truc-stream "~3D ~10,5F~%" k truc-time)
-	 (format machin-stream "~3D ~10,5F~%" k machin-time))))
-
-(defun mouline-truc-versus-machin-file
-    (truc-automaton machin-automaton i j truc-file machin-file graph-fun
-     &key (step 1) (fois 1) (enum t))
-  (with-open-file (truc-stream truc-file :direction :output :if-does-not-exist :create :if-exists :supersede)
-    (with-open-file (machin-stream machin-file :direction :output :if-does-not-exist :create :if-exists :supersede)
-      (mouline-truc-versus-machin-stream
-       truc-automaton machin-automaton
-       i j truc-stream machin-stream graph-fun :step step :fois fois :enum enum))))
-
 (defun mouline-truc-versus-machin-one-stream
-    (truc-automaton machin-automaton
-     i j stream graph-fun &key (step 1) (fois 1) (enum t))
+    (stream reverse-count-fun1 reverse-count-fun2 start end &key (step 1) (times 1))
   (loop
-    for k from i to j by step
-    do (let* ((term (funcall graph-fun k))
-	      (truc-time (eval-time-aut-term
-			  term truc-automaton :fois fois :enum enum))
-	      (machin-time (eval-time-aut-term
-			    term machin-automaton :fois fois :enum enum)))
+    for k from start to end by step
+    for list = (make-zeros start) then (more-zeros step list)
+    do (let ((truc-time (evaluate-time (funcall reverse-count-fun1 0 list) times))
+	     (machin-time (evaluate-time (funcall reverse-count-fun2 0 list) times)))
 	 (format t "~3D ~10,5F ~10,5F~%" k truc-time machin-time)
 	 (format stream "~3D ~10,5F ~10,5F~%" k truc-time machin-time))))
 
 (defun mouline-truc-versus-machin-one-file
-    (truc-automaton machin-automaton i j file graph-fun
-     &key (step 1) (fois 1) (enum t))
+    (file reverse-count-fun1 reverse-count-fun2 start end &key (step 1) (times 1))
   (with-open-file (stream file :direction :output :if-does-not-exist :create :if-exists :supersede)
       (mouline-truc-versus-machin-one-stream
-       truc-automaton machin-automaton
-       i j stream graph-fun :step step :fois fois :enum enum)))
-
-(defun truc-versus-machin-stream
-    (truc-stream machin-stream
-     truc-automaton machin-automaton
-     term-fun next-term-fun
-     n ;; n computations
-     &key (start 1) (step 1) (fois 1))
-  (loop
-     with enum = (not (deterministic-p truc-automaton))
-     with next-term-fun = (apply-k-next step next-term-fun)
-     repeat n
-     for i from start by step
-     for term = (funcall term-fun start) then (funcall next-term-fun term)
-     do (let ((truc-time (eval-time-aut-term term truc-automaton :fois fois :enum enum))
-	      (machin-time (eval-time-aut-term term machin-automaton :fois fois :enum enum)))
-	 (format t "~3D ~10,5F ~10,5F~%" i truc-time machin-time)
-	 (unless (eq truc-stream t)
-	   (if (eq truc-stream machin-stream)
-	       (format truc-stream "~3D ~10,5F ~10,5F~%" i truc-time machin-time)
-	       (progn
-		 (format truc-stream "~3D ~10,5F~%" i truc-time)
-		 (format machin-stream "~3D ~10,5F~%" i machin-time)))))))
-
-(defun truc-versus-machin-file
-    (truc-file machin-file
-     truc-automaton machin-automaton
-     term-fun next-term-fun
-     n
-     &key  (start 1) (step 1) (fois 1))
-  (with-open-file (truc-stream truc-file :direction :output :if-does-not-exist :create :if-exists :supersede)
-    (with-open-file (machin-stream machin-file :direction :output :if-does-not-exist :create :if-exists :supersede)
-      (truc-versus-machin-stream
-       truc-stream machin-stream
-       truc-automaton machin-automaton
-       term-fun next-term-fun
-       n
-       :start start :step step :fois fois))))
-
+       stream
+       reverse-count-fun1 reverse-count-fun2 
+       start end :step step :times times)))

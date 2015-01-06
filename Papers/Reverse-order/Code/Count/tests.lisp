@@ -6,4 +6,3 @@
 (defun test-reverse-count (n reverse-count-fun)
   (loop for i from 1 to n
 	do (test-reverse-count-once i reverse-count-fun)))
-
