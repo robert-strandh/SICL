@@ -21,7 +21,8 @@
    (%package-var :initform (gensym) :reader package-var)
    (%temp-entry-p-var :initform (gensym) :reader temp-entry-p-var)
    (%temp-symbol-var :initform (gensym) :reader temp-symbol-var)
-   (%iterator-var :initform (gensym) :reader iterator-var)))
+   (%iterator-var :initform (gensym) :reader iterator-var)
+   (%iterator-keywords :initarg :itetator-keywords :reader iterator-keywords)))
 
 (defclass for-as-package-symbols (for-as-package) ())
 
