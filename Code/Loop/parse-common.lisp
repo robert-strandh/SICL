@@ -52,6 +52,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; A parser that recognizes one of the LOOP keyword BEING.
+;;; It is used to parse FOR-AS-HASH and FOR-AS-PACKAGE subclauses.
+
+(define-parser being-parser
+  (keyword-parser 'being))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Parser for COMPOUND-FORM+, i.e. a non-empty sequence of compound
 ;;; forms.
 
