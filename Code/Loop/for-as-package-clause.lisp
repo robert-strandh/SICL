@@ -25,3 +25,6 @@
 
 (defclass for-as-package-external-symbols (for-as-package) ())
 
+(defmethod bound-variables ((subclause for-as-package))
+  (mapcar #'car
+	  (extract-variables (var-spec subclause) nil)))
