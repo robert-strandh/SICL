@@ -82,7 +82,7 @@
 		   :other-var-spec other))
 	       'anything-parser
 	       'optional-type-spec-parser
-	       (keyword-parser 'being)
+	       'being-parser
 	       'each-the-parser
 	       'hash-key-parser
 	       'in-of-parser
@@ -106,7 +106,7 @@
 		   :other-var-spec nil))
 	       'anything-parser
 	       'optional-type-spec-parser
-	       (keyword-parser 'being)
+	       'being-parser
 	       'each-the-parser
 	       'hash-key-parser
 	       'in-of-parser
@@ -130,7 +130,7 @@
 		   :other-var-spec other))
 	       'anything-parser
 	       'optional-type-spec-parser
-	       (keyword-parser 'being)
+	       'being-parser
 	       'each-the-parser
 	       'hash-value-parser
 	       'in-of-parser
@@ -154,7 +154,7 @@
 		   :other-var-spec nil))
 	       'anything-parser
 	       'optional-type-spec-parser
-	       (keyword-parser 'being)
+	       'being-parser
 	       'each-the-parser
 	       'hash-value-parser
 	       'in-of-parser
