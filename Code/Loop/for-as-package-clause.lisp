@@ -17,7 +17,11 @@
 ;;; Clause FOR-AS-PACKAGE
 
 (defclass for-as-package (for-as-subclause)
-  ((%package-form :initarg :package-form :reader package-form)))
+  ((%package-form :initarg :package-form :reader package-form)
+   (%package-var :initform (gensym) :reader package-var)
+   (%temp-entry-p-var :initform (gensym) :reader temp-entry-p-var)
+   (%temp-symbol-var :initform (gensym) :reader temp-symbol-var)
+   (%iterator-var :initform (gensym) :reader iterator-var)))
 
 (defclass for-as-package-symbols (for-as-package) ())
 
