@@ -158,3 +158,10 @@
 	    (setq ,(temp-entry-p-var subclause) entry-p
 		  ,(temp-symbol-var subclause) symbol))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination form.
+
+(defmethod termination-form ((subclause for-as-package) end-tag)
+  `(unless ,(temp-entry-p-var subclause)
+     (go ,end-tag)))
