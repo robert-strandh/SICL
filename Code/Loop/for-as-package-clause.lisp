@@ -32,3 +32,19 @@
 (defmethod bound-variables ((subclause for-as-package))
   (mapcar #'car
 	  (extract-variables (var-spec subclause) nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parsers
+
+(define-parser symbol-parser
+  (alternative (keyword-parser 'symbol)
+	       (keyword-parser 'symbols)))
+
+(define-parser present-symbol-parser
+  (alternative (keyword-parser 'present-symbol)
+	       (keyword-parser 'present-symbols)))
+
+(define-parser external-symbol-parser
+  (alternative (keyword-parser 'external-symbol)
+	       (keyword-parser 'external-symbols)))
