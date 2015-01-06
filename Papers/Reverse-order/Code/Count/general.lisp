@@ -71,8 +71,8 @@
   (loop
     for k from start to end by step
     for list = (make-zeros start) then (more-zeros step list)
-    do (let ((truc-time (evaluate-time (funcall reverse-count-fun1 0 list) times))
-	     (machin-time (evaluate-time (funcall reverse-count-fun2 0 list) times)))
+    do (let ((truc-time (* 1000 (evaluate-time (funcall reverse-count-fun1 0 list) times)))
+	     (machin-time (* 1000 (evaluate-time (funcall reverse-count-fun2 0 list) times))))
 	 (format t "~3D ~10,5F ~10,5F~%" k truc-time machin-time)
 	 (format stream "~3D ~10,5F ~10,5F~%" k truc-time machin-time))))
 
