@@ -165,3 +165,15 @@
 (defmethod termination-form ((subclause for-as-package) end-tag)
   `(unless ,(temp-entry-p-var subclause)
      (go ,end-tag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the step form.
+
+(defmethod step-form ((subclause for-as-package))
+  `(progn ,(generate-assignments (var-spec subclause)
+				 (temp-key-var subclause))
+	  (multiple-value-bind (entry-p symbol)
+	      (,(iterator-var subclause))
+	    (setq ,(temp-entry-p-var subclause) entry-p
+		  ,(temp-symbol-var subclause) symbol))))
