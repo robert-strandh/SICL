@@ -111,6 +111,11 @@
 	       'in-of-parser
 	       'anything-parser))
 
+(define-parser 'for-as-package-parser
+  (alternative 'package-symbol-parser
+	       'package-present-symbol-parser
+	       'package-external-symbol-parser))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the initial bindings.
