@@ -139,3 +139,22 @@
 	  ,(package-var subclause)
 	  ,@(iterator-keywords subclause))
        ,inner-form)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the prologue form.
+
+(defmethod prologue-form ((subclause for-as-package) end-tag)
+  `(progn (multiple-value-bind (entry-p symbol)
+	      (,(iterator-var subclause))
+	    (setq ,(temp-entry-p-var subclause) entry-p
+		  ,(temp-symbol-var subclause) symbol))
+	  (unless ,(temp-entry-p-var subclause)
+	    (go ,end-tag))
+	  ,(generate-assignments (var-spec subclause)
+				 (temp-key-var subclause))
+	  (multiple-value-bind (entry-p symbol)
+	      (,(iterator-var subclause))
+	    (setq ,(temp-entry-p-var subclause) entry-p
+		  ,(temp-symbol-var subclause) symbol))))
+
