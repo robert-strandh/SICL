@@ -117,3 +117,25 @@
 
 (defmethod initial-bindings ((clause for-as-package))
   `((,(package-var clause) ,(package-form clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the subclause wrapper.
+
+(defmethod wrap-subclause ((subclause for-as-package) inner-form)
+  `(let ((,(temp-entry-p-var subclause) nil)
+	 (,(temp-symbol-var subclause) nil)
+	 ,@(loop with d-var-spec = (var-spec subclause)
+		 with d-type-spec = (type-spec subclause)
+		 for (variable) in (extract-variables d-var-spec d-type-spec)
+		 collect `(,variable nil)))
+     (declare ,@(loop with d-var-spec = (var-spec subclause)
+		      with d-type-spec = (type-spec subclause)
+		      for (variable type)
+			in (extract-variables d-var-spec d-type-spec)
+		      collect `(cl:type (or null ,type) ,variable)))
+     (with-package-iterator
+	 (,(iterator-var subclause)
+	  ,(package-var subclause)
+	  ,@(iterator-keywords subclause))
+       ,inner-form)))
