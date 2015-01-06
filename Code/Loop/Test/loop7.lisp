@@ -14,11 +14,11 @@
   (:use "LOOP.CL-TEST.1")
   (:intern "X" "Y" "Z"))
 
-;; (deftest loop.7.1
-;;   (sort (mapcar #'symbol-name
-;;                 (loop for x being the symbols of "LOOP.CL-TEST.1" collect x))
-;;         #'string<)
-;;   ("A" "B" "BAR" "BAZ" "C" "FOO"))
+(deftest loop.7.1
+  (sort (mapcar #'symbol-name
+                (loop for x being the symbols of "LOOP.CL-TEST.1" collect x))
+        #'string<)
+  ("A" "B" "BAR" "BAZ" "C" "FOO"))
 
 ;; (deftest loop.7.2
 ;;   (sort (mapcar #'symbol-name
