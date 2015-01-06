@@ -13,4 +13,5 @@
    (:file "loop3")
    (:file "loop4")
    (:file "loop5")
-   (:file "loop6")))
+   (:file "loop6")
+   (:file "loop7")))
