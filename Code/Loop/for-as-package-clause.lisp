@@ -116,6 +116,8 @@
 	       'package-present-symbol-parser
 	       'package-external-symbol-parser))
 
+(add-for-as-subclause-parser 'for-as-package-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the initial bindings.
