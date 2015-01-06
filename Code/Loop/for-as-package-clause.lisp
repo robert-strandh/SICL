@@ -48,3 +48,24 @@
 (define-parser external-symbol-parser
   (alternative (keyword-parser 'external-symbol)
 	       (keyword-parser 'external-symbols)))
+
+(define-parser package-symbol-parser
+  (consecutive (lambda (var-spec
+			type-spec
+			being
+			each
+			symbol
+			of
+			package-form)
+		 (declare (ignore being each symbol of))
+		 (make-instance 'for-as-package-symbols
+		   :var-spec var-spec
+		   :type-spec type-spec
+		   :package-form package-form))
+	       'anything-parser
+	       'optional-type-spec-parser
+	       'being-parser
+	       'each-the-parser
+	       'symbol-parser
+	       'in-of-parser
+	       'anything-parser))
