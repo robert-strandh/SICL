@@ -112,3 +112,10 @@
 	       'external-symbol-parser
 	       'in-of-parser
 	       'anything-parser))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the initial bindings.
+
+(defmethod initial-bindings ((clause for-as-package))
+  `((,(package-var clause) ,(package-form clause))))
