@@ -14,9 +14,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS-PACKAGE-CLAUSE and FOR-AS-PACKAGE
-
-(defclass for-as-package-clause (for-as-clause) ())
+;;; Clause FOR-AS-PACKAGE
 
 (defclass for-as-package (for-as-subclause)
   ((%package-form :initarg :package-form :reader package-form)))
