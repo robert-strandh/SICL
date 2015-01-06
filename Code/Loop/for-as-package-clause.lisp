@@ -111,7 +111,7 @@
 	       'in-of-parser
 	       'anything-parser))
 
-(define-parser 'for-as-package-parser
+(define-parser for-as-package-parser
   (alternative 'package-symbol-parser
 	       'package-present-symbol-parser
 	       'package-external-symbol-parser))
@@ -159,7 +159,7 @@
 	  (unless ,(temp-entry-p-var subclause)
 	    (go ,end-tag))
 	  ,(generate-assignments (var-spec subclause)
-				 (temp-key-var subclause))
+				 (temp-symbol-var subclause))
 	  (multiple-value-bind (entry-p symbol)
 	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
@@ -179,7 +179,7 @@
 
 (defmethod step-form ((subclause for-as-package))
   `(progn ,(generate-assignments (var-spec subclause)
-				 (temp-key-var subclause))
+				 (temp-symbol-var subclause))
 	  (multiple-value-bind (entry-p symbol)
 	      (,(iterator-var subclause))
 	    (setq ,(temp-entry-p-var subclause) entry-p
