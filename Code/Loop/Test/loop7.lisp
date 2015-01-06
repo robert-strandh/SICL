@@ -92,11 +92,11 @@
         #'string<)
   ("A" "B" "C" "X" "Y" "Z"))
 
-;; (deftest loop.7.14
-;;   (sort (mapcar #'symbol-name
-;;                 (loop for x being the present-symbols of "LOOP.CL-TEST.2" collect x))
-;;         #'string<)
-;;   ("X" "Y" "Z"))
+(deftest loop.7.14
+  (sort (mapcar #'symbol-name
+                (loop for x being the present-symbols of "LOOP.CL-TEST.2" collect x))
+        #'string<)
+  ("X" "Y" "Z"))
 
 ;; ;;; According to the ANSI CL spec, "If the package for the iteration is not supplied,
 ;; ;;; the current package is used."  Thse next tests are of the cases that the package
