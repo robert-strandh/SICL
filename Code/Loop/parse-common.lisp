@@ -34,6 +34,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; A parser that recognizes one of the LOOP keywords EACH and THE.
+;;; It is used to parse FOR-AS-HASH and FOR-AS-PACKAGE subclauses.
+
+(define-parser each-the-parser
+  (alternative (keyword-parser 'each)
+	       (keyword-parser 'the)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Parser for COMPOUND-FORM+, i.e. a non-empty sequence of compound
 ;;; forms.
 

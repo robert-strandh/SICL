@@ -38,10 +38,6 @@
 ;;;
 ;;; Parsers
 
-(define-parser each-the-parser
-  (alternative (keyword-parser 'each)
-	       (keyword-parser 'the)))
-
 (define-parser hash-key-parser
   (alternative (keyword-parser 'hash-key)
 	       (keyword-parser 'hash-keys)))
