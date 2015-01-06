@@ -22,7 +22,7 @@
    (%temp-entry-p-var :initform (gensym) :reader temp-entry-p-var)
    (%temp-symbol-var :initform (gensym) :reader temp-symbol-var)
    (%iterator-var :initform (gensym) :reader iterator-var)
-   (%iterator-keywords :initarg :itetator-keywords :reader iterator-keywords)))
+   (%iterator-keywords :initarg :iterator-keywords :reader iterator-keywords)))
 
 (defmethod bound-variables ((subclause for-as-package))
   (mapcar #'car
@@ -56,7 +56,8 @@
 		 (make-instance 'for-as-package-symbols
 		   :var-spec var-spec
 		   :type-spec type-spec
-		   :package-form package-form))
+		   :package-form package-form
+		   :iterator-keywords '(:internal :external :inherited)))
 	       'anything-parser
 	       'optional-type-spec-parser
 	       'being-parser
@@ -77,7 +78,8 @@
 		 (make-instance 'for-as-package-present-symbols
 		   :var-spec var-spec
 		   :type-spec type-spec
-		   :package-form package-form))
+		   :package-form package-form
+		   :iterator-keywords '(:internal :external)))
 	       'anything-parser
 	       'optional-type-spec-parser
 	       'being-parser
@@ -99,7 +101,8 @@
 		 (make-instance 'for-as-package-external-symbols
 		   :var-spec var-spec
 		   :type-spec type-spec
-		   :package-form package-form))
+		   :package-form package-form
+		   :iterator-keywords '(:external)))
 	       'anything-parser
 	       'optional-type-spec-parser
 	       'being-parser
