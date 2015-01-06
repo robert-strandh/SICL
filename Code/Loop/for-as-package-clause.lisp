@@ -90,3 +90,25 @@
 	       'present-symbol-parser
 	       'in-of-parser
 	       'anything-parser))
+
+
+(define-parser package-external-symbol-parser
+  (consecutive (lambda (var-spec
+			type-spec
+			being
+			each
+			external-symbol
+			of
+			package-form)
+		 (declare (ignore being each external-symbol of))
+		 (make-instance 'for-as-package-external-symbols
+		   :var-spec var-spec
+		   :type-spec type-spec
+		   :package-form package-form))
+	       'anything-parser
+	       'optional-type-spec-parser
+	       'being-parser
+	       'each-the-parser
+	       'external-symbol-parser
+	       'in-of-parser
+	       'anything-parser))
