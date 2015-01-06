@@ -14,9 +14,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS-HASH-CLAUSE and FOR-AS-HASH
-
-(defclass for-as-hash-clause (for-as-clause) ())
+;;; Clause FOR-AS-HASH
 
 (defclass for-as-hash (for-as-subclause)
   ((%hash-table-form :initarg :hash-table-form :reader hash-table-form)
