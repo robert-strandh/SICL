@@ -109,11 +109,11 @@
           #'string<))
   ("A" "B" "BAR" "BAZ" "C" "FOO"))
 
-;; (deftest loop.7.16
-;;   (let ((*package* (find-package "LOOP.CL-TEST.1")))
-;;     (sort (mapcar #'symbol-name (loop for x being each external-symbol collect x))
-;;           #'string<))
-;;   ("A" "B" "C"))
+(deftest loop.7.16
+  (let ((*package* (find-package "LOOP.CL-TEST.1")))
+    (sort (mapcar #'symbol-name (loop for x being each external-symbol collect x))
+          #'string<))
+  ("A" "B" "C"))
 
 ;; (deftest loop.7.17
 ;;   (let ((*package* (find-package "LOOP.CL-TEST.2")))
