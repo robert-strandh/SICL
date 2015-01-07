@@ -98,15 +98,16 @@
         #'string<)
   ("X" "Y" "Z"))
 
-;; ;;; According to the ANSI CL spec, "If the package for the iteration is not supplied,
-;; ;;; the current package is used."  Thse next tests are of the cases that the package
-;; ;;; is not supplied in the loop form.
+;;; According to the ANSI CL spec, "If the package for the iteration
+;;; is not supplied, the current package is used."  Thse next tests
+;;; are of the cases that the package is not supplied in the loop
+;;; form.
 
-;; (deftest loop.7.15
-;;   (let ((*package* (find-package "LOOP.CL-TEST.1")))
-;;     (sort (mapcar #'symbol-name (loop for x being each symbol collect x))
-;;           #'string<))
-;;   ("A" "B" "BAR" "BAZ" "C" "FOO"))
+(deftest loop.7.15
+  (let ((*package* (find-package "LOOP.CL-TEST.1")))
+    (sort (mapcar #'symbol-name (loop for x being each symbol collect x))
+          #'string<))
+  ("A" "B" "BAR" "BAZ" "C" "FOO"))
 
 ;; (deftest loop.7.16
 ;;   (let ((*package* (find-package "LOOP.CL-TEST.1")))
