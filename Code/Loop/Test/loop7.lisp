@@ -186,9 +186,9 @@
   (loop for x of-type symbol being the external-symbols of "LOOP.CL-TEST.1" count x)
   3)
 
-;; (deftest loop.7.29
-;;   (loop for x of-type symbol being the present-symbols of "LOOP.CL-TEST.2" count x)
-;;   3)
+(deftest loop.7.29
+  (loop for x of-type symbol being the present-symbols of "LOOP.CL-TEST.2" count x)
+  3)
 
 ;; ;;; Tests of the 'as' form
 
