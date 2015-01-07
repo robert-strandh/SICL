@@ -1,20 +1,6 @@
-;; do not divide
-(defun count-from-end-with-length-1 (x list length)
-  (declare (optimize (speed 3) (debug 0) (safety 0) (compilation-speed 0)))
-  (declare (type fixnum length))
-  (let ((count 0))
-    (declare (type fixnum count))
-    (flet ((process (elem)
-	     (when (eql elem x)
-	       (incf count))))
-      (labels ((recursive-traverse (rest n)
-		 (declare (type fixnum n))
-		 (when (> n 0)
-		     (recursive-traverse (cdr rest) (1- n))
-		     (process (car rest)))))
-	(recursive-traverse list length)))
-    count))
-
 (defun reverse-count-1 (x list)
-  (count-from-end-with-length-1 x list (length list)))
+  (loop
+    for e in (reverse list)
+    when (eql x e)
+      count e))
 

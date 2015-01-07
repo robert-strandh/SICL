@@ -52,25 +52,25 @@
   (make-list n :initial-element 0))
 
 (defun more-zeros (n l)
-  (nconc (make-zeros n) l))
+  (nconc (zeros n) l))
 
 (defun mouline-stream (stream reverse-count-fun n &key (step 1) (start 1) (times 1))
   (loop
     repeat n
     for k from start by step
-    for list = (make-zeros start) then (more-zeros step list)
+    for list = (zeros start) then (more-zeros step list)
     do (format stream "~3D ~A~%" k (evaluate-time (funcall reverse-count-fun 0 list) times))))
 
 (defun mouline-file (file reverse-count-fun n &key (step 1) (start 1) (times 1))
   (with-open-file (stream (date-string file)
 			  :direction :output :if-does-not-exist :create :if-exists :supersede)
-    (mouline-next-stream stream reverse-count-fun n :step step :start start :times times)))
+    (mouline-stream stream reverse-count-fun n :step step :start start :times times)))
 
 (defun mouline-truc-versus-machin-one-stream
     (stream reverse-count-fun1 reverse-count-fun2 start end &key (step 1) (times 1))
   (loop
     for k from start to end by step
-    for list = (make-zeros start) then (more-zeros step list)
+    for list = (zeros start) then (more-zeros step list)
     do (let ((truc-time (* 1000 (evaluate-time (funcall reverse-count-fun1 0 list) times)))
 	     (machin-time (* 1000 (evaluate-time (funcall reverse-count-fun2 0 list) times))))
 	 (format t "~3D ~10,5F ~10,5F~%" k truc-time machin-time)
