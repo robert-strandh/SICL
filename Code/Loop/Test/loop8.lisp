@@ -9,10 +9,10 @@
   (loop with x = 1 do (return x))
   1)
 
-;; (deftest loop.8.2
-;;   (loop with x = 1
-;;         with y = (1+ x) do (return (list x y)))
-;;   (1 2))
+(deftest loop.8.2
+  (loop with x = 1
+        with y = (1+ x) do (return (list x y)))
+  (1 2))
 
 ;; (deftest loop.8.3
 ;;   (let ((y 2))
