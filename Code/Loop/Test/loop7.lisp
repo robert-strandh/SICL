@@ -121,16 +121,16 @@
           #'string<))
   ("X" "Y" "Z"))
 
-;; ;;; Cases where the package doesn't exist.  According to the standard,
-;; ;;; (section 6.1.2.1.7), this should cause a pacakge-error.
+;;; Cases where the package doesn't exist.  According to the standard,
+;;; (section 6.1.2.1.7), this should cause a pacakge-error.
 
-;; (deftest loop.7.18
-;;   (let ()
-;;     (ignore-errors (delete-package "LOOP.MISSING.PACKAGE"))
-;;     (signals-error
-;;      (loop for x being each symbol of "LOOP.MISSING.PACKAGE" collect x)
-;;      package-error))
-;;   t)
+(deftest loop.7.18
+  (let ()
+    (ignore-errors (delete-package "LOOP.MISSING.PACKAGE"))
+    (signals-error
+     (loop for x being each symbol of "LOOP.MISSING.PACKAGE" collect x)
+     package-error))
+  t)
 
 ;; (deftest loop.7.19
 ;;   (let ()
