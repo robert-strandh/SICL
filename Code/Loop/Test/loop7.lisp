@@ -164,11 +164,11 @@
   (loop for nil being the present-symbols of "LOOP.CL-TEST.2" count t)
   3)
 
-;; ;;; Type specs
+;;; Type specs
 
-;; (deftest loop.7.24
-;;   (loop for x t being the symbols of "LOOP.CL-TEST.1" count x)
-;;   6)
+(deftest loop.7.24
+  (loop for x t being the symbols of "LOOP.CL-TEST.1" count x)
+  6)
 
 ;; (deftest loop.7.25
 ;;   (loop for x t being the external-symbols of "LOOP.CL-TEST.1" count x)
