@@ -70,8 +70,11 @@
 			   :temp-vars temp-vars
 			   :dictionary dictionary)))
 
+(defclass with-subclause-no-form (with-subclause) ())
+
 (defclass with-subclause-with-form (with-subclause)
-  ((%form :initarg :form :reader form)))
+  ((%form :initarg :form :reader form)
+   (%form-var :initform (gensym) :reader form-var)))
 
 ;;; The default form is NIL.
 (defmethod form ((subclause with-subclause))
@@ -108,7 +111,7 @@
 ;;; Parser for var [type-spec]
 (define-parser with-subclause-type-2-parser
   (consecutive (lambda (var-spec type-spec)
-		 (make-instance 'with-subclause
+		 (make-instance 'with-subclause-no-form
 		   :var-spec var-spec
 		   :type-spec type-spec))
 	       ;; Accept anything for now.  Analyze later. 
@@ -148,15 +151,25 @@
 (defmethod initial-bindings ((clause with-clause))
   (reduce #'append (mapcar #'initial-bindings (subclauses clause))))
 
-(defmethod final-bindings ((clause with-clause))
-  (reduce #'append (mapcar #'final-bindings (subclauses clause))))
+(defmethod initial-bindings ((clause with-subclause-with-form))
+  `((,(form-var clause) ,(form clause))))
 
-(defmethod initial-bindings ((clause with-subclause))
-  (destructure-variables (temp-vars clause) (form clause)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the subclause wrapper.
 
-(defmethod final-bindings ((clause with-subclause))
-  (loop for (real-var . temp-var) in (dictionary clause)
-	collect `(,real-var ,temp-var)))
+(defmethod wrap-subclause ((subclause with-subclause-with-form) inner-form)
+  `(let* ,(destructure-variables (var-spec subclause) (form-var subclause))
+     ,inner-form))
+
+(defmethod wrap-subclause ((subclause with-subclause-no-form) inner-form)
+  `(let* ,(destructure-variables
+	   (var-spec subclause)
+	   (case (type-spec subclause)
+	     (fixnum 0)
+	     (float 0.0)
+	     (t nil)))
+     ,inner-form))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

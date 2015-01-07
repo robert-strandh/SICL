@@ -44,15 +44,24 @@
   (alternative (keyword-parser 'external-symbol)
 	       (keyword-parser 'external-symbols)))
 
+;;; This parser recognizes IN/OF followed by any form, and returns
+;;; that form, or, if there is no IN/OF, returns the symbol *PACKAGE*.
+(define-parser package-form-parser
+  (optional '*package*
+	    (consecutive (lambda (of form)
+			   (declare (ignore of))
+			   form)
+			 'in-of-parser
+			 'anything-parser)))
+
 (define-parser package-symbol-parser
   (consecutive (lambda (var-spec
 			type-spec
 			being
 			each
 			symbol
-			of
 			package-form)
-		 (declare (ignore being each symbol of))
+		 (declare (ignore being each symbol))
 		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
@@ -63,8 +72,7 @@
 	       'being-parser
 	       'each-the-parser
 	       'symbol-parser
-	       'in-of-parser
-	       'anything-parser))
+	       'package-form-parser))
 
 (define-parser package-present-symbol-parser
   (consecutive (lambda (var-spec
@@ -72,9 +80,8 @@
 			being
 			each
 			present-symbol
-			of
 			package-form)
-		 (declare (ignore being each present-symbol of))
+		 (declare (ignore being each present-symbol))
 		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
@@ -85,8 +92,7 @@
 	       'being-parser
 	       'each-the-parser
 	       'present-symbol-parser
-	       'in-of-parser
-	       'anything-parser))
+	       'package-form-parser))
 
 
 (define-parser package-external-symbol-parser
@@ -95,9 +101,8 @@
 			being
 			each
 			external-symbol
-			of
 			package-form)
-		 (declare (ignore being each external-symbol of))
+		 (declare (ignore being each external-symbol))
 		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
@@ -108,8 +113,7 @@
 	       'being-parser
 	       'each-the-parser
 	       'external-symbol-parser
-	       'in-of-parser
-	       'anything-parser))
+	       'package-form-parser))
 
 (define-parser for-as-package-parser
   (alternative 'package-symbol-parser
