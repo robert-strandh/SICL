@@ -150,11 +150,11 @@
      package-error))
   t)
 
-;; ;;; NIL d-var-specs
+;;; NIL d-var-specs
 
-;; (deftest loop.7.21
-;;   (loop for nil being the symbols of "LOOP.CL-TEST.1" count t)
-;;   6)
+(deftest loop.7.21
+  (loop for nil being the symbols of "LOOP.CL-TEST.1" count t)
+  6)
 
 ;; (deftest loop.7.22
 ;;   (loop for nil being the external-symbols of "LOOP.CL-TEST.1" count t)
