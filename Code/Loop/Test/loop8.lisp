@@ -58,9 +58,9 @@
   (loop with a of-type fixnum return a)
   0)
 
-;; (deftest loop.8.12
-;;   (loop with a of-type float return a)
-;;   0.0)
+(deftest loop.8.12
+  (loop with a of-type float return a)
+  0.0)
 
 ;; (deftest loop.8.13
 ;;   (loop with a of-type t return a)
