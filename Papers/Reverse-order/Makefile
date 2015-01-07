@@ -7,6 +7,9 @@ VERBATIM=$(shell ./strip-dependence verbatimtabinput $(TEXFILES))
 CODEFILES=$(shell ./strip-dependence inputcode $(TEXFILES))
 PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 
+.SUFFIXES:
+.SUFFIXES: .fig .ps .dvi .tex .pdf .bib .eps .pstex .pstex_t .gp
+
 all : $(NAME).pdf
 
 %.pdf: %.fig
@@ -17,6 +20,9 @@ all : $(NAME).pdf
 
 %.code: %.lisp 
 	./codify $<
+
+%.eps: %.gp
+	gnuplot $<
 
 $(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES)
 	pdflatex $<
