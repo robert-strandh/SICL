@@ -115,11 +115,11 @@
           #'string<))
   ("A" "B" "C"))
 
-;; (deftest loop.7.17
-;;   (let ((*package* (find-package "LOOP.CL-TEST.2")))
-;;     (sort (mapcar #'symbol-name (loop for x being each present-symbol collect x))
-;;           #'string<))
-;;   ("X" "Y" "Z"))
+(deftest loop.7.17
+  (let ((*package* (find-package "LOOP.CL-TEST.2")))
+    (sort (mapcar #'symbol-name (loop for x being each present-symbol collect x))
+          #'string<))
+  ("X" "Y" "Z"))
 
 ;; ;;; Cases where the package doesn't exist.  According to the standard,
 ;; ;;; (section 6.1.2.1.7), this should cause a pacakge-error.
