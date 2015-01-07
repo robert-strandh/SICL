@@ -50,9 +50,9 @@
   (loop with (a b) = '(1 2) return (list b a))
   (2 1))
 
-;; (deftest loop.8.10
-;;   (loop with (a b) of-type (fixnum fixnum) = '(3 4) return (+ a b))
-;;   7)
+(deftest loop.8.10
+  (loop with (a b) of-type (fixnum fixnum) = '(3 4) return (+ a b))
+  7)
 
 ;; (deftest loop.8.11
 ;;   (loop with a of-type fixnum return a)
