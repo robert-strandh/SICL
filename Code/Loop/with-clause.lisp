@@ -71,7 +71,8 @@
 			   :dictionary dictionary)))
 
 (defclass with-subclause-with-form (with-subclause)
-  ((%form :initarg :form :reader form)))
+  ((%form :initarg :form :reader form)
+   (%form-var :initform (gensym) :reader form-var)))
 
 ;;; The default form is NIL.
 (defmethod form ((subclause with-subclause))
@@ -148,15 +149,16 @@
 (defmethod initial-bindings ((clause with-clause))
   (reduce #'append (mapcar #'initial-bindings (subclauses clause))))
 
-(defmethod final-bindings ((clause with-clause))
-  (reduce #'append (mapcar #'final-bindings (subclauses clause))))
-
 (defmethod initial-bindings ((clause with-subclause))
-  (destructure-variables (temp-vars clause) (form clause)))
+  `((,(form-var clause) ,(form clause))))
 
-(defmethod final-bindings ((clause with-subclause))
-  (loop for (real-var . temp-var) in (dictionary clause)
-	collect `(,real-var ,temp-var)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the subclause wrapper.
+
+(defmethod wrap-subclause ((subclause with-subclause) inner-form)
+  `(let* ,(destructure-variables (var-spec subclause) (form-var subclause))
+     ,inner-form))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
