@@ -141,14 +141,14 @@
      package-error))
   t)
 
-;; (deftest loop.7.20
-;;   (let ()
-;;     (ignore-errors (delete-package "LOOP.MISSING.PACKAGE"))
-;;     (signals-error
-;;      (loop for x being each external-symbol of "LOOP.MISSING.PACKAGE"
-;;            collect x)
-;;      package-error))
-;;   t)
+(deftest loop.7.20
+  (let ()
+    (ignore-errors (delete-package "LOOP.MISSING.PACKAGE"))
+    (signals-error
+     (loop for x being each external-symbol of "LOOP.MISSING.PACKAGE"
+           collect x)
+     package-error))
+  t)
 
 ;; ;;; NIL d-var-specs
 
