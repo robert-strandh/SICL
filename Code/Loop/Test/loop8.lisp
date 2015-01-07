@@ -62,9 +62,9 @@
   (loop with a of-type float return a)
   0.0)
 
-;; (deftest loop.8.13
-;;   (loop with a of-type t return a)
-;;   nil)
+(deftest loop.8.13
+  (loop with a of-type t return a)
+  nil)
 
 ;; (deftest loop.8.14
 ;;   (loop with a t return a)
