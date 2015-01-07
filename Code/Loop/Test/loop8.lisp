@@ -66,9 +66,9 @@
   (loop with a of-type t return a)
   nil)
 
-;; (deftest loop.8.14
-;;   (loop with a t return a)
-;;   nil)
+(deftest loop.8.14
+  (loop with a t return a)
+  nil)
 
 ;; (deftest loop.8.15
 ;;   (loop with a t and b t return (list a b))
