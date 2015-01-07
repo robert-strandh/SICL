@@ -42,9 +42,9 @@
   (loop with a float = 3.0 return a)
   3.0)
 
-;; (deftest loop.8.8
-;;   (loop with a of-type string = "abc" return a)
-;;   "abc")
+(deftest loop.8.8
+  (loop with a of-type string = "abc" return a)
+  "abc")
 
 ;; (deftest loop.8.9
 ;;   (loop with (a b) = '(1 2) return (list b a))
