@@ -60,9 +60,8 @@
 			being
 			each
 			symbol
-			of
 			package-form)
-		 (declare (ignore being each symbol of))
+		 (declare (ignore being each symbol))
 		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
@@ -73,8 +72,7 @@
 	       'being-parser
 	       'each-the-parser
 	       'symbol-parser
-	       'in-of-parser
-	       'anything-parser))
+	       'package-form-parser))
 
 (define-parser package-present-symbol-parser
   (consecutive (lambda (var-spec
@@ -82,9 +80,8 @@
 			being
 			each
 			present-symbol
-			of
 			package-form)
-		 (declare (ignore being each present-symbol of))
+		 (declare (ignore being each present-symbol))
 		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
@@ -95,8 +92,7 @@
 	       'being-parser
 	       'each-the-parser
 	       'present-symbol-parser
-	       'in-of-parser
-	       'anything-parser))
+	       'package-form-parser))
 
 
 (define-parser package-external-symbol-parser
@@ -105,9 +101,8 @@
 			being
 			each
 			external-symbol
-			of
 			package-form)
-		 (declare (ignore being each external-symbol of))
+		 (declare (ignore being each external-symbol))
 		 (make-instance 'for-as-package
 		   :var-spec var-spec
 		   :type-spec type-spec
@@ -118,8 +113,7 @@
 	       'being-parser
 	       'each-the-parser
 	       'external-symbol-parser
-	       'in-of-parser
-	       'anything-parser))
+	       'package-form-parser))
 
 (define-parser for-as-package-parser
   (alternative 'package-symbol-parser
