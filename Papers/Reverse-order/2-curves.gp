@@ -1,7 +1,7 @@
 set term post eps
-set output "coloring.eps"
-set title "Coloring on rectangular grids 6 x N"
-set xlabel "N"
+set output "2-curves.eps"
+set title "Comparison between two reverse-count functions"
+set xlabel "List length"
 set ylabel "Time"
-plot 'coloring.dat' using 1:2 with lines linecolor rgb "red"
-
+plot '2-curves.dat' using 1:2 with lines linecolor rgb "blue", \
+      '2-curves.dat' using 1:3 with lines linecolor rgb "red"
