@@ -46,9 +46,9 @@
   (loop with a of-type string = "abc" return a)
   "abc")
 
-;; (deftest loop.8.9
-;;   (loop with (a b) = '(1 2) return (list b a))
-;;   (2 1))
+(deftest loop.8.9
+  (loop with (a b) = '(1 2) return (list b a))
+  (2 1))
 
 ;; (deftest loop.8.10
 ;;   (loop with (a b) of-type (fixnum fixnum) = '(3 4) return (+ a b))
