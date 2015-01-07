@@ -163,7 +163,12 @@
      ,inner-form))
 
 (defmethod wrap-subclause ((subclause with-subclause-no-form) inner-form)
-  `(let* ,(destructure-variables (var-spec subclause) nil)
+  `(let* ,(destructure-variables
+	   (var-spec subclause)
+	   (case (type-spec subclause)
+	     (fixnum 0)
+	     (float 0.0)
+	     (t nil)))
      ,inner-form))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
