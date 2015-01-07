@@ -54,9 +54,9 @@
   (loop with (a b) of-type (fixnum fixnum) = '(3 4) return (+ a b))
   7)
 
-;; (deftest loop.8.11
-;;   (loop with a of-type fixnum return a)
-;;   0)
+(deftest loop.8.11
+  (loop with a of-type fixnum return a)
+  0)
 
 ;; (deftest loop.8.12
 ;;   (loop with a of-type float return a)
