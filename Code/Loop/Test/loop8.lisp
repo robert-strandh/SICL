@@ -70,9 +70,9 @@
   (loop with a t return a)
   nil)
 
-;; (deftest loop.8.15
-;;   (loop with a t and b t return (list a b))
-;;   (nil nil))
+(deftest loop.8.15
+  (loop with a t and b t return (list a b))
+  (nil nil))
 
 ;; (deftest loop.8.16
 ;;   (loop with (a b c) of-type (fixnum float t) return (list a b c))
