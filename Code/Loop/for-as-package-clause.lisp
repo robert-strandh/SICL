@@ -44,6 +44,16 @@
   (alternative (keyword-parser 'external-symbol)
 	       (keyword-parser 'external-symbols)))
 
+;;; This parser recognizes IN/OF followed by any form, and returns
+;;; that form, or, if there is no IN/OF, returns the symbol *PACKAGE*.
+(define-parser package-form-parser
+  (optional '*package*
+	    (consecutive (lambda (of form)
+			   (declare (ignore of))
+			   form)
+			 'in-of-parser
+			 'anything-parser)))
+
 (define-parser package-symbol-parser
   (consecutive (lambda (var-spec
 			type-spec
