@@ -174,9 +174,9 @@
   (loop for x t being the external-symbols of "LOOP.CL-TEST.1" count x)
   3)
 
-;; (deftest loop.7.26
-;;   (loop for x t being the present-symbols of "LOOP.CL-TEST.2" count x)
-;;   3)
+(deftest loop.7.26
+  (loop for x t being the present-symbols of "LOOP.CL-TEST.2" count x)
+  3)
 
 ;; (deftest loop.7.27
 ;;   (loop for x of-type symbol being the symbols of "LOOP.CL-TEST.1" count x)
