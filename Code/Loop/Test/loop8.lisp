@@ -5,9 +5,9 @@
 
 (in-package :sicl-loop-test)
 
-;; (deftest loop.8.1
-;;   (loop with x = 1 do (return x))
-;;   1)
+(deftest loop.8.1
+  (loop with x = 1 do (return x))
+  1)
 
 ;; (deftest loop.8.2
 ;;   (loop with x = 1
