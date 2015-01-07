@@ -14,11 +14,11 @@
         with y = (1+ x) do (return (list x y)))
   (1 2))
 
-;; (deftest loop.8.3
-;;   (let ((y 2))
-;;     (loop with x = y
-;;           with y = (1+ x) do (return (list x y))))
-;;   (2 3))
+(deftest loop.8.3
+  (let ((y 2))
+    (loop with x = y
+          with y = (1+ x) do (return (list x y))))
+  (2 3))
 
 ;; (deftest loop.8.4
 ;;   (let (a b)
