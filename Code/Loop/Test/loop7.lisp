@@ -204,11 +204,11 @@
         #'string<)
   ("A" "B" "BAR" "BAZ" "C" "FOO"))
 
-;; (deftest loop.7.32
-;;   (sort (mapcar #'symbol-name
-;;                 (loop as x being the symbol of "LOOP.CL-TEST.1" collect x))
-;;         #'string<)
-;;   ("A" "B" "BAR" "BAZ" "C" "FOO"))
+(deftest loop.7.32
+  (sort (mapcar #'symbol-name
+                (loop as x being the symbol of "LOOP.CL-TEST.1" collect x))
+        #'string<)
+  ("A" "B" "BAR" "BAZ" "C" "FOO"))
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
