@@ -38,9 +38,9 @@
   (loop with a fixnum = 2 return a)
   2)
 
-;; (deftest loop.8.7
-;;   (loop with a float = 3.0 return a)
-;;   3.0)
+(deftest loop.8.7
+  (loop with a float = 3.0 return a)
+  3.0)
 
 ;; (deftest loop.8.8
 ;;   (loop with a of-type string = "abc" return a)
