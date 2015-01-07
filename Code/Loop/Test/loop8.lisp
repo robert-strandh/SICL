@@ -20,14 +20,13 @@
           with y = (1+ x) do (return (list x y))))
   (2 3))
 
-;; (deftest loop.8.4
-;;   (let (a b)
-;;     (loop with a = 1
-;;           and b = (list a)
-;;           and c = (list b)
-;;           return (list a b c)))
-;;   (1 (nil) (nil)))
-
+(deftest loop.8.4
+  (let (a b)
+    (loop with a = 1
+          and b = (list a)
+          and c = (list b)
+          return (list a b c)))
+  (1 (nil) (nil)))
 
 ;; ;;; type specs
 
