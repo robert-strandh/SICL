@@ -28,11 +28,11 @@
           return (list a b c)))
   (1 (nil) (nil)))
 
-;; ;;; type specs
+;;; type specs
 
-;; (deftest loop.8.5
-;;   (loop with a t = 1 return a)
-;;   1)
+(deftest loop.8.5
+  (loop with a t = 1 return a)
+  1)
 
 ;; (deftest loop.8.6
 ;;   (loop with a fixnum = 2 return a)
