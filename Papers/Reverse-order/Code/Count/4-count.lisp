@@ -1,9 +1,5 @@
 ;; divide by 16
 
-(defvar *log*)
-(defvar *k*)
-(setq *log* 4 *k* (ash 2 *log*))
-
 (defun count-from-end-with-length-4 (x list length)
   (declare (type fixnum length) (optimize (speed 3) (compilation-speed 0)))
   (let ((count 0))
