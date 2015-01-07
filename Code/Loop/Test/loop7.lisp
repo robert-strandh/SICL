@@ -233,12 +233,12 @@
          #'string<))
   ("A" "B" "C"))
 
-;; (deftest loop.7.35
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (sort (mapcar #'symbol-name
-;;                  (loop for x being the present-symbols of
-;;                        (expand-in-current-env (%m "LOOP.CL-TEST.2"))
-;;                        collect x))
-;;          #'string<))
-;;   ("X" "Y" "Z"))
+(deftest loop.7.35
+  (macrolet
+   ((%m (z) z))
+   (sort (mapcar #'symbol-name
+                 (loop for x being the present-symbols of
+                       (expand-in-current-env (%m "LOOP.CL-TEST.2"))
+                       collect x))
+         #'string<))
+  ("X" "Y" "Z"))
