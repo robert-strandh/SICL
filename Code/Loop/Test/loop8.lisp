@@ -96,10 +96,10 @@
   (loop with (a nil) = '(1 2) return a)
   1)
 
-;; (deftest loop.8.21
-;;   (loop with b = 3
-;;         and (a nil) = '(1 2) return (list a b))
-;;   (1 3))
+(deftest loop.8.21
+  (loop with b = 3
+        and (a nil) = '(1 2) return (list a b))
+  (1 3))
 
 ;; (deftest loop.8.22
 ;;   (loop with b = 3
