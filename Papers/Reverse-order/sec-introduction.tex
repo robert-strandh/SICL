@@ -17,13 +17,13 @@ and return the \emph{last} element that \emph{satisfies the test}%
   document.}
 even if the test has side effects.  There is one exception this
 requirement, however:  The \texttt{count} function is required by the
-standard to test the elements from the end of the sequence.  Though if
-the test has no side effects and cannot fail, as is the case of
-functions such as \texttt{eq} or \texttt{eql}, testing from the
-beginning is arguably conforming behavior.  In addition to the
-function \texttt{count}, the function \texttt{reduce} also requires
-processing from the end of the list when \texttt{from-end} is
-\emph{true}.
+standard to test the elements from the end of the sequence.%
+\footnote{Though if the test has no side effects and cannot fail, as
+  is the case of functions such as \texttt{eq} or \texttt{eql},
+  testing from the beginning is arguably conforming behavior.}
+In addition to the function \texttt{count}, the function
+\texttt{reduce} also requires processing from the end of the list when
+\texttt{from-end} is \emph{true}.
 
 Processing list elements from the beginning to the end could, however,
 have a significant additional cost associated with it when processing
