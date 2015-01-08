@@ -88,3 +88,77 @@ can be expressed with this recursive equation:%
 $$f(n) = \left\lfloor\frac{n}{2}\right\rfloor
 + f(\left\lfloor\frac{n}{2}\right\rfloor)4.
 + f(\left\lceil\frac{n}{2}\right\rceil)$$
+
+\subsection{Implementation-specific solutions}
+
+So far, we have explored techniques that can mostly be implemented in
+portable \commonlisp{}.  In this section, we explore a variation on
+our technique that requires access to the control stack of the
+implementation.
+
+Recall that at the lowest level of our technique, there is a recursive
+function that is used for traversing the list when the number of
+elements is small compared to the stack size.  At each invocation,
+this function does very little work.
+
+With direct access to the control stack, we can convert the recursive
+function to an iterative function that pushes the elements of the list
+on the control stack, and then processes them in reverse order.  This
+technique has several advantages:
+
+\begin{itemize}
+\item A single word is used for each element, whereas the recursive
+  function requires space for a return address, a frame pointer,
+  saved registers, etc.  As a result, this technique can be used for
+  lists with more elements than would be possible with the recursive
+  technique, thereby further decreasing the number of times a list is
+  traversed.
+\item There is no function-call overhead involved.  The only
+  processing that is needed for an element is to store it on the stack
+  and then comparing it to the item.
+\end{itemize}
+
+We illustrate this technique in a notation similar to \commonlisp{}:
+
+\begin{verbatim}
+(defun low-level-reverse-count (item list length)
+  (loop for rest = list then (cdr rest)
+        repeat length
+        do (push-on-stack (car rest)))
+  (loop repeat length
+        count (eq item (pop-from-stack))))
+\end{verbatim}
+
+We implemented this technique in SBCL.  In order not to have to
+recompile SBCL with our additional function, we used the
+implementation-specific foreign-function interface and wrote the
+function using the language C.  Rather than pushing and popping the
+control stack, we used the built-in C function \texttt{alloca} to
+allocate a one-dimensional C array on the control stack to hold the
+list elements.
+
+In SBCL, the default stack size is $2$MBytes, or around $250$k words
+on a 64-bit processor.  We tested our technique using $100000$ words
+on the stack.  The result is that for a list with $10$ million
+elements, our technique processes the list in reverse order as fast as
+an ordinary loop from the beginning of the list.
+
+This surprising result can be explained by a few factors:
+
+\begin{itemize}
+\item Presumably in order to speed up the functions \texttt{car} and
+  \texttt{cdr}, SBCL uses the same tag for \texttt{cons} cells and for
+  the symbol \texttt{nil}.  As a result, in order to traverse a list,
+  SBCL must make \emph{two} tests for each element, namely one to
+  check whether the putative list is something other than a list
+  altogether, and another to check whether it is a \texttt{cons}
+  cell.
+\item The SBCL compiler can not determine that the return value of
+  \texttt{count} must always be a \texttt{fixnum}.%
+  \footnote{In implementation with more tag bits, the result of
+    \texttt{count} might be a \texttt{bignum}, but in SBCL, a single
+    bit is used for a \texttt{fixnum} tag, and there can not be as
+    many \texttt{cons} cells in the system as the largest possible
+    \texttt{fixnum}.}
+  When the function is implemented in C, this problem disappears.
+\end{itemize}
