@@ -17,7 +17,7 @@
 ;;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;;; Boston, MA  02111-1307  USA.
 
-;;; ASDF system definition for Autograph.
+;;; ASDF system definition for Count.
 
 (defpackage :count-system
   (:use :asdf :common-lisp))
@@ -25,8 +25,8 @@
 (in-package :count-system)
 
 (defsystem :count
-  :description "Autograph: Automata and Graphs"
-  :name "autograph"
+  :description "Reverse Count experimentations"
+  :name "count"
   :version "1.0"
   :author "Irene Durand <idurand@labri.fr>"
   :licence "General Public Licence"
@@ -45,4 +45,4 @@
    (:file "7-count"))
   :serial t)
 
-(pushnew :autograph *features*)
+;; (pushnew :count *features*)
