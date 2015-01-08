@@ -84,9 +84,9 @@
 
 ;; ;;; The NIL block of a loop encloses the entire loop.
 
-;; (deftest loop.8.18
-;;   (loop with nil = (return t) return nil)
-;;   t)
+(deftest loop.8.18
+  (loop with nil = (return t) return nil)
+  t)
 
 ;; (deftest loop.8.19
 ;;   (loop with (nil a) = '(1 2) return a)
