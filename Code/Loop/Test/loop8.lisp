@@ -101,10 +101,10 @@
         and (a nil) = '(1 2) return (list a b))
   (1 3))
 
-;; (deftest loop.8.22
-;;   (loop with b = 3
-;;         and (nil a) = '(1 2) return (list a b))
-;;   (2 3))
+(deftest loop.8.22
+  (loop with b = 3
+        and (nil a) = '(1 2) return (list a b))
+  (2 3))
 
 ;; ;;; The NIL block of a loop encloses the entire loop.
 
