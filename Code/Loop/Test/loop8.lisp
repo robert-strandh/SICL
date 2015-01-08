@@ -106,14 +106,14 @@
         and (nil a) = '(1 2) return (list a b))
   (2 3))
 
-;; ;;; The NIL block of a loop encloses the entire loop.
+;;; The NIL block of a loop encloses the entire loop.
 
-;; (deftest loop.8.23
-;;   (loop
-;;    with a = 1
-;;    and  b = (return 2)
-;;    return 3)
-;;   2)
+(deftest loop.8.23
+  (loop
+   with a = 1
+   and  b = (return 2)
+   return 3)
+  2)
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
