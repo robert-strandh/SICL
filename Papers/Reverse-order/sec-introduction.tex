@@ -33,9 +33,9 @@ In this paper, we will concentrate on the functions that are required
 by the standard to process list elements from the end, and we will use
 only the function \texttt{count} in our test cases.
 
-There are of course some very simple methods for processing elements
+There are of course some very simple techniques for processing elements
 from the end of a list.
-One such method would be to start by reversing the list%
+One such technique would be to start by reversing the list%
 \footnote{By \emph{reversing the list} we do not mean modifying the
   list as \texttt{nreverse} would do, but creating a new list with the
   elements in reverse order as \texttt{reverse} would do.  The reason
@@ -43,20 +43,20 @@ One such method would be to start by reversing the list%
   influence the semantics of other functions, including perhaps the
   test function or the view of the list by other threads.}
 and processing the elements from the beginning in the reversed list.
-This method is used by several implementations, including SBCL and
+This technique is used by several implementations, including SBCL and
 CCL.
 We consider such a solution unacceptable, because of the $O(n)$
 additional space required, and the additional execution time required
 by the memory allocator and the garbage collector.
 
-Another simple method would be to traverse the list \emph{recursively}
+Another simple technique would be to traverse the list \emph{recursively}
 and testing the elements during the \emph{backtracking} phase of the
 recursion.  Again, $O(n)$ extra space is required, even though this
 time the memory allocator and the garbage collector are not solicited,
 at least in most implementations.  Worse, many implementations have a
 fairly small call stack, especially in multi-threaded implementations
 where each thread must have a dedicated stack.  Aside from these
-disadvantages, this method is however fairly efficient in terms of
+disadvantages, this technique is however fairly efficient in terms of
 execution time, because a simple function call is quite fast on most
 modern processors.  For that reason, we will use recursion as the
 basis of the technique described in this paper, but with fairly few
