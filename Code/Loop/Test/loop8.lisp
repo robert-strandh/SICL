@@ -78,9 +78,9 @@
 ;;   (loop with (a b c) of-type (fixnum float t) return (list a b c))
 ;;   (0 0.0 nil))
 
-;; (deftest loop.8.17
-;;   (loop with nil = nil return nil)
-;;   nil)
+(deftest loop.8.17
+  (loop with nil = nil return nil)
+  nil)
 
 ;; ;;; The NIL block of a loop encloses the entire loop.
 
