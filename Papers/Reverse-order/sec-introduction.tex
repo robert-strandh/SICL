@@ -14,9 +14,8 @@ keyword argument is \emph{true}.  For example, it is allowed for
 and return the \emph{last} element that \emph{satisfies the test}%
 \footnote{The phrase \emph{satisfy the test} has a precise meaning in
   the \commonlisp{} standard as shown in section 17.2 in that
-  document.}
-even if the test has side effects.  There is one exception this
-requirement, however:  The \texttt{count} function is required by the
+  document.}  even if the test has side effects.  There is one
+exception, however: The \texttt{count} function is required by the
 standard to test the elements from the end of the sequence.%
 \footnote{Though if the test has no side effects and cannot fail, as
   is the case of functions such as \texttt{eq} or \texttt{eql},
@@ -30,34 +29,12 @@ have a significant additional cost associated with it when processing
 from the end would require fewer executions of the test function, and
 the additional cost increases with the complexity of the test.
 
-The premise of this paper is that the programmer who supplies a true
-value to the keyword argument \texttt{:from-end} has an inkling that
-it would be more efficient to process the elements from the end, even
-when the standard explicitly allows the implementation to violate that
-processing order.  At the very least, a programmer that supplies a
-true value would have to take into account that at least \emph{some}
-implementation may \emph{actually} process the elements from the end.
-Therefore, it is likely that the programmer who definitely does not
-want elements to be processed form the end, either does not supply a
-true value, or would write a special-case version of the sequence
-function in question.
-
-For the remainder of this paper, we therefore assume that when a true
-value was supplied to the keyword argument \texttt{:from-end}, then
-the elements should be processed from the end, unless the following
-criteria simultaneously hold:
-
-\begin{itemize}
-\item The test is side-effect free
-\item The test can not fail (which excludes functions such as numeric
-  comparison).
-\item Processing from the beginning is guaranteed to be less costly in
-  terms of performance.
-\end{itemize}
+In this paper, we will concentrate on the functions that are required
+by the standard to process list elements from the end, and we will use
+only the function \texttt{count} in our test cases.
 
 There are of course some very simple methods for processing elements
 from the end of a list.
-
 One such method would be to start by reversing the list%
 \footnote{By \emph{reversing the list} we do not mean modifying the
   list as \texttt{nreverse} would do, but creating a new list with the
@@ -66,6 +43,8 @@ One such method would be to start by reversing the list%
   influence the semantics of other functions, including perhaps the
   test function or the view of the list by other threads.}
 and processing the elements from the beginning in the reversed list.
+This method is used by several implementations, including SBCL and
+CCL.
 We consider such a solution unacceptable, because of the $O(n)$
 additional space required, and the additional execution time required
 by the memory allocator and the garbage collector.
