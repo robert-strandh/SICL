@@ -48,18 +48,20 @@ A major disadvantage of this technique is that it requires $O(n)$
 additional heap space, and that it requires additional execution time
 by the memory allocator and the garbage collector.
 
-Another simple technique would be to traverse the list \emph{recursively}
-and testing the elements during the \emph{backtracking} phase of the
-recursion.  Again, $O(n)$ extra space is required, even though this
-time the memory allocator and the garbage collector are not solicited,
-at least in most implementations.  Worse, many implementations have a
-fairly small call stack, especially in multi-threaded implementations
-where each thread must have a dedicated stack.  Aside from these
-disadvantages, this technique is however fairly efficient in terms of
-execution time, because a simple function call is quite fast on most
-modern processors.  For that reason, we will use recursion as the
-basis of the technique described in this paper, but with fairly few
-recursive calls so that the additional extra space is modest.
+Another simple technique would be to traverse the list
+\emph{recursively} and testing the elements during the
+\emph{backtracking} phase of the recursion.  Again, $O(n)$ extra space
+is required, even though this time it is \emph{stack space} rather
+than heap space, so that the memory allocator and the garbage
+collector are not solicited, at least in most implementations.  Worse,
+many implementations have a fairly small call stack, especially in
+multi-threaded implementations where each thread must have a dedicated
+stack.  Aside from these disadvantages, this technique is however
+fairly efficient in terms of execution time, because a simple function
+call is quite fast on most modern processors.  For that reason, we
+will use recursion as the basis of the technique described in this
+paper, but with fairly few recursive calls so that the additional
+extra space is modest.
 
 Throughout this paper, we assume that the lists to be processed have a
 large number of elements, for several reasons:
