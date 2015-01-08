@@ -44,13 +44,13 @@ Irène Durand and Robert Strandh\\
 \begin{abstract}
 The \commonlisp{} sequence functions and some other functions such as
 \texttt{reduce} accept a keyword parameter called \texttt{from-end}.
-In the case of \texttt{count} and \texttt{reduce}, it is required that
-the elements are processed in reverse order.  Some implementations, in
-particular SBCL and CCL implement the reverse-order traversal of a
-list by non-destructively reversing the list and then traversing the
-reversed version instead.  This technique requires O(n) additional heap
-space, and increases the amount of work required by the garbage
-collector.
+In the case of \texttt{count} and \texttt{reduce}, when the value of
+that parameter is \emph{true}, it is required that the elements are
+processed in reverse order.  Some implementations, in particular SBCL
+and CCL implement the reverse-order traversal of a list by
+non-destructively reversing the list and then traversing the reversed
+version instead.  This technique requires O(n) additional heap space,
+and increases the amount of work required by the garbage collector.
 
 In this paper, we present a technique that only uses additional stack
 space.  To avoid stack overflow, our technique traverses parts of the
