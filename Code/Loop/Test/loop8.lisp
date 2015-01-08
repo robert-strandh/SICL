@@ -92,9 +92,9 @@
   (loop with (nil a) = '(1 2) return a)
   2)
 
-;; (deftest loop.8.20
-;;   (loop with (a nil) = '(1 2) return a)
-;;   1)
+(deftest loop.8.20
+  (loop with (a nil) = '(1 2) return a)
+  1)
 
 ;; (deftest loop.8.21
 ;;   (loop with b = 3
