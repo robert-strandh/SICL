@@ -6,15 +6,15 @@ To illustrate our technique, we first show a very simple version of it
 in the form of the following code:
 
 {\small\begin{verbatim}
-(defun find-from-end (x list)
+(defun count-from-end (x list)
   (labels ((aux (x list n)
-             (if (= n 1)
-                 (when (eq x (car list))
-                   (return-from find-from-end x))
-                 (let* ((n/2 (ash n -1))
-                        (half (nthcdr n/2 list)))
-                   (aux x half (- n n/2))
-                   (aux x list n/2)))))
+             (cond ((= n 0) 0)
+                   ((= n 1)
+                    (if (eq x (car list)) 1 0))
+                   (t (let* ((n/2 (ash n -1))
+                             (half (nthcdr n/2 list)))
+                        (+ (aux x half (- n n/2))
+                           (aux x list n/2)))))))
     (aux x list (length list))))))
 \end{verbatim}}
 
@@ -24,12 +24,10 @@ length.  The auxiliary function calls \texttt{nthcdr} in order to get
 a reference to about half the list it was passed.  Then it makes two
 recursive calls, first with the second half of the list and then with
 the firs half of the list.  The recursion terminates when the list has
-a single element in it.  Then this element is compared to the argument
-\texttt{x} and if they are the same,%
-\footnote{We use \texttt{eq} for the comparison here, because the
-  exact nature of the test is unimportant for illustrating our general
-  technique.}
-then the element is returned form the function.
+a single element or no elements in it.  When it has no element in it,
+clearly the count is $0$.  When it has a single element in it, the
+element is compared to the argument \texttt{x} and if they are the
+same, the value $1$ is returned.  Otherwise $0$ is returned.
 
 The main feature of our technique is that it trades fewer recursive
 calls for multiple traversals of the list.  The maximum number% of
