@@ -4,12 +4,14 @@ The \commonlisp{} \emph{sequence} functions are defined to work on
 lists as well as vectors.  Furthermore, many of these sequence
 functions accept a keyword argument \texttt{from-end} that alters the
 behavior in that elements toward the end of the sequence are favored
-over elements toward the beginning of the sequence.
+over elements toward the beginning of the sequence.  Other functions,
+in particular \texttt{reduce}, also accept this keyword argument.
 
 Most sequence functions are not required to process the elements from
-the end of the sequence.  For example, it is allowed for \texttt{find}
-to compare elements from the beginning of the sequence and return the
-\emph{last} element that \emph{satisfies the test}%
+the end of the sequence even though the value of the \texttt{from-end}
+keyword argument is \emph{true}.  For example, it is allowed for
+\texttt{find} to compare elements from the beginning of the sequence
+and return the \emph{last} element that \emph{satisfies the test}%
 \footnote{The phrase \emph{satisfy the test} has a precise meaning in
   the \commonlisp{} standard as shown in section 17.2 in that
   document.}
@@ -18,7 +20,10 @@ requirement, however:  The \texttt{count} function is required by the
 standard to test the elements from the end of the sequence.  Though if
 the test has no side effects and cannot fail, as is the case of
 functions such as \texttt{eq} or \texttt{eql}, testing from the
-beginning is arguably conforming behavior.
+beginning is arguably conforming behavior.  In addition to the
+function \texttt{count}, the function \texttt{reduce} also requires
+processing from the end of the list when \texttt{from-end} is
+\emph{true}.
 
 Processing list elements from the beginning to the end could, however,
 have a significant additional cost associated with it when processing
