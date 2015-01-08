@@ -143,9 +143,9 @@
    program-error)
   t)
 
-;; (deftest loop.8.error.2
-;;   (signals-error
-;;    (loop with a = 1
-;;          with a = 2 return a)
-;;    program-error)
-;;   t)
+(deftest loop.8.error.2
+  (signals-error
+   (loop with a = 1
+         with a = 2 return a)
+   program-error)
+  t)
