@@ -52,13 +52,13 @@ non-destructively reversing the list and then traversing the reversed
 version instead.  This technique requires O(n) additional heap space,
 and increases the amount of work required by the garbage collector.
 
-In this paper, we present a technique that only uses additional stack
-space.  To avoid stack overflow, our technique traverses parts of the
-list multiple times when the list has more elements than the available
-stack space can handle.  We show that our technique is fast, in
-particular for lists with a large number of elements, which is also
-the case where it is the most important to avoid allocating heap
-space.
+In this paper, we present a technique that only uses additional
+\emph{stack space}.  To avoid stack overflow, our technique traverses
+parts of the list multiple times when the list has more elements than
+the available stack space can handle.  We show that our technique is
+fast, in particular for lists with a large number of elements, which
+is also the case where it is the most important to avoid allocating
+heap space.
 \end{abstract}
 
 \category{D.3.4}{Programming Languages}{Processors}
