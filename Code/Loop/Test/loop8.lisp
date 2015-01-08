@@ -74,9 +74,9 @@
   (loop with a t and b t return (list a b))
   (nil nil))
 
-;; (deftest loop.8.16
-;;   (loop with (a b c) of-type (fixnum float t) return (list a b c))
-;;   (0 0.0 nil))
+(deftest loop.8.16
+  (loop with (a b c) of-type (fixnum float t) return (list a b c))
+  (0 0.0 nil))
 
 (deftest loop.8.17
   (loop with nil = nil return nil)
