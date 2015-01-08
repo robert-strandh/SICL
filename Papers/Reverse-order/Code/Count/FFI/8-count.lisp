@@ -35,4 +35,5 @@
 		      (aux3 x list n))))))
     (aux3 x list length)))
 
-  
+(defun reverse-count-8 (x list)
+  (count-from-end-with-length-8 x list (length list)))
