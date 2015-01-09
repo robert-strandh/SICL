@@ -18,17 +18,29 @@
     (maximize-clause accumulate-it-clause numeric-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause maximize-it-clause))
+  `((nil max/min ,(type-spec clause))))
+
 (defclass maximize-form-clause
     (maximize-clause accumulate-form-clause numeric-accumulation-mixin)
   ())
+
+(defmethod accumulation-variables ((clause maximize-form-clause))
+  `((nil max/min ,(type-spec clause))))
 
 (defclass maximize-it-into-clause
     (maximize-clause accumulate-it-into-clause numeric-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause maximize-it-into-clause))
+  `((,(into-var clause) max/min ,(type-spec clause))))
+
 (defclass maximize-form-into-clause
     (maximize-clause accumulate-form-into-clause numeric-accumulation-mixin)
   ())
+
+(defmethod accumulation-variables ((clause maximize-form-into-clause))
+  `((,(into-var clause) max/min ,(type-spec clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
