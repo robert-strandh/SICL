@@ -29,6 +29,14 @@
 
 (defclass list-accumulation-clause (accumulation-clause) ())
 
+;;; The methods on ACCUMULATION-VARIABLES call the function TYPE-SPEC
+;;; on the clause in order to obtain the third element of each
+;;; accumulation variable descriptor.  For the numeric accumulation
+;;; clauses, the type is stored in a slot.  For the list accumulation
+;;; clauses, we always want to return the type LIST.
+(defmethod type-spec ((clause list-accumulation-clause))
+  'list)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; NUMERIC-ACCUMULATION-CLAUSE.
