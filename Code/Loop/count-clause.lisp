@@ -12,7 +12,8 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass count-clause (accumulation-clause) ())
+(defclass count-clause (accumulation-clause)
+  ((%type-spec :initform T :initarg :type-spec :reader type-spec)))
 
 (defclass count-it-clause
     (count-clause accumulate-it-clause numeric-accumulation-mixin)
