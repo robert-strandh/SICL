@@ -24,6 +24,10 @@
 (defclass numeric-accumulation-clause (accumulation-clause)
   ((%type-spec :initform T :initarg :type-spec :reader type-spec)))
 
+(defclass count/sum-accumulation-clause (numeric-accumulation-clause) ())
+
+(defclass max/min-accumulation-clause (numeric-accumulation-clause) ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin class for INTO clause variants.
