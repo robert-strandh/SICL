@@ -19,7 +19,19 @@
 (defclass accumulation-clause (selectable-clause)
   ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; LIST-ACCUMULATION-CLAUSE.
+;;;
+;;; This class is the superclass of the list accumulation clauses:
+;;; COLLECT-CLAUSE, APPEND-CLAUSE, and NCONC-CLAUSE.
+;;;
+
 (defclass list-accumulation-clause (accumulation-clause) ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; NUMERIC-ACCUMULATION-CLAUSE.
 
 (defclass numeric-accumulation-clause (accumulation-clause)
   ((%type-spec :initform T :initarg :type-spec :reader type-spec)))
