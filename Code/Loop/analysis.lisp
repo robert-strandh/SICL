@@ -80,8 +80,27 @@
 			(second (first remaining))
 			(second (first entry))))))))
 
+;;; Check that there is no overlap between the bound variables and the
+;;; accumulation variables.
+(defun check-no-variable-overlap (clauses)
+  (let ((bound-variables
+	  (reduce #'append (mapcar #'bound-variables clauses)
+		  :from-end t))
+	(accumulation-variables
+	  (mapcar #'first
+		  (reduce #'append
+			  (mapcar #'accumulation-variables clauses)))))
+    (let ((intersection
+	    (intersection bound-variables accumulation-variables
+			  :test #'eq)))
+      (unless (null intersection)
+	(error "The variable ~s is used both as an iteration variable~@
+                and as an accumulation variable."
+	       (car intersection))))))
+
 ;;; FIXME: Add more analyses.
 (defun analyze-clauses (clauses)
   (verify-clause-order clauses)
   (check-variable-uniqueness clauses)
-  (check-accumulation-categories clauses))
+  (check-accumulation-categories clauses)
+  (check-no-variable-overlap clauses))
