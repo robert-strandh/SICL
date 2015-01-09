@@ -12,12 +12,6 @@
 
 (cl:in-package #:sicl-loop)
 
-(define-parser then-or-else-parser
-  (consecutive #'cons
-	       'selectable-clause-parser
-	       (repeat* #'list
-			'and-selectable-clause-parser)))
-
 (defclass conditional-clause (selectable-clause)
   ((%condition :initarg :condition :reader condition)
    (%then-clauses :initarg :then-clauses :reader then-clauses)
@@ -32,6 +26,11 @@
 ;;;
 ;;; Parsers.
 
+(define-parser then-or-else-parser
+  (consecutive #'cons
+	       'selectable-clause-parser
+	       (repeat* #'list
+			'and-selectable-clause-parser)))
 (define-parser if-else-end-clause-parser
   (consecutive (lambda (if form then-clauses else else-clauses end)
 		 (declare (ignore if else end))
