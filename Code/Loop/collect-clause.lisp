@@ -17,26 +17,14 @@
 (defclass collect-it-clause (collect-clause it-mixin)
   ())
 
-(defmethod accumulation-variables ((clause collect-it-clause))
-  '((nil list list)))
-
 (defclass collect-form-clause (collect-clause form-mixin)
   ())
-
-(defmethod accumulation-variables ((clause collect-form-clause))
-  '((nil list list)))
 
 (defclass collect-it-into-clause (collect-clause it-mixin into-mixin)
   ())
 
-(defmethod accumulation-variables ((clause collect-it-into-clause))
-  `((,(into-var clause) list list)))
-
 (defclass collect-form-into-clause (collect-clause form-mixin into-mixin)
   ())
-
-(defmethod accumulation-variables ((clause collect-form-into-clause))
-  `((,(into-var clause) list list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

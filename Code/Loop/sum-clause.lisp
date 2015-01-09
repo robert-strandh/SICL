@@ -17,26 +17,14 @@
 (defclass sum-it-clause (sum-clause it-mixin)
   ())
 
-(defmethod accumulation-variables ((clause sum-it-clause))
-  `((nil count/sum ,(type-spec clause))))
-
 (defclass sum-form-clause (sum-clause form-mixin)
   ())
-
-(defmethod accumulation-variables ((clause sum-form-clause))
-  `((nil count/sum ,(type-spec clause))))
 
 (defclass sum-it-into-clause (sum-clause it-mixin into-mixin)
   ())
 
-(defmethod accumulation-variables ((clause sum-it-into-clause))
-  `((,(into-var clause) count/sum ,(type-spec clause))))
-
 (defclass sum-form-into-clause (sum-clause form-mixin into-mixin)
   ())
-
-(defmethod accumulation-variables ((clause sum-form-into-clause))
-  `((,(into-var clause) count/sum ,(type-spec clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
