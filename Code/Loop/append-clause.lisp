@@ -25,7 +25,7 @@
     (append-clause accumulate-form-clause)
   ())
 
-(defmethod accumulation-variables ((clause append-it-clause))
+(defmethod accumulation-variables ((clause append-form-clause))
   '((nil list list)))
 
 (defclass append-it-into-clause
@@ -39,7 +39,7 @@
     (append-clause accumulate-form-into-clause)
   ())
 
-(defmethod accumulation-variables ((clause append-it-into-clause))
+(defmethod accumulation-variables ((clause append-form-into-clause))
   `((,(into-var clause) list list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
