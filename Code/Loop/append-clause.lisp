@@ -18,17 +18,29 @@
     (append-clause accumulate-it-clause list-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause append-it-clause))
+  '((nil list list)))
+
 (defclass append-form-clause
     (append-clause accumulate-form-clause list-accumulation-mixin)
   ())
+
+(defmethod accumulation-variables ((clause append-it-clause))
+  '((nil list list)))
 
 (defclass append-it-into-clause
     (append-clause accumulate-it-into-clause list-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause append-it-into-clause))
+  `((,(into-var clause) list list)))
+
 (defclass append-form-into-clause
     (append-clause accumulate-form-into-clause list-accumulation-mixin)
   ())
+
+(defmethod accumulation-variables ((clause append-it-into-clause))
+  `((,(into-var clause) list list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
