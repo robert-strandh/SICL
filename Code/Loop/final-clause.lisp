@@ -30,6 +30,9 @@
 (defmethod bound-variables ((clause final-clause))
   '())
 
+(defmethod accumulation-variables ((clause final-clause))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser
