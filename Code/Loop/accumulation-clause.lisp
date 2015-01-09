@@ -73,6 +73,7 @@
 
 (defmethod accumulation-category ((clause max/min-accumulation-clause))
   'max/min)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin class for INTO clause variants.
@@ -80,3 +81,12 @@
 (defclass into-mixin ()
   ((%into-var :initform nil :initarg :into-var :accessor into-var)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on ACCUMULATION-VARIABLES, valid for all accumulation
+;;; clauses.
+
+(defmethod accumulation-variables ((clause accumulation-clause))
+  `((,(into-var clause)
+     ,(accumulation-category clause)
+     ,(type-spec clause))))
