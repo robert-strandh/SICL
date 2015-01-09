@@ -19,20 +19,29 @@
     (count-clause accumulate-it-clause numeric-accumulation-mixin)
   ())
 
-(defmethod accumulation-variables ((clause append-it-clause))
-  '((nil list list)))
+(defmethod accumulation-variables ((clause count-it-clause))
+  `((nil count/sum ,(type-spec clause))))
 
 (defclass count-form-clause
     (count-clause accumulate-form-clause numeric-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause count-form-clause))
+  `((nil count/sum ,(type-spec clause))))
+
 (defclass count-it-into-clause
     (count-clause accumulate-it-into-clause numeric-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause count-it-into-clause))
+  `((,(into-var) count/sum ,(type-spec clause))))
+
 (defclass count-form-into-clause
     (count-clause accumulate-form-into-clause numeric-accumulation-mixin)
   ())
+
+(defmethod accumulation-variables ((clause count-form-into-clause))
+  `((,(into-var) count/sum ,(type-spec clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
