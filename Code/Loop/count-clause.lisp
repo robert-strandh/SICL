@@ -33,14 +33,14 @@
   ())
 
 (defmethod accumulation-variables ((clause count-it-into-clause))
-  `((,(into-var) count/sum ,(type-spec clause))))
+  `((,(into-var clause) count/sum ,(type-spec clause))))
 
 (defclass count-form-into-clause
     (count-clause accumulate-form-into-clause numeric-accumulation-mixin)
   ())
 
 (defmethod accumulation-variables ((clause count-form-into-clause))
-  `((,(into-var) count/sum ,(type-spec clause))))
+  `((,(into-var clause) count/sum ,(type-spec clause))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
