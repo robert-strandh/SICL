@@ -42,3 +42,16 @@
 ;;; Mixin for clauses that make the loop return a value.
 
 (defclass loop-return-clause-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin for clauses that has an implicit IT argument.
+
+(defclass it-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin for clauses that has an explicit form argument.
+
+(defclass form-mixin ()
+  ((%form :initarg :form :reader form)))
