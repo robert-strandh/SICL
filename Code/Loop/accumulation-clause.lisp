@@ -33,7 +33,7 @@
 
 (defclass list-accumulation-clause (accumulation-clause) ())
 
-(defclass numeric-accumulation-mixin ()
+(defclass numeric-accumulation-clause (accumulation-clause)
   ((%type-spec :initform T :initarg :type-spec :reader type-spec)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

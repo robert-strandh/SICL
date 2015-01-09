@@ -12,31 +12,27 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass sum-clause (accumulation-clause) ())
+(defclass sum-clause (numeric-accumulation-clause) ())
 
-(defclass sum-it-clause
-    (sum-clause accumulate-it-clause numeric-accumulation-mixin)
+(defclass sum-it-clause (sum-clause it-mixin)
   ())
 
 (defmethod accumulation-variables ((clause sum-it-clause))
   `((nil count/sum ,(type-spec clause))))
 
-(defclass sum-form-clause
-    (sum-clause accumulate-form-clause numeric-accumulation-mixin)
+(defclass sum-form-clause (sum-clause form-mixin)
   ())
 
 (defmethod accumulation-variables ((clause sum-form-clause))
   `((nil count/sum ,(type-spec clause))))
 
-(defclass sum-it-into-clause
-    (sum-clause accumulate-it-into-clause numeric-accumulation-mixin)
+(defclass sum-it-into-clause (sum-clause it-mixin into-mixin)
   ())
 
 (defmethod accumulation-variables ((clause sum-it-into-clause))
   `((,(into-var clause) count/sum ,(type-spec clause))))
 
-(defclass sum-form-into-clause
-    (sum-clause accumulate-form-into-clause numeric-accumulation-mixin)
+(defclass sum-form-into-clause (sum-clause form-mixin into-mixin)
   ())
 
 (defmethod accumulation-variables ((clause sum-form-into-clause))
