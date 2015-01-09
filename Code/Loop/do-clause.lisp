@@ -26,6 +26,9 @@
 (defclass do-clause (unconditional-clause)
   ((%body :initarg :body :reader body)))
 
+(defmethod accumulation-variables ((clause do-clause))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser
