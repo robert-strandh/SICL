@@ -26,6 +26,9 @@
 (defclass return-clause (unconditional-clause)
   ())
 
+(defmethod accumulation-variables ((clause return-clause))
+  '())
+
 (defclass return-it-clause (return-clause)
   ())
 
