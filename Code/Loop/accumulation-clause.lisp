@@ -36,3 +36,10 @@
 (defclass numeric-accumulation-mixin ()
   ((%type-spec :initform T :initarg :type-spec :reader type-spec)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class for INTO clause variants.
+
+(defclass into-mixin ()
+  ((%into-var :initform nil :initarg :into-var :accessor into-var)))
+
