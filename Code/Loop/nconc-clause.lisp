@@ -25,7 +25,7 @@
     (nconc-clause accumulate-form-clause)
   ())
 
-(defmethod accumulation-variables ((clause nconc-it-clause))
+(defmethod accumulation-variables ((clause nconc-form-clause))
   '((nil list list)))
 
 (defclass nconc-it-into-clause
@@ -39,7 +39,7 @@
     (nconc-clause accumulate-form-into-clause)
   ())
 
-(defmethod accumulation-variables ((clause nconc-it-into-clause))
+(defmethod accumulation-variables ((clause nconc-form-into-clause))
   `((,(into-var clause) list list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
