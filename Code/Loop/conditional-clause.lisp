@@ -23,8 +23,10 @@
   '())
 
 (defmethod accumulation-variables ((clause conditional-clause))
-  (append (reduce #'append (accumulation-variables (then-clauses clause)))
-	  (reduce #'append (accumulation-variables (else-clauses clause)))))
+  (append (reduce #'append
+		  (mapcar #'accumulation-variables (then-clauses clause)))
+	  (reduce #'append
+		  (mapcar #'accumulation-variables (else-clauses clause)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
