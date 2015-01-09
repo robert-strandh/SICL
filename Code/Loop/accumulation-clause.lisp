@@ -33,4 +33,6 @@
 
 (defclass list-accumulation-mixin () ())
 
-(defclass numeric-accumulation-mixin () ())
+(defclass numeric-accumulation-mixin ()
+  ((%type-spec :initform T :initarg :type-spec :reader type-spec)))
+
