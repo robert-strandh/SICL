@@ -18,6 +18,15 @@
 ;;; clause.
 (defgeneric bound-variables (clause))
 
+;;; The purpose of this generic function is to generate a list of all
+;;; the accumulation variables in a clause.  Each element of the list
+;;; is itself a list of three elements.  The first element is the name
+;;; of a variable used in an INTO clause, or NIL if the clause has no
+;;; INTO.  The second element determines the kind of accumulation, and
+;;; can be one of the symbols LIST, COUNT/SUM, or MAX/MIN.  The third
+;;; element is a type specifier which can be T.
+(defgeneric accumulation-variables (clause))
+
 (defgeneric declarations (clause)
   (:method (clause)
     (declare (ignore clause))
