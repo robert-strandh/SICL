@@ -18,17 +18,29 @@
     (nconc-clause accumulate-it-clause list-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause nconc-it-clause))
+  '((nil list list)))
+
 (defclass nconc-form-clause
     (nconc-clause accumulate-form-clause list-accumulation-mixin)
   ())
+
+(defmethod accumulation-variables ((clause nconc-it-clause))
+  '((nil list list)))
 
 (defclass nconc-it-into-clause
     (nconc-clause accumulate-it-into-clause list-accumulation-mixin)
   ())
 
+(defmethod accumulation-variables ((clause nconc-it-into-clause))
+  `((,(into-var clause) list list)))
+
 (defclass nconc-form-into-clause
     (nconc-clause accumulate-form-into-clause list-accumulation-mixin)
   ())
+
+(defmethod accumulation-variables ((clause nconc-it-into-clause))
+  `((,(into-var clause) list list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
