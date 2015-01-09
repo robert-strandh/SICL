@@ -22,6 +22,10 @@
 (defmethod bound-variables ((clause conditional-clause))
   '())
 
+(defmethod accumulation-variables ((clause conditional-clause))
+  (append (reduce #'append (accumulation-variables (then-clauses clause)))
+	  (reduce #'append (accumulation-variables (else-clauses clause)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
