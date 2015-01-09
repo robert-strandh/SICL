@@ -19,6 +19,15 @@
 (defclass accumulation-clause (selectable-clause)
   ())
 
+;;; The methods on ACCUMULATION-VARIABLES call the function INTO-VAR
+;;; on the clause in order to obtain the first element of each
+;;; accumulation variable descriptor.  For clauses that have
+;;; INTO-MIXIN as a superclass, the variable is stored in a slot.
+;;; This method defines the default method to be used for all other
+;;; accumulation clauses.
+(defmethod into-var ((clause accumulation-clause))
+  'nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; LIST-ACCUMULATION-CLAUSE.
