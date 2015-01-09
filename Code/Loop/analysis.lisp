@@ -59,7 +59,29 @@
 		 (error 'multiple-variable-occurrences
 			:bound-variable var))))))
 
+;;; Check that for a given accumulation variable, there is only one
+;;; category.  Recall that the accumlation categores are represented
+;;; by the symbols LIST, COUNT/SUM, and MAX/MIN.
+(defun check-accumulation-categories (clauses)
+  (let* ((descriptors (reduce #'append
+			      (mapcar #'accumulation-variables clauses)))
+	 (equal-fun (lambda (d1 d2)
+		      (and (eq (first d1) (first d2))
+			   (eq (second d1) (second d2)))))
+	 (unique (remove-duplicates descriptors :test equal-fun)))
+    (loop for remaining on unique
+	  do (let ((entry (member (first (first remaining))
+				  (rest remaining)
+				  :test #'first)))
+	       (unless (null entry)
+		 (error "the accumulation variable ~s is used both~@
+                         for ~s accumulation and ~s accumulation."
+			(first (first remaining))
+			(second (first remaining))
+			(second (first entry))))))))
+
 ;;; FIXME: Add more analyses.
 (defun analyze-clauses (clauses)
   (verify-clause-order clauses)
-  (check-variable-uniqueness clauses))
+  (check-variable-uniqueness clauses)
+  (check-accumulation-categories clauses))
