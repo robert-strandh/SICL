@@ -33,3 +33,7 @@
 ;;;   variable-clause ::= with-clause | for-as-clause
 
 (defclass variable-clause (clause) ())
+
+;;; No variable clause defines any accumulation variables
+(defmethod accumulation-variables ((clause variable-clause))
+  '())
