@@ -14,29 +14,25 @@
 
 (defclass append-clause (list-accumulation-clause) ())
 
-(defclass append-it-clause
-    (append-clause accumulate-it-clause)
+(defclass append-it-clause (append-clause it-mixin)
   ())
 
 (defmethod accumulation-variables ((clause append-it-clause))
   '((nil list list)))
 
-(defclass append-form-clause
-    (append-clause accumulate-form-clause)
+(defclass append-form-clause (append-clause form-mixin)
   ())
 
 (defmethod accumulation-variables ((clause append-form-clause))
   '((nil list list)))
 
-(defclass append-it-into-clause
-    (append-clause accumulate-it-into-clause)
+(defclass append-it-into-clause (append-clause it-mixin into-mixin)
   ())
 
 (defmethod accumulation-variables ((clause append-it-into-clause))
   `((,(into-var clause) list list)))
 
-(defclass append-form-into-clause
-    (append-clause accumulate-form-into-clause)
+(defclass append-form-into-clause (append-clause form-mixin into-mixin)
   ())
 
 (defmethod accumulation-variables ((clause append-form-into-clause))
