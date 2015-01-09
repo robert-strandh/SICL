@@ -12,7 +12,7 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass count-clause (numeric-accumulation-clause) ())
+(defclass count-clause (count/sum-accumulation-clause) ())
 
 (defclass count-it-clause (count-clause it-mixin)
   ())

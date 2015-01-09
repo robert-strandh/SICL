@@ -12,7 +12,7 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass maximize-clause (numeric-accumulation-clause) ())
+(defclass maximize-clause (max/min-accumulation-clause) ())
 
 (defclass maximize-it-clause (maximize-clause it-mixin)
   ())
