@@ -12,31 +12,31 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass append-clause (accumulation-clause) ())
+(defclass append-clause (list-accumulation-clause) ())
 
 (defclass append-it-clause
-    (append-clause accumulate-it-clause list-accumulation-mixin)
+    (append-clause accumulate-it-clause)
   ())
 
 (defmethod accumulation-variables ((clause append-it-clause))
   '((nil list list)))
 
 (defclass append-form-clause
-    (append-clause accumulate-form-clause list-accumulation-mixin)
+    (append-clause accumulate-form-clause)
   ())
 
 (defmethod accumulation-variables ((clause append-it-clause))
   '((nil list list)))
 
 (defclass append-it-into-clause
-    (append-clause accumulate-it-into-clause list-accumulation-mixin)
+    (append-clause accumulate-it-into-clause)
   ())
 
 (defmethod accumulation-variables ((clause append-it-into-clause))
   `((,(into-var clause) list list)))
 
 (defclass append-form-into-clause
-    (append-clause accumulate-form-into-clause list-accumulation-mixin)
+    (append-clause accumulate-form-into-clause)
   ())
 
 (defmethod accumulation-variables ((clause append-it-into-clause))

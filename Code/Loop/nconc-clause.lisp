@@ -12,31 +12,31 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass nconc-clause (accumulation-clause) ())
+(defclass nconc-clause (list-accumulation-clause) ())
 
 (defclass nconc-it-clause
-    (nconc-clause accumulate-it-clause list-accumulation-mixin)
+    (nconc-clause accumulate-it-clause)
   ())
 
 (defmethod accumulation-variables ((clause nconc-it-clause))
   '((nil list list)))
 
 (defclass nconc-form-clause
-    (nconc-clause accumulate-form-clause list-accumulation-mixin)
+    (nconc-clause accumulate-form-clause)
   ())
 
 (defmethod accumulation-variables ((clause nconc-it-clause))
   '((nil list list)))
 
 (defclass nconc-it-into-clause
-    (nconc-clause accumulate-it-into-clause list-accumulation-mixin)
+    (nconc-clause accumulate-it-into-clause)
   ())
 
 (defmethod accumulation-variables ((clause nconc-it-into-clause))
   `((,(into-var clause) list list)))
 
 (defclass nconc-form-into-clause
-    (nconc-clause accumulate-form-into-clause list-accumulation-mixin)
+    (nconc-clause accumulate-form-into-clause)
   ())
 
 (defmethod accumulation-variables ((clause nconc-it-into-clause))

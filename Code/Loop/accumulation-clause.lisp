@@ -31,7 +31,7 @@
 (defclass accumulate-form-into-clause (accumulate-form-clause)
   ((%into-var :initform nil :initarg :into-var :accessor into-var)))
 
-(defclass list-accumulation-mixin () ())
+(defclass list-accumulation-clause (accumulation-clause) ())
 
 (defclass numeric-accumulation-mixin ()
   ((%type-spec :initform T :initarg :type-spec :reader type-spec)))
