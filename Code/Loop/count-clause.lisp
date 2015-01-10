@@ -97,3 +97,9 @@
   `(when ,(form clause)
      (setq ,(into-var clause)
 	   (1+ ,(into-var clause)))))
+
+(defmethod body-form ((clause count-it-clause) end-tag)
+  (declare (ignore end-tag))
+  `(when ,*it-var*
+     (setq ,*accumulation-variable*
+	   (1+ ,*accumulation-variable*))))
