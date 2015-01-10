@@ -30,10 +30,10 @@
 		 (traverse (rest length)
 		   (declare (type fixnum length))
 		   ;;		 (print (list 'traverse (length rest) length))
-		   (cond  ((<= length 16384) (recursive-traverse rest length)) ; 2^14
-			  ((<= length 32768) (divide rest length 1)) ; 2^15
-			  ((<= length 65536) (divide rest length 2)) ; 2^16
-			  ((<= length 131072) (divide rest length 3)) ; 2^17
+		   (cond  ((<= length 8192) (recursive-traverse rest length)) ; 2^13
+			  ((<= length 16384) (divide rest length 1)) ; 2^14
+			  ((<= length 32768) (divide rest length 2)) ; 2^15
+			  ((<= length 65536) (divide rest length 3)) ; 2^16
 			  (t (divide rest length 4)))))
 	  (traverse list length))))
     count))
