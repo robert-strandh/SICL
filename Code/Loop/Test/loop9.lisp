@@ -27,11 +27,11 @@
         finally (return (reverse foo)))
   ((c) (b) (a)))
 
-;; (deftest loop.9.5
-;;   (loop for x in '(a b c)
-;;         collecting (list x) into foo
-;;         finally (return (reverse foo)))
-;;   ((c) (b) (a)))
+(deftest loop.9.5
+  (loop for x in '(a b c)
+        collecting (list x) into foo
+        finally (return (reverse foo)))
+  ((c) (b) (a)))
 
 ;; (deftest loop.9.6
 ;;   (loop for x from 1 to 10
