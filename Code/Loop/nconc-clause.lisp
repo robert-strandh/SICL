@@ -95,3 +95,15 @@
 		      ,(form clause))
 	      (setq ,*list-tail-accumulation-variable*
 		    (last ,*list-tail-accumulation-variable*)))))
+
+(defmethod body-form ((clause nconc-form-into-clause) end-tag)
+  (declare (ignore end-tag))
+  `(if (null ,(tail-variable (into-var clause)))
+       (progn (setq ,(into-var clause)
+		    ,(form clause))
+	      (setq ,(tail-variable (into-var clause))
+		    (last ,(into-var clause))))
+       (progn (rplacd ,(tail-variable (into-var clause))
+		      ,(form clause))
+	      (setq ,(tail-variable (into-var clause))
+		    (last ,(tail-variable (into-var clause)))))))
