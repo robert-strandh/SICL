@@ -165,12 +165,14 @@
 ;;; Compute body-form.
 
 (defmethod body-form ((clause conditional-clause) end-tag)
-  `(if ,(condition clause)
-       (progn
-	 ,@(mapcar (lambda (clause)
-		     (body-form clause end-tag))
-		   (then-clauses clause)))
-       (progn
-	 ,@(mapcar (lambda (clause)
-		     (body-form clause end-tag))
-		   (else-clauses clause)))))
+  (let ((*it-var* (gensym)))
+    `(let ((,*it-var* ,(condition clause)))
+       (if ,*it-var*
+	   (progn
+	     ,@(mapcar (lambda (clause)
+			 (body-form clause end-tag))
+		       (then-clauses clause)))
+	   (progn
+	     ,@(mapcar (lambda (clause)
+			 (body-form clause end-tag))
+		       (else-clauses clause)))))))
