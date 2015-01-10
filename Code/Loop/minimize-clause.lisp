@@ -79,3 +79,13 @@
 	       'minimize-it-clause-parser
 	       'minimize-form-into-clause-parser
 	       'minimize-form-clause-parser))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the BODY-FORM.
+
+(defmethod body-form ((clause minimize-form-clause) end-tag)
+  (declare (ignore end-tag))
+  `(setq ,*accumulation-variable*
+	 (min ,*accumulation-variable* ,(form clause))))
+
