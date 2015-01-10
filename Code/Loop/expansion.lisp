@@ -82,6 +82,11 @@
       0
       nil))
 
+;;; This variable is bound by the code generator for
+;;; CONDITIONAL-CLAUSE before calling the code generators for the
+;;; clauses in its THEN and ELSE branches.
+(defvar *it-var*)
+
 (defvar *accumulation-variable*)
 
 (defvar *list-tail-accumulation-variable*)
