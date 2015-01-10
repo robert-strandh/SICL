@@ -93,11 +93,11 @@
 	 (equal-fun (lambda (d1 d2)
 		      (and (eq (first d1) (first d2))
 			   (eq (second d1) (second d2)))))
-	 (unique (remove-duplicates descriptors :test equal-fun)))
-    (loop for (name category type) in unique
+	 (unique (remove-duplicates descriptors :test equal-fun))
+	 (no-nil (remove nil unique :test #'eq :key #'car)))
+    (loop for (name category type) in no-nil
 	  for initial-value = (if (eq category 'count/sum) 0 nil)
-	  for var = (if (null name) *accumulation-variable* name)
-	  collect `(,var ,initial-value))))
+	  collect `(,name ,initial-value))))
 
 (defvar *loop-name*)
 
