@@ -21,11 +21,11 @@
         collect x)
   good)
 
-;; (deftest loop.9.4
-;;   (loop for x in '(a b c)
-;;         collect (list x) into foo
-;;         finally (return (reverse foo)))
-;;   ((c) (b) (a)))
+(deftest loop.9.4
+  (loop for x in '(a b c)
+        collect (list x) into foo
+        finally (return (reverse foo)))
+  ((c) (b) (a)))
 
 ;; (deftest loop.9.5
 ;;   (loop for x in '(a b c)
