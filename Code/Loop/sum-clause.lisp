@@ -100,3 +100,8 @@
   (declare (ignore end-tag))
   `(setq ,*accumulation-variable*
 	 (+ ,*accumulation-variable* ,*it-var*)))
+
+(defmethod body-form ((clause sum-it-into-clause) end-tag)
+  (declare (ignore end-tag))
+  `(setq ,(into-var clause)
+	 (+ ,(into-var clause) ,*it-var*)))
