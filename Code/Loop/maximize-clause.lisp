@@ -79,3 +79,12 @@
 	       'maximize-it-clause-parser
 	       'maximize-form-into-clause-parser
 	       'maximize-form-clause-parser))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the BODY-FORM.
+
+(defmethod body-form ((clause maximize-form-clause) end-tag)
+  (declare (ignore end-tag))
+  `(setq ,*accumulation-variable*
+	 (max ,*accumulation-variable* ,(form clause))))
