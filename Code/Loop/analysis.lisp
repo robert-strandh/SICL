@@ -72,7 +72,8 @@
     (loop for remaining on unique
 	  do (let ((entry (member (first (first remaining))
 				  (rest remaining)
-				  :test #'first)))
+				  :test #'eq
+				  :key #'first)))
 	       (unless (null entry)
 		 (error "the accumulation variable ~s is used both~@
                          for ~s accumulation and ~s accumulation."
