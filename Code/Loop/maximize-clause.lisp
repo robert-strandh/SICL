@@ -88,3 +88,8 @@
   (declare (ignore end-tag))
   `(setq ,*accumulation-variable*
 	 (max ,*accumulation-variable* ,(form clause))))
+
+(defmethod body-form ((clause maximize-form-into-clause) end-tag)
+  (declare (ignore end-tag))
+  `(setq ,(into-var clause)
+	 (max ,(into-var clause) ,(form clause))))
