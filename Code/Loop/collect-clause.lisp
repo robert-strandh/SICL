@@ -20,10 +20,10 @@
 (defclass collect-form-clause (collect-clause form-mixin)
   ())
 
-(defclass collect-it-into-clause (collect-clause it-mixin into-mixin)
+(defclass collect-it-into-clause (into-mixin collect-clause it-mixin)
   ())
 
-(defclass collect-form-into-clause (collect-clause form-mixin into-mixin)
+(defclass collect-form-into-clause (into-mixin collect-clause form-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
