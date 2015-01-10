@@ -97,3 +97,15 @@
 		      (list ,(form clause)))
 	      (setq ,*list-tail-accumulation-variable*
 		    (cdr ,*list-tail-accumulation-variable*)))))
+
+(defmethod body-form ((clause collect-form-into-clause) end-tag)
+  (declare (ignore end-tag))
+  `(if (null ,(tail-variable (into-var clause)))
+       (progn (setq ,(tail-variable (into-var clause))
+		    (list ,(form clause)))
+	      (setq ,(into-var clause)
+		    ,(tail-variable (into-var clause))))
+       (progn (rplacd ,(tail-variable (into-var clause))
+		      (list ,(form clause)))
+	      (setq ,(tail-variable (into-var clause))
+		    (cdr ,(tail-variable (into-var clause)))))))
