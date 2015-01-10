@@ -183,6 +183,7 @@
 			 nil))
 	       (*loop-name* name)
 	       (*accumulation-variable* (gensym))
-	       (*list-tail-accumulation-variable* (gensym)))
+	       (*list-tail-accumulation-variable* (gensym))
+	       (*tail-variables* (make-hash-table :test #'eq)))
 	  `(block ,name
 	     ,(expand-clauses clauses))))))
