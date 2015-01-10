@@ -93,3 +93,8 @@
   (declare (ignore end-tag))
   `(setq ,(into-var clause)
 	 (min ,(into-var clause) ,(form clause))))
+
+(defmethod body-form ((clause minimize-it-clause) end-tag)
+  (declare (ignore end-tag))
+  `(setq ,*accumulation-variable*
+	 (min ,*accumulation-variable* ,*it-var*)))
