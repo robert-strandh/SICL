@@ -79,3 +79,19 @@
 	       'nconc-it-clause-parser
 	       'nconc-form-into-clause-parser
 	       'nconc-form-clause-parser))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute body-form.
+
+(defmethod body-form ((clause nconc-form-clause) end-tag)
+  (declare (ignore end-tag))
+  `(if (null ,*list-tail-accumulation-variable*)
+       (progn (setq ,*accumulation-variable*
+		    ,(form clause))
+	      (setq ,*list-tail-accumulation-variable*
+		    (last ,*accumulation-variable*)))
+       (progn (rplacd ,*list-tail-accumulation-variable*
+		      ,(form clause))
+	      (setq ,*list-tail-accumulation-variable*
+		    (last ,*list-tail-accumulation-variable*)))))
