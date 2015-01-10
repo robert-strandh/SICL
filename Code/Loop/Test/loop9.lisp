@@ -33,12 +33,12 @@
         finally (return (reverse foo)))
   ((c) (b) (a)))
 
-;; (deftest loop.9.6
-;;   (loop for x from 1 to 10
-;;         when (evenp x) collect x into foo
-;;         when (oddp x)  collect x into bar
-;;         finally (return (list foo bar)))
-;;   ((2 4 6 8 10) (1 3 5 7 9)))
+(deftest loop.9.6
+  (loop for x from 1 to 10
+        when (evenp x) collect x into foo
+        when (oddp x)  collect x into bar
+        finally (return (list foo bar)))
+  ((2 4 6 8 10) (1 3 5 7 9)))
 
 ;; (deftest loop.9.7
 ;;   (loop for x from 1 to 10
