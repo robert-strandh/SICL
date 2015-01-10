@@ -86,6 +86,15 @@
 
 (defvar *list-tail-accumulation-variable*)
 
+(defvar *tail-variables*)
+
+(defun tail-variable (head-variable)
+  (let ((result (gethash head-variable *tail-variables*)))
+    (when (null result)
+      (setf result (gensym))
+      (setf (gethash head-variable *tail-variables*) result))
+    result))
+
 (defun accumulation-bindings (clauses)
   (let* ((descriptors
 	   (reduce #'append
@@ -152,7 +161,8 @@
 (defun expand-clauses (all-clauses)
   `(let ((,*accumulation-variable*
 	   ,(accumulation-initial-value all-clauses))
-	 (,*list-tail-accumulation-variable* nil))
+	 (,*list-tail-accumulation-variable* nil)
+	 ,@(accumulation-bindings all-clauses))
      (declare (ignorable ,*list-tail-accumulation-variable*))
      ,(do-clauses all-clauses)))
 
