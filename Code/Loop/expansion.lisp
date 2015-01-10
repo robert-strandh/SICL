@@ -106,7 +106,9 @@
 	 (no-nil (remove nil unique :test #'eq :key #'car)))
     (loop for (name category type) in no-nil
 	  for initial-value = (if (eq category 'count/sum) 0 nil)
-	  collect `(,name ,initial-value))))
+	  collect `(,name ,initial-value)
+	  when (eq category 'list)
+	    collect `(,(tail-variable name) ,nil))))
 
 (defvar *loop-name*)
 
