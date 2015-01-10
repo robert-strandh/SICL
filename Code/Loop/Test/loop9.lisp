@@ -15,11 +15,11 @@
   (loop for x in '(2 3 4) collecting (1+ x))
   (3 4 5))
 
-;; (deftest loop.9.3
-;;   (loop for x in '(0 1 2)
-;;         when (eql x 2) do (return 'good)
-;;         collect x)
-;;   good)
+(deftest loop.9.3
+  (loop for x in '(0 1 2)
+        when (eql x 2) do (return 'good)
+        collect x)
+  good)
 
 ;; (deftest loop.9.4
 ;;   (loop for x in '(a b c)
