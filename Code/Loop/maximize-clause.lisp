@@ -20,10 +20,10 @@
 (defclass maximize-form-clause (maximize-clause form-mixin)
   ())
 
-(defclass maximize-it-into-clause (maximize-clause it-mixin into-mixin)
+(defclass maximize-it-into-clause (into-mixin maximize-clause it-mixin)
   ())
 
-(defclass maximize-form-into-clause (maximize-clause form-mixin into-mixin)
+(defclass maximize-form-into-clause (into-mixin maximize-clause form-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

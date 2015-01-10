@@ -20,10 +20,10 @@
 (defclass minimize-form-clause (minimize-clause form-mixin)
   ())
 
-(defclass minimize-it-into-clause (minimize-clause it-mixin into-mixin)
+(defclass minimize-it-into-clause (into-mixin minimize-clause it-mixin)
   ())
 
-(defclass minimize-form-into-clause (minimize-clause form-mixin into-mixin)
+(defclass minimize-form-into-clause (into-mixin minimize-clause form-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

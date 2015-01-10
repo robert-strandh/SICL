@@ -20,10 +20,10 @@
 (defclass count-form-clause (count-clause form-mixin)
   ())
 
-(defclass count-it-into-clause (count-clause it-mixin into-mixin)
+(defclass count-it-into-clause (into-mixin count-clause it-mixin)
   ())
 
-(defclass count-form-into-clause (count-clause form-mixin into-mixin)
+(defclass count-form-into-clause (into-mixin count-clause form-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

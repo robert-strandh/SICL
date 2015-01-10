@@ -20,10 +20,10 @@
 (defclass nconc-form-clause (nconc-clause form-mixin)
   ())
 
-(defclass nconc-it-into-clause (nconc-clause it-mixin into-mixin)
+(defclass nconc-it-into-clause (into-mixin nconc-clause it-mixin)
   ())
 
-(defclass nconc-form-into-clause (nconc-clause form-mixin into-mixin)
+(defclass nconc-form-into-clause (into-mixin nconc-clause form-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

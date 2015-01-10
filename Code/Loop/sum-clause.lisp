@@ -20,10 +20,10 @@
 (defclass sum-form-clause (sum-clause form-mixin)
   ())
 
-(defclass sum-it-into-clause (sum-clause it-mixin into-mixin)
+(defclass sum-it-into-clause (into-mixin sum-clause it-mixin)
   ())
 
-(defclass sum-form-into-clause (sum-clause form-mixin into-mixin)
+(defclass sum-form-into-clause (into-mixin sum-clause form-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

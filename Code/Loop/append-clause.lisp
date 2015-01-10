@@ -20,10 +20,10 @@
 (defclass append-form-clause (append-clause form-mixin)
   ())
 
-(defclass append-it-into-clause (append-clause it-mixin into-mixin)
+(defclass append-it-into-clause (into-mixin append-clause it-mixin)
   ())
 
-(defclass append-form-into-clause (append-clause form-mixin into-mixin)
+(defclass append-form-into-clause (into-mixin append-clause form-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
