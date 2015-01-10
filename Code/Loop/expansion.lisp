@@ -86,6 +86,19 @@
 
 (defvar *list-tail-accumulation-variable*)
 
+(defun accumulation-bindings (clauses)
+  (let* ((descriptors
+	   (reduce #'append
+		   (mapcar #'accumulation-variables clauses)))
+	 (equal-fun (lambda (d1 d2)
+		      (and (eq (first d1) (first d2))
+			   (eq (second d1) (second d2)))))
+	 (unique (remove-duplicates descriptors :test equal-fun)))
+    (loop for (name category type) in unique
+	  for initial-value = (if (eq category 'count/sum) 0 nil)
+	  for var = (if (null name) *accumulation-variable* name)
+	  collect `(,var ,initial-value))))
+
 (defvar *loop-name*)
 
 (defun prologue-body-epilogue (clauses)
