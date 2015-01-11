@@ -45,12 +45,12 @@
         collect (if (> x 5) (loop-finish) x))
   (1 2 3 4 5))
 
-;; (deftest loop.9.8
-;;   (loop for x from 1 to 20
-;;         when (eql (mod x 5) 0) collect x into foo
-;;         when (eql (mod x 5) 2) collect x into foo
-;;         finally (return foo))
-;;   (2 5 7 10 12 15 17 20))
+(deftest loop.9.8
+  (loop for x from 1 to 20
+        when (eql (mod x 5) 0) collect x into foo
+        when (eql (mod x 5) 2) collect x into foo
+        finally (return foo))
+  (2 5 7 10 12 15 17 20))
 
 ;; (deftest loop.9.9
 ;;   (loop for x from 1 to 20
