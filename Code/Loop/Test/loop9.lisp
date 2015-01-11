@@ -52,12 +52,12 @@
         finally (return foo))
   (2 5 7 10 12 15 17 20))
 
-;; (deftest loop.9.9
-;;   (loop for x from 1 to 20
-;;         when (eql (mod x 5) 0) collecting x into foo
-;;         when (eql (mod x 5) 2) collecting x into foo
-;;         finally (return foo))
-;;   (2 5 7 10 12 15 17 20))
+(deftest loop.9.9
+  (loop for x from 1 to 20
+        when (eql (mod x 5) 0) collecting x into foo
+        when (eql (mod x 5) 2) collecting x into foo
+        finally (return foo))
+  (2 5 7 10 12 15 17 20))
 
 ;; (deftest loop.9.10
 ;;   (signals-error
