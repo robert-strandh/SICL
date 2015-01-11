@@ -80,6 +80,8 @@
 	       'nconc-form-into-clause-parser
 	       'nconc-form-clause-parser))
 
+(add-clause-parser 'nconc-clause-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute body-form.
