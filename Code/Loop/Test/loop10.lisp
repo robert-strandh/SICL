@@ -50,14 +50,14 @@
   nil
   4)
 
-;; (deftest loop.10.8
-;;   (let (z)
-;;     (values
-;;      (loop for x from 1 to 10 count (< x 5) into foo float
-;;            finally (setq z foo))
-;;      z))
-;;   nil
-;;   4.0)
+(deftest loop.10.8
+  (let (z)
+    (values
+     (loop for x from 1 to 10 count (< x 5) into foo float
+           finally (setq z foo))
+     z))
+  nil
+  4.0)
 
 ;; (deftest loop.10.9
 ;;   (signals-error
