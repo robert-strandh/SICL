@@ -108,15 +108,15 @@
         when (eq x 'd) appending '(4 5 6))
   (a b 1 2 3 c d 4 5 6))
 
-;; (deftest loop.9.25
-;;   (let (z)
-;;     (values
-;;      (loop for x in '((a) (b) (c) (d))
-;;            append x into foo
-;;            finally (setq z foo))
-;;      z))
-;;   nil
-;;   (a b c d))
+(deftest loop.9.25
+  (let (z)
+    (values
+     (loop for x in '((a) (b) (c) (d))
+           append x into foo
+           finally (setq z foo))
+     z))
+  nil
+  (a b c d))
 
 ;; (deftest loop.9.26
 ;;   (loop for x in '((a) (b) (c) (d))
