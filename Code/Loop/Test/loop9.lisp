@@ -169,15 +169,15 @@
         when (eq x 'd) nconcing (copy-seq '(4 5 6)))
   (a b 1 2 3 c d 4 5 6))
 
-;; (deftest loop.9.35
-;;   (let (z)
-;;     (values
-;;      (loop for x in '((a) (b) (c) (d))
-;;            nconc (copy-seq x) into foo
-;;            finally (setq z foo))
-;;      z))
-;;   nil
-;;   (a b c d))
+(deftest loop.9.35
+  (let (z)
+    (values
+     (loop for x in '((a) (b) (c) (d))
+           nconc (copy-seq x) into foo
+           finally (setq z foo))
+     z))
+  nil
+  (a b c d))
 
 ;; (deftest loop.9.36
 ;;   (loop for x in '((a) (b) (c) (d))
