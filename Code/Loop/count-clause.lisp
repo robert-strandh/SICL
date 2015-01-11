@@ -112,7 +112,7 @@
      (setq ,*accumulation-variable*
 	   (1+ ,*accumulation-variable*))))
 
-(defmethod body-form ((clause count-form-into-clause) end-tag)
+(defmethod body-form ((clause count-it-into-clause) end-tag)
   (declare (ignore end-tag))
   `(when ,*it-var*
      (setq ,(into-var clause)
