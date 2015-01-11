@@ -179,14 +179,14 @@
   nil
   (a b c d))
 
-;; (deftest loop.9.36
-;;   (loop for x in '((a) (b) (c) (d))
-;;         for i from 1
-;;         nconc (copy-seq x) into foo
-;;         nconc (copy-seq x) into foo
-;;         nconcing (list i) into foo
-;;         finally (return foo))
-;;   (a a 1 b b 2 c c 3 d d 4))
+(deftest loop.9.36
+  (loop for x in '((a) (b) (c) (d))
+        for i from 1
+        nconc (copy-seq x) into foo
+        nconc (copy-seq x) into foo
+        nconcing (list i) into foo
+        finally (return foo))
+  (a a 1 b b 2 c c 3 d d 4))
 
 ;; (deftest loop.9.37
 ;;   (signals-error
