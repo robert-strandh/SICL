@@ -227,14 +227,14 @@
   (loop for x in '(a b c d e) nconc (cons x 'foo))
   (a b c d e . foo))
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
-;; (deftest loop.9.43
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for x in '(1 2 3) collect (expand-in-current-env (%m (- x)))))
-;;   (-1 -2 -3))
+(deftest loop.9.43
+  (macrolet
+   ((%m (z) z))
+   (loop for x in '(1 2 3) collect (expand-in-current-env (%m (- x)))))
+  (-1 -2 -3))
 
 ;; (deftest loop.9.44
 ;;   (macrolet
