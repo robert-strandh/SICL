@@ -144,11 +144,11 @@
   t)
 
 
-;; ;;; NCONC, NCONCING
+;;; NCONC, NCONCING
 
-;; (deftest loop.9.30
-;;   (loop for x in '((a b) (c d) (e f g) () (i)) nconc (copy-seq x))
-;;   (a b c d e f g i))
+(deftest loop.9.30
+  (loop for x in '((a b) (c d) (e f g) () (i)) nconc (copy-seq x))
+  (a b c d e f g i))
 
 ;; (deftest loop.9.31
 ;;   (loop for x in '((a b) (c d) (e f g) () (i)) nconcing (copy-seq x))
