@@ -117,9 +117,8 @@
 
 (defvar *loop-name*)
 
-(defun prologue-body-epilogue (clauses)
-  (let ((start-tag (gensym))
-	(end-tag (gensym)))
+(defun prologue-body-epilogue (clauses end-tag)
+  (let ((start-tag (gensym)))
     `(tagbody
 	(progn ,@(mapcar (lambda (clause)
 			   (prologue-form clause end-tag))
@@ -158,22 +157,22 @@
     `(let ,(initial-bindings clause)
        ,result)))
 
-(defun do-clauses (all-clauses)
-  (let ((result (prologue-body-epilogue all-clauses)))
+(defun do-clauses (all-clauses end-tag)
+  (let ((result (prologue-body-epilogue all-clauses end-tag)))
     (mapc (lambda (clause)
 	    (setf result (wrap-clause clause result)))
 	  (reverse all-clauses))
     result))
 
-(defun expand-clauses (all-clauses)
+(defun expand-clauses (all-clauses end-tag)
   `(let ((,*accumulation-variable*
 	   ,(accumulation-initial-value all-clauses))
 	 (,*list-tail-accumulation-variable* nil)
 	 ,@(accumulation-bindings all-clauses))
      (declare (ignorable ,*list-tail-accumulation-variable*))
-     ,(do-clauses all-clauses)))
+     ,(do-clauses all-clauses end-tag)))
 
-(defun expand-body (loop-body)
+(defun expand-body (loop-body end-tag)
   (if (every #'consp loop-body)
       (let ((tag (gensym)))
 	`(block nil
@@ -191,4 +190,4 @@
 	       (*list-tail-accumulation-variable* (gensym))
 	       (*tail-variables* (make-hash-table :test #'eq)))
 	  `(block ,name
-	     ,(expand-clauses clauses))))))
+	     ,(expand-clauses clauses end-tag))))))
