@@ -32,14 +32,14 @@
   nil
   4)
 
-;; (deftest loop.10.6
-;;   (let (z)
-;;     (values
-;;      (loop for x from 1 to 10 count (< x 5) into foo fixnum
-;;            finally (setq z foo))
-;;      z))
-;;   nil
-;;   4)
+(deftest loop.10.6
+  (let (z)
+    (values
+     (loop for x from 1 to 10 count (< x 5) into foo fixnum
+           finally (setq z foo))
+     z))
+  nil
+  4)
 
 ;; (deftest loop.10.7
 ;;   (let (z)
