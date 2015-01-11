@@ -250,12 +250,12 @@
          finally (return (reverse foo))))
   ((c) (b) (a)))
 
-;; (deftest loop.9.46
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for x in '((a b) (c d) (e f g) () (i))
-;;          append (expand-in-current-env (%m x))))
-;;   (a b c d e f g i))
+(deftest loop.9.46
+  (macrolet
+   ((%m (z) z))
+   (loop for x in '((a b) (c d) (e f g) () (i))
+         append (expand-in-current-env (%m x))))
+  (a b c d e f g i))
 
 ;; (deftest loop.9.47
 ;;   (macrolet
