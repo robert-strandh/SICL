@@ -80,6 +80,8 @@
 	       'append-form-into-clause-parser
 	       'append-form-clause-parser))
 
+(add-clause-parser 'append-clause-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute body-form.
