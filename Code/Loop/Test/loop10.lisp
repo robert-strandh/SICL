@@ -59,13 +59,13 @@
   nil
   4.0)
 
-;; (deftest loop.10.9
-;;   (signals-error
-;;    (loop with foo = 10
-;;          for x in '(a b c) count x into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.10.9
+  (signals-error
+   (loop with foo = 10
+         for x in '(a b c) count x into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; (deftest loop.10.10
 ;;   (signals-error
