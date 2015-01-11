@@ -150,9 +150,9 @@
   (loop for x in '((a b) (c d) (e f g) () (i)) nconc (copy-seq x))
   (a b c d e f g i))
 
-;; (deftest loop.9.31
-;;   (loop for x in '((a b) (c d) (e f g) () (i)) nconcing (copy-seq x))
-;;   (a b c d e f g i))
+(deftest loop.9.31
+  (loop for x in '((a b) (c d) (e f g) () (i)) nconcing (copy-seq x))
+  (a b c d e f g i))
 
 ;; (deftest loop.9.32
 ;;   (loop for x in '((a) (b) (c . whatever)) nconc (cons (car x) (cdr x)))
