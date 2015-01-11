@@ -213,13 +213,13 @@
         else collect (+ x 2))
   (1 3 4 5 7 8 9))
 
-;; (deftest loop.9.41
-;;   (loop for x in '(1 2 3 4 5 6 7)
-;;         if (< x 2) append (list x) into foo
-;;         else if (< x 5) nconc (list (1+ x)) into foo
-;;         else collect (+ x 2) into foo
-;;         finally (return foo))
-;;   (1 3 4 5 7 8 9))
+(deftest loop.9.41
+  (loop for x in '(1 2 3 4 5 6 7)
+        if (< x 2) append (list x) into foo
+        else if (< x 5) nconc (list (1+ x)) into foo
+        else collect (+ x 2) into foo
+        finally (return foo))
+  (1 3 4 5 7 8 9))
 
 ;; ;;; More nconc tests
 
