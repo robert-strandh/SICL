@@ -242,13 +242,13 @@
    (loop for x in '(1 2 3) collecting (expand-in-current-env (%m (list x)))))
   ((1) (2) (3)))
 
-;; (deftest loop.9.45
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for x in '(a b c)
-;;          collect (expand-in-current-env (%m (list x))) into foo
-;;          finally (return (reverse foo))))
-;;   ((c) (b) (a)))
+(deftest loop.9.45
+  (macrolet
+   ((%m (z) z))
+   (loop for x in '(a b c)
+         collect (expand-in-current-env (%m (list x))) into foo
+         finally (return (reverse foo))))
+  ((c) (b) (a)))
 
 ;; (deftest loop.9.46
 ;;   (macrolet
