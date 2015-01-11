@@ -257,9 +257,9 @@
          append (expand-in-current-env (%m x))))
   (a b c d e f g i))
 
-;; (deftest loop.9.47
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for x in '((a b) (c d) (e f g) () (i))
-;;          nconc (expand-in-current-env (%m (copy-seq x)))))
-;;   (a b c d e f g i))
+(deftest loop.9.47
+  (macrolet
+   ((%m (z) z))
+   (loop for x in '((a b) (c d) (e f g) () (i))
+         nconc (expand-in-current-env (%m (copy-seq x)))))
+  (a b c d e f g i))
