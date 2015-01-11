@@ -97,9 +97,9 @@
   (loop for x in '((a) (b) (c . whatever)) append x)
   (a b c . whatever))
 
-;; (deftest loop.9.23
-;;   (loop for x in '((a) (b) (c . whatever)) appending x)
-;;   (a b c . whatever))
+(deftest loop.9.23
+  (loop for x in '((a) (b) (c . whatever)) appending x)
+  (a b c . whatever))
 
 ;; (deftest loop.9.24
 ;;   (loop for x in '(a b c d)
