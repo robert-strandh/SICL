@@ -31,48 +31,56 @@
 ;;; Parsers.
 
 (define-parser count-it-into-clause-parser
-  (consecutive (lambda (count it into var)
+  (consecutive (lambda (count it into var type-spec)
 		 (declare (ignore count it into))
 		 (make-instance 'count-it-into-clause
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'count)
 			    (keyword-parser 'counting))
 	       (keyword-parser 'it)
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser count-it-clause-parser
-  (consecutive (lambda (count it)
+  (consecutive (lambda (count it type-spec)
 		 (declare (ignore count it))
-		 (make-instance 'count-it-clause))
+		 (make-instance 'count-it-clause
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'count)
 			    (keyword-parser 'counting))
-	       (keyword-parser 'it)))
+	       (keyword-parser 'it)
+	       'optional-type-spec-parser))
 
 (define-parser count-form-into-clause-parser
-  (consecutive (lambda (count form into var)
+  (consecutive (lambda (count form into var type-spec)
 		 (declare (ignore count into))
 		 (make-instance 'count-form-into-clause
 		   :form form
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'count)
 			    (keyword-parser 'counting))
 	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser count-form-clause-parser
-  (consecutive (lambda (count form)
+  (consecutive (lambda (count form type-spec)
 		 (declare (ignore count))
 		 (make-instance 'count-form-clause
-		   :form form))
+		   :form form
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'count)
 			    (keyword-parser 'counting))
-	       'anything-parser))
+	       'anything-parser
+	       'optional-type-spec-parser))
 
 (define-parser count-clause-parser
   (alternative 'count-it-into-clause-parser
