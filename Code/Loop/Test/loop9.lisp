@@ -135,13 +135,13 @@
    program-error)
   t)
 
-;; (deftest loop.9.28
-;;   (signals-error
-;;    (loop with foo = '(a b)
-;;          for x in '(c d) appending (list x) into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.9.28
+  (signals-error
+   (loop with foo = '(a b)
+         for x in '(c d) appending (list x) into foo
+         finally (return foo))
+   program-error)
+  t)
 
 
 ;; ;;; NCONC, NCONCING
