@@ -196,13 +196,13 @@
    program-error)
   t)
 
-;; (deftest loop.9.38
-;;   (signals-error
-;;    (loop with foo = '(a b)
-;;          for x in '(c d) nconcing (list x) into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.9.38
+  (signals-error
+   (loop with foo = '(a b)
+         for x in '(c d) nconcing (list x) into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; ;;; Combinations
 
