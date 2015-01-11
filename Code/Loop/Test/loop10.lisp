@@ -23,14 +23,14 @@
   (loop for x from 1 to 10 count (< x 5) of-type integer)
   4)
 
-;; (deftest loop.10.5
-;;   (let (z)
-;;     (values
-;;      (loop for x from 1 to 10 count (< x 5) into foo
-;;            finally (setq z foo))
-;;      z))
-;;   nil
-;;   4)
+(deftest loop.10.5
+  (let (z)
+    (values
+     (loop for x from 1 to 10 count (< x 5) into foo
+           finally (setq z foo))
+     z))
+  nil
+  4)
 
 ;; (deftest loop.10.6
 ;;   (let (z)
