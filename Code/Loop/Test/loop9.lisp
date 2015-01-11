@@ -158,9 +158,9 @@
   (loop for x in '((a) (b) (c . whatever)) nconc (cons (car x) (cdr x)))
   (a b c . whatever))
 
-;; (deftest loop.9.33
-;;   (loop for x in '((a) (b) (c . whatever)) nconcing (cons (car x) (cdr x)))
-;;   (a b c . whatever))
+(deftest loop.9.33
+  (loop for x in '((a) (b) (c . whatever)) nconcing (cons (car x) (cdr x)))
+  (a b c . whatever))
 
 ;; (deftest loop.9.34
 ;;   (loop for x in '(a b c d)
