@@ -59,13 +59,13 @@
         finally (return foo))
   (2 5 7 10 12 15 17 20))
 
-;; (deftest loop.9.10
-;;   (signals-error
-;;    (loop with foo = '(a b)
-;;          for x in '(c d) collect x into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.9.10
+  (signals-error
+   (loop with foo = '(a b)
+         for x in '(c d) collect x into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; (deftest loop.9.11
 ;;   (signals-error
