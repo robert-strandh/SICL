@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-loop-test
   (:use #:common-lisp)
-  (:shadow #:loop))
+  (:shadow #:loop #:loop-finish))
