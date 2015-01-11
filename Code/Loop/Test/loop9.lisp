@@ -162,12 +162,12 @@
   (loop for x in '((a) (b) (c . whatever)) nconcing (cons (car x) (cdr x)))
   (a b c . whatever))
 
-;; (deftest loop.9.34
-;;   (loop for x in '(a b c d)
-;;         nconc (list x)
-;;         when (eq x 'b) nconc (copy-seq '(1 2 3))
-;;         when (eq x 'd) nconcing (copy-seq '(4 5 6)))
-;;   (a b 1 2 3 c d 4 5 6))
+(deftest loop.9.34
+  (loop for x in '(a b c d)
+        nconc (list x)
+        when (eq x 'b) nconc (copy-seq '(1 2 3))
+        when (eq x 'd) nconcing (copy-seq '(4 5 6)))
+  (a b 1 2 3 c d 4 5 6))
 
 ;; (deftest loop.9.35
 ;;   (let (z)
