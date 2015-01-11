@@ -75,13 +75,13 @@
    program-error)
   t)
 
-;; (deftest loop.9.12
-;;   (let ((foo '(a b)))
-;;     (values
-;;      (loop for x in '(c d e) collect x into foo finally (return foo))
-;;      foo))
-;;   (c d e)
-;;   (a b))
+(deftest loop.9.12
+  (let ((foo '(a b)))
+    (values
+     (loop for x in '(c d e) collect x into foo finally (return foo))
+     foo))
+  (c d e)
+  (a b))
 
 ;; ;;; Tests of APPEND, APPENDING
 
