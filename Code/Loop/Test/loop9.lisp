@@ -101,12 +101,12 @@
   (loop for x in '((a) (b) (c . whatever)) appending x)
   (a b c . whatever))
 
-;; (deftest loop.9.24
-;;   (loop for x in '(a b c d)
-;;         append (list x)
-;;         when (eq x 'b) append '(1 2 3)
-;;         when (eq x 'd) appending '(4 5 6))
-;;   (a b 1 2 3 c d 4 5 6))
+(deftest loop.9.24
+  (loop for x in '(a b c d)
+        append (list x)
+        when (eq x 'b) append '(1 2 3)
+        when (eq x 'd) appending '(4 5 6))
+  (a b 1 2 3 c d 4 5 6))
 
 ;; (deftest loop.9.25
 ;;   (let (z)
