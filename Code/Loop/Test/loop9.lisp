@@ -221,11 +221,11 @@
         finally (return foo))
   (1 3 4 5 7 8 9))
 
-;; ;;; More nconc tests
+;;; More nconc tests
 
-;; (deftest loop.9.42
-;;   (loop for x in '(a b c d e) nconc (cons x 'foo))
-;;   (a b c d e . foo))
+(deftest loop.9.42
+  (loop for x in '(a b c d e) nconc (cons x 'foo))
+  (a b c d e . foo))
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
