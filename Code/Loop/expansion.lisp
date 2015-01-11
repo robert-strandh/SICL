@@ -110,7 +110,9 @@
 	 (unique (remove-duplicates descriptors :test equal-fun))
 	 (no-nil (remove nil unique :test #'eq :key #'car)))
     (loop for (name category type) in no-nil
-	  for initial-value = (if (eq category 'count/sum) 0 nil)
+	  for initial-value = (if (eq category 'count/sum)
+				  (if (eq type 'float) 0.0 0)
+				  nil)
 	  collect `(,name ,initial-value)
 	  when (eq category 'list)
 	    collect `(,(tail-variable name) ,nil))))
