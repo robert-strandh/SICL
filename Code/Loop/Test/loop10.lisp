@@ -11,9 +11,9 @@
   (loop for x from 1 to 10 count (< x 5))
   4)
 
-;; (deftest loop.10.2
-;;   (loop for x from 1 to 10 counting (< x 7))
-;;   6)
+(deftest loop.10.2
+  (loop for x from 1 to 10 counting (< x 7))
+  6)
 
 ;; (deftest loop.10.3
 ;;   (loop for x from 1 to 10 count (< x 5) fixnum)
