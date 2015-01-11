@@ -67,13 +67,13 @@
    program-error)
   t)
 
-;; (deftest loop.9.11
-;;   (signals-error
-;;    (loop with foo = '(a b)
-;;          for x in '(c d) collecting x into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.9.11
+  (signals-error
+   (loop with foo = '(a b)
+         for x in '(c d) collecting x into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; (deftest loop.9.12
 ;;   (let ((foo '(a b)))
