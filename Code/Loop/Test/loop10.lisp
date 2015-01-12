@@ -329,12 +329,11 @@
         minimize (- i))
   -1)
 
+;;; Tests for SUM, SUMMING
 
-;; ;;; Tests for SUM, SUMMING
-
-;; (deftest loop.10.70
-;;   (loop for i from 1 to 4 sum i)
-;;   10)
+(deftest loop.10.70
+  (loop for i from 1 to 4 sum i)
+  10)
 
 ;; (deftest loop.10.71
 ;;   (loop for i from 1 to 4 summing i)
