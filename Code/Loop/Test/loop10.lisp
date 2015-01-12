@@ -67,13 +67,13 @@
    program-error)
   t)
 
-;; (deftest loop.10.10
-;;   (signals-error
-;;    (loop with foo = 10
-;;          for x in '(a b c) counting x into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.10.10
+  (signals-error
+   (loop with foo = 10
+         for x in '(a b c) counting x into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; (declaim (special *loop-count-var*))
 
