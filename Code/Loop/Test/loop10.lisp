@@ -339,9 +339,9 @@
   (loop for i from 1 to 4 summing i)
   10)
 
-;; (deftest loop.10.72
-;;   (loop for i from 1 to 4 sum (float i))
-;;   10.0)
+(deftest loop.10.72
+  (loop for i from 1 to 4 sum (float i))
+  10.0)
 
 ;; (deftest loop.10.73
 ;;   (loop for i from 1 to 4 sum (complex i i))
