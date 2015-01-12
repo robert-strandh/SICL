@@ -85,11 +85,11 @@
      *loop-count-var*))
   4 100)
 
-;; (deftest loop.10.12
-;;   (loop for x in '(a b nil d nil e)
-;;         count x into foo
-;;         collect foo)
-;;   (1 2 2 3 3 4))
+(deftest loop.10.12
+  (loop for x in '(a b nil d nil e)
+        count x into foo
+        collect foo)
+  (1 2 2 3 3 4))
 
 ;; (deftest loop.10.13
 ;;   (loop for x in '(a b nil d nil e)
