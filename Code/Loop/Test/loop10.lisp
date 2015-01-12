@@ -220,9 +220,9 @@
   (loop for x in '(1000000000000) minimizing x)
   1000000000000)
 
-;; (deftest loop.10.43
-;;   (loop for x in '(-1000000000000) minimize x)
-;;   -1000000000000)
+(deftest loop.10.43
+  (loop for x in '(-1000000000000) minimize x)
+  -1000000000000)
 
 ;; (deftest loop.10.44
 ;;   (loop for x in '(1.0 2.0 -1.0 3.0) minimize x)
