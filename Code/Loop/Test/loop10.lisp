@@ -160,9 +160,9 @@
   (loop for x in '(-1/8 -1/20 -1/5 -1/3 -1/24 -1/1 -1/19 -1/4 -1/20 -1/3) maximize x of-type rational)
   -1/24)
 
-;; (deftest loop.10.33
-;;   (loop for x in '(1 4 10 5 7 9) maximize x into foo fixnum finally (return foo))
-;;   10)
+(deftest loop.10.33
+  (loop for x in '(1 4 10 5 7 9) maximize x into foo fixnum finally (return foo))
+  10)
 
 ;; (deftest loop.10.34
 ;;   (loop for x in '(1 4 10 5 7 9) maximize x into foo of-type integer finally (return foo))
