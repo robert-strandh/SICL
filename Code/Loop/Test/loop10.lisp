@@ -193,13 +193,13 @@
    program-error)
   t)
 
-;; (deftest loop.10.38
-;;   (signals-error
-;;    (loop with foo = 100
-;;          for i from 1 to 10 maximizing i into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.10.38
+  (signals-error
+   (loop with foo = 100
+         for i from 1 to 10 maximizing i into foo
+         finally (return foo))
+   program-error)
+  t)
 
 
 ;; (deftest loop.10.39
