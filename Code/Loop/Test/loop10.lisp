@@ -359,9 +359,9 @@
   (loop for i from 1 to 4 sum i of-type rational)
   10)
 
-;; (deftest loop.10.77
-;;   (loop for i from 1 to 4 sum (float i) float)
-;;   10.0)
+(deftest loop.10.77
+  (loop for i from 1 to 4 sum (float i) float)
+  10.0)
 
 ;; (deftest loop.10.78
 ;;   (loop for i from 1 to 4 sum i of-type number)
