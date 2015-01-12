@@ -212,9 +212,9 @@
    (loop for x in '(4 10 1 5 7 9) minimize x)
    1)
 
-;; (deftest loop.10.41
-;;   (loop for x in '(4 10 5 7 1 9) minimizing x)
-;;   1)
+(deftest loop.10.41
+  (loop for x in '(4 10 5 7 1 9) minimizing x)
+  1)
 
 ;; (deftest loop.10.42
 ;;   (loop for x in '(1000000000000) minimizing x)
