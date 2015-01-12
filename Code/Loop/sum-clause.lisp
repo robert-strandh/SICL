@@ -31,48 +31,56 @@
 ;;; Parsers.
 
 (define-parser sum-it-into-clause-parser
-  (consecutive (lambda (sum it into var)
+  (consecutive (lambda (sum it into var type-spec)
 		 (declare (ignore sum it into))
 		 (make-instance 'sum-it-into-clause
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'sum)
 			    (keyword-parser 'summing))
 	       (keyword-parser 'it)
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser sum-it-clause-parser
-  (consecutive (lambda (sum it)
+  (consecutive (lambda (sum it type-spec)
 		 (declare (ignore sum it))
-		 (make-instance 'sum-it-clause))
+		 (make-instance 'sum-it-clause
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'sum)
 			    (keyword-parser 'summing))
-	       (keyword-parser 'it)))
+	       (keyword-parser 'it)
+	       'optional-type-spec-parser))
 
 (define-parser sum-form-into-clause-parser
-  (consecutive (lambda (sum form into var)
+  (consecutive (lambda (sum form into var type-spec)
 		 (declare (ignore sum into))
 		 (make-instance 'sum-form-into-clause
 		   :form form
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'sum)
 			    (keyword-parser 'summing))
 	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser sum-form-clause-parser
-  (consecutive (lambda (sum form)
+  (consecutive (lambda (sum form type-spec)
 		 (declare (ignore sum))
 		 (make-instance 'sum-form-clause
-		   :form form))
+		   :form form
+		   :type-spec))
 	       (alternative (keyword-parser 'sum)
 			    (keyword-parser 'summing))
-	       'anything-parser))
+	       'anything-parser
+	       'optional-type-spec-parser))
 
 (define-parser sum-clause-parser
   (alternative 'sum-it-into-clause-parser
