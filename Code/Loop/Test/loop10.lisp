@@ -367,9 +367,9 @@
   (loop for i from 1 to 4 sum i of-type number)
   10)
 
-;; (deftest loop.10.79
-;;   (loop for i from 1 to 4 sum i into foo finally (return foo))
-;;   10)
+(deftest loop.10.79
+  (loop for i from 1 to 4 sum i into foo finally (return foo))
+  10)
 
 ;; (deftest loop.10.80
 ;;   (loop for i from 1 to 4 sum i into foo fixnum finally (return foo))
