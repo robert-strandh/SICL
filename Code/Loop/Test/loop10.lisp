@@ -185,13 +185,13 @@
      *loop-max-var*))
   10 100)
 
-;; (deftest loop.10.37
-;;   (signals-error
-;;    (loop with foo = 100
-;;          for i from 1 to 10 maximize i into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.10.37
+  (signals-error
+   (loop with foo = 100
+         for i from 1 to 10 maximize i into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; (deftest loop.10.38
 ;;   (signals-error
