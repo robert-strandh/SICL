@@ -91,11 +91,11 @@
         collect foo)
   (1 2 2 3 3 4))
 
-;; (deftest loop.10.13
-;;   (loop for x in '(a b nil d nil e)
-;;         counting x into foo
-;;         collect foo)
-;;   (1 2 2 3 3 4))
+(deftest loop.10.13
+  (loop for x in '(a b nil d nil e)
+        counting x into foo
+        collect foo)
+  (1 2 2 3 3 4))
 
 ;; (deftest loop.10.14
 ;;   (loop for x in '(a b c) count (return 10))
