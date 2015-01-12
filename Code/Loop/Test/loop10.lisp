@@ -297,13 +297,13 @@
    program-error)
   t)
 
-;; (deftest loop.10.58
-;;   (signals-error
-;;    (loop with foo = 100
-;;          for i from 1 to 10 minimizing i into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.10.58
+  (signals-error
+   (loop with foo = 100
+         for i from 1 to 10 minimizing i into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; (deftest loop.10.58a
 ;;   (loop for x in '(1 2 3) minimize (return 10))
