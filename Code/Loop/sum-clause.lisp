@@ -76,7 +76,7 @@
 		 (declare (ignore sum))
 		 (make-instance 'sum-form-clause
 		   :form form
-		   :type-spec))
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'sum)
 			    (keyword-parser 'summing))
 	       'anything-parser
