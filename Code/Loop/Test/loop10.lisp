@@ -317,11 +317,11 @@
         maximize (- i))
   1)
 
-;; (deftest loop.10.60
-;;   (loop for i from 1 to 10
-;;         maximize (- i)
-;;         minimize i)
-;;   -1)
+(deftest loop.10.60
+  (loop for i from 1 to 10
+        maximize (- i)
+        minimize i)
+  -1)
 
 ;; (deftest loop.10.61
 ;;   (loop for i from 5 downto 1
