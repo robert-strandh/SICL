@@ -309,13 +309,13 @@
   (loop for x in '(1 2 3) minimize (return 10))
   10)
 
-;; ;;; Tests combining MINIMIZE, MAXIMIZE
+;;; Tests combining MINIMIZE, MAXIMIZE
 
-;; (deftest loop.10.59
-;;   (loop for i from 1 to 10
-;;         minimize i
-;;         maximize (- i))
-;;   1)
+(deftest loop.10.59
+  (loop for i from 1 to 10
+        minimize i
+        maximize (- i))
+  1)
 
 ;; (deftest loop.10.60
 ;;   (loop for i from 1 to 10
