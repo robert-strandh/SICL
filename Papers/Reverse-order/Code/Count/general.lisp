@@ -59,7 +59,9 @@
     repeat n
     for k from start by step
     for list = (zeros start) then (more-zeros step list)
-    do (format stream "~3D ~A~%" k (evaluate-time (funcall reverse-count-fun 0 list) times))))
+    do (let ((time (evaluate-time (funcall reverse-count-fun 0 list) times)))
+	 (format t "~3D ~A~%" k time)
+	 (format stream "~3D ~A~%" k time))))
 
 (defun mouline-file (file reverse-count-fun n &key (step 1) (start 1) (times 1))
   (with-open-file (stream (date-string file)
