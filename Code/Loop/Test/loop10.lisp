@@ -279,15 +279,15 @@
      foo))
   3 20)
 
-;; (declaim (special *loop-min-var*))
+(declaim (special *loop-min-var*))
 
-;; (deftest loop.10.56
-;;   (let ((*loop-min-var* 100))
-;;     (values
-;;      (loop for x in '(10 4 8) minimize x into *loop-min-var*
-;;            finally (return *loop-min-var*))
-;;      *loop-min-var*))
-;;   4 100)
+(deftest loop.10.56
+  (let ((*loop-min-var* 100))
+    (values
+     (loop for x in '(10 4 8) minimize x into *loop-min-var*
+           finally (return *loop-min-var*))
+     *loop-min-var*))
+  4 100)
 
 ;; (deftest loop.10.57
 ;;   (signals-error
