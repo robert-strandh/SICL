@@ -80,6 +80,8 @@
 	       'maximize-form-into-clause-parser
 	       'maximize-form-clause-parser))
 
+(add-clause-parser 'maximize-clause-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the BODY-FORM.
