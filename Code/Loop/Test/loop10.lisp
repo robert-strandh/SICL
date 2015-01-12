@@ -264,9 +264,9 @@
   (loop for x in '(-1/8 -1/20 -1/5 -1/3 -1/24 -1/1 -1/19 -1/4 -1/20 -1/3) minimize x of-type rational)
   -1/1)
 
-;; (deftest loop.10.53
-;;   (loop for x in '(4 10 5 1 7 9) minimize x into foo fixnum finally (return foo))
-;;   1)
+(deftest loop.10.53
+  (loop for x in '(4 10 5 1 7 9) minimize x into foo fixnum finally (return foo))
+  1)
 
 ;; (deftest loop.10.54
 ;;   (loop for x in '(1 4 10 5 7 9) minimize x into foo of-type integer finally (return foo))
