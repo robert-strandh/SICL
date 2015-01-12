@@ -168,12 +168,12 @@
   (loop for x in '(1 4 10 5 7 9) maximize x into foo of-type integer finally (return foo))
   10)
 
-;; (deftest loop.10.35
-;;   (let ((foo 20))
-;;     (values
-;;      (loop for x in '(3 5 8 3 7) maximize x into foo finally (return foo))
-;;      foo))
-;;   8 20)
+(deftest loop.10.35
+  (let ((foo 20))
+    (values
+     (loop for x in '(3 5 8 3 7) maximize x into foo finally (return foo))
+     foo))
+  8 20)
 
 ;; (declaim (special *loop-max-var*))
 
