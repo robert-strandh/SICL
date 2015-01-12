@@ -164,9 +164,9 @@
   (loop for x in '(1 4 10 5 7 9) maximize x into foo fixnum finally (return foo))
   10)
 
-;; (deftest loop.10.34
-;;   (loop for x in '(1 4 10 5 7 9) maximize x into foo of-type integer finally (return foo))
-;;   10)
+(deftest loop.10.34
+  (loop for x in '(1 4 10 5 7 9) maximize x into foo of-type integer finally (return foo))
+  10)
 
 ;; (deftest loop.10.35
 ;;   (let ((foo 20))
