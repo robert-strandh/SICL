@@ -305,9 +305,9 @@
    program-error)
   t)
 
-;; (deftest loop.10.58a
-;;   (loop for x in '(1 2 3) minimize (return 10))
-;;   10)
+(deftest loop.10.58a
+  (loop for x in '(1 2 3) minimize (return 10))
+  10)
 
 ;; ;;; Tests combining MINIMIZE, MAXIMIZE
 
