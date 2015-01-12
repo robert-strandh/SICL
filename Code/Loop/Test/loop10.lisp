@@ -148,9 +148,9 @@
   nil
   10)
 
-;; (deftest loop.10.30
-;;   (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x of-type real)
-;;   24)
+(deftest loop.10.30
+  (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x of-type real)
+  24)
 
 ;; (deftest loop.10.31
 ;;   (loop for x in '(0.08 0.20 0.05 0.03 0.24 0.01 0.19 0.04 0.20 0.03) maximize x of-type float)
