@@ -216,9 +216,9 @@
   (loop for x in '(4 10 5 7 1 9) minimizing x)
   1)
 
-;; (deftest loop.10.42
-;;   (loop for x in '(1000000000000) minimizing x)
-;;   1000000000000)
+(deftest loop.10.42
+  (loop for x in '(1000000000000) minimizing x)
+  1000000000000)
 
 ;; (deftest loop.10.43
 ;;   (loop for x in '(-1000000000000) minimize x)
