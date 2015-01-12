@@ -80,6 +80,8 @@
 	       'minimize-form-into-clause-parser
 	       'minimize-form-clause-parser))
 
+(add-clause-parser 'minimize-clause-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the BODY-FORM.
