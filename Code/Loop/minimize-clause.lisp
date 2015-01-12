@@ -96,20 +96,28 @@
 
 (defmethod body-form ((clause minimize-form-clause) end-tag)
   (declare (ignore end-tag))
-  `(setq ,*accumulation-variable*
-	 (min ,*accumulation-variable* ,(form clause))))
+  `(if (null ,*accumulation-variable*)
+       (setq ,*accumulation-variable* ,(form clause))
+       (setq ,*accumulation-variable*
+	     (min ,*accumulation-variable* ,(form clause)))))
 
 (defmethod body-form ((clause minimize-form-into-clause) end-tag)
   (declare (ignore end-tag))
-  `(setq ,(into-var clause)
-	 (min ,(into-var clause) ,(form clause))))
+  `(if (null ,(into-var clause))
+       (setq ,(into-var clause) ,(form clause))
+       (setq ,(into-var clause)
+	     (min ,(into-var clause) ,(form clause)))))
 
 (defmethod body-form ((clause minimize-it-clause) end-tag)
   (declare (ignore end-tag))
-  `(setq ,*accumulation-variable*
-	 (min ,*accumulation-variable* ,*it-var*)))
+  `(if (null ,*accumulation-variable*)
+       (setq ,*accumulation-variable* ,*it-var*)
+       (setq ,*accumulation-variable*
+	     (min ,*accumulation-variable* ,*it-var*))))
 
 (defmethod body-form ((clause minimize-it-into-clause) end-tag)
   (declare (ignore end-tag))
-  `(setq ,(into-var clause)
-	 (min ,(into-var clause) ,*it-var*)))
+  `(if (null ,(into-var clause))
+       (setq ,(into-var clause) ,*it-var*)
+       (setq ,(into-var clause)
+	     (min ,(into-var clause) ,*it-var*))))
