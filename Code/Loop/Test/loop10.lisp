@@ -108,9 +108,9 @@
   (loop for x in '(1 4 10 5 7 9) maximize x)
   10)
 
-;; (deftest loop.10.21
-;;   (loop for x in '(1 4 10 5 7 9) maximizing x)
-;;   10)
+(deftest loop.10.21
+  (loop for x in '(1 4 10 5 7 9) maximizing x)
+  10)
 
 ;; (deftest loop.10.22
 ;;   (loop for x in '(1000000000000) maximizing x)
