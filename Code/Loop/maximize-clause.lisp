@@ -31,48 +31,56 @@
 ;;; Parsers.
 
 (define-parser maximize-it-into-clause-parser
-  (consecutive (lambda (maximize it into var)
+  (consecutive (lambda (maximize it into var type-spec)
 		 (declare (ignore maximize it into))
 		 (make-instance 'maximize-it-into-clause
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'maximize)
 			    (keyword-parser 'maximizing))
 	       (keyword-parser 'it)
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser maximize-it-clause-parser
-  (consecutive (lambda (maximize it)
+  (consecutive (lambda (maximize it type-spec)
 		 (declare (ignore maximize it))
-		 (make-instance 'maximize-it-clause))
+		 (make-instance 'maximize-it-clause
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'maximize)
 			    (keyword-parser 'maximizing))
-	       (keyword-parser 'it)))
+	       (keyword-parser 'it)
+	       'optional-type-spec-parser))
 
 (define-parser maximize-form-into-clause-parser
-  (consecutive (lambda (maximize form into var)
+  (consecutive (lambda (maximize form into var type-spec)
 		 (declare (ignore maximize into))
 		 (make-instance 'maximize-form-into-clause
 		   :form form
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'maximize)
 			    (keyword-parser 'maximizing))
 	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser maximize-form-clause-parser
-  (consecutive (lambda (maximize form)
+  (consecutive (lambda (maximize form type-spec)
 		 (declare (ignore maximize))
 		 (make-instance 'maximize-form-clause
-		   :form form))
+		   :form form
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'maximize)
 			    (keyword-parser 'maximizing))
-	       'anything-parser))
+	       'anything-parser
+	       'optional-type-spec-parser))
 
 (define-parser maximize-clause-parser
   (alternative 'maximize-it-into-clause-parser
