@@ -152,9 +152,9 @@
   (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x of-type real)
   24)
 
-;; (deftest loop.10.31
-;;   (loop for x in '(0.08 0.20 0.05 0.03 0.24 0.01 0.19 0.04 0.20 0.03) maximize x of-type float)
-;;   0.24)
+(deftest loop.10.31
+  (loop for x in '(0.08 0.20 0.05 0.03 0.24 0.01 0.19 0.04 0.20 0.03) maximize x of-type float)
+  0.24)
 
 ;; (deftest loop.10.32
 ;;   (loop for x in '(-1/8 -1/20 -1/5 -1/3 -1/24 -1/1 -1/19 -1/4 -1/20 -1/3) maximize x of-type rational)
