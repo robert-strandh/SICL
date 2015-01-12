@@ -128,9 +128,9 @@
   (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x fixnum)
   24)
 
-;; (deftest loop.10.26
-;;   (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x of-type integer)
-;;   24)
+(deftest loop.10.26
+  (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x of-type integer)
+  24)
 
 ;; (deftest loop.10.27
 ;;   (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x of-type rational)
