@@ -76,7 +76,7 @@
 		 (declare (ignore minimize))
 		 (make-instance 'minimize-form-clause
 		   :form form
-		   :type-spec))
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'minimize)
 			    (keyword-parser 'minimizing))
 	       'anything-parser
