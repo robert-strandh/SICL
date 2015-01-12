@@ -363,9 +363,9 @@
   (loop for i from 1 to 4 sum (float i) float)
   10.0)
 
-;; (deftest loop.10.78
-;;   (loop for i from 1 to 4 sum i of-type number)
-;;   10)
+(deftest loop.10.78
+  (loop for i from 1 to 4 sum i of-type number)
+  10)
 
 ;; (deftest loop.10.79
 ;;   (loop for i from 1 to 4 sum i into foo finally (return foo))
