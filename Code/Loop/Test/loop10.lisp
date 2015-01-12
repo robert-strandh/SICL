@@ -272,12 +272,12 @@
   (loop for x in '(1 4 10 5 7 9) minimize x into foo of-type integer finally (return foo))
   1)
 
-;; (deftest loop.10.55
-;;   (let ((foo 20))
-;;     (values
-;;      (loop for x in '(4 5 8 3 7) minimize x into foo finally (return foo))
-;;      foo))
-;;   3 20)
+(deftest loop.10.55
+  (let ((foo 20))
+    (values
+     (loop for x in '(4 5 8 3 7) minimize x into foo finally (return foo))
+     foo))
+  3 20)
 
 ;; (declaim (special *loop-min-var*))
 
