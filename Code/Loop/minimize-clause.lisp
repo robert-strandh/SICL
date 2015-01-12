@@ -31,48 +31,56 @@
 ;;; Parsers.
 
 (define-parser minimize-it-into-clause-parser
-  (consecutive (lambda (minimize it into var)
+  (consecutive (lambda (minimize it into var type-spec)
 		 (declare (ignore minimize it into))
 		 (make-instance 'minimize-it-into-clause
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'minimize)
 			    (keyword-parser 'minimizing))
 	       (keyword-parser 'it)
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser minimize-it-clause-parser
-  (consecutive (lambda (minimize it)
+  (consecutive (lambda (minimize it type-spec)
 		 (declare (ignore minimize it))
-		 (make-instance 'minimize-it-clause))
+		 (make-instance 'minimize-it-clause
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'minimize)
 			    (keyword-parser 'minimizing))
-	       (keyword-parser 'it)))
+	       (keyword-parser 'it)
+	       'optional-type-spec-parser))
 
 (define-parser minimize-form-into-clause-parser
-  (consecutive (lambda (minimize form into var)
+  (consecutive (lambda (minimize form into var type-spec)
 		 (declare (ignore minimize into))
 		 (make-instance 'minimize-form-into-clause
 		   :form form
-		   :into-var var))
+		   :into-var var
+		   :type-spec type-spec))
 	       (alternative (keyword-parser 'minimize)
 			    (keyword-parser 'minimizing))
 	       'anything-parser
 	       (keyword-parser 'into)
 	       (singleton #'identity
 			  (lambda (x)
-			    (and (symbolp x) (not (constantp x)))))))
+			    (and (symbolp x) (not (constantp x)))))
+	       'optional-type-spec-parser))
 
 (define-parser minimize-form-clause-parser
-  (consecutive (lambda (minimize form)
+  (consecutive (lambda (minimize form type-spec)
 		 (declare (ignore minimize))
 		 (make-instance 'minimize-form-clause
-		   :form form))
+		   :form form
+		   :type-spec))
 	       (alternative (keyword-parser 'minimize)
 			    (keyword-parser 'minimizing))
-	       'anything-parser))
+	       'anything-parser
+	       'optional-type-spec-parser))
 
 (define-parser minimize-clause-parser
   (alternative 'minimize-it-into-clause-parser
