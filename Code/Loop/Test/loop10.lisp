@@ -97,9 +97,9 @@
         collect foo)
   (1 2 2 3 3 4))
 
-;; (deftest loop.10.14
-;;   (loop for x in '(a b c) count (return 10))
-;;   10)
+(deftest loop.10.14
+  (loop for x in '(a b c) count (return 10))
+  10)
 
 
 ;; ;;; Tests of MAXIMIZE, MAXIMIZING
