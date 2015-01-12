@@ -323,11 +323,11 @@
         minimize i)
   -1)
 
-;; (deftest loop.10.61
-;;   (loop for i from 5 downto 1
-;;         maximize i
-;;         minimize (- i))
-;;   -1)
+(deftest loop.10.61
+  (loop for i from 5 downto 1
+        maximize i
+        minimize (- i))
+  -1)
 
 
 ;; ;;; Tests for SUM, SUMMING
