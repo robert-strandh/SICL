@@ -120,9 +120,9 @@
   (loop for x in '(-1000000000000) maximize x)
   -1000000000000)
 
-;; (deftest loop.10.24
-;;   (loop for x in '(1.0 2.0 3.0 -1.0) maximize x)
-;;   3.0)
+(deftest loop.10.24
+  (loop for x in '(1.0 2.0 3.0 -1.0) maximize x)
+  3.0)
 
 ;; (deftest loop.10.25
 ;;   (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x fixnum)
