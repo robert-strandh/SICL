@@ -102,11 +102,11 @@
   10)
 
 
-;; ;;; Tests of MAXIMIZE, MAXIMIZING
+;;; Tests of MAXIMIZE, MAXIMIZING
 
-;; (deftest loop.10.20
-;;   (loop for x in '(1 4 10 5 7 9) maximize x)
-;;   10)
+(deftest loop.10.20
+  (loop for x in '(1 4 10 5 7 9) maximize x)
+  10)
 
 ;; (deftest loop.10.21
 ;;   (loop for x in '(1 4 10 5 7 9) maximizing x)
