@@ -244,13 +244,13 @@
   (loop for x in '(1 4 10 5 7 9) minimize x into foo finally (return foo))
   1)
 
-;; (deftest loop.10.49
-;;   (let (z)
-;;     (values
-;;      (loop for x in '(4 1 10 1 5 7 9) minimize x into foo finally (setq z foo))
-;;      z))
-;;   nil
-;;   1)
+(deftest loop.10.49
+  (let (z)
+    (values
+     (loop for x in '(4 1 10 1 5 7 9) minimize x into foo finally (setq z foo))
+     z))
+  nil
+  1)
 
 ;; (deftest loop.10.50
 ;;   (loop for x in '(8 20 5 3 24 1 19 4 20 3) minimize x of-type real)
