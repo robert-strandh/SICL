@@ -224,9 +224,9 @@
   (loop for x in '(-1000000000000) minimize x)
   -1000000000000)
 
-;; (deftest loop.10.44
-;;   (loop for x in '(1.0 2.0 -1.0 3.0) minimize x)
-;;   -1.0)
+(deftest loop.10.44
+  (loop for x in '(1.0 2.0 -1.0 3.0) minimize x)
+  -1.0)
 
 ;; (deftest loop.10.45
 ;;   (loop for x in '(8 20 5 3 24 1 19 4 20 3) minimize x fixnum)
