@@ -206,11 +206,11 @@
   (loop for x in '(1 2 3) maximize (return 10))
   10)
 
-;; ;;; Tests of MINIMIZE, MINIMIZING
+;;; Tests of MINIMIZE, MINIMIZING
 
-;; (deftest loop.10.40
-;;   (loop for x in '(4 10 1 5 7 9) minimize x)
-;;   1)
+(deftest loop.10.40
+   (loop for x in '(4 10 1 5 7 9) minimize x)
+   1)
 
 ;; (deftest loop.10.41
 ;;   (loop for x in '(4 10 5 7 1 9) minimizing x)
