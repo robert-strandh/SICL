@@ -75,15 +75,15 @@
    program-error)
   t)
 
-;; (declaim (special *loop-count-var*))
+(declaim (special *loop-count-var*))
 
-;; (deftest loop.10.11
-;;   (let ((*loop-count-var* 100))
-;;     (values
-;;      (loop for x in '(a b c d) count x into *loop-count-var*
-;;            finally (return *loop-count-var*))
-;;      *loop-count-var*))
-;;   4 100)
+(deftest loop.10.11
+  (let ((*loop-count-var* 100))
+    (values
+     (loop for x in '(a b c d) count x into *loop-count-var*
+           finally (return *loop-count-var*))
+     *loop-count-var*))
+  4 100)
 
 ;; (deftest loop.10.12
 ;;   (loop for x in '(a b nil d nil e)
