@@ -175,15 +175,15 @@
      foo))
   8 20)
 
-;; (declaim (special *loop-max-var*))
+(declaim (special *loop-max-var*))
 
-;; (deftest loop.10.36
-;;   (let ((*loop-max-var* 100))
-;;     (values
-;;      (loop for x in '(1 10 4 8) maximize x into *loop-max-var*
-;;            finally (return *loop-max-var*))
-;;      *loop-max-var*))
-;;   10 100)
+(deftest loop.10.36
+  (let ((*loop-max-var* 100))
+    (values
+     (loop for x in '(1 10 4 8) maximize x into *loop-max-var*
+           finally (return *loop-max-var*))
+     *loop-max-var*))
+  10 100)
 
 ;; (deftest loop.10.37
 ;;   (signals-error
