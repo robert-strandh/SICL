@@ -140,13 +140,13 @@
   (loop for x in '(1 4 10 5 7 9) maximize x into foo finally (return foo))
   10)
 
-;; (deftest loop.10.29
-;;   (let (z)
-;;     (values
-;;      (loop for x in '(1 4 10 5 7 9) maximize x into foo finally (setq z foo))
-;;      z))
-;;   nil
-;;   10)
+(deftest loop.10.29
+  (let (z)
+    (values
+     (loop for x in '(1 4 10 5 7 9) maximize x into foo finally (setq z foo))
+     z))
+  nil
+  10)
 
 ;; (deftest loop.10.30
 ;;   (loop for x in '(8 20 5 3 24 1 19 4 20 3) maximize x of-type real)
