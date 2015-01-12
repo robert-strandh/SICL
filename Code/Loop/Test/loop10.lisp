@@ -375,14 +375,14 @@
   (loop for i from 1 to 4 sum i into foo fixnum finally (return foo))
   10)
 
-;; (deftest loop.10.81
-;;   (let (z)
-;;     (values
-;;      (loop for i from 1 to 4 sum i into foo of-type (integer 0 10)
-;;            finally (setq z foo))
-;;      z))
-;;   nil
-;;   10)
+(deftest loop.10.81
+  (let (z)
+    (values
+     (loop for i from 1 to 4 sum i into foo of-type (integer 0 10)
+           finally (setq z foo))
+     z))
+  nil
+  10)
 
 ;; (deftest loop.10.82
 ;;   (loop for i from 1 to 4
