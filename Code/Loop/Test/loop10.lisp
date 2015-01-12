@@ -202,9 +202,9 @@
   t)
 
 
-;; (deftest loop.10.39
-;;   (loop for x in '(1 2 3) maximize (return 10))
-;;   10)
+(deftest loop.10.39
+  (loop for x in '(1 2 3) maximize (return 10))
+  10)
 
 ;; ;;; Tests of MINIMIZE, MINIMIZING
 
