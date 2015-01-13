@@ -77,59 +77,59 @@
         always nil)
   t)
 
-;; ;;; Tests of NEVER
+;;; Tests of NEVER
 
-;; (deftest loop.12.21
-;;   (loop for i in '(1 2 3 4) never (> i 10))
-;;   t)
+(deftest loop.12.21
+  (loop for i in '(1 2 3 4) never (> i 10))
+  t)
 
-;; (deftest loop.12.22
-;;   (loop for i in nil never t)
-;;   t)
+(deftest loop.12.22
+  (loop for i in nil never t)
+  t)
 
-;; (deftest loop.12.23
-;;   (loop for i in '(a) never t)
-;;   nil)
+(deftest loop.12.23
+  (loop for i in '(a) never t)
+  nil)
 
-;; (deftest loop.12.24
-;;   (loop for i in '(1 2 3 4 5 6 7)
-;;         never nil
-;;         until (> i 5))
-;;   t)
+(deftest loop.12.24
+  (loop for i in '(1 2 3 4 5 6 7)
+        never nil
+        until (> i 5))
+  t)
 
-;; (deftest loop.12.25
-;;   (loop for i in '(1 2 3 4 5 6 7)
-;;         never (>= i 6)
-;;         until (>= i 5))
-;;   t)
+(deftest loop.12.25
+  (loop for i in '(1 2 3 4 5 6 7)
+        never (>= i 6)
+        until (>= i 5))
+  t)
 
-;; (deftest loop.12.26
-;;   (loop for x in '(a b c d e) never (not x))
-;;   t)
+(deftest loop.12.26
+  (loop for x in '(a b c d e) never (not x))
+  t)
 
-;; (deftest loop.12.30
-;;   (loop for x in '(1 2 3 4 5)
-;;         never (>= x 10)
-;;         finally (return 'good))
-;;   good)
+(deftest loop.12.30
+  (loop for x in '(1 2 3 4 5)
+        never (>= x 10)
+        finally (return 'good))
+  good)
 
-;; (deftest loop.12.31
-;;   (loop for x in '(1 2 3 4 5)
-;;         never (>= x 3)
-;;         finally (return 'bad))
-;;   nil)
+(deftest loop.12.31
+  (loop for x in '(1 2 3 4 5)
+        never (>= x 3)
+        finally (return 'bad))
+  nil)
 
-;; (deftest loop.12.32
-;;   (loop for x in '(1 2 3 4 5 6)
-;;         never nil
-;;         when (= x 4) do (loop-finish))
-;;   t)
+(deftest loop.12.32
+  (loop for x in '(1 2 3 4 5 6)
+        never nil
+        when (= x 4) do (loop-finish))
+  t)
 
-;; (deftest loop.12.33
-;;   (loop for x in '(1 2 3 4 5 6)
-;;         do (loop-finish)
-;;         never t)
-;;   t)
+(deftest loop.12.33
+  (loop for x in '(1 2 3 4 5 6)
+        do (loop-finish)
+        never t)
+  t)
 
 ;; ;;; Tests of THEREIS
 
