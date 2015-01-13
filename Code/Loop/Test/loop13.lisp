@@ -60,154 +60,154 @@
     :bad)
   :good)
 
-;; (deftest loop.13.12
-;;   (loop named foo with a = (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.12
+  (loop named foo with a = (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.13
-;;   (loop named foo
-;;         with b = 1
-;;         and a = (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.13
+  (loop named foo
+        with b = 1
+        and a = (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.14
-;;   (loop named foo
-;;         for a = (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.14
+  (loop named foo
+        for a = (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.15
-;;   (loop named foo for a in (return-from foo :good))
-;;   :good)
+(deftest loop.13.15
+  (loop named foo for a in (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.16
-;;   (loop named foo for a from (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.16
+  (loop named foo for a from (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.17
-;;   (loop named foo for a on (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.17
+  (loop named foo for a on (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.18
-;;   (loop named foo for a across (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.18
+  (loop named foo for a across (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.19
-;;   (loop named foo for a being the hash-keys of (return-from foo :good)
-;;         return :bad)
-;;   :good)
+(deftest loop.13.19
+  (loop named foo for a being the hash-keys of (return-from foo :good)
+        return :bad)
+  :good)
 
-;; (deftest loop.13.20
-;;   (loop named foo for a being the symbols of (return-from foo :good)
-;;         return :bad)
-;;   :good)
+(deftest loop.13.20
+  (loop named foo for a being the symbols of (return-from foo :good)
+        return :bad)
+  :good)
 
-;; (deftest loop.13.21
-;;   (loop named foo repeat (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.21
+  (loop named foo repeat (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.22
-;;   (loop named foo for i from 0 to (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.22
+  (loop named foo for i from 0 to (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.23
-;;   (loop named foo for i from 0 to 10 by (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.23
+  (loop named foo for i from 0 to 10 by (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.24
-;;   (loop named foo for i from 10 downto (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.24
+  (loop named foo for i from 10 downto (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.25
-;;   (loop named foo for i from 10 above (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.25
+  (loop named foo for i from 10 above (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.26
-;;   (loop named foo for i from 10 below (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.26
+  (loop named foo for i from 10 below (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.27
-;;   (loop named foo for i in '(a b c) by (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.27
+  (loop named foo for i in '(a b c) by (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.28
-;;   (loop named foo for i on '(a b c) by (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.28
+  (loop named foo for i on '(a b c) by (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.29
-;;   (loop named foo for i = 1 then (return-from foo :good))
-;;   :good)
+(deftest loop.13.29
+  (loop named foo for i = 1 then (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.30
-;;   (loop named foo for x in '(a b c) collect (return-from foo :good))
-;;   :good)
+(deftest loop.13.30
+  (loop named foo for x in '(a b c) collect (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.31
-;;   (loop named foo for x in '(a b c) append (return-from foo :good))
-;;   :good)
+(deftest loop.13.31
+  (loop named foo for x in '(a b c) append (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.32
-;;   (loop named foo for x in '(a b c) nconc (return-from foo :good))
-;;   :good)
+(deftest loop.13.32
+  (loop named foo for x in '(a b c) nconc (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.33
-;;   (loop named foo for x in '(a b c) count (return-from foo :good))
-;;   :good)
+(deftest loop.13.33
+  (loop named foo for x in '(a b c) count (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.34
-;;   (loop named foo for x in '(a b c) sum (return-from foo :good))
-;;   :good)
+(deftest loop.13.34
+  (loop named foo for x in '(a b c) sum (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.35
-;;   (loop named foo for x in '(a b c) maximize (return-from foo :good))
-;;   :good)
+(deftest loop.13.35
+  (loop named foo for x in '(a b c) maximize (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.36
-;;   (loop named foo for x in '(a b c) minimize (return-from foo :good))
-;;   :good)
+(deftest loop.13.36
+  (loop named foo for x in '(a b c) minimize (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.37
-;;   (loop named foo for x in '(a b c) thereis (return-from foo :good))
-;;   :good)
+(deftest loop.13.37
+  (loop named foo for x in '(a b c) thereis (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.38
-;;   (loop named foo for x in '(a b c) always (return-from foo :good))
-;;   :good)
+(deftest loop.13.38
+  (loop named foo for x in '(a b c) always (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.39
-;;   (loop named foo for x in '(a b c) never (return-from foo :good))
-;;   :good)
+(deftest loop.13.39
+  (loop named foo for x in '(a b c) never (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.40
-;;   (loop named foo for x in '(a b c) until (return-from foo :good))
-;;   :good)
+(deftest loop.13.40
+  (loop named foo for x in '(a b c) until (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.41
-;;   (loop named foo for x in '(a b c) while (return-from foo :good))
-;;   :good)
+(deftest loop.13.41
+  (loop named foo for x in '(a b c) while (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.42
-;;   (loop named foo for x in '(a b c) when (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.42
+  (loop named foo for x in '(a b c) when (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.43
-;;   (loop named foo for x in '(a b c) unless (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.43
+  (loop named foo for x in '(a b c) unless (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.44
-;;   (loop named foo for x in '(a b c) if (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.44
+  (loop named foo for x in '(a b c) if (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.45
-;;   (loop named foo for x in '(a b c) return (return-from foo :good))
-;;   :good)
+(deftest loop.13.45
+  (loop named foo for x in '(a b c) return (return-from foo :good))
+  :good)
 
-;; (deftest loop.13.46
-;;   (loop named foo initially (return-from foo :good) return :bad)
-;;   :good)
+(deftest loop.13.46
+  (loop named foo initially (return-from foo :good) return :bad)
+  :good)
 
-;; (deftest loop.13.47
-;;   (loop named foo do (loop-finish) finally (return-from foo :good))
-;;   :good)
+(deftest loop.13.47
+  (loop named foo do (loop-finish) finally (return-from foo :good))
+  :good)
 
 
 ;; (deftest loop.13.52
