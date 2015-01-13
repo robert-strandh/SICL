@@ -48,17 +48,17 @@
   (loop named foo return 'a)
   a)
 
-;; (deftest loop.13.10
-;;   (block nil
-;;     (return (loop named foo return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.10
+  (block nil
+    (return (loop named foo return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.11
-;;   (block nil
-;;     (loop named foo do (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.11
+  (block nil
+    (loop named foo do (return :good))
+    :bad)
+  :good)
 
 ;; (deftest loop.13.12
 ;;   (loop named foo with a = (return-from foo :good) return :bad)
