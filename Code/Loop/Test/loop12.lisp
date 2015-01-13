@@ -7,33 +7,33 @@
 
 ;;; Tests of ALWAYS clauses
 
-;; (deftest loop.12.1
-;;   (loop for i in '(1 2 3 4) always (< i 10))
-;;   t)
+(deftest loop.12.1
+  (loop for i in '(1 2 3 4) always (< i 10))
+  t)
 
-;; (deftest loop.12.2
-;;   (loop for i in nil always nil)
-;;   t)
+(deftest loop.12.2
+  (loop for i in nil always nil)
+  t)
 
-;; (deftest loop.12.3
-;;   (loop for i in '(a) always nil)
-;;   nil)
+(deftest loop.12.3
+  (loop for i in '(a) always nil)
+  nil)
 
-;; (deftest loop.12.4
-;;   (loop for i in '(1 2 3 4 5 6 7)
-;;         always t
-;;         until (> i 5))
-;;   t)
+(deftest loop.12.4
+  (loop for i in '(1 2 3 4 5 6 7)
+        always t
+        until (> i 5))
+  t)
 
-;; (deftest loop.12.5
-;;   (loop for i in '(1 2 3 4 5 6 7)
-;;         always (< i 6)
-;;         until (>= i 5))
-;;   t)
+(deftest loop.12.5
+  (loop for i in '(1 2 3 4 5 6 7)
+        always (< i 6)
+        until (>= i 5))
+  t)
 
-;; (deftest loop.12.6
-;;   (loop for x in '(a b c d e) always x)
-;;   t)
+(deftest loop.12.6
+  (loop for x in '(a b c d e) always x)
+  t)
 
 ;; (deftest loop.12.7
 ;;   (loop for x in '(1 2 3 4 5 6)
