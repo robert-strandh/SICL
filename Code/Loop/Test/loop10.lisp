@@ -488,17 +488,17 @@
   (loop for i in nil sum i of-type short-float)
   0.0s0)
 
-;; (deftest loop.10.102
-;;   (loop for i in nil sum i of-type single-float)
-;;   0.0f0)
+(deftest loop.10.102
+  (loop for i in nil sum i of-type single-float)
+  0.0f0)
 
-;; (deftest loop.10.103
-;;   (loop for i in nil sum i of-type double-float)
-;;   0.0d0)
+(deftest loop.10.103
+  (loop for i in nil sum i of-type double-float)
+  0.0d0)
 
-;; (deftest loop.10.104
-;;   (loop for i in nil sum i of-type long-float)
-;;   0.0l0)
+(deftest loop.10.104
+  (loop for i in nil sum i of-type long-float)
+  0.0l0)
 
 ;; ;;; Test that explicit calls to macroexpand in subforms
 ;; ;;; are done in the correct environment
