@@ -14,6 +14,9 @@
 
 (defclass never-clause (termination-test-clause form-mixin) ())
 
+(defmethod accumulation-variables ((clause never-clause))
+  `((nil always/never t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
