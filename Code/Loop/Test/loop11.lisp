@@ -213,8 +213,8 @@
 ;; Test that explicit calls to macroexpand in subforms
 ;; are done in the correct environment
 
-;; (deftest loop.11.35
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop repeat (expand-in-current-env (%m 5)) collect 'x))
-;;   (x x x x x))
+(deftest loop.11.35
+  (macrolet
+   ((%m (z) z))
+   (loop repeat (expand-in-current-env (%m 5)) collect 'x))
+  (x x x x x))
