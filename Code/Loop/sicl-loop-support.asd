@@ -10,9 +10,9 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-(in-package #:cl-user)
+(in-package #:asdf-user)
 
-(asdf:defsystem :sicl-loop-support
+(defsystem :sicl-loop-support
   :depends-on (:sicl-additional-conditions
 	       :cleavir-internationalization)
   :serial t
