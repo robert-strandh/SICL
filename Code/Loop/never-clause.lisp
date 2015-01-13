@@ -12,8 +12,7 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass never-clause (termination-test-clause)
-  ((%form :initarg :form :reader form)))
+(defclass never-clause (termination-test-clause form-mixin) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
