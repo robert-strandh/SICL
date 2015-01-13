@@ -430,9 +430,9 @@
         sum (/ i 17) of-type rational)
   10/17)
 
-;; (deftest loop.10.89
-;;   (loop for i from 1 to 4 summing (/ i 17))
-;;   10/17)
+(deftest loop.10.89
+  (loop for i from 1 to 4 summing (/ i 17))
+  10/17)
 
 ;; (deftest loop.10.90
 ;;   (loop for i from 1 to 4
