@@ -456,13 +456,13 @@
   (loop for i from 1 to 4 summing (return 100))
   100)
 
-;; (deftest loop.10.94
-;;   (loop for i in nil sum i of-type integer)
-;;   0)
+(deftest loop.10.94
+  (loop for i in nil sum i of-type integer)
+  0)
 
-;; (deftest loop.10.95
-;;   (loop for i in nil sum i of-type fixnum)
-;;   0)
+(deftest loop.10.95
+  (loop for i in nil sum i of-type fixnum)
+  0)
 
 ;; (deftest loop.10.96
 ;;   (loop for i in nil sum i of-type bit)
