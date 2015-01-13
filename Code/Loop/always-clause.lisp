@@ -14,14 +14,8 @@
 
 (defclass always-clause (termination-test-clause form-mixin) ())
 
-(defmethod accumulation-category ((clause always-clause))
-  'always)
-
-(defmethod into-var ((clause always-clause))
-  nil)
-
-(defmethod type-spec ((clause always-clause))
-  t)
+(defmethod accumulation-variables ((clause always-clause))
+  `((nil always/never t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
