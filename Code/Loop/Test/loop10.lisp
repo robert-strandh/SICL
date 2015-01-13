@@ -396,13 +396,13 @@
         count t fixnum)
   14)
 
-;; (deftest loop.10.84
-;;   (let ((foo 100))
-;;     (values
-;;      (loop for i from 1 to 4 sum i into foo of-type integer
-;;            finally (return foo))
-;;      foo))
-;;   10 100)
+(deftest loop.10.84
+  (let ((foo 100))
+    (values
+     (loop for i from 1 to 4 sum i into foo of-type integer
+           finally (return foo))
+     foo))
+  10 100)
 
 ;; (deftest loop.10.85
 ;;   (signals-error
