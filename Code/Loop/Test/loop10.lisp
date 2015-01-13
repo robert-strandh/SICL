@@ -472,13 +472,13 @@
   (loop for i in nil sum i of-type (integer 0 100))
   0)
 
-;; (deftest loop.10.98
-;;   (loop for i in nil sum i of-type (integer -100 0))
-;;   0)
+(deftest loop.10.98
+  (loop for i in nil sum i of-type (integer -100 0))
+  0)
 
-;; (deftest loop.10.99
-;;   (loop for i in nil sum i of-type (integer -100 100))
-;;   0)
+(deftest loop.10.99
+  (loop for i in nil sum i of-type (integer -100 100))
+  0)
 
 ;; (deftest loop.10.100
 ;;   (loop for i in nil sum i of-type (and integer (real -100.0 100.0)))
