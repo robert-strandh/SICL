@@ -100,7 +100,7 @@
     (loop for (name category type) in unique
 	  for initial-value = (cond  ((eq category 'count/sum)
 				      (coerce 0 type))
-				     ((member category '(always never))
+				     ((eq category 'always/never)
 				      t)
 				     (t
 				      nil))
