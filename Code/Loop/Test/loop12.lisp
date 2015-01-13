@@ -35,23 +35,23 @@
   (loop for x in '(a b c d e) always x)
   t)
 
-;; (deftest loop.12.7
-;;   (loop for x in '(1 2 3 4 5 6)
-;;         always (< x 20)
-;;         never (> x 10))
-;;   t)
+(deftest loop.12.7
+  (loop for x in '(1 2 3 4 5 6)
+        always (< x 20)
+        never (> x 10))
+  t)
 
-;; (deftest loop.12.8
-;;   (loop for x in '(1 2 3 4 5 6)
-;;         always (< x 20)
-;;         never (> x 5))
-;;   nil)
+(deftest loop.12.8
+  (loop for x in '(1 2 3 4 5 6)
+        always (< x 20)
+        never (> x 5))
+  nil)
 
-;; (deftest loop.12.9
-;;   (loop for x in '(1 2 3 4 5 6)
-;;         never (> x 5)
-;;         always (< x 20))
-;;   nil)
+(deftest loop.12.9
+  (loop for x in '(1 2 3 4 5 6)
+        never (> x 5)
+        always (< x 20))
+  nil)
 
 ;; (deftest loop.12.10
 ;;   (loop for x in '(1 2 3 4 5)
