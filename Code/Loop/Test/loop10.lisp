@@ -464,13 +464,13 @@
   (loop for i in nil sum i of-type fixnum)
   0)
 
-;; (deftest loop.10.96
-;;   (loop for i in nil sum i of-type bit)
-;;   0)
+(deftest loop.10.96
+  (loop for i in nil sum i of-type bit)
+  0)
 
-;; (deftest loop.10.97
-;;   (loop for i in nil sum i of-type (integer 0 100))
-;;   0)
+(deftest loop.10.97
+  (loop for i in nil sum i of-type (integer 0 100))
+  0)
 
 ;; (deftest loop.10.98
 ;;   (loop for i in nil sum i of-type (integer -100 0))
