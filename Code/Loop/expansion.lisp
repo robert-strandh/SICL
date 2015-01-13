@@ -71,17 +71,6 @@
     (declare (ignore clause))
     nil))
 
-;;; Determine the initial value for the main loop accumulation
-;;; variable.  If there is a default SUM or a default COUNT clause,
-;;; then the initial value is 0.  Otherwise it is NIL.
-(defun accumulation-initial-value (clauses)
-  (if (find-if (lambda (clause)
-		 (or (typep clause 'count-form-clause)
-		     (typep clause 'sum-form-clause)))
-	       clauses)
-      0
-      nil))
-
 ;;; This variable is bound by the code generator for
 ;;; CONDITIONAL-CLAUSE before calling the code generators for the
 ;;; clauses in its THEN and ELSE branches.
@@ -107,15 +96,18 @@
 	 (equal-fun (lambda (d1 d2)
 		      (and (eq (first d1) (first d2))
 			   (eq (second d1) (second d2)))))
-	 (unique (remove-duplicates descriptors :test equal-fun))
-	 (no-nil (remove nil unique :test #'eq :key #'car)))
-    (loop for (name category type) in no-nil
+	 (unique (remove-duplicates descriptors :test equal-fun)))
+    (loop for (name category type) in unique
 	  for initial-value = (if (eq category 'count/sum)
 				  (coerce 0 type)
 				  nil)
-	  collect `(,name ,initial-value)
+	  collect (if (null name)
+		      `(,*accumulation-variable* ,initial-value)
+		      `(,name ,initial-value))
 	  when (eq category 'list)
-	    collect `(,(tail-variable name) ,nil))))
+	    collect (if (null name)
+		      `(,*list-tail-accumulation-variable* nil)
+		      `(,(tail-variable name) nil)))))
 
 (defvar *loop-name*)
 
@@ -167,12 +159,12 @@
     result))
 
 (defun expand-clauses (all-clauses end-tag)
-  `(let ((,*accumulation-variable*
-	   ,(accumulation-initial-value all-clauses))
-	 (,*list-tail-accumulation-variable* nil)
-	 ,@(accumulation-bindings all-clauses))
-     (declare (ignorable ,*list-tail-accumulation-variable*))
-     ,(do-clauses all-clauses end-tag)))
+  (let ((acc (accumulation-bindings all-clauses)))
+    `(let (,@(if (member *accumulation-variable* acc :key #'car)
+		 '()
+		 `((,*accumulation-variable* nil)))
+	   ,@acc)
+       ,(do-clauses all-clauses end-tag))))
 
 (defun expand-body (loop-body end-tag)
   (if (every #'consp loop-body)
