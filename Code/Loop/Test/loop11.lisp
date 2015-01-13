@@ -174,41 +174,41 @@
 
 ;; More tests of a bug that showed up in c.l.l
 
-;; (deftest loop.11.29
-;;   (loop for i in '(4 8 9 A 13)
-;;         when (eq i 'a) return :good
-;;         while (< i 12) collect i)
-;;   :good)
+(deftest loop.11.29
+  (loop for i in '(4 8 9 A 13)
+        when (eq i 'a) return :good
+        while (< i 12) collect i)
+  :good)
 
-;; (deftest loop.11.30
-;;   (loop for i in '(4 8 9 A 13)
-;;         unless (numberp i) return :good
-;;         while (< i 12) collect i)
-;;   :good)
+(deftest loop.11.30
+  (loop for i in '(4 8 9 A 13)
+        unless (numberp i) return :good
+        while (< i 12) collect i)
+  :good)
 
-;; (deftest loop.11.31
-;;   (loop for i in '(4 8 9 A 13)
-;;         when (eq i 'a) return :good
-;;         until (> i 12) collect i)
-;;   :good)
+(deftest loop.11.31
+  (loop for i in '(4 8 9 A 13)
+        when (eq i 'a) return :good
+        until (> i 12) collect i)
+  :good)
 
-;; (deftest loop.11.32
-;;   (loop for i in '(4 8 9 A 13)
-;;         unless (numberp i) return :good
-;;         until (> i 12) collect i)
-;;   :good)
+(deftest loop.11.32
+  (loop for i in '(4 8 9 A 13)
+        unless (numberp i) return :good
+        until (> i 12) collect i)
+  :good)
 
-;; (deftest loop.11.33
-;;   (loop for i in '(4 8 9 A 13)
-;;         if (not (numberp i)) return :good end
-;;         while (< i 12) collect i)
-;;   :good)
+(deftest loop.11.33
+  (loop for i in '(4 8 9 A 13)
+        if (not (numberp i)) return :good end
+        while (< i 12) collect i)
+  :good)
 
-;; (deftest loop.11.34
-;;   (loop for i in '(4 8 9 A 13)
-;;         if (not (numberp i)) return :good end
-;;         until (> i 12) collect i)
-;;   :good)
+(deftest loop.11.34
+  (loop for i in '(4 8 9 A 13)
+        if (not (numberp i)) return :good end
+        until (> i 12) collect i)
+  :good)
 
 ;; Test that explicit calls to macroexpand in subforms
 ;; are done in the correct environment
