@@ -404,21 +404,21 @@
      foo))
   10 100)
 
-;; (deftest loop.10.85
-;;   (signals-error
-;;    (loop with foo = 100
-;;          for i from 1 to 4 sum i into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.10.85
+  (signals-error
+   (loop with foo = 100
+         for i from 1 to 4 sum i into foo
+         finally (return foo))
+   program-error)
+  t)
 
-;; (deftest loop.10.86
-;;   (signals-error
-;;    (loop with foo = 100
-;;          for i from 1 to 4 summing i into foo
-;;          finally (return foo))
-;;    program-error)
-;;   t)
+(deftest loop.10.86
+  (signals-error
+   (loop with foo = 100
+         for i from 1 to 4 summing i into foo
+         finally (return foo))
+   program-error)
+  t)
 
 ;; (deftest loop.10.87
 ;;   (loop for i from 1 to 4
