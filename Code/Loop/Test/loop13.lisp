@@ -5,36 +5,36 @@
 
 (in-package :sicl-loop-test)
 
-;; (deftest loop.13.1
-;;   (loop do (return 10))
-;;   10)
+(deftest loop.13.1
+  (loop do (return 10))
+  10)
 
-;; (deftest loop.13.2
-;;   (loop doing (return 10))
-;;   10)
+(deftest loop.13.2
+  (loop doing (return 10))
+  10)
 
-;; (deftest loop.13.3
-;;   (loop for i from 0 below 100 by 7
-;;         when (> i 50) return i)
-;;   56)
+(deftest loop.13.3
+  (loop for i from 0 below 100 by 7
+        when (> i 50) return i)
+  56)
 
-;; (deftest loop.13.4
-;;   (let ((x 0))
-;;     (loop do
-;;           (incf x)
-;;           (when (= x 10) (return x))))
-;;   10)
+(deftest loop.13.4
+  (let ((x 0))
+    (loop do
+          (incf x)
+          (when (= x 10) (return x))))
+  10)
 
-;; (deftest loop.13.5
-;;   (loop return 'a)
-;;   a)
+(deftest loop.13.5
+  (loop return 'a)
+  a)
 
-;; (deftest loop.13.6
-;;   (loop return (values)))
+(deftest loop.13.6
+  (loop return (values)))
 
-;; (deftest loop.13.7
-;;   (loop return (values 1 2))
-;;   1 2)
+(deftest loop.13.7
+  (loop return (values 1 2))
+  1 2)
 
 ;; (deftest loop.13.8
 ;;   (let* ((limit (min 1000 (1- (min call-arguments-limit
