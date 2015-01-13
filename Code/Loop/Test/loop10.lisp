@@ -420,10 +420,10 @@
    program-error)
   t)
 
-;; (deftest loop.10.87
-;;   (loop for i from 1 to 4
-;;         sum (complex i (1+ i)) of-type complex)
-;;   #c(10 14))
+(deftest loop.10.87
+  (loop for i from 1 to 4
+        sum (complex i (1+ i)) of-type complex)
+  #c(10 14))
 
 ;; (deftest loop.10.88
 ;;   (loop for i from 1 to 4
