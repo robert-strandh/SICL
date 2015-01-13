@@ -30,3 +30,13 @@
 	       'anything-parser))
 
 (add-clause-parser 'thereis-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the body-form
+
+(defmethod body-form ((clause thereis-clause) end-tag)
+  (declare (ignore end-tag))
+  `(let ((temp ,(form clause)))
+     (when temp
+       (return-from ,*loop-name* temp))))
