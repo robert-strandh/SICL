@@ -12,7 +12,16 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass always-clause (termination-test-clause form-mixin)
+(defclass always-clause (termination-test-clause form-mixin) ())
+
+(defmethod accumulation-category ((clause always-clause))
+  'always)
+
+(defmethod into-var ((clause always-clause))
+  nil)
+
+(defmethod type-spec ((clause always-clause))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
