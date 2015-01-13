@@ -36,3 +36,12 @@
 	       'anything-parser))
 
 (add-clause-parser 'always-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the body-form
+
+(defmethod body-form ((clause always-clause) end-tag)
+  (declare (ignore end-tag))
+  `(unless ,(form clause)
+     (return-from ,*loop-name* nil)))
