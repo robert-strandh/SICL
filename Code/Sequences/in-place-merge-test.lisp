@@ -1,7 +1,7 @@
 (defun nrev (v start end)
-  (loop repeat (floor (- end start) 2)
-	for i from start
+  (loop for i from start
 	for j downfrom (1- end)
+	repeat (floor (- end start) 2)
 	do (rotatef (svref v i) (svref v j))))
 
 (defun rotate (vector start middle end)
