@@ -30,6 +30,9 @@
 (defclass name-clause (clause)
   ((%name :initarg :name :reader name)))
 
+(defmethod bound-variables ((clause name-clause))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser.
