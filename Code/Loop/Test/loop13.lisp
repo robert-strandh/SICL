@@ -44,9 +44,9 @@
     (equal vals vals2))
   t)
 
-;; (deftest loop.13.9
-;;   (loop named foo return 'a)
-;;   a)
+(deftest loop.13.9
+  (loop named foo return 'a)
+  a)
 
 ;; (deftest loop.13.10
 ;;   (block nil
