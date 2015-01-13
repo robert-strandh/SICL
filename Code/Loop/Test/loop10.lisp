@@ -434,12 +434,12 @@
   (loop for i from 1 to 4 summing (/ i 17))
   10/17)
 
-;; (deftest loop.10.90
-;;   (loop for i from 1 to 4
-;;         sum i into foo
-;;         sum (1+ i) into bar
-;;         finally (return (values foo bar)))
-;;   10 14)
+(deftest loop.10.90
+  (loop for i from 1 to 4
+        sum i into foo
+        sum (1+ i) into bar
+        finally (return (values foo bar)))
+  10 14)
 
 ;; (deftest loop.10.91
 ;;   (loop for i from 1 to 4
