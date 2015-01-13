@@ -149,55 +149,55 @@
         when (eql x 2) do (loop-finish))
   nil)
 
-;; ;;; Error cases
+;;; Error cases
 
-;; (deftest loop.12.error.50
-;;   (signals-error
-;;    (loop for i from 1 to 10
-;;          collect i
-;;          always (< i 20))
-;;    program-error)
-;;   t)
+(deftest loop.12.error.50
+  (signals-error
+   (loop for i from 1 to 10
+         collect i
+         always (< i 20))
+   program-error)
+  t)
 
-;; (deftest loop.12.error.50a
-;;   (signals-error
-;;    (loop for i from 1 to 10
-;;          always (< i 20)
-;;          collect i)
-;;    program-error)
-;;   t)
+(deftest loop.12.error.50a
+  (signals-error
+   (loop for i from 1 to 10
+         always (< i 20)
+         collect i)
+   program-error)
+  t)
 
-;; (deftest loop.12.error.51
-;;   (signals-error
-;;    (loop for i from 1 to 10
-;;          collect i
-;;          never (> i 20))
-;;    program-error)
-;;   t)
+(deftest loop.12.error.51
+  (signals-error
+   (loop for i from 1 to 10
+         collect i
+         never (> i 20))
+   program-error)
+  t)
 
-;; (deftest loop.12.error.51a
-;;   (signals-error
-;;    (loop for i from 1 to 10
-;;          never (> i 20)
-;;          collect i)
-;;    program-error)
-;;   t)
+(deftest loop.12.error.51a
+  (signals-error
+   (loop for i from 1 to 10
+         never (> i 20)
+         collect i)
+   program-error)
+  t)
 
-;; (deftest loop.12.error.52
-;;   (signals-error
-;;    (loop for i from 1 to 10
-;;          collect i
-;;          thereis (> i 20))
-;;    program-error)
-;;   t)
+(deftest loop.12.error.52
+  (signals-error
+   (loop for i from 1 to 10
+         collect i
+         thereis (> i 20))
+   program-error)
+  t)
 
-;; (deftest loop.12.error.52a
-;;   (signals-error
-;;    (loop for i from 1 to 10
-;;          thereis (> i 20)
-;;          collect i)
-;;    program-error)
-;;   t)
+(deftest loop.12.error.52a
+  (signals-error
+   (loop for i from 1 to 10
+         thereis (> i 20)
+         collect i)
+   program-error)
+  t)
 
 ;; ;;; Non-error cases
 
