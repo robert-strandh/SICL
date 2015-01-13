@@ -121,56 +121,56 @@
 
 ;; Tests of UNTIL
 
-;; (deftest loop.11.20
-;;   (loop with i = 0 until (>= i 10) collect (incf i))
-;;   (1 2 3 4 5 6 7 8 9 10))
+(deftest loop.11.20
+  (loop with i = 0 until (>= i 10) collect (incf i))
+  (1 2 3 4 5 6 7 8 9 10))
 
-;; (deftest loop.11.21
-;;   (loop with i = 0 while (if (< i 10) t (return 'good))
-;;         collect (incf i))
-;;   good)
+(deftest loop.11.21
+  (loop with i = 0 while (if (< i 10) t (return 'good))
+        collect (incf i))
+  good)
 
-;; (deftest loop.11.22
-;;   (loop with i = 0
-;;         until (>= i 10) collect (incf i)
-;;         until (>= i 10) collect (incf i)
-;;         until (>= i 10) collect (incf i))
-;;   (1 2 3 4 5 6 7 8 9 10))
+(deftest loop.11.22
+  (loop with i = 0
+        until (>= i 10) collect (incf i)
+        until (>= i 10) collect (incf i)
+        until (>= i 10) collect (incf i))
+  (1 2 3 4 5 6 7 8 9 10))
 
-;; (deftest loop.11.23
-;;   (loop with i = 0 until (>= i 10) collect (incf i)
-;;         finally (return 'done))
-;;   done)
+(deftest loop.11.23
+  (loop with i = 0 until (>= i 10) collect (incf i)
+        finally (return 'done))
+  done)
 
-;; (deftest loop.11.24
-;;   (loop for i in '(a b c)
-;;         until t
-;;         collect i)
-;;   nil)
+(deftest loop.11.24
+  (loop for i in '(a b c)
+        until t
+        collect i)
+  nil)
 
-;; (deftest loop.11.25
-;;   (loop for i in '(a b c)
-;;         collect i
-;;         until t)
-;;   (a))
+(deftest loop.11.25
+  (loop for i in '(a b c)
+        collect i
+        until t)
+  (a))
 
-;; (deftest loop.11.26
-;;   (loop for i in '(a b c)
-;;         until nil
-;;         collect i)
-;;   (a b c))
+(deftest loop.11.26
+  (loop for i in '(a b c)
+        until nil
+        collect i)
+  (a b c))
 
-;; (deftest loop.11.27
-;;   (loop for i in '(a b c)
-;;         collect i
-;;         until nil)
-;;   (a b c))
+(deftest loop.11.27
+  (loop for i in '(a b c)
+        collect i
+        until nil)
+  (a b c))
 
-;; (deftest loop.11.28
-;;   (loop for i from 1 to 10
-;;         until (>= i 6)
-;;         finally (return i))
-;;   6)
+(deftest loop.11.28
+  (loop for i from 1 to 10
+        until (>= i 6)
+        finally (return i))
+  6)
 
 ;; More tests of a bug that showed up in c.l.l
 
