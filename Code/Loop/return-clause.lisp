@@ -64,6 +64,10 @@
 ;;;
 ;;; Compute body-form.
 
-(defmethod body-form ((clause return-clause) end-tag)
+(defmethod body-form ((clause return-form-clause) end-tag)
   (declare (ignore end-tag))
   `(return-from ,*loop-name* ,(form clause)))
+
+(defmethod body-form ((clause return-it-clause) end-tag)
+  (declare (ignore end-tag))
+  `(return-from ,*loop-name* ,*it-var*))
