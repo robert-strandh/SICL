@@ -131,23 +131,23 @@
         never t)
   t)
 
-;; ;;; Tests of THEREIS
+;;; Tests of THEREIS
 
-;; (deftest loop.12.41
-;;   (loop for x in '(1 2 3 4 5)
-;;         thereis (and (eqlt x 3) 'good))
-;;   good)
+(deftest loop.12.41
+  (loop for x in '(1 2 3 4 5)
+        thereis (and (eql x 3) 'good))
+  good)
 
-;; (deftest loop.12.42
-;;   (loop for x in '(nil nil a nil nil)
-;;         thereis x)
-;;   a)
+(deftest loop.12.42
+  (loop for x in '(nil nil a nil nil)
+        thereis x)
+  a)
 
-;; (deftest loop.12.43
-;;   (loop for x in '(1 2 3 4 5)
-;;         thereis (eql x 4)
-;;         when (eql x 2) do (loop-finish))
-;;   nil)
+(deftest loop.12.43
+  (loop for x in '(1 2 3 4 5)
+        thereis (eql x 4)
+        when (eql x 2) do (loop-finish))
+  nil)
 
 ;; ;;; Error cases
 
