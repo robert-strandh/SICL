@@ -53,29 +53,29 @@
         always (< x 20))
   nil)
 
-;; (deftest loop.12.10
-;;   (loop for x in '(1 2 3 4 5)
-;;         always (< x 10)
-;;         finally (return 'good))
-;;   good)
+(deftest loop.12.10
+  (loop for x in '(1 2 3 4 5)
+        always (< x 10)
+        finally (return 'good))
+  good)
 
-;; (deftest loop.12.11
-;;   (loop for x in '(1 2 3 4 5)
-;;         always (< x 3)
-;;         finally (return 'bad))
-;;   nil)
+(deftest loop.12.11
+  (loop for x in '(1 2 3 4 5)
+        always (< x 3)
+        finally (return 'bad))
+  nil)
 
-;; (deftest loop.12.12
-;;   (loop for x in '(1 2 3 4 5 6)
-;;         always t
-;;         when (= x 4) do (loop-finish))
-;;   t)
+(deftest loop.12.12
+  (loop for x in '(1 2 3 4 5 6)
+        always t
+        when (= x 4) do (loop-finish))
+  t)
 
-;; (deftest loop.12.13
-;;   (loop for x in '(1 2 3 4 5 6)
-;;         do (loop-finish)
-;;         always nil)
-;;   t)
+(deftest loop.12.13
+  (loop for x in '(1 2 3 4 5 6)
+        do (loop-finish)
+        always nil)
+  t)
 
 ;; ;;; Tests of NEVER
 
