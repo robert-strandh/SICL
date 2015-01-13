@@ -210,245 +210,245 @@
   :good)
 
 
-;; (deftest loop.13.52
-;;   (block nil
-;;     (loop named foo with a = (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.52
+  (block nil
+    (loop named foo with a = (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.53
-;;   (block nil
-;;     (loop named foo
-;;           with b = 1
-;;           and a = (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.53
+  (block nil
+    (loop named foo
+          with b = 1
+          and a = (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.54
-;;   (block nil
-;;     (loop named foo
-;;           for a = (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.54
+  (block nil
+    (loop named foo
+          for a = (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.55
-;;   (block nil
-;;     (loop named foo for a in (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.55
+  (block nil
+    (loop named foo for a in (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.56
-;;   (block nil
-;;     (loop named foo for a from (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.56
+  (block nil
+    (loop named foo for a from (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.57
-;;   (block nil
-;;     (loop named foo for a on (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.57
+  (block nil
+    (loop named foo for a on (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.58
-;;   (block nil
-;;     (loop named foo for a across (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.58
+  (block nil
+    (loop named foo for a across (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.59
-;;   (block nil
-;;     (loop named foo for a being the hash-keys of (return :good)
-;;           return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.59
+  (block nil
+    (loop named foo for a being the hash-keys of (return :good)
+          return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.60
-;;   (block nil
-;;     (loop named foo for a being the symbols of (return :good)
-;;           return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.60
+  (block nil
+    (loop named foo for a being the symbols of (return :good)
+          return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.61
-;;   (block nil
-;;     (loop named foo repeat (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.61
+  (block nil
+    (loop named foo repeat (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.62
-;;   (block nil
-;;     (loop named foo for i from 0 to (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.62
+  (block nil
+    (loop named foo for i from 0 to (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.63
-;;   (block nil
-;;     (loop named foo for i from 0 to 10 by (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.63
+  (block nil
+    (loop named foo for i from 0 to 10 by (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.64
-;;   (block nil
-;;     (loop named foo for i from 10 downto (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.64
+  (block nil
+    (loop named foo for i from 10 downto (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.65
-;;   (block nil
-;;     (loop named foo for i from 10 above (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.65
+  (block nil
+    (loop named foo for i from 10 above (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.66
-;;   (block nil
-;;     (loop named foo for i from 10 below (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.66
+  (block nil
+    (loop named foo for i from 10 below (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.67
-;;   (block nil
-;;     (loop named foo for i in '(a b c) by (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.67
+  (block nil
+    (loop named foo for i in '(a b c) by (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.68
-;;   (block nil
-;;     (loop named foo for i on '(a b c) by (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.68
+  (block nil
+    (loop named foo for i on '(a b c) by (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.69
-;;   (block nil
-;;     (loop named foo for i = 1 then (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.69
+  (block nil
+    (loop named foo for i = 1 then (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.70
-;;   (block nil
-;;     (loop named foo for x in '(a b c) collect (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.70
+  (block nil
+    (loop named foo for x in '(a b c) collect (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.71
-;;   (block nil
-;;     (loop named foo for x in '(a b c) append (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.71
+  (block nil
+    (loop named foo for x in '(a b c) append (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.72
-;;   (block nil
-;;     (loop named foo for x in '(a b c) nconc (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.72
+  (block nil
+    (loop named foo for x in '(a b c) nconc (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.73
-;;   (block nil
-;;     (loop named foo for x in '(a b c) count (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.73
+  (block nil
+    (loop named foo for x in '(a b c) count (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.74
-;;   (block nil
-;;     (loop named foo for x in '(a b c) sum (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.74
+  (block nil
+    (loop named foo for x in '(a b c) sum (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.75
-;;   (block nil
-;;     (loop named foo for x in '(a b c) maximize (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.75
+  (block nil
+    (loop named foo for x in '(a b c) maximize (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.76
-;;   (block nil
-;;     (loop named foo for x in '(a b c) minimize (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.76
+  (block nil
+    (loop named foo for x in '(a b c) minimize (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.77
-;;   (block nil
-;;     (loop named foo for x in '(a b c) thereis (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.77
+  (block nil
+    (loop named foo for x in '(a b c) thereis (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.78
-;;   (block nil
-;;     (loop named foo for x in '(a b c) always (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.78
+  (block nil
+    (loop named foo for x in '(a b c) always (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.79
-;;   (block nil
-;;     (loop named foo for x in '(a b c) never (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.79
+  (block nil
+    (loop named foo for x in '(a b c) never (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.80
-;;   (block nil
-;;     (loop named foo for x in '(a b c) until (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.80
+  (block nil
+    (loop named foo for x in '(a b c) until (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.81
-;;   (block nil
-;;     (loop named foo for x in '(a b c) while (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.81
+  (block nil
+    (loop named foo for x in '(a b c) while (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.82
-;;   (block nil
-;;     (loop named foo for x in '(a b c) when (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.82
+  (block nil
+    (loop named foo for x in '(a b c) when (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.83
-;;   (block nil
-;;     (loop named foo for x in '(a b c) unless (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.83
+  (block nil
+    (loop named foo for x in '(a b c) unless (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.84
-;;   (block nil
-;;     (loop named foo for x in '(a b c) if (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.84
+  (block nil
+    (loop named foo for x in '(a b c) if (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.85
-;;   (block nil
-;;     (loop named foo for x in '(a b c) return (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.85
+  (block nil
+    (loop named foo for x in '(a b c) return (return :good))
+    :bad)
+  :good)
 
-;; (deftest loop.13.86
-;;   (block nil
-;;     (loop named foo initially (return :good) return :bad)
-;;     :bad)
-;;   :good)
+(deftest loop.13.86
+  (block nil
+    (loop named foo initially (return :good) return :bad)
+    :bad)
+  :good)
 
-;; (deftest loop.13.87
-;;   (block nil
-;;     (loop named foo do (loop-finish) finally (return :good))
-;;     :bad)
-;;   :good)
+(deftest loop.13.87
+  (block nil
+    (loop named foo do (loop-finish) finally (return :good))
+    :bad)
+  :good)
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
-;; (deftest loop.13.88
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop do (expand-in-current-env (%m (return 10)))))
-;;   10)
+(deftest loop.13.88
+  (macrolet
+   ((%m (z) z))
+   (loop do (expand-in-current-env (%m (return 10)))))
+  10)
 
-;; (deftest loop.13.89
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i from 0 below 100 by 7
-;;          when (> i 50) return (expand-in-current-env (%m i))))
-;;   56)
+(deftest loop.13.89
+  (macrolet
+   ((%m (z) z))
+   (loop for i from 0 below 100 by 7
+         when (> i 50) return (expand-in-current-env (%m i))))
+  56)
 
-;; (deftest loop.13.90
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop return (expand-in-current-env (%m 'a))))
-;;   a)
+(deftest loop.13.90
+  (macrolet
+   ((%m (z) z))
+   (loop return (expand-in-current-env (%m 'a))))
+  a)
