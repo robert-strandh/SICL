@@ -7,48 +7,52 @@
 
 ;;; Tests of REPEAT
 
-;; (deftest loop.11.1
-;;   (let ((z 0))
-;;     (values
-;;      (loop repeat 10 do (incf z))
-;;      z))
-;;   nil
-;;   10)
+(deftest loop.11.1
+  (let ((z 0))
+    (values
+     (loop repeat 10 do (incf z))
+     z))
+  nil
+  10)
 
-;; (deftest loop.11.2
-;;   (loop repeat 10 collect 'a)
-;;   (a a a a a a a a a a))
+(deftest loop.11.2
+  (loop repeat 10 collect 'a)
+  (a a a a a a a a a a))
 
-;; (deftest loop.11.3
-;;   (let ((z 0))
-;;     (loop repeat 0 do (incf z))
-;;     z)
-;;   0)
+(deftest loop.11.3
+  (let ((z 0))
+    (loop repeat 0 do (incf z))
+    z)
+  0)
 
-;; (deftest loop.11.4
-;;   (let ((z 0))
-;;     (loop repeat -1 do (incf z))
-;;     z)
-;;   0)
+(deftest loop.11.4
+  (let ((z 0))
+    (loop repeat -1 do (incf z))
+    z)
+  0)
 
-;; (deftest loop.11.5
-;;   (let ((z 0))
-;;     (loop repeat -1.5 do (incf z))
-;;     z)
-;;   0)
+(deftest loop.11.5
+  (let ((z 0))
+    (loop repeat -1.5 do (incf z))
+    z)
+  0)
 
-;; (deftest loop.11.6
-;;   (let ((z 0))
-;;     (loop repeat -1000000000000 do (incf z))
-;;     z)
-;;   0)
+(deftest loop.11.6
+  (let ((z 0))
+    (loop repeat -1000000000000 do (incf z))
+    z)
+  0)
 
-;; (deftest loop.11.7
-;;   (let ((z 0))
-;;     (loop repeat 10 do (incf z) (loop-finish))
-;;     z)
-;;   1)
+(deftest loop.11.7
+  (let ((z 0))
+    (loop repeat 10 do (incf z) (loop-finish))
+    z)
+  1)
 
+;;; This test is wrong because REPEAT is a main clause whereas FOR is
+;;; a variable clause, and no main clause can precede a variable
+;;; clause.
+;;;
 ;; (deftest loop.11.8
 ;;  (loop repeat 3 for i in '(a b c d e) collect i)
 ;;  (a b c))
