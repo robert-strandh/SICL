@@ -441,12 +441,12 @@
         finally (return (values foo bar)))
   10 14)
 
-;; (deftest loop.10.91
-;;   (loop for i from 1 to 4
-;;         sum i into foo fixnum
-;;         sum (float (1+ i)) into bar float
-;;         finally (return (values foo bar)))
-;;   10 14.0)
+(deftest loop.10.91
+  (loop for i from 1 to 4
+        sum i into foo fixnum
+        sum (float (1+ i)) into bar float
+        finally (return (values foo bar)))
+  10 14.0)
 
 ;; (deftest loop.10.92
 ;;   (loop for i from 1 to 4 sum (return 100))
