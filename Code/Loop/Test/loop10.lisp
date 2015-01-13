@@ -425,10 +425,10 @@
         sum (complex i (1+ i)) of-type complex)
   #c(10 14))
 
-;; (deftest loop.10.88
-;;   (loop for i from 1 to 4
-;;         sum (/ i 17) of-type rational)
-;;   10/17)
+(deftest loop.10.88
+  (loop for i from 1 to 4
+        sum (/ i 17) of-type rational)
+  10/17)
 
 ;; (deftest loop.10.89
 ;;   (loop for i from 1 to 4 summing (/ i 17))
