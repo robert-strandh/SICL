@@ -14,6 +14,9 @@
 
 (defclass thereis-clause (termination-test-clause form-mixin) ())
 
+(defmethod accumulation-variables ((clause thereis-clause))
+  `((nil thereis t)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers.
