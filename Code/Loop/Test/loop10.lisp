@@ -384,17 +384,17 @@
   nil
   10)
 
-;; (deftest loop.10.82
-;;   (loop for i from 1 to 4
-;;         sum i fixnum
-;;         count t)
-;;   14)
+(deftest loop.10.82
+  (loop for i from 1 to 4
+        sum i fixnum
+        count t)
+  14)
 
-;; (deftest loop.10.83
-;;   (loop for i from 1 to 4
-;;         sum i fixnum
-;;         count t fixnum)
-;;   14)
+(deftest loop.10.83
+  (loop for i from 1 to 4
+        sum i fixnum
+        count t fixnum)
+  14)
 
 ;; (deftest loop.10.84
 ;;   (let ((foo 100))
