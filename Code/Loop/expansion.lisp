@@ -98,9 +98,12 @@
 			   (eq (second d1) (second d2)))))
 	 (unique (remove-duplicates descriptors :test equal-fun)))
     (loop for (name category type) in unique
-	  for initial-value = (if (eq category 'count/sum)
-				  (coerce 0 type)
-				  nil)
+	  for initial-value = (cond  ((eq category 'count/sum)
+				      (coerce 0 type))
+				     ((member category '(always never))
+				      t)
+				     (t
+				      nil))
 	  collect (if (null name)
 		      `(,*accumulation-variable* ,initial-value)
 		      `(,name ,initial-value))
