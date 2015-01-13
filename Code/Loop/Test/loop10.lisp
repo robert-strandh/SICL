@@ -448,13 +448,13 @@
         finally (return (values foo bar)))
   10 14.0)
 
-;; (deftest loop.10.92
-;;   (loop for i from 1 to 4 sum (return 100))
-;;   100)
+(deftest loop.10.92
+  (loop for i from 1 to 4 sum (return 100))
+  100)
 
-;; (deftest loop.10.93
-;;   (loop for i from 1 to 4 summing (return 100))
-;;   100)
+(deftest loop.10.93
+  (loop for i from 1 to 4 summing (return 100))
+  100)
 
 ;; (deftest loop.10.94
 ;;   (loop for i in nil sum i of-type integer)
