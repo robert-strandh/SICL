@@ -160,5 +160,4 @@
 ;;; Step a FOR-AS clause.
 
 (defmethod step-form ((clause for-as-clause))
-  (reduce #'append (mapcar #'step-form (subclauses clause))
-	  :from-end t))
+  `(progn ,@(mapcar #'step-form (subclauses clause))))
