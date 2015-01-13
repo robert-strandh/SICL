@@ -237,36 +237,36 @@
         collect i into foo)
   1)
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
-;; (deftest loop.12.56
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i in '(1 2 3 4) always (expand-in-current-env (%m (< i 10)))))
-;;   t)
+(deftest loop.12.56
+  (macrolet
+   ((%m (z) z))
+   (loop for i in '(1 2 3 4) always (expand-in-current-env (%m (< i 10)))))
+  t)
 
-;; (deftest loop.12.57
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i in '(1 2 3 4) always (expand-in-current-env (%m t))))
-;;   t)
+(deftest loop.12.57
+  (macrolet
+   ((%m (z) z))
+   (loop for i in '(1 2 3 4) always (expand-in-current-env (%m t))))
+  t)
 
-;; (deftest loop.12.58
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i in '(1 2 3 4) never (expand-in-current-env (%m (>= i 10)))))
-;;   t)
+(deftest loop.12.58
+  (macrolet
+   ((%m (z) z))
+   (loop for i in '(1 2 3 4) never (expand-in-current-env (%m (>= i 10)))))
+  t)
 
-;; (deftest loop.12.59
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i in '(1 2 3 4) never (expand-in-current-env (%m t))))
-;;   nil)
+(deftest loop.12.59
+  (macrolet
+   ((%m (z) z))
+   (loop for i in '(1 2 3 4) never (expand-in-current-env (%m t))))
+  nil)
 
-;; (deftest loop.12.60
-;;   (macrolet
-;;    ((%m (z) z))
-;;    (loop for i in '(1 2 3 4)
-;;          thereis (expand-in-current-env (%m (and (>= i 2) (+ i 1))))))
-;;   3)
+(deftest loop.12.60
+  (macrolet
+   ((%m (z) z))
+   (loop for i in '(1 2 3 4)
+         thereis (expand-in-current-env (%m (and (>= i 2) (+ i 1))))))
+  3)
