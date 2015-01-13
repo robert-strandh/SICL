@@ -111,7 +111,7 @@
 	 (no-nil (remove nil unique :test #'eq :key #'car)))
     (loop for (name category type) in no-nil
 	  for initial-value = (if (eq category 'count/sum)
-				  (if (subtypep type 'float) 0.0 0)
+				  (coerce 0 type)
 				  nil)
 	  collect `(,name ,initial-value)
 	  when (eq category 'list)
