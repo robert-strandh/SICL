@@ -68,56 +68,56 @@
 
 ;; Tests of WHILE
 
-;; (deftest loop.11.10
-;;   (loop with i = 0 while (< i 10) collect (incf i))
-;;   (1 2 3 4 5 6 7 8 9 10))
+(deftest loop.11.10
+  (loop with i = 0 while (< i 10) collect (incf i))
+  (1 2 3 4 5 6 7 8 9 10))
 
-;; (deftest loop.11.11
-;;   (loop with i = 0 while (if (< i 10) t (return 'good))
-;;         collect (incf i))
-;;   good)
+(deftest loop.11.11
+  (loop with i = 0 while (if (< i 10) t (return 'good))
+        collect (incf i))
+  good)
 
-;; (deftest loop.11.12
-;;   (loop with i = 0
-;;         while (< i 10) collect (incf i)
-;;         while (< i 10) collect (incf i)
-;;         while (< i 10) collect (incf i))
-;;   (1 2 3 4 5 6 7 8 9 10))
+(deftest loop.11.12
+  (loop with i = 0
+        while (< i 10) collect (incf i)
+        while (< i 10) collect (incf i)
+        while (< i 10) collect (incf i))
+  (1 2 3 4 5 6 7 8 9 10))
 
-;; (deftest loop.11.13
-;;   (loop with i = 0 while (< i 10) collect (incf i)
-;;         finally (return 'done))
-;;   done)
+(deftest loop.11.13
+  (loop with i = 0 while (< i 10) collect (incf i)
+        finally (return 'done))
+  done)
 
-;; (deftest loop.11.14
-;;   (loop for i in '(a b c)
-;;         while nil
-;;         collect i)
-;;   nil)
+(deftest loop.11.14
+  (loop for i in '(a b c)
+        while nil
+        collect i)
+  nil)
 
-;; (deftest loop.11.15
-;;   (loop for i in '(a b c)
-;;         collect i
-;;         while nil)
-;;   (a))
+(deftest loop.11.15
+  (loop for i in '(a b c)
+        collect i
+        while nil)
+  (a))
 
-;; (deftest loop.11.16
-;;   (loop for i in '(a b c)
-;;         while t
-;;         collect i)
-;;   (a b c))
+(deftest loop.11.16
+  (loop for i in '(a b c)
+        while t
+        collect i)
+  (a b c))
 
-;; (deftest loop.11.17
-;;   (loop for i in '(a b c)
-;;         collect i
-;;         while t)
-;;   (a b c))
+(deftest loop.11.17
+  (loop for i in '(a b c)
+        collect i
+        while t)
+  (a b c))
 
-;; (deftest loop.11.18
-;;   (loop for i from 1 to 10
-;;         while (< i 6)
-;;         finally (return i))
-;;   6)
+(deftest loop.11.18
+  (loop for i from 1 to 10
+        while (< i 6)
+        finally (return i))
+  6)
 
 ;; Tests of UNTIL
 
