@@ -33,6 +33,9 @@
 (defmethod bound-variables ((clause name-clause))
   '())
 
+(defmethod accumulation-variables ((clause name-clause))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser.
