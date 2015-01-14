@@ -9,51 +9,57 @@
 ;;; containing APPEND, LIST, QUOTE, APPLY, and VECTOR. 
 ;;;
 ;;; Our implementation is an almost immediate translation of section
-;;; 2.4.6 of the Hyperspec.  Where the HyperSpec uses brackets
-;;; [FORM], we use (TRANSFORM FORM).  The other difference is that
-;;; the HyperSpec converts a form such as `(x1 x2 ... xn . atom)
-;;; directly to (append [x1] [x2] ... [xn] (quote atom)), whereas we
-;;; do it in smaller steps so that (QUASIQUOTE (x1 x2 ... xn . atom))
-;;; is transformed by only converting the first element of the list
-;;; into (APPEND (TRANSFORM x1) (QUASIQUOTE (x2 ... xn . atom))).  
-;;;
-;;; Also, the HyperSpec says that when the backquote syntax is
-;;; nested, the innermost occurence of backquote is transformed first
-;;; so that the "first" comma belongs to the innermost backquote.  We
-;;; implement this rule by making an explicit call to macroexpand of
-;;; the innmermost occurence of QUASIQUOTE when we see an expression
-;;; such as (QUASIQUOTE (QUASIQUOTE ...) ...), or an expression such
-;;; as (TRANSFORM (QUASIQUOTE ...) ...), before we decide on the
-;;; action to take for the outermost occurrence.
+;;; 2.4.6 of the Hyperspec.  Where the HyperSpec uses brackets [FORM],
+;;; we use (TRANSFORM FORM).  The other difference is that the
+;;; HyperSpec converts a form such as `(x1 x2 ... xn . atom) directly
+;;; to (append [x1] [x2] ... [xn] (quote atom)), whereas we do it
+;;; indirectly by calling TRANSFORM-COMPOUND on the (potentially
+;;; dottet) list. 
 
-(defmacro transform (form)
+(defun transform (form)
   (if (consp form)
       (case (car form)
-        (quasiquote
-         `(transform ,(macroexpand-1 form)))
         (unquote
          `(list ,(cadr form)))
         (unquote-splicing
          (cadr form))
         (t
-         `(list (quasiquote ,form))))
-      `(list (quasiquote ,form))))
+         `(list ,(transform-quasiquote-argument form))))
+      `(list ,(transform-quasiquote-argument form))))
 
-(defmacro quasiquote (form)
-  (cond ((consp form)
-         (case (car form)
-           (unquote
-            (cadr form))
-           (unquote-splicing
-            ;; Hmm.  This condition type is a subclass of
-            ;; reader-error, which should be given a stream, but at
-            ;; this point we no longer have the stream available.  
-            (error 'undefined-use-of-backquote))
-           (quasiquote
-            `(quasiquote ,(macroexpand-1 form)))
-           (t
-            `(append (transform ,(car form)) (quasiquote ,(cdr form))))))
-        ((vectorp form)
-         `(apply #'vector (quasiquote ,(coerce form 'list))))
-        (t
-         `(quote ,form))))
+(defun transform-compound (compound)
+  (if (atom compound)
+      `((quote ,compound))
+      (cons (transform (first compound)) (transform-compound (rest compound)))))
+
+(defun transform-quasiquote-argument (argument)
+  (cond ((consp argument)
+	 (case (car argument)
+	   (unquote
+	    (cadr argument))
+	   (unquote-splicing
+	    ;; Hmm.  This condition type is a subclass of
+	    ;; reader-error, which should be given a stream, but at
+	    ;; this point we no longer have the stream available.
+	    (error 'undefined-use-of-backquote))
+	   (t
+	    `(append ,@(transform-compound argument)))))
+	((vectorp argument)
+	 `(apply #'vector
+		 ,(transform-quasiquote-argument
+		   (coerce argument 'list))))
+	(t
+	 `(quote ,argument))))
+
+(defun expand (form)
+  (if (atom form)
+      form
+      (let ((expanded (cons (expand (car form)) (expand (cdr form)))))
+	(format t "expanded is now: ~s~%" expanded)
+	(if (eq (first expanded) 'quasiquote)
+	    (transform-quasiquote-argument (second expanded))
+	    expanded))))
+
+(defmacro quasiquote (&whole form argument)
+  (declare (ignore argument))
+  (expand form))
