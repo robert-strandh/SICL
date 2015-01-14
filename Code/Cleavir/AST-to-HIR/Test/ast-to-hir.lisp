@@ -50,10 +50,15 @@
 	  (find-if #'f '(1 2 5 7)))
 	5))
 
+(defun test-progn ()
+  (test '(progn)
+	nil))
+
 (defun run-tests ()
   (test-constant)
   (test-lexical)
   (test-call)
   (test-if)
   (test-let*)
-  (test-function))
+  (test-function)
+  (test-progn))
