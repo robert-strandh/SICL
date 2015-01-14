@@ -20,4 +20,5 @@
 (load (rp "../../Cons/low.lisp"))
 (load (rp "../../Cons/high.lisp"))
 (load (rp "../../Loop/loop-defmacro.lisp"))
+(load (rp "../../Arithmetic/incf-decf-defmacro.lisp"))
 (load (rp "ensure-generic-function.lisp"))
