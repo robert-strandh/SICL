@@ -294,6 +294,11 @@
 	    ,(second inputs)
 	    ,(first inputs)))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:nop-instruction) inputs outputs)
+  (declare (ignore inputs outputs))
+  '(progn))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
