@@ -1,6 +1,6 @@
-(in-package #:cl-user)
+(in-package #:asdf-user)
 
-(asdf:defsystem :sicl-loop-test
+(defsystem :sicl-loop-test
   :depends-on (:sicl-loop-support)
   :serial t
   :components
