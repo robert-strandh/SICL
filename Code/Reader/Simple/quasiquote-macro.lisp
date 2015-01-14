@@ -55,7 +55,6 @@
   (if (atom form)
       form
       (let ((expanded (cons (expand (car form)) (expand (cdr form)))))
-	(format t "expanded is now: ~s~%" expanded)
 	(if (eq (first expanded) 'quasiquote)
 	    (transform-quasiquote-argument (second expanded))
 	    expanded))))
