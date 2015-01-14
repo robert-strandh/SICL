@@ -183,13 +183,16 @@
 ;;; successor.
 
 (defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
-  (let ((next (compile-ast (car (last (cleavir-ast:form-asts ast))) context)))
-    (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
-	  do (setf next (compile-ast sub-ast
-				     (context '()
-					      (list next)
-					      (invocation context)))))
-    next))
+  (let ((form-asts (cleavir-ast:form-asts ast)))
+    (if (null form-asts)
+	(compile-ast (cleavir-ast:make-constant-ast nil) context)
+	(let ((next (compile-ast (car (last form-asts)) context)))
+	  (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
+		do (setf next (compile-ast sub-ast
+					   (context '()
+						    (list next)
+						    (invocation context)))))
+	  next))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
