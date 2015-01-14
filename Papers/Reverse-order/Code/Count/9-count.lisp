@@ -1,7 +1,7 @@
 ;; For Irene's experiments.
 ;; reverse in an array
 
-(defun count-from-end-with-length9 (x list length)
+(defun count-from-end-with-length-9 (x list length)
   (declare (type fixnum length) (optimize (speed 3) (compilation-speed 0)))
   (flet ((count-from-array (x list length)
 	   (declare (type fixnum length) (optimize (speed 3) (compilation-speed 0)))
@@ -38,7 +38,7 @@
 		   (t                 (divide x rest length 4))))) ; divide by 16
 	(traverse x list length)))))
 
-(defun count-from-end-with-length9-bis (x list length)
+(defun count-from-end-with-length-9-bis (x list length)
   (declare (type fixnum length) (optimize (speed 3) (compilation-speed 0)))
   (macrolet ((divide (x rest length k)
 	       (let* ((n (ash 1 k))
@@ -60,17 +60,17 @@
 	     (declare (type fixnum length))
 	     (if (zerop length)
 		 0
-		 (+ (recursive-traverse x (cdr list) (1- length))
-		    (if (eql x (car list))
+		 (+ (recursive-traverse x (cdr rest) (1- length))
+		    (if (eql x (car rest))
 			1
-			0)))))
+			0))))
 	   (traverse (x rest length)
 	     (declare (type fixnum length))
 	     (cond ((<= length 4096)  (recursive-traverse x rest length))
 		   ((<= length 8192) (divide x rest length 1)) ; 2^13 divide by 2
 		   ((<= length 16384) (divide x rest length 2)) ; 2^14 divide by 4
 		   ((<= length 32768) (divide x rest length 3)) ; 2^15 divide by 8
-		   (t                 (divide x rest length 4)))) ; divide by 16
+		   (t                 (divide x rest length 4))))) ; divide by 16
 	(traverse x list length))))
 
 (defun reverse-count-9 (x list)
