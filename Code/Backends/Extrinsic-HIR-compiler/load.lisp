@@ -4,8 +4,8 @@
 ;;; facility.  These macros must exist in the SICL global environment
 ;;; so that they can be expanded by the compiler.
 
-(setf (sicl-env:macro-function 'sicl-reader::transform *environment*)
-      (macro-function 'sicl-reader::transform))
+(setf (sicl-env:fdefinition 'sicl-reader::expand *environment*)
+      (fdefinition 'sicl-reader::transform))
 
 (setf (sicl-env:macro-function 'sicl-reader::quasiquote *environment*)
       (macro-function 'sicl-reader::quasiquote))
