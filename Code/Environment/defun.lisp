@@ -9,7 +9,7 @@
       `(progn
 	 (eval-when (:compile-toplevel :load-toplevel :execute)
 	   (setf (sicl-env:function-type ',name ,global-env)
-		 `(function ,arg-type t)))
+		 `(function ,',arg-type t)))
 	 (eval-when (:load-toplevel :execute)
 	   (setf (sicl-env:fdefinition ',name ,global-env)
 		 (lambda ,lambda-list
