@@ -111,3 +111,7 @@
 ;;; It is not ideal right now because it can fail and call ERROR.
 (setf (sicl-env:fdefinition 'host-fdefinition *environment*)
       #'fdefinition)
+
+;;; Fill the target environment with all available packages in the host.
+(setf (sicl-env:packages *environment*)
+      (list-all-packages))
