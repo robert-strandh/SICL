@@ -69,7 +69,7 @@
 ;;; loaded below.
 (load (rp "../../Data-and-control-flow/nth-value.lisp"))
 
-(load (rp "../../Environment/defun.lisp"))
+(load (rp "../../Environment/defun-defmacro.lisp"))
 (load (rp "../../Conditionals/macros.lisp"))
 (load (rp "typep.lisp"))
 (load (rp "../../Environment/standard-environment-macros.lisp"))
