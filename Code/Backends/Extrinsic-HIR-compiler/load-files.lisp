@@ -37,7 +37,7 @@
 ;;; macros defined subsequently will have their macro functions
 ;;; compiled with the target compiler.  However, the macro function of
 ;;; DEFMACRO is still compiled with the host compiler.
-(load (rp "defmacro-defmacro.lisp"))
+(load (rp "../../Environment/defmacro-defmacro.lisp"))
 
 ;;; As mentioned above, at this point, we have a version of DEFMACRO
 ;;; that will compile the macro function of the macro definition using
@@ -45,7 +45,7 @@
 ;;; DEFMACRO itself is still the result of using the host compiler.
 ;;; By loading the definition of DEFMACRO again, we fix this
 ;;; "problem".
-(load (rp "defmacro-defmacro.lisp"))
+(load (rp "../../Environment/defmacro-defmacro.lisp"))
 
 ;;; Load a file containing the definition of the macro
 ;;; MULTIPLE-VALUE-LIST.  This definition is needed, because it is
