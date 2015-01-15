@@ -39,7 +39,11 @@
 ;;; DEFMACRO is still compiled with the host compiler.
 (load (rp "defmacro-defmacro.lisp"))
 
+;;; Load a file containing the definition of the macro
+;;; MULTIPLE-VALUE-LIST.  This definition is needed, because it is
+;;; used in the expansion of the macro NTH-VALUE loaded below.
 (load (rp "../../Data-and-control-flow/multiple-value-list.lisp"))
+
 (load (rp "../../Data-and-control-flow/nth-value.lisp"))
 (load (rp "../../Environment/defun.lisp"))
 (load (rp "../../Conditionals/macros.lisp"))
