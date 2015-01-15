@@ -85,5 +85,10 @@
 (load (rp "../../Arithmetic/incf-decf-defmacro.lisp"))
 (load (rp "ensure-generic-function.lisp"))
 (load (rp "../../CLOS/defgeneric-defmacro.lisp"))
+
+;;; Load a file containing the definition of the macro REMF. We load
+;;; it here because it is used in the function ENSURE-METHOD (see
+;;; below).
 (load (rp "../../Cons/remf-defmacro.lisp"))
+
 (load (rp "../../CLOS/ensure-method.lisp"))
