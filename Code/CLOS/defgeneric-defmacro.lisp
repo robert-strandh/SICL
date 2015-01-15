@@ -5,8 +5,8 @@
 ;;; DEFGENERIC.
 
 ;;; FIXME: add options and methods
-(defmacro defgeneric (name lambda-list)
+(defmacro defgeneric (&environment env name lambda-list)
   `(ensure-generic-function
     ',name
-    :lambda-list ',lambda-list))
-
+    :lambda-list ',lambda-list
+    :environment ,env))
