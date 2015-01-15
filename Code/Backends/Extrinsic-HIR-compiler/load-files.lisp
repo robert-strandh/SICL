@@ -85,3 +85,4 @@
 (load (rp "../../Arithmetic/incf-decf-defmacro.lisp"))
 (load (rp "ensure-generic-function.lisp"))
 (load (rp "../../CLOS/defgeneric-defmacro.lisp"))
+(load (rp "../../Cons/remf-defmacro.lisp"))
