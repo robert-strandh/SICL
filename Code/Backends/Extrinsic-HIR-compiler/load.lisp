@@ -12,8 +12,16 @@
 
 (defun load (file)
   (with-open-file (stream file :direction :input)
-    (let ((*package* *package*))
+    (let ((*package* (sicl-env:special-variable '*package* *environment*)))
       (loop with eof = (list nil)
 	    for form = (sicl-reader:read stream nil eof)
 	    until (eq form eof)
-	    do (eval form)))))
+	    do (eval form)
+	       ;; The evaluation of the form might have change the
+	       ;; value of the variable *PACKAGE* in the target
+	       ;; environment.  But this function is executed as a
+	       ;; host function, so the next time we call READ, we
+	       ;; need to make sure the host variable *PACKAGE* also
+	       ;; changes.
+	       (setf *package*
+		     (sicl-env:special-variable '*package* *environment*))))))
