@@ -284,6 +284,12 @@
 	(push (cons symbol new-class) (type-expanders env))
 	(setf (cdr association) new-class))))
 
+(defmethod sicl-env:packages ((env simple-environment))
+  (packages env))
+
+(defmethod (setf sicl-env:packages) (new-packages (env simple-environment))
+  (setf (packages env) new-packages))
+
 (defmethod sicl-env:find-package (name (env simple-environment))
   (loop for package in (packages env)
 	when (or (string= (package-name package) name)
