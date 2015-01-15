@@ -47,6 +47,10 @@
 ;;; "problem".
 (load (rp "../../Environment/defmacro-defmacro.lisp"))
 
+;;; Now that have the final version of the macro DEFMACRO, we can load
+;;; the target version of the macro IN-PACKAGE.
+(load (rp "../../Environment/in-package.lisp"))
+
 ;;; Load a file containing the definition of the macro
 ;;; MULTIPLE-VALUE-LIST.  This definition is needed, because it is
 ;;; used in the expansion of the macro NTH-VALUE loaded below.
