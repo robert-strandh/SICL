@@ -86,3 +86,4 @@
 (load (rp "ensure-generic-function.lisp"))
 (load (rp "../../CLOS/defgeneric-defmacro.lisp"))
 (load (rp "../../Cons/remf-defmacro.lisp"))
+(load (rp "../../CLOS/ensure-method.lisp"))
