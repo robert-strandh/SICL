@@ -44,7 +44,12 @@
 ;;; used in the expansion of the macro NTH-VALUE loaded below.
 (load (rp "../../Data-and-control-flow/multiple-value-list.lisp"))
 
+;;; Load a file containing the definition of the macro NTH-VALUE.
+;;; This definition is needed by the function CONSTANTP which is
+;;; loaded as part of the file standard-environment-functions.lisp
+;;; loaded below.
 (load (rp "../../Data-and-control-flow/nth-value.lisp"))
+
 (load (rp "../../Environment/defun.lisp"))
 (load (rp "../../Conditionals/macros.lisp"))
 (load (rp "typep.lisp"))
