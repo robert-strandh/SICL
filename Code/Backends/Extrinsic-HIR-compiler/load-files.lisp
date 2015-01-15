@@ -15,7 +15,17 @@
 (load (rp "../../Evaluation-and-compilation/lambda.lisp"))
 
 (load (rp "../../Environment/multiple-value-bind.lisp"))
+
+;;; Load a file containing a definition of the macro SETF. Recall
+;;; that, at this point, the definition of DEFMACRO is still the one
+;;; that we created "manually".  We need the SETF macro early, because
+;;; it is needed in order to define the macro DEFMACRO.  The reason
+;;; for that, is that the expansion of DEFMACRO uses SETF to set the
+;;; macro function.  We could have defined DEFMACRO to call (SETF
+;;; MACRO-FUNCTION) directly, but that would have been less "natural",
+;;; so we do it this way instead.
 (load (rp "../../Data-and-control-flow/setf.lisp"))
+
 (load (rp "defmacro-defmacro.lisp"))
 (load (rp "../../Data-and-control-flow/multiple-value-list.lisp"))
 (load (rp "../../Data-and-control-flow/nth-value.lisp"))
