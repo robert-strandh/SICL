@@ -12,7 +12,7 @@
 		      &allow-other-keys)
   ;; FIXME: Check that SPECIALIZERS is a proper list, and that
   ;; it contains only symbols and specializer metaobjects. 
-  (let ((specs (loop for s in specializer
+  (let ((specs (loop for s in specializers
 		     collect (if (symbolp s) (find-class s) s)))
 	(remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :specializers))
