@@ -14,6 +14,10 @@
 ;;; to redefine DEFMACRO.
 (load (rp "../../Evaluation-and-compilation/lambda.lisp"))
 
+;;; Load a file containing the definition of the macro
+;;; MULTIPLE-VALUE-BIND.  We need it early because it is used in the
+;;; expansion of SETF, which we also need early for reasons explained
+;;; below.
 (load (rp "../../Environment/multiple-value-bind.lisp"))
 
 ;;; Load a file containing a definition of the macro SETF. Recall
