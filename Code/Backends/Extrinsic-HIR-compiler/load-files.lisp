@@ -74,7 +74,7 @@
 (load (rp "typep.lisp"))
 (load (rp "../../Environment/standard-environment-macros.lisp"))
 (load (rp "../../Environment/standard-environment-functions.lisp"))
-(load (rp "../../Data-and-control-flow/fboundp.lisp"))
+(load (rp "../../Data-and-control-flow/fboundp-defun.lisp"))
 (load (rp "../../Data-and-control-flow/fdefinition.lisp"))
 (load (rp "../../Data-and-control-flow/setf-fdefinition.lisp"))
 (load (rp "../../Data-and-control-flow/get-setf-expansion.lisp"))
