@@ -1,4 +1,4 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
 ;;;; The purpose of this system is to create a SICL-like environment
 ;;;; executing inside the host Common Lisp implementation.  This goal
@@ -49,7 +49,7 @@
 ;;;; was initially imported from the host is replaced by SICL code
 ;;;; that has been compiled with the SICL compiler.
 
-(asdf:defsystem :sicl-extrinsic-hir-compiler
+(defsystem :sicl-extrinsic-hir-compiler
   :depends-on (:closer-mop
 	       :sicl-conditionals-support
 	       :sicl-loop-support
