@@ -94,3 +94,5 @@
 (load (rp "../../CLOS/ensure-method.lisp"))
 
 (load (rp "../../CLOS/defmethod-support.lisp"))
+
+(load (rp "../../CLOS/defmethod-defmacro.lisp"))
