@@ -75,6 +75,7 @@
    #:ensure-generic-function
    #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
    #:print-object #:describe-object #:documentation
+   #:make-method-lambda
    ;; SICL-specific classes
    #:real-class #:regular-class
    ;; SICL-specific functions
