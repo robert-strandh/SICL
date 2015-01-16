@@ -72,7 +72,7 @@
    #:no-applicable-method #:no-next-method #:remove-method #:defmethod
    #:method-combination #:define-method-combination #:method-combination-error
    #:make-instance
-   #:ensure-generic-function
+   #:ensure-generic-function #:ensure-generic-function-using-class
    #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
    #:print-object #:describe-object #:documentation
    #:make-method-lambda
