@@ -91,6 +91,9 @@
 ;;; below).
 (load (rp "../../Cons/remf-defmacro.lisp"))
 
+;;; Load a file containing the definition of function ENSURE-METHOD.
+;;; This function is not in the AMOP, but we use it in the expansion
+;;; of DEFMETHOD, so we need to define it here.
 (load (rp "../../CLOS/ensure-method.lisp"))
 
 ;;; Load a file containing support code for MAKE-METHOD-LAMBDA.
