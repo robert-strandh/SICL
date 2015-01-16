@@ -50,7 +50,8 @@
 ;;;; that has been compiled with the SICL compiler.
 
 (asdf:defsystem :sicl-extrinsic-hir-compiler
-  :depends-on (:sicl-conditionals-support
+  :depends-on (:closer-mop
+	       :sicl-conditionals-support
 	       :sicl-loop-support
 	       :sicl-arithmetic
 	       :sicl-clos-package
