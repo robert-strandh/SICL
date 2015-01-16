@@ -118,6 +118,8 @@
 ;;; can very well generate code that is implementation-specific.
 (load (rp "../../CLOS/make-method-lambda-defuns.lisp"))
 
+;;; Load a file containing code used by the macro expander for the
+;;; macro DEFMETHOD.
 (load (rp "../../CLOS/defmethod-support.lisp"))
 
 (load (rp "../../CLOS/defmethod-defmacro.lisp"))
