@@ -19,10 +19,7 @@
 
 ;;; ASDF system definition for Count.
 
-(defpackage :count-system
-  (:use :asdf :common-lisp))
-
-(in-package :count-system)
+(cl:in-package #:asdf-user)
 
 (defsystem :count
   :description "Reverse Count experimentations"
@@ -42,7 +39,8 @@
    (:file "4-count")
    (:file "5-count")
    (:file "6-count")
-   (:file "7-count"))
+   (:file "7-count")
+   (:file "9-count"))
   :serial t)
 
 ;; (pushnew :count *features*)
