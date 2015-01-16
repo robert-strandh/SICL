@@ -110,7 +110,9 @@
 ;;; methods.  Obviously, since we can not yet define methods, we can
 ;;; not use the definitive version of MAKE-METHOD-LAMBDA which is a
 ;;; generic function.  That is why we load this temporary version of
-;;; it.
+;;; it.  Furthermore, we can not use the host version of
+;;; MAKE-METHOD-LAMBDA, because it is a "code generator", and as such
+;;; can very well generate code that is implementation-specific.
 (load (rp "../../CLOS/make-method-lambda-defuns.lisp"))
 
 (load (rp "../../CLOS/defmethod-support.lisp"))
