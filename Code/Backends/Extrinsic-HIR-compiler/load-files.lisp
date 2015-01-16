@@ -123,3 +123,5 @@
 (load (rp "../../CLOS/defmethod-defmacro.lisp"))
 
 (load (rp "../../CLOS/ensure-generic-function-using-class-defgenerics.lisp"))
+
+(load (rp "../../CLOS/ensure-generic-function-using-class-support.lisp"))
