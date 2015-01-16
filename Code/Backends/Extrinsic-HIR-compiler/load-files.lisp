@@ -93,9 +93,9 @@
 
 (load (rp "../../CLOS/ensure-method.lisp"))
 
-;;; Load file containing support code for MAKE-METHOD-LAMBDA.  Recall
-;;; that MAKE-METHOD-LAMBDA is a generic function.  However, we can
-;;; not define generic functions or methods yet.  The support code
+;;; Load a file containing support code for MAKE-METHOD-LAMBDA.
+;;; Recall that MAKE-METHOD-LAMBDA is a generic function.  However, we
+;;; can not define generic functions or methods yet.  The support code
 ;;; contains only ordinary functions that are called from the methods
 ;;; of MAKE-METHOD-LAMBDA.  By structuring the code this way, we can
 ;;; make a temporary version of MAKE-METHOD-LAMBDA as an ordinary
@@ -103,6 +103,14 @@
 ;;; code.
 (load (rp "../../CLOS/make-method-lambda-support.lisp"))
 
+;;; Load a file containing a temporary definition of
+;;; MAKE-METHOD-LAMBDA as an ordinary function.  MAKE-METHOD-LAMBDA is
+;;; used by the macro DEFMETHOD, so we need some version of
+;;; MAKE-METHOD-LAMBDA before we can start using DEFMETHOD to define
+;;; methods.  Obviously, since we can not yet define methods, we can
+;;; not use the definitive version of MAKE-METHOD-LAMBDA which is a
+;;; generic function.  That is why we load this temporary version of
+;;; it.
 (load (rp "../../CLOS/make-method-lambda-defuns.lisp"))
 
 (load (rp "../../CLOS/defmethod-support.lisp"))
