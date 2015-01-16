@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-data-and-control-flow
+(defsystem :sicl-data-and-control-flow
   :depends-on (:sicl-environment
 	       :cleavir-internationalization)
   :serial t
