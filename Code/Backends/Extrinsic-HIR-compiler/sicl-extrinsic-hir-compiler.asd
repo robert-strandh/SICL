@@ -56,7 +56,7 @@
 	       :sicl-arithmetic
 	       :sicl-clos-package
 	       :sicl-cons-package
-	       :sicl-environment
+	       :sicl-global-environment
 	       :sicl-simple-environment
 	       :sicl-evaluation-and-compilation
 	       :sicl-data-and-control-flow

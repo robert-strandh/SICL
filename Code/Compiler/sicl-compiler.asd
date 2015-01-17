@@ -2,7 +2,7 @@
 
 (asdf:defsystem :sicl-compiler
   :depends-on (:cleavir-code-utilities
-	       :sicl-environment
+	       :sicl-global-environment
 	       :sicl-reader-simple
 	       :sicl-generate-ast
 	       :sicl-type

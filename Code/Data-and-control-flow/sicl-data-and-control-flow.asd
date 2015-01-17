@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-data-and-control-flow
-  :depends-on (:sicl-environment
+  :depends-on (:sicl-global-environment
 	       :cleavir-internationalization)
   :serial t
   :components
