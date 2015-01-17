@@ -27,4 +27,5 @@
   :depends-on (:sicl-global-environment)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "fdefinition-defun")))
