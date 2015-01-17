@@ -6,7 +6,8 @@
 ;;; This function is also specified in the CLHS.
 ;;; http://www.lispworks.com/documentation/HyperSpec/Body/f_ensure.htm#ensure-generic-function
 
-(defun ensure-generic-function (name &rest keys &key environment)
+(defun ensure-generic-function
+    (name &rest keys &key (environment sicl-env:*global-environment*))
   (let ((generic-function
 	  (if (sicl-environment:fboundp name environment)
 	      (let ((fun (sicl-environment:fdefinition name)))
