@@ -81,10 +81,9 @@
 	  (array-dimension sequence 0))
       (let ((length (proper-list-length sequence)))
 	(when (null length)
-	  (with-signaler 'length
-	    (error 'list-as-sequence-must-be-proper
-		   :datum sequence
-		   :expected-type 'proper-list)))
+	  (error 'list-as-sequence-must-be-proper
+		 :datum sequence
+		 :expected-type 'proper-list))
 	length)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
