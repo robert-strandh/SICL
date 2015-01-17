@@ -35,4 +35,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "fdefinition-defun")))
+   (:file "fdefinition-defun")
+   (:file "setf-fdefinition-defun")))
