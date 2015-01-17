@@ -1,6 +1,6 @@
 (in-package #:sicl-additional-conditions)
 
-;;;; Copyright (c) 2008, 2009, 2010, 2012
+;;;; Copyright (c) 2008, 2009, 2010, 2012, 2015
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
@@ -11,10 +11,6 @@
 ;;;;
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
-
-;;;; This file is part of the cons-high module of the SICL project.
-;;;; See the file SICL.text for a description of the project. 
-;;;; See the file cons-high.text for a description of the module.
 
 (defun name-package (name)
   (let ((real-name (if (symbolp name) name (cadr name))))
