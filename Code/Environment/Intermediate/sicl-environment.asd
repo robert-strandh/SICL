@@ -35,6 +35,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "fboundp-defun")
    (:file "fdefinition-defun")
    (:file "setf-fdefinition-defun")
    (:file "symbol-function-defun")
