@@ -62,7 +62,7 @@
 			result)
 		  (go out))
 	   (let ((first (pop rest)))
-	     (cond ((eq first '&rest)
+	     (cond ((or (eq first '&rest) (eq first '&body))
 		    (go rest))
 		   ((eq first '&key)
 		    (go key))
@@ -78,10 +78,8 @@
        (push `(setq ,(pop rest) (copy-list ,var))
 	     result)
        (if (null rest)
-	   (progn (push `(unless (null ,var)
-			   (traced-funcall ,error "too many arguments"))
-			result)
-		  (go out))
+	   ;; We are done.
+	   (go out)
 	   ;; The first element of REST must be &key.
 	   (progn (pop rest)
 		  (go key)))
