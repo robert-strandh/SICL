@@ -24,7 +24,8 @@
 ;;;; SICL-GLOBAL-ENVIRONMENT.
 
 (defsystem :sicl-environment
-  :depends-on (:sicl-global-environment)
+  :depends-on (:sicl-global-environment
+	       :cleavir-environment)
   :serial t
   :components
   ((:file "packages")
