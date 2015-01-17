@@ -1,7 +1,8 @@
 (in-package #:asdf-user)
 
 (defsystem #:sicl-additional-conditions
-  :depends-on (#:sicl-internationalization #:sicl-additional-types)
+  :depends-on (:cleavir-internationalization
+	       :sicl-additional-types)
   :components
   ((:file "packages")
    (:file "conditions" :depends-on ("packages"))
