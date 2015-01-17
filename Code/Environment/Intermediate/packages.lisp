@@ -4,5 +4,6 @@
   (:use #:common-lisp)
   (:shadow . #1=(#:fboundp
 		 #:fdefinition
-		 #:symbol-function))
+		 #:symbol-function
+		 #:find-class))
   (:export . #1#))
