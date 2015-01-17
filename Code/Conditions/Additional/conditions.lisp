@@ -1,6 +1,6 @@
 (in-package #:sicl-additional-conditions)
 
-;;;; Copyright (c) 2008, 2009, 2010, 2012
+;;;; Copyright (c) 2008, 2009, 2010, 2012, 2015
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
@@ -18,19 +18,6 @@
 
 (defparameter *signaler* nil)
 
-;;; Clients that might signal errors can wrap a call to this macro
-;;; around the code that signals an error.  This macro makes sure that
-;;; the signaler that gets reported is the outermost entity that uses
-;;; it.
-(defmacro with-signaler (signaler &body body)
-  (let ((local-function-name (gensym)))
-    `(flet ((,local-function-name ()
-	      ,@body))
-       (if (null *signaler*)
-	   (let ((*signaler* ,signaler))
-	     (,local-function-name))
-	   (,local-function-name)))))
-
 ;;; This condition is used to mix into other conditions that will
 ;;; report the construct (function, macro, etc) in which the condition
 ;;; was signaled.  Code would typically rely on the value of
@@ -41,7 +28,10 @@
 	      :initarg :signaler
 	      :reader signaler)))
 
-(define-condition sicl-condition (signaler-mixin condition) ())
+(define-condition sicl-condition
+    (signaler-mixin condition)
+  ())
+
 (define-condition sicl-warning (sicl-condition warning) ())
 (define-condition sicl-style-warning (sicl-condition style-warning) ())
 (define-condition sicl-error (sicl-condition  error) ())
