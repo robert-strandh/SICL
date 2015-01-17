@@ -58,6 +58,7 @@
 	       :sicl-cons-package
 	       :sicl-global-environment
 	       :sicl-simple-environment
+	       :sicl-environment
 	       :sicl-evaluation-and-compilation
 	       :sicl-data-and-control-flow
 	       :sicl-reader-simple
