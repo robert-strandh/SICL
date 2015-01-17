@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-environment
+(defsystem :sicl-global-environment
   :depends-on (:cleavir-code-utilities
 	       :cleavir-environment
 	       :cleavir-internationalization)
