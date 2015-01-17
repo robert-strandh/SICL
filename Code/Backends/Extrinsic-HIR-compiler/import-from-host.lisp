@@ -59,8 +59,17 @@
 (setf (sicl-env:special-variable 'cl:*package* *environment* t)
       (find-package '#:common-lisp-user))
 
-;;; Add every environment function into the environment.
+;;; Add every global environment function into the environment.
 (loop for symbol being each external-symbol in '#:sicl-env
+      when (fboundp symbol)
+	do (setf (sicl-env:fdefinition symbol *environment*)
+		 (fdefinition symbol))
+      when (fboundp `(setf ,symbol))
+	do (setf (sicl-env:fdefinition `(setf ,symbol) *environment*)
+		 (fdefinition `(setf ,symbol))))
+
+;;; Add every intermediate environment function into the environment.
+(loop for symbol being each external-symbol in '#:sicl-environment
       when (fboundp symbol)
 	do (setf (sicl-env:fdefinition symbol *environment*)
 		 (fdefinition symbol))
