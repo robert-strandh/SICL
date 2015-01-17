@@ -37,4 +37,5 @@
   ((:file "packages")
    (:file "fdefinition-defun")
    (:file "setf-fdefinition-defun")
-   (:file "symbol-function-defun")))
+   (:file "symbol-function-defun")
+   (:file "setf-symbol-function-defun")))
