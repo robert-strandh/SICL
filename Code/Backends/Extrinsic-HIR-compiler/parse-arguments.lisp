@@ -45,7 +45,7 @@
 	   (let ((first (pop rest)))
 	     (cond ((eq first '&optional)
 		    (go optional))
-		   ((eq first '&rest)
+		   ((or (eq first '&rest) (eq first '&body))
 		    (go rest))
 		   ((eq first '&key)
 		    (go key))
