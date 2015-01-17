@@ -83,7 +83,14 @@
 (load (rp "../../Cons/high.lisp"))
 (load (rp "../../Loop/loop-defmacro.lisp"))
 (load (rp "../../Arithmetic/incf-decf-defmacro.lisp"))
+
+;;; Load a file containing a temporary definition of the ordinary
+;;; function ENSURE-GENERIC-FUNCTION.  The real version of
+;;; ENSURE-GENERIC-FUNCTION calls ENSURE-GENERIC-FUNCTION-USING-CLASS
+;;; which is a generic function, but since we can't create generic
+;;; functions yet, we must break this dependency cycle somehow.
 (load (rp "ensure-generic-function.lisp"))
+
 (load (rp "../../CLOS/defgeneric-defmacro.lisp"))
 
 ;;; Load a file containing the definition of the macro REMF. We load
