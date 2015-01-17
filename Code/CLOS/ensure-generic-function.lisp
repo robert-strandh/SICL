@@ -6,10 +6,10 @@
 ;;; This function is also specified in the CLHS.
 ;;; http://www.lispworks.com/documentation/HyperSpec/Body/f_ensure.htm#ensure-generic-function
 
-(defun ensure-generic-function (name &rest keys)
+(defun ensure-generic-function (name &rest keys &key environment)
   (let ((generic-function
-	  (if (fboundp name)
-	      (let ((fun (fdefinition name)))
+	  (if (sicl-environment:fboundp name environment)
+	      (let ((fun (sicl-environment:fdefinition name)))
 		(if (typep fun 'generic-function)
 		    fun
 		    (error 'type-error
