@@ -22,6 +22,12 @@
 ;;;; for finding the global environment object at the end of the
 ;;;; chain, and finally they call the corresponding function in
 ;;;; SICL-GLOBAL-ENVIRONMENT.
+;;;;
+;;;; System code should NEVER use the standard Common Lisp functions
+;;;; directly, because we always want to know exactly which
+;;;; environment is concerned.  Instead, system code should use the
+;;;; functions in this module, or, if it is known that the environment
+;;;; is global, the functions in SICL-GLOBAL-ENVIRONMENT.
 
 (defsystem :sicl-environment
   :depends-on (:sicl-global-environment
