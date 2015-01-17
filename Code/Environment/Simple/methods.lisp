@@ -66,7 +66,8 @@
 	(progn (setf (car (function-cell entry)) new-definition)
 	       (setf (macro-function entry) nil)
 	       (setf (type entry) t)
-	       (setf (inline entry) nil)))))
+	       (setf (inline entry) nil)
+	       new-definition))))
 
 (defmethod sicl-env:macro-function (symbol (env simple-environment))
   (let ((entry (find-function-entry env symbol)))
@@ -81,7 +82,8 @@
     (setf (car (function-cell entry)) (unbound entry))
     (setf (macro-function entry) new-definition)
     (setf (type entry) t)
-    (setf (inline entry) nil)))
+    (setf (inline entry) nil)
+    new-definition))
 
 (defmethod sicl-env:compiler-macro-function
     (function-name (env simple-environment))
@@ -103,7 +105,8 @@
 	(if (null entry)
 	    (push (cons function-name new-definition)
 		  (compiler-macro-expanders env))
-	    (setf (cdr entry) new-definition)))))
+	    (setf (cdr entry) new-definition))))
+  new-definition)
 
 (defmethod sicl-env:function-type (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
