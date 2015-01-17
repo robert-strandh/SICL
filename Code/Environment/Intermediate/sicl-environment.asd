@@ -36,4 +36,5 @@
   :components
   ((:file "packages")
    (:file "fdefinition-defun")
-   (:file "setf-fdefinition-defun")))
+   (:file "setf-fdefinition-defun")
+   (:file "symbol-function-defun")))
