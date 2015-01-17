@@ -91,6 +91,9 @@
 ;;; functions yet, we must break this dependency cycle somehow.
 (load (rp "ensure-generic-function.lisp"))
 
+;;; Load a file containing the definition of the macro DEFGENERIC.
+;;; That macro is particularly simple in that it expands to a call to
+;;; ensure-generic-function and it does not need any support code.
 (load (rp "../../CLOS/defgeneric-defmacro.lisp"))
 
 ;;; Load a file containing the definition of the macro REMF. We load
