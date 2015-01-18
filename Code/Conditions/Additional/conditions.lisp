@@ -274,23 +274,27 @@
 ;;;
 ;;;  Argument mismatch conditions.
 
-(define-condition too-few-arguments (program-error)
+(define-condition argument-mismatch (sicl-program-error)
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%arguments :initarg :arguments :reader arguments)))
+
+(define-condition too-few-arguments (argument-mismatch)
   ())
 
-(define-condition too-many-arguments (program-error)
+(define-condition too-many-arguments (argument-mismatch)
   ())
 
-(define-condition unrecognized-keyword-argument (program-error)
+(define-condition unrecognized-keyword-argument (argument-mismatch)
   ((%keyword-argument
     :initarg :keyword
     :reader keyword-argument)))
 
-(define-condition invalid-keyword-argument (program-error)
+(define-condition invalid-keyword-argument (argument-mismatch)
   ((%keyword-argument
     :initarg :keyword
     :reader keyword-argument)))
 
-(define-condition odd-number-of-keyword-arguments (program-error)
+(define-condition odd-number-of-keyword-arguments (argument-mismatch)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
