@@ -16,21 +16,6 @@
   (let ((real-name (if (symbolp name) name (cadr name))))
     (package-name (symbol-package real-name))))
 
-(defgeneric report-condition (condition stream language))
-
-(defmethod print-object ((c sicl-condition) stream)
-  (report-condition c stream (language *locale*)))
-
-(defmethod report-condition :before
-    ((c signaler-mixin)
-     stream
-     (language (eql 'en-us)))
-  (unless (null (signaler c))
-    (format stream
-	    "In ~a (in the ~a package):~%"
-	    (signaler c)
-	    (name-package (signaler c)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Runtime conditions.
