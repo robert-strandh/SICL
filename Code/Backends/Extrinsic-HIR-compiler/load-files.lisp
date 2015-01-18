@@ -140,4 +140,9 @@
 
 (load (rp "../../CLOS/ensure-generic-function-using-class-defmethods.lisp"))
 
+;;; Load file containing final version of ENSURE-GENERIC-FUNCTION.
+;;; Since the generic function ENSURE-GENERIC-FUNCTION-USING-CLASS as
+;;; well as its specified methods exist, we can now replace the
+;;; temporary definition of this ordinary function by the final
+;;; version.
 (load (rp "../../CLOS/ensure-generic-function.lisp"))
