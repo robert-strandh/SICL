@@ -55,14 +55,22 @@
 		    (go key))
 		   (t
 		    (push `(if (null ,var)
-			       (traced-funcall ,error "too few arguments")
+			       (traced-funcall
+				,error
+				'sicl-additional-conditions:too-few-arguments
+				:lambda-list ',lambda-list
+				:arguments ,arguments-var)
 			       (setq ,first (pop ,var)))
 			  result)
 		    (go required)))))
      optional
        (if (null rest)
 	   (progn (push `(unless (null ,var)
-			   (traced-funcall ,error "too many arguments"))
+			   (traced-funcall
+			    ,error
+			    'sicl-additional-conditions:too-many-arguments
+			    :lambda-list ',lambda-list
+			    :arguments ,arguments-var))
 			result)
 		  (go out))
 	   (let ((first (pop rest)))
@@ -91,9 +99,12 @@
        (if (null rest)
 	   (progn (push `(unless (or (null ,var)
 				     (getf ,var :allow-other-keys))
-			   (traced-funcall ,error
-				    "unknown keyword argument"
-				    (first ,var)))
+			   (traced-funcall
+			    ,error
+			    'sicl-additional-conditions:unrecognized-keyword-argument
+			    :keyword (first ,var)
+			    :lambda-list ',lambda-list
+			    :arguments ,arguments-var))
 			result)
 		  (go out))
 	   (let ((first (pop rest)))
