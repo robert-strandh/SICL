@@ -31,7 +31,7 @@
 ;;;
 ;;; ERROR is the name of a variable (a symbol) that holds the function
 ;;; ERROR to be called in case an error is detected.
-(defun parse (lambda-list var error)
+(defun parse (lambda-list arguments-var var error)
   (let ((result '())
 	(rest lambda-list)
 	(default (list nil)))
@@ -39,7 +39,11 @@
      required
        (if (null rest)
 	   (progn (push `(unless (null ,var)
-			   (traced-funcall ,error "too many arguments"))
+			   (traced-funcall
+			    ,error
+			    'sicl-additional-conditions:too-many-arguments
+			    :lambda-list ',lambda-list
+			    :arguments ,arguments-var))
 			result)
 		  (go out))
 	   (let ((first (pop rest)))
@@ -123,4 +127,4 @@
 (defun build-argument-parsing-code (lambda-list argument-variable error)
   (let ((remaining-argument-variable (gensym)))
     `(let ((,remaining-argument-variable ,argument-variable))
-       ,@(parse lambda-list remaining-argument-variable error))))
+       ,@(parse lambda-list argument-variable remaining-argument-variable error))))
