@@ -12,10 +12,6 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-(defun name-package (name)
-  (let ((real-name (if (symbolp name) name (cadr name))))
-    (package-name (symbol-package real-name))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Runtime conditions.
