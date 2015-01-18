@@ -67,7 +67,8 @@
 	       :sicl-extrinsic-environment
 	       :cleavir-primop
 	       :cleavir-hir-transformations
-	       :cleavir-basic-blocks)
+	       :cleavir-basic-blocks
+	       :sicl-additional-conditions)
   :serial t
   :components
   ((:file "packages")
