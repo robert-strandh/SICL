@@ -32,7 +32,7 @@
 	(t
 	 (format nil "an object of type ~s" type))))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c sicl-type-error) stream (language (eql 'en-us)))
   (format stream
 	  "Expected ~a.~@
@@ -41,24 +41,24 @@
 	  (interpret-type (type-error-expected-type c))
 	  (type-error-datum c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c both-test-and-test-not-given) stream (language (eql 'en-us)))
   (format stream
 	  "Both keyword arguments :test and :test-not were given."))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c at-least-one-list-required) stream (language (eql 'en-us)))
   (format stream
 	  "At least one list argument is required,~@
            but none was given."))
 	  
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c at-least-one-argument-required) stream (language (eql 'en-us)))
   (format stream
 	  "At least one argument is required,~@
            but none was given."))
 	  
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c lists-must-have-the-same-length) stream (language (eql 'en-us)))
   (format stream
 	  "The two lists passed as arguments must~@
@@ -70,18 +70,18 @@
 	  (list1 c)
 	  (list2 c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c warn-both-test-and-test-not-given) stream (language (eql 'en-us)))
   (format stream
 	  "Both keyword arguments :test and :test-not were given."))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c sicl-unbound-variable) stream (language (eql 'en-us)))
   (format stream
 	  "The variable named ~s in unbound."
 	  (cell-error-name c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c sicl-undefined-function) stream (language (eql 'en-us)))
   (format stream
 	  "The funcation named ~s in undefined."
@@ -91,7 +91,7 @@
 ;;;
 ;;; Compile time conditions. 
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c form-must-be-proper-list) stream (language (eql 'en-us)))
   (format stream
 	  "A form must be a proper list.~@
@@ -99,7 +99,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c body-must-be-proper-list) stream (language (eql 'en-us)))
   (format stream
 	  "A code body must be a proper list.~@
@@ -107,7 +107,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c block-tag-must-be-symbol) stream (language (eql 'en-us)))
   (format stream
 	  "A block tag must be a symbol.~@
@@ -115,7 +115,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c go-tag-must-be-symbol-or-integer) stream (language (eql 'en-us)))
   (format stream
 	  "A GO tag must be a symbol or an integer.~@
@@ -123,35 +123,35 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c multiple-documentation-strings-in-body) stream (language (eql 'en-us)))
   (format stream
 	  "Multiple documentation strings found in code body:~@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c documentation-string-not-allowed-in-body) stream (language (eql 'en-us)))
   (format stream
 	  "A documentation string was found where none is allowed:~@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c declarations-not-allowed-in-body) stream (language (eql 'en-us)))
   (format stream
 	  "Declarations found where none is allowed:~@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c declaration-follows-form-in-body) stream (language (eql 'en-us)))
   (format stream
 	  "Declarations can not follow the forms in a code body:~@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c form-too-short) stream (language (eql 'en-us)))
   (format stream
 	  "The form:~@
@@ -161,7 +161,7 @@
 	  (min-length c)
 	  (length (code c))))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c form-too-long) stream (language (eql 'en-us)))
   (format stream
 	  "The form:~@
@@ -171,21 +171,21 @@
 	  (max-length c)
 	  (length (code c))))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c unknown-eval-when-situation) stream (language (eql 'en-us)))
   (format stream
 	  "Unknown evaluation situation given:~@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c deprecated-eval-when-situation) stream (language (eql 'en-us)))
   (format stream
 	  "A deprecated evaluation situation given:~@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c setq-must-have-even-number-arguments) stream (language (eql 'en-us)))
   (format stream
 	  "An even number of arguments are required.~@
@@ -193,7 +193,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c setq-variable-must-be-symbol) stream (language (eql 'en-us)))
   (format stream
 	  "A variable assigned to must be a symbol.~@
@@ -201,7 +201,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c tagbody-element-must-be-symbol-integer-or-compound-form)
      stream
      (language (eql 'en-us)))
@@ -211,14 +211,14 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c empty-body) stream (language (eql 'en-us)))
   (format stream
 	  "The body of this form is empty:~@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c numeric-catch-tag) stream (language (eql 'en-us)))
   (format stream
 	  "CATCH tags are compared with EQ so using a numeric~@
@@ -226,7 +226,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c load-time-value-read-only-p-not-evaluated)
      stream
      (language (eql 'en-us)))
@@ -241,7 +241,7 @@
 ;;;
 ;;;  Lambda list conditions.
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c lambda-list-must-be-list) stream (language (eql 'en-us)))
   (format stream
 	  "A lambda list must be a list.~@
@@ -249,7 +249,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c lambda-list-must-not-be-circular) stream (language (eql 'en-us)))
   (format stream
 	  "A lambda list must not be a circular list.~@
@@ -257,7 +257,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c lambda-list-must-be-proper-list) stream (language (eql 'en-us)))
   (format stream
 	  "This lambda list must be a proper list.~@
@@ -265,7 +265,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c lambda-list-keyword-not-allowed) stream (language (eql 'en-us)))
   (format stream
 	  "Lambda list keyword ~s not allowed in this type of lambda list:~@
@@ -273,7 +273,7 @@
 	  (lambda-list-keyword c)
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c suspect-lambda-list-keyword) stream (language (eql 'en-us)))
   (format stream
 	  "Suspect lambda list keyword ~s will be treated as an ordinary symbol.~@
@@ -282,7 +282,7 @@
 	  (lambda-list-keyword c)
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c lambda-list-keyword-not-allowed-in-dotted-lambda-list)
      stream
      (language (eql 'en-us)))
@@ -292,7 +292,7 @@
 	  (lambda-list-keyword c)
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c multiple-occurrences-of-lambda-list-keyword) stream (language (eql 'en-us)))
   (format stream
 	  "Lambda list keyword ~s appears multiple times in lambda list:~@
@@ -300,7 +300,7 @@
 	  (lambda-list-keyword c)
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c incorrect-keyword-order) stream (language (eql 'en-us)))
   (format stream
 	  "Incorrect lambda list keyword order.~@
@@ -310,7 +310,7 @@
 	  (lambda-list-keyword2 c)
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c both-rest-and-body-occur-in-lambda-list) stream (language (eql 'en-us)))
   (format stream
 	  "Both &rest and &body may not occur in a lambda list.
@@ -318,7 +318,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c rest/body-must-be-followed-by-variable) stream (language (eql 'en-us)))
   (format stream
 	  "The lambda list keyword &rest or &body must be followed by a variable.~@
@@ -326,7 +326,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c atomic-lambda-list-tail-must-be-variable) stream (language (eql 'en-us)))
   (format stream
 	  "The atomic tail of a lambda list must be a variable.~@
@@ -334,7 +334,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c whole-must-be-followed-by-variable) stream (language (eql 'en-us)))
   (format stream
 	  "The lambda list keyword &whole must be followed by a variable.~@
@@ -342,7 +342,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c whole-must-appear-first) stream (language (eql 'en-us)))
   (format stream
 	  "If &whole is used in a lambda list, it must appear first.~@
@@ -350,7 +350,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c whole-must-be-followed-by-variable) stream (language (eql 'en-us)))
   (format stream
 	  "The lambda list keyword &whole must be followed by a variable.~@
@@ -358,7 +358,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c environment-must-be-followed-by-variable) stream (language (eql 'en-us)))
   (format stream
 	  "The lambda list keyword &environment must be followed by a variable.~@
@@ -366,7 +366,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c environment-can-appear-at-most-once) stream (language (eql 'en-us)))
   (format stream
 	  "The lambda list keyword &environment can occur at most once in a lambda list.~@
@@ -374,7 +374,7 @@
            ~s"
 	  (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-specialized-required) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, a required parameter must~@
@@ -389,7 +389,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-ordinary-optional) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, an item following the &optional~@
@@ -404,7 +404,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-defgeneric-optional) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, an item following the &optional~@
@@ -417,7 +417,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-destructuring-optional) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, an item following the &optional~@
@@ -432,7 +432,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-ordinary-key) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, an item following the &key~@
@@ -450,7 +450,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-defgeneric-key) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, an item following the &key~@
@@ -464,7 +464,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-destructuring-key) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, an item following the &key~@
@@ -483,7 +483,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-aux) stream (language (eql 'en-us)))
   (format stream
 	  "In a lambda list, an item following the &aux~@
@@ -497,7 +497,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-destructuring-tree) stream (language (eql 'en-us)))
   (format stream
 	  "A destructuring tree can only contain CONS cells and~@
@@ -506,7 +506,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c malformed-lambda-list-pattern) stream (language (eql 'en-us)))
   (format stream
 	  "A lambda-list pattern must be either a tree containing only~@
@@ -516,7 +516,7 @@
            ~s"
           (code c)))
 
-(defmethod report-condition
+(defmethod cleavir-i18n:report-condition
     ((c required-must-be-variable) stream (language (eql 'en-us)))
   (format stream
 	  "In this type of lambda list, the required parameter must~@
@@ -529,14 +529,14 @@
 ;;;
 ;;; CLOS/MOP-related conditions.
 
-(defmethod report-condition  ((c no-such-class-name)
+(defmethod cleavir-i18n:report-condition  ((c no-such-class-name)
 			      stream
 			      (language (eql 'en-us)))
   (format stream
 	  "There is no class with the name ~s."
 	  (type-error-datum c)))
 
-(defmethod report-condition  ((c must-be-class-or-nil)
+(defmethod cleavir-i18n:report-condition  ((c must-be-class-or-nil)
 			      stream
 			      (language (eql 'en-us)))
   (format stream
@@ -544,7 +544,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c superclass-list-must-be-proper-list)
+(defmethod cleavir-i18n:report-condition ((c superclass-list-must-be-proper-list)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -552,7 +552,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c class-name-must-be-non-nil-symbol)
+(defmethod cleavir-i18n:report-condition ((c class-name-must-be-non-nil-symbol)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -560,7 +560,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c malformed-slots-list)
+(defmethod cleavir-i18n:report-condition ((c malformed-slots-list)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -568,7 +568,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c malformed-slot-spec)
+(defmethod cleavir-i18n:report-condition ((c malformed-slot-spec)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -576,7 +576,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c illegal-slot-name)
+(defmethod cleavir-i18n:report-condition ((c illegal-slot-name)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -584,7 +584,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c slot-options-must-be-even)
+(defmethod cleavir-i18n:report-condition ((c slot-options-must-be-even)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -592,7 +592,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c slot-option-name-must-be-symbol)
+(defmethod cleavir-i18n:report-condition ((c slot-option-name-must-be-symbol)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -600,7 +600,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c multiple-initform-options-not-permitted)
+(defmethod cleavir-i18n:report-condition ((c multiple-initform-options-not-permitted)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -608,7 +608,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c multiple-documentation-options-not-permitted)
+(defmethod cleavir-i18n:report-condition ((c multiple-documentation-options-not-permitted)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -616,7 +616,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c multiple-allocation-options-not-permitted)
+(defmethod cleavir-i18n:report-condition ((c multiple-allocation-options-not-permitted)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -624,7 +624,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c multiple-type-options-not-permitted)
+(defmethod cleavir-i18n:report-condition ((c multiple-type-options-not-permitted)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -632,7 +632,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c slot-documentation-option-must-be-string)
+(defmethod cleavir-i18n:report-condition ((c slot-documentation-option-must-be-string)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
@@ -640,7 +640,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c class-option-must-be-non-empty-list)
+(defmethod cleavir-i18n:report-condition ((c class-option-must-be-non-empty-list)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -648,7 +648,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c class-option-name-must-be-symbol)
+(defmethod cleavir-i18n:report-condition ((c class-option-name-must-be-symbol)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -656,7 +656,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c malformed-documentation-option)
+(defmethod cleavir-i18n:report-condition ((c malformed-documentation-option)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -665,7 +665,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c malformed-metaclass-option)
+(defmethod cleavir-i18n:report-condition ((c malformed-metaclass-option)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -674,7 +674,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c malformed-default-initargs-option)
+(defmethod cleavir-i18n:report-condition ((c malformed-default-initargs-option)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -683,7 +683,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c default-initargs-option-once)
+(defmethod cleavir-i18n:report-condition ((c default-initargs-option-once)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -692,7 +692,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c documentation-option-once)
+(defmethod cleavir-i18n:report-condition ((c documentation-option-once)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -701,7 +701,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c metaclass-option-once)
+(defmethod cleavir-i18n:report-condition ((c metaclass-option-once)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
@@ -710,7 +710,7 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c unknown-class-option)
+(defmethod cleavir-i18n:report-condition ((c unknown-class-option)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
