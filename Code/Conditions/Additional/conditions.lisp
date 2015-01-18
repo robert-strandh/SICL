@@ -12,26 +12,6 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-;;; We use a special variable *signaler* which holds the name of the
-;;; outermost entity to have wrapped WITH-SIGNALER around a call to
-;;; error. 
-
-(defparameter *signaler* nil)
-
-;;; This condition is used to mix into other conditions that will
-;;; report the construct (function, macro, etc) in which the condition
-;;; was signaled.  Code would typically rely on the value of
-;;; *SIGNALER* to initialize the corresponding slot.  Code that wants
-;;; to override the value of *SIGNALER* can use the :SIGNALER initarg.
-(define-condition signaler-mixin ()
-  ((%signaler :initform *signaler*
-	      :initarg :signaler
-	      :reader signaler)))
-
-(define-condition sicl-condition
-    (signaler-mixin condition)
-  ())
-
 (define-condition sicl-warning (sicl-condition warning) ())
 (define-condition sicl-style-warning (sicl-condition style-warning) ())
 (define-condition sicl-error (sicl-condition  error) ())
