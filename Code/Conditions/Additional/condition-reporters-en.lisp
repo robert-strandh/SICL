@@ -527,6 +527,43 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Argument mismatch conditions.
+
+(defmethod cleavir-i18n:report-condition
+    ((c too-few-arguments) stream (language cleavir-i18n:english))
+  (format stream
+	  "Too few arguments were given.  The lambda list is:~@
+           ~s~@
+           and the arguments given were:~@
+           ~s"
+	  (lambda-list c)
+	  (arguments c)))
+
+(defmethod cleavir-i18n:report-condition
+    ((c too-many-arguments) stream (language cleavir-i18n:english))
+  (format stream
+	  "Too many arguments were given.  The lambda list is:~@
+           ~s~@
+           and the arguments given were:~@
+           ~s"
+	  (lambda-list c)
+	  (arguments c)))
+
+(defmethod cleavir-i18n:report-condition
+    ((c unrecognized-keyword-argument) stream (language cleavir-i18n:english))
+  (format stream
+	  "The keyword argument:~@
+           ~s~@
+           Is not recognized by this function.  The lambda list is:~@
+           ~s~@
+           and the arguments given were:~@
+           ~s"
+	  (keyword-argument c)
+	  (lambda-list c)
+	  (arguments c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; CLOS/MOP-related conditions.
 
 (defmethod cleavir-i18n:report-condition  ((c no-such-class-name)
