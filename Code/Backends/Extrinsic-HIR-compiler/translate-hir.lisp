@@ -291,7 +291,13 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:symbol-value-instruction) inputs outputs)
   `(setq ,(first outputs)
-	 (traced-funcall (funcall fdefinition 'symbol-value) ,(first inputs))))
+	 (symbol-value
+	  ,(first inputs)
+	  *dynamic-environment*
+	  ',(sicl-env:variable-unbound (first inputs) *linkage-environment*)
+	  (load-time-value
+	   (sicl-env:variable-cell ,(first inputs) ,*linkage-environment*)
+	   nil))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:set-symbol-value-instruction) inputs outputs)
