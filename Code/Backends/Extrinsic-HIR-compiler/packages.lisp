@@ -8,7 +8,8 @@
 	   #:catch
 	   #:throw
 	   #:eval
-	   #:load)
+	   #:load
+	   #:symbol-value)
   (:export
    #:eval
    #:load
