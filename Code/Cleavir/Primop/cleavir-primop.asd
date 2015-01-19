@@ -1,5 +1,5 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-primop
+(defsystem :cleavir-primop
   :components
   ((:file "packages")))
