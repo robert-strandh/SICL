@@ -1,6 +1,6 @@
-(cl:in-package :common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-clos-package
+(defsystem :sicl-clos-package
   :depends-on (:sicl-additional-types
 	       :sicl-additional-conditions
 	       :cleavir-code-utilities)
