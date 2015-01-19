@@ -40,7 +40,11 @@
        (if (null rest)
 	   (progn (push `(unless (null ,var)
 			   (traced-funcall
-			    ,error
+			    (car (load-time-value
+				  (sicl-env:function-cell
+				   'error
+				   ,*linkage-environment*)
+				  nil))
 			    'sicl-additional-conditions:too-many-arguments
 			    :lambda-list ',lambda-list
 			    :arguments ,arguments-var))
@@ -56,7 +60,11 @@
 		   (t
 		    (push `(if (null ,var)
 			       (traced-funcall
-				,error
+				(car (load-time-value
+				      (sicl-env:function-cell
+				       'error
+				       ,*linkage-environment*)
+				      nil))
 				'sicl-additional-conditions:too-few-arguments
 				:lambda-list ',lambda-list
 				:arguments ,arguments-var)
@@ -67,7 +75,11 @@
        (if (null rest)
 	   (progn (push `(unless (null ,var)
 			   (traced-funcall
-			    ,error
+			    (car (load-time-value
+				  (sicl-env:function-cell
+				   'error
+				   ,*linkage-environment*)
+				  nil))
 			    'sicl-additional-conditions:too-many-arguments
 			    :lambda-list ',lambda-list
 			    :arguments ,arguments-var))
@@ -100,7 +112,11 @@
 	   (progn (push `(unless (or (null ,var)
 				     (getf ,var :allow-other-keys))
 			   (traced-funcall
-			    ,error
+			    (car (load-time-value
+				  (sicl-env:function-cell
+				   'error
+				   ,*linkage-environment*)
+				  nil))
 			    'sicl-additional-conditions:unrecognized-keyword-argument
 			    :keyword (first ,var)
 			    :lambda-list ',lambda-list
