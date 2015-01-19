@@ -270,7 +270,10 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:fdefinition-instruction) inputs outputs)
   `(setf ,(first outputs)
-	 (funcall fdefinition ,(first inputs))))
+	 (car (load-time-value
+	       (sicl-env:function-cell ,(first inputs)
+				       ,*linkage-environment*)
+	       nil))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:fixed-to-multiple-instruction) inputs outputs)
