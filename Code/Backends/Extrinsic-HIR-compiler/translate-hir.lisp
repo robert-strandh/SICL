@@ -108,8 +108,7 @@
 	     ,(build-argument-parsing-code
 	       (translate-lambda-list
 		(cleavir-ir:lambda-list initial-instruction))
-	       'args
-	       '(funcall fdefinition 'cl:error))
+	       'args)
 	     ,tagbody))))))
 
 (defvar *linkage-environment*)

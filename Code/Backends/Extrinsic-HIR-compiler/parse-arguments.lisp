@@ -28,10 +28,7 @@
 ;;; runtime will hold the remaining arguments to be parsed.  The value
 ;;; of that variable is changed at runtime as more arguments are
 ;;; parsed.
-;;;
-;;; ERROR is the name of a variable (a symbol) that holds the function
-;;; ERROR to be called in case an error is detected.
-(defun parse (lambda-list arguments-var var error)
+(defun parse (lambda-list arguments-var var)
   (let ((result '())
 	(rest lambda-list)
 	(default (list nil)))
@@ -151,7 +148,7 @@
 ;;; In order to avoid modifying the value of the &REST parameter of
 ;;; the resulting code, we generate a temporary variable that will be
 ;;; modified as argument parsing progresses.
-(defun build-argument-parsing-code (lambda-list argument-variable error)
+(defun build-argument-parsing-code (lambda-list argument-variable)
   (let ((remaining-argument-variable (gensym)))
     `(let ((,remaining-argument-variable ,argument-variable))
-       ,@(parse lambda-list argument-variable remaining-argument-variable error))))
+       ,@(parse lambda-list argument-variable remaining-argument-variable))))
