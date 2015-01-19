@@ -53,7 +53,7 @@
 
 (loop for symbol in *imported-variables*
       do (setf (sicl-env:special-variable 'cl:*package* *environment* t)
-	       (symbol-value symbol)))
+	       (cl:symbol-value symbol)))
 
 ;;; Set the variable CL:*PACKAGE* in the environment.
 (setf (sicl-env:special-variable 'cl:*package* *environment* t)
