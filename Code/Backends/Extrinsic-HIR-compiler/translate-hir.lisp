@@ -302,9 +302,13 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:set-symbol-value-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(traced-funcall (funcall fdefinition '(setf symbol-value))
-	    ,(second inputs)
-	    ,(first inputs)))
+  `(setf (symbol-value
+	  ,(first inputs)
+	  *dynamic-environment*
+	  (load-time-value
+	   (sicl-env:variable-cell ,(first inputs) ,*linkage-environment*)
+	   nil))
+	 ,(second inputs)))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:nop-instruction) inputs outputs)
