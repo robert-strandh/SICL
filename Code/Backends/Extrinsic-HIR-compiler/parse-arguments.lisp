@@ -22,6 +22,8 @@
 ;;;;    was supplied.  The third element of the list is the name of the
 ;;;;    associated SUPPLIED-P parameter.
 
+(defvar *linkage-environment*)
+
 ;;; Generate a form that parses the arguments to a function.
 ;;;
 ;;; The parameter VAR contains the name a variable (a symbol) that at
