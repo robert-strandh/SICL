@@ -111,8 +111,6 @@
 	       'args)
 	     ,tagbody))))))
 
-(defvar *linkage-environment*)
-
 (defun translate (initial-instruction linkage-environment)
   (let ((*ownerships*
 	  (cleavir-hir-transformations:compute-ownerships initial-instruction))
@@ -162,12 +160,23 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:the-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(unless (traced-funcall (funcall fdefinition 'typep)
-			   ,(first inputs)
-			   ',(cleavir-ir:value-type instruction))
-     (error 'type-error
-	    :expected-type ',(cleavir-ir:value-type instruction)
-	    :datum ,(first inputs))))
+  `(unless (traced-funcall
+	    (car (load-time-value
+		  (sicl-env:function-cell
+		   'typep
+		   ,*linkage-environment*)
+		  nil))
+	    ,(first inputs)
+	    ',(cleavir-ir:value-type instruction))
+     (traced-funcall
+      (car (load-time-value
+	    (sicl-env:function-cell
+	     'error
+	     ,*linkage-environment*)
+	    nil))
+      'type-error
+      :expected-type ',(cleavir-ir:value-type instruction)
+      :datum ,(first inputs))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:car-instruction) inputs outputs)
@@ -326,9 +335,14 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
-  `(if (traced-funcall (funcall fdefinition 'typep)
-		       ,(first inputs)
-		       ',(cleavir-ir:value-type instruction))
+  `(if (traced-funcall
+	(car (load-time-value
+	      (sicl-env:function-cell
+	       'typep
+	       ,*linkage-environment*)
+	      nil))
+	,(first inputs)
+	',(cleavir-ir:value-type instruction))
        (go ,(second successors))
        (go ,(first successors))))
 
