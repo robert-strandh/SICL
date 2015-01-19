@@ -112,10 +112,13 @@
 	       '(funcall fdefinition 'cl:error))
 	     ,tagbody))))))
 
-(defun translate (initial-instruction)
+(defvar *linkage-environment*)
+
+(defun translate (initial-instruction linkage-environment)
   (let ((*ownerships*
 	  (cleavir-hir-transformations:compute-ownerships initial-instruction))
 	(*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
+	(*linkage-environment* linkage-environment)
 	(*tags* (make-hash-table :test #'eq))
 	(*vars* (make-hash-table :test #'eq)))
     (layout-procedure initial-instruction)))
