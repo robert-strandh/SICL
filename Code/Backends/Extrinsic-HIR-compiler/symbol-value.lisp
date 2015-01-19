@@ -15,3 +15,9 @@
 	(if (eq (value entry) unbound-value)
 	    (error "unbound variable ~s" symbol)
 	    (value entry)))))
+
+(defun (setf symbol-value) (new-value symbol dynamic-env global-value-cell)
+  (let ((entry (find-variable-entry symbol dynamic-env)))
+    (if (null entry)
+	(setf (car global-value-cell) new-value)
+	(setf (value entry) new-value))))
