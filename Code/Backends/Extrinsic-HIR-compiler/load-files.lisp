@@ -81,6 +81,7 @@
 (load (rp "../../Data-and-control-flow/return-defmacro.lisp"))
 (load (rp "../../Cons/low.lisp"))
 (load (rp "../../Cons/cxr.lisp"))
+(load (rp "../../Cons/setf-cxr.lisp"))
 (load (rp "../../Loop/loop-defmacro.lisp"))
 (load (rp "../../Arithmetic/incf-decf-defmacro.lisp"))
 

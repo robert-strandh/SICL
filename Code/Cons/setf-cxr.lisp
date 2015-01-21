@@ -108,10 +108,10 @@
   (setf (car (cddddr cons)) new-value))
 
 (defun (setf sixth) (new-value cons)
-  (setf (car (cdr (cddddr cons)) new-value)))
+  (setf (car (cdr (cddddr cons))) new-value))
 
 (defun (setf seventh) (new-value cons)
-  (setf (car (cddr (cddddr cons)) new-value)))
+  (setf (car (cddr (cddddr cons))) new-value))
 
 (defun (setf eighth) (new-value cons)
   (setf (car (cdddr (cddddr cons))) new-value))
