@@ -49,7 +49,8 @@ that parameter is \emph{true}, it is required that the elements are
 processed in reverse order.  Some implementations, in particular SBCL
 and CCL implement the reverse-order traversal of a list by
 non-destructively reversing the list and then traversing the reversed
-version instead.  This technique requires O(n) additional heap space,
+version instead.  This technique requires $O(n)$ additional heap space 
+(where $n$ is the length of the list),
 and increases the amount of work required by the garbage collector.
 
 In this paper, we present a technique that only uses additional
