@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "create-stage-1")
+   (:file "fill-global-environment")
    (:file "import-from-stage-0")))
