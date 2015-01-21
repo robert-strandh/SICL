@@ -28,12 +28,6 @@
 ;;;
 ;;; Utilities
 
-;;; Check that an object is a proper list
-(defun proper-list-p (object)
-  (or (null object)
-      (and (consp object)
-	   (proper-list-p (cdr object)))))
-
 ;;; Checks if the binding var is a symbol
 (defun binding-var-must-be-symbol (name binding-var)
   (unless (symbolp binding-var)
@@ -60,7 +54,7 @@
 
 ;;; Checks if iteration body is a proper list
 (defun body-must-be-proper-list (name body)
-  (unless (proper-list-p body)
+  (unless (cleavir-code-utilities:proper-list-p body)
     (error 'malformed-body
            :name name
            :datum body)))
@@ -152,7 +146,7 @@
 	     ,result-form))))))
 
 (defun check-variable-clauses (name variable-clauses)
-  (unless (proper-list-p variable-clauses)
+  (unless (cleavir-code-utilities:proper-list-p variable-clauses)
     (error 'malformed-variable-clauses
            :name
            :datum variable-clauses))
@@ -197,7 +191,7 @@
                   ;; do some syntax checking
                   (check-variable-clauses ',name variable-clauses)
                   (body-must-be-proper-list ',name body)
-                  (unless (and (proper-list-p end-test)
+                  (unless (and (cleavir-code-utilities:proper-list-p end-test)
                                (not (null end-test)))
                     (error 'malformed-end-test
                            :name ',name
