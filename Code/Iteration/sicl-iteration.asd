@@ -1,6 +1,6 @@
-(in-package #:cl-user)
+(in-package #:asdf-user)
 
-(asdf:defsystem :sicl-iteration
+(defsystem :sicl-iteration
   :components
   ((:file "packages" :depends-on ())
    (:file "conditions" :depends-on ("packages"))
