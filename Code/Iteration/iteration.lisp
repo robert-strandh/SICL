@@ -1,4 +1,4 @@
-(in-package #:sicl-iteration)
+(cl:in-package #:sicl-iteration)
 
 ;;; This code is in the public domain.
 ;;;
@@ -27,14 +27,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utilities
-
-;;; Split a body into declarations and forms.
-(defun split-body (body &optional declarations)
-  (if (or (null body)
-	  (not (consp (car body)))
-	  (not (eq (caar body) 'declare)))
-      (values (nreverse declarations) body)
-      (split-body (cdr body) (cons (car body) declarations))))
 
 ;;; Check that an object is a proper list
 (defun proper-list-p (object)
@@ -108,7 +100,7 @@
   (list-form-must-be-list 'dolist list-form)
   (body-must-be-proper-list 'dolist body)
   (multiple-value-bind (declarations forms)
-      (split-body body)
+      (cleavir-code-utilities:separate-ordinary-body body)
     (let ((start-tag (gensym))
 	  (end-tag (gensym))
 	  (list-var (gensym)))
@@ -138,7 +130,7 @@
   (count-form-must-be-nonnegative-integer 'dotimes count-form)
   (body-must-be-proper-list 'dotimes body)
   (multiple-value-bind (declarations forms)
-      (split-body body)
+      (cleavir-code-utilities:separate-ordinary-body body)
     (let ((start-tag (gensym))
 	  (end-tag (gensym))
 	  (count-var (gensym)))
@@ -211,7 +203,7 @@
                            :name ',name
                            :found end-test))
                   (multiple-value-bind (declarations forms)
-                      (split-body body)
+                      (cleavir-code-utilities:separate-ordinary-body body)
                     (let ((start-tag (gensym)))
                       `(block nil
                          (,',let-type ,(extract-bindings
