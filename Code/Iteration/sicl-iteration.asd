@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "utilities")
    (:file "iteration")
    (:file "condition-reporters-en")
    (:file "docstrings-en")))
