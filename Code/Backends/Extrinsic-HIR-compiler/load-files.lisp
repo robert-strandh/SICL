@@ -80,7 +80,7 @@
 (load (rp "../../Data-and-control-flow/get-setf-expansion.lisp"))
 (load (rp "../../Data-and-control-flow/return-defmacro.lisp"))
 (load (rp "../../Cons/low.lisp"))
-(load (rp "../../Cons/high.lisp"))
+(load (rp "../../Cons/cxr.lisp"))
 (load (rp "../../Loop/loop-defmacro.lisp"))
 (load (rp "../../Arithmetic/incf-decf-defmacro.lisp"))
 
