@@ -4,4 +4,5 @@
   :depends-on (:sicl-extrinsic-hir-compiler)
   :serial t
   :components
-  ((:file "create-stage-1")))
+  ((:file "create-stage-1")
+   (:file "import-from-stage-0")))
