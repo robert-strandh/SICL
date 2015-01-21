@@ -99,42 +99,6 @@
 	     (declare (ignorable ,var))
 	     ,result-form))))))
 
-(defun check-variable-clauses (name variable-clauses)
-  (unless (cleavir-code-utilities:proper-list-p variable-clauses)
-    (error 'malformed-variable-clauses
-           :name
-           :datum variable-clauses))
-  (local-mapcar
-   (lambda (clause)
-     (unless (or (symbolp clause)
-		 (and (consp clause)
-		      (symbolp (car clause))
-		      (or (null (cdr clause))
-			  (null (cddr clause))
-			  (null (cdddr clause)))))
-       (error 'malformed-variable-clause
-              :name name
-	      :found clause)))
-   variable-clauses))
-
-(defun extract-bindings (variable-clauses)
-  (local-mapcar
-   (lambda (clause)
-     (cond ((symbolp clause) clause)
-	   ((null (cdr clause)) (car clause))
-	   (t (list (car clause) (cadr clause)))))
-   variable-clauses))
-
-(defun extract-updates (variable-clauses)
-  (if (null variable-clauses) '()
-      (let ((clause (car variable-clauses)))
-	(if (and (consp clause)
-		 (not (null (cddr clause))))
-	    (list* (car clause)
-		   (caddr clause)
-		   (extract-updates (cdr variable-clauses)))
-	    (extract-updates (cdr variable-clauses))))))
-
 (macrolet ((define-do (name assignment-type)
              (multiple-value-bind (let-type setq-type)
                  (ecase assignment-type
