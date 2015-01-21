@@ -31,11 +31,6 @@
            :name name
            :datum body)))
 
-;;; For do and do* we need to map over the variable binding clauses.
-;;; We therefore need mapcar or something similar.  But in order to
-;;; avoid introducing a dependency on sequence operations, we define
-;;; our own mapcar using only recursion.
-
 (defun local-mapcar (function list)
   (if (null list)
       '()
@@ -47,7 +42,7 @@
     (error 'malformed-variable-clauses
            :name
            :datum variable-clauses))
-  (local-mapcar
+  (mapcar
    (lambda (clause)
      (unless (or (symbolp clause)
 		 (and (consp clause)
@@ -61,7 +56,7 @@
    variable-clauses))
 
 (defun extract-bindings (variable-clauses)
-  (local-mapcar
+  (mapcar
    (lambda (clause)
      (cond ((symbolp clause) clause)
 	   ((null (cdr clause)) (car clause))
