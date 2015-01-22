@@ -1,8 +1,27 @@
 \section{Our technique}
 
-A binding of a function name to a function object contains an
-indirection in the form of a \emph{function cell}.  The same holds for
-the binding of a variable name (a symbol) to its \emph{global value}.
-In our implementation, these cells are ordinary \texttt{cons} cells
-with the \texttt{car} containing the value of the binding, and the
-\texttt{cdr} contains \texttt{nil}.
+We suggest a \clos{}-based \emph{protocol} defining the set of
+operations on a first-class environment.  This protocol contains
+around $40$ generic functions.
+
+Mainly, the protocol contains versions of \commonlisp{} environment
+functions such as \texttt{fboundp}, \texttt{find-class}, etc. that
+take an additional required \texttt{environment} argument.
+
+In addition to these functions, the protocol also contains a set of
+functions for accessing \emph{cells} that in most implementations
+would be stored elsewhere.  Thus, a binding of a function name to a
+function object contains an indirection in the form of a
+\emph{function cell}.  The same holds for the binding of a variable
+name (a symbol) to its \emph{global value}.  In our implementation,
+these cells are ordinary \texttt{cons} cells with the \texttt{car}
+containing the value of the binding, and the \texttt{cdr} contains
+\texttt{nil}.
+
+These cells are created as needed.  The first time a reference to a
+function is made, the corresponding cell is created.  Compiled code
+that refers to a global function will have the corresponding cell in
+its run-time environment.  The cost of accessing a function at
+run-time is therefore no greater in our implementation than in an
+implementation that accesses the function through the symbol naming
+it.
