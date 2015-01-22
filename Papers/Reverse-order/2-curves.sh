@@ -1,20 +1,16 @@
-#!/bin/bash
-
-display_usage() { 
-	echo "\nusage: $0 version_number1 version_number2" 
-	} 
+#!/bin/sh
 
 # if less than two arguments supplied, display usage 
-if [[ ( $# -le 1 ) || ( $# -ge 3 ) ]]
+if [ "$#" -le 1 ] || [ "$#" -ge 3 ]
 then 
-	display_usage
+	echo "\nusage: $0 version_number1 version_number2"
 	exit 1
 fi 
 
 V1=$1
 V2=$1
 
-if [ $# == 2 ]
+if [ "$#" -eq 2 ]
 then 
 	V2=$2
 fi 

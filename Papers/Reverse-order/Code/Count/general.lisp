@@ -77,7 +77,6 @@
 	     (machin-time (* 1000 (evaluate-time (funcall reverse-count-fun2 0 list) times))))
 	 (format t "~3D ~10,5F ~10,5F~%" k truc-time machin-time)
 	 (finish-output t)
-	 (
 	 (format stream "~3D ~10,5F ~10,5F~%" k truc-time machin-time))))
 
 (defun mouline-truc-versus-machin-one-file
