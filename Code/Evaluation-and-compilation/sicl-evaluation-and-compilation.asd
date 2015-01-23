@@ -1,4 +1,4 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
 ;;; This system contains some definitions from the "Evaluation and
 ;;; compilation" dictionary of the HyperSpec.  Most of the contents of
@@ -8,7 +8,7 @@
 ;;; SICL, since SICL has first-class global environments, and those
 ;;; definitions are directly related to the environment.
 
-(asdf:defsystem :sicl-evaluation-and-compilation
+(defsystem :sicl-evaluation-and-compilation
   :depends-on (:cleavir-internationalization)
   :serial t
   :components
