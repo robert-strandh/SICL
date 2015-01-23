@@ -299,16 +299,20 @@
     <img src="loop5.png" height=600 width=400>    
 
     <P>
-      Now, when the control flow move out of <B>b</B>, the test
-      in <B>test(2)</B> must succeed, so we can make <B>d(1)</B> the
-      immediate successor of <B>b</B>.  Similarly, when the control
-      flow move out of <B>c</B>, the test in <B>test(2)</B> must fail,
-      so we can make <B>d(2)</B> the immediate successor of <B>c</B>.
-      Finally, we can eliminate <B>test(2)</B> because it no longer
-      has any predecessors.  We obtain the final flowchart as follows:
+      Now, <B>test(2)</B> has two inputs so we replicated it.
     </P>
 
     <img src="loop6.png" height=600 width=400>    
+
+    <P>
+      Now, <B>test(2.1)</B> must always be true, so we can
+      make <B>d(1)</B> the direct successor of <B>b</B> and eliminate
+      the test.  Similary, <B>test(2.2)</B> must always be false, so we can
+      make <B>d(2)</B> the direct successor of <B>c</B> and eliminate
+      the test.
+    </P>
+
+    <img src="loop7.png" height=600 width=400>    
 
     <P>
       As we can see, this flowchart corresponds exactly to the program
