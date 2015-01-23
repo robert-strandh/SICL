@@ -1,0 +1,320 @@
+<HTML>
+  <HEAD><TITLE>Rewriting techniques applied to program optimization</TITLE></HEAD>
+  <BODY>
+    <H2>Multiple redundant tests</H2>
+
+    <P>
+      Consider the following program:
+    </P>
+    <PRE>
+    (setq x (car list)
+    (loop until loop-test do body)
+    (setq y (cdr list))
+    ...
+    </PRE>
+
+    <P>
+      This pattern occurs frequently in real programs, both
+      explicitly, and implicitly as a result of <I>destructuring</I>.
+    </P>
+
+    <P>
+      Furthermore, assume that <TT>car</TT> and <TT>cdr</TT> have the
+      following definitions:
+    </P>
+    <PRE>
+    (defun car (list)
+      (if (consp list)
+	  (cons-car list)
+	  (if (null list)
+	      nil
+	      (error 'type-error ...))))
+
+    (defun cdr (list)
+      (if (consp list)
+	  (cons-cdr list)
+	  (if (null list)
+	      nil
+	      (error 'type-error ...))))
+    </PRE>
+
+    <P>where <TT>cons-car</TT> and <TT>cons-cdr</TT> are primitives
+      recognized by the compiler.
+    </P>
+
+    <P>
+      If we inline <TT>car</TT> and <TT>cdr</TT>, the first program
+      can be written like this:
+    </P>
+
+    <PRE>
+    (if (consp list)
+	(setq x (cons-car list))
+	(if (null list)
+	    (setq x nil)
+	    (error 'type-error ...)))
+    (loop until loop-test do body)
+    (if (consp list)
+	(setq y (cons-cdr list))
+	(if (null list)
+	    (setq y nil)
+	    (error 'type-error ...)))
+    </PRE>
+
+    <P>
+      In the most common case where <TT>list</TT> is a <TT>cons</TT>
+      we end up making two identical tests to verify this fact.  We
+      would like to turn this program into something like:
+    </P>
+
+    <PRE>
+    (if (consp list)
+	(progn (setq x (cons-car list))
+               (loop until loop-test do body)
+	       (setq y (cons-cdr list)))
+	(if (null list)
+	    (progn (setq x nil)
+                   (loop until loop-test do body)
+		   (setq y nil))
+	    (error 'type-error ...)))
+    </PRE>
+
+    <P>
+      Similar situations occur for testing whether a variable contains
+      a <TT>fixnum</TT> when it participates in several consecutive
+      arithmetic operations, though that situation can not easily be
+      illustrated in source code.
+    </P>
+
+    <P>
+      If we generate intermediate code in the form of a <I>flowchart</I>
+      from the naive program above, we get the result illustrated by
+      the following figure:
+    </P>
+
+    <img src="redundant1.png" height=600 width=400>
+
+    <P>
+      In that figure, control flow is represented by bold arcs.  Type
+      information about the variable <TT>list</TT> is indicated by the
+      color of the arc.  Black means no information, green
+      means <TT>cons</TT>, pink means <TT>atom</TT>, yellow
+      means <TT>null</TT>, blue means <TT>list</TT>, and red
+      means <TT>(not list)</TT>.  The two outgoing arcs from a test
+      instruction are labeled <B>T</B> and <B>F</B> for <I>true</I>
+      and <I>false</I> respectively.  Instructions are represented by
+      rectangles and data are represented by ellipses.  Input and
+      output are represented by dashed arcs.
+    </P>
+
+    <P>
+      We now illustrate through a sequence of <I>rewrite steps</I> how
+      to optimize the program in the previous figure.  We observe that
+      the second test for <TT>consp</TT> has the same input as the
+      first, so the objective is to eliminate the second one by moving
+      it earlier in the flowchart.
+    </P>
+
+    <P>
+      The first optimization consists of realizing that the result of
+      the test labeled <B>null(2)</B> will always be true, simply
+      because before this instruction, the yellow color indicates
+      that <TT>list</TT> is of type <TT>null</TT>, and that is what
+      the instruction tests for.  The simplification, then, consists
+      of eliminating the instruction labeled <B>null(2)</B> and the
+      branch that can not be taken.  We obtain the following
+      flowchart:
+    </P>
+
+    <img src="redundant2.png" height=600 width=400>
+
+    <P>
+      The first real rewrite step consists of moving the instruction
+      labeled <B>consp(2)</B> so that it appears <I>before</I> its
+      current predecessor, i.e. the instruction labeled <B>loop
+      test</B>.  In order to do that, we must duplicate the
+      instruction labeled <B>loop test</B> in both the branches of the
+      test.  Furthermore, incoming control arcs to the instruction
+      labeled <B>loop test</B> turn into incoming arcs of the
+      instruction labeled <B>consp(2)</B>.  The result is shown in the
+      following flow chart:
+    </P>
+
+    <img src="redundant3.png" height=600 width=400>
+
+    <P>
+      The copies of the instruction previously labeled <B>loop
+      test</B> are now labeled <B>loop test(1)</B> and <B>loop
+      test(2)</B> respectively.  Notice that we have gained some type
+      information.  The incoming arcs to and outgoing arcs
+      from <B>loop test(1)</B> are now green and the incoming arcs to
+      and outgoing arcs from <B>loop test(2)</B> are now yellow.
+    </P>
+
+    <P>
+      The next rewrite step illustrates a different transformation.
+      Whenever the test instruction we want to eliminate has more than
+      one predecessor, we duplicate it so that each copy has a single
+      predecessor.  The result is the following flowchart in which the
+      copies of <B>consp(2)</B> are
+      labeled <B>consp(2.1)</B>, <B>consp(2.2)</B>,
+      and <B>consp(2.3)</B> respectively:
+    </P>
+
+    <img src="redundant4.png" height=600 width=400>
+
+    <P>
+      Whereas <B>consp(2)</B> had one green, one yellow, and one blue
+      predecessor, after the duplication, the unique predecessor
+      of <B>consp(2.1)</B> is green, the unique predecessor
+      of <B>consp(2.2)</B> is yellow, and the unique predecessor
+      of <B>consp(2.1)</B> is blue.  Green means <TT>cons</TT>, so the
+      test of <B>consp(2.1)</B> will always succeed.  We can therefore
+      eliminate <B>consp(2.1)</B> and make <B>loop test(1)</B> the
+      successor of <B>cons-car</B>.  Similarly, yellow
+      means <TT>null</TT>, so the test of <B>consp(2.2)</B> will
+      always fail.  We can therefore
+      eliminate <B>consp(2.2)</B> and make <B>loop test(2)</B> the
+      successor of <B>setq(1)</B>.  The result is shown in the
+      following flowchart:
+    </P>
+
+    <img src="redundant5.png" height=600 width=400>
+
+    <P>
+      The next rewrite step is similar to the first real rewrite step
+      we made, with the purpose of moving the test we want to
+      eliminate so that it appears <I>before</I> its current
+      predecessor.  In this case, it is the test
+      labeled <B>consp(2.3)</B> and its current predecessor
+      is <B>body</B>.  The current predecessors of <B>body</B> become
+      predecessors of the test, and <B>body</B> is duplicated in the
+      two branches of the test.  We obtain the following flowchart:
+    </P>
+
+    <img src="redundant6.png" height=600 width=400>
+
+    <P>
+      The next rewrite step consists of observing that when control
+      flow exits from <B>loop test(1)</B> and enters
+      into <B>consp(2.3)</B> the arc is green so that the type
+      of <TT>list</TT> is <TT>cons</TT>.  This means that in this
+      case, the test will always succeed.  We rewrite by
+      making <B>body(1)</B> the successor of <B>loop test(1)</B>.
+      Similarly, when control flow exits from <B>loop test(2)</B> and
+      enters into <B>consp(2.3)</B> the arc is yellow so that the type
+      of <TT>list</TT> is <TT>null</TT>.  This means that in this
+      case, the test will always fail.  We rewrite by
+      making <B>body(2)</B> the successor of <B>loop test(2)</B>.
+      We obtain the following flowchart:
+    </P>
+
+    <img src="redundant7.png" height=600 width=400>
+    
+    <P>
+      This flowchart now corresponds to the program we desired in the
+      first place.  Aside from the error branch, It has two
+      independent branches, one green and one yellow.  Furthermore,
+      the loop has been replicated in the two branches.
+    </P>
+
+    <H2>Loop unswitching</H2>
+
+    <P>
+      Loop unswitching is a transformation that is applicable when a
+      loop contains a test that is <I>loop invariant</I>.  In that
+      case, we want to make the test once and replicate the loop,
+      specialized to the outcome of the test.  In this section we show
+      how to obtain loop unswitching with the same rewriting technique
+      as in the previous section.
+    </P>
+
+    <P>
+      We illustrate the technique with the following program.
+    </P>
+
+    <PRE>
+    (loop until loop-test
+	  do a (if test b c) d)
+    </PRE>
+
+    <P>
+      We hope to obtain the following program after transformation:
+    </P>
+    
+    <PRE>
+    (if test
+        (loop until loop-test
+              do a b d)
+        (loop until loop-test
+              do a c d))
+    </PRE>
+
+    <P>
+      Here is the flowchart corresponding to this program:
+    </P>
+
+    <img src="loop1.png" height=600 width=400>    
+
+    <P>
+      Conventions are as before, except that this time, green color
+      illustrates that the test we want move out of the loop
+      is <I>true</I> and green color that it is <I>false</I>.
+    </P>
+
+    <P>
+      The first rewrite step consists of moving the <B>test</B>
+      instruction so that it appears <I>before</I> its current
+      predecessor.  We make <B>test</B> the successor of <B>loop
+      test</B> and we replicate <B>a</B> in both branches
+      of <B>test</B>.  The result is the following flowchart:
+    </P>
+
+    <img src="loop2.png" height=600 width=400>    
+
+    <P>
+      The second rewrite step is of the same nature as the first,
+      i.e., consists of moving the <B>test</B> instruction so that it
+      appears <I>before</I> its current predecessor.  We
+      make <B>test</B> the successor of <B>start</B> and we
+      replicate <B>loop test</B> in both branches of <B>test</B>.  The
+      result is the following flowchart:
+    </P>
+
+    <img src="loop3.png" height=600 width=400>    
+
+    <P>
+      Now, <B>test</B> has two predecessors, so we duplicate it:
+    </P>
+
+    <img src="loop4.png" height=600 width=400>    
+
+    <P>
+      We now move <B>test(2)</B> so that it appears <I>before</I> its
+      current predecessor.  We make <B>test(2)</B> the successor
+      of <B>b</B> and <B>c</B>, and we replicate <B>d</B> in the two
+      branches of <B>test(2)</B>:
+    </P>
+
+    <img src="loop5.png" height=600 width=400>    
+
+    <P>
+      Now, when the control flow move out of <B>b</B>, the test
+      in <B>test(2)</B> must succeed, so we can make <B>d(1)</B> the
+      immediate successor of <B>b</B>.  Similarly, when the control
+      flow move out of <B>c</B>, the test in <B>test(2)</B> must fail,
+      so we can make <B>d(2)</B> the immediate successor of <B>c</B>.
+      Finally, we can eliminate <B>test(2)</B> because it no longer
+      has any predecessors.  We obtain the final flowchart as follows:
+    </P>
+
+    <img src="loop6.png" height=600 width=400>    
+
+    <P>
+      As we can see, this flowchart corresponds exactly to the program
+      we were hoping to obtain.
+    </P>
+
+  </BODY>
+
+</HTML>

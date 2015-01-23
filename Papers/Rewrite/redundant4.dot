@@ -1,0 +1,60 @@
+digraph G {
+  start [label = "start", shape = box];
+  end [label = "end", shape = box];
+  consp1 [label = "consp(1)", shape = box];
+  consp21 [label = "consp(2.1)", shape = box];
+  consp22 [label = "consp(2.2)", shape = box];
+  consp23 [label = "consp(2.3)", shape = box];
+  null1 [label = "null(1)", shape = box];
+  conscar [label = "cons-car", shape = box];
+  conscdr [label = "cons-cdr", shape = box];
+  setq1 [label = "setq(1)", shape = box];
+  setq2 [label = "setq(2)", shape = box];
+  error1 [label = "error(1)", shape = box];
+  looptest1 [label = "loop test(1)", shape = box];
+  looptest2 [label = "loop test(2)", shape = box];
+  body [label = "body", shape = box];
+
+  list [label = "list", shape = ellipse];
+  nil [label = "nil", shape = ellipse];
+  x [label = "x", shape = ellipse];
+  y [label = "y", shape = ellipse];
+
+  list -> consp1 [style = dashed];
+  list -> consp21 [style = dashed];
+  list -> consp22 [style = dashed];
+  list -> consp23 [style = dashed];
+  list -> null1 [style = dashed];
+  list -> conscar [style = dashed];
+  list -> conscdr [style = dashed];
+  nil -> setq1 [style = dashed];
+  nil -> setq2 [style = dashed];
+
+  conscar -> x [style = dashed];
+  conscdr -> y [style = dashed];
+  setq1 -> x [style = dashed];
+  setq2 -> y [style = dashed];
+
+  start -> consp1 [style = bold];
+  consp1 -> conscar [style = bold, color = green, label = "T"];
+  consp1 -> null1 [style = bold, color = pink, label = "F"];
+  null1 -> setq1 [style = bold, color = yellow, label = "T"];
+  null1 -> error1 [style = bold, color = red, label = "F"];
+  conscar ->  consp21 [style = bold, color = green];
+  setq1 -> consp22 [style = bold, color = yellow];
+
+  looptest1 -> conscdr [style = bold, color = green, label = "T"];
+  looptest1 -> body [style = bold, color = green, label = "F"];
+  looptest2 -> setq2 [style = bold, color = yellow, label = "T"];
+  looptest2 -> body [style = bold, color = yellow, label = "F"];
+  body -> consp23 [style = bold, color = blue];
+
+  consp21 -> looptest1 [style = bold, color = green, label = "T"];
+  consp21 -> looptest2 [style = bold, color = yellow, label = "F"];
+  consp22 -> looptest1 [style = bold, color = green, label = "T"];
+  consp22 -> looptest2 [style = bold, color = yellow, label = "F"];
+  consp23 -> looptest1 [style = bold, color = green, label = "T"];
+  consp23 -> looptest2 [style = bold, color = yellow, label = "F"];
+  conscdr -> end [style = bold, color = green];
+  setq2 -> end [style = bold, color = yellow];
+}

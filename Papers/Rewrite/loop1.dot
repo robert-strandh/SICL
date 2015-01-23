@@ -1,0 +1,21 @@
+digraph G {
+  start [label = "start", shape = box];
+  end [label = "end", shape = box];
+  looptest [label = "loop test", shape = box];
+  a [label = "a", shape = box];
+  b [label = "b", shape = box];
+  c [label = "c", shape = box];
+  d [label = "d", shape = box];
+  test [label = "test", shape = box];
+
+  start -> looptest [style = bold];
+  looptest -> a [style = bold, label = "T"];
+  looptest -> end [style = bold, label = "F"];
+  a -> test [style = bold];
+  test -> b [style = bold, color = green, label = "T"];
+  test -> c [style = bold, color = red, label = "F"];
+  b -> d [style = bold, color = green];
+  c -> d [style = bold, color = red];
+  d -> looptest [style = bold];
+
+}
