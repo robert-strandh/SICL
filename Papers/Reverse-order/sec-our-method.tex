@@ -60,7 +60,8 @@ By far the most important improvement to the basic technique is to
 take advantage of the available stack space to decrease the number of
 multiple list traversals required by the basic technique.
 
-\FIXME{Pourquoi pas un seul "labels"?}
+\FIXME{Pourquoi pas un seul "labels"?  Because \texttt{recursive} does
+  not need to call \texttt{aux}}
 
 {\small\begin{verbatim}
 (defun find-2 (x list)
