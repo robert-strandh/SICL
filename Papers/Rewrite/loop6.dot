@@ -10,6 +10,8 @@ digraph G {
   d1 [label = "d(1)", shape = box];
   d2 [label = "d(2)", shape = box];
   test1 [label = "test(1)", shape = box];
+  test21 [label = "test(2.1)", shape = box];
+  test22 [label = "test(2.2)", shape = box];
 
   start -> test1 [style = bold];
   looptest1 -> a1 [style = bold, color = green, label = "T"];
@@ -20,8 +22,12 @@ digraph G {
   a2 -> c [style = bold, color = red];
   test1 -> looptest1 [style = bold, color = green, label = "T"];
   test1 -> looptest2 [style = bold, color = red, label = "F"];
-  b -> d1 [style = bold, color = green];
-  c -> d2 [style = bold, color = red];
+  test21 -> d1 [style = bold, color = green, label = "T"];
+  test21 -> d2 [style = bold, color = red, label = "F"];
+  test22 -> d1 [style = bold, color = green, label = "T"];
+  test22 -> d2 [style = bold, color = red, label = "F"];
+  b -> test21 [style = bold, color = green];
+  c -> test22 [style = bold, color = red];
   d1 -> looptest1 [style = bold, color = green];
   d2 -> looptest2 [style = bold, color = red];
 
