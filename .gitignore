@@ -15,7 +15,6 @@
 *.code
 *.dvi
 *.ps
-*.dot
 *.out
 *.snm
 *.nav
