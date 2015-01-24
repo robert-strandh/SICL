@@ -112,8 +112,31 @@
       to optimize the program in the previous figure.  We observe that
       the second test for <TT>consp</TT> has the same input as the
       first, so the objective is to eliminate the second one by moving
-      it earlier in the flowchart.
+      it earlier in the flowchart.  We will do that by using three
+      rewrite rules:
     </P>
+
+    <ol>
+      <li>
+	If there is any test that must always be true or must always
+	be false, then eliminate the test and connect its
+	predecessor(s) to its true or false successor according to the
+	outcome of the test.
+      </li>
+      <li>
+	If the test we want to eliminate has more than one
+	predecessor, then replicate the test so that each replica has
+	a single predecessor.  All the replicas have the same
+	successors. 
+      </li>
+      <li>
+	If the test we want to eliminate has a single
+	predecessor <i>P</i>, then interchange the test and <i>P</i>.
+	The former predecessors of <i>P</i> become predecessors
+	of the test, and <i>P</i> is duplicated in each of the
+	outgoing branches of the test. 
+      </li>
+    </ol>
 
     <P>
       The first optimization consists of realizing that the result of
@@ -122,14 +145,16 @@
       that <TT>list</TT> is of type <TT>null</TT>, and that is what
       the instruction tests for.  The simplification, then, consists
       of eliminating the instruction labeled <B>null(2)</B> and the
-      branch that can not be taken.  We obtain the following
+      branch that can not be taken.  We thus have an instance of the
+      first rewrite rule.  We obtain the following
       flowchart:
     </P>
 
     <img src="redundant2.png" height=600 width=400>
 
     <P>
-      The first real rewrite step consists of moving the instruction
+      The first real rewrite step is an instance of the third rewrite
+      rule.  It consists of moving the instruction
       labeled <B>consp(2)</B> so that it appears <I>before</I> its
       current predecessor, i.e. the instruction labeled <B>loop
       test</B>.  In order to do that, we must duplicate the
@@ -152,12 +177,12 @@
     </P>
 
     <P>
-      The next rewrite step illustrates a different transformation.
-      Whenever the test instruction we want to eliminate has more than
-      one predecessor, we duplicate it so that each copy has a single
-      predecessor.  The result is the following flowchart in which the
-      copies of <B>consp(2)</B> are
-      labeled <B>consp(2.1)</B>, <B>consp(2.2)</B>,
+      The next rewrite step illustrates a different transformation,
+      namely the second rewrite rule.  Whenever the test instruction
+      we want to eliminate has more than one predecessor, we duplicate
+      it so that each copy has a single predecessor.  The result is
+      the following flowchart in which the copies of <B>consp(2)</B>
+      are labeled <B>consp(2.1)</B>, <B>consp(2.2)</B>,
       and <B>consp(2.3)</B> respectively:
     </P>
 
@@ -173,23 +198,23 @@
       eliminate <B>consp(2.1)</B> and make <B>loop test(1)</B> the
       successor of <B>cons-car</B>.  Similarly, yellow
       means <TT>null</TT>, so the test of <B>consp(2.2)</B> will
-      always fail.  We can therefore
-      eliminate <B>consp(2.2)</B> and make <B>loop test(2)</B> the
-      successor of <B>setq(1)</B>.  The result is shown in the
-      following flowchart:
+      always fail.  We can therefore eliminate <B>consp(2.2)</B> and
+      make <B>loop test(2)</B> the successor of <B>setq(1)</B>.  These
+      transformations are instances of the first rewrite rule.  The
+      result is shown in the following flowchart:
     </P>
 
     <img src="redundant5.png" height=600 width=400>
 
     <P>
-      The next rewrite step is similar to the first real rewrite step
-      we made, with the purpose of moving the test we want to
-      eliminate so that it appears <I>before</I> its current
-      predecessor.  In this case, it is the test
-      labeled <B>consp(2.3)</B> and its current predecessor
-      is <B>body</B>.  The current predecessors of <B>body</B> become
-      predecessors of the test, and <B>body</B> is duplicated in the
-      two branches of the test.  We obtain the following flowchart:
+      The next rewrite step is again an instance of the third rewrite
+      rule.  The purpose is to move the test we want to eliminate so
+      that it appears <I>before</I> its current predecessor.  In this
+      case, it is the test labeled <B>consp(2.3)</B> and its current
+      predecessor is <B>body</B>.  The current predecessors
+      of <B>body</B> become predecessors of the test, and <B>body</B>
+      is duplicated in the two branches of the test.  We obtain the
+      following flowchart:
     </P>
 
     <img src="redundant6.png" height=600 width=400>
