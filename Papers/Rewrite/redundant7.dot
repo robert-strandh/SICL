@@ -21,8 +21,8 @@ digraph G {
   y [label = "y", shape = ellipse];
 
   list -> consp1 [style = dashed];
-  list -> consp23 [style = dashed];
-  list -> consp23 [style = dashed];
+  list -> consp231 [style = dashed];
+  list -> consp232 [style = dashed];
   list -> null1 [style = dashed];
   list -> conscar [style = dashed];
   list -> conscdr [style = dashed];
