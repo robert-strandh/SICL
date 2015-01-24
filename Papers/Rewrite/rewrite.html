@@ -195,21 +195,27 @@
     <img src="redundant6.png" height=600 width=400>
 
     <P>
-      The next rewrite step consists of observing that when control
-      flow exits from <B>loop test(1)</B> and enters
-      into <B>consp(2.3)</B> the arc is green so that the type
-      of <TT>list</TT> is <TT>cons</TT>.  This means that in this
-      case, the test will always succeed.  We rewrite by
-      making <B>body(1)</B> the successor of <B>loop test(1)</B>.
-      Similarly, when control flow exits from <B>loop test(2)</B> and
-      enters into <B>consp(2.3)</B> the arc is yellow so that the type
-      of <TT>list</TT> is <TT>null</TT>.  This means that in this
-      case, the test will always fail.  We rewrite by
-      making <B>body(2)</B> the successor of <B>loop test(2)</B>.
-      We obtain the following flowchart:
+      Now, <B>consp(2.3)</B> has two predecessors, so we replicate it,
+      one copy for each predecessor.  Thus, we
+      create <B>consp(2.3.1)</B> which becomes the successor
+      of <B>loop test(1)</B> and <B>consp(2.3.2)</B> which becomes the
+      successor of <B>loop test(2)</B>.  The result is the following
+      flowchart:
     </P>
 
     <img src="redundant7.png" height=600 width=400>
+
+    <P>
+      We now observe that the test in <B>consp(2.3.1)</B> is always
+      true.  Therefore, we can eliminate the test and
+      make <B>body(1)</B> a direct successor of <B>loop test(1)</B>.
+      Similarly, the test in <B>consp(2.3.2)</B> is always
+      false, and we can therefore eliminate the test and
+      make <B>body(2)</B> a direct successor of <B>loop test(2)</B>.
+      We obtain the following flowchart:
+    </P>
+
+    <img src="redundant8.png" height=600 width=400>
     
     <P>
       This flowchart now corresponds to the program we desired in the
