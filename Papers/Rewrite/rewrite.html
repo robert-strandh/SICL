@@ -350,6 +350,52 @@
       we were hoping to obtain.
     </P>
 
+    <H2>Premises</H2>
+
+    <P>
+      One might want the answer to two questions:
+    </P>
+
+    <UL>
+      <LI>
+	First, how are the two examples in the previous sections similar?
+      </LI>
+      <LI>
+	Second, when does this transformation apply?
+      </LI>
+    </UL>
+
+    <P>
+      Let us first address the first question.  In the first example,
+      we have a second test that is <I>dominated by</I> a first
+      identical test.  In the second example, we have only one test.
+      However, the two cases become similar if we insert an identical
+      test with two empty branches before the beginning of the loop in
+      the second example.  Then, in both cases, we find two identical
+      tests where the second one is dominated by the first, and we
+      apply the transformation to the second test and its replicas
+      until there are no more replicas to process.
+    </P>
+
+    <P>
+      Concerning the second question, this transformation applies
+      whenever there are two identical tests where one is <I>dominated
+      by</I> the other, in the sense of the graph-theoretical concept
+      of domination.  The two tests have to be <I>identical</I> i.e.,
+      they have to test the same <I>value</I> and not the same
+      variable.  In order to make sure that they test the same value,
+      some other algorithm must be applied such as <I>Global Value
+      Numbering</I> (GVN).  If the program is in <I>Static Single
+      Assignment</I> (SSA) form or some form with the same
+      properties, then this task becomes simpler.
+    </P>
+
+    <P>
+      We have yet to prove that this transformation applies
+      in <I>all</I> cases mentioned above.  We also have yet to prove
+      that it always terminates.
+    </P>
+
   </BODY>
 
 </HTML>
