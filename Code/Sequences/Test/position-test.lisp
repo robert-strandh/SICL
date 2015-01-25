@@ -321,13 +321,13 @@
             :from-end t)
   4)
 
-;; (deftest position-vector.32
-;;   (position 10 #(1 4 8 10 15 20) :test #'<)
-;;   4)
+(deftest position-vector.32
+  (position 10 #(1 4 8 10 15 20) :test #'<)
+  4)
 
-;; (deftest position-vector.33
-;;   (position 10 #(1 4 8 10 15 20) :test-not #'>=)
-;;   4)
+(deftest position-vector.33
+  (position 10 #(1 4 8 10 15 20) :test-not #'>=)
+  4)
 
 ;; (deftest position-vector.34
 ;;   (let* ((v1 #(x x x a b c d a b c d y y y y y))
