@@ -516,199 +516,199 @@
   (position 0 #*1111000 :test-not #'<)
   4)
 
-;; ;;; strings
+;;; strings
 
-;; (deftest position-string.1
-;;   (position #\c "abcdeca")
-;;   2)
+(deftest position-string.1
+  (position #\c "abcdeca")
+  2)
 
-;; (deftest position-string.2
-;;   (position #\c "abcdeca" :from-end t)
-;;   5)
+(deftest position-string.2
+  (position #\c "abcdeca" :from-end t)
+  5)
 
-;; (deftest position-string.3
-;;   (loop for i from 0 to 7 collect
-;;         (position #\c "abcdeca" :start i))
-;;   (2 2 2 5 5 5 nil nil))
+(deftest position-string.3
+  (loop for i from 0 to 7 collect
+        (position #\c "abcdeca" :start i))
+  (2 2 2 5 5 5 nil nil))
 
-;; (deftest position-string.4
-;;   (loop for i from 0 to 7 collect
-;;         (position #\c "abcdeca" :start i :end nil))
-;;   (2 2 2 5 5 5 nil nil))
+(deftest position-string.4
+  (loop for i from 0 to 7 collect
+        (position #\c "abcdeca" :start i :end nil))
+  (2 2 2 5 5 5 nil nil))
 
-;; (deftest position-string.5
-;;   (loop for i from 7 downto 0 collect
-;;         (position #\c "abcdeca" :end i))
-;;   (2 2 2 2 2 nil nil nil))
+(deftest position-string.5
+  (loop for i from 7 downto 0 collect
+        (position #\c "abcdeca" :end i))
+  (2 2 2 2 2 nil nil nil))
 
-;; (deftest position-string.6
-;;   (loop for i from 0 to 7 collect
-;;         (position #\c "abcdeca" :start i :from-end t))
-;;   (5 5 5 5 5 5 nil nil))
+(deftest position-string.6
+  (loop for i from 0 to 7 collect
+        (position #\c "abcdeca" :start i :from-end t))
+  (5 5 5 5 5 5 nil nil))
 
-;; (deftest position-string.7
-;;   (loop for i from 0 to 7 collect
-;;         (position #\c "abcdeca" :start i :end nil :from-end t))
-;;   (5 5 5 5 5 5 nil nil))
+(deftest position-string.7
+  (loop for i from 0 to 7 collect
+        (position #\c "abcdeca" :start i :end nil :from-end t))
+  (5 5 5 5 5 5 nil nil))
 
-;; (deftest position-string.8
-;;   (loop for i from 7 downto 0 collect
-;;         (position #\c "abcdeca" :end i :from-end t))
-;;   (5 5 2 2 2 nil nil nil))
+(deftest position-string.8
+  (loop for i from 7 downto 0 collect
+        (position #\c "abcdeca" :end i :from-end t))
+  (5 5 2 2 2 nil nil nil))
 
-;; (deftest position-string.9
-;;   (loop for i from 0 to 6 collect
-;;         (loop for j from (1+ i) to 7
-;;               collect
-;;               (position #\c "abcdeca" :start i :end j)))
-;;   ((nil nil 2 2 2 2 2)
-;;    (nil 2 2 2 2 2)
-;;    (2 2 2 2 2)
-;;    (nil nil 5 5)
-;;    (nil 5 5)
-;;    (5 5)
-;;    (nil)))
+(deftest position-string.9
+  (loop for i from 0 to 6 collect
+        (loop for j from (1+ i) to 7
+              collect
+              (position #\c "abcdeca" :start i :end j)))
+  ((nil nil 2 2 2 2 2)
+   (nil 2 2 2 2 2)
+   (2 2 2 2 2)
+   (nil nil 5 5)
+   (nil 5 5)
+   (5 5)
+   (nil)))
 
-;; (deftest position-string.10
-;;   (loop for i from 0 to 6 collect
-;;         (loop for j from (1+ i) to 7
-;;               collect
-;;               (position #\c "abcdeca" :start i :end j :from-end t)))
-;;   ((nil nil 2 2 2 5 5)
-;;    (nil 2 2 2 5 5)
-;;    (2 2 2 5 5)
-;;    (nil nil 5 5)
-;;    (nil 5 5)
-;;    (5 5)
-;;    (nil)))
+(deftest position-string.10
+  (loop for i from 0 to 6 collect
+        (loop for j from (1+ i) to 7
+              collect
+              (position #\c "abcdeca" :start i :end j :from-end t)))
+  ((nil nil 2 2 2 5 5)
+   (nil 2 2 2 5 5)
+   (2 2 2 5 5)
+   (nil nil 5 5)
+   (nil 5 5)
+   (5 5)
+   (nil)))
 
-;; (deftest position-string.11
-;;   (position 5 "12345648" :key #'(lambda (c)
-;;                                   (1+ (read-from-string (string c)))))
-;;   3)
+(deftest position-string.11
+  (position 5 "12345648" :key #'(lambda (c)
+                                  (1+ (read-from-string (string c)))))
+  3)
 
-;; (deftest position-string.13
-;;   (position 5 "12345648" :key #'(lambda (c)
-;;                                   (1+ (read-from-string (string c))))
-;;             :from-end t)
-;;   6)
+(deftest position-string.13
+  (position 5 "12345648" :key #'(lambda (c)
+                                  (1+ (read-from-string (string c))))
+            :from-end t)
+  6)
 
-;; (deftest position-string.14
-;;   (position #\a "aabacedafa" :test (complement #'eql))
-;;   2)
+(deftest position-string.14
+  (position #\a "aabacedafa" :test (complement #'eql))
+  2)
 
-;; (deftest position-string.15
-;;   (position #\a "aabacedafa" :test (complement #'eql)
-;;             :from-end t)
-;;   8)
+(deftest position-string.15
+  (position #\a "aabacedafa" :test (complement #'eql)
+            :from-end t)
+  8)
 
-;; (deftest position-string.16
-;;   (position #\a "aabacedafa" :test-not #'eql)
-;;   2)
+(deftest position-string.16
+  (position #\a "aabacedafa" :test-not #'eql)
+  2)
 
-;; (deftest position-string.17
-;;   (position #\a "aabacedafa" :test-not 'eql
-;;             :from-end t)
-;;   8)
+(deftest position-string.17
+  (position #\a "aabacedafa" :test-not 'eql
+            :from-end t)
+  8)
 
-;; (deftest position-string.18
-;;   (position #\a "aabacedafa" :test-not 'eql)
-;;   2)
+(deftest position-string.18
+  (position #\a "aabacedafa" :test-not 'eql)
+  2)
 
-;; (deftest position-string.19
-;;   (position #\a "aabacedafa" :test-not #'eql
-;;             :from-end t)
-;;   8)
+(deftest position-string.19
+  (position #\a "aabacedafa" :test-not #'eql
+            :from-end t)
+  8)
 
-;; (deftest position-string.20
-;;   (position #\a "aabacedafa" :test-not #'eql)
-;;   2)
+(deftest position-string.20
+  (position #\a "aabacedafa" :test-not #'eql)
+  2)
 
-;; (deftest position-string.21
-;;   (position #\a "aabacedafa" :test #'eql
-;;             :start 2)
-;;   3)
+(deftest position-string.21
+  (position #\a "aabacedafa" :test #'eql
+            :start 2)
+  3)
 
-;; (deftest position-string.22
-;;   (position #\a "aabacedafa" :test #'eql
-;;             :start 2 :end nil)
-;;   3)
+(deftest position-string.22
+  (position #\a "aabacedafa" :test #'eql
+            :start 2 :end nil)
+  3)
 
-;; (deftest position-string.23
-;;   (position #\a "aabacedafa" :test-not #'eql
-;;             :start 0 :end 5)
-;;   2)
+(deftest position-string.23
+  (position #\a "aabacedafa" :test-not #'eql
+            :start 0 :end 5)
+  2)
 
-;; (deftest position-string.24
-;;   (position #\a "aabacedafa" :test-not #'eql
-;;             :start 0 :end 5 :from-end t)
-;;   4)
+(deftest position-string.24
+  (position #\a "aabacedafa" :test-not #'eql
+            :start 0 :end 5 :from-end t)
+  4)
 
-;; (deftest position-string.25
-;;   (position #\a (make-array '(10) :initial-contents "bbbbbaaaaa"
-;;                             :element-type 'character
-;;                             :fill-pointer 5))
-;;   nil)
+(deftest position-string.25
+  (position #\a (make-array '(10) :initial-contents "bbbbbaaaaa"
+                            :element-type 'character
+                            :fill-pointer 5))
+  nil)
 
-;; (deftest position-string.26
-;;   (position #\a (make-array '(10) :initial-contents "bbbbbaaaaa"
-;;                             :element-type 'character
-;;                             :fill-pointer 5)
-;;             :from-end t)
-;;   nil)
+(deftest position-string.26
+  (position #\a (make-array '(10) :initial-contents "bbbbbaaaaa"
+                            :element-type 'character
+                            :fill-pointer 5)
+            :from-end t)
+  nil)
 
-;; (deftest position-string.27
-;;   (position #\a (make-array '(10) :initial-contents "bbbbaaaaaa"
-;;                             :element-type 'character
-;;                             :fill-pointer 5))
-;;   4)
+(deftest position-string.27
+  (position #\a (make-array '(10) :initial-contents "bbbbaaaaaa"
+                            :element-type 'character
+                            :fill-pointer 5))
+  4)
 
-;; (deftest position-string.28
-;;   (position #\a (make-array '(10) :initial-contents "babbaaaaaa"
-;;                             :element-type 'character
-;;                             :fill-pointer 5)
-;;             :from-end t)
-;;   4)
+(deftest position-string.28
+  (position #\a (make-array '(10) :initial-contents "babbaaaaaa"
+                            :element-type 'character
+                            :fill-pointer 5)
+            :from-end t)
+  4)
 
-;; (deftest position-string.29
-;;   (position #\m "adfmpz" :test #'char<)
-;;   4)
+(deftest position-string.29
+  (position #\m "adfmpz" :test #'char<)
+  4)
 
-;; (deftest position-string.30
-;;   (position #\m "adfmpz" :test-not #'char>=)
-;;   4)
+(deftest position-string.30
+  (position #\m "adfmpz" :test-not #'char>=)
+  4)
 
-;; (deftest position-string.31
-;;   (let* ((s1 (copy-seq "xxxabcdyyyyy"))
-;;          (s2 (make-array '(4) :displaced-to s1
-;;                          :displaced-index-offset 3
-;;                          :element-type (array-element-type s1))))
-;;     (position #\c s2))
-;;   2)
+(deftest position-string.31
+  (let* ((s1 (copy-seq "xxxabcdyyyyy"))
+         (s2 (make-array '(4) :displaced-to s1
+                         :displaced-index-offset 3
+                         :element-type (array-element-type s1))))
+    (position #\c s2))
+  2)
 
-;; (deftest position-string.32
-;;   (let* ((s1 (copy-seq "xxxabcdabcdyyyyyyyy"))
-;;          (s2 (make-array '(8) :displaced-to s1
-;;                          :displaced-index-offset 3
-;;                          :element-type (array-element-type s1))))
-;;     (position #\c s2 :from-end t))
-;;   6)
+(deftest position-string.32
+  (let* ((s1 (copy-seq "xxxabcdabcdyyyyyyyy"))
+         (s2 (make-array '(8) :displaced-to s1
+                         :displaced-index-offset 3
+                         :element-type (array-element-type s1))))
+    (position #\c s2 :from-end t))
+  6)
 
-;; (deftest position-string.33
-;;   (do-special-strings
-;;    (s "abcdabcdabcd" nil)
-;;    (let* ((c #\c)
-;;           (pos (position c s)))
-;;      (assert (eql pos 2) () "First position of ~A in ~A is ~A" c s pos)))
-;;   nil)
+(deftest position-string.33
+  (do-special-strings
+   (s "abcdabcdabcd" nil)
+   (let* ((c #\c)
+          (pos (position c s)))
+     (assert (eql pos 2) () "First position of ~A in ~A is ~A" c s pos)))
+  nil)
 
-;; (deftest position-string.34
-;;   (do-special-strings
-;;    (s "abcdabcdabcd" nil)
-;;    (let* ((c #\c)
-;;           (pos (position c s :from-end t)))
-;;      (assert (eql pos 10) () "Last position of ~A in ~A is ~A" c s pos)))
-;;   nil)
+(deftest position-string.34
+  (do-special-strings
+   (s "abcdabcdabcd" nil)
+   (let* ((c #\c)
+          (pos (position c s :from-end t)))
+     (assert (eql pos 10) () "Last position of ~A in ~A is ~A" c s pos)))
+  nil)
 
 ;; (defharmless position.test-and-test-not.1
 ;;   (position 'b '(a b c d) :test #'eql :test-not #'eql))
