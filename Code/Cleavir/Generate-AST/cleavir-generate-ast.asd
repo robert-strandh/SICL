@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-generate-ast
+(defsystem :cleavir-generate-ast
   :depends-on (:cleavir-ast
 	       :cleavir-primop
 	       :cleavir-code-utilities
