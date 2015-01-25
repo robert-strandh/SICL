@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-dominance-test
+(defsystem :cleavir-dominance-test
   :depends-on (:cleavir-utilities
 	       :cleavir-dominance
 	       :cleavir-test-utilities)
