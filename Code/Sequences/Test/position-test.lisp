@@ -315,11 +315,11 @@
                            :fill-pointer 5))
   4)
 
-;; (deftest position-vector.31
-;;   (position 'a (make-array '(10) :initial-contents '(b a b b a a a a a a)
-;;                            :fill-pointer 5)
-;;             :from-end t)
-;;   4)
+(deftest position-vector.31
+  (position 'a (make-array '(10) :initial-contents '(b a b b a a a a a a)
+                           :fill-pointer 5)
+            :from-end t)
+  4)
 
 ;; (deftest position-vector.32
 ;;   (position 10 #(1 4 8 10 15 20) :test #'<)
