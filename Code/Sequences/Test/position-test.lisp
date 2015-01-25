@@ -734,76 +734,76 @@
 (defharmless position.test-and-test-not.8
   (position 0 #*1110010110111 :test-not #'eql :test #'eql))
 
-;; (deftest position.order.1
-;;   (let ((i 0) a b c d e f g)
-;;     (values
-;;      (position
-;;       (progn (setf a (incf i)) 0)
-;;       (progn (setf b (incf i)) '(3 1 8 2 1 2 3 4))
-;;       :from-end (setf c (incf i))
-;;       :start (progn (setf d (incf i)) 1)
-;;       :end (progn (setf e (incf i)) 6)
-;;       :key (progn (setf f (incf i)) #'1-)
-;;       :test (progn (setf g (incf i)) #'=)
-;;       )
-;;      i a b c d e f g))
-;;   4 7 1 2 3 4 5 6 7)
+(deftest position.order.1
+  (let ((i 0) a b c d e f g)
+    (values
+     (position
+      (progn (setf a (incf i)) 0)
+      (progn (setf b (incf i)) '(3 1 8 2 1 2 3 4))
+      :from-end (setf c (incf i))
+      :start (progn (setf d (incf i)) 1)
+      :end (progn (setf e (incf i)) 6)
+      :key (progn (setf f (incf i)) #'1-)
+      :test (progn (setf g (incf i)) #'=)
+      )
+     i a b c d e f g))
+  4 7 1 2 3 4 5 6 7)
 
-;; (deftest position.order.2
-;;   (let ((i 0) a b c d e f g)
-;;     (values
-;;      (position
-;;       (progn (setf a (incf i)) 0)
-;;       (progn (setf b (incf i)) '(3 1 8 2 1 2 3 4))
-;;       :test-not (progn (setf c (incf i)) #'/=)
-;;       :key (progn (setf d (incf i)) #'1-)
-;;       :end (progn (setf e (incf i)) 6)
-;;       :start (progn (setf f (incf i)) 1)
-;;       :from-end (setf g (incf i))
-;;       )
-;;      i a b c d e f g))
-;;   4 7 1 2 3 4 5 6 7)
+(deftest position.order.2
+  (let ((i 0) a b c d e f g)
+    (values
+     (position
+      (progn (setf a (incf i)) 0)
+      (progn (setf b (incf i)) '(3 1 8 2 1 2 3 4))
+      :test-not (progn (setf c (incf i)) #'/=)
+      :key (progn (setf d (incf i)) #'1-)
+      :end (progn (setf e (incf i)) 6)
+      :start (progn (setf f (incf i)) 1)
+      :from-end (setf g (incf i))
+      )
+     i a b c d e f g))
+  4 7 1 2 3 4 5 6 7)
 
-;; ;;; Keyword tests
+;;; Keyword tests
 
-;; (deftest position.allow-other-keys.1
-;;   (position 0 '(1 2 0 3 2 1) :allow-other-keys t)
-;;   2)
+(deftest position.allow-other-keys.1
+  (position 0 '(1 2 0 3 2 1) :allow-other-keys t)
+  2)
 
-;; (deftest position.allow-other-keys.2
-;;   (position 0 '(1 2 0 3 2 1) :allow-other-keys nil)
-;;   2)
+(deftest position.allow-other-keys.2
+  (position 0 '(1 2 0 3 2 1) :allow-other-keys nil)
+  2)
 
-;; (deftest position.allow-other-keys.3
-;;   (position 0 '(1 2 0 3 2 1) :allow-other-keys t :bad t)
-;;   2)
+(deftest position.allow-other-keys.3
+  (position 0 '(1 2 0 3 2 1) :allow-other-keys t :bad t)
+  2)
 
-;; (deftest position.allow-other-keys.4
-;;   (position 0 '(1 2 0 3 2 1) :bad t :allow-other-keys t)
-;;   2)
+(deftest position.allow-other-keys.4
+  (position 0 '(1 2 0 3 2 1) :bad t :allow-other-keys t)
+  2)
 
-;; (deftest position.allow-other-keys.5
-;;   (position 0 '(1 2 0 3 2 1) :bad t :allow-other-keys t :key #'1-)
-;;   0)
+(deftest position.allow-other-keys.5
+  (position 0 '(1 2 0 3 2 1) :bad t :allow-other-keys t :key #'1-)
+  0)
 
-;; (deftest position.keywords.6
-;;   (position 0 '(1 2 0 3 2 1) :key #'1- :key #'identity)
-;;   0)
+(deftest position.keywords.6
+  (position 0 '(1 2 0 3 2 1) :key #'1- :key #'identity)
+  0)
 
-;; (deftest position.allow-other-keys.7
-;;   (position 0 '(1 2 0 3 2 1) :bad t :allow-other-keys t
-;;                :allow-other-keys nil)
-;;   2)
+(deftest position.allow-other-keys.7
+  (position 0 '(1 2 0 3 2 1) :bad t :allow-other-keys t
+               :allow-other-keys nil)
+  2)
 
-;; (deftest position.allow-other-keys.8
-;;   (position 0 '(1 2 0 3 2 1) :allow-other-keys t :bad t
-;;                :allow-other-keys nil)
-;;   2)
+(deftest position.allow-other-keys.8
+  (position 0 '(1 2 0 3 2 1) :allow-other-keys t :bad t
+               :allow-other-keys nil)
+  2)
 
-;; (deftest position.allow-other-keys.9
-;;   (position 0 '(1 2 0 3 2 1) :allow-other-keys t
-;;                :allow-other-keys nil :bad t)
-;;   2)
+(deftest position.allow-other-keys.9
+  (position 0 '(1 2 0 3 2 1) :allow-other-keys t
+               :allow-other-keys nil :bad t)
+  2)
 
 ;; ;;; Error tests
 
