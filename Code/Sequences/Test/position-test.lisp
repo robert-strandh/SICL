@@ -329,13 +329,13 @@
   (position 10 #(1 4 8 10 15 20) :test-not #'>=)
   4)
 
-;; (deftest position-vector.34
-;;   (let* ((v1 #(x x x a b c d a b c d y y y y y))
-;;          (v2 (make-array '(8) :displaced-to v1
-;;                          :displaced-index-offset 3)))
-;;     (values (position 'c v2)
-;;             (position 'c v2 :from-end t)))
-;;   2 6)
+(deftest position-vector.34
+  (let* ((v1 #(x x x a b c d a b c d y y y y y))
+         (v2 (make-array '(8) :displaced-to v1
+                         :displaced-index-offset 3)))
+    (values (position 'c v2)
+            (position 'c v2 :from-end t)))
+  2 6)
 
 ;; ;;; tests on bit vectors
 
