@@ -352,169 +352,169 @@
         (position 1 #*0010010 :start i))
   (2 2 2 5 5 5 nil nil))
 
-;; (deftest position-bit-vector.4
-;;   (loop for i from 0 to 7 collect
-;;         (position 1 #*0010010 :start i :end nil))
-;;   (2 2 2 5 5 5 nil nil))
+(deftest position-bit-vector.4
+  (loop for i from 0 to 7 collect
+        (position 1 #*0010010 :start i :end nil))
+  (2 2 2 5 5 5 nil nil))
 
-;; (deftest position-bit-vector.5
-;;   (loop for i from 7 downto 0 collect
-;;         (position 1 #*0010010 :end i))
-;;   (2 2 2 2 2 nil nil nil))
+(deftest position-bit-vector.5
+  (loop for i from 7 downto 0 collect
+        (position 1 #*0010010 :end i))
+  (2 2 2 2 2 nil nil nil))
 
-;; (deftest position-bit-vector.6
-;;   (loop for i from 0 to 7 collect
-;;         (position 1 #*0010010 :start i :from-end t))
-;;   (5 5 5 5 5 5 nil nil))
+(deftest position-bit-vector.6
+  (loop for i from 0 to 7 collect
+        (position 1 #*0010010 :start i :from-end t))
+  (5 5 5 5 5 5 nil nil))
 
-;; (deftest position-bit-vector.7
-;;   (loop for i from 0 to 7 collect
-;;         (position 0 #*1101101 :start i :end nil :from-end t))
-;;   (5 5 5 5 5 5 nil nil))
+(deftest position-bit-vector.7
+  (loop for i from 0 to 7 collect
+        (position 0 #*1101101 :start i :end nil :from-end t))
+  (5 5 5 5 5 5 nil nil))
 
-;; (deftest position-bit-vector.8
-;;   (loop for i from 7 downto 0 collect
-;;         (position 0 #*1101101 :end i :from-end t))
-;;   (5 5 2 2 2 nil nil nil))
+(deftest position-bit-vector.8
+  (loop for i from 7 downto 0 collect
+        (position 0 #*1101101 :end i :from-end t))
+  (5 5 2 2 2 nil nil nil))
 
-;; (deftest position-bit-vector.9
-;;   (loop for i from 0 to 6 collect
-;;         (loop for j from (1+ i) to 7
-;;               collect
-;;               (position 1 #*0010010 :start i :end j)))
-;;   ((nil nil 2 2 2 2 2)
-;;    (nil 2 2 2 2 2)
-;;    (2 2 2 2 2)
-;;    (nil nil 5 5)
-;;    (nil 5 5)
-;;    (5 5)
-;;    (nil)))
+(deftest position-bit-vector.9
+  (loop for i from 0 to 6 collect
+        (loop for j from (1+ i) to 7
+              collect
+              (position 1 #*0010010 :start i :end j)))
+  ((nil nil 2 2 2 2 2)
+   (nil 2 2 2 2 2)
+   (2 2 2 2 2)
+   (nil nil 5 5)
+   (nil 5 5)
+   (5 5)
+   (nil)))
 
-;; (deftest position-bit-vector.10
-;;   (loop for i from 0 to 6 collect
-;;         (loop for j from (1+ i) to 7
-;;               collect
-;;               (position 1 #*0010010 :start i :end j :from-end t)))
-;;   ((nil nil 2 2 2 5 5)
-;;    (nil 2 2 2 5 5)
-;;    (2 2 2 5 5)
-;;    (nil nil 5 5)
-;;    (nil 5 5)
-;;    (5 5)
-;;    (nil)))
+(deftest position-bit-vector.10
+  (loop for i from 0 to 6 collect
+        (loop for j from (1+ i) to 7
+              collect
+              (position 1 #*0010010 :start i :end j :from-end t)))
+  ((nil nil 2 2 2 5 5)
+   (nil 2 2 2 5 5)
+   (2 2 2 5 5)
+   (nil nil 5 5)
+   (nil 5 5)
+   (5 5)
+   (nil)))
 
-;; (deftest position-bit-vector.11
-;;   (position 2 #*00010001010 :key #'1+)
-;;   3)
+(deftest position-bit-vector.11
+  (position 2 #*00010001010 :key #'1+)
+  3)
 
-;; (deftest position-bit-vector.12
-;;   (position 2 #*00010001010 :key '1+)
-;;   3)
+(deftest position-bit-vector.12
+  (position 2 #*00010001010 :key '1+)
+  3)
 
-;; (deftest position-bit-vector.13
-;;   (position 2 #*0010001000 :key #'1+ :from-end t)
-;;   6)
+(deftest position-bit-vector.13
+  (position 2 #*0010001000 :key #'1+ :from-end t)
+  6)
 
-;; (deftest position-bit-vector.14
-;;   (position 0 #*0010111010 :test (complement #'eql))
-;;   2)
+(deftest position-bit-vector.14
+  (position 0 #*0010111010 :test (complement #'eql))
+  2)
 
-;; (deftest position-bit-vector.15
-;;   (position 0 #*0010111010 :test (complement #'eql)
-;;             :from-end t)
-;;   8)
+(deftest position-bit-vector.15
+  (position 0 #*0010111010 :test (complement #'eql)
+            :from-end t)
+  8)
 
-;; (deftest position-bit-vector.16
-;;   (position 0 #*0010111010 :test-not #'eql)
-;;   2)
+(deftest position-bit-vector.16
+  (position 0 #*0010111010 :test-not #'eql)
+  2)
 
-;; (deftest position-bit-vector.17
-;;   (position 0 #*001011101 :test-not 'eql
-;;             :from-end t)
-;;   8)
+(deftest position-bit-vector.17
+  (position 0 #*001011101 :test-not 'eql
+            :from-end t)
+  8)
 
-;; (deftest position-bit-vector.18
-;;   (position 0 #*00101110 :test-not 'eql)
-;;   2)
+(deftest position-bit-vector.18
+  (position 0 #*00101110 :test-not 'eql)
+  2)
 
-;; (deftest position-bit-vector.19
-;;   (position 0 #*00101110 :test-not #'eql
-;;             :from-end t)
-;;   6)
+(deftest position-bit-vector.19
+  (position 0 #*00101110 :test-not #'eql
+            :from-end t)
+  6)
 
-;; (deftest position-bit-vector.20
-;;   (position 0 #*00101110 :test-not #'eql)
-;;   2)
+(deftest position-bit-vector.20
+  (position 0 #*00101110 :test-not #'eql)
+  2)
 
-;; (deftest position-bit-vector.21
-;;   (position 0 #*00101110 :test #'eql
-;;             :start 2)
-;;   3)
+(deftest position-bit-vector.21
+  (position 0 #*00101110 :test #'eql
+            :start 2)
+  3)
 
-;; (deftest position-bit-vector.22
-;;   (position 0 #*00101110 :test #'eql
-;;             :start 2 :end nil)
-;;   3)
+(deftest position-bit-vector.22
+  (position 0 #*00101110 :test #'eql
+            :start 2 :end nil)
+  3)
 
-;; (deftest position-bit-vector.23
-;;   (position 0 #*00101110 :test-not #'eql
-;;             :start 0 :end 5)
-;;   2)
+(deftest position-bit-vector.23
+  (position 0 #*00101110 :test-not #'eql
+            :start 0 :end 5)
+  2)
 
-;; (deftest position-bit-vector.24
-;;   (position 0 #*00101110 :test-not #'eql
-;;             :start 0 :end 5 :from-end t)
-;;   4)
+(deftest position-bit-vector.24
+  (position 0 #*00101110 :test-not #'eql
+            :start 0 :end 5 :from-end t)
+  4)
 
-;; (deftest position-bit-vector.25
-;;   (position 2 #*1100001010 :key #'1+
-;;             :start 3)
-;;   6)
+(deftest position-bit-vector.25
+  (position 2 #*1100001010 :key #'1+
+            :start 3)
+  6)
 
-;; (deftest position-bit-vector.27
-;;   (position 2 #*1100001010 :key #'1+
-;;             :start 2 :from-end t)
-;;   8)
+(deftest position-bit-vector.27
+  (position 2 #*1100001010 :key #'1+
+            :start 2 :from-end t)
+  8)
 
-;; (deftest position-bit-vector.28
-;;   (position 0 (make-array '(10) :initial-contents '(1 1 1 1 1 0 0 0 0 0)
-;;                           :element-type 'bit
-;;                           :fill-pointer 5))
-;;   nil)
+(deftest position-bit-vector.28
+  (position 0 (make-array '(10) :initial-contents '(1 1 1 1 1 0 0 0 0 0)
+                          :element-type 'bit
+                          :fill-pointer 5))
+  nil)
 
-;; (deftest position-bit-vector.29
-;;   (position 0 (make-array '(10) :initial-contents '(1 1 1 1 1 0 0 0 0 0)
-;;                           :element-type 'bit
-;;                           :fill-pointer 5)
-;;             :from-end t)
-;;   nil)
+(deftest position-bit-vector.29
+  (position 0 (make-array '(10) :initial-contents '(1 1 1 1 1 0 0 0 0 0)
+                          :element-type 'bit
+                          :fill-pointer 5)
+            :from-end t)
+  nil)
 
-;; (deftest position-bit-vector.30
-;;   (position 0 (make-array '(10) :initial-contents '(1 1 1 1 0 0 0 0 0 0)
-;;                           :element-type 'bit
-;;                           :fill-pointer 5))
-;;   4)
+(deftest position-bit-vector.30
+  (position 0 (make-array '(10) :initial-contents '(1 1 1 1 0 0 0 0 0 0)
+                          :element-type 'bit
+                          :fill-pointer 5))
+  4)
 
-;; (deftest position-bit-vector.31
-;;   (position 0 (make-array '(10) :initial-contents '(0 1 0 1 0 0 0 0 0 0)
-;;                           :element-type 'bit
-;;                           :fill-pointer 5)
-;;             :from-end t)
-;;   4)
+(deftest position-bit-vector.31
+  (position 0 (make-array '(10) :initial-contents '(0 1 0 1 0 0 0 0 0 0)
+                          :element-type 'bit
+                          :fill-pointer 5)
+            :from-end t)
+  4)
 
-;; (deftest position-bit-vector.32
-;;   (position 0 (make-array '(10) :initial-contents '(1 0 1 1 0 0 0 0 0 0)
-;;                           :element-type 'bit
-;;                           :fill-pointer 5))
-;;   1)
+(deftest position-bit-vector.32
+  (position 0 (make-array '(10) :initial-contents '(1 0 1 1 0 0 0 0 0 0)
+                          :element-type 'bit
+                          :fill-pointer 5))
+  1)
 
-;; (deftest position-bit-vector.33
-;;   (position 0 #*1111000 :test #'>=)
-;;   4)
+(deftest position-bit-vector.33
+  (position 0 #*1111000 :test #'>=)
+  4)
 
-;; (deftest position-bit-vector.34
-;;   (position 0 #*1111000 :test-not #'<)
-;;   4)
+(deftest position-bit-vector.34
+  (position 0 #*1111000 :test-not #'<)
+  4)
 
 ;; ;;; strings
 
