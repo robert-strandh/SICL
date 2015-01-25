@@ -23,6 +23,47 @@
 (defmacro expand-in-current-env (macro-form &environment env)
   (macroexpand macro-form env))
 
+(defun make-special-string (string &key fill adjust displace base)
+  (let* ((len (length string))
+         (len2 (if fill (+ len 4) len))
+         (etype (if base 'base-char 'character)))
+    (if displace
+        (let ((s0 (make-array (+ len2 5)
+                              :initial-contents
+                              (concatenate 'string
+                                           (make-string 2 :initial-element #\X)
+                                           string
+                                           (make-string (if fill 7 3)
+                                                        :initial-element #\Y))
+                              :element-type etype)))
+          (make-array len2 :element-type etype
+                      :adjustable adjust
+                      :fill-pointer (if fill len nil)
+                      :displaced-to s0
+                      :displaced-index-offset 2))
+      (make-array len2 :element-type etype
+                  :initial-contents
+                  (if fill (concatenate 'string string "ZZZZ") string)
+                  :fill-pointer (if fill len nil)
+                  :adjustable adjust))))
+
+(defmacro do-special-strings ((var string-form &optional ret-form) &body forms)
+  (let ((string (gensym))
+        (fill (gensym "FILL"))
+        (adjust (gensym "ADJUST"))
+        (base (gensym "BASE"))
+        (displace (gensym "DISPLACE")))
+    `(let ((,string ,string-form))
+       (dolist (,fill '(nil t) ,ret-form)
+         (dolist (,adjust '(nil t))
+           (dolist (,base '(nil t))
+             (dolist (,displace '(nil t))
+               (let ((,var (make-special-string
+                            ,string
+                            :fill ,fill :adjust ,adjust
+                            :base ,base :displace ,displace)))
+                 ,@forms))))))))
+
 (defun run-test (test)
   (assert (equal (multiple-value-list (eval (form test)))
 		 (results test))))
