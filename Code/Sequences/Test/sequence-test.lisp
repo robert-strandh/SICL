@@ -64,6 +64,19 @@
                             :base ,base :displace ,displace)))
                  ,@forms))))))))
 
+;;; Macro for testing that something is undefined but 'harmless'
+
+(defmacro defharmless (name form)
+  `(deftest ,name
+     (block done
+       (let ((*debugger-hook* #'(lambda (&rest args)
+                                  (declare (ignore args))
+                                  (return-from done :good))))
+         (handler-case
+          (unwind-protect (eval ',form) (return-from done :good))
+          (condition () :good))))
+     :good))
+
 (defun run-test (test)
   (assert (equal (multiple-value-list (eval (form test)))
 		 (results test))))
