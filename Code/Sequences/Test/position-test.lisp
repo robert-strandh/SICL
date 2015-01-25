@@ -337,20 +337,20 @@
             (position 'c v2 :from-end t)))
   2 6)
 
-;; ;;; tests on bit vectors
+;;; tests on bit vectors
 
-;; (deftest position-bit-vector.1
-;;   (position 1 #*001001010100)
-;;   2)
+(deftest position-bit-vector.1
+  (position 1 #*001001010100)
+  2)
 
-;; (deftest position-bit-vector.2
-;;   (position 1 #*001001010100 :from-end t)
-;;   9)
+(deftest position-bit-vector.2
+  (position 1 #*001001010100 :from-end t)
+  9)
 
-;; (deftest position-bit-vector.3
-;;   (loop for i from 0 to 7 collect
-;;         (position 1 #*0010010 :start i))
-;;   (2 2 2 5 5 5 nil nil))
+(deftest position-bit-vector.3
+  (loop for i from 0 to 7 collect
+        (position 1 #*0010010 :start i))
+  (2 2 2 5 5 5 nil nil))
 
 ;; (deftest position-bit-vector.4
 ;;   (loop for i from 0 to 7 collect
