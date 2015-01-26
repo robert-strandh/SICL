@@ -43,16 +43,15 @@ many \commonlisp{} systems have a feature called \emph{package locks}%
 which prevents the redefinition of standard \commonlisp{} functions,
 macros, etc.
 
-To deal with the problem of bootstrapping, some systems (in particular
-SBCL)%
-\FIXME{Cite Rhodes paper}
-replace the standard package names by some other names for target
-code, typically derived from the standard names in some systematic
-way.  Using different package names guarantees that there is no clash
-between a host package name and the corresponding target package
-name.  However, using non-standard package names also means that the
-text of the source code for the target will differ from the target
-code that ends up in the final system.
+To deal with the problem of bootstrapping, some systems, in particular
+SBCL, replace the standard package names by some other names for
+target code, typically derived from the standard names in some
+systematic way \cite{Rhodes:2008:SSC:1482373.1482380}.  Using
+different package names guarantees that there is no clash between a
+host package name and the corresponding target package name.  However,
+using non-standard package names also means that the text of the
+source code for the target will differ from the target code that ends
+up in the final system.
 
 As an alternative to renaming packages, first-class global
 environments represent an elegant solution to the bootstrapping
