@@ -1,1 +1,24 @@
 \section{Conclusions and future work}
+
+In this paper, we have argued in favor of first-class global
+environments as a way of implementing the global environments
+mentioned in the \hs{}.  We have seen that this technique has several
+advantages in terms of flexibility of the system, and that it greatly
+simplifies certain difficult problems such as bootstrapping and
+sandboxing.
+
+We also think that first-class global environments could be an
+excellent basis for a multi-user \commonlisp{} system.
+
+In such a system, each user would have an initial, private,
+environment.  That environment would contain the standard
+\commonlisp{} functionality.  Most standard \commonlisp{} functions
+would be shared between all users.  Some functions, such as
+\texttt{print-object} or \texttt{initialize-instance} would not be
+shared, so as to allow individual users to add methods to them without
+affecting other users.
+
+Furthermore, functionality that could destroy the integrity of the
+system, such as access to raw memory, would be accessible in an
+environment reserved for system maintenance.  This environment would
+not be accessible to ordinary users.
