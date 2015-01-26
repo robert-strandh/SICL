@@ -65,12 +65,13 @@ function, then a call to this function returns the associated
 function object.
 
 If \textit{fname} is defined as a macro, then a list of the form
-\texttt{(cl:macro-function <function>)} is returned, where <function>
-is the macro expansion function associated with the macro.
+\texttt{(cl:macro-function \textrm{\textit{function}})} is returned, where
+\textit{function} is the macro expansion function associated with the
+macro.
 
 If \textit{fname} is defined as a special operator, then a list of the
-form (\texttt{cl:special} <object>) is returned, where the nature of
-<object> is currently not specified.
+form \texttt{(cl:special \textrm{\textit{object}})} is returned, where
+  the nature of \textit{object} is currently not specified.
 
 \Defgeneric {(setf fdefinition)} {new-def fname env}
 
@@ -82,8 +83,8 @@ a function or a macro, then the previous definition is lost.  If
 \textit{fname} already names a special operator, then an error is
 signaled.
 
-If \textit{fname} is a symbol and it has an associated setf
-expander, then that setf expander is preserved.
+If \textit{fname} is a symbol and it has an associated \texttt{setf}
+expander, then that \texttt{setf} expander is preserved.
 
 \Defgeneric {macro-function} {symbol env}
 
@@ -120,8 +121,8 @@ NOTINLINE proclamation of the type of that function is lost.  In other
 words, if at some later point \textit{symbol} is again defined as a
 function, its proclaimed inline information will be \texttt{nil}.
 
-If \textit{fname} is a symbol and it has an associated setf
-expander, then that setf expander is preserved.
+If \textit{fname} is a symbol and it has an associated \texttt{setf}
+expander, then that \texttt{setf} expander is preserved.
 
 \Defgeneric {compiler-macro-function} {fname env}
 
