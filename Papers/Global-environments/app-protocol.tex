@@ -116,8 +116,8 @@ the type of that function is lost.  In other words, if at some later
 point \textit{symbol} is again defined as a function, its proclaimed
 type will be T.
 
-If \textit{symbol} already names a function, then any INLINE or
-NOTINLINE proclamation of the type of that function is lost.  In other
+If \textit{symbol} already names a function, then any \texttt{inline} or
+\texttt{notinline} proclamation of the type of that function is lost.  In other
 words, if at some later point \textit{symbol} is again defined as a
 function, its proclaimed inline information will be \texttt{nil}.
 
@@ -159,3 +159,98 @@ generic function in \textit{env}, then an error is signaled.
 If \textit{fname} is associated with an ordinary function or a
 generic function in \textit{env}, but no type proclamation for that
 function has been made, then this generic function returns T.
+
+\Defgeneric {(setf function-type)} {new-type fname env}
+
+This generic function is used to set the proclaimed type of the
+function associated with \textit{fname} in \textit{env} to NEW-TYPE.
+
+If \textit{fname} is associated with a macro or a special operator
+in \textit{env}, then an error is signaled.
+
+\Defgeneric {function-inline} {fname env}
+
+This generic function returns the proclaimed inline information of
+the function associated with \textit{fname} in \textit{env}.
+
+If \textit{fname} is not associated with an ordinary function or a
+generic function in \textit{env}, then an error is signaled.
+
+If \textit{fname} is associated with an ordinary function or a
+generic function in \textit{env}, then the return value of this
+function is either \texttt{nil}, \texttt{inline}, or \texttt{notinline}.  If no inline
+proclamation has been made, then this generic function returns
+\texttt{nil}.
+
+\Defgeneric {(setf function-inline)} {new-inline fname env}
+
+This generic function is used to set the proclaimed inline
+information of the function associated with \textit{fname} in
+\textit{env} to \textit{new-inline}.
+
+\textit{new-inline} must have one of the values \texttt{nil}, \texttt{inline}, or
+\texttt{notinline}.
+
+If \textit{fname} is not associated with an ordinary function or a
+generic function in \textit{env}, then an error is signaled.
+
+\Defgeneric {function-cell} {fname env}
+
+A call to this function always succeeds.  It returns a CONS cell,
+in which the CAR always holds the current definition of the
+function named \textit{fname}.  When \textit{fname} has no
+definition as a function, the CAR of this cell will contain a
+function that, when called, signals an error of type
+\texttt{undefined-function}.  The return value of this function is always
+the same (in the sense of EQ) when it is passed the same (in the
+sense of EQUAL) function name and the same (in the sense of EQ)
+environment.
+
+\Defgeneric {function-unbound} {fname env}
+
+A call to this function always succeeds.  It returns a function
+that, when called, signals an error of type \texttt{undefined-function}.
+When \textit{fname} has no definition as a function, the return
+value of this function is the contents of the CONS cell returned
+by FUNCTION-CELL.  The return value of this function is always the
+same (in the sense of EQ) when it is passed the same (in the sense
+of EQUAL) function name and the same (in the sense of EQ)
+environment.  Client code can use the return value of this
+function to determine whether \textit{fname} is unbound and if so
+signal an error when an attempt is made to evaluate the form
+(FUNCTION \textit{fname}).
+
+\Defgeneric {function-lambda-list} {fname env}
+
+This function returns two values.  The first value is an ordinary
+lambda list, or \texttt{nil} if no lambda list has been defined for
+\textit{fname}.  The second value is true if and only if a lambda
+list has been defined for \textit{fname}.
+
+\Defgeneric {boundp} {symbol env}
+
+It returns true if \textit{symbol} has a definition in \textit{env} as a
+constant variable, as a special variable, or as a symbol macro.
+Otherwise, it returns false.
+
+\Defgeneric {constant-variable} {symbol env}
+
+This function is used in order to define \textit{symbol} as a constant
+variable in \textit{env}, with VALUE as its value.
+
+If \textit{symbol} already has a definition as a special variable or as a
+symbol macro in \textit{env}, then an error is signaled.
+
+If \textit{symbol} already has a definition as a constant variable, and its
+current value is not EQL to VALUE, then an error is signaled.
+
+\Defgeneric {(setf constant-variable)} {value symbol env}
+
+This function is used in order to define \textit{symbol} as a constant
+variable in \textit{env}, with VALUE as its value.
+
+If \textit{symbol} already has a definition as a special variable or as a
+symbol macro in \textit{env}, then an error is signaled.
+
+If \textit{symbol} already has a definition as a constant variable, and its
+current value is not EQL to VALUE, then an error is signaled.
