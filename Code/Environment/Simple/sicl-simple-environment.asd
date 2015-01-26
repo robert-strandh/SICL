@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-simple-environment
+(defsystem :sicl-simple-environment
   :depends-on (:sicl-global-environment)
   :serial t
   :components
