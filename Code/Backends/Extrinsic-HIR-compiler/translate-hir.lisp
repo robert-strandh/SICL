@@ -35,13 +35,17 @@
 (defvar *vars*)
 
 (defun translate-datum (datum)
-  (if (typep datum 'cleavir-ir:constant-input)
-      `(quote ,(cleavir-ir:value datum))
-      (let ((var (gethash datum *vars*)))
-	(when (null var)
-	  (setf var (gensym))
-	  (setf (gethash datum *vars*) var))
-	var)))
+  (cond ((typep datum 'cleavir-ir:constant-input)
+	 `(quote ,(cleavir-ir:value datum)))
+	((typep datum 'cleavir-ir:load-time-value-input)
+	 `(load-time-value ,(cleavir-ir:form datum)
+			   ,(cleavir-ir:read-only-p datum)))
+	(t
+	 (let ((var (gethash datum *vars*)))
+	   (when (null var)
+	     (setf var (gensym))
+	     (setf (gethash datum *vars*) var))
+	   var))))
 
 (defun translate-lambda-list (lambda-list)
   (loop for item in lambda-list
