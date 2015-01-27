@@ -85,7 +85,7 @@
 
 (defmethod stream-draw-ast ((ast load-time-value-ast) stream)
   (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast) (form-ast ast))
+	  (id ast) (form ast))
   (format stream "   ~a [style = filled, fillcolor = pink];~%"
 	  (id ast)))
 
