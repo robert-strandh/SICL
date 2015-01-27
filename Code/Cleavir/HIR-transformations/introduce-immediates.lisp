@@ -23,4 +23,5 @@
 							     os)))
 		       (if (eq input replacement)
 			   input
-			   (cleavir-ir:make-immediate-input replacement)))))))))
+			   (cleavir-ir:make-immediate-input replacement)))
+		     input))))))
