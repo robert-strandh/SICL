@@ -26,6 +26,7 @@
    #:multiple-value-prog1-ast #:make-multiple-value-prog1-ast
    #:first-form-ast 
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
+   #:form
    #:body-asts
    #:progn-ast #:make-progn-ast #:form-asts
    #:return-from-ast #:make-return-from-ast #:form-ast
