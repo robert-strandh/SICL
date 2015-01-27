@@ -864,3 +864,17 @@
 		    fdefinition-ast
 		    (list symbol-ast value-ast thunk-ast))))
     (compile-ast call-ast context)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a LOAD-TIME-VALUE-AST.
+
+(defmethod copile-ast ((ast cleavir-ast:load-time-value-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (cleavir-ir:make-assignment-instruction
+     (cleavir-ir:make-load-time-value-input
+      (cleavir-ast:form ast) (cleavir-ast:read-only-p ast))
+     (first results)
+     (first successors))))
