@@ -2,6 +2,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Datum class FLOAT-LOCATION.
+;;;
+;;; The FLOAT-LOCATION datum is used to hold floating point values on
+;;; processors that distinguish between general-purpose registers and
+;;; floating-point registers.
+
+(defclass float-location (datum)
+  ((%size :initarg :size :reader size)))
+
+(defun make-float-location (size)
+  (make-instance 'float-location
+    :size size))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Datum class WORD-INPUT.
 ;;;
 ;;; The WORD-INPUT datum corresponds to a raw machine interger that

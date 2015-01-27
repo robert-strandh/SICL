@@ -8,6 +8,7 @@
    #:load-time-value-input #:make-load-time-value-input
    #:form #:read-only-p
    #:word-input
+   #:float-location #:make-float-location #:size
    #:constant-input #:make-constant-input
    #:value
    #:lexical-location #:make-lexical-location
