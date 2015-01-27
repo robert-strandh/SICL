@@ -496,12 +496,12 @@
 ;;; know at AST creation time whether it is true or false. 
 
 (defclass load-time-value-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
+  ((%form :initarg :form :reader form)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
-(defun make-load-time-value-ast (form-ast &optional read-only-p)
+(defun make-load-time-value-ast (form &optional read-only-p)
   (make-instance 'load-time-value-ast
-    :form-ast form-ast
+    :form form
     :read-only-p read-only-p))
 
 ;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
