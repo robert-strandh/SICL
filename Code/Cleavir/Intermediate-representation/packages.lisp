@@ -5,6 +5,7 @@
   (:export
    #:datum
    #:immediate-input #:make-immediate-input
+   #:load-time-value-input #:make-load-time-value-input #:form
    #:word-input
    #:constant-input #:make-constant-input
    #:value
