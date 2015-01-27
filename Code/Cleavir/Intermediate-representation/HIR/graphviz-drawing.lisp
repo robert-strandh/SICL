@@ -85,7 +85,7 @@
 (defmethod draw-datum ((datum load-time-value-input) stream)
   (format stream "  ~a [shape = box, style = filled];~%"
 	  (datum-id datum))
-  (format stream "   ~a [fillcolor = green, label = \"~s\"]~%"
+  (format stream "   ~a [fillcolor = orange, label = \"~s\"]~%"
 	  (datum-id datum) (form datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
