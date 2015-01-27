@@ -507,10 +507,11 @@
 ;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
 ;;; saved when the AST is saved. 
 (cleavir-io:define-save-info load-time-value-ast
+  (:form form)
   (:read-only-p read-only-p))
 
 (defmethod children ((ast load-time-value-ast))
-  (list (form-ast ast)))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
