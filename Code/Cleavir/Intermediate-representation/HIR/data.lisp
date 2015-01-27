@@ -146,3 +146,13 @@
   (make-instance 'immediate-input
     :value value))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum class LOAD-TIME-VALUE-INPUT.
+
+(defclass load-time-value-input (datum)
+  ((%form :initarg :form :reader form)))
+
+(defun make-load-time-value-input (form)
+  (make-instance 'load-time-value-input
+    :form form))
