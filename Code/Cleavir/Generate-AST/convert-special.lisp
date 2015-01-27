@@ -345,8 +345,7 @@
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 1 2)
   (cleavir-ast:make-load-time-value-ast
-   (convert (cadr form) environment)
-   (caddr form)))
+   (cadr form) (caddr form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
