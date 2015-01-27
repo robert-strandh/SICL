@@ -15,4 +15,5 @@
    (:file "simplify-box-unbox")
    (:file "segregate-lexicals")
    (:file "process-fdefinition")
+   (:file "eliminate-constants")
    (:file "hir-transformations")))
