@@ -9,4 +9,5 @@
   ((:file "packages")
    (:file "general")
    (:file "cons")
-   (:file "integer")))
+   (:file "integer")
+   (:file "environment-related-instructions")))
