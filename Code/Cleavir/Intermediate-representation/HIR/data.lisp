@@ -151,8 +151,10 @@
 ;;; Datum class LOAD-TIME-VALUE-INPUT.
 
 (defclass load-time-value-input (datum)
-  ((%form :initarg :form :reader form)))
+  ((%form :initarg :form :reader form)
+   (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
-(defun make-load-time-value-input (form)
+(defun make-load-time-value-input (form read-only-p)
   (make-instance 'load-time-value-input
-    :form form))
+    :form form
+    :read-only-p read-only-p))
