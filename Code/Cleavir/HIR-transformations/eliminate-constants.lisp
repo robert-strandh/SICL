@@ -1,5 +1,11 @@
 (cl:in-package #:cleavir-hir-transformations)
 
+;;;; When this transformation is invoked, constants that can be turned
+;;;; into immediate values have already been removed.  We turn the
+;;;; remaining constants into LOAD-TIME-VALUE-INPUTs so that we have a
+;;;; uniform treatment of LOAD-TIME-VALUE and constants when the HIR
+;;;; code is turned into MIR.
+
 (defun eliminate-constants (initial-instruction)
   (traverse
    initial-instruction
