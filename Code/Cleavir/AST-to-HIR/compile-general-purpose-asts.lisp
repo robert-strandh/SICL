@@ -178,7 +178,7 @@
 ;;; Compile a PROGN-AST.
 ;;;
 ;;; The last sub-ast is compiled in the same context as the progn-ast
-;;; itself.  All the others are copiled in a context where no value is
+;;; itself.  All the others are compiled in a context where no value is
 ;;; required, and with the code for the following form as a single
 ;;; successor.
 
@@ -869,7 +869,7 @@
 ;;;
 ;;; Compile a LOAD-TIME-VALUE-AST.
 
-(defmethod copile-ast ((ast cleavir-ast:load-time-value-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:load-time-value-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
