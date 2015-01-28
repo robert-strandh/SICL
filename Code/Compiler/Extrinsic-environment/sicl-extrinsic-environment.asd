@@ -104,6 +104,7 @@
   ((:file "packages")
    (:file "environment-defclass")
    (:file "import-from-host-common-lisp")
+   (:file "import-from-sicl-global-environment")
    (:file "import-loop-support")
    (:file "define-defmacro")
    (:file "define-default-setf-expander")
