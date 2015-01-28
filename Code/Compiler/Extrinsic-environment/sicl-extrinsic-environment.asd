@@ -102,5 +102,6 @@
   :components
   ((:file "packages")
    (:file "environment-defclass")
+   (:file "import-from-host-common-lisp")
    (:file "fill")
    (:file "initialization")))

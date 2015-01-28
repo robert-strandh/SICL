@@ -1,14 +1,5 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-(defun add-special-operators (environment)
-  (loop for symbol being each external-symbol in '#:common-lisp
-	when (special-operator-p symbol)
-	  do (setf (sicl-env:special-operator symbol environment) t)))
-
-(defun add-nil-and-t (environment)
-  (setf (sicl-env:constant-variable t environment) t)
-  (setf (sicl-env:constant-variable nil environment) nil))
-
 ;;; We need to start using DEFMACRO early on to define macros, and
 ;;; since we don't already have it, we must create it "manually".
 ;;; This version is incorrect, though, because it uses the host
@@ -52,7 +43,6 @@
 			`(,(first form) ,@temps)))))))
 
 (defun fill-environment (environment)
-  (add-special-operators environment)
-  (add-nil-and-t environment)
+  (import-from-host-common-lisp environment)
   (define-defmacro environment)
   (add-default-setf-expander environment))
