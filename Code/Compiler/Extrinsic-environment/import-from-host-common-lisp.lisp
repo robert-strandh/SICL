@@ -43,5 +43,6 @@
   (import-special-operators environment)
   (import-nil-and-t environment)
   (import-classes environment)
-  (import-variables environment))
+  (import-variables environment)
+  (import-functions environment))
   
