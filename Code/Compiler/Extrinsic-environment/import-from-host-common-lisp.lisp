@@ -33,9 +33,11 @@
 	when (and (fboundp symbol)
 		  (null (macro-function symbol))
 		  (not (special-operator-p symbol)))
-	  do (setf (sicl-env:fdefinition symbol environment) t)
+	  do (setf (sicl-env:fdefinition symbol environment)
+		   (fdefinition symbol))
 	when (fboundp `(setf ,symbol))
-	  do (setf (sicl-env:fdefinition `(setf ,symbol) environment) t)))
+	  do (setf (sicl-env:fdefinition `(setf ,symbol) environment)
+		   (fdefinition `(setf ,symbol)))))
 
 (defun import-from-host-common-lisp (environment)
   (import-special-operators environment)
