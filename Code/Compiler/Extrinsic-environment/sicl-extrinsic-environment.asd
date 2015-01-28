@@ -97,12 +97,14 @@
 ;;;; functionality must provide it.
 
 (defsystem :sicl-extrinsic-environment
-  :depends-on (:sicl-simple-environment)
+  :depends-on (:sicl-simple-environment
+	       :sicl-loop-support)
   :serial t
   :components
   ((:file "packages")
    (:file "environment-defclass")
    (:file "import-from-host-common-lisp")
+   (:file "import-loop-support")
    (:file "define-defmacro")
    (:file "define-default-setf-expander")
    (:file "fill")
