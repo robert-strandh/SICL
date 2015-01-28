@@ -1,4 +1,4 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
 ;;;; This system makes it possible to instantiate an EXTRINSIC
 ;;;; ENVIRONMENT.
@@ -96,7 +96,7 @@
 ;;;; system as an explicit mechanism.  Client code that needs this
 ;;;; functionality must provide it.
 
-(asdf:defsystem :sicl-extrinsic-environment
+(defsystem :sicl-extrinsic-environment
   :depends-on (:sicl-simple-environment)
   :serial t
   :components
