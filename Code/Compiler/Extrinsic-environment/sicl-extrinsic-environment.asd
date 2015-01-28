@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "environment-defclass")
-   (:file "fill")))
+   (:file "fill")
+   (:file "initialization")))
