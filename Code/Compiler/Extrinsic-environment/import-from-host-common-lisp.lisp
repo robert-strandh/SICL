@@ -9,7 +9,16 @@
   (setf (sicl-env:constant-variable t environment) t)
   (setf (sicl-env:constant-variable nil environment) nil))
 
+;;; Enter every Common Lisp class into the environment.
+(defun import-classes (environment)
+  (loop for symbol being each external-symbol in '#:common-lisp
+	for class = (find-class symbol nil)
+	unless (null class)
+	  do (setf (sicl-env:find-class symbol environment)
+		   class)))
+
 (defun import-from-host-common-lisp (environment)
   (import-special-operators environment)
-  (import-nil-and-t environment))
+  (import-nil-and-t environment)
+  (import-classes environment))
   
