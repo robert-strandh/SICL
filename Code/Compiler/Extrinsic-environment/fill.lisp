@@ -17,7 +17,7 @@
 		  'defmacro
 		  '(name lambda-list &body body)
 		  `((eval-when (:compile-toplevel :load-toplevel :execute)
-		      (setf (sicl-env:macro-function name environment)
+		      (setf (sicl-env:macro-function name ,environment)
 			    (compile nil
 				     (cleavir-code-utilities:parse-macro
 				      name
