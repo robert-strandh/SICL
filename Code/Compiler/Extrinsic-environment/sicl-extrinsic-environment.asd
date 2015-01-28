@@ -103,5 +103,6 @@
   ((:file "packages")
    (:file "environment-defclass")
    (:file "import-from-host-common-lisp")
+   (:file "define-defmacro")
    (:file "fill")
    (:file "initialization")))
