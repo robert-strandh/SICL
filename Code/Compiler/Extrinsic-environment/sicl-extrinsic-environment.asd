@@ -104,5 +104,6 @@
    (:file "environment-defclass")
    (:file "import-from-host-common-lisp")
    (:file "define-defmacro")
+   (:file "define-default-setf-expander")
    (:file "fill")
    (:file "initialization")))
