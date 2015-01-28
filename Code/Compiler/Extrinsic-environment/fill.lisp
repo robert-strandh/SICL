@@ -24,7 +24,7 @@
 				      lambda-list
 				      body)))))))))
 
-(defun add-default-setf-expander (environment)
+(defun define-default-setf-expander (environment)
   (setf (sicl-env:default-setf-expander environment)
 	(lambda (form)
 	  (if (symbolp form)
@@ -45,4 +45,4 @@
 (defun fill-environment (environment)
   (import-from-host-common-lisp environment)
   (define-defmacro environment)
-  (add-default-setf-expander environment))
+  (define-default-setf-expander environment))
