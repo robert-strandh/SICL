@@ -110,6 +110,7 @@
    (:file "parse-arguments")
    (:file "translate-hir")
    (:file "environment-defclass")
+   (:file "eval")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
    (:file "import-loop-support")
