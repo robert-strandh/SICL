@@ -161,4 +161,6 @@
 (defpackage #:cleavir-ir-graphviz
   (:use #:common-lisp #:cleavir-ir)
   (:export
+   #:draw-instruction
+   #:draw-datum
    #:draw-flowchart))
