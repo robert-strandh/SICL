@@ -39,14 +39,11 @@
    (multiple-value-bind (s m h day month year) (get-decoded-time)
      (declare (ignore s))
      (if seconds
-	 (format nil "~A-~2,'0D-~2,'0D-~A:~A" year month day h m)
-	 (format nil "~A-~A-~A-~A" year month day h))))
+		 (format nil "~A-~2,'0D-~2,'0D-~A:~A" year month day h m)
+		 (format nil "~A-~A-~A-~A" year month day h))))
 
-(defun date-string (&optional (string ""))
-  (concatenate 'string
-	       (time-string nil)
-	       "-"
-	       string))
+(defun date-string ()
+  (time-string nil))
 
 (defvar *the-symbol* 'a)
 
@@ -60,40 +57,45 @@
   (funcall reverse-count-fun *the-symbol* list))
 
 (defun evaluate-test-call (reverse-count-fun list times)
-  (evaluate-time (test-call reverse-count-fun list)))
+  (evaluate-time (test-call reverse-count-fun list) times))
 
-(defun mouline-stream (stream reverse-count-fun n &key (step 1) (start 1) (times 1))
-  (loop
-    repeat n
-    for k from start by step
-    for list = (symbols start) then (more-symbols step list)
-    do (let ((time (evaluate-test-call reverse-count-fun list times)))
-		 (format t "~3D ~A~%" k time)
-		 (format stream "~3D ~A~%" k time))))
-
-(defun mouline-file (file reverse-count-fun n &key (step 1) (start 1) (times 1))
-  (with-open-file (stream (date-string file)
-			  :direction :output :if-does-not-exist :create :if-exists :supersede)
-    (mouline-stream stream reverse-count-fun n :step step :start start :times times)))
-
-(defun mouline-truc-versus-machin-one-stream
-    (stream reverse-count-fun1 reverse-count-fun2 start end &key (step 1) (times 1))
+(defun compare-versions-stream (stream versions start end &key (step 1) (times 1))
+  (loop for version in versions
+		do (format stream " ~10T~A~10T" (symbol-name version))
+		do (format t " ~10T~A~10T" (symbol-name version))
+		finally (progn (terpri stream) (terpri t)))
+  (setq versions (mapcar #'symbol-function versions))
   (loop
     for k from start to end by step
     for list = (symbols start) then (more-symbols step list)
-    do (let ((truc-time (evaluate-test-call reverse-count-fun1 list times))
-			 (machin-time (evaluate-test-call reverse-count-fun2 list times)))
-	 (format t "~3D ~5,10F ~5,10F~%" k truc-time machin-time)
-	 (finish-output t)
-	 (format stream "~3D ~5,10F ~5,10F~%" k truc-time machin-time))))
+	do (format stream "~D~10T" k)
+	do (format t "~D~10T" k)
+    do (loop for version in versions
+			 do (let ((version-time (evaluate-test-call version list times)))
+				  (format stream "~10,5F ~10T" version-time)
+				  (format t "~10,5F ~10T" version-time))
+			 finally (progn (format stream "~%") (format t "~%") (finish-output t) (finish-output stream)))))
 
-(defun mouline-truc-versus-machin-one-file
-    (file reverse-count-fun1 reverse-count-fun2 start end &key (step 1) (times 1))
+(defun compare-versions-file (file versions start end &key (step 1) (times 1))
   (with-open-file (stream file :direction :output :if-does-not-exist :create :if-exists :supersede)
-      (mouline-truc-versus-machin-one-stream
+	(compare-versions-stream
        stream
-       reverse-count-fun1 reverse-count-fun2 
+	   versions
        start end :step step :times times)))
+
+(defun make-test-filename ()
+  (format nil "~A-~A-~A.res"
+;;		  (date-string)
+		  (cl:lisp-implementation-type)
+		  (cl:lisp-implementation-version) 
+		  (machine-version)))
+		  
+(defun compare-versions (versions start end &key (step 1) (times 1))
+  (compare-versions-file (make-test-filename) versions start end :step step :times times))
+
+(defun test-versions (versions)
+  (compare-versions versions 10000 10000000 :step 10000))
+
 
 ;; CL-USER> (mouline-truc-versus-machin-one-file "v1-vs-v4" #'reverse-count-1 #'reverse-count-4 1000 1000000 :step 1000 :times 30)
 ;; 1000    0.00000    0.03333
