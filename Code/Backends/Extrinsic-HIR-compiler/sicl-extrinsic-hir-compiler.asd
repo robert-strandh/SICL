@@ -63,6 +63,7 @@
 	       :sicl-data-and-control-flow
 	       :sicl-reader-simple
 	       :cleavir-hir
+	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
 	       :sicl-extrinsic-environment
 	       :cleavir-primop
