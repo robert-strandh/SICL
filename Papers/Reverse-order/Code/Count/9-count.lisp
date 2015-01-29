@@ -11,7 +11,7 @@
 	       for i from (1- length) downto 0
 	       do (setf (aref v i) e))
 	     (loop for e across v
-		   when (eql x e)
+		   when (eq x e)
 		     count e))))
     (macrolet ((divide (x rest length k)
 		 (let* ((n (ash 1 k))

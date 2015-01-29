@@ -48,20 +48,28 @@
 	       "-"
 	       string))
 
-(defun zeros (n)
-  (make-list n :initial-element 0))
+(defvar *the-symbol* 'a)
 
-(defun more-zeros (n l)
-  (nconc (zeros n) l))
+(defun symbols (n)
+  (make-list n :initial-element *the-symbol*))
+
+(defun more-symbols (n l)
+  (nconc (symbols n) l))
+
+(defun test-call (reverse-count-fun list)
+  (funcall reverse-count-fun *the-symbol* list))
+
+(defun evaluate-test-call (reverse-count-fun list times)
+  (evaluate-time (test-call reverse-count-fun list)))
 
 (defun mouline-stream (stream reverse-count-fun n &key (step 1) (start 1) (times 1))
   (loop
     repeat n
     for k from start by step
-    for list = (zeros start) then (more-zeros step list)
-    do (let ((time (evaluate-time (funcall reverse-count-fun 0 list) times)))
-	 (format t "~3D ~A~%" k time)
-	 (format stream "~3D ~A~%" k time))))
+    for list = (symbols start) then (more-symbols step list)
+    do (let ((time (evaluate-test-call reverse-count-fun list times)))
+		 (format t "~3D ~A~%" k time)
+		 (format stream "~3D ~A~%" k time))))
 
 (defun mouline-file (file reverse-count-fun n &key (step 1) (start 1) (times 1))
   (with-open-file (stream (date-string file)
@@ -72,12 +80,12 @@
     (stream reverse-count-fun1 reverse-count-fun2 start end &key (step 1) (times 1))
   (loop
     for k from start to end by step
-    for list = (zeros start) then (more-zeros step list)
-    do (let ((truc-time (* 1000 (evaluate-time (funcall reverse-count-fun1 0 list) times)))
-	     (machin-time (* 1000 (evaluate-time (funcall reverse-count-fun2 0 list) times))))
-	 (format t "~3D ~10,5F ~10,5F~%" k truc-time machin-time)
+    for list = (symbols start) then (more-symbols step list)
+    do (let ((truc-time (evaluate-test-call reverse-count-fun1 list times))
+			 (machin-time (evaluate-test-call reverse-count-fun2 list times)))
+	 (format t "~3D ~5,10F ~5,10F~%" k truc-time machin-time)
 	 (finish-output t)
-	 (format stream "~3D ~10,5F ~10,5F~%" k truc-time machin-time))))
+	 (format stream "~3D ~5,10F ~5,10F~%" k truc-time machin-time))))
 
 (defun mouline-truc-versus-machin-one-file
     (file reverse-count-fun1 reverse-count-fun2 start end &key (step 1) (times 1))
