@@ -98,7 +98,10 @@
 
 (defsystem :sicl-extrinsic-environment
   :depends-on (:sicl-simple-environment
-	       :sicl-loop-support)
+	       :sicl-loop-support
+	       :cleavir-hir
+	       :cleavir-hir-transformations
+	       :cleavir-basic-blocks)
   :serial t
   :components
   ((:file "packages")
