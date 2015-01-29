@@ -105,6 +105,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "parse-arguments")
    (:file "translate-hir")
    (:file "environment-defclass")
    (:file "import-from-host-common-lisp")
