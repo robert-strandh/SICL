@@ -103,7 +103,8 @@
 	       :cleavir-ast-to-hir
 	       :cleavir-hir
 	       :cleavir-hir-transformations
-	       :cleavir-basic-blocks)
+	       :cleavir-basic-blocks
+	       :sicl-reader-simple)
   :serial t
   :components
   ((:file "packages")
