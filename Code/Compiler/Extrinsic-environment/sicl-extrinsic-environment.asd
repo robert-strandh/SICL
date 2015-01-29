@@ -112,6 +112,7 @@
    (:file "translate-hir")
    (:file "environment-defclass")
    (:file "eval")
+   (:file "load")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
    (:file "import-loop-support")
