@@ -117,5 +117,6 @@
    (:file "import-loop-support")
    (:file "define-defmacro")
    (:file "define-default-setf-expander")
+   (:file "define-backquote-macros")
    (:file "fill")
    (:file "initialization")))
