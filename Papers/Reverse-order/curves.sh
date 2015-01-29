@@ -19,7 +19,7 @@ set term post eps
 set output "$NAME.eps"
 set title "$TITLE"
 set xlabel "List length"
-set ylabel "Time"
+set ylabel "Time in ms"
 _EOF_
 
 STRING="'"$NAME"'"

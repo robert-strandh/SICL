@@ -76,25 +76,35 @@
 				  (format t "~10,5F ~10T" version-time))
 			 finally (progn (format stream "~%") (format t "~%") (finish-output t) (finish-output stream)))))
 
-(defun compare-versions-file (file versions start end &key (step 1) (times 1))
+(defun compare-versions-file (file version-numbers start end &key (step 1) (times 1))
   (with-open-file (stream file :direction :output :if-does-not-exist :create :if-exists :supersede)
 	(compare-versions-stream
        stream
-	   versions
+	   (mapcar (lambda (n)
+				 (find-symbol (format nil "REVERSE-COUNT-~A" n)))
+			   version-numbers)
        start end :step step :times times)))
 
-(defun make-test-filename ()
-  (format nil "~A-~A-~A.res"
-;;		  (date-string)
-		  (cl:lisp-implementation-type)
-		  (cl:lisp-implementation-version) 
-		  (machine-version)))
+(defvar *local*)
+(setq *local* t)
+(defun make-test-filename (&optional (prefix ""))
+  (if *local* 
+	  prefix
+	  (format nil "~A:~A-~A-~A.res"
+			  prefix
+			  (cl:lisp-implementation-type)
+			  (cl:lisp-implementation-version) 
+			  (machine-version))))
 		  
-(defun compare-versions (versions start end &key (step 1) (times 1))
-  (compare-versions-file (make-test-filename) versions start end :step step :times times))
+(defun compare-versions (version-numbers start end &key (step 1) (times 1))
+  (let ((name (format nil "v~A" (first version-numbers))))
+	(loop
+	  for n in (rest version-numbers)
+	  do (setq name (format nil "~A-v~A" name n)))
+	(compare-versions-file (make-test-filename name) version-numbers start end :step step :times times)))
 
-(defun test-versions (versions)
-  (compare-versions versions 10000 10000000 :step 10000))
+(defun test-versions (version-numbers)
+  (compare-versions version-numbers 10000 10000000 :step 100000 :times 2))
 
 
 ;; CL-USER> (mouline-truc-versus-machin-one-file "v1-vs-v4" #'reverse-count-1 #'reverse-count-4 1000 1000000 :step 1000 :times 30)
