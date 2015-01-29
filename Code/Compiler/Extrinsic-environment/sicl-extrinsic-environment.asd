@@ -105,6 +105,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "translate-hir")
    (:file "environment-defclass")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
