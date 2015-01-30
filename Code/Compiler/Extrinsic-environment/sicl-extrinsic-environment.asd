@@ -104,6 +104,7 @@
 	       :cleavir-hir
 	       :cleavir-hir-transformations
 	       :cleavir-basic-blocks
+	       :sicl-evaluation-and-compilation
 	       :sicl-reader-simple)
   :serial t
   :components
