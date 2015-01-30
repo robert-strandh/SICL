@@ -109,6 +109,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "runtime-environment")
    (:file "symbol-value")
    (:file "traced-funcall")
    (:file "parse-arguments")
