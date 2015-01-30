@@ -147,7 +147,10 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs)
   `(setf ,(first outputs)
-	 (multiple-value-list (traced-funcall ,(first inputs) ,@(rest inputs)))))
+	 (multiple-value-list (traced-funcall
+			       ,*linkage-environment*
+			       ,(first inputs)
+			       ,@(rest inputs)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:multiple-value-call-instruction) inputs outputs)
@@ -159,12 +162,16 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:tailcall-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(return (traced-funcall ,(first inputs) ,@(rest inputs))))
+  `(return (traced-funcall
+	    ,*linkage-environment*
+	    ,(first inputs)
+	    ,@(rest inputs))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:the-instruction) inputs outputs)
   (declare (ignore outputs))
   `(unless (traced-funcall
+	    ,*linkage-environment*
 	    (car (load-time-value
 		  (sicl-env:function-cell
 		   'typep
@@ -173,6 +180,7 @@
 	    ,(first inputs)
 	    ',(cleavir-ir:value-type instruction))
      (traced-funcall
+      ,*linkage-environment*
       (car (load-time-value
 	    (sicl-env:function-cell
 	     'error
@@ -340,6 +348,7 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
   `(if (traced-funcall
+	,*linkage-environment*
 	(car (load-time-value
 	      (sicl-env:function-cell
 	       'typep
@@ -419,4 +428,7 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs successors)
   (declare (ignore outputs successors))
-  `(traced-funcall ,(first inputs) ,@(rest inputs)))
+  `(traced-funcall
+    ,*linkage-environment*
+    ,(first inputs)
+    ,@(rest inputs)))
