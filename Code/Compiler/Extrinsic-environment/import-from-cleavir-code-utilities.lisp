@@ -9,19 +9,8 @@
 		    symbol
 		    environment)
 		   (fdefinition symbol))
-	     (setf (sicl-env:fdefinition
-		    (find-symbol (symbol-name symbol)
-				 '#:host-common-lisp)
-		    environment)
-		   (fdefinition symbol))
 	when (fboundp (list 'setf symbol))
 	  do (setf (sicl-env:fdefinition
 		    (list 'setf symbol)
-		    environment)
-		   (fdefinition (list 'setf symbol)))
-	     (setf (sicl-env:fdefinition
-		    (list 'setf
-			  (find-symbol (symbol-name symbol)
-				       '#:host-common-lisp))
 		    environment)
 		   (fdefinition (list 'setf symbol)))))
