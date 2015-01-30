@@ -15,5 +15,5 @@
 		(values temps
 			(rest form)
 			`(,new)
-			`(funcall #'(setf ,(first form) ,new ,@temps))
+			`(funcall #'(setf ,(first form)) ,new ,@temps)
 			`(,(first form) ,@temps)))))))
