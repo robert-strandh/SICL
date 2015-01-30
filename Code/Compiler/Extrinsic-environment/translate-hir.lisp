@@ -305,7 +305,7 @@
   `(setq ,(first outputs)
 	 (symbol-value
 	  ,(first inputs)
-	  *dynamic-environment*
+	  (dynamic-environment ,*linkage-environment*)
 	  ',(sicl-env:variable-unbound (first inputs) *linkage-environment*)
 	  (load-time-value
 	   (sicl-env:variable-cell ,(first inputs) ,*linkage-environment*)
@@ -316,7 +316,7 @@
   (declare (ignore outputs))
   `(setf (symbol-value
 	  ,(first inputs)
-	  *dynamic-environment*
+	  (dynamic-environment ,*linkage-environment*)
 	  (load-time-value
 	   (sicl-env:variable-cell ,(first inputs) ,*linkage-environment*)
 	   nil))
