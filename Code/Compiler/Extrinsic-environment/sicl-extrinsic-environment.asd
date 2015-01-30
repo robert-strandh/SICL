@@ -109,6 +109,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "symbol-value")
    (:file "traced-funcall")
    (:file "parse-arguments")
    (:file "translate-hir")
