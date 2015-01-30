@@ -3,6 +3,7 @@
 (defpackage #:sicl-extrinsic-environment
   (:use #:common-lisp)
   (:shadow #:load
+	   #:unwind-protect
 	   #:symbol
 	   #:symbol-value)
   (:export #:*environment*))
