@@ -4,9 +4,9 @@
 
 (defparameter *depth* 0)
 
-(defun traced-funcall (function &rest arguments)
+(defun traced-funcall (environment function &rest arguments)
   (if *trace-funcall*
-      (let* ((entries (sicl-simple-environment::function-entries *environment*))
+      (let* ((entries (sicl-simple-environment::function-entries environment))
 	     (entry (find function entries
 			  :test #'eq
 			  :key (lambda (entry)
@@ -27,8 +27,3 @@
 		"~s returned: ~s~%" name result)
 	(apply #'values result))
       (apply function arguments)))
-
-    
-	
-    
-	 
