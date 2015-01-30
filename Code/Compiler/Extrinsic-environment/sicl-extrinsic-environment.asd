@@ -119,6 +119,7 @@
    (:file "import-from-sicl-global-environment")
    (:file "import-loop-support")
    (:file "define-defmacro")
+   (:file "define-in-package")
    (:file "define-default-setf-expander")
    (:file "define-backquote-macros")
    (:file "fill")
