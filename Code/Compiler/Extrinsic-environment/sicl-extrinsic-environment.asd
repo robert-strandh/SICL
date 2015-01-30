@@ -113,6 +113,7 @@
    (:file "environment-defclass")
    (:file "eval")
    (:file "load")
+   (:file "load-file-defun")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
    (:file "import-loop-support")
