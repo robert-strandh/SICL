@@ -121,6 +121,7 @@
    (:file "load-file-defun")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
+   (:file "import-from-cleavir-code-utilities")
    (:file "import-loop-support")
    (:file "define-defmacro")
    (:file "define-in-package")
