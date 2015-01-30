@@ -8,4 +8,6 @@
 		   (fdefinition symbol))
 	when (fboundp `(setf ,symbol))
 	  do (setf (sicl-env:fdefinition `(setf ,symbol) environment)
-		   (fdefinition `(setf ,symbol)))))
+		   (fdefinition `(setf ,symbol))))
+  (setf (sicl-env:special-variable 'sicl-env:*global-environment* environment t)
+	environment))
