@@ -57,7 +57,7 @@
 	     (if (zerop length)
 		 0
 		 (+ (aux1 x (cdr list) (1- length))
-		    (if (eql x (car list))
+		    (if (eq x (car list))
 			1
 			0))))
 	   ;; AUX2 is the recursive traversal by (NTHCDR 10000 ...).
@@ -95,7 +95,7 @@
 	       for i from (1- length) downto 0
 	       do (setf (aref v i) e))
 	     (loop for e across v
-		   when (eql x e)
+		   when (eq x e)
 		     count e))))
     (macrolet ((divide (x rest length k)
 		 (let* ((n (ash 1 k))

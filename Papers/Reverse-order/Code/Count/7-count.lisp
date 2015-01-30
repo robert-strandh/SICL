@@ -19,7 +19,7 @@
 	     (if (zerop length)
 		 0
 		 (+ (aux1 x (cdr list) (1- length))
-		    (if (eql x (car list))
+		    (if (eq x (car list))
 			1
 			0))))
 	   ;; AUX2 is the recursive traversal by (NTHCDR 10000 ...).

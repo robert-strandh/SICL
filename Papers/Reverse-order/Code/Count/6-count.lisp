@@ -4,7 +4,7 @@
   (let ((count 0))
     (declare (type fixnum count))
     (flet ((process (elem)
-	     (when (eql elem x)
+	     (when (eq elem x)
 	       (incf count))))
       (macrolet ((divide (rest length k)
 		   (let* ((n (ash 1 k))

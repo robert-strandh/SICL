@@ -5,7 +5,7 @@
   (let ((count 0))
     (declare (type fixnum count))
     (flet ((process (elem)
-	     (when (eql elem x)
+	     (when (eq elem x)
 	       (incf count))))
       (labels ((recursive-traverse (rest length)
 		 (declare (type fixnum length))
