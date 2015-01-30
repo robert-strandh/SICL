@@ -2,5 +2,6 @@
 
 (defpackage #:sicl-extrinsic-environment
   (:use #:common-lisp)
-  (:shadow #:load)
+  (:shadow #:load
+	   #:symbol-value)
   (:export #:*environment*))
