@@ -48,4 +48,7 @@
   ;; DEFMACRO itself is still the result of using the host compiler.
   ;; By loading the definition of DEFMACRO again, we fix this
   ;; "problem".
-  (load "../../Environment/defmacro-defmacro.lisp" environment))
+  (load "../../Environment/defmacro-defmacro.lisp" environment)
+  ;; Now that have the final version of the macro DEFMACRO, we can
+  ;; load the target version of the macro IN-PACKAGE.
+  (load "../../Environment/in-package.lisp" environment))
