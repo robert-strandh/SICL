@@ -6,4 +6,5 @@
   (import-loop-support environment)
   (define-backquote-macros environment)
   (define-defmacro environment)
-  (define-default-setf-expander environment))
+  (define-default-setf-expander environment)
+  (load-file "../../Evaluation-and-compilation/lambda.lisp" environment))
