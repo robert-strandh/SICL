@@ -57,4 +57,8 @@
   ;; version of the macro DEFMACRO, we can reload the file containing
   ;; the definition of the macro LAMBDA, which will cause the macro
   ;; function to be compiled with the target compiler.
-  (load "../../Evaluation-and-compilation/lambda.lisp" environment))
+  (load "../../Evaluation-and-compilation/lambda.lisp" environment)
+  ;; Load a file containing the definition of the macro
+  ;; MULTIPLE-VALUE-LIST.  This definition is needed, because it is
+  ;; used in the expansion of the macro NTH-VALUE loaded below.
+  (load "../../Data-and-control-flow/multiple-value-list.lisp" environment))
