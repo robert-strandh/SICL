@@ -66,4 +66,6 @@
   ;; This definition is needed by the function CONSTANTP which is
   ;; loaded as part of the file standard-environment-functions.lisp
   ;; loaded below.
-  (load "../../Data-and-control-flow/nth-value.lisp" environment))
+  (load "../../Data-and-control-flow/nth-value.lisp" environment)
+  ;; Load a file containing the definition of macro DEFUN.
+  (load "../../Environment/defun-defmacro.lisp" environment))
