@@ -5,6 +5,7 @@
   (import-from-host-common-lisp environment)
   (import-from-sicl-global-environment environment)
   (import-from-cleavir-code-utilities environment)
+  (import-from-cleavir-environment environment)
   (import-loop-support environment)
   (define-backquote-macros environment)
   (define-defmacro environment)
