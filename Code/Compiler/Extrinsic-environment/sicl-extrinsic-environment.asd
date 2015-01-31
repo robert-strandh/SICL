@@ -106,6 +106,7 @@
 	       :cleavir-basic-blocks
 	       :sicl-evaluation-and-compilation
 	       :sicl-data-and-control-flow
+	       :sicl-conditionals-support
 	       :sicl-reader-simple)
   :serial t
   :components
