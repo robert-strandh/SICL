@@ -1,13 +1,13 @@
 (cl:in-package #:sicl-extrinsic-file-compiler)
 
-(defun ast-from-stream (stream)
+(defun ast-from-stream (stream environment)
   (apply #'cleavir-ast:make-progn-ast
 	 (loop with eof = (list nil)
 	       for form = (sicl-reader:read stream nil eof)
 	       until (eq form eof)
-	       collect form)))
+	       collect (cleavir-generate-ast:generate-ast form environment))))
 
-(defun compile-stream (stream)
-  (let* ((ast (ast-from-stream stream))
+(defun compile-stream (stream environment)
+  (let* ((ast (ast-from-stream stream environment))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
     hir))
