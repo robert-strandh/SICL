@@ -6,7 +6,7 @@
       (loop with eof = (list nil)
 	    for form = (sicl-reader:read stream nil eof)
 	    until (eq form eof)
-	    do (eval form)
+	    do (cleavir-env:eval form environment environment)
 	       ;; The evaluation of the form might have change the
 	       ;; value of the variable *PACKAGE* in the target
 	       ;; environment.  But this function is executed as a

@@ -18,4 +18,11 @@
   (:use #:common-lisp #:cleavir-code-utilities)
   (:export #:or #:and #:when #:unless #:cond
 	   #:case #:ccase #:ecase
-	   #:typecase #:ctypecase #:etypecase))
+	   #:typecase #:ctypecase #:etypecase
+	   #:expand-case-clauses
+	   #:expand-e/ccase-clauses
+	   #:collect-e/ccase-keys
+	   #:expand-typecase-clauses
+	   #:expand-e/ctypecase-clauses
+	   #:compute-let*-bindings
+	   #:collect-e/ctypecase-keys))

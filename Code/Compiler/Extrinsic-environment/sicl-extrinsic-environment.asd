@@ -20,6 +20,20 @@
 ;;;; consists of generating target code in a FASL file.  The FASL file
 ;;;; is then loaded into the native target system.
 ;;;;
+;;;; As it is, this environment is only designed to handle the usual
+;;;; top-level defining forms such as DEFUN, DEFGENERIC, DEFMETHOD,
+;;;; DEFCLASS, DEFVAR, DEFPARAMETER, and DEFCONSTANT.  It can of
+;;;; course evaluate any top-level form at compile time, but since
+;;;; most functions in the environment come from the host, they may
+;;;; not have the desired effect.  For instance, an attempt to call
+;;;; (SETF CL:FDEFINITION) will set the function definition in the
+;;;; host environment, rather than in this environment.  Client code
+;;;; that needs to evaluate more sophisticated top-level forms must
+;;;; first evaluate forms in this environment that create the correct
+;;;; function definitions that are needed.  It is not hard to do that,
+;;;; of course.  Basically, it suffices to load a file containing such
+;;;; function definitions into this environment.
+
 ;;;; Extrinsic compilation imposes some non-trivial requirements on
 ;;;; the extrinsic environment:
 ;;;;
@@ -56,20 +70,6 @@
 ;;;;     turn the HIR into a host function, and finally we execute the
 ;;;;     resulting function.
 ;;;;
-;;;; Since the extrinsic environment uses host objects, many functions
-;;;; can be imported directly from the host.  Accessor functions such
-;;;; as CAR, RPLACA, SYMBOL-PACKAGE, etc. are exemples of such
-;;;; functions.  However, there are also several functions that can
-;;;; not be taken from the host:
-;;;;
-;;;;   * Functions that access or modify the global environment can
-;;;;     not be taken from the host because they would then access or
-;;;;     modify the host environment instead of the extrinsic
-;;;;     environment.  Examples of such functions are FDEFINITION,
-;;;;     (SETF MACRO-FUNCTION), etc.  These functions must therefore
-;;;;     be defined in the same way as macro functions, i.e., by
-;;;;     translation to HIR, and then to host functions.
-;;;;
 ;;;; Since it must be possible to define and execute functions at
 ;;;; compile time, the extrinsic environment must also supply a
 ;;;; DYNAMIC RUN-TIME ENVIRONMENT.  There are several reasons for that:
@@ -104,19 +104,31 @@
 	       :cleavir-hir
 	       :cleavir-hir-transformations
 	       :cleavir-basic-blocks
+	       :sicl-evaluation-and-compilation
+	       :sicl-data-and-control-flow
+	       :sicl-conditionals-support
 	       :sicl-reader-simple)
   :serial t
   :components
   ((:file "packages")
+   (:file "runtime-environment")
+   (:file "symbol-value")
+   (:file "traced-funcall")
    (:file "parse-arguments")
    (:file "translate-hir")
    (:file "environment-defclass")
    (:file "eval")
    (:file "load")
+   (:file "load-file-defun")
+   (:file "import-host-packages")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
+   (:file "import-from-sicl-conditionals")
+   (:file "import-from-cleavir-code-utilities")
+   (:file "import-from-cleavir-environment")
    (:file "import-loop-support")
    (:file "define-defmacro")
+   (:file "define-in-package")
    (:file "define-default-setf-expander")
    (:file "define-backquote-macros")
    (:file "fill")
