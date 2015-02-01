@@ -6,3 +6,8 @@
 	       for form = (sicl-reader:read stream nil eof)
 	       until (eq form eof)
 	       collect form)))
+
+(defun compile-stream (stream)
+  (let* ((ast (ast-from-stream stream))
+	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
+    hir))
