@@ -74,4 +74,6 @@
   ;; Load a file containing the definitions of the conditional macros
   ;; such as AND, OR, CASE, etc.
   (load "../../Conditionals/macros.lisp" environment)
+  ;; Load a file containing the definitions of the macros DEFVAR,
+  ;; DEFPARAMETER, DEFCONSTANT, DEFTYPE, and DEFINE-COMPILER-MACRO.
   (load "../../Environment/standard-environment-macros.lisp" environment))
