@@ -103,7 +103,10 @@
 	(loop
 	  for n in (rest version-numbers)
 	  do (setq name (format nil "~A-v~A" name n)))
-	(compare-versions-file (make-test-filename name) version-numbers start end :step step :times times)))
+	(let ((filename (make-test-filename name)))
+	  (format t "Ouput written to ~A~%" filename)
+	  (finish-output t)
+	  (compare-versions-file filename version-numbers start end :step step :times times))))
 
 (defun test-versions (&rest version-numbers)
   (compare-versions version-numbers 10000 10000000 :step 100000 :times 2))
