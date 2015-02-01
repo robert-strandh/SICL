@@ -8,7 +8,8 @@
 	 collect (cleavir-generate-ast:generate-ast form environment))))
 
 (defun compile-stream (stream environment)
-  (let* ((ast (ast-from-stream stream environment))
+  (let* ((cleavir-generate-ast:*compiler* 'cl:compile-file)
+	 (ast (ast-from-stream stream environment))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
     hir))
 
