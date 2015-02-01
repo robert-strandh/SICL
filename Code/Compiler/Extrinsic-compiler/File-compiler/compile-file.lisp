@@ -11,3 +11,7 @@
   (let* ((ast (ast-from-stream stream environment))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
     hir))
+
+(defun compile-file (filename environment)
+  (with-open-file (stream filename :direction :input)
+    (compile-stream stream environment)))
