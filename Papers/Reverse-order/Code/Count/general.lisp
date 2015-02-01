@@ -1,3 +1,6 @@
+(defvar *trace*)
+(setq *trace* nil)
+
 (defun time-in-sec (tstart tend)
   (/ (- tend tstart) internal-time-units-per-second))
 
@@ -60,21 +63,20 @@
   (evaluate-time (test-call reverse-count-fun list) times))
 
 (defun compare-versions-stream (stream versions start end &key (step 1) (times 1))
-  (loop for version in versions
-		do (format stream " ~10T~A~10T" (symbol-name version))
-		do (format t " ~10T~A~10T" (symbol-name version))
-		finally (progn (terpri stream) (terpri t)))
-  (setq versions (mapcar #'symbol-function versions))
   (loop
     for k from start to end by step
     for list = (symbols start) then (more-symbols step list)
 	do (format stream "~D~10T" k)
-	do (format t "~D~10T" k)
-    do (loop for version in versions
+	do (when *trace* (format t "~D~10T" k))
+    do (loop for version in (mapcar #'symbol-function versions)
 			 do (let ((version-time (evaluate-test-call version list times)))
 				  (format stream "~10,5F ~10T" version-time)
-				  (format t "~10,5F ~10T" version-time))
-			 finally (progn (format stream "~%") (format t "~%") (finish-output t) (finish-output stream)))))
+				  (when *trace*
+					(format t "~10,5F ~10T" version-time))
+				  )
+			 finally (progn (format stream "~%")
+							(when *trace* (format t "~%") (finish-output t))
+							(finish-output stream)))))
 
 (defun compare-versions-file (file version-numbers start end &key (step 1) (times 1))
   (with-open-file (stream file :direction :output :if-does-not-exist :create :if-exists :supersede)
@@ -86,7 +88,7 @@
        start end :step step :times times)))
 
 (defvar *local*)
-(setq *local* t)
+(setq *local* nil)
 (defun make-test-filename (&optional (prefix ""))
   (if *local* 
 	  prefix
@@ -103,9 +105,11 @@
 	  do (setq name (format nil "~A-v~A" name n)))
 	(compare-versions-file (make-test-filename name) version-numbers start end :step step :times times)))
 
-(defun test-versions (version-numbers)
+(defun test-versions (&rest version-numbers)
   (compare-versions version-numbers 10000 10000000 :step 100000 :times 2))
 
+(defun the-test ()
+  (test-versions 0 1 7))
 
 ;; CL-USER> (mouline-truc-versus-machin-one-file "v1-vs-v4" #'reverse-count-1 #'reverse-count-4 1000 1000000 :step 1000 :times 30)
 ;; 1000    0.00000    0.03333
