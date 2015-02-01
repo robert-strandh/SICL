@@ -5,4 +5,5 @@
 	       :cleavir-generate-ast)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "compile-file")))
