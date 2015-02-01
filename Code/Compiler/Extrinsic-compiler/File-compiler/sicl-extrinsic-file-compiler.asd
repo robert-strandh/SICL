@@ -2,7 +2,8 @@
 
 (defsystem :sicl-extrinsic-file-compiler
   :depends-on (:sicl-reader-simple
-	       :cleavir-generate-ast)
+	       :cleavir-generate-ast
+	       :cleavir-ast-to-hir)
   :serial t
   :components
   ((:file "packages")
