@@ -73,4 +73,5 @@
   (load "../../Environment/defun-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the conditional macros
   ;; such as AND, OR, CASE, etc.
-  (load "../../Conditionals/macros.lisp" environment))
+  (load "../../Conditionals/macros.lisp" environment)
+  (load "../../Environment/standard-environment-macros.lisp" environment))
