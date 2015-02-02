@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-extrinsic-file-compiler)
 
+(defparameter *sicl* (make-instance 'sicl-target-sicl:sicl))
+
 (defun ast-from-stream (stream environment)
   (cleavir-ast:make-progn-ast
    (loop with eof = (list nil)
@@ -10,8 +12,11 @@
 (defun compile-stream (stream environment)
   (let* ((cleavir-generate-ast:*compiler* 'cl:compile-file)
 	 (ast (ast-from-stream stream environment))
-	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
-    hir))
+	 (hir (cleavir-ast-to-hir:compile-toplevel ast))
+	 (hir-bis (cleavir-hir-transformations:hir-transformations
+		   hir
+		   *sicl*)))
+    hir-bis))
 
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
