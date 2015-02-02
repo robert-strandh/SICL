@@ -6,4 +6,5 @@
    #:eliminate-typeq
    #:compute-ownerships
    #:segregate-lexicals
-   #:hir-transformations))
+   #:hir-transformations
+   #:introduce-immediate))
