@@ -16,13 +16,13 @@
 (defun compile-stream (stream environment)
   (let* ((cleavir-generate-ast:*compiler* 'cl:compile-file)
 	 (ast (ast-from-stream stream environment))
-	 (hir (cleavir-ast-to-hir:compile-toplevel ast))
-	 (hir-bis (cleavir-hir-transformations:hir-transformations
-		   hir
-		   *sicl*
-		   *x86-64*
-		   *gnu-linux*)))
-    hir-bis))
+	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
+    (cleavir-hir-transformations:hir-transformations
+     hir
+     *sicl*
+     *x86-64*
+     *gnu-linux*)
+    hir))
 
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
