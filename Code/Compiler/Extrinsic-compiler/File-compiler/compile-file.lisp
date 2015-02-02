@@ -4,7 +4,7 @@
 
 (defparameter *gnu-linux* (make-instance 'sicl-os-gnu-linux:gnu-linux))
 
-(defparameter *x86-64* (make-instance 'sicl-x86-64:x86-64))
+(defparameter *x86-64* (make-instance 'cleavir-processor-x86-64:x86-64))
 
 (defun ast-from-stream (stream environment)
   (cleavir-ast:make-progn-ast
@@ -22,7 +22,7 @@
      *sicl*
      *x86-64*
      *gnu-linux*)
-    hir))
+    (cleavir-ir:hir-to-mir hir *sicl* *x86-64* *gnu-linux*)))
 
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
