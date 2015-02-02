@@ -51,8 +51,7 @@
 			    (member 'eval situations))
 			*compile-time-too*))
 	       (let ((*compile-time-too* t))
-		 (cleavir-ast:make-progn-ast
-		  (convert-sequence (cddr form) environment))))
+		 (convert `(progn ,@(cddr form)) environment)))
 	      ((or (and (not (or (member :compile-toplevel situations)
 				 (member 'compile situations)))
 			(or (member :load-toplevel situations)
@@ -67,8 +66,7 @@
 			(not (or (member :execute situations)
 				 (member 'eval situations)))))
 	       (let ((*compile-time-too* nil))
-		 (cleavir-ast:make-progn-ast
-		  (convert-sequence (cddr form) environment))))
+		 (convert `(progn ,@(cddr form)) environment)))
 	      ((or (and (or (member :compile-toplevel situations)
 			    (member 'compile situations))
 			(not (or (member :load-toplevel situations)
