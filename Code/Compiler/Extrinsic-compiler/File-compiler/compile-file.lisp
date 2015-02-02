@@ -4,6 +4,8 @@
 
 (defparameter *gnu-linux* (make-instance 'sicl-os-gnu-linux:gnu-linux))
 
+(defparameter *x86-64* (make-instance 'sicl-x86-64:x86-64))
+
 (defun ast-from-stream (stream environment)
   (cleavir-ast:make-progn-ast
    (loop with eof = (list nil)
@@ -18,7 +20,8 @@
 	 (hir-bis (cleavir-hir-transformations:hir-transformations
 		   hir
 		   *sicl*
-		   *gnu-linux*)))
+		   *gnu-linux*
+		   *x86-64*)))
     hir-bis))
 
 (defun compile-file (filename environment)
