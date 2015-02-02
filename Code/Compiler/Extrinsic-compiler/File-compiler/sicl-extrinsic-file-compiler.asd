@@ -5,7 +5,8 @@
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
 	       :sicl-extrinsic-environment
-	       :sicl-target-sicl)
+	       :sicl-target-sicl
+	       :sicl-os-gnu-linux)
   :serial t
   :components
   ((:file "packages")
