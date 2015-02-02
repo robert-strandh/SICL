@@ -485,6 +485,10 @@
 
 (defvar *old-top-level-form-p*)
 
+(defmacro with-preserved-toplevel-ness (&body body)
+  `(progn (setf *top-level-form-p* *old-top-level-form-p*)
+	  ,@body))
+
 (defmethod convert :around (form environment)
   (let ((*old-top-level-form-p* *top-level-form-p*)
 	(*top-level-form-p* nil))
