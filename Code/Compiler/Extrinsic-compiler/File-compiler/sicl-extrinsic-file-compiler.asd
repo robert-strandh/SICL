@@ -4,7 +4,8 @@
   :depends-on (:sicl-reader-simple
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
-	       :sicl-extrinsic-environment)
+	       :sicl-extrinsic-environment
+	       :sicl-target-sicl)
   :serial t
   :components
   ((:file "packages")
