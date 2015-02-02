@@ -363,12 +363,9 @@
 	     (reduce #'append (mapcar #'cdr declarations)))))
       (let ((new-env (augment-environment-with-declarations
 		      env canonicalized-dspecs)))
-	;; The following expression means "if this form is a top-level
-	;; form, then make sure that forms compiled by a recursive
-	;; call to CONVERT are also top-level forms".
-	(setf *top-level-form-p* *old-top-level-form-p*)
-	(cleavir-ast:make-progn-ast
-	 (convert-sequence forms new-env))))))
+	(with-preserved-toplevel-ness
+	  (cleavir-ast:make-progn-ast
+	   (convert-sequence forms new-env)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -387,11 +384,8 @@
 	    for expander = (cleavir-env:eval lambda-expr env env)
 	    do (setf new-env
 		     (cleavir-env:add-local-macro new-env name expander)))
-      ;; The following expression means "if this form is a top-level
-      ;; form, then make sure that forms compiled by a recursive call
-      ;; to CONVERT are also top-level forms".
-      (setf *top-level-form-p* *old-top-level-form-p*)
-      (convert `(locally ,@body) new-env))))
+      (with-preserved-toplevel-ness
+	(convert `(locally ,@body) new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -402,12 +396,9 @@
 
 (defmethod convert-special
     ((head (eql 'progn)) form environment)
-  ;; The following expression means "if this form is a top-level
-  ;; form, then make sure that forms compiled by a recursive call
-  ;; to CONVERT are also top-level forms".
-  (setf *top-level-form-p* *old-top-level-form-p*)
-  (cleavir-ast:make-progn-ast
-   (convert-sequence (cdr form) environment)))
+  (with-preserved-toplevel-ness
+    (cleavir-ast:make-progn-ast
+     (convert-sequence (cdr form) environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -469,11 +460,8 @@
     (loop for (name expansion) in (cadr form)
 	  do (setf new-env
 		   (cleavir-env:add-local-symbol-macro new-env name expansion)))
-    ;; The following expression means "if this form is a top-level
-    ;; form, then make sure that forms compiled by a recursive call to
-    ;; CONVERT are also top-level forms".
-    (setf *top-level-form-p* *old-top-level-form-p*)
-    (convert `(progn ,@(cddr form)) new-env)))
+    (with-preserved-toplevel-ness
+      (convert `(progn ,@(cddr form)) new-env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
