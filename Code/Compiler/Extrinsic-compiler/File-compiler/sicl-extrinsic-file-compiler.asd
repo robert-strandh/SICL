@@ -11,4 +11,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "compile-file")))
+   (:file "compile-file")
+   (:file "introduce-immediate")))
