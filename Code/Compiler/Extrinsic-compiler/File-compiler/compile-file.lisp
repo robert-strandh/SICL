@@ -20,8 +20,8 @@
 	 (hir-bis (cleavir-hir-transformations:hir-transformations
 		   hir
 		   *sicl*
-		   *gnu-linux*
-		   *x86-64*)))
+		   *x86-64*
+		   *gnu-linux*)))
     hir-bis))
 
 (defun compile-file (filename environment)
