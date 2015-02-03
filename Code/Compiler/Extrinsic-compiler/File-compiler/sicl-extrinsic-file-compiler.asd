@@ -8,7 +8,8 @@
 	       :sicl-extrinsic-environment
 	       :sicl-target-sicl
 	       :sicl-os-gnu-linux
-	       :cleavir-processor-x86-64)
+	       :cleavir-processor-x86-64
+	       :sicl-hir-to-mir)
   :serial t
   :components
   ((:file "packages")
