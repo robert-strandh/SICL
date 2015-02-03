@@ -1,1 +1,52 @@
 \section{Conclusions and future work}
+
+We have presented a general technique for processing elements of a
+list from the last element to the first.  The implementation-specific
+version of our technique is comparable in speed to traversing the list
+from the first to the last element for all reasonably-sized lists.
+For very long lists, the performance of our technique degrades
+modestly and gracefully.
+
+Even the implementation-independent version of our technique performs
+well enough that it is preferable to the existing technique of
+reversing the list that is used in some implementations.
+
+We have presented our technique in the context of the function
+\texttt{count} because, together with \texttt{reduce}, processing the
+elements from the end is required by the \hs{}, whereas for other
+functions accepting the keyword argument \texttt{from-end} it is
+explicitly allowed to process the elements from the beginning to the
+end.
+
+However, our technique is potentially even more interesting to use
+with functions such as \texttt{find} and \texttt{position} for which
+it is not required to process the elements from the end to the
+beginning.  The reason is that when elements are processed form the
+beginning to the end in these functions, \emph{all} elements must be
+tested.  When the combination of the \texttt{test} and the
+\texttt{key} functions has non-trivial computational cost, a
+significant amount of work may be wasted.  However, when elements are
+processed in reverse order, a result can be returned when the test is
+satisfied the first time, thereby avoiding such wasted work.
+
+Since the performance our technique is not significantly worse than
+processing from the beginning to the end, it is very likely that our
+technique will be faster in almost all cases.  Only when the last
+element of the list to satisfy the test is close to the beginning of
+the list will our technique apply the test as many times as when
+processing is done from the beginning to the end.  We conjecture that,
+on the average, our technique will be faster whenever the cost of
+applying the test is at least that of a function call.  If so, our
+technique should be used in all cases except for those using a very
+inexpensive test functions such as \texttt{eq}, and when the
+implementation then uses a special version of the sequence function
+where this test is inlined, so as to avoid a function call.
+
+Further research is required in order to verify our conjecture.  In
+order to determine the result with some accuracy, additional
+parameters have to be taken into account.  In particular, the position
+of the last element in the list to satisfy the test must be taken into
+account, as well as the cost of calling the test function.  As usual,
+benchmarks will have to be performed on a variety of implementations
+and processors, further complicating the verification of our
+conjecture.
