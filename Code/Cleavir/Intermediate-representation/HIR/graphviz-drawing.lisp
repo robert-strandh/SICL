@@ -215,6 +215,10 @@
 
 (defmethod label ((instruction phi-instruction)) "phi")
 
+(defmethod label ((instruction symbol-value-instruction)) "symbol-value")
+
+(defmethod label ((instruction set-symbol-value-instruction)) "set-symbol-value")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Fixnum instructions.
