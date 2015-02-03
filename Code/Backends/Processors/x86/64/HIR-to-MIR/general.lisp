@@ -65,3 +65,11 @@
   (cleavir-ir:make-equal-instruction
    :inputs (cleavir-ir:inputs instruction)
    :successors (cleavir-ir:successors instruction)))
+
+(defmethod cleavir-ir:specialize
+    ((instruction cleavir-ir:multiple-to-fixed-instruction)
+     (implementation sicl-target-sicl:sicl)
+     (processor cleavir-processor-x86-64:x86-64)
+     os)
+  (declare (ignore os))
+  instruction)
