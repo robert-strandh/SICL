@@ -25,6 +25,14 @@
   instruction)
 
 (defmethod cleavir-ir:specialize
+    ((instruction cleavir-ir:symbol-value-instruction)
+     (implementation sicl-target-sicl:sicl)
+     (processor cleavir-processor-x86-64:x86-64)
+     os)
+  (declare (ignore os))
+  instruction)
+
+(defmethod cleavir-ir:specialize
     ((instruction cleavir-ir:tailcall-instruction)
      (implementation sicl-target-sicl:sicl)
      (processor cleavir-processor-x86-64:x86-64)
