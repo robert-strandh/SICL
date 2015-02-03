@@ -380,7 +380,9 @@
 		     result)))
     (append (mapcar #'list required) result)))
 
-(defun convert-code (lambda-list body env)
+(defgeneric convert-code (lambda-list body env))
+
+(defmethod convert-code (lambda-list body env)
   (let* ((parsed-lambda-list
 	   (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list))
 	 (required (cleavir-code-utilities:required parsed-lambda-list)))
