@@ -3,7 +3,7 @@
 (defmethod cleavir-hir-transformations:introduce-immediate
     (constant
      (implementation sicl-target-sicl:sicl)
-     (processor sicl-x86-64:x86-64)
+     (processor cleavir-processor-x86-64:x86-64)
      os)
   (let ((value (cleavir-ir:value constant)))
     (cond ((and (typep value 'integer)
