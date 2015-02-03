@@ -49,20 +49,19 @@ technique, because it is quite fast.  We devised the following test to
 verify this hypothesis:
 
 {\small\begin{verbatim}
-(defun recursive-find (x list)
+(defun recursive-count (x list)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (if (endp list)
-      nil
-      (progn (recursive-find x (cdr list))
-             (when (eq (car list) x)
-               (return-from recursive-find x)))))
+      0
+      (+ (recursive-count x (cdr list))
+           (if (eq (car list) x) 1 0))))
 \end{verbatim}}
 
 On \sbcl{} executing this function on a list with $50000$ elements
 where no element satisfies the test takes around $4$ns per element
 compared to around $1.5$ns for an explicit loop from the beginning of
-the list, and around twice as fast as calling \texttt{find}.%
-\FIXME{There has got to be a way to convince \sbcl{} \texttt{find} to
+the list, and around twice as fast as calling \texttt{count}.%
+\FIXME{There has got to be a way to convince \sbcl{} \texttt{count} to
   run faster on this test.}  This result indicates that we should use
 recursion whenever the size of the stack allows it, though there is of
 course no portable way of testing how much stack space is available.
