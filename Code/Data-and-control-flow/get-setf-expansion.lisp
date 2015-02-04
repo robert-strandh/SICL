@@ -2,4 +2,4 @@
 
 (defun get-setf-expansion (place &optional environment)
   (let ((global-env (cleavir-env:global-environment environment)))
-    (sicl-env:get-setf-expansion place global-env)))
+    (sicl-global-environment:get-setf-expansion place global-env)))
