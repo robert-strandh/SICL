@@ -5,7 +5,7 @@
 \Defgeneric {fboundp} {fname env}
 
 This generic function is a generic version of the \commonlisp{}
-function \texttt{cl:fboundp}. 
+function \texttt{cl:fboundp}.
 
 It returns true if \textit{fname} has a definition in
 \textit{env} as an ordinary function, a generic function, a
@@ -53,7 +53,7 @@ definition as a special operator should be set first.
 \Defgeneric {fdefinition} {fname env}
 
 This generic function is a generic version of the \commonlisp{}
-function \texttt{cl:fdefinition}. 
+function \texttt{cl:fdefinition}.
 
 If \textit{fname} has a definition in the function namespece of
 \textit{env} (i.e., if \texttt{fboundp} returns true), then a call to
@@ -76,7 +76,7 @@ form \texttt{(cl:special \textrm{\textit{object}})} is returned, where
 \Defgeneric {(setf fdefinition)} {new-def fname env}
 
 This generic function is a generic version of the \commonlisp{}
-function \texttt{cl:fdefinition}. 
+function \texttt{cl:fdefinition}.
 
 \textit{new-def} must be a function.  If \textit{fname} already names
 a function or a macro, then the previous definition is lost.  If
@@ -154,7 +154,7 @@ This generic function returns the proclaimed type of the function
 associated with \textit{fname} in \textit{env}.
 
 If \textit{fname} is not associated with an ordinary function or a
-generic function in \textit{env}, then an error is signaled.  
+generic function in \textit{env}, then an error is signaled.
 
 If \textit{fname} is associated with an ordinary function or a
 generic function in \textit{env}, but no type proclamation for that
@@ -202,8 +202,8 @@ function named \textit{fname}.  When \textit{fname} has no
 definition as a function, the CAR of this cell will contain a
 function that, when called, signals an error of type
 \texttt{undefined-function}.  The return value of this function is always
-the same (in the sense of EQ) when it is passed the same (in the
-sense of EQUAL) function name and the same (in the sense of EQ)
+the same (in the sense of \texttt{eq}) when it is passed the same (in the
+sense of EQUAL) function name and the same (in the sense of \texttt{eq})
 environment.
 
 \Defgeneric {function-unbound} {fname env}
@@ -213,8 +213,8 @@ that, when called, signals an error of type \texttt{undefined-function}.
 When \textit{fname} has no definition as a function, the return
 value of this function is the contents of the CONS cell returned
 by FUNCTION-CELL.  The return value of this function is always the
-same (in the sense of EQ) when it is passed the same (in the sense
-of EQUAL) function name and the same (in the sense of EQ)
+same (in the sense of \texttt{eq}) when it is passed the same (in the sense
+of EQUAL) function name and the same (in the sense of \texttt{eq})
 environment.  Client code can use the return value of this
 function to determine whether \textit{fname} is unbound and if so
 signal an error when an attempt is made to evaluate the form
@@ -258,13 +258,13 @@ current value is not EQL to \textit{value}, then an error is signaled.
 \Defgeneric {special-variable} {symbol env}
 
 This function returns two values.  The first value is the value of
-\textit{symbol} as a special variable in \textit{env}, or NIL if \textit{symbol}
+\textit{symbol} as a special variable in \textit{env}, or \texttt{nil} if \textit{symbol}
 does not have a value as a special variable in \textit{env}.  The
 second value is true if \textit{symbol} does have a value as a special
 variable in \textit{env} and false otherwise.
 
 Notice that the symbol can have a value even though this function
-returns NIL and NIL.  The first such case is when the symbol has a
+returns \texttt{nil} and \texttt{nil}.  The first such case is when the symbol has a
 value as a constant variable in \textit{env}.  The second case is when
 the symbol was assigned a value using \texttt{(setf symbol-value)}
 without declaring the variable as SPECIAL.
@@ -285,3 +285,25 @@ unbound, then it remains unbound.
 
 If \textit{init-p} is true, then \textit{value} becomes the new
 value of the special variable \textit{symbol}.
+
+\Defgeneric {symbol-macro} {symbol env}
+
+This function returns two values.  The first value is a macro
+expansion function associated with the symbol macro named by \textit{symbol},
+or \texttt{nil} if \textit{symbol} does not have a definition as a symbol
+macro.  The second value is the form that \textit{symbol} expands to as a
+macro, or \texttt{nil} if symbol does not have a definition as a
+symbol macro.
+
+It is guaranteed that the same (in the sense of \texttt{eq}) function is
+returned by two consecutive calls as the first argument as long as
+the definition of \textit{symbol} does not change.
+
+\Defgeneric {(setf symbol-macro} {expansion symbol env}
+
+This function is used in order to define \textit{symbol} as a symbol macro
+with the given \textit{expansion} in \textit{env}.
+
+If \textit{symbol} already has a definition as a constant variable, or
+as a special variable, then an error of type \texttt{program-error} is
+signaled.
