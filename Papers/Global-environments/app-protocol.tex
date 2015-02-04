@@ -436,6 +436,16 @@ If there is already a type expander associated with \textit{symbol} in
 
 \Defgeneric {find-package} {name env}
 
-Return the package with the name \textit{name} in the
+Return the package with the name or the nickname \textit{name} in the
 environment \textit{env}.  If there is no package with that name
-in \textit{env}, then return \texttt{nil}.
+in \textit{env}, then return \texttt{nil}.  Contrary to
+the standard \commonlisp{} function \texttt{cl:find-package}, for this
+function, \textit{name} must be a string.
+
+\Defgeneric {package-name} {package env}
+
+Return the string that names \textit{package} in \textit{env}.
+If \textit{package} is not associated with any name in \textit{env},
+then \texttt{nil} is returned.  Contrary to the standard \commonlisp{}
+function \texttt{cl:package-name}, for this function, \textit{package}
+must be a package object.
