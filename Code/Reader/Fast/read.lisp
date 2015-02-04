@@ -33,7 +33,7 @@
 ;;; For now, we just leave it up to each system to implement
 ;;; #= and ##. 
 
-(in-package #:sicl-read)
+(cl:in-package #:sicl-read)
 
 (defparameter *readtable* nil)
 
