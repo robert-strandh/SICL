@@ -203,7 +203,7 @@ definition as a function, the CAR of this cell will contain a
 function that, when called, signals an error of type
 \texttt{undefined-function}.  The return value of this function is always
 the same (in the sense of \texttt{eq}) when it is passed the same (in the
-sense of EQUAL) function name and the same (in the sense of \texttt{eq})
+sense of \texttt{equal}) function name and the same (in the sense of \texttt{eq})
 environment.
 
 \Defgeneric {function-unbound} {fname env}
@@ -214,7 +214,7 @@ When \textit{fname} has no definition as a function, the return
 value of this function is the contents of the CONS cell returned
 by FUNCTION-CELL.  The return value of this function is always the
 same (in the sense of \texttt{eq}) when it is passed the same (in the sense
-of EQUAL) function name and the same (in the sense of \texttt{eq})
+of \texttt{equal}) function name and the same (in the sense of \texttt{eq})
 environment.  Client code can use the return value of this
 function to determine whether \textit{fname} is unbound and if so
 signal an error when an attempt is made to evaluate the form
@@ -242,7 +242,7 @@ If \textit{symbol} already has a definition as a special variable or as a
 symbol macro in \textit{env}, then an error is signaled.
 
 If \textit{symbol} already has a definition as a constant variable, and its
-current value is not EQL to \textit{value}, then an error is signaled.
+current value is not \texttt{eql} to \textit{value}, then an error is signaled.
 
 \Defgeneric {(setf constant-variable)} {value symbol env}
 
@@ -253,7 +253,7 @@ If \textit{symbol} already has a definition as a special variable or as a
 symbol macro in \textit{env}, then an error is signaled.
 
 If \textit{symbol} already has a definition as a constant variable, and its
-current value is not EQL to \textit{value}, then an error is signaled.
+current value is not \texttt{eql} to \textit{value}, then an error is signaled.
 
 \Defgeneric {special-variable} {symbol env}
 
