@@ -1,4 +1,4 @@
-(in-package #:sicl-iteration)
+(cl:in-package #:sicl-iteration)
 
 (defun name-package (name)
   (let ((real-name (if (symbolp name) name (cadr name))))
