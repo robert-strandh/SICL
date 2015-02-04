@@ -35,7 +35,7 @@
   ;; set the macro function.  We could have defined DEFMACRO to call
   ;; (SETF MACRO-FUNCTION) directly, but that would have been less
   ;; "natural", so we do it this way instead.
-  (load "../../Data-and-control-flow/setf.lisp" environment)
+  (load-file "../../Data-and-control-flow/setf.lisp" environment)
   ;; At this point, we have all the ingredients (the macros LAMBDA and
   ;; SETF) in order to redefine the macro DEFMACRO as a native macro.
   ;; SINCE we already have a primitive form of DEFMACRO, we use it to
@@ -43,37 +43,37 @@
   ;; macros defined subsequently will have their macro functions
   ;; compiled with the target compiler.  However, the macro function of
   ;; DEFMACRO is still compiled with the host compiler.
-  (load "../../Environment/defmacro-defmacro.lisp" environment)
+  (load-file "../../Environment/defmacro-defmacro.lisp" environment)
   ;; As mentioned above, at this point, we have a version of DEFMACRO
   ;; that will compile the macro function of the macro definition using
   ;; the target compiler.  However, the macro function of the macro
   ;; DEFMACRO itself is still the result of using the host compiler.
   ;; By loading the definition of DEFMACRO again, we fix this
   ;; "problem".
-  (load "../../Environment/defmacro-defmacro.lisp" environment)
+  (load-file "../../Environment/defmacro-defmacro.lisp" environment)
   ;; Now that have the final version of the macro DEFMACRO, we can
   ;; load the target version of the macro IN-PACKAGE.
-  (load "../../Environment/in-package.lisp" environment)
+  (load-file "../../Environment/in-package.lisp" environment)
   ;; Up to this point, the macro function of the macro LAMBDA was
   ;; compiled using the host compiler.  Now that we have the final
   ;; version of the macro DEFMACRO, we can reload the file containing
   ;; the definition of the macro LAMBDA, which will cause the macro
   ;; function to be compiled with the target compiler.
-  (load "../../Evaluation-and-compilation/lambda.lisp" environment)
+  (load-file "../../Evaluation-and-compilation/lambda.lisp" environment)
   ;; Load a file containing the definition of the macro
   ;; MULTIPLE-VALUE-LIST.  This definition is needed, because it is
   ;; used in the expansion of the macro NTH-VALUE loaded below.
-  (load "../../Data-and-control-flow/multiple-value-list.lisp" environment)
+  (load-file "../../Data-and-control-flow/multiple-value-list.lisp" environment)
   ;; Load a file containing the definition of the macro NTH-VALUE.
   ;; This definition is needed by the function CONSTANTP which is
   ;; loaded as part of the file standard-environment-functions.lisp
   ;; loaded below.
-  (load "../../Data-and-control-flow/nth-value.lisp" environment)
+  (load-file "../../Data-and-control-flow/nth-value.lisp" environment)
   ;; Load a file containing the definition of macro DEFUN.
-  (load "../../Environment/defun-defmacro.lisp" environment)
+  (load-file "../../Environment/defun-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the conditional macros
   ;; such as AND, OR, CASE, etc.
-  (load "../../Conditionals/macros.lisp" environment)
+  (load-file "../../Conditionals/macros.lisp" environment)
   ;; Load a file containing the definitions of the macros DEFVAR,
   ;; DEFPARAMETER, DEFCONSTANT, DEFTYPE, and DEFINE-COMPILER-MACRO.
-  (load "../../Environment/standard-environment-macros.lisp" environment))
+  (load-file "../../Environment/standard-environment-macros.lisp" environment))
