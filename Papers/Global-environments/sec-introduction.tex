@@ -16,4 +16,19 @@ the \commonlisp{} \hs{}, the distinction is made between the
 Excluding the runtime environment, the standard allows for all the
 others to be identical.
 
+In a typical \commonlisp{} implementation, these global environments
+are not first-class objects, and there is typically only one global
+environment available as specifically allowed by the standard.  In some
+implementations, part of the environment is contained in other
+objects.  For instance, it is common for a symbol object to contain a
+\emph{value cell} containing the global value (if any) of the variable
+having the name of the symbol and/or a \emph{function cell} containing
+the definition of a global function having the name of the symbol.
+This kind of representation is even implicitly suggested by the
+standard in that it sometimes uses terminology such as \emph{value
+  cell} and \emph{function cell}%
+\footnote{See for instance the glossary entries for \emph{cell},
+  \emph{value cell}, and \emph{function cell} in the
+  \hs{}.},  while pointing out that this terminology is ``traditional''.
+
 %%  LocalWords:  startup runtime
