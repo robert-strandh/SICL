@@ -433,3 +433,9 @@ with \textit{symbol} in \texttt{env}.
 
 If there is already a type expander associated with \textit{symbol} in
 \texttt{env}, then the old type expander is lost.
+
+\Defgeneric {find-package} {name env}
+
+Return the package with the name \textit{name} in the
+environment \textit{env}.  If there is no package with that name
+in \textit{env}, then return \texttt{nil}.
