@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-initialize-environment-1
+(defsystem :sicl-initialize-environment-1
   :depends-on (:sicl-compiler)
   :components
   ((:file "macros")
@@ -8,7 +8,7 @@
    (:file "functions")
    (:file "types")))
 
-(asdf:defsystem :sicl-initialize-environment
+(defsystem :sicl-initialize-environment
   :depends-on (:sicl-initialize-environment-1)
   :components
   ((:file "compiler-macros")))
