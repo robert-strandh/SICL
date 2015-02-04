@@ -385,3 +385,26 @@ in \textit{env} than that association is lost.
 
 If \textit{new-class} is \texttt{nil}, then \textit{symbol} is no
 longer associated with a class in \textit{env}.
+
+\Defgeneric {setf-expander} {symbol env}
+
+This generic function returns the setf expander associated with
+\textit{symbol} in \textit{env}.  If \textit{symbol} is not associated
+with any setf expander in \textit{env}, then \texttt{nil} is returned.
+
+\Defgeneric {(setf setf-expander)} {new-expander symbol env}
+
+This generic function is used to set the setf expander associated
+with \textit{symbol} in \textit{env}.
+
+If \textit{symbol} is not associated with an ordinary function, a generic
+function, or a macro in \textit{env}, then an error is signaled.
+
+If there is already a setf expander associated with \textit{symbol} in
+\textit{env}, then the old setf expander is lost.
+
+If a value of \texttt{nil} is given for \textit{new-expander}, then
+any current setf expander associated with \textit{symbol} is removed.
+In this case, no error is signaled, even if \textit{symbol} is not
+associated with any ordinary function, generic function, or macro
+in \textit{env}.
