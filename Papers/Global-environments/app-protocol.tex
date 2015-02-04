@@ -236,21 +236,52 @@ Otherwise, it returns false.
 \Defgeneric {constant-variable} {symbol env}
 
 This function is used in order to define \textit{symbol} as a constant
-variable in \textit{env}, with VALUE as its value.
+variable in \textit{env}, with \textit{value} as its value.
 
 If \textit{symbol} already has a definition as a special variable or as a
 symbol macro in \textit{env}, then an error is signaled.
 
 If \textit{symbol} already has a definition as a constant variable, and its
-current value is not EQL to VALUE, then an error is signaled.
+current value is not EQL to \textit{value}, then an error is signaled.
 
 \Defgeneric {(setf constant-variable)} {value symbol env}
 
 This function is used in order to define \textit{symbol} as a constant
-variable in \textit{env}, with VALUE as its value.
+variable in \textit{env}, with \textit{value} as its value.
 
 If \textit{symbol} already has a definition as a special variable or as a
 symbol macro in \textit{env}, then an error is signaled.
 
 If \textit{symbol} already has a definition as a constant variable, and its
-current value is not EQL to VALUE, then an error is signaled.
+current value is not EQL to \textit{value}, then an error is signaled.
+
+\Defgeneric {special-variable} {symbol env}
+
+This function returns two values.  The first value is the value of
+\textit{symbol} as a special variable in \textit{env}, or NIL if \textit{symbol}
+does not have a value as a special variable in \textit{env}.  The
+second value is true if \textit{symbol} does have a value as a special
+variable in \textit{env} and false otherwise.
+
+Notice that the symbol can have a value even though this function
+returns NIL and NIL.  The first such case is when the symbol has a
+value as a constant variable in \textit{env}.  The second case is when
+the symbol was assigned a value using \texttt{(setf symbol-value)}
+without declaring the variable as SPECIAL.
+
+\Defgeneric {(setf special-variable)} {value symbol env init-p}
+
+This function is used in order to define \textit{symbol} as a special
+variable in \textit{env}.
+
+If \textit{symbol} already has a definition as a constant variable or as a
+symbol macro in \textit{env}, then an error is signaled.
+Otherwise, \textit{symbol} is defined as a special variable in \textit{env}.
+
+If \textit{symbol} already has a definition as a special variable, and
+\textit{init-p} is false, then this function has no effect.  The
+current value is not altered, or if \textit{symbol} is currently
+unbound, then it remains unbound.
+
+If \textit{init-p} is true, then \textit{value} becomes the new
+value of the special variable \textit{symbol}.
