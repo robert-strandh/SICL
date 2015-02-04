@@ -2,6 +2,6 @@
 
 (defun load-file (filename environment)
   (load-source-with-environments
-   (asdf:system-relative-pathname :sicl-extrinsic-hir-compiler filename)
+   (asdf:system-relative-pathname :sicl-extrinsic-environment filename)
    environment
    environment))
