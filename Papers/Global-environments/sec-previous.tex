@@ -4,7 +4,12 @@ The idea of first-class environments is of course not new.
 Gelernter et al \cite{Gelernter:1987:EFC:41625.41634} defined a
 language called ``Symmetric Lisp'' in which the programmer is allowed
 to evaluate expressions with respect to a particular first-class
-environment.
+environment.  They suggest using this kind of environment as a
+replacement for a variety of constructs, including closure,
+structures, classes, and modules.  The present paper does not have
+this kind of ambitious objective, simply because we do not know how to
+obtain excellent performance for all these constructs with our
+suggested protocol.
 
 Queinnec and de Roure \cite{Queinnec:1996:SCT:232627.232653} proposed
 a protocol for first-class environments in the context of the
