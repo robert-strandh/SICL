@@ -462,3 +462,8 @@ Return a list of the strings that are nicknames of \textit{package}
 in \textit{env}.  Contrary to the standard \commonlisp{}
 function \texttt{cl:package-name}, for this function, \textit{package}
 must be a package object.
+
+\Defgeneric {(setf package-nicknames)} {new-nicknames package env}
+
+Associate the strings in the list \textit{new-nicknames} as nicknames
+of \textit{package} in \textit{env}.
