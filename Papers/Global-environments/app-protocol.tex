@@ -408,3 +408,28 @@ any current setf expander associated with \textit{symbol} is removed.
 In this case, no error is signaled, even if \textit{symbol} is not
 associated with any ordinary function, generic function, or macro
 in \textit{env}.
+
+\Defgeneric {default-setf-expander} {env}
+
+This generic function returns the default \texttt{setf} expander, to
+be used when the function \texttt{setf-expander} returns \texttt{nil}.
+This function always returns a valid \texttt{setf} expander.
+
+\Defgeneric {(setf default-setf-expander)} {new-expander env}
+
+This generic function is used to set the default \texttt{setf}
+expander in \texttt{env}.
+
+\Defgeneric {type-expander} {symbol env}
+
+This generic function returns the type expander associated with
+\textit{symbol} in \texttt{env}.  If \textit{symbol} is not associated
+with any type expander in \texttt{env}, then \texttt{nil} is returned.
+
+\Defgeneric {(setf type-expander} {new-expander symbol env}
+
+This generic function is used to set the type expander associated
+with \textit{symbol} in \texttt{env}.
+
+If there is already a type expander associated with \textit{symbol} in
+\texttt{env}, then the old type expander is lost.
