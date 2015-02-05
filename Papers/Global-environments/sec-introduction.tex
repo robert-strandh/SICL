@@ -45,4 +45,13 @@ environments is that it becomes unnecessary to use temporary package
 names for bootstrapping a target \commonlisp{} system from a host
 \commonlisp{} system.
 
+In order for first-class global environments to be a viable
+alternative to the traditional implementation method, they must not
+incur any performance penalty, at least not at runtime.  We show an
+implementation of first-class global environments that respects this
+constraint by supplying \emph{cells} that can be thought of as the
+same as the traditional value cells and function cells, except that
+they are disembodied so that the are physically located in the
+environment object as opposed to being associated with a symbol.
+
 %%  LocalWords:  startup runtime
