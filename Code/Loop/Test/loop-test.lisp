@@ -1,4 +1,4 @@
-(in-package #:sicl-loop-test)
+(cl:in-package #:sicl-loop-test)
 
 (defclass test ()
   ((%name :initarg :name :reader name)

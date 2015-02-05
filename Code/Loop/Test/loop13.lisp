@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Nov 17 12:37:45 2002
 ;;;; Contains: Tests of DO, DOING, RETURN in LOOP.  Tests of NAMED loops
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 (deftest loop.13.1
   (loop do (return 10))

@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Oct 27 22:46:39 2002
 ;;;; Contains: Tests for LOOP FOR-AS-EQUAL-THEN
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 (deftest loop.4.1
   (loop

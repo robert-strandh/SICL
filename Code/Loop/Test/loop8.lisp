@@ -3,7 +3,7 @@
 ;;;; Created:  Tue Nov 12 06:30:14 2002
 ;;;; Contains: Tests of LOOP local variable initialization
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 (deftest loop.8.1
   (loop with x = 1 do (return x))

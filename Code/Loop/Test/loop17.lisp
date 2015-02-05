@@ -3,7 +3,7 @@
 ;;;; Created:  Thu Nov 21 09:48:38 2002
 ;;;; Contains: Miscellaneous loop tests
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 ;;; Initially and finally take multiple forms,
 ;;; and execute them in the right order

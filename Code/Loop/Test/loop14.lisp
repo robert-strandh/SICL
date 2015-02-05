@@ -3,7 +3,7 @@
 ;;;; Created:  Wed Nov 20 06:33:21 2002
 ;;;; Contains: Tests of LOOP conditional execution clauses
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 (deftest loop.14.1
   (loop for x from 1 to 6

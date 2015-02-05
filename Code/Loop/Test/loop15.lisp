@@ -3,7 +3,7 @@
 ;;;; Created:  Thu Nov 21 07:08:21 2002
 ;;;; Contains: Tests that keywords can be loop keywords
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 ;;; Tests of loop keywords
 

@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Oct 27 08:36:36 2002
 ;;;; Contains: Tests of FOR-ON-AS-LIST iteration control in LOOP
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 (deftest loop.3.1
   (loop for x on '(1 2 3) sum (car x))

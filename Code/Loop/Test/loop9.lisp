@@ -3,7 +3,7 @@
 ;;;; Created:  Thu Nov 14 06:25:21 2002
 ;;;; Contains: Tests for loop list accumulation clauses
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 ;;; Tests of COLLECT, COLLECTING
 

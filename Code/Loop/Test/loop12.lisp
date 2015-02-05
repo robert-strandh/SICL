@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Nov 17 08:47:43 2002
 ;;;; Contains: Tests for ALWAYS, NEVER, THEREIS
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 ;;; Tests of ALWAYS clauses
 

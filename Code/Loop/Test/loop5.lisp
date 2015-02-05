@@ -3,7 +3,7 @@
 ;;;; Created:  Sat Nov  2 13:52:50 2002
 ;;;; Contains: Tests of LOOP clause FOR-AS-ACROSS
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 (deftest loop.5.1
   (let ((x "abcd")) (loop for e across x collect e))

@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Nov 10 21:13:04 2002
 ;;;; Contains: Tests for LOOP-AS-HASH forms
 
-(in-package :sicl-loop-test)
+(cl:in-package :sicl-loop-test)
 
 (defun symbol< (s1 s2)
   (string< (string s1) (string s2)))
