@@ -2,6 +2,7 @@
 
 (defsystem :cleavir-def-use-chains
   :depends-on (:cleavir-reaching-definitions)
-  :components
+  :serial t
+ :components
   ((:file "packages")
-   (:file "def-use-chains" :depends-on ("packages"))))
+   (:file "def-use-chains")))
