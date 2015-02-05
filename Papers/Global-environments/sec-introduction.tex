@@ -36,6 +36,13 @@ global environment a first-class object.  An immediate advantage is
 that it is then possible to distinguish between the \emph{startup
   environment}, the \emph{compilation environment} and the
 \emph{evaluation environment} so that compile-time evaluations by the
-compiler are not visible in the startup-environment.
+compiler are not visible in the startup-environment.  However, as we
+show in this paper, there are many more advantages, such as making it
+easier to create a so-called \emph{sandbox} environment, which is
+notoriously difficult to do in a typical \commonlisp{}
+implementation.  Another significant advantage with first-class global
+environments is that it becomes unnecessary to use temporary package
+names for bootstrapping a target \commonlisp{} system from a host
+\commonlisp{} system.
 
 %%  LocalWords:  startup runtime
