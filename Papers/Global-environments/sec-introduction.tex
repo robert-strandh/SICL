@@ -31,4 +31,11 @@ standard in that it sometimes uses terminology such as \emph{value
   \emph{value cell}, and \emph{function cell} in the
   \hs{}.},  while pointing out that this terminology is ``traditional''.
 
+In this paper, we argue that there are many advantages to making the
+global environment a first-class object.  An immediate advantage is
+that it is then possible to distinguish between the \emph{startup
+  environment}, the \emph{compilation environment} and the
+\emph{evaluation environment} so that compile-time evaluations by the
+compiler are not visible in the startup-environment.
+
 %%  LocalWords:  startup runtime
