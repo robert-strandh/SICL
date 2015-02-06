@@ -26,19 +26,6 @@
    clone
    :value (cleavir-ast:value original)))
 
-(defmethod fixup :after ((clone cleavir-ast:global-ast) original dictionary)
-  (declare (ignore dictionary))
-  (reinitialize-instance
-   clone
-   :name (cleavir-ast:name original)
-   :function-type (cleavir-ast:function-type original)))
-
-(defmethod fixup :after ((clone cleavir-ast:special-ast) original dictionary)
-  (declare (ignore dictionary))
-  (reinitialize-instance
-   clone
-   :name (cleavir-ast:name original)))
-
 (defmethod fixup :after ((clone cleavir-ast:lexical-ast) original dictionary)
   (declare (ignore dictionary))
   (reinitialize-instance
@@ -68,12 +55,6 @@
   (reinitialize-instance
    clone
    :name (cleavir-ast:name original)))
-
-(defmethod fixup :after ((clone cleavir-ast:the-ast) original dictionary)
-  (declare (ignore dictionary))
-  (reinitialize-instance
-   clone
-   :value-type (cleavir-ast:value-type original)))
 
 (defmethod fixup :after ((clone cleavir-ast:typeq-ast) original dictionary)
   (declare (ignore dictionary))
