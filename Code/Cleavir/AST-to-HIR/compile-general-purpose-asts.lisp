@@ -743,6 +743,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a IMMEDIATE-AST.
+;;;
+;;; The IMMEDIATE-AST is a subclass of ONE-VALUE-AST-MIXIN, so the
+;;; :AROUND method on COMPILE-AST has adapted the context so that it
+;;; has a single result.
+
+(defmethod compile-ast ((ast cleavir-ast:immediate-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (cleavir-ir:make-assignment-instruction
+     (cleavir-ir:make-immediate-input (cleavir-ast:value ast))
+     (first results)
+     (first successors))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a CONSTANT-AST.
 ;;;
 ;;; The CONSTANT-AST is a subclass of ONE-VALUE-AST-MIXIN, so the
