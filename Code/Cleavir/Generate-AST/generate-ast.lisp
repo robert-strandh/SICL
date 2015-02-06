@@ -13,6 +13,40 @@
   (loop for form in forms
 	collect (convert form environment)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; CONVERT-CONSTANT is called when a constant is found, either in the
+;;; form of a literal or in the form of a constant variable.
+;;;
+;;; The result of the conversion can be either an IMMEDIATE-AST if the
+;;; constant is such that it can be represented as an immediate value
+;;; in the resulting machine code, or it can be a LOAD-TIME-VALUE-AST
+;;; if it can not be represented as an immediate.
+;;;
+;;; Obviously, Cleavir can not know a priori neither whether the
+;;; constant can be represented as an immediate value, nor can it know
+;;; in that case what the corresponding immediate representation is.
+;;; For that reason, we first call the generic function named
+;;; CONVERT-CONSTANT-TO-IMMEDIATE with the constant value and the
+;;; environment.  The function CONVERT-CONSTANT-TO-IMMEDIATE may
+;;; return NIL, meaning that this constant does not have a
+;;; representation as an immediate value, or it may return an
+;;; possibly-negative integer which is taken to be the representation
+;;; of the constant as an immediate machine word.  A default method is
+;;; provided that always returns NIL.
+
+(defgeneric convert-constant-to-immediate (constant env))
+
+(defmethod convert-constant-to-immediate (constant env)
+  (declare (ignore constant env))
+  nil)
+
+(defun convert-constant (constant env)
+  (let ((immediate (convert-constant-to-immediate constant env)))
+    (if (null immediate)
+	(cleavir-ast:make-load-time-value-ast `',constant t)
+	(cleavir-ast:make-immediate-ast immediate))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a compound form when the head of a compound form is a
@@ -406,40 +440,6 @@
 				forms
 				env)
 	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; CONVERT-CONSTANT is called when a constant is found, either in the
-;;; form of a literal or in the form of a constant variable.
-;;;
-;;; The result of the conversion can be either an IMMEDIATE-AST if the
-;;; constant is such that it can be represented as an immediate value
-;;; in the resulting machine code, or it can be a LOAD-TIME-VALUE-AST
-;;; if it can not be represented as an immediate.
-;;;
-;;; Obviously, Cleavir can not know a priori neither whether the
-;;; constant can be represented as an immediate value, nor can it know
-;;; in that case what the corresponding immediate representation is.
-;;; For that reason, we first call the generic function named
-;;; CONVERT-CONSTANT-TO-IMMEDIATE with the constant value and the
-;;; environment.  The function CONVERT-CONSTANT-TO-IMMEDIATE may
-;;; return NIL, meaning that this constant does not have a
-;;; representation as an immediate value, or it may return an
-;;; possibly-negative integer which is taken to be the representation
-;;; of the constant as an immediate machine word.  A default method is
-;;; provided that always returns NIL.
-
-(defgeneric convert-constant-to-immediate (constant env))
-
-(defmethod convert-constant-to-immediate (constant env)
-  (declare (ignore constant env))
-  nil)
-
-(defun convert-constant (constant env)
-  (let ((immediate (convert-constant-to-immediate constant env)))
-    (if (null immediate)
-	(cleavir-ast:make-load-time-value-ast `',constant t)
-	(cleavir-ast:make-immediate-ast immediate))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
