@@ -52,10 +52,12 @@
 			  (ensure-object '(function fdefinition))))
 		       ((eq (car object) 'function-cell)
 			(ensure-object (cadr object))
-			(ensure-object '(function sicl-env:find-function-cell)))
+			(ensure-object
+			 '(function sicl-global-environment:find-function-cell)))
 		       ((eq (car object) 'value-cell)
 			(ensure-object (cadr object))
-			(ensure-object '(function sicl-env:find-value-cell)))
+			(ensure-object
+			 '(function sicl-global-environment:find-value-cell)))
 		       (t
 			(ensure-object (car object))
 			(ensure-object (cdr object))
@@ -188,13 +190,13 @@
 		 ((eq (car object) 'function-cell)
 		  (sicl-ast:make-call-ast
 		   (find-lexical-location
-		    '(function sicl-env:find-function-cell))
+		    '(function sicl-global-environment:find-function-cell))
 		   (list
 		    (find-lexical-location (cadr object)))))
 		 ((eq (car object) 'value-cell)
 		  (sicl-ast:make-call-ast
 		   (find-lexical-location
-		    '(function sicl-env:find-value-cell))
+		    '(function sicl-global-environment:find-value-cell))
 		   (list
 		    (find-lexical-location (cadr object)))))
 		 (t
