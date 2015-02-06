@@ -323,6 +323,12 @@
 (defclass top-level-function-ast (function-ast)
   ((%forms :initarg :forms :reader forms)))
 
+(defun make-top-level-function-ast (body-ast lambda-list forms)
+  (make-instance 'top-level-function-ast
+    :body-ast body-ast
+    :lambda-list lambda-list
+    :forms forms))
+
 (cleavir-io:define-save-info top-level-function-ast
   (:forms forms))
 
