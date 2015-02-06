@@ -868,6 +868,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a LOAD-TIME-VALUE-AST.
+;;;
+;;; The LOAD-TIME-VALUE-AST is a subclass of ONE-VALUE-AST-MIXIN, so
+;;; the :AROUND method on COMPILE-AST has adapted the context so that
+;;; it has a single result.
 
 (defmethod compile-ast ((ast cleavir-ast:load-time-value-ast) context)
   (with-accessors ((results results)
