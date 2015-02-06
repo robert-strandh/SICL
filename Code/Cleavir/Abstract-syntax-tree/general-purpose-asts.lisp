@@ -519,7 +519,7 @@
 ;;; because it can only be a Boolean which is not evaluated, so we
 ;;; know at AST creation time whether it is true or false. 
 
-(defclass load-time-value-ast (ast)
+(defclass load-time-value-ast (ast one-value-ast-mixin)
   ((%form :initarg :form :reader form)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
