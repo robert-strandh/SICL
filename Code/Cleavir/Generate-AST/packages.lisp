@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export #:generate-ast
 	   #:convert-code
+	   #:convert-constant-to-immediate
 	   #:minimally-compile
 	   #:*top-level-form-p*
 	   #:*compiler*
