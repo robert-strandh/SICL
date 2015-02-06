@@ -19,6 +19,7 @@
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:function-ast #:make-function-ast #:lambda-list
+   #:top-level-function-ast #:make-top-level-function-ast #:forms
    #:required-only-p #:required #:argparse-ast #:body-ast
    #:go-ast #:make-go-ast #:tag-ast
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
