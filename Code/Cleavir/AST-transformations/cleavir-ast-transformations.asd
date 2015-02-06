@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "clone")))
+   (:file "clone")
+   (:file "hoist-load-time-value")))
