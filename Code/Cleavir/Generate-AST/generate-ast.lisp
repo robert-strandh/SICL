@@ -42,7 +42,8 @@
   nil)
 
 (defun convert-constant (constant env)
-  (let ((immediate (convert-constant-to-immediate constant env)))
+  (let* ((global-env (cleavir-env:global-environment env))
+	 (immediate (convert-constant-to-immediate constant global-env)))
     (if (null immediate)
 	(cleavir-ast:make-load-time-value-ast `',constant t)
 	(cleavir-ast:make-immediate-ast immediate))))
