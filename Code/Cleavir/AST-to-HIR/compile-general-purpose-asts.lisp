@@ -439,6 +439,21 @@
      (first (successors context))
      enter)))
 
+;;; When the FUNCTION-AST is in fact a TOP-LEVEL-FUNCTION-AST it also
+;;; contains a list of LOAD-TIME-VALUE forms to be evaluated and then
+;;; supplied as arguments to the function.  We need to preserve that
+;;; list of forms which we can do by producing an instance of
+;;; TOP-LEVEL-ENTER-INSTRUCTION rather than of a plain
+;;; ENTER-INSTRUCTION.  For that reason, we define an :AROUND method
+;;; on that type of AST that turns the ENTER-INSTRUCTION into a
+;;; TOP-LEVEL-ENTER-INSTRUCTION.
+
+(defmethod compile-ast :around ((ast cleavir-ast:top-level-function-ast) context)
+  (declare (ignore context))
+  (let ((enter (call-next-method)))
+    (change-class enter 'top-level-enter-instruction
+		  :forms (cleavir-ast:forms ast))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a SETQ-AST.
