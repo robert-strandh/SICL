@@ -7,7 +7,7 @@
 (defmethod convert-special ((symbol (eql 'cleavir-primop:typeq)) form env)
   (cleavir-ast:make-typeq-ast
    (convert (second form) env)
-   (cleavir-ast:make-constant-ast (third form))))
+   (convert-constant (third form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

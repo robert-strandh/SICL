@@ -19,7 +19,7 @@
 ;;; Converting a symbol that has a definition as a constant variable.
 
 (defmethod convert-form (form (info cleavir-env:constant-variable-info) env)
-  (cleavir-ast:make-constant-ast (cleavir-env:value info)))
+  (convert-constant (cleavir-env:value info) env))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

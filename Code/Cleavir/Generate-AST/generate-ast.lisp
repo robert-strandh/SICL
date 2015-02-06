@@ -110,13 +110,13 @@
 ;;; code for testing whether SUPPLIED-P-AST computes NIL or T, and for
 ;;; assigning the value computed by VALUE-AST to VAR-AST if
 ;;; SUPPLIED-P-AST computes NIL.
-(defun generate-initialization (var-ast supplied-p-ast value-ast)
+(defun generate-initialization (var-ast supplied-p-ast value-ast env)
   (cleavir-ast:make-if-ast
    (cleavir-ast:make-eq-ast
     supplied-p-ast
-    (cleavir-ast:make-constant-ast nil))
+    (convert-constant nil env))
    (cleavir-ast:make-setq-ast var-ast value-ast)
-   (cleavir-ast:make-constant-ast nil)))
+   (convert-constant nil env)))
 
 ;;; VAR and SUPPLIED-P are symbols representing a parameter variable
 ;;; and its associated SUPPLIED-P variable. If no associated
@@ -146,7 +146,8 @@
     (values (cleavir-ast:make-progn-ast
 	     (list (generate-initialization lexical-var-ast
 					    lexical-supplied-p-ast
-					    init-ast)
+					    init-ast
+					    env)
 		   (set-or-bind-variable
 		    var
 		    lexical-var-ast
@@ -457,9 +458,9 @@
 
 (defmethod convert (form environment)
   (cond ((and (not (consp form)) (not (symbolp form)))
-	 (cleavir-ast:make-constant-ast form))
+	 (convert-constant form environment))
 	((and (symbolp form) (constantp form))
-	 (cleavir-ast:make-constant-ast (symbol-value form)))
+	 (convert-constant (symbol-value form) environment))
 	((symbolp form)
 	 (let ((info (variable-info environment form)))
 	   (convert-form form info environment)))

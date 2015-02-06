@@ -11,7 +11,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'quote)) form env)
-  (cleavir-ast:make-constant-ast (cadr form)))
+  (convert-constant (cadr form) env))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -156,7 +156,7 @@
    (convert (cadr form) env)
    (convert (caddr form) env)
    (if (null (cdddr form))
-       (cleavir-ast:make-constant-ast nil)
+       (convert-constant nil env)
        (convert (cadddr form) env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -487,7 +487,7 @@
 				   (convert item new-env)))))
       (cleavir-ast:make-progn-ast
        (list (cleavir-ast:make-tagbody-ast items)
-	     (cleavir-ast:make-constant-ast nil))))))
+	     (convert-constant nil env))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
