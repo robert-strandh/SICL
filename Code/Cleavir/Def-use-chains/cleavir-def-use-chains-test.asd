@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-def-use-chains-test
+(defsystem :cleavir-def-use-chains-test
   :depends-on (:cleavir-def-use-chains
 	       :cleavir-test-utilities)
   :components
