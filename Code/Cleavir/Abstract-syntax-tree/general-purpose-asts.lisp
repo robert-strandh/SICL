@@ -308,6 +308,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class TOP-LEVEL-FUNCTION-AST.
+;;;
+;;; This AST is a subclass of FUNCTION-AST.  It is used when an AST is
+;;; transformed by hoisting all the LOAD-TIME-VALUE-ASTs in the tree
+;;; by turning them into LEXIAL-ASTs that are also required parameters
+;;; of the TOP-LEVEL-FUNCTION-AST.
+;;;
+;;; This AST class supplies a slot that contains a list of the forms
+;;; that were contained in the LOAD-TIME-VALUE-ASTs.  In order to
+;;; evaluate the original AST, the transformed AST must be called with
+;;; the values of those forms as arguments.
+
+(defclass top-level-function-ast (function-ast)
+  ((%forms :initarg :forms :reader forms)))
+
+(cleavir-io:define-save-info top-level-function-ast
+  (:forms forms))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class PROGN-AST.
 
 (defclass progn-ast (ast)
