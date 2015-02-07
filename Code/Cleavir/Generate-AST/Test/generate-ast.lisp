@@ -12,7 +12,8 @@
 
 (defun test (form value)
   (let* ((ast (cleavir-generate-ast:generate-ast form *e*))
-	 (v (cleavir-ast-interpreter:interpret ast)))
+	 (hoisted (cleavir-ast-transformations:hoist-load-time-value ast))
+	 (v (cleavir-ast-interpreter:interpret hoisted)))
     (assert (equalp v value))))
 
 (defun test-error (form)
