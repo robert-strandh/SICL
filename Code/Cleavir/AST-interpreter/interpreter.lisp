@@ -21,10 +21,6 @@
 ;;;
 ;;; Methods on INTERPRET-AST.
 
-(defmethod interpret-ast ((ast cleavir-ast:constant-ast) env)
-  (declare (ignore env))
-  (cleavir-ast:value ast))
-
 (defmethod interpret-ast ((ast cleavir-ast:progn-ast) env)
   (interpret-sequence (cleavir-ast:form-asts ast) env))
 
@@ -277,9 +273,6 @@
       (list (cleavir-ast:symbol ast))
       (list (interpret-ast (cleavir-ast:value-ast ast) env))
     (interpret-ast (cleavir-ast:body-ast ast) env)))
-
-(defmethod interpret-ast ((ast cleavir-ast:load-time-value-ast) env)
-  (eval (cleavir-ast:form ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
