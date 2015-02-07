@@ -28,7 +28,7 @@ it, then that \texttt{setf} expander is lost.
 
 \Defgeneric {special-operator} {fname env}
 
-if \textit{fname} has a definition as a special operator in
+If \textit{fname} has a definition as a special operator in
 \textit{env}, then that definition is returned.  The definition is an
 the object that was used as an argument to \texttt{(setf
   special-operator)}.  The exact nature of this object is not
@@ -114,7 +114,7 @@ already names a special operator, that definition is kept.
 If \textit{symbol} already names a function, then any proclamation of
 the type of that function is lost.  In other words, if at some later
 point \textit{symbol} is again defined as a function, its proclaimed
-type will be T.
+type will be \texttt{t}.
 
 If \textit{symbol} already names a function, then any \texttt{inline} or
 \texttt{notinline} proclamation of the type of that function is lost.  In other
@@ -163,7 +163,8 @@ function has been made, then this generic function returns T.
 \Defgeneric {(setf function-type)} {new-type fname env}
 
 This generic function is used to set the proclaimed type of the
-function associated with \textit{fname} in \textit{env} to NEW-TYPE.
+function associated with \textit{fname} in \textit{env}
+to \textit{new-type}.
 
 If \textit{fname} is associated with a macro or a special operator
 in \textit{env}, then an error is signaled.
@@ -212,13 +213,13 @@ A call to this function always succeeds.  It returns a function
 that, when called, signals an error of type \texttt{undefined-function}.
 When \textit{fname} has no definition as a function, the return
 value of this function is the contents of the \texttt{cons} cell returned
-by FUNCTION-CELL.  The return value of this function is always the
+by \texttt{function-cell}.  The return value of this function is always the
 same (in the sense of \texttt{eq}) when it is passed the same (in the sense
 of \texttt{equal}) function name and the same (in the sense of \texttt{eq})
 environment.  Client code can use the return value of this
 function to determine whether \textit{fname} is unbound and if so
 signal an error when an attempt is made to evaluate the form
-(FUNCTION \textit{fname}).
+\texttt{(function \textrm{\textit{fname}})}.
 
 \Defgeneric {function-lambda-list} {fname env}
 
@@ -231,7 +232,7 @@ list has been defined for \textit{fname}.
 
 It returns true if \textit{symbol} has a definition in \textit{env} as a
 constant variable, as a special variable, or as a symbol macro.
-Otherwise, it returns false.
+Otherwise, it returns \texttt{nil}.
 
 \Defgeneric {constant-variable} {symbol env}
 
@@ -261,13 +262,13 @@ This function returns two values.  The first value is the value of
 \textit{symbol} as a special variable in \textit{env}, or \texttt{nil} if \textit{symbol}
 does not have a value as a special variable in \textit{env}.  The
 second value is true if \textit{symbol} does have a value as a special
-variable in \textit{env} and false otherwise.
+variable in \textit{env} and \texttt{nil} otherwise.
 
 Notice that the symbol can have a value even though this function
 returns \texttt{nil} and \texttt{nil}.  The first such case is when the symbol has a
 value as a constant variable in \textit{env}.  The second case is when
 the symbol was assigned a value using \texttt{(setf symbol-value)}
-without declaring the variable as SPECIAL.
+without declaring the variable as \texttt{special}.
 
 \Defgeneric {(setf special-variable)} {value symbol env init-p}
 
@@ -279,7 +280,7 @@ symbol macro in \textit{env}, then an error is signaled.
 Otherwise, \textit{symbol} is defined as a special variable in \textit{env}.
 
 If \textit{symbol} already has a definition as a special variable, and
-\textit{init-p} is false, then this function has no effect.  The
+\textit{init-p} is \texttt{nil}, then this function has no effect.  The
 current value is not altered, or if \textit{symbol} is currently
 unbound, then it remains unbound.
 
@@ -318,7 +319,7 @@ then the result of calling \texttt{type-of} on its value is returned.
 
 If \textit{symbol} does not have a definition as a constant variable in
 \textit{env}, and no previous type proclamation has been made for
-\textit{symbol} in \textit{env}, then this function returns T.
+\textit{symbol} in \textit{env}, then this function returns \texttt{t}.
 
 \Defgeneric {(setf variable-type)} {new-type symbol env}
 
@@ -388,23 +389,23 @@ longer associated with a class in \textit{env}.
 
 \Defgeneric {setf-expander} {symbol env}
 
-This generic function returns the setf expander associated with
+This generic function returns the \texttt{setf} expander associated with
 \textit{symbol} in \textit{env}.  If \textit{symbol} is not associated
-with any setf expander in \textit{env}, then \texttt{nil} is returned.
+with any \texttt{setf} expander in \textit{env}, then \texttt{nil} is returned.
 
 \Defgeneric {(setf setf-expander)} {new-expander symbol env}
 
-This generic function is used to set the setf expander associated
+This generic function is used to set the \texttt{setf} expander associated
 with \textit{symbol} in \textit{env}.
 
 If \textit{symbol} is not associated with an ordinary function, a generic
 function, or a macro in \textit{env}, then an error is signaled.
 
-If there is already a setf expander associated with \textit{symbol} in
-\textit{env}, then the old setf expander is lost.
+If there is already a \texttt{setf} expander associated with \textit{symbol} in
+\textit{env}, then the old \texttt{setf} expander is lost.
 
 If a value of \texttt{nil} is given for \textit{new-expander}, then
-any current setf expander associated with \textit{symbol} is removed.
+any current \texttt{setf} expander associated with \textit{symbol} is removed.
 In this case, no error is signaled, even if \textit{symbol} is not
 associated with any ordinary function, generic function, or macro
 in \textit{env}.
