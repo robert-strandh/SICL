@@ -3,4 +3,5 @@
 (defpackage #:cleavir-ast-transformations
   (:use #:common-lisp)
   (:export
+   #:hoist-load-time-value
    ))
