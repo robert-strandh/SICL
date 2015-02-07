@@ -89,4 +89,12 @@ there is no binding from the names \texttt{eval} and \texttt{compile}
 to the corresponding functions.  These functions can still be
 available in some other environment for use by the system itself.
 
+\subsection{Multiple package versions}
+
+When running multiple applications in the same \commonlisp{} process,
+there can easily be conflicts between different versions of the same
+package.  First-class global environments can alleviate this problem
+by having different global environments for the different applications
+causing the conflict.
+
 %%  LocalWords:  Sanboxing startup
