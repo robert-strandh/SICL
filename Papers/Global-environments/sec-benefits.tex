@@ -95,6 +95,18 @@ When running multiple applications in the same \commonlisp{} process,
 there can easily be conflicts between different versions of the same
 package.  First-class global environments can alleviate this problem
 by having different global environments for the different applications
-causing the conflict.
+causing the conflict.%
+\FIXME{Say more}
+
+\subsection{Separate environment for each application}
+
+It is sometimes desirable for a large application to use a large
+number of packages that are specific to that application.  In such a
+situation, it is advantageous to build the application in a separate
+global environment, so that the application-specific packages exist
+only in that environment.  The main entry point(s) of the application
+can then be made available in other environments without making its
+packages available.%
+\FIXME{Say more}
 
 %%  LocalWords:  Sanboxing startup
