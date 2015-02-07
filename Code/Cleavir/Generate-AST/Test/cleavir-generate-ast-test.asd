@@ -2,6 +2,7 @@
 
 (asdf:defsystem :cleavir-generate-ast-test
   :depends-on (:cleavir-generate-ast
+	       :cleavir-ast-transformations
 	       :cleavir-ast-interpreter)
   :serial t
   :components
