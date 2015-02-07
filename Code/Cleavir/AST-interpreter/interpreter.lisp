@@ -3,9 +3,10 @@
 (defgeneric interpret-ast (ast env))
 
 (defun interpret (ast)
-  (let ((env (list (make-hash-table :test #'eq)))
-	(dynamic-env '()))
-    (interpret-ast ast env)))
+  (assert (typep ast 'cleavir-ast:top-level-function-ast))
+  (let ((fun (interpret-ast ast '())))
+    (apply fun
+	   (mapcar #'eval (cleavir-ast:forms ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
