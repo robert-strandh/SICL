@@ -35,7 +35,9 @@ When a \emph{host} \commonlisp{} system is used to bootstrap a
 definitions of many standard \commonlisp{} features.  In particular,
 in order to compile code for the target system in the host system, the
 cross compiler needs access to the target definitions of standard
-\commonlisp{} macros.
+\commonlisp{} macros, in particular defining macros such as
+\texttt{defun}, \texttt{defmacro}, \texttt{defgeneric},
+\texttt{defvar}, etc.
 
 It is, of course, not an option to replace the host versions of such
 macros with the corresponding target versions.  Doing so would almost
