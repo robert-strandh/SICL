@@ -26,7 +26,9 @@ For the purpose of this paper, we use the word \emph{bootstrapping} to
 mean the process of building the executable of some implementation
 (the \emph{target} system) by executing code in the running process of
 another implementation (the \emph{host} system).  The host and the
-target systems may be the same implementation.
+target systems may be the same implementation.  In this context, a
+\emph{cross compiler} is a compiler that executes in the host system
+while generating code for the target system.
 
 When a \emph{host} \commonlisp{} system is used to bootstrap a
 \emph{target} \commonlisp{} system, the target system needs its own
