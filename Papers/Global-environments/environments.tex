@@ -41,21 +41,21 @@ Robert Strandh\\
 \maketitle
 
 \begin{abstract}
-The concept of an \emph{environment} is mentioned in many places in
-the \commonlisp{} standard, but the nature of the object is not
+\emph{Environments} are mentioned in many places in
+the \commonlisp{} standard, but the nature of such objects is not
 specified.  For the purpose of this paper, an environment is a mapping
 from \emph{names} to \emph{meanings}.  In a typical \commonlisp{}
 implementation the \emph{global environment} is not a first-class
 object.
 
-In this paper, we argue in favor of first-class global environments,
+In this paper, we advocate first-class global environments,
 not as an extension or a modification of the \commonlisp{} standard,
 but as an implementation technique.  We state several advantages in
 terms of bootstrapping, sandboxing, and more.  We show an
 implementation where there is no performance penalty associated with
 making the environment first class.  For performance purposes, the
 essence of the implementation relies on the environment containing
-\emph{cells} (an ordinary \texttt{cons} cell in our implementation)
+\emph{cells} (ordinary \texttt{cons} cells in our implementation)
 holding bindings of names to functions and global values that are
 likely to be heavily solicited at runtime.
 \end{abstract}
