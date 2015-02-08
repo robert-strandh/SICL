@@ -20,6 +20,17 @@ value cells and function cells are shared.  Therefore, executing code
 at compile time that alters the global binding of a function or a
 variable will also be seen in the startup environment.
 
+As an example of code that should not be evaluated in the startup
+environment, consider definitions of macros that are only required for
+the correct compilation of some program, as well as definitions of
+functions that are only required for the expansion of such macros.  A
+definition for this purpose might be wrapped in an \texttt{eval-when}
+form with \texttt{:compile-toplevel} as the only \emph{situation} in
+which the definition should be evaluated.  When the evaluation
+environment and the startup environment are identical, such a
+definition will be evaluated in the startup environment, and persist
+after the program has been compiled.
+
 \subsection{Bootstrapping}
 
 For the purpose of this paper, we use the word \emph{bootstrapping} to
