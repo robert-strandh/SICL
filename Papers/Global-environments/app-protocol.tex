@@ -236,14 +236,11 @@ Otherwise, it returns \texttt{nil}.
 
 \Defgeneric {constant-variable} {symbol env}
 
-This function is used in order to define \textit{symbol} as a constant
-variable in \textit{env}, with \textit{value} as its value.
+This function returns the value of the constant
+variable \textit{symbol}.
 
-If \textit{symbol} already has a definition as a special variable or as a
-symbol macro in \textit{env}, then an error is signaled.
-
-If \textit{symbol} already has a definition as a constant variable, and its
-current value is not \texttt{eql} to \textit{value}, then an error is signaled.
+If \textit{symbol} does not have a definition as a constant variable,
+then an error is signaled.
 
 \Defgeneric {(setf constant-variable)} {value symbol env}
 
@@ -300,7 +297,7 @@ It is guaranteed that the same (in the sense of \texttt{eq}) function is
 returned by two consecutive calls as the first argument as long as
 the definition of \textit{symbol} does not change.
 
-\Defgeneric {(setf symbol-macro} {expansion symbol env}
+\Defgeneric {(setf symbol-macro)} {expansion symbol env}
 
 This function is used in order to define \textit{symbol} as a symbol macro
 with the given \textit{expansion} in \textit{env}.
