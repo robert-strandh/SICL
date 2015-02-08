@@ -385,6 +385,9 @@ in \textit{env} than that association is lost.
 If \textit{new-class} is \texttt{nil}, then \textit{symbol} is no
 longer associated with a class in \textit{env}.
 
+If \textit{new-class} is neither a class metaobject nor \texttt{nil},
+then an error of type \texttt{type-error} is signaled.
+
 \Defgeneric {setf-expander} {symbol env}
 
 This generic function returns the \texttt{setf} expander associated with
