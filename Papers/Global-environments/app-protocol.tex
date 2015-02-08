@@ -293,9 +293,10 @@ macro.  The second value is the form that \textit{symbol} expands to as a
 macro, or \texttt{nil} if symbol does not have a definition as a
 symbol macro.
 
-It is guaranteed that the same (in the sense of \texttt{eq}) function is
-returned by two consecutive calls as the first argument as long as
-the definition of \textit{symbol} does not change.
+It is guaranteed that the same (in the sense of \texttt{eq}) function
+is returned by two consecutive calls to this function with the same
+symbol as the first argument, as long as the definition
+of \textit{symbol} does not change.
 
 \Defgeneric {(setf symbol-macro)} {expansion symbol env}
 
