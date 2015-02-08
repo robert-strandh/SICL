@@ -92,7 +92,13 @@ to generate dispatch code.
 
 The root of the problem is that in \commonlisp{} there is always a way
 for the user of a Read-Eval-Print Loop to access every global function
-in the system, including the compiler.
+in the system, including the compiler.  While it might be easy to
+remove functions that may render the system unusable \emph{directly}
+such as functions for opening and deleting files, it is generally not
+possible to remove the compiler, since it is used at run-time to
+evaluate expressions and in many systems in order to create functions
+for generic dispatch.  With access to the compiler, a user can
+potentially create and execute code for any purpose.
 
 Using first-class global environments solves this problem in an
 elegant way.  It suffices to provide a restricted environment in which
