@@ -9,8 +9,8 @@ there is a suggested protocol that is sometimes supplied in existing
 \commonlisp{} implementations. 
 
 When it comes to \emph{global environments}, however, the standard is
-even more silent.  In section 3.2.1 (entitled Compiler Terminology) of
-the \commonlisp{} \hs{}, the distinction is made between the
+even more reticent.  In section 3.2.1 (entitled Compiler Terminology)
+of the \commonlisp{} \hs{}, the distinction is made between the
 \emph{startup environment}, the \emph{compilation environment}, the
 \emph{evaluation environment}, and the \emph{runtime environment}.
 Excluding the runtime environment, the standard allows for all the
@@ -40,7 +40,7 @@ compiler are not visible in the startup-environment.  However, as we
 show in this paper, there are many more advantages, such as making it
 easier to create a so-called \emph{sandbox} environment, which is
 notoriously difficult to do in a typical \commonlisp{}
-implementation.  Another significant advantage with first-class global
+implementation.  Another significant advantage of first-class global
 environments is that it becomes unnecessary to use temporary package
 names for bootstrapping a target \commonlisp{} system from a host
 \commonlisp{} system.
@@ -51,7 +51,7 @@ incur any performance penalty, at least not at runtime.  We show an
 implementation of first-class global environments that respects this
 constraint by supplying \emph{cells} that can be thought of as the
 same as the traditional value cells and function cells, except that
-they are disembodied so that the are physically located in the
+they are dislocated so that the are physically located in the
 environment object as opposed to being associated with a symbol.
 
 %%  LocalWords:  startup runtime
