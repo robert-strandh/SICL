@@ -6,6 +6,20 @@ We have seen that this technique has several advantages in terms of
 flexibility of the system, and that it greatly simplifies certain
 difficult problems such as bootstrapping and sandboxing.
 
+An interesting extension of our technique would be to consider
+\emph{environment inheritance}%
+\footnote{We mean \emph{inheritance} not in the sense of subclassing,
+  but rather as used in section 3.2.1 of the \hs{}.}
+For example, an environment providing the standard bindings of the
+\commonlisp{} language could be divided into an immutable part and a
+mutable part.  The mutable part would then contain features that can
+be modified by the user, such as the generic function
+\texttt{print-object} or the variable \texttt{*print-base*}, and it
+would inherit from the immutable part.  With this feature, it would
+only be necessary to clone the mutable part in order to create the
+evaluation environment from the startup environment as suggested in
+\refSec{sec-native-compilation}.
+
 We also think that first-class global environments could be an
 excellent basis for a multi-user \commonlisp{} system.
 
