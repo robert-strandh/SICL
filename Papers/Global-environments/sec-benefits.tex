@@ -11,14 +11,14 @@ evaluation environment is the global environment in which evaluations
 initiated by the compiler are accomplished.}
 Our method allows most evaluations by the compiler to have no
 influence in the startup environment.  It suffices to \emph{clone} the
-startup environment in order to obtains the evaluation environment. 
+startup environment in order to obtain the evaluation environment.
 
-With the method described in the previous section, some evaluations
-by the compiler would have side effects in the startup environment.
-In particular, the value cells and function cells are shared.
-Therefore, executing code at compile time that alters the global
-binding of a function or a variable will also be seen in the startup
-environment.  
+With the traditional of the startup environment and evaluation
+environment being identical, some evaluations by the compiler would
+have side effects in the startup environment.  In particular, the
+value cells and function cells are shared.  Therefore, executing code
+at compile time that alters the global binding of a function or a
+variable will also be seen in the startup environment.
 
 \subsection{Bootstrapping}
 
