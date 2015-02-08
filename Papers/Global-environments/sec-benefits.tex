@@ -22,6 +22,12 @@ variable will also be seen in the startup environment.
 
 \subsection{Bootstrapping}
 
+For the purpose of this paper, we use the word \emph{bootstrapping} to
+mean the process of building the executable of some implementation
+(the \emph{target} system) by executing code in the running process of
+another implementation (the \emph{host} system).  The host and the
+target systems may be the same implementation.
+
 When a \emph{host} \commonlisp{} system is used to bootstrap a
 \emph{target} \commonlisp{} system, the target system needs its own
 definitions of many standard \commonlisp{} features.  In particular,
