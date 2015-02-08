@@ -31,7 +31,8 @@ cross compiler needs access to the target definitions of standard
 
 It is, of course, not an option to replace the host versions of such
 macros with the corresponding target versions.  Doing so would almost
-certainly break the host system in irreparable ways.  For that reason,
+certainly break the host system in irreparable ways.  To avoid that
+the system might be damaged this way,
 many \commonlisp{} systems have a feature called \emph{package locks}%
 \footnote{The name of this feature is misleading.  While it does make
   sure that the protected package is not modified, it also makes sure
@@ -70,8 +71,8 @@ functions of the first-class global environment protocol.
 
 It is notoriously hard to create a so-called \emph{sandbox
   environment} for \commonlisp{}, i.e., an environment that contains
-a subset of the full languages.  A typical use case would be to
-propose a Read-Eval-Print Loop accessible through a web interface for
+a subset of the full language.  A typical use case would be to
+provide a Read-Eval-Print Loop accessible through a web interface for
 educational purposes.  Such a sandbox environment is hard to achieve
 because functions such as \texttt{eval} and \texttt{compile} would
 have to be removed so that the environment could not be destroyed by a
@@ -84,7 +85,7 @@ for the user of a Read-Eval-Print Loop to access every global function
 in the system, including the compiler.
 
 Using first-class global environments solves this problem in an
-elegant way.  It suffices to propose a restricted environment in which
+elegant way.  It suffices to provide a restricted environment in which
 there is no binding from the names \texttt{eval} and \texttt{compile}
 to the corresponding functions.  These functions can still be
 available in some other environment for use by the system itself.
