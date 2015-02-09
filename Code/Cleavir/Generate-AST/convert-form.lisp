@@ -122,13 +122,13 @@
 ;;; Converting a compound form that calls a global function.
 ;;; A global function can have  compiler macro associated with it.
 
-(defgeneric convert-function (info))
+(defgeneric convert-function (info env))
 
 (defmethod convert-form (form (info cleavir-env:global-function-info) env)
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
 	;; There is no compiler macro.  Create a CALL-AST.
-	(let ((function-ast (convert-function info))
+	(let ((function-ast (convert-function info env))
 	      (argument-asts (convert-sequence (cdr form) env)))
 	  (cleavir-ast:make-call-ast function-ast argument-asts))
 	;; There is a compiler macro.  We must see whether it will
@@ -142,7 +142,7 @@
 	      ;; declined.  We are left with function-call form.
 	      ;; Create a CALL-AST, just as if there were no compiler
 	      ;; macro present.
-	      (let ((function-ast (convert-function info))
+	      (let ((function-ast (convert-function info env))
 		    (argument-asts (convert-sequence (cdr form) env)))
 		(cleavir-ast:make-call-ast function-ast argument-asts))
 	      ;; If the two are not EQ, this means that the compiler

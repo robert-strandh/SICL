@@ -116,17 +116,19 @@
 ;;;
 ;;; Converting FUNCTION.
 
-(defmethod convert-function ((info cleavir-env:global-function-info))
+(defmethod convert-function ((info cleavir-env:global-function-info) env)
+  (declare (ignore env))
   (let ((name (cleavir-env:name info)))
     (make-instance 'cleavir-ast:fdefinition-ast
       :name name :info info)))
 
-(defmethod convert-function ((info cleavir-env:local-function-info))
+(defmethod convert-function ((info cleavir-env:local-function-info) env)
+  (declare (ignore env))
   (cleavir-env:identity info))
 
 (defun convert-named-function (name environment)
   (let ((info (cleavir-env:function-info environment name)))
-    (convert-function info)))
+    (convert-function info environment)))
 
 (defun convert-lambda-function (lambda-form env)
   (convert-code (cadr lambda-form) (cddr lambda-form) env))
