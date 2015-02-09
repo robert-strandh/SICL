@@ -34,15 +34,3 @@
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
     (compile-stream stream environment)))
-
-(defmethod cleavir-generate-ast:convert-constant-to-immediate
-    (constant (environment environment))
-  (cond ((and (typep constant 'integer)
-	      (<= #.(- (expt 2 30)) constant #.(1- (expt 2 30))))
-	 (* 2 constant))
-	((typep constant 'character)
-	 ;; FIXME: Currently, we depend on the host having the same
-	 ;; character encoding as the target.
-	 (+ #b11 (* 4 (char-code constant))))
-	(t
-	 nil)))
