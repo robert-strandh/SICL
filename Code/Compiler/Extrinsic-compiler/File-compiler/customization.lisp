@@ -15,3 +15,19 @@
 	 (+ #b11 (* 4 (char-code constant))))
 	(t
 	 nil)))
+
+;;; When we are asked to compile the name of a global function, by
+;;; default Cleavir generates an FDEFINITION-AST taking the function
+;;; name as an input.  For SICL, we do not want that.  Instead we want
+;;; it to generate an access to the CAR of the global function cell
+;;; that contains the function.  And we want the function cell to be
+;;; accessed at load time.
+(defmethod cleavir-generate-ast:convert-function
+    ((info cleavir-env:global-function-info) (env environment))
+  (cleavir-ast:make-car-ast
+   (cleavir-ast:make-load-time-value-ast
+    `(sicl-global-environment:function-cell
+      ',(cleavir-env:name info)
+      sicl-global-environment:*global-environment*)
+    ;; The cell is not read-only.
+    nil)))
