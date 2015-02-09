@@ -28,3 +28,6 @@
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
     (compile-stream stream environment)))
+
+(defclass environment (sicl-extrinsic-environment:environment)
+  ())
