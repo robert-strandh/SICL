@@ -519,8 +519,25 @@
 ;;; then a call to TYPEP is generated instead. 
 
 (defclass typeq-ast (ast)
-  ((%type-specifier :initarg :type-specifier :reader type-specifier)
+  (;; This slot contains the type specifier as an S-expression.  When
+   ;; this AST is compiled to HIR, the contents of this slot will be
+   ;; transmitted to the TYPEQ-INSTRUCTION so that it can be used by
+   ;; the type inference machinery.
+   (%type-specifier :initarg :type-specifier :reader type-specifier)
+   ;; This slot also contains the type specifier, but this time as a
+   ;; LOAD-TIME-VALUE-AST.  The purpose of this AST is that it will be
+   ;; hoisted so that the type specifier is provided as a load-time
+   ;; constant to be used with TYPEP, should it turn out to be
+   ;; necessary to use TYPEP at runtime to determine the type.
+   (%type-specifier-ast :initarg :type-specifier-ast :reader type-specifier-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
+
+(defmethod initialize-instance :after
+    ((ast typeq-ast) &key &allow-other-keys)
+  (reinitialize-instance
+   ast
+   :type-specifier-ast
+   (make-load-time-value-ast `',(type-specifier ast))))
 
 (defun make-typeq-ast (form-ast type-specifier)
   (make-instance 'typeq-ast
@@ -532,7 +549,7 @@
   (:form-ast form-ast))
 
 (defmethod children ((ast typeq-ast))
-  (list (form-ast ast)))
+  (list (form-ast ast) (type-specifier-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
