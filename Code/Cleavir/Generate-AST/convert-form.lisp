@@ -122,6 +122,8 @@
 ;;; Converting a compound form that calls a global function.
 ;;; A global function can have  compiler macro associated with it.
 
+(defgeneric convert-function (info))
+
 (defmethod convert-form (form (info cleavir-env:global-function-info) env)
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)

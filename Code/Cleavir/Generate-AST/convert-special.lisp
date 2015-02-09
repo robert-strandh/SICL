@@ -116,8 +116,6 @@
 ;;;
 ;;; Converting FUNCTION.
 
-(defgeneric convert-function (info))
-
 (defmethod convert-function ((info cleavir-env:global-function-info))
   (let ((name (cleavir-env:name info)))
     (make-instance 'cleavir-ast:fdefinition-ast
