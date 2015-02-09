@@ -13,6 +13,12 @@
 	 until (eq form eof)
 	 collect (cleavir-generate-ast:generate-ast form environment))))
 
+(defun hir-transformations (initial-instruction)
+  (cleavir-hir-transformations:process-fdefinitions
+   initial-instruction *sicl* *x86-64* *gnu-linux*)
+  (cleavir-hir-transformations:type-inference initial-instruction)
+  (cleavir-hir-transformations:eliminate-typeq initial-instruction))
+
 (defun compile-stream (stream environment)
   (let* ((cleavir-generate-ast:*compiler* 'cl:compile-file)
 	 (ast (ast-from-stream stream environment))
@@ -28,9 +34,6 @@
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
     (compile-stream stream environment)))
-
-(defclass environment (sicl-extrinsic-environment:environment)
-  ())
 
 (defmethod cleavir-generate-ast:convert-constant-to-immediate
     (constant (environment environment))

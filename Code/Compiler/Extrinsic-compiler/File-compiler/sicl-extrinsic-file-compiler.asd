@@ -13,5 +13,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment")
    (:file "compile-file")
    (:file "introduce-immediate")))
