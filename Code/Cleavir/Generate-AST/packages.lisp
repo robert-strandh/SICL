@@ -5,6 +5,7 @@
   (:export #:generate-ast
 	   #:convert-code
 	   #:convert-constant-to-immediate
+	   #:convert-function
 	   #:minimally-compile
 	   #:*top-level-form-p*
 	   #:*compiler*
