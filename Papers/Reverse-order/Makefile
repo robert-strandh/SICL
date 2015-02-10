@@ -8,6 +8,8 @@ PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
 #PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 PDF=$(PDF_T:.pdf_t=.pdf)
 TESTFILE=v0-v1-v7
+FORMAT=eps
+CURVE=$(TESTFILE).$(FORMAT)
 
 .SUFFIXES:
 .SUFFIXES: .fig .ps .dvi .tex .pdf .bib .eps .pstex .pstex_t .gp .png
@@ -23,7 +25,7 @@ all : $(NAME).pdf
 %.code: %.lisp 
 	./codify $<
 
-%.png: %
+%.eps: %
 	echo $<
 	sh curves.sh $<
 	gnuplot $<.gp
@@ -34,7 +36,7 @@ all : $(NAME).pdf
 	sh curves.sh $<
 	gnuplot $<.gp
 
-$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(TESTFILE).png
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(CURVE)
 	pdflatex $<
 	bibtex $(NAME)
 	pdflatex $<
