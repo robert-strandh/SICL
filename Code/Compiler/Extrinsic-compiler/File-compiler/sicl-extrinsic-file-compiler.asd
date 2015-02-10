@@ -4,6 +4,7 @@
   :depends-on (:sicl-reader-simple
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
+	       :cleavir-ast-transformations
 	       :cleavir-hir-to-mir
 	       :sicl-extrinsic-environment
 	       :sicl-target-sicl
