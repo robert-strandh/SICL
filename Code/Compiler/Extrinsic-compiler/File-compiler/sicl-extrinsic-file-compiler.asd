@@ -4,6 +4,7 @@
   :depends-on (:sicl-reader-simple
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
+	       :cleavir-ast-transformations
 	       :cleavir-hir-to-mir
 	       :sicl-extrinsic-environment
 	       :sicl-target-sicl
@@ -15,5 +16,4 @@
   ((:file "packages")
    (:file "environment")
    (:file "customization")
-   (:file "compile-file")
-   (:file "introduce-immediate")))
+   (:file "compile-file")))
