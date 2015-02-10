@@ -451,7 +451,7 @@
 (defmethod compile-ast :around ((ast cleavir-ast:top-level-function-ast) context)
   (declare (ignore context))
   (let ((enter (call-next-method)))
-    (change-class enter 'top-level-enter-instruction
+    (change-class enter 'cleavir-ir:top-level-enter-instruction
 		  :forms (cleavir-ast:forms ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
