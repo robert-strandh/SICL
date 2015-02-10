@@ -5,8 +5,6 @@
   (:export
    #:eliminate-typeq
    #:type-inference
-   #:process-fdefinitions
-   #:process-fdefinition
    #:process-captured-variables
    #:compute-ownerships
    #:segregate-lexicals

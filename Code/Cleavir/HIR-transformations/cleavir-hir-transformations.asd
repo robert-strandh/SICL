@@ -14,5 +14,4 @@
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
    (:file "segregate-lexicals")
-   (:file "process-fdefinition")
    (:file "hir-transformations")))
