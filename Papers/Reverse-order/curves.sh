@@ -13,10 +13,12 @@ GP=$NAME.gp
 
 TITLE="Comparison between reverse-count functions"
 echo gp=$GP
+OUTPUT=eps
+SUFFIX=$OUTPUT
 
 cat << _EOF_ > $GP
-set term post eps
-set output "$NAME.eps"
+set term $OUTPUT dashed
+set output "$NAME.$SUFFIX"
 set title "$TITLE"
 set xlabel "List length"
 set ylabel "Time in ms"

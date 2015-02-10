@@ -2,13 +2,15 @@ NAME=reverse-order
 
 TEXFILES=$(NAME).tex $(shell ./tex-dependencies $(NAME).tex)
 BIBFILES=$(NAME).bib
-PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
 VERBATIM=$(shell ./strip-dependence verbatimtabinput $(TEXFILES))
 CODEFILES=$(shell ./strip-dependence inputcode $(TEXFILES))
-PDF=$(subst .pdf_t,.pdf,$(PDF_T))
+PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
+#PDF=$(subst .pdf_t,.pdf,$(PDF_T))
+PDF=$(PDF_T:.pdf_t=.pdf)
+TESTFILE=v0-v1-v7
 
 .SUFFIXES:
-.SUFFIXES: .fig .ps .dvi .tex .pdf .bib .eps .pstex .pstex_t .gp
+.SUFFIXES: .fig .ps .dvi .tex .pdf .bib .eps .pstex .pstex_t .gp .png
 
 all : $(NAME).pdf
 
@@ -21,14 +23,24 @@ all : $(NAME).pdf
 %.code: %.lisp 
 	./codify $<
 
-%.eps: %.gp
-	gnuplot $<
+%.png: %
+	echo $<
+	sh curves.sh $<
+	gnuplot $<.gp
 
-$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES)
+%.tex: %
+	echo $%
+	echo $<	
+	sh curves.sh $<
+	gnuplot $<.gp
+
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(TESTFILE).png
 	pdflatex $<
 	bibtex $(NAME)
 	pdflatex $<
 	pdflatex $<
+
+.PHONY: clean spotless view
 
 view: $(NAME).pdf
 	xpdf $<
