@@ -15,15 +15,16 @@
 
 (defun compile-stream (stream environment)
   (let* ((cleavir-generate-ast:*compiler* 'cl:compile-file)
-	 (ast (ast-from-stream stream environment))
-	 (hir (cleavir-ast-to-hir:compile-toplevel ast)))
-    (cleavir-hir-transformations:hir-transformations
-     hir
-     *sicl*
-     *x86-64*
-     *gnu-linux*)
-    (cleavir-ir:hir-to-mir hir *sicl* *x86-64* *gnu-linux*)
-    hir))
+	 (ast (ast-from-stream stream environment)))
+    (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
+	   (hir (cleavir-ast-to-hir:compile-toplevel ast-bis)))
+      (cleavir-hir-transformations:hir-transformations
+       hir
+       *sicl*
+       *x86-64*
+       *gnu-linux*)
+      (cleavir-ir:hir-to-mir hir *sicl* *x86-64* *gnu-linux*)
+      hir)))
 
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
