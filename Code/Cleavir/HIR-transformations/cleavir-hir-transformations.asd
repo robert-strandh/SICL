@@ -6,7 +6,6 @@
   :components
   ((:file "packages")
    (:file "traverse")
-   (:file "introduce-immediates")
    (:file "compute-nesting-depth")
    (:file "inline-calls")
    (:file "static-few-assignments")
