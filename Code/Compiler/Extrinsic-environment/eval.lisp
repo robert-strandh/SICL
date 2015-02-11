@@ -17,6 +17,13 @@
 		       form environment1)))
 	((and (atom form) (not (symbolp form)))
 	 form)
+	((and (consp form)
+	      (consp (cdr form))
+	      (consp (cddr form))
+	      (null (cdddr form))
+	      (eq (car form) 'sicl-global-environment:function-cell)
+	      (eq (caddr form) 'sicl-global-environment:*global-environment*))
+	 (sicl-global-environment:function-cell (cadr form) environment2))
 	(t
 	 (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
 		(ast (cleavir-generate-ast:generate-ast form environment1))
