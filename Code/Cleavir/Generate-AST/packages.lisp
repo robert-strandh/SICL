@@ -6,6 +6,7 @@
 	   #:convert-code
 	   #:convert-constant-to-immediate
 	   #:convert-function
+	   #:convert-global-function
 	   #:minimally-compile
 	   #:*top-level-form-p*
 	   #:*compiler*
