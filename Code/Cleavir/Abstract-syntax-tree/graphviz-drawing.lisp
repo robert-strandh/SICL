@@ -81,6 +81,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Drawing a TOP-LEVEL-FUNCTION-AST.
+
+(defmethod stream-draw-ast ((ast top-level-function-ast) stream)
+  (format stream "   ~a [label = \"~a ~a\"];~%"
+	  (id ast)
+	  (label ast)
+	  (forms ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Drawing a LOAD-TIME-VALUE-AST.
 
 (defmethod stream-draw-ast ((ast load-time-value-ast) stream)

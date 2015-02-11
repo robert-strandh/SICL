@@ -22,7 +22,7 @@
 ;;; it to generate an access to the CAR of the global function cell
 ;;; that contains the function.  And we want the function cell to be
 ;;; accessed at load time.
-(defmethod cleavir-generate-ast:convert-function
+(defmethod cleavir-generate-ast:convert-global-function
     ((info cleavir-env:global-function-info) (env environment))
   (cleavir-ast:make-car-ast
    (cleavir-ast:make-load-time-value-ast
