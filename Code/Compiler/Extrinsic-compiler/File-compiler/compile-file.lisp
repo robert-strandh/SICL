@@ -23,8 +23,8 @@
        *sicl*
        *x86-64*
        *gnu-linux*)
-      (cleavir-ir:hir-to-mir hir *sicl* *x86-64* *gnu-linux*)
-      hir)))
+      ;; (cleavir-ir:hir-to-mir hir *sicl* *x86-64* *gnu-linux*)
+      (values hir ast-bis))))
 
 (defun compile-file (filename environment)
   (with-open-file (stream filename :direction :input)
