@@ -6,18 +6,22 @@ that counts elements of a list from the end. The two adjustment parameters are
 \item into how many chunks do we cut the list.
 \end{enumerate}
 
-To present here, we have retained the one with the best experimental behaviour
-and compared it to two more classical versions:
+To present in this article, 
+we have retained the one with the best experimental behaviour (\texttt{v7})
+and compared it to two more classical versions  (\texttt{v0} and \texttt{v1}).
+
+We now describe these three versions.
+
 \begin{enumerate}
 \setcounter{enumi}{-1}
-\item the native \texttt{count} function called with the \texttt{from-end} keyword argument set to \texttt{t},
+\item Version \texttt{v0} uses the native \texttt{count} function called with the \texttt{from-end} keyword argument set to \texttt{t},
 \verbatimtabinput{Code/Count/0-count.lisp}
-\item the naive version consisting in reversing the list before counting;
-this version uses the heap space and no stack space.
+\item Version \texttt{v1} is the naive version consisting in reversing the list 
+before counting; this version uses the heap space and no stack space.
 \verbatimtabinput{Code/Count/1-count.lisp}
 \setcounter{enumi}{6}
-\item our 7th version;
-this version divides the list in 2 parts if it has more than one
+\item Our 7th version (\texttt{v7}) divides the list in 2 parts 
+if it has more than one 
 hundred million elements.  Otherwise, if it has more than 10000
 elements, it divides it into chunks that have 10000 elements each.
 Finally, if it has no more than 10000 elements, then it uses the
@@ -28,10 +32,12 @@ lengths no more than one hundred million elements, because then it
 is guaranteed to traverse the list at most 3 times + 1 time for
 computing the length.  It could be improved for lengths greater
 than one hundred million by using a better division than 2 then.
-\verbatimtabinput{Code/Count/7-count.lisp}
+The code is given below.
 \end{enumerate}
 
-Thanks to the help of the Lisp community we could test the behaviour
+\verbatimtabinput{Code/Count/7-count.lisp}
+
+Thanks to the help of the Lisp community, we could test the behaviour
 of these three versions on several implementations and architectures.
 We summarize in Figure~\ref{f-systems} the results of tests that 
 worked for a list of size up to $10^7$.

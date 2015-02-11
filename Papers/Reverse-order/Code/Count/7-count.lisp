@@ -39,4 +39,5 @@
     (aux3 x list length)))
 
 (defun reverse-count-7 (x list)
-  (count-from-end-with-length-7 x list (length list)))
+  (count-from-end-with-length-7
+   x list (length list)))
