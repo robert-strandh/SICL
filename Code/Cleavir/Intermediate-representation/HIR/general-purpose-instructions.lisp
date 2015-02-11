@@ -50,6 +50,11 @@
 (defclass top-level-enter-instruction (enter-instruction)
   ((%forms :initarg :forms :reader forms)))
 
+(defun make-top-level-enter-instruction (lambda-list forms)
+  (let ((enter (make-enter-instruction lambda-list)))
+    (change-class enter 'top-level-enter-instruction
+		  :forms forms)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction NOP-INSTRUCTION.

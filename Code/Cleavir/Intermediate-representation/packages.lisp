@@ -39,7 +39,7 @@
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
    #:enter-instruction #:make-enter-instruction #:lambda-list
-   #:top-level-enter-instruction #:forms
+   #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction
