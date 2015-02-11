@@ -304,7 +304,16 @@
   (:body-ast body-ast))
 
 (defmethod children ((ast function-ast))
-  (list (body-ast ast)))
+  (cons (body-ast ast)
+	(loop for entry in (lambda-list ast)
+	      append (cond ((symbolp entry)
+			    '())
+			   ((consp entry)
+			    (if (= (length entry) 2)
+				entry
+				(cdr entry)))
+			   (t
+			    (list entry))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
