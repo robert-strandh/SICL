@@ -9,4 +9,5 @@
 	   #:unwind-protect
 	   #:symbol
 	   #:symbol-value)
-  (:export #:environment))
+  (:export #:environment
+	   #:symbol-value))
