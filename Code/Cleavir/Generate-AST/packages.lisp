@@ -8,6 +8,7 @@
 	   #:convert-function
 	   #:convert-global-function
 	   #:convert-special-variable
+	   #:convert-setq-special-variable
 	   #:convert-special-binding
 	   #:minimally-compile
 	   #:*top-level-form-p*
