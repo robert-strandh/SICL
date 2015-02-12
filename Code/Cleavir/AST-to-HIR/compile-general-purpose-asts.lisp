@@ -880,34 +880,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a BIND-AST
-;;;
-;;; Recall that the BIND-AST contains a SYMBOL to bind, a VALUE-AST
-;;; computing the value to bind it to, and a BODY-AST with code to be
-;;; executed while the binding is in place.
-;;;
-;;; We compile the BIND-AST by turning it into a CALL-AST as follows:
-;;; The CALLEE-AST of the CALL-AST is an FDEFINITION-AST for the
-;;; function named CLEAVIR-PRIMOP:CALL-WITH-VARIABLE-BOUND.  The
-;;; ARGUMENT-ASTs of the CALL-AST are ASTs for creating a CONSTANT-AST
-;;; out of the SYMBOL, the VALUE-AST, and a FUNCTION-AST defining a
-;;; thunk containing the BODY-AST.
-
-(defmethod compile-ast ((ast cleavir-ast:bind-ast) context)
-  (let* ((fname 'cleavir-primop:call-with-variable-bound)
-	 ;; FIXME: provide something more useful for the second argument.
-	 (fdefinition-ast (cleavir-ast:make-fdefinition-ast fname nil))
-	 (symbol-ast nil) ; FIXME
-	 (value-ast (cleavir-ast:value-ast ast))
-	 (body-ast (cleavir-ast:body-ast ast))
-	 (thunk-ast (cleavir-ast:make-function-ast body-ast '()))
-	 (call-ast (cleavir-ast:make-call-ast
-		    fdefinition-ast
-		    (list symbol-ast value-ast thunk-ast))))
-    (compile-ast call-ast context)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compile a LOAD-TIME-VALUE-AST.
 ;;;
 ;;; The LOAD-TIME-VALUE-AST is a subclass of ONE-VALUE-AST-MIXIN, so
