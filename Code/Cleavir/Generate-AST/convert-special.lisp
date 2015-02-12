@@ -119,7 +119,7 @@
 (defgeneric convert-global-function (info global-env))
 
 (defmethod convert-global-function (info global-env)
-  (declare (ignore env))
+  (declare (ignore global-env))
   (make-instance 'cleavir-ast:fdefinition-ast
     :name (cleavir-env:name info)
     :info info))
@@ -440,7 +440,7 @@
     (cleavir-ast:make-progn-ast
      (list (cleavir-ast:make-setq-ast temp form-ast)
 	   (cleavir-ast:make-set-symbol-value-ast
-	    (cleavir-env:name info)
+	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info))
 	    temp)
 	   temp))))
 
