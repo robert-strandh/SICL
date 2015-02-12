@@ -120,9 +120,9 @@
 
 (defmethod convert-global-function (info global-env)
   (declare (ignore global-env))
-  (make-instance 'cleavir-ast:fdefinition-ast
-    :name (cleavir-env:name info)
-    :info info))
+  (cleavir-ast:make-fdefinition-ast
+   (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info) t)
+   info))
 
 (defmethod convert-function ((info cleavir-env:global-function-info) env)
   (convert-global-function info (cleavir-env:global-environment env)))
