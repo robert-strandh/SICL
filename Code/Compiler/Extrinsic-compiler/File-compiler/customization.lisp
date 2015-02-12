@@ -31,3 +31,31 @@
       sicl-global-environment:*global-environment*)
     ;; The cell is not read-only.
     nil)))
+
+;;; When we are asked to compile the name of a special variable, by
+;;; default Cleavir generates a SYMBOL-VALUE-AST taking the variable
+;;; name as an input.  For SICL, we do not want that.  Instead we want
+;;; it to generate a call to SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE,
+;;; passing it the symbol naming the variable, the unbound value, and
+;;; the global value cell.
+(defmethod cleavir-generate-ast:convert-special-variable
+    ((info cleavir-env:special-variable-info) (env environment))
+  (cleavir-ast:make-call-ast
+   (cleavir-ast:make-car-ast
+    (cleavir-ast:make-load-time-value-ast
+     '(sicl-global-environment:function-cell
+       'sicl-extrinsic-environment:symbol-value
+       sicl-global-environment:*global-environment*)))
+   (list (cleavir-ast:make-load-time-value-ast
+	  `,(cleavir-env:name info)
+	  t)
+	 (cleavir-ast:make-load-time-value-ast
+	  `(sicl-global-environment:variable-unbound
+	    ',(cleavir-env:name info)
+	    sicl-global-environment:*global-environment*)
+	  t)
+	 (cleavir-ast:make-load-time-value-ast
+	  `(sicl-global-environment:variable-cell
+	    ',(cleavir-env:name info)
+	    sicl-global-environment:*global-environment*)
+	  nil))))
