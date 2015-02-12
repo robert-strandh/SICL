@@ -422,20 +422,26 @@
 ;;; therefore make sure it is always compiled in a context where its
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
-(defgeneric convert-setq (info form-ast))
+(defgeneric convert-setq (info form-ast env))
 
-(defmethod convert-setq ((info cleavir-env:constant-variable-info) form-ast)
+(defmethod convert-setq
+    ((info cleavir-env:constant-variable-info) form-ast env)
+  (declare (ignore env))
   (error 'setq-constant-variable
 	 :form (cleavir-env:name info)))
 
-(defmethod convert-setq ((info cleavir-env:lexical-variable-info) form-ast)
+(defmethod convert-setq
+    ((info cleavir-env:lexical-variable-info) form-ast env)
+  (declare (ignore env))
   (cleavir-ast:make-progn-ast 
    (list (cleavir-ast:make-setq-ast
 	  (cleavir-env:identity info)
 	  form-ast)
 	 (cleavir-env:identity info))))
 
-(defmethod convert-setq ((info cleavir-env:special-variable-info) form-ast)
+(defgeneric convert-setq-special-variable (info form-ast global-env))
+
+(defmethod convert-setq-special-variable (info form-ast global-env)
   (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
     (cleavir-ast:make-progn-ast
      (list (cleavir-ast:make-setq-ast temp form-ast)
@@ -444,8 +450,13 @@
 	    temp)
 	   temp))))
 
+(defmethod convert-setq
+    ((info cleavir-env:special-variable-info) form-ast env)
+  (let ((global-env (cleavir-env:global-environment env)))
+    (convert-setq-special-variable info form-ast global-env)))
+
 (defun convert-elementary-setq (var form env)
-  (convert-setq (variable-info env var) (convert form env)))
+  (convert-setq (variable-info env var) (convert form env) env))
   
 (defmethod convert-special
     ((symbol (eql 'setq)) form environment)
