@@ -221,6 +221,12 @@
     t))
 
 (defun find-function-entry (environment name)
+  (assert (or (symbolp name)
+	      (and (consp name)
+		   (consp (cdr name))
+		   (null (cddr name))
+		   (eq (car name) 'setf)
+		   (symbolp (cadr name)))))
   (find name (function-entries environment)
 	:test #'equal :key #'name))
 
