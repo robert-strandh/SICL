@@ -100,6 +100,7 @@
   :depends-on (:sicl-simple-environment
 	       :sicl-loop-support
 	       :cleavir-generate-ast
+	       :cleavir-ast-transformations
 	       :cleavir-ast-to-hir
 	       :cleavir-hir
 	       :cleavir-hir-transformations
@@ -111,6 +112,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "customization")
    (:file "runtime-environment")
    (:file "symbol-value")
    (:file "traced-funcall")
