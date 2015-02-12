@@ -186,6 +186,17 @@
 	  (values (cons item-specific-dspecs itemized-dspecs)
 		  remaining-dspecs)))))
 
+(defgeneric convert-special-binding (variable value-ast next-ast env))
+
+(defmethod convert-special-binding (variable value-ast next-ast global-env)
+  (let* ((function-name 'cleavir-primop:call-with-variable-bound)
+	 (info (cleavir-env:function-info global-env function-name)))
+    (cleavir-ast:make-call-ast
+     (convert-global-function info global-env)
+     (list (cleavir-ast:make-load-time-value-ast variable t)
+	   value-ast
+	   (cleavir-ast:make-function-ast next-ast '())))))
+
 ;;; ENV is an environment that is known to contain information about
 ;;; the variable VARIABLE, but we don't know whether it is special or
 ;;; lexical.  VALUE-AST is an AST that computes the value to be given
@@ -200,7 +211,8 @@
   (let ((info (cleavir-env:variable-info env variable)))
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)
-	(cleavir-ast:make-bind-ast variable value-ast next-ast)
+	(let ((global-env (cleavir-env:global-environment env)))
+	  (convert-special-binding variable value-ast next-ast global-env))
 	(cleavir-ast:make-progn-ast
 	 (list (cleavir-ast:make-setq-ast
 		(cleavir-env:identity info)
