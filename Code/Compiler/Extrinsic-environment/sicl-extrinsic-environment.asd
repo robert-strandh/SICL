@@ -123,6 +123,7 @@
    (:file "import-host-packages")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
+   (:file "import-from-sicl-extrinsic-environment")
    (:file "import-from-sicl-conditionals")
    (:file "import-from-cleavir-code-utilities")
    (:file "import-from-cleavir-environment")
