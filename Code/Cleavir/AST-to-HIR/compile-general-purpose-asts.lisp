@@ -564,11 +564,14 @@
 
 (defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)
   (check-context-for-one-value-ast context)
-  (let ((symbol (cleavir-ast:symbol ast)))
-    (cleavir-ir:make-symbol-value-instruction
-     (cleavir-ir:make-constant-input symbol)
-     (first (results context))
-     (first (successors context)))))
+  (let ((temp (make-temp)))
+    (compile-ast
+     (cleavir-ast:symbol-ast ast)
+     (context
+      (list temp)
+      (list (cleavir-ir:make-symbol-value-instruction
+	     temp (first (results context)) (first (successors context))))
+      (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -576,16 +579,19 @@
 
 (defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((temp (make-temp))
-	(symbol (cleavir-ast:symbol ast)))
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp)))
     (compile-ast
-     (cleavir-ast:value-ast ast)
+     (cleavir-ast:symbol-ast ast)
      (context
-      (list temp)
-      (list (cleavir-ir:make-set-symbol-value-instruction
-	     (cleavir-ir:make-constant-input symbol)
-	     temp
-	     (first (successors context))))
+      (list temp1)
+      (list (compile-ast
+	     (cleavir-ast:value-ast ast)
+	     (context
+	      (list temp2)
+	      (list (cleavir-ir:make-set-symbol-value-instruction
+		     temp1 temp2 (first (successors context))))
+	      (invocation context))))
       (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -891,7 +897,7 @@
   (let* ((fname 'cleavir-primop:call-with-variable-bound)
 	 ;; FIXME: provide something more useful for the second argument.
 	 (fdefinition-ast (cleavir-ast:make-fdefinition-ast fname nil))
-	 (symbol-ast (cleavir-ast:make-constant-ast (cleavir-ast:symbol ast)))
+	 (symbol-ast nil) ; FIXME
 	 (value-ast (cleavir-ast:value-ast ast))
 	 (body-ast (cleavir-ast:body-ast ast))
 	 (thunk-ast (cleavir-ast:make-function-ast body-ast '()))
