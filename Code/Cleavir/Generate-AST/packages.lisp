@@ -7,6 +7,7 @@
 	   #:convert-constant-to-immediate
 	   #:convert-function
 	   #:convert-global-function
+	   #:convert-special-variable
 	   #:minimally-compile
 	   #:*top-level-form-p*
 	   #:*compiler*
