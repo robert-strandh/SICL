@@ -210,23 +210,22 @@
 ;;; Class FDEFINITION-AST.
 ;;;
 ;;; This AST is generated from a reference to a global function.
-;;; NAME is not an AST but just a function name. 
 
 (defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  (;; This slot contains the function name.
-   (%name :initarg :name :reader name)
+  (;; This slot contains an AST that produces the function name.
+   (%name-ast :initarg :name-ast :reader name-ast)
    ;; This slot contains the INFO instance that was returned form
    ;; the environment query.
    (%info :initarg :info :reader info)))
 
-(defun make-fdefinition-ast (name info)
-  (make-instance 'fdefinition-ast :name name :info info))
+(defun make-fdefinition-ast (name-ast info)
+  (make-instance 'fdefinition-ast :name-ast name-ast :info info))
 
 (cleavir-io:define-save-info fdefinition-ast
-  (:name name))
+  (:name-ast name-ast))
 
 (defmethod children ((ast fdefinition-ast))
-  '())
+  (list (name-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
