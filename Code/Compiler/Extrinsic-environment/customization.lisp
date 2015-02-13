@@ -36,8 +36,7 @@
 ;;; default Cleavir generates a SYMBOL-VALUE-AST taking the variable
 ;;; name as an input.  For SICL, we do not want that.  Instead we want
 ;;; it to generate a call to SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE,
-;;; passing it the symbol naming the variable, the unbound value, and
-;;; the global value cell.
+;;; passing it the symbol naming the variable and the environment.
 (defmethod cleavir-generate-ast:convert-special-variable
     ((info cleavir-env:special-variable-info) (env environment))
   (cleavir-ast:make-call-ast
@@ -50,22 +49,15 @@
 	  `',(cleavir-env:name info)
 	  t)
 	 (cleavir-ast:make-load-time-value-ast
-	  `(sicl-global-environment:variable-unbound
-	    ',(cleavir-env:name info)
-	    sicl-global-environment:*global-environment*)
-	  t)
-	 (cleavir-ast:make-load-time-value-ast
-	  `(sicl-global-environment:variable-cell
-	    ',(cleavir-env:name info)
-	    sicl-global-environment:*global-environment*)
-	  nil))))
+	  'sicl-global-environment:*global-environment*
+	  t))))
 
 ;;; When we are asked to compile an assignment to a special variable,
 ;;; by default Cleavir generates a SET-SYMBOL-VALUE-AST taking the
 ;;; variable name and the value as an input.  For SICL, we do not want
 ;;; that.  Instead we want it to generate a call to (SETF
 ;;; SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE), passing it the new
-;;; value, the symbol naming the variable, and the global value cell.
+;;; value, the symbol naming the variable, and the environment.
 (defmethod cleavir-generate-ast:convert-setq-special-variable
     ((info cleavir-env:special-variable-info) form-ast (env environment))
   (cleavir-ast:make-call-ast
@@ -79,7 +71,5 @@
 	  `',(cleavir-env:name info)
 	  t)
 	 (cleavir-ast:make-load-time-value-ast
-	  `(sicl-global-environment:variable-cell
-	    ',(cleavir-env:name info)
-	    sicl-global-environment:*global-environment*)
+	  'sicl-global-environment:*global-environment*
 	  nil))))
