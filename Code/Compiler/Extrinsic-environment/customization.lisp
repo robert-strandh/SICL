@@ -12,7 +12,7 @@
 	((typep constant 'character)
 	 ;; FIXME: Currently, we depend on the host having the same
 	 ;; character encoding as the target.
-	 (+ #b11 (* 4 (char-code constant))))
+	 (+ #b11 (ash (char-code constant) 3)))
 	(t
 	 nil)))
 
