@@ -41,6 +41,8 @@
 	      (eq (car (cadr form)) 'quote))
 	 (sicl-global-environment:variable-cell (cadr (cadr form))
 						environment2))
+	((eq form 'sicl-global-environment:*global-environment*)
+	 environment2)
 	(t
 	 (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
 		(ast (cleavir-generate-ast:generate-ast form environment1))
