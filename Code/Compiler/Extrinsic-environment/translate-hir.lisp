@@ -34,12 +34,21 @@
 (defvar *tags*)
 (defvar *vars*)
 
+(defun translate-immediate-input (value)
+  (cond ((evenp value)
+	 (/ value 2))
+	(t
+	 (code-char (ash value -3)))))
+
 (defun translate-datum (datum)
-  (let ((var (gethash datum *vars*)))
-    (when (null var)
-      (setf var (gensym))
-      (setf (gethash datum *vars*) var))
-    var))
+  (cond ((typep datum 'cleavir-ir:immediate-input)
+	 (translate-immediate-input (cleavir-ir:value datum)))
+	(t
+	 (let ((var (gethash datum *vars*)))
+	   (when (null var)
+	     (setf var (gensym))
+	     (setf (gethash datum *vars*) var))
+	   var))))
 
 (defun translate-lambda-list (lambda-list)
   (loop for item in lambda-list
