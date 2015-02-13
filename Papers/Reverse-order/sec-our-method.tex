@@ -61,6 +61,11 @@ By far the most important improvement to the basic technique is to
 take advantage of the available stack space to decrease the number of
 multiple list traversals required by the basic technique.
 
+The following example illustrates this technique by using the simple
+recursive traversal if there are fewer than $10000$ elements in the
+list.  If there are more elements, then it divides the list in two,
+just like the basic technique shown in \refSec{sec-basic-technique}.
+
 {\small\begin{verbatim}
 (defun find-2 (x list)
   (labels ((recursive (x list n)
@@ -78,6 +83,13 @@ multiple list traversals required by the basic technique.
                      (aux x list n/2)))))
       (aux x list (length list)))))
 \end{verbatim}}
+
+With this improvement, the number of \texttt{cdr} operations required
+can now be expressed as $n\thinspace (1 +
+\frac{1}{2}\mathsf{lb}\thinspace \frac{n}{10000})$%
+\FIXME{This is not quite right.  Find the correct formula.}
+which is significantly better than the corresponding value for the
+basic technique.
 
 \subsection{Other improvements}
 
