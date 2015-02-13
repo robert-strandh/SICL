@@ -17,32 +17,32 @@ For its implementation of \texttt{count}, \sbcl{} uses the simple
 technique of reversing the list first and then processing the elements
 of the reversed list from the beginning.
 
-To test the stack depth of various implementations, we devised the
-following test:
+%% To test the stack depth of various implementations, we devised the
+%% following test:
 
-{\small\begin{verbatim}
-(defun stack-depth (n)
-  (declare (optimize (space 3)))
-  (if (zerop n) 0 (1+ (stack-depth (1- n)))))
-\end{verbatim}}
+%% {\small\begin{verbatim}
+%% (defun stack-depth (n)
+%%   (declare (optimize (space 3)))
+%%   (if (zerop n) 0 (1+ (stack-depth (1- n)))))
+%% \end{verbatim}}
 
-The following table shows approximate values of the argument to
-\texttt{stack-depth} for which some implementations exhaust the stack:
+%% The following table shows approximate values of the argument to
+%% \texttt{stack-depth} for which some implementations exhaust the stack:
 
-\FIXME{with default stack and heap size. Irene}
+%% \FIXME{with default stack and heap size. Irene}
 
-\begin{tabular}{|l|r|}
-\hline
-Implementation & argument\\
-\hline
-\hline
-\sbcl{} & 90000\\
-\hline
-Allegro & ???\\
-\hline
-LispWork & ???\\
-\hline
-\end{tabular}
+%% \begin{tabular}{|l|r|}
+%% \hline
+%% Implementation & argument\\
+%% \hline
+%% \hline
+%% \sbcl{} & 90000\\
+%% \hline
+%% Allegro & ???\\
+%% \hline
+%% LispWork & ???\\
+%% \hline
+%% \end{tabular}
 
 As we already mentioned, we use recursion as the basis of our
 technique, because it is quite fast.  We devised the following test to
