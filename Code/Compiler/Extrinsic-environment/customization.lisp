@@ -47,7 +47,7 @@
        'sicl-extrinsic-environment:symbol-value
        sicl-global-environment:*global-environment*)))
    (list (cleavir-ast:make-load-time-value-ast
-	  `,(cleavir-env:name info)
+	  `',(cleavir-env:name info)
 	  t)
 	 (cleavir-ast:make-load-time-value-ast
 	  `(sicl-global-environment:variable-unbound
@@ -76,7 +76,7 @@
        sicl-global-environment:*global-environment*)))
    (list form-ast
 	 (cleavir-ast:make-load-time-value-ast
-	  `,(cleavir-env:name info)
+	  `',(cleavir-env:name info)
 	  t)
 	 (cleavir-ast:make-load-time-value-ast
 	  `(sicl-global-environment:variable-cell
