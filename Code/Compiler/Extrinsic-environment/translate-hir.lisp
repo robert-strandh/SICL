@@ -35,17 +35,11 @@
 (defvar *vars*)
 
 (defun translate-datum (datum)
-  (cond ((typep datum 'cleavir-ir:constant-input)
-	 `(quote ,(cleavir-ir:value datum)))
-	((typep datum 'cleavir-ir:load-time-value-input)
-	 `(load-time-value ,(cleavir-ir:form datum)
-			   ,(cleavir-ir:read-only-p datum)))
-	(t
-	 (let ((var (gethash datum *vars*)))
-	   (when (null var)
-	     (setf var (gensym))
-	     (setf (gethash datum *vars*) var))
-	   var))))
+  (let ((var (gethash datum *vars*)))
+    (when (null var)
+      (setf var (gensym))
+      (setf (gethash datum *vars*) var))
+    var))
 
 (defun translate-lambda-list (lambda-list)
   (loop for item in lambda-list
@@ -307,28 +301,6 @@
        (declare (ignorable ,temp))
        ,@(loop for output in outputs
 	       collect `(setf ,output (pop ,temp))))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:symbol-value-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (symbol-value
-	  ,(first inputs)
-	  (dynamic-environment ,*linkage-environment*)
-	  ',(sicl-env:variable-unbound (first inputs) *linkage-environment*)
-	  (load-time-value
-	   (sicl-env:variable-cell ,(first inputs) ,*linkage-environment*)
-	   nil))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:set-symbol-value-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (symbol-value
-	  ,(first inputs)
-	  (dynamic-environment ,*linkage-environment*)
-	  (load-time-value
-	   (sicl-env:variable-cell ,(first inputs) ,*linkage-environment*)
-	   nil))
-	 ,(second inputs)))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:nop-instruction) inputs outputs)
