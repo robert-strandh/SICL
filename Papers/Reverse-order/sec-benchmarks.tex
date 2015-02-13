@@ -1,11 +1,19 @@
 \section{Benchmarks}
 \label{sec-benchmarks}
 
-We have experimented ten different versions of the function \texttt{reverse-count}
-that counts elements of a list from the end. The two adjustment parameters are
+We implemented ten different versions of \texttt{reverse-count}, a
+function that counts elements of a list from the end.  The difference
+between these versions can be expressed in terms of two different
+numeric parameters, namely:
+
 \begin{enumerate}
-\item at which size do we start the logarithmic method,
-\item into how many chunks do we cut the list.
+\item the minimum number of elements for which we apply the
+  logarithmic method, consisting of dividing the list into two
+  equal-size halves, and
+\item into how many chunks do we cut the list when the number of
+  elements is smaller than the first parameter, but larger than the
+  number of elements that can be handled by the simple recursive
+  technique.
 \end{enumerate}
 
 To present in this article, 
