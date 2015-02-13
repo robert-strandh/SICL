@@ -91,16 +91,16 @@ can now be expressed as $n\thinspace (1 +
 which is significantly better than the corresponding value for the
 basic technique.
 
-\subsection{Other improvements}
+%% \subsection{Other improvements}
 
-Excluding the initial traversal of the list in order to compute the
-length, the number of \texttt{cdr} operations of the basic technique
-can be expressed with this recursive equation:%
-\FIXME{Add the base case.}
+%% Excluding the initial traversal of the list in order to compute the
+%% length, the number of \texttt{cdr} operations of the basic technique
+%% can be expressed with this recursive equation:%
+%% \FIXME{Add the base case.}
 
-$$f(n) = \left\lfloor\frac{n}{2}\right\rfloor
-+ f(\left\lfloor\frac{n}{2}\right\rfloor)4.
-+ f(\left\lceil\frac{n}{2}\right\rceil)$$
+%% $$f(n) = \left\lfloor\frac{n}{2}\right\rfloor
+%% + f(\left\lfloor\frac{n}{2}\right\rfloor)4.
+%% + f(\left\lceil\frac{n}{2}\right\rceil)$$
 
 \subsection{Implementation-specific solutions}
 
