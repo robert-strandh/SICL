@@ -46,16 +46,18 @@
 ;;; Converting a symbol that has a definition as a special variable.
 ;;; We do this by generating a call to SYMBOL-VALUE.
 
-(defgeneric convert-special-variable (info env))
+(defgeneric convert-special-variable (info global-env))
 
-(defmethod convert-special-variable (info env)
+(defmethod convert-special-variable (info global-env)
+  (declare (ignore global-env))
   (let ((symbol (cleavir-env:name info)))
     (cleavir-ast:make-symbol-value-ast
      (cleavir-ast:make-load-time-value-ast `',symbol))))
 
 (defmethod convert-form (form (info cleavir-env:special-variable-info) env)
   (declare (ignore form))
-  (convert-special-variable info env))
+  (let ((global-env (cleavir-env:global-environment env)))
+    (convert-special-variable info global-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
