@@ -112,13 +112,13 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "customization")
    (:file "runtime-environment")
    (:file "symbol-value")
    (:file "traced-funcall")
    (:file "parse-arguments")
    (:file "translate-hir")
    (:file "environment-defclass")
+   (:file "customization")
    (:file "eval")
    (:file "load")
    (:file "load-file-defun")
