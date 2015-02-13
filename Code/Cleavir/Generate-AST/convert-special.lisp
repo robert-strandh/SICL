@@ -158,11 +158,13 @@
 
 (defmethod convert-special ((symbol (eql 'if)) form env)
   (cleavir-ast:make-if-ast
-   (convert (cadr form) env)
-   (convert (caddr form) env)
+   (cleavir-ast:make-eq-ast
+    (convert (cadr form) env)
+    (convert-constant nil env))
    (if (null (cdddr form))
        (convert-constant nil env)
-       (convert (cadddr form) env))))
+       (convert (cadddr form) env))
+   (convert (caddr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
