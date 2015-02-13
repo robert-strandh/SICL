@@ -123,14 +123,14 @@ technique has several advantages:
 
 We illustrate this technique in a notation similar to \commonlisp{}:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defun low-level-reverse-count (item list length)
   (loop for rest = list then (cdr rest)
         repeat length
         do (push-on-stack (car rest)))
   (loop repeat length
         count (eq item (pop-from-stack))))
-\end{verbatim}
+\end{verbatim}}
 
 We implemented this technique in SBCL.  In order not to have to
 recompile SBCL with our additional function, we used the
