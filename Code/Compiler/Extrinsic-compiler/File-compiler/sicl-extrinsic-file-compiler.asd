@@ -15,5 +15,4 @@
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "customization")
    (:file "compile-file")))
