@@ -346,7 +346,7 @@
 				       (succs (cleavir-ir:successors instruction)))
 				   (cleavir-ir:insert-instruction-after
 				    (cleavir-ir:make-write-cell-instruction
-				     location temp (first succs))
+				     location temp)
 				    instruction)
 				   ;; Finally return the temporary location.
 				   temp))
