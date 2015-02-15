@@ -328,16 +328,90 @@
 	    ;; unchanged.
 	    output)))
 
+;;; Compute and return a list of new inputs for INSTRUCTION.  OWNER is
+;;; the owner of INSTRUCTION.
+(defun new-inputs (instruction owner owners imports cell-locations)
+  (loop for input in (cleavir-ir:inputs instruction)
+	do (when (null (gethash input owners))
+	     (setf (gethash input owners) owner))
+	collect
+	(if (typep input 'cleavir-ir:static-lexical-location)
+	    (let ((input-owner (gethash input owners)))
+	      (when (null input-owner)
+		(setf input-owner owner)
+		(setf (gethash input owners) input-owner))
+	      (if (eq input-owner owner)
+		  ;; The owner of this instruction is also the owner
+		  ;; of the captured variable.  This means that we
+		  ;; already allocated a dynamic lexical location for
+		  ;; it.
+		  (let ((location (gethash (cons owner input)
+					   cell-locations)))
+		    ;; We must now generate a READ-CELL instruction to
+		    ;; read the value into a temporary location.
+		    (new-input instruction location))
+		  ;; The owner of this instruction is not the owner of
+		  ;; the captured variable.  We need to fetch the cell
+		  ;; from our static environment.
+		  (let ((cell-location (fetch-cell instruction
+						   owner
+						   input
+						   imports)))
+		    ;; We must now generate a READ-CELL instruction to
+		    ;; read the value into a temporary location.
+		    (new-input instruction cell-location))))
+	    ;; This input is not a captured variable, return it
+	    ;; unchanged.
+	    input)))
+
+(defun handle-enclose-instruction (enclose owner owners imports cell-locations)
+  (setf (cleavir-ir:inputs enclose)
+	(loop with enter = (cleavir-ir:code enclose)
+	      for import in (gethash enter imports)
+	      collect
+	      (if (eq (gethash import owners) owner)
+		  (gethash (cons owner import) cell-locations)
+		  (fetch-cell enclose owner import imports)))))
+
+;;; For each ENCLOSE-INSTRUCTION of the program, add inputs
+;;; corresponding to the cells of the captured variables that the
+;;; corresponding ENTER-INSTRUCTION imports.  We can't use the
+;;; ordinary traversal here, because that one processes successors
+;;; before the nested functions
+(defun handle-enclose-instructions
+    (initial-instruction owners imports cell-locations)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels
+	((traverse (instruction owner)
+	   (unless (gethash instruction table)
+	     (setf (gethash instruction table) t)
+	     (let ((successors (cleavir-ir:successors instruction)))
+	       (cond ((typep instruction 'cleavir-ir:enclose-instruction)
+		      ;; When we see an ENTER-INSTRUCTION, we
+		      ;; start by recursively traversing it.
+		      (let ((code (cleavir-ir:code instruction)))
+			(traverse code code))
+		      (handle-enclose-instruction
+		       instruction owner owners imports cell-locations)
+		      (loop for successor in successors
+			    do (traverse successor owner)))
+		     ((typep instruction 'cleavir-ir:unwind-instruction)
+		      (traverse (first successors)
+				(cleavir-ir:invocation instruction)))
+		     (t
+		      (loop for successor in successors
+			    do (traverse successor owner))))))))
+      (traverse initial-instruction initial-instruction))))
+
 (defun process-captured-variables (initial-instruction)
   (segregate-lexicals initial-instruction)
   (let ((owners (make-hash-table :test #'eq))
 	;; This table maps each ENTER-INSTRUCTION to a list of
 	;; imported static lexical locations that it needs.
 	(imports (make-hash-table :test #'eq))
-	;; This table maps pairs of the form
-	;; (<enter-instruction> . <static-lexical-location>)
-	;; to dynamic lexical locations holding the cell for
-	;; the captured variable.
+	;; This table maps pairs of the form (<enter-instruction>
+	;; . <static-lexical-location>) to dynamic lexical locations
+	;; holding the cell for the captured variable.
 	(cell-locations (make-hash-table :test #'equal)))
     ;; Replace every reference to a static lexical location by a
     ;; combination of dynamic lexical locations and new instructions
@@ -346,96 +420,9 @@
      initial-instruction
      (lambda (instruction owner)
        (setf (cleavir-ir:inputs instruction)
-	     (new-outputs instruction owner owners imports cell-locations))
+	     (new-inputs instruction owner owners imports cell-locations))
        ;; Now process the outputs of this instruction
        (setf (cleavir-ir:outputs instruction)
-	     (loop for output in (cleavir-ir:outputs instruction)
-		   collect
-		   (if (typep output 'cleavir-ir:static-lexical-location)
-		       (let ((output-owner (gethash output owners)))
-			 (when (null output-owner)
-			   (setf output-owner owner)
-			   (setf (gethash output owners) output-owner))
-			 (if (eq output-owner owner)
-			     ;; The owner of this instruction is also
-			     ;; the owner of the captured variable.
-			     ;; Check whether we have written to it
-			     ;; before.  If we have, then we have
-			     ;; allocated a location for the
-			     ;; corresponding cell.
-			     (let ((location (gethash (cons owner output)
-						      cell-locations)))
-			       (when (null location)
-				 ;; This write is the defining write to
-				 ;; the variable, so we must allocate a
-				 ;; location for its cell.
-				 (setf location (cleavir-ir:new-temporary))
-				 (setf (gethash (cons owner output)
-						cell-locations)
-				       location)
-				 ;; We must also insert the
-				 ;; instruction for creating the
-				 ;; cell.
-				 (cleavir-ir:insert-instruction-before
-				  (cleavir-ir:make-create-cell-instruction
-				   location)
-				  instruction))
-			       ;; We must now change the current
-			       ;; output to a temporary dynamic
-			       ;; lexical location, and then add a
-			       ;; WRITE-CELL instruction after this
-			       ;; one to write the contents of that
-			       ;; temporary location to the cell.
-			       (new-output instruction location))
-			     ;; the owner if this instruction is not the
-			     ;; owner of the captured variable.  We need
-			     ;; to fetch the cell from our static
-			     ;; environment.
-			     (let ((cell-location (fetch-cell instruction
-							      owner
-							      output
-							      imports)))
-			       ;; We must now change the current
-			       ;; output to a temporary dynamic
-			       ;; lexical location, and then add a
-			       ;; WRITE-CELL instruction after this
-			       ;; one to write the contents of that
-			       ;; temporary location to the cell.
-			       (new-output instruction cell-location))))
-		       ;; This input is not a captured variable,
-		       ;; return it unchanged.
-		       output)))))
-    ;; For each ENCLOSE-INSTRUCTION of the program, add inputs
-    ;; corresponding to the cells of the captured variables that the
-    ;; corresponding ENTER-INSTRUCTION imports.  We can't use the
-    ;; ordinary traversal here, because that one processes
-    ;; successors before the nested functions
-    (flet ((handle-enclose-instruction (enclose owner)
-	     (setf (cleavir-ir:inputs enclose)
-		   (loop with enter = (cleavir-ir:code enclose)
-			 for import in (gethash enter imports)
-			 collect
-			 (if (eq (gethash import owners) owner)
-			     (gethash (cons owner import) cell-locations)
-			     (fetch-cell enclose owner import imports))))))
-      (let ((table (make-hash-table :test #'eq)))
-	(labels
-	    ((traverse (instruction owner)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (let ((successors (cleavir-ir:successors instruction)))
-		   (cond ((typep instruction 'cleavir-ir:enclose-instruction)
-			  ;; When we see an ENTER-INSTRUCTION, we
-			  ;; start by recursively traversing it.
-			  (let ((code (cleavir-ir:code instruction)))
-			    (traverse code code))
-			  (handle-enclose-instruction instruction owner)
-			  (loop for successor in successors
-				do (traverse successor owner)))
-			 ((typep instruction 'cleavir-ir:unwind-instruction)
-			  (traverse (first successors)
-				    (cleavir-ir:invocation instruction)))
-			 (t
-			  (loop for successor in successors
-				do (traverse successor owner))))))))
-	  (traverse initial-instruction initial-instruction))))))
+	     (new-outputs instruction owner owners imports cell-locations))))
+    (handle-enclose-instructions
+     initial-instruction owners imports cell-locations)))
