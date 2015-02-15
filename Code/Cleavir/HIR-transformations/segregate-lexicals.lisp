@@ -291,26 +291,40 @@
 		  ;; allocated a location for the corresponding cell.
 		  (let ((location (gethash (cons owner output)
 					   cell-locations)))
-		    (when (null location)
-		      ;; This write is the defining write to the
-		      ;; variable, so we must allocate a location for
-		      ;; its cell.
-		      (setf location (cleavir-ir:new-temporary))
-		      (setf (gethash (cons owner output)
-				     cell-locations)
-			    location)
-		      ;; We must also insert the instruction for
-		      ;; creating the cell.
-		      (cleavir-ir:insert-instruction-before
-		       (cleavir-ir:make-create-cell-instruction
-			location)
-		       instruction))
-		    ;; We must now change the current output to a
-		    ;; temporary dynamic lexical location, and then
-		    ;; add a WRITE-CELL instruction after this one to
-		    ;; write the contents of that temporary location
-		    ;; to the cell.
-		    (new-output instruction location))
+		    (if (null location)
+			;; This write is the defining write to the
+			;; variable, so we must allocate a location
+			;; for its cell.
+			(progn
+			  (setf location (cleavir-ir:new-temporary))
+			  (setf (gethash (cons owner output)
+					 cell-locations)
+				location)
+			  ;; Our mission now is to add two new
+			  ;; instructions after the current one.  The
+			  ;; first of the two new instructions (I1) is
+			  ;; an instruction to create the cell.  The
+			  ;; second (I2) is the one writing to the
+			  ;; cell.  We do this by first adding I2
+			  ;; after INSTRUCTION and then adding I1
+			  ;; after INSTRUCTION.  Recall that the
+			  ;; function NEW-OUTPUT does the job of
+			  ;; adding I2.
+			  (let ((new-output (new-output instruction location)))
+			    ;; We must now add I1 to create the cell.
+			    (cleavir-ir:insert-instruction-after
+			     (cleavir-ir:make-create-cell-instruction
+			      location) instruction)
+			    ;; Return the new output to replace the old
+			    ;; one in INSTRUCTION.
+			    new-output))
+			;; This write is not the defining write, so we
+			;; just change the current output to a
+			;; temporary dynamic lexical location, and
+			;; then add a WRITE-CELL instruction after
+			;; this one to write the contents of that
+			;; temporary location to the cell.
+			(new-output instruction location)))
 		  ;; The owner if this instruction is not the owner of
 		  ;; the captured variable.  We need to fetch the cell
 		  ;; from our static environment.
