@@ -308,14 +308,7 @@
 				 ;; We must now generate a READ-CELL
 				 ;; instruction to read the value into
 				 ;; a temporary location.
-				 (let ((temp (cleavir-ir:new-temporary)))
-				   (cleavir-ir:insert-instruction-before
-				    (cleavir-ir:make-read-cell-instruction
-				     location temp)
-				    instruction)
-				   ;; Return the new input to this
-				   ;; instruction.
-				   temp))
+				 (new-input instruction location))
 			       ;; The owner of this instruction is not
 			       ;; the owner of the captured variable.
 			       ;; We need to fetch the cell from our
@@ -326,14 +319,7 @@
 				 ;; We must now generate a READ-CELL
 				 ;; instruction to read the value into
 				 ;; a temporary location.
-				 (let ((temp (cleavir-ir:new-temporary)))
-				   (cleavir-ir:insert-instruction-before
-				    (cleavir-ir:make-read-cell-instruction
-				     cell-location temp)
-				    instruction)
-				   ;; Return the new input to this
-				   ;; instruction.
-				   temp))))
+				 (new-input instruction cell-location))))
 			 ;; This input is not a captured variable,
 			 ;; return it unchanged
 			 input)))
