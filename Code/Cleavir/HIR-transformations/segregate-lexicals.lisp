@@ -342,8 +342,7 @@
 				 ;; instruction after this one to write
 				 ;; the contents of the temporary to the
 				 ;; cell.
-				 (let ((temp (cleavir-ir:new-temporary))
-				       (succs (cleavir-ir:successors instruction)))
+				 (let ((temp (cleavir-ir:new-temporary)))
 				   (cleavir-ir:insert-instruction-after
 				    (cleavir-ir:make-write-cell-instruction
 				     location temp)
