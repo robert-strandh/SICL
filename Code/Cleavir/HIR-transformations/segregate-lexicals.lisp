@@ -215,19 +215,36 @@
 		 datum
 		 'cleavir-ir:dynamic-lexical-location))))))
 
-;;; Given an instruction I that writes to a captured variable C, and a
-;;; dynamic lexical variable L holding the location of the cell that
-;;; will store the value of the captured variable, we do the
-;;; following: We allocate a new temporary dynamic lexical V.  We
-;;; return V from this function so that the caller can replace C by V
-;;; in I.  We add a WRITE-CELL-INSTRUCTION after I that writes the
-;;; contents of V to the cell in L.
+;;; Given an instruction I that writes to a captured variable CV, and
+;;; a dynamic lexical variable L holding the location of the cell that
+;;; will store the value of CV, we do the following: We allocate a new
+;;; temporary dynamic lexical variable V.  We return V from this
+;;; function so that the caller can replace CV by V in I.  We add a
+;;; WRITE-CELL-INSTRUCTION after I that writes the contents of V to
+;;; the cell in L.
 (defun new-output (instruction cell-location)
   (let ((temp (cleavir-ir:new-temporary)))
     (cleavir-ir:insert-instruction-after
      (cleavir-ir:make-write-cell-instruction
       cell-location temp)
      instruction)
+    ;; Return the new output to this instruction.
+    temp))
+
+;;; Given an instruction I that reads a captured variable CV, and a
+;;; dynamic lexical variable L holding the location of the cell that
+;;; will store the value of CV, we do the following: We allocate a new
+;;; temporary dynamic lexical variable V.  We return V from this
+;;; function so that the caller can replace CV by V in I.  We add a
+;;; READ-CELL-INSTRUCTION before I that reads the contents of the cell
+;;; in L and writes it into V.
+(defun new-input (instruction cell-location)
+  (let ((temp (cleavir-ir:new-temporary)))
+    (cleavir-ir:insert-instruction-before
+     (cleavir-ir:make-read-cell-instruction
+      cell-location temp)
+     instruction)
+    ;; Return the new input to this instruction.
     temp))
 
 (defun process-captured-variables (initial-instruction)
