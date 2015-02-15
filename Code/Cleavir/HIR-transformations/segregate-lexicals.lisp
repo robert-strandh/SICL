@@ -215,6 +215,21 @@
 		 datum
 		 'cleavir-ir:dynamic-lexical-location))))))
 
+;;; Given an instruction I that writes to a captured variable C, and a
+;;; dynamic lexical variable L holding the location of the cell that
+;;; will store the value of the captured variable, we do the
+;;; following: We allocate a new temporary dynamic lexical V.  We
+;;; return V from this function so that the caller can replace C by V
+;;; in I.  We add a WRITE-CELL-INSTRUCTION after I that writes the
+;;; contents of V to the cell in L.
+(defun new-output (instruction cell-location)
+  (let ((temp (cleavir-ir:new-temporary)))
+    (cleavir-ir:insert-instruction-after
+     (cleavir-ir:make-write-cell-instruction
+      cell-location temp)
+     instruction)
+    temp))
+
 (defun process-captured-variables (initial-instruction)
   (segregate-lexicals initial-instruction)
   (let ((owners (make-hash-table :test #'eq))
@@ -336,19 +351,13 @@
 				    (cleavir-ir:make-create-cell-instruction
 				     location)
 				    instruction))
-				 ;; We must now change the current output
-				 ;; to a temporary dynamic lexical
-				 ;; location, and then add a WRITE-CELL
-				 ;; instruction after this one to write
-				 ;; the contents of the temporary to the
-				 ;; cell.
-				 (let ((temp (cleavir-ir:new-temporary)))
-				   (cleavir-ir:insert-instruction-after
-				    (cleavir-ir:make-write-cell-instruction
-				     location temp)
-				    instruction)
-				   ;; Finally return the temporary location.
-				   temp))
+				 ;; We must now change the current
+				 ;; output to a temporary dynamic
+				 ;; lexical location, and then add a
+				 ;; WRITE-CELL instruction after this
+				 ;; one to write the contents of that
+				 ;; temporary location to the cell.
+				 (new-output instruction location))
 			       ;; the owner if this instruction is not the
 			       ;; owner of the captured variable.  We need
 			       ;; to fetch the cell from our static
@@ -356,19 +365,13 @@
 			       (let ((cell-location (fetch-cell instruction
 								owner
 								output)))
-				 ;; We must now change the current output
-				 ;; to a temporary dynamic lexical
-				 ;; location, and then add a WRITE-CELL
-				 ;; instruction to write the contents of
-				 ;; that temporary location to the cell.
-				 (let ((temp (cleavir-ir:new-temporary)))
-				   (cleavir-ir:insert-instruction-after
-				    (cleavir-ir:make-write-cell-instruction
-				     cell-location temp)
-				    instruction)
-				   ;; Return the new input to this
-				   ;; instruction.
-				   temp))))
+				 ;; We must now change the current
+				 ;; output to a temporary dynamic
+				 ;; lexical location, and then add a
+				 ;; WRITE-CELL instruction after this
+				 ;; one to write the contents of that
+				 ;; temporary location to the cell.
+				 (new-output instruction cell-location))))
 			 ;; This input is not a captured variable,
 			 ;; return it unchanged.
 			 output)))))
