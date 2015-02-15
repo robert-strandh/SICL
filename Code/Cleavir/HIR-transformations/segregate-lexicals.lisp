@@ -286,17 +286,19 @@
 			       ;; the owner of the captured variable.
 			       ;; This means that we already allocated a
 			       ;; dynamic lexical location for it.
-			       (let* ((location (gethash (cons owner input)
-							 cell-locations))
-				      (temp (cleavir-ir:new-temporary))
-				      (inst (cleavir-ir:make-read-cell-instruction
-					     location temp)))
-				 ;; Insert the READ-CELL instruction
-				 ;; before the current one.
-				 (cleavir-ir:insert-instruction-before
-				  inst instruction)
-				 ;; Return the new input to this instruction. 
-				 temp)
+			       (let ((location (gethash (cons owner input)
+							cell-locations)))
+				 ;; We must now generate a READ-CELL
+				 ;; instruction to read the value into
+				 ;; a temporary location.
+				 (let ((temp (cleavir-ir:new-temporary)))
+				   (cleavir-ir:insert-instruction-before
+				    (cleavir-ir:make-read-cell-instruction
+				     location temp)
+				    instruction)
+				   ;; Return the new input to this
+				   ;; instruction.
+				   temp))
 			       ;; The owner of this instruction is not
 			       ;; the owner of the captured variable.
 			       ;; We need to fetch the cell from our
@@ -305,8 +307,8 @@
 								owner
 								input)))
 				 ;; We must now generate a READ-CELL
-				 ;; instruction to read the value into a
-				 ;; temporary location.
+				 ;; instruction to read the value into
+				 ;; a temporary location.
 				 (let ((temp (cleavir-ir:new-temporary)))
 				   (cleavir-ir:insert-instruction-before
 				    (cleavir-ir:make-read-cell-instruction
