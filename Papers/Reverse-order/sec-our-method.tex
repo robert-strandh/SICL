@@ -186,6 +186,34 @@ the overhead of allocating and subsequently garbage-collecting a
 \texttt{cons} cell can very well be comparable to $6$ times the time
 taken by the \texttt{cdr} operation.
 
+Finally, instead of using more stack space for the base case, let us
+analyze what happens if we divide the original list into more than two
+parts.  For this analysis, let us assume that we divide the list into
+$M$ equal parts, and that $M$ also is a power of $2$ so that $M =
+2^m$.  We then obtain the following relation
+
+\[ f(N) = \left\{ \begin{array}{ll}
+                    0 & \mbox{if $N = 1$} \\
+                    N - \frac{N}{M} + Mf(\frac{N}{M}) &\mbox{otherwise}
+                  \end{array} \right. \]
+
+Solving as before, we obtain:
+
+\[ f(N) = N((1 - \frac{1}{M})\frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
+
+and thus:
+
+\[ F(N) = N(1 + (1 - \frac{1}{M})\frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
+
+and again:
+
+\[ F(N) \approx N(1 + \frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
+
+While it may appear that we can get very good performance when $M$ is
+chosen to be large, in practice, using large values of $M$ introduces
+a different kind of overhead, namely large stack frames, making the
+gain less than what the formula suggests.
+
 \subsection{Implementation-specific solutions}
 
 So far, we have explored techniques that can mostly be implemented in
