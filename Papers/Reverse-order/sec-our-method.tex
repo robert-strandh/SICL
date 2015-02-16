@@ -154,6 +154,38 @@ with around $16$ million elements (which fills the default heap of most
 implementations we have tested), we have $N \approx 2^{24}$ which
 gives $F(N) \approx 13N$ which is probably unacceptably slow.
 
+Let us now consider what happens when we are able to handle more than
+a single element with the basic recursive technique, as shown in
+\refSec{sec-more-stack}.  We denote the number of elements that the
+basic recursive technique can handle by $K$, and again, in order to
+simplify the analysis, we assume that $K$ is a power of $2$, i.e., $K
+= 2^k$.  The recursion relation now looks as follows:
+
+\[ f(N) = \left\{ \begin{array}{ll}
+                    K-1 & \mbox{if $N = K$} \\
+                    \frac{N}{2} + 2f(\frac{N}{2}) &\mbox{otherwise}
+                  \end{array} \right. \]
+
+Using the same technique as above, we obtain:
+
+\[ f(N) = p\frac{N}{2} + 2^pf(\frac{2^n}{2^p})\]
+
+so that when $p = n - k$ we have:
+
+\[ f(N) = N(1 + \frac{1}{K} + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
+
+Clearly, the term $\frac{1}{K}$ can be ignored, giving:
+
+\[ f(N) \approx N(1 + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
+
+With the best portable version of our technique and a typical stack
+being able to handle $K = 2^{14}$ we are now looking at a worst-case
+performance for $N = 2^{24}$ of $F(N) \approx 6N$.  Comparing this
+result to the technique of reversing the list, it is fair to say that
+the overhead of allocating and subsequently garbage-collecting a
+\texttt{cons} cell can very well be comparable to $6$ times the time
+taken by the \texttt{cdr} operation.
+
 \subsection{Implementation-specific solutions}
 
 So far, we have explored techniques that can mostly be implemented in
