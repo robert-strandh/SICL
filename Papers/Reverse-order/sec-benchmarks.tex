@@ -17,7 +17,7 @@ numeric parameters, namely:
 \end{enumerate}
 
 To present in this article, 
-we have retained the one with the best experimental behaviour (\texttt{v7})
+we have retained the one with the best experimental behavior (\texttt{v7})
 and compared it to two more classical versions  (\texttt{v0} and \texttt{v1}).
 
 We now describe these three versions.
@@ -47,7 +47,7 @@ The code is given below.
 
 \verbatimtabinput{Code/Count/7-count.lisp}
 
-Thanks to the help of the Lisp community, we could test the behaviour
+Thanks to the help of the Lisp community, we could test the behavior
 of these three versions on several implementations and architectures.
 We summarize in Figure~\ref{f-systems} the results of tests that 
 worked for a list of size up to $10^7$.
@@ -72,12 +72,12 @@ SBCL       & 1.2.7 & Intel(R) Core(TM)2 Duo CPU P8700 & 2.53GHz      & 0.36 & 0.
 
 In order to compare between the three versions, we have chosen the non commercial implementation
 that gave the best performances that is to say \texttt{Clozure CL 1.10-dev-r16128M}.
-Figure~\ref{f-versions} shows the behaviour of the three tested versions.
+Figure~\ref{f-versions} shows the behavior of the three tested versions.
 
 \begin{figure*}[htb]
 \centering
 \includegraphics{v0-v1-v7.eps}
-\caption{\label{f-versions} Comparison of the behaviour of the three versions on a single system}
+\caption{\label{f-versions} Comparison of the behavior of the three versions on a single system}
 \end{figure*}
 
 We see that version \texttt{v7} behaves very well compared the the other two version.
