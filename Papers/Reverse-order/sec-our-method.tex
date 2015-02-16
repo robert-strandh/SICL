@@ -44,7 +44,8 @@ length of the list, and once again as part of the recursive traversal.
 When the item to be found is the \emph{first} element of the list
 (worst case), the number of \texttt{cdr} operations can be
 approximately expressed as $n\thinspace (1 +
-\frac{1}{2}\mathsf{lb}\thinspace n)$.
+\frac{1}{2}\mathsf{lb}\thinspace n)$.  In \refSec{sec-analyses} we
+analyze this result in greater depth.
 
 The best case for this function is very efficient indeed.%
 \FIXME{Add a table comparing execution times}
@@ -56,6 +57,7 @@ The remainder of this section is dedicated to ways of improving on the
 worst-case performance of the basic technique.
 
 \subsection{Using more stack space}
+\label{sec-more-stack}
 
 By far the most important improvement to the basic technique is to
 take advantage of the available stack space to decrease the number of
@@ -147,8 +149,10 @@ we obtain:
 
 \[ F(N) = \frac{N}{2}\mathsf{lb}~N + N = N(1 + \frac{1}{2}\mathsf{lb}~N)\]
 
-which is clearly $O(N\mathsf{log}~N)$.
-
+which is clearly $O(N\mathsf{log}~N)$.  More importantly, for a list
+with around $16$ million elements (which fills the default heap of most
+implementations we have tested), we have $N \approx 2^{24}$ which
+gives $F(N) \approx 13N$ which is probably unacceptably slow.
 
 \subsection{Implementation-specific solutions}
 
