@@ -31,7 +31,7 @@ element is compared to the argument \texttt{x} and if they are the
 same, the value $1$ is returned.  Otherwise $0$ is returned.
 
 The main feature of our technique is that it trades fewer recursive
-calls for multiple traversals of the list.  The maximum number% of
+calls for multiple traversals of the list.  The maximum number of
 simultaneous active invocations of this simple function is around
 $\mathsf{lb}\thinspace n$, where $n$ is the length of the list.  The
 maximum value of this number is quite modest.  On a 64-bit processor,
@@ -97,16 +97,58 @@ technique.  \refSec{sec-benchmarks} gives a more complete explanation
 of the parameters involved and how they influence the execution time
 of the resulting code.
 
-%% \subsection{Other improvements}
+\subsection{Analyses}
+\label{sec-analyses}
 
-%% Excluding the initial traversal of the list in order to compute the
-%% length, the number of \texttt{cdr} operations of the basic technique
-%% can be expressed with this recursive equation:%
-%% \FIXME{Add the base case.}
+In this section we derive approximate formulas for the performance of
+our technique.  The basic measure we are interested in is the number
+of \texttt{cdr} operations that must be performed as a function of the
+number of elements of the list.  We will denote the number of elements
+of the list by $N$ and the number of \texttt{cdr} operations required
+by $F(n)$.  Since our technique always starts by traversing the entire
+list in order to compute $N$, we can always write $F(N)$ as $N +
+f(N)$, were $f(N)$ is the number of \texttt{cdr} operations required
+in the subsequent step.
 
-%% $$f(n) = \left\lfloor\frac{n}{2}\right\rfloor
-%% + f(\left\lfloor\frac{n}{2}\right\rfloor)4.
-%% + f(\left\lceil\frac{n}{2}\right\rceil)$$
+For the basic technique where the list is divided into two equal-size
+sublists, we obtain the following recursive relation:
+
+\[ f(N) = \left\{ \begin{array}{ll}
+                    0 & \mbox{if $N = 1$} \\
+                    \left\lfloor\frac{N}{2}\right\rfloor
+                    + f(\left\lfloor\frac{N}{2}\right\rfloor)
+                    + f(\left\lceil\frac{N}{2}\right\rceil) &
+                    \mbox{otherwise}
+                  \end{array} \right. \]
+
+In order to obtain an approximate solution to this relation, we can
+solve for $N$ being a power of $2$, i.e., $N = 2^n$.  In that case,
+for $N>1$ we obtain:
+
+\[ f(N) = \frac{N}{2} + 2f(\frac{N}{2}) \]
+
+Developing this equation a few steps, we obtain:
+
+\[ f(N) = \frac{N}{2} + 2f(\frac{N}{2}) = \]
+\[ = \frac{N}{2} + 2(\frac{N}{4} + 2f(\frac{N}{4})) =\]
+\[ = \frac{N}{2} + \frac{N}{2} + 4f(\frac{N}{4}) =\]
+\[ = 2\frac{N}{2} + 4f(\frac{N}{4}) = \]
+
+Or more generally:
+
+\[ f(N) = p\frac{N}{2} + 2^pf(\frac{N}{2^p})\]
+
+When $p = n = \mathsf{lb}~N$, this equation turns into:
+
+\[ f(N) = \frac{N}{2}\mathsf{lb}~N + Nf(1) = \frac{N}{2}\mathsf{lb}~N\]
+
+Including the traversal to compute the number of elements of the list,
+we obtain:
+
+\[ F(N) = \frac{N}{2}\mathsf{lb}~N + N = N(1 + \frac{1}{2}\mathsf{lb}~N)\]
+
+which is clearly $O(N\mathsf{log}~N)$.
+
 
 \subsection{Implementation-specific solutions}
 
