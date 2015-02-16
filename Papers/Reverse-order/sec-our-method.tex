@@ -290,3 +290,8 @@ This surprising result can be explained by a few factors:
     \texttt{fixnum}.}
   When the function is implemented in C, this problem disappears.
 \end{itemize}
+
+If we put this technique in the perspective of the analyses in
+\refSec{sec-analyses}, we can also see that the number of \texttt{cdr}
+operations remains quite modest, even for lists with a very large
+number of elements.
