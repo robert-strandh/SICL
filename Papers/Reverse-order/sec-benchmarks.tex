@@ -16,21 +16,27 @@ numeric parameters, namely:
   technique.
 \end{enumerate}
 
-To present in this article, 
+In all of our versions, when the number of elements is less than
+$10000$, we process the elements using the purely recursive technique
+where the element is processed in the backtracking phase.
+
+For the purpose of this article,
 we have retained the one with the best experimental behavior (\texttt{v7})
 and compared it to two more classical versions  (\texttt{v0} and \texttt{v1}).
 
-We now describe these three versions.
+These three versions can be characterized as follows:
 
 \begin{enumerate}
 \setcounter{enumi}{-1}
-\item Version \texttt{v0} uses the native \texttt{count} function called with the \texttt{from-end} keyword argument set to \texttt{t},
+\item Version \texttt{v0} uses the native \texttt{count} function
+  called with the \texttt{from-end} keyword argument set to
+  \texttt{t},
 \verbatimtabinput{Code/Count/0-count.lisp}
 \item Version \texttt{v1} is the naive version consisting in reversing the list 
 before counting; this version uses the heap space and no stack space.
 \verbatimtabinput{Code/Count/1-count.lisp}
 \setcounter{enumi}{6}
-\item Our 7th version (\texttt{v7}) divides the list in 2 parts 
+\item Version \texttt{v7} divides the list in 2 parts
 if it has more than one 
 hundred million elements.  Otherwise, if it has more than 10000
 elements, it divides it into chunks that have 10000 elements each.
@@ -41,7 +47,8 @@ We think this method is faster than the others, at least for
 lengths no more than one hundred million elements, because then it
 is guaranteed to traverse the list at most 3 times + 1 time for
 computing the length.  It could be improved for lengths greater
-than one hundred million by using a better division than 2 then.
+than one hundred million by using a better division than 2 in this
+case, but we have not attempted that improvement.
 The code is given below.
 \end{enumerate}
 
@@ -71,7 +78,7 @@ SBCL       & 1.2.7 & Intel(R) Core(TM)2 Duo CPU P8700 & 2.53GHz      & 0.36 & 0.
 \end{figure*}
 
 In order to compare between the three versions, we have chosen the non commercial implementation
-that gave the best performances that is to say \texttt{Clozure CL 1.10-dev-r16128M}.
+that gave the best performances that is to say \texttt{Clozure CL 1.10-dev}.
 Figure~\ref{f-versions} shows the behavior of the three tested versions.
 
 \begin{figure*}[htb]
