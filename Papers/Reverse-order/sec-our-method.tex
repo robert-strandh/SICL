@@ -157,7 +157,8 @@ a single element with the basic recursive technique, as shown in
 \refSec{sec-more-stack}.  We denote the number of elements that the
 basic recursive technique can handle by $K$, and again, in order to
 simplify the analysis, we assume that $K$ is a power of $2$, i.e., $K
-= 2^k$.  The recursion relation now looks as follows:
+= 2^k$, and also that $N \ge K$.  The recursion relation now looks as
+follows:
 
 \[ f(N) = \left\{ \begin{array}{ll}
                     K-1 & \mbox{if $N = K$} \\
