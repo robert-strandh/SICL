@@ -24,8 +24,8 @@ calling the auxiliary function with the original arguments and the
 length.  The auxiliary function calls \texttt{nthcdr} in order to get
 a reference to about half the list it was passed.  Then it makes two
 recursive calls, first with the second half of the list and then with
-the firs half of the list.  The recursion terminates when the list has
-a single element or no elements in it.  When it has no element in it,
+the first half of the list.  The recursion terminates when the list has
+a single element or no element in it.  When it has no element in it,
 clearly the count is $0$.  When it has a single element in it, the
 element is compared to the argument \texttt{x} and if they are the
 same, the value $1$ is returned.  Otherwise $0$ is returned.
