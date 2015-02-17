@@ -41,8 +41,22 @@ Furthermore, a clearly stated goal of lexicons is to create a
 different \lisp{} dialect targeted to new users or to users that have
 prior experience with languages that are different from \lisp{}.
 
-One similarity between lexicons and the first-class environments
-presented in this paper is that \emph{symbols} are still unique, i.e.,
+One explicit goal of lexicons is to replace \commonlisp{} packages, so
+that there is a single system-wide symbol with a particular name.  In
+contrast, the first-class environments presented in this paper do not
+in any way affect the package system.  It should be noted that with
+our first-class environments, \emph{symbols are still unique}, i.e.,
 for a given package $P$ and a given symbol name $N$, there is at most
 one symbol with the name $N$ in $P$; independently of the number of
-lexicons or first-class environments in the system.
+first-class environments in the system.
+
+Garret discusses the use of lexicons as modules and shows examples
+where functions defined in one lexicon can be imported into a
+different lexicon.  The use of the operator \texttt{use-lexicon}
+imports all the \emph{bindings} of an explicitly-mentioned lexicon
+into the current one.  In the present work, we do not emphasize the
+possibility of sharing bindings between first-class environment.
+However, since functions and global values of special variables are
+stored in indirections called \emph{cells} in our environment, such
+sharing of bindings would also be possible in the first-class
+environments presented in this paper.
