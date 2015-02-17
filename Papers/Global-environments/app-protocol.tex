@@ -2,6 +2,14 @@
 
 \section{Protocol}
 
+In this appendix we present the generic functions making up the
+protocol for our first-class global environments.  The definitions
+here should be considered \emph{preliminary}, because there are some
+aspects of this protocol that need further consideration.  As an
+example, consider the function \texttt{function-lambda-list}.  We have
+not made up our minds as to whether this function should be part of
+the protocol, or just a function to be applied to function objects.
+
 \Defgeneric {fboundp} {fname env}
 
 This generic function is a generic version of the \commonlisp{}
