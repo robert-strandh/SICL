@@ -20,10 +20,12 @@ However, like the present work, they are also concerned with
 performance, and they show how to implement their protocol without
 serious performance degradation.
 
-Ron Garret desicribes \emph{lexicons} which are said to be first-class
-global environments.  However, the concept of a lexicon is very
-different from the concept of a first-class global environment as
-defined in this paper.
+Ron Garret desicribes \emph{lexicons}%
+\footnote{Unpublished document.  A PDF version can be found here:
+  http://www.flownet.com/ron/lisp/lexicons.pdf.}
+which are said to be first-class global environments.  However, the
+concept of a lexicon is very different from the concept of a
+first-class global environment as defined in this paper.
 
 For one thing, a lexicon is ``a mapping from symbols to bindings'',
 which excludes a per-environment set of packages, simply because
@@ -33,3 +35,8 @@ Furthermore, a clearly stated goal of lexicons is to create a
 different \lisp{} dialect targeted to new users or to users that have
 prior experience with languages that are different from \lisp{}.
 
+One similarity between lexicons and the first-class environments
+presented in this paper is that \emph{symbols} are still unique, i.e.,
+for a given package $P$ and a given symbol name $N$, there is at most
+one symbol with the name $N$ in $P$; independently of the number of
+lexicons or first-class environments in the system.
