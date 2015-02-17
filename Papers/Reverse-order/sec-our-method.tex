@@ -47,8 +47,7 @@ approximately expressed as $n\thinspace (1 +
 \frac{1}{2}\mathsf{lb}\thinspace n)$.  In \refSec{sec-analyses} we
 analyze this result in greater depth.
 
-The best case for this function is very efficient indeed.%
-\FIXME{Add a table comparing execution times}
+The best case for this function is very efficient indeed.
 The worst case is unacceptably slow.  Even for a list of some
 reasonable length such as a million elements, the execution time is a
 factor $20$ slower than for the best case.
@@ -87,9 +86,8 @@ just like the basic technique shown in \refSec{sec-basic-technique}.
 \end{verbatim}}
 
 With this improvement, the number of \texttt{cdr} operations required
-can now be expressed as $n\thinspace (1 +
-\frac{1}{2}\mathsf{lb}\thinspace \frac{n}{10000})$%
-\FIXME{This is not quite right.  Find the correct formula.}
+can now be expressed as approximately $n\thinspace (1 +
+\frac{1}{2}\mathsf{lb}\thinspace \frac{n}{10000})$
 which is significantly better than the corresponding value for the
 basic technique.
 
