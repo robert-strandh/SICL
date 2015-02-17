@@ -102,7 +102,13 @@ performance in the form of a graph.  The result is shown in
 \caption{\label{f-versions} Comparison of the behavior of the three versions on a single system}
 \end{figure*}
 
-We see that version \texttt{v7} behaves very well compared the the other two version.
-It is not ony faster but also smoother.
+As \refFig{f-versions} shows, the performance of \texttt{v7} is
+significantly better than that of the other versions.  Furthermore,
+the fact that the curve for \texttt{v7} is smoother than the curves
+for other versions indicates that the performance of \texttt{v7} is
+more predictable.  We attribute this behavior to the garbage
+collector, which occasionally has to run when heap allocation is
+required.  Since \texttt{v7} does not require any heap allocation, the
+garbage collector is not solicited.
 
 %%  LocalWords:  
