@@ -134,7 +134,7 @@ Developing this equation a few steps, we obtain:
 \[ = \frac{N}{2} + \frac{N}{2} + 4f(\frac{N}{4}) =\]
 \[ = 2\frac{N}{2} + 4f(\frac{N}{4}) = \]
 
-Or more generally:
+After developing the second term $p$ times, we obtain:
 
 \[ f(N) = p\frac{N}{2} + 2^pf(\frac{N}{2^p})\]
 
@@ -165,13 +165,22 @@ follows:
                     \frac{N}{2} + 2f(\frac{N}{2}) &\mbox{otherwise}
                   \end{array} \right. \]
 
-Using the same technique as above, we obtain:
+Since the second equation is the same as for the basic technique,
+developing the second equation $p$ times, we again obtain:
 
 \[ f(N) = p\frac{N}{2} + 2^pf(\frac{2^n}{2^p})\]
 
-so that when $p = n - k$ we have:
+When $p = n - k = \mathsf{lb}~\frac{N}{K}$ we get:
 
-\[ f(N) = N(1 + \frac{1}{K} + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
+\[ f(N) = \frac{N}{2}\mathsf{lb}~\frac{N}{K} + \frac{N}{K}f(K)\]
+
+Substituting $K-1$ for $f(K)$ and factoring out $N$, we obtain:
+
+\[ f(N) = N(\frac{1}{2}\mathsf{lb}~\frac{N}{K} + \frac{K - 1}{K})\]
+
+Or:
+
+\[ f(N) = N(1 - \frac{1}{K} + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
 
 Clearly, the term $\frac{1}{K}$ can be ignored, giving:
 
