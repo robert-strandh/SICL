@@ -127,14 +127,21 @@ for $N>1$ we obtain:
 
 \[ f(N) = \frac{N}{2} + 2f(\frac{N}{2}) \]
 
-Developing this equation a few steps, we obtain:
+Developing the second term of this equation one step, we obtain:
 
 \[ f(N) = \frac{N}{2} + 2f(\frac{N}{2}) = \]
 \[ = \frac{N}{2} + 2(\frac{N}{4} + 2f(\frac{N}{4})) =\]
 \[ = \frac{N}{2} + \frac{N}{2} + 4f(\frac{N}{4}) =\]
-\[ = 2\frac{N}{2} + 4f(\frac{N}{4}) = \]
+\[ = 2\frac{N}{2} + 4f(\frac{N}{4})\]
 
-After developing the second term $p$ times, we obtain:
+Developing the second term of this equation one more step, we obtain:
+
+\[ f(N) = 2\frac{N}{2} + 4f(\frac{N}{4}) = \]
+\[ = 2\frac{N}{2} + 4(\frac{N}{8} + 2f(\frac{N}{8})) =\]
+\[ = 2\frac{N}{2} + \frac{N}{2} + 8f(\frac{N}{8}) =\]
+\[ = 3\frac{N}{2} + 8f(\frac{N}{8}) \]
+
+After developing the second term $p-1$ times, we obtain:
 
 \[ f(N) = p\frac{N}{2} + 2^pf(\frac{N}{2^p})\]
 
