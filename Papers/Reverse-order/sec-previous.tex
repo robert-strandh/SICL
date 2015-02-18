@@ -60,10 +60,8 @@ verify this hypothesis:
 On \sbcl{} executing this function on a list with $50000$ elements
 where no element satisfies the test takes around $4$ns per element
 compared to around $1.5$ns for an explicit loop from the beginning of
-the list, and around twice as fast as calling \texttt{count}.%
-\FIXME{There has got to be a way to convince \sbcl{} \texttt{count} to
-  run faster on this test.}  This result indicates that we should use
-recursion whenever the size of the stack allows it, though there is of
-course no portable way of testing how much stack space is available.
-However, each implementation might have a specific way, which would
-then be good enough.
+the list, and around twice as fast as calling \texttt{count}.  This
+result indicates that we should use recursion whenever the size of the
+stack allows it, though there is of course no portable way of testing
+how much stack space is available.  However, each implementation might
+have a specific way, which would then be good enough.
