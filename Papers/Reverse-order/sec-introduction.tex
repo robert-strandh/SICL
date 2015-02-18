@@ -73,8 +73,10 @@ large number of elements, for several reasons:
   calling a few functions, or by loop prologues and epilogues.  By
   using long lists, we make sure that performance is dominated by
   traversing the list and computing the test.
-\item We need for the list to have orders of magnitude more elements
-  than can be processed by a simple recursive technique.
+\item If the list is too short, it can be processed by a simple
+  recursive technique.  In order to avoid this possibility, we want
+  the lists to have orders of magnitude more elements than the size of
+  the stack.
 \end{itemize}
 
 Furthermore, throughout this paper, we will assume that the
