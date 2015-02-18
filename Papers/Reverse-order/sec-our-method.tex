@@ -173,7 +173,7 @@ follows:
                   \end{array} \right. \]
 
 Since the second equation is the same as for the basic technique,
-developing the second equation $p$ times, we again obtain:
+developing the second equation $p-1$ times, we again obtain:
 
 \[ f(N) = p\frac{N}{2} + 2^pf(\frac{2^n}{2^p})\]
 
@@ -205,14 +205,38 @@ Finally, instead of using more stack space for the base case, let us
 analyze what happens if we divide the original list into more than two
 parts.  For this analysis, let us assume that we divide the list into
 $M$ equal parts, and that $M$ also is a power of $2$ so that $M =
-2^m$.  We then obtain the following relation
+2^m$.  We then obtain the following relation:
 
 \[ f(N) = \left\{ \begin{array}{ll}
                     0 & \mbox{if $N = 1$} \\
                     N - \frac{N}{M} + Mf(\frac{N}{M}) &\mbox{otherwise}
                   \end{array} \right. \]
 
-Solving as before, we obtain:
+Solving as before, after developing the last term once, we obtain:
+
+\[ f(N) = N - \frac{N}{M} + Mf(\frac{N}{M}) = \]
+\[ = N - \frac{N}{M} + M(\frac{N}{M} - \frac{N}{M^2} + Mf(\frac{N}{M^2})) = \]
+\[ = N - \frac{N}{M} + N - \frac{N}{M} + M^2f(\frac{N}{M^2}) = \]
+\[ = 2(N - \frac{N}{M}) + M^2f(\frac{N}{M^2}) \]
+
+Developing the last term a second time, we obtain:
+
+\[ f(N) = 2(N - \frac{N}{M}) + M^2f(\frac{N}{M^2}) = \]
+\[ = 2(N - \frac{N}{M}) + M^2(\frac{N}{M^2} - \frac{N}{M^3} + Mf(\frac{N}{M^3})) = \]
+\[ = 2(N - \frac{N}{M}) + N - \frac{N}{M} + M^3f(\frac{N}{M^3}) = \]
+\[ = 3(N - \frac{N}{M}) + M^3f(\frac{N}{M^3}) \]
+
+After developing the last term $p-1$ times, we obtain:
+
+\[ f(N) = p(N - \frac{N}{M}) + M^pf(\frac{N}{M^p}) = \]
+
+Setting $p = \frac{n}{m} = \frac{\mathsf{lb}~N}{\mathsf{lb}~M}$ so
+that $M^p = N$, we get:
+
+\[ f(N) = \frac{\mathsf{lb}~N}{\mathsf{lb}~M}(N - \frac{N}{M}) + Nf(1)
+   = \frac{\mathsf{lb}~N}{\mathsf{lb}~M}(N - \frac{N}{M}) \]
+
+Factoring out $N$, we obtain:
 
 \[ f(N) = N((1 - \frac{1}{M})\frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
 
