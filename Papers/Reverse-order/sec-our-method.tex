@@ -163,12 +163,12 @@ Let us now consider what happens when we are able to handle more than
 a single element with the basic recursive technique, as shown in
 \refSec{sec-more-stack}.  We denote the number of elements that the
 basic recursive technique can handle by $K$, and again, in order to
-simplify the analysis, we assume that $K$ is a power of $2$, i.e., $K
-= 2^k$, and also that $N \ge K$.  The recursion relation now looks as
-follows:
+simplify the analysis, we assume that both $N$ and $K$ are powers of
+$2$, i.e., $N = 2^n$ $K = 2^k$, and also that $N \ge K$.  The
+recursion relation now looks as follows:
 
 \[ f(N) = \left\{ \begin{array}{ll}
-                    K-1 & \mbox{if $N = K$} \\
+                    K-1 & \mbox{if $N \le K$} \\
                     \frac{N}{2} + 2f(\frac{N}{2}) &\mbox{otherwise}
                   \end{array} \right. \]
 
