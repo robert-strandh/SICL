@@ -168,7 +168,7 @@ $2$, i.e., $N = 2^n$ $K = 2^k$, and also that $N \ge K$.  The
 recursion relation now looks as follows:
 
 \[ f(N) = \left\{ \begin{array}{ll}
-                    K-1 & \mbox{if $N \le K$} \\
+                    N-1 & \mbox{if $N \le K$} \\
                     \frac{N}{2} + 2f(\frac{N}{2}) &\mbox{otherwise}
                   \end{array} \right. \]
 
@@ -238,7 +238,7 @@ that $M^p = N$, we get:
 
 Factoring out $N$, we obtain:
 
-\[ f(N) = N((1 - \frac{1}{M})\frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
+\[ f(N) = N(1 - \frac{1}{M})\frac{\mathsf{lb}~N}{\mathsf{lb}~M} \]
 
 and thus:
 
