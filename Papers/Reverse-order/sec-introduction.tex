@@ -54,7 +54,7 @@ Another simple technique would be to traverse the list
 is required, even though this time it is \emph{stack space} rather
 than heap space, so that the memory allocator and the garbage
 collector are not solicited, at least in most implementations.  Worse,
-many implementations have a fairly small call stack, especially in
+many implementations have a fairly small call stack, in particular in
 multi-threaded implementations where each thread must have a dedicated
 stack.  Aside from these disadvantages, this technique is however
 fairly efficient in terms of execution time, because a simple function
