@@ -13,9 +13,10 @@ reversing the list that is used in some implementations.
 
 We have presented our technique in the context of the function
 \texttt{count} because, together with \texttt{reduce}, processing the
-elements from the end is required by the \hs{}, whereas for other
-functions accepting the keyword argument \texttt{from-end} it is
-explicitly allowed to process the elements from the beginning to the
+elements from the end is required by the \hs{}, whereas, for other
+func\-tions accep\-ting the key\-word ar\-gument \\
+\texttt{from-end},
+it is ex\-plicitly al\-lowed to process the elements from the begin\-ning to the
 end.
 
 However, our technique is potentially even more interesting to use
@@ -29,7 +30,7 @@ significant amount of work may be wasted.  However, when elements are
 processed in reverse order, a result can be returned when the test is
 satisfied the first time, thereby avoiding such wasted work.
 
-Since the performance our technique is not significantly worse than
+Since the performance our technique is not significant\-ly wor\-se than
 processing from the beginning to the end, it is very likely that our
 technique will be faster in almost all cases.  Only when the last
 element of the list to satisfy the test is close to the beginning of

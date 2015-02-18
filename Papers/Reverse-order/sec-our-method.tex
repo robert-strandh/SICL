@@ -6,7 +6,8 @@
 To illustrate our technique, we first show a very simple version of it
 in the form of the following code:
 
-{\small\begin{verbatim}
+{\small
+\begin{verbatim}
 (defun count-from-end (x list)
   (labels ((aux (x list n)
              (cond ((= n 0) 0)
@@ -17,7 +18,8 @@ in the form of the following code:
                         (+ (aux x half (- n n/2))
                            (aux x list n/2)))))))
     (aux x list (length list))))))
-\end{verbatim}}
+\end{verbatim}
+}
 
 This function starts by computing the length of the list and then
 calling the auxiliary function with the original arguments and the
@@ -67,7 +69,8 @@ recursive traversal if there are fewer than $10000$ elements in the
 list.  If there are more elements, then it divides the list in two,
 just like the basic technique shown in \refSec{sec-basic-technique}.
 
-{\small\begin{verbatim}
+{\small
+\begin{verbatim}
 (defun find-2 (x list)
   (labels ((recursive (x list n)
              (if (zerop n)
@@ -83,17 +86,21 @@ just like the basic technique shown in \refSec{sec-basic-technique}.
                      (aux x half (- n n/2))
                      (aux x list n/2)))))
       (aux x list (length list)))))
-\end{verbatim}}
+\end{verbatim}
+}
 
 With this improvement, the number of \texttt{cdr} operations required
-can now be expressed as approximately $n\thinspace (1 +
-\frac{1}{2}\mathsf{lb}\thinspace \frac{n}{10000})$
+can now be expressed as ap\-proximately 
+\[
+n\thinspace (1 +
+\frac{1}{2}\mathsf{lb}\thinspace \frac{n}{10000})
+\]
 which is significantly better than the corresponding value for the
 basic technique.
 
 However, there is no particular reason to divide the list into $2$
 equal-sized parts when there are too many elements for the basic
-technique.  \refSec{sec-benchmarks} gives a more complete explanation
+technique. \refSec{sec-benchmarks} gives a more complete explanation
 of the parameters involved and how they influence the execution time
 of the resulting code.
 
@@ -284,14 +291,16 @@ technique has several advantages:
 
 We illustrate this technique in a notation similar to \commonlisp{}:
 
-{\small\begin{verbatim}
+{\small
+\begin{verbatim}
 (defun low-level-reverse-count (item list length)
   (loop for rest = list then (cdr rest)
         repeat length
         do (push-on-stack (car rest)))
   (loop repeat length
         count (eq item (pop-from-stack))))
-\end{verbatim}}
+\end{verbatim}
+}
 
 We implemented this technique in SBCL.  In order not to have to
 recompile SBCL with our additional function, we used the

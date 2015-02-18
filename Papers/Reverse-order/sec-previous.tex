@@ -48,14 +48,16 @@ As we already mentioned, we use recursion as the basis of our
 technique, because it is quite fast.  We devised the following test to
 verify this hypothesis:
 
-{\small\begin{verbatim}
+{\small
+\begin{verbatim}
 (defun recursive-count (x list)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (if (endp list)
       0
       (+ (recursive-count x (cdr list))
            (if (eq (car list) x) 1 0))))
-\end{verbatim}}
+\end{verbatim}
+}
 
 On \sbcl{} executing this function on a list with $50000$ elements
 where no element satisfies the test takes around $4$ns per element
