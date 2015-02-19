@@ -76,7 +76,6 @@
    (:file "host-cl-package")
    (:file "define-global-environment")
    (:file "create-global-environment")
-   (:file "import-from-code-utilities")
    (:file "import-from-conditionals")
    (:file "import-from-loop")
    (:file "import-from-cleavir-env")
