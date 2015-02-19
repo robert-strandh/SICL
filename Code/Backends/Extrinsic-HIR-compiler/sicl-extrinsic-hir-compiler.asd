@@ -88,7 +88,6 @@
    (:file "define-primops")
    (:file "fill-global-environment")
    (:file "parse-arguments")
-   (:file "translate-hir")
    (:file "eval")
    (:file "load")
    (:file "load-files")
