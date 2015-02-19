@@ -87,7 +87,6 @@
    (:file "funcall")
    (:file "define-primops")
    (:file "fill-global-environment")
-   (:file "eval")
    (:file "load")
    (:file "load-files")
    (:file "repl")))
