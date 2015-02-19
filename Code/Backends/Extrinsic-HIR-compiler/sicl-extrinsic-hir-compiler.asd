@@ -77,7 +77,6 @@
    (:file "define-global-environment")
    (:file "create-global-environment")
    (:file "runtime-environment")
-   (:file "symbol-value")
    (:file "import-from-host")
    (:file "import-from-code-utilities")
    (:file "import-from-conditionals")
