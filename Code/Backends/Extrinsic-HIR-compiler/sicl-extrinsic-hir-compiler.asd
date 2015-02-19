@@ -76,7 +76,6 @@
    (:file "host-cl-package")
    (:file "define-global-environment")
    (:file "create-global-environment")
-   (:file "runtime-environment")
    (:file "import-from-host")
    (:file "import-from-code-utilities")
    (:file "import-from-conditionals")
