@@ -1,4 +1,4 @@
 (cl:in-package #:sicl-extrinsic-hir-compiler)
 
-(defclass environment (sicl-simple-environment:simple-environment)
+(defclass environment (sicl-extrinsic-environment:environment)
   ())
