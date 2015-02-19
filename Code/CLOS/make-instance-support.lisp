@@ -4,7 +4,7 @@
 ;;; finalized, and if not, calls FINALIZE-INHERITANCE.  However, the
 ;;; INITARGS received by ALLOCATE-INSTANCE should be the defaulted
 ;;; initargs, and computing the defaulted initargs requires the class
-;;; to be finalized.  I peek at PCL shows that the class is finalized
+;;; to be finalized.  A peek at PCL shows that the class is finalized
 ;;; in MAKE-INSTANCE, before ALLOCATE-INSTANCE is called, which makes
 ;;; more sense.
 
