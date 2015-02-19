@@ -78,7 +78,6 @@
    (:file "create-global-environment")
    (:file "import-from-conditionals")
    (:file "import-from-loop")
-   (:file "import-from-cleavir-env")
    (:file "import-from-closer-mop")
    (:file "funcall")
    (:file "define-primops")
