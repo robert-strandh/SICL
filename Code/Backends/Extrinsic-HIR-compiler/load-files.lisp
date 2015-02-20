@@ -28,14 +28,6 @@
   (load-file "../../Arithmetic/incf-decf-defmacro.lisp"
 	     environment)
 
-  ;; Load a file containing a temporary definition of the ordinary
-  ;; function ENSURE-GENERIC-FUNCTION.  The real version of
-  ;; ENSURE-GENERIC-FUNCTION calls ENSURE-GENERIC-FUNCTION-USING-CLASS
-  ;; which is a generic function, but since we can't create generic
-  ;; functions yet, we must break this dependency cycle somehow.
-  (load-file "ensure-generic-function.lisp"
-	     environment)
-
   ;; Load a file containing the definition of the macro DEFGENERIC.
   ;; That macro is particularly simple in that it expands to a call to
   ;; ensure-generic-function and it does not need any support code.
