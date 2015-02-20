@@ -32,7 +32,9 @@ penalty in code using the extension.
 The basic mechanism of their proposed extension is a \emph{special
   form} named \texttt{make-environment} that creates and returns an
 environment in which the code in the \emph{body} of that special form
-is executed.
+is executed.  The operators \texttt{lexical-reference} and
+\texttt{lexical-assignment} are provided to access bindings in a
+first-class environment.
 
 From the examples in the paper, it is clear that their first-class
 environments are meant to be used at a much finer level of granularity
