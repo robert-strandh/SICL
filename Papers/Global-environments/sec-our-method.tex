@@ -25,3 +25,13 @@ its run-time environment.  The cost of accessing a function at
 run-time is therefore no greater in our implementation than in an
 implementation that accesses the function through the symbol naming
 it.
+
+Our technique does, however, incur a performance penalty for functions
+such as \texttt{fdefinition} and \texttt{symbol-value} with an
+argument that is computed at run-time%
+\footnote{When the argument is a constant, a suitable
+  \emph{compiler-macro} can turn the form into an access of the
+  corresponding cell.}
+compared to an implementation in which each symbol contains slots for
+these objects.  However, even in a high-performance implementation such
+as \sbcl{}, these values are \emph{not} contained in symbol slots.
