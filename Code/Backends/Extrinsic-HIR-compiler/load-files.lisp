@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-extrinsic-hir-compiler)
 
-(defun rp (filename)
-  (asdf:system-relative-pathname :sicl-extrinsic-hir-compiler filename))
-
 ;;; Load a file containing a definition of the macro LAMBDA.  This
 ;;; macro is particularly simple, so it doesn't really matter how it
 ;;; is expanded.  This is fortunate, because that the time this file
