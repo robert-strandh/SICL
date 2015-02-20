@@ -142,13 +142,19 @@ different global environments can be created for building \emph{A} and
 
 \subsection{Separate environment for each application}
 
-It is sometimes desirable for a large application to use a large
-number of packages that are specific to that application.  In such a
-situation, it is advantageous to build the application in a separate
-global environment, so that the application-specific packages exist
-only in that environment.  The main entry point(s) of the application
-can then be made available in other environments without making its
-packages available.%
-\FIXME{Say more}
+Taking the idea of \refSec{sec-multiple-package-versions} even
+further, it is sometimes desirable for a large application to use a
+large number of packages that are specific to that application.  In
+such a situation, it is advantageous to build the application in a
+separate global environment, so that the application-specific packages
+exist only in that environment.  The main entry point(s) of the
+application can then be made available in other environments without
+making its packages available.
+
+Using separate first-class global environments for this purpose would
+also eliminate the problem of choosing package names for an
+application that are guaranteed not to conflict with names of packages
+in other applications that some user might simultaneously want to
+install.
 
 %%  LocalWords: startup Sandboxing
