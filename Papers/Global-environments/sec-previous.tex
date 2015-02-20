@@ -51,6 +51,18 @@ However, like the present work, they are also concerned with
 performance, and they show how to implement their protocol without
 serious performance degradation.
 
+The environments proposed by Queinnec and de Roure were clearly meant
+to allow for \emph{modules} as collections of \emph{bindings} where
+the bindings can be shared by other modules through the use of the new
+operators \texttt{export} and \texttt{import}.  In contrast, the
+first-class environments proposed in the present paper are not meant
+to allow such sharing of bindings, though our proposal might allow
+such sharing for function and variable bindings.
+
+The paper by Queinnec and de Roure contains a thorough survey of other
+work related to first-class environments that will not be repeated
+here.
+
 \subsection{Garret's lexicons}
 
 Ron Garret desicribes \emph{lexicons}%
