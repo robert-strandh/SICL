@@ -15,7 +15,28 @@ suggested protocol.
 
 \subsection{Miller and Rozas}
 
-Miller and Rozas \cite{Miller:1991:FVF:113825.113826}
+Miller and Rozas \cite{Miller:1991:FVF:113825.113826} describe a set
+of extensions for the \scheme{} programming language.  In their paper,
+Miller and Rozas also claim that their proposed first-class
+environments could serve as a basis for an object-oriented system.
+Like the present work, Miller and Rozas are concerned with
+performance, and a large part of their paper is dedicated to this
+aspect of their proposal.
+
+In their paper, they show that the extensions incurs no performance
+penalty for code that does not use it.  However, for code that uses
+the extension, the compiler defers accesses to the first-class
+environment to the \emph{interpreter}, thereby imposing a performance
+penalty in code using the extension.
+
+The basic mechanism of their proposed extension is a \emph{special
+  form} named \texttt{make-environment} that creates and returns an
+environment in which the code in the \emph{body} of that special form
+is executed.
+
+From the examples in the paper, it is clear that their first-class
+environments are meant to be used at a much finer level of granularity
+then ours.
 
 \subsection{Queinnec and Roure}
 
