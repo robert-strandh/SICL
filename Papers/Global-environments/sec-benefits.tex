@@ -119,13 +119,26 @@ to the corresponding functions.  These functions can still be
 available in some other environment for use by the system itself.
 
 \subsection{Multiple package versions}
+\label{sec-multiple-package-versions}
 
 When running multiple applications in the same \commonlisp{} process,
 there can easily be conflicts between different versions of the same
 package.  First-class global environments can alleviate this problem
 by having different global environments for the different applications
-causing the conflict.%
-\FIXME{Say more}
+causing the conflict.
+
+Suppose, for instance, that applications \emph{A} and \emph{B} both
+require some \commonlisp{} package \emph{P}, but that \emph{P} exists
+in different \emph{versions}.  Suppose also that \emph{A} and \emph{B}
+require different such versions of \emph{P}.  Since the \commonlisp{}
+standard has no provisions for multiple versions of a package, it
+becomes difficult to provide both \emph{A} and \emph{B} in the same
+\commonlisp{} process.
+
+Using first-class global environments as proposed in this paper, two
+different global environments can be created for building \emph{A} and
+\emph{B}.  These two environments would differ in that the name
+\emph{P} would refer to different versions of the package \emph{P}.
 
 \subsection{Separate environment for each application}
 
