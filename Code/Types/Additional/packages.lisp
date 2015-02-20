@@ -1,4 +1,4 @@
-(in-package #:common-lisp-user)
+(cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-additional-types
   (:use #:common-lisp)
