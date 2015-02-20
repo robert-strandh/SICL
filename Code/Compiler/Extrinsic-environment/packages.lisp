@@ -10,4 +10,6 @@
 	   #:symbol
 	   #:symbol-value)
   (:export #:environment
-	   #:symbol-value))
+	   #:symbol-value
+	   #:load
+	   #:load-source-with-environments))
