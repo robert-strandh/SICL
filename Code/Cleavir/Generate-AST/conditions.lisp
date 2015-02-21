@@ -126,3 +126,10 @@
 (define-condition function-name-unknown
     (compilation-program-error)
   ())
+
+;;; This condition is signaled by methods on CONVERT-SPECIAL,
+;;; specialized to operators for which Cleavir does not provide a
+;;; default method.
+(define-condition no-default-method
+    (compilation-program-error)
+  ((%operator :initarg :operator :reader operator)))
