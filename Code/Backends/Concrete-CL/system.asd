@@ -1,6 +1,6 @@
-(in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem #:sicl-exp
+(defsystem #:sicl-exp
   :components
   ((:file "packages"
     :depends-on ())
