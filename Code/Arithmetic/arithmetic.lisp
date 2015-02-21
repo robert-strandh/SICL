@@ -1,4 +1,4 @@
-(in-package :sicl-arithmetic)
+(cl:in-package :sicl-arithmetic)
 
 (defun + (&rest args)
   (cond ((null args) 0)
