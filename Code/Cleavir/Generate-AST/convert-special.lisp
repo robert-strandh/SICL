@@ -541,3 +541,28 @@
     (cleavir-ast:make-multiple-value-prog1-ast
      (convert first-form environment)
      (convert-sequence forms environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods specialized to operators for which we do not provide a
+;;; conversion method.
+
+(defmethod convert-special
+    ((symbol (eql 'unwind-protect)) form environment)
+  (declare (ignore form environment))
+  (error 'no-default-method :operator symbol))
+
+(defmethod convert-special
+    ((symbol (eql 'catch)) form environment)
+  (declare (ignore form environment))
+  (error 'no-default-method :operator symbol))
+
+(defmethod convert-special
+    ((symbol (eql 'throw)) form environment)
+  (declare (ignore form environment))
+  (error 'no-default-method :operator symbol))
+
+(defmethod convert-special
+    ((symbol (eql 'progv)) form environment)
+  (declare (ignore form environment))
+  (error 'no-default-method :operator symbol))
