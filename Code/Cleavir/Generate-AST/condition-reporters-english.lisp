@@ -145,3 +145,13 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition setq-constant-variable)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The variable assigned to in a SETQ must not be a constant variable,~@
+           but the following constant variable was found:~@
+           ~s"
+	  (expr condition)))
