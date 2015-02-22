@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-generate-ast-test
+(defsystem :cleavir-generate-ast-test
   :depends-on (:cleavir-generate-ast
 	       :cleavir-ast-transformations
 	       :cleavir-ast-interpreter)
