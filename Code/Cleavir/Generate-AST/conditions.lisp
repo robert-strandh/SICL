@@ -4,13 +4,16 @@
 ;;;
 ;;; The base classes for conditions used here. 
 
-(define-condition compilation-program-error (program-error)
+(define-condition compilation-program-error
+    (program-error cleavir-i18n:condition)
   ((%expr :initarg :expr :reader expr)))
 
-(define-condition compilation-warning (warning)
+(define-condition compilation-warning
+    (warning cleavir-i18n:condition)
   ((%expr :initarg :expr :reader expr)))
 
-(define-condition compilation-style-warning (style-warning)
+(define-condition compilation-style-warning
+    (cleavir-i18n:condition style-warning)
   ((%expr :initarg :expr :reader expr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
