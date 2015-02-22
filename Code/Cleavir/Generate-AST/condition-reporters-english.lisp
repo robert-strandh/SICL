@@ -114,3 +114,14 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition block-name-unknown)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "In a RETURN or RETURN-FROM special form, the block name given~@
+           must have been established by a BLOCK special form,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
