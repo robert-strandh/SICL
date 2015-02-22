@@ -30,3 +30,13 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition flet-functions-must-be-proper-list)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The function definitions of an FLET form must be a proper list,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
