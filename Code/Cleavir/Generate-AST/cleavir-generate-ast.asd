@@ -10,6 +10,7 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "condition-reporters-english")
    (:file "check-special-form-syntax")
    (:file "environment-query")
    (:file "utilities")
