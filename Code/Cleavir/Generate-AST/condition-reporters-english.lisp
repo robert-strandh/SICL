@@ -81,3 +81,14 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition binding-must-have-length-one-or-two)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "A binding of a LET or LET* special form that is a list,~@
+           must be a proper list of length 1 or 2,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
