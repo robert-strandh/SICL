@@ -71,3 +71,13 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition binding-must-be-symbol-or-list)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "A binding of a LET or LET* special form must be symbol or a list,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
