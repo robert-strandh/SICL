@@ -155,3 +155,15 @@
            but the following constant variable was found:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition variable-name-unknown)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "A variable referred to must have been previously defined,~@
+           using either some global operator such as DEFVAR or DEFPARAMETER,~@
+           or some form such as LET or LET* for creating a local variable,~@
+           but the following undefined variable was found:~@
+           ~s"
+	  (expr condition)))
