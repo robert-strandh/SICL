@@ -125,3 +125,13 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition setq-must-have-even-number-of-arguments)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The SETQ special form must have an even number of arguments,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
