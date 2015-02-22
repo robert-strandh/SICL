@@ -40,3 +40,13 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition lambda-must-be-proper-list)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "A LAMBDA expression must be a proper list,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
