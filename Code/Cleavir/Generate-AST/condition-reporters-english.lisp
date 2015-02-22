@@ -50,3 +50,14 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition function-argument-must-be-function-name-or-lambda-expression)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The argument of the special operator FUNCTION must be~@
+           a function name or a LAMBDA expression,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
