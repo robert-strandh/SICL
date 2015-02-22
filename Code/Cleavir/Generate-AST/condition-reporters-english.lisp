@@ -135,3 +135,13 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition setq-var-must-be-symbol)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The variable assigned to in a SETQ special form must be a symbol,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
