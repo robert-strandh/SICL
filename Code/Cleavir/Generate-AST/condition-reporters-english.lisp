@@ -61,3 +61,13 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition bindings-must-be-proper-list)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The bindings of a LET or LET* special form must be a proper list,~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
