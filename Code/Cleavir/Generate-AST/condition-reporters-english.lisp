@@ -103,3 +103,14 @@
            but the following was found instead:~@
            ~s"
 	  (expr condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition read-only-p-must-be-boolean)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream
+	  "The second argument of a LOAD-TIME-VALUE special form,~@
+           must be a Boolean constant (so T or NIL),~@
+           but the following was found instead:~@
+           ~s"
+	  (expr condition)))
