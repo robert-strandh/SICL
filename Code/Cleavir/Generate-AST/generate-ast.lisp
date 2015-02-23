@@ -56,7 +56,9 @@
 ;;; (params) . body)) (temp . args))
 ;;;
 ;;; FIXME: do some more error checking.
-(defun convert-lambda-call (form env)
+(defgeneric convert-lambda-call (form env))
+
+(defmethod convert-lambda-call (form env)
   (destructuring-bind ((lambda lambda-list &rest body) &rest args) form
     (declare (ignore lambda))
     (cleavir-ast:make-call-ast
