@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-ast-interpreter
+(defsystem :cleavir-ast-interpreter
   :depends-on (:cleavir-ast)
   :serial t
   :components
