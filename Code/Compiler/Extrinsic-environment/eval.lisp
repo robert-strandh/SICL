@@ -45,7 +45,7 @@
 	 environment2)
 	(t
 	 (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
-		(ast (cleavir-generate-ast:generate-ast form environment1))
+		(ast (cleavir-generate-ast:generate-ast form environment1 nil))
 		(ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
 		(hir (cleavir-ast-to-hir:compile-toplevel ast-bis))
 		(lambda-expr (translate hir environment2))
