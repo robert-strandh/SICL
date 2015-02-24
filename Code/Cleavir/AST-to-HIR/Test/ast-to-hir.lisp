@@ -6,8 +6,10 @@
 
 (defparameter *e* (make-instance 'bogus-environment))
 
+;;; FIXME: pass an implementation instance rather than NIL to
+;;; GENERATE-AST.
 (defun test (form value)
-  (let* ((ast (cleavir-generate-ast:generate-ast form *e*))
+  (let* ((ast (cleavir-generate-ast:generate-ast form *e* nil))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast))
 	 (v (cleavir-hir-interpreter:interpret-hir hir)))
     (assert (equalp v value))))
