@@ -5,13 +5,13 @@
 ;;; Converting code to an abstract syntax tree.
 
 ;;; The main entry point for converting a form.
-(defgeneric convert (form environment))
+(defgeneric convert (form environment system))
 
 ;;; Utility function for converting a sequence of forms, represented
 ;;; as a list.
-(defun convert-sequence (forms environment)
+(defun convert-sequence (forms environment system)
   (loop for form in forms
-	collect (convert form environment)))
+	collect (convert form environment system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -35,15 +35,16 @@
 ;;; of the constant as an immediate machine word.  A default method is
 ;;; provided that always returns NIL.
 
-(defgeneric convert-constant-to-immediate (constant env))
+(defgeneric convert-constant-to-immediate (constant env system))
 
-(defmethod convert-constant-to-immediate (constant env)
-  (declare (ignore constant env))
+(defmethod convert-constant-to-immediate (constant env system)
+  (declare (ignore constant env system))
   nil)
 
-(defun convert-constant (constant env)
+(defun convert-constant (constant env system)
   (let* ((global-env (cleavir-env:global-environment env))
-	 (immediate (convert-constant-to-immediate constant global-env)))
+	 (immediate (convert-constant-to-immediate
+		     constant global-env system)))
     (if (null immediate)
 	(cleavir-ast:make-load-time-value-ast `',constant t)
 	(cleavir-ast:make-immediate-ast immediate))))
@@ -56,14 +57,14 @@
 ;;; (params) . body)) (temp . args))
 ;;;
 ;;; FIXME: do some more error checking.
-(defgeneric convert-lambda-call (form env))
+(defgeneric convert-lambda-call (form env system))
 
-(defmethod convert-lambda-call (form env)
+(defmethod convert-lambda-call (form env system)
   (destructuring-bind ((lambda lambda-list &rest body) &rest args) form
     (declare (ignore lambda))
     (cleavir-ast:make-call-ast
-     (convert-code lambda-list body env)
-     (convert-sequence args env))))
+     (convert-code lambda-list body env system)
+     (convert-sequence args env system))))
 
 ;;; The general method for processing the lambda list is as follows:
 ;;; We use recursion to process the remaining lambda list.  Before the
@@ -91,12 +92,12 @@
 ;;; the lambda list, and this function recursively processes the
 ;;; remaining &AUX "parameters".  FORMS is a sequence of forms
 ;;; constituting the body of the function.
-(defun process-remaining-aux (aux idspecs rdspecs forms env)
+(defun process-remaining-aux (aux idspecs rdspecs forms env system)
   (if (null aux)
       ;; We ran out of &AUX "parameters".  We must build an AST for
       ;; the body of the function.
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
-	(cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
+	(cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
       ;; We have at least one more &AUX "parameter".
       (destructuring-bind (var init) (first aux)
 	(let* (;; We enter the new parameter variable into the
@@ -117,7 +118,8 @@
 						(rest idspecs)
 						rdspecs
 						forms
-						new-env)))
+						new-env
+						system)))
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the &AUX "parameter" and the AST of the
 	  ;; remaining computation as components.
@@ -126,19 +128,19 @@
 ;;; This function is called when we have processed all the &KEY
 ;;; parameters, so if there are any &AUX "parameters", they should be
 ;;; processed by this function.
-(defun process-aux (parsed-lambda-list idspecs rdspecs forms env)
+(defun process-aux (parsed-lambda-list idspecs rdspecs forms env system)
   (let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
     (if (eq aux :none)
 	;; This lambda list has no &AUX "parameters".  We must build
 	;; an AST for the body of the function.
 	(let ((new-env (augment-environment-with-declarations env rdspecs)))
-	  (cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
+	  (cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
 	;; This lambda list has the &AUX keyword in it.  There may or
 	;; may not be any &AUX "parameters" following that keyword.
 	;; We call PROCESS-REMAINING-AUX with the list of these &AUX
 	;; "parameters", and we return the AST that
 	;; PROCESS-REMAINING-AUX builds.
-	(process-remaining-aux aux idspecs rdspecs forms env))))
+	(process-remaining-aux aux idspecs rdspecs forms env system))))
 
 ;;; VAR-AST and SUPPLIED-P-AST are LEXICAL-ASTs that will be set by
 ;;; the implementation-specific argument-parsing code, according to
@@ -147,13 +149,14 @@
 ;;; code for testing whether SUPPLIED-P-AST computes NIL or T, and for
 ;;; assigning the value computed by VALUE-AST to VAR-AST if
 ;;; SUPPLIED-P-AST computes NIL.
-(defun generate-initialization (var-ast supplied-p-ast value-ast env)
+(defun generate-initialization
+    (var-ast supplied-p-ast value-ast env system)
   (cleavir-ast:make-if-ast
    (cleavir-ast:make-eq-ast
     supplied-p-ast
-    (convert-constant nil env))
+    (convert-constant nil env system))
    (cleavir-ast:make-setq-ast var-ast value-ast)
-   (convert-constant nil env)))
+   (convert-constant nil env system)))
 
 ;;; VAR and SUPPLIED-P are symbols representing a parameter variable
 ;;; and its associated SUPPLIED-P variable. If no associated
@@ -173,7 +176,8 @@
 ;;; SUPPLIED-P.  The implementation-specific argument-parsing code is
 ;;; responsible for assigning to those LEXICAL-ASTs according to what
 ;;; arguments were given to the function.
-(defun process-init-parameter (var supplied-p init-ast env next-ast)
+(defun process-init-parameter
+    (var supplied-p init-ast env next-ast system)
   (let* ((name1 (make-symbol (string-downcase var)))
 	 (lexical-var-ast (cleavir-ast:make-lexical-ast name1))
 	 (name2 (if (null supplied-p)
@@ -184,7 +188,8 @@
 	     (list (generate-initialization lexical-var-ast
 					    lexical-supplied-p-ast
 					    init-ast
-					    env)
+					    env
+					    system)
 		   (set-or-bind-variable
 		    var
 		    lexical-var-ast
@@ -204,8 +209,9 @@
 ;;; keyword is present in PARSED-LAMBDA-LIST, and the empty list
 ;;; otherwise.  This works because in the lambda list we create, there
 ;;; are no &AUX "parameters".
-(defun process-allow-other-keys (parsed-lambda-list idspecs rdspecs  forms env)
-  (values (process-aux parsed-lambda-list idspecs rdspecs forms env)
+(defun process-allow-other-keys
+    (parsed-lambda-list idspecs rdspecs  forms env system)
+  (values (process-aux parsed-lambda-list idspecs rdspecs forms env system)
 	  (if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
 	      '(&allow-other-keys)
 	      '())))
@@ -227,13 +233,15 @@
 ;;; the lambda list, and this function recursively processes the
 ;;; remaining &KEY parameters.  FORMS is a sequence of forms
 ;;; constituting the body of the function.
-(defun process-remaining-keys (keys parsed-lambda-list idspecs rdspecs forms env)
+(defun process-remaining-keys
+    (keys parsed-lambda-list idspecs rdspecs forms env system)
   (if (null keys)
       ;; We ran out of &KEY parameters.  Call PROCESS-ALLOW-OTHER-KEYS
       ;; to deal with a possible &ALLOW-OTHER-KEYS lambda-list
       ;; keyword, and return the AST and the modified lambda list
       ;; returned by that function. 
-      (process-allow-other-keys parsed-lambda-list idspecs rdspecs forms env)
+      (process-allow-other-keys
+       parsed-lambda-list idspecs rdspecs forms env system)
       (destructuring-bind ((keyword var) init &optional supplied-p)
  	  (first keys)
 	(let (;; Compute an augmented environment to be used to
@@ -256,12 +264,13 @@
 				      (rest idspecs)
 				      rdspecs
 				      forms
-				      new-env)
+				      new-env
+				      system)
 	    (multiple-value-bind (ast lexical-locations)
 		;; Combine the AST for the remaining computation with
 		;; the effect of this parameter.
 		(process-init-parameter
-		 var supplied-p init-ast new-env next-ast)
+		 var supplied-p init-ast new-env next-ast system)
 	      (values ast
 		      (cons (cons keyword lexical-locations)
 			    next-lexical-parameters))))))))
@@ -269,14 +278,15 @@
 ;;; This function is called when we have processed a possible &REST
 ;;; parameter, so if there are any &KEY parameters, they should be
 ;;; processed by this function.
-(defun process-keys (parsed-lambda-list idspecs rdspecs forms env)
+(defun process-keys (parsed-lambda-list idspecs rdspecs forms env system)
   (let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
     (if (eq keys :none)
 	;; There was no lambda-list keyword &KEY in this lambda list.
 	;; Just call the function PROCESS-AUX to create the AST for
 	;; the remaining analysis, together with an empty modified
 	;; lambda list.
-	(values (process-aux parsed-lambda-list idspecs rdspecs forms env)
+	(values (process-aux
+		 parsed-lambda-list idspecs rdspecs forms env system)
 		'())
 	(multiple-value-bind (ast lexicals)
 	    ;; This lambda list has the lambda-list keyword &KEY in
@@ -286,20 +296,20 @@
 	    ;; the AST that PROCESS-REMAINING-KEYS builds and the
 	    ;; modified lambda list that it returns.
 	    (process-remaining-keys
-	     keys parsed-lambda-list idspecs rdspecs forms env)
+	     keys parsed-lambda-list idspecs rdspecs forms env system)
 	  (values ast (cons '&key lexicals))))))
 
 ;;; This function is called when we have processed a possible
 ;;; &OPTIONAL parameter, so if there is a &REST parameter, it should
 ;;; be processed by this function.
-(defun process-rest (parsed-lambda-list idspecs rdspecs forms env)
+(defun process-rest (parsed-lambda-list idspecs rdspecs forms env system)
   (let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
     (if (eq rest :none)
 	;; There was no lambda-list keyword &REST or &BODY in this
 	;; lambda list.  Just call the function PROCESS-KEYS to create
 	;; the AST for the remaining analysis and the modified lambda
 	;; list.
-	(process-keys parsed-lambda-list idspecs rdspecs forms env)
+	(process-keys parsed-lambda-list idspecs rdspecs forms env system)
 	;; This lambda list has the lambda-list &REST or &BODY in it.
 	;; It is followed by a single variable to hold the rest of the
 	;; arguments.
@@ -314,7 +324,8 @@
 			    (rest idspecs)
 			    rdspecs
 			    forms
-			    new-env)
+			    new-env
+			    system)
 	    (let* (;; We must create a LEXICAL-AST that the
 		   ;; implementation-specific argument-parsing code
 		   ;; will assign to, so we must give it a name.
@@ -331,44 +342,46 @@
 		      (list* '&rest lexical-ast next-lexical-parameters))))))))
 
 (defun process-remaining-optionals
-    (optionals parsed-lambda-list idspecs rdspecs forms env)
+    (optionals parsed-lambda-list idspecs rdspecs forms env system)
   (if (null optionals)
-      (process-rest parsed-lambda-list idspecs rdspecs forms env)
+      (process-rest parsed-lambda-list idspecs rdspecs forms env system)
       (destructuring-bind (var init &optional supplied-p)
  	  (first optionals)
 	(let ((new-env (augment-environment-with-parameter
 			var supplied-p (first idspecs) env))
-	      (init-ast (convert init env)))
+	      (init-ast (convert init env system)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
 	      (process-remaining-optionals (rest optionals)
 					   parsed-lambda-list
 					   (rest idspecs)
 					   rdspecs
 					   forms
-					   new-env)
+					   new-env
+					   system)
 	    (multiple-value-bind (ast lexical-locations)
 		(process-init-parameter
-		 var supplied-p init-ast new-env next-ast)
+		 var supplied-p init-ast new-env next-ast system)
 	      (values ast
 		      (cons lexical-locations next-lexical-parameters))))))))
 
-(defun process-optionals (parsed-lambda-list idspecs rdspecs forms env)
+(defun process-optionals (parsed-lambda-list idspecs rdspecs forms env system)
   (let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
     (if (eq optionals :none)
-	(process-rest parsed-lambda-list idspecs rdspecs forms env)
+	(process-rest parsed-lambda-list idspecs rdspecs forms env system)
 	(multiple-value-bind (ast lexicals)
 	    (process-remaining-optionals optionals
 					 parsed-lambda-list
 					 idspecs
 					 rdspecs
 					 forms
-					 env)
+					 env
+					 system)
 	  (values ast (cons '&optional lexicals))))))
 
 (defun process-required
-    (required parsed-lambda-list idspecs rdspecs forms env)
+    (required parsed-lambda-list idspecs rdspecs forms env system)
   (if (null required)
-      (process-optionals parsed-lambda-list idspecs rdspecs forms env)
+      (process-optionals parsed-lambda-list idspecs rdspecs forms env system)
       (let* ((var (first required))
 	     (name (make-symbol (string-downcase var)))
 	     (lexical-ast (cleavir-ast:make-lexical-ast name))
@@ -380,7 +393,8 @@
 			      (rest idspecs)
 			      rdspecs
 			      forms
-			      new-env)
+			      new-env
+			      system)
 	  (values (set-or-bind-variable var lexical-ast next-ast new-env)
 		  (cons lexical-ast next-lexical-parameters))))))
 
@@ -418,9 +432,9 @@
 		     result)))
     (append (mapcar #'list required) result)))
 
-(defgeneric convert-code (lambda-list body env))
+(defgeneric convert-code (lambda-list body env system))
 
-(defmethod convert-code (lambda-list body env)
+(defmethod convert-code (lambda-list body env system)
   (let* ((parsed-lambda-list
 	   (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list))
 	 (required (cleavir-code-utilities:required parsed-lambda-list)))
@@ -441,7 +455,8 @@
 				idspecs
 				rdspecs
 				forms
-				env)
+				env
+				system)
 	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -452,29 +467,29 @@
 ;;; calling VARIABLE-INFO on the symbol or from calling FUNCTION-INFO
 ;;; on the CAR of the CONS;  3. the environment.
 
-(defgeneric convert-form (form info environment))
+(defgeneric convert-form (form info environment system))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT is responsible for converting a form to an abstract syntax
 ;;; tree.
 
-(defmethod convert (form environment)
+(defmethod convert (form environment system)
   (cond ((and (not (consp form)) (not (symbolp form)))
-	 (convert-constant form environment))
+	 (convert-constant form environment system))
 	((and (symbolp form) (constantp form))
-	 (convert-constant (symbol-value form) environment))
+	 (convert-constant (symbol-value form) environment system))
 	((symbolp form)
 	 (let ((info (variable-info environment form)))
-	   (convert-form form info environment)))
+	   (convert-form form info environment system)))
 	((symbolp (car form))
 	 (let ((info (function-info environment (car form))))
-	   (convert-form form info environment)))
+	   (convert-form form info environment system)))
 	(t
-	 (convert-lambda-call form environment))))
+	 (convert-lambda-call form environment system))))
 
-(defun generate-ast (form environment)
-  (convert form environment))
+(defun generate-ast (form environment system)
+  (convert form environment system))
 
 ;;; This variable should be bound by client code to one of the symbols
 ;;; CL:COMPILE, CL:COMPILE-FILE, or CL:EVAL before the main entry
@@ -529,7 +544,8 @@
   `(progn (setf *top-level-form-p* *old-top-level-form-p*)
 	  ,@body))
 
-(defmethod convert :around (form environment)
+(defmethod convert :around (form environment system)
+  (declare (ignore system))
   (let ((*old-top-level-form-p* *top-level-form-p*)
 	(*top-level-form-p* nil))
     (when (and *compile-time-too* *old-top-level-form-p*)

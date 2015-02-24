@@ -10,14 +10,18 @@
 
 (defparameter *e* (make-instance 'bogus-environment))
 
+;;; FIXME: Pass an implementation instance (rather than NIL) to
+;;; GENERATE-AST.
 (defun test (form value)
   (let* ((ast (cleavir-generate-ast:generate-ast form *e*))
 	 (hoisted (cleavir-ast-transformations:hoist-load-time-value ast))
 	 (v (cleavir-ast-interpreter:interpret hoisted)))
     (assert (equalp v value))))
 
+;;; FIXME: Pass an implementation instance (rather than NIL) to
+;;; GENERATE-AST.
 (defun test-error (form)
-  (let* ((ast (cleavir-generate-ast:generate-ast form *e*)))
+  (let* ((ast (cleavir-generate-ast:generate-ast form *e* nil)))
     (multiple-value-bind (v1 v2)
 	(ignore-errors 
 	 (cleavir-ast-interpreter:interpret ast))

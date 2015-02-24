@@ -1,6 +1,6 @@
 (in-package #:cleavir-generate-ast)
 
-(defmethod convert-special :around (symbol form env)
+(defmethod convert-special :around (symbol form env system)
   (declare (ignore env))
   (check-special-form-syntax symbol form)
   (call-next-method))
@@ -10,18 +10,18 @@
 ;;; Converting QUOTE.
 
 (defmethod convert-special
-    ((symbol (eql 'quote)) form env)
-  (convert-constant (cadr form) env))
+    ((symbol (eql 'quote)) form env system)
+  (convert-constant (cadr form) env system))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting BLOCK.
 
 (defmethod convert-special
-    ((symbol (eql 'block)) form env)
+    ((symbol (eql 'block)) form env system)
   (let* ((ast (cleavir-ast:make-block-ast nil))
 	 (new-env (cleavir-env:add-block env (cadr form) ast))
-	 (forms (convert-sequence (cddr form) new-env)))
+	 (forms (convert-sequence (cddr form) new-env system)))
     (setf (cleavir-ast:body-ast ast)
 	  (cleavir-ast:make-progn-ast forms))
     ast))
@@ -31,15 +31,15 @@
 ;;; Converting EVAL-WHEN.
 
 (defmethod convert-special
-    ((symbol (eql 'eval-when)) form environment)
+    ((symbol (eql 'eval-when)) form environment system)
   (with-preserved-toplevel-ness
     (destructuring-bind (situations . body) (rest form)
       (if (or (eq *compiler* 'cl:compile) (eq *compiler* 'cl:eval))
 	  (if (or (member :execute situations)
 		  (member 'eval situations))
 	      (cleavir-ast:make-progn-ast
-	       (convert-sequence (cddr form) environment))
-	      (convert nil environment))
+	       (convert-sequence (cddr form) environment system))
+	      (convert nil environment system))
 	  (cond ((or (and (or (member :compile-toplevel situations)
 			      (member 'compile situations))
 			  (or (member :load-toplevel situations)
@@ -52,7 +52,7 @@
 			      (member 'eval situations))
 			  *compile-time-too*))
 		 (let ((*compile-time-too* t))
-		   (convert `(progn ,@(cddr form)) environment)))
+		   (convert `(progn ,@(cddr form)) environment system)))
 		((or (and (not (or (member :compile-toplevel situations)
 				   (member 'compile situations)))
 			  (or (member :load-toplevel situations)
@@ -67,7 +67,7 @@
 			  (not (or (member :execute situations)
 				   (member 'eval situations)))))
 		 (let ((*compile-time-too* nil))
-		   (convert `(progn ,@(cddr form)) environment)))
+		   (convert `(progn ,@(cddr form)) environment system)))
 		((or (and (or (member :compile-toplevel situations)
 			      (member 'compile situations))
 			  (not (or (member :load-toplevel situations)
@@ -80,15 +80,16 @@
 			      (member 'eval situations))
 			  *compile-time-too*))
 		 (cleavir-env:eval `(progn ,@body) environment environment)
-		 (convert nil environment))
+		 (convert nil environment system))
 		(t
-		 (convert nil environment)))))))
+		 (convert nil environment system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FLET.
 
-(defmethod convert-special ((symbol (eql 'flet)) form env)
+(defmethod convert-special
+    ((symbol (eql 'flet)) form env system)
   (let ((new-env env))
     ;; Create a new environment with the additional names.
     (loop for def in (cadr form)
@@ -97,7 +98,7 @@
 	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
-		  for fun = (convert-code lambda-list body env)
+		  for fun = (convert-code lambda-list body env system)
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
@@ -110,44 +111,47 @@
 	  (setf new-env (augment-environment-with-declarations
 			 new-env canonicalized-dspecs)))
 	(cleavir-ast:make-progn-ast
-	 (append init-asts (convert-sequence forms new-env)))))))
+	 (append init-asts (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FUNCTION.
 
-(defgeneric convert-global-function (info global-env))
+(defgeneric convert-global-function (info global-env system))
 
-(defmethod convert-global-function (info global-env)
+(defmethod convert-global-function (info global-env system)
   (declare (ignore global-env))
   (cleavir-ast:make-fdefinition-ast
    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info) t)
    info))
 
-(defmethod convert-function ((info cleavir-env:global-function-info) env)
-  (convert-global-function info (cleavir-env:global-environment env)))
+(defmethod convert-function
+    ((info cleavir-env:global-function-info) env system)
+  (convert-global-function info (cleavir-env:global-environment env) system))
 
-(defmethod convert-function ((info cleavir-env:local-function-info) env)
-  (declare (ignore env))
+(defmethod convert-function
+    ((info cleavir-env:local-function-info) env system)
+  (declare (ignore env system))
   (cleavir-env:identity info))
 
-(defun convert-named-function (name environment)
+(defun convert-named-function (name environment system)
   (let ((info (cleavir-env:function-info environment name)))
-    (convert-function info environment)))
+    (convert-function info environment system)))
 
-(defun convert-lambda-function (lambda-form env)
-  (convert-code (cadr lambda-form) (cddr lambda-form) env))
+(defun convert-lambda-function (lambda-form env system)
+  (convert-code (cadr lambda-form) (cddr lambda-form) env system))
 
-(defmethod convert-special ((symbol (eql 'function)) form env)
+(defmethod convert-special ((symbol (eql 'function)) form env system)
   (if (proper-function-name-p (cadr form))
-      (convert-named-function (cadr form) env)
-      (convert-lambda-function (cadr form) env)))
+      (convert-named-function (cadr form) env system)
+      (convert-lambda-function (cadr form) env system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting GO.
 
-(defmethod convert-special ((symbol (eql 'go)) form env)
+(defmethod convert-special ((symbol (eql 'go)) form env system)
+  (declare (ignore system))
   (let ((info (tag-info env (cadr form))))
     (cleavir-ast:make-go-ast
      (cleavir-env:identity info))))
@@ -156,21 +160,21 @@
 ;;;
 ;;; Converting IF.
 
-(defmethod convert-special ((symbol (eql 'if)) form env)
+(defmethod convert-special ((symbol (eql 'if)) form env system)
   (cleavir-ast:make-if-ast
    (cleavir-ast:make-eq-ast
-    (convert (cadr form) env)
-    (convert-constant nil env))
+    (convert (cadr form) env system)
+    (convert-constant nil env system))
    (if (null (cdddr form))
-       (convert-constant nil env)
-       (convert (cadddr form) env))
-   (convert (caddr form) env)))
+       (convert-constant nil env system)
+       (convert (cadddr form) env system))
+   (convert (caddr form) env system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LABELS.
 
-(defmethod convert-special ((symbol (eql 'labels)) form env)
+(defmethod convert-special ((symbol (eql 'labels)) form env system)
   (let ((new-env env))
     ;; Create a new environment with the additional names.
     (loop for def in (cadr form)
@@ -179,7 +183,7 @@
 	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
-		  for fun = (convert-code lambda-list body new-env)
+		  for fun = (convert-code lambda-list body new-env system)
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
@@ -192,7 +196,7 @@
 	  (setf new-env (augment-environment-with-declarations
 			 new-env canonicalized-dspecs)))
 	(cleavir-ast:make-progn-ast
-	 (append init-asts (convert-sequence forms new-env)))))))
+	 (append init-asts (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -226,12 +230,12 @@
 ;;; corresponding variable in the BINDINGS list.  RDSPECS is a list of
 ;;; remaining canonicalized declaration specifiers that apply to the
 ;;; environment in which the FORMS are to be processed.
-(defun process-remaining-let-bindings (bindings idspecs rdspecs forms env)
+(defun process-remaining-let-bindings (bindings idspecs rdspecs forms env system)
   (if (null bindings)
       ;; We ran out of bindings.  We must build an AST for the body of
       ;; the function.
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
-	(cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
+	(cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
       (destructuring-bind (var . lexical-ast) (first bindings)
 	(let* (;; We enter the new variable into the environment and
 	       ;; then we process remaining parameters and ultimately
@@ -247,14 +251,15 @@
 							 (rest idspecs)
 							 rdspecs
 							 forms
-							 new-env)))
+							 new-env
+							 system)))
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the new variable and the AST of the
 	  ;; remaining computation as components.
 	  (set-or-bind-variable var lexical-ast next-ast new-env)))))
 
 (defmethod convert-special
-    ((symbol (eql 'let)) form env)
+    ((symbol (eql 'let)) form env system)
   (destructuring-bind (bindings &rest body) (cdr form)
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
@@ -268,7 +273,8 @@
 			      for init-form = (binding-init-form binding)
 			      for temp-ast in temp-asts
 			      collect (cleavir-ast:make-setq-ast
-				       temp-ast (convert init-form  env)))))
+				       temp-ast
+				       (convert init-form env system)))))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
 	     (mapcar #'list variables)
@@ -280,7 +286,8 @@
 			  idspecs
 			  rdspecs
 			  forms
-			  env)))))))))
+			  env
+			  system)))))))))
 
 ;;; BINDINGS is a list of CONS cells.  The CAR of each CONS cell is a
 ;;; variable to be bound.  The CDR of each CONS cell is an init-form
@@ -291,12 +298,13 @@
 ;;; corresponding variable in the BINDINGS list.  RDSPECS is a list of
 ;;; remaining canonicalized declaration specifiers that apply to the
 ;;; environment in which the FORMS are to be processed.
-(defun process-remaining-let*-bindings (bindings idspecs rdspecs forms env)
+(defun process-remaining-let*-bindings
+    (bindings idspecs rdspecs forms env system)
   (if (null bindings)
       ;; We ran out of bindings.  We must build an AST for the body of
       ;; the function.
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
-	(cleavir-ast:make-progn-ast (convert-sequence forms new-env)))
+	(cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
       (destructuring-bind (var . init-form) (first bindings)
 	(let* (;; We enter the new variable into the environment and
 	       ;; then we process remaining parameters and ultimately
@@ -306,7 +314,7 @@
 	       ;; The initform of the &AUX parameter is turned into an
 	       ;; AST in the original environment, i.e. the one that
 	       ;; does not have the parameter variable in it.
-	       (value-ast (convert init-form env))
+	       (value-ast (convert init-form env system))
 	       ;; We compute the AST of the remaining computation by
 	       ;; recursively calling this same function with the
 	       ;; remaining bindings (if any) and the environment that
@@ -316,14 +324,15 @@
 							  (rest idspecs)
 							  rdspecs
 							  forms
-							  new-env)))
+							  new-env
+							  system)))
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the new variable and the AST of the
 	  ;; remaining computation as components.
 	  (set-or-bind-variable var value-ast next-ast new-env)))))
 
 (defmethod convert-special
-    ((symbol (eql 'let*)) form env)
+    ((symbol (eql 'let*)) form env system)
   (destructuring-bind (bindings &rest body) (cdr form)
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
@@ -340,14 +349,16 @@
 					   idspecs
 					   rdspecs
 					   forms
-					   env))))))
+					   env
+					   system))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LOAD-TIME-VALUE.
 
 (defmethod convert-special
-    ((symbol (eql 'load-time-value)) form environment)
+    ((symbol (eql 'load-time-value)) form environment system)
+  (declare (ignore system))
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 1 2)
   (cleavir-ast:make-load-time-value-ast
@@ -361,7 +372,7 @@
 ;;; its subforms the same way as the form itself.
 
 (defmethod convert-special
-    ((symbol (eql 'locally)) form env)
+    ((symbol (eql 'locally)) form env system)
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body (cdr form))
     (let ((canonicalized-dspecs
@@ -371,7 +382,7 @@
 		      env canonicalized-dspecs)))
 	(with-preserved-toplevel-ness
 	  (cleavir-ast:make-progn-ast
-	   (convert-sequence forms new-env)))))))
+	   (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -381,7 +392,7 @@
 ;;; its subforms the same way as the form itself.
 
 (defmethod convert-special
-    ((symbol (eql 'macrolet)) form env)
+    ((symbol (eql 'macrolet)) form env system)
   (destructuring-bind (definitions &rest body) (rest form)
     (let ((new-env env))
       (loop for (name lambda-list . body) in definitions
@@ -391,7 +402,7 @@
 	    do (setf new-env
 		     (cleavir-env:add-local-macro new-env name expander)))
       (with-preserved-toplevel-ness
-	(convert `(locally ,@body) new-env)))))
+	(convert `(locally ,@body) new-env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -401,20 +412,21 @@
 ;;; its subforms the same way as the form itself.
 
 (defmethod convert-special
-    ((head (eql 'progn)) form environment)
+    ((head (eql 'progn)) form environment system)
   (with-preserved-toplevel-ness
     (cleavir-ast:make-progn-ast
-     (convert-sequence (cdr form) environment))))
+     (convert-sequence (cdr form) environment system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting RETURN-FROM.
 
-(defmethod convert-special ((symbol (eql 'return-from)) form env)
+(defmethod convert-special
+    ((symbol (eql 'return-from)) form env system)
   (let ((info (block-info env (cadr form))))
     (cleavir-ast:make-return-from-ast
      (cleavir-env:identity info)
-     (convert (caddr form) env))))
+     (convert (caddr form) env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -424,26 +436,29 @@
 ;;; therefore make sure it is always compiled in a context where its
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
-(defgeneric convert-setq (info form-ast env))
+(defgeneric convert-setq (info form-ast env system))
 
 (defmethod convert-setq
-    ((info cleavir-env:constant-variable-info) form-ast env)
-  (declare (ignore env))
+    ((info cleavir-env:constant-variable-info) form-ast env system)
+  (declare (ignore env system))
   (error 'setq-constant-variable
 	 :form (cleavir-env:name info)))
 
 (defmethod convert-setq
-    ((info cleavir-env:lexical-variable-info) form-ast env)
-  (declare (ignore env))
+    ((info cleavir-env:lexical-variable-info) form-ast env system)
+  (declare (ignore env system))
   (cleavir-ast:make-progn-ast 
    (list (cleavir-ast:make-setq-ast
 	  (cleavir-env:identity info)
 	  form-ast)
 	 (cleavir-env:identity info))))
 
-(defgeneric convert-setq-special-variable (info form-ast global-env))
+(defgeneric convert-setq-special-variable
+    (info form-ast global-env system))
 
-(defmethod convert-setq-special-variable (info form-ast global-env)
+(defmethod convert-setq-special-variable
+    (info form-ast global-env system)
+  (declare (ignore system))
   (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
     (cleavir-ast:make-progn-ast
      (list (cleavir-ast:make-setq-ast temp form-ast)
@@ -453,18 +468,21 @@
 	   temp))))
 
 (defmethod convert-setq
-    ((info cleavir-env:special-variable-info) form-ast env)
+    ((info cleavir-env:special-variable-info) form-ast env system)
   (let ((global-env (cleavir-env:global-environment env)))
-    (convert-setq-special-variable info form-ast global-env)))
+    (convert-setq-special-variable info form-ast global-env system)))
 
-(defun convert-elementary-setq (var form env)
-  (convert-setq (variable-info env var) (convert form env) env))
+(defun convert-elementary-setq (var form env system)
+  (convert-setq (variable-info env var)
+		(convert form env system)
+		env
+		system))
   
 (defmethod convert-special
-    ((symbol (eql 'setq)) form environment)
+    ((symbol (eql 'setq)) form environment system)
   (let ((form-asts (loop for (var form) on (cdr form) by #'cddr
 			 collect (convert-elementary-setq
-				  var form environment))))
+				  var form environment system))))
     (cleavir-ast:make-progn-ast form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -472,13 +490,13 @@
 ;;; Converting SYMBOL-MACROLET.
 
 (defmethod convert-special
-    ((head (eql 'symbol-macrolet)) form env)
+    ((head (eql 'symbol-macrolet)) form env system)
   (let ((new-env env))
     (loop for (name expansion) in (cadr form)
 	  do (setf new-env
 		   (cleavir-env:add-local-symbol-macro new-env name expansion)))
     (with-preserved-toplevel-ness
-      (convert `(progn ,@(cddr form)) new-env))))
+      (convert `(progn ,@(cddr form)) new-env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -490,7 +508,7 @@
 ;;; value.
 
 (defmethod convert-special
-    ((symbol (eql 'tagbody)) form env)
+    ((symbol (eql 'tagbody)) form env system)
   (let ((tag-asts
 	  (loop for item in (cdr form)
 		when (symbolp item)
@@ -502,20 +520,20 @@
     (let ((items (loop for item in (cdr form)
 		       collect (if (symbolp item)
 				   (pop tag-asts)
-				   (convert item new-env)))))
+				   (convert item new-env system)))))
       (cleavir-ast:make-progn-ast
        (list (cleavir-ast:make-tagbody-ast items)
-	     (convert-constant nil env))))))
+	     (convert-constant nil env system))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting THE.
 
 (defmethod convert-special
-    ((symbol (eql 'the)) form environment)
+    ((symbol (eql 'the)) form environment system)
   (destructuring-bind (value-type subform) (rest form)
     (cleavir-ast:make-the-ast
-     (convert subform environment)
+     (convert subform environment system)
      (if (and (consp value-type) (eq (car value-type) 'values))
 	 (cdr value-type)
 	 (list value-type)))))
@@ -525,22 +543,22 @@
 ;;; Converting MULTIPLE-VALUE-CALL.
 
 (defmethod convert-special
-    ((symbol (eql 'multiple-value-call)) form environment)
+    ((symbol (eql 'multiple-value-call)) form environment system)
   (destructuring-bind (function-form . forms) (rest form)
     (cleavir-ast:make-multiple-value-call-ast
-     (convert function-form environment)
-     (convert-sequence forms environment))))
+     (convert function-form environment system)
+     (convert-sequence forms environment system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting MULTIPLE-VALUE-CALL.
 
 (defmethod convert-special
-    ((symbol (eql 'multiple-value-prog1)) form environment)
+    ((symbol (eql 'multiple-value-prog1)) form environment system)
   (destructuring-bind (first-form . forms) (rest form)
     (cleavir-ast:make-multiple-value-prog1-ast
-     (convert first-form environment)
-     (convert-sequence forms environment))))
+     (convert first-form environment system)
+     (convert-sequence forms environment system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -548,21 +566,21 @@
 ;;; conversion method.
 
 (defmethod convert-special
-    ((symbol (eql 'unwind-protect)) form environment)
-  (declare (ignore form environment))
+    ((symbol (eql 'unwind-protect)) form environment system)
+  (declare (ignore form environment system))
   (error 'no-default-method :operator symbol))
 
 (defmethod convert-special
-    ((symbol (eql 'catch)) form environment)
-  (declare (ignore form environment))
+    ((symbol (eql 'catch)) form environment system)
+  (declare (ignore form environment system))
   (error 'no-default-method :operator symbol))
 
 (defmethod convert-special
-    ((symbol (eql 'throw)) form environment)
-  (declare (ignore form environment))
+    ((symbol (eql 'throw)) form environment system)
+  (declare (ignore form environment system))
   (error 'no-default-method :operator symbol))
 
 (defmethod convert-special
-    ((symbol (eql 'progv)) form environment)
-  (declare (ignore form environment))
+    ((symbol (eql 'progv)) form environment system)
+  (declare (ignore form environment system))
   (error 'no-default-method :operator symbol))

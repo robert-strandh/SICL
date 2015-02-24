@@ -4,7 +4,8 @@
 ;;;
 ;;; Converting a symbol that has a definition as a symbol macro.
 
-(defmethod convert-form (form (info cleavir-env:symbol-macro-info) env)
+(defmethod convert-form
+    (form (info cleavir-env:symbol-macro-info) env system)
   (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
 			    (lambda (form env)
 			      (declare (ignore form env))
@@ -12,20 +13,23 @@
 			    form
 			    env)))
     (with-preserved-toplevel-ness
-      (convert expansion env))))
+      (convert expansion env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a symbol that has a definition as a constant variable.
 
-(defmethod convert-form (form (info cleavir-env:constant-variable-info) env)
-  (convert-constant (cleavir-env:value info) env))
+(defmethod convert-form
+    (form (info cleavir-env:constant-variable-info) env system)
+  (convert-constant (cleavir-env:value info) env system))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a symbol that has a definition as a lexical variable.
 
-(defmethod convert-form (form (info cleavir-env:lexical-variable-info) env)
+(defmethod convert-form
+    (form (info cleavir-env:lexical-variable-info) env system)
+  (declare (ignore system))
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn "Reference to a variable declared IGNORE"))
   (let ((type (cleavir-env:type info)))
@@ -46,18 +50,19 @@
 ;;; Converting a symbol that has a definition as a special variable.
 ;;; We do this by generating a call to SYMBOL-VALUE.
 
-(defgeneric convert-special-variable (info global-env))
+(defgeneric convert-special-variable (info global-env system))
 
-(defmethod convert-special-variable (info global-env)
+(defmethod convert-special-variable (info global-env system)
   (declare (ignore global-env))
   (let ((symbol (cleavir-env:name info)))
     (cleavir-ast:make-symbol-value-ast
      (cleavir-ast:make-load-time-value-ast `',symbol))))
 
-(defmethod convert-form (form (info cleavir-env:special-variable-info) env)
+(defmethod convert-form
+    (form (info cleavir-env:special-variable-info) env system)
   (declare (ignore form))
   (let ((global-env (cleavir-env:global-environment env)))
-    (convert-special-variable info global-env)))
+    (convert-special-variable info global-env system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -70,20 +75,22 @@
 ;;; use of MACROLET.  Therefore, the expander should be able to handle
 ;;; being passed the same kind of environment.
 
-(defmethod convert-form (form (info cleavir-env:local-macro-info) env)
+(defmethod convert-form
+    (form (info cleavir-env:local-macro-info) env system)
   (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
 			    (cleavir-env:expander info)
 			    form
 			    env)))
     (with-preserved-toplevel-ness
-      (convert expansion env))))
+      (convert expansion env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a compound form that calls a global macro.
 ;;; A global macro can have a compiler macro associated with it.
 
-(defmethod convert-form (form (info cleavir-env:global-macro-info) env)
+(defmethod convert-form
+    (form (info cleavir-env:global-macro-info) env system)
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (with-preserved-toplevel-ness
       (if (null compiler-macro)
@@ -93,7 +100,7 @@
 			    (cleavir-env:expander info)
 			    form
 			    env)
-		   env)
+		   env system)
 	  ;; There is a compiler macro, so we must see whether it will
 	  ;; accept or decline.
 	  (let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
@@ -109,21 +116,22 @@
 				  (cleavir-env:expander info)
 				  expanded-form
 				  env)
-			 env)
+			 env system)
 		;; If the two are not EQ, this means that the compiler
 		;; macro replaced the original form with a new form.
 		;; This new form must then again be converted without
 		;; taking into account the real macro expander.
-		(convert expanded-form env)))))))
+		(convert expanded-form env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a compound form that calls a local function.
 ;;; A local function can not have a compiler macro associated with it.
 
-(defmethod convert-form (form (info cleavir-env:local-function-info) env)
+(defmethod convert-form
+    (form (info cleavir-env:local-function-info) env system)
   (let ((function-ast (cleavir-env:identity info))
-	(argument-asts (convert-sequence (cdr form) env)))
+	(argument-asts (convert-sequence (cdr form) env system)))
     (cleavir-ast:make-call-ast function-ast argument-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -131,14 +139,15 @@
 ;;; Converting a compound form that calls a global function.
 ;;; A global function can have  compiler macro associated with it.
 
-(defgeneric convert-function (info env))
+(defgeneric convert-function (info env system))
 
-(defmethod convert-form (form (info cleavir-env:global-function-info) env)
+(defmethod convert-form
+    (form (info cleavir-env:global-function-info) env system)
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
 	;; There is no compiler macro.  Create a CALL-AST.
-	(let ((function-ast (convert-function info env))
-	      (argument-asts (convert-sequence (cdr form) env)))
+	(let ((function-ast (convert-function info env system))
+	      (argument-asts (convert-sequence (cdr form) env system)))
 	  (cleavir-ast:make-call-ast function-ast argument-asts))
 	;; There is a compiler macro.  We must see whether it will
 	;; accept or decline.
@@ -151,19 +160,20 @@
 	      ;; declined.  We are left with function-call form.
 	      ;; Create a CALL-AST, just as if there were no compiler
 	      ;; macro present.
-	      (let ((function-ast (convert-function info env))
-		    (argument-asts (convert-sequence (cdr form) env)))
+	      (let ((function-ast (convert-function info env system))
+		    (argument-asts (convert-sequence (cdr form) env system)))
 		(cleavir-ast:make-call-ast function-ast argument-asts))
 	      ;; If the two are not EQ, this means that the compiler
 	      ;; macro replaced the original form with a new form.
 	      ;; This new form must then be converted.
-	      (convert expanded-form env))))))
+	      (convert expanded-form env system))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a special form.
 
-(defgeneric convert-special (head form environment))
+(defgeneric convert-special (head form environment system))
 
-(defmethod convert-form (form (info cleavir-env:special-operator-info) env)
-  (convert-special (car form) form env))
+(defmethod convert-form
+    (form (info cleavir-env:special-operator-info) env system)
+  (convert-special (car form) form env system))
