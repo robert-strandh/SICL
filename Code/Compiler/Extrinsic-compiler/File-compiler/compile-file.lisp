@@ -6,12 +6,12 @@
 
 (defparameter *x86-64* (make-instance 'cleavir-processor-x86-64:x86-64))
 
-(defun ast-from-stream (stream environment)
+(defun ast-from-stream (stream environment system)
   (cleavir-ast:make-progn-ast
    (loop with eof = (list nil)
 	 for form = (sicl-reader:read stream nil eof)
 	 until (eq form eof)
-	 collect (cleavir-generate-ast:generate-ast form environment))))
+	 collect (cleavir-generate-ast:generate-ast form environment system))))
 
 (defun compile-stream (stream environment)
   (let* ((cleavir-generate-ast:*compiler* 'cl:compile-file)

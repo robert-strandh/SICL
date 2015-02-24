@@ -19,11 +19,16 @@
 		 (traverse (cleavir-ir:successors insn)))))
       (traverse initial-instruction))))
 
-(defun compile-function-form (form processor os)
+(defun allocate-registers (initial-instruction processor os)
+  (let ((conflicts (cleavir-register-allocation:compute-conflicts
+		    initial-instruction)))
+    conflicts))
+
+(defun compile-function-form (form processor os system)
   (let* ((environment sicl-extrinsic-environment:*environment*)
 	 (sicl-env:*global-environment* environment)
 	 (sicl (make-instance 'sicl-target-sicl:sicl))
-	 (ast (cleavir-generate-ast:generate-ast form environment))
+	 (ast (cleavir-generate-ast:generate-ast form environment system))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast))
 	 (mir (cleavir-ir:hir-to-mir hir sicl processor os)))
     mir))
