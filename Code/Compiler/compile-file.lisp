@@ -76,9 +76,9 @@
 ;;;
 ;;; Default method.  Convert to AST and accumulate.
 
-(defmethod process-compound-form (head form environment)
+(defmethod process-compound-form (head form environment system)
   (declare (ignore head))
-  (push (sicl-generate-ast:generate-ast form environment)
+  (push (sicl-generate-ast:generate-ast form environment system)
 	*top-level-asts*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
