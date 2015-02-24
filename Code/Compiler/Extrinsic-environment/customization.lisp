@@ -5,7 +5,8 @@
 ;;; introduce an immediate value, and NIL if we do not want to
 ;;; introduce an immediate value.
 (defmethod cleavir-generate-ast:convert-constant-to-immediate
-    (constant (environment environment))
+    (constant (environment environment) system)
+  (declare (ignore system))
   (cond ((and (typep constant 'integer)
 	      (<= #.(- (expt 2 30)) constant #.(1- (expt 2 30))))
 	 (* 2 constant))
@@ -23,7 +24,8 @@
 ;;; that contains the function.  And we want the function cell to be
 ;;; accessed at load time.
 (defmethod cleavir-generate-ast:convert-global-function
-    ((info cleavir-env:global-function-info) (env environment))
+    ((info cleavir-env:global-function-info) (env environment) system)
+  (declare (ignore system))
   (cleavir-ast:make-car-ast
    (cleavir-ast:make-load-time-value-ast
     `(sicl-global-environment:function-cell
@@ -38,7 +40,8 @@
 ;;; it to generate a call to SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE,
 ;;; passing it the symbol naming the variable and the environment.
 (defmethod cleavir-generate-ast:convert-special-variable
-    ((info cleavir-env:special-variable-info) (env environment))
+    ((info cleavir-env:special-variable-info) (env environment) system)
+  (declare (ignore system))
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
     (cleavir-ast:make-load-time-value-ast
@@ -59,7 +62,8 @@
 ;;; SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE), passing it the new
 ;;; value, the symbol naming the variable, and the environment.
 (defmethod cleavir-generate-ast:convert-setq-special-variable
-    ((info cleavir-env:special-variable-info) form-ast (env environment))
+    ((info cleavir-env:special-variable-info) form-ast (env environment) system)
+  (declare (ignore system))
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
     (cleavir-ast:make-load-time-value-ast
