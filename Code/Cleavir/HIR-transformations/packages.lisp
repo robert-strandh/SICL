@@ -3,6 +3,7 @@
 (defpackage #:cleavir-hir-transformations
   (:use #:common-lisp)
   (:export
+   #:traverse
    #:eliminate-typeq
    #:type-inference
    #:process-captured-variables
