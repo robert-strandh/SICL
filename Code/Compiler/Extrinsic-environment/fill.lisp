@@ -8,6 +8,7 @@
   (import-from-sicl-conditionals environment)
   (import-from-cleavir-code-utilities environment)
   (import-from-cleavir-environment environment)
+  (import-from-cleavir-primop environment)
   (import-loop-support environment)
   (define-backquote-macros environment)
   (define-defmacro environment)
