@@ -97,6 +97,15 @@
 			 last input-vars output-vars successor-tags)))))))
 
 (defun layout-procedure (initial-instruction)
+  ;; Make sure we have an ENTER-INSTRUCTION.
+  (assert (typep initial-instruction 'cleavir-ir:enter-instruction))
+  ;; Make sure we do not already have a variable associated with this
+  ;; ENTER-INSTRUCTION for holding the dynamic environment at runtime.
+  (assert (null (gethash initial-instruction *dynamic-environment-variables*)))
+  ;; Generate a new variable for holding the dynamic environment at
+  ;; runtime.
+  (setf (gethash initial-instruction *dynamic-environment-variables*)
+	(gensym))
   (let* ((basic-blocks (remove initial-instruction
 			       *basic-blocks*
 			       :test-not #'eq :key #'third))
