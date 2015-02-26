@@ -102,16 +102,17 @@
   ;; Make sure we do not already have a variable associated with this
   ;; ENTER-INSTRUCTION for holding the dynamic environment at runtime.
   (assert (null (gethash initial-instruction *dynamic-environment-variables*)))
-  ;; Generate a new variable for holding the dynamic environment at
-  ;; runtime.
-  (setf (gethash initial-instruction *dynamic-environment-variables*)
-	(gensym))
-  (let* ((basic-blocks (remove initial-instruction
+  (let* (;; Generate a new variable for holding the dynamic
+	 ;; environment at runtime.
+	 (dynamic-environment-variable (gensym))
+	 (basic-blocks (remove initial-instruction
 			       *basic-blocks*
 			       :test-not #'eq :key #'third))
 	 (first (find initial-instruction basic-blocks
 		      :test #'eq :key #'first))
 	 (rest (remove first basic-blocks :test #'eq)))
+    (setf (gethash initial-instruction *dynamic-environment-variables*)
+	  dynamic-environment-variable)
     ;; Assign tags to all basic block except the first one
     (loop for block in rest
 	  for instruction = (first block)
@@ -125,8 +126,11 @@
 	  (owned-vars (compute-owned-variables initial-instruction)))
       `(lambda (&rest args)
 	 (block nil
-	   (let ,owned-vars
-	     (declare (ignorable ,@owned-vars))
+	   (let ((*dynamic-environment* *dynamic-environment*)
+		 (,dynamic-environment-variable *dynamic-environment*)
+		 ,@owned-vars)
+	     (declare (ignorable ,dynamic-environment-variable
+				 ,@owned-vars))
 	     ,(build-argument-parsing-code
 	       (translate-lambda-list
 		(cleavir-ir:lambda-list initial-instruction))
