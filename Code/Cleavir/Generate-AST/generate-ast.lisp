@@ -123,7 +123,7 @@
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the &AUX "parameter" and the AST of the
 	  ;; remaining computation as components.
-	  (set-or-bind-variable var value-ast next-ast new-env)))))
+	  (set-or-bind-variable var value-ast next-ast new-env system)))))
 
 ;;; This function is called when we have processed all the &KEY
 ;;; parameters, so if there are any &AUX "parameters", they should be
@@ -199,8 +199,10 @@
 			 supplied-p
 			 lexical-supplied-p-ast
 			 next-ast
-			 env))
-		    env)))
+			 env
+			 system))
+		    env
+		    system)))
 	    (list lexical-var-ast lexical-supplied-p-ast))))
 
 ;;; This function just returns the AST produced by calling
@@ -338,7 +340,8 @@
 		   ;; of the name of the parameter variable.
 		   (name (make-symbol (string-downcase rest)))
 		   (lexical-ast (cleavir-ast:make-lexical-ast name)))
-	      (values (set-or-bind-variable rest lexical-ast next-ast new-env)
+	      (values (set-or-bind-variable
+		       rest lexical-ast next-ast new-env system)
 		      (list* '&rest lexical-ast next-lexical-parameters))))))))
 
 (defun process-remaining-optionals
@@ -395,7 +398,8 @@
 			      forms
 			      new-env
 			      system)
-	  (values (set-or-bind-variable var lexical-ast next-ast new-env)
+	  (values (set-or-bind-variable
+		   var lexical-ast next-ast new-env system)
 		  (cons lexical-ast next-lexical-parameters))))))
 
 ;;; Given a parsed lambda list, return a list of items.  There are as

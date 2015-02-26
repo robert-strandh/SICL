@@ -256,7 +256,7 @@
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the new variable and the AST of the
 	  ;; remaining computation as components.
-	  (set-or-bind-variable var lexical-ast next-ast new-env)))))
+	  (set-or-bind-variable var lexical-ast next-ast new-env system)))))
 
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
@@ -329,7 +329,7 @@
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the new variable and the AST of the
 	  ;; remaining computation as components.
-	  (set-or-bind-variable var value-ast next-ast new-env)))))
+	  (set-or-bind-variable var value-ast next-ast new-env system)))))
 
 (defmethod convert-special
     ((symbol (eql 'let*)) form env system)
