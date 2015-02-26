@@ -336,6 +336,14 @@
   (declare (ignore inputs outputs))
   '(progn))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:unwind-instruction) inputs outputs)
+  (declare (ignore inputs outputs))
+  (let ((dynamic-environment-variable
+	  (gethash (cleavir-ir:invocation instruction)
+		   *dynamic-environment-variables*)))
+    `(unwind ,dynamic-environment-variable)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
