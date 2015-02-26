@@ -223,7 +223,7 @@
 ;;; WRITE-CELL-INSTRUCTION after I that writes the contents of V to
 ;;; the cell in L.
 (defun new-output (instruction cell-location)
-  (let ((temp (cleavir-ir:new-temporary)))
+  (let ((temp (cleavir-ir:new-dynamic-temporary)))
     (cleavir-ir:insert-instruction-after
      (cleavir-ir:make-write-cell-instruction
       cell-location temp)
@@ -239,7 +239,7 @@
 ;;; READ-CELL-INSTRUCTION before I that reads the contents of the cell
 ;;; in L and writes it into V.
 (defun new-input (instruction cell-location)
-  (let ((temp (cleavir-ir:new-temporary)))
+  (let ((temp (cleavir-ir:new-dynamic-temporary)))
     (cleavir-ir:insert-instruction-before
      (cleavir-ir:make-read-cell-instruction
       cell-location temp)
@@ -265,7 +265,7 @@
       (setf pos (1- (length (gethash owner imports)))))
     ;; We must now generate a FETCH instruction to load the cell from
     ;; the static environment
-    (let* ((temp (cleavir-ir:new-temporary))
+    (let* ((temp (cleavir-ir:new-dynamic-temporary))
 	   (env-location (first (cleavir-ir:outputs owner)))
 	   (index (cleavir-ir:make-immediate-input pos))
 	   (fetch (cleavir-ir:make-fetch-instruction
@@ -296,7 +296,7 @@
 			;; variable, so we must allocate a location
 			;; for its cell.
 			(progn
-			  (setf location (cleavir-ir:new-temporary))
+			  (setf location (cleavir-ir:new-dynamic-temporary))
 			  (setf (gethash (cons owner output)
 					 cell-locations)
 				location)
