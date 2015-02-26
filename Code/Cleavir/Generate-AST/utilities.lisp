@@ -186,13 +186,16 @@
 	  (values (cons item-specific-dspecs itemized-dspecs)
 		  remaining-dspecs)))))
 
-(defgeneric convert-special-binding (variable value-ast next-ast env))
+(defgeneric convert-special-binding
+    (variable value-ast next-ast env system))
 
-(defmethod convert-special-binding (variable value-ast next-ast global-env)
+(defmethod convert-special-binding
+    (variable value-ast next-ast global-env system)
   (let* ((function-name 'cleavir-primop:call-with-variable-bound)
 	 (info (cleavir-env:function-info global-env function-name)))
+    (assert (not (null info)))
     (cleavir-ast:make-call-ast
-     (convert-global-function info global-env)
+     (convert-global-function info global-env system)
      (list (cleavir-ast:make-load-time-value-ast variable t)
 	   value-ast
 	   (cleavir-ast:make-function-ast next-ast '())))))
@@ -207,12 +210,13 @@
 ;;; creates a PROGN-AST with two ASTs in it.  The first one is a
 ;;; SETQ-AST that assigns the value to the variable, and the second
 ;;; one is the NEXT-AST.
-(defun set-or-bind-variable (variable value-ast next-ast env)
+(defun set-or-bind-variable (variable value-ast next-ast env system)
   (let ((info (cleavir-env:variable-info env variable)))
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)
 	(let ((global-env (cleavir-env:global-environment env)))
-	  (convert-special-binding variable value-ast next-ast global-env))
+	  (convert-special-binding
+	   variable value-ast next-ast global-env system))
 	(cleavir-ast:make-progn-ast
 	 (list (cleavir-ast:make-setq-ast
 		(cleavir-env:identity info)
