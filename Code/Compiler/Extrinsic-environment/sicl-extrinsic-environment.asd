@@ -129,6 +129,7 @@
    (:file "import-from-sicl-conditionals")
    (:file "import-from-cleavir-code-utilities")
    (:file "import-from-cleavir-environment")
+   (:file "import-from-cleavir-primop")
    (:file "import-loop-support")
    (:file "define-defmacro")
    (:file "define-in-package")
