@@ -12,7 +12,9 @@
    #:constant-input #:make-constant-input
    #:value
    #:lexical-location #:make-lexical-location
-   #:dynamic-lexical-location #:make-dynamic-lexical-location #:new-temporary
+   #:new-temporary
+   #:dynamic-lexical-location #:make-dynamic-lexical-location
+   #:new-dynamic-temporary
    #:static-lexical-location #:make-static-lexical-location
    #:name
    #:values-location #:make-values-location
