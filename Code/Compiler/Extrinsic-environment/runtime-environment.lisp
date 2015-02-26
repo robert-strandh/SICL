@@ -27,10 +27,9 @@
 ;;; finds.
 (defun unwind (suffix)
   (loop until (eq suffix *dynamic-environment*)
-	for entry = (car *dynamic-environment*)
-	do (pop *dynamic-environment*)
-	   (when (typep entry 'unwind-protect)
-	     (funcall (thunk entry)))))
+	do (let ((entry (pop *dynamic-environment*)))
+	     (when (typep entry 'unwind-protect)
+	       (funcall (thunk entry))))))
 
 ;;; VALUES is a list of values that should be returned by the CATCH.
 (defun throw (tag values)
