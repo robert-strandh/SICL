@@ -76,6 +76,10 @@
   (print-unreadable-object (object stream :type t)
     (format stream "~a" (name object))))
 
+;;; Generate a new lexical location
+(defun new-temporary ()
+  (make-lexical-location (gensym)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class DYNAMIC-LEXICAL-LOCATION.
@@ -93,9 +97,9 @@
     :name name))
 
 ;;; Generate a new lexical location
-(defun new-temporary ()
+(defun new-dynamic-temporary ()
   (make-dynamic-lexical-location (gensym)))
-  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class STATIC-LEXICAL-LOCATION.
