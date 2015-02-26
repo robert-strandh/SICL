@@ -34,6 +34,12 @@
 (defvar *tags*)
 (defvar *vars*)
 
+;;; This variable holds an EQ hash table, mapping each
+;;; ENTER-INSTRUCTION to a GENSYMed symbol that is used to hold the
+;;; dynamic environment as it was when the function corresponding to
+;;; that ENTER-INSTRUCTION was called.
+(defvar *dynamic-environment-variables*)
+
 (defun translate-immediate-input (value)
   (cond ((evenp value)
 	 (/ value 2))
@@ -124,7 +130,8 @@
 	(*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
 	(*linkage-environment* linkage-environment)
 	(*tags* (make-hash-table :test #'eq))
-	(*vars* (make-hash-table :test #'eq)))
+	(*vars* (make-hash-table :test #'eq))
+	(*dynamic-environment-variables* (make-hash-table :test #'eq)))
     (layout-procedure initial-instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
