@@ -80,10 +80,11 @@
 
 ;;; The default method on CLEAVIR-GENERATE-AST:CONVERT-SPECIAL-BINDING
 ;;; generates a call to CLEAVIR-PRIMOP:CALL-WITH-VARIABLE-BOUND, but
-;;; that function does not have a default definition.  For that
-;;; reason, we define it here.
-
-(defun cleavir-primop:call-with-variable-bound (variable-name value thunk)
+;;; that function does not have a default definition.  We define that
+;;; function under a different name here, and then we import it into
+;;; the environment with the name that is used by
+;;; CONVERT-SPECIAL-BINDING
+(defun call-with-variable-bound (variable-name value thunk)
   (let ((*dynamic-environment*
 	  (cons (make-instance 'variable-binding
 		  :symbol variable-name
