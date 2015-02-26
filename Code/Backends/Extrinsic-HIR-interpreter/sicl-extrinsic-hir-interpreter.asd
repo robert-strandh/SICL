@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-extrinsic-hir-interpreter
+(defsystem :sicl-extrinsic-hir-interpreter
   :depends-on (:sicl-global-environment
 	       :sicl-simple-environment
 	       :cleavir-hir)
