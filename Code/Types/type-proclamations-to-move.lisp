@@ -1,4 +1,4 @@
-(in-package #:sicl-type-proclamations)
+(cl:in-package #:sicl-type-proclamations)
 
 (declaim (ftype symbol-predicate name-of-length-1))
 
