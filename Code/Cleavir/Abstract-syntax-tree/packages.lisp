@@ -35,7 +35,7 @@
    #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
    #:tagbody-ast #:make-tagbody-ast #:item-asts
    #:tag-ast #:make-tag-ast #:name
-   #:the-ast #:make-the-ast #:type-specifiers #:check-p
+   #:the-ast #:make-the-ast #:type-specifiers
    #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
    #:bind-ast #:make-bind-ast
    #:eq-ast #:make-eq-ast
