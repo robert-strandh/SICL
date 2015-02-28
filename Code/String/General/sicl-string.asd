@@ -14,9 +14,9 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file string.text for a description of the module.
 
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-string
+(defsystem :sicl-string
   :serial t
   :components
   ((:file "packages")
