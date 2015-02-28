@@ -1,4 +1,4 @@
-(in-package #:sicl-additional-types)
+(cl:in-package #:sicl-additional-types)
 
 ;;; These definitions exist mostly for correctness.
 ;;; You don't want to use them in performance-critical code becase
