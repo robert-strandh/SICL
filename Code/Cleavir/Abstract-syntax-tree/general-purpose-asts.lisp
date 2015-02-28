@@ -474,13 +474,13 @@
 ;;; also implicitly from type declarations and assignments to
 ;;; variables with type declarations.  
 ;;;
-;;; When the slot CHECK-P is true, code is generated to check that the
-;;; type is correct.  When it is false, no code is generated, but the
-;;; type inference machinery uses the type to optimize the code. 
+;;; This AST should be used only in situations where it is known that
+;;; the value produced is of the correct type.  For situations where
+;;; it is desirable to signal an error when there is a violation of
+;;; the declared type, the TYPEQ-AST should be used instead.
 
 (defclass the-ast (ast)
-  ((%check-p :initarg :check-p :initform t :reader check-p)
-   (%form-ast :initarg :form-ast :reader form-ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
    (%type-specifiers :initarg :type-specifiers :reader type-specifiers)))
 
 (defun make-the-ast (form-ast type-specifiers)
@@ -489,7 +489,6 @@
     :type-specifiers type-specifiers))
 
 (cleavir-io:define-save-info the-ast
-  (:check-p check-p)
   (:form-ast form-ast)
   (:type-specifiers type-specifiers))
 
