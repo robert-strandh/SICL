@@ -458,25 +458,7 @@
 ;;; Compile a THE-AST.
 
 (defun make-type-check (type-specifier var successor)
-  (let* ((type-input (cleavir-ir:make-constant-input type-specifier))
-	 (temp (make-temp))
-	 (error-branch
-	   (make-instance 'cleavir-ir:fdefinition-instruction
-	     :inputs (list (cleavir-ir:make-constant-input 'error))
-	     :outputs (list temp)
-	     :successors
-	     (list (cleavir-ir:make-funcall-instruction
-		    (list temp
-			  (cleavir-ir:make-constant-input 'type-error)
-			  (cleavir-ir:make-constant-input :datum)
-			  var
-			  (cleavir-ir:make-constant-input :expected-type)
-			  type-input)
-		    '())))))
-    (cleavir-ir:make-typeq-instruction
-     var
-     (list error-branch successor)
-     type-specifier)))
+  (cleavir-ir:make-the-instruction var successor type-specifier))
 
 (defmethod compile-ast ((ast cleavir-ast:the-ast) context)
   (with-accessors ((results results)
