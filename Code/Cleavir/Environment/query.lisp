@@ -133,10 +133,10 @@
    ;; supplied.  IGNORE means and IGNORE declaration is in scope, and
    ;; IGNORABLE means and IGNORABLE declaration is in scope.
    (%ignore :initform nil :initarg :ignore :reader ignore)
-   ;; The value of this slot is either a HIR program represented by an
-   ;; ENTER-INSTRUCTION, or NIL if there is no HIR code available for
-   ;; this function.
-   (%hir :initform nil :initarg :hir :reader hir)
+   ;; The value of this slot is either an abstract syntax tree for the
+   ;; function, or NIL if there is no abstract syntax tree available
+   ;; for this function.
+   (%ast :initform nil :initarg :ast :reader ast)
    ;; True if and only if a dynamic-extent declaration is in scope for
    ;; this function.
    (%dynamic-extent :initform nil
@@ -167,10 +167,10 @@
    ;; supplied.  IGNORE means and IGNORE declaration is in scope, and
    ;; IGNORABLE means and IGNORABLE declaration is in scope.
    (%ignore :initform nil :initarg :ignore :reader ignore)
-   ;; The value of this slot is either a HIR program represented by an
-   ;; ENTER-INSTRUCTION, or NIL if there is no HIR code available for
-   ;; this function.
-   (%hir :initform nil :initarg :hir :reader hir)
+   ;; The value of this slot is either an abstract syntax tree for the
+   ;; function, or NIL if there is no abstract syntax tree available
+   ;; for this function.
+   (%ast :initform nil :initarg :ast :reader ast)
    ;; True if and only if a dynamic-extent declaration is in scope for
    ;; this function.
    (%dynamic-extent :initform nil
