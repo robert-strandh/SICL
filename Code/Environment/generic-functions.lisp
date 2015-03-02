@@ -292,13 +292,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function FUNCTION-HIR.
+;;; Generic function FUNCTION-AST.
 ;;;
-;;; This function returns if information about the high-level
-;;; intermediate code (HIR) associated with FUNCTION-NAME, or NIL if
-;;; there is not such information associated with the function.
+;;; This function returns the abstract syntax tree corresponding to
+;;; the FUNCTION-NAME, or NIL if no abstract syntax tree has been
+;;; associated with the function.
 
-(defgeneric function-hir (function-name environment))
+(defgeneric function-ast (function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
