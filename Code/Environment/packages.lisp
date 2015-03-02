@@ -28,7 +28,7 @@
    #:function-inline
    #:function-cell
    #:function-unbound
-   #:function-hir
+   #:function-ast
    #:constant-variable
    #:special-variable
    #:symbol-macro
