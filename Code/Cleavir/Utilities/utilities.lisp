@@ -1,4 +1,4 @@
-(in-package #:cleavir-utilities)
+(cl:in-package #:cleavir-utilities)
 
 (defun depth-first-search-preorder (start-node successor-fun)
   (let ((table (make-hash-table :test #'eq))
