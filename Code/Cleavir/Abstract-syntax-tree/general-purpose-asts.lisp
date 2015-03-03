@@ -351,7 +351,7 @@
   (make-instance 'progn-ast
     :form-asts form-asts))
 
-(cleavir-io:define-save-info function-ast
+(cleavir-io:define-save-info progn-ast
   (:form-asts form-asts))
 
 (defmethod children ((ast progn-ast))
