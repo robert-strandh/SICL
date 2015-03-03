@@ -1,5 +1,12 @@
 (cl:in-package #:cleavir-ast-transformations)
 
+;;;; FIXME: The method we use in here doesn't QUITE work.  The method
+;;;; used assumes that each slot of an AST is either another AST or
+;;;; something that can be copied or created literally.  This is not
+;;;; quite true, because some AST nodes contain LISTs that may contain
+;;;; other ASTs.  What we need to do is to traverse lists and examine
+;;;; their contents.
+
 ;;; Cloning an AST is done in two steps.
 ;;;
 ;;; In step one, we create a dictionary mapping every node in the
