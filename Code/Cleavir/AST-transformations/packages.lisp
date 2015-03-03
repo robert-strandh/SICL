@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export
    #:hoist-load-time-value
+   #:clone-ast
    ))
