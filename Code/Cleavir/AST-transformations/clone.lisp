@@ -72,7 +72,7 @@
 		     using (hash-value value)
 		   collect `(,value
 			     (make-instance
-				 ',(class-name key)
+				 ',(class-name (class-of key))
 			       ,@(init-args-1 key))))
 	 ,@(loop for key being each hash-key of dictionary
 		   using (hash-value value)
