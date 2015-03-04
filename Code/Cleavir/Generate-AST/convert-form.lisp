@@ -142,9 +142,26 @@
 (defgeneric convert-function (info env system))
 
 (defun make-call (info env arguments system)
-  (let ((function-ast (convert-function info env system))
-	(argument-asts (convert-sequence arguments env system)))
-    (cleavir-ast:make-call-ast function-ast argument-asts)))
+  (let ((argument-asts (convert-sequence arguments env system))
+	(ast (cleavir-env:ast info)))
+    (if (and (eq (cleavir-env:inline info) 'cl:inline)
+	     (not (null ast))
+	     (loop for parameter in (cleavir-ast:lambda-list ast)
+		   never (member parameter lambda-list-keywords :test #'eq))
+	     (= (length arguments)
+		(length (cleavir-ast:lambda-list ast))))
+	;; We can inline the call.
+	(let ((clone (cleavir-ast-transformations:clone-ast ast)))
+	  (cleavir-ast:make-progn-ast
+	   (append
+	    (loop with ll = (cleavir-ast:lambda-list clone)
+		  for parameter in ll
+		  for argument-ast in argument-asts
+		  collect (cleavir-ast:make-setq-ast parameter argument-ast))
+	    (list (cleavir-ast:body-ast clone)))))
+	;; Generate an ordinary call.
+	(let ((function-ast (convert-function info env system)))
+	  (cleavir-ast:make-call-ast function-ast argument-asts)))))
 
 (defmethod convert-form
     (form (info cleavir-env:global-function-info) env system)
