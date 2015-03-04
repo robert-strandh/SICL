@@ -53,6 +53,7 @@
    #:catch-instruction #:make-catch-instruction
    #:unwind-instruction #:make-unwind-instruction #:invocation
    #:eq-instruction #:make-eq-instruction
+   #:consp-instruction #:make-consp-instruction
    #:phi-instruction #:make-phi-instruction
    #:fixnum-add-instruction #:make-fixnum-add-instruction
    #:fixnum-sub-instruction #:make-fixnum-sub-instruction
