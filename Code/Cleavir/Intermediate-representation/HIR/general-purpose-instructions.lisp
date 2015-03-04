@@ -247,6 +247,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction CONSP-INSTRUCTION.
+;;;
+;;; This instruction is used to test whether its input is a CONS cell.
+;;; If that is the case, then the first output is chosen.  Otherwise,
+;;; the second output is chosen.
+
+(defclass consp-instruction (instruction two-successors-mixin)
+  ())
+
+(defun make-consp-instruction (input successors)
+  (make-instance 'consp-instruction
+    :inputs (list input)
+    :successors successors))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SYMBOL-VALUE-INSTRUCTION.
 
 (defclass symbol-value-instruction (instruction one-successor-mixin)
