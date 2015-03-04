@@ -1,12 +1,9 @@
 (cl:in-package #:cleavir-ast-transformations)
 
-;;;; FIXME: The method we use in here doesn't QUITE work.  The method
-;;;; used assumes that each slot of an AST is either another AST or
-;;;; something that can be copied or created literally.  This is not
-;;;; quite true, because some AST nodes contain LISTs that may contain
-;;;; other ASTs.  What we need to do is to traverse lists and examine
-;;;; their contents.
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Cloning an AST.
+;;;
 ;;; Cloning an AST is done in two steps.
 ;;;
 ;;; In step one, we create a dictionary mapping every node in the
@@ -25,29 +22,43 @@
 ;;; SAVE-INFO, but this time we keep only slot values that are AST
 ;;; nodes.  Furthermore, we replace each such AST node with the
 ;;; mapping computed in step one.
-(defun clone-ast (ast)
+
+(defun clone-create-dictionary (ast)
   (let ((dictionary (make-hash-table :test #'eq)))
-    (labels
-	((traverse (node)
-	   (when (null (gethash node dictionary))
-	     (setf (gethash node dictionary)
-		   (apply #'make-instance (class-of node)
-			  (loop for (keyword reader)
-				  in (cleavir-io:save-info node)
-				collect keyword
-				collect (funcall reader node))))
-	     (mapc #'traverse (cleavir-ast:children node)))))
+    (labels ((traverse (node)
+	       (when (null (gethash node dictionary))
+		 (setf (gethash node dictionary)
+		       (make-instance (class-of node)))
+		 (mapc #'traverse (cleavir-ast:children node)))))
       (traverse ast))
-    (maphash
-     (lambda (key value)
-       (apply #'reinitialize-instance
-	      value
-	      (loop for (keyword reader) in (cleavir-io:save-info key)
-		    for new = (gethash (funcall reader key) dictionary)
-		    unless (null new)
-		      collect keyword
-		      and collect new)))
-     dictionary)
+    dictionary))
+
+(defgeneric finalize-substructure (object dictionary))
+
+(defmethod finalize-substructure (object dictionary)
+  (declare (ignore dictionary))
+  object)
+
+(defmethod finalize-substructure ((object cons) dictionary)
+  (cons (finalize-substructure (car object) dictionary)
+	(finalize-substructure (cdr object) dictionary)))
+
+(defmethod finalize-substructure ((object cleavir-ast:ast) dictionary)
+  (gethash object dictionary))
+
+(defun finalize (ast model dictionary)
+  (apply #'reinitialize-instance
+	 ast
+	 (loop for (keyword reader) in (cleavir-io:save-info model)
+	       for value = (funcall reader model)
+	       collect keyword
+	       collect (finalize-substructure value dictionary))))
+
+(defun clone-ast (ast)
+  (let ((dictionary (clone-create-dictionary ast)))
+    (maphash (lambda (key value)
+	       (finalize value key dictionary))
+	     dictionary)
     (gethash ast dictionary)))
 
 ;;; This function is a variation on the cloning.  Instead of directly
