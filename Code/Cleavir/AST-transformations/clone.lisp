@@ -3,26 +3,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Cloning an AST.
-;;;
-;;; Cloning an AST is done in two steps.
-;;;
-;;; In step one, we create a dictionary mapping every node in the
-;;; original AST to a cloned node.  The cloned node is created by
-;;; calling MAKE-INSTANCE on the class of the original node.  The
-;;; initialization arguments passed to MAKE-INSTANCE are obtained from
-;;; the SAVE-INFO of the original node, using the same keys and the
-;;; same values.  As a result, the slots of the coned node contain
-;;; original AST nodes, but also non-AST information such as names,
-;;; etc.
-;;;
-;;; In step two, we iterate over the dictionary entries.  For each
-;;; entry, we reinitialize a cloned node by calling
-;;; REINITIALIZE-INSTANCE on it.  As with step one, we compute the
-;;; initialization arguments to REINITIALIZE-INSTANCE from the
-;;; SAVE-INFO, but this time we keep only slot values that are AST
-;;; nodes.  Furthermore, we replace each such AST node with the
-;;; mapping computed in step one.
 
+;;; In step one of cloning an AST, we create a dictionary mapping
+;;; every node in the original AST to a cloned node.  The cloned node
+;;; is created by calling MAKE-INSTANCE on the class of the original
+;;; node.  No initialization arguments are passed to MAKE-INSTANCE, so
+;;; the cloned node is uninitialized except for slots that are
+;;; initialized by :INITFORM.
 (defun clone-create-dictionary (ast)
   (let ((dictionary (make-hash-table :test #'eq)))
     (labels ((traverse (node)
@@ -33,19 +20,34 @@
       (traverse ast))
     dictionary))
 
+;;; This generic function is used to obtain some substructure
+;;; (typically a slot) for the new AST, given the corresponding
+;;; substructure of the model AST.
 (defgeneric finalize-substructure (object dictionary))
 
+;;; For most objects, such as numbers, symbols, strings, etc, the
+;;; object to be used in the new AST is the same as the one in the
+;;; original AST.
 (defmethod finalize-substructure (object dictionary)
   (declare (ignore dictionary))
   object)
 
+;;; If the substructure of an AST is a CONS (typically a proper list),
+;;; then we obtain the corresponding substructure of the new AST by
+;;; copying the CONS and calling FINALIZE-SUBSTRUCTURE on the CAR and
+;;; the CDR.
 (defmethod finalize-substructure ((object cons) dictionary)
   (cons (finalize-substructure (car object) dictionary)
 	(finalize-substructure (cdr object) dictionary)))
 
+;;; If the substructure of an AST is another AST, then the
+;;; corresponding substructure of the new AST is obtained from the
+;;; dictionary.
 (defmethod finalize-substructure ((object cleavir-ast:ast) dictionary)
   (gethash object dictionary))
 
+;;; Given an AST to finalize and the MODEL AST of which the AST is a
+;;; clone,  reinitialize the AST with new substructure.
 (defun finalize (ast model dictionary)
   (apply #'reinitialize-instance
 	 ast
