@@ -53,7 +53,8 @@
 		 :ignore nil
 		 :compiler-macro (compiler-macro-function function-name env)
 		 :inline (function-inline function-name env)
-		 :type (function-type function-name env)))
+		 :type (function-type function-name env)
+		 :ast (function-ast function-name env)))
 	      ((eq (first binding) 'cl:macro-function)
 	       (make-instance 'cleavir-env:global-macro-info
 		 :name function-name
