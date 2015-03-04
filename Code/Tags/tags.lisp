@@ -1,4 +1,4 @@
-(in-package :sicl.tags)
+(cl:in-package #:sicl.tags)
 
 ;;; Number of bytes in a machine word.
 (cl:defparameter +machine-word-length+ 64)
