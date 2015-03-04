@@ -141,14 +141,17 @@
 
 (defgeneric convert-function (info env system))
 
+(defun make-call (info env arguments system)
+  (let ((function-ast (convert-function info env system))
+	(argument-asts (convert-sequence arguments env system)))
+    (cleavir-ast:make-call-ast function-ast argument-asts)))
+
 (defmethod convert-form
     (form (info cleavir-env:global-function-info) env system)
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
-	;; There is no compiler macro.  Create a CALL-AST.
-	(let ((function-ast (convert-function info env system))
-	      (argument-asts (convert-sequence (cdr form) env system)))
-	  (cleavir-ast:make-call-ast function-ast argument-asts))
+	;; There is no compiler macro.  Create the call.
+	(make-call info env (cdr form) system)
 	;; There is a compiler macro.  We must see whether it will
 	;; accept or decline.
 	(let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
@@ -158,11 +161,9 @@
 	  (if (eq form expanded-form)
 	      ;; If the two are EQ, this means that the compiler macro
 	      ;; declined.  We are left with function-call form.
-	      ;; Create a CALL-AST, just as if there were no compiler
+	      ;; Create the call, just as if there were no compiler
 	      ;; macro present.
-	      (let ((function-ast (convert-function info env system))
-		    (argument-asts (convert-sequence (cdr form) env system)))
-		(cleavir-ast:make-call-ast function-ast argument-asts))
+	      (make-call info env (cdr form) system)
 	      ;; If the two are not EQ, this means that the compiler
 	      ;; macro replaced the original form with a new form.
 	      ;; This new form must then be converted.
