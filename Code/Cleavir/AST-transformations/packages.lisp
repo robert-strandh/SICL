@@ -5,5 +5,4 @@
   (:export
    #:hoist-load-time-value
    #:clone-ast
-   #:make-create-ast-code
-   ))
+   #:codegen-clone-ast))
