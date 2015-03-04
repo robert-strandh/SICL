@@ -302,6 +302,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF FUNCTION-AST).
+;;;
+;;; This function associates an abstract syntax tree with the name of
+;;; a function.  It always succeeds.
+
+(defgeneric (setf function-ast) (new-ast function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
