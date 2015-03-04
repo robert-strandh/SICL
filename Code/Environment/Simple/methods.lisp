@@ -157,6 +157,11 @@
 	nil
 	(ast entry))))
 
+(defmethod (setf sicl-env:function-ast)
+    (new-ast function-name (env simple-environment))
+  (let ((entry (ensure-function-entry env function-name)))
+    (setf (ast entry) new-ast)))
+
 (defmethod sicl-env:boundp (symbol (env simple-environment))
   (let ((entry (find-variable-entry env symbol)))
     (and (not (null entry))
