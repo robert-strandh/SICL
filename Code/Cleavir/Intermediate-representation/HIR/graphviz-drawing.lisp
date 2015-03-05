@@ -213,6 +213,8 @@
 
 (defmethod label ((instruction eq-instruction)) "eq")
 
+(defmethod label ((instruction consp-instruction)) "consp")
+
 (defmethod label ((instruction phi-instruction)) "phi")
 
 (defmethod label ((instruction symbol-value-instruction)) "symbol-value")
