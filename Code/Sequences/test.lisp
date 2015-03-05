@@ -1,4 +1,4 @@
-(in-package #:sicl-sequence-test)
+(cl:in-package #:sicl-sequence-test)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
