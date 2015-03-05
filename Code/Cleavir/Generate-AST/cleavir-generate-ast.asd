@@ -2,6 +2,7 @@
 
 (defsystem :cleavir-generate-ast
   :depends-on (:cleavir-ast
+	       :cleavir-ast-transformations
 	       :cleavir-primop
 	       :cleavir-code-utilities
 	       :cleavir-environment
