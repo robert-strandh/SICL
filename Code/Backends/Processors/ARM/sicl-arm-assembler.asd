@@ -1,4 +1,6 @@
-(asdf:defsystem :sicl-arm-assembler
+(cl:in-package #:asdf-user)
+
+(defsystem :sicl-arm-assembler
   :depends-on (:split-sequence :sicl-compiler)
   :components
   ((:file "packages")
