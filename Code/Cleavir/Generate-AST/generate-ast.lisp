@@ -255,7 +255,7 @@
 	      ;; the initialization argument.  It must be computed in
 	      ;; the original environment, i.e. before the parameter
 	      ;; variables were added to it.
-	      (init-ast (convert init env)))
+	      (init-ast (convert init env system)))
 	  (multiple-value-bind (next-ast next-lexical-parameters)
 	      ;; Make a recursive call to process the remaining keys
 	      ;; in the augmented environment that contains this
