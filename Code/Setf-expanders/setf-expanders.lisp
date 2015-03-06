@@ -21,7 +21,7 @@
 (defpackage #:sicl-setf
     (:use #:common-lisp))
 
-(in-package #:sicl-setf)
+(cl:in-package #:sicl-setf)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
