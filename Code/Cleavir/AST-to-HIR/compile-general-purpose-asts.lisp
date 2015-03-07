@@ -110,8 +110,10 @@
 	      ;; a PROGN-AST.
 	      (if (cleavir-ast:side-effect-free-p ast)
 		  (progn
-		    ;; Warn an generate no code.
-		    (warn "Form compiled in a context requiring no value.")
+		    ;; For now, we do not emit this warning.  It is a bit
+		    ;; too annoying because there is some automatically
+		    ;; generated code that is getting warned about.
+		    ;; (warn "Form compiled in a context requiring no value.")
 		    (first successors))
 		  ;; We allocate a temporary variable to receive the
 		  ;; result, and that variable will not be used.
