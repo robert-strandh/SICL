@@ -108,7 +108,7 @@
 	       ;; The initform of the &AUX parameter is turned into an
 	       ;; AST in the original environment, i.e. the one that
 	       ;; does not have the parameter variable in it.
-	       (value-ast (convert init env))
+	       (value-ast (convert init env system))
 	       ;; We compute the AST of the remaining computation by
 	       ;; recursively calling this same function with the
 	       ;; remaining &AUX entries (if any) and the environment
