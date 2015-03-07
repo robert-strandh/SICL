@@ -699,3 +699,34 @@
 			   (/ (float -2 1s0) (float 10 1s0))))))))
 
 			      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reading parentheses
+
+(define-test read.parenthesis.list.empty
+  (let ((*read-base* 10)
+        (*readtable* (copy-readtable nil)))
+    (assert-equal nil
+                  (with-input-from-string (stream "()")
+                    (read stream)))))
+
+(define-test read.parenthesis.list.non.empty
+  (let ((*read-base* 10)
+        (*readtable* (copy-readtable nil)))
+    (assert-equal (list nil)
+                  (with-input-from-string (stream "(())")
+                    (read stream)))))
+
+(define-test read.parenthesis.list.nested
+  (let ((*read-base* 10)
+        (*readtable* (copy-readtable nil)))
+    (assert-equal (list (list nil))
+                  (with-input-from-string (stream "((()))")
+                    (read stream)))))
+
+(define-test read.parenthesis.list.non.empty.cdr
+  (let ((*read-base* 10)
+        (*readtable* (copy-readtable nil)))
+    (assert-equal (list nil nil)
+                  (with-input-from-string (stream "(()())")
+                    (read stream)))))
