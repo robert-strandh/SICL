@@ -48,9 +48,11 @@
 		(ast (cleavir-generate-ast:generate-ast form environment1 nil))
 		(ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
 		(hir (cleavir-ast-to-hir:compile-toplevel ast-bis))
+		(ignore (cleavir-hir-transformations:eliminate-typeq hir))
 		(lambda-expr (translate hir environment2))
 		(fun (compile nil lambda-expr))
 		(args (loop for arg in (cleavir-ir:forms hir)
 			    collect (cleavir-env:eval
 				     arg environment1 environment2))))
+	   (declare (ignore ignore))
 	   (apply fun args)))))
