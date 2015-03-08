@@ -36,7 +36,7 @@
       (loop until (null to-process)
 	    do (let ((instruction (pop to-process)))
 		 (maybe-eliminate instruction)
-		 (when (typep instruction 'cleavir-ir:typeq-instruction)
+		 (when (typep instruction 'cleavir-ir:enclose-instruction)
 		   (register (cleavir-ir:code instruction)))
 		 (loop for successor in (cleavir-ir:successors instruction)
 		       do (register successor)))))))
