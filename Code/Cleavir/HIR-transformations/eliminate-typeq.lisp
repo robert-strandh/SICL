@@ -1,27 +1,12 @@
 (cl:in-package #:cleavir-hir-transformations)
 
-(defvar *table*)
+(defgeneric maybe-eliminate (instruction))
 
-(defgeneric eliminate (instruction))
-
-(defun eliminate-typeq (initial-instruction)
-  (let ((*table* (make-hash-table :test #'eq)))
-    (eliminate initial-instruction)))
-
-(defmethod eliminate (instruction)
+(defmethod maybe-eliminate (instruction)
   (declare (ignore instruction))
   nil)
 
-(defmethod eliminate :around (instruction)
-  (unless (gethash instruction *table*)
-    (setf (gethash instruction *table*) t)
-    (call-next-method)
-    (mapc #'eliminate (cleavir-ir:successors instruction))))
-
-(defmethod eliminate :after ((instruction cleavir-ir:enclose-instruction))
-  (eliminate (cleavir-ir:code instruction)))
-
-(defmethod eliminate ((instruction cleavir-ir:typeq-instruction))
+(defmethod maybe-eliminate ((instruction cleavir-ir:typeq-instruction))
   (let* ((object (first (cleavir-ir:inputs instruction)))
 	 (typep-constant (cleavir-ir:make-constant-input 'typep))
 	 (typep-function (cleavir-ir:new-temporary))
@@ -39,3 +24,18 @@
     (change-class instruction 'cleavir-ir:eq-instruction
 		  :inputs (list boolean-value nil-constant)
 		  :successors (reverse (cleavir-ir:successors instruction)))))
+
+(defun eliminate-typeq (initial-instruction)
+  (let ((visited (make-hash-table :test #'eq))
+	(to-process '()))
+    (flet ((register (instruction)
+	     (push instruction to-process)
+	     (setf (gethash instruction visited) t)))
+      (register initial-instruction)
+      (loop until (null to-process)
+	    do (let ((instruction (pop to-process)))
+		 (maybe-eliminate instruction)
+		 (when (typep instruction 'cleavir-ir:typeq-instruction)
+		   (register (cleavir-ir:code instruction)))
+		 (loop for successor in (cleavir-ir:successors instruction)
+		       do (register successor)))))))
