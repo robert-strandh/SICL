@@ -168,3 +168,33 @@ of the person reading the code:
   (push (f x) y)     ; y is treated as a list.
   ...)
 \end{verbatim}
+
+\section{Tests in conditional expressions}
+
+The \emph{test} of a conditional expression should be a (possibly
+generalized) Boolean expression.  The following expressions correspond
+to the expectations of the person reading the code:
+
+\begin{verbatim}
+(if visited-p ...)
+(when (member ...) ...)
+(cond ((plusp x) ...) ...)
+\end{verbatim}
+
+The following code violates the expectation:
+
+\begin{verbatim}
+(let ((item (find ...)))
+  (when item ...))
+\end{verbatim}
+
+because \texttt{item} is not a (generalized) Boolean value.  It is an
+item returned by \texttt{find}, though there is an \emph{out of band}
+value (\texttt{nil}) indicating that no item was found by
+\texttt{find}.  In this case, the corresponding code that corresponds
+to the expectations would look like this:
+
+\begin{verbatim}
+(let ((item (find ...)))
+  (unless (null item) ...))
+\end{verbatim}
