@@ -135,7 +135,7 @@
   (cleavir-env:identity info))
 
 (defun convert-named-function (name environment system)
-  (let ((info (cleavir-env:function-info environment name)))
+  (let ((info (function-info environment name)))
     (convert-function info environment system)))
 
 (defun convert-lambda-function (lambda-form env system)
