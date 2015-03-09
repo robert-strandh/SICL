@@ -198,3 +198,58 @@ to the expectations would look like this:
 (let ((item (find ...)))
   (unless (null item) ...))
 \end{verbatim}
+
+\section{General structure of recursive functions}
+
+When possible, a recursive function should be structured like a
+mathematical proof by induction.  By that we mean that the special
+case should be handled \emph{first} so as to reassure the person
+reading the code that this case can be handled correctly by the
+function.
+
+
+So for instance, assume we have want to write a function that counts
+the number of atoms in a tree, we should not write it like this:
+
+\begin{verbatim}
+(defun count-atoms (tree)
+  (if (consp tree)
+      (+ (count-atoms (car tree))
+          (count-atoms (cdr tree)))
+      1))
+\end{verbatim}
+
+but rather
+
+\begin{verbatim}
+(defun count-atoms (tree)
+  (if (atom tree)
+      1
+      (+ (count-atoms (car tree))
+          (count-atoms (cdr tree)))))
+\end{verbatim}
+
+Even when the base case does not return anything useful, it should be
+handled first.  The following code violates the expectations:
+
+\begin{verbatim}
+(defun map-conses (function tree)
+ (unless (atom node)
+   (funcall function node)
+   (traverse (car node))
+   (traverse (cdr node))))
+\end{verbatim}
+
+and should be written like this instead:
+
+\begin{verbatim}
+(defun map-conses (function tree)
+  (if (atom node)
+      nil ; nothing to do
+      (progn (funcall function node)
+             (traverse (car node))
+             (traverse (cdr node)))))
+\end{verbatim}
+
+though, admittedly, this example is a little too simple to illustrate
+the importance of this rule.
