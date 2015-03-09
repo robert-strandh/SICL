@@ -76,5 +76,4 @@
 		 ;; the successors first on the list, the traversal
 		 ;; becomes depth-first.
 		 (loop for successor in (successors instruction)
-		       unless (gethash successor visited-instructions)
-			 do (register-if-unvisited successor)))))))
+		       do (register-if-unvisited successor)))))))
