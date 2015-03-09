@@ -39,6 +39,29 @@ in separate functions.
 There should never be any instance of two consecutive blank lines, and
 the last line of the file should not be blank.
 
+\section{\texttt{car}, \texttt{cdr}, \texttt{first}, etc are for
+  \texttt{cons} cells}
+
+The \commonlisp{} standard specifies that the function \texttt{car},
+\texttt{cdr}, \texttt{first}, \texttt{second}, \texttt{rest}, etc
+return \texttt{nil} when \texttt{nil} is passed as an argument.  This
+fact should mostly be considered as a historical artifact and should
+not be systematically exploited.  Take for instance the following
+code:
+
+\begin{verbatim}
+(if (first x) ...)
+\end{verbatim}
+
+To the compiler, it means ``execute the false branch of the \texttt{if}
+when either \texttt{x} is \texttt{nil}, or when \texttt{x} is a list
+whose first element is \texttt{nil}''.
+
+To the person reading the code, it means something different
+altogether, namely ``\texttt{x} holds a non-empty list of Boolean
+values, and the false branch of the \texttt{if} should be executed
+when the first element of that list is \emph{false}.
+
 \section{Different meanings of \texttt{nil}}
 
 Consider the following local variable bindings:
