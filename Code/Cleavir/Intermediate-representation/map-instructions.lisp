@@ -77,3 +77,59 @@
 		 ;; becomes depth-first.
 		 (loop for successor in (successors instruction)
 		       do (register-if-unvisited successor)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function MAP-INSTRUCTIONS-WITH-OWNER.
+;;;
+;;; In this variation of MAP-INSTRUCTIONS, FUNCTION is called with two
+;;; arguments, namely the instruction and the owner of the
+;;; instruction.
+;;;
+;;; We accomplish this variation by modifying the list of instructions
+;;; to process so that it holds pairs (INSTRUCTION . OWNER).
+;;; Otherwise, the logic is the same as with MAP-INSTRUCTIONS.
+
+(defun map-instructions-with-owner (function initial-instruction)
+  (let ((visited-instructions (make-hash-table :test #'eq))
+	(instructions-to-process '()))
+    (flet ((register-if-unvisited (instruction owner)
+	     (unless (gethash instruction visited-instructions)
+	       (setf (gethash instruction visited-instructions) t)
+	       (push (cons instruction owner)
+		     instructions-to-process))))
+      (register-if-unvisited initial-instruction initial-instruction)
+      (loop until (null instructions-to-process)
+	    do (destructuring-bind (instruction . owner)
+		   (pop instructions-to-process)
+		 (funcall function instruction owner)
+		 (cond ((typep instruction 'cleavir-ir:enclose-instruction)
+			(let ((code (code instruction)))
+			  (if (null instructions-to-process)
+			      (setf instructions-to-process
+				    (list (cons code code)))
+			      (setf (rest (last instructions-to-process))
+				    (list (cons code code))))
+			  (setf (gethash code visited-instructions) t))
+			(register-if-unvisited
+			 (first (successors instruction))
+			 ;; The owner of the successor of the
+			 ;; ENCLOSE-INSTRUCTION is the same as the
+			 ;; owner of the enclose-instruction itself.
+			 owner))
+		       ((typep instruction 'cleavir-ir:unwind-instruction)
+			(register-if-unvisited
+			 (first (successors instruction))
+			 ;; The owner of the successor of the
+			 ;; UNWIND-INSTRUCTION is the INVOCATION of
+			 ;; the UNWIND-INSTRUCTION.
+			 (invocation instruction)))
+		       (t
+			(loop for successor in (successors instruction)
+			      do (register-if-unvisited
+				  successor
+				  ;; For all other instructions the
+				  ;; owner of each successor is the
+				  ;; same as the owner of the
+				  ;; instruction itself.
+				  owner)))))))))
