@@ -1,0 +1,60 @@
+\chapter{General \commonlisp{} style guide}
+
+\section{Different meanings of \texttt{nil}}
+
+Consider the following local variable bindings:
+
+\begin{verbatim}
+(let ((x '())
+      (y nil)
+      z)
+  ...)  
+\end{verbatim}
+
+To the compiler, the three are equivalent.  To a person reading the
+code, they mean different things, however:
+
+\begin{itemize}
+\item The initialization of \texttt{x} means that \texttt{x} holds a
+  \emph{list} that is initially empty.
+\item The initialization of \texttt{y} means that \texttt{y} holds a
+  Boolean value or a default value that may or may not change in the
+  body of the \texttt{let} form.
+\item The absence of initialization of \texttt{y} means that no
+  initial value is given to \texttt{z}.  In the body of the
+  \texttt{let} form, the variable \texttt{z} will be assigned to
+  before it is used. 
+\end{itemize}
+
+The following body of the \texttt{let} form corresponds to the
+expectations of the person reading the code:
+
+\begin{verbatim}
+(let ((x '())
+      (y nil)
+      z)
+  ...
+  (push (f y) x)
+  ...
+  (unless y (setf y (g x)))
+  ... 
+  (setf z (h x))
+  ...)
+\end{verbatim}
+
+The following body of the \texttt{let} form violates the expectations
+of the person reading the code:
+
+\begin{verbatim}
+(let ((x '())
+      (y nil)
+      z)
+  ...
+  (push (f y) z)     ; z is used before it is assigned.
+  ...
+  (unless x          ; x is treated as a Boolean.
+    (setf y (g x)))
+  ... 
+  (push (f x) y)     ; y is treated as a list.
+  ...)
+\end{verbatim}
