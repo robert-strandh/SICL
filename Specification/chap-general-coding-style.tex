@@ -1,5 +1,24 @@
 \chapter{General \commonlisp{} style guide}
 
+\section{Width of a line of code}
+
+Horizontal space is a precious resource that should not be wasted.
+The width of a line should preferably not exceed 80 characters.  This
+limit used to be hard, because some printers or printer drivers would
+truncate longer lines.  Since it is less common to print code these
+days, the limit is now soft.  The purpose of keeping lines somewhat
+short is so that it is possible on a reasonable monitor to display two
+documents side by side.  One document is typically a \commonlisp{}
+source file, and the other document is typically the buffer containing
+interactions with the \commonlisp{} system.
+
+The systematic use of long lines makes the practice of displaying two
+documents side by side impossible, or at least impractical.  If a
+single monitor is used, the programmer then has to flip back and forth
+between the source code and the interaction loop.  When two monitors
+are used, the effect is to waste half a monitor that could otherwise
+be used for displaying documentation or something else.
+
 \section{Blank lines}
 
 A single blank line is common in the following situations:
