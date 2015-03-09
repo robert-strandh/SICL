@@ -63,11 +63,12 @@
 		   ;; know that we haven't yet visited the nested
 		   ;; ENTER-INSTRUCTION.  Therefore, no test is
 		   ;; necessary for that situation.
-		   (if (null instructions-to-process)
-		       (setf instructions-to-process (list (code instruction)))
-		       (setf (rest (last instructions-to-process))
-			     (list (code instruction))))
-		   (setf (gethash instruction visited-instructions) t))
+		   (let ((code (code instruction)))
+		     (if (null instructions-to-process)
+			 (setf instructions-to-process (list code))
+			 (setf (rest (last instructions-to-process))
+			       (list code)))
+		     (setf (gethash code visited-instructions) t)))
 		 ;; For each successor of the current instruction, check
 		 ;; whether it has already been visited, and if not,
 		 ;; make sure it gets processed later by pushing it onto
