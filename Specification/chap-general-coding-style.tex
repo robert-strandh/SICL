@@ -1,5 +1,25 @@
 \chapter{General \commonlisp{} style guide}
 
+\section{Blank lines}
+
+A single blank line is common in the following situations:
+
+\begin{itemize}
+\item Between two top-level forms.
+\item Between a file-specific comment and the following top-level
+  form.
+\item Between a comment for several top-level forms and the first
+  of those top-level forms.
+\end{itemize}
+
+A single blank line \emph{may} occur inside a top-level form to
+indicate the separation of two blocks of code concerned with different
+subjects, but it would be more common to put those two blocks of code
+in separate functions.
+
+There should never be any instance of two consecutive blank lines, and
+the last line of the file should not be blank.
+
 \section{Different meanings of \texttt{nil}}
 
 Consider the following local variable bindings:
@@ -8,7 +28,7 @@ Consider the following local variable bindings:
 (let ((x '())
       (y nil)
       z)
-  ...)  
+  ...)
 \end{verbatim}
 
 To the compiler, the three are equivalent.  To a person reading the
@@ -23,7 +43,7 @@ code, they mean different things, however:
 \item The absence of initialization of \texttt{y} means that no
   initial value is given to \texttt{z}.  In the body of the
   \texttt{let} form, the variable \texttt{z} will be assigned to
-  before it is used. 
+  before it is used.
 \end{itemize}
 
 The following body of the \texttt{let} form corresponds to the
@@ -37,7 +57,7 @@ expectations of the person reading the code:
   (push (f y) x)
   ...
   (unless y (setf y (g x)))
-  ... 
+  ...
   (setf z (h x))
   ...)
 \end{verbatim}
@@ -54,7 +74,7 @@ of the person reading the code:
   ...
   (unless x          ; x is treated as a Boolean.
     (setf y (g x)))
-  ... 
+  ...
   (push (f x) y)     ; y is treated as a list.
   ...)
 \end{verbatim}
