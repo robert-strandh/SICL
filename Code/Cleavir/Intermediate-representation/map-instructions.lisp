@@ -26,6 +26,13 @@
 ;;; it can not be reached from the initial instruction of that
 ;;; function.  It will therefore be processed only as part of
 ;;; processing the nested function (lambda () (go a)).
+;;;
+;;; We traverse the graph by using an explicit stack (in the form of
+;;; an ordinary list) of instruction to process, rather than using the
+;;; control stack in a recursive traversal function.  The reason for
+;;; doing it this way is that the control stack of many
+;;; implementations can be relatively small, and if the instruction
+;;; graph is big, then the control stack can easily be exhausted.
 
 (defun map-instructions (function initial-instruction)
   (let ((visited-instructions (make-hash-table :test #'eq))
