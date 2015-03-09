@@ -56,8 +56,10 @@
 		   ;; know that we haven't yet visited the nested
 		   ;; ENTER-INSTRUCTION.  Therefore, no test is
 		   ;; necessary for that situation.
-		   (setf (rest (last instructions-to-process))
-			 (list (code instruction)))
+		   (if (null instructions-to-process)
+		       (setf instructions-to-process (list (code instruction)))
+		       (setf (rest (last instructions-to-process))
+			     (list (code instruction))))
 		   (setf (gethash instruction visited-instructions) t))
 		 ;; For each successor of the current instruction, check
 		 ;; whether it has already been visited, and if not,
