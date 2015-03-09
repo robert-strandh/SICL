@@ -253,3 +253,18 @@ and should be written like this instead:
 
 though, admittedly, this example is a little too simple to illustrate
 the importance of this rule.
+
+\section{Using \texttt{car} and \texttt{cdr} vs. using \texttt{first}
+  and \texttt{rest}}
+
+While the two functions \texttt{car} and \texttt{first} have the exact
+same definitions, as do \texttt{cdr} and \texttt{rest}, they send very
+different messages to the person reading the code.
+
+The functions \texttt{car}, \texttt{cdr}, etc., should be avoided when
+the argument is to be considered as a \emph{list}, and should be
+reserved for other uses of \texttt{cons} cells such as for
+\emph{trees} or \emph{pairs} of values.
+
+It follows that the two families of functions should never be mixed
+for the same argument.
