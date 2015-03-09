@@ -87,4 +87,5 @@
    (:file "instruction")
    (:file "graph-modifications")
    (:file "instruction-mixin-classes")
-   (:file "graphviz-drawing")))
+   (:file "graphviz-drawing")
+   (:file "map-instructions")))
