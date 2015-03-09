@@ -188,8 +188,7 @@
   ;; Make sure everything is up to date.
   (cleavir-ir:reinitialize-data initial-instruction)
   (let ((owners (make-hash-table :test #'eq)))
-    (traverse
-     initial-instruction
+    (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (loop for datum in (append (cleavir-ir:inputs instruction)
 				  (cleavir-ir:outputs instruction))
@@ -202,18 +201,18 @@
 			(t
 			 (change-class
 			  datum
-			  'cleavir-ir:static-lexical-location))))))))
-  (traverse
-   initial-instruction
-   (lambda (instruction owner)
-     (declare (ignore owner))
+			  'cleavir-ir:static-lexical-location))))))
+     initial-instruction))
+  (cleavir-ir:map-instructions
+   (lambda (instruction)
      (loop for datum in (append (cleavir-ir:inputs instruction)
 				(cleavir-ir:outputs instruction))
 	   do (when (eq (class-of datum)
 			(find-class 'cleavir-ir:lexical-location))
 		(change-class
 		 datum
-		 'cleavir-ir:dynamic-lexical-location))))))
+		 'cleavir-ir:dynamic-lexical-location))))
+   initial-instruction))
 
 ;;; Given an instruction I that writes to a captured variable CV, and
 ;;; a dynamic lexical variable L holding the location of the cell that
