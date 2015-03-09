@@ -161,7 +161,8 @@
    #:make-load-from-static-environment-instruction
    #:store-to-static-environment-instruction
    #:make-store-to-static-environment-instruction
-   #:hir-to-mir #:specialize))
+   #:hir-to-mir #:specialize
+   #:map-instructions))
 
 (defpackage #:cleavir-ir-graphviz
   (:use #:common-lisp #:cleavir-ir)
