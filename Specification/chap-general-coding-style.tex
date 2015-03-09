@@ -1,5 +1,51 @@
 \chapter{General \commonlisp{} style guide}
 
+\section{Purpose of style restrictions}
+
+The purpose of imposing a particular style is based on a few simple
+facts that hold true for both natural languages and programming
+languages:
+
+\begin{itemize}
+\item The set of all idiomatic phrases is a tiny subset of the set of
+  all grammatical phrases.
+\item The main purpose of these phrases is to serve as communication
+  between people.
+\end{itemize}
+
+To illustrate the first fact, consider a natural language such as
+English.  In English, we say ``tooth brush'', but ``dental floss''.
+The words ``dental brush'' and ``tooth floss'' would be perfectly
+grammatical, but they are not used.  A person trying to communicate
+with other people must use the words that have been widely agreed
+upon, even though some other words are perfectly legitimate.  It might
+seem that such idiosyncrasies would be limited to languages with
+multiple heritage such as English, but that is not the case.  In
+French, we say ``brosse à dents'', ``pâte dentifrice'', and ``fil
+dentaire''.  There are nine reasonable combinations, but only one is
+used.
+
+The same thing is true for programming languages.  The community has
+collectively decided on a particular subset of all the grammatical
+phrases, and a programmer who wishes to communicate with other
+programmers should stick to that subset.
+
+It should also be emphasized that the choice of idioms is different in
+different languages.  An example from natural languages would be that
+in English we say ``I was my hands'', in French ``I wash myself the
+hands'', and in Swedish we say ``I wash the hands [on myself]''.  Just
+as it would be pointless trying to use an idiom form one language in a
+translated version in a different language, it is as pointless to
+translate idioms from one programming language to a different
+programming language.
+
+Finally, the choice of what phrases are idioms and what phrases are
+not is almost totally arbitrary, and based on coincidences of
+history.  Therefore it is rarely productive to ask oneself why a
+particular phrase is an idiom and a different one is not.  There is no
+possible enlightening answer to such a question.
+
+
 \section{Width of a line of code}
 
 Horizontal space is a precious resource that should not be wasted.
