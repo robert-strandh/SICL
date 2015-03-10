@@ -17,6 +17,9 @@
 (defmethod reset progn ((meter meter))
   nil)
 
+(defmethod report progn ((meter meter) &optional stream)
+  (declare (ignore stream)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BASIC-METER.
