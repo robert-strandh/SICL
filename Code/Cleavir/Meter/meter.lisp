@@ -26,6 +26,9 @@
 (defmethod stream-report progn ((meter meter) stream)
   (format stream "Report for meter named ~a~%" (name meter)))
 
+(defmethod invoke-with-meter ((meter meter) function)
+  (funcall function))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BASIC-METER.
