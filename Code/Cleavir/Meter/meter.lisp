@@ -31,9 +31,9 @@
 ;;; the total CPU time for the invocations.
 
 (defclass basic-meter (meter)
-  ((%cpu-time :initform 0 :accessor cpu-time)
+  ((%sum-cpu-time :initform 0 :accessor sum-cpu-time)
    (%invocation-count :initform 0 :accessor invocation-count)))
 
 (defmethod reset progn ((meter basic-meter))
-  (setf (cpu-time meter) 0)
+  (setf (sum-cpu-time meter) 0)
   (setf (invocation-count meter) 0))
