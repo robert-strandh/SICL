@@ -65,21 +65,25 @@
 (defun reinitialize-data (initial-instruction)
   ;; In the first pass, we set the defining and the using instructions
   ;; of every datum to the empty set.
-  (let ((table (make-hash-table :test #'eq)))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (loop for datum in (inputs instruction)
-		       do (setf (using-instructions datum) '())
-			  (setf (defining-instructions datum) '()))
-		 (loop for datum in (outputs instruction)
-		       do (setf (using-instructions datum) '())
-			  (setf (defining-instructions datum) '()))
-		 (mapc #'traverse (successors instruction)))))
-      (traverse initial-instruction)))
+  (map-instructions
+   (lambda (instruction)
+     (loop for datum in (inputs instruction)
+	   do (setf (using-instructions datum) '())
+	      (setf (defining-instructions datum) '()))
+     (loop for datum in (outputs instruction)
+	   do (setf (using-instructions datum) '())
+	      (setf (defining-instructions datum) '())))
+   initial-instruction)
   ;; In the second pass, we add each instruction as a using
   ;; instruction of its inputs, and a defining instruction of its
   ;; outputs.
+  (map-instructions
+   (lambda (instruction)
+     (loop for datum in (inputs instruction)
+	   do (push instruction (using-instructions datum)))
+     (loop for datum in (outputs instruction)
+	   do (push instruction (defining-instructions datum))))
+   initial-instruction)
   (let ((table (make-hash-table :test #'eq)))
     (labels ((traverse (instruction)
 	       (unless (gethash instruction table)
