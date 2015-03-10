@@ -1,9 +1,43 @@
 (cl:in-package #:cleavir-ir)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; 
-;;; Function MAP-INSTRUCTIONS. 
-;;; 
+;;;
+;;; Function MAP-INSTRUCTIONS-ARBITRARY-ORDER
+;;;
+;;; Traverse an instruction graph in some arbitrary order.
+;;; INITIAL-INSTRUCTION is the root of the instruction graph.
+;;; FUNCTION will be called exactly once for each instruction in the
+;;; instruction graph, and it will be called with that instruction as
+;;; the only argument.
+
+(defun map-instructions-arbitrary-order (function initial-instruction)
+  (let ((visited-instructions (make-hash-table :test #'eq))
+	(instructions-to-process '()))
+    (flet ((register-if-unvisited (instruction)
+	     (unless (gethash instruction visited-instructions)
+	       (setf (gethash instruction visited-instructions) t)
+	       (push instruction instructions-to-process))))
+      (register-if-unvisited initial-instruction)
+      (loop until (null instructions-to-process)
+	    do (let ((instruction (pop instructions-to-process)))
+		 (funcall function instruction)
+		 (when (typep instruction 'cleavir-ir:enclose-instruction)
+		   ;; When the instruction is an ENCLOSE-INSTRUCTION,
+		   ;; we must also account for the CODE slot of the
+		   ;; instruction, because it contains the
+		   ;; ENTER-INSTRUCTION of a nested function.
+		   (register-if-unvisited (code instruction)))
+		 ;; For each successor of the current instruction,
+		 ;; register it so that it will be processed
+		 ;; ultimately, unless, of course, it has already been
+		 ;; processed.
+		 (loop for successor in (successors instruction)
+		       do (register-if-unvisited successor)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function MAP-INSTRUCTIONS.
+;;;
 ;;; Call FUNCTION on each instruction of an instruction graph the root
 ;;; of which is INITIAL-INSTRUCTION.  In this version of the mapping
 ;;; function, we traverse the instruction graph depth-first, and we
@@ -15,10 +49,10 @@
 ;;; function to be processed only as part of processing a nested
 ;;; function.  Consider the following code snippet:
 ;;;
-;;;   (tagbody 
+;;;   (tagbody
 ;;;       (ff (lambda () (go a)))
 ;;;       (go out)
-;;;     a 
+;;;     a
 ;;;       (print 234)
 ;;;     out)
 ;;;
