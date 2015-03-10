@@ -11,6 +11,10 @@
 
 (defgeneric invoke-with-meter (meter function))
 
+(defmacro with-meter ((meter-variable meter-form) &body body)
+  `(let ((,meter-variable ,meter-form))
+     (invoke-with-meter ,meter-variable (lambda () ,@body))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class METER.
