@@ -3,7 +3,7 @@
 (defgeneric reset (meter)
   (:method-combination progn))
 
-(defgeneric report (meter)
+(defgeneric report (meter &optional stream)
   (:method-combination progn :most-specific-last))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
