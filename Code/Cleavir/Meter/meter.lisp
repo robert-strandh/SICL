@@ -22,7 +22,7 @@
   nil)
 
 (defmethod stream-report progn ((meter meter) stream)
-  (declare (ignore stream)))
+  (format stream "Report for meter named ~a~%" (name meter)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
