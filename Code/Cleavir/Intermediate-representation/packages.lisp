@@ -162,6 +162,7 @@
    #:store-to-static-environment-instruction
    #:make-store-to-static-environment-instruction
    #:hir-to-mir #:specialize
+   #:map-instructions-arbitrary-order
    #:map-instructions
    #:map-instructions-with-owner))
 
