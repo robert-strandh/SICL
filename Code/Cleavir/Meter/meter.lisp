@@ -45,3 +45,23 @@
   (setf (sum-cpu-time meter) 0)
   (setf (sum-squared-cpu-time meter) 0)
   (setf (invocation-count meter) 0))
+
+(defmethod stream-report progn ((meter basic-meter) stream)
+  (with-accessors ((invocation-count invocation-count)
+		   (sum-cpu-time sum-cpu-time)
+		   (sum-squared-cpu-time sum-squared-cpu-time))
+      meter
+    (format stream "Invocation count: ~a~%" invocation-count)
+    (unless (zerop invocation-count)
+      (format stream
+	      "Total CPU time: ~a~%"
+	      sum-cpu-time)
+      (format stream
+	      "Average CPU time per invocation: ~a~%"
+	      (float (/ sum-cpu-time invocation-count)))
+      (format stream
+	      "Standard deviation of CPU time per invocation: ~a~%"
+	      (sqrt (/ (- sum-squared-cpu-time
+			  (/ (* sum-cpu-time sum-cpu-time)
+			     invocation-count))
+		       invocation-count))))))
