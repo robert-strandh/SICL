@@ -59,17 +59,21 @@
     (format stream "Invocation count: ~a~%" invocation-count)
     (unless (zerop invocation-count)
       (format stream
-	      "Total CPU time: ~a~%"
-	      sum-cpu-time)
+	      "Total CPU time: ~a seconds~%"
+	      (float (/ sum-cpu-time
+			internal-time-units-per-second)))
       (format stream
-	      "Average CPU time per invocation: ~a~%"
-	      (float (/ sum-cpu-time invocation-count)))
+	      "Average CPU time per invocation: ~a seconds~%"
+	      (float (/ sum-cpu-time
+			invocation-count
+			internal-time-units-per-second)))
       (format stream
-	      "Standard deviation of CPU time per invocation: ~a~%"
-	      (sqrt (/ (- sum-squared-cpu-time
-			  (/ (* sum-cpu-time sum-cpu-time)
-			     invocation-count))
-		       invocation-count))))))
+	      "Standard deviation of CPU time per invocation: ~a seconds~%"
+	      (/ (sqrt (/ (- sum-squared-cpu-time
+			     (/ (* sum-cpu-time sum-cpu-time)
+				invocation-count))
+			  invocation-count))
+		 internal-time-units-per-second)))))
 
 (defmethod invoke-with-meter :around ((meter basic-meter) function)
   (declare (ignorable function))
