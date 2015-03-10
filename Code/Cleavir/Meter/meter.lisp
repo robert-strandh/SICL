@@ -11,6 +11,9 @@
 
 (defclass meter () ())
 
+(defmethod reset progn ((meter meter))
+  nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BASIC-METER.
