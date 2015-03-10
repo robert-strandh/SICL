@@ -15,7 +15,8 @@
 ;;;
 ;;; This is the base class of all meters.
 
-(defclass meter () ())
+(defclass meter ()
+  ((%name :initform "Unnamed" :initarg :name :reader name)))
 
 (defmethod reset progn ((meter meter))
   nil)
