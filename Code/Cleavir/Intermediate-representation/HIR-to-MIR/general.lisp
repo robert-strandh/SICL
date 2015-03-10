@@ -3,18 +3,14 @@
 (defgeneric specialize (instruction implementation processor os))
 
 (defun hir-to-mir (initial-instruction implementation processor os)
-  ;; Gather up all instructions in a table
-  (let ((table (make-hash-table :test #'eq)))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (loop for succ in (cleavir-ir:successors instruction)
-		       do (traverse succ))
-		 (when (typep instruction 'cleavir-ir:enclose-instruction)
-		   (traverse (cleavir-ir:code instruction))))))
-      (traverse initial-instruction))
-    ;; Appply specialize to all instructions in the table.
-    (loop for instruction being each hash-key of table
+  (let ((all-instructions '()))
+    ;; Gather up all instructions in a list.
+    (map-instructions
+     (lambda (instruction)
+       (push instruction all-instructions))
+     initial-instruction)
+    ;; Appply specialize to all instructions in the list.
+    (loop for instruction in all-instructions
 	  do (specialize instruction implementation processor os))))
 
 (defmethod specialize :around (instruction implementation processor os)
