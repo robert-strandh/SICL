@@ -2,5 +2,6 @@
 
 (defpackage #:cleavir-meter
   (:use #:common-lisp)
-  (:export #:meter
+  (:export #:reset
+	   #:meter
 	   #:basic-meter))
