@@ -5,5 +5,6 @@
   (:export #:reset
 	   #:report
 	   #:stream-report
+	   #:invoke-with-meter
 	   #:meter
 	   #:basic-meter))
