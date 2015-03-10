@@ -6,5 +6,6 @@
 	   #:report
 	   #:stream-report
 	   #:invoke-with-meter
+	   #:with-meter
 	   #:meter
 	   #:basic-meter))
