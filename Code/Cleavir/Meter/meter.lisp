@@ -3,6 +3,9 @@
 (defgeneric reset (meter)
   (:method-combination progn))
 
+(defgeneric report (meter)
+  (:method-combination progn :most-specific-last))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class METER.
