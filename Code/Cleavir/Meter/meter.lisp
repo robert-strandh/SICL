@@ -9,6 +9,8 @@
 (defun report (meter &optional (stream *standard-output*))
   (stream-report meter stream))
 
+(defgeneric invoke-with-meter (meter function))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class METER.
