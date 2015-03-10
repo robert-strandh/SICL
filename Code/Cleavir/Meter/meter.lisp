@@ -70,3 +70,10 @@
 			  (/ (* sum-cpu-time sum-cpu-time)
 			     invocation-count))
 		       invocation-count))))))
+
+(defmethod invoke-with-meter :around ((meter basic-meter) function)
+  (declare (ignorable function))
+  (let ((time (get-internal-run-time)))
+    (multiple-value-prog1
+	(call-next-method)
+      (register-one-invocation meter (- (get-internal-run-time) time)))))
