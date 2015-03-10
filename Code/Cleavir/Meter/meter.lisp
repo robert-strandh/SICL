@@ -32,8 +32,10 @@
 
 (defclass basic-meter (meter)
   ((%sum-cpu-time :initform 0 :accessor sum-cpu-time)
+   (%sum-squared-cpu-time :initform 0 :accessor sum-squared-cpu-time)
    (%invocation-count :initform 0 :accessor invocation-count)))
 
 (defmethod reset progn ((meter basic-meter))
   (setf (sum-cpu-time meter) 0)
+  (setf (sum-squared-cpu-time meter) 0)
   (setf (invocation-count meter) 0))
