@@ -36,6 +36,11 @@
    (%sum-squared-cpu-time :initform 0 :accessor sum-squared-cpu-time)
    (%invocation-count :initform 0 :accessor invocation-count)))
 
+(defun register-one-invocation (basic-meter cpu-time)
+  (incf (invocation-count basic-meter))
+  (incf (sum-cpu-time basic-meter) cpu-time)
+  (incf (sum-squared-cpu-time basic-meter) (* cpu-time cpu-time)))
+
 (defmethod reset progn ((meter basic-meter))
   (setf (sum-cpu-time meter) 0)
   (setf (sum-squared-cpu-time meter) 0)
