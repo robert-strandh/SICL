@@ -1,5 +1,8 @@
 (cl:in-package #:cleavir-meter)
 
+(defgeneric reset (meter)
+  (:method-combination progn))
+
 (defclass meter () ())
 
 (defclass basic-meter (meter)
