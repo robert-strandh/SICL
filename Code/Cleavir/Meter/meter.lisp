@@ -6,6 +6,9 @@
 (defgeneric stream-report (meter stream)
   (:method-combination progn :most-specific-last))
 
+(defun report (meter &optional (stream *standard-output*))
+  (stream-report meter stream))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class METER.
