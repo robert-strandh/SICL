@@ -105,6 +105,7 @@
 	       :cleavir-hir
 	       :cleavir-hir-transformations
 	       :cleavir-basic-blocks
+	       :cleavir-meter
 	       :sicl-evaluation-and-compilation
 	       :sicl-data-and-control-flow
 	       :sicl-conditionals-support
