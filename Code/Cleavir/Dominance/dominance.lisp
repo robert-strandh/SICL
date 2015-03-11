@@ -251,6 +251,10 @@
 ;;;
 ;;; For each node in the graph, compute its dominance frontier.
 
+(defparameter *dominance-frontiers-meter*
+  (make-instance 'cleavir-meter:basic-meter
+    :name "DOMINANCE-FRONTIERS"))
+
 ;;; Compute a hash table that maps every node in a dominance tree to a
 ;;; list of its children in that tree.
 (defun children (dominance-tree)
@@ -265,31 +269,32 @@
 ;;; for each node.  To client code, the object returned is opaque, and
 ;;; can be used to pass to the function DOMINANCE-FRONTIER.
 (defun dominance-frontiers (start-node successor-fun)
-  (let* ((dominance-tree (dominance-tree start-node successor-fun))
-	 (children (children dominance-tree))
-	 (result (make-hash-table :test #'eq)))
-    (flet ((children (node)
-	     (gethash node children))
-	   (successors (node)
-	     (funcall successor-fun node))
-	   (df (node)
-	     (gethash node result))
-	   ((setf df) (new-df node)
-	     (setf (gethash node result) new-df)))
-      (labels
-	  ((traverse (x)
-	     (mapc #'traverse (children x))
-	     (loop for y in (successors x)
-		   do (unless (eq (immediate-dominator dominance-tree y)
-				  x)
-			(pushnew y (df x) :test #'eq)))
-	     (loop for z in (children x)
-		   do (loop for y in (df z)
-			    do (unless (eq (immediate-dominator dominance-tree y)
-					   x)
-				 (pushnew y (df x) :test #'eq))))))
-	(traverse start-node)))
-    result))
+  (cleavir-meter:with-meter (m *dominance-frontiers-meter*)
+    (let* ((dominance-tree (dominance-tree start-node successor-fun))
+	   (children (children dominance-tree))
+	   (result (make-hash-table :test #'eq)))
+      (flet ((children (node)
+	       (gethash node children))
+	     (successors (node)
+	       (funcall successor-fun node))
+	     (df (node)
+	       (gethash node result))
+	     ((setf df) (new-df node)
+	       (setf (gethash node result) new-df)))
+	(labels
+	    ((traverse (x)
+	       (mapc #'traverse (children x))
+	       (loop for y in (successors x)
+		     do (unless (eq (immediate-dominator dominance-tree y)
+				    x)
+			  (pushnew y (df x) :test #'eq)))
+	       (loop for z in (children x)
+		     do (loop for y in (df z)
+			      do (unless (eq (immediate-dominator dominance-tree y)
+					     x)
+				   (pushnew y (df x) :test #'eq))))))
+	  (traverse start-node)))
+      result)))
 
 (defun dominance-frontier (dominance-frontiers node)
   (gethash node dominance-frontiers))
