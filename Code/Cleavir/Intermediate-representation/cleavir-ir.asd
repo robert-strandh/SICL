@@ -80,6 +80,7 @@
 ;;;; parent.
 
 (asdf:defsystem :cleavir-ir
+  :depends-on (:cleavir-meter)
   :serial t
   :components
   ((:file "packages")
