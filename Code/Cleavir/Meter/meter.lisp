@@ -43,12 +43,21 @@
 (defclass basic-meter (meter)
   ((%sum-cpu-time :initform 0 :accessor sum-cpu-time)
    (%sum-squared-cpu-time :initform 0 :accessor sum-squared-cpu-time)
+   (%min-cpu-time :initform 0 :accessor min-cpu-time)
+   (%max-cpu-time :initform 0 :accessor max-cpu-time)
    (%invocation-count :initform 0 :accessor invocation-count)))
 
 (defun register-one-invocation (basic-meter cpu-time)
   (incf (invocation-count basic-meter))
   (incf (sum-cpu-time basic-meter) cpu-time)
-  (incf (sum-squared-cpu-time basic-meter) (* cpu-time cpu-time)))
+  (incf (sum-squared-cpu-time basic-meter) (* cpu-time cpu-time))
+  (if (= (invocation-count basic-meter) 1)
+      (progn (setf (min-cpu-time basic-meter) cpu-time)
+	     (setf (max-cpu-time basic-meter) cpu-time))
+      (progn (setf (min-cpu-time basic-meter)
+		   (min (min-cpu-time basic-meter) cpu-time))
+	     (setf (max-cpu-time basic-meter)
+		   (max (max-cpu-time basic-meter) cpu-time)))))
 
 (defmethod reset progn ((meter basic-meter))
   (setf (sum-cpu-time meter) 0)
@@ -58,13 +67,23 @@
 (defmethod stream-report progn ((meter basic-meter) stream)
   (with-accessors ((invocation-count invocation-count)
 		   (sum-cpu-time sum-cpu-time)
-		   (sum-squared-cpu-time sum-squared-cpu-time))
+		   (sum-squared-cpu-time sum-squared-cpu-time)
+		   (min-cpu-time min-cpu-time)
+		   (max-cpu-time max-cpu-time))
       meter
     (format stream "Invocation count: ~a~%" invocation-count)
     (unless (zerop invocation-count)
       (format stream
 	      "Total CPU time: ~a seconds~%"
 	      (float (/ sum-cpu-time
+			internal-time-units-per-second)))
+      (format stream
+	      "Minimum CPU time for an invocation: ~a seconds~%"
+	      (float (/ min-cpu-time
+			internal-time-units-per-second)))
+      (format stream
+	      "Maximum CPU time for an invocation: ~a seconds~%"
+	      (float (/ max-cpu-time
 			internal-time-units-per-second)))
       (format stream
 	      "Average CPU time per invocation: ~a seconds~%"
@@ -98,6 +117,8 @@
 (defclass size-meter (basic-meter)
   ((%sum-size :initform 0 :accessor sum-size)
    (%sum-squared-size :initform 0 :accessor sum-squared-size)
+   (%min-size :initform 0 :accessor min-size)
+   (%max-size :initform 0 :accessor max-size)
    (%temp-size :initform 0 :accessor temp-size)))
 
 (defmethod reset progn ((meter size-meter))
@@ -112,12 +133,20 @@
 (defmethod stream-report progn ((meter size-meter) stream)
   (with-accessors ((invocation-count invocation-count)
 		   (sum-size sum-size)
-		   (sum-squared-size sum-squared-size))
+		   (sum-squared-size sum-squared-size)
+		   (min-size min-size)
+		   (max-size max-size))
       meter
     (unless (zerop invocation-count)
       (format stream
 	      "Total size: ~a~%"
 	      (float sum-size))
+      (format stream
+	      "Minimum size for an invocation: ~a~%"
+	      (float min-size))
+      (format stream
+	      "Maximum size for an invocation: ~a~%"
+	      (float max-size))
       (format stream
 	      "Average size per invocation: ~a~%"
 	      (float (/ sum-size
@@ -136,4 +165,11 @@
       (call-next-method)
     (incf (sum-size meter) (temp-size meter))
     (incf (sum-squared-size meter) (* (temp-size meter) (temp-size meter)))
+    (if (= (invocation-count meter) 1)
+	(progn (setf (min-size meter) (temp-size meter))
+	       (setf (max-size meter) (temp-size meter)))
+	(progn (setf (min-size meter)
+		     (min (min-size meter) (temp-size meter)))
+	       (setf (max-size meter)
+		     (max (max-size meter) (temp-size meter)))))
     (setf (temp-size meter) 0)))
