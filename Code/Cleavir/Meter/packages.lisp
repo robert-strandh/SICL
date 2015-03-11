@@ -8,4 +8,6 @@
 	   #:invoke-with-meter
 	   #:with-meter
 	   #:meter
-	   #:basic-meter))
+	   #:basic-meter
+	   #:size-meter
+	   #:increment-size))
