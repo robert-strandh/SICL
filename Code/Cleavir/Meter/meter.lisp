@@ -85,3 +85,17 @@
     (multiple-value-prog1
 	(call-next-method)
       (register-one-invocation meter (- (get-internal-run-time) time)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SIZE-METER.
+;;;
+;;; A meter class that, in addition to counting the number of
+;;; invocations and measuring the total CPU time for the invocations
+;;; also allows client code to supply a SIZE for each invocation.  We
+;;; do this by defining a generic function INCREMENT-SIZE.
+
+(defclass size-meter (basic-meter)
+  ((%sum-size :initform 0 :accessor sum-size)
+   (%sum-squared-size :initform 0 :accessor sum-squared-size)
+   (%temp-size :initform 0 :accessor temp-size)))
