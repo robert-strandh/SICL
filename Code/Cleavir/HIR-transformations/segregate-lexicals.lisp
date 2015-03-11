@@ -72,16 +72,11 @@
 (defun has-owner-p (item)
   (nth-value 1 (gethash item *ownerships*)))
 
-(defparameter *ld1-call-count* 0)
-(defparameter *ld1-item-count* 0)
-(defparameter *ld1-time* 0)
-
 ;;; Compute the owner of each instruction and each datum.  The return
 ;;; value is an EQ hash table mapping an instruction or a datum to its
 ;;; owner.
 (defun compute-ownerships (initial-instruction)
-  (let ((time (get-internal-run-time))
-	(worklist '())
+  (let ((worklist '())
 	(current-owner (if (typep initial-instruction
 				  'cleavir-ir:enter-instruction)
 			   initial-instruction
@@ -106,9 +101,6 @@
       (loop until (null worklist)
 	    do (setf current-owner (pop worklist))
 	       (traverse current-owner)))
-    (incf *ld1-call-count*)
-    (incf *ld1-item-count* (hash-table-count *ownerships*))
-    (incf *ld1-time* (- (get-internal-run-time) time))
     *ownerships*))
 
 (defvar *lexical-depths*)
