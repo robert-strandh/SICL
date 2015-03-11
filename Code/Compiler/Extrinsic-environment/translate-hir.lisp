@@ -137,15 +137,20 @@
 	       'args)
 	     ,tagbody))))))
 
+(defparameter *hir-to-cl-translation-meter*
+  (make-instance 'cleavir-meter:basic-meter
+    :name "HIR-to-Common-Lisp translation"))
+
 (defun translate (initial-instruction linkage-environment)
-  (let ((*ownerships*
-	  (cleavir-hir-transformations:compute-ownerships initial-instruction))
-	(*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
-	(*linkage-environment* linkage-environment)
-	(*tags* (make-hash-table :test #'eq))
-	(*vars* (make-hash-table :test #'eq))
-	(*dynamic-environment-variables* (make-hash-table :test #'eq)))
-    (layout-procedure initial-instruction)))
+  (cleavir-meter:with-meter (m *hir-to-cl-translation-meter*)
+    (let ((*ownerships*
+	    (cleavir-hir-transformations:compute-ownerships initial-instruction))
+	  (*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
+	  (*linkage-environment* linkage-environment)
+	  (*tags* (make-hash-table :test #'eq))
+	  (*vars* (make-hash-table :test #'eq))
+	  (*dynamic-environment-variables* (make-hash-table :test #'eq)))
+      (layout-procedure initial-instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
