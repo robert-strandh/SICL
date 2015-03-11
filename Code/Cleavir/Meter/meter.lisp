@@ -108,3 +108,23 @@
 
 (defmethod increment-size ((meter size-meter) &optional (increment 1))
   (incf (temp-size meter) increment))
+
+(defmethod stream-report progn ((meter size-meter) stream)
+  (with-accessors ((invocation-count invocation-count)
+		   (sum-size sum-size)
+		   (sum-squared-size sum-squared-size))
+      meter
+    (unless (zerop invocation-count)
+      (format stream
+	      "Total size: ~a~%"
+	      (float sum-size))
+      (format stream
+	      "Average size per invocation: ~a~%"
+	      (float (/ sum-size
+			invocation-count)))
+      (format stream
+	      "Standard deviation of size per invocation: ~a~%"
+	      (sqrt (/ (- sum-squared-size
+			  (/ (* sum-size sum-size)
+			     invocation-count))
+		       invocation-count))))))
