@@ -116,6 +116,7 @@
    #:bit-aset-ast #:make-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
    #:unsigned-byte-8-aset-ast #:make-unsigned-byte-8-aset-ast
+   #:map-ast-depth-first-preorder
    ))
 
 (defpackage #:cleavir-ast-graphviz
