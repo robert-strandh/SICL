@@ -93,12 +93,10 @@
     ;; Start by collecting all the instructions to be processed, so as
     ;; to avoid converting an instruction twice as the instruction
     ;; graph changes.
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (push instruction all-instructions)
-		 (mapc #'traverse (sicl-mir:successors instruction)))))
-      (traverse initial-instruction))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (push instruction all-instructions))
+     initial-instructions)
     ;; Now convert all instructions previously collected.
     (mapc #'convert-instruction all-instructions)))
 
