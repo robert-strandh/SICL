@@ -71,12 +71,10 @@
 ;;; the generated code.  That variable will hold the cloned AST.
 (defun codegen-clone-create-dictionary (ast)
   (let ((dictionary (make-hash-table :test #'eq)))
-    (labels ((traverse (node)
-	       (when (null (gethash node dictionary))
-		 (setf (gethash node dictionary)
-		       (gensym))
-		 (mapc #'traverse (cleavir-ast:children node)))))
-      (traverse ast))
+    (cleavir-ast:map-ast-depth-first-preorder
+     (lambda (node)
+       (setf (gethash node dictionary) (gensym)))
+     ast)
     dictionary))
 
 (defgeneric codegen-finalize-substructure (object dictionary))
