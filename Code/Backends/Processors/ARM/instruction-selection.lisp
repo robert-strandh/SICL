@@ -580,11 +580,9 @@
 	(*code-object-lexical* (sicl-mir:new-temporary))
 	(*return-address-lexical* (sicl-mir:new-temporary))
 	(*static-environment-lexical* (sicl-mir:new-temporary)))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (convert-instruction instruction))))
-      (traverse initial-instruction))))  
+    (cleavir-ir:map-instructions-arbitrary-order
+     #'convert-instruction
+     initial-instruction)))
 
 (defmethod sicl-program:convert-to-lir ((backend backend-arm) initial-instruction)
   (convert-instruction-graph initial-instruction))
