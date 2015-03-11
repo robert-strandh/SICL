@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir-ast
-  :depends-on (:cleavir-io)
+  :depends-on (:cleavir-io
+	       :cleavir-meter)
   :serial t
   :components
   ((:file "packages")
