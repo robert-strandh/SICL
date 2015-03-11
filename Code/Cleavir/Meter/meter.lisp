@@ -128,3 +128,12 @@
 			  (/ (* sum-size sum-size)
 			     invocation-count))
 		       invocation-count))))))
+
+(defmethod invoke-with-meter :around ((meter size-meter) function)
+  (declare (ignorable function))
+  (setf (temp-size meter) 0)
+  (multiple-value-prog1
+      (call-next-method)
+    (incf (sum-size meter) (temp-size meter))
+    (incf (sum-squared-size meter) (* (temp-size meter) (temp-size meter)))
+    (setf (temp-size meter) 0)))
