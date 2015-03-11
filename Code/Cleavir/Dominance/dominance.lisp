@@ -95,13 +95,8 @@
 ;;; subroutine for computing the dominance tree and the dominance
 ;;; frontiers.
 
-(defparameter *df1-call-count* 0)
-(defparameter *df1-node-count* 0)
-(defparameter *df1-run-time* 0)
-
 (defun immediate-dominators (start-node successor-fun)
-  (let* ((time (get-internal-run-time))
-	 (pred (make-hash-table :test #'eq))
+  (let* ((pred (make-hash-table :test #'eq))
 	 (parent (make-hash-table :test #'eq))
 	 (vertex (make-array (count-nodes start-node successor-fun)))
 	 (semi (make-hash-table :test #'eq))
@@ -203,9 +198,6 @@
 	      for w = (vertex i)
 	      do (unless (eq (dom w) (vertex (semi w)))
 		   (setf (dom w) (dom (dom w))))))
-      (incf *df1-call-count*)
-      (incf *df1-run-time* (- (get-internal-run-time) time))
-      (incf *df1-node-count* (hash-table-size dom))
       dom)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
