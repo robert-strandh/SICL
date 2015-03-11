@@ -1,6 +1,6 @@
 ;;; This is dumb of course, but this file is
 ;;; only a small test for now.
-(in-package #:sicl-compiler-phase-1)
+(cl:in-package #:sicl-compiler-phase-1)
 
 ;;; A static frame.  A static environment is a Lisp list of static
 ;;; frames. 
