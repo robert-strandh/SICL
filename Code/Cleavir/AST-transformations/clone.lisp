@@ -12,12 +12,11 @@
 ;;; initialized by :INITFORM.
 (defun clone-create-dictionary (ast)
   (let ((dictionary (make-hash-table :test #'eq)))
-    (labels ((traverse (node)
-	       (when (null (gethash node dictionary))
-		 (setf (gethash node dictionary)
-		       (make-instance (class-of node)))
-		 (mapc #'traverse (cleavir-ast:children node)))))
-      (traverse ast))
+    (cleavir-ast:map-ast-depth-first-preorder
+     (lambda (node)
+       (setf (gethash node dictionary)
+	     (make-instance (class-of node))))
+     ast)
     dictionary))
 
 ;;; This generic function is used to obtain some substructure
