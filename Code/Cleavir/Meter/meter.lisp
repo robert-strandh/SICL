@@ -103,3 +103,8 @@
 (defmethod reset progn ((meter size-meter))
   (setf (sum-size meter) 0)
   (setf (sum-squared-size meter) 0))
+
+(defgeneric increment-size (meter &optional increment))
+
+(defmethod increment-size ((meter size-meter) &optional (increment 1))
+  (incf (temp-size meter) increment))
