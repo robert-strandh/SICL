@@ -99,3 +99,7 @@
   ((%sum-size :initform 0 :accessor sum-size)
    (%sum-squared-size :initform 0 :accessor sum-squared-size)
    (%temp-size :initform 0 :accessor temp-size)))
+
+(defmethod reset progn ((meter size-meter))
+  (setf (sum-size meter) 0)
+  (setf (sum-squared-size meter) 0))
