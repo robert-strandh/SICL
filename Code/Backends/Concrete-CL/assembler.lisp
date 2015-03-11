@@ -1,4 +1,4 @@
-(in-package #:sicl-assembler)
+(cl:in-package #:sicl-assembler)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
