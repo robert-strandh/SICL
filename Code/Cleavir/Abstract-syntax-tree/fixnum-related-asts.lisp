@@ -1,4 +1,4 @@
-(in-package #:cleavir-ast)
+(cl:in-package #:cleavir-ast)
 
 ;;;; This file contains definitions of AST classes that have to do
 ;;;; with fixnum arithmetic and comparison. 
