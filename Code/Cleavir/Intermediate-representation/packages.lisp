@@ -164,7 +164,8 @@
    #:hir-to-mir #:specialize
    #:map-instructions-arbitrary-order
    #:map-instructions
-   #:map-instructions-with-owner))
+   #:map-instructions-with-owner
+   #:set-predecessors))
 
 (defpackage #:cleavir-ir-graphviz
   (:use #:common-lisp #:cleavir-ir)
