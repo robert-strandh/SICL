@@ -671,26 +671,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Once the graph is generated, set the predecessor correctly.
-
-(defun set-predecessors (initial-instruction)
-  ;; First, set the list of predecessors of each instruction to the
-  ;; empty list, just in case there are some spurious predecessors on
-  ;; any instruction.
-  (cleavir-ir:map-instructions-arbitrary-order
-   (lambda (instruction)
-     (setf (cleavir-ir:predecessors instruction) '()))
-   initial-instruction)
-  ;; Next add each instruction as a predecessor to each of its
-  ;; successors.
-  (cleavir-ir:map-instructions-arbitrary-order
-   (lambda (instruction)
-     (loop for successor in (cleavir-ir:successors instruction)
-	   do (push instruction (cleavir-ir:predecessors successor))))
-   initial-instruction))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; COMPILE-TOPLEVEL
 ;;;
 ;;; This is the main entry point.
@@ -712,7 +692,7 @@
       (reinitialize-instance enter :successors (list body))
       ;; Make sure the list of predecessors of each instruction is
       ;; initialized correctly.
-      (set-predecessors enter)
+      (cleavir-ir:set-predecessors enter)
       enter)))
 
 ;;; When the FUNCTION-AST is in fact a TOP-LEVEL-FUNCTION-AST it also
