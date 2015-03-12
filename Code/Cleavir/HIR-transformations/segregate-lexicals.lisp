@@ -292,20 +292,28 @@
 					 cell-locations)
 				location)
 			  ;; Our mission now is to add two new
-			  ;; instructions after the current one.  The
-			  ;; first of the two new instructions (I1) is
-			  ;; an instruction to create the cell.  The
-			  ;; second (I2) is the one writing to the
-			  ;; cell.  We do this by first adding I2
-			  ;; after INSTRUCTION and then adding I1
-			  ;; after INSTRUCTION.  Recall that the
-			  ;; function NEW-OUTPUT does the job of
-			  ;; adding I2.
+			  ;; instructions.  The first of the two new
+			  ;; instructions (I1) is an instruction to
+			  ;; create the cell.  The second (I2) is the
+			  ;; one writing to the cell.  Since it is
+			  ;; possible that there is an
+			  ;; ENCLOSE-INSTRUCTION before INSTRUCTION
+			  ;; that will have the cell as input, we must
+			  ;; create the cell early.  We do it
+			  ;; conservatively by adding I1 right after
+			  ;; the OWNER of INSTRUCTION.  But I1 must
+			  ;; absolutely come before I2, so in case
+			  ;; INSTRUCTION is its own owner, we first
+			  ;; add I2 after INSTRUCTION, and then I1
+			  ;; after the owner of INSTRUCTION.  Recall
+			  ;; that the function NEW-OUTPUT does the job
+			  ;; of adding I2.
 			  (let ((new-output (new-output instruction location)))
 			    ;; We must now add I1 to create the cell.
 			    (cleavir-ir:insert-instruction-after
 			     (cleavir-ir:make-create-cell-instruction
-			      location) instruction)
+			      location)
+			     owner)
 			    ;; Return the new output to replace the old
 			    ;; one in INSTRUCTION.
 			    new-output))
