@@ -89,4 +89,5 @@
    (:file "graph-modifications")
    (:file "instruction-mixin-classes")
    (:file "graphviz-drawing")
+   (:file "map-instructions-arbitrary-order")
    (:file "map-instructions")))
