@@ -166,6 +166,7 @@
    #:map-instructions
    #:map-instructions-with-owner
    #:map-instructions-by-owner
+   #:map-instructions-by/with-owner
    #:set-predecessors))
 
 (defpackage #:cleavir-ir-graphviz
