@@ -174,7 +174,7 @@
 ;;;
 ;;; Function MAP-INSTRUCTIONS-BY/WITH-OWNER.
 
-(defun map-instructions-by-owner (function initial-instruction)
+(defun map-instructions-by/with-owner (function initial-instruction)
   (set-predecessors initial-instruction)
   (let ((visited-instructions (make-hash-table :test #'eq))
 	(instructions-to-process '()))
