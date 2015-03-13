@@ -446,6 +446,9 @@
   (make-instance 'tagbody-ast
     :item-asts item-asts))
 
+(cleavir-io:define-save-info tagbody-ast
+  (:item-asts item-asts))
+
 (defmethod children ((ast tagbody-ast))
   (item-asts ast))
 
