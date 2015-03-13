@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-ast-to-source
+(defsystem :cleavir-ast-to-source
   :depends-on (:cleavir-ast :cleavir-primop)
   :serial t
   :components
