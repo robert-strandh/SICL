@@ -133,3 +133,39 @@
 				  ;; same as the owner of the
 				  ;; instruction itself.
 				  owner)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function MAP-INSTRUCTIONS-BY-OWNER.
+
+(defun map-instructions-by-owner (function initial-instruction)
+  (set-predecessors initial-instruction)
+  (let ((visited-instructions (make-hash-table :test #'eq))
+	(instructions-to-process '()))
+    (flet ((register-if-unvisited (instruction)
+	     (unless (gethash instruction visited-instructions)
+	       (setf (gethash instruction visited-instructions) t)
+	       (push instruction instructions-to-process))))
+      (register-if-unvisited initial-instruction)
+      (flet ((register-relevant-predecessors (instruction)
+	       (loop for predecessor in (predecessors instruction)
+		     unless (typep predecessor 'unwind-instruction)
+		       do (register-if-unvisited predecessor))))
+	(loop until (null instructions-to-process)
+	      do (let ((instruction (pop instructions-to-process)))
+		   (funcall function instruction)
+		   (cond ((typep instruction 'enclose-instruction)
+			  (let ((code (code instruction)))
+			    (if (null instructions-to-process)
+				(setf instructions-to-process
+				      (list (cons code code)))
+				(setf (rest (last instructions-to-process))
+				      (list (cons code code))))
+			    (setf (gethash code visited-instructions) t))
+			  (register-if-unvisited
+			   (first (successors instruction)))
+			  (register-relevant-predecessors instruction))
+			 (t
+			  (loop for successor in (successors instruction)
+				do (register-if-unvisited successor))
+			  (register-relevant-predecessors instruction)))))))))
