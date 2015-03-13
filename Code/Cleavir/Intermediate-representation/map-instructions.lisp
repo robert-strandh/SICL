@@ -45,7 +45,7 @@
       (loop until (null instructions-to-process)
 	    do (let ((instruction (pop instructions-to-process)))
 		 (funcall function instruction)
-		 (when (typep instruction 'cleavir-ir:enclose-instruction)
+		 (when (typep instruction 'enclose-instruction)
 		   ;; When the instruction is an ENCLOSE-INSTRUCTION,
 		   ;; we must also account for the CODE slot of the
 		   ;; instruction, because it contains the
@@ -103,7 +103,7 @@
 	    do (destructuring-bind (instruction . owner)
 		   (pop instructions-to-process)
 		 (funcall function instruction owner)
-		 (cond ((typep instruction 'cleavir-ir:enclose-instruction)
+		 (cond ((typep instruction 'enclose-instruction)
 			(let ((code (code instruction)))
 			  (if (null instructions-to-process)
 			      (setf instructions-to-process
@@ -117,7 +117,7 @@
 			 ;; ENCLOSE-INSTRUCTION is the same as the
 			 ;; owner of the enclose-instruction itself.
 			 owner))
-		       ((typep instruction 'cleavir-ir:unwind-instruction)
+		       ((typep instruction 'unwind-instruction)
 			(register-if-unvisited
 			 (first (successors instruction))
 			 ;; The owner of the successor of the
