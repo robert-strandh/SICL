@@ -1,4 +1,4 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
 ;;;; Compile an abstract syntax tree into an instruction graph.
 ;;;;
@@ -6,7 +6,7 @@
 ;;;; instruction of the instruction graph resulting from the
 ;;;; compilation of the entire AST.
 
-(asdf:defsystem :cleavir-ast-to-hir
+(defsystem :cleavir-ast-to-hir
   :depends-on (:cleavir-ast :cleavir-hir :cleavir-primop)
   :serial t
   :components
