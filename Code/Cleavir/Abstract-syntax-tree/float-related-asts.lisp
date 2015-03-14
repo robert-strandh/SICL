@@ -1,4 +1,4 @@
-(in-package #:cleavir-ast)
+(cl:in-package #:cleavir-ast)
 
 (defmacro define-one-arg-float-ast (name)
   `(progn 
