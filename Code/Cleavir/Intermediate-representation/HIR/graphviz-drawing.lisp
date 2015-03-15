@@ -7,16 +7,11 @@
 (defgeneric draw-datum (datum stream))
 
 ;;; During the drawing process, the value of this variable is a hash
-;;; table that contains data that have already been drawn. 
+;;; table that contains data that have already been drawn.
 (defparameter *datum-table* nil)
 
 (defun datum-id (datum)
   (gethash datum *datum-table*))
-
-(defmethod draw-datum :around (datum stream)
-  (when (null (datum-id datum))
-    (setf (gethash datum *datum-table*) (gensym))
-    (call-next-method)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -98,26 +93,19 @@
   (gethash instruction *instruction-table*))
 
 (defgeneric draw-instruction (instruction stream))
-  
-(defmethod draw-instruction :around (instruction stream)
-  (when (null (instruction-id instruction))
-    (setf (gethash instruction *instruction-table*) (gensym))
-    (format stream "  ~a [shape = box];~%"
-	    (instruction-id instruction))
-    (call-next-method)))
 
-(defmethod draw-instruction :before ((instruction instruction) stream)
-  (loop for next in (successors instruction)
-	do (draw-instruction next stream))
+(defmethod draw-instruction :around (instruction stream)
+  (format stream "  ~a [shape = box];~%"
+	  (instruction-id instruction))
+  ;; Draw a numbered bold arrow to each successor.
   (loop for next in (successors instruction)
 	for i from 1
 	do (format stream
 		   "  ~a -> ~a [style = bold, label = \"~d\"];~%"
 		   (instruction-id instruction)
-		   (gethash next *instruction-table*)
-		   i)))
-  
-(defmethod draw-instruction :after (instruction stream)
+		   (instruction-id next)
+		   i))
+  ;; Draw a numbered red dashed arrow from each input.
   (loop for datum in (inputs instruction)
 	for i from 1
 	do (draw-datum datum stream)
@@ -126,6 +114,7 @@
 		   (datum-id datum)
 		   (instruction-id instruction)
 		   i))
+  ;; Draw a numbered blue dashed arrow to each output
   (loop for datum in (outputs instruction)
 	for i from 1
 	do (draw-datum datum stream)
@@ -133,7 +122,8 @@
 		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
 		   (instruction-id instruction)
 		   (datum-id datum)
-		   i)))
+		   i))
+  (call-next-method))
 
 (defgeneric label (instruction))
 
@@ -145,7 +135,7 @@
 	  (instruction-id instruction)
 	  (label instruction)))
 
-(defun draw-flowchart (start filename)
+(defun draw-flowchart (initial-instruction filename)
   (with-open-file (stream filename
 			  :direction :output
 			  :if-exists :supersede)
@@ -153,9 +143,23 @@
 	  (*datum-table* (make-hash-table :test #'eq)))
       (format stream "digraph G {~%")
       (format stream "   start [label = \"START\"];~%")
-      (draw-instruction start stream)
+      ;; Assign a unique ID to each instruction and each datum.
+      (map-instructions-arbitrary-order
+       (lambda (instruction)
+	 (when (null (gethash instruction *instruction-table*))
+	   (setf (gethash instruction *instruction-table*) (gensym))
+	   (loop for datum in (append (inputs instruction) (inputs instruction))
+		 when (null (gethash datum *datum-table*))
+		   do (setf (gethash datum *datum-table*) (gensym)))))
+       initial-instruction)
+      ;; Draw all instructions together with inputs and outputs.
+      (map-instructions-arbitrary-order
+       (lambda (instruction)
+	 (draw-instruction instruction stream))
+       initial-instruction)
+      ;; Draw a START label to indentify the initial instruction.
       (format stream "start -> ~a [style = bold];~%"
-	      (instruction-id start))
+	      (instruction-id initial-instruction))
       (format stream "}~%"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -197,7 +201,6 @@
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
   (format stream "   ~a [label = \"enclose\"];~%"
 	  (instruction-id instruction))
-  (draw-instruction (code instruction) stream)
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
 	  (gethash (code instruction) *instruction-table*)
 	  (instruction-id instruction)))
