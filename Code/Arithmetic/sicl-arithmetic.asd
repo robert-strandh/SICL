@@ -3,5 +3,4 @@
 (defsystem :sicl-arithmetic
   :serial t
   :components
-  ((:file "packages")
-   (:file "support")))
+  ((:file "packages")))
