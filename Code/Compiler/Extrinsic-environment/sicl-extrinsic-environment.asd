@@ -99,6 +99,7 @@
 (defsystem :sicl-extrinsic-environment
   :depends-on (:sicl-simple-environment
 	       :sicl-loop-support
+	       :sicl-arithmetic
 	       :cleavir-generate-ast
 	       :cleavir-ast-transformations
 	       :cleavir-ast-to-hir
