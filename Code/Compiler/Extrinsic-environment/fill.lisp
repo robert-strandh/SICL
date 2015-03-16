@@ -73,6 +73,7 @@
   (load-file "../../Data-and-control-flow/nth-value.lisp" environment)
   ;; Load a file containing the definition of macro DEFUN.
   (load-file "../../Environment/defun-defmacro.lisp" environment)
+  (load-file "../../Data-and-control-flow/get-setf-expansion.lisp" environment)
   ;; Load a file containing the definitions of the conditional macros
   ;; such as AND, OR, CASE, etc.
   (load-file "../../Conditionals/macros.lisp" environment)
