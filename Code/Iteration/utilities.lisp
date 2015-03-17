@@ -31,12 +31,6 @@
            :name name
            :datum body)))
 
-(defun local-mapcar (function list)
-  (if (null list)
-      '()
-      (cons (funcall function (car list))
-	    (local-mapcar function (cdr list)))))
-
 (defun check-variable-clauses (name variable-clauses)
   (unless (cleavir-code-utilities:proper-list-p variable-clauses)
     (error 'malformed-variable-clauses
