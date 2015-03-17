@@ -103,66 +103,6 @@
 	       (traverse current-owner)))
     *ownerships*))
 
-(defvar *lexical-depths*)
-
-(defun lexical-depth (enter-instruction)
-  (gethash enter-instruction *lexical-depths*))
-
-(defun (setf lexical-depth) (new-depth enter-instruction)
-  (setf (gethash enter-instruction *lexical-depths*) new-depth))
-
-(defparameter *ld2-call-count* 0)
-(defparameter *ld2-item-count* 0)
-(defparameter *ld2-time* 0)
-
-;;; Return the lexical depth of each instruction and each datum of the
-;;; program.  The return value is an EQ hash table mapping each item
-;;; (instruction or datum) to its lexical depth.
-(defun lexical-depths (enter-instruction)
-  (let ((time (get-internal-run-time))
-	(*ownerships* (compute-ownerships enter-instruction))
-	(worklist (list enter-instruction))
-	(*lexical-depths* (make-hash-table :test #'eq)))
-    (flet
-	((process-function (enter-instruction)
-	   (setf (lexical-depth enter-instruction) 0)
-	   (let ((visited (make-hash-table :test #'eq)))
-	     (labels
-		 ((traverse (instruction)
-		    (unless (gethash instruction visited)
-		      (setf (gethash instruction visited) t)
-		      (when (typep instruction 'cleavir-ir:enclose-instruction)
-			(let ((code (cleavir-ir:code instruction)))
-			  (setf worklist (append worklist (list code)))))
-		      (loop with i-owner = (owner instruction)
-			    for datum in (data instruction)
-			    for d-owner = (owner datum)
-			    do (unless (eq d-owner i-owner)
-				 (setf (lexical-depth enter-instruction)
-				       (max (lexical-depth enter-instruction)
-					    (1+ (lexical-depth d-owner))))))
-		      (loop with i-owner = (owner instruction)
-			    for successor in (cleavir-ir:successors instruction)
-			    for s-owner = (owner successor)
-			    do (if (eq i-owner s-owner)
-				   (traverse successor)
-				   (setf (lexical-depth enter-instruction)
-					 (max (lexical-depth enter-instruction)
-					      (1+ (lexical-depth s-owner)))))))))
-	       (traverse enter-instruction)))))
-      (loop until (null worklist)
-	    do (process-function (pop worklist))))
-    ;; Add remaining instructions and data to table.
-    (maphash (lambda (item owner)
-	       (when (null (gethash item *lexical-depths*))
-		 (setf (gethash item *lexical-depths*)
-		       (gethash owner *lexical-depths*))))
-	     *ownerships*)
-    (incf *ld2-call-count*)
-    (incf *ld2-item-count* (hash-table-count *lexical-depths*))
-    (incf *ld2-time* (- (get-internal-run-time) time))
-    *lexical-depths*))
-
 ;;; By SEGREGATING lexical locations, we mean taking each lexical
 ;;; location and turning it into either a dynamic lexical location
 ;;; (which can be allocated in a register or on the stack) or an
