@@ -88,6 +88,19 @@
 ;;; of canonicalized declaration specifiers.  This list is used to
 ;;; determine whether a variable is declared special.
 
+;;; This variable is either unbound or it is bound to a symbol which
+;;; is the name of a BLOCK.  When it is unbound, we convert the body
+;;; of a function as an ordinary PROGN-AST.  When it is bound, we put
+;;; a BLOCK in there too.
+(defvar *block-name*)
+
+;;; Convert the body forms of a function.
+(defun convert-body (forms env system)
+  (convert (if (boundp '*block-name*)
+	       `(block ,*block-name* ,@forms)
+	       `(progn ,@forms))
+	   env system))
+
 ;;; We have already detected there is an &AUX lambda-list keyword in
 ;;; the lambda list, and this function recursively processes the
 ;;; remaining &AUX "parameters".  FORMS is a sequence of forms
@@ -97,7 +110,7 @@
       ;; We ran out of &AUX "parameters".  We must build an AST for
       ;; the body of the function.
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
-	(cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
+	(convert-body forms new-env system))
       ;; We have at least one more &AUX "parameter".
       (destructuring-bind (var init) (first aux)
 	(let* (;; We enter the new parameter variable into the
@@ -134,7 +147,7 @@
 	;; This lambda list has no &AUX "parameters".  We must build
 	;; an AST for the body of the function.
 	(let ((new-env (augment-environment-with-declarations env rdspecs)))
-	  (cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
+	  (convert-body forms new-env system))
 	;; This lambda list has the &AUX keyword in it.  There may or
 	;; may not be any &AUX "parameters" following that keyword.
 	;; We call PROCESS-REMAINING-AUX with the list of these &AUX
