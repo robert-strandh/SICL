@@ -131,42 +131,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro push
-
-;;; We need the push macro in the implementation of other functions
-;;; and or macros in this module, so we define it early.
-
-(defmacro push (item place &environment env)
-  (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (get-setf-expansion place env)
-    (let ((item-var (gensym)))
-      `(let* ((,item-var ,item)
-	      ,@(mapcar #'list vars vals)
-	      (,(car store-vars) (cons ,item-var ,reader-form)))
-	 ,writer-form))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro pop
-
-;;; We need the pop macro in the implementation of other functions
-;;; and or macros in this module, so we define it early.
-
-(defmacro pop (place &environment env)
-  (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (get-setf-expansion place env)
-    `(let* (,@(mapcar #'list vars vals)
-	    (,(car store-vars) ,reader-form))
-       (if (listp ,(car store-vars))
-	   (prog1 (car ,(car store-vars))
-	     (setq ,(car store-vars) (cdr ,(car store-vars)))
-	     ,writer-form)
-	   (error 'must-be-list
-		  :datum ,(car store-vars)
-		  :name 'pop)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function nconc
 
 ;;; It used to be the case that the append function was defined
