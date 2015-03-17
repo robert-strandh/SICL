@@ -328,7 +328,6 @@
    ;; Lexical locations that  belong to this procedure. 
    (%lexical-locations :initform '() :accessor lexical-locations)
    (%nesting-depth :initarg :nesting-depth :accessor nesting-depth)
-   (%lexical-depth :initform nil :accessor lexical-depth)
    ;; The basic blocks that belong to this procedure.
    (%basic-blocks :initform '() :accessor basic-blocks)))
 
@@ -416,32 +415,6 @@
 
 (add-dependencies 'location-ownership
 		  '(instruction-ownership))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Determine the LEXICAL DEPTH of each procedure in a program.
-
-(defun compute-lexical-depth (procedure)
-  (setf (lexical-depth procedure)
-	(loop for lexical-location in (lexical-locations procedure)
-	      maximize  (let ((owner (owner lexical-location)))
-			  (if (eq owner procedure)
-			      0
-			      (1+ (lexical-depth owner)))))))
-
-(defun compute-lexical-depths (program)
-  (let ((*program* program))
-    (with-accessors ((procedures procedures))
-	program
-      (let ((sorted-code
-	      (sort (copy-list procedures) #'< :key #'nesting-depth)))
-	(loop for procedure in sorted-code
-	      do (compute-lexical-depth procedure))))))
-
-(set-processor 'lexical-depth 'compute-lexical-depth)
-
-(add-dependencies 'lexical-depth
-		  '(location-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
