@@ -93,18 +93,6 @@
 (defun using-instructions (datum)
   (sicl-mir:using-instructions datum))
 
-;;; Apply a function to every instruction of the program.
-(defun map-instructions (function)
-  (assert (not (null *program*)))
-  (let ((table (make-hash-table :test #'eq)))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (funcall function instruction)
-		 (loop for succ in (sicl-mir:successors instruction)
-		       do (traverse succ)))))
-      (traverse (initial-instruction *program*)))))
-
 ;;; Apply a function to every datum of the program.
 (defun map-data (function)
   (assert (not (null *program*)))
@@ -122,14 +110,6 @@
   (map-data
    (lambda (datum)
      (when (typep datum 'sicl-mir:lexical-location)
-       (funcall function datum)))))
-
-;;; Apply a function to every constant input of the program.
-(defun map-constants (function)
-  (assert (not (null *program*)))
-  (map-data
-   (lambda (datum)
-     (when (typep datum 'sicl-mir:constant-input)
        (funcall function datum)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -338,86 +318,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; For each instruction in a complete instruction graph, determine
-;;; all the nested procedures, and to which procedure each
-;;; instruction belongs.
-
-(defun compute-instruction-ownership (program)
-  (with-accessors ((initial-instruction initial-instruction)
-		   (instruction-info instruction-info)
-		   (procedures procedures))
-      program
-    (setf procedures '())
-    (let ((*program* program))
-      (let* ((first (make-procedure initial-instruction 0))
-	     (worklist (list first)))
-	(push first procedures)
-	(flet
-	    ((handle-single-procedure (procedure)
-	       (labels
-		   ((aux (instruction)
-		      (when (null (owner instruction))
-			(setf (owner instruction) procedure)
-			(when (typep instruction 'sicl-mir:enclose-instruction)
-			  (let ((new (make-procedure
-				      (sicl-mir:code instruction)
-				      (1+ (nesting-depth procedure)))))
-			    (push new procedures)
-			    (setf worklist (append worklist (list new)))))
-			(mapc #'aux (successors instruction)))))
-		 (aux (initial-instruction procedure)))))
-	  (loop until (null worklist)
-		do (handle-single-procedure (pop worklist)))))
-      (map-instructions
-       (lambda (instruction)
-	 (push instruction (instructions (owner instruction))))))))
-
-(set-processor 'instruction-ownership 'compute-instruction-ownership)
-
-(add-dependencies 'instruction-ownership
-		  '(instruction-info))
-
-;;; It might be confusing that we compute the procedures at the same
-;;; time we determine instruction ownership.  For that reason, we
-;;; instroduce a target named PROCEDURES.
-
-(set-processor 'procedures 'identity)
-
-(add-dependencies 'procedures
-		  '(instruction-ownership))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute location ownership.
-
-(defun compute-location-ownership-for-procedure (procedure)
-  (loop for instruction in (instructions procedure)
-	do (loop for datum in (append (inputs instruction)
-				      (outputs instruction))
-		 do (when (and (typep datum 'sicl-mir:lexical-location)
-			       (null (owner datum)))
-		      (setf (owner datum) procedure)))))
-
-(defun compute-location-ownership (program)
-  (let ((*program* program))
-    (with-accessors ((procedures procedures))
-	program
-      (let ((sorted-code
-	      (sort (copy-list procedures) #'< :key #'nesting-depth)))
-	(loop for procedure in sorted-code
-	      do (compute-location-ownership-for-procedure procedure)))
-      (map-lexical-locations
-       (lambda (lexical-location)
-	 (push lexical-location
-	       (lexical-locations (owner lexical-location))))))))
-
-(set-processor 'location-ownership 'compute-location-ownership)
-
-(add-dependencies 'location-ownership
-		  '(instruction-ownership))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Merge similar constants
 ;;;
 ;;; This simplification consists of taking all the instances of some
@@ -519,121 +419,6 @@
 	       'convert-constants-according-to-backend)
 
 (add-dependencies 'backend-specific-constants
-		  '(instruction-graph))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Determine indices for all data that need to be allocated there,
-;;; i.e., data of type CONSTANT-INPUT, GLOBAL-INPUT, LOAD-TIME-INPUT,
-;;; and SPECIAL-LOCATION.
-;;;
-;;; We do not expect the number of of such data to be huge, so it is
-;;; not justified to use a hash table.  For that reason, we use an
-;;; ALIST, where the CAR of each element is the datum and the CDR of
-;;; each element is the unique index that was allocated for that
-;;; datum.
-;;;
-;;; Before this computation is done, it is advantageous to uniquify
-;;; the inputs for which an index is to be computed, so as to avoid
-;;; multiple entries in the linkage vector containing the same
-;;; constant or the same global function.
-;;;
-;;; FIXME: consider introducting a common superclass for the three
-;;; kinds of data that we handle here. 
-
-(defun compute-linkage-vector (program)
-  (let ((result '()))
-    (map-data
-     (lambda (datum)
-       (when (and (or (typep datum 'sicl-mir:constant-input)
-		      (typep datum 'sicl-mir:global-input)
-		      (typep datum 'sicl-mir:load-time-input)
-		      (typep datum 'sicl-mir:special-location)))
-	 (pushnew datum result :test #'eq))))
-    (setf (linkage-vector program) result)))
-
-(set-processor 'linkage-vector
-	       'compute-linkage-vector)
-
-(add-dependencies 'linkage-vector
-		  '(instruction-graph))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Replace constant inputs by a new temporary lexical location, and
-;;; insert a LOAD-CONSTANT instruction of the constant to the lexical
-;;; location before the instruction using the constant.
-;;;
-;;; We count on transformations such as common subexpression
-;;; elimination to remove unnecessary LOAD-CONSTANT instructions
-;;; later.
- 
-;;; Insert a LOAD-CONSTANT instruction before INSTRUCTION, with
-;;; IN as its single input and OUT as its single output.
-(defun insert-load-constant-before (instruction lv-index out)
-  (let ((new (sicl-mir:make-load-constant-instruction
-	      lv-index
-	      out)))
-    (sicl-mir:insert-instruction-before new instruction)))
-
-(defun replace-constant-inputs (program)
-  (let ((modify-p nil))
-    (flet ((lv-offset (input)
-	     (position input (linkage-vector program))))
-      (map-instructions
-       (lambda (instruction)
-	 (unless (typep instruction 'sicl-mir:load-constant-instruction)
-	   (let ((new-inputs
-		   (loop for input in (inputs instruction)
-			 collect (if (typep input 'sicl-mir:constant-input)
-				     (let ((new (sicl-mir:new-temporary)))
-				       (insert-load-constant-before
-					instruction (lv-offset input) new)
-					new)
-				     input))))
-	     (unless (every #'eq (inputs instruction) new-inputs)
-	       (setf (inputs instruction) new-inputs)
-	       (setf modify-p t)))))))
-    (when modify-p
-      (touch program 'instruction-graph))))
-
-(set-processor 'no-constant-inputs 'replace-constant-inputs)
-
-(add-dependencies 'no-constant-inputs
-		  '(instruction-graph))
-
-;;; Insert a LOAD-EXTERNAL instruction before INSTRUCTION, with
-;;; IN as its single input and OUT as its single output.
-(defun insert-load-global-before (instruction lv-index out)
-  (let ((new (sicl-mir:make-load-global-instruction
-	      lv-index
-	      out)))
-    (sicl-mir:insert-instruction-before new instruction)))
-
-(defun replace-global-inputs (program)
-  (let ((modify-p nil))
-    (flet ((lv-offset (input)
-	     (position input (linkage-vector program))))
-      (map-instructions
-       (lambda (instruction)
-	 (unless (typep instruction 'sicl-mir:load-global-instruction)
-	   (let ((new-inputs
-		   (loop for input in (inputs instruction)
-			 collect (if (typep input 'sicl-mir:global-input)
-				     (let ((new (sicl-mir:new-temporary)))
-				       (insert-load-global-before
-					instruction (lv-offset input) new)
-				       new)
-				     input))))
-	     (unless (every #'eq (inputs instruction) new-inputs)
-	       (setf (inputs instruction) new-inputs)
-	       (setf modify-p t)))))))
-    (when modify-p
-      (touch program 'instruction-graph))))
-
-(set-processor 'no-global-inputs 'replace-global-inputs)
-
-(add-dependencies 'no-global-inputs
 		  '(instruction-graph))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
