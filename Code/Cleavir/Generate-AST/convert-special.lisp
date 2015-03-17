@@ -98,7 +98,8 @@
 	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
-		  for fun = (convert-code lambda-list body env system)
+		  for fun = (let ((*block-name* name))
+			      (convert-code lambda-list body env system))
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
@@ -183,7 +184,8 @@
 	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
-		  for fun = (convert-code lambda-list body new-env system)
+		  for fun = (let ((*block-name* name))
+			      (convert-code lambda-list body new-env system))
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
