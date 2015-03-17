@@ -50,36 +50,11 @@
 ;;;; its lexical location. 
 
 (defparameter *labels* nil)
-(defparameter *depth* nil)
-
-(defun load-level-location (location)
-  (let ((count (- *depth* (lexical-depth (owner location)))))
-    `("	mov ebx, [ebp - 4]	; Load lexical environment from stack."
-      ;; The environment is a list of levels.  Take the CDR as many
-      ;; times as necessary to get to the right CONS cell of the list.
-      ,@(loop repeat count
-	      collect "	mov ebx, [ebx + 3]	; CDR down a level.")
-      "	mov ebx, [ebx - 1]	; CAR to get to the level vector."
-      "	mov ebx, [ebx + 1]	; Load rack of level vector.")))
 
 (defun source/destination-operand (location)
   (format nil "[ebx + ~a]" (* 4 (1+ (index location)))))
 
 (defgeneric load-input (input))
-
-(defmethod load-input ((input sicl-env:lexical-location))
-  (let ((count (- *depth* (lexical-depth (owner input)))))
-    `(;; Load the lexical environment from the stack.
-      "	mov eax, [ebp - 4]	; Load lexical environment from stack."
-      ;; The environment is a list of levels.  Take the CDR as many
-      ;; times as necessary to get to the right CONS cell of the list.
-      ,@(loop repeat count
-	      collect "	mov eax, [eax + 3]	; CDR down a level.")
-      "	mov eax, [eax - 1]	; CAR to get to the level vector."
-      "	mov eax, [eax + 1]	; Load rack of level vector."
-      ;; Load the appropriate element from the rack.
-      ,(format nil "	mov eax, [eax + ~a]	; Load lexical."
-	       (* 4 (1+ (index input)))))))
 
 (defmethod load-input ((input sicl-mir:immediate-input))
   `(,(format nil "	mov eax, ~a	; Load immediate."
@@ -97,19 +72,6 @@
 (defun save-to-argument (i)
   `(,(format nil "	mov [edb + ~a], eax	; Save to argument."
 	     (* 4 i))))
-
-(defun save-result (location)
-  (let ((count (- *depth* (lexical-depth (owner location)))))
-    `("	mov ebx, [ebp - 4]	; Load lexical environment from stack."
-      ;; The environment is a list of levels.  Take the CDR as many
-      ;; times as necessary to get to the right CONS cell of the list.
-      ,@(loop repeat count
-	      collect "	mov ebx, [ebx + 3]	; CDR down a level.")
-      "	mov ebx, [ebx - 1]	; CAR to get to the level vector."
-      "	mov ebx, [ebx + 1]	; Load rack of level vector."
-      ;; Save the appropriate element to the rack.
-      ,(format nil "	mov [ebx + ~a], eax	; Save lexical."
-	       (* 4 (1+ (index location)))))))
 
 (defgeneric codegen-instruction (instruction))
 
@@ -410,8 +372,7 @@
       ";;; End of ELSE branch.")))
 	  
 (defun codegen-procedure (procedure)
-  (let ((*depth* (lexical-depth procedure)))
-    (codegen-instruction (initial-instruction procedure))))
+  (codegen-instruction (initial-instruction procedure)))
 
 (defun codegen (program)
   (let ((*program* program)
