@@ -125,7 +125,7 @@
    (:file "eval")
    (:file "load")
    (:file "load-file-defun")
-   (:file "import-host-packages")
+   (:file "import-from-host")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
    (:file "define-defmacro")
