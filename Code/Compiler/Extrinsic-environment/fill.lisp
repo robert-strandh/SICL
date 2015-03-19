@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
 (defun fill-environment (environment)
-  (import-host-packages environment)
+  (import-from-host environment)
   (import-from-host-common-lisp environment)
   (import-from-sicl-global-environment environment)
   (define-backquote-macros environment)

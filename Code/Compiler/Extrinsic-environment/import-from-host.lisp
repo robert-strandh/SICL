@@ -1,9 +1,10 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-;;; Fill the target environment with all available packages in the host.
-(defun import-host-packages (environment)
+(defun import-from-host (environment)
+  ;; Import available packages in the host to ENVIRONMENT.
   (setf (sicl-env:packages environment)
 	(list-all-packages))
+  ;; Import available functions in the host to ENVIRONMENT.
   (do-all-symbols (symbol)
     (when (and (fboundp symbol)
 	       (not (special-operator-p symbol))
