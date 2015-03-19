@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
 (defun import-from-sicl-cons (environment)
-  (loop for symbol being each external-symbol in '#:sicl-cons
+  (loop for symbol being each present-symbol in '#:sicl-cons
 	when (and (fboundp symbol)
 		  (not (special-operator-p symbol))
 		  (null (macro-function symbol)))
