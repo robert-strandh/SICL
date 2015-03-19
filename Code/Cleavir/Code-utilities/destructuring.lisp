@@ -244,7 +244,7 @@
 		   ;; several pairs :allow-other-keys <mumble> then it
 		   ;; is the first one that counts.  This happens to
 		   ;; be exactly what GETF checks for so use it.
-		   (push `(,temp (unless (getf var2 :allow-other-keys)
+		   (push `(,temp (unless (getf ,var2 :allow-other-keys)
 				   ;; Either no :allow-other-keys was
 				   ;; found, or the first one found
 				   ;; had a value of NIL.  Then every
@@ -252,7 +252,7 @@
 				   ;; must be one of the ones supplied
 				   ;; in the parameters.
 				   (let ()
-				     (loop for keyword in var2 by #'cddr
+				     (loop for keyword in ,var2 by #'cddr
 					   unless (member keyword
 							  ,allowed-keywords)
 					     do (error "unknown keyword ~s"
