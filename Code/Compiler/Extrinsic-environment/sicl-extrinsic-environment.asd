@@ -130,7 +130,6 @@
    (:file "import-from-sicl-global-environment")
    (:file "import-from-sicl-extrinsic-environment")
    (:file "import-from-cleavir-code-utilities")
-   (:file "import-from-cleavir-environment")
    (:file "define-defmacro")
    (:file "define-in-package")
    (:file "define-default-setf-expander")
