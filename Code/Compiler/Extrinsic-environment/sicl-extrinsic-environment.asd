@@ -130,6 +130,7 @@
    (:file "import-from-sicl-global-environment")
    (:file "import-from-sicl-extrinsic-environment")
    (:file "import-from-sicl-conditionals")
+   (:file "import-from-sicl-cons")
    (:file "import-from-cleavir-code-utilities")
    (:file "import-from-cleavir-environment")
    (:file "import-from-cleavir-primop")
