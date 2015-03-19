@@ -6,6 +6,7 @@
   (import-from-sicl-global-environment environment)
   (import-from-sicl-extrinsic-environment environment)
   (import-from-sicl-conditionals environment)
+  (import-from-sicl-cons environment)
   (import-from-cleavir-code-utilities environment)
   (import-from-cleavir-environment environment)
   (import-from-cleavir-primop environment)
@@ -92,4 +93,6 @@
   ;; Load a file containing the definition of the macro RETURN.
   (load-file "../../Data-and-control-flow/return-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the macros PROG1 and PROG2.
-  (load-file "../../Data-and-control-flow/prog1-prog2-defmacro.lisp" environment))
+  (load-file "../../Data-and-control-flow/prog1-prog2-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro PUSHNEW.
+  (load-file "../../Cons/pushnew-defmacro.lisp" environment))
