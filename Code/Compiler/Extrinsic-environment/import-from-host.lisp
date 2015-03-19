@@ -20,4 +20,9 @@
 	    (cl:symbol-value symbol)))
     ;; Import all special operators in the host to ENVIRONMENT
     (when (special-operator-p symbol)
-      (setf (sicl-env:special-operator symbol environment) t))))
+      (setf (sicl-env:special-operator symbol environment) t))
+    ;; Import all classes in the host to ENVIRONMENT
+    (let ((class (find-class symbol nil)))
+      (unless (null class)
+	(setf (sicl-env:find-class symbol environment)
+	      class)))))
