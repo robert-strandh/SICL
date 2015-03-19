@@ -5,10 +5,6 @@
 	when (special-operator-p symbol)
 	  do (setf (sicl-env:special-operator symbol environment) t)))
 
-(defun import-nil-and-t (environment)
-  (setf (sicl-env:constant-variable t environment) t)
-  (setf (sicl-env:constant-variable nil environment) nil))
-
 ;;; Enter every Common Lisp class into the environment.
 (defun import-classes (environment)
   (loop for symbol being each external-symbol in '#:common-lisp
@@ -41,7 +37,6 @@
 
 (defun import-from-host-common-lisp (environment)
   (import-special-operators environment)
-  (import-nil-and-t environment)
   (import-classes environment)
   (import-variables environment)
   (import-functions environment))
