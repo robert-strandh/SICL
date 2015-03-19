@@ -128,7 +128,6 @@
    (:file "import-host-packages")
    (:file "import-from-host-common-lisp")
    (:file "import-from-sicl-global-environment")
-   (:file "import-from-sicl-extrinsic-environment")
    (:file "define-defmacro")
    (:file "define-in-package")
    (:file "define-default-setf-expander")

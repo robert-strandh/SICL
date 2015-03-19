@@ -4,7 +4,6 @@
   (import-host-packages environment)
   (import-from-host-common-lisp environment)
   (import-from-sicl-global-environment environment)
-  (import-from-sicl-extrinsic-environment environment)
   (define-backquote-macros environment)
   (define-defmacro environment)
   (define-in-package environment)
