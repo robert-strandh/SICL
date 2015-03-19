@@ -17,4 +17,7 @@
     ;; Import all constant variables in the host to ENVIRONMENT.
     (when (constantp symbol)
       (setf (sicl-global-environment:constant-variable symbol environment)
-	    (cl:symbol-value symbol)))))
+	    (cl:symbol-value symbol)))
+    ;; Import all special operators in the host to ENVIRONMENT
+    (when (special-operator-p symbol)
+      (setf (sicl-env:special-operator symbol environment) t))))
