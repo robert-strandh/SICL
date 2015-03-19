@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-(defun import-special-operators (environment)
-  (loop for symbol being each external-symbol in '#:common-lisp
-	when (special-operator-p symbol)
-	  do (setf (sicl-env:special-operator symbol environment) t)))
-
 ;;; Enter every Common Lisp class into the environment.
 (defun import-classes (environment)
   (loop for symbol being each external-symbol in '#:common-lisp
@@ -22,7 +17,6 @@
 		   (cl:symbol-value symbol)))))
 
 (defun import-from-host-common-lisp (environment)
-  (import-special-operators environment)
   (import-classes environment)
   (import-variables environment))
   
