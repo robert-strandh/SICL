@@ -21,23 +21,8 @@
 	  do (setf (sicl-env:special-variable symbol environment t)
 		   (cl:symbol-value symbol)))))
 
-;;; Rather than explicitly enumerating the functions to import, we
-;;; just import them all initially.  Later, we redefine the ones for
-;;; which the host definition will not be appropriate.
-(defun import-functions (environment)
-  (loop for symbol being each external-symbol in '#:common-lisp
-	when (and (fboundp symbol)
-		  (null (macro-function symbol))
-		  (not (special-operator-p symbol)))
-	  do (setf (sicl-env:fdefinition symbol environment)
-		   (fdefinition symbol))
-	when (fboundp `(setf ,symbol))
-	  do (setf (sicl-env:fdefinition `(setf ,symbol) environment)
-		   (fdefinition `(setf ,symbol)))))
-
 (defun import-from-host-common-lisp (environment)
   (import-special-operators environment)
   (import-classes environment)
-  (import-variables environment)
-  (import-functions environment))
+  (import-variables environment))
   
