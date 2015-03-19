@@ -52,7 +52,8 @@
    ;; This slot holds a list of variable entries.
    (%variable-entries :initform '() :accessor variable-entries)
    ;; This slot holds a list of function entries.
-   (%function-entries :initform '() :accessor function-entries)
+   (%function-entries :initform (make-hash-table :test #'equal)
+		      :accessor function-entries)
    ;; This slot holds an association list, mapping function names to
    ;; compiler-macro functions.
    (%compiler-macro-expanders :initform '() :accessor compiler-macro-expanders)
@@ -227,8 +228,7 @@
 		   (null (cddr name))
 		   (eq (car name) 'setf)
 		   (symbolp (cadr name)))))
-  (find name (function-entries environment)
-	:test #'equal :key #'name))
+  (gethash name (function-entries environment)))
 
 (defun ensure-function-entry (environment name)
   (let ((entry (find-function-entry environment name)))
@@ -236,7 +236,7 @@
       (setf entry
 	    (make-instance 'function-entry
 	      :name name))
-      (push entry (function-entries environment)))
+      (setf (gethash name (function-entries environment)) entry))
     entry))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
