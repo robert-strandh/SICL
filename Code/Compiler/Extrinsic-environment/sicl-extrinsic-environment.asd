@@ -132,7 +132,6 @@
    (:file "import-from-sicl-cons")
    (:file "import-from-cleavir-code-utilities")
    (:file "import-from-cleavir-environment")
-   (:file "import-from-cleavir-primop")
    (:file "define-defmacro")
    (:file "define-in-package")
    (:file "define-default-setf-expander")

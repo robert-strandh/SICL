@@ -8,7 +8,6 @@
   (import-from-sicl-cons environment)
   (import-from-cleavir-code-utilities environment)
   (import-from-cleavir-environment environment)
-  (import-from-cleavir-primop environment)
   (define-backquote-macros environment)
   (define-defmacro environment)
   (define-in-package environment)
