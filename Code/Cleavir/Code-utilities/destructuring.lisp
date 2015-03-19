@@ -254,7 +254,7 @@
 				   (let ()
 				     (loop for keyword in ,var2 by #'cddr
 					   unless (member keyword
-							  ,allowed-keywords)
+							  ',allowed-keywords)
 					     do (error "unknown keyword ~s"
 						       keyword)))))
 			 error-check-bindings))))
