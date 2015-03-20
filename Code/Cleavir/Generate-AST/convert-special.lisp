@@ -454,6 +454,16 @@
 	  (convert form env system))
 	 (cleavir-env:identity info))))
 
+(defmethod convert-setq
+    ((info cleavir-env:symbol-macro-info) form env system)
+  (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
+			    (lambda (form env)
+			      (declare (ignore form env))
+			      (cleavir-env:expansion info))
+			    (cleavir-env:name info)
+			    env)))
+    (convert `(setf ,expansion ,form) env system)))
+
 (defgeneric convert-setq-special-variable
     (info form-ast global-env system))
 
