@@ -91,4 +91,6 @@
   ;; Load a file containing the definition of the macro DOTIMES.
   (load-file "../../Iteration/dotimes-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DOLIST.
-  (load-file "../../Iteration/dolist-defmacro.lisp" environment))
+  (load-file "../../Iteration/dolist-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macros DO and DO*.
+  (load-file "../../Iteration/do-dostar-defmacro.lisp" environment))
