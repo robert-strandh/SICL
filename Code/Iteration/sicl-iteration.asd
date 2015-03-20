@@ -6,6 +6,6 @@
 	       :sicl-iteration-support)
   :serial t
   :components
-  ((:file "dotimes")
-   (:file "dolist")
-   (:file "iteration")))
+  ((:file "dotimes-defmacro")
+   (:file "dolist-defmacro")
+   (:file "do-dostar-defmacro")))
