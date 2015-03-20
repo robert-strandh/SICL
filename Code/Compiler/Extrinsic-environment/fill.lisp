@@ -89,4 +89,6 @@
   ;; Load a file containing the definition of the macro PUSHNEW.
   (load-file "../../Cons/pushnew-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DOTIMES.
-  (load-file "../../Iteration/dotimes-defmacro.lisp" environment))
+  (load-file "../../Iteration/dotimes-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro DOLIST.
+  (load-file "../../Iteration/dolist-defmacro.lisp" environment))
