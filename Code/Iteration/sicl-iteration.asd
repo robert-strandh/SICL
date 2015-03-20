@@ -2,12 +2,8 @@
 
 (defsystem :sicl-iteration
   :depends-on (:cleavir-code-utilities
-	       :cleavir-internationalization)
+	       :cleavir-internationalization
+	       :sicl-iteration-support)
   :serial t
   :components
-  ((:file "packages")
-   (:file "conditions")
-   (:file "utilities")
-   (:file "iteration")
-   (:file "condition-reporters-en")
-   (:file "docstrings-en")))
+  ((:file "iteration")))
