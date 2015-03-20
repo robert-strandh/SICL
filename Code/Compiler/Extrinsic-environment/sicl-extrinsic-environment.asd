@@ -111,6 +111,7 @@
 	       :sicl-evaluation-and-compilation
 	       :sicl-data-and-control-flow
 	       :sicl-conditionals-support
+	       :sicl-iteration-support
 	       :sicl-reader-simple)
   :serial t
   :components
