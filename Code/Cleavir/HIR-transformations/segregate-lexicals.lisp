@@ -369,13 +369,13 @@
     ;; Replace every reference to a static lexical location by a
     ;; combination of dynamic lexical locations and new instructions
     ;; for allocating the cell holding the value of the variable.
-    (traverse
-     initial-instruction
+    (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (setf (cleavir-ir:inputs instruction)
 	     (new-inputs instruction owner owners imports cell-locations))
        ;; Now process the outputs of this instruction
        (setf (cleavir-ir:outputs instruction)
-	     (new-outputs instruction owner owners imports cell-locations))))
+	     (new-outputs instruction owner owners imports cell-locations)))
+     initial-instruction)
     (handle-enclose-instructions
      initial-instruction owners imports cell-locations)))
