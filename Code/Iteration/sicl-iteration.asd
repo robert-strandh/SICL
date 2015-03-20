@@ -7,4 +7,5 @@
   :serial t
   :components
   ((:file "dotimes")
+   (:file "dolist")
    (:file "iteration")))
