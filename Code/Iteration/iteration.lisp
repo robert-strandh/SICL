@@ -26,7 +26,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macros dolist and dotimes
+;;; Macro DOLIST.
 
 ;;; The spec says that the variable is bound to nil when the
 ;;; result-form is evaluated.  But we don't want the declarations to
@@ -62,37 +62,6 @@
 		,@declarations
 		(tagbody ,@forms))
 	      (pop ,list-var)
-	      (go ,start-tag)
-	      ,end-tag)
-	   (let ((,var nil))
-	     (declare (ignorable ,var))
-	     ,result-form))))))
-
-;;; For dotimes, we don't have the problem of initial value which is
-;;; always 0, so we can bind the variable once for the entire loop
-;;; body.
-
-(defmacro dotimes ((var count-form &optional result-form) &body body)
-  ;; do some syntax checking
-  (binding-var-must-be-symbol 'dotimes var)
-  (count-form-must-be-nonnegative-integer 'dotimes count-form)
-  (body-must-be-proper-list 'dotimes body)
-  (multiple-value-bind (declarations forms)
-      (cleavir-code-utilities:separate-ordinary-body body)
-    (let ((start-tag (gensym))
-	  (end-tag (gensym))
-	  (count-var (gensym)))
-      `(let ((,count-var ,count-form)
-	     (,var 0))
-	 (declare (type unsigned-byte ,var))
-	 ,@declarations
-	 (block nil
-	   (tagbody
-	      ,start-tag
-	      (when (= ,var ,count-var)
-		(go ,end-tag))
-	      (tagbody ,@forms)
-	      (incf ,var)
 	      (go ,start-tag)
 	      ,end-tag)
 	   (let ((,var nil))

@@ -6,4 +6,5 @@
 	       :sicl-iteration-support)
   :serial t
   :components
-  ((:file "iteration")))
+  ((:file "dotimes")
+   (:file "iteration")))
