@@ -95,4 +95,6 @@
   ;; Load a file containing the definition of the macros DO and DO*.
   (load-file "../../Iteration/do-dostar-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro WITH-SLOTS.
-  (load-file "../../CLOS/with-slots-defmacro.lisp" environment))
+  (load-file "../../CLOS/with-slots-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro WITH-ACCESSORS.
+  (load-file "../../CLOS/with-accessors-defmacro.lisp" environment))
