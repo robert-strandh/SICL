@@ -139,6 +139,15 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a function name is encountered
+;;; during compilation in a context where the name must be that of a
+;;; local or a globall function, but instead the name has a definition
+;;; as a local macro in the environment in which the function name is
+;;; compiled.
+(define-condition function-name-names-local-macro
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled by methods on CONVERT-SPECIAL,
 ;;; specialized to operators for which Cleavir does not provide a
 ;;; default method.
