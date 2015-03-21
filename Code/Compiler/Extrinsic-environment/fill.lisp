@@ -93,4 +93,6 @@
   ;; Load a file containing the definition of the macro DOLIST.
   (load-file "../../Iteration/dolist-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macros DO and DO*.
-  (load-file "../../Iteration/do-dostar-defmacro.lisp" environment))
+  (load-file "../../Iteration/do-dostar-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro WITH-SLOTS.
+  (load-file "../../CLOS/with-slots-defmacro.lisp" environment))
