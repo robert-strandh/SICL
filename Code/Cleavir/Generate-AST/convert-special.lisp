@@ -135,6 +135,11 @@
   (declare (ignore env system))
   (cleavir-env:identity info))
 
+(defmethod convert-function
+    ((info cleavir-env:global-macro-info) env system)
+  (error 'function-name-names-global-macro
+	 :expr (cleavir-env:name info)))
+
 (defun convert-named-function (name environment system)
   (let ((info (function-info environment name)))
     (convert-function info environment system)))
