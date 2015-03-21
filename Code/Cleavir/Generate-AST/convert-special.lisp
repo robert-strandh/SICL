@@ -145,6 +145,11 @@
   (error 'function-name-names-local-macro
 	 :expr (cleavir-env:name info)))
 
+(defmethod convert-function
+    ((info cleavir-env:special-operator-info) env system)
+  (error 'function-name-names-special-operator
+	 :expr (cleavir-env:name info)))
+
 (defun convert-named-function (name environment system)
   (let ((info (function-info environment name)))
     (convert-function info environment system)))
