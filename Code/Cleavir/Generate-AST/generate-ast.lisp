@@ -96,12 +96,16 @@
 ;;; simply to avoid very long lambda lists in the source code.
 (defclass body ()
   ((%dspecs :initarg :dspecs :accessor dspecs)
-   (%forms :initarg :forms :accessor forms)))
+   (%forms :initarg :forms :accessor forms)
+   (%block-name :initarg :block-name :reader block-name)
+   (%block-name-p :initarg :block-name-p :reader block-name-p)))
 
-(defun make-body (dspecs forms)
+(defun make-body (dspecs forms block-name block-name-p)
   (make-instance 'body
     :dspecs dspecs
-    :forms forms))
+    :forms forms
+    :block-name block-name
+    :block-name-p block-name-p))
 
 ;;; This variable is either unbound or it is bound to a symbol which
 ;;; is the name of a BLOCK.  When it is unbound, we convert the body
@@ -112,10 +116,8 @@
 ;;; Convert the body forms of a function.
 (defun convert-body (body env system)
   (let ((new-env (augment-environment-with-declarations env (dspecs body))))
-    (convert (if (boundp '*block-name*)
-		 (let ((block-name *block-name*))
-		   (makunbound '*block-name*)
-		   `(block ,block-name ,@(forms body)))
+    (convert (if (block-name-p body)
+		 `(block ,(block-name body) ,@(forms body))
 		 `(progn ,@(forms body)))
 	     new-env system)))
 
@@ -459,9 +461,10 @@
 		     result)))
     (append (mapcar #'list required) result)))
 
-(defgeneric convert-code (lambda-list body env system))
+(defgeneric convert-code (lambda-list body env system &optional block-name))
 
-(defmethod convert-code (lambda-list body env system)
+(defmethod convert-code (lambda-list body env system
+			 &optional (block-name nil block-name-p))
   (let* ((parsed-lambda-list
 	   (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list))
 	 (required (cleavir-code-utilities:required parsed-lambda-list)))
@@ -480,7 +483,7 @@
 	      (process-required required
 				parsed-lambda-list
 				idspecs
-				(make-body rdspecs forms)
+				(make-body rdspecs forms block-name block-name-p)
 				env
 				system)
 	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
