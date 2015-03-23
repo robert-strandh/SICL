@@ -101,8 +101,7 @@
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for block-name = (if (symbolp name) name (second name))
-		  for fun = (let ((*block-name* block-name))
-			      (convert-code lambda-list body env system))
+		  for fun = (convert-code lambda-list body env system block-name)
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
@@ -203,8 +202,7 @@
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for block-name = (if (symbolp name) name (second name))
-		  for fun = (let ((*block-name* block-name))
-			      (convert-code lambda-list body new-env system))
+		  for fun = (convert-code lambda-list body new-env system block-name)
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
