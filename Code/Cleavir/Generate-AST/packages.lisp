@@ -11,7 +11,6 @@
 	   #:convert-setq-special-variable
 	   #:convert-special-binding
 	   #:minimally-compile
-	   #:*top-level-form-p*
 	   #:*compiler*
 	   #:ast-from-file
 	   #:ast-from-stream))
