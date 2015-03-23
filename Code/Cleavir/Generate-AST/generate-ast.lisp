@@ -528,43 +528,46 @@
 ;;; top-level form.  For all other forms, any subform of the form is
 ;;; not considered a top-level form.
 
-;;; This variable is true if and only if the form to be compiled is a
-;;; top-level form.
-(defparameter *top-level-form-p* t)
-
 ;;; The reason for the following somewhat twisted logic is that we
-;;; want to avoid having to explicitly set *TOP-LEVEL-FORM-P* no false
-;;; in every method EXCEPT the ones for LOCALLY, MACROLET, and
-;;; SYMBOL-MACROLET.  This logic allows us to add some code ONLY to
-;;; these special forms in order to indicate that they preserve the
+;;; want to avoid having to explicitly set *SUBFORMS-ARE-TOP-LEVEL-P*
+;;; to false in every method EXCEPT the ones for LOCALLY, MACROLET,
+;;; and SYMBOL-MACROLET.  This logic allows us to add some code ONLY
+;;; to these special forms in order to indicate that they preserve the
 ;;; top-level property.
 ;;;
 ;;; The way this logic works is as follows: We define a second
-;;; variable named *OLD-TOP-LEVEL-FORM-P*.  This variable holds the
-;;; value of *TOP-LEVEL-FORM-P* as it was before CONVERT was called,
-;;; and this is the variable that we actually test in order to
+;;; variable named *CURRENT-FORM-IS-TOP-LEVEL-P*.  This variable holds
+;;; the value of *SUBFORMS-ARE-TOP-LEVEL-P* as it was before CONVERT was
+;;; called, and this is the variable that we actually test in order to
 ;;; determine whether a form is a top-level form.  To obtain that, we
 ;;; define an :AROUND method on CONVERT that binds
-;;; *OLD-TOP-LEVEL-FORM-P* to the value of *TOP-LEVEL-FORM-P* for the
-;;; duration of the invocation of the primary method on CONVERT, and
-;;; that also binds *TOP-LEVEL-FORM-P* to false.  Any recursive
-;;; invocation of CONVERT will thus automatically see the value of
-;;; *OLD-TOP-LEVEL-FORM-P* as false.  The methods for LOCALLY,
-;;; MACROLET, and SYMBOL-MACROLET set *OLD-TOP-LEVEL-FORM-P* to true
-;;; so that when they recursively call CONVERT, then this true value
-;;; will be the value of *OLD-TOP-LEVEL-FORM-P*.  I hope this
-;;; explanation makes sense.
+;;; *CURRENT-FORM-IS-TOP-LEVEL-P* to the value of *SUBFORMS-ARE-TOP-LEVEL-P*
+;;; for the duration of the invocation of the primary method on
+;;; CONVERT, and that also binds *SUBFORMS-ARE-TOP-LEVEL-P* to false.  Any
+;;; recursive invocation of CONVERT will thus automatically see the
+;;; value of *CURRENT-FORM-IS-TOP-LEVEL-P* as false.  The methods for
+;;; LOCALLY, MACROLET, and SYMBOL-MACROLET set
+;;; *CURRENT-FORM-IS-TOP-LEVEL-P* to true so that when they
+;;; recursively call CONVERT, then this true value will be the value
+;;; of *CURRENT-FORM-IS-TOP-LEVEL-P*.  I hope this explanation makes
+;;; sense.
 
-(defvar *old-top-level-form-p*)
+;;; This variable is true if and only if the current form is a
+;;; top-level form.
+(defvar *current-form-is-top-level-p*)
+
+;;; This variable is true if and only if the subforms of the current
+;;; form are top-level forms.
+(defparameter *subforms-are-top-level-p* t)
 
 (defmacro with-preserved-toplevel-ness (&body body)
-  `(progn (setf *top-level-form-p* *old-top-level-form-p*)
+  `(progn (setf *subforms-are-top-level-p* *current-form-is-top-level-p*)
 	  ,@body))
 
 (defmethod convert :around (form environment system)
   (declare (ignore system))
-  (let ((*old-top-level-form-p* *top-level-form-p*)
-	(*top-level-form-p* nil))
-    (when (and *compile-time-too* *old-top-level-form-p*)
+  (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
+	(*subforms-are-top-level-p* nil))
+    (when (and *compile-time-too* *current-form-is-top-level-p*)
       (cleavir-env:eval form environment environment ))
     (call-next-method)))
