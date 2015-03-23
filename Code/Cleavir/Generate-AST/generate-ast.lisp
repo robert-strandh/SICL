@@ -97,7 +97,9 @@
 ;;; Convert the body forms of a function.
 (defun convert-body (forms env system)
   (convert (if (boundp '*block-name*)
-	       `(block ,*block-name* ,@forms)
+	       (let ((block-name *block-name*))
+		 (makunbound '*block-name*)
+		 `(block ,block-name ,@forms))
 	       `(progn ,@forms))
 	   env system))
 
