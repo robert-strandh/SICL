@@ -107,12 +107,6 @@
     :block-name block-name
     :block-name-p block-name-p))
 
-;;; This variable is either unbound or it is bound to a symbol which
-;;; is the name of a BLOCK.  When it is unbound, we convert the body
-;;; of a function as an ordinary PROGN-AST.  When it is bound, we put
-;;; a BLOCK in there too.
-(defvar *block-name*)
-
 ;;; Convert the body forms of a function.
 (defun convert-body (body env system)
   (let ((new-env (augment-environment-with-declarations env (dspecs body))))
