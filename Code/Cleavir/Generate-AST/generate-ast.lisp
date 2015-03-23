@@ -90,10 +90,12 @@
 
 ;;; This class is used to describe the body of a function.  It
 ;;; contains the declaration specifiers that apply to the body as a
-;;; whole and the forms of the body.  The main reason for the
-;;; existence of this class is to keep the number of arguments down of
-;;; several functions below, not for the purpose of performance, but
-;;; simply to avoid very long lambda lists in the source code.
+;;; whole, the forms of the body and information about a possible
+;;; BLOCK that the body code should be wrapped in.  The main reason
+;;; for the existence of this class is to keep the number of arguments
+;;; down of several functions below, not for the purpose of
+;;; performance, but simply to avoid very long lambda lists in the
+;;; source code.
 (defclass body ()
   ((%dspecs :initarg :dspecs :accessor dspecs)
    (%forms :initarg :forms :accessor forms)
@@ -107,7 +109,7 @@
     :block-name block-name
     :block-name-p block-name-p))
 
-;;; Convert the body forms of a function.
+;;; Convert the body of a function.
 (defun convert-body (body env system)
   (let ((new-env (augment-environment-with-declarations env (dspecs body))))
     (convert (if (block-name-p body)
