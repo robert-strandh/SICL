@@ -34,7 +34,9 @@
     ((symbol (eql 'eval-when)) form environment system)
   (with-preserved-toplevel-ness
     (destructuring-bind (situations . body) (rest form)
-      (if (or (eq *compiler* 'cl:compile) (eq *compiler* 'cl:eval))
+      (if (or (eq *compiler* 'cl:compile)
+	      (eq *compiler* 'cl:eval)
+	      (not *current-form-is-top-level-p*))
 	  (if (or (member :execute situations)
 		  (member 'eval situations))
 	      (cleavir-ast:make-progn-ast
