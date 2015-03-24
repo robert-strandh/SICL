@@ -173,11 +173,14 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs)
-  `(setf ,(first outputs)
-	 (multiple-value-list (traced-funcall
-			       ,*linkage-environment*
-			       ,(first inputs)
-			       ,@(rest inputs)))))
+  (let* ((owner (gethash instruction *ownerships*))
+	 (var (gethash owner *dynamic-environment-variables*)))
+    `(progn (setf *dynamic-environment* ,var)
+	    (setf ,(first outputs)
+		  (multiple-value-list (traced-funcall
+					,*linkage-environment*
+					,(first inputs)
+					,@(rest inputs)))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:multiple-value-call-instruction) inputs outputs)
@@ -189,10 +192,19 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:tailcall-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(return (traced-funcall
-	    ,*linkage-environment*
-	    ,(first inputs)
-	    ,@(rest inputs))))
+  (let* ((owner (gethash instruction *ownerships*))
+	 (var (gethash owner *dynamic-environment-variables*)))
+    ;; It is not quite correct to set the dynamic environment to that
+    ;; of the current function.  Since it is a tail call it should
+    ;; really be set to the dynamic environment of the caller.
+    ;; However, no function translated here will alter its dynamic
+    ;; run-time environment in any way.  Such modifications are only
+    ;; done in host functions.
+    `(progn (setf *dynamic-environment* ,var)
+	    (return (traced-funcall
+		     ,*linkage-environment*
+		     ,(first inputs)
+		     ,@(rest inputs))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:the-instruction) inputs outputs)
@@ -441,7 +453,10 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs successors)
   (declare (ignore outputs successors))
-  `(traced-funcall
-    ,*linkage-environment*
-    ,(first inputs)
-    ,@(rest inputs)))
+  (let* ((owner (gethash instruction *ownerships*))
+	 (var (gethash owner *dynamic-environment-variables*)))
+    `(progn (setf *dynamic-environment* ,var)
+	    (traced-funcall
+	     ,*linkage-environment*
+	     ,(first inputs)
+	     ,@(rest inputs)))))
