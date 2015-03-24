@@ -196,7 +196,7 @@
     (assert (not (null info)))
     (cleavir-ast:make-call-ast
      (convert-global-function info global-env system)
-     (list (cleavir-ast:make-load-time-value-ast variable t)
+     (list (cleavir-ast:make-load-time-value-ast `',variable t)
 	   value-ast
 	   (cleavir-ast:make-function-ast next-ast '())))))
 
