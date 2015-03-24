@@ -84,10 +84,16 @@
 ;;; function under a different name here, and then we import it into
 ;;; the environment with the name that is used by
 ;;; CONVERT-SPECIAL-BINDING
+;;;
+;;; Notice that this function must be a host function.  It accesses
+;;; the host variable *DYNAMIC-ENVIRONMENT* which the caller SETS to
+;;; its dynamic run-time environment immediately before the call.  In
+;;; order to follow the same protocol, we must also SET this variable
+;;; before calling THUNK.
 (defun call-with-variable-bound (variable-name value thunk)
-  (let ((*dynamic-environment*
-	  (cons (make-instance 'variable-binding
-		  :symbol variable-name
-		  :value value)
-		*dynamic-environment*)))
-    (funcall thunk)))
+  (setf *dynamic-environment*
+	(cons (make-instance 'variable-binding
+		:symbol variable-name
+		:value value)
+	      *dynamic-environment*))
+  (funcall thunk))
