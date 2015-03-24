@@ -95,6 +95,7 @@
   (assert (typep initial-instruction 'cleavir-ir:enter-instruction))
   (let* (;; Generate a new variable for holding the dynamic
 	 ;; environment at runtime.
+	 (dynamic-environment-variable (gensym))
 	 (basic-blocks (remove initial-instruction
 			       *basic-blocks*
 			       :test-not #'eq :key #'third))
@@ -114,9 +115,11 @@
 	  (owned-vars (compute-owned-variables initial-instruction)))
       `(lambda (&rest args)
 	 (block nil
-	   (let ((dynamic-environment *dynamic-environment*)
+	   (let ((*dynamic-environment* *dynamic-environment*)
+		 (,dynamic-environment-variable *dynamic-environment*)
 		 ,@owned-vars)
-	     (declare (ignorable dynamic-environment ,@owned-vars))
+	     (declare (ignorable ,dynamic-environment-variable
+				 ,@owned-vars))
 	     ,(build-argument-parsing-code
 	       (translate-lambda-list
 		(cleavir-ir:lambda-list initial-instruction))
