@@ -7,10 +7,14 @@
 (defun traced-funcall (environment function &rest arguments)
   (if *trace-funcall*
       (let* ((entries (sicl-simple-environment::function-entries environment))
-	     (entry (find function entries
-			  :test #'eq
-			  :key (lambda (entry)
-				 (car (sicl-simple-environment::function-cell entry)))))
+	     (entry (block nil
+		      (maphash
+		       (lambda (key entry)
+			 (declare (ignore key))
+			 (when (eq function
+				   (car (sicl-simple-environment::function-cell entry)))
+			   (return entry)))
+		       entries)))
 	     (name (if (null entry)
 		       "???"
 		       (sicl-simple-environment::name entry)))
