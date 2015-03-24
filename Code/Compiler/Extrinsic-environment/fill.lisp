@@ -3,6 +3,10 @@
 (defun fill-environment (environment)
   (import-from-host environment)
   (import-from-sicl-global-environment environment)
+  (setf (sicl-global-environment:fdefinition
+	 'cleavir-primop:call-with-variable-bound
+	 environment)
+	(fdefinition 'call-with-variable-bound))
   (define-backquote-macros environment)
   (define-defmacro environment)
   (define-in-package environment)
