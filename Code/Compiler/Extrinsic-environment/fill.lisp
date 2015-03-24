@@ -81,6 +81,9 @@
   ;; Load a file containing the definitions of the macros DEFVAR,
   ;; DEFPARAMETER, DEFCONSTANT, DEFTYPE, and DEFINE-COMPILER-MACRO.
   (load-file "../../Environment/standard-environment-macros.lisp" environment)
+  ;; Load a file containing the definitions of the functions
+  ;; FDEFINITION, (SETF FDEFINITION), SYMBOL-FUNCTION, etc.
+  (load-file "../../Environment/standard-environment-functions.lisp" environment)
   ;; Load a file containing the definitions of the macros INCF and DECF.
   (load-file "../../Arithmetic/incf-decf-defmacro.lisp" environment)
   (load-file "../../Loop/loop-defmacro.lisp" environment)
