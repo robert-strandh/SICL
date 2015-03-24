@@ -37,8 +37,15 @@
 ;;; When we are asked to compile the name of a special variable, by
 ;;; default Cleavir generates a SYMBOL-VALUE-AST taking the variable
 ;;; name as an input.  For SICL, we do not want that.  Instead we want
-;;; it to generate a call to SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE,
-;;; passing it the symbol naming the variable and the environment.
+;;; it to generate a call to the function
+;;; SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE, passing it the symbol
+;;; naming the variable and the GLOBAL ENVIRONMENT.
+;;;
+;;; The global environment is used by the function
+;;; SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE to retrieve the value
+;;; representing UNBOUND in that environment, and to retrieve the
+;;; global value cell in case the variable is not bound in the dynamic
+;;; run-time environment.
 (defmethod cleavir-generate-ast:convert-special-variable
     ((info cleavir-env:special-variable-info) (env environment) system)
   (declare (ignore system))
