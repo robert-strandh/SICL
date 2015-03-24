@@ -126,8 +126,7 @@
 	  (owned-vars (compute-owned-variables initial-instruction)))
       `(lambda (&rest args)
 	 (block nil
-	   (let ((*dynamic-environment* *dynamic-environment*)
-		 (,dynamic-environment-variable *dynamic-environment*)
+	   (let ((,dynamic-environment-variable *dynamic-environment*)
 		 ,@owned-vars)
 	     (declare (ignorable ,dynamic-environment-variable
 				 ,@owned-vars))
