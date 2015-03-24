@@ -34,6 +34,12 @@
 (defvar *tags*)
 (defvar *vars*)
 
+;;; This variable holds an EQ hash table, mapping each
+;;; ENTER-INSTRUCTION to a GENSYMed symbol that is used to hold the
+;;; dynamic environment as it was when the function corresponding to
+;;; that ENTER-INSTRUCTION was called.
+(defvar *dynamic-environment-variables*)
+
 (defun translate-immediate-input (value)
   (cond ((evenp value)
 	 (/ value 2))
@@ -93,6 +99,9 @@
 (defun layout-procedure (initial-instruction)
   ;; Make sure we have an ENTER-INSTRUCTION.
   (assert (typep initial-instruction 'cleavir-ir:enter-instruction))
+  ;; Make sure we do not already have a variable associated with this
+  ;; ENTER-INSTRUCTION for holding the dynamic environment at runtime.
+  (assert (null (gethash initial-instruction *dynamic-environment-variables*)))
   (let* (;; Generate a new variable for holding the dynamic
 	 ;; environment at runtime.
 	 (dynamic-environment-variable (gensym))
@@ -102,6 +111,8 @@
 	 (first (find initial-instruction basic-blocks
 		      :test #'eq :key #'first))
 	 (rest (remove first basic-blocks :test #'eq)))
+    (setf (gethash initial-instruction *dynamic-environment-variables*)
+	  dynamic-environment-variable)
     ;; Assign tags to all basic block except the first one
     (loop for block in rest
 	  for instruction = (first block)
@@ -137,7 +148,8 @@
 	  (*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
 	  (*linkage-environment* linkage-environment)
 	  (*tags* (make-hash-table :test #'eq))
-	  (*vars* (make-hash-table :test #'eq)))
+	  (*vars* (make-hash-table :test #'eq))
+	  (*dynamic-environment-variables* (make-hash-table :test #'eq)))
       (layout-procedure initial-instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -332,7 +344,10 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unwind-instruction) inputs outputs)
   (declare (ignore inputs outputs))
-  `(unwind dynamic-environment))
+  (let ((dynamic-environment-variable
+	  (gethash (cleavir-ir:invocation instruction)
+		   *dynamic-environment-variables*)))
+    `(unwind ,dynamic-environment-variable)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
