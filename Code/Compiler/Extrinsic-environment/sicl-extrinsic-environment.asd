@@ -125,6 +125,7 @@
    (:file "environment-defclass")
    (:file "customization")
    (:file "eval")
+   (:file "repl")
    (:file "load")
    (:file "load-file-defun")
    (:file "import-from-host")
