@@ -7,6 +7,8 @@
        (let ((form (sicl-reader:read)))
 	 (when (equal form '(quit))
 	   (loop-finish))
-	 (let ((value (cleavir-env:eval form environment environment)))
-	   (print value)
+	 (let ((values (multiple-value-list
+			(cleavir-env:eval form environment environment))))
+	   (loop for value in values
+		 do (print value))
 	   (terpri)))))
