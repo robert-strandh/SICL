@@ -44,12 +44,25 @@
    (%function :initarg :function :reader function)))
 
 ;;; SUFFIX is a suffix of the current dynamic environment.  This
-;;; function removes entries until from the runtime environment until
-;;; the suffix is reached, executing any UNWIND-PROTECT entries it
-;;; finds.
+;;; function executes any UNWIND-PROTECT entries starting with the
+;;; dynamic run-time environment provided by the caller in the
+;;; variable *DYNAMIC-ENVIRONMENT* and ending with the last entry
+;;; before SUFFIX is reached.
+;;;
+;;; The value of the variable *DYNAMIC-ENVIRONMENT* is only valid
+;;; around function calls.  Each function has its own local variable
+;;; containing the dynamic run-time environment as it needs it to be.
+;;; That includes the function in which the UNWIND-PROTECT was
+;;; executed.  Therefore the thunk stored in the UNWIND-PROTECT entry
+;;; will be executed in the dynamic run-time environment of the
+;;; function in which the UNWIND-PROTECT form was evaluated, which is
+;;; the way it is supposed to be according to the HyperSpec.
 (defun unwind (suffix)
-  (loop until (eq suffix *dynamic-environment*)
-	do (let ((entry (pop *dynamic-environment*)))
+  (loop for env = *dynamic-environment* then (cdr env)
+	until (eq suffix env)
+	;; If SUFFIX is not the same as ENV, then there is at least
+	;; one entry between the two.
+	do (let ((entry (first env)))
 	     (when (typep entry 'unwind-protect)
 	       (funcall (thunk entry))))))
 
