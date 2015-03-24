@@ -1,9 +1,9 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
 (defun repl (environment)
-  (setf *dynamic-environment* '())
   (loop
     do (princ "SICL: ")
+       (setf *dynamic-environment* '())
        (let ((form (sicl-reader:read)))
 	 (when (equal form '(quit))
 	   (loop-finish))
