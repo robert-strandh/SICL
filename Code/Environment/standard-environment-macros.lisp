@@ -115,7 +115,8 @@
 	      ',name
 	      sicl-env:*global-environment*
 	      t)
-	     ,initial-value))))
+	     ,initial-value)
+       ',name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
