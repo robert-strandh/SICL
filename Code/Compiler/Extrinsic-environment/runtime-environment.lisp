@@ -1,5 +1,31 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Dynamic run-time environment.
+;;;
+;;; The dynamic run-time environment is a list of instances of the
+;;; class DYNAMIC-ENVIRONMENT-ENTRY.
+;;;
+;;; In a native backend, the dynamic run-time environment would be
+;;; passed in a register to each function, which is kind of like a
+;;; hidden argument.  But in the extrinsic environment we do not want
+;;; to add arguments to each function, because we want the
+;;; function-call protocol to be compatible with that of the host, so
+;;; that we can call host functions that ignore the existence of the
+;;; target dynamic run-time environment.
+;;;
+;;; We solve this problem as follows: we define a host variable named
+;;; *DYNAMIC-ENVIRONMENT* that holds the dynamic run-time environment
+;;; of the target AROUND TARGET FUNCTION CALLS ONLY.  This host
+;;; variable is SET (not bound) right before a function is called, and
+;;; a lexical variable in the callee is bound to its value immediately
+;;; upon function entry.  In a multi-threaded environment, this host
+;;; variable must be BOUND for the duration of the thread so that each
+;;; thread sees its own binding.
+
+(defparameter *dynamic-environment* '())
+
 (defclass dynamic-environment-entry () ())
 
 (defclass variable-binding (dynamic-environment-entry)
@@ -16,10 +42,6 @@
    ;; function executes the host form (RETURN-FROM <block-name> (APPLY
    ;; #'VALUES ARG)).
    (%function :initarg :function :reader function)))
-
-;;; The dynamic environment is a list of instances of the class
-;;; DYNAMIC-ENVIRONMENT-ENTRY.
-(defparameter *dynamic-environment* '())
 
 ;;; SUFFIX is a suffix of the current dynamic environment.  This
 ;;; function removes entries until from the runtime environment until
