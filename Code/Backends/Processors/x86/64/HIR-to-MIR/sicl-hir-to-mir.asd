@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem #:sicl-hir-to-mir
+(defsystem #:sicl-hir-to-mir
   :depends-on (:cleavir-hir-to-mir
 	       :cleavir-processor-x86-64
 	       :sicl-target-sicl)

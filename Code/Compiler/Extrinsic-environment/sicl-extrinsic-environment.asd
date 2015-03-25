@@ -100,7 +100,8 @@
   :depends-on (:sicl-simple-environment
 	       :sicl-loop-support
 	       :sicl-arithmetic
-	       :sicl-cons-package
+	       :sicl-cons-support
+	       :sicl-clos-package
 	       :cleavir-generate-ast
 	       :cleavir-ast-transformations
 	       :cleavir-ast-to-hir
@@ -111,6 +112,7 @@
 	       :sicl-evaluation-and-compilation
 	       :sicl-data-and-control-flow
 	       :sicl-conditionals-support
+	       :sicl-iteration-support
 	       :sicl-reader-simple)
   :serial t
   :components
@@ -123,17 +125,11 @@
    (:file "environment-defclass")
    (:file "customization")
    (:file "eval")
+   (:file "repl")
    (:file "load")
    (:file "load-file-defun")
-   (:file "import-host-packages")
-   (:file "import-from-host-common-lisp")
+   (:file "import-from-host")
    (:file "import-from-sicl-global-environment")
-   (:file "import-from-sicl-extrinsic-environment")
-   (:file "import-from-sicl-conditionals")
-   (:file "import-from-cleavir-code-utilities")
-   (:file "import-from-cleavir-environment")
-   (:file "import-from-cleavir-primop")
-   (:file "import-loop-support")
    (:file "define-defmacro")
    (:file "define-in-package")
    (:file "define-default-setf-expander")

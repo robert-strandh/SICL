@@ -72,7 +72,8 @@
 		  ',name
 		  sicl-env:*global-environment*
 		  nil)
-		 nil))
+		 nil)
+	   ',name)
 	 (eval-when (:load-toplevel :execute)
 	   (unless (sicl-env:boundp ',name
 				    sicl-env:*global-environment*)
@@ -80,13 +81,15 @@
 		    ',name
 		    sicl-env:*global-environment*
 		    t)
-		   ,initial-value))))
+		   ,initial-value))
+	   ',name))
       `(eval-when (:compile-toplevel :load-toplevel :execute)
 	 (setf (sicl-env:special-variable
 		',name
 		sicl-env:*global-environment*
 		nil)
-	       nil))))
+	       nil)
+	 ',name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -115,7 +118,8 @@
 	      ',name
 	      sicl-env:*global-environment*
 	      t)
-	     ,initial-value))))
+	     ,initial-value)
+       ',name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

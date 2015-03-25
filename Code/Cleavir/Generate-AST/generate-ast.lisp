@@ -88,29 +88,44 @@
 ;;; of canonicalized declaration specifiers.  This list is used to
 ;;; determine whether a variable is declared special.
 
-;;; This variable is either unbound or it is bound to a symbol which
-;;; is the name of a BLOCK.  When it is unbound, we convert the body
-;;; of a function as an ordinary PROGN-AST.  When it is bound, we put
-;;; a BLOCK in there too.
-(defvar *block-name*)
+;;; This class is used to describe the body of a function.  It
+;;; contains the declaration specifiers that apply to the body as a
+;;; whole, the forms of the body and information about a possible
+;;; BLOCK that the body code should be wrapped in.  The main reason
+;;; for the existence of this class is to keep the number of arguments
+;;; down of several functions below, not for the purpose of
+;;; performance, but simply to avoid very long lambda lists in the
+;;; source code.
+(defclass body ()
+  ((%dspecs :initarg :dspecs :accessor dspecs)
+   (%forms :initarg :forms :accessor forms)
+   (%block-name :initarg :block-name :reader block-name)
+   (%block-name-p :initarg :block-name-p :reader block-name-p)))
 
-;;; Convert the body forms of a function.
-(defun convert-body (forms env system)
-  (convert (if (boundp '*block-name*)
-	       `(block ,*block-name* ,@forms)
-	       `(progn ,@forms))
-	   env system))
+(defun make-body (dspecs forms block-name block-name-p)
+  (make-instance 'body
+    :dspecs dspecs
+    :forms forms
+    :block-name block-name
+    :block-name-p block-name-p))
+
+;;; Convert the body of a function.
+(defun convert-body (body env system)
+  (let ((new-env (augment-environment-with-declarations env (dspecs body))))
+    (convert (if (block-name-p body)
+		 `(block ,(block-name body) ,@(forms body))
+		 `(progn ,@(forms body)))
+	     new-env system)))
 
 ;;; We have already detected there is an &AUX lambda-list keyword in
 ;;; the lambda list, and this function recursively processes the
 ;;; remaining &AUX "parameters".  FORMS is a sequence of forms
 ;;; constituting the body of the function.
-(defun process-remaining-aux (aux idspecs rdspecs forms env system)
+(defun process-remaining-aux (aux idspecs body env system)
   (if (null aux)
       ;; We ran out of &AUX "parameters".  We must build an AST for
       ;; the body of the function.
-      (let ((new-env (augment-environment-with-declarations env rdspecs)))
-	(convert-body forms new-env system))
+      (convert-body body env system)
       ;; We have at least one more &AUX "parameter".
       (destructuring-bind (var init) (first aux)
 	(let* (;; We enter the new parameter variable into the
@@ -129,8 +144,7 @@
 	       ;; the parameter variable.
 	       (next-ast (process-remaining-aux (rest aux)
 						(rest idspecs)
-						rdspecs
-						forms
+						body
 						new-env
 						system)))
 	  ;; All that is left to do now, is to construct the AST to
@@ -141,19 +155,18 @@
 ;;; This function is called when we have processed all the &KEY
 ;;; parameters, so if there are any &AUX "parameters", they should be
 ;;; processed by this function.
-(defun process-aux (parsed-lambda-list idspecs rdspecs forms env system)
+(defun process-aux (parsed-lambda-list idspecs body env system)
   (let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
     (if (eq aux :none)
 	;; This lambda list has no &AUX "parameters".  We must build
 	;; an AST for the body of the function.
-	(let ((new-env (augment-environment-with-declarations env rdspecs)))
-	  (convert-body forms new-env system))
+	(convert-body body env system)
 	;; This lambda list has the &AUX keyword in it.  There may or
 	;; may not be any &AUX "parameters" following that keyword.
 	;; We call PROCESS-REMAINING-AUX with the list of these &AUX
 	;; "parameters", and we return the AST that
 	;; PROCESS-REMAINING-AUX builds.
-	(process-remaining-aux aux idspecs rdspecs forms env system))))
+	(process-remaining-aux aux idspecs body env system))))
 
 ;;; VAR-AST and SUPPLIED-P-AST are LEXICAL-ASTs that will be set by
 ;;; the implementation-specific argument-parsing code, according to
@@ -225,8 +238,8 @@
 ;;; otherwise.  This works because in the lambda list we create, there
 ;;; are no &AUX "parameters".
 (defun process-allow-other-keys
-    (parsed-lambda-list idspecs rdspecs  forms env system)
-  (values (process-aux parsed-lambda-list idspecs rdspecs forms env system)
+    (parsed-lambda-list idspecs body env system)
+  (values (process-aux parsed-lambda-list idspecs body env system)
 	  (if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
 	      '(&allow-other-keys)
 	      '())))
@@ -249,14 +262,14 @@
 ;;; remaining &KEY parameters.  FORMS is a sequence of forms
 ;;; constituting the body of the function.
 (defun process-remaining-keys
-    (keys parsed-lambda-list idspecs rdspecs forms env system)
+    (keys parsed-lambda-list idspecs body env system)
   (if (null keys)
       ;; We ran out of &KEY parameters.  Call PROCESS-ALLOW-OTHER-KEYS
       ;; to deal with a possible &ALLOW-OTHER-KEYS lambda-list
       ;; keyword, and return the AST and the modified lambda list
       ;; returned by that function. 
       (process-allow-other-keys
-       parsed-lambda-list idspecs rdspecs forms env system)
+       parsed-lambda-list idspecs body env system)
       (destructuring-bind ((keyword var) init &optional supplied-p)
  	  (first keys)
 	(let (;; Compute an augmented environment to be used to
@@ -277,8 +290,7 @@
 	      (process-remaining-keys (rest keys)
 				      parsed-lambda-list
 				      (rest idspecs)
-				      rdspecs
-				      forms
+				      body
 				      new-env
 				      system)
 	    (multiple-value-bind (ast lexical-locations)
@@ -293,7 +305,7 @@
 ;;; This function is called when we have processed a possible &REST
 ;;; parameter, so if there are any &KEY parameters, they should be
 ;;; processed by this function.
-(defun process-keys (parsed-lambda-list idspecs rdspecs forms env system)
+(defun process-keys (parsed-lambda-list idspecs body env system)
   (let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
     (if (eq keys :none)
 	;; There was no lambda-list keyword &KEY in this lambda list.
@@ -301,7 +313,7 @@
 	;; the remaining analysis, together with an empty modified
 	;; lambda list.
 	(values (process-aux
-		 parsed-lambda-list idspecs rdspecs forms env system)
+		 parsed-lambda-list idspecs body env system)
 		'())
 	(multiple-value-bind (ast lexicals)
 	    ;; This lambda list has the lambda-list keyword &KEY in
@@ -311,20 +323,20 @@
 	    ;; the AST that PROCESS-REMAINING-KEYS builds and the
 	    ;; modified lambda list that it returns.
 	    (process-remaining-keys
-	     keys parsed-lambda-list idspecs rdspecs forms env system)
+	     keys parsed-lambda-list idspecs body env system)
 	  (values ast (cons '&key lexicals))))))
 
 ;;; This function is called when we have processed a possible
 ;;; &OPTIONAL parameter, so if there is a &REST parameter, it should
 ;;; be processed by this function.
-(defun process-rest (parsed-lambda-list idspecs rdspecs forms env system)
+(defun process-rest (parsed-lambda-list idspecs body env system)
   (let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
     (if (eq rest :none)
 	;; There was no lambda-list keyword &REST or &BODY in this
 	;; lambda list.  Just call the function PROCESS-KEYS to create
 	;; the AST for the remaining analysis and the modified lambda
 	;; list.
-	(process-keys parsed-lambda-list idspecs rdspecs forms env system)
+	(process-keys parsed-lambda-list idspecs body env system)
 	;; This lambda list has the lambda-list &REST or &BODY in it.
 	;; It is followed by a single variable to hold the rest of the
 	;; arguments.
@@ -337,8 +349,7 @@
 	      ;; results from processing the remaining lambda list. 
 	      (process-keys parsed-lambda-list
 			    (rest idspecs)
-			    rdspecs
-			    forms
+			    body
 			    new-env
 			    system)
 	    (let* (;; We must create a LEXICAL-AST that the
@@ -358,9 +369,9 @@
 		      (list* '&rest lexical-ast next-lexical-parameters))))))))
 
 (defun process-remaining-optionals
-    (optionals parsed-lambda-list idspecs rdspecs forms env system)
+    (optionals parsed-lambda-list idspecs body env system)
   (if (null optionals)
-      (process-rest parsed-lambda-list idspecs rdspecs forms env system)
+      (process-rest parsed-lambda-list idspecs body env system)
       (destructuring-bind (var init &optional supplied-p)
  	  (first optionals)
 	(let ((new-env (augment-environment-with-parameter
@@ -370,8 +381,7 @@
 	      (process-remaining-optionals (rest optionals)
 					   parsed-lambda-list
 					   (rest idspecs)
-					   rdspecs
-					   forms
+					   body
 					   new-env
 					   system)
 	    (multiple-value-bind (ast lexical-locations)
@@ -380,24 +390,23 @@
 	      (values ast
 		      (cons lexical-locations next-lexical-parameters))))))))
 
-(defun process-optionals (parsed-lambda-list idspecs rdspecs forms env system)
+(defun process-optionals (parsed-lambda-list idspecs body env system)
   (let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
     (if (eq optionals :none)
-	(process-rest parsed-lambda-list idspecs rdspecs forms env system)
+	(process-rest parsed-lambda-list idspecs body env system)
 	(multiple-value-bind (ast lexicals)
 	    (process-remaining-optionals optionals
 					 parsed-lambda-list
 					 idspecs
-					 rdspecs
-					 forms
+					 body
 					 env
 					 system)
 	  (values ast (cons '&optional lexicals))))))
 
 (defun process-required
-    (required parsed-lambda-list idspecs rdspecs forms env system)
+    (required parsed-lambda-list idspecs body env system)
   (if (null required)
-      (process-optionals parsed-lambda-list idspecs rdspecs forms env system)
+      (process-optionals parsed-lambda-list idspecs body env system)
       (let* ((var (first required))
 	     (name (make-symbol (string-downcase var)))
 	     (lexical-ast (cleavir-ast:make-lexical-ast name))
@@ -407,8 +416,7 @@
 	    (process-required (rest required)
 			      parsed-lambda-list
 			      (rest idspecs)
-			      rdspecs
-			      forms
+			      body
 			      new-env
 			      system)
 	  (values (set-or-bind-variable
@@ -449,9 +457,10 @@
 		     result)))
     (append (mapcar #'list required) result)))
 
-(defgeneric convert-code (lambda-list body env system))
+(defgeneric convert-code (lambda-list body env system &optional block-name))
 
-(defmethod convert-code (lambda-list body env system)
+(defmethod convert-code (lambda-list body env system
+			 &optional (block-name nil block-name-p))
   (let* ((parsed-lambda-list
 	   (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list))
 	 (required (cleavir-code-utilities:required parsed-lambda-list)))
@@ -470,8 +479,7 @@
 	      (process-required required
 				parsed-lambda-list
 				idspecs
-				rdspecs
-				forms
+				(make-body rdspecs forms block-name block-name-p)
 				env
 				system)
 	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
@@ -528,43 +536,46 @@
 ;;; top-level form.  For all other forms, any subform of the form is
 ;;; not considered a top-level form.
 
-;;; This variable is true if and only if the form to be compiled is a
-;;; top-level form.
-(defparameter *top-level-form-p* t)
-
 ;;; The reason for the following somewhat twisted logic is that we
-;;; want to avoid having to explicitly set *TOP-LEVEL-FORM-P* no false
-;;; in every method EXCEPT the ones for LOCALLY, MACROLET, and
-;;; SYMBOL-MACROLET.  This logic allows us to add some code ONLY to
-;;; these special forms in order to indicate that they preserve the
+;;; want to avoid having to explicitly set *SUBFORMS-ARE-TOP-LEVEL-P*
+;;; to false in every method EXCEPT the ones for LOCALLY, MACROLET,
+;;; and SYMBOL-MACROLET.  This logic allows us to add some code ONLY
+;;; to these special forms in order to indicate that they preserve the
 ;;; top-level property.
 ;;;
 ;;; The way this logic works is as follows: We define a second
-;;; variable named *OLD-TOP-LEVEL-FORM-P*.  This variable holds the
-;;; value of *TOP-LEVEL-FORM-P* as it was before CONVERT was called,
-;;; and this is the variable that we actually test in order to
+;;; variable named *CURRENT-FORM-IS-TOP-LEVEL-P*.  This variable holds
+;;; the value of *SUBFORMS-ARE-TOP-LEVEL-P* as it was before CONVERT was
+;;; called, and this is the variable that we actually test in order to
 ;;; determine whether a form is a top-level form.  To obtain that, we
 ;;; define an :AROUND method on CONVERT that binds
-;;; *OLD-TOP-LEVEL-FORM-P* to the value of *TOP-LEVEL-FORM-P* for the
-;;; duration of the invocation of the primary method on CONVERT, and
-;;; that also binds *TOP-LEVEL-FORM-P* to false.  Any recursive
-;;; invocation of CONVERT will thus automatically see the value of
-;;; *OLD-TOP-LEVEL-FORM-P* as false.  The methods for LOCALLY,
-;;; MACROLET, and SYMBOL-MACROLET set *OLD-TOP-LEVEL-FORM-P* to true
-;;; so that when they recursively call CONVERT, then this true value
-;;; will be the value of *OLD-TOP-LEVEL-FORM-P*.  I hope this
-;;; explanation makes sense.
+;;; *CURRENT-FORM-IS-TOP-LEVEL-P* to the value of *SUBFORMS-ARE-TOP-LEVEL-P*
+;;; for the duration of the invocation of the primary method on
+;;; CONVERT, and that also binds *SUBFORMS-ARE-TOP-LEVEL-P* to false.  Any
+;;; recursive invocation of CONVERT will thus automatically see the
+;;; value of *CURRENT-FORM-IS-TOP-LEVEL-P* as false.  The methods for
+;;; LOCALLY, MACROLET, and SYMBOL-MACROLET set
+;;; *CURRENT-FORM-IS-TOP-LEVEL-P* to true so that when they
+;;; recursively call CONVERT, then this true value will be the value
+;;; of *CURRENT-FORM-IS-TOP-LEVEL-P*.  I hope this explanation makes
+;;; sense.
 
-(defvar *old-top-level-form-p*)
+;;; This variable is true if and only if the current form is a
+;;; top-level form.
+(defvar *current-form-is-top-level-p*)
+
+;;; This variable is true if and only if the subforms of the current
+;;; form are top-level forms.
+(defparameter *subforms-are-top-level-p* t)
 
 (defmacro with-preserved-toplevel-ness (&body body)
-  `(progn (setf *top-level-form-p* *old-top-level-form-p*)
+  `(progn (setf *subforms-are-top-level-p* *current-form-is-top-level-p*)
 	  ,@body))
 
 (defmethod convert :around (form environment system)
   (declare (ignore system))
-  (let ((*old-top-level-form-p* *top-level-form-p*)
-	(*top-level-form-p* nil))
-    (when (and *compile-time-too* *old-top-level-form-p*)
+  (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
+	(*subforms-are-top-level-p* nil))
+    (when (and *compile-time-too* *current-form-is-top-level-p*)
       (cleavir-env:eval form environment environment ))
     (call-next-method)))

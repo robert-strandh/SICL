@@ -34,7 +34,9 @@
     ((symbol (eql 'eval-when)) form environment system)
   (with-preserved-toplevel-ness
     (destructuring-bind (situations . body) (rest form)
-      (if (or (eq *compiler* 'cl:compile) (eq *compiler* 'cl:eval))
+      (if (or (eq *compiler* 'cl:compile)
+	      (eq *compiler* 'cl:eval)
+	      (not *current-form-is-top-level-p*))
 	  (if (or (member :execute situations)
 		  (member 'eval situations))
 	      (cleavir-ast:make-progn-ast
@@ -98,8 +100,8 @@
 	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
-		  for fun = (let ((*block-name* name))
-			      (convert-code lambda-list body env system))
+		  for block-name = (if (symbolp name) name (second name))
+		  for fun = (convert-code lambda-list body env system block-name)
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
@@ -134,6 +136,21 @@
     ((info cleavir-env:local-function-info) env system)
   (declare (ignore env system))
   (cleavir-env:identity info))
+
+(defmethod convert-function
+    ((info cleavir-env:global-macro-info) env system)
+  (error 'function-name-names-global-macro
+	 :expr (cleavir-env:name info)))
+
+(defmethod convert-function
+    ((info cleavir-env:local-macro-info) env system)
+  (error 'function-name-names-local-macro
+	 :expr (cleavir-env:name info)))
+
+(defmethod convert-function
+    ((info cleavir-env:special-operator-info) env system)
+  (error 'function-name-names-special-operator
+	 :expr (cleavir-env:name info)))
 
 (defun convert-named-function (name environment system)
   (let ((info (function-info environment name)))
@@ -184,8 +201,8 @@
 	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
-		  for fun = (let ((*block-name* name))
-			      (convert-code lambda-list body new-env system))
+		  for block-name = (if (symbolp name) name (second name))
+		  for fun = (convert-code lambda-list body new-env system block-name)
 		  collect (cleavir-ast:make-setq-ast
 			   (let ((info (cleavir-env:function-info new-env name)))
 			     (cleavir-env:identity info))
@@ -438,22 +455,31 @@
 ;;; therefore make sure it is always compiled in a context where its
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
-(defgeneric convert-setq (info form-ast env system))
+(defgeneric convert-setq (info form env system))
 
 (defmethod convert-setq
-    ((info cleavir-env:constant-variable-info) form-ast env system)
-  (declare (ignore env system))
+    ((info cleavir-env:constant-variable-info) form env system)
+  (declare (ignore env system form))
   (error 'setq-constant-variable
 	 :form (cleavir-env:name info)))
 
 (defmethod convert-setq
-    ((info cleavir-env:lexical-variable-info) form-ast env system)
-  (declare (ignore env system))
+    ((info cleavir-env:lexical-variable-info) form env system)
   (cleavir-ast:make-progn-ast 
    (list (cleavir-ast:make-setq-ast
 	  (cleavir-env:identity info)
-	  form-ast)
+	  (convert form env system))
 	 (cleavir-env:identity info))))
+
+(defmethod convert-setq
+    ((info cleavir-env:symbol-macro-info) form env system)
+  (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
+			    (lambda (form env)
+			      (declare (ignore form env))
+			      (cleavir-env:expansion info))
+			    (cleavir-env:name info)
+			    env)))
+    (convert `(setf ,expansion ,form) env system)))
 
 (defgeneric convert-setq-special-variable
     (info form-ast global-env system))
@@ -470,13 +496,16 @@
 	   temp))))
 
 (defmethod convert-setq
-    ((info cleavir-env:special-variable-info) form-ast env system)
+    ((info cleavir-env:special-variable-info) form env system)
   (let ((global-env (cleavir-env:global-environment env)))
-    (convert-setq-special-variable info form-ast global-env system)))
+    (convert-setq-special-variable info
+				   (convert form env system)
+				   global-env
+				   system)))
 
 (defun convert-elementary-setq (var form env system)
   (convert-setq (variable-info env var)
-		(convert form env system)
+		form
 		env
 		system))
   

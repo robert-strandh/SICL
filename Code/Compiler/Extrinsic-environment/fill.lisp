@@ -1,15 +1,12 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
 (defun fill-environment (environment)
-  (import-host-packages environment)
-  (import-from-host-common-lisp environment)
+  (import-from-host environment)
   (import-from-sicl-global-environment environment)
-  (import-from-sicl-extrinsic-environment environment)
-  (import-from-sicl-conditionals environment)
-  (import-from-cleavir-code-utilities environment)
-  (import-from-cleavir-environment environment)
-  (import-from-cleavir-primop environment)
-  (import-loop-support environment)
+  (setf (sicl-global-environment:fdefinition
+	 'cleavir-primop:call-with-variable-bound
+	 environment)
+	(fdefinition 'call-with-variable-bound))
   (define-backquote-macros environment)
   (define-defmacro environment)
   (define-in-package environment)
@@ -84,8 +81,29 @@
   ;; Load a file containing the definitions of the macros DEFVAR,
   ;; DEFPARAMETER, DEFCONSTANT, DEFTYPE, and DEFINE-COMPILER-MACRO.
   (load-file "../../Environment/standard-environment-macros.lisp" environment)
+  ;; Load a file containing the definitions of the functions
+  ;; FDEFINITION, (SETF FDEFINITION), SYMBOL-FUNCTION, etc.
+  (load-file "../../Environment/standard-environment-functions.lisp" environment)
   ;; Load a file containing the definitions of the macros INCF and DECF.
   (load-file "../../Arithmetic/incf-decf-defmacro.lisp" environment)
   (load-file "../../Loop/loop-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the macros PUSH and POP.
-  (load-file "../../Cons/push-pop-defmacro.lisp" environment))
+  (load-file "../../Cons/push-pop-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro RETURN.
+  (load-file "../../Data-and-control-flow/return-defmacro.lisp" environment)
+  ;; Load a file containing the definitions of the macros PROG1 and PROG2.
+  (load-file "../../Data-and-control-flow/prog1-prog2-defmacro.lisp" environment)
+  ;; Load a file containing the definitions of the macros PROG and PROG*.
+  (load-file "../../Data-and-control-flow/prog-progstar-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro PUSHNEW.
+  (load-file "../../Cons/pushnew-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro DOTIMES.
+  (load-file "../../Iteration/dotimes-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro DOLIST.
+  (load-file "../../Iteration/dolist-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macros DO and DO*.
+  (load-file "../../Iteration/do-dostar-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro WITH-SLOTS.
+  (load-file "../../CLOS/with-slots-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro WITH-ACCESSORS.
+  (load-file "../../CLOS/with-accessors-defmacro.lisp" environment))

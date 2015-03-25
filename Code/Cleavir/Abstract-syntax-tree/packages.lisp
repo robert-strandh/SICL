@@ -33,6 +33,7 @@
    #:progn-ast #:make-progn-ast #:form-asts
    #:return-from-ast #:make-return-from-ast #:form-ast
    #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
+   #:multiple-value-setq-ast #:make-multiple-value-setq-ast #:lhs-asts
    #:tagbody-ast #:make-tagbody-ast #:item-asts
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:type-specifiers

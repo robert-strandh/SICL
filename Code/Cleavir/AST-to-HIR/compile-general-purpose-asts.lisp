@@ -457,6 +457,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a MULTIPLE-VALUE-SETQ-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
+  (check-context-for-no-value-ast context)
+  (let ((locations (mapcar #'find-or-create-location
+			   (cleavir-ast:lhs-asts ast))))
+    (compile-ast
+     (cleavir-ast:value-ast ast)
+     (context
+      locations
+      (successors context)
+      (invocation context)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a THE-AST.
 
 (defun make-type-check (type-specifier var successor)

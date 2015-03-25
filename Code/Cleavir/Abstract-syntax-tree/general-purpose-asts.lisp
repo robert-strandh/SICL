@@ -419,6 +419,39 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class MULTIPLE-VALUE-SETQ-AST.
+;;; 
+;;; This AST can be used to represent MULTIPLE-VALUE-BIND.  
+;;;
+;;; The LHS-ASTS is a list of lexical locations to be assigned to.
+;;; FORM-AST represents a form to be evaluated, and the values of
+;;; which will be assigned to the lexical locations in LHS-ASTS.  If
+;;; the FORM-AST produces fewer values than there are lexical
+;;; locations in LHS-ASTS, then NIL is assigned to the remaining
+;;; lexical locations.  If there are more values there are lexical
+;;; locations in LHS-ASTS, then the additional values are ignored.
+;;;
+;;; This AST does not return a value, so it must be compiled in a
+;;; context where no value is required.
+
+(defclass multiple-value-setq-ast (ast no-value-ast-mixin)
+  ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
+   (%form-ast :initarg :form-ast :reader form-ast)))
+
+(defun make-multiple-value-setq-ast (lhs-asts form-ast)
+  (make-instance 'multiple-value-setq-ast
+    :lhs-asts lhs-asts
+    :form-ast form-ast))
+
+(cleavir-io:define-save-info multiple-value-setq-ast
+  (:lhs-asts lhs-asts)
+  (:form-ast form-ast))
+
+(defmethod children ((ast multiple-value-setq-ast))
+  (cons (form-ast ast) (lhs-asts ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class TAG-AST.
 
 (defclass tag-ast (ast)

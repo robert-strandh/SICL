@@ -1040,6 +1040,8 @@
 	      (setf (values (optionals result) positions)
 		    (parse-all-optionals
 		     lambda-list positions #'parse-destructuring-optional))
+	      (setf (values (rest-body result) positions)
+		    (values (parse-rest/body lambda-list positions)))
 	      (setf (values (keys result) positions)
 		    (parse-all-keys
 		     lambda-list positions #'parse-destructuring-key))

@@ -18,4 +18,5 @@
 			 '()
 			 (list documentation))
 		   (block ,(if (symbolp name) name (second name))
-		     ,@forms))))))))
+		     ,@forms)))
+	   ',name)))))

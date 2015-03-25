@@ -328,33 +328,20 @@
 
 ;;; For each ENCLOSE-INSTRUCTION of the program, add inputs
 ;;; corresponding to the cells of the captured variables that the
-;;; corresponding ENTER-INSTRUCTION imports.  We can't use the
-;;; ordinary traversal here, because that one processes successors
-;;; before the nested functions
+;;; corresponding ENTER-INSTRUCTION imports.
 (defun handle-enclose-instructions
     (initial-instruction owners imports cell-locations)
-  (let ((table (make-hash-table :test #'eq)))
-    (labels
-	((traverse (instruction owner)
-	   (unless (gethash instruction table)
-	     (setf (gethash instruction table) t)
-	     (let ((successors (cleavir-ir:successors instruction)))
-	       (cond ((typep instruction 'cleavir-ir:enclose-instruction)
-		      ;; When we see an ENTER-INSTRUCTION, we
-		      ;; start by recursively traversing it.
-		      (let ((code (cleavir-ir:code instruction)))
-			(traverse code code))
-		      (handle-enclose-instruction
-		       instruction owner owners imports cell-locations)
-		      (loop for successor in successors
-			    do (traverse successor owner)))
-		     ((typep instruction 'cleavir-ir:unwind-instruction)
-		      (traverse (first successors)
-				(cleavir-ir:invocation instruction)))
-		     (t
-		      (loop for successor in successors
-			    do (traverse successor owner))))))))
-      (traverse initial-instruction initial-instruction))))
+  (let ((enclose-instructions-to-handle '()))
+    (cleavir-ir:map-instructions-with-owner
+     (lambda (instruction owner)
+       (when (typep instruction 'cleavir-ir:enclose-instruction)
+	 (push (cons instruction owner) enclose-instructions-to-handle)))
+     initial-instruction)
+    (loop until (null enclose-instructions-to-handle)
+	    do (destructuring-bind (instruction . owner)
+		   (pop enclose-instructions-to-handle)
+		 (handle-enclose-instruction
+		  instruction owner owners imports cell-locations)))))
 
 (defun process-captured-variables (initial-instruction)
   (segregate-lexicals initial-instruction)
@@ -369,13 +356,13 @@
     ;; Replace every reference to a static lexical location by a
     ;; combination of dynamic lexical locations and new instructions
     ;; for allocating the cell holding the value of the variable.
-    (traverse
-     initial-instruction
+    (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (setf (cleavir-ir:inputs instruction)
 	     (new-inputs instruction owner owners imports cell-locations))
        ;; Now process the outputs of this instruction
        (setf (cleavir-ir:outputs instruction)
-	     (new-outputs instruction owner owners imports cell-locations))))
+	     (new-outputs instruction owner owners imports cell-locations)))
+     initial-instruction)
     (handle-enclose-instructions
      initial-instruction owners imports cell-locations)))
