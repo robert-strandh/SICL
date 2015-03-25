@@ -1,4 +1,4 @@
-(in-package #:sicl-cross-compiler)
+(cl:in-package #:sicl-cross-compiler)
 
 (defclass environment () ())
 
