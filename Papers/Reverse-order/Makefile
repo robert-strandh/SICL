@@ -42,6 +42,8 @@ $(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(
 	pdflatex $<
 	pdflatex $<
 
+$(CURVE): curves.sh
+
 .PHONY: clean spotless view
 
 view: $(NAME).pdf
