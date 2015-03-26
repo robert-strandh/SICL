@@ -1,0 +1,112 @@
+
+\vspace{1em}
+%\pagebreak
+\section*{APPENDIX}
+\subsubsection*{Part A}
+We develop here the details of the approximated resolution
+of the recursive equation defined in Section~\ref{sec-analyses},
+page~\pageref{analyse1}.
+
+\[ f(N) = \frac{N}{2} + 2f(\frac{N}{2}) \]
+
+Developing the second term of this equation one step, we obtain:
+
+\[ f(N) = \frac{N}{2} + 2f(\frac{N}{2}) = \]
+\[ = \frac{N}{2} + 2(\frac{N}{4} + 2f(\frac{N}{4})) =\]
+\[ = \frac{N}{2} + \frac{N}{2} + 4f(\frac{N}{4}) =\]
+\[ = 2\frac{N}{2} + 4f(\frac{N}{4})\]
+
+Developing the second term of this equation one more step, we obtain:
+
+\[ f(N) = 2\frac{N}{2} + 4f(\frac{N}{4}) = \]
+\[ = 2\frac{N}{2} + 4(\frac{N}{8} + 2f(\frac{N}{8})) =\]
+\[ = 2\frac{N}{2} + \frac{N}{2} + 8f(\frac{N}{8}) =\]
+\[ = 3\frac{N}{2} + 8f(\frac{N}{8}) \]
+
+After developing the second term $p-1$ times, we obtain:
+
+\[ f(N) = p\frac{N}{2} + 2^pf(\frac{N}{2^p})\]
+
+When $p = n = \mathsf{lb}~N$, this equation turns into:
+
+\[ f(N) = \frac{N}{2}\mathsf{lb}~N + Nf(1) = \frac{N}{2}\mathsf{lb}~N\]
+
+\subsubsection*{Part B}
+We develop here the details of the approximated resolution
+of the recursive equation defined in Section~\ref{sec-analyses},
+page~\pageref{analyse2}.
+
+\[ f(N) = \left\{ \begin{array}{ll}
+    N-1 & \mbox{if $N \le K$} \\
+    \frac{N}{2} + 2f(\frac{N}{2}) &\mbox{otherwise}
+  \end{array} \right. \]
+
+Since the second equation is the same as for the basic technique,
+developing the second equation $p-1$ times, we again obtain:
+
+\[ f(N) = p\frac{N}{2} + 2^pf(\frac{2^n}{2^p})\]
+
+When $p = n - k = \mathsf{lb}~\frac{N}{K}$ we get:
+
+\[ f(N) = \frac{N}{2}\mathsf{lb}~\frac{N}{K} + \frac{N}{K}f(K)\]
+
+Substituting $K-1$ for $f(K)$ and factoring out $N$, we obtain:
+
+\[ f(N) = N(\frac{1}{2}\mathsf{lb}~\frac{N}{K} + \frac{K - 1}{K})\]
+
+Or:
+
+\[ f(N) = N(1 - \frac{1}{K} + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
+
+Clearly, the term $\frac{1}{K}$ can be ignored, giving:
+
+\[ f(N) \approx N(1 + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
+
+\subsubsection*{Part C}
+We develop here the details of the approximated resolution
+of the recursive equation defined in Section~\ref{sec-analyses},
+page~\pageref{analyse3}.
+
+\[ f(N) = \left\{ \begin{array}{ll}
+                    0 & \mbox{if $N = 1$} \\
+                    N - \frac{N}{M} + Mf(\frac{N}{M}) &\mbox{otherwise}
+                  \end{array} \right. \]
+
+The resolution of this equation is given in the appendix (Part C).
+It yields:
+
+Solving as before, after developing the last term once, we obtain:
+
+\[ f(N) = N - \frac{N}{M} + Mf(\frac{N}{M}) = \]
+\[ = N - \frac{N}{M} + M(\frac{N}{M} - \frac{N}{M^2} + Mf(\frac{N}{M^2})) = \]
+\[ = N - \frac{N}{M} + N - \frac{N}{M} + M^2f(\frac{N}{M^2}) = \]
+\[ = 2(N - \frac{N}{M}) + M^2f(\frac{N}{M^2}) \]
+
+Developing the last term a second time, we obtain:
+
+\[ f(N) = 2(N - \frac{N}{M}) + M^2f(\frac{N}{M^2}) = \]
+\[ = 2(N - \frac{N}{M}) + M^2(\frac{N}{M^2} - \frac{N}{M^3} + Mf(\frac{N}{M^3})) = \]
+\[ = 2(N - \frac{N}{M}) + N - \frac{N}{M} + M^3f(\frac{N}{M^3}) = \]
+\[ = 3(N - \frac{N}{M}) + M^3f(\frac{N}{M^3}) \]
+
+After developing the last term $p-1$ times, we obtain:
+
+\[ f(N) = p(N - \frac{N}{M}) + M^pf(\frac{N}{M^p}) = \]
+
+Setting $p = \frac{n}{m} = \frac{\mathsf{lb}~N}{\mathsf{lb}~M}$ so
+that $M^p = N$, we get:
+
+\[ f(N) = \frac{\mathsf{lb}~N}{\mathsf{lb}~M}(N - \frac{N}{M}) + Nf(1)
+   = \frac{\mathsf{lb}~N}{\mathsf{lb}~M}(N - \frac{N}{M}) \]
+
+Factoring out $N$, we obtain:
+
+\[ f(N) = N(1 - \frac{1}{M})\frac{\mathsf{lb}~N}{\mathsf{lb}~M} \]
+
+and thus:
+
+\[ F(N) = N(1 + (1 - \frac{1}{M})\frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
+
+and again:
+
+\[ F(N) \approx N(1 + \frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
