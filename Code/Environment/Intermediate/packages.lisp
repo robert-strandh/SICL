@@ -5,5 +5,6 @@
   (:shadow . #1=(#:fboundp
 		 #:fdefinition
 		 #:symbol-function
-		 #:find-class))
+		 #:find-class
+		 #:macroexpand-1))
   (:export . #1#))
