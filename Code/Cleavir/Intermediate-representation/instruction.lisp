@@ -50,7 +50,7 @@
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)))
 
-(defmethod initialize-instance :after ((obj instruction) &key &allow-other-keys)
+(defmethod initialize-instance :after ((obj instruction) &key)
   (unless (and (listp (successors obj))
 	       (every (lambda (successor)
 			(typep successor 'instruction))
