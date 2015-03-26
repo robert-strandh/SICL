@@ -16,23 +16,25 @@
 ;;; expander did some non-functional stuff like consulting global
 ;;; variables, then, it might be possible. 
 
-(defun macroexpand-1 (form &optional env)
-  (cond
-    ((and (consp form) (symbolp (car form)))
-     (let ((expander (macro-function (car form) env)))
-       (if (null expander)
-	   (values form nil)
-	   (values 
-	    (funcall (coerce *macroexpand-hook* 'function)
-		     expander
-		     form
-		     (or env sicl-env:*global-environment*))
-	    t))))
-    ((symbolp form)
-     (let* ((environment (or env sicl-env:*global-environment*))
-	    (expansion (cleavir-env:symbol-macro-expansion
-			form environment)))
-       (values expansion
-	       (not (eq form expansion)))))
-    (t
-     (values form nil))))
+(defun macroexpand-1
+    (form &optional (env sicl-global-environment:*global-environment*))
+  (let ((expander nil))
+    (cond ((symbolp form)
+	   (let ((expansion (cleavir-env:symbol-macro-expansion form env)))
+	     (unless (eq form expansion)
+	       (setf expander
+		     (lambda (form environment)
+		       (declare (ignore form environment))
+		       expansion)))
+	     (values expansion (not (eq form expansion)))))
+	  ((and (consp form) (symbolp (car form)))
+	   (setf expander (cleavir-env:macro-function (car form) env)))
+	  (t
+	   nil))
+    (if (null expander)
+	(values form nil)
+	(values (funcall (coerce *macroexpand-hook* 'function)
+			 expander
+			 form
+			 env)
+		t))))
