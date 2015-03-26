@@ -211,7 +211,10 @@ performance for $N = 2^{24}$ of $F(N) \approx 6N$.  Comparing this
 result to the technique of reversing the list, it is fair to say that
 the overhead of allocating and subsequently garbage-collecting a
 \texttt{cons} cell can very well be comparable to $6$ times the time
-taken by the \texttt{cdr} operation.
+taken by the \texttt{cdr} operation.  In other words, the performance
+of our portable version is already comparable to an implementation
+based on first creating a reversed copy of the list and then
+traversing that reversed copy.
 
 Finally, instead of using more stack space for the base case, let us
 analyze what happens if we divide the original list into more than two
