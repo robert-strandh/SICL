@@ -40,5 +40,4 @@
    (:file "setf-fdefinition-defun")
    (:file "symbol-function-defun")
    (:file "setf-symbol-function-defun")
-   (:file "find-class-defun")
-   (:file "macroexpand-1-defgeneric-defmethod")))
+   (:file "find-class-defun")))
