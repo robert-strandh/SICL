@@ -20,8 +20,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class AST.  The base class for all AST classes.
+;;;
+;;; SOURCE-INFO
 
-(defclass ast () ())
+(defclass ast ()
+  ((%source-info :initform nil :initarg source-info :accessor source-info)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
