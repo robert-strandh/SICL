@@ -20,8 +20,9 @@ cat << _EOF_ > $GP
 set term $OUTPUT dashed
 set output "$NAME.$SUFFIX"
 set title "$TITLE"
+set key on inside center top
 set xlabel "List length"
-set ylabel "Time in ms"
+set ylabel "Time in seconds"
 _EOF_
 
 STRING="'"$NAME"'"

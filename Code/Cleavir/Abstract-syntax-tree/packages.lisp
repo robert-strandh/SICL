@@ -5,6 +5,7 @@
   (:shadow #:symbol)
   (:export
    #:ast #:children
+   #:source-info
    #:boolean-ast-mixin
    #:no-value-ast-mixin
    #:one-value-ast-mixin

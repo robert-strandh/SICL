@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-boot-phase1
+(defsystem :sicl-boot-phase1
   :depends-on (:cleavir-code-utilities
 	       :sicl-additional-conditions)
   :serial t

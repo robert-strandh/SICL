@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-x86-64
+(defsystem :sicl-x86-64
   :depends-on (:cleavir-processor-x86-64)
   :serial t
   :components

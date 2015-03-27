@@ -5,7 +5,8 @@
 (setq *log* 4 *k* (ash 2 *log*))
 
 (defun count-from-end-with-length-5 (x list length)
-  (declare (type fixnum length) (optimize (speed 3) (compilation-speed 0)))
+  (declare (optimize (speed 3) (debug 0) (safety 0) (compilation-speed 0)))
+  (declare (type fixnum length))
   (let ((count 0))
     (declare (type fixnum count))
     (flet ((process (elem)

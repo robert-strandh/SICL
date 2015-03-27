@@ -1,7 +1,6 @@
 (defun count-from-end-with-length-7 (x list length)
+  (declare (optimize (speed 3) (safety 0) (debug 0) (compilation-speed 0)))
   (declare (type fixnum length))
-  (declare (optimize (speed 3) (safety 0) (debug 0)
-		     (compilation-speed 0)))
   (labels (;; AUX1 is the recursive traversal 
 	   ;; by CDR.
 	   (aux1 (x list length)

@@ -9,7 +9,8 @@
 ;;; definitions are directly related to the environment.
 
 (defsystem :sicl-evaluation-and-compilation
-  :depends-on (:cleavir-internationalization)
+  :depends-on (:cleavir-internationalization
+	       :sicl-environment)
   :serial t
   :components
   ((:file "packages")
