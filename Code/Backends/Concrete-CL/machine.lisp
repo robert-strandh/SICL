@@ -5,8 +5,8 @@
 ;;; Virtual machine organization
 
 ;;; We use a fixed number of registers to pass arguments to functions.
-;;; The same register file is used to pas return values.  The variable
-;;; *number-of-arguments* contains the current number of registers
+;;; The same register file is used to pass return values.  The variable
+;;; *NUMBER-OF-ARGUMENTS* contains the current number of registers
 ;;; that have significant values in them.  When a function returns
 ;;; zero arguments, it nevertheless puts the symbol NIL in register 0,
 ;;; so that callers that need exactly one return value can count on
