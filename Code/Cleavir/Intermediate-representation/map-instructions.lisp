@@ -136,75 +136,82 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function MAP-INSTRUCTIONS-BY-OWNER.
+;;; Function MAP-INSTRUCTIONS-BY/WITH-OWNER.
+;;;
+;;; This function calls FUNCTION with every instruction reachable from
+;;; INITIAL-INSTRUCTION.
+;;;
+;;; Let's define a PARENT relationship between ENTER-INSTRUCTIONs.
+;;; INITIAL-INSTRUCTION has no parent.  Any ENTER-INSTRUCTION (say A)
+;;; other than INITIAL-INSTRUCTION is the CODE of some
+;;; ENCLOSE-INSTRUCTION (say B).  The parent of A is then the owner of
+;;; B.
+;;;
+;;; The things that characterizes MAP-INSTRUCTIONS-BY/WITH-OWNER is
+;;; that it calls FUNCTION with the instructions in a particular order
+;;; that can be characterized as follows: when FUNCTION is called on
+;;; some instruction A, then it has already been called on EVERY
+;;; INSTRUCTION B such that the owner of B is the parent of the owner
+;;; of A.
+;;;
+;;; Why is this order important, one might ask?  Well, it can be used
+;;; to compute ownership of DATA.  Recall that the owner of a datum is
+;;; the MOST SENIOR (in terms of the PARENT relationship) of the
+;;; owners of the instructions that refer to it.  So we can compute
+;;; the owner ship of DATA by traversing the instructions with this
+;;; function, attributing an owner to the data used by an instruction
+;;; only if no owner has previously been attributed.
+;;;
+;;; One might also ask why this function is non-trivial to implement.
+;;; Consider this code: (BLOCK NIL (FUNCALL (LAMBDA () (RETURN
+;;; NIL)))).  This code contains a RETURN-INSTRUCTION with no
+;;; successors (of course) and with an UNWIND-INSTRUCTION as its only
+;;; predecessor.  In other words, the RETURN instruction is not
+;;; reachable from its owner by following only predecessors and
+;;; successors.  The only way to reach it is to go through a child.
 
-(defun map-instructions-by-owner (function initial-instruction)
-  (set-predecessors initial-instruction)
-  (let ((visited-instructions (make-hash-table :test #'eq))
-	(instructions-to-process '()))
-    (flet ((register-if-unvisited (instruction)
-	     (unless (gethash instruction visited-instructions)
-	       (setf (gethash instruction visited-instructions) t)
-	       (push instruction instructions-to-process))))
-      (register-if-unvisited initial-instruction)
-      (flet ((register-relevant-predecessors (instruction)
-	       (loop for predecessor in (predecessors instruction)
-		     unless (typep predecessor 'unwind-instruction)
-		       do (register-if-unvisited predecessor))))
-	(loop until (null instructions-to-process)
-	      do (let ((instruction (pop instructions-to-process)))
-		   (funcall function instruction)
-		   (cond ((typep instruction 'enclose-instruction)
-			  (let ((code (code instruction)))
-			    (if (null instructions-to-process)
-				(setf instructions-to-process
-				      (list (cons code code)))
-				(setf (rest (last instructions-to-process))
-				      (list (cons code code))))
-			    (setf (gethash code visited-instructions) t))
-			  (register-if-unvisited
-			   (first (successors instruction)))
-			  (register-relevant-predecessors instruction))
-			 (t
-			  (loop for successor in (successors instruction)
-				do (register-if-unvisited successor))
-			  (register-relevant-predecessors instruction)))))))))
+(defun map-instructions-by/with-owner (function initial-instruction)
+  (let (;; A key of this hash table is an ENTER-INSTRUCTION.  The
+	;; corresponding value is a list of all the instructions owned
+	;; by that ENTER-INSTRUCTION, including the ENTER-INSTRUCTION
+	;; itself.
+	(owned-instructions (make-hash-table :test #'eq))
+	;; A key of this hash table is an ENTER-INSTRUCTION.  The
+	;; corresponding value is the PARENT of that ENTER-INSTRUCTION
+	;; provided the ENTER-INSTRUCTION has a parent
+	(parents (make-hash-table :test #'eq)))
+    (map-instructions-with-owner
+     (lambda (instruction owner)
+       ;; Add INSTRUCTION to the list of instructions owned by OWNER.
+       (push instruction (gethash owner owned-instructions))
+       (when (typep instruction 'cleavir-ir:enclose-instruction)
+	 ;; The parent of the CODE of INSTRUCTION is the OWNER of
+	 ;; INSTRUCTION.
+	 (setf (gethash (cleavir-ir:code instruction) parents) owner)))
+     initial-instruction)
+    (let (;; This hash table is just a set of all the
+	  ;; ENTER-INSTRUCTIONs that have been traversed
+	  (traversed-owners (make-hash-table :test #'eq)))
+      ;; We do a recursive traversal, but only between parents, so the
+      ;; recursion depth is small.
+      (labels ((traverse (owner)
+		 (unless (gethash owner traversed-owners)
+		   (let ((parent (gethash owner parents)))
+		     (unless (null parent)
+		       (traverse parent)))
+		   (setf (gethash owner traversed-owners) t)
+		   (loop for instruction in (gethash owner owned-instructions)
+			 do (funcall function instruction owner)))))
+	(loop for owner being each hash-key of owned-instructions
+	      do (traverse owner))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function MAP-INSTRUCTIONS-BY/WITH-OWNER.
+;;; Function MAP-INSTRUCTIONS-BY-OWNER.
 
-(defun map-instructions-by/with-owner (function initial-instruction)
-  (set-predecessors initial-instruction)
-  (let ((visited-instructions (make-hash-table :test #'eq))
-	(instructions-to-process '()))
-    (flet ((register-if-unvisited (instruction)
-	     (unless (gethash instruction visited-instructions)
-	       (setf (gethash instruction visited-instructions) t)
-	       (push instruction instructions-to-process))))
-      (register-if-unvisited initial-instruction)
-      (flet ((register-relevant-predecessors (instruction)
-	       (loop for predecessor in (predecessors instruction)
-		     unless (typep predecessor 'unwind-instruction)
-		       do (register-if-unvisited predecessor))))
-	(loop with owner
-	      until (null instructions-to-process)
-	      do (let ((instruction (pop instructions-to-process)))
-		   (when (typep instruction 'enter-instruction)
-		     (setf owner instruction))
-		   (funcall function instruction owner)
-		   (cond ((typep instruction 'enclose-instruction)
-			  (let ((code (code instruction)))
-			    (if (null instructions-to-process)
-				(setf instructions-to-process
-				      (list (cons code code)))
-				(setf (rest (last instructions-to-process))
-				      (list (cons code code))))
-			    (setf (gethash code visited-instructions) t))
-			  (register-if-unvisited
-			   (first (successors instruction)))
-			  (register-relevant-predecessors instruction))
-			 (t
-			  (loop for successor in (successors instruction)
-				do (register-if-unvisited successor))
-			  (register-relevant-predecessors instruction)))))))))
+(defun map-instructions-by-owner (function initial-instruction)
+  (map-instructions-by/with-owner
+   (lambda (instruction owner)
+     (declare (ignore owner))
+     (funcall function instruction))
+   initial-instruction))
