@@ -1,6 +1,7 @@
 ;; divide by something that depends on the length of the list does not work better than dividing by 16
 (defun count-from-end-with-length-6-macro (x list length)
-  (declare (type fixnum length) (optimize (speed 3) (compilation-speed 0)))
+  (declare (optimize (speed 3) (debug 0) (safety 0) (compilation-speed 0)))
+  (declare (type fixnum length))
   (let ((count 0))
     (declare (type fixnum count))
     (flet ((process (elem)

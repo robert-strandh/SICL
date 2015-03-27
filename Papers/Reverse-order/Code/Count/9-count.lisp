@@ -1,7 +1,8 @@
 ;; For Irene's experiments.
 
 (defun count-from-end-with-length-9 (x list length)
-  (declare (type fixnum length) (optimize (speed 3) (compilation-speed 0)))
+  (declare (optimize (speed 3) (debug 0) (safety 0) (compilation-speed 0)))
+  (declare (type fixnum length))
   (labels
 	  ((aux1 (x list length) ;; traversal by CDR.
 		 (declare (type fixnum length))

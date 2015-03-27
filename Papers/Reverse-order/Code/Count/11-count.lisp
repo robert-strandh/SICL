@@ -1,11 +1,11 @@
 ;; For Irene's experiments.
 ;; reverse in an array on stack
-(defun count-from-end-with-length-10 (x list length)
+(defun count-from-end-with-length-11 (x list length)
   (declare (optimize (speed 3) (debug 0) (safety 0) (compilation-speed 0)))
   (declare (type fixnum length))
   (flet ((count-from-array (x list len)
 	   (declare (type fixnum len) (optimize (speed 3) (compilation-speed 0)))
-	   (let ((v (make-array len)))
+	   (let ((v (make-array 4096)))
 	     (declare (dynamic-extent v))
 	     (loop ;; reverse list to array
 		for e in list
@@ -39,5 +39,5 @@
 		   (t                 (divide x rest len 4))))) ; divide by 16
 	(traverse x list length)))))
 
-(defun reverse-count-10 (x list)
-  (count-from-end-with-length-10 x list (length list)))
+(defun reverse-count-11 (x list)
+  (count-from-end-with-length-11 x list (length list)))

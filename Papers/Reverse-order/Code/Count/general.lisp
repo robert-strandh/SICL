@@ -114,6 +114,9 @@
 (defun the-test ()
   (test-versions 0 1 7))
 
+(defun the-test2 ()
+  (test-versions 7 11))
+
 ;; CL-USER> (mouline-truc-versus-machin-one-file "v1-vs-v4" #'reverse-count-1 #'reverse-count-4 1000 1000000 :step 1000 :times 30)
 ;; 1000    0.00000    0.03333
 ;; 2000    0.03333    0.06667
