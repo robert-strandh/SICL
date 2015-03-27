@@ -989,7 +989,7 @@
                                 (intern name package)
                                 (multiple-value-setq (symbol status)
                                  (find-symbol name package)))
-                              (error "symbol does not exists in package")))
+                              (error "symbol does not exists")))
 			(unless (eq status :external)
 			  (error "symbol is not external"))
 			(return-from read-upcase-downcase-preserve-decimal
