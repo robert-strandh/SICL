@@ -660,6 +660,7 @@
 ;;; is one of :upcase, :downcase, and :preserve.
 (defun read-upcase-downcase-preserve-decimal
     (input-stream eof-error-p eof-value recursive-p case-table case-function)
+  (declare (optimize (speed 0) (space 0) (debug 3) (safety 3)))
   (let* ((table *readtable*)
 	 (buffer *buffer*)
 	 (buffer-size (length buffer))
@@ -755,6 +756,14 @@
 			       (setf (schar buffer index) char)
 			       (incf index)
 			       (go perhaps-integer))
+                              (;; or perhaps a package marker
+                               (has-constituent-trait-p table char +package-marker+)
+                               ;; We found a package marker.  Remember its position
+                               ;; and change state to reflect our discovery.
+                               (setf first-package-marker-position index)
+			       (setf (schar buffer index) char)
+			       (incf index)
+                               (go symbol-even-escape-one-package-marker))
 			      (;; It might be a dot
 			       (has-constituent-trait-p table char +dot+)
 			       ;; Save it
@@ -965,7 +974,9 @@
 	   ;; Until we do, we can't do anthing else useful.
 	   (flet ((return-or-error ()
 		    (let ((package (find-package
-				    (subseq buffer 0 first-package-marker-position))))
+				    (if (= 0 first-package-marker-position)
+                                        "KEYWORD"
+                                        (subseq buffer 0 first-package-marker-position)))))
 		      (unless package
 			(error "no package by that name exists"))
 		      (multiple-value-bind (symbol status)
