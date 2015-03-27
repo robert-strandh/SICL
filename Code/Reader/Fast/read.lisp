@@ -660,7 +660,6 @@
 ;;; is one of :upcase, :downcase, and :preserve.
 (defun read-upcase-downcase-preserve-decimal
     (input-stream eof-error-p eof-value recursive-p case-table case-function)
-  (declare (optimize (speed 0) (space 0) (debug 3) (safety 3)))
   (let* ((table *readtable*)
 	 (buffer *buffer*)
 	 (buffer-size (length buffer))
