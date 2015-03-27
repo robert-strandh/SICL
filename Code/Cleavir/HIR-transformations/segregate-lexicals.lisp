@@ -76,31 +76,14 @@
 ;;; value is an EQ hash table mapping an instruction or a datum to its
 ;;; owner.
 (defun compute-ownerships (initial-instruction)
-  (let ((worklist '())
-	(current-owner (if (typep initial-instruction
-				  'cleavir-ir:enter-instruction)
-			   initial-instruction
-			   nil))
-	(*ownerships* (make-hash-table :test #'eq)))
-    (labels
-	((traverse (instruction)
-	   (unless (has-owner-p instruction)
-	     (setf (owner instruction) current-owner)
-	     (loop for datum in (data instruction)
-		   do (unless (has-owner-p datum)
-			(setf (owner datum) current-owner)))
-	     (when (typep instruction 'cleavir-ir:enclose-instruction)
-	       (let ((code (cleavir-ir:code instruction)))
-		 (setf worklist (append worklist (list code)))))
-	     (loop for succ in (cleavir-ir:successors instruction)
-		   do (traverse succ))
-	     (loop for pred in (cleavir-ir:predecessors instruction)
-		   unless (typep pred 'cleavir-ir:unwind-instruction)
-		     do (traverse pred)))))
-      (traverse initial-instruction)
-      (loop until (null worklist)
-	    do (setf current-owner (pop worklist))
-	       (traverse current-owner)))
+  (let ((*ownerships* (make-hash-table :test #'eq)))
+    (cleavir-ir:map-instructions-by/with-owner
+     (lambda (instruction owner)
+       (setf (owner instruction) owner)
+       (loop for datum in (data instruction)
+	     do (unless (has-owner-p datum)
+		  (setf (owner datum) owner))))
+     initial-instruction)
     *ownerships*))
 
 ;;; By SEGREGATING lexical locations, we mean taking each lexical
