@@ -1,6 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-backend-concrete-cl
+  :depends-on (:sicl-extrinsic-environment)
   :serial t
   :components
   ((:file "packages")
