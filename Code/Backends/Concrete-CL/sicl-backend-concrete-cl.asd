@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-exp
+(defsystem #:sicl-backend-concrete-cl
   :serial t
   :components
   ((:file "packages")
