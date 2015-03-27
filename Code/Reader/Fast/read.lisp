@@ -1189,102 +1189,118 @@
 	 perhaps-integer
 	   ;; We have seen the a sequence of digits, possibly preceded by
 	   ;; as sign.  
-	   (setf char (read-char input-stream nil nil t))
-	   ;; Start by testing for end of file.
-	   ;; Until we do, we can't do anthing else useful.
-	   (when (not char)
-	     ;; Found end of file.
-	     (return-from read-upcase-downcase-preserve-decimal
-	       (* sign numerator)))
-	   (when (and (< (setf code (char-code char)) 128)
-		      (= (sbit decimal-digits code) 1))
-	     (push-char char)
-	     (setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
-	     (go perhaps-integer))
-	   (if (eq (syntax-type table char) 'constituent)
-	       (cond ((has-constituent-trait-p table char +ratio-marker+)
-		      (push-char char)
-		      (setf char (read-char input-stream nil nil t))
-		      (cond ((null char)
-			     (return-from read-upcase-downcase-preserve-decimal
-			       (intern (subseq buffer 0 index))))
-			    ((and (< (setf code (char-code char)) 128)
-				  (= (sbit decimal-digits code) 1))
-			     (push-char char)
-			     (setf denominator (- code #.(char-code #\0)))
-			     (go perhaps-ratio))
-			    (t
-			     (push-char (funcall case-function char))
-			     (go symbol-even-escape-no-package-marker))))
-		     ((has-constituent-trait-p
-		       table char +decimal-point+)
-		      (push-char char)
-		      ;; We could have a decimal integer, or we could
-		      ;; have a floating-point number.  Check first for 
-		      ;; integer. 
-		      (setf char (read-char input-stream nil nil t))
-		      ;; Start by testing for end of file.
-		      ;; Until we do, we can't do anthing else useful.
-		      (when (not char)
-			;; Found end of file.
-			(return-from read-upcase-downcase-preserve-decimal
-			  (* sign numerator)))
-		      (when (and (< (setf code (char-code char)) 128)
-				 (= (sbit decimal-digits code) 1))
-			(push-char char)
-			(setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
-			(setf scale -1)
-			(go perhaps-float-with-decimal-point))
-		      (ecase (syntax-type table char)
-			(whitespace
-			   (return-from read-upcase-downcase-preserve-decimal
-			     (* sign numerator)))
-			((constituent non-terminating-macro-char)
-			   (push-char (funcall case-function char))
-			   (go symbol-even-escape-no-package-marker))
-			(single-escape
-			   (setf char (read-char input-stream nil nil t))
-			   (if (null char)
-			       (error 'reader-error :stream input-stream)
-			       (progn (push-char (funcall case-function char))
-				      (go symbol-odd-escape-two-package-markers))))
-			(multiple-escape
-			   (go symbol-even-escape-two-package-markers))
-			(terminating-macro-char
-			   (unread-char char input-stream)
-			   (return-from read-upcase-downcase-preserve-decimal
-			     (/ (* sign numerator) denominator)))))
-		     ((has-constituent-trait-p
-		       table char +float-exponent-marker+)
-		      (push-char (funcall case-function char))
-		      (setf float-prototype float-prototype)
-		      (go pre-perhaps-float-with-exponent-marker))
-		     ((has-constituent-trait-p
-		       table char +short-float-exponent-marker+)
-		      (push-char (funcall case-function char))
-		      (setf float-prototype 1s0)
-		      (go pre-perhaps-float-with-exponent-marker))
-		     ((has-constituent-trait-p
-		       table char +single-float-exponent-marker+)
-		      (push-char (funcall case-function char))
-		      (setf float-prototype 1f0)
-		      (go pre-perhaps-float-with-exponent-marker))
-		     ((has-constituent-trait-p
-		       table char +double-float-exponent-marker+)
-		      (push-char (funcall case-function char))
-		      (setf float-prototype 1d0)
-		      (go pre-perhaps-float-with-exponent-marker))
-		     ((has-constituent-trait-p
-		       table char +long-float-exponent-marker+)
-		      (push-char (funcall case-function char))
-		      (setf float-prototype 1l0)
-		      (go pre-perhaps-float-with-exponent-marker))
-		     (t
-		      (push-char (funcall case-function char))
-		      (go symbol-even-escape-no-package-marker)))
-	       (progn (unread-char char input-stream)
-		      (return-from read-upcase-downcase-preserve-decimal
-			numerator)))
+	   (flet ((buffer-has-decimal-digit ()
+                    (or (> numerator 0)
+                        (some (lambda (c)
+                                (and (< (setf c (char-code c)) 128)
+                                     (= (sbit decimal-digits c) 1)))
+                              (subseq buffer 0 index)))))
+             (setf char (read-char input-stream nil nil t))
+             ;; Start by testing for end of file.
+             ;; Until we do, we can't do anthing else useful.
+             (when (not char)
+               ;; Found end of file.
+               (return-from read-upcase-downcase-preserve-decimal
+                 (if (buffer-has-decimal-digit)
+                     (* sign numerator)
+                     (intern (subseq buffer 0 index)))))
+            (when (and (< (setf code (char-code char)) 128)
+                       (= (sbit decimal-digits code) 1))
+              (push-char char)
+              (setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
+              (go perhaps-integer))
+            (if (eq (syntax-type table char) 'constituent)
+                (cond ((has-constituent-trait-p table char +ratio-marker+)
+                       (push-char char)
+                       (setf char (read-char input-stream nil nil t))
+                       (cond ((null char)
+                              (return-from read-upcase-downcase-preserve-decimal
+                                (intern (subseq buffer 0 index))))
+                             ((and (< (setf code (char-code char)) 128)
+                                   (= (sbit decimal-digits code) 1))
+                              (push-char char)
+                              (setf denominator (- code #.(char-code #\0)))
+                              (go perhaps-ratio))
+                             (t
+                              (push-char (funcall case-function char))
+                              (go symbol-even-escape-no-package-marker))))
+                      ((has-constituent-trait-p
+                        table char +decimal-point+)
+                       (push-char char)
+                       ;; We could have a decimal integer, or we could
+                       ;; have a floating-point number.  Check first for 
+                       ;; integer. 
+                       (setf char (read-char input-stream nil nil t))
+                       ;; Start by testing for end of file.
+                       ;; Until we do, we can't do anthing else useful.
+                       (when (not char)
+                         ;; Found end of file.
+                         (return-from read-upcase-downcase-preserve-decimal
+                           (if (buffer-has-decimal-digit)
+                               (* sign numerator)
+                               (intern (subseq buffer 0 index)))))
+                       (when (and (< (setf code (char-code char)) 128)
+                                  (= (sbit decimal-digits code) 1))
+                         (push-char char)
+                         (setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
+                         (setf scale -1)
+                         (go perhaps-float-with-decimal-point))
+                       (ecase (syntax-type table char)
+                         (whitespace
+                          (return-from read-upcase-downcase-preserve-decimal
+                            (if (buffer-has-decimal-digit)
+                                (* sign numerator)
+                                (intern (subseq buffer 0 index)))))
+                         ((constituent non-terminating-macro-char)
+                          (push-char (funcall case-function char))
+                          (go symbol-even-escape-no-package-marker))
+                         (single-escape
+                          (setf char (read-char input-stream nil nil t))
+                          (if (null char)
+                              (error 'reader-error :stream input-stream)
+                              (progn (push-char (funcall case-function char))
+                                     (go symbol-odd-escape-two-package-markers))))
+                         (multiple-escape
+                          (go symbol-even-escape-two-package-markers))
+                         (terminating-macro-char
+                          (unread-char char input-stream)
+                          (return-from read-upcase-downcase-preserve-decimal
+                            (if (buffer-has-decimal-digit)
+                                (/ (* sign numerator) denominator)
+                                (intern (subseq buffer 0 index)))))))
+                      ((has-constituent-trait-p
+                        table char +float-exponent-marker+)
+                       (push-char (funcall case-function char))
+                       (setf float-prototype float-prototype)
+                       (go pre-perhaps-float-with-exponent-marker))
+                      ((has-constituent-trait-p
+                        table char +short-float-exponent-marker+)
+                       (push-char (funcall case-function char))
+                       (setf float-prototype 1s0)
+                       (go pre-perhaps-float-with-exponent-marker))
+                      ((has-constituent-trait-p
+                        table char +single-float-exponent-marker+)
+                       (push-char (funcall case-function char))
+                       (setf float-prototype 1f0)
+                       (go pre-perhaps-float-with-exponent-marker))
+                      ((has-constituent-trait-p
+                        table char +double-float-exponent-marker+)
+                       (push-char (funcall case-function char))
+                       (setf float-prototype 1d0)
+                       (go pre-perhaps-float-with-exponent-marker))
+                      ((has-constituent-trait-p
+                        table char +long-float-exponent-marker+)
+                       (push-char (funcall case-function char))
+                       (setf float-prototype 1l0)
+                       (go pre-perhaps-float-with-exponent-marker))
+                      (t
+                       (push-char (funcall case-function char))
+                       (go symbol-even-escape-no-package-marker)))
+                (progn (unread-char char input-stream)
+                       (return-from read-upcase-downcase-preserve-decimal
+                         (if (buffer-has-decimal-digit)
+                             (* sign numerator)
+                             (intern (subseq buffer 0 index)))))))
 	   (error "can't come here either")
 	 perhaps-ratio
 	   ;; We have seen an integer, a slash, and at leat one more digit. 
