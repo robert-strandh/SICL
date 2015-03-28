@@ -98,6 +98,8 @@
   (load-file "../../Data-and-control-flow/prog1-prog2-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the macros PROG and PROG*.
   (load-file "../../Data-and-control-flow/prog-progstar-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro PSETF.
+  (load-file "../../Data-and-control-flow/psetf-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro PUSHNEW.
   (load-file "../../Cons/pushnew-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DOTIMES.
