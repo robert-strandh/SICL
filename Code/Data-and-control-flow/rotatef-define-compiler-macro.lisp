@@ -1,0 +1,7 @@
+(cl:in-package #:sicl-data-and-control-flow)
+
+(define-compiler-macro rotateff (&whole form)
+  (if (not (cleavir-code-utilities:proper-list-p form))
+      (error 'cleavir-code-utilities:form-must-be-proper-list
+	     :key form)
+      form))
