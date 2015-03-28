@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(defmacro rrotatef (&environment environment &rest places)
+(defmacro rotatef (&environment environment &rest places)
   (let* ((setf-expansions
 	   ;; Collect the SETF-EXPANSION of each place as a list of the
 	   ;; values returned by GET-SETF-EXPANSION. 
