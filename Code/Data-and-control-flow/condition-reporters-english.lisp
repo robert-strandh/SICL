@@ -19,3 +19,13 @@
            in the following form:~@
            ~s"
           (form condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition odd-number-of-arguments-to-psetq)
+     stream
+     (langauge cleavir-i18n:english))
+  (format stream 
+	  "An odd number of arguments was given to PSETQ~@
+           in the following form:~@
+           ~s"
+          (form condition)))
