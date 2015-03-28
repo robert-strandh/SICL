@@ -975,14 +975,21 @@
 		    (let ((package (find-package
 				    (if (= 0 first-package-marker-position)
                                         "KEYWORD"
-                                        (subseq buffer 0 first-package-marker-position)))))
+                                        (subseq buffer 0 first-package-marker-position))))
+                          (name (subseq buffer
+                                        (1+ first-package-marker-position)
+                                        index)))
 		      (unless package
 			(error "no package by that name exists"))
 		      (multiple-value-bind (symbol status)
-			  (find-symbol (subseq buffer
-					       (1+ first-package-marker-position)
-					       index)
-				       package)
+			  (find-symbol name package)
+                        (unless symbol
+                          (if (string= (package-name package) "KEYWORD")
+                              (progn
+                                (intern name package)
+                                (multiple-value-setq (symbol status)
+                                 (find-symbol name package)))
+                              (error "symbol does not exists")))
 			(unless (eq status :external)
 			  (error "symbol is not external"))
 			(return-from read-upcase-downcase-preserve-decimal
