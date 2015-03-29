@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :x86-assembler
+(defsystem :x86-assembler
   :depends-on (:split-sequence)
   :components
   ((:file "packages")
