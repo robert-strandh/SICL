@@ -11,3 +11,7 @@
 (define-condition odd-number-of-arguments-to-psetq
     (program-error cleavir-i18n:condition)
   ((%form :initarg :form :reader form)))
+
+(define-condition too-few-arguments-to-shiftf
+    (program-error cleavir-i18n:condition)
+  ((%form :initarg :form :reader form)))
