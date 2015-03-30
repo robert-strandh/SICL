@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-stream
+(defsystem :sicl-stream-support
   :depends-on (:cleavir-code-utilities)
   :serial t
   :components
