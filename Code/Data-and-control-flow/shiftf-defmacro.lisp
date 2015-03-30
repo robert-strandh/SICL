@@ -37,7 +37,7 @@
 ;;;                     ...
 ;;;                     <storing-formn>))) ...))))
 
-(defmacro sshiftf (&environment environment &rest arguments)
+(defmacro shiftf (&environment environment &rest arguments)
   (let* ((places (butlast arguments))
 	 (new-value-form (first (last arguments)))
 	 (setf-expansions
