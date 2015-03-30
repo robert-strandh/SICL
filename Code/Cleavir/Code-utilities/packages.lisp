@@ -33,7 +33,7 @@
 	   #:parse-define-modify-macro-lambda-list
 	   #:parse-define-method-combination-arguments-lambda-list
 	   #:lambda-list-variables
-	   #:destruture-lambda-list
+	   #:destructure-lambda-list
 	   #:match-lambda-list
 	   #:parse-macro
 	   #:parse-deftype
