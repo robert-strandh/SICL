@@ -28,7 +28,10 @@ $(NAME).pdf: $(TEXFILES) $(PSTEX_T) $(EPS) $(CODE) $(VERBATIM) Makefile
 .fig.eps:
 	fig2dev -Leps -m 0.75 $< > $@
 
-.PHONY: clean spotless install
+.PHONY: clean spotless install init
+
+init:
+	ln -s ../v0-v1-v7.epd
 clean:
 	rm -f *.aux *.log *~ *.bak \#*\# $(NAME).aux $(NAME).log $(NAME).out \
 	$(NAME).nav $(NAME).snm $(NAME).toc 
