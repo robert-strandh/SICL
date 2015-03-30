@@ -2,4 +2,10 @@
 
 (defpackage #:sicl-stream
   (:use #:common-lisp)
-  (:export))
+  (:shadow #:finish-output
+	   #:force-output
+	   #:clear-output)
+  (:export
+   #:finish-output
+   #:force-output
+   #:clear-output))
