@@ -108,6 +108,8 @@
   ;; DESTRUCTURING-BIND.
   (load-file "../../Data-and-control-flow/destructuring-bind-defmacro.lisp"
 	     environment)
+  ;; Load a file containing the definition of the macro SHIFTF.
+  (load-file "../../Data-and-control-flow/shiftf-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro PUSHNEW.
   (load-file "../../Cons/pushnew-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DOTIMES.
