@@ -71,7 +71,13 @@ multiple list traversals required by the basic technique.
 
 The following example illustrates this technique by using the simple
 recursive traversal if there are fewer than $10000$ elements in the
-list.  If there are more elements, then it divides the list in two,
+list.%
+\footnote{The number $10000$ was chosen to be a significant part of a
+  typical per-thread default stack while still leaving room for stack
+  space required by callers and callees of this function.  In a real
+  production implementation, the number would be chosen based on the
+  remaining space left on the stack when the function is called.}
+If there are more elements, then it divides the list in two,
 just like the basic technique shown in \refSec{sec-basic-technique}.
 
 {\small
@@ -82,17 +88,16 @@ just like the basic technique shown in \refSec{sec-basic-technique}.
                  0
                  (+ (recursive x (cdr list) (1- n))
                     (if (eq x (car list)) 1 0))))
-	   (aux (x list n)
-	     (if (<= n 10000)
-		 (recursive x list n)
-		 (let* ((n/2 (ash n -1))
-			(half (nthcdr n/2 list)))
-		   (+
-		    (aux x half (- n n/2))
-		    (aux x list n/2))))))
+           (aux (x list n)
+             (if (<= n 10000)
+                 (recursive x list n)
+                 (let* ((n/2 (ash n -1))
+                        (half (nthcdr n/2 list)))
+                   (+
+                    (aux x half (- n n/2))
+                    (aux x list n/2))))))
     (aux x list (length list))))
-\end{verbatim}
-}
+\end{verbatim}}
 
 With this improvement, the number of \texttt{cdr} operations required
 can now be expressed as ap\-proximately 
