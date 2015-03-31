@@ -50,7 +50,13 @@ by the memory allocator and the garbage collector.
 
 Another simple technique would be to traverse the list
 \emph{recursively} and testing the elements during the
-\emph{backtracking} phase of the recursion.  Again, $O(n)$ extra space
+\emph{backtracking} phase of the recursion.%
+\footnote{Despite considerable research, we have not been able to find
+  any original reference to this technique, and it seems to trivial
+  for standard text books to even discuss.  We must conclude that this
+  technique must be so obvious that it was probably discovered
+  independenlty by several people.}
+Again, $O(n)$ extra space
 is required, even though this time it is \emph{stack space} rather
 than heap space, so that the memory allocator and the garbage
 collector are not solicited, at least in most implementations.  Worse,
