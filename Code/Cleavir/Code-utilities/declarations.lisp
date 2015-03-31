@@ -96,7 +96,7 @@
 				     (eq (car item) 'declare)))
 			      body)))
     (if (null pos)
-	(values body '())
+	(values '() body)
 	(values (subseq body 0 pos) (subseq body pos)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
