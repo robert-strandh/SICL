@@ -96,7 +96,15 @@ It should be noted that the difficulty of processing list elements in
 reverse order is due to the way \commonlisp{} practically imposes the
 representations of such lists.  Other representations are, of course,
 possible.  For instance, Hughes \cite{Hughes:1986} suggested a
-representation of lists as first-class functions.
+representation of lists as first-class functions.  Similarly, in his
+talk on parallelism in 2009%
+\footnote{http://groups.csail.mit.edu/mac/users/gjs/\\
+6.945/readings/MITApril2009Steele.pdf}
+Guy Steele proposed a representation of lists for parallel processing,
+based on using the four operations \texttt{item}, \texttt{split},
+\texttt{list}, and \texttt{conc}.  Clearly, such alternative
+representations could be devised that facilitate processing elements
+in reverse order.
 
 In this paper, we use the international convention \cite{ISO80000} for
 writing logarithms.  Hence, we write $\mathsf{lb}\thinspace n$ for the
