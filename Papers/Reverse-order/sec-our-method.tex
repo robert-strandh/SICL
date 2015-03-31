@@ -291,3 +291,16 @@ If we put this technique in the perspective of the analyses in
 \refSec{sec-analyses}, we can also see that the number of \texttt{cdr}
 operations remains quite modest, even for lists with a very large
 number of elements.
+
+There are several variations on this implementation-specific
+technique.  Some implementations might allocate a vector or a list
+declared to be \texttt{dynamic-extent} on the stack, thus giving
+essentially the same advantage as the version we implemented in C.
+However, such a technique would still be implementation specific,
+given that it is permitted for the compiler to ignore
+\texttt{dynamic-extent} declarations.  In the case of SBCL, using such
+a declaration, we were able to obtain performance almost as good as
+our C version.  However, as it turns out, SBCL only allocates a vector
+on the stack if it also has a size that is known statically, thereby
+making this technique impossible to apply when the size depends on
+available stack space.
