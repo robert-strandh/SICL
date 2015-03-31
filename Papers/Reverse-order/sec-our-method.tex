@@ -117,8 +117,9 @@ of the resulting code.
 \subsection{Analyses}
 \label{sec-analyses}
 
-In this section we derive approximate formulas for the performance of
-our technique.  The basic measure we are interested in is the number
+In this section we give approximate formulas for the performance of
+our technique.
+The basic measure we are interested in is the number
 of \texttt{cdr} operations that must be performed as a function of the
 number of elements of the list.  We will denote the number of elements
 of the list by $N$ and the number of \texttt{cdr} operations required
@@ -145,9 +146,9 @@ for $N>1$ we obtain:
 
 \[ f(N) = \frac{N}{2} + 2f(\frac{N}{2}) \]
 
-The details of the approximated resolution of this recursive equation
+The details of the approximate solution of this recursive equation
 is given in the appendix.
-This resolution yields
+This solution yields
 
 \[ f(N) = \frac{N}{2}\mathsf{lb}~N + Nf(1) = \frac{N}{2}\mathsf{lb}~N\]
 
@@ -175,7 +176,7 @@ recursion relation now looks as follows:
                     \frac{N}{2} + 2f(\frac{N}{2}) &\mbox{otherwise}
                   \end{array} \right. \]
 
-The resolution of this equation is given in the appendix (Part B).
+The solution of this equation is given in the appendix (Part B).
 It yields:
 
 \[ f(N) \approx N(1 + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
@@ -203,7 +204,7 @@ $M$ equal parts, and that $M$ also is a power of $2$ so that $M =
                     N - \frac{N}{M} + Mf(\frac{N}{M}) &\mbox{otherwise}
                   \end{array} \right. \]
 
-The resolution of this equation is given in the appendix (Part C).
+The solution of this equation is given in the appendix (Part C).
 It yields:
 
 \[ F(N) \approx N(1 + \frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
