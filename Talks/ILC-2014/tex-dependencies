@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 #set -x
 TEXFILES=$(./strip-dependence inputtex $1)
 echo -n $TEXFILES
 for i in $TEXFILES
 do
-    echo -n $(./tex-dependencies $i)
+    echo -n " " $(./tex-dependencies $i)
 done
 echo

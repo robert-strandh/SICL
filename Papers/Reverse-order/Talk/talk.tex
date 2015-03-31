@@ -13,6 +13,7 @@
 %\usepackage[all]{xy}
 \usepackage{listings}
 \usepackage{filecontents}
+\usepackage{graphicx}
 
 \lstset{
   language=Lisp,
@@ -91,9 +92,29 @@ LaBRI, University of Bordeaux
 \hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
 }
 
-\frame{
+\frame[containsverbatim]{
 \frametitle{Objectives and Framework}
 
+\begin{verbatim}
+count item sequence &key from-end start end key test test-not => n
+\end{verbatim}
+
+
+\begin{quotation}
+  The from-end has no direct effect on the result.
+  However, if from-end is true, the elements of sequence
+  will be supplied as arguments to the test, test-not,
+  and key in reverse order, which may change the side-effects,
+  if any, of those functions.
+\end{quotation}
+  
+}
+
+\frame{
+  \frametitle{Comparison of the behavior of the three versions}
+  \begin{center}
+    \includegraphics{v0-v1-v7.eps}
+  \end{center}
 }
 
 \frame{
