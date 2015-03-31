@@ -92,6 +92,12 @@ case for our technique, because the execution time will then be
 dominated by the overhead of traversing the list, as opposed to by
 executing the test function.
 
+It should be noted that the difficulty of processing list elements in
+reverse order is due to the way \commonlisp{} practically imposes the
+representations of such lists.  Other representations are, of course,
+possible.  For instance, Hughes \cite{Hughes:1986} suggested a
+representation of lists as first-class functions.
+
 In this paper, we use the international convention \cite{ISO80000} for
 writing logarithms.  Hence, we write $\mathsf{lb}\thinspace n$ for the
 logarithm in base~$2$.  We use $\mathsf{log}$ only when the base is
