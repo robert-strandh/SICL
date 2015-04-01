@@ -14,11 +14,14 @@
 	  :qualifiers ',qualifiers
 	  :specializers ,(canonicalize-specializers specializers)
 	  :documentation ,documentation
-	  :function ,(make-method-lambda
-		      ;; FIXME: do this better.
-		      (class-prototype (find-class 'standard-generic-function))
-		      (class-prototype (find-class 'standard-method))
-		      `(lambda ,lambda-list
-			 ,@declarations
-			 ,@forms)
-		      nil))))))
+	  :function
+	  ,(make-method-lambda
+	    ;; FIXME: do this better.
+	    (class-prototype
+	     (sicl-environment:find-class 'standard-generic-function ,env))
+	    (class-prototype
+	     (sicl-environment:find-class 'standard-method ,env))
+	    `(lambda ,lambda-list
+	       ,@declarations
+	       ,@forms)
+	    nil))))))
