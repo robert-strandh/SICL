@@ -60,7 +60,7 @@ reasonable length such as a million elements, the execution time is a
 factor $6$ slower than for the best case.
 
 The remainder of this section is dedicated to ways of improving on the
-worst-case performance of the basic technique.
+performance of the basic technique.
 
 \subsection{Using more stack space}
 \label{sec-more-stack}
@@ -183,7 +183,7 @@ It yields:
 \[ f(N) \approx N(1 + \frac{1}{2}\mathsf{lb}~\frac{N}{K})\]
 
 With the best portable version of our technique and a typical stack
-being able to handle $K = 2^{14}$ we are now looking at a worst-case
+being able to handle $K = 2^{14}$ we are now looking at a 
 performance for $N = 2^{24}$ of $F(N) \approx 6N$.  Comparing this
 result to the technique of reversing the list, it is fair to say that
 the overhead of allocating and subsequently garbage-collecting a
@@ -205,7 +205,7 @@ $M$ equal parts, and that $M$ also is a power of $2$ so that $M =
                     N - \frac{N}{M} + Mf(\frac{N}{M}) &\mbox{otherwise}
                   \end{array} \right. \]
 
-The solution of this equation is given in the appendix (Part C).
+The resolution of this equation is given in the appendix (Part C).
 It yields:
 
 \[ F(N) \approx N(1 + \frac{\mathsf{lb}~N}{\mathsf{lb}~M}) \]
