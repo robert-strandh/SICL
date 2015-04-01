@@ -6,4 +6,5 @@
   :serial t
   :components
   ((:file "ensure-generic-function-using-class-support")
+   (:file "defmethod-support")
    (:file "ensure-method")))
