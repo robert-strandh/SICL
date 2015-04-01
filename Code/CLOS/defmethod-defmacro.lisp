@@ -9,6 +9,7 @@
 	       (ensure-generic-function ',function-name :environment ,env)))
 	 (ensure-method
 	  ,generic-function-var
+	  ,env
 	  :lambda-list ',lambda-list
 	  :qualifiers ',qualifiers
 	  :specializers ,(canonicalize-specializers specializers)
