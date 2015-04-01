@@ -101,7 +101,7 @@
 	       :sicl-loop-support
 	       :sicl-arithmetic
 	       :sicl-cons-support
-	       :sicl-clos-package
+	       :sicl-clos-support
 	       :cleavir-generate-ast
 	       :cleavir-ast-transformations
 	       :cleavir-ast-to-hir
