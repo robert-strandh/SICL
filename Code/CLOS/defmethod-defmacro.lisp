@@ -18,9 +18,9 @@
 	  ,(make-method-lambda
 	    ;; FIXME: do this better.
 	    (class-prototype
-	     (sicl-environment:find-class 'standard-generic-function ,env))
+	     (sicl-environment:find-class 'standard-generic-function env))
 	    (class-prototype
-	     (sicl-environment:find-class 'standard-method ,env))
+	     (sicl-environment:find-class 'standard-method env))
 	    `(lambda ,lambda-list
 	       ,@declarations
 	       ,@forms)
