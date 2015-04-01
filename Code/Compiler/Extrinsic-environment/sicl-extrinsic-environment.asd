@@ -113,7 +113,6 @@
 	       :sicl-data-and-control-flow
 	       :sicl-conditionals-support
 	       :sicl-iteration-support
-	       :sicl-stream
 	       :sicl-reader-simple)
   :serial t
   :components
