@@ -125,8 +125,5 @@
   (load-file "../../CLOS/with-slots-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro WITH-ACCESSORS.
   (load-file "../../CLOS/with-accessors-defmacro.lisp" environment)
-  ;; Import host definition of CLASS-PROTOTYPE.
-  (setf (sicl-env:fdefinition 'sicl-clos::class-prototype environment)
-	#'closer-mop:class-prototype)
   ;; Load a file containing the definition of the macro DEFMETHOD
   (load-file "../../CLOS/defmethod-defmacro.lisp" environment))
