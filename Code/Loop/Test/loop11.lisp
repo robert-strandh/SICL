@@ -53,9 +53,9 @@
 ;;; a variable clause, and no main clause can precede a variable
 ;;; clause.
 ;;;
-;; (deftest loop.11.8
-;;  (loop repeat 3 for i in '(a b c d e) collect i)
-;;  (a b c))
+;;; (deftest loop.11.8
+;;;  (loop repeat 3 for i in '(a b c d e) collect i)
+;;;  (a b c))
 
 ;; Enough implementors have complained about this test that
 ;; I'm removing it.  The standard is self-contradictory
