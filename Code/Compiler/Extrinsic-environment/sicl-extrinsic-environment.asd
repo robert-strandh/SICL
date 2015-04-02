@@ -98,6 +98,7 @@
 
 (defsystem :sicl-extrinsic-environment
   :depends-on (:sicl-simple-environment
+	       :sicl-environment
 	       :sicl-loop-support
 	       :sicl-arithmetic
 	       :sicl-cons-support
