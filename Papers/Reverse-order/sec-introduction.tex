@@ -43,10 +43,11 @@ One such technique would be to start by reversing the list%
   influence the semantics of other functions, including perhaps the
   test function or the view of the list by other threads.}  and
 processing the elements from the beginning in the reversed list.  This
-technique is used by several implementations, including \sbcl{} and
-\ccl{}.  A major disadvantage of this technique is that it requires
-$O(n)$ additional heap space, and that it requires additional
-execution time by the memory allocator and the garbage collector.
+technique is used by several implementations, including \sbcl{},
+\ccl{}, and \lispworks{}.  A major disadvantage of this technique is
+that it requires $O(n)$ additional heap space, and that it requires
+additional execution time by the memory allocator and the garbage
+collector.
 
 Another simple technique would be to traverse the list
 \emph{recursively} and testing the elements during the
