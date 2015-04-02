@@ -66,9 +66,18 @@ the system are unimportant; we are only interested in whether
 \texttt{v7} compares favorably to the other versions on most systems.
 Furthermore, for some implementations, we had to change the
 \texttt{optimize} settings and some other parameters in order to get
-our code to work.  For that reason, it is not possible to compare the
-performance on different implementations in \refFig{f-systems}, even
-when the processor and the clock frequency are the same.
+our code to work.%
+\footnote{In particular, \lispworks{} has a much smaller default stack
+  than for instance \sbcl{} (16k words, compared to 250k words)
+  resulting in stack overflow of our benchmark with default
+  parameters.  For that reason, we ran the \lispworks{} benchmark with
+  a smaller stack and with a higher value of \texttt{safety}.  The
+  combination of these factors is the likely explanation to the
+  absence of performance improvement for \lispworks{}.  However, we
+  are told that on 32-bit \lispworks{} our technique gives a factor
+  $10$ improvement.}  For that reason, it is not possible to compare
+the performance on different implementations in \refFig{f-systems},
+even when the processor and the clock frequency are the same.
 
 \begin{figure*}[htb]
 \centering
