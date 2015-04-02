@@ -274,7 +274,7 @@
          #'symbol<))
   (a b c))
 
-;; ;;; Error tests
+;;; Error tests
 
 (deftest loop.6.error.1
   (signals-error

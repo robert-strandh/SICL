@@ -138,8 +138,8 @@
   (a c e g)
   1 2 2)
 
-;; ;;; Test that explicit calls to macroexpand in subforms
-;; ;;; are done in the correct environment
+;;; Test that explicit calls to macroexpand in subforms
+;;; are done in the correct environment
 
 ;; (deftest loop.2.24
 ;;   (macrolet

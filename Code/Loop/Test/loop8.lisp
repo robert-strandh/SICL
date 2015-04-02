@@ -82,7 +82,7 @@
   (loop with nil = nil return nil)
   nil)
 
-;; ;;; The NIL block of a loop encloses the entire loop.
+;;; The NIL block of a loop encloses the entire loop.
 
 (deftest loop.8.18
   (loop with nil = (return t) return nil)

@@ -203,10 +203,10 @@
    (loop as x across (expand-in-current-env (%m #*00110110)) collect x))
   (0 0 1 1 0 1 1 0))
 
-;; ;;; FIXME
-;; ;;; Add tests for other specialized array types (integer types, floats, complex)
+;;; FIXME
+;;; Add tests for other specialized array types (integer types, floats, complex)
 
-;; ;;; Error cases
+;;; Error cases
 
 ;; (deftest loop.5.error.1
 ;;   (signals-error

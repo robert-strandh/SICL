@@ -36,7 +36,7 @@
         collect x)
   (a b c d e))
 
-;; ;;; Error cases
+;;; Error cases
 
 ;; (deftest loop.4.6
 ;;   (signals-error
