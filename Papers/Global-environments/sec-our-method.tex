@@ -8,6 +8,28 @@ Mainly, the protocol contains versions of \commonlisp{} environment
 functions such as \texttt{fboundp}, \texttt{find-class}, etc. that
 take an additional required \texttt{environment} argument.
 
+For a simple example, consider the \sicl{} implementation of the
+standard \commonlisp{} function \texttt{fboundp}:
+
+{\small\begin{verbatim}
+(defun fboundp (name)
+  (sicl-genv:fboundp
+    name
+    (load-time-value
+      (symbol-value 'sicl-genv:+global-environment+))))
+\end{verbatim}}
+
+In this example \texttt{sicl-genv} is the nickname for the package
+named \texttt{sicl-global-environment} which contains the symbols of
+the protocol defined in this paper.  In each global environment, the
+constant variable \texttt{+global-environment+} in that package holds
+the value of the environment itself.  When the definition in the
+example above is \emph{loaded}, either as source or from a previously
+compiled file, the value of the \texttt{load-time-value} form will
+therefore be the global environment in which the definition is loaded,
+thereby permanently \emph{linking} this definition to that global
+environment.
+
 In addition to these functions, the protocol contains a set of
 functions for accessing \emph{cells} that in most implementations
 would be stored elsewhere.  Thus, a binding of a function name to a
