@@ -45,9 +45,9 @@
 (defmacro defconstant (name initial-value &optional documentation)
   (declare (ignore documentation))
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf (sicl-env:constant-variable
+     (setf (sicl-genv:constant-variable
 	    ',name
-	    sicl-env:*global-environment*)
+	    sicl-genv:*global-environment*)
 	   ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -68,25 +68,25 @@
   (if initial-value-p
       `(progn
 	 (eval-when (:compile-toplevel)
-	   (setf (sicl-env:special-variable
+	   (setf (sicl-genv:special-variable
 		  ',name
-		  sicl-env:*global-environment*
+		  sicl-genv:*global-environment*
 		  nil)
 		 nil)
 	   ',name)
 	 (eval-when (:load-toplevel :execute)
-	   (unless (sicl-env:boundp ',name
-				    sicl-env:*global-environment*)
-	     (setf (sicl-env:special-variable
+	   (unless (sicl-genv:boundp ',name
+				    sicl-genv:*global-environment*)
+	     (setf (sicl-genv:special-variable
 		    ',name
-		    sicl-env:*global-environment*
+		    sicl-genv:*global-environment*
 		    t)
 		   ,initial-value))
 	   ',name))
       `(eval-when (:compile-toplevel :load-toplevel :execute)
-	 (setf (sicl-env:special-variable
+	 (setf (sicl-genv:special-variable
 		',name
-		sicl-env:*global-environment*
+		sicl-genv:*global-environment*
 		nil)
 	       nil)
 	 ',name)))
@@ -108,15 +108,15 @@
   (declare (ignore documentation))
   `(progn
      (eval-when (:compile-toplevel)
-       (setf (sicl-env:special-variable
+       (setf (sicl-genv:special-variable
 	      ',name
-	      sicl-env:*global-environment*
+	      sicl-genv:*global-environment*
 	      nil)
 	     nil))
      (eval-when (:load-toplevel :execute)
-       (setf (sicl-env:special-variable
+       (setf (sicl-genv:special-variable
 	      ',name
-	      sicl-env:*global-environment*
+	      sicl-genv:*global-environment*
 	      t)
 	     ,initial-value)
        ',name)))
@@ -127,9 +127,9 @@
 
 (defmacro deftype (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf (sicl-env:type-expander
+     (setf (sicl-genv:type-expander
 	    ',name
-	    sicl-env:*global-environment*)
+	    sicl-genv:*global-environment*)
 	   (function ,(cleavir-code-utilities:parse-deftype 
 		       name
 		       lambda-list
@@ -141,9 +141,9 @@
 
 (defmacro define-compiler-macro (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (setf (sicl-env:compiler-macro-function
+     (setf (sicl-genv:compiler-macro-function
 	    ',name
-	    sicl-env:*global-environment*)
+	    sicl-genv:*global-environment*)
 	   (function ,(cleavir-code-utilities:parse-macro
 		       name
 		       lambda-list
