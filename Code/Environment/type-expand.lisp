@@ -1,24 +1,5 @@
 (cl:in-package #:sicl-global-environment)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Type expansion.
-
-(defun type-function (symbol)
-  (let ((entry (find symbol (types *global-environment*)
-		     :key #'name :test #'eq)))
-    (if (null entry)
-	nil
-	(definition entry))))
-
-;;; FIXME: check if the type is already there, maybe?
-(defun (setf type-function) (new-function symbol)
-  (push (make-type-entry symbol new-function)
-	(types *global-environment*))
-  ;; Respect the general rule that setters should return the new
-  ;; value.
-  new-function)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function TYPEEXPAND-1.
