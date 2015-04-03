@@ -15,14 +15,13 @@ standard \commonlisp{} function \texttt{fboundp}:
 (defun fboundp (name)
   (sicl-genv:fboundp
     name
-    (load-time-value
-      (symbol-value 'sicl-genv:+global-environment+))))
+    (load-time-value (sicl-genv:global-environment))))
 \end{verbatim}}
 
 In this example \texttt{sicl-genv} is the nickname for the package
 named \texttt{sicl-global-environment} which contains the symbols of
 the protocol defined in this paper.  In each global environment, the
-constant variable \texttt{+global-environment+} in that package holds
+function \texttt{global-environment} in that package returns
 the value of the environment itself.  When the definition in the
 example above is \emph{loaded}, either as source or from a previously
 compiled file, the value of the \texttt{load-time-value} form will
@@ -64,7 +63,7 @@ The \sicl{} compiler translates a reference to a global function (say
   (load-time-value
     (sicl-genv:function-cell
       'foo
-      (symbol-value 'sicl-genv:+global-environment+))))
+      (sicl-genv:global-environment+))))
 \end{verbatim}}
 
 except that what is shown as \texttt{car} is not the full
