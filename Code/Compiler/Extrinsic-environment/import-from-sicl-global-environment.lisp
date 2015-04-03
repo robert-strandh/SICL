@@ -6,4 +6,6 @@
   (setf (sicl-env:special-variable 'sicl-env:*global-environment* environment t)
 	environment)
   (setf (sicl-env:constant-variable 'sicl-env:+global-environment+ environment)
-	environment))
+	environment)
+  (setf (sicl-env:fdefinition 'sicl-env:global-environment environment)
+	(lambda () environment)))
