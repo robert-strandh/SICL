@@ -51,6 +51,7 @@
    ;; constant variable +global-environment+
    #:*global-environment*
    #:+global-environment+
+   #:global-environment
    ))
 
 (defpackage #:sicl-standard-environment-functions
