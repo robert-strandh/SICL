@@ -56,6 +56,25 @@ implementation that accesses the function through the symbol naming
 it, hence our claim that there is no performance penalty for accessing
 this information at run-time.
 
+The \sicl{} compiler translates a reference to a global function (say
+\texttt{foo}) into something similar to this code:
+
+{\small\begin{verbatim}
+(car
+  (load-time-value
+    (sicl-genv:function-cell
+      'foo
+      (symbol-value 'sicl-genv:+global-environment+))))
+\end{verbatim}}
+
+except that what is shown as \texttt{car} is not the full
+\commonlisp{} function, because the argument is known to be a
+\texttt{cons} cell.  When the code containing this reference is
+loaded, the resulting machine code will refer to a local variable
+containing the \texttt{cons} cell of the current global environment
+that is permanently assigned to holding the function definition of
+\texttt{foo}.
+
 Our technique does, however, incur a performance penalty for functions
 such as \texttt{fdefinition} and \texttt{symbol-value} with an
 argument that is computed at run-time%
