@@ -2,29 +2,29 @@
 
 (defun import-from-host (environment)
   ;; Import available packages in the host to ENVIRONMENT.
-  (setf (sicl-env:packages environment)
+  (setf (sicl-genv:packages environment)
 	(list-all-packages))
   (do-all-symbols (symbol)
     ;; Import available functions in the host to ENVIRONMENT.
     (when (and (fboundp symbol)
 	       (not (special-operator-p symbol))
 	       (null (macro-function symbol)))
-      (setf (sicl-global-environment:fdefinition symbol environment)
+      (setf (sicl-genv:fdefinition symbol environment)
 	    (fdefinition symbol)))
     (when (fboundp `(setf ,symbol))
-      (setf (sicl-global-environment:fdefinition `(setf ,symbol) environment)
+      (setf (sicl-genv:fdefinition `(setf ,symbol) environment)
 	    (fdefinition `(setf ,symbol))))
     ;; Import all constant variables in the host to ENVIRONMENT.
     (when (constantp symbol)
-      (setf (sicl-global-environment:constant-variable symbol environment)
+      (setf (sicl-genv:constant-variable symbol environment)
 	    (cl:symbol-value symbol)))
     ;; Import all special operators in the host to ENVIRONMENT
     (when (special-operator-p symbol)
-      (setf (sicl-env:special-operator symbol environment) t))
+      (setf (sicl-genv:special-operator symbol environment) t))
     ;; Import all classes in the host to ENVIRONMENT
     (let ((class (find-class symbol nil)))
       (unless (null class)
-	(setf (sicl-env:find-class symbol environment)
+	(setf (sicl-genv:find-class symbol environment)
 	      class)))
     ;; Import special variables.  There is no predicate for special
     ;; variables in Common Lisp, so we must settle for an
@@ -39,7 +39,7 @@
 		 (eql (char name 0) #\*)
 		 (eql (char name (1- length)) #\*)
 		 (not (constantp symbol)))
-	(setf (sicl-env:special-variable symbol environment boundp)
+	(setf (sicl-genv:special-variable symbol environment boundp)
 	      (if boundp (cl:symbol-value symbol) nil)))))
   ;; We look at symbols in the package CLOSER-MOP.  If they have some
   ;; interesting definition, we import that definition associated with
@@ -52,23 +52,23 @@
       (when (and (fboundp symbol)
 		 (not (special-operator-p symbol))
 		 (null (macro-function symbol))
-		 (not (sicl-global-environment:fboundp new environment)))
-	(setf (sicl-global-environment:fdefinition new environment)
+		 (not (sicl-genv:fboundp new environment)))
+	(setf (sicl-genv:fdefinition new environment)
 	      (fdefinition symbol)))
       (when (and (fboundp `(setf ,symbol))
-		 (not (sicl-global-environment:fboundp `(setf ,new) environment)))
-	(setf (sicl-global-environment:fdefinition `(setf ,new) environment)
+		 (not (sicl-genv:fboundp `(setf ,new) environment)))
+	(setf (sicl-genv:fdefinition `(setf ,new) environment)
 	      (fdefinition `(setf ,symbol))))
       ;; Import constant variables.
       (when (and (constantp symbol)
-		 (not (sicl-global-environment:boundp new environment)))
-	(setf (sicl-global-environment:constant-variable new environment)
+		 (not (sicl-genv:boundp new environment)))
+	(setf (sicl-genv:constant-variable new environment)
 	      (cl:symbol-value symbol)))
       ;; Import classes.
       (let ((class (find-class symbol nil)))
 	(unless (or (null class)
-		    (sicl-global-environment:find-class new environment))
-	  (setf (sicl-env:find-class new environment)
+		    (sicl-genv:find-class new environment))
+	  (setf (sicl-genv:find-class new environment)
 		class)))
       ;; Import special variables.
       (let* ((name (symbol-name symbol))
@@ -78,6 +78,6 @@
 		   (eql (char name 0) #\*)
 		   (eql (char name (1- length)) #\*)
 		   (not (constantp symbol))
-		   (not (sicl-global-environment:boundp new environment)))
-	  (setf (sicl-env:special-variable new environment boundp)
+		   (not (sicl-genv:boundp new environment)))
+	  (setf (sicl-genv:special-variable new environment boundp)
 		(if boundp (cl:symbol-value symbol) nil)))))))
