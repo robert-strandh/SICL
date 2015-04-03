@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-hir-interpreter
+(defsystem :cleavir-hir-interpreter
   :depends-on (:cleavir-hir
 	       :cleavir-hir-transformations
 	       :cleavir-basic-blocks)
