@@ -48,6 +48,7 @@
    #:special-operator
    #:get-setf-expansion
    #:*global-environment*
+   #:+global-environment+
    ))
 
 (defpackage #:sicl-standard-environment-functions
