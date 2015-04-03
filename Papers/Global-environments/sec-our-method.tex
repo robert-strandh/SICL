@@ -38,7 +38,14 @@ function object contains an indirection in the form of a
 name (a symbol) to its \emph{global value}.  In our implementation,
 these cells are ordinary \texttt{cons} cells with the \texttt{car}
 containing the value of the binding, and the \texttt{cdr} containing
-\texttt{nil}.
+\texttt{nil}.  The reason for using ordinary \texttt{cons} cells is
+that they are already supported in any \commonlisp{} implementation.
+The only possible reason for choosing a different representation for
+cells would be to save one word in each cell, since the \texttt{cdr}
+slot in each of our \texttt{cons} cells is wasted.  However, the saved
+space would probably be more than consumed by the space occupied by
+specialized inspector functionality for dealing with custom cell
+representations.
 
 These cells are created as needed.  The first time a reference to a
 function is made, the corresponding cell is created.  Compiled code
@@ -46,7 +53,8 @@ that refers to a global function will have the corresponding cell in
 its run-time environment.  The cost of accessing a function at
 run-time is therefore no greater in our implementation than in an
 implementation that accesses the function through the symbol naming
-it.
+it, hence our claim that there is no performance penalty for accessing
+this information at run-time.
 
 Our technique does, however, incur a performance penalty for functions
 such as \texttt{fdefinition} and \texttt{symbol-value} with an
