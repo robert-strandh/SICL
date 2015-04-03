@@ -75,7 +75,9 @@
 
 (defun fboundp (function-name)
   (declare (type function-name function-name))
-  (sicl-genv:fboundp function-name sicl-genv:*global-environment*))
+  (sicl-genv:fboundp
+   function-name
+   (load-time-value (sicl-genv:global-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
