@@ -10,6 +10,11 @@ example, consider the function \texttt{function-lambda-list}.  We have
 not made up our minds as to whether this function should be part of
 the protocol, or just a function to be applied to function objects.
 
+\Defconst {+global-environment+}
+\vskip -0.2cm
+In each global environment $e$, the value of this constant variable is
+$e$.
+
 \Defgeneric {fboundp} {fname env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
