@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-global-environment
   (:nicknames #:sicl-env)
+  (:nicknames #:sicl-genv)
   (:use #:common-lisp)
   ;; When this package is defined in a host implementation for the
   ;; purpose of cross compilation, we shadow the symbols of the
