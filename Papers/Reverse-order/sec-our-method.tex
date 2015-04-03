@@ -257,17 +257,17 @@ We illustrate this technique in a notation similar to \commonlisp{}:
 \end{verbatim}
 }
 
-We implemented this technique in SBCL.  In order not to have to
-recompile SBCL with our additional function, we used the
+We implemented this technique in \sbcl{}.  In order not to have to
+recompile \sbcl{} with our additional function, we used the
 implementation-specific foreign-function interface and wrote the
 function using the language C.  Rather than pushing and popping the
 control stack, we used the built-in C function \texttt{alloca} to
 allocate a one-dimensional C array on the control stack to hold the
 list elements.
 
-In SBCL, the default stack size is $2$MBytes, or around $250$k words
-on a 64-bit processor.  We tested our technique using $100000$ words
-on the stack.  The result is that for a list with $10$ million
+In \sbcl{}, the default stack size is $2$MBytes, or around $250$k
+words on a 64-bit processor.  We tested our technique using $100000$
+words on the stack.  The result is that for a list with $10$ million
 elements, our technique processes the list in reverse order as fast as
 an ordinary loop from the beginning of the list.
 
@@ -284,7 +284,7 @@ This surprising result can be explained by a few factors:
   elements is known, there is no need to make any additional tests,
   simply because when the length of the list is positive, the first
   element must be a \texttt{cons} cell.
-\item The SBCL compiler can not determine that the return value of
+\item The \sbcl{} compiler can not determine that the return value of
   \texttt{count} must always be a \texttt{fixnum}.%
   \footnote{On a byte-addressed processor where $n$ word-aligned bytes
     are needed to represent a \texttt{cons} cell, the number of
@@ -292,7 +292,7 @@ This surprising result can be explained by a few factors:
     number of possible addresses.  In a system that uses at most
     $\mathsf{lb}~n$ tag bits for a fixnum, the value that
     \texttt{count} returns must be a fixnum.  While some systems might
-    use $8$ tag bits, SBCL on a $64$-bit platform uses a single tag
+    use $8$ tag bits, \sbcl{} on a $64$-bit platform uses a single tag
     bit for fixnums.  As a consequence, \texttt{count} must then
     return a fixnum.}
   When the function is implemented in C, this problem disappears.
@@ -309,9 +309,8 @@ declared to be \texttt{dynamic-extent} on the stack, thus giving
 essentially the same advantage as the version we implemented in C.
 However, such a technique would still be implementation specific,
 given that it is permitted for the compiler to ignore
-\texttt{dynamic-extent} declarations.  In the case of SBCL, using such
-a declaration, we were able to obtain performance almost as good as
-our C version.  However, as it turns out, SBCL only allocates a vector
-on the stack if it also has a size that is known statically, thereby
-making this technique impossible to apply when the size depends on
-available stack space.
+\texttt{dynamic-extent} declarations.  In the case of \sbcl{}, using
+such a declaration, we were able to obtain performance almost as good
+as our C version.  However, as it turns out, \sbcl{} only allocates a
+vector on the stack under certain circumstances thereby making this
+technique impossible to apply in general.
