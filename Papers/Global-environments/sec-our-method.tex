@@ -84,3 +84,12 @@ argument that is computed at run-time%
 compared to an implementation in which each symbol contains slots for
 these objects.  However, even in a high-performance implementation such
 as \sbcl{}, these values are \emph{not} contained in symbol slots.
+
+While it is \emph{possible} for the application programmer to create
+new global environments, it would not be a common thing to do, at
+least not for the applications of first-class global environments that
+we have considered so far.  For that reason, we have not streamlined
+any particular technique for doing so.  The difficulty is not in
+\emph{creating} the environment per se, but rather in filling it with
+useful objects.  For the purpose of bootstrapping, we currently fill
+environments by loading code into it from files.
