@@ -87,6 +87,18 @@ compared to an implementation in which each symbol contains slots for
 these objects.  However, even in a high-performance implementation such
 as \sbcl{}, these values are \emph{not} contained in symbol slots.
 
+The performance penalty incurred on these functions depends on the
+exact representation of the environment.  The representation of the
+environment is outside the scope of this paper, however.  Here, we
+only consider the \emph{protocol} for accessing it.  However, it is
+not hard to devise a reasonable implementation.  In SICL, we use a
+hash table for each namespace with the keys being the corresponding
+\emph{names}%
+\footnote{Functions are named by symbols and lists; variables are
+  named by symbols; packages are named by strings; classes are named
+  by symbols; etc.}
+of the entities in that namespace.
+
 While it is \emph{possible} for the application programmer to create
 new global environments, it would not be a common thing to do, at
 least not for the applications of first-class global environments that
