@@ -81,4 +81,5 @@
    ;; SICL-specific functions
    #:ensure-method
    ;; SICL-specific macro
-   #:define-built-in-class))
+   #:define-built-in-class
+   #:subclassp))
