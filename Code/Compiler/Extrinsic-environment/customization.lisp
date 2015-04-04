@@ -30,7 +30,7 @@
    (cleavir-ast:make-load-time-value-ast
     `(sicl-global-environment:function-cell
       ',(cleavir-env:name info)
-      sicl-global-environment:*global-environment*)
+      (sicl-global-environment:global-environment))
     ;; The cell is not read-only.
     nil)))
 
