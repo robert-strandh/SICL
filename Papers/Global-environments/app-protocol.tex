@@ -9,44 +9,44 @@ aspects of this protocol that need further consideration.  As an
 example, consider the function \texttt{function-lambda-list}.  We have
 not made up our minds as to whether this function should be part of
 the protocol, or just a function to be applied to function objects.
-\vskip -0.02cm
+\vskip -0.05cm
 In order for our definitions to fit in a column, we have abbreviated
 ``Generic Function'' as ``GF''.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defconst {+global-environment+}
 \vskip -0.2cm
 In each global environment $e$, the value of this constant variable is
 $e$.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defun {global-environment} {}
 \vskip -0.2cm
 In each global environment $e$, this function takes no arguments and
 returns $e$.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {fboundp} {fname env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{cl:fboundp}.
-\vskip -0.02cm
+\vskip -0.05cm
 It returns true if \textit{fname} has a definition in
 \textit{env} as an ordinary function, a generic function, a
 macro, or a special operator.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {fmakunbound} {fname env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{cl:fmakunbound}.
-\vskip -0.02cm
+\vskip -0.05cm
 Makes \textit{fname} unbound in the function namespace of
 \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} already has a definition in
 \textit{env} as an ordinary function, as a generic function,
 as a macro, or as a special operator, then that definition is lost.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} has a \texttt{setf} expander associated with
 it, then that \texttt{setf} expander is lost.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {special-operator} {fname env}
 \vskip -0.2cm
 If \textit{fname} has a definition as a special operator in
@@ -56,166 +56,166 @@ the object that was used as an argument to \texttt{(setf
 specified, other than that it can not be \texttt{nil}.  If
 \textit{fname} does not have a definition as a special operator in
 \textit{env}, then \texttt{nil} is returned.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf special-operator)} {new-def fname env}
 \vskip -0.2cm
 Set the definition of \textit{fname} to be a special operator.  The
 exact nature of \textit{new-def} is not specified, except that a value
 of \texttt{nil} means that \textit{fname} no longer has a definition
 as a special operator in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If a value other than \texttt{nil} is given for \textit{new-def}, and
 \textit{fname} already has a definition as an ordinary function, as a
 generic function, or as a macro, then an error is signaled.  As a
 consequence, if it is desirable for \textit{fname} to have a
 definition both as a special operator and as a macro, then the
 definition as a special operator should be set first.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {fdefinition} {fname env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{cl:fdefinition}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} has a definition in the function namespace of
 \textit{env} (i.e., if \texttt{fboundp} returns true), then a call to
 this function succeeds.  Otherwise an error of type
 \texttt{undefined-function} is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is defined as an ordinary function or a generic
 function, then a call to this function returns the associated
 function object.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is defined as a macro, then a list of the form
 \texttt{(cl:macro-function \textrm{\textit{function}})} is returned, where
 \textit{function} is the macro expansion function associated with the
 macro.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is defined as a special operator, then a list of the
 form \texttt{(cl:special \textrm{\textit{object}})} is returned, where
   the nature of \textit{object} is currently not specified.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf fdefinition)} {new-def fname env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{cl:fdefinition}.
-\vskip -0.02cm
+\vskip -0.05cm
 \textit{new-def} must be an ordinary function or a generic function.
 If \textit{fname} already names a function or a macro, then the
 previous definition is lost.  If \textit{fname} already names a
 special operator, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is a symbol and it has an associated \texttt{setf}
 expander, then that \texttt{setf} expander is preserved.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {macro-function} {symbol env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{cl:macro-function}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} has a definition as a macro in \textit{env}, then the
 corresponding macro expansion function is returned.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} has no definition in the function namespace of
 \textit{env}, or if the definition is not a macro, then this
 function returns \texttt{nil}.
-\vskip -0.02cm
-\vskip -0.02cm
+\vskip -0.05cm
+\vskip -0.05cm
 \Defgeneric {(setf macro-function)} {new-def symbol env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{(setf cl:macro-function)}.
-\vskip -0.02cm
+\vskip -0.05cm
 \textit{new-def} must be a macro expansion function or \texttt{nil}.
 A call to this function then always succeeds.  A value of \texttt{nil}
 means that the \textit{symbol} no longer has a macro function
 associated with it.  If \textit{symbol} already names a macro or a
 function, then the previous definition is lost.  If \textit{symbol}
 already names a special operator, that definition is kept.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} already names a function, then any proclamation of
 the type of that function is lost.  In other words, if at some later
 point \textit{symbol} is again defined as a function, its proclaimed
 type will be \texttt{t}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} already names a function, then any \texttt{inline} or
 \texttt{notinline} proclamation of the type of that function is lost.  In other
 words, if at some later point \textit{symbol} is again defined as a
 function, its proclaimed inline information will be \texttt{nil}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is a symbol and it has an associated \texttt{setf}
 expander, then that \texttt{setf} expander is preserved.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {compiler-macro-function} {fname env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{cl:compiler-macro-function}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} has a definition as a compiler macro in
 \textit{env}, then the corresponding compiler macro function is
 returned.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} has no definition as a compiler macro in
 \textit{env}, then this function returns \texttt{nil}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf compiler-macro-function)} {new-def fname env}
 \vskip -0.2cm
 This generic function is a generic version of the \commonlisp{}
 function \texttt{(setf cl:compiler-macro-function)}.
-\vskip -0.02cm
+\vskip -0.05cm
 \textit{new-def} can be a compiler macro function or \texttt{nil}.
 When it is a compiler macro function, then it establishes
 \textit{new-def} as a compiler macro for \textit{fname} and any
 existing definition is lost.  A value of \texttt{nil} means that
 \textit{fname} no longer has a compiler macro associated with it in
 \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {function-type} {fname env}
 \vskip -0.2cm
 This generic function returns the proclaimed type of the function
 associated with \textit{fname} in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is not associated with an ordinary function or a
 generic function in \textit{env}, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is associated with an ordinary function or a generic
 function in \textit{env}, but no type proclamation for that function
 has been made, then this generic function returns \texttt{t}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf function-type)} {new-type fname env}
 \vskip -0.2cm
 This generic function is used to set the proclaimed type of the
 function associated with \textit{fname} in \textit{env}
 to \textit{new-type}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is associated with a macro or a special operator
 in \textit{env}, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {function-inline} {fname env}
 \vskip -0.2cm
 This generic function returns the proclaimed inline information of
 the function associated with \textit{fname} in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is not associated with an ordinary function or a
 generic function in \textit{env}, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is associated with an ordinary function or a
 generic function in \textit{env}, then the return value of this
 function is either \texttt{nil}, \texttt{inline}, or \texttt{notinline}.  If no inline
 proclamation has been made, then this generic function returns
 \texttt{nil}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf function-inline)} {new-inline fname env}
 \vskip -0.2cm
 This generic function is used to set the proclaimed inline
 information of the function associated with \textit{fname} in
 \textit{env} to \textit{new-inline}.
-\vskip -0.02cm
+\vskip -0.05cm
 \textit{new-inline} must have one of the values \texttt{nil}, \texttt{inline}, or
 \texttt{notinline}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{fname} is not associated with an ordinary function or a
 generic function in \textit{env}, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {function-cell} {fname env}
 \vskip -0.2cm
 A call to this function always succeeds.  It returns a \texttt{cons} cell,
@@ -227,7 +227,7 @@ function that, when called, signals an error of type
 the same (in the sense of \texttt{eq}) when it is passed the same (in the
 sense of \texttt{equal}) function name and the same (in the sense of \texttt{eq})
 environment.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {function-unbound} {fname env}
 \vskip -0.2cm
 A call to this function always succeeds.  It returns a function
@@ -241,39 +241,39 @@ environment.  Client code can use the return value of this
 function to determine whether \textit{fname} is unbound and if so
 signal an error when an attempt is made to evaluate the form
 \texttt{(function \textrm{\textit{fname}})}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {function-lambda-list} {fname env}
 \vskip -0.2cm
 This function returns two values.  The first value is an ordinary
 lambda list, or \texttt{nil} if no lambda list has been defined for
 \textit{fname}.  The second value is true if and only if a lambda
 list has been defined for \textit{fname}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {boundp} {symbol env}
 \vskip -0.2cm
 It returns true if \textit{symbol} has a definition in \textit{env} as a
 constant variable, as a special variable, or as a symbol macro.
 Otherwise, it returns \texttt{nil}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {constant-variable} {symbol env}
 \vskip -0.2cm
 This function returns the value of the constant
 variable \textit{symbol}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} does not have a definition as a constant variable,
 then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf constant-variable)} {value symbol env}
 \vskip -0.2cm
 This function is used in order to define \textit{symbol} as a constant
 variable in \textit{env}, with \textit{value} as its value.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} already has a definition as a special variable or as a
 symbol macro in \textit{env}, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} already has a definition as a constant variable, and its
 current value is not \texttt{eql} to \textit{value}, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {special-variable} {symbol env}
 \vskip -0.2cm
 This function returns two values.  The first value is the value of
@@ -281,30 +281,30 @@ This function returns two values.  The first value is the value of
 does not have a value as a special variable in \textit{env}.  The
 second value is true if \textit{symbol} does have a value as a special
 variable in \textit{env} and \texttt{nil} otherwise.
-\vskip -0.02cm
+\vskip -0.05cm
 Notice that the symbol can have a value even though this function
 returns \texttt{nil} and \texttt{nil}.  The first such case is when the symbol has a
 value as a constant variable in \textit{env}.  The second case is when
 the symbol was assigned a value using \texttt{(setf symbol-value)}
 without declaring the variable as \texttt{special}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf special-variable)} {value symbol env init-p}
 \vskip -0.2cm
 This function is used in order to define \textit{symbol} as a special
 variable in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} already has a definition as a constant variable or as a
 symbol macro in \textit{env}, then an error is signaled.
 Otherwise, \textit{symbol} is defined as a special variable in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} already has a definition as a special variable, and
 \textit{init-p} is \texttt{nil}, then this function has no effect.  The
 current value is not altered, or if \textit{symbol} is currently
 unbound, then it remains unbound.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{init-p} is true, then \textit{value} becomes the new
 value of the special variable \textit{symbol}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {symbol-macro} {symbol env}
 \vskip -0.2cm
 This function returns two values.  The first value is a macro
@@ -313,51 +313,51 @@ or \texttt{nil} if \textit{symbol} does not have a definition as a symbol
 macro.  The second value is the form that \textit{symbol} expands to as a
 macro, or \texttt{nil} if symbol does not have a definition as a
 symbol macro.
-\vskip -0.02cm
+\vskip -0.05cm
 It is guaranteed that the same (in the sense of \texttt{eq}) function
 is returned by two consecutive calls to this function with the same
 symbol as the first argument, as long as the definition
 of \textit{symbol} does not change.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf symbol-macro)} {expansion symbol env}
 \vskip -0.2cm
 This function is used in order to define \textit{symbol} as a symbol macro
 with the given \textit{expansion} in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} already has a definition as a constant variable, or
 as a special variable, then an error of type \texttt{program-error} is
 signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {variable-type} {symbol env}
 \vskip -0.2cm
 This generic function returns the proclaimed type of the variable
 associated with \textit{symbol} in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} has a definition as a constant variable in \textit{env},
 then the result of calling \texttt{type-of} on its value is returned.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} does not have a definition as a constant variable in
 \textit{env}, and no previous type proclamation has been made for
 \textit{symbol} in \textit{env}, then this function returns \texttt{t}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf variable-type)} {new-type symbol env}
 \vskip -0.2cm
 This generic function is used to set the proclaimed type of the
 variable associated with \textit{symbol} in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} has a definition as a constant variable in \textit{env},
 then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 It is meaningful to set the proclaimed type even if \textit{symbol}
 has not previously been defined as a special variable or as a symbol
 macro, because it is meaningful to use \texttt{(setf symbol-value)} on
 such a symbol.
-\vskip -0.02cm
+\vskip -0.05cm
 Recall that the \hs{} defines the meaning of proclaiming the
 type of a symbol macro.  Therefore, it is meaningful to call this
 function when \textit{symbol} has a definition as a symbol macro in
 \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {variable-cell} {symbol env}
 \vskip -0.2cm
 A call to this function always succeeds.  It returns a \texttt{cons}
@@ -369,7 +369,7 @@ the return value of the function \texttt{variable-unbound}.  The
 return value of this function is always the same (in the sense
 of \texttt{eq}) when it is passed the same symbol and the same
 environment.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {variable-unbound} {symbol env}
 \vskip -0.2cm
 A call to this function always succeeds.  It returns an object that
@@ -381,82 +381,82 @@ of \texttt{eq}) when it is passed the same symbol and the same
 environment.  Client code can use the return value of this function to
 determine whether
 \textit{symbol} is unbound.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {find-class} {symbol env}
 \vskip -0.2cm
 This generic function is a generic version of the Common Lisp
 function \texttt{cl:find-class}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} has a definition as a class in \textit{env}, then that
 class metaobject is returned.  Otherwise \texttt{nil} is returned.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf find-class)} {new-class symbol env}
 \vskip -0.2cm
 This generic function is a generic version of the Common Lisp
 function \texttt{(setf cl:find-class)}.
-\vskip -0.02cm
+\vskip -0.05cm
 This function is used in order to associate a class with a class
 name in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{new-class} is a class metaobject, then that class
 metaobject is associated with the name \textit{symbol}
 in \textit{env}.  If \textit{symbol} already names a class
 in \textit{env} than that association is lost.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{new-class} is \texttt{nil}, then \textit{symbol} is no
 longer associated with a class in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{new-class} is neither a class metaobject nor \texttt{nil},
 then an error of type \texttt{type-error} is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {setf-expander} {symbol env}
 \vskip -0.2cm
 This generic function returns the \texttt{setf} expander associated with
 \textit{symbol} in \textit{env}.  If \textit{symbol} is not associated
 with any \texttt{setf} expander in \textit{env}, then \texttt{nil} is returned.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf setf-expander)} {new-expander symbol env}
 \vskip -0.2cm
 This generic function is used to set the \texttt{setf} expander associated
 with \textit{symbol} in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If \textit{symbol} is not associated with an ordinary function, a generic
 function, or a macro in \textit{env}, then an error is signaled.
-\vskip -0.02cm
+\vskip -0.05cm
 If there is already a \texttt{setf} expander associated with \textit{symbol} in
 \textit{env}, then the old \texttt{setf} expander is lost.
-\vskip -0.02cm
+\vskip -0.05cm
 If a value of \texttt{nil} is given for \textit{new-expander}, then
 any current \texttt{setf} expander associated with \textit{symbol} is removed.
 In this case, no error is signaled, even if \textit{symbol} is not
 associated with any ordinary function, generic function, or macro
 in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {default-setf-expander} {env}
 \vskip -0.2cm
 This generic function returns the default \texttt{setf} expander, to
 be used when the function \texttt{setf-expander} returns \texttt{nil}.
 This function always returns a valid \texttt{setf} expander.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf default-setf-expander)} {new-expander env}
 \vskip -0.2cm
 This generic function is used to set the default \texttt{setf}
 expander in \texttt{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {type-expander} {symbol env}
 \vskip -0.2cm
 This generic function returns the type expander associated with
 \textit{symbol} in \texttt{env}.  If \textit{symbol} is not associated
 with any type expander in \texttt{env}, then \texttt{nil} is returned.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf type-expander)} {new-expander symbol env}
 \vskip -0.2cm
 This generic function is used to set the type expander associated
 with \textit{symbol} in \texttt{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 If there is already a type expander associated with \textit{symbol} in
 \texttt{env}, then the old type expander is lost.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {find-package} {name env}
 \vskip -0.2cm
 Return the package with the name or the nickname \textit{name} in the
@@ -464,7 +464,7 @@ environment \textit{env}.  If there is no package with that name
 in \textit{env}, then return \texttt{nil}.  Contrary to
 the standard \commonlisp{} function \texttt{cl:find-package}, for this
 function, \textit{name} must be a string.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {package-name} {package env}
 \vskip -0.2cm
 Return the string that names \textit{package} in \textit{env}.
@@ -472,20 +472,20 @@ If \textit{package} is not associated with any name in \textit{env},
 then \texttt{nil} is returned.  Contrary to the standard \commonlisp{}
 function \texttt{cl:package-name}, for this function, \textit{package}
 must be a package object.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf package-name)} {new-name package env}
 \vskip -0.2cm
 Make the string \textit{new-name} the new name of \textit{package}
 in \textit{env}.  If \textit{new-name} is \texttt{nil},
 then \textit{package} no longer has a name in \textit{env}.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {package-nicknames} {package env}
 \vskip -0.2cm
 Return a list of the strings that are nicknames of \textit{package}
 in \textit{env}.  Contrary to the standard \commonlisp{}
 function \texttt{cl:package-nicknames}, for this function, \textit{package}
 must be a package object.
-\vskip -0.02cm
+\vskip -0.05cm
 \Defgeneric {(setf package-nicknames)} {new-names package env}
 \vskip -0.2cm
 Associate the strings in the list \textit{new-names} as nicknames
