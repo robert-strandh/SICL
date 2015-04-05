@@ -85,6 +85,9 @@
   ;; MACROEXPAND-1.
   (load-file "../../Evaluation-and-compilation/macroexpand.lisp" environment)
   ;; Load a file containing the definitions of the functions
+  ;; MACRO-FUNCTION and (SETF MACRO-FUNCTION).
+  (load-file "../../Evaluation-and-compilation/macro-function.lisp" environment)
+  ;; Load a file containing the definitions of the functions
   ;; FDEFINITION, (SETF FDEFINITION), SYMBOL-FUNCTION, etc.
   (load-file "../../Environment/standard-environment-functions.lisp" environment)
   ;; Load a file containing the definitions of the macros INCF and DECF.
