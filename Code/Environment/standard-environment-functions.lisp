@@ -59,7 +59,8 @@
   (declare (type symbol symbol)
 	   (type function new-function))
   (when (null environment)
-    (setf environment sicl-genv:*global-environment*))
+    (setf environment
+	  (load-time-value (sicl-genv:global-environment))))
   (setf (sicl-genv:macro-function symbol environment)
 	new-function))
 
