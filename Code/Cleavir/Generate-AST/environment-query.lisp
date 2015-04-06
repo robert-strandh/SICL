@@ -17,7 +17,7 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read)))
-		 (setq result (variable-info environment new-symbol)))))
+		 (setq result (cleavir-env:variable-info environment new-symbol)))))
     result))
 
 (defun function-info (environment function-name)
@@ -38,7 +38,7 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read)))
-		 (setq result (function-info environment new-function-name)))))
+		 (setq result (cleavir-env:function-info environment new-function-name)))))
     result))
 
 (defun block-info (environment block-name)
@@ -52,7 +52,7 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read)))
-		 (setq result (block-info environment new-block-name)))))
+		 (setq result (cleavir-env:block-info environment new-block-name)))))
     result))
 
 (defun tag-info (environment tag-name)
@@ -66,6 +66,6 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read)))
-		 (setq result (tag-info environment new-tag-name)))))
+		 (setq result (cleavir-env:tag-info environment new-tag-name)))))
     result))
 
