@@ -54,7 +54,7 @@
     (cleavir-ast:make-load-time-value-ast
      '(sicl-global-environment:function-cell
        'sicl-extrinsic-environment:symbol-value
-       sicl-global-environment:*global-environment*)))
+       (sicl-global-environment:global-environment))))
    (list (cleavir-ast:make-load-time-value-ast
 	  `',(cleavir-env:name info)
 	  t)
