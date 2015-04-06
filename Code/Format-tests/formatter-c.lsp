@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Dec  5 14:32:46 2004
 ;;;; Contains: Tests of FORMATTER on the C directive
 
-(in-package :cl-test)
+(cl:in-package :cl-test)
 
 (compile-and-load "printer-aux.lsp")
 

@@ -3,7 +3,7 @@
 ;;;; Created:  Wed Jul 28 00:33:02 2004
 ;;;; Contains: Tests of the format directive ~R
 
-(in-package :cl-test)
+(cl:in-package :cl-test)
 
 ;;; Test of various radixes
 (compile-and-load "printer-aux.lsp")

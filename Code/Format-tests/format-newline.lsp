@@ -3,7 +3,7 @@
 ;;;; Created:  Sat Nov 27 08:07:16 2004
 ;;;; Contains: Tests of ~<newline>
 
-(in-package :cl-test)
+(cl:in-package :cl-test)
 (compile-and-load "printer-aux.lsp")
 
 (def-format-test format.newline.1

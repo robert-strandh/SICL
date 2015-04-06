@@ -3,7 +3,7 @@
 ;;;; Created:  Mon Feb 23 05:08:17 2004
 ;;;; Contains: Tests of FORMAT
 
-(in-package :cl-test)
+(cl:in-package :cl-test)
 
 
 (defun def-format-test (name args result)

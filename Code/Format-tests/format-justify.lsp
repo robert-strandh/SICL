@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Aug 22 18:09:49 2004
 ;;;; Contains: Tests of the ~< ~> directive
 
-(in-package :cl-test)
+(cl:in-package :cl-test)
 
 (compile-and-load "printer-aux.lsp")
 

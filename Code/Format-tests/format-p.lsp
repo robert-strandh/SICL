@@ -3,7 +3,7 @@
 ;;;; Created:  Sun Oct 17 21:32:45 2004
 ;;;; Contains: Tests of the ~P format directives
 
-(in-package :cl-test)
+(cl:in-package :cl-test)
 
 (compile-and-load "printer-aux.lsp")
 

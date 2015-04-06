@@ -3,7 +3,7 @@
 ;;;; Created:  Wed Aug 25 19:27:25 2004
 ;;;; Contains: Tests of the ~[ ~] forms
 
-(in-package :cl-test)
+(cl:in-package :cl-test)
 
 (compile-and-load "printer-aux.lsp")
 
