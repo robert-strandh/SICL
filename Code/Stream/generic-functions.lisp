@@ -11,3 +11,11 @@
 (defgeneric stream-element-type (stream))
 
 (defgeneric close (stream))
+
+(defgeneric finish-output (stream))
+
+(defgeneric force-output (stream))
+
+(defgeneric clear-output (stream))
+
+(defgeneric write-byte (integer stream))
