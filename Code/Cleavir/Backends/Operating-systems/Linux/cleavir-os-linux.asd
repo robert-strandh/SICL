@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-os-linux
+(defsystem :cleavir-os-linux
   :serial t
   :components
   ((:file "packages")
