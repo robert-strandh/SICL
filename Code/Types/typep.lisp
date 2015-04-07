@@ -126,3 +126,9 @@
 (defun typep-and (object type-specifier environment)
   (loop for type-spec in (rest type-specifier)
 	always (typep object type-spec environment)))
+
+;;; Given a type specifier of the form (EQL ...), check whether OBJECT
+;;; is of that type in ENVIRONMENT.
+(defun typep-eql (object type-specifier environment)
+  (declare (ignore environment))
+  (eql object (second type-specifier)))
