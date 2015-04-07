@@ -141,7 +141,7 @@
 
 ;;; Given a type specifier of the form (NOT ...), check whether OBJECT
 ;;; is of that type in ENVIRONMENT.
-(defun typep-member (object type-specifier environment)
+(defun typep-not (object type-specifier environment)
   (not (typep object (second type-specifier) environment)))
 
 ;;; Given a type specifier of the form (OR ...), check whether OBJECT
@@ -150,3 +150,9 @@
   (loop for type-spec in (rest type-specifier)
 	when (typep object type-spec environment)
 	  return t))
+
+;;; Given a type specifier of the form (SATISFIES ...), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defun typep-satisfies (object type-specifier environment)
+  (funcall (sicl-genv:fdefinition (second type-specifier) environment)
+	   object))
