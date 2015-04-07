@@ -138,3 +138,8 @@
 (defun typep-member (object type-specifier environment)
   (declare (ignore environment))
   (member object (rest type-specifier)))
+
+;;; Given a type specifier of the form (NOT ...), check whether OBJECT
+;;; is of that type in ENVIRONMENT.
+(defun typep-member (object type-specifier environment)
+  (not (typep object (second type-specifier) environment)))
