@@ -2,4 +2,5 @@
 
 (defsystem :sicl-type
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "typep")))
