@@ -143,3 +143,10 @@
 ;;; is of that type in ENVIRONMENT.
 (defun typep-member (object type-specifier environment)
   (not (typep object (second type-specifier) environment)))
+
+;;; Given a type specifier of the form (OR ...), check whether OBJECT
+;;; is of that type in ENVIRONMENT.
+(defun typep-or (object type-specifier environment)
+  (loop for type-spec in (rest type-specifier)
+	when (typep object type-spec environment)
+	  return t))
