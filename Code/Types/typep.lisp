@@ -121,3 +121,8 @@
 ;;; unsigned-byte, signed-byte, vector, simple-array,
 ;;; simple-base-string, simple-bit-vector
 
+;;; Given a type specifier of the form (AND ...), check whether OBJECT
+;;; is of that type in ENVIRONMENT.
+(defun typep-and (object type-specifier environment)
+  (loop for type-spec in (rest type-specifier)
+	always (typep object type-spec environment)))
