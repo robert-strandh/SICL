@@ -132,3 +132,9 @@
 (defun typep-eql (object type-specifier environment)
   (declare (ignore environment))
   (eql object (second type-specifier)))
+
+;;; Given a type specifier of the form (MEMBER ...), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defun typep-member (object type-specifier environment)
+  (declare (ignore environment))
+  (member object (rest type-specifier)))
