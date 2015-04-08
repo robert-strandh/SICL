@@ -28,9 +28,9 @@
   (declare (ignore system))
   (cleavir-ast:make-car-ast
    (cleavir-ast:make-load-time-value-ast
-    `(sicl-global-environment:function-cell
+    `(sicl-genv:function-cell
       ',(cleavir-env:name info)
-      (sicl-global-environment:global-environment))
+      (sicl-genv:global-environment))
     ;; The cell is not read-only.
     nil)))
 
@@ -52,14 +52,14 @@
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
     (cleavir-ast:make-load-time-value-ast
-     '(sicl-global-environment:function-cell
+     '(sicl-genv:function-cell
        'sicl-extrinsic-environment:symbol-value
-       (sicl-global-environment:global-environment))))
+       (sicl-genv:global-environment))))
    (list (cleavir-ast:make-load-time-value-ast
 	  `',(cleavir-env:name info)
 	  t)
 	 (cleavir-ast:make-load-time-value-ast
-	  'sicl-global-environment:*global-environment*
+	  'sicl-genv:*global-environment*
 	  t))))
 
 ;;; When we are asked to compile an assignment to a special variable,
@@ -74,15 +74,15 @@
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
     (cleavir-ast:make-load-time-value-ast
-     '(sicl-global-environment:function-cell
+     '(sicl-genv:function-cell
        '(setf sicl-extrinsic-environment:symbol-value)
-       sicl-global-environment:*global-environment*)))
+       sicl-genv:*global-environment*)))
    (list form-ast
 	 (cleavir-ast:make-load-time-value-ast
 	  `',(cleavir-env:name info)
 	  t)
 	 (cleavir-ast:make-load-time-value-ast
-	  'sicl-global-environment:*global-environment*
+	  'sicl-genv:*global-environment*
 	  nil))))
 
 ;;; The default method on CLEAVIR-GENERATE-AST:CONVERT-SPECIAL-BINDING
