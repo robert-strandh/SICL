@@ -156,3 +156,10 @@
 (defun typep-satisfies (object type-specifier environment)
   (funcall (sicl-genv:fdefinition (second type-specifier) environment)
 	   object))
+
+;;; Given a type specifier that is illegal in the context of TYPEP,
+;;; such as VALUES or FUNCTION, signal an error to that effect.
+(defun typep-illegal (object type-specifier environment)
+  (declare (ignore object environment))
+  (error "Compound type specifier is illegal for typep: ~s."
+	 type-specifier))
