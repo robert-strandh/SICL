@@ -7,7 +7,7 @@
 ;;;
 ;;; Function CONSTANTP.
 
-(defun constantp (form &optional (environment sicl-genv:*global-environment*))
+(defun constantp (form &optional (environment (sicl-genv:global-environment)))
   (or (and (not (symbolp form))
 	   (not (consp form)))
       (keywordp form)
