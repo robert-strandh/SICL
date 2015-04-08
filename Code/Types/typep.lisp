@@ -13,7 +13,7 @@
 
 ;;; If the type specifier is a symbol for which there is deftype
 ;;; expander or a list whose CAR is such a symbol, we apply the
-;;; expander and try again. 
+;;; expander and try again.
 ;;;
 ;;; If not, and if the type specifier is a class C or a symbol that is
 ;;; the name of a class C, we check whether the CLASS-OF the object is
@@ -32,8 +32,8 @@
 ;;; simple-vector.  Nothing is of type nil.  We are left with:
 ;;; compiled-function, short-float, single-float, double-float,
 ;;; long-float, simple-array.
-;;; 
-;;; 
+;;;
+;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -46,7 +46,7 @@
 
 ;;; The following standardized atomic types are conditions, so they
 ;;; are subclasses of the class CONDITION.  None of them takes any
-;;; arguments, so they can only be used as atomic type specifiers. 
+;;; arguments, so they can only be used as atomic type specifiers.
 ;;;
 ;;; arithmetic-error, simple-condition, simple-error,
 ;;; simple-type-error, simple-warning, cell-error, storage-condition,
@@ -68,7 +68,7 @@
 ;;; is a character.  The other character types can be defined using
 ;;; this predicate and SATISFIES with a functions that check the range
 ;;; of the character code or by using a bitmap.
-;;; 
+;;;
 ;;; Stream types: stream, broadcast-stream, concatenated-stream,
 ;;; string-stream, echo-stream, synonym-stream, two-way-stream,
 ;;; file-stream.
@@ -78,7 +78,7 @@
 ;;; classes (as does STREAM), that are all pairwise disjoint.  So if
 ;;; we do not allow subclasses, then TYPEP for streams can be
 ;;; implemented by checking the CLASS-OF the object for equality (EQ)
-;;; with the FIND-CLASS of the name. 
+;;; with the FIND-CLASS of the name.
 ;;;
 ;;; Number types: number, ratio, bit, fixnum, bignum
 ;;;
@@ -92,7 +92,7 @@
 ;;; standard-generic-function, class, standard-class, built-in-class,
 ;;; structure-class, standard-object, structure-object, method,
 ;;; standard-method, method-combination,
-;;; 
+;;;
 ;;; Others: t, null, nil, atom, hash-table, keyword, logical-pathname,
 ;;; list, compiled-function, package, pathname, random-state, symbol,
 ;;; readtable, sequence, restart,
@@ -106,7 +106,7 @@
 ;;; is a predicate SYMBOLP. There is a predicate READTABLEP, SEQUENCE
 ;;; is LIST or VECTOR.  For RESTART we can use class-of.
 
-;;; The following standardized types can only be used as compound 
+;;; The following standardized types can only be used as compound
 ;;; type specifiers:
 ;;;
 ;;; and, eql, member, mod, not, or, satisfies, values.
@@ -163,3 +163,55 @@
   (declare (ignore object environment))
   (error "Compound type specifier is illegal for typep: ~s."
 	 type-specifier))
+
+;;; Given a type specifier of the form (ARRAY ...), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defun typep-array (object type-specifier environment)
+  (declare (ignore environment))
+  (unless (arrayp object)
+    (return-from typep-array nil))
+  ;; OBJECT is definitely an array.
+  (when (null (rest type-specifier))
+    ;; TYPE-SPECIFIER is (ARRAY), so since OBJECT is an
+    ;; array, we are done.
+    (return-from typep-array t))
+  ;; TYPE-SPECIFIER is (ARRAY ...)
+  (unless (eq (second type-specifier) '*)
+    ;; TYPE-SPECIFIER is either (ARRAY <type>) or (ARRAY
+    ;; <type> ...).  In order for TYPEP to return
+    ;; true, the element type of the array must be the
+    ;; same as the result of upgrading <type>.  FIXME:
+    ;; is EQUAL the right thing to do here?
+    (unless (equal (array-element-type object)
+		   (upgraded-array-element-type
+		    (second type-specifier)))
+      ;; No luck, they are not the same.
+      (return-from typep-array nil)))
+  ;; The element types are compatible.  Check whether
+  ;; we have  (ARRAY <type>) or (ARRAY <type> ...).
+  (when (null (rest (rest type-specifier)))
+    ;; We have (ARRAY <type>) so we are done.
+    (return-from typep-array t))
+  ;; We have (ARRAY <type> ...).
+  ;; Check whether we have (ARRAY <type> *)
+  (when (eq (third type-specifier) '*)
+    ;; We are done.
+    (return-from typep-array t))
+  ;; Check whether we have (ARRAY <type> rank), and if
+  ;; so whether the rank of OBJECT corresponds.
+  (when (integerp (third type-specifier))
+    (return-from typep-array
+      (= (array-rank object) (third type-specifier))))
+  ;; We must have (ARRAY <type> (...)).  Start by
+  ;; checking that the rank of OBJECT is the same as
+  ;; the length of the list.
+  (unless (= (array-rank object) (length (third type-specifier)))
+    (return-from typep-array nil))
+  ;; The ranks are the same.  Now check that each
+  ;; dimension is valid.
+  (loop for d1 in (array-dimensions object)
+	for d2 in (third type-specifier)
+	unless (or (eq d1 '*) (= d1 d2))
+	  do (return-from typep-array nil))
+  ;; Every dimension is valid.
+  (return-from typep-array t))
