@@ -1,4 +1,4 @@
-(in-package #:common-lisp-user)
+(cl:in-package #:common-lisp-user)
 
 (defpackage #:cleavir-code-utilities
   (:use #:common-lisp)
