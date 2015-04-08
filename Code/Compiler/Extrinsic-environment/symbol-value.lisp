@@ -1,5 +1,11 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
+;;;; This file must not be loaded into the extrinsic environment.  The
+;;;; functions defined here must be compiled and executed in the host
+;;;; environment.  The reason for that is that they access the dynamic
+;;;; environment, which is the value of the host special variable
+;;;; *DYNAMIC-ENVIRONMENT* when a function is called.
+
 (defun find-variable-entry (symbol dynamic-environment)
   (loop for entry in dynamic-environment
 	do (when (and (typep entry 'variable-binding)
