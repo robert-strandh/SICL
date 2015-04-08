@@ -1,4 +1,4 @@
-(in-package #:cleavir-code-utilities)
+(cl:in-package #:cleavir-code-utilities)
 
 (defmethod cleavir-i18n:report-condition
     ((condition form-must-be-proper-list) stream (language cleavir-i18n:english))

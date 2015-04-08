@@ -1,4 +1,4 @@
-(in-package #:cleavir-code-utilities)
+(cl:in-package #:cleavir-code-utilities)
 
 (define-condition form-must-be-proper-list
     (program-error cleavir-i18n:condition)

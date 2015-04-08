@@ -1,4 +1,4 @@
-(in-package #:common-lisp-user)
+(cl:in-package #:common-lisp-user)
 
 (asdf:defsystem cleavir-code-utilities
   :depends-on (:cleavir-internationalization)

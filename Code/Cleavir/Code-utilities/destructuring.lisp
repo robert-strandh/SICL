@@ -1,4 +1,4 @@
-(in-package #:cleavir-code-utilities)
+(cl:in-package #:cleavir-code-utilities)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
