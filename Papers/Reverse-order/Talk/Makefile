@@ -31,7 +31,7 @@ $(NAME).pdf: $(TEXFILES) $(PSTEX_T) $(EPS) $(CODE) $(VERBATIM) Makefile
 .PHONY: clean spotless install init
 
 init:
-	ln -s ../v0-v1-v7.epd
+	ln -s ../v0-v1-v7.eps
 clean:
 	rm -f *.aux *.log *~ *.bak \#*\# $(NAME).aux $(NAME).log $(NAME).out \
 	$(NAME).nav $(NAME).snm $(NAME).toc 
