@@ -8,4 +8,5 @@
   :depends-on (:sicl-data-and-control-flow)
   :serial t
   :components
-  ((:file "test")))
+  ((:file "packages")
+   (:file "test")))
