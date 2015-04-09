@@ -126,6 +126,13 @@
 ;;; use for expanding types defined by DEFTYPE.
 (defgeneric typep-compound (object head rest environment))
 
+;;; Given a type specifier that is illegal in the context of TYPEP,
+;;; such as VALUES or FUNCTION, signal an error to that effect.
+(defmethod typep-compound (object head rest environment)
+  (declare (ignore object environment))
+  (error "Compound type specifier is illegal for typep: ~s."
+	 (cons head rest)))
+
 ;;; Given a type specifier of the form (AND . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
 (defmethod typep-compound (object (head (eql 'and)) rest environment)
@@ -161,13 +168,6 @@
 (defmethod typep-compound (object (head (eql 'satisfies)) rest environment)
   (funcall (sicl-genv:fdefinition (first rest) environment)
 	   object))
-
-;;; Given a type specifier that is illegal in the context of TYPEP,
-;;; such as VALUES or FUNCTION, signal an error to that effect.
-(defun typep-illegal (object type-specifier environment)
-  (declare (ignore object environment))
-  (error "Compound type specifier is illegal for typep: ~s."
-	 type-specifier))
 
 ;;; Given a type specifier of the form (ARRAY ...), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
