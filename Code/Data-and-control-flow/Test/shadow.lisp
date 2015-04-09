@@ -1,4 +1,4 @@
-(cl:in-package "sicl-data-and-control-flow")
+(cl:in-package #:sicl-data-and-control-flow)
 
 (shadow '(#:setf
 	  #:define-setf-expander
