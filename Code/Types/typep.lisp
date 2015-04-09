@@ -223,7 +223,7 @@
 
 ;;; Given a type specifier of the form (COMPLEX ...), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
-(defun typep-complex (object type-specifier environment)
+(defmethod typep-compound (object (head (eql 'complex)) rest environment)
   (unless (complexp object)
     (return-from typep-complex nil))
   ;; OBJECT is definitely a complex.
