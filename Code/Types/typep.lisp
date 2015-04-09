@@ -149,10 +149,10 @@
 (defmethod typep-compound (object (head (eql 'not)) rest environment)
   (not (typep object (first rest) environment)))
 
-;;; Given a type specifier of the form (OR ...), check whether OBJECT
-;;; is of that type in ENVIRONMENT.
-(defun typep-or (object type-specifier environment)
-  (loop for type-spec in (rest type-specifier)
+;;; Given a type specifier of the form (OR . REST), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'or)) rest environment)
+  (loop for type-spec in rest
 	when (typep object type-spec environment)
 	  return t))
 
