@@ -221,16 +221,16 @@
   ;; Every dimension is valid.
   (return-from typep-compound t))
 
-;;; Given a type specifier of the form (COMPLEX ...), check whether
+;;; Given a type specifier of the form (COMPLEX . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
 (defmethod typep-compound (object (head (eql 'complex)) rest environment)
   (unless (complexp object)
-    (return-from typep-complex nil))
+    (return-from typep-compound nil))
   ;; OBJECT is definitely a complex.
   (when (null rest)
     ;; the type specifier is (COMPLEX), so since OBJECT is a complex, we
     ;; are done.
-    (return-from typep-complex t))
+    (return-from typep-compound t))
   ;; the type specifier is (COMPLEX ...)
   (if (eq (first rest) '*)
       t
@@ -241,23 +241,23 @@
 	(and (typep (realpart object) type environment)
 	     (typep (imagpart object) type environment)))))
 
-;;; Given a type specifier of the form (CONS ...), check whether
+;;; Given a type specifier of the form (CONS . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
-(defun typep-cons (object type-specifier environment)
+(defmethod typep-compound (object (head (eql 'cons)) rest environment)
   (unless (consp object)
-    (return-from typep-cons nil))
+    (return-from typep-compound nil))
   ;; OBJECT is definitely a CONS.
   (when (null rest)
     ;; the type specifier is (CONS), so since OBJECT is a CONS, we
     ;; are done.
-    (return-from typep-cons t))
+    (return-from typep-compound t))
   ;; the type specifier is (CONS <type> . ...)
   (unless (typep (car object) (first rest) environment)
-    (return-from typep-cons nil))
+    (return-from typep-compound nil))
   ;; The CAR of OBJECT is the right type.  Now check the CDR.
   (when (null (rest rest))
     ;; the type specifier is (CONS <type>), so since OBJECT is a CONS, and
     ;; the CAR is the right type, we are done.
-    (return-from typep-cons t))
+    (return-from typep-compound t))
   ;; the type specifier is (CONS <type> <type>)
   (typep (cdr object) (second rest) environment))
