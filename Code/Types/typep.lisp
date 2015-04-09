@@ -235,3 +235,24 @@
 	;; same as the result of upgrading <type>.
 	(and (typep (realpart object) type environment)
 	     (typep (imagpart object) type environment)))))
+
+;;; Given a type specifier of the form (CONS ...), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defun typep-cons (object type-specifier environment)
+  (unless (consp object)
+    (return-from typep-cons nil))
+  ;; OBJECT is definitely a CONS.
+  (when (null (rest type-specifier))
+    ;; TYPE-SPECIFIER is (CONS), so since OBJECT is a CONS, we
+    ;; are done.
+    (return-from typep-cons t))
+  ;; TYPE-SPECIFIER is (CONS <type> . ...)
+  (unless (typep (car object) (second type-specifier) environment)
+    (return-from typep-cons nil))
+  ;; The CAR of OBJECT is the right type.  Now check the CDR.
+  (when (null (rest (rest type-specifier)))
+    ;; TYPE-SPECIFIER is (CONS <type>), so since OBJECT is a CONS, and
+    ;; the CAR is the right type, we are done.
+    (return-from typep-cons t))
+  ;; TYPE-SPECIFIER is (CONS <type> <type>)
+  (typep (cdr OBJECT) (third type-specifier) environment))
