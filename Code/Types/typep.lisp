@@ -126,10 +126,10 @@
 ;;; use for expanding types defined by DEFTYPE.
 (defgeneric typep-compound (object head rest environment))
 
-;;; Given a type specifier of the form (AND ...), check whether OBJECT
-;;; is of that type in ENVIRONMENT.
-(defun typep-and (object type-specifier environment)
-  (loop for type-spec in (rest type-specifier)
+;;; Given a type specifier of the form (AND . REST), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'and)) rest environment)
+  (loop for type-spec in rest
 	always (typep object type-spec environment)))
 
 ;;; Given a type specifier of the form (EQL ...), check whether OBJECT
