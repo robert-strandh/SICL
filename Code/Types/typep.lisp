@@ -132,11 +132,11 @@
   (loop for type-spec in rest
 	always (typep object type-spec environment)))
 
-;;; Given a type specifier of the form (EQL ...), check whether OBJECT
-;;; is of that type in ENVIRONMENT.
-(defun typep-eql (object type-specifier environment)
+;;; Given a type specifier of the form (EQL . REST), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'eql)) rest environment)
   (declare (ignore environment))
-  (eql object (second type-specifier)))
+  (eql object (first rest)))
 
 ;;; Given a type specifier of the form (MEMBER ...), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
