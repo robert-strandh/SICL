@@ -5,12 +5,12 @@
   :serial t
   :components
   ((:file "setf")
-   (:file "multple-value-list")
+   (:file "multiple-value-list")
    (:file "nth-value")
    (:file "get-setf-expansion")
    (:file "return-defmacro")
    (:file "prog1-prog2-defmacro")
-   (:file "prog-progstart-defmacro")
+   (:file "prog-progstar-defmacro")
    (:file "psetq-defmacro")
    (:file "psetf-defmacro")
    (:file "rotatef-defmacro")
