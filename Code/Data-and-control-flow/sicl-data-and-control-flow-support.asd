@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-data-and-control-flow
+(defsystem :sicl-data-and-control-flow-support
   :depends-on (:sicl-global-environment
 	       :cleavir-code-utilities
 	       :cleavir-internationalization)
