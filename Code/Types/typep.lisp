@@ -219,7 +219,6 @@
 ;;; Given a type specifier of the form (COMPLEX ...), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
 (defun typep-complex (object type-specifier environment)
-  (declare (ignore environment))
   (unless (complexp object)
     (return-from typep-complex nil))
   ;; OBJECT is definitely a complex.
@@ -234,5 +233,5 @@
 	;; TYPE-SPECIFIER is (COMPLEX <type>).  In order for TYPEP to
 	;; return true, the element type of the complex must be the
 	;; same as the result of upgrading <type>.
-	(and (typep (realpart object) type)
-	     (typep (imagpart object) type)))))
+	(and (typep (realpart object) type environment)
+	     (typep (imagpart object) type environment)))))
