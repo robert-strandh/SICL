@@ -169,57 +169,57 @@
   (funcall (sicl-genv:fdefinition (first rest) environment)
 	   object))
 
-;;; Given a type specifier of the form (ARRAY ...), check whether
+;;; Given a type specifier of the form (ARRAY . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
-(defun typep-array (object type-specifier environment)
+(defmethod typep-compound (object (head (eql 'array)) rest environment)
   (declare (ignore environment))
   (unless (arrayp object)
-    (return-from typep-array nil))
+    (return-from typep-compound nil))
   ;; OBJECT is definitely an array.
-  (when (null (rest type-specifier))
-    ;; TYPE-SPECIFIER is (ARRAY), so since OBJECT is an
+  (when (null rest)
+    ;; the type specifier is (ARRAY), so since OBJECT is an
     ;; array, we are done.
-    (return-from typep-array t))
-  ;; TYPE-SPECIFIER is (ARRAY ...)
-  (unless (eq (second type-specifier) '*)
-    ;; TYPE-SPECIFIER is either (ARRAY <type>) or (ARRAY
+    (return-from typep-compound t))
+  ;; the type specifier is (ARRAY ...)
+  (unless (eq (first rest) '*)
+    ;; the type specifier is either (ARRAY <type>) or (ARRAY
     ;; <type> ...).  In order for TYPEP to return
     ;; true, the element type of the array must be the
     ;; same as the result of upgrading <type>.  FIXME:
     ;; is EQUAL the right thing to do here?
     (unless (equal (array-element-type object)
 		   (upgraded-array-element-type
-		    (second type-specifier)))
+		    (first rest)))
       ;; No luck, they are not the same.
-      (return-from typep-array nil)))
+      (return-from typep-compound nil)))
   ;; The element types are compatible.  Check whether
   ;; we have  (ARRAY <type>) or (ARRAY <type> ...).
-  (when (null (rest (rest type-specifier)))
+  (when (null (rest rest))
     ;; We have (ARRAY <type>) so we are done.
-    (return-from typep-array t))
+    (return-from typep-compound t))
   ;; We have (ARRAY <type> ...).
   ;; Check whether we have (ARRAY <type> *)
-  (when (eq (third type-specifier) '*)
+  (when (eq (second rest) '*)
     ;; We are done.
-    (return-from typep-array t))
+    (return-from typep-compound t))
   ;; Check whether we have (ARRAY <type> rank), and if
   ;; so whether the rank of OBJECT corresponds.
-  (when (integerp (third type-specifier))
-    (return-from typep-array
-      (= (array-rank object) (third type-specifier))))
+  (when (integerp (second rest))
+    (return-from typep-compound
+      (= (array-rank object) (second rest))))
   ;; We must have (ARRAY <type> (...)).  Start by
   ;; checking that the rank of OBJECT is the same as
   ;; the length of the list.
-  (unless (= (array-rank object) (length (third type-specifier)))
-    (return-from typep-array nil))
+  (unless (= (array-rank object) (length (second rest)))
+    (return-from typep-compound nil))
   ;; The ranks are the same.  Now check that each
   ;; dimension is valid.
   (loop for d1 in (array-dimensions object)
-	for d2 in (third type-specifier)
+	for d2 in (second rest)
 	unless (or (eq d1 '*) (= d1 d2))
-	  do (return-from typep-array nil))
+	  do (return-from typep-compound nil))
   ;; Every dimension is valid.
-  (return-from typep-array t))
+  (return-from typep-compound t))
 
 ;;; Given a type specifier of the form (COMPLEX ...), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
@@ -227,15 +227,15 @@
   (unless (complexp object)
     (return-from typep-complex nil))
   ;; OBJECT is definitely a complex.
-  (when (null (rest type-specifier))
-    ;; TYPE-SPECIFIER is (COMPLEX), so since OBJECT is a complex, we
+  (when (null rest)
+    ;; the type specifier is (COMPLEX), so since OBJECT is a complex, we
     ;; are done.
     (return-from typep-complex t))
-  ;; TYPE-SPECIFIER is (COMPLEX ...)
-  (if (eq (second type-specifier) '*)
+  ;; the type specifier is (COMPLEX ...)
+  (if (eq (first rest) '*)
       t
-      (let ((type (upgraded-complex-part-type (second type-specifier))))
-	;; TYPE-SPECIFIER is (COMPLEX <type>).  In order for TYPEP to
+      (let ((type (upgraded-complex-part-type (first rest))))
+	;; the type specifier is (COMPLEX <type>).  In order for TYPEP to
 	;; return true, the element type of the complex must be the
 	;; same as the result of upgrading <type>.
 	(and (typep (realpart object) type environment)
@@ -247,17 +247,17 @@
   (unless (consp object)
     (return-from typep-cons nil))
   ;; OBJECT is definitely a CONS.
-  (when (null (rest type-specifier))
-    ;; TYPE-SPECIFIER is (CONS), so since OBJECT is a CONS, we
+  (when (null rest)
+    ;; the type specifier is (CONS), so since OBJECT is a CONS, we
     ;; are done.
     (return-from typep-cons t))
-  ;; TYPE-SPECIFIER is (CONS <type> . ...)
-  (unless (typep (car object) (second type-specifier) environment)
+  ;; the type specifier is (CONS <type> . ...)
+  (unless (typep (car object) (first rest) environment)
     (return-from typep-cons nil))
   ;; The CAR of OBJECT is the right type.  Now check the CDR.
-  (when (null (rest (rest type-specifier)))
-    ;; TYPE-SPECIFIER is (CONS <type>), so since OBJECT is a CONS, and
+  (when (null (rest rest))
+    ;; the type specifier is (CONS <type>), so since OBJECT is a CONS, and
     ;; the CAR is the right type, we are done.
     (return-from typep-cons t))
-  ;; TYPE-SPECIFIER is (CONS <type> <type>)
-  (typep (cdr object) (third type-specifier) environment))
+  ;; the type specifier is (CONS <type> <type>)
+  (typep (cdr object) (second rest) environment))
