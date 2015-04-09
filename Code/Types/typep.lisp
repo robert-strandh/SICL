@@ -255,4 +255,4 @@
     ;; the CAR is the right type, we are done.
     (return-from typep-cons t))
   ;; TYPE-SPECIFIER is (CONS <type> <type>)
-  (typep (cdr OBJECT) (third type-specifier) environment))
+  (typep (cdr object) (third type-specifier) environment))
