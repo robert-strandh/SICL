@@ -144,10 +144,10 @@
   (declare (ignore environment))
   (member object rest))
 
-;;; Given a type specifier of the form (NOT ...), check whether OBJECT
-;;; is of that type in ENVIRONMENT.
-(defun typep-not (object type-specifier environment)
-  (not (typep object (second type-specifier) environment)))
+;;; Given a type specifier of the form (NOT . REST), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'not)) rest environment)
+  (not (typep object (first rest) environment)))
 
 ;;; Given a type specifier of the form (OR ...), check whether OBJECT
 ;;; is of that type in ENVIRONMENT.
