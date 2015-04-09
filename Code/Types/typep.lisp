@@ -138,11 +138,11 @@
   (declare (ignore environment))
   (eql object (first rest)))
 
-;;; Given a type specifier of the form (MEMBER ...), check whether
+;;; Given a type specifier of the form (MEMBER . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
-(defun typep-member (object type-specifier environment)
+(defmethod typep-compound (object (head (eql 'member)) rest environment)
   (declare (ignore environment))
-  (member object (rest type-specifier)))
+  (member object rest))
 
 ;;; Given a type specifier of the form (NOT ...), check whether OBJECT
 ;;; is of that type in ENVIRONMENT.
