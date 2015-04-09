@@ -112,7 +112,7 @@
 	       :cleavir-basic-blocks
 	       :cleavir-meter
 	       :sicl-evaluation-and-compilation
-	       :sicl-data-and-control-flow
+	       :sicl-data-and-control-flow-support
 	       :sicl-conditionals-support
 	       :sicl-iteration-support
 	       :sicl-reader-simple)

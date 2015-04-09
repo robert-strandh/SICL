@@ -60,7 +60,7 @@
 	       :sicl-simple-environment
 	       :sicl-environment
 	       :sicl-evaluation-and-compilation
-	       :sicl-data-and-control-flow
+	       :sicl-data-and-control-flow-support
 	       :sicl-reader-simple
 	       :cleavir-hir
 	       :cleavir-generate-ast
