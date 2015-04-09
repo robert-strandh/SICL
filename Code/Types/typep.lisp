@@ -121,6 +121,11 @@
 ;;; unsigned-byte, signed-byte, vector, simple-array,
 ;;; simple-base-string, simple-bit-vector
 
+;;; Implement TYPEP for a type specifier of the form (HEAD . REST).
+;;; OBJECT is the object to test.  ENVIRONMENT is the environment to
+;;; use for expanding types defined by DEFTYPE.
+(defgeneric typep-compound (object head rest environment))
+
 ;;; Given a type specifier of the form (AND ...), check whether OBJECT
 ;;; is of that type in ENVIRONMENT.
 (defun typep-and (object type-specifier environment)
