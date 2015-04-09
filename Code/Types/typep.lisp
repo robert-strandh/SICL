@@ -156,10 +156,10 @@
 	when (typep object type-spec environment)
 	  return t))
 
-;;; Given a type specifier of the form (SATISFIES ...), check whether
-;;; OBJECT is of that type in ENVIRONMENT.
-(defun typep-satisfies (object type-specifier environment)
-  (funcall (sicl-genv:fdefinition (second type-specifier) environment)
+;;; Given a type specifier of the form (SATISFIES . REST), check
+;;; whether OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'satisfies)) rest environment)
+  (funcall (sicl-genv:fdefinition (first rest) environment)
 	   object))
 
 ;;; Given a type specifier that is illegal in the context of TYPEP,
