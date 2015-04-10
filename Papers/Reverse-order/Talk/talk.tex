@@ -147,6 +147,23 @@ count item sequence
 }
 
 \frame{
+\frametitle{Existing implementations of \texttt{count}}
+
+\sbcl{}, \ccl{}, and \lispworks{} all implement the behavior of
+\texttt{count} by first calling \texttt{reverse} on the list.
+
+Inconveniences:
+
+\begin{itemize}
+\item For long lists, an unreasonable amount of heap space is used,
+  and it is possible to run out of space.
+\item Allocating list elements \emph{may} be costly.
+\item The garbage collector will run more often.
+\end{itemize}
+
+}
+
+\frame{
   \frametitle{Comparison of the behavior of the three versions}
   \begin{center}
     \includegraphics{v0-v1-v7.eps}
