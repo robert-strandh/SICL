@@ -182,6 +182,22 @@ The main performance factor of our technique is the number of
 technique.
 }
 
+\frame[containsverbatim]{
+\frametitle{Basic recursive technique}
+
+\begin{verbatim}
+(defun recursive-count (x list)
+  (if (endp list)
+      0
+      (+ (recursive-count x (cdr list))
+         (if (eq (car list) x) 1 0))))
+\end{verbatim}
+
+This technique uses \emph{stack} space rather than heap space.\\
+Problem: stack space is limited, so it may fail.
+
+}
+
 \frame{
   \frametitle{Comparison of the behavior of the three versions}
   \begin{center}
