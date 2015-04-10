@@ -214,6 +214,13 @@ Problem: stack space is limited, so it may fail.
     (aux x list (length list))))))
 \end{verbatim}
 
+Number of \texttt{cdr} operations $F(n)$ on a list of length $n$ is
+approximately $F(n) \approx n\thinspace (1 +
+\frac{1}{2}\mathsf{lb}\thinspace n)$.
+\vskip 0.25cm
+Unacceptable when $n$ is very large.
+\vskip 0.25cm
+Stack depth is only $\mathsf{lb}\thinspace n$.
 }
 
 \frame{
