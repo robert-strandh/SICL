@@ -198,6 +198,24 @@ Problem: stack space is limited, so it may fail.
 
 }
 
+\frame[containsverbatim]{
+\frametitle{Avoiding stack overflow}
+
+\begin{verbatim}
+(defun count-from-end (x list)
+  (labels ((aux (x list n)
+             (cond ((= n 0) 0)
+                   ((= n 1)
+                    (if (eq x (car list)) 1 0))
+                   (t (let* ((n/2 (ash n -1))
+                             (half (nthcdr n/2 list)))
+                        (+ (aux x half (- n n/2))
+                           (aux x list n/2)))))))
+    (aux x list (length list))))))
+\end{verbatim}
+
+}
+
 \frame{
   \frametitle{Comparison of the behavior of the three versions}
   \begin{center}
