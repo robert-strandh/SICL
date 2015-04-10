@@ -164,6 +164,25 @@ Inconveniences:
 }
 
 \frame{
+\frametitle{Basis of our technique}
+
+\begin{itemize}
+\item Use available stack space.
+\item Traverse the list multiple times if necessary.
+\end{itemize}
+
+Most of the talk will discuss near-portable techniques.
+\vskip 0.25cm
+Toward the end, more efficient non-portable techniques.
+\vskip 0.25cm
+The main performance factor of our technique is the number of
+\texttt{cdr} operations.  For that reason, we will consider that
+\texttt{:test} is \texttt{eq} and that \texttt{:key} is
+\texttt{identity}.  Other cases will be more favorable to our
+technique.
+}
+
+\frame{
   \frametitle{Comparison of the behavior of the three versions}
   \begin{center}
     \includegraphics{v0-v1-v7.eps}
