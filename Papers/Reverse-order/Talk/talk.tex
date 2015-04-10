@@ -111,6 +111,22 @@ Several objectives:
 \end{itemize}
 }
 
+\frame{
+\frametitle{Processing list elements in reverse order}
+
+\begin{itemize}
+\item Several \commonlisp{} operators accept the \texttt{:from-end}
+  keyword argument.
+\item In most cases, an implementation is still allowed to process
+  from beginning to end, but the result will typically be different.
+\item Two operators are \emph{required} to process from the end, namely
+  \texttt{count} and \texttt{reduce}.
+\end{itemize}
+
+In this talk, we will exclusively refer to the \texttt{count}
+operator, but the same argument is true for \texttt{reduce}.
+}
+
 \frame[containsverbatim]{
 \frametitle{The \commonlisp{} \texttt{count} operator}
 
