@@ -204,9 +204,9 @@
     ;; true, the element type of the array must be the
     ;; same as the result of upgrading <type>.  FIXME:
     ;; is EQUAL the right thing to do here?
-    (unless (equal (array-element-type object)
-		   (upgraded-array-element-type
-		    (first rest)))
+    (unless (same-array-element-type-p (array-element-type object)
+				       (upgraded-array-element-type
+					(first rest)))
       ;; No luck, they are not the same.
       (return-from typep-compound nil)))
   ;; The element types are compatible.  Check whether
