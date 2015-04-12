@@ -117,6 +117,17 @@ Several objectives:
 }
 
 \frame{
+\frametitle{Environments in the \hs{}}
+
+Mostly used to distinguish the \emph{global environment} from a
+\emph{non-local} (lexical) environment.
+\vskip 0.25cm
+For example, \texttt{setf} might need to call \texttt{macroexpand}
+with the same environment, in case it is wrapped in \texttt{macrolet}
+or \texttt{symbol-macrolet}.
+}
+
+\frame{
 \frametitle{Previous work}
 }
 
