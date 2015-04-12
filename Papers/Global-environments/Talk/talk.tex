@@ -148,6 +148,22 @@ one and the same.
 }
 
 \frame{
+\frametitle{Global environments in typical implementations}
+
+A typical implementation has a single global environment as allowed by
+the \hs{}.  It is typically \emph{spread out} in that a \emph{symbol}
+might contain a \emph{function cell} and/or a \emph{value cell}.
+\vskip 0.25cm
+Some implementations store the function named \emph{foo} in a slot of
+the symbol named \emph{foo} but they store the function named
+\texttt{(setf \textsf{\emph{foo}})} elsewhere.
+\vskip 0.25cm
+This discrepancy might reflect the fact that the basic implementation
+pre-dates the introduction of \texttt{setf} functions.
+
+}
+
+\frame{
 \frametitle{Previous work}
 }
 
