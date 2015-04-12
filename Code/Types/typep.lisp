@@ -199,7 +199,7 @@
     (return-from typep-compound t))
   ;; the type specifier is (ARRAY ...)
   (unless (eq (first rest) '*)
-    ;; the type specifier is either (ARRAY <type>) or (ARRAY
+    ;; The type specifier is either (ARRAY <type>) or (ARRAY
     ;; <type> ...).  In order for TYPEP to return
     ;; true, the element type of the array must be the
     ;; same as the result of upgrading <type>.  FIXME:
