@@ -169,6 +169,23 @@
   (funcall (sicl-genv:fdefinition (first rest) environment)
 	   object))
 
+;;; Given two type specifiers, both indicating possible upgraded array
+;;; element types, return true if and only if the two represent the
+;;; same type.
+(defun same-array-element-type-p (type-descriptor1 type-descriptor2)
+  ;; If we are lucky, the two type descriptors are EQUAL.  In fact, I
+  ;; can't imagine how an implementation would NOT make then EQUAL.
+  (or (equal type-descriptor1 type-descriptor2)
+      ;; If we are not lucky, we must ask SUBTYPEP, and then we insist
+      ;; that it return true for the second return value in both
+      ;; cases.
+      (multiple-value-bind (subtype1-p valid1-p)
+	  (subtypep type-descriptor1 type-descriptor2)
+	(multiple-value-bind (subtype2-p valid2-p)
+	    (subtypep type-descriptor2 type-descriptor1)
+	  (assert (and valid1-p valid2-p))
+	  (and subtype1-p subtype2-p)))))
+
 ;;; Given a type specifier of the form (ARRAY . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
 (defmethod typep-compound (object (head (eql 'array)) rest environment)
