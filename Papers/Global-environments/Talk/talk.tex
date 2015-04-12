@@ -168,6 +168,28 @@ pre-dates the introduction of \texttt{setf} functions.
 }
 
 \frame{
+\frametitle{First-class global environments}
+
+In \sicl{}, we put all environment-related information in an
+\texttt{environment} class instance.  This environment would typically
+be organized as a collection of hash tables, one for each
+\emph{namespace}:
+\begin{itemize}
+\item The \emph{function} namespace, containing information about
+  functions, macros, and special operators.
+\item The \emph{variable} namespace, containing information about
+  special variables, constant variables, and symbol macros.
+\item The \emph{type} namespace, containing types defined by
+  \texttt{deftype}.
+\item The \emph{class} namespace, containing a mapping from class
+  names (symbols) to class metaobjects.
+\item The \emph{package} namespace, containing mappings from package
+  names (strings) to package objects.
+\item etc.
+\end{itemize}
+}
+
+\frame{
   \frametitle{Acknowledgments}
 
 We would like to thank Alastair Bridgewater, David Murray, Robert
