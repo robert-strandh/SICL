@@ -278,3 +278,35 @@
     (return-from typep-compound t))
   ;; the type specifier is (CONS <type> <type>)
   (typep (cdr object) (second rest) environment))
+
+;;; Given a type specifier of the form (INTEGER . REST), check whether
+;;; OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'integer)) rest environment)
+  (unless (integerp object)
+    (return-from typep-compound nil))
+  ;; OBJECT is definitely an integer.
+  (when (null rest)
+    ;; the type specifier is (INTEGER), so since OBJECT is an integer,
+    ;; we are done.
+    (return-from typep-compound t))
+  ;; the type specifier is (INTEGER <lower-bound> . ...).
+  (let ((lower-bound (first rest)))
+    (cond ((integerp lower-bound)
+	   (when (< object lower-bound)
+	     (return-from typep-compound nil)))
+	  ((consp lower-bound)
+	   (when (<= object (car lower-bound))
+	     (return-from typep-compound nil)))
+	  (t
+	   nil)))
+  (when (null (rest rest))
+    ;; the type specifier is (INTEGER <lower-bound>), so since we have
+    ;; checked that the lower bound is OK, we are done.
+    (return-from typep-compound t))
+  (let ((upper-bound (second rest)))
+    (cond ((integerp upper-bound)
+	   (<= object upper-bound))
+	  ((consp upper-bound)
+	   (< object (car upper-bound)))
+	  (t
+	   t))))
