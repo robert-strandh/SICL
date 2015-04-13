@@ -215,6 +215,25 @@ global environment.
 
 }
 
+\frame[containsverbatim]{
+\frametitle{Reference to a global function}
+
+The compiler turns a reference to a global function \texttt{foo} into
+something like:
+
+\begin{verbatim}
+(car
+  (load-time-value
+    (sicl-genv:function-cell
+      'foo
+      (sicl-genv:global-environment+))))
+\end{verbatim}
+
+Here \texttt{car} is not really the standard \commonlisp{} function,
+because the argument is known to be a \texttt{cons} cell.
+
+}
+
 \frame{
   \frametitle{Acknowledgments}
 
