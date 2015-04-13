@@ -226,6 +226,28 @@ Unacceptable when $n$ is very large.
 Stack depth is only $\mathsf{lb}\thinspace n$.
 }
 
+\frame[containsverbatim]{
+\frametitle{Using more stack space}
+
+\begin{verbatim}
+(defun count-from-end-2 (x list)
+  (labels ((recursive (x list n)
+             (if (zerop n)
+                 0
+                 (+ (recursive x (cdr list) (1- n))
+                    (if (eq x (car list)) 1 0))))
+           (aux (x list n)
+             (if (<= n 10000)
+                 (recursive x list n)
+                 (let* ((n/2 (ash n -1))
+                        (half (nthcdr n/2 list)))
+                   (+
+                    (aux x half (- n n/2))
+                    (aux x list n/2))))))
+    (aux x list (length list))))
+\end{verbatim}
+}
+
 \frame{
   \frametitle{Comparison of the behavior of the three versions}
   \begin{center}
