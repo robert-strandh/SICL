@@ -342,3 +342,8 @@
 	   (< object (car upper-bound)))
 	  (t
 	   t))))
+
+(defun same-float-type-p (type1 type2)
+  (or (eq type1 type2)
+      (and (subtypep type1 type2)
+	   (subtypep type2 type1))))
