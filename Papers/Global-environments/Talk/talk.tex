@@ -197,6 +197,23 @@ However, the current paper is only about a \clos{}-based
 
 }
 
+\frame[containsverbatim]{
+\frametitle{Example: \texttt{fboundp}}
+
+\begin{verbatim}
+(defun fboundp (name)
+  (sicl-genv:fboundp
+    name
+    (load-time-value (sicl-genv:global-environment))))
+\end{verbatim}
+
+The package named \texttt{sicl-genv} is the one containing the
+protocol definitions.
+\vskip 0.25cm
+The function \texttt{sicl-genv:global-environment} returns the current
+global environment.
+
+}
 
 \frame{
   \frametitle{Acknowledgments}
