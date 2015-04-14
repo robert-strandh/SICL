@@ -383,3 +383,9 @@
 (defmethod typep-compound (object (head (eql 'short-float)) rest environment)
   (declare (ignore environment))
   (typep-compound-float object head rest))
+
+;;; Given a type specifier of the form (SINGLE-FLOAT . REST), check
+;;; whether OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'single-float)) rest environment)
+  (declare (ignore environment))
+  (typep-compound-float object head rest))
