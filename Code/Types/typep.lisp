@@ -395,3 +395,9 @@
 (defmethod typep-compound (object (head (eql 'double-float)) rest environment)
   (declare (ignore environment))
   (typep-compound-float object head rest))
+
+;;; Given a type specifier of the form (LONG-FLOAT . REST), check
+;;; whether OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'long-float)) rest environment)
+  (declare (ignore environment))
+  (typep-compound-float object head rest))
