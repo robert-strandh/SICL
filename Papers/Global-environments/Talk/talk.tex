@@ -184,11 +184,21 @@ be organized as a collection of hash tables, one for each
 \end{itemize}
 }
 
-\frame{
+\frame[containsverbatim]{
 \frametitle{A protocol for first-class global environments}
 
 However, the current paper is only about a \clos{}-based
 \emph{protocol} for first-class global environments.
+\vskip 0.25cm
+Most protocol functions are generic versions of existing functions:
+
+\begin{verbatim}
+(cl:in-package #:sicl-genv)
+
+(defgeneric fboundp (function-name environment))
+
+(defgeneric fmakunbound (function-name environment))
+\end{verbatim}
 
 }
 
