@@ -377,3 +377,9 @@
 	   (< object (car upper-bound)))
 	  (t
 	   t))))
+  
+;;; Given a type specifier of the form (SHORT-FLOAT . REST), check
+;;; whether OBJECT is of that type in ENVIRONMENT.
+(defmethod typep-compound (object (head (eql 'short-float)) rest environment)
+  (declare (ignore environment))
+  (typep-compound-float object head rest))
