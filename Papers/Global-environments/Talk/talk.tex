@@ -203,6 +203,22 @@ Most protocol functions are generic versions of existing functions:
 }
 
 \frame[containsverbatim]{
+\frametitle{A protocol for first-class global environments}
+
+Some functions are new, but needed to implement some standard
+\commonlisp{} functionality
+
+\begin{verbatim}
+(cl:in-package #:sicl-genv)
+
+(defgeneric type-expander (symbol environment))
+
+(defgeneric (setf type-expander) (new symbol environment))
+\end{verbatim}
+
+}
+
+\frame[containsverbatim]{
 \frametitle{Example: \texttt{fboundp}}
 
 \begin{verbatim}
