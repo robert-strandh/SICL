@@ -251,6 +251,25 @@ global environment.
 
 }
 
+\frame{
+\frametitle{Performance issue}
+
+We must make sure that typical run-time uses of the environment do not
+penalize performance, in particular for:
+
+\begin{itemize}
+\item Accessing a globally defined function in order to call it.
+\item Accessing the global value of a special variable.
+\end{itemize}
+
+We must use an \emph{indirection} to allow functions to be redefined,
+and values of variables to be modified.
+\vskip 0.25cm
+For that, the environment contains a \emph{cell} for each function and
+each variable.
+
+}
+
 \frame[containsverbatim]{
 \frametitle{Reference to a global function}
 
