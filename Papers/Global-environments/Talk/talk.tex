@@ -255,6 +255,28 @@ because the argument is known to be a \texttt{cons} cell.
 
 }
 
+\frame[containsverbatim]{
+  \frametitle{Main reason for first-class global environments}
+
+We needed first-class global environments for bootstrapping.
+\vskip 0.25cm
+The \sicl{} cross compiler works against a first-class global
+environment.
+\vskip 0.25cm
+We can then read and compile code for standard \commonlisp{} functions
+using normal package names:
+
+\begin{verbatim}
+(defpackage #:sicl-cons
+  (:use #:common-lisp))
+...
+(cl:in-package #:sicl-cons)
+
+(defun cadr (object)
+  (car (cdr object)))
+\end{verbatim}
+}
+
 \frame{
   \frametitle{Acknowledgments}
 
