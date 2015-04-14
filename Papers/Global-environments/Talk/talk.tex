@@ -290,6 +290,29 @@ because the argument is known to be a \texttt{cons} cell.
 }
 
 \frame[containsverbatim]{
+\frametitle{Other performance issues}
+
+Our environment incurs a performance penalty when the name of a
+function or a variable is only known at run-time:
+
+\begin{verbatim}
+(fdefinition x)
+(symbol-value x)
+\end{verbatim}
+
+But when the name is known at compile time:
+
+\begin{verbatim}
+(fdefinition 'my-function)
+(symbol-value 'my-variable)
+\end{verbatim}
+
+we can use a compiler macro.
+
+}
+
+
+\frame[containsverbatim]{
   \frametitle{Main reason for first-class global environments}
 
 We needed first-class global environments for bootstrapping.
