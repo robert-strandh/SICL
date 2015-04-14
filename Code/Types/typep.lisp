@@ -1,3 +1,5 @@
+(cl:in-package #:sicl-type)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Here is what we know about types.
