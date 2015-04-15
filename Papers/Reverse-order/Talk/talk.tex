@@ -210,10 +210,10 @@ collector.
              (cond ((= n 0) 0)
                    ((= n 1)
                     (if (eq x (car list)) 1 0))
-                   (t (let* ((n/2 (ash n -1))
-                             (half (nthcdr n/2 list)))
-                        (+ (aux x half (- n n/2))
-                           (aux x list n/2)))))))
+                   (t (let* ((m (ash n -1))
+                             (half (nthcdr m list)))
+                        (+ (aux x half (- n m))
+                           (aux x list m)))))))
     (aux x list (length list))))))
 \end{verbatim}
 
