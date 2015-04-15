@@ -6,5 +6,6 @@
 	       :sicl-global-environment)
   :components
   ((:file "packages")
+   (:file "float-types")
    (:file "typep-compound")
    (:file "typep-atomic")))
