@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-type-support
-  :depends-on (:sicl-global-environment)
+  :depends-on (:sicl-environment
+	       :sicl-global-environment)
   :components
   ((:file "packages")
    (:file "typep-compound")
