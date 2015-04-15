@@ -4,4 +4,4 @@
   :depends-on (:sicl-global-environment)
   :components
   ((:file "packages")
-   (:file "typep")))
+   (:file "typep-compound")))
