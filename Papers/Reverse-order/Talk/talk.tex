@@ -351,6 +351,23 @@ SBCL       & 1.2.7    & Intel Core & 0.36 & 0.38 & 0.25 \\ \hline
 }
 
 \frame{
+  \frametitle{Doing better with implementation-specific techniques}
+
+So far, our technique is mostly portable (aside from computing
+available stack space).
+\vskip 0.25cm
+Observations:
+
+\begin{itemize}
+\item Each recursive call takes many words in each stack frame for
+  frame pointer, return address, saved registers, etc.
+\item We use \texttt{nthcdr} which must test for \texttt{cons} cells,
+  but no such test is needed.
+\end{itemize}
+
+}
+
+\frame{
   \frametitle{Acknowledgments}
 
 We would like to thank Pascal Bourguignon for reading and commenting
