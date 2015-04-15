@@ -42,6 +42,9 @@
 (defun non-conforming ()
   (error "Non-conforming floating-point types of implementation."))
 
+;;; We do not use floating point literals here, nor do we use
+;;; read-time evaluation.  The reason for that is that we want this
+;;; definition to work also when compiled in an extrinsic environment.
 (defun floating-point-types ()
   (let ((short (coerce 1 'short-float))
 	(single (coerce 1 'single-float))
