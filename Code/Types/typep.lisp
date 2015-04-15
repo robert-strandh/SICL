@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-type)
 
+;;; We try not to allocate any memory in TYPEP.  To avoid it as much
+;;; as possible, we do not start by expanding the type desriptor.
+
 (defgeneric typep (object type-specifier environment))
 
 (defmethod typep (object type-specifier environment)
