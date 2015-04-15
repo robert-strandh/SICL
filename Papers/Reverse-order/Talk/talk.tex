@@ -211,8 +211,8 @@ collector.
                    ((= n 1)
                     (if (eq x (car list)) 1 0))
                    (t (let* ((m (ash n -1))
-                             (half (nthcdr m list)))
-                        (+ (aux x half (- n m))
+                             (suffix (nthcdr m list)))
+                        (+ (aux x suffix (- n m))
                            (aux x list m)))))))
     (aux x list (length list))))))
 \end{verbatim}
