@@ -317,6 +317,16 @@ Stack depth is only $\mathsf{lb}\thinspace n$.
 }
 
 \frame{
+  \frametitle{Benchmark of three versions}
+
+  \begin{itemize}
+  \item v0 Native \texttt{count} with \texttt{:from-end t}.
+  \item v1 Using \texttt{reverse} then \texttt{count}.
+  \item v7 Our best version.
+  \end{itemize}
+}
+
+\frame{
   \frametitle{Comparison of the behavior of the three versions}
 \begin{tabular}{|c|c|c|c|c|c|c|}
 \hline
