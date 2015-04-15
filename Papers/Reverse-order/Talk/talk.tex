@@ -318,6 +318,23 @@ Stack depth is only $\mathsf{lb}\thinspace n$.
 
 \frame{
   \frametitle{Comparison of the behavior of the three versions}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{3}{|c|}{System characteristics}  & \multicolumn{3}{|c|}{Time in ms}\\ \hline
+Impl & Version        & Processor  & v0   & v1   & v7   \\ \hline
+LispWorks  & 6.1.1    & Intel Core & 0.20 & 0.18 & 0.14 \\ \hline
+Clozure CL & 1.10     & Intel Xeon & 1.93 & 1.79 & 0.15 \\ \hline
+Clozure CL & 1.10-dev & AMD FX     & 1.77 & 1.63 & 0.15 \\ \hline
+SBCL       & 1.2.8    & Intel Xeon & 0.51 & 0.27 & 0.22 \\ \hline
+ABCL       & 1.3.1    & Intel Xeon & 1.13 & 0.22 & 0.34 \\ \hline
+CLISP      & 2.49     & X86\_64    & 1.15 & 1.14 & 0.87 \\ \hline
+ECL        & 13.5.1   & ?          & 0.69 & 0.41 & 0.36 \\ \hline
+SBCL       & 1.2.7    & Intel Core & 0.36 & 0.38 & 0.25 \\ \hline
+\end{tabular}
+}
+
+\frame{
+  \frametitle{Comparison of the behavior of the three versions}
   \begin{center}
     \includegraphics{v0-v1-v7.eps}
   \end{center}
