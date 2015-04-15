@@ -61,5 +61,8 @@
 		'(short-float single-float double-float)
 		'(short-float single-float double-float long-float))))))
 
-		
-	    
+;;; Return true if and only the two atomic floating-point types TYPE1
+;;; and TYPE2 are the same.
+(defun same-float-type-p (type1 type2)
+  (or (eq type1 type2)
+      (eql (coerce 1 type1) (coerce 1 type2))))

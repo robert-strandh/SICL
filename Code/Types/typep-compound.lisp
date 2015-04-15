@@ -345,10 +345,6 @@
 	  (t
 	   t))))
 
-(defun same-float-type-p (type1 type2)
-  (or (eq type1 type2)
-      (eql (coerce 1 type1) (coerce 1 type2))))
-
 (defun typep-compound-float (object head rest)
   (unless (same-float-type-p (type-of object) head)
     (return-from typep-compound-float nil))
