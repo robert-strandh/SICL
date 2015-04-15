@@ -239,11 +239,10 @@ Stack depth is only $\mathsf{lb}\thinspace n$.
            (aux (x list n)
              (if (<= n 10000)
                  (recursive x list n)
-                 (let* ((n/2 (ash n -1))
-                        (half (nthcdr n/2 list)))
-                   (+
-                    (aux x half (- n n/2))
-                    (aux x list n/2))))))
+                 (let* ((m (ash n -1))
+                        (suffix (nthcdr m list)))
+                   (+ (aux x suffix (- n m))
+                      (aux x list m))))))
     (aux x list (length list))))
 \end{verbatim}
 }
