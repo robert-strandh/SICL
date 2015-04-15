@@ -387,6 +387,9 @@ Observations:
 \item In a typical implementation, we can process more than one
   hundred thousand elements without any function calls.
 \item No need to test whether element is a \texttt{cons} cell.
+\item We can process lists of up to $10$ billion elements with only
+  $3$ \texttt{cdr} operations per element, $2$ of which need not be
+  checked.
 \end{itemize}
 
 Result: On \sbcl{}, speed almost the same as counting from the
