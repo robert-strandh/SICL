@@ -367,6 +367,19 @@ Observations:
 
 }
 
+\frame[containsverbatim]{
+\frametitle{Replacing recursive technique}
+
+\begin{verbatim}
+(defun low-level-reverse-count (item list length)
+  (loop for rest = list then (cdr rest)
+        repeat length
+        do (push-on-stack (car rest)))
+  (loop repeat length
+        count (eq item (pop-from-stack))))
+\end{verbatim}
+}
+
 \frame{
   \frametitle{Acknowledgments}
 
