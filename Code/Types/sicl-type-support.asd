@@ -7,5 +7,6 @@
   :components
   ((:file "packages")
    (:file "float-types")
+   (:file "expand")
    (:file "typep-compound")
    (:file "typep-atomic")))
