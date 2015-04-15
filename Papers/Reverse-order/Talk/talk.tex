@@ -381,6 +381,20 @@ Observations:
 }
 
 \frame{
+  \frametitle{Improvement with implementation-specific technique}
+
+\begin{itemize}
+\item In a typical implementation, we can process more than one
+  hundred thousand elements without any function calls.
+\item No need to test whether element is a \texttt{cons} cell.
+\end{itemize}
+
+Result: On \sbcl{}, speed almost the same as counting from the
+beginning of the list.
+
+}
+
+\frame{
   \frametitle{Acknowledgments}
 
 We would like to thank Pascal Bourguignon for reading and commenting
