@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-type
+(defsystem :sicl-type-support
   :depends-on (:sicl-global-environment)
   :components
   ((:file "packages")
