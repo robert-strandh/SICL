@@ -268,6 +268,27 @@ Stack depth is only $\mathsf{lb}\thinspace n$.
 \end{verbatim}
 }
 
+\frame[containsverbatim]{
+\frametitle{Using more stack space}
+
+\begin{verbatim}
+(defun count-from-end-2 (x list)
+  (labels ((recursive (x list n)
+             (if (zerop n)
+                 0
+                 (+ (recursive x (cdr list) (1- n))
+                    (if (eq x (car list)) 1 0))))
+           (aux (x list n)
+             (if (<= n 10000)
+                 (recursive x list n)
+                 (let* ((m 10000)
+                        (suffix (nthcdr m list)))
+                   (+ (aux x suffix (- n m))
+                      (recursive x list m))))))
+    (aux x list (length list))))
+\end{verbatim}
+}
+
 \frame{
   \frametitle{Comparison of the behavior of the three versions}
   \begin{center}
