@@ -395,6 +395,20 @@ beginning of the list.
 }
 
 \frame{
+\frametitle{Future work}
+
+\begin{itemize}
+\item Apply our technique to operators where the implementation has a
+  choice of direction of traversal, in particular \texttt{find} and
+  \texttt{position}.
+\item Devise benchmarks for these operators.  Additional parameters
+  are necessary, such as expected position of last element that
+  \emph{passes the test}.
+\item Apply the idea of using available stack space to other domains.
+\end{itemize}
+}
+
+\frame{
   \frametitle{Acknowledgments}
 
 We would like to thank Pascal Bourguignon for reading and commenting
@@ -407,21 +421,6 @@ to us.  Finally, we would like to thank Martin Simmons at \lispworks{}
 technical support for giving us the information we needed in order to
 explain the performance of our technique on the \lispworks{}
 \commonlisp{} implementation.
-}
-
-\frame{
-\frametitle{Future work}
-
-\begin{itemize}
-\item Apply our technique to operators where the implementation has a
-  choice of direction of traversal, in particular \texttt{find} and
-  \texttt{position}.
-\item Devise benchmarks for these operators.  Additional parameters
-  are necessary, such as expected position of last element that
-  \emph{passes the test}.
-\item Apply the idea of using available stack space to other domains.
-\end{itemize}
-
 }
 
 \frame{
