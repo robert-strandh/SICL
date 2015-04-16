@@ -1,4 +1,4 @@
-(in-package #:cleavir-ast)
+(cl:in-package #:cleavir-ast)
 
 ;;;; We define the abstract syntax trees (ASTs) that represent not
 ;;;; only Common Lisp code, but also the low-level operations that we
