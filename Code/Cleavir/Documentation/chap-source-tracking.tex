@@ -3,38 +3,31 @@
 Source tracking is necessarily implementation-specific.  In this
 chapter, we describe a protocol for source tracking that allows each
 implementation to configure the protocol according to its methods and
-abilities. 
+abilities.
 
-At the heart of the protocol is the generic function \texttt{location}:
+The function \texttt{cleavir-ast:generate-ast} takes an additional
+optional argument named \texttt{source-info}.  The caller passes an
+object that encapsulates source information about the form to be
+compiled.
 
-\Defgeneric {location} 
-            {environment expression parent-location child-number}
+\sysname{} calls two generic functions:
 
-Within the dynamic context of compiling a file, \sysname{} calls this
-generic function to obtain the source location of some expression that
-it is about to convert to an abstract syntax tree.  The function
-returns some implementation-defined object that stores the
-source-tracking information about an expression.  
+\Defgeneric {begin-source} {source-info expression}
 
-The parameter \textit{environment} is the global environment object
-that the implementation passed to the top-level compilation function. 
-The parameter \textit{expression} is the expression that \sysname{} is
-about to process and convert into an AST.  The parameter
-\textit{parent-location} is the implementation-defined location object
-that was returned by the call to \texttt{location} with the parent
-expression of \textit{expression}, or \texttt{nil} if
-\textit{expression} is a top-level expression with no parent.  The
-parameter \textit{child-number} is the element number of
-\textit{expression} in its parent, where elements are numbered from
-$0$. 
+This function is called at the beginning of the processing of
+\textit{expression}.  It should return an object representing the
+source location for \textit{expression}, or \texttt{nil} if the source
+location of \textit{expression} is not known.
 
-At any point, the implementation-defined method on \texttt{location}
-may fail to determine the location of \textit{expression} perhaps
-because there are multiple or no occurrences of the expression in the
-source, or perhaps because some reader macro created a complex
-structure that can not be analyzed by this method.  In that case, the
-implementation-defined method simply returns an object indicating this
-fact.  It can be any object other than \texttt{nil}, as long as the
-same method recognizes this object when it is passed as the
-\textit{parent-location} argument to subsequent calls to
-\texttt{location}. 
+\Defgeneric {end-source} {source-info}
+
+This function is called at the end of the processing of the expression
+that was most passed to the most recent call to
+\texttt{begin-source}.
+
+These functions are called in \emph{last-in first-out} order,
+effectively defining a \emph{stack} of nested expressions.  The
+implementation can keep track of that stack in order to have a better
+idea of the source location of the expression, or it can ignore this
+information and just use a hash table, mapping expressions to
+locations.
