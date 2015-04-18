@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-basic-blocks
+(defsystem :cleavir-basic-blocks
   :depends-on (:cleavir-utilities
 	       :cleavir-hir)
   :components
