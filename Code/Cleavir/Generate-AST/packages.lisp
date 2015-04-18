@@ -13,4 +13,6 @@
 	   #:minimally-compile
 	   #:*compiler*
 	   #:ast-from-file
-	   #:ast-from-stream))
+	   #:ast-from-stream
+	   #:begin-source
+	   #:end-source))
