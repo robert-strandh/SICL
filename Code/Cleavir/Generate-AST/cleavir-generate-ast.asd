@@ -12,6 +12,7 @@
   ((:file "packages")
    (:file "conditions")
    (:file "condition-reporters-english")
+   (:file "source-tracking")
    (:file "check-special-form-syntax")
    (:file "environment-query")
    (:file "utilities")
