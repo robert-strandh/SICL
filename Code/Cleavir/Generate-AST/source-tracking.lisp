@@ -32,3 +32,8 @@
 (defgeneric begin-source (source-info expression))
 
 (defgeneric end-cource (source-info))
+
+;;; Data structure for source tracking.
+(defclass source-location ()
+  ((%location :initarg :location :reader location)
+   (%children :initarg :children :reader children)))
