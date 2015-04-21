@@ -1,4 +1,4 @@
-(in-package #:cleavir-ssa-form)
+(cl:in-package #:cleavir-ssa-form)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
