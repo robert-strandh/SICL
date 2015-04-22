@@ -3,6 +3,7 @@
 (defun repl (environment)
   (loop
     do (princ "SICL: ")
+       (finish-output)
        (setf *dynamic-environment* '())
        (let ((form (sicl-reader:read)))
 	 (when (equal form '(quit))
