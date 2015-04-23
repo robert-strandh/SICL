@@ -31,7 +31,7 @@
 
 (defgeneric begin-source (source-info expression))
 
-(defgeneric end-cource (source-info))
+(defgeneric end-source (source-info))
 
 ;;; Data structure for source tracking.
 (defclass source-location ()
