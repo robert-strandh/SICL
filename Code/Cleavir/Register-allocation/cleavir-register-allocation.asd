@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-register-allocation
+(defsystem :cleavir-register-allocation
   :depends-on (:cleavir-liveness
 	       :cleavir-ir
 	       :cleavir-hir
