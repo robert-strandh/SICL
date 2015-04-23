@@ -37,3 +37,24 @@
 (defclass source-location ()
   ((%location :initarg :location :reader location)
    (%children :initarg :children :reader children)))
+
+(defun build-source-info (source-info expression)
+  (let ((location (begin-source source-info expression)))
+    (unless (null location)
+      (make-instance 'source-location
+	:location location
+	:children
+	(if (atom expression)
+	    '()
+	    (let ((result '()))
+	      (loop for sub-expressions = (rest expression)
+		      then (rest sub-expressions)
+		    while (consp sub-expressions)
+		    do (push (build-source-info source-info (first sub-expressions))
+			     result)
+		    finally (unless (null sub-expressions)
+			      (push (build-source-info source-info sub-expressions)
+				    result)))
+	      (nreverse result)))))
+    (end-source source-info)
+    location))
