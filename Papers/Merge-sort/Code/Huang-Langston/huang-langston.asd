@@ -3,4 +3,4 @@
 (defsystem :huang-langston
   :serial t
   :components
-  ())
+  ((:file "packages")))
