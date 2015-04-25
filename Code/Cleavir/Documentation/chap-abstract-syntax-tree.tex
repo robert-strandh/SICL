@@ -60,6 +60,21 @@ operator \texttt{eval-when}.  The compiler takes action based on the
 context of the compilation and either evaluates or generates an
 abstract syntax tree.
 
+\subsection{\texttt{immediate-ast}}
+\label{immediate-ast}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:value} & \texttt{value} & The immediate value.\\
+\hline
+\end{tabular}
+
+A \texttt{immediate-ast} is used by an implementation to represent
+constants that can be represented as immediates in machine code on the
+particular platform used.
+
 \subsection{\texttt{constant-ast}}
 \label{constant-ast}
 
