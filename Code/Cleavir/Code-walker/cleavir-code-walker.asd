@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-code-walker
+(defsystem :cleavir-code-walker
   :depends-on (:cleavir-code-utilities
 	       :cleavir-environment)
   :serial t
