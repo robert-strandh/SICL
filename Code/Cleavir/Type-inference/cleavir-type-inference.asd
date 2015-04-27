@@ -3,4 +3,5 @@
 (defsystem cleavir-type-inference
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "type-descriptor")))
