@@ -27,6 +27,12 @@
 ;;;; appear in a fixed, predefined order.  This order is defined by
 ;;;; the order in which sub-type descriptors are defined below.
 ;;;;
+;;;; Notice that there is no FLOAT sub-type descriptor.  The
+;;;; implementation has to supply a list of the XXX-FLOAT types that
+;;;; it supports, so that an occurrence of a type-specifier involving
+;;;; FLOAT will be turned into a type descriptor in which FLOAT has
+;;;; been replaced by every supported XXX-FLOAT type.
+;;;;
 ;;;; INTEGER
 ;;;;
 ;;;;   This sub-type descriptor has the following form:
