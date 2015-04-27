@@ -54,5 +54,30 @@
 ;;;;   symbol *, where r is a rational number.  Only l1 and un can be
 ;;;;   the symbol *.  The pair (li ui) designates an interval of
 ;;;;   rationals.
+;;;;
+;;;; SHORT-FLOAT
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     (SHORT-FLOAT (l1 u1) (l2 u2) ... (ln un))
+;;;;
+;;;; SINGLE-FLOAT
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     (SINGLE-FLOAT (l1 u1) (l2 u2) ... (ln un))
+;;;;
+;;;; DOUBLE-FLOAT
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     (DOUBLE-FLOAT (l1 u1) (l2 u2) ... (ln un))
+;;;;
+;;;; LONG-FLOAT
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     (LONG-FLOAT (l1 u1) (l2 u2) ... (ln un))
+;;;;
 
 ;;  LocalWords:  canonicalize inferencer
