@@ -33,15 +33,26 @@
 ;;;;
 ;;;;     (INTEGER (l1 u1) (l2 u2) ... (ln un))
 ;;;;
-;;;;   where li and ui are integers or the symbol *.  Only l1 and un
-;;;;   can be the symbol *.  The pair (li ui) designate a closed
-;;;;   interval of integers, where li is the least possible value and
-;;;;   ui is the largest possible value.  Furthermore for all i, if
-;;;;   both li and ui are integers, then i <= 1 <= n, li <= ui.  Also,
-;;;;   for all i such that 1 <= i < n, ui + 1 < li+1.  In other words,
-;;;;   the intervals are ordered and there is at least one integer
-;;;;   between each interval.  Notice that we do not allow the
-;;;;   notation (n) for the sub-type INTEGER because it can trivially
-;;;;   be replaced by n-1 or n+1 as needed.
+;;;;   where each li and ui is an integer or the symbol *.  Only l1
+;;;;   and un can be the symbol *.  The pair (li ui) designates a
+;;;;   closed interval of integers, where li is the least possible
+;;;;   value and ui is the largest possible value.  Furthermore for
+;;;;   all i, if both li and ui are integers, then i <= 1 <= n, li <=
+;;;;   ui.  Also, for all i such that 1 <= i < n, ui + 1 < li+1.  In
+;;;;   other words, the intervals are ordered and there is at least
+;;;;   one integer between each interval.  Notice that we do not allow
+;;;;   the notation (n) for the sub-type INTEGER because it can
+;;;;   trivially be replaced by n-1 or n+1 as needed.
+;;;;
+;;;; RATIONAL
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     (RATIONAL (l1 u1) (l2 u2) ... (ln un))
+;;;;
+;;;;   where each li and ui is either of the form r, (r), or the
+;;;;   symbol *, where r is a rational number.  Only l1 and un can be
+;;;;   the symbol *.  The pair (li ui) designates an interval of
+;;;;   rationals.
 
 ;;  LocalWords:  canonicalize inferencer
