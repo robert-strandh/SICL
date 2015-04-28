@@ -80,5 +80,16 @@
 ;;;;
 ;;;;     (LONG-FLOAT (l1 u1) (l2 u2) ... (ln un))
 ;;;;
+;;;; COMPLEX
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     (COMPLEX t1 t2 ... tn)
+;;;;
+;;;;   where t1, t2, ... tn are symbols taken from the set INTEGER,
+;;;;   RATIONAL, SHORT-LOAT, SINGLE-FLOAT, DOUBLE-FLOAT, and
+;;;;   LONG-FLOAT.  Each symbol can appear only once, and there must
+;;;;   be at least one element in the list, or else the COMPLEX
+;;;;   sub-type descriptor will be removed from the type descriptor.
 
 ;;  LocalWords:  canonicalize inferencer
