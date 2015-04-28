@@ -91,5 +91,11 @@
 ;;;;   LONG-FLOAT.  Each symbol can appear only once, and there must
 ;;;;   be at least one element in the list, or else the COMPLEX
 ;;;;   sub-type descriptor will be removed from the type descriptor.
+;;;;
+;;;; NULL
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     NULL
 
 ;;  LocalWords:  canonicalize inferencer
