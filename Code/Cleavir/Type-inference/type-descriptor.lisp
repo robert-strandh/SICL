@@ -27,6 +27,14 @@
 ;;;; appear in a fixed, predefined order.  This order is defined by
 ;;;; the order in which sub-type descriptors are defined below.
 ;;;;
+;;;; For a sub-type descriptor that designates a set of INTERVALS, the
+;;;; following restriction holds: Two intervals can not overlap or
+;;;; touch, and the intervals are ordered from smallest to greatest.
+;;;; For the RATIONAL type descriptor interval, the notation (x) means
+;;;; that x is not part of the interval, so that the interval is open
+;;;; in the direction indicated.  Other interval descriptors do not
+;;;; allow the notation (x).
+;;;;
 ;;;; Notice that there is no FLOAT sub-type descriptor.  The
 ;;;; implementation has to supply a list of the XXX-FLOAT types that
 ;;;; it supports, so that an occurrence of a type-specifier involving
