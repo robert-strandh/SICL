@@ -97,5 +97,15 @@
 ;;;;   This sub-type descriptor has the following form:
 ;;;;
 ;;;;     NULL
+;;;;
+;;;; CONS
+;;;;
+;;;;   This sub-type descriptor has the following form:
+;;;;
+;;;;     CONS
+;;;;
+;;;;   Notice that we do not take into account the element type of the
+;;;;   CONS.  We also do not canonicalize the occurrence of both NULL
+;;;;   and CONS to LIST.
 
 ;;  LocalWords:  canonicalize inferencer
