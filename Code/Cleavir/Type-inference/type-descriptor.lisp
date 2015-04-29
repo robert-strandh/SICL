@@ -27,6 +27,11 @@
 ;;;; totally different representations do not occur often in practice,
 ;;;; so we do not attempt to represent them.
 ;;;;
+;;;; Another important consideration for the lattice used here is that
+;;;; an instance of STANDARD-OBJECT can have its class changed at any
+;;;; time.  Therefore, it is not meaningful to distinguish between
+;;;; sub-classes of STANDARD-OBJECT.
+;;;;
 ;;;; A type descriptor is either T, meaning the type T, or it is a
 ;;;; list of sub-type descriptors.  The meaning of this list is the OR
 ;;;; of the meaning of each element.  If the list is empty, i.e. NIL,
