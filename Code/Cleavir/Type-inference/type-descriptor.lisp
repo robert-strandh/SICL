@@ -14,6 +14,19 @@
 ;;;; not useful to know that the type is either SINGLE-FLOAT or
 ;;;; DOUBLE-FLOAT because a test is required to determine which one it
 ;;;; is.
+;;;;
+;;;; We do not think it is useful to keep information about the
+;;;; dimensions of an array.  We think that array operations need to
+;;;; be optimized when they are in a loop, and then we count on
+;;;; loop-invariant optimizations to factor out such computations.  We
+;;;; do need to keep information about the upgraded element type of
+;;;; the array, however, because it is essential in order to avoid
+;;;; box/unbox operations on the elements.  We do not think it is
+;;;; useful to know that some variable is an array, without also
+;;;; knowing its exact upgraded element type, because a run-time test
+;;;; would have to be made to determine this information.  For that
+;;;; reason, we canonicalize to T when we do not know the exact
+;;;; upgraded element type.
 
 ;;;; We use a canonical representation of the type of a variable.
 ;;;;
