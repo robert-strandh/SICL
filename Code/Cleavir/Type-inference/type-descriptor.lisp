@@ -16,6 +16,14 @@
 ;;;; type specifier.  For that reason, we call it a TYPE DESCRIPTOR
 ;;;; instead.
 ;;;;
+;;;; For the type inferencer, we need a finite lattice.  We should
+;;;; make sure we do not attempt to represent too fine-grain types, or
+;;;; types that are not likely to be useful in practice.  So for
+;;;; instance, a type such as (OR FIXNUM ARRAY) is not useful in
+;;;; practice, because in order to do something with an object of that
+;;;; type, it would first have to be tested to determine whether it is
+;;;; one or the other.  Then, we might as well use the type T instead.
+;;;;
 ;;;; A type descriptor is either T, meaning the type T, or it is a
 ;;;; list of sub-type descriptors.  The meaning of this list is the OR
 ;;;; of the meaning of each element.  If the list is empty, i.e. NIL,
