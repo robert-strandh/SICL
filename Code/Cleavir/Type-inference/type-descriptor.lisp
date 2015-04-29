@@ -182,6 +182,16 @@
 ;;;;     simple array with an upgraded element type of (SIGNED-BYTE
 ;;;;     64).
 ;;;;
+;;;;   (SIMPLE-ARRAY BASE-CHAR)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of BASE-CHAR.
+;;;;
+;;;;   (SIMPLE-ARRAY CHARACTER)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of CHARACTER.
+;;;;
 ;;;; COMPLEX
 ;;;;
 ;;;;   This sub-type descriptor has the following form:
