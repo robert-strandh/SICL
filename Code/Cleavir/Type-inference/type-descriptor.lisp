@@ -109,6 +109,26 @@
 ;;;;     This type descriptor means that the variable must have the
 ;;;;     type LONG-FLOAT.
 ;;;;
+;;;;   UNBOXED-SHORT-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must contain an
+;;;;     unboxed SHORT-FLOAT value.
+;;;;
+;;;;   UNBOXED-SINGLE-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must contain an
+;;;;     unboxed SINGLE-FLOAT value.
+;;;;
+;;;;   UNBOXED-DOUBLE-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must contain an
+;;;;     unboxed DOUBLE-FLOAT value.
+;;;;
+;;;;   UNBOXED-LONG-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must contain an
+;;;;     unboxed LONG-FLOAT value.
+;;;;
 ;;;; COMPLEX
 ;;;;
 ;;;;   This sub-type descriptor has the following form:
