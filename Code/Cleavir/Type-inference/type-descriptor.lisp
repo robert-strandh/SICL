@@ -139,105 +139,105 @@
 ;;;;     This type descriptor means that the variable must contain an
 ;;;;     unboxed LONG-FLOAT value.
 ;;;;
-;;;;   (COMPLEX SHORT-FLOAT)
+;;;;   COMPLEX-SHORT-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     complex number with an upgraded element type of SHORT-FLOAT.
 ;;;;
-;;;;   (COMPLEX SINGLE-FLOAT)
+;;;;   COMPLEX-SINGLE-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     complex number with an upgraded element type of SINGLE-FLOAT.
 ;;;;
-;;;;   (COMPLEX DOUBLE-FLOAT)
+;;;;   COMPLEX-DOUBLE-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     complex number with an upgraded element type of DOUBLE-FLOAT.
 ;;;;
-;;;;   (COMPLEX LONG-FLOAT)
+;;;;   COMPLEX-LONG-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     complex number with an upgraded element type of LONG-FLOAT.
 ;;;;
-;;;;   (SIMPLE-ARRAY BIT)
+;;;;   SIMPLE-ARRAY-BIT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of BIT.
 ;;;;
-;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 8)
+;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-8
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
 ;;;;     8).
 ;;;;
-;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 16)
+;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-16
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
 ;;;;     16).
 ;;;;
-;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 32)
+;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-32
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
 ;;;;     32).
 ;;;;
-;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 64)
+;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-64
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
 ;;;;     64).
 ;;;;
-;;;;   (SIMPLE-ARRAY SIGNED-BYTE 8)
+;;;;   SIMPLE-ARRAY-SIGNED-BYTE-8
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (SIGNED-BYTE
 ;;;;     8).
 ;;;;
-;;;;   (SIMPLE-ARRAY SIGNED-BYTE 16)
+;;;;   SIMPLE-ARRAY-SIGNED-BYTE-16
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (SIGNED-BYTE
 ;;;;     16).
 ;;;;
-;;;;   (SIMPLE-ARRAY SIGNED-BYTE 32)
+;;;;   SIMPLE-ARRAY-SIGNED-BYTE-32
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (SIGNED-BYTE
 ;;;;     32).
 ;;;;
-;;;;   (SIMPLE-ARRAY SIGNED-BYTE 64)
+;;;;   SIMPLE-ARRAY-SIGNED-BYTE-64
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of (SIGNED-BYTE
 ;;;;     64).
 ;;;;
-;;;;   (SIMPLE-ARRAY BASE-CHAR)
+;;;;   SIMPLE-ARRAY-BASE-CHAR
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of BASE-CHAR.
 ;;;;
-;;;;   (SIMPLE-ARRAY CHARACTER)
+;;;;   SIMPLE-ARRAY-CHARACTER
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of CHARACTER.
 ;;;;
-;;;;   (SIMPLE-ARRAY SHORT-FLOAT)
+;;;;   SIMPLE-ARRAY-SHORT-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of SHORT-FLOAT.
 ;;;;
-;;;;   (SIMPLE-ARRAY SINGLE-FLOAT)
+;;;;   SIMPLE-ARRAY-SINGLE-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of SINGLE-FLOAT.
 ;;;;
-;;;;   (SIMPLE-ARRAY DOUBLE-FLOAT)
+;;;;   SIMPLE-ARRAY-DOUBLE-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of DOUBLE-FLOAT.
 ;;;;
-;;;;   (SIMPLE-ARRAY LONG-FLOAT)
+;;;;   SIMPLE-ARRAY-LONG-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of LONG-FLOAT.
