@@ -192,18 +192,26 @@
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of CHARACTER.
 ;;;;
-;;;; COMPLEX
+;;;;   (COMPLEX SHORT-FLOAT)
 ;;;;
-;;;;   This sub-type descriptor has the following form:
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of SHORT-FLOAT.
 ;;;;
-;;;;     (COMPLEX t1 t2 ... tn)
+;;;;   (COMPLEX SINGLE-FLOAT)
 ;;;;
-;;;;   where t1, t2, ... tn are symbols taken from the set INTEGER,
-;;;;   RATIONAL, SHORT-LOAT, SINGLE-FLOAT, DOUBLE-FLOAT, and
-;;;;   LONG-FLOAT.  Each symbol can appear only once, and there must
-;;;;   be at least one element in the list, or else the COMPLEX
-;;;;   sub-type descriptor will be removed from the type descriptor.
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of SINGLE-FLOAT.
 ;;;;
+;;;;   (COMPLEX DOUBLE-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of DOUBLE-FLOAT.
+;;;;
+;;;;   (COMPLEX LONG-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of LONG-FLOAT.
+
 ;;;;   Notice that we do not take into account the element type of the
 ;;;;   CONS.  We also do not canonicalize the occurrence of both NULL
 ;;;;   and CONS to LIST.
