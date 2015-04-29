@@ -6,6 +6,14 @@
 ;;;; report type violations to the user, though we might add that at
 ;;;; some later time.  This goal has some important consequences that
 ;;;; allow us to simplify the type inferencer considerably.
+;;;;
+;;;; For example, knowing that a variable contains an object of type
+;;;; INTEGER, or NUMBER, or FLOAT is not useful, because in order to
+;;;; apply some operation to it, some tests must be executed in order
+;;;; to determine which sub-type of that type it is.  Similarly, it is
+;;;; not useful to know that the type is either SINGLE-FLOAT or
+;;;; DOUBLE-FLOAT because a test is required to determine which one it
+;;;; is.
 
 ;;;; We use a canonical representation of the type of a variable.
 ;;;;
