@@ -99,29 +99,6 @@
 ;;;;     This type descriptor means that the variable must have the
 ;;;;     type LONG-FLOAT.
 ;;;;
-;;;; A type descriptor is either T, meaning the type T, or it is a
-;;;; list of sub-type descriptors.  The meaning of this list is the OR
-;;;; of the meaning of each element.  If the list is empty, i.e. NIL,
-;;;; it means the type NIL.  If a sub-type is omitted from the list,
-;;;; then objects described by that sub-type are not members of the
-;;;; type described by the type descriptor.
-;;;;
-;;;; Sub-type descriptors that are present in the type descriptor
-;;;; appear in a fixed, predefined order.  This order is defined by
-;;;; the order in which sub-type descriptors are defined below.
-;;;;
-;;;; For a sub-type descriptor that designates a set of INTERVALS, the
-;;;; following restriction holds: Two intervals can not overlap or
-;;;; touch, and the intervals are ordered from smallest to greatest.
-;;;; For the RATIONAL type descriptor interval, the notation (x) means
-;;;; that x is not part of the interval, so that the interval is open
-;;;; in the direction indicated.  Other interval descriptors do not
-;;;; allow the notation (x).  The first element of the first interval
-;;;; may be the symbol * which means that that there is no lower
-;;;; bound.  Similarly, the second element of the last interval may be
-;;;; the symbol *, meaning that there is no upper bound.
-;;;;
-;;;;
 ;;;; COMPLEX
 ;;;;
 ;;;;   This sub-type descriptor has the following form:
