@@ -82,7 +82,9 @@
 ;;;;   CONS
 ;;;;
 ;;;;     This type descriptor means that the variable must have the
-;;;;     type CONS.
+;;;;     type CONS.  Notice that we do not take into account the
+;;;;     element type of the CONS.  We also do not canonicalize the
+;;;;     occurrence of both NULL and CONS to LIST.
 ;;;;
 ;;;;   FIXNUM
 ;;;;
@@ -211,9 +213,5 @@
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     complex number with an upgraded element type of LONG-FLOAT.
-
-;;;;   Notice that we do not take into account the element type of the
-;;;;   CONS.  We also do not canonicalize the occurrence of both NULL
-;;;;   and CONS to LIST.
 
 ;;  LocalWords:  canonicalize inferencer
