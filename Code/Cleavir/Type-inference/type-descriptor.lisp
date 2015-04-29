@@ -74,6 +74,16 @@
 ;;;;     this type can not be executed, so the entire branch can be
 ;;;;     eliminated.
 ;;;;
+;;;;   NULL
+;;;;
+;;;;     This type descriptor means that the variable must contain the
+;;;;     value NIL.
+;;;;
+;;;;   CONS
+;;;;
+;;;;     This type descriptor means that the variable must have the
+;;;;     type CONS.
+;;;;
 ;;;;   FIXNUM
 ;;;;
 ;;;;     This type descriptor means that the variable must have the
@@ -110,18 +120,6 @@
 ;;;;   LONG-FLOAT.  Each symbol can appear only once, and there must
 ;;;;   be at least one element in the list, or else the COMPLEX
 ;;;;   sub-type descriptor will be removed from the type descriptor.
-;;;;
-;;;; NULL
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     NULL
-;;;;
-;;;; CONS
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     CONS
 ;;;;
 ;;;;   Notice that we do not take into account the element type of the
 ;;;;   CONS.  We also do not canonicalize the occurrence of both NULL
