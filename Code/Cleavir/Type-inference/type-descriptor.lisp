@@ -74,6 +74,31 @@
 ;;;;     this type can not be executed, so the entire branch can be
 ;;;;     eliminated.
 ;;;;
+;;;;   FIXNUM
+;;;;
+;;;;     This type descriptor means that the variable must have the
+;;;;     type FIXNUM.
+;;;;
+;;;;   SHORT-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must have the
+;;;;     type SHORT-FLOAT.
+;;;;
+;;;;   SINGLE-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must have the
+;;;;     type SINGLE-FLOAT.
+;;;;
+;;;;   DOUBLE-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must have the
+;;;;     type DOUBLE-FLOAT.
+;;;;
+;;;;   LONG-FLOAT
+;;;;
+;;;;     This type descriptor means that the variable must have the
+;;;;     type LONG-FLOAT.
+;;;;
 ;;;; A type descriptor is either T, meaning the type T, or it is a
 ;;;; list of sub-type descriptors.  The meaning of this list is the OR
 ;;;; of the meaning of each element.  If the list is empty, i.e. NIL,
@@ -96,29 +121,6 @@
 ;;;; bound.  Similarly, the second element of the last interval may be
 ;;;; the symbol *, meaning that there is no upper bound.
 ;;;;
-;;;; SHORT-FLOAT
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     (SHORT-FLOAT (l1 u1) (l2 u2) ... (ln un))
-;;;;
-;;;; SINGLE-FLOAT
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     (SINGLE-FLOAT (l1 u1) (l2 u2) ... (ln un))
-;;;;
-;;;; DOUBLE-FLOAT
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     (DOUBLE-FLOAT (l1 u1) (l2 u2) ... (ln un))
-;;;;
-;;;; LONG-FLOAT
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     (LONG-FLOAT (l1 u1) (l2 u2) ... (ln un))
 ;;;;
 ;;;; COMPLEX
 ;;;;
