@@ -129,6 +129,35 @@
 ;;;;     This type descriptor means that the variable must contain an
 ;;;;     unboxed LONG-FLOAT value.
 ;;;;
+;;;;   (SIMPLE-ARRAY BIT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of BIT.
+;;;;
+;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 8)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
+;;;;     8).
+;;;;
+;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 16)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
+;;;;     16).
+;;;;
+;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 32)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
+;;;;     32).
+;;;;
+;;;;   (SIMPLE-ARRAY UNSIGNED-BYTE 64)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
+;;;;     64).
+;;;;
 ;;;; COMPLEX
 ;;;;
 ;;;;   This sub-type descriptor has the following form:
