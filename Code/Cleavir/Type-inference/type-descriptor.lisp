@@ -1,5 +1,12 @@
 (cl:in-package #:cleavir-type-inference)
 
+;;;; The only goal of (at least this version of) the type inferencer
+;;;; is to speed up program execution by avoiding type tests and
+;;;; box/unbox operations whenever possible.  It is not a goal to
+;;;; report type violations to the user, though we might add that at
+;;;; some later time.  This goal has some important consequences that
+;;;; allow us to simplify the type inferencer considerably.
+
 ;;;; We use a canonical representation of the type of a variable.
 ;;;;
 ;;;; Baker's paper on SUBTYPEP suggests that it is not necessary to
