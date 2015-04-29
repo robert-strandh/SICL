@@ -23,6 +23,9 @@
 ;;;; practice, because in order to do something with an object of that
 ;;;; type, it would first have to be tested to determine whether it is
 ;;;; one or the other.  Then, we might as well use the type T instead.
+;;;; Furthermore, types such as (OR T1 T2) where T1 and T2 have
+;;;; totally different representations do not occur often in practice,
+;;;; so we do not attempt to represent them.
 ;;;;
 ;;;; A type descriptor is either T, meaning the type T, or it is a
 ;;;; list of sub-type descriptors.  The meaning of this list is the OR
