@@ -96,24 +96,6 @@
 ;;;; bound.  Similarly, the second element of the last interval may be
 ;;;; the symbol *, meaning that there is no upper bound.
 ;;;;
-;;;; Notice that there is no FLOAT sub-type descriptor.  The
-;;;; implementation has to supply a list of the XXX-FLOAT types that
-;;;; it supports, so that an occurrence of a type-specifier involving
-;;;; FLOAT will be turned into a type descriptor in which FLOAT has
-;;;; been replaced by every supported XXX-FLOAT type.
-;;;;
-;;;; INTEGER
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     (INTEGER (l1 u1) (l2 u2) ... (ln un))
-;;;;
-;;;; RATIONAL
-;;;;
-;;;;   This sub-type descriptor has the following form:
-;;;;
-;;;;     (RATIONAL (l1 u1) (l2 u2) ... (ln un))
-;;;;
 ;;;; SHORT-FLOAT
 ;;;;
 ;;;;   This sub-type descriptor has the following form:
