@@ -194,6 +194,26 @@
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of CHARACTER.
 ;;;;
+;;;;   (SIMPLE-ARRAY SHORT-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of SHORT-FLOAT.
+;;;;
+;;;;   (SIMPLE-ARRAY SINGLE-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of SINGLE-FLOAT.
+;;;;
+;;;;   (SIMPLE-ARRAY DOUBLE-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of DOUBLE-FLOAT.
+;;;;
+;;;;   (SIMPLE-ARRAY LONG-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of LONG-FLOAT.
+;;;;
 ;;;;   (COMPLEX SHORT-FLOAT)
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
