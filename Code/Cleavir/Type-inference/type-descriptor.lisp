@@ -32,6 +32,20 @@
 ;;;; time.  Therefore, it is not meaningful to distinguish between
 ;;;; sub-classes of STANDARD-OBJECT.
 ;;;;
+;;;; Valid type descriptors:
+;;;;
+;;;;   T
+;;;;
+;;;;     This type descriptor means that the variable can have a value
+;;;;     of any type.
+;;;;
+;;;;   NIL
+;;;;
+;;;;     This type descriptor means that the variable can not have any
+;;;;     value at all.  A branch in which at least one variable has
+;;;;     this type can not be executed, so the entire branch can be
+;;;;     eliminated.
+;;;;
 ;;;; A type descriptor is either T, meaning the type T, or it is a
 ;;;; list of sub-type descriptors.  The meaning of this list is the OR
 ;;;; of the meaning of each element.  If the list is empty, i.e. NIL,
