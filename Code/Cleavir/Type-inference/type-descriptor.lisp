@@ -139,6 +139,26 @@
 ;;;;     This type descriptor means that the variable must contain an
 ;;;;     unboxed LONG-FLOAT value.
 ;;;;
+;;;;   (COMPLEX SHORT-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of SHORT-FLOAT.
+;;;;
+;;;;   (COMPLEX SINGLE-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of SINGLE-FLOAT.
+;;;;
+;;;;   (COMPLEX DOUBLE-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of DOUBLE-FLOAT.
+;;;;
+;;;;   (COMPLEX LONG-FLOAT)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     complex number with an upgraded element type of LONG-FLOAT.
+;;;;
 ;;;;   (SIMPLE-ARRAY BIT)
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
@@ -221,25 +241,5 @@
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of LONG-FLOAT.
-;;;;
-;;;;   (COMPLEX SHORT-FLOAT)
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     complex number with an upgraded element type of SHORT-FLOAT.
-;;;;
-;;;;   (COMPLEX SINGLE-FLOAT)
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     complex number with an upgraded element type of SINGLE-FLOAT.
-;;;;
-;;;;   (COMPLEX DOUBLE-FLOAT)
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     complex number with an upgraded element type of DOUBLE-FLOAT.
-;;;;
-;;;;   (COMPLEX LONG-FLOAT)
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     complex number with an upgraded element type of LONG-FLOAT.
 
 ;;  LocalWords:  canonicalize inferencer
