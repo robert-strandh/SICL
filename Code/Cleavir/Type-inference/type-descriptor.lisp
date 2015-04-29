@@ -158,6 +158,30 @@
 ;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
 ;;;;     64).
 ;;;;
+;;;;   (SIMPLE-ARRAY SIGNED-BYTE 8)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (SIGNED-BYTE
+;;;;     8).
+;;;;
+;;;;   (SIMPLE-ARRAY SIGNED-BYTE 16)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (SIGNED-BYTE
+;;;;     16).
+;;;;
+;;;;   (SIMPLE-ARRAY SIGNED-BYTE 32)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (SIGNED-BYTE
+;;;;     32).
+;;;;
+;;;;   (SIMPLE-ARRAY SIGNED-BYTE 64)
+;;;;
+;;;;     This type descriptor means that the variable must contain a
+;;;;     simple array with an upgraded element type of (SIGNED-BYTE
+;;;;     64).
+;;;;
 ;;;; COMPLEX
 ;;;;
 ;;;;   This sub-type descriptor has the following form:
