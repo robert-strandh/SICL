@@ -1011,3 +1011,26 @@
     :inputs (list input)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION UNBOXED-INTEGER-TO-UNBOXED-DOUBLE-FLOAT-INSTRUCTION
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed integer, i.e.  It has a single output which is an
+;;; unboxed DOUBLE-FLOAT presumably with the same value as the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; DOUBLE-FLOAT data type and for which the DOUBLE-FLOAT data type has
+;;; a useful unboxed representation.
+
+(defclass unboxed-integer-to-unboxed-double-float-instruction
+    (instruction one-successor-mixin)
+  ())
+
+(defun make-unboxed-integer-to-unboxed-double-float-instruction
+    (input output successor)
+  (make-instance 'unboxed-integer-to-unboxed-double-float-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
