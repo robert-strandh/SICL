@@ -113,6 +113,8 @@
    #:long-float-less-instruction
    #:long-float-not-greater-instruction
    #:long-float-equal-instruction
+   #:unboxed-integer-to-unboxed-short-float-instruction
+   #:make-unboxed-integer-to-unboxed-short-float-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
