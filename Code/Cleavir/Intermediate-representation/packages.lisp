@@ -117,6 +117,8 @@
    #:make-unboxed-integer-to-unboxed-short-float-instruction
    #:unboxed-integer-to-unboxed-single-float-instruction
    #:make-unboxed-integer-to-unboxed-single-float-instruction
+   #:unboxed-integer-to-unboxed-double-float-instruction
+   #:make-unboxed-integer-to-unboxed-double-float-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
