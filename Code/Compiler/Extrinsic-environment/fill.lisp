@@ -130,6 +130,9 @@
   (load-file "../../CLOS/with-accessors-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro REMF.
   (load-file "../../Cons/remf-defmacro.lisp" environment)
+  ;; Load a file containing a temporary definition of the function
+  ;; ENSURE-GENERIC-FUNCTION.
+  (load-file "ensure-generic-function-defun-temporary.lisp" environment)
   ;; Load a file containing the definition of the macro DEFMETHOD.
   ;; DEFMETHOD calls ENSURE-GENERIC-FUNCTION to find the generic
   ;; function to add the method do.  At this point, though,
