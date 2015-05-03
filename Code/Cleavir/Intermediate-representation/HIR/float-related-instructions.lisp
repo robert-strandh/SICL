@@ -1057,3 +1057,26 @@
     :inputs (list input)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION UNBOXED-SHORT-FLOAT-TO-UNBOXED-SINGLE-FLOAT-INSTRUCTION
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed short-float, i.e.  It has a single output which is an
+;;; unboxed SINGLE-FLOAT presumably with the same value as the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; SHORT-FLOAT data type and for which the SHORT-FLOAT and
+;;; SINGLE-FLOAT data types have useful unboxed representations.
+
+(defclass unboxed-short-float-to-unboxed-single-float-instruction
+    (instruction one-successor-mixin)
+  ())
+
+(defun make-unboxed-short-float-to-unboxed-single-float-instruction
+    (input output successor)
+  (make-instance 'unboxed-short-float-to-unboxed-single-float-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
