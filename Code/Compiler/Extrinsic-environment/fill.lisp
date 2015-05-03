@@ -134,10 +134,6 @@
   ;; ENSURE-GENERIC-FUNCTION.
   (load-file "ensure-generic-function-defun-temporary.lisp" environment)
   ;; Load a file containing the definition of the macro DEFMETHOD.
-  ;; DEFMETHOD calls ENSURE-GENERIC-FUNCTION to find the generic
-  ;; function to add the method do.  At this point, though,
-  ;; ENSURE-GENERIC-FUNCTION is the host version of it, which of
-  ;; course consults the host environment with the name of the
-  ;; function.  DEFMETHOD also calls ENSURE-METHOD which has been
-  ;; imported from SICL CLOS as a host function.
+  ;; DEFMETHOD calls ENSURE-METHOD which has been imported from SICL
+  ;; CLOS as a host function.
   (load-file "../../CLOS/defmethod-defmacro.lisp" environment))
