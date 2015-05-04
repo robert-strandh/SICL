@@ -40,6 +40,26 @@ to their target counterparts as follows:
   host objects.
 \end{itemize}
 
+\section{Global environments for bootstrapping}
+
+During different stages of bootstrapping, a particular \emph{name} (of
+a function, class, etc) must be associated with different objects.  As
+a trivial example, the function \texttt{allocate-object} in the host
+system is used to allocate all standard objects.  But
+\texttt{allocate-object} is also a target function for allocating
+objects according to the way such objects are represented by the
+target system.  These two functions must be available simultaneously.
+
+Most systems solve this problem by using temporary names for target
+packages during the bootstrapping process.  For example, even though
+in the final target system, the name \texttt{allocate-object} must be
+a symbol in the \texttt{common-lisp} package, during the bootstrapping
+process, the name might be a symbol in a package with a different
+name.
+
+In \sysname{} we solve the problem by using multiple \emph{first-class
+  global environments}.
+
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
 
