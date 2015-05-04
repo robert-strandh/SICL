@@ -105,8 +105,8 @@ including:
 
 \begin{definition}
 A \emph{host class} is a class in the host system.  If it is an
-instance of the host class \texttt{host:standard-class}, then it is
-typically created by \texttt{host:defclass}.
+instance of the host class \texttt{host:standard-class}, then
+it is typically created by \texttt{host:defclass}.
 \end{definition}
 
 \begin{definition}
@@ -194,29 +194,6 @@ ordinary host function.
 
 Phase 1 is characterized by the fact that the MOP names are names of
 host classes and host generic functions.  
-
-We start by defining several packages.
-
-The package named
-\texttt{sicl-boot-common} contains and exports symbols that are used
-the same way throughout the boot process.  In particular, it contains
-symbols for allocating and accessing ersatz instances.  This package
-is used by the phase-specific packages.  
-
-The package named \texttt{aspiring-sicl-clos} contains symbols that
-will eventually have the package \texttt{sicl-clos} as their home
-package.  This package can not be named \texttt{sicl-clos} at this
-point, because that name is going to be used as a nickname for
-phase-specific packages during the boot process.  Furthermore, this
-package initially only contains the names of classes.  
-
-The package named \texttt{sicl-boot-phase1} is the phase-specific
-package for phase 1.  During phase 1, it will have the nickname
-\texttt{sicl-clos}, but this nickname is removed at the end of phase
-1.   This package shadows symbols that are defined in the package
-\texttt{common-lisp} and that name MOP-specified names.  This package
-also shadows the symbol \texttt{defclass}, for reasons explained
-below. 
 
 In the following steps, we define macros \texttt{defclass} and
 \texttt{define-built-in-class} in preparation for loading the MOP
