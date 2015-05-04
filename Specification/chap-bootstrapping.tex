@@ -5,10 +5,13 @@
 \sysname{} is bootstrapped from an existing \commonlisp{}
 implementation that, in addition to the functionality required by the
 standard, also contains the library \texttt{closer-mop}.  This
-\commonlisp{} system is called the \emph{host}.  The result of
-the bootstrapping process is an \emph{image} in the form of an
-executable file containing a partial \sysname{} system.  This system
-is called the \emph{target}.
+\commonlisp{} system is called the \emph{host}.  The result of the
+bootstrapping process is an \emph{image} in the form of an executable
+file containing a \sysname{} system.  This system is called the
+\emph{target}.  The target image does not contain a complete
+\commonlisp{} system.  It only contains enough functionality to load
+the remaining system from compiled files.
+\seesec{sec-bootstrapping-viable-image}.
 
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
