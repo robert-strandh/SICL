@@ -13,6 +13,15 @@ file containing a \sysname{} system.  This system is called the
 the remaining system from compiled files.
 \seesec{sec-bootstrapping-viable-image}.
 
+In general, the target image can be thought of as containing
+\emph{graph} of \commonlisp{} objects that have been placed in memory
+according to the spaces managed by the memory manager.  To create this
+graph, we first generate an \emph{isomorphic} graph of host objects in
+the memory of an executing host system.  To generate the target image,
+the isomorphic host graph is traversed, creating a target version of
+each object in the host graph, and placing that object on an
+appropriate address in the target image.
+
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
 
