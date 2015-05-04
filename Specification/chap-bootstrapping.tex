@@ -1,5 +1,15 @@
 \chapter{Bootstrapping}
 
+\section{General technique}
+
+\sysname{} is bootstrapped from an existing \commonlisp{}
+implementation that, in addition to the functionality required by the
+standard, also contains the library \texttt{closer-mop}.  This
+\commonlisp{} system is called the \emph{host}.  The result of
+the bootstrapping process is an \emph{image} in the form of an
+executable file containing a partial \sysname{} system.  This system
+is called the \emph{target}.
+
 \section{Viable image}
 
 An image I is said to be \emph{viable} if and only if it is possible
