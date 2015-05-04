@@ -22,6 +22,24 @@ the isomorphic host graph is traversed, creating a target version of
 each object in the host graph, and placing that object on an
 appropriate address in the target image.
 
+The isomorphic host graph contains objects that are \emph{analogous}
+to their target counterparts as follows:
+
+\begin{itemize}
+\item A target \texttt{fixnum} is represented as a host integer.
+  Whether the integer is a host fixnum or not depends on the fixnum
+  range of the host.
+\item A target \texttt{character} is represented as a host character.
+\item A target \texttt{cons} cell is represented as a host
+  \texttt{cons} cell.
+\item A target heap-allocated object other than a \texttt{cons} cell
+  is represented as a host \texttt{struct} for the \emph{header} and a
+  host \texttt{simple-vector} for the \emph{rack}.
+\item Target objects such as bignums or floats are not needed at this
+  stage of bootstrapping, so they do not have any representation as
+  host objects.
+\end{itemize}
+
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
 
