@@ -133,6 +133,8 @@
   ;; Load a file containing a temporary definition of the function
   ;; ENSURE-GENERIC-FUNCTION.
   (load-file "ensure-generic-function-defun-temporary.lisp" environment)
+  ;; Load a file containing the definition of the macro DEFGENERIC.
+  (load-file "../../CLOS/defgeneric-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DEFMETHOD.
   ;; DEFMETHOD calls ENSURE-METHOD which has been imported from SICL
   ;; CLOS as a host function.
