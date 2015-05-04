@@ -18,15 +18,15 @@
 		   lambda-list
 		   method-class
 		   method-combination))
-  (let ((generic-function (sicl-genv:fdefinition function-name environment)))
-    (when (null generic-function)
+  (if (sicl-genv:fboundp function-name environment)
+      ;; We do not check whether it is something other than a generic
+      ;; function, such as an ordinary function or a macro.
+      (sicl-genv:fdefinition function-name environment)
       (let ((keys (copy-list keys)))
 	(loop while (remf keys :environment))
-	(setf generic-function
-	      (apply #'make-instance
-		     'standard-generic-function
-		     keys))
-	(setf (sicl-genv:fdefinition function-name environment)
-	      generic-function)))
-    generic-function))
-	  
+	(let ((generic-function (apply #'make-instance
+				       'standard-generic-function
+				       keys)))
+	  (setf (sicl-genv:fdefinition function-name environment)
+		generic-function)
+	  generic-function))))
