@@ -210,6 +210,16 @@ bridge classes.  The \emph{method function} of a bridge method is an
 ordinary host function.
 \end{definition}
 
+\subsubsection{Phase 0}
+
+We start by creating a \sysname{} global environment that will be the
+start-up environment for the compiler, the evaluation environment
+during compilation, and the global part of the compilation environment
+during compilation.  Call this environment $E_0$.  It contains
+definitions of all standard \commonlisp{} macros that are needed
+during bootstrapping, as well as support code required to expand these
+macros.
+
 \subsubsection{Phase 1}
 
 Phase 1 is characterized by the fact that the MOP names are names of
