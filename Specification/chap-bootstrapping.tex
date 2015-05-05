@@ -60,6 +60,25 @@ name.
 In \sysname{} we solve the problem by using multiple \emph{first-class
   global environments}.
 
+For the purpose of bootstrapping, it is convenient to think of
+\texttt{eval} as consisting of two distinct operations:
+
+\begin{itemize}
+\item Compile.  A \emph{compilation environment} is used to expand
+  macros and for other compilation purposes.  The result of
+  compilation is code that is \emph{untied} to any particular
+  environment.
+\item Tie.  The untied code produced by the first step is \emph{tied}
+  to a particular run-time environment.  Tying is accomplished by
+  calling the top-level function created by the compilation, passing
+  it the result of evaluating \texttt{load-time-value} forms in a
+  particular environment.
+\end{itemize}
+
+The reason we need to separate these two operations is that for
+bootstrapping purposes, the two are going to use distinct global
+environments.
+
 \section{Viable image}
 \label{sec-bootstrapping-viable-image}
 
