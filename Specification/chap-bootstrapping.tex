@@ -252,6 +252,19 @@ The environment $E_0$ is used for compiling the \texttt{defclass}
 forms defining the MOP classes, and then the resulting code is
 \emph{tied} to $E_1$.
 
+During phase~1, classes are created by calls to \texttt{ensure-class}
+and generic functions are created by calls to
+\texttt{ensure-generic-function}.  These functions both ultimately
+call \texttt{make-instance} in order to create the class or generic
+function in question.  We have to make sure that the classes that are
+instantiated in this process are not redefined by
+\texttt{ensure-class}.  We avoid this problem by \emph{importing}
+\texttt{make-instance} from $E_0$, so that the class names given to
+\texttt{make-instance} are looked up in $E_0$ rather than in $E_1$.
+This way, modifications to the set of classes available in $E_1$ will
+not interfere with the classes that \texttt{make-instance} is asked to
+instantiate.
+
 Phase 1 is characterized by the fact that the MOP names are names of
 host classes and host generic functions.  
 
