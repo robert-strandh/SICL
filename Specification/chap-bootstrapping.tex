@@ -255,22 +255,6 @@ forms defining the MOP classes, and then the resulting code is
 Phase 1 is characterized by the fact that the MOP names are names of
 host classes and host generic functions.  
 
-We define macros \texttt{defclass} and \texttt{define-built-in-class}
-in preparation for loading the MOP class hierarchy.  In order to be
-able to use the file of MOP classes unmodified, we define a version of
-\texttt{defclass} that expand into \texttt{host:defclass} except that
-\texttt{T} is removed if it is a superclass.  We also define a version
-of \texttt{define-built-in-class} that expands into \texttt{defclass}
-except that if the class to be defined is named \texttt{T} it expands
-to \texttt{nil} instead.  The reason for this trickery is that we do
-not want to shadow the symbol \texttt{T} since it is used for other
-purposes in the MOP class hierarchy.  Since we do not shadow
-\texttt{T}, we can not define a class with that name.  Furthermore,
-\texttt{T} will not be the superclass of any of the classes defined in
-phase 1.  It is however not required to have \texttt{T} as a
-superclass for these classes.  All that matters is that these classes
-have the right slots, and \texttt{T} does not supply any slots anyway.
-
 In the next step, we load the file containing the MOP class hierarchy.
 The names of the host classes created will be
 \texttt{target:standard-object}, \texttt{target:metaobject}, etc.
