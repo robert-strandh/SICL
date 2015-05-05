@@ -222,6 +222,17 @@ macros.
 
 \subsubsection{Phase 1}
 
+To accomplish phase~1, we create a second \sysname{} global
+environment that we can call $E_1$.  The purpose of phase~1 is to
+create the hierarchy of MOP classes as well as the generic accessor
+generic functions and methods that are automatically created as a
+result of creating the MOP classes.  These classes are created and
+associated with names in $E_1$.
+
+The environment $E_0$ is used for compiling the \texttt{defclass}
+forms defining the MOP classes, and then the resulting code is
+\emph{tied} to $E_1$.
+
 Phase 1 is characterized by the fact that the MOP names are names of
 host classes and host generic functions.  
 
