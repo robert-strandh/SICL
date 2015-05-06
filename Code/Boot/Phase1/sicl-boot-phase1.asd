@@ -4,4 +4,5 @@
   :depends-on (:sicl-extrinsic-environment)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "environment")))
