@@ -4,6 +4,5 @@
   ((%compilation-environment :initarg :compilation-environment
 			     :reader compilation-environment)))
 
-(defmethod initialize-instance :after
-    ((environment environment) &key compilation-environment)
-  (fill-environment compilation-environment environment))
+(defmethod initialize-instance :after ((environment environment) &key)
+  (fill-environment environment))
