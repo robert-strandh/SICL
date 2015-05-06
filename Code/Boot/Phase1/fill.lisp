@@ -10,4 +10,6 @@
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
 			 environment)
   (ld "../../CLOS/ensure-generic-function-using-class-defgenerics.lisp"
+      environment)
+  (ld "../../CLOS/ensure-generic-function-using-class-defmethods.lisp"
       environment))
