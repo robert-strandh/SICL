@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot-phase1)
 
-(defclass environment (sicl-simple-environment:simple-environment)
+(defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
     :initarg :compilation-environment
     :initform (make-instance 'sicl-extrinsic-environment:environment)
