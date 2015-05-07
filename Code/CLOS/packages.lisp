@@ -56,7 +56,6 @@
    #:defclass #:defgeneric #:defmethod
    ;; Generic functions.
    #:compute-effective-slot-definition
-   #:find-class
    #:class-of
    #:allocate-instance
    #:make-instance
