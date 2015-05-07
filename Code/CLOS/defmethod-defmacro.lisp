@@ -1,15 +1,18 @@
 (cl:in-package #:sicl-clos)
 
+;;; At the moment, this macro does not have any compile-time side
+;;; effects.
 (defmacro defmethod (&environment env function-name &rest rest)
   (multiple-value-bind
 	(qualifiers lambda-list specializers declarations documentation forms)
       (parse-defmethod rest)
     (let ((generic-function-var (gensym)))
-      `(let ((,generic-function-var
-	       (ensure-generic-function ',function-name :environment ,env)))
+      `(let* ((env (load-time-value (sicl-genv:global-environment)))
+	      (,generic-function-var
+		(ensure-generic-function ',function-name :environment env)))
 	 (ensure-method
 	  ,generic-function-var
-	  ,env
+	  env
 	  :lambda-list ',lambda-list
 	  :qualifiers ',qualifiers
 	  :specializers ,(canonicalize-specializers specializers)
