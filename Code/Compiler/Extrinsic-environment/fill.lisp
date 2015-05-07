@@ -87,6 +87,8 @@
   ;; Load a file containing the definitions of the functions
   ;; MACRO-FUNCTION and (SETF MACRO-FUNCTION).
   (load-file "../../Evaluation-and-compilation/macro-function.lisp" environment)
+  ;; Load a file containing the definition of the macro DECLAIM.
+  (load-file "../../Evaluation-and-compilation/declaim-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the functions
   ;; FDEFINITION, (SETF FDEFINITION), SYMBOL-FUNCTION, etc.
   (load-file "../../Environment/standard-environment-functions.lisp" environment)
