@@ -42,4 +42,4 @@
 	       ;; changes.
 	       (setf *package*
 		     (sicl-env:special-variable '*package*
-						compilation-environment))))))
+						linkage-environment))))))
