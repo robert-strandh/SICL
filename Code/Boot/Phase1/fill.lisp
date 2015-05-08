@@ -16,4 +16,6 @@
   (ld "../../CLOS/ensure-generic-function-using-class-support.lisp"
       environment)
   (ld "../../CLOS/ensure-generic-function-using-class-defmethods.lisp"
+      environment)
+  (ld "../../CLOS/ensure-class-using-class-support.lisp"
       environment))
