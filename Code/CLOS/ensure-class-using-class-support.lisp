@@ -60,22 +60,8 @@
        name
        (metaclass nil metaclass-p)
      &allow-other-keys)
-  (setf metaclass
-	(let ((class-metaobject
-		(if metaclass-p
-		    (if (symbolp metaclass)
-			(case metaclass
-			  (standard-class
-			   *standard-class*)
-			  (funcallable-standard-class
-			   *funcallable-standard-class*)
-			  (t
-			   (find-class metaclass)))
-			metaclass)
-		    *standard-class*)))
-	  (unless (classp class-metaobject)
-	    (error "metaclass must be a class metaobject class"))
-	  class-metaobject))
+  (unless metaclass-p
+    (setf metaclass 'standard-class))
   (setf direct-superclasses
 	(process-direct-superclasses direct-superclasses))
   (let ((remaining-keys (copy-list keys)))
