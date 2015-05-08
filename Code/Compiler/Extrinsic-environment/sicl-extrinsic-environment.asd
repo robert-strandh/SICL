@@ -103,6 +103,7 @@
 	       :sicl-arithmetic
 	       :sicl-cons-support
 	       :sicl-clos-support
+	       :sicl-type-support
 	       :closer-mop
 	       :cleavir-generate-ast
 	       :cleavir-ast-transformations
