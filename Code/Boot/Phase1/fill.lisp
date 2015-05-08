@@ -8,6 +8,7 @@
 
 (defun fill-environment (environment)
   (sicl-genv:fmakunbound 'sicl-type:typep environment)
+  (ld "../../Types/typep.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
 			 environment)
   (ld "../../CLOS/ensure-generic-function-using-class-defgenerics.lisp"
