@@ -162,6 +162,13 @@
   (let ((entry (ensure-function-entry env function-name)))
     (setf (ast entry) new-ast)))
 
+;;; According to the protocol definition, the consequences are
+;;; undefined if FUNCTION is not a function object.  We define the
+;;; consequences here to be that an error is signaled.
+(defmethod sicl-genv:function-names (function (env simple-environment))
+  (assert (functionp function))
+  (gethash function (function-names env)))
+
 (defmethod sicl-genv:boundp (symbol (env simple-environment))
   (let ((entry (find-variable-entry env symbol)))
     (and (not (null entry))
