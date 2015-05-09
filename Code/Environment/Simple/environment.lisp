@@ -51,7 +51,7 @@
    (%type-expanders :initform '() :accessor type-expanders)
    ;; This slot holds a list of variable entries.
    (%variable-entries :initform '() :accessor variable-entries)
-   ;; This slot holds a list of function entries.
+   ;; This slot holds an #'EQUAL hash table of function entries.
    (%function-entries :initform (make-hash-table :test #'equal)
 		      :accessor function-entries)
    ;; This slot holds an association list, mapping function names to
