@@ -54,6 +54,10 @@
    ;; This slot holds an #'EQUAL hash table of function entries.
    (%function-entries :initform (make-hash-table :test #'equal)
 		      :accessor function-entries)
+   ;; This slot holds an #'EQ hash table mapping a function object to
+   ;; a list of names of that function in this environment
+   (%function-names :initform (make-hash-table :test #'eq)
+		    :accessor function-names)
    ;; This slot holds an association list, mapping function names to
    ;; compiler-macro functions.
    (%compiler-macro-expanders :initform '() :accessor compiler-macro-expanders)
