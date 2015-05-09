@@ -4,7 +4,7 @@
 (defun add-function-name (function function-name env)
   (pushnew function-name
 	   (gethash function (function-names env))
-	   :key #'equal))
+	   :test #'equal))
 
 ;;; Utility function for disassociating a name from a function.
 (defun remove-function-name (function function-name env)
