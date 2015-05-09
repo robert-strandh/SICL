@@ -1,5 +1,11 @@
 (cl:in-package #:sicl-simple-environment)
 
+;;; Utility function for associating a name with a function.
+(defun add-function-name (function function-name env)
+  (pushnew function-name
+	   (gethash function (function-names env))
+	   :key #'equal))
+
 ;;; Recall that this function should return true if FUNCTION-NAME has
 ;;; a definition in ENVIRONMENT as an ordinary function, a generic
 ;;; function, a macro, or a special operator.
