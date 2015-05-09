@@ -6,6 +6,14 @@
 	   (gethash function (function-names env))
 	   :key #'equal))
 
+;;; Utility function for disassociating a name from a function.
+(defun remove-function-name (function function-name env)
+  (setf (gethash function (function-names env))
+	(remove function-name (gethash function (function-names env))
+		:test #'equal))
+  (when (null (gethash function (function-names env)))
+    (remhash function (function-names env))))
+
 ;;; Recall that this function should return true if FUNCTION-NAME has
 ;;; a definition in ENVIRONMENT as an ordinary function, a generic
 ;;; function, a macro, or a special operator.
