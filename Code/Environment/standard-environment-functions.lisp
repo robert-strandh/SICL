@@ -144,23 +144,23 @@
 ;;;
 ;;; Function GET-SETF-EXPANSION.
 
-(defun get-setf-expansion (place &optional environment)
-  (when (null environment)
-    (setf environment sicl-genv:*global-environment*))
-  (if (symbolp place)
-      (let ((temp (gensym)))
-	(values '() '() `(,temp) `(setq ,place ,temp) place))
-      (let ((expander (sicl-genv:setf-expander (first place) environment)))
-	(if (null expander)
-	    (let ((temps (mapcar (lambda (p) (declare (ignore p)) (gensym))
-				 (rest place)))
-		  (new (gensym)))
-	      (values temps
-		      (rest place)
-		      (list new)
-		      `(funcall #'(setf ,(first place)) ,new ,@temps)
-		      `(,(first place) ,@temps)))
-	    (funcall expander place environment)))))
+(defun get-setf-expansion
+    (place &optional (environment sicl-genv:*global-environment*))
+  (let ((global-environment (cleavir-env:global-environment environment)))
+    (if (symbolp place)
+	(let ((temp (gensym)))
+	  (values '() '() `(,temp) `(setq ,place ,temp) place))
+	(let ((expander (sicl-genv:setf-expander (first place) global-environment)))
+	  (if (null expander)
+	      (let ((temps (mapcar (lambda (p) (declare (ignore p)) (gensym))
+				   (rest place)))
+		    (new (gensym)))
+		(values temps
+			(rest place)
+			(list new)
+			`(funcall #'(setf ,(first place)) ,new ,@temps)
+			`(,(first place) ,@temps)))
+	      (funcall expander place global-environment))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
