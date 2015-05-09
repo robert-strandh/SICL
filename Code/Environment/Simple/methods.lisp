@@ -78,11 +78,14 @@
     (if (not (null (special-operator entry)))
 	(error "The name ~s has a definition as a special operator"
 	       function-name)
-	(progn (setf (car (function-cell entry)) new-definition)
-	       (setf (macro-function entry) nil)
-	       (setf (type entry) t)
-	       (setf (inline entry) nil)
-	       new-definition))))
+	(progn
+	  (remove-function-name (car (function-cell entry)) function-name env)
+	  (setf (car (function-cell entry)) new-definition)
+	  (add-function-name new-definition function-name env)
+	  (setf (macro-function entry) nil)
+	  (setf (type entry) t)
+	  (setf (inline entry) nil)
+	  new-definition))))
 
 (defmethod sicl-genv:macro-function (symbol (env simple-environment))
   (let ((entry (find-function-entry env symbol)))
