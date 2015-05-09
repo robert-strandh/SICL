@@ -166,8 +166,8 @@
   (let ((reduced-options (remove-duplicates options :key #'car :test #'eq)))
     (when (< (length reduced-options) (length options))
       (loop for option in reduced-options
-	    do (when (> (count-list (car option) options
-				    :key #'car :test #'eq) 1)
+	    do (when (> (count (car option) options
+			       :key #'car :test #'eq) 1)
 		 (error 'duplicate-class-option-not-allowed
 			:name 'defclass
 			:datum (car option))))))
