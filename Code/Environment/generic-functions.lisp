@@ -311,7 +311,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function FUNCTION-NAME.
+;;; Generic function FUNCTION-NAMES.
 ;;;
 ;;; This function returns a list of names associated with FUNCTION in
 ;;; ENVIRONMENT.  If FUNCTION is currently not associated with any
@@ -325,7 +325,7 @@
 ;;; is useful for showing names of functions in error messages and
 ;;; backtraces.
 
-(defgeneric function-name (function environment))
+(defgeneric function-names (function environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -29,7 +29,7 @@
    #:function-cell
    #:function-unbound
    #:function-ast
-   #:function-name
+   #:function-names
    #:constant-variable
    #:special-variable
    #:symbol-macro
