@@ -28,6 +28,7 @@
 (defmethod sicl-genv:fmakunbound (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
     (unless (null entry)
+      (remove-function-name (car (function-cell entry)) function-name env)
       (setf (car (function-cell entry))
 	    (unbound entry))
       (setf (macro-function entry) nil)
