@@ -6,19 +6,9 @@
 
 (defun traced-funcall (environment function &rest arguments)
   (if *trace-funcall*
-      (let* ((entries (sicl-simple-environment::function-entries environment))
-	     (entry (block nil
-		      (maphash
-		       (lambda (key entry)
-			 (declare (ignore key))
-			 (when (eq function
-				   (car (sicl-simple-environment::function-cell entry)))
-			   (return entry)))
-		       entries)))
-	     (name (if (null entry)
-		       "???"
-		       (sicl-simple-environment::name entry)))
-	     (result nil))
+      (let ((name (or (car (sicl-genv:function-names function environment))
+		      "???"))
+	    (result nil))
 	(loop repeat *depth*
 	      do (format *trace-output* " "))
 	(format *trace-output*
