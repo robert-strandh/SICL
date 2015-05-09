@@ -23,4 +23,5 @@
       environment)
   (ld "../../CLOS/ensure-class-using-class-defmethods.lisp"
       environment)
-  (ld "../../CLOS/defclass-support.lisp" environment))
+  (ld "../../CLOS/defclass-support.lisp" environment)
+  (ld "../../CLOS/defclass-defmacro.lisp" environment))
