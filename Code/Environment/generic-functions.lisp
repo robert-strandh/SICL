@@ -311,6 +311,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FUNCTION-NAME.
+;;;
+;;; This function returns a list of names associated with FUNCTION in
+;;; ENVIRONMENT.  If FUNCTION is currently not associated with any
+;;; names in ENVIRONMENT, then the empty list is returned.  The value
+;;; returned by this function is determined by previous calls to other
+;;; functions such as (SETF FDEFINITION), FMAKUNBOUND, etc.  The
+;;; consequences are undefined if FUNCTION is not a function.
+;;;
+;;; This function can be seen as an alternative to "named lambdas" and
+;;; other similar mechanisms for associating names with functions.  It
+;;; is useful for showing names of functions in error messages and
+;;; backtraces.
+
+(defgeneric function-name (function environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
