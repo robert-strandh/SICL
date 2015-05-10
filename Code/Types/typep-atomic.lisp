@@ -10,7 +10,7 @@
     (cond ((not (null expander))
 	   ;; We found an expander.  Expand the type call TYPEP
 	   ;; recursively with the expanded type.
-	   (typep object (funcall expander type) environment))
+	   (generic-typep object (funcall expander type) environment))
 	  ((not (null type-class))
 	   ;; The type specifier is the name of a class.  Then return
 	   ;; true if and only if the class of the object is a
