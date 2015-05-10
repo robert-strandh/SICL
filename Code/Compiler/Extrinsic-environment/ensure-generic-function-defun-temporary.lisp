@@ -26,6 +26,7 @@
 	(loop while (remf keys :environment))
 	(let ((generic-function (apply #'make-instance
 				       'standard-generic-function
+				       :name function-name
 				       keys)))
 	  (setf (sicl-genv:fdefinition function-name environment)
 		generic-function)
