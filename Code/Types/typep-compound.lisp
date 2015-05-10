@@ -139,7 +139,7 @@
 ;;; OBJECT is of that type in ENVIRONMENT.
 (defmethod typep-compound (object (head (eql 'and)) rest environment)
   (loop for type-spec in rest
-	always (typep object type-spec environment)))
+	always (generic-typep object type-spec environment)))
 
 ;;; Given a type specifier of the form (EQL . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
@@ -156,13 +156,13 @@
 ;;; Given a type specifier of the form (NOT . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
 (defmethod typep-compound (object (head (eql 'not)) rest environment)
-  (not (typep object (first rest) environment)))
+  (not (generic-typep object (first rest) environment)))
 
 ;;; Given a type specifier of the form (OR . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
 (defmethod typep-compound (object (head (eql 'or)) rest environment)
   (loop for type-spec in rest
-	when (typep object type-spec environment)
+	when (generic-typep object type-spec environment)
 	  return t))
 
 ;;; Given a type specifier of the form (SATISFIES . REST), check
@@ -257,8 +257,8 @@
 	;; the type specifier is (COMPLEX <type>).  In order for TYPEP to
 	;; return true, the element type of the complex must be the
 	;; same as the result of upgrading <type>.
-	(and (typep (realpart object) type environment)
-	     (typep (imagpart object) type environment)))))
+	(and (generic-typep (realpart object) type environment)
+	     (generic-typep (imagpart object) type environment)))))
 
 ;;; Given a type specifier of the form (CONS . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
@@ -271,7 +271,7 @@
     ;; are done.
     (return-from typep-compound t))
   ;; the type specifier is (CONS <type> . ...)
-  (unless (typep (car object) (first rest) environment)
+  (unless (generic-typep (car object) (first rest) environment)
     (return-from typep-compound nil))
   ;; The CAR of OBJECT is the right type.  Now check the CDR.
   (when (null (rest rest))
@@ -279,7 +279,7 @@
     ;; the CAR is the right type, we are done.
     (return-from typep-compound t))
   ;; the type specifier is (CONS <type> <type>)
-  (typep (cdr object) (second rest) environment))
+  (generic-typep (cdr object) (second rest) environment))
 
 ;;; Given a type specifier of the form (INTEGER . REST), check whether
 ;;; OBJECT is of that type in ENVIRONMENT.
