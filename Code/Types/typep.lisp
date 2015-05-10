@@ -1,4 +1,4 @@
-(cl:in-package #:cl-type)
+(cl:in-package #:sicl-type)
 
 (defun typep (object type-specifier)
   (generic-typep object
