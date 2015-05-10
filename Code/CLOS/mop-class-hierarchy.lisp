@@ -65,12 +65,3 @@
 
 (defconstant +class-unique-number-offset+ 0)
 (defconstant +instance-slots-offset+ 1)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class FUNCTION.
-
-(define-built-in-class function (t)
-  ((%entry-point :initarg :entry-point)
-   (%linkage-rack :initarg :linkage-rack)
-   (%environment :initform nil :initarg :environment)))
