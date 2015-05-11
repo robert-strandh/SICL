@@ -170,7 +170,7 @@
     (symbol
      &optional
        (errorp t)
-       environment (load-time-value (sicl-genv:global-environment)))
+       (environment (load-time-value (sicl-genv:global-environment))))
   (let ((class (sicl-genv:find-class symbol environment)))
     (if (and (null class) errorp)
 	(error 'no-such-class symbol)
@@ -185,7 +185,7 @@
      symbol
      &optional
        errorp
-       environment (load-time-value (sicl-genv:global-environment)))
+       (environment (load-time-value (sicl-genv:global-environment))))
   (declare (ignore errorp))
   (setf (sicl-genv:find-class symbol environment)
 	new-class))
