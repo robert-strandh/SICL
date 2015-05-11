@@ -10,4 +10,5 @@
    (:file "make-method-lambda-defgenerics")
    (:file "make-method-lambda-defmethods")
    (:file "defmethod-support")
-   (:file "ensure-method")))
+   (:file "ensure-method")
+   (:file "ensure-class-using-class-support")))
