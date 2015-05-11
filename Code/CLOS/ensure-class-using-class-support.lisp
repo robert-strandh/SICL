@@ -57,7 +57,6 @@
        direct-default-initargs
        direct-slots
        direct-superclasses
-       name
        (metaclass nil metaclass-p)
      &allow-other-keys)
   (unless metaclass-p
@@ -124,7 +123,6 @@
        direct-default-initargs
        direct-slots
        (direct-superclasses nil direct-superclasses-p)
-       name
        (metaclass nil metaclass-p)
        &allow-other-keys)
   (unless metaclass-p
