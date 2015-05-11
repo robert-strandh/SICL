@@ -11,7 +11,7 @@
 	   (setf (sicl-env:function-type ',name ,global-env)
 		 `(function ,',arg-type t)))
 	 (eval-when (:load-toplevel :execute)
-	   (setf (sicl-env:fdefinition ',name ,global-env)
+	   (setf (sicl-env:fdefinition ',name (sicl-genv:global-environment))
 		 (lambda ,lambda-list
 		   ,@declarations
 		   ,@(if (null documentation)
