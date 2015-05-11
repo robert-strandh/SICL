@@ -20,4 +20,5 @@
   (ld "../../CLOS/ensure-class-using-class-defgenerics.lisp"
       environment)
   (ld "../../CLOS/ensure-class-using-class-defmethods.lisp"
-      environment))
+      environment)
+  (ld "../../Environment/standard-environment-functions.lisp" environment))
