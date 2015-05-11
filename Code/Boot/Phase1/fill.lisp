@@ -22,4 +22,6 @@
   (ld "../../CLOS/ensure-class-using-class-defmethods.lisp"
       environment)
   (ld "../../CLOS/ensure-class.lisp" environment)
-  (ld "../../Environment/standard-environment-functions.lisp" environment))
+  (ld "../../Environment/standard-environment-functions.lisp" environment)
+  (setf (sicl-genv:find-class 'standard-object environment) nil)
+  (ld "../../CLOS/standard-object-defclass.lisp" environment))
