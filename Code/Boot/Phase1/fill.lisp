@@ -24,4 +24,6 @@
   (ld "../../CLOS/ensure-class.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment)
   (setf (sicl-genv:find-class 'standard-object environment) nil)
-  (ld "../../CLOS/standard-object-defclass.lisp" environment))
+  (ld "../../CLOS/standard-object-defclass.lisp" environment)
+  (setf (sicl-genv:find-class 'sicl-clos:metaobject environment) nil)
+  (ld "../../CLOS/metaobject-defclass.lisp" environment))
