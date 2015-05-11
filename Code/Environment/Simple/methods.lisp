@@ -289,7 +289,8 @@
   (let ((association (assoc symbol (classes env) :test #'eq)))
     (if (null association)
 	(push (cons symbol new-class) (classes env))
-	(setf (cdr association) new-class))))
+	(setf (cdr association) new-class)))
+  new-class)
 
 (defmethod sicl-genv:setf-expander (symbol (env simple-environment))
   (cdr (assoc symbol (setf-expanders env) :test #'eq)))
