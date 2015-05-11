@@ -32,7 +32,7 @@
   (unless (proper-list-p direct-superclasses)
     (error "list of superclasses must be a proper list"))
   (loop for class-or-name in direct-superclasses
-	collect (cond ((classp class-or-name)
+	collect (cond ((typep class-or-name 'class)
 		       class-or-name)
 		      ((symbolp class-or-name)
 		       (let ((class (find-class class-or-name nil)))
@@ -93,7 +93,7 @@
   (when metaclass-p
     (cond ((symbolp metaclass)
 	   (setf metaclass (find-class metaclass)))
-	  ((classp metaclass)
+	  ((typep metaclass 'class)
 	   nil)
 	  (t
 	   (error "metaclass must be a symbol or a class metaobject class")))
@@ -129,7 +129,7 @@
     (error "metaclass must be given when ensuring a forward-referenced class"))
   (cond ((symbolp metaclass)
 	 (setf metaclass (find-class metaclass)))
-	((classp metaclass)
+	((typep metaclass 'class)
 	 nil)
 	(t
 	 (error "metaclass must be a symbol or a class metaobject class")))
