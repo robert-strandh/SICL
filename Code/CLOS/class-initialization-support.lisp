@@ -77,8 +77,10 @@
 
 (defun add-as-subclass-to-superclasses (class direct-superclasses)
   (loop for superclass in direct-superclasses
-	do (setf (c-direct-subclasses superclass)
-		 (cons class (class-direct-subclasses superclass)))))
+	do (reinitialize-instance
+	    superclass
+	    :direct-subclasses
+	    (cons class (class-direct-subclasses superclass)))))
 
 (defun create-readers-and-writers (class direct-slots)
   (loop for direct-slot in direct-slots
