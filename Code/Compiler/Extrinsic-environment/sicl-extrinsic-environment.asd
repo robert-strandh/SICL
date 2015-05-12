@@ -137,6 +137,5 @@
    (:file "define-in-package")
    (:file "define-default-setf-expander")
    (:file "define-backquote-macros")
-   (:file "standard-class")
    (:file "fill")
    (:file "initialization")))
