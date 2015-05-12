@@ -7,6 +7,9 @@
    filename (compilation-environment environment) environment))
 
 (defun fill-environment (environment)
+  (setf (sicl-genv:find-class 'standard-class
+			      (compilation-environment environment))
+	(find-class 'new-standard-class))
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
 			 environment)
   (ld "../../CLOS/ensure-generic-function-using-class-defgenerics.lisp"

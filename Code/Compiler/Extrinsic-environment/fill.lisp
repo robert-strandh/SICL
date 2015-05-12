@@ -11,8 +11,6 @@
   (define-defmacro environment)
   (define-in-package environment)
   (define-default-setf-expander environment)
-  (setf (sicl-genv:find-class 'standard-class environment)
-	(find-class 'new-standard-class))
   ;; Load a file containing a definition of the macro LAMBDA.  This
   ;; macro is particularly simple, so it doesn't really matter how it
   ;; is expanded.  This is fortunate, because that the time this file
