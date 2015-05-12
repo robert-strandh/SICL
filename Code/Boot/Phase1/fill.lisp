@@ -12,6 +12,18 @@
 	(find-class 'new-standard-class))
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
 			 environment)
+  (setf (sicl-genv:fdefinition 'make-instance environment)
+	(let ((make-instance (sicl-genv:fdefinition
+			      'make-instance
+			      (compilation-environment environment))))
+	  (lambda (&rest arguments)
+	    (if (symbolp (first arguments))
+		(apply make-instance
+		       (sicl-genv:find-class
+			(first arguments)
+			(compilation-environment environment))
+		       (rest arguments))
+		(apply make-instance arguments)))))
   (ld "../../CLOS/ensure-generic-function-using-class-defgenerics.lisp"
       environment)
   (ld "../../CLOS/ensure-generic-function-using-class-support.lisp"
