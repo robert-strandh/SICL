@@ -258,11 +258,15 @@ and generic functions are created by calls to
 call \texttt{make-instance} in order to create the class or generic
 function in question.  We have to make sure that the classes that are
 instantiated in this process are not redefined by
-\texttt{ensure-class}.  We avoid this problem by \emph{importing}
-\texttt{make-instance} from $E_0$, so that the class names given to
-\texttt{make-instance} are looked up in $E_0$ rather than in $E_1$.
-This way, modifications to the set of classes available in $E_1$ will
-not interfere with the classes that \texttt{make-instance} is asked to
+\texttt{ensure-class}.  We avoid this problem by creating a special
+version of \texttt{make-instance} in $E_1$.  This version checks
+whether its first argument is a symbol, and if so, replaces it by the
+result of calling \texttt{find-class} in $E_0$ before calling the host
+version of \texttt{make-instance}.  The net result is that $E_0$
+supplies the mapping from class names to classes when
+\texttt{make-instance} is called during phase~1.  This way,
+modifications to the set of classes available in $E_1$ will not
+interfere with the classes that \texttt{make-instance} is asked to
 instantiate.
 
 Phase 1 is characterized by the fact that the MOP names are names of
