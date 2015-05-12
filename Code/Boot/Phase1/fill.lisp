@@ -31,6 +31,7 @@
   (ld "../../CLOS/ensure-generic-function-using-class-defmethods.lisp"
       environment)
   (ld "../../CLOS/add-accessor-method.lisp" environment)
+  (ld "../../CLOS/class-initialization-support.lisp" environment)
   (ld "../../CLOS/ensure-class-using-class-support.lisp"
       environment)
   (ld "../../CLOS/ensure-class-using-class-defgenerics.lisp"
