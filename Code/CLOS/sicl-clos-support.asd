@@ -13,4 +13,5 @@
    (:file "ensure-method")
    (:file "ensure-class-using-class-support")
    (:file "reader-writer-method-class-defgenerics")
-   (:file "add-accessor-method")))
+   (:file "add-accessor-method")
+   (:file "class-initialization-support")))
