@@ -9,7 +9,7 @@
 (defun fill-environment (environment)
   (setf (sicl-genv:find-class 'standard-class
 			      (compilation-environment environment))
-	(find-class 'new-standard-class))
+	(find-class 'temporary-standard-class))
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
 			 environment)
   (setf (sicl-genv:fdefinition 'make-instance environment)
@@ -24,14 +24,6 @@
 			(compilation-environment environment))
 		       (rest arguments))
 		(apply make-instance arguments)))))
-  (ld "../../CLOS/ensure-generic-function-using-class-defgenerics.lisp"
-      environment)
-  (ld "../../CLOS/ensure-generic-function-using-class-support.lisp"
-      environment)
-  (ld "../../CLOS/ensure-generic-function-using-class-defmethods.lisp"
-      environment)
-  (ld "../../CLOS/add-accessor-method.lisp" environment)
-  (ld "../../CLOS/class-initialization-support.lisp" environment)
   (ld "../../CLOS/ensure-class-using-class-support.lisp"
       environment)
   (ld "../../CLOS/ensure-class-using-class-defgenerics.lisp"
