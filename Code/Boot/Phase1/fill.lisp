@@ -28,4 +28,5 @@
       environment)
   (ld "temporary-ensure-class.lisp" environment)
   (ld "../../CLOS/standard-object-defclass.lisp" environment)
+  (ld "../../CLOS/metaobject-defclass.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
