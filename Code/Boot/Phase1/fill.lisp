@@ -26,4 +26,5 @@
 		(apply make-instance arguments)))))
   (ld "../../CLOS/ensure-class-using-class-support.lisp"
       environment)
+  (ld "temporary-ensure-class.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
