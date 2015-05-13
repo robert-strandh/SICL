@@ -130,8 +130,9 @@
 (defmethod sicl-genv:function-type (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
     (if (or (null entry)
-	    (eq (car (function-cell entry)) (unbound entry)))
-	(error 'undefined-function :name function-name)
+	    (not (null (special-operator entry)))
+	    (not (null (macro-function entry))))
+	nil
 	(type entry))))
 
 (defmethod (setf sicl-genv:function-type)
