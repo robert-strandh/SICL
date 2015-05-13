@@ -26,13 +26,4 @@
 		(apply make-instance arguments)))))
   (ld "../../CLOS/ensure-class-using-class-support.lisp"
       environment)
-  (ld "../../CLOS/ensure-class-using-class-defgenerics.lisp"
-      environment)
-  (ld "../../CLOS/ensure-class-using-class-defmethods.lisp"
-      environment)
-  (ld "../../CLOS/ensure-class.lisp" environment)
-  (ld "../../Environment/standard-environment-functions.lisp" environment)
-  (setf (sicl-genv:find-class 'standard-object environment) nil)
-  (ld "../../CLOS/standard-object-defclass.lisp" environment)
-  (setf (sicl-genv:find-class 'sicl-clos:metaobject environment) nil)
-  (ld "../../CLOS/metaobject-defclass.lisp" environment))
+  (ld "../../Environment/standard-environment-functions.lisp" environment))
