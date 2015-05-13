@@ -5,6 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "standard-class")
    (:file "fill")
    (:file "environment")))
