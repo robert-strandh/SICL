@@ -13,4 +13,7 @@
    (:file "ensure-method")
    (:file "ensure-class-using-class-support")
    (:file "reader-writer-method-class-defgenerics")
-   (:file "add-accessor-method")))
+   (:file "add-accessor-method")
+   (:file "real-class-defclass")
+   (:file "regular-class-defclass")
+   (:file "funcallable-standard-class-defclass")))
