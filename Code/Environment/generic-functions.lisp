@@ -192,7 +192,7 @@
 ;;; associated with FUNCTION-NAME in ENVIRONMENT.
 ;;;
 ;;; If FUNCTION-NAME is not associated with an ordinary function or a
-;;; generic function in ENVIRONMENT, then an error is signaled.  
+;;; generic function in ENVIRONMENT, then NIL is returned.
 ;;;
 ;;; If FUNCTION-NAME is associated with an ordinary function or a
 ;;; generic function in ENVIRONMENT, but no type proclamation for that
