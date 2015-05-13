@@ -7,9 +7,6 @@
    filename (compilation-environment environment) environment))
 
 (defun fill-environment (environment)
-  (setf (sicl-genv:find-class 'standard-class
-			      (compilation-environment environment))
-	(find-class 'temporary-standard-class))
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
 			 environment)
   (setf (sicl-genv:fdefinition 'make-instance environment)
