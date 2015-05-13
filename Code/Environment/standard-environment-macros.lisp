@@ -104,19 +104,17 @@
 ;;; This is not the final version of DEFPARAMETER, because we ignore
 ;;; the documentation for now.
 
-(defmacro defparameter (name initial-value &optional documentation)
+(defmacro defparameter
+    (&environment env name initial-value &optional documentation)
   (declare (ignore documentation))
   `(progn
      (eval-when (:compile-toplevel)
-       (setf (sicl-genv:special-variable
-	      ',name
-	      sicl-genv:*global-environment*
-	      nil)
+       (setf (sicl-genv:special-variable ',name ,env nil)
 	     nil))
      (eval-when (:load-toplevel :execute)
        (setf (sicl-genv:special-variable
 	      ',name
-	      sicl-genv:*global-environment*
+	      (sicl-genv:global-environment)
 	      t)
 	     ,initial-value)
        ',name)))
