@@ -57,8 +57,6 @@
 ;;; difference, but for system-level classes and generic functions, it
 ;;; may significantly improve overall performance.
 
-(defparameter *class-unique-number* 0)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; The MOP class hierarchy. 
