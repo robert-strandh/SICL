@@ -148,9 +148,8 @@
 	   (setf (type entry) new-type)))))
 
 (defmethod sicl-genv:function-inline (function-name (env simple-environment))
-  (let ((entry (find-function-entry env function-name)))
-    (if (or (null entry)
-	    (eq (car (function-cell entry)) (unbound entry)))
+  (let ((entry (ensure-function-entry env function-name)))
+    (if (null entry)
 	(error 'undefined-function :name function-name)
 	(inline entry))))
 
