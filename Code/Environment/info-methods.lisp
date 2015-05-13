@@ -42,25 +42,37 @@
 			nil))))))))
 
 (defmethod cleavir-env:function-info ((env environment) function-name)
-  (if (fboundp function-name env)
-      ;; It is bound, but to what?  First check whether it is bound
-      ;; to a macro.
-      (let ((binding (fdefinition function-name env)))
-	(cond ((functionp binding)
-	       (make-instance 'cleavir-env:global-function-info
-		 :name function-name
-		 :dynamic-extent nil
-		 :ignore nil
-		 :compiler-macro (compiler-macro-function function-name env)
-		 :inline (function-inline function-name env)
-		 :type (function-type function-name env)
-		 :ast (function-ast function-name env)))
-	      ((eq (first binding) 'cl:macro-function)
-	       (make-instance 'cleavir-env:global-macro-info
-		 :name function-name
-		 :expander (second binding)
-		 :compiler-macro (compiler-macro-function function-name env)))
-	      (t
-	       (make-instance 'cleavir-env:special-operator-info
-		 :name function-name))))
-      nil))
+  (cond ((fboundp function-name env)
+	 (let ((binding (fdefinition function-name env)))
+	   (cond ((functionp binding)
+		  (make-instance 'cleavir-env:global-function-info
+		    :name function-name
+		    :dynamic-extent nil
+		    :ignore nil
+		    :compiler-macro (compiler-macro-function function-name env)
+		    :inline (function-inline function-name env)
+		    :type (function-type function-name env)
+		    :ast (function-ast function-name env)))
+		 ((eq (first binding) 'cl:macro-function)
+		  (make-instance 'cleavir-env:global-macro-info
+		    :name function-name
+		    :expander (second binding)
+		    :compiler-macro (compiler-macro-function function-name env)))
+		 (t
+		  (make-instance 'cleavir-env:special-operator-info
+		    :name function-name)))))
+	((not (null (function-type function-name env)))
+	 ;; This means that the type of the function was proclaimed,
+	 ;; typically as a result of a compile-time side effect of
+	 ;; DEFUN.  We should be nice then and indicate that the
+	 ;; function exists.
+	 (make-instance 'cleavir-env:global-function-info
+	   :name function-name
+	   :dynamic-extent nil
+	   :ignore nil
+	   :compiler-macro (compiler-macro-function function-name env)
+	   :inline (function-inline function-name env)
+	   :type (function-type function-name env)
+	   :ast (function-ast function-name env)))
+	(t
+	 nil)))
