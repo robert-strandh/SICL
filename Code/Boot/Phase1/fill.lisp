@@ -30,5 +30,6 @@
   (ld "../../CLOS/specializer-defclass.lisp" environment)
   (ld "../../CLOS/class-unique-number-defparameter.lisp" environment)
   (ld "../../CLOS/class-defclass.lisp" environment)
+  (ld "../../CLOS/forward-referenced-class-defclass.lisp" environment)
   (ld "../../CLOS/eql-specializer-defclass.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
