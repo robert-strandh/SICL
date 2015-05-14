@@ -33,4 +33,6 @@
   (ld "../../CLOS/class-defclass.lisp" environment)
   (ld "../../CLOS/forward-referenced-class-defclass.lisp" environment)
   (ld "../../CLOS/real-class-defclass.lisp" environment)
+  (ld "../../CLOS/regular-class-defclass.lisp" environment)
+  (ld "../../CLOS/standard-class-defclass.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
