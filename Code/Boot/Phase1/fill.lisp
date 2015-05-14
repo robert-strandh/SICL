@@ -28,6 +28,7 @@
   (ld "../../CLOS/metaobject-defclass.lisp" environment)
   (ld "../../CLOS/method-defclass.lisp" environment)
   (ld "../../CLOS/standard-method-defclass.lisp" environment)
+  (ld "../../CLOS/standard-accessor-method-defclass.lisp" environment)
   (ld "../../CLOS/specializer-defclass.lisp" environment)
   (ld "../../CLOS/eql-specializer-defclass.lisp" environment)
   (ld "../../CLOS/class-unique-number-defparameter.lisp" environment)
