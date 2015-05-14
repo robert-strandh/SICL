@@ -108,7 +108,7 @@
     (&environment env name initial-value &optional documentation)
   (declare (ignore documentation))
   `(progn
-     (eval-when (:compile-toplevel)
+     (eval-when (:compile-toplevel :load-toplevel :execute)
        (setf (sicl-genv:special-variable ',name ,env nil)
 	     nil))
      (eval-when (:load-toplevel :execute)
