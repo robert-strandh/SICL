@@ -385,10 +385,13 @@
 ;;; Generic function SPECIAL-VARIABLE
 ;;;
 ;;; This function returns two values.  The first value is the value of
-;;; SYMBOL as a special variable in ENVIRONMENT, or NIL if SYMBOL
-;;; does not have a value as a special variable in ENVIRONMENT.  The
-;;; second value is true if SYMBOL does have a value as a special
-;;; variable in ENVIRONMENT and false otherwise.
+;;; SYMBOL as a special variable in ENVIRONMENT, or NIL if SYMBOL does
+;;; not have a value as a special variable in ENVIRONMENT.  The second
+;;; value is true if SYMBOL is a special variable in ENVIRONMENT and
+;;; false otherwise.  There can be two reasons why a symbol does not
+;;; have a value as a special variable in ENVIRONMENT.  Either it is
+;;; not a special variable at all, or it is a special variable, but it
+;;; is currently unbound.
 ;;;
 ;;; Notice that the symbol can have a value even though this function
 ;;; returns NIL and NIL.  The first such case is when the symbol has a
