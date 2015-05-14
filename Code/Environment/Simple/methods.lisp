@@ -225,11 +225,12 @@
 
 (defmethod sicl-genv:special-variable (symbol (env simple-environment))
   (let ((entry (find-variable-entry env symbol)))
-    (if (or (null entry)
-	    (not (specialp entry))
-	    (eq (car (value-cell entry)) (unbound env)))
-	(values nil nil)
-	(values (car (value-cell entry)) t))))
+    (values (if (or (null entry)
+		    (not (specialp entry))
+		    (eq (car (value-cell entry)) (unbound env)))
+		nil
+		(car (value-cell entry)))
+	    (and (not (null entry)) (specialp entry)))))
 
 (defmethod (setf sicl-genv:special-variable)
     (value symbol (env simple-environment) initialize-p)
