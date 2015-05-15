@@ -33,10 +33,7 @@
    (:file "method-qualifiers-defgeneric")
    ;; This file contains the definition of the generic function
    ;; ACCESSOR-METHOD-SLOT-DEFINITION.
-   (:file "accessor-method-slot-definition-defgeneric")
-   ;; This file contains definitions of generic functions that are
-   ;; slot accessors for method metaobjects.
-   (:file "method-readers-defgenerics")))
+   (:file "accessor-method-slot-definition-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers
