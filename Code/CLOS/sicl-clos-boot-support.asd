@@ -8,9 +8,11 @@
 ;;;; imported into the global environments that are created during the
 ;;;; bootstrapping process.
 ;;;;
-;;;; For a list of specified readers of these metaobjects, see
+;;;; For a list of specified readers of method metaobjects, see
 ;;;; http://metamodular.com/CLOS-MOP/readers-for-method-metaobjects.html
-
+;;;;
+;;;; For a list of specified readers of slot-definition metaobjects, see
+;;;; http://metamodular.com/CLOS-MOP/readers-for-slot-definition-metaobjects.html
 
 (defsystem :sicl-clos-boot-support
   :depends-on (:sicl-clos-package)

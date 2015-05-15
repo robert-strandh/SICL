@@ -1,10 +1,5 @@
 (cl:in-package #:sicl-clos)
 
-;;; Readers for slot definition metaobjects.
-;;;
-;;; For a list of specified readers of these metaobjects, see
-;;; http://metamodular.com/CLOS-MOP/readers-for-slot-definition-metaobjects.html
-
 ;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/slot-definition-allocation.html
 (defgeneric slot-definition-allocation (slot-definition))
