@@ -15,6 +15,9 @@
   (;; This file contains the definition of the generic function
    ;; METHOD-FUNCTION.
    (:file "method-function-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; METHOD-GENERIC-FUNCTION.
+   (:file "method-generic-function-defgeneric")
    ;; This file contains definitions of generic functions that are
    ;; slot accessors for method metaobjects.
    (:file "method-readers-defgenerics")))
