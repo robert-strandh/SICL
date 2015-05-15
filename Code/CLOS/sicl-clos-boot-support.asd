@@ -21,8 +21,12 @@
    ;; This file contains the definition of the generic function
    ;; METHOD-LAMBDA-LIST.
    (:file "method-lambda-list-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; METHOD-SPECIALIZERS.
+   (:file "method-specializers-defgeneric")
    ;; This file contains definitions of generic functions that are
    ;; slot accessors for method metaobjects.
    (:file "method-readers-defgenerics")))
 
-;;  LocalWords:  metaobject accessor metaobjects accessors
+;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
+;;  LocalWords:  specializers
