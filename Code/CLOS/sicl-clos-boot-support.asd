@@ -59,7 +59,10 @@
    (:file "slot-definition-readers-defgeneric")
    ;; This file contains the definition of the generic function
    ;; SLOT-DEFINITION-WRITERS.
-   (:file "slot-definition-writers-defgeneric")))
+   (:file "slot-definition-writers-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; SLOT-DEFINITION-LOCATION.
+   (:file "slot-definition-location-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers
