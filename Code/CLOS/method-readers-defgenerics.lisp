@@ -6,11 +6,6 @@
 ;;; http://metamodular.com/CLOS-MOP/readers-for-method-metaobjects.html
 
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/method-lambda-list.html
-(defgeneric method-lambda-list (method))
-
-
-;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/method-specializers.html
 (defgeneric method-specializers (method))
 
