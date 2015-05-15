@@ -34,6 +34,7 @@
   (ld "../../CLOS/slot-definition-defclass.lisp" environment)
   (ld "../../CLOS/standard-slot-definition-defclass.lisp" environment)
   (ld "../../CLOS/direct-slot-definition-defclass.lisp" environment)
+  (ld "../../CLOS/effective-slot-definition-defclass.lisp" environment)
   (ld "../../CLOS/standard-direct-slot-definition-defclass.lisp" environment)
   (ld "../../CLOS/standard-effective-slot-definition-defclass.lisp" environment)
   (ld "../../CLOS/specializer-defclass.lisp" environment)
