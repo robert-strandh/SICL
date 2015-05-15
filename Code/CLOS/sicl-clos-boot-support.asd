@@ -50,7 +50,10 @@
    (:file "slot-definition-initfunction-defgeneric")
    ;; This file contains the definition of the generic function
    ;; SLOT-DEFINITION-NAME.
-   (:file "slot-definition-name-defgeneric")))
+   (:file "slot-definition-name-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; SLOT-DEFINITION-TYPE.
+   (:file "slot-definition-type-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers
