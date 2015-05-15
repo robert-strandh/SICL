@@ -31,6 +31,7 @@
   (ld "../../CLOS/standard-accessor-method-defclass.lisp" environment)
   (ld "../../CLOS/standard-reader-method-defclass.lisp" environment)
   (ld "../../CLOS/standard-writer-method-defclass.lisp" environment)
+  (ld "../../CLOS/slot-definition-defclass.lisp" environment)
   (ld "../../CLOS/specializer-defclass.lisp" environment)
   (ld "../../CLOS/eql-specializer-defclass.lisp" environment)
   (ld "../../CLOS/class-unique-number-defparameter.lisp" environment)
