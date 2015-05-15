@@ -47,7 +47,10 @@
    (:file "slot-definition-initform-defgeneric")
    ;; This file contains the definition of the generic function
    ;; SLOT-DEFINITION-INITFUNCTION.
-   (:file "slot-definition-initfunction-defgeneric")))
+   (:file "slot-definition-initfunction-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; SLOT-DEFINITION-NAME.
+   (:file "slot-definition-name-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers
