@@ -6,10 +6,6 @@
 ;;; http://metamodular.com/CLOS-MOP/readers-for-method-metaobjects.html
 
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/method-function.html
-(defgeneric method-function (method))
-
-;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/method-generic-function.html
 (defgeneric method-generic-function (method))
 
