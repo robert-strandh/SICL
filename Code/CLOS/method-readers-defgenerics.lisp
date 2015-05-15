@@ -4,7 +4,3 @@
 ;;;
 ;;; For a list of specified readers of these metaobjects, see
 ;;; http://metamodular.com/CLOS-MOP/readers-for-method-metaobjects.html
-
-;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/accessor-method-slot-definition.html
-(defgeneric accessor-method-slot-definition (accessor-method))
