@@ -7,6 +7,10 @@
 ;;;; generic functions to be defined so that they are automatically
 ;;;; imported into the global environments that are created during the
 ;;;; bootstrapping process.
+;;;;
+;;;; For a list of specified readers of these metaobjects, see
+;;;; http://metamodular.com/CLOS-MOP/readers-for-method-metaobjects.html
+
 
 (defsystem :sicl-clos-boot-support
   :depends-on (:sicl-clos-package)
