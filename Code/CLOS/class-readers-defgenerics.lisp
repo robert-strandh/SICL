@@ -5,18 +5,6 @@
 ;;; Class CLASS.
 
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/class-name.html
-(defgeneric class-name (class))
-
-;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/class-direct-superclasses.html
-(defgeneric class-direct-superclasses (class))
-
-;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/class-direct-slots.html
-(defgeneric class-direct-slots (class))
-
-;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/class-direct-subclasses.html
 (defgeneric class-direct-subclasses (class))
 
