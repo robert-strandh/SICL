@@ -65,7 +65,10 @@
    (:file "slot-definition-location-defgeneric")
    ;; This file contains the definition of the generic function
    ;; SPECIALIZER-DIRECT-GENERIC-FUNCTIONS.
-   (:file "specializer-direct-generic-functions-defgeneric")))
+   (:file "specializer-direct-generic-functions-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; SPECIALIZER-DIRECT-METHODS.
+   (:file "specializer-direct-methods-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer
