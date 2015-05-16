@@ -12,6 +12,7 @@
 		 for class = (sicl-genv:find-class superclass-name environment)
 		 collect (class-name class))))
     (loop while (remf new-arguments :direct-superclasses))
+    (loop while (remf new-arguments :metaclass))
     (let ((class (apply #'closer-mop:ensure-class
 			generated-name
 			:direct-superclasses new-superclasses
