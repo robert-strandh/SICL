@@ -47,4 +47,5 @@
   (ld "../../CLOS/standard-class-defclass.lisp" environment)
   (ld "../../CLOS/funcallable-standard-class-defclass.lisp" environment)
   (ld "../../CLOS/built-in-class-defclass.lisp" environment)
+  (ld "function-temporary-defclass.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
