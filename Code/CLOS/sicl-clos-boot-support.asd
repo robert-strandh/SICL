@@ -77,7 +77,10 @@
    (:file "eql-specializer-object-defgeneric")
    ;; This file contains the definition of the generic function
    ;; CLASS-DEFAULT-INITARGS.
-   (:file "class-default-initargs-defgeneric")))
+   (:file "class-default-initargs-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; CLASS-DIRECT-DEFAULT-INITARGS.
+   (:file "class-direct-default-initargs-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer
