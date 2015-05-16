@@ -13,6 +13,9 @@
 ;;;;
 ;;;; For a list of specified readers of slot-definition metaobjects, see
 ;;;; http://metamodular.com/CLOS-MOP/readers-for-slot-definition-metaobjects.html
+;;;;
+;;;; For a list of specified readers of class metaobjects, see
+;;;; http://metamodular.com/CLOS-MOP/readers-for-class-metaobjects.html
 
 (defsystem :sicl-clos-boot-support
   :depends-on (:sicl-clos-package)

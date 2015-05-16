@@ -3,9 +3,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class CLASS.
-;;;
-;;; For a list of specified readers of these metaobjects, see
-;;; http://metamodular.com/CLOS-MOP/readers-for-class-metaobjects.html
 
 ;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/class-default-initargs.html
