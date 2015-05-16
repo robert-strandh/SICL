@@ -5,10 +5,6 @@
 ;;; Class CLASS.
 
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/class-direct-default-initargs.html
-(defgeneric class-direct-default-initargs (class))
-
-;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/class-name.html
 (defgeneric class-name (class))
 
