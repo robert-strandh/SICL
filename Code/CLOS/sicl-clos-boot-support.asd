@@ -89,7 +89,10 @@
    (:file "class-direct-superclasses-defgeneric")
    ;; This file contains the definition of the generic function
    ;; CLASS-DIRECT-SLOTS.
-   (:file "class-direct-slots-defgeneric")))
+   (:file "class-direct-slots-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; CLASS-DIRECT-SUBCLASSES.
+   (:file "class-direct-subclasses-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
-;;  LocalWords:  specializers specializer superclasses
+;;  LocalWords:  specializers specializer superclasses subclasses
