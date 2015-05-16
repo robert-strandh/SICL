@@ -83,7 +83,10 @@
    (:file "class-direct-default-initargs-defgeneric")
    ;; This file contains the definition of the generic function
    ;; CLASS-NAME.
-   (:file "class-name-defgeneric")))
+   (:file "class-name-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; CLASS-DIRECT-SUPERCLASSES.
+   (:file "class-direct-superclasses-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer
