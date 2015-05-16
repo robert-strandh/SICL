@@ -68,7 +68,10 @@
    (:file "specializer-direct-generic-functions-defgeneric")
    ;; This file contains the definition of the generic function
    ;; SPECIALIZER-DIRECT-METHODS.
-   (:file "specializer-direct-methods-defgeneric")))
+   (:file "specializer-direct-methods-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; EQL-SPECIALIZER-OBJECT.
+   (:file "eql-specializer-object-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer
