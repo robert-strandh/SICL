@@ -5,10 +5,6 @@
 ;;; Class CLASS.
 
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/class-slots.html
-(defgeneric class-slots (class))
-
-;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/class-precedence-list.html
 (defgeneric class-precedence-list (class))
 
