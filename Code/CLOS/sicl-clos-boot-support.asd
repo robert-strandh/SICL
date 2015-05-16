@@ -89,4 +89,4 @@
    (:file "class-direct-superclasses-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
-;;  LocalWords:  specializers specializer
+;;  LocalWords:  specializers specializer superclasses
