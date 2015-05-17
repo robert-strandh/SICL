@@ -38,8 +38,7 @@
 (defun fill-environment (environment)
   (define-ensure-generic-function environment)
   (define-make-instance environment)
-  (ld "../../CLOS/ensure-class-using-class-support.lisp"
-      environment)
+  (ld "../../CLOS/ensure-class-using-class-support.lisp" environment)
   (ld "temporary-ensure-class.lisp" environment)
   (ld "../../CLOS/standard-object-defclass.lisp" environment)
   (ld "../../CLOS/metaobject-defclass.lisp" environment)
