@@ -20,7 +20,7 @@
 		(apply make-instance
 		       (sicl-genv:find-class
 			(first arguments)
-			(compilation-environment environment))
+			environment)
 		       (rest arguments))
 		(apply make-instance arguments)))))
   (ld "../../CLOS/ensure-class-using-class-support.lisp"
