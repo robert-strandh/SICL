@@ -36,8 +36,6 @@
 		(apply make-instance arguments))))))
 
 (defun fill-environment (environment)
-  (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
-			 environment)
   (define-ensure-generic-function environment)
   (define-make-instance environment)
   (ld "../../CLOS/ensure-class-using-class-support.lisp"
