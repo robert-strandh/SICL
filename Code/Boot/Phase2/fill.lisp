@@ -4,7 +4,7 @@
   (format *trace-output* "Loading file ~a~%" filename)
   (finish-output *trace-output*)
   (sicl-extrinsic-environment:load-source-with-environments
-   filename
+   (asdf:system-relative-pathname :sicl-boot-phase2 filename)
    (sicl-boot-phase1:compilation-environment (phase1-environment environment))
    environment))
 
