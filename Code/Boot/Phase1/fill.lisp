@@ -11,6 +11,17 @@
 (defun fill-environment (environment)
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
 			 environment)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function environment)
+	(let ((ensure-generic-function  (sicl-genv:fdefinition
+					 'ensure-generic-function
+					 (compilation-environment environment))))
+	  (lambda (function-name &rest arguments)
+	    (let ((new-arguments (copy-list arguments)))
+	      (loop while (remf new-arguments :environment))
+	      (setf (sicl-genv:fdefinition function-name environment)
+		    (apply ensure-generic-function
+			   (gensym)
+			   new-arguments))))))
   (setf (sicl-genv:fdefinition 'make-instance environment)
 	(let ((make-instance (sicl-genv:fdefinition
 			      'make-instance
