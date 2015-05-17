@@ -8,9 +8,7 @@
    (compilation-environment environment)
    environment))
 
-(defun fill-environment (environment)
-  (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
-			 environment)
+(defun define-ensure-generic-function (environment)
   (setf (sicl-genv:fdefinition 'ensure-generic-function environment)
 	(let ((ensure-generic-function  (sicl-genv:fdefinition
 					 'ensure-generic-function
@@ -21,7 +19,12 @@
 	      (setf (sicl-genv:fdefinition function-name environment)
 		    (apply ensure-generic-function
 			   (gensym)
-			   new-arguments))))))
+			   new-arguments)))))))
+
+(defun fill-environment (environment)
+  (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
+			 environment)
+  (define-ensure-generic-function environment)
   (setf (sicl-genv:fdefinition 'make-instance environment)
 	(let ((make-instance (sicl-genv:fdefinition
 			      'make-instance
