@@ -4,7 +4,9 @@
   (format *trace-output* "Loading file ~a~%" filename)
   (finish-output *trace-output*)
   (sicl-extrinsic-environment:load-source-with-environments
-   filename (compilation-environment environment) environment))
+   (asdf:system-relative-pathname :sicl-boot-phase1 filename)
+   (compilation-environment environment)
+   environment))
 
 (defun fill-environment (environment)
   (sicl-genv:fmakunbound 'sicl-clos:ensure-generic-function-using-class
