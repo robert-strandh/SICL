@@ -16,6 +16,9 @@
 ;;;;
 ;;;; For a list of specified readers of class metaobjects, see
 ;;;; http://metamodular.com/CLOS-MOP/readers-for-class-metaobjects.html
+;;;;
+;;;; For a list of specified readers of generic function metaobjects, see
+;;;; http://metamodular.com/CLOS-MOP/readers-for-generic-function-metaobjects.html
 
 (defsystem :sicl-clos-boot-support
   :depends-on (:sicl-clos-package)
