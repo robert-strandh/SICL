@@ -7,11 +7,11 @@
 ;;; This function is not required by the AMOP to exist, 
 ;;;
 ;;; One can think of this function as a convenience function that
-;;; combines a call to MAKE-INSTANCE 'STANDARD-METHOD with a call to
-;;; ADD-METHOD.  A SPECIALIZER, can be either a specializer meta
-;;; object, or a symbol.  If it is a symbol, it is considered to be
-;;; the name of a class, and this function replaces the symbol with
-;;; the corresponding class before calling MAKE-INSTANCE.
+;;; combines a call to MAKE-INSTANCE with a call to ADD-METHOD.  A
+;;; SPECIALIZER, can be either a specializer meta object, or a symbol.
+;;; If it is a symbol, it is considered to be the name of a class, and
+;;; this function replaces the symbol with the corresponding class
+;;; before calling MAKE-INSTANCE.
 ;;;
 ;;; Since we might need to find the class with a particular name, we
 ;;; apply the general rule in SICL, namely to use explicit
@@ -38,7 +38,7 @@
 	(remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :specializers))
     (let ((method (apply #'make-instance
-			 'standard-method
+			 (generic-function-method-class generic-function)
 			 :specializers specs
 			 remaining-keys)))
       (add-method generic-function method)
