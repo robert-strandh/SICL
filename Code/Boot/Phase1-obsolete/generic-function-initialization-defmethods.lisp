@@ -1,1 +1,0 @@
-../../CLOS/generic-function-initialization-defmethods.lisp

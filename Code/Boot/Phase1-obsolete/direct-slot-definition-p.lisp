@@ -1,1 +1,0 @@
-../../CLOS/direct-slot-definition-p.lisp
