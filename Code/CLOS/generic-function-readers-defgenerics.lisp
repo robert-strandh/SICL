@@ -5,10 +5,6 @@
 ;;; http://metamodular.com/CLOS-MOP/readers-for-generic-function-metaobjects.html
 
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/generic-function-lambda-list.html
-(defgeneric generic-function-lambda-list (generic-function))
-
-;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/generic-function-argument-precedence-order.html
 (defgeneric generic-function-argument-precedence-order (generic-function))
 
