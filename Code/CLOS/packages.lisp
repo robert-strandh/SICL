@@ -77,6 +77,7 @@
    #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
    #:print-object #:describe-object #:documentation
    #:make-method-lambda
+   #:direct-slot-definition-class
    ;; SICL-specific classes
    #:real-class #:regular-class
    ;; SICL-specific functions
