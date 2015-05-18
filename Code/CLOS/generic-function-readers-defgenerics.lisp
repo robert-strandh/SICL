@@ -5,9 +5,5 @@
 ;;; http://metamodular.com/CLOS-MOP/readers-for-generic-function-metaobjects.html
 
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/generic-function-method-combination.html
-(defgeneric generic-function-method-combination (generic-function))
-
-;;; For the specification of this generic function, see
 ;;; http://metamodular.com/CLOS-MOP/generic-function-methods.html
 (defgeneric generic-function-methods (generic-function))
