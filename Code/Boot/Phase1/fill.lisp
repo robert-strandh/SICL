@@ -18,7 +18,7 @@
 	      (loop while (remf new-arguments :environment))
 	      (setf (sicl-genv:fdefinition function-name environment)
 		    (apply ensure-generic-function
-			   (gensym)
+			   function-name
 			   new-arguments)))))))
 
 (defun define-make-instance (environment)
