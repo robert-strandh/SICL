@@ -10,7 +10,7 @@
 ;;;; FUNCALLABLE-STANDARD-CLASS.
 
 ;;; Add a reader method to a generic function.  CLASS is a class
-;;; metaobject that plays the role of specialize for the argument of
+;;; metaobject that plays the role of specializer for the argument of
 ;;; the reader method.  FUNCTION-NAME is the name of the reader
 ;;; generic function to which the reader method should be added.
 ;;; SLOT-DEFINITION is a DIRECT-SLOT-DEFINITION metaobject that
@@ -42,7 +42,7 @@
     (add-method generic-function method)))
 
 ;;; Add a writer method to a generic function.  CLASS is a class
-;;; metaobject that plays the role of specialize for the argument of
+;;; metaobject that plays the role of specializer for the argument of
 ;;; the writer method.  FUNCTION-NAME is the name of the writer
 ;;; generic function to which the writer method should be added.
 ;;; SLOT-DEFINITION is a DIRECT-SLOT-DEFINITION metaobject that
