@@ -1,1 +1,0 @@
-../../CLOS/defclass-defmacro.lisp

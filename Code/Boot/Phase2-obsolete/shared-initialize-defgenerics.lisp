@@ -1,1 +1,0 @@
-../../CLOS/shared-initialize-defgenerics.lisp
