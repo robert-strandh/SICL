@@ -98,10 +98,7 @@
    (:file "class-precedence-list-defgeneric")
    ;; This file contains the definition of the generic function
    ;; CLASS-FINALIZED-P.
-   (:file "class-finalized-p-defgeneric")
-   ;; This file contains the definition of the generic function
-   ;; CLASS-PROTOTYPE.
-   (:file "class-prototype-defgeneric")))
+   (:file "class-finalized-p-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer superclasses subclasses
