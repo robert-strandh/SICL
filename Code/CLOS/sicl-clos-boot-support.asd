@@ -101,7 +101,16 @@
    (:file "class-precedence-list-defgeneric")
    ;; This file contains the definition of the generic function
    ;; CLASS-FINALIZED-P.
-   (:file "class-finalized-p-defgeneric")))
+   (:file "class-finalized-p-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; GENERIC-FUNCTION-NAME.
+   (:file "generic-function-name-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; GENERIC-FUNCTION-LAMBDA-LIST.
+   (:file "generic-function-lambda-list-defgeneric")
+   ;; This file contains the definition of the generic function
+   ;; GENERIC-FUNCTION-METHOD-CLASS.
+   (:file "generic-function-method-class-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer superclasses subclasses
