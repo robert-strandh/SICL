@@ -69,4 +69,5 @@
   (ld "../../CLOS/standard-generic-function-defclass.lisp" environment)
   (ld "../../CLOS/ensure-method.lisp" environment)
   (ld "../../CLOS/direct-slot-definition-class-support.lisp" environment)
+  (ld "../../CLOS/direct-slot-definition-class-defgeneric.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
