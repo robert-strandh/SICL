@@ -86,4 +86,5 @@
   (ld "../../CLOS/reader-writer-method-class-defgenerics.lisp" environment)
   (ld "../../CLOS/reader-writer-method-class-defmethods.lisp" environment)
   (ld "../../CLOS/add-accessor-method.lisp" environment)
+  (ld "../../CLOS/class-initialization-support.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
