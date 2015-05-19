@@ -1,6 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:cleavir-primop
+  (:use)
   (:export
    #:typeq
    #:car #:cdr #:rplaca #:rplacd
