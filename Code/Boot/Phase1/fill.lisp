@@ -82,4 +82,7 @@
   (ld "../../CLOS/direct-slot-definition-class-support.lisp" environment)
   (ld "../../CLOS/direct-slot-definition-class-defgeneric.lisp" environment)
   (ld "../../CLOS/direct-slot-definition-class-defmethods.lisp" environment)
+  (ld "../../CLOS/reader-writer-method-class-support.lisp" environment)
+  (ld "../../CLOS/reader-writer-method-class-defgenerics.lisp" environment)
+  (ld "../../CLOS/reader-writer-method-class-defmethods.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
