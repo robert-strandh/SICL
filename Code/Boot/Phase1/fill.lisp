@@ -39,10 +39,16 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype environment)
 	#'closer-mop:class-prototype))
 
+(defun define-generic-function-method-class (environment)
+  (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class
+			       environment)
+	#'closer-mop:generic-function-method-class))
+
 (defun fill-environment (environment)
   (define-ensure-generic-function environment)
   (define-make-instance environment)
   (define-class-prototype environment)
+  (define-generic-function-method-class environment)
   (ld "../../CLOS/ensure-class-using-class-support.lisp" environment)
   (ld "temporary-ensure-class.lisp" environment)
   (ld "../../CLOS/standard-object-defclass.lisp" environment)
