@@ -41,6 +41,7 @@
    #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
    #:bind-ast #:make-bind-ast
    #:eq-ast #:make-eq-ast
+   #:consp-ast #:make-consp-ast
    #:car-ast #:make-car-ast #:cons-ast
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast
