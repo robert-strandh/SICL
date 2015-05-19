@@ -8,5 +8,18 @@
    (sicl-boot-phase1:compilation-environment (phase1-environment environment))
    environment))
 
+(defun define-ensure-generic-function (environment)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function environment)
+	(lambda (function-name &rest arguments)
+	  (if (sicl-genv:fboundp function-name environment)
+	      (sicl-genv:fdefinition function-name environment)
+	      (let ((new-arguments (copy-list arguments)))
+		(loop while (remf new-arguments :environment))
+		(apply #'make-instance
+		       (sicl-genv:find-class
+			'standard-generic-function
+			(phase1-environment environment))
+		       new-arguments))))))
+
 (defun fill-environment (environment)
-  (declare (ignore environment)))
+  (define-ensure-generic-function environment))
