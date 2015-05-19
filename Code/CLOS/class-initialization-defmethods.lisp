@@ -27,7 +27,8 @@
   (if (null direct-superclasses)
       (apply #'call-next-method
 	     class
-	     :direct-superclasses (list *standard-object*)
+	     :direct-superclasses
+	     (list (find-class 'standard-object))
 	     initargs)
       (call-next-method)))
 
@@ -38,7 +39,8 @@
   (if (null direct-superclasses)
       (apply #'call-next-method
 	     class
-	     :direct-superclasses (list *funcallable-standard-object*)
+	     :direct-superclasses
+	     (list (find-class 'funcallable-standard-object))
 	     initargs)
       (call-next-method)))
 
