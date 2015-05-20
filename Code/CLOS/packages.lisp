@@ -28,6 +28,7 @@
    ;; Accessors for method metaobjects.
    #:method-function
    #:method-generic-function
+   #:method-lambda-list
    ;; Accessors for class metaobjects. 
    #:class-name
    #:class-direct-superclasses
