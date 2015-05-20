@@ -30,6 +30,7 @@
    #:method-generic-function
    #:method-lambda-list
    #:method-qualifiers
+   #:method-specializers
    ;; Accessors for class metaobjects. 
    #:class-name
    #:class-direct-superclasses
