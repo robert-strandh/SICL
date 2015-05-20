@@ -24,5 +24,7 @@
 
 (defun fill-environment (environment)
   (define-ensure-generic-function environment)
+  (sicl-genv:fmakunbound 'sicl-clos:method-function environment)
+  (ld "../../CLOS/method-function-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:class-direct-superclasses environment)
   (ld "../../CLOS/class-direct-superclasses-defgeneric.lisp" environment))
