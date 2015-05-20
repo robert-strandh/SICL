@@ -30,5 +30,7 @@
   (ld "../../CLOS/method-generic-function-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:method-lambda-list environment)
   (ld "../../CLOS/method-lambda-list-defgeneric.lisp" environment)
+  (sicl-genv:fmakunbound 'sicl-clos:method-qualifiers environment)
+  (ld "../../CLOS/method-qualifiers-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:class-direct-superclasses environment)
   (ld "../../CLOS/class-direct-superclasses-defgeneric.lisp" environment))
