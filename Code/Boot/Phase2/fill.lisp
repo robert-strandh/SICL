@@ -15,11 +15,12 @@
 	      (sicl-genv:fdefinition function-name environment)
 	      (let ((new-arguments (copy-list arguments)))
 		(loop while (remf new-arguments :environment))
-		(apply #'make-instance
-		       (sicl-genv:find-class
-			'standard-generic-function
-			(phase1-environment environment))
-		       new-arguments))))))
+		(setf (sicl-genv:fdefinition function-name environment)
+		      (apply #'make-instance
+			     (sicl-genv:find-class
+			      'standard-generic-function
+			      (phase1-environment environment))
+			     new-arguments)))))))
 
 (defun fill-environment (environment)
   (define-ensure-generic-function environment))
