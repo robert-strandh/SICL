@@ -25,6 +25,8 @@
    #:standard--slot-definition
    #:standard-direct-slot-definition
    #:standard-effective-slot-definition
+   ;; Accessors for method metaobjects.
+   #:method-function
    ;; Accessors for class metaobjects. 
    #:class-name
    #:class-direct-superclasses
