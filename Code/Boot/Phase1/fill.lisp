@@ -14,12 +14,14 @@
 					 'ensure-generic-function
 					 (compilation-environment environment))))
 	  (lambda (function-name &rest arguments)
-	    (let ((new-arguments (copy-list arguments)))
-	      (loop while (remf new-arguments :environment))
-	      (setf (sicl-genv:fdefinition function-name environment)
-		    (apply ensure-generic-function
-			   function-name
-			   new-arguments)))))))
+	    (if (sicl-genv:fboundp function-name environment)
+		(sicl-genv:fdefinition function-name environment)
+		(let ((new-arguments (copy-list arguments)))
+		  (loop while (remf new-arguments :environment))
+		  (setf (sicl-genv:fdefinition function-name environment)
+			(apply ensure-generic-function
+			       (gensym)
+			       new-arguments))))))))
 
 (defun define-make-instance (environment)
   (setf (sicl-genv:fdefinition 'make-instance environment)
