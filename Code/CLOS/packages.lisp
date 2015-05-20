@@ -31,6 +31,7 @@
    #:method-lambda-list
    #:method-qualifiers
    #:method-specializers
+   #:accessor-method-slot-definition
    ;; Accessors for class metaobjects. 
    #:class-name
    #:class-direct-superclasses
