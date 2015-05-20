@@ -34,6 +34,8 @@
   (ld "../../CLOS/method-qualifiers-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:method-specializers environment)
   (ld "../../CLOS/method-specializers-defgeneric.lisp" environment)
+  (sicl-genv:fmakunbound 'sicl-clos:accessor-method-slot-definition environment)
+  (ld "../../CLOS/accessor-method-slot-definition-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:slot-definition-name environment)
   (ld "../../CLOS/slot-definition-name-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:slot-definition-allocation environment)
