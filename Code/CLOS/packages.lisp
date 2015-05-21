@@ -6,10 +6,8 @@
   (:use #:common-lisp)
   (:import-from #:cleavir-code-utilities
 		#:proper-list-p
-		#:parse-generic-function-lambda-list
 		#:parse-ordinary-lambda-list
-		#:parse-specialized-lambda-list
-		#:required)
+		#:parse-specialized-lambda-list)
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
   (:export
    ;; MOP classes
