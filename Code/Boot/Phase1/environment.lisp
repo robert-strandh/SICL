@@ -15,7 +15,12 @@
   ;; SICL-CLOS:CLASS-PROTOTYPE to be the function CLASS-PROTOTYPE of
   ;; the host.
   (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype environment)
-	#'closer-mop:class-prototype))
+	#'closer-mop:class-prototype)
+  ;; For the benefit of the macro DEFMETHOD, we define the function
+  ;; SICL-CLOS:MAKE-METHOD-LAMBDA to be the function
+  ;; MAKE-METHOD-LAMBDA of the host.
+  (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda environment)
+	#'closer-mop:make-method-lambda))
 
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
