@@ -49,3 +49,52 @@
    generic-function
    (lambda (dependent)
      (apply #'update-dependent generic-function dependent initargs))))
+
+(defun shared-initialize-before-generic-function
+    (generic-function
+     slot-names
+     &rest initargs
+     &key
+       documentation
+       declarations
+       (lambda-list nil lambda-list-p)
+       (argument-precedence-order nil argument-precedence-order-p)
+       method-class
+       method-combination
+       name
+     &allow-other-keys)
+  (declare (ignore slot-names))
+  (check-documentation documentation)
+  (check-declarations declarations)
+  (check-method-combination method-combination)
+  (check-method-class method-class)
+  (if lambda-list-p
+      (let* ((parsed-lambda-list
+	       (cleavir-code-utilities:parse-generic-function-lambda-list
+		lambda-list))
+	     (required (cleavir-code-utilities:required parsed-lambda-list)))
+	(when argument-precedence-order-p
+	  (check-argument-precedence-order argument-precedence-order required)))
+      (when argument-precedence-order-p
+	(error "when argument precedence order appears,~@
+                so must lambda list"))))
+
+(defun shared-initialize-after-generic-function
+    (generic-function
+     slot-names
+     &rest initargs
+     &key
+       (lambda-list nil lambda-list-p)
+       (argument-precedence-order nil argument-precedence-order-p)
+       method-class
+       method-combination
+       name
+     &allow-other-keys)
+  (declare (ignore slot-names))
+  (when (and lambda-list-p (not argument-precedence-order-p))
+    (let* ((parsed-lambda-list
+	     (cleavir-code-utilities:parse-generic-function-lambda-list
+	      lambda-list))
+	   (required (cleavir-code-utilities:required parsed-lambda-list)))
+      (reinitialize-instance generic-function
+			     :argument-precedence-order required))))
