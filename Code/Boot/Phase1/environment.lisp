@@ -17,16 +17,29 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype environment)
 	#'closer-mop:class-prototype)
   ;; For the benefit of the macro DEFMETHOD, we define the function
-  ;; SICL-CLOS:MAKE-METHOD-LAMBDA to be the function
-  ;; MAKE-METHOD-LAMBDA of the host.
-  (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda environment)
-	#'closer-mop:make-method-lambda)
-  ;; For the benefit of the macro DEFMETHOD, we define the function
   ;; SICL-CLOS:GENERIC-FUNCTION-METHOD-CLASS to be the function
   ;; GENERIC-FUNCTION-METHOD-CLASS of the host.
   (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class
 			       environment)
 	#'closer-mop:generic-function-method-class))
+
+(defun define-make-method-lambda (cenv rtenv)
+  (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda rtenv)
+	(lambda (generic-function method lambda-expression env)
+	  (let* ((body-fun (cleavir-env:eval lambda-expression
+					     cenv
+					     rtenv))
+		 (body-expr `(lambda (&rest args) (apply ,body-fun args))))
+	    `(lambda (&rest args)
+	       (apply ,(eval (funcall #'closer-mop:make-method-lambda
+				      generic-function
+				      method
+				      body-expr
+				      env))
+		      args))))))
+
+(defun customize (compilation-environment run-time-environment)
+  (define-make-method-lambda compilation-environment run-time-environment))
 
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
@@ -35,4 +48,5 @@
     :reader compilation-environment)))
 
 (defmethod initialize-instance :after ((environment environment) &key)
+  (customize (compilation-environment environment) environment)
   (fill-environment environment))
