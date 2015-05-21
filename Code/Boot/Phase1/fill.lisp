@@ -90,4 +90,6 @@
   (ld "../../CLOS/add-accessor-method.lisp" environment)
   (ld "../../CLOS/class-initialization-support.lisp" environment)
   (ld "../../CLOS/class-initialization-defmethods.lisp" environment)
+  (ld "../../CLOS/generic-function-initialization-support.lisp" environment)
+  (ld "../../CLOS/generic-function-initialization-defmethods.lisp" environment)
   (ld "../../Environment/standard-environment-functions.lisp" environment))
