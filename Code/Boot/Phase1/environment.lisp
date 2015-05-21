@@ -9,6 +9,10 @@
 (defclass compilation-environment (sicl-extrinsic-environment:environment)
   ())
 
+(defmethod initialize-instance :after
+    ((environment compilation-environment) &key)
+  ())
+
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
     :initarg :compilation-environment
