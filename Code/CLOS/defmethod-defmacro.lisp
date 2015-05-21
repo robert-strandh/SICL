@@ -6,7 +6,14 @@
   (multiple-value-bind
 	(qualifiers lambda-list specializers declarations documentation forms)
       (parse-defmethod rest)
-    (let ((generic-function-var (gensym)))
+    (let* ((fboundp (sicl-genv:fboundp function-name env))
+	   (binding (if fboundp
+			(sicl-genv:fdefinition function-name env)
+			nil))
+	   (fun (if (and binding (typep binding 'generic-function))
+		    binding
+		    nil))
+	   (generic-function-var (gensym)))
       `(let* ((env (load-time-value (sicl-genv:global-environment)))
 	      (,generic-function-var
 		(ensure-generic-function ',function-name :environment env)))
@@ -19,11 +26,14 @@
 	  :documentation ,documentation
 	  :function
 	  ,(make-method-lambda
-	    ;; FIXME: do this better.
+	    (if (null fun)
+		(class-prototype
+		 (sicl-environment:find-class 'standard-generic-function env))
+		fun)
 	    (class-prototype
-	     (sicl-environment:find-class 'standard-generic-function env))
-	    (class-prototype
-	     (sicl-environment:find-class 'standard-method env))
+	     (if (null fun)
+		 (sicl-environment:find-class 'standard-method env)
+		 (generic-function-method-class fun)))
 	    `(lambda ,lambda-list
 	       ,@declarations
 	       ,@forms)
