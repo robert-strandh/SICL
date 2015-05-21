@@ -12,7 +12,7 @@
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
     :initarg :compilation-environment
-    :initform (make-instance 'sicl-extrinsic-environment:environment)
+    :initform (make-instance 'compilation-environment)
     :reader compilation-environment)))
 
 (defmethod initialize-instance :after ((environment environment) &key)
