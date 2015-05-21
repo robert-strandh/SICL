@@ -20,7 +20,13 @@
   ;; SICL-CLOS:MAKE-METHOD-LAMBDA to be the function
   ;; MAKE-METHOD-LAMBDA of the host.
   (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda environment)
-	#'closer-mop:make-method-lambda))
+	#'closer-mop:make-method-lambda)
+  ;; For the benefit of the macro DEFMETHOD, we define the function
+  ;; SICL-CLOS:GENERIC-FUNCTION-METHOD-CLASS to be the function
+  ;; GENERIC-FUNCTION-METHOD-CLASS of the host.
+  (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class
+			       environment)
+	#'closer-mop:generic-function-method-class))
 
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
