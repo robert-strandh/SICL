@@ -135,8 +135,6 @@
   ;; Load a file containing the definition of the macro DEFGENERIC.
   (load-file "../../CLOS/defgeneric-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DEFMETHOD.
-  ;; DEFMETHOD calls ENSURE-METHOD which has been imported from SICL
-  ;; CLOS as a host function.
   (load-file "../../CLOS/defmethod-defmacro.lisp" environment)
   (load-file "../../CLOS/defclass-support.lisp" environment)
   (load-file "../../CLOS/defclass-defmacro.lisp" environment))
