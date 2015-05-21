@@ -11,7 +11,11 @@
 
 (defmethod initialize-instance :after
     ((environment compilation-environment) &key)
-  ())
+  ;; For the benefit of the macro DEFMETHOD, we define the function
+  ;; SICL-CLOS:CLASS-PROTOTYPE to be the function CLASS-PROTOTYPE of
+  ;; the host.
+  (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype environment)
+	#'closer-mop:class-prototype))
 
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
