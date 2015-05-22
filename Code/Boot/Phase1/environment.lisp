@@ -26,6 +26,10 @@
     :reader compilation-environment)))
 
 (defmethod initialize-instance :around ((environment environment) &key)
+  (format t "Initializing phase 1 environments~%")
   (call-next-method)
   (customize (compilation-environment environment) environment)
-  (fill-environment environment))
+  (format t "Finished initializing phase 1 environments~%")
+  (format t "Filling phase 1 run-time environment~%")
+  (fill-environment environment)
+  (format t "Finished filling phase 1 run-time environment~%"))
