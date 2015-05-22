@@ -11,17 +11,7 @@
 
 (defmethod initialize-instance :after
     ((environment compilation-environment) &key)
-  ;; For the benefit of the macro DEFMETHOD, we define the function
-  ;; SICL-CLOS:CLASS-PROTOTYPE to be the function CLASS-PROTOTYPE of
-  ;; the host.
-  (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype environment)
-	#'closer-mop:class-prototype)
-  ;; For the benefit of the macro DEFMETHOD, we define the function
-  ;; SICL-CLOS:GENERIC-FUNCTION-METHOD-CLASS to be the function
-  ;; GENERIC-FUNCTION-METHOD-CLASS of the host.
-  (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class
-			       environment)
-	#'closer-mop:generic-function-method-class))
+  nil)
 
 (defun define-make-method-lambda (cenv rtenv)
   (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda rtenv)
