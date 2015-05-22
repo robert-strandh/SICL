@@ -3,9 +3,9 @@
 ;;; We define a subclass of the normal extrinsic environment.  This
 ;;; version of the extrinsic environment is used as compilation
 ;;; environment in phase 1 of bootstrapping.  By creating a special
-;;; version of it, we can define an :AFTER method on
-;;; INITIALIZE-INSTANCE where we can modify it to correspond to the
-;;; needs of bootstrapping.
+;;; version of it, we can define auxiliary methods on the generic
+;;; function INITIALIZE-INSTANCE in which we can modify it to
+;;; correspond to the needs of bootstrapping.
 (defclass compilation-environment (sicl-extrinsic-environment:environment)
   ())
 
