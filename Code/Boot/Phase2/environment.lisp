@@ -71,7 +71,7 @@
 				     (second req)
 				     run-time-environment))))))
 		 (new-args (append new-required remaining)))
-	    `(eval '(defmethod ,name ,@qualifiers ,@new-args ,@body))))))
+	    `(eval '(defmethod ,name ,@qualifiers ,new-args ,@body))))))
 
 (defmethod initialize-instance :after ((environment environment) &key)
   (define-defmethod
