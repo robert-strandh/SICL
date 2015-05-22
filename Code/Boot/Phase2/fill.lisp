@@ -5,7 +5,7 @@
   (finish-output *trace-output*)
   (sicl-extrinsic-environment:load-source-with-environments
    (asdf:system-relative-pathname :sicl-boot-phase2 filename)
-   (sicl-boot-phase1:compilation-environment (phase1-environment environment))
+   (sicl-boot-phase1:compilation-environment environment)
    environment))
 
 (defun define-ensure-generic-function (environment)
