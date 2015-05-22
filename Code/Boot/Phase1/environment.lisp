@@ -13,23 +13,9 @@
     ((environment compilation-environment) &key)
   nil)
 
-(defun define-make-method-lambda (cenv rtenv)
-  (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda rtenv)
-	(lambda (generic-function method lambda-expression env)
-	  (let* ((body-fun (cleavir-env:eval lambda-expression
-					     cenv
-					     rtenv))
-		 (body-expr `(lambda (&rest args) (apply ,body-fun args))))
-	    `(lambda (&rest args)
-	       (apply ,(eval (funcall #'closer-mop:make-method-lambda
-				      generic-function
-				      method
-				      body-expr
-				      env))
-		      args))))))
-
 (defun customize (compilation-environment run-time-environment)
-  (define-make-method-lambda compilation-environment run-time-environment))
+  (declare (ignore compilation-environment run-time-environment))
+  nil)
 
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
