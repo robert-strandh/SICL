@@ -49,8 +49,8 @@
 		 (rest (rest (rest form)))
 		 (lambda-list-position (position-if #'listp rest))
 		 (lambda-list (nth lambda-list-position rest))
-		 (qualifiers (subseq rest 0 (1- lambda-list-position)))
-		 (body (subseq rest lambda-list-position))
+		 (qualifiers (subseq rest 0 lambda-list-position))
+		 (body (subseq rest (1+ lambda-list-position)))
 		 (required-end-position
 		   (position-if (lambda (x) (member x lambda-list-keywords))
 				lambda-list))
