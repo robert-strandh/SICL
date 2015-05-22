@@ -9,9 +9,11 @@
 (defclass compilation-environment (sicl-extrinsic-environment:environment)
   ())
 
-(defmethod initialize-instance :after
+(defmethod initialize-instance :around
     ((environment compilation-environment) &key)
-  nil)
+  (format t "Initializing phase 1 compilation environment~%")
+  (call-next-method)
+  (format t "Finished initializing phase 1 compilation environment~%"))
 
 (defun customize (compilation-environment run-time-environment)
   (declare (ignore compilation-environment run-time-environment))
