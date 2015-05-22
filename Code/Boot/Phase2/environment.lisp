@@ -62,4 +62,7 @@
 	    `(eval '(defmethod ,name ,@qualifiers ,@new-args ,@body))))))
 
 (defmethod initialize-instance :after ((environment environment) &key)
+  (define-defmethod
+      (compilation-environment environment)
+      (phase1-environment environment))
   (fill-environment environment))
