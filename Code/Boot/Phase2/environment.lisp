@@ -13,14 +13,14 @@
   (message "Finished initializing phase 2 compilation environment~%"))
 
 (defclass environment (sicl-extrinsic-environment:environment)
-  ((%compilation-environment
-    :initarg :compilation-environment
-    :initform (make-instance 'compilation-environment)
-    :reader compilation-environment)
-   (%phase1-environment
+  ((%phase1-environment
     :initarg :phase1-environment
     :initform (make-instance 'sicl-boot-phase1:environment)
-    :reader phase1-environment)))
+    :reader phase1-environment)
+   (%compilation-environment
+    :initarg :compilation-environment
+    :initform (make-instance 'compilation-environment)
+    :reader compilation-environment)))
 
 ;;; Before we can start creating bridge generic functions and bridge
 ;;; classes in the phase 2 run-time environment, we need to define
