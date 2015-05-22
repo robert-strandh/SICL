@@ -9,11 +9,14 @@
 (defclass compilation-environment (sicl-extrinsic-environment:environment)
   ())
 
+(defun message (message-text)
+  (format *trace-output* message-text))
+
 (defmethod initialize-instance :around
     ((environment compilation-environment) &key)
-  (format t "Initializing phase 1 compilation environment~%")
+  (message "Initializing phase 1 compilation environment~%")
   (call-next-method)
-  (format t "Finished initializing phase 1 compilation environment~%"))
+  (message "Finished initializing phase 1 compilation environment~%"))
 
 (defun customize (compilation-environment run-time-environment)
   (declare (ignore compilation-environment run-time-environment))
@@ -26,10 +29,10 @@
     :reader compilation-environment)))
 
 (defmethod initialize-instance :around ((environment environment) &key)
-  (format t "Initializing phase 1 environments~%")
+  (message "Initializing phase 1 environments~%")
   (call-next-method)
   (customize (compilation-environment environment) environment)
-  (format t "Finished initializing phase 1 environments~%")
-  (format t "Filling phase 1 run-time environment~%")
+  (message "Finished initializing phase 1 environments~%")
+  (message "Filling phase 1 run-time environment~%")
   (fill-environment environment)
-  (format t "Finished filling phase 1 run-time environment~%"))
+  (message "Finished filling phase 1 run-time environment~%"))
