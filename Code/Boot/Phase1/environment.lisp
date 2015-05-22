@@ -25,6 +25,7 @@
     :initform (make-instance 'compilation-environment)
     :reader compilation-environment)))
 
-(defmethod initialize-instance :after ((environment environment) &key)
+(defmethod initialize-instance :around ((environment environment) &key)
+  (call-next-method)
   (customize (compilation-environment environment) environment)
   (fill-environment environment))
