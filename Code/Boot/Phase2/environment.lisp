@@ -9,6 +9,25 @@
     :initform (make-instance 'sicl-boot-phase1:environment)
     :reader phase1-environment)))
 
+;;; Before we can start creating bridge generic functions and bridge
+;;; classes in the phase 2 run-time environment, we need to define
+;;; some methods on host generic functions, specialized to classes
+;;; that were created in phase 1.  The methods are auxiliary methods
+;;; on the generic functions INITIALIZE-INSTANCE,
+;;; REINITIALIZE-INSTANCE, and SHARED-INITIALIZE, and the purpose is
+;;; to implement what the AMOP requires for classed, generic
+;;; functions, and slot definitions.  We basically want to evaluate
+;;; host DEFMETHOD forms that are loaded from files, except that the
+;;; names of the specializer classes are wrong for the host
+;;; environment.  When we created those specializer classes in phase
+;;; 1, we gave them GENSYMed names so that they would not clash with
+;;; existing host classes.
+;;;
+;;; We solve this problem by defining the macro DEFMETHOD in the phase
+;;; 2 compilation environment to call the host EVAL with a slightly
+;;; modified DEFMETHOD form.  It is modified so that the names of the
+;;; specializer classes in the required parameters are those GENSYMed
+;;; names that the host will recognize.
 (defun define-defmethod (compilation-environment run-time-environment)
   (setf (sicl-genv:macro-function 'defmethod compilation-environment)
 	(lambda (form environment)
