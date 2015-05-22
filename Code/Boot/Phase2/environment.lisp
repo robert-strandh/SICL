@@ -3,7 +3,8 @@
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
     :initarg :compilation-environment
-    :initform (make-instance 'sicl-extrinsic-environment:environment))
+    :initform (make-instance 'sicl-extrinsic-environment:environment)
+    :reader compilation-environment)
    (%phase1-environment
     :initarg :phase1-environment
     :initform (make-instance 'sicl-boot-phase1:environment)
