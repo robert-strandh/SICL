@@ -97,4 +97,5 @@
 	      lambda-list))
 	   (required (cleavir-code-utilities:required parsed-lambda-list)))
       (reinitialize-instance generic-function
+			     :lambda-list lambda-list
 			     :argument-precedence-order required))))
