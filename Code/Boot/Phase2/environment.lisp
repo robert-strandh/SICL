@@ -1,9 +1,21 @@
 (cl:in-package #:sicl-boot-phase2)
 
+(defclass compilation-environment (sicl-extrinsic-environment:environment)
+  ())
+
+(defun message (message-text)
+  (format *trace-output* message-text))
+
+(defmethod initialize-instance :around
+    ((environment compilation-environment) &key)
+  (message "Initializing phase 2 compilation environment~%")
+  (call-next-method)
+  (message "Finished initializing phase 2 compilation environment~%"))
+
 (defclass environment (sicl-extrinsic-environment:environment)
   ((%compilation-environment
     :initarg :compilation-environment
-    :initform (make-instance 'sicl-extrinsic-environment:environment)
+    :initform (make-instance 'compilation-environment)
     :reader compilation-environment)
    (%phase1-environment
     :initarg :phase1-environment
