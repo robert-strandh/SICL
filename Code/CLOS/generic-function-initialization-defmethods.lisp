@@ -3,16 +3,6 @@
 ;;; FIXME: check whether these methods should specialize on
 ;;; GENERIC-FUNCTION rather than on STANDARD-GENERIC-FUNCTION.
 
-(defmethod shared-initialize :after
-    ((generic-function standard-generic-function)
-     slot-names
-     &rest initargs
-     &key
-     &allow-other-keys)
-  (declare (ignore slot-names))
-  (apply #'initialize-instance-after-standard-generic-function-default
-	 generic-function initargs))
-
 (defmethod shared-initialize :around
     ((generic-function generic-function)
      slot-names
@@ -58,13 +48,3 @@
 	       :method-class method-class
 	       :name name
 	       initargs))))
-
-(defmethod shared-initialize :after
-    ((generic-function standard-generic-function)
-     slot-names
-     &rest initargs
-     &key
-     &allow-other-keys)
-  (declare (ignore slot-names))
-  (apply #'reinitialize-instance-after-standard-generic-function-default
-	 generic-function initargs))
