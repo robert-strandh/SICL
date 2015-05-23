@@ -5,40 +5,49 @@
   (apply #'initialize-instance-after-regular-class-default
 	 class initargs))
 
-(defmethod initialize-instance :around ((class real-class)
-					&rest initargs
-					&key
-					  direct-default-initargs
-					  direct-superclasses
-					  direct-slots
-					&allow-other-keys)
+(defmethod shared-initialize :around
+    ((class real-class)
+     slot-names
+     &rest initargs
+     &key
+       direct-default-initargs
+       direct-superclasses
+       direct-slots
+     &allow-other-keys)
   (check-direct-default-initargs direct-default-initargs)
   (check-direct-superclasses class direct-superclasses)
   (apply #'call-next-method
 	 class
+	 slot-names
 	 :direct-default-initargs direct-default-initargs
 	 :direct-slots (check-and-instantiate-direct-slots class direct-slots)
 	 initargs))
 
-(defmethod initialize-instance :around ((class standard-class)
-					&rest initargs
-					&key direct-superclasses
-					&allow-other-keys)
+(defmethod shared-initialize :around
+    ((class standard-class)
+     slot-names
+     &rest initargs
+     &key direct-superclasses
+     &allow-other-keys)
   (if (null direct-superclasses)
       (apply #'call-next-method
 	     class
+	     slot-names
 	     :direct-superclasses
 	     (list (find-class 'standard-object))
 	     initargs)
       (call-next-method)))
 
-(defmethod initialize-instance :around ((class funcallable-standard-class)
-					&rest initargs
-					&key direct-superclasses
-					&allow-other-keys)
+(defmethod shared-initialize :around
+    ((class funcallable-standard-class)
+     slot-names
+     &rest initargs
+     &key direct-superclasses
+     &allow-other-keys)
   (if (null direct-superclasses)
       (apply #'call-next-method
 	     class
+	     slot-names
 	     :direct-superclasses
 	     (list (find-class 'funcallable-standard-object))
 	     initargs)
