@@ -288,19 +288,6 @@ metaobjects.  Since these reader functions were automatically imported
 into $E_1$ when this environment was created, the new methods are
 automatically available during bootstrapping.
 
-In the next step, we load the file containing the MOP class hierarchy.
-The names of the host classes created will be
-\texttt{target:standard-object}, \texttt{target:metaobject}, etc.
-These host classes created here have the analogous superclasses
-compared their corresponding target MOP classes, and they define the
-analogous slots.  Their metaclasses are all wrong of course, because
-each one of them has \texttt{host:standard-class} as metaclass.  The
-class finalization protocol of the host will make sure that instances
-of these host classes have the effective slots determined by class
-inheritance.  In other words, each of the classes define slots with
-the right names, the right initargs, etc.  Loading the class hierarchy
-automatically creates accessors for class slots. 
-
 Next, we define the class named \texttt{bridge-generic-function}.
 This class has the host class named
 \texttt{funcallable-standard-object} and the MOP class
@@ -308,56 +295,6 @@ This class has the host class named
 step as superclasses.  Instances of this class are fully-functional
 host functions, but their specializers are bridge classes and they
 take ersatz instances as arguments. 
-
-Next, we define a certain number of global variables that are used by
-various parts of CLOS.  The variable \texttt{*t*} is used to find the
-class named \texttt{T} to use as a default specializer in methods.
-The variable \texttt{*standard-object*} is used to find the class
-named \texttt{standard-object} to use as a default superclass when
-none is given in a \texttt{defclass} form.  In the running system,
-these are plain variables containing references to the respective
-classes.  However, during bootstrapping, they do not yet exist.  For
-that reason, these symbols are not variable here, but instead symbol
-macros that expand to a form that searches for the corresponding
-bridge class.  The remaining variables hold values of host classes, so
-they are normal variables, since the host classes already exist at
-this point.
-
-We define \emph{databases} and associated query functions for
-\emph{bridge classes} and \emph{bridge generic function}, because when
-one of the MOP classes defined in phase 1 is instantiated, it
-explicitly creates a bridge class, and it implicitly creates bridge
-generic functions and bridge methods for the accessors of those
-classes.  Other host instances are created here, in particular
-instances of \texttt{target:standard-direct-slot-definition}, but
-these instances do not require a separate database, because they are
-referred to by the bridge classes that are created. 
-
-During phase 1, we also establish the \texttt{:after} methods on
-\texttt{host:initialize-instance} that implement the initialization
-protocols for class metaobjects, generic function metaobjects, etc.
-We define special versions of \texttt{ensure-class} and
-\texttt{ensure-generic-function} that call \texttt{host:make-instance}
-to create bridge classes and bridge generic functions.
-
-Finally, during phase 1, we define functions that will ultimately be
-used for manipulating the bridge classes and bridge generic functions
-that are created during phase 1, including computing the
-discriminating function of bridge generic functions and creating
-instances of bridge classes.  For functions like
-\texttt{make-instance} that we can not create in phase 1 because they
-would class with the host function of the same name, we only define
-the supporting ordinary functions and we stop short of defining the
-main functions.  We define all this machinery in phase 1, because it
-will use the accessors that are implicitly defined when MOP classes
-are created here. 
-
-The support code for \texttt{shared-initialize} for the purpose of
-creating ersatz instances is defined here, because shared initialize
-accesses the \emph{class} of the instance to initialize, and the class
-if an ersatz instance is a bridge instance.  So the generic functions
-called by shared-initialize when an ersatz instance is created are
-host generic functions taking bridge classes as arguments. 
 
 \subsubsection{Phase 2}
 
