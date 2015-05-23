@@ -23,8 +23,9 @@
   (check-method-class method-class)
   (if lambda-list-p
       (let* ((parsed-lambda-list
-	       (parse-generic-function-lambda-list lambda-list))
-	     (required (required parsed-lambda-list)))
+	       (cleavir-code-utilities:parse-generic-function-lambda-list
+		lambda-list))
+	     (required (cleavir-code-utilities:required parsed-lambda-list)))
 	(if argument-precedence-order-p
 	    (check-argument-precedence-order argument-precedence-order required)
 	    (setf argument-precedence-order required))
