@@ -270,12 +270,6 @@ have the correct names.  A MOP class that has a name in the
 \texttt{built-in-class}, etc., has that name in $E_1$ as well.  Other
 MOP classes have names in the \texttt{sicl-clos} package.
 
-The purpose of phase~1 is to
-create the hierarchy of MOP classes as well as the generic accessor
-generic functions and methods that are automatically created as a
-result of creating the MOP classes.  These classes are created and
-associated with names in $E_1$.
-
 The environment $E_0$ is used for compiling the \texttt{defclass}
 forms defining the MOP classes, and then the resulting code is
 \emph{tied} to $E_1$.
