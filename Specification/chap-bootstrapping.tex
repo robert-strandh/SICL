@@ -241,8 +241,16 @@ macros.
 
 \subsubsection{Phase 1}
 
+The purpose of phase~1 is to create a hierarchy of host standard
+classes that has the same structure as the hierarchy of MOP classes.
 To accomplish phase~1, we create a second \sysname{} global
-environment that we can call $E_1$.  The purpose of phase~1 is to
+environment that we can call $E_1$.  In this environment, the classes
+have the correct names.  A MOP class that has a name in the
+\texttt{common-lisp} package such as \texttt{standard-object} and
+\texttt{built-in-class}, etc., has that name in $E_1$ as well.  Other
+MOP classes have names in the \texttt{sicl-clos} package.
+
+The purpose of phase~1 is to
 create the hierarchy of MOP classes as well as the generic accessor
 generic functions and methods that are automatically created as a
 result of creating the MOP classes.  These classes are created and
