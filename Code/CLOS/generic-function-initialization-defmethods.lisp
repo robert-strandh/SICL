@@ -16,7 +16,6 @@
        (method-class (find-class 'standard-method))
        name
      &allow-other-keys)
-  (declare (ignore slot-names))
   (check-documentation documentation)
   (check-declarations declarations)
   (check-method-combination method-combination)
@@ -31,6 +30,7 @@
 	    (setf argument-precedence-order required))
 	(apply #'call-next-method
 	       generic-function
+	       slot-names
 	       :documentation documentation
 	       :declarations declarations
 	       :argument-precedence-order argument-precedence-order
@@ -44,6 +44,7 @@
                   so must lambda list")
 	(apply #'call-next-method
 	       generic-function
+	       slot-names
 	       :documentation documentation
 	       :declarations declarations
 	       :method-class method-class
