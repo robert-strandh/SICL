@@ -23,6 +23,7 @@
 			     new-arguments)))))))
 
 (defun fill-environment (environment)
+  (ld "../../CLOS/generic-function-initialization-defmethods.lisp" environment)
   (define-ensure-generic-function environment)
   (sicl-genv:fmakunbound 'sicl-clos:method-function environment)
   (ld "../../CLOS/method-function-defgeneric.lisp" environment)
