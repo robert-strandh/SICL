@@ -110,7 +110,10 @@
    (:file "generic-function-lambda-list-defgeneric")
    ;; This file contains the definition of the generic function
    ;; GENERIC-FUNCTION-METHOD-CLASS.
-   (:file "generic-function-method-class-defgeneric")))
+   (:file "generic-function-method-class-defgeneric")
+   ;; This file contains support code for generic function
+   ;; initialization.
+   (:file "generic-function-initialization-support")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer superclasses subclasses
