@@ -94,4 +94,5 @@
   (sicl-genv:fmakunbound 'sicl-clos:class-finalized-p environment)
   (ld "../../CLOS/class-finalized-p-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:class-prototype environment)
-  (ld "../../CLOS/class-prototype-defgeneric.lisp" environment))
+  (ld "../../CLOS/class-prototype-defgeneric.lisp" environment)
+  (define-direct-slot-definition-class environment))
