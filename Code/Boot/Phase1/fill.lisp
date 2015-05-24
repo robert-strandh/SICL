@@ -79,5 +79,4 @@
   (ld "function-temporary-defclass.lisp" environment)
   (ld "../../CLOS/funcallable-standard-object-defclass.lisp" environment)
   (ld "../../CLOS/generic-function-defclass.lisp" environment)
-  (ld "../../CLOS/standard-generic-function-defclass.lisp" environment)
-  (ld "../../CLOS/ensure-method.lisp" environment))
+  (ld "../../CLOS/standard-generic-function-defclass.lisp" environment))
