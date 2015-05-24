@@ -42,6 +42,14 @@
 	  (sicl-genv:find-class 'standard-direct-slot-definition
 				(phase1-environment environment)))))
 
+(defun define-reader-method-class (environment)
+  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class
+			       environment)
+	(lambda (&rest arguments)
+	  (declare (ignore arguments))
+	  (sicl-genv:find-class 'standard-reader-method
+				(phase1-environment environment)))))
+
 (defun fill-environment (environment)
   (ld "../../CLOS/generic-function-initialization-defmethods.lisp" environment)
   (ld "../../CLOS/slot-definition-initialization-defmethods.lisp" environment)
@@ -95,4 +103,5 @@
   (ld "../../CLOS/class-finalized-p-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:class-prototype environment)
   (ld "../../CLOS/class-prototype-defgeneric.lisp" environment)
-  (define-direct-slot-definition-class environment))
+  (define-direct-slot-definition-class environment)
+  (define-reader-method-class environment))
