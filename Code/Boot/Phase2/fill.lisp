@@ -22,10 +22,23 @@
 			      (phase1-environment environment))
 			     new-arguments)))))))
 
+(defun define-make-instance (environment)
+  (setf (sicl-genv:fdefinition 'make-instance environment)
+	(lambda (class-name-or-class &rest arguments)
+	  (let ((class (if (symbolp class-name-or-class)
+			   (sicl-genv:find-class
+			      class-name-or-class
+			      (phase1-environment environment))
+			   class-name-or-class)))
+	    (apply #'make-instance
+		   class
+		   arguments)))))
+
 (defun fill-environment (environment)
   (ld "../../CLOS/generic-function-initialization-defmethods.lisp" environment)
   (ld "../../CLOS/slot-definition-initialization-defmethods.lisp" environment)
   (define-ensure-generic-function environment)
+  (define-make-instance environment)
   (sicl-genv:fmakunbound 'sicl-clos:method-function environment)
   (ld "../../CLOS/method-function-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:method-generic-function environment)
