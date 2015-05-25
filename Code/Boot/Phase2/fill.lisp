@@ -8,6 +8,12 @@
    (compilation-environment environment)
    environment))
 
+(defun define-find-class (environment)
+  (setf (sicl-genv:fdefinition 'find-class environment)
+	(lambda (class-name)
+	  (sicl-genv:find-class class-name
+				(phase1-environment environment)))))
+
 (defun define-ensure-generic-function (environment)
   (setf (sicl-genv:fdefinition 'ensure-generic-function environment)
 	(lambda (function-name &rest arguments)
