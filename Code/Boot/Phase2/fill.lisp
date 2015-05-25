@@ -59,6 +59,7 @@
 (defun fill-environment (environment)
   (ld "../../CLOS/generic-function-initialization-defmethods.lisp" environment)
   (ld "../../CLOS/slot-definition-initialization-defmethods.lisp" environment)
+  (ld "../../CLOS/direct-slot-definition-class-support.lisp" environment)
   (ld "../../CLOS/direct-slot-definition-class-defmethods.lisp" environment)
   (define-ensure-generic-function environment)
   (define-make-instance environment)
