@@ -118,5 +118,6 @@
   (ld "../../CLOS/class-finalized-p-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:class-prototype environment)
   (ld "../../CLOS/class-prototype-defgeneric.lisp" environment)
+  (define-find-class environment)
   (define-reader-method-class environment)
   (define-writer-method-class environment))
