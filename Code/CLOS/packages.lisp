@@ -83,6 +83,7 @@
    #:print-object #:describe-object #:documentation
    #:make-method-lambda
    #:direct-slot-definition-class
+   #:reader-method-class #:writer-method-class
    ;; SICL-specific classes
    #:real-class #:regular-class
    ;; SICL-specific functions
