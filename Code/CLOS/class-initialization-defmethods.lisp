@@ -24,7 +24,7 @@
 	 initargs))
 
 (defmethod shared-initialize :around
-    ((class standard-class)
+    ((class real-class)
      slot-names
      &rest initargs
      &key direct-superclasses
@@ -34,22 +34,7 @@
 	     class
 	     slot-names
 	     :direct-superclasses
-	     (list (find-class 'standard-object))
-	     initargs)
-      (call-next-method)))
-
-(defmethod shared-initialize :around
-    ((class funcallable-standard-class)
-     slot-names
-     &rest initargs
-     &key direct-superclasses
-     &allow-other-keys)
-  (if (null direct-superclasses)
-      (apply #'call-next-method
-	     class
-	     slot-names
-	     :direct-superclasses
-	     (list (find-class 'funcallable-standard-object))
+	     (default-superclasses class)
 	     initargs)
       (call-next-method)))
 
