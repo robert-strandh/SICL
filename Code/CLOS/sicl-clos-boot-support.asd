@@ -111,9 +111,6 @@
    ;; This file contains the definition of the generic function
    ;; GENERIC-FUNCTION-METHOD-CLASS.
    (:file "generic-function-method-class-defgeneric")
-   ;; This file contains the definition of the generic function
-   ;; DIRECT-SLOT-DEFINITION-CLASS.
-   (:file "direct-slot-definition-class-defgeneric")
    ;; This file contains support code for generic function
    ;; initialization.
    (:file "generic-function-initialization-support")))
