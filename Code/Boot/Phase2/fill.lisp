@@ -40,14 +40,6 @@
 		   class
 		   arguments)))))
 
-(defun define-direct-slot-definition-class (environment)
-  (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class
-			       environment)
-	(lambda (&rest arguments)
-	  (declare (ignore arguments))
-	  (sicl-genv:find-class 'standard-direct-slot-definition
-				(phase1-environment environment)))))
-
 (defun define-reader-method-class (environment)
   (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class
 			       environment)
