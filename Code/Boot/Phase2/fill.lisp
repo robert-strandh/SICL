@@ -61,6 +61,7 @@
   (ld "../../CLOS/slot-definition-initialization-defmethods.lisp" environment)
   (ld "../../CLOS/direct-slot-definition-class-support.lisp" environment)
   (ld "../../CLOS/direct-slot-definition-class-defmethods.lisp" environment)
+  (ld "../../CLOS/reader-writer-method-class-support.lisp" environment)
   (define-ensure-generic-function environment)
   (define-make-instance environment)
   (sicl-genv:fmakunbound 'sicl-clos:method-function environment)
