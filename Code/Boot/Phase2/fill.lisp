@@ -40,19 +40,12 @@
 		   class
 		   arguments)))))
 
-(defun define-writer-method-class (environment)
-  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class
-			       environment)
-	(lambda (&rest arguments)
-	  (declare (ignore arguments))
-	  (sicl-genv:find-class 'standard-writer-method
-				(phase1-environment environment)))))
-
 (defun fill-environment (environment)
   (ld "../../CLOS/generic-function-initialization-defmethods.lisp" environment)
   (ld "../../CLOS/slot-definition-initialization-defmethods.lisp" environment)
   (ld "direct-slot-definition-class-temporary-defun.lisp" environment)
   (ld "reader-method-class-temporary-defun.lisp" environment)
+  (ld "writer-method-class-temporary-defun.lisp" environment)
   (ld "../../CLOS/reader-writer-method-class-support.lisp" environment)
   (define-ensure-generic-function environment)
   (define-make-instance environment)
@@ -104,5 +97,4 @@
   (ld "../../CLOS/class-finalized-p-defgeneric.lisp" environment)
   (sicl-genv:fmakunbound 'sicl-clos:class-prototype environment)
   (ld "../../CLOS/class-prototype-defgeneric.lisp" environment)
-  (define-find-class environment)
-  (define-writer-method-class environment))
+  (define-find-class environment))
