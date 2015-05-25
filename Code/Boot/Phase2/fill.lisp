@@ -46,6 +46,7 @@
   (ld "direct-slot-definition-class-temporary-defun.lisp" environment)
   (ld "reader-method-class-temporary-defun.lisp" environment)
   (ld "writer-method-class-temporary-defun.lisp" environment)
+  (ld "default-superclasses-temporary-defun.lisp" environment)
   (define-ensure-generic-function environment)
   (define-make-instance environment)
   (sicl-genv:fmakunbound 'sicl-clos:method-function environment)
