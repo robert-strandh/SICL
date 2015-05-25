@@ -6,7 +6,7 @@
 	 (lambda-list (elt all-but-name lambda-list-position))
 	 (body (subseq all-but-name (1+ lambda-list-position)))
 	 (parsed-lambda-list (parse-specialized-lambda-list lambda-list))
-	 (required (required parsed-lambda-list)))
+	 (required (cleavir-code-utilities:required parsed-lambda-list)))
     (multiple-value-bind (declarations documentation forms)
 	(cleavir-code-utilities:separate-function-body body)
       (values qualifiers
