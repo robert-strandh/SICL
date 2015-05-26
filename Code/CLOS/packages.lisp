@@ -88,6 +88,7 @@
    #:real-class #:regular-class
    ;; SICL-specific functions
    #:ensure-method
+   #:default-superclasses
    ;; SICL-specific macro
    #:define-built-in-class
    #:subclassp))
