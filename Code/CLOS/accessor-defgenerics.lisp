@@ -157,5 +157,3 @@
 (defgeneric slot-definition-storage (direct-slot-definition))
 
 (defgeneric (setf slot-definition) (slot-definition accessor-method))
-
-(defgeneric (setf s-location) (location slot-definition))
