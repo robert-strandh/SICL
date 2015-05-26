@@ -114,9 +114,6 @@
    ;; This file contains the definition of the generic function
    ;; DEFAULT-SUPERCLASSES.
    (:file "default-superclasses-defgeneric")
-   ;; This file contains support code for generic function
-   ;; initialization.
-   (:file "generic-function-initialization-support")
    ;; This file contains code for generating the discriminating
    ;; automaton of generic functions.
    (:file "discriminating-automaton")))
