@@ -60,7 +60,7 @@
   (unless (proper-list-p direct-superclasses)
     (error "direct superclasses must be proper list"))
   (loop for direct-superclass in direct-superclasses
-	do (unless (classp direct-superclass)
+	do (unless (typep direct-superclass 'class)
 	     (error "superclass must be a class metaobject"))
 	   (unless (validate-superclass class direct-superclass)
 	     (error "superclass not valid for class"))))
