@@ -79,16 +79,6 @@
 ;;; action.  If the state is an internal state, the CDR of the second
 ;;; CONS cell contains the list of transitions.
 
-;;; FIXME: We are using the following standard Common Lisp functions
-;;; that are defined to work on sequences, rather than just lists:
-;;;
-;;;   SORT, REVERSE
-;;;
-;;; However, in SICL, we might turn those functions into generic
-;;; functions.  It would therefore be best to define simplified
-;;; versions of them that only work on lists, and to use those
-;;; versions here.
-
 (defun make-internal-state (&optional transitions)
   (assert (listp transitions))
   (list* :internal nil transitions))
@@ -231,9 +221,9 @@
 	     (length (state-transitions state2)))
     (return-from states-equivalent-p nil))
   (setf (state-transitions state1)
-	(sort-list (state-transitions state1) #'< :key #'transition-label))
+	(sort (state-transitions state1) #'< :key #'transition-label))
   (setf (state-transitions state2)
-	(sort-list (state-transitions state2) #'< :key #'transition-label))
+	(sort (state-transitions state2) #'< :key #'transition-label))
   (every #'transitions-equal
 	 (state-transitions state1)
 	 (state-transitions state2)))
