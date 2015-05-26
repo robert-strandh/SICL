@@ -116,7 +116,10 @@
    (:file "default-superclasses-defgeneric")
    ;; This file contains support code for generic function
    ;; initialization.
-   (:file "generic-function-initialization-support")))
+   (:file "generic-function-initialization-support")
+   ;; This file contains code for generating the discriminating
+   ;; automaton of generic functions.
+   (:file "discriminating-automaton")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer superclasses subclasses
