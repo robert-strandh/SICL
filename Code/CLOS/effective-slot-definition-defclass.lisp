@@ -4,5 +4,4 @@
   ((%location 
     :initform nil
     :initarg :location 
-    :reader slot-definition-location
-    :writer (setf location))))
+    :accessor slot-definition-location)))
