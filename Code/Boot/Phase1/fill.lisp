@@ -79,4 +79,26 @@
   (ld "function-temporary-defclass.lisp" environment)
   (ld "../../CLOS/funcallable-standard-object-defclass.lisp" environment)
   (ld "../../CLOS/generic-function-defclass.lisp" environment)
-  (ld "../../CLOS/standard-generic-function-defclass.lisp" environment))
+  (ld "../../CLOS/standard-generic-function-defclass.lisp" environment)
+  ;;
+  ;; Preparation for phase 2.  When we start making instances of
+  ;; generic functions with classes defined in the phase 1
+  ;; environment, we are going to want to access the slots of those
+  ;; generic functions.  The accessors for those slots are generic
+  ;; functions defined in the phase 1 environment, so the code that
+  ;; calls those accessors should also be loaded in the phase 1
+  ;; environment.
+  ;;
+  ;; Recall that the generic function classes defined here inherit
+  ;; from the host class funcallable-standard-object.  In order to set
+  ;; the funcallable instance function of the generic functions that
+  ;; are instances of those generic function classes, we must call the
+  ;; host version of SET-FUNCALLABLE-INSTANCE-FUNCTION.  We make that
+  ;; possible by defining SICL-CLOS:SET-FUNCALLABLE-INSTANCE-FUNCTION
+  ;; in this environment to be an alias for the analogous host
+  ;; function.
+  (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function
+			       environment)
+	#'closer-mop:set-funcallable-instance-function))
+
+;;  LocalWords:  accessors funcallable
