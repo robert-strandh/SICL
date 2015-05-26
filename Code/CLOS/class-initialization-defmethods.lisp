@@ -16,27 +16,16 @@
      &allow-other-keys)
   (check-direct-default-initargs direct-default-initargs)
   (check-direct-superclasses class direct-superclasses)
+  (when (null direct-superclasses)
+    (setf direct-superclasses (default-superclasses class)))
   (apply #'call-next-method
 	 class
 	 slot-names
+	 :direct-superclasses
+	 (default-superclasses class)
 	 :direct-default-initargs direct-default-initargs
 	 :direct-slots (check-and-instantiate-direct-slots class direct-slots)
 	 initargs))
-
-(defmethod shared-initialize :around
-    ((class real-class)
-     slot-names
-     &rest initargs
-     &key direct-superclasses
-     &allow-other-keys)
-  (if (null direct-superclasses)
-      (apply #'call-next-method
-	     class
-	     slot-names
-	     :direct-superclasses
-	     (default-superclasses class)
-	     initargs)
-      (call-next-method)))
 
 ;;; According to the AMOP, calling initialize-instance on a built-in
 ;;; class (i.e., on an instance of a subclass of the class
