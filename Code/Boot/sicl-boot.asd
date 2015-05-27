@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-boot
-  :depends-on ()
+  :depends-on (:sicl-extrinsic-environment)
   :serial t
   :components
   ((:file "packages")
