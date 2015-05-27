@@ -7,8 +7,7 @@
    (%generic-function 
     :initform nil
     :initarg :generic-function
-    :reader method-generic-function
-    :writer (setf m-generic-function))
+    :accessor method-generic-function)
    (%lambda-list 
     :initarg :lambda-list 
     :reader method-lambda-list)

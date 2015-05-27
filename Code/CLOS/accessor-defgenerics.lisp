@@ -40,7 +40,7 @@
 
 ;;; This function is called by ADD-METHOD and REMOVE-METHOD to assign
 ;;; the generic function to which the method is associated.
-(defgeneric (setf m-generic-function) (generic-function method))
+(defgeneric (setf method-generic-function) (generic-function method))
 
 ;;; This function will be removed later.  For now it plays the role of
 ;;; the function CL:DOCUMENTATION. 

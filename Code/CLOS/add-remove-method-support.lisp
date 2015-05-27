@@ -70,7 +70,7 @@
   ;; to the specializers of the method.
   (update-specializer-profile generic-function (method-specializers method))
   ;; Associate GENERIC-FUNCTION with METHOD.
-  (setf (m-generic-function method) generic-function)
+  (setf (method-generic-function method) generic-function)
   ;; Call ADD-DIRECT-METHOD for each of the specializers of METHOD.
   (loop for specializer in (method-specializers method)
 	do (add-direct-method specializer method))
@@ -108,7 +108,7 @@
   (loop for specializer in (method-specializers method)
 	do (remove-direct-method specializer method))
   ;; Disassociate GENERIC-FUNCTION from METHOD.
-  (setf (m-generic-function method) nil)
+  (setf (method-generic-function method) nil)
   ;; Call COMPUTE-DISCRIMINATING-FUNCTION and install its result
   ;; with SET-FUNCALLABLE-INSTANCE-FUNCTION. 
   (let ((df (compute-discriminating-function generic-function)))
