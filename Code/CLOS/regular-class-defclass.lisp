@@ -28,7 +28,7 @@
    (%default-initargs 
     :accessor class-default-initargs
     ;; Additional reader
-    :reader default-initargs
+    :reader default-initargs)
    (%effective-slots 
     :initform '() 
     :reader class-slots
