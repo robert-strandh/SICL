@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "boot")))
+   (:file "boot")
+   (:file "load")))
