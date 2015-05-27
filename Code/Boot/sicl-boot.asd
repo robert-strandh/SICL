@@ -3,4 +3,4 @@
 (defsystem :sicl-boot
   :depends-on ()
   :components
-  ())
+  ((:file "packages")))
