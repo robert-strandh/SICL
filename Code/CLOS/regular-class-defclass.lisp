@@ -26,10 +26,9 @@
     :initarg :direct-superclasses
     :reader class-direct-superclasses)
    (%default-initargs 
-    :reader class-default-initargs
+    :accessor class-default-initargs
     ;; Additional reader
     :reader default-initargs
-    :writer (setf c-default-initargs))
    (%effective-slots 
     :initform '() 
     :reader class-slots

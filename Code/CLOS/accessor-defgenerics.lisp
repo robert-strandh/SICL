@@ -120,7 +120,7 @@
 
 ;;; This function is used by the class finalization protocol to set
 ;;; the default initargs of the class. 
-(defgeneric (setf c-default-initargs) (default-initargs class))
+(defgeneric (setf class-default-initargs) (default-initargs class))
 
 ;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
 ;;; returns the same value as CLASS-SLOTS.  However, whereas for

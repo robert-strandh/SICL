@@ -304,7 +304,7 @@
 		       :test #'eq :key #'slot-definition-allocation)))
     (setf (instance-size class) (+ slot-count 2))
     (setf (c-slots class) effective-slots))
-  (setf (c-default-initargs class) (compute-default-initargs class))
+  (setf (class-default-initargs class) (compute-default-initargs class))
   ;; We set FINALIZED-P to TRUE before allocating the prototype
   ;; instance, because ALLOCATE-INSTANCE checks that the class is
   ;; finalized and if not, calls FINALIZE-INSTANCE, and we would have

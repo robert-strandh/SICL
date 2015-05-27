@@ -25,7 +25,7 @@
    (%default-initargs 
     :initarg :default-initargs
     :reader default-initargs
-    :writer (setf c-default-initargs))
+    :writer (setf class-default-initargs))
    (%effective-slots 
     :initform '() 
     :reader effective-slots

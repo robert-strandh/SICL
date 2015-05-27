@@ -39,5 +39,5 @@
 		       :test #'eq :key #'slot-definition-allocation)))
     (setf (instance-size class) (+ slot-count 1))
     (setf (c-slots class) effective-slots))
-  (setf (c-default-initargs class) (compute-default-initargs-default class))
+  (setf (class-default-initargs class) (compute-default-initargs-default class))
   (setf (c-finalized-p class) t))
