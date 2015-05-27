@@ -2,5 +2,6 @@
 
 (defsystem :sicl-boot
   :depends-on ()
+  :serial t
   :components
   ((:file "packages")))
