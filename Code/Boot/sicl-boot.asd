@@ -1,10 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-boot
-  :depends-on (:sicl-compiler
-	       :sicl-conditionals
-	       :sicl-arithmetic
-	       :sicl-conditions
-	       :sicl-type)
+(defsystem :sicl-boot
+  :depends-on ()
   :components
-  ((:file "initialize-environment")))
+  ())
