@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot)
 
-(defun fill1 (boot)
+(defun phase1 (boot)
   (let ((c (c1 boot))
 	(r (r1 boot)))
     (define-ensure-generic-function c r)
