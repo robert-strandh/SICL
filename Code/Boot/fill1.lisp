@@ -4,7 +4,6 @@
   (let ((c (c1 boot))
 	(r (r1 boot)))
     (define-ensure-generic-function c r)
-    (define-make-instance c r)
     (define-class-prototype r)
     (define-generic-function-method-class r)
     (ld "../CLOS/ensure-class-using-class-support.lisp" c r)
