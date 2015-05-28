@@ -16,6 +16,7 @@
    (:file "define-generic-function-method-class-defun")
    (:file "phase1")
    (:file "define-direct-slot-definition-class")
+   (:file "define-find-class")
    (:file "customize-r2")
    (:file "phase2")
    (:file "fill")))
