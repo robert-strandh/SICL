@@ -15,20 +15,6 @@
 			       (gensym)
 			       new-arguments))))))))
 
-(defun define-make-instance (c r)
-  (setf (sicl-genv:fdefinition 'make-instance r)
-	(let ((make-instance (sicl-genv:fdefinition
-			      'make-instance
-			      c)))
-	  (lambda (&rest arguments)
-	    (if (symbolp (first arguments))
-		(apply make-instance
-		       (sicl-genv:find-class
-			(first arguments)
-			r)
-		       (rest arguments))
-		(apply make-instance arguments))))))
-
 (defun define-class-prototype (r)
   (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype r)
 	#'closer-mop:class-prototype))

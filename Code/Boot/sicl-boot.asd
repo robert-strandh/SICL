@@ -10,5 +10,6 @@
    (:file "boot")
    (:file "load")
    (:file "customize-c1")
+   (:file "define-make-instance-defun")
    (:file "fill1")
    (:file "fill")))
