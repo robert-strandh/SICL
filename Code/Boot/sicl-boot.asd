@@ -13,5 +13,6 @@
    (:file "define-make-instance-defun")
    (:file "define-ensure-generic-function-defun")
    (:file "define-class-prototype-defun")
+   (:file "define-generic-function-method-class-defun")
    (:file "fill1")
    (:file "fill")))
