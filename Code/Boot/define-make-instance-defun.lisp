@@ -1,16 +1,11 @@
 (cl:in-package #:sicl-boot)
 
-(defun define-make-instance (c r)
-  (setf (sicl-genv:fdefinition 'make-instance r)
-	(let ((make-instance (sicl-genv:fdefinition
-			      'make-instance
-			      c)))
-	  (lambda (&rest arguments)
-	    (if (symbolp (first arguments))
-		(apply make-instance
-		       (sicl-genv:find-class
-			(first arguments)
-			r)
-		       (rest arguments))
-		(apply make-instance arguments))))))
-
+(defun define-make-instance (boot)
+  (setf (sicl-genv:fdefinition 'make-instance (r2 boot))
+	(lambda (class-name-or-class &rest arguments)
+	  (let ((class (if (symbolp class-name-or-class)
+			   (sicl-genv:find-class class-name-or-class (r1 boot))
+			   class-name-or-class)))
+	    (apply #'make-instance
+		   class
+		   arguments)))))
