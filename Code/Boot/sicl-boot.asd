@@ -17,6 +17,7 @@
    (:file "phase1")
    (:file "define-direct-slot-definition-class")
    (:file "define-find-class")
+   (:file "define-setf-fdefinition")
    (:file "customize-r2")
    (:file "phase2")
    (:file "fill")))
