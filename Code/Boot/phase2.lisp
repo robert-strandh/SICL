@@ -43,6 +43,14 @@
 ;;;; of generic functions, we make the names map to host generic
 ;;;; functions in run-time-environment R2, and we make the names map
 ;;;; to bridge generic functions in the run-time environment R3.
+;;;;
+;;;; The class initialization protocol is triggered by auxiliary
+;;;; methods on the functions INITIALIZE-INSTANCE,
+;;;; REINITIALIZE-INSTANCE, and SHARED-INITIALIZE.  Since we are
+;;;; initializing ordinary host classes, these functions are those of
+;;;; the host.  Therefore, in phase 2, DEFMETHOD translates to a host
+;;;; DEFMETHOD after the names of the specializer classes have been
+;;;; translated to the names that the host knows them by.
 
 (defun phase2 (boot)
   (declare (ignore boot))
