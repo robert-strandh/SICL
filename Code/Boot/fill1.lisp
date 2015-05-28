@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-boot)
 
-(defun define-class-prototype (r)
-  (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype r)
-	#'closer-mop:class-prototype))
-
 (defun define-generic-function-method-class (r)
   (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class
 			       r)
