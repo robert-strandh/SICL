@@ -9,6 +9,16 @@
 ;;;; in that we have accessor functions that let us query all aspects
 ;;;; of it as if it were a target class.
 ;;;;
+;;;; To create a bridge class, we need to instantiate a host class.
+;;;; Therefore, calling MAKE-INSTANCE in the run-time environment R2
+;;;; ultimately calls the host function with the same name.  However,
+;;;; if MAKE-INSTANCE is invoked with the name of a class, rather than
+;;;; with a class metaobject, then we need for that name to mean the
+;;;; name it was given during phase 1.  Therefore, in the run-time
+;;;; environment, MAKE-INSTANCE is associated with a temporary
+;;;; function that looks up the name in the run-time environment R1
+;;;; before calling the host function named make-instance.
+;;;;
 ;;;; The main difficulty with phase 2 is that we need to implement the
 ;;;; class initialization protocol.  This protocol mainly works on the
 ;;;; classes metaobjects themselves.  So for instance, it is the
@@ -40,4 +50,4 @@
   nil)
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
-;;  LocalWords:  accessors instantiation
+;;  LocalWords:  accessors instantiation specializer
