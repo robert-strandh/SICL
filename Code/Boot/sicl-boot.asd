@@ -9,5 +9,6 @@
    (:file "message")
    (:file "boot")
    (:file "load")
+   (:file "customize-c1")
    (:file "fill1")
    (:file "fill")))
