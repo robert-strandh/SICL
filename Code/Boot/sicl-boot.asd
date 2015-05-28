@@ -15,4 +15,5 @@
    (:file "define-class-prototype-defun")
    (:file "define-generic-function-method-class-defun")
    (:file "fill1")
+   (:file "customize-r2")
    (:file "fill")))
