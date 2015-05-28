@@ -13,7 +13,6 @@
 (defun phase1 (boot)
   (let ((c (c1 boot))
 	(r (r1 boot)))
-    (define-class-prototype r)
     (ld "ensure-class-temporary-defun.lisp" c r)
     (ld "../CLOS/standard-object-defclass.lisp" c r)
     (ld "../CLOS/metaobject-defclass.lisp" c r)
