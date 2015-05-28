@@ -1,10 +1,19 @@
 (cl:in-package #:sicl-boot)
 
+;;;; The purpose of phase 1 is to create in the run-time environment
+;;;; number 1 a class hierarchy that mirrors the MOP class hierarchy.
+;;;; The classes we create are all host standard classes.  We create
+;;;; these classes by loading files from the CLOS sub-directory that
+;;;; contain DEFCLASS forms defining these classes.
+;;;;
+;;;; For compilation we use compilation environment number 1.  This
+;;;; environment contains the normal definition of DEFCLASS, which
+;;;; expands to a call to ENSURE-CLASS.
+
 (defun phase1 (boot)
   (let ((c (c1 boot))
 	(r (r1 boot)))
     (define-class-prototype r)
-    (ld "../CLOS/ensure-class-using-class-support.lisp" c r)
     (ld "ensure-class-temporary-defun.lisp" c r)
     (ld "../CLOS/standard-object-defclass.lisp" c r)
     (ld "../CLOS/metaobject-defclass.lisp" c r)
