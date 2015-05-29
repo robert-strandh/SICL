@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-boot)
 
+;;; The purpose of this function is to redefine the macro DEFGENERIC
+;;; in the compilation environment C2.  The new definition is only
+;;; used to create bridge-class accessors in run-time environment
+;;; during phase 2.  Therefore, we can process only the name and the
+;;; lambda-list of each DEFGENERIC form.  Furthermore, by passing all
+;;; the initialization arguments to MAKE-INSTANCE, we avoid having to
+;;; implement the generic-function initialization protocol in phase 2.
 (defun define-defgeneric (boot)
   (setf (sicl-genv:macro-function 'defgeneric (c2 boot))
 	(lambda (form environment)
@@ -22,3 +29,5 @@
 
 (defun customize-c2 (boot)
   (define-defgeneric boot))
+
+;;  LocalWords:  accessors
