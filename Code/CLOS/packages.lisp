@@ -84,6 +84,7 @@
    #:make-method-lambda
    #:direct-slot-definition-class
    #:reader-method-class #:writer-method-class
+   #:validate-superclass
    ;; Other functions
    #:set-funcallable-instance-function
    ;; SICL-specific classes
