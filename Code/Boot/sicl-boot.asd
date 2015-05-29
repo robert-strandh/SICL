@@ -19,5 +19,6 @@
    (:file "define-find-class")
    (:file "customize-r2")
    (:file "customize-c2")
+   (:file "create-bridge-class-accessors")
    (:file "phase2")
    (:file "fill")))

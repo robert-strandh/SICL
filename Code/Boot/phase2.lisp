@@ -53,9 +53,7 @@
 ;;;; translated to the names that the host knows them by.
 
 (defun phase2 (boot)
-  (declare (ignore boot))
-  (declare (ignore boot))
-  nil)
+  (create-bridge-class-accessors boot))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
 ;;  LocalWords:  accessors instantiation specializer
