@@ -29,7 +29,7 @@
 ;;; requires.
 
 (defun process-direct-superclasses (direct-superclasses)
-  (unless (proper-list-p direct-superclasses)
+  (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
     (error "list of superclasses must be a proper list"))
   (loop for class-or-name in direct-superclasses
 	collect (cond ((typep class-or-name 'class)

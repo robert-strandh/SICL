@@ -16,7 +16,7 @@
   `',class-name)
 
 (defun canonicalize-direct-superclass-names (direct-superclass-names)
-  (unless (proper-list-p direct-superclass-names)
+  (unless (cleavir-code-utilities:proper-list-p direct-superclass-names)
     (error 'superclass-list-must-be-proper-list
 	   :name 'defclass
 	   :datum direct-superclass-names))
@@ -36,7 +36,7 @@
       (progn
 	;; If the direct-slot-spec is not a symbol, it must
 	;; be a non-empty proper list.
-	(unless (and (proper-list-p direct-slot-spec)
+	(unless (and (cleavir-code-utilities:proper-list-p direct-slot-spec)
 		     (consp direct-slot-spec))
 	  (error 'malformed-slot-spec
 		 :name 'defclass
@@ -138,7 +138,7 @@
 	    `(list ,@result))))))
 
 (defun canonicalize-direct-slot-specs (direct-slot-specs)
-  (when (not (proper-list-p direct-slot-specs))
+  (when (not (cleavir-code-utilities:proper-list-p direct-slot-specs))
     (error 'malformed-slots-list
 	   :name 'defclass
 	   :datum direct-slot-specs))
@@ -175,7 +175,7 @@
     (loop for option in options
 	  do (case (car option)
 	       (:default-initargs
-		(unless (proper-list-p (cdr option))
+		(unless (cleavir-code-utilities:proper-list-p (cdr option))
 		  (error 'malformed-default-initargs
 			 :datum option))
 		(unless (evenp (length (cdr option)))

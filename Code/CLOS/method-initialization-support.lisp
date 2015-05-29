@@ -3,7 +3,7 @@
 (defun check-qualifiers (qualifiers)
   ;; The AMOP says it the qualifiers be a proper list, so check that
   ;; first.
-  (unless (proper-list-p qualifiers)
+  (unless (cleavir-code-utilities:proper-list-p qualifiers)
     (error "qualifiers must be a proper list"))
   ;; The AMOP says that the elements of the list of qualifiers should
   ;; be "non-null atoms".  In the section "Readers for Method
@@ -45,7 +45,7 @@
       (error "the specializers argument must be supplied"))
     ;; Furthermore, the AMOP requires the list of specializers to be a
     ;; proper list.
-    (unless (proper-list-p specializers)
+    (unless (cleavir-code-utilities:proper-list-p specializers)
       (error "specializers must be a proper list"))
     ;; The AMOP says that list of specializers must have the same number
     ;; of elements as there are required parameters in the lambda list.

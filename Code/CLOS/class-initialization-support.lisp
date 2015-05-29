@@ -53,11 +53,11 @@
 (defun check-direct-default-initargs (direct-default-initargs)
   ;; FIXME: check that the elements of the list are canonicalized
   ;; default initargs.
-  (unless (proper-list-p direct-default-initargs)
+  (unless (cleavir-code-utilities:proper-list-p direct-default-initargs)
     (error "direct default initargs must be a proper list")))
 
 (defun check-direct-superclasses (class direct-superclasses)
-  (unless (proper-list-p direct-superclasses)
+  (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
     (error "direct superclasses must be proper list"))
   (loop for direct-superclass in direct-superclasses
 	do (unless (typep direct-superclass 'class)
@@ -66,7 +66,7 @@
 	     (error "superclass not valid for class"))))
 
 (defun check-and-instantiate-direct-slots (class direct-slots)
-  (unless (proper-list-p direct-slots)
+  (unless (cleavir-code-utilities:proper-list-p direct-slots)
     (error "direct slots must be proper list"))
   ;; FIXME: check that the elements are canonicalized slot specifications
   (loop for canonicalized-slot-specification in direct-slots

@@ -2,7 +2,7 @@
 
 (defun check-argument-precedence-order
     (argument-precedence-order required-parameters)
-  (unless (proper-list-p argument-precedence-order)
+  (unless (cleavir-code-utilities:proper-list-p argument-precedence-order)
     (error "argument-precedence-order must be a proper list"))
   (unless (and (= (length argument-precedence-order)
 		  (length required-parameters))
@@ -19,7 +19,7 @@
 
 ;;; FIXME: check the syntax of each declaration. 
 (defun check-declarations (declarations)
-  (unless (proper-list-p declarations)
+  (unless (cleavir-code-utilities:proper-list-p declarations)
     (error "declarations must be a proper list")))
 
 (defun check-method-combination (method-combination)
