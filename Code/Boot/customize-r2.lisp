@@ -4,6 +4,12 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass (r2 boot))
 	(constantly t)))
 
+(defun define-ensure-generic-function (boot)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function (r2 boot))
+	(lambda (function-name &rest arguments)
+	  (declare (ignore arguments))
+	  (sicl-genv:fdefinition function-name (r3 boot)))))
+
 (defun customize-r2 (boot)
   (let ((c (c1 boot))
 	(r (r2 boot)))
@@ -11,5 +17,6 @@
     (define-direct-slot-definition-class boot)
     (define-find-class boot)
     (define-validate-superclass boot)
+    (define-ensure-generic-function boot)
     (ld "default-superclasses-temporary-defun.lisp" c r)
     (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c r)))
