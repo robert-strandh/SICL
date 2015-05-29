@@ -11,4 +11,5 @@
     (define-direct-slot-definition-class boot)
     (define-find-class boot)
     (define-validate-superclass boot)
+    (ld "default-superclasses-temporary-defun" c r)
     (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c r)))
