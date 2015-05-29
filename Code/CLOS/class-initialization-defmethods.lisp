@@ -10,21 +10,11 @@
      slot-names
      &rest initargs
      &key
-       direct-default-initargs
-       direct-superclasses
-       direct-slots
      &allow-other-keys)
-  (check-direct-default-initargs direct-default-initargs)
-  (check-direct-superclasses class direct-superclasses)
-  (when (null direct-superclasses)
-    (setf direct-superclasses (default-superclasses class)))
-  (apply #'call-next-method
+  (apply #'shared-initialize-around-real-class-default
+	 #'call-next-method
 	 class
 	 slot-names
-	 :direct-superclasses
-	 (default-superclasses class)
-	 :direct-default-initargs direct-default-initargs
-	 :direct-slots (check-and-instantiate-direct-slots class direct-slots)
 	 initargs))
 
 ;;; According to the AMOP, calling initialize-instance on a built-in

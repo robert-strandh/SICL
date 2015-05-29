@@ -86,6 +86,29 @@
 	   (loop for writer in (slot-definition-writers direct-slot)
 		 do (add-writer-method class writer direct-slot))))
 
+(defun shared-initialize-around-real-class-default
+    (call-next-method
+     class
+     slot-names
+     &rest initargs
+     &key
+       direct-default-initargs
+       direct-superclasses
+       direct-slots
+     &allow-other-keys)
+  (check-direct-default-initargs direct-default-initargs)
+  (check-direct-superclasses class direct-superclasses)
+  (when (null direct-superclasses)
+    (setf direct-superclasses (default-superclasses class)))
+  (apply call-next-method
+	 class
+	 slot-names
+	 :direct-superclasses
+	 (default-superclasses class)
+	 :direct-default-initargs direct-default-initargs
+	 :direct-slots (check-and-instantiate-direct-slots class direct-slots)
+	 initargs))
+
 (defun initialize-instance-after-regular-class-default
     (class &key direct-superclasses direct-slots &allow-other-keys)
   (add-as-subclass-to-superclasses class direct-superclasses)
