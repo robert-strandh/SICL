@@ -8,13 +8,12 @@
      &key
        environment
        (generic-function-class
-	(sicl-global-environment:find-class
-	 'standard-generic-function environment))
+	(sicl-genv:find-class 'standard-generic-function environment))
        (method-class nil method-class-p)
      &allow-other-keys)
   (declare (ignore generic-function))
   (cond ((symbolp generic-function-class)
-	 (let ((class (sicl-global-environment:find-class
+	 (let ((class (sicl-genv:find-class
 		       generic-function-class environment)))
 	   (when (null class)
 	     (error "no such generic-function-class ~s"
@@ -26,8 +25,7 @@
 	 (error "generic function class must be a class or a name")))
   (when method-class-p
     (cond ((symbolp method-class)
-	   (let ((class (sicl-global-environment:find-class
-			 method-class environment)))
+	   (let ((class (sicl-genv:find-class method-class environment)))
 	     (when (null class)
 	       (error "no such method class ~s" method-class))
 	     (setf method-class class)))
@@ -38,7 +36,7 @@
   (let ((remaining-keys (copy-list all-keyword-arguments)))
     (loop while (remf remaining-keys :generic-function-class))
     (loop while (remf remaining-keys :environment))
-    (setf (sicl-global-environment:fdefinition function-name environment)
+    (setf (sicl-genv:fdefinition function-name environment)
 	  (if method-class-p
 	      (apply #'make-instance generic-function-class
 		     ;; The AMOP does
@@ -57,13 +55,12 @@
      &key
        environment
        (generic-function-class
-	(sicl-global-environment:find-class
-	 'standard-generic-function environment))
+	(sicl-genv:find-class 'standard-generic-function environment))
        (method-class nil method-class-p)
      &allow-other-keys)
   (declare (ignore function-name))
   (cond ((symbolp generic-function-class)
-	 (let ((class (sicl-global-environment:find-class
+	 (let ((class (sicl-genv:find-class
 		       generic-function-class environment)))
 	   (when (null class)
 	     (error "no such generic-function-class ~s"
@@ -77,8 +74,7 @@
     (error "classes don't agree"))
   (when method-class-p
     (cond ((symbolp method-class)
-	   (let ((class (sicl-global-environment:find-class
-			 method-class environment)))
+	   (let ((class (sicl-genv:find-class method-class environment)))
 	     (when (null class)
 	       (error "no such method class ~s" method-class))
 	     (setf method-class class)))
