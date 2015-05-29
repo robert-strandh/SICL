@@ -5,7 +5,6 @@
 (defpackage #:sicl-clos
   (:use #:common-lisp)
   (:import-from #:cleavir-code-utilities
-		#:proper-list-p
 		#:parse-ordinary-lambda-list
 		#:parse-specialized-lambda-list)
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
