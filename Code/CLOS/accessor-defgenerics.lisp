@@ -4,11 +4,6 @@
 ;;;
 ;;; SICL-specific accessors.
 
-;;; The functions ADD-DIRECT-SUBCLASS and REMOVE-DIRECT-SUBCLASS are
-;;; used to update the direct subclasses of a class, so they call this
-;;; function.
-(defgeneric (setf c-direct-subclasses) (direct-subclassees class))
-
 ;;; This function will be removed later.  For now it plays the role of
 ;;; the function CL:DOCUMENTATION. 
 (defgeneric gf-documentation (generic-function))
