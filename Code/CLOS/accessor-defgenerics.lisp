@@ -11,14 +11,6 @@
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf methods) (new-methods generic-function))
 
-;;; This function returns the call history of the generic function.
-;;; FIXME: say more.
-(defgeneric call-history (generic-function))
-
-;;; This function sets the call history of the generic function.
-;;; FIXME: say more.
-(defgeneric (setf call-history) (new-call-history generic-function))
-
 ;;; This function returns the specializer profile of the generic function.
 ;;; FIXME: say more.
 (defgeneric specializer-profile (generic-function))
