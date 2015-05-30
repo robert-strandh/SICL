@@ -8,12 +8,6 @@
 ;;; the function CL:DOCUMENTATION. 
 (defgeneric gf-documentation (generic-function))
 
-;;; This function returns a list of the dependents of the metaobject.
-(defgeneric dependents (metaobject))
-
-;;; This function sets the list dependents of the metaobject.
-(defgeneric (setf dependents) (new-dependents metaobject))
-
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf methods) (new-methods generic-function))
 
