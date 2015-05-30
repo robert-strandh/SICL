@@ -7,7 +7,7 @@
 ;;; The functions ADD-DIRECT-SUBCLASS and REMOVE-DIRECT-SUBCLASS are
 ;;; used to update the direct subclasses of a class, so they call this
 ;;; function.
-(defgeneric (setf c-direct-subclasses) (new-value class))
+(defgeneric (setf c-direct-subclasses) (direct-subclassees class))
 
 ;;; This function will be removed later.  For now it plays the role of
 ;;; the function CL:DOCUMENTATION. 
@@ -67,9 +67,6 @@
 ;;; This function returns the unique number of the class, assigned
 ;;; when the class is initialized or reinitialized.
 (defgeneric unique-number (class))
-
-;;; This function sets the direct subclasses of the class.
-(defgeneric (setf c-direct-subclasses) (direct-subclasses class))
 
 ;;; This function sets the direct methods of the class.
 (defgeneric (setf c-direct-methods) (direct-methods class))
