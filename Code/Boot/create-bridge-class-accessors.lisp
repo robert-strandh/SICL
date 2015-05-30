@@ -20,6 +20,8 @@
   (ld "../CLOS/slot-definition-location-defgeneric.lisp" c r)
   (ld "../CLOS/class-name-defgeneric.lisp" c r)
   (ld "../CLOS/class-direct-superclasses-defgeneric.lisp" c r)
+  (ld "../CLOS/class-direct-subclasses-defgeneric.lisp" c r)
+  (ld "../CLOS/setf-class-direct-subclasses-defgeneric.lisp" c r)
   (ld "../CLOS/class-direct-slots-defgeneric.lisp" c r)
   (ld "../CLOS/class-direct-default-initargs-defgeneric.lisp" c r)
   (ld "../CLOS/class-precedence-list-defgeneric.lisp" c r)
