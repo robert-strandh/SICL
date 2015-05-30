@@ -4,6 +4,7 @@
   (let ((c (c2 boot))
 	(r (r3 boot)))
     ;; Accessors for generic function metaobjects.
+    (ld "../CLOS/generic-function-argument-precedence-order-defgeneric.lisp" c r)
     (ld "../CLOS/call-history-defgeneric.lisp" c r)
     (ld "../CLOS/setf-call-history-defgeneric.lisp" c r)
     ;; Accessors for method metaobjects.
