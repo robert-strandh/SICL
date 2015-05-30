@@ -16,5 +16,4 @@
    (%direct-subclasses 
     :initform '() 
     :initarg :direct-subclasses
-    :reader class-direct-subclasses
-    :writer (setf c-direct-subclasses))))
+    :accessor class-direct-subclasses)))
