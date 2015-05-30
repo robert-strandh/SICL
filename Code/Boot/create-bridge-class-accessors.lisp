@@ -3,6 +3,8 @@
 (defun create-bridge-class-accessors (boot)
   (let ((c (c2 boot))
 	(r (r3 boot)))
+    (ld "../CLOS/call-history-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-call-history-defgeneric.lisp" c r)
     (ld "../CLOS/method-function-defgeneric.lisp" c r)
     (ld "../CLOS/method-generic-function-defgeneric.lisp" c r)
     (ld "../CLOS/method-lambda-list-defgeneric.lisp" c r)
