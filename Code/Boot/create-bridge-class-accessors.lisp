@@ -22,6 +22,8 @@
     (ld "../CLOS/slot-definition-location-defgeneric.lisp" c r)
     (ld "../CLOS/specializer-direct-methods-defgeneric.lisp" c r)
     (ld "../CLOS/setf-specializer-direct-methods-defgeneric.lisp" c r)
+    (ld "../CLOS/specializer-profile-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-specializer-profile-defgeneric.lisp" c r)
     (ld "../CLOS/class-name-defgeneric.lisp" c r)
     (ld "../CLOS/class-direct-superclasses-defgeneric.lisp" c r)
     (ld "../CLOS/class-direct-subclasses-defgeneric.lisp" c r)
