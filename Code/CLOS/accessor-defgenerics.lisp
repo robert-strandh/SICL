@@ -11,14 +11,6 @@
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf methods) (new-methods generic-function))
 
-;;; This function returns the specializer profile of the generic function.
-;;; FIXME: say more.
-(defgeneric specializer-profile (generic-function))
-
-;;; This function sets the specializer profile of the generic function.
-;;; FIXME: say more.
-(defgeneric (setf specializer-profile) (new-specializer-profile generic-function))
-
 ;;; This function is called by ADD-METHOD and REMOVE-METHOD to assign
 ;;; the generic function to which the method is associated.
 (defgeneric (setf method-generic-function) (generic-function method))
