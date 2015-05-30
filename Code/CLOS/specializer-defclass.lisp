@@ -7,5 +7,4 @@
     :writer (setf direct-generic-functions))
    (%direct-methods
     :initform '()
-    :reader specializer-direct-methods
-    :writer (setf s-direct-methods))))
+    :accessor specializer-direct-methods)))

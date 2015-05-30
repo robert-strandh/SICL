@@ -51,7 +51,7 @@
 ;;; This function is called by ADD-DIRECT-METHOD and
 ;;; REMOVE-DIRECT-METHOD so change the list of methods having
 ;;; SPECIALIZER as a specializer.
-(defgeneric (setf s-direct-methods) (new-methods specializer))
+(defgeneric (setf specializer-direct-methods) (new-methods specializer))
 
 ;;; This function returns the unique number of the class, assigned
 ;;; when the class is initialized or reinitialized.

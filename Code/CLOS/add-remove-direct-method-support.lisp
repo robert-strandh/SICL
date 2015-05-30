@@ -13,7 +13,7 @@
 ;;; both those methods.
 
 (defun add-direct-method-default (specializer method)
-  (setf (s-direct-methods specializer)
+  (setf (specializer-direct-methods specializer)
 	(adjoin method (specializer-direct-methods specializer) :test #'eq)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -29,5 +29,5 @@
 ;;; both those methods.
 
 (defun remove-direct-method-default (specializer method)
-  (setf (s-direct-methods specializer)
+  (setf (specializer-direct-methods specializer)
 	(remove method (specializer-direct-methods specializer)	:test #'eq)))
