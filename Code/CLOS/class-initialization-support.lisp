@@ -77,7 +77,7 @@
 
 (defun add-as-subclass-to-superclasses (class direct-superclasses)
   (loop for superclass in direct-superclasses
-	do (push class (class-direct-subclasses superclass))))
+	do (add-direct-subclass superclass class)))
 
 (defun create-readers-and-writers (class direct-slots)
   (loop for direct-slot in direct-slots
