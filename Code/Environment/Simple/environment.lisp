@@ -1,4 +1,4 @@
-(in-package #:sicl-simple-environment)
+(cl:in-package #:sicl-simple-environment)
 
 ;;;; This file contains definitions of classes, functions, and
 ;;;; variables for creating and manipulating global environments.  It
