@@ -74,7 +74,7 @@
   ;;it must be a string or NIL, and it defaults to NIL.
   (unless (or (null documentation) (stringp documentation))
     (error "the documentation argument must be NIL or a string"))
-  (setf (method-documentation method) documentation))
+  (setf (documentation method) documentation))
 
 (defun initialize-instance-after-standard-accessor-method
     (method
