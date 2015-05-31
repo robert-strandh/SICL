@@ -12,25 +12,19 @@
 ;;; http://metamodular.com/CLOS-MOP/restrictions-on-implementations.html
 
 (defclass regular-class (real-class)
-  ((%direct-default-initargs 
-    :initarg :direct-default-initargs
-    :initform '()
-    :reader class-direct-default-initargs
-    ;; Additional reader
-    :reader direct-default-initargs)
-   (%direct-slots 
+  ((%direct-slots
     :initarg :direct-slots
     :reader direct-slots
     :reader class-direct-slots)
-   (%direct-superclasses 
+   (%direct-superclasses
     :initarg :direct-superclasses
     :reader class-direct-superclasses)
-   (%default-initargs 
+   (%default-initargs
     :accessor class-default-initargs
     ;; Additional reader
     :reader default-initargs)
-   (%effective-slots 
-    :initform '() 
+   (%effective-slots
+    :initform '()
     :reader class-slots
     ;; Additional reader
     :reader effective-slots

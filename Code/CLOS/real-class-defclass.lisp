@@ -5,15 +5,19 @@
 ;;; Class REAL-CLASS.
 
 (defclass real-class (class)
-  ((%documentation 
+  ((%direct-default-initargs
+    :initarg :direct-default-initargs
+    :initform '()
+    :reader class-direct-default-initargs)
+   (%documentation
     :initform nil
     :accessor documentation)
-   (%finalized-p 
-    :initform nil 
+   (%finalized-p
+    :initform nil
     :reader class-finalized-p
     :writer (setf c-finalized-p))
-   (%precedence-list 
-    :initform '() 
+   (%precedence-list
+    :initform '()
     ;; The AMOP says that CLASS-PRECEDENCE-LIST should signal an error
     ;; if the class has not been finalized.  We accomplish that effect
     ;; by defining a :BEFORE method that checks this condition, and
@@ -35,5 +39,5 @@
     :accessor precedence-list)
    ;; ALLOCATE-INSTANCE and ALLOCATE-BUILT-IN-INSTANCE access this
    ;; slot in order to determine the size of the instance to allocate.
-   ;; The writer is used during class finalization. 
+   ;; The writer is used during class finalization.
    (%instance-size :accessor instance-size)))
