@@ -9,6 +9,7 @@
     (ld "../CLOS/generic-function-argument-precedence-order-defgeneric.lisp" c r)
     (ld "../CLOS/generic-function-declarations-defgeneric.lisp" c r)
     (ld "../CLOS/generic-function-method-class-defgeneric.lisp" c r)
+    (ld "../CLOS/generic-function-method-combination-defgeneric.lisp" c r)
     (ld "../CLOS/call-history-defgeneric.lisp" c r)
     (ld "../CLOS/setf-call-history-defgeneric.lisp" c r)
     ;; Accessors for method metaobjects.
