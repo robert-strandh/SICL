@@ -8,10 +8,6 @@
 ;;;
 ;;; Accessors for specializer metaobjects other than classes.
 
-;;; This function returns the unique number of the class, assigned
-;;; when the class is initialized or reinitialized.
-(defgeneric unique-number (class))
-
 ;;; This function sets the direct methods of the class.
 (defgeneric (setf c-direct-methods) (direct-methods class))
 
