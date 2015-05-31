@@ -14,7 +14,8 @@
 ;;; This function is called by ADD-DIRECT-METHOD and
 ;;; REMOVE-DIRECT-METHOD so change the list of generic functions
 ;;; having SPECIALIZER as a specializer.
-(defgeneric (setf direct-generic-functions) (new-generic-functions specializer))
+(defgeneric (setf specializer-direct-generic-functions)
+    (new-generic-functions specializer))
 
 ;;; This function returns the unique number of the class, assigned
 ;;; when the class is initialized or reinitialized.
