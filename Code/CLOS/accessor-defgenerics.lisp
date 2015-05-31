@@ -4,20 +4,8 @@
 ;;;
 ;;; SICL-specific accessors.
 
-;;; This function will be removed later.  For now it plays the role of
-;;; the function CL:DOCUMENTATION. 
-(defgeneric gf-documentation (generic-function))
-
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf methods) (new-methods generic-function))
-
-;;; This function will be removed later.  For now it plays the role of
-;;; the function CL:DOCUMENTATION. 
-(defgeneric method-documentation (generic-function))
-
-;;; This function will be removed later.  For now it plays the role of
-;;; the function (SETF CL:DOCUMENTATION). 
-(defgeneric (setf method-documentation) (documentation generic-function))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -50,14 +38,6 @@
 ;;; according to the MOP, this function returns the direct default
 ;;; slots of the built-in class.
 (defgeneric direct-slots (class))
-
-;;; This function will be removed later.  For now it plays the role of
-;;; the function CL:DOCUMENTATION. 
-(defgeneric c-documentation (generic-function))
-
-;;; This function will be removed later.  For now it plays the role of
-;;; the function (SETF CL:DOCUMENTATION). 
-(defgeneric (setf c-documentation) (documentation generic-function))
 
 ;;; This function is used by the class finalization protocol to set
 ;;; the flag in the class that indicates that it is finalized.
