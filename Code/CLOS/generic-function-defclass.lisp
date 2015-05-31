@@ -18,7 +18,7 @@
    (%documentation 
     :initarg :documentation
     :initform nil
-    :reader gf-documentation)
+    :accessor documentation)
    (%dependents
     :initform '()
     :accessor dependents))

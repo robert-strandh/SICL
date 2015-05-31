@@ -24,4 +24,4 @@
    (%documentation 
     :initform nil
     :initarg :documentation
-    :accessor method-documentation)))
+    :accessor documentation)))

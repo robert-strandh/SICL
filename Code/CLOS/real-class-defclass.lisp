@@ -7,7 +7,7 @@
 (defclass real-class (class)
   ((%documentation 
     :initform nil
-    :accessor c-documentation)
+    :accessor documentation)
    (%finalized-p 
     :initform nil 
     :reader class-finalized-p
