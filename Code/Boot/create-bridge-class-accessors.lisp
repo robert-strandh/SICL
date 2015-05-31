@@ -11,6 +11,7 @@
     ;; Accessors for method metaobjects.
     (ld "../CLOS/method-function-defgeneric.lisp" c r)
     (ld "../CLOS/method-generic-function-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-method-generic-function-defgeneric.lisp" c r)
     (ld "../CLOS/method-lambda-list-defgeneric.lisp" c r)
     (ld "../CLOS/method-qualifiers-defgeneric.lisp" c r)
     (ld "../CLOS/method-specializers-defgeneric.lisp" c r)
