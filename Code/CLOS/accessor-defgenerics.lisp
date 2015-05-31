@@ -4,9 +4,6 @@
 ;;;
 ;;; SICL-specific accessors.
 
-;;; This function sets the methods of the generic function.
-(defgeneric (setf methods) (new-methods generic-function))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Accessors for specializer metaobjects other than classes.
