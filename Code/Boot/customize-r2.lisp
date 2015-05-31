@@ -8,7 +8,12 @@
   (setf (sicl-genv:fdefinition 'ensure-generic-function (r2 boot))
 	(lambda (function-name &rest arguments)
 	  (declare (ignore arguments))
-	  (sicl-genv:fdefinition function-name (r3 boot)))))
+	  (assert (sicl-genv:fboundp function-name (r3 boot)))
+	  (let ((result (sicl-genv:fdefinition function-name (r3 boot))))
+	    (assert (eq (class-of result)
+			(sicl-genv:find-class 'standard-generic-function
+					      (r1 boot))))
+	    result))))
 
 (defun customize-r2 (boot)
   (let ((c (c1 boot))
