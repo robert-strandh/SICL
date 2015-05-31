@@ -1,4 +1,4 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 (defun initialize-built-in-instance
     (instance &rest initargs &key &allow-other-keys)
