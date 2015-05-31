@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-hir
+(defsystem :cleavir-hir
   :depends-on (:cleavir-ir)
   :serial t
   :components
