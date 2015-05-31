@@ -11,10 +11,6 @@
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf methods) (new-methods generic-function))
 
-;;; This function is called by ADD-METHOD and REMOVE-METHOD to assign
-;;; the generic function to which the method is associated.
-(defgeneric (setf method-generic-function) (generic-function method))
-
 ;;; This function will be removed later.  For now it plays the role of
 ;;; the function CL:DOCUMENTATION. 
 (defgeneric method-documentation (generic-function))
