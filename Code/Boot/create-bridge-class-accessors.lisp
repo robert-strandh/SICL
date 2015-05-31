@@ -44,4 +44,6 @@
     (ld "../CLOS/class-prototype-defgeneric.lisp" c r)
     ;; General accessors.
     (ld "../CLOS/dependents-defgeneric.lisp" c r)
-    (ld "../CLOS/setf-dependents-defgeneric.lisp" c r)))
+    (ld "../CLOS/setf-dependents-defgeneric.lisp" c r)
+    (ld "../CLOS/documentation-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-documentation-defgeneric.lisp" c r)))
