@@ -18,13 +18,6 @@
 (defgeneric default-initargs (class))
 
 ;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
-;;; returns the same value as CLASS-DIRECT-DEFAULT-INITARGS.  However,
-;;; whereas for BUILT-IN-CLASS CLASS-DIRECT-DEFAULT-INITARGS must
-;;; return the empty list according to the MOP, this function returns
-;;; the direct default initargs of the built-in class.
-(defgeneric direct-default-initargs (class))
-
-;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
 ;;; returns the same value as CLASS-DIRECT-SLOTS.  However, whereas
 ;;; for BUILT-IN-CLASS CLASS-DIRECT-SLOTS must return the empty list
 ;;; according to the MOP, this function returns the direct default
