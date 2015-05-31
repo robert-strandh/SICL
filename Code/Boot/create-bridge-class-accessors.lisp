@@ -11,6 +11,7 @@
     (ld "../CLOS/generic-function-method-class-defgeneric.lisp" c r)
     (ld "../CLOS/generic-function-method-combination-defgeneric.lisp" c r)
     (ld "../CLOS/generic-function-methods-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-generic-function-methods-defgeneric.lisp" c r)
     (ld "../CLOS/call-history-defgeneric.lisp" c r)
     (ld "../CLOS/setf-call-history-defgeneric.lisp" c r)
     ;; Accessors for method metaobjects.
