@@ -27,6 +27,8 @@
     (ld "../CLOS/slot-definition-writers-defgeneric.lisp" c r)
     (ld "../CLOS/slot-definition-location-defgeneric.lisp" c r)
     ;; Accessors for specializer metaobjects.
+    (ld "../CLOS/specializer-direct-generic-functions-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" c r)
     (ld "../CLOS/specializer-direct-methods-defgeneric.lisp" c r)
     (ld "../CLOS/setf-specializer-direct-methods-defgeneric.lisp" c r)
     (ld "../CLOS/specializer-profile-defgeneric.lisp" c r)
