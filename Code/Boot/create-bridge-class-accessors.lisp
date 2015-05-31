@@ -5,6 +5,7 @@
 	(r (r3 boot)))
     ;; Accessors for generic function metaobjects.
     (ld "../CLOS/generic-function-name-defgeneric.lisp" c r)
+    (ld "../CLOS/generic-function-lambda-list-defgeneric.lisp" c r)
     (ld "../CLOS/generic-function-argument-precedence-order-defgeneric.lisp" c r)
     (ld "../CLOS/generic-function-declarations-defgeneric.lisp" c r)
     (ld "../CLOS/call-history-defgeneric.lisp" c r)
