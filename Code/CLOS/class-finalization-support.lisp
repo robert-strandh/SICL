@@ -234,7 +234,7 @@
 	   ;; PRECEDENCE-LIST rather than CLASS-PRECEDENCE-LIST,
 	   ;; because the latter signals an error if the class is not
 	   ;; finalized.
-	   (mapcar #'direct-default-initargs
+	   (mapcar #'class-direct-default-initargs
 		   (precedence-list class)))
    :test #'eq
    :key #'car
