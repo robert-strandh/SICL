@@ -51,6 +51,7 @@
     (ld "../CLOS/class-precedence-list-defgeneric.lisp" c r)
     (ld "../CLOS/class-slots-defgeneric.lisp" c r)
     (ld "../CLOS/class-default-initargs-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-class-default-initargs-defgeneric.lisp" c r)
     (ld "../CLOS/class-finalized-p-defgeneric.lisp" c r)
     (ld "../CLOS/setf-class-finalized-p-defgeneric.lisp" c r)
     (ld "../CLOS/class-prototype-defgeneric.lisp" c r)
