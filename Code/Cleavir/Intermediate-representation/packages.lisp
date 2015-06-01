@@ -182,4 +182,7 @@
   (:export
    #:draw-instruction
    #:draw-datum
-   #:draw-flowchart))
+   #:draw-flowchart
+   #:label
+   #:name
+   #:datum-id))
