@@ -38,6 +38,6 @@
 	   (count-list :instance effective-slots
 		       :test #'eq :key #'slot-definition-allocation)))
     (setf (instance-size class) (+ slot-count 1))
-    (setf (c-slots class) effective-slots))
+    (setf (class-slots class) effective-slots))
   (setf (class-default-initargs class) (compute-default-initargs-default class))
   (setf (class-finalized-p class) t))

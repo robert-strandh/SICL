@@ -27,7 +27,7 @@
 (defun initialize-built-in-instance-default
     (instance &rest initargs &key &allow-other-keys)
   (let* ((class (class-of instance))
-	 (slots (effective-slots class)))
+	 (slots (class-slots class)))
     (loop for slot in slots
 	  for location = (slot-definition-location slot)
 	  do (multiple-value-bind (key value foundp)

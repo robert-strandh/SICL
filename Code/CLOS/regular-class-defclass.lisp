@@ -22,10 +22,7 @@
     :accessor class-default-initargs)
    (%effective-slots
     :initform '()
-    :reader class-slots
-    ;; Additional reader
-    :reader effective-slots
-    :writer (setf c-slots))
+    :accessor class-slots)
    (%prototype
     :accessor class-prototype)
    (%dependents

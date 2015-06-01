@@ -234,7 +234,7 @@
   (let ((method-class (class-of method)))
     (flet ((slot-location (direct-slot class)
 	     (let* ((name (slot-definition-name direct-slot))
-		    (effective-slots (effective-slots class))
+		    (effective-slots (class-slots class))
 		    (effective-slot (find name effective-slots
 					  :key #'slot-definition-name
 					  :test #'eq)))
