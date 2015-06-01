@@ -8,9 +8,6 @@
 ;;;
 ;;; Accessors for specializer metaobjects other than classes.
 
-;;; This function sets the direct methods of the class.
-(defgeneric (setf c-direct-methods) (direct-methods class))
-
 (defgeneric default-initargs (class))
 
 ;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
