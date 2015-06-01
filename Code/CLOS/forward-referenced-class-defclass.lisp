@@ -16,7 +16,6 @@
     ;; list for a forward referenced class.
     :allocation :class
     :initform '()
-    :reader direct-slots
     :reader class-direct-slots)
    (%direct-superclasses
     ;; The AMOP says that CLASS-DIRECT-SUPERCLASSES should return the

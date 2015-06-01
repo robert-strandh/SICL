@@ -173,7 +173,7 @@
 	 ;; reader named DIRECT-SLOTS which does the same thing as
 	 ;; CLASS-DIRECT-SLOTS except that for built-in classes, it
 	 ;; retuns the direct slots of the built-in class.
-	 (direct-slots (mapcar #'direct-slots superclasses))
+	 (direct-slots (mapcar #'class-direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
 	 (reverse-slots (reverse direct-slots))
 	 (reverse-concatenated (reduce #'append reverse-slots))

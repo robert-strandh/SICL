@@ -8,13 +8,6 @@
 ;;;
 ;;; Accessors for specializer metaobjects other than classes.
 
-;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
-;;; returns the same value as CLASS-DIRECT-SLOTS.  However, whereas
-;;; for BUILT-IN-CLASS CLASS-DIRECT-SLOTS must return the empty list
-;;; according to the MOP, this function returns the direct default
-;;; slots of the built-in class.
-(defgeneric direct-slots (class))
-
 ;;; This function is similar to CLASS-PRECEDENCE-LIST, except that
 ;;; CLASS-PRECEDENCE-LIST is specified to signal an error when the
 ;;; class is not finalized, which we accomplish by using a :BEFORE

@@ -14,7 +14,6 @@
 (defclass regular-class (real-class)
   ((%direct-slots
     :initarg :direct-slots
-    :reader direct-slots
     :reader class-direct-slots)
    (%direct-superclasses
     :initarg :direct-superclasses

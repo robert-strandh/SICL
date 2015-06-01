@@ -6,7 +6,7 @@
 
 (defun compute-built-in-slots (class)
   (let* ((superclasses (precedence-list class))
-	 (direct-slots (mapcar #'direct-slots superclasses))
+	 (direct-slots (mapcar #'class-direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
 	 (reverse-slots (reverse direct-slots))
 	 (reverse-concatenated (reduce #'append reverse-slots))

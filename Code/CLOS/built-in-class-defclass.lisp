@@ -16,7 +16,7 @@
     :reader class-direct-superclasses)
    (%direct-slots
     :initarg :direct-slots
-    :reader direct-slots)
+    :reader class-direct-slots)
    (%default-initargs
     :initarg :default-initargs
     :accessor class-default-initargs)
