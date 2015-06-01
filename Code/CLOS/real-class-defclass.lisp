@@ -14,8 +14,7 @@
     :accessor documentation)
    (%finalized-p
     :initform nil
-    :reader class-finalized-p
-    :writer (setf c-finalized-p))
+    :accessor class-finalized-p)
    (%precedence-list
     :initform '()
     ;; The AMOP says that CLASS-PRECEDENCE-LIST should signal an error
