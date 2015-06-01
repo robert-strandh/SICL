@@ -42,9 +42,6 @@
 ;;; the effective slots of the class. 
 (defgeneric (setf c-slots) (effective-slots class))
 
-;;; This function sets the class prototype of the class.
-(defgeneric (setf c-prototype) (prototype class))
-
 ;;; This function is used by ALLOCATE-INSTANCE and
 ;;; ALLOCATE-BUILT-IN-INSTANCE to determine the size of the instance
 ;;; to allocate.
