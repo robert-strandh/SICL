@@ -17,10 +17,6 @@
 ;;; slots of the built-in class.
 (defgeneric direct-slots (class))
 
-;;; This function is used by the class finalization protocol to set
-;;; the flag in the class that indicates that it is finalized.
-(defgeneric (setf c-finalized-p) (new-value class))
-
 ;;; This function is similar to CLASS-PRECEDENCE-LIST, except that
 ;;; CLASS-PRECEDENCE-LIST is specified to signal an error when the
 ;;; class is not finalized, which we accomplish by using a :BEFORE
