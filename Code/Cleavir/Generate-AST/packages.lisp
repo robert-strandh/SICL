@@ -19,4 +19,6 @@
 	   #:ast-from-file
 	   #:ast-from-stream
 	   #:begin-source
-	   #:end-source))
+	   #:end-source
+	   #:consider-special
+	   #:consider-global))
