@@ -49,6 +49,7 @@
     (ld "../CLOS/class-direct-slots-defgeneric.lisp" c r)
     (ld "../CLOS/class-direct-default-initargs-defgeneric.lisp" c r)
     (ld "../CLOS/class-precedence-list-defgeneric.lisp" c r)
+    (ld "../CLOS/precedence-list-defgeneric.lisp" c r)
     (ld "../CLOS/class-slots-defgeneric.lisp" c r)
     (ld "../CLOS/setf-class-slots-defgeneric.lisp" c r)
     (ld "../CLOS/class-default-initargs-defgeneric.lisp" c r)
