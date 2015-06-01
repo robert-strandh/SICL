@@ -309,7 +309,7 @@
   ;; instance, because ALLOCATE-INSTANCE checks that the class is
   ;; finalized and if not, calls FINALIZE-INSTANCE, and we would have
   ;; an infinite recursion.
-  (setf (c-finalized-p class) t)
+  (setf (class-finalized-p class) t)
   ;; FIXME: allocate a prototype here, maybe?
   ;;(setf (c-prototype class)
   ;;      (allocate-instance class)))

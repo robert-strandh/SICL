@@ -40,4 +40,4 @@
     (setf (instance-size class) (+ slot-count 1))
     (setf (c-slots class) effective-slots))
   (setf (class-default-initargs class) (compute-default-initargs-default class))
-  (setf (c-finalized-p class) t))
+  (setf (class-finalized-p class) t))
