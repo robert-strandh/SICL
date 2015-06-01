@@ -57,6 +57,7 @@
     (ld "../CLOS/class-prototype-defgeneric.lisp" c r)
     (ld "../CLOS/setf-class-prototype-defgeneric.lisp" c r)
     (ld "../CLOS/instance-size-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-instance-size-defgeneric.lisp" c r)
     ;; General accessors.
     (ld "../CLOS/dependents-defgeneric.lisp" c r)
     (ld "../CLOS/setf-dependents-defgeneric.lisp" c r)
