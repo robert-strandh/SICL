@@ -24,12 +24,6 @@
 ;;; the precedence list of the class.
 (defgeneric (setf precedence-list) (precedence-list class))
 
-;;; This function returns the dependents of the class.
-(defgeneric dependents (class))
-
-;;; This function sets the dependents of the class.
-(defgeneric (setf dependents) (dependents class))
-
 ;;; For a slot with :ALLOCATION :CLASS, this function returns a CONS
 ;;; cell where the CAR is used to store the value of the slot.
 (defgeneric slot-definition-storage (direct-slot-definition))
