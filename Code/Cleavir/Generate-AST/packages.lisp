@@ -10,6 +10,7 @@
 	   #:convert-special-variable
 	   #:convert-setq-special-variable
 	   #:convert-special-binding
+	   #:convert-special
 	   #:minimally-compile
 	   #:*compiler*
 	   #:ast-from-file
