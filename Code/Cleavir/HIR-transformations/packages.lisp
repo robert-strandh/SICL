@@ -9,4 +9,5 @@
    #:process-captured-variables
    #:compute-ownerships
    #:segregate-lexicals
-   #:hir-transformations))
+   #:hir-transformations
+   #:introduce-intermediate))

@@ -3,5 +3,6 @@
 (defpackage #:cleavir-ast-to-hir
   (:use #:common-lisp)
   (:export
-   #:compile-toplevel))
-
+   #:compile-toplevel
+   #:make-temp
+   #:make-temps))
