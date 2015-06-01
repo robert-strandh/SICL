@@ -42,11 +42,6 @@
 ;;; the effective slots of the class. 
 (defgeneric (setf c-slots) (effective-slots class))
 
-;;; This function is used during class finalization, when the
-;;; effective slots are known, and it is therefore also known what
-;;; size the instances of this class should have.
-(defgeneric (setf instance-size) (new-size class))
-
 ;;; This function returns the dependents of the class.
 (defgeneric dependents (class))
 
