@@ -8,8 +8,6 @@
 ;;;
 ;;; Accessors for specializer metaobjects other than classes.
 
-(defgeneric default-initargs (class))
-
 ;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
 ;;; returns the same value as CLASS-DIRECT-SLOTS.  However, whereas
 ;;; for BUILT-IN-CLASS CLASS-DIRECT-SLOTS must return the empty list
@@ -32,10 +30,6 @@
 ;;; This function is used by the class finalization protocol to set
 ;;; the precedence list of the class.
 (defgeneric (setf precedence-list) (precedence-list class))
-
-;;; This function is used by the class finalization protocol to set
-;;; the default initargs of the class. 
-(defgeneric (setf class-default-initargs) (default-initargs class))
 
 ;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
 ;;; returns the same value as CLASS-SLOTS.  However, whereas for
