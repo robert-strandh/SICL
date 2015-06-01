@@ -7,4 +7,4 @@
 (defclass standard-accessor-method (standard-method)
   ((%slot-definition 
     :initarg :slot-definition
-    :reader accessor-method-slot-definition)))
+    :accessor accessor-method-slot-definition)))
