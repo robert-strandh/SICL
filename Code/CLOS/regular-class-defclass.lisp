@@ -28,8 +28,7 @@
     :reader effective-slots
     :writer (setf c-slots))
    (%prototype
-    :reader class-prototype
-    :writer (setf c-prototype))
+    :accessor class-prototype)
    (%dependents
     :initform '()
     :accessor dependents)))

@@ -311,7 +311,7 @@
   ;; an infinite recursion.
   (setf (class-finalized-p class) t)
   ;; FIXME: allocate a prototype here, maybe?
-  ;;(setf (c-prototype class)
+  ;;(setf (class-prototype class)
   ;;      (allocate-instance class)))
   )
 
