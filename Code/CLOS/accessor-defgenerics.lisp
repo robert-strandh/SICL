@@ -24,17 +24,6 @@
 ;;; the precedence list of the class.
 (defgeneric (setf precedence-list) (precedence-list class))
 
-;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
-;;; returns the same value as CLASS-SLOTS.  However, whereas for
-;;; BUILT-IN-CLASS CLASS-SLOTS must return the empty list according to
-;;; the MOP, this function returns the effective default slots of the
-;;; built-in class.
-(defgeneric effective-slots (class))
-
-;;; This function is used by the class finalization protocol to set
-;;; the effective slots of the class. 
-(defgeneric (setf c-slots) (effective-slots class))
-
 ;;; This function returns the dependents of the class.
 (defgeneric dependents (class))
 
