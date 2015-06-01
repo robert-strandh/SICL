@@ -8,4 +8,4 @@
 ;;;
 ;;; Accessors for specializer metaobjects other than classes.
 
-(defgeneric (setf slot-definition) (slot-definition accessor-method))
+(defgeneric (setf accessor-method-slot-definition) (slot-definition accessor-method))
