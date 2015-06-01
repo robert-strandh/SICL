@@ -19,8 +19,7 @@
     :reader direct-slots)
    (%default-initargs
     :initarg :default-initargs
-    :reader default-initargs
-    :writer (setf class-default-initargs))
+    :accessor class-default-initargs)
    (%effective-slots
     :initform '()
     :reader effective-slots

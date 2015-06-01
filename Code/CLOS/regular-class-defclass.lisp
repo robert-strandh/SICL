@@ -20,9 +20,7 @@
     :initarg :direct-superclasses
     :reader class-direct-superclasses)
    (%default-initargs
-    :accessor class-default-initargs
-    ;; Additional reader
-    :reader default-initargs)
+    :accessor class-default-initargs)
    (%effective-slots
     :initform '()
     :reader class-slots

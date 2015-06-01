@@ -15,7 +15,7 @@
 (defun make-built-in-instance-default
     (class initialize-built-in-instance &rest initargs)
   (let ((defaulted-initargs initargs))
-    (loop for default-initarg in (default-initargs class)
+    (loop for default-initarg in (class-default-initargs class)
 	  do (unless (initarg-in-list-p (car default-initarg) initargs)
 	       (setf defaulted-initargs
 		     (append defaulted-initargs
