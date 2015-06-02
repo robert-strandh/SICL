@@ -58,7 +58,22 @@
     (create-bridge-class-accessors boot)
     (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     (ld "../CLOS/add-accessor-method.lisp" c r)
-    (ld "../CLOS/class-initialization-support.lisp" c r)))
+    (ld "../CLOS/class-initialization-support.lisp" c r)
+    (setf (fdefinition
+	   'sicl-clos:shared-initialize-around-real-class-default)
+	  (sicl-genv:fdefinition
+	   'sicl-clos:shared-initialize-around-real-class-default
+	   (r2 boot)))
+    (setf (fdefinition
+	   'sicl-clos:initialize-instance-after-built-in-class-default)
+	  (sicl-genv:fdefinition
+	   'sicl-clos:initialize-instance-after-built-in-class-default
+	   (r2 boot)))
+    (setf (fdefinition
+	   'sicl-clos:initialize-instance-after-regular-class-default)
+	  (sicl-genv:fdefinition
+	   'sicl-clos:initialize-instance-after-regular-class-default
+	   (r2 boot)))))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
 ;;  LocalWords:  accessors instantiation specializer
