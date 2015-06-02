@@ -57,7 +57,8 @@
 	(r (r2 boot)))
     (create-bridge-class-accessors boot)
     (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
-    (ld "../CLOS/add-accessor-method.lisp" c r)))
+    (ld "../CLOS/add-accessor-method.lisp" c r)
+    (ld "../CLOS/class-initialization-support.lisp" c r)))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
 ;;  LocalWords:  accessors instantiation specializer
