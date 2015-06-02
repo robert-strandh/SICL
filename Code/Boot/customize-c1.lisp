@@ -52,4 +52,4 @@
 
 
 (defun customize-c1 (boot)
-  (define-defmethod (c1 boot) (c1 boot)))
+  (define-defmethod (c1 boot) (r1 boot)))
