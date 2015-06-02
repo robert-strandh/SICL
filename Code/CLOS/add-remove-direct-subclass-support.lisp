@@ -15,7 +15,7 @@
   (when (member subclass (class-direct-subclasses superclass))
     (error "Attempt to add existing subclass ~s as a subclass of ~s."
 	   subclass superclass))
-  (setf (c-direct-subclasses superclass)
+  (setf (class-direct-subclasses superclass)
 	(cons subclass (class-direct-subclasses superclass))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -30,6 +30,6 @@
 ;;; below is valid for that method.
 
 (defun remove-direct-subclass-default (superclass subclass)
-  (setf (c-direct-subclasses superclass)
+  (setf (class-direct-subclasses superclass)
 	(remove subclass (class-direct-subclasses superclass)
 		:test #'eq)))
