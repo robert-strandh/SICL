@@ -23,7 +23,7 @@
     (class &rest initargs &key (additional-storage 0) &allow-other-keys)
   (declare (ignore initargs))
   (unless (class-finalized-p class)
-    (finalize-built-in-inheritance class))
+    (finalize-inheritance class))
   (let* ((size (+ (instance-size class) additional-storage))
 	 (slots (allocate-slot-storage size))
 	 (instance (allocate-heap-instance class slots)))
