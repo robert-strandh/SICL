@@ -87,6 +87,9 @@
    #:validate-superclass
    ;; Other functions
    #:set-funcallable-instance-function
+   #:shared-initialize-around-real-class-default
+   #:initialize-instance-after-regular-class-default
+   #:initialize-instance-after-built-in-class-default
    ;; SICL-specific classes
    #:real-class #:regular-class
    ;; SICL-specific functions
