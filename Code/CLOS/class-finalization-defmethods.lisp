@@ -1,12 +1,7 @@
 (cl:in-package #:sicl-clos)
 
-(defmethod finalize-inheritance ((class regular-class))
+(defmethod finalize-inheritance ((class real-class))
   (finalize-inheritance-default class))
-
-;;; This method should be removed once all built-in classes are
-;;; finalized.
-(defmethod finalize-inheritance ((class built-in-class))
-  (finalize-built-in-inheritance class))
 
 (defmethod compute-default-initargs ((class regular-class))
   (compute-default-initargs-default class))
