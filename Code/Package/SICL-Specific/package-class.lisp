@@ -1,6 +1,6 @@
 (in-package #:sicl-package)
 
-(define-built-in-class package (t)
+(defclass package (t)
   ((%name
     :initarg :name
     :accessor name)
@@ -27,7 +27,8 @@
    (%shadowing-symbols
     :initarg :shadowing-symbols
     :initform '()
-    :accessor shadowing-symbols)))
+    :accessor shadowing-symbols))
+  (:metaclass built-in-class))
 
    
    

@@ -1,5 +1,6 @@
 (cl:in-package #:sicl-string)
 
-(define-built-in-class string
+(defclass string
     (sicl-vector:vector sicl-array:array-character)
-  ())
+  ()
+  (:metaclass built-in-class))

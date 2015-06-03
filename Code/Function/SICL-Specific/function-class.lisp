@@ -21,13 +21,15 @@
 ;;; add this dummy slot, we define a class DUMMY-SLOT-PROVIDER,
 ;;; containing such a slot.
 
-(define-built-in-class dummy-slot-supplier (t)
-  ((%dummy :initform nil)))
+(defclass dummy-slot-supplier (t)
+  ((%dummy :initform nil))
+  (:metaclass built-in-class))
 
 ;;; It is important that the list of superclasses appear in the order
 ;;; that it does in this definition, because slots are allocated with
 ;;; locations that take this order into account.  In this case, the
 ;;; slot supplied by DUMMY-SLOT-SUPPLIER will occupy the first
 ;;; location in instances of STANDARD-FUNCTION.
-(define-built-in-class standard-function (function dummy-slot-supplier)
-  ())
+(defclass standard-function (function dummy-slot-supplier)
+  ()
+  (:metaclass built-in-class))
