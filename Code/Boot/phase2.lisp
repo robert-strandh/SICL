@@ -76,7 +76,8 @@
 	   (r2 boot)))
     (ld "../CLOS/class-initialization-defmethods.lisp" c r)
     (ld "../CLOS/ensure-class-using-class-support.lisp" c r)
-    (ld "ensure-class-defun-phase2.lisp" c r)))
+    (ld "ensure-class-defun-phase2.lisp" c r)
+    (create-bridge-classes boot)))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
 ;;  LocalWords:  accessors instantiation specializer
