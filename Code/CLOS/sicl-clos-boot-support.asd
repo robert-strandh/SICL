@@ -118,7 +118,8 @@
    ;; automaton of generic functions.
    (:file "discriminating-automaton")
    (:file "add-remove-direct-subclass-support")
-   (:file "add-remove-direct-subclass-defgenerics")))
+   (:file "add-remove-direct-subclass-defgenerics")
+   (:file "default-superclasses-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
 ;;  LocalWords:  specializers specializer superclasses subclasses
