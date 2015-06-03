@@ -64,16 +64,6 @@
 	  (sicl-genv:fdefinition
 	   'sicl-clos:shared-initialize-around-real-class-default
 	   (r2 boot)))
-    (setf (fdefinition
-	   'sicl-clos:initialize-instance-after-built-in-class-default)
-	  (sicl-genv:fdefinition
-	   'sicl-clos:initialize-instance-after-built-in-class-default
-	   (r2 boot)))
-    (setf (fdefinition
-	   'sicl-clos:initialize-instance-after-regular-class-default)
-	  (sicl-genv:fdefinition
-	   'sicl-clos:initialize-instance-after-regular-class-default
-	   (r2 boot)))
     (ld "../CLOS/class-initialization-defmethods.lisp" c r)
     (ld "../CLOS/ensure-class-using-class-support.lisp" c r)
     (ld "ensure-class-defun-phase2.lisp" c r)
