@@ -12,42 +12,53 @@
 
 (defgeneric array-dimensions (array))
 
-(define-built-in-class array (t)
-  ((%dimensions :initarg :dimensions :reader array-dimensions)))
+(defclass array (t)
+  ((%dimensions :initarg :dimensions :reader array-dimensions))
+  (:metaclass built-in-class))
 
-(define-built-in-class simple-array (array)
-  ())
+(defclass simple-array (array)
+  ()
+  (:metaclass built-in-class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Specialized arrays.
 
-(define-built-in-class array-double-float (simple-array)
-  ())
+(defclass array-double-float (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-single-float (simple-array)
-  ())
+(defclass array-single-float (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-signed-byte-64 (simple-array)
-  ())
+(defclass array-signed-byte-64 (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-unsigned-byte-64 (simple-array)
-  ())
+(defclass array-unsigned-byte-64 (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-signed-byte-32 (simple-array)
-  ())
+(defclass array-signed-byte-32 (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-unsigned-byte-32 (simple-array)
-  ())
+(defclass array-unsigned-byte-32 (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-unsigned-byte-8 (simple-array)
-  ())
+(defclass array-unsigned-byte-8 (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-bit (simple-array)
-  ())
+(defclass array-bit (simple-array)
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class array-character (simple-array)
-  ())
+(defclass array-character (simple-array)
+  ()
+  (:metaclass built-in-class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -60,9 +71,10 @@
 ;;;
 ;;; Could a displaced array also be simple?
 
-(define-built-in-class displaced-array (array)
+(defclass displaced-array (array)
   ((%target :initarg :target)
-   (%offset :initarg :offset)))
+   (%offset :initarg :offset))
+  (:metaclass built-in-class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -74,53 +86,64 @@
 (defgeneric fill-pointer (vector))
 (defgeneric (setf fill-pointer) (new-fill-pointer vector))
 
-(define-built-in-class vector (array sequence)
-  ((%fill-pointer :initarg :fill-pointer :accessor fill-pointer)))
+(defclass vector (array sequence)
+  ((%fill-pointer :initarg :fill-pointer :accessor fill-pointer))
+  (:metaclass built-in-class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Specialized vectors.
 
-(define-built-in-class vector-double-float
+(defclass vector-double-float
     (vector array-double-float)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class vector-single-float
+(defclass vector-single-float
     (vector array-single-float)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class vector-signed-byte-64
+(defclass vector-signed-byte-64
     (vector array-signed-byte-64)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class vector-unsigned-byte-64
+(defclass vector-unsigned-byte-64
     (vector array-unsigned-byte-64)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class vector-signed-byte-32
+(defclass vector-signed-byte-32
     (vector array-signed-byte-32)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class vector-unsigned-byte-32
+(defclass vector-unsigned-byte-32
     (vector array-unsigned-byte-32)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class vector-unsigned-byte-8
+(defclass vector-unsigned-byte-8
     (vector array-unsigned-byte-8)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class bit-vector
+(defclass bit-vector
     (vector array-bit)
-  ())
+  ()
+  (:metaclass built-in-class))
 
-(define-built-in-class string
+(defclass string
     (vector array-character)
-  ())
+  ()
+  (:metaclass built-in-class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Displaced vectors.
 
-(define-built-in-class displaced-vector
+(defclass displaced-vector
     (vector displaced-array)
-  ())
+  ()
+  (:metaclass built-in-class))
