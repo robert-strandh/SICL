@@ -5,5 +5,5 @@
 	(lambda (name-or-class &optional errorp environment)
 	  (declare (ignore errorp environment))
 	  (if (symbolp name-or-class)
-	      (sicl-genv:find-class name-or-class (r1 boot))
+	      (sicl-genv:find-class name-or-class (r2 boot))
 	      name-or-class))))
