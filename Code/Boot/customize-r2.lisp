@@ -50,6 +50,12 @@
 		(t
 		 '())))))
 
+(defun define-reader-method-class (boot)
+  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class (r2 boot))
+	(lambda (&rest arguments)
+	  (declare (ignore arguments))
+	  (sicl-genv:find-class 'sicl-clos:standard-reader-method (r1 boot)))))
+
 (defun customize-r2 (boot)
   (let ((c (c1 boot))
 	(r (r2 boot)))
@@ -60,6 +66,7 @@
     (define-typep boot)
     (define-ensure-generic-function boot)
     (define-default-superclasses boot)
+    (define-reader-method-class boot)
     (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c r)))
 
 ;;  LocalWords:  metaobject
