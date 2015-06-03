@@ -43,8 +43,10 @@
 		     (sicl-genv:find-class 'standard-class (r1 boot)))
 		 (sicl-genv:find-class 'standard-object (r2 boot)))
 		((eq (class-of class)
-		     (sicl-genv:find-class 'funcallable-standard-class (r1 boot)))
-		 (sicl-genv:find-class 'funcallable-standard-object (r2 boot)))
+		     (sicl-genv:find-class 'sicl-clos:funcallable-standard-class
+					   (r1 boot)))
+		 (sicl-genv:find-class 'sicl-clos:funcallable-standard-object
+				       (r2 boot)))
 		(t
 		 '())))))
 
