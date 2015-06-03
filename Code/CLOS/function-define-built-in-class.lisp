@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-clos)
 
-(define-built-in-class function (t)
+(defclass function (t)
   ((%entry-point :initarg :entry-point)
    (%linkage-rack :initarg :linkage-rack)
-   (%environment :initform nil :initarg :environment)))
+   (%environment :initform nil :initarg :environment))
+  (:metaclass built-in-class))
