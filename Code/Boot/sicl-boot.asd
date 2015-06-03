@@ -19,5 +19,6 @@
    (:file "customize-r2")
    (:file "customize-c2")
    (:file "create-bridge-class-accessors")
+   (:file "create-bridge-classes")
    (:file "phase2")
    (:file "fill")))
