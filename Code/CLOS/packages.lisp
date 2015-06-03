@@ -24,6 +24,8 @@
    #:standard--slot-definition
    #:standard-direct-slot-definition
    #:standard-effective-slot-definition
+   #:standard-reader-method
+   #:standard-writer-method
    ;; Accessors for method metaobjects.
    #:method-function
    #:method-generic-function
