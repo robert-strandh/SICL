@@ -36,6 +36,18 @@
 					      (r1 boot))))
 	    result))))
 
+(defun define-default-superclasses (boot)
+  (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses (r2 boot))
+	(lambda (class)
+	  (cond ((eq (class-of class)
+		     (sicl-genv:find-class 'standard-class (r1 boot)))
+		 (sicl-genv:find-class 'standard-object (r2 boot)))
+		((eq (class-of class)
+		     (sicl-genv:find-class 'funcallable-standard-class (r1 boot)))
+		 (sicl-genv:find-class 'funcallable-standard-object (r2 boot)))
+		(t
+		 '())))))
+
 (defun customize-r2 (boot)
   (let ((c (c1 boot))
 	(r (r2 boot)))
@@ -45,7 +57,7 @@
     (define-validate-superclass boot)
     (define-typep boot)
     (define-ensure-generic-function boot)
-    (ld "default-superclasses-temporary-defun.lisp" c r)
+    (define-default-superclasses boot)
     (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c r)))
 
 ;;  LocalWords:  metaobject
