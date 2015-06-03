@@ -12,7 +12,8 @@
   (:export
    ;; MOP classes
    #:class #:standard-class #:built-in-class #:structure-class
-   #:standard-object #:function
+   #:funcallable-standard-class
+   #:standard-object #:function #:funcallable-standard-object
    #:generic-function #:standard-generic-function
    #:method #:standard-method
    #:metaobject
