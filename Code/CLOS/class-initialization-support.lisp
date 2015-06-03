@@ -103,8 +103,7 @@
   (apply call-next-method
 	 class
 	 slot-names
-	 :direct-superclasses
-	 (default-superclasses class)
+	 :direct-superclasses direct-superclasses
 	 :direct-default-initargs direct-default-initargs
 	 :direct-slots (check-and-instantiate-direct-slots class direct-slots)
 	 initargs))
