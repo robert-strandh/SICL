@@ -24,6 +24,7 @@
     (ld "../CLOS/method-qualifiers-defgeneric.lisp" c r)
     (ld "../CLOS/method-specializers-defgeneric.lisp" c r)
     (ld "../CLOS/accessor-method-slot-definition-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-accessor-method-slot-definition-defgeneric.lisp" c r)
     ;; Accessors for slot definition metaobjects.
     (ld "../CLOS/slot-definition-name-defgeneric.lisp" c r)
     (ld "../CLOS/slot-definition-allocation-defgeneric.lisp" c r)
