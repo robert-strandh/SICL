@@ -9,4 +9,5 @@
     (ld "../CLOS/specializer-defclass.lisp" c r)
     (ld "../CLOS/class-defclass.lisp" c r)
     (ld "../CLOS/forward-referenced-class-defclass.lisp" c r)
-    (ld "../CLOS/real-class-defclass.lisp" c r)))
+    (ld "../CLOS/real-class-defclass.lisp" c r)
+    (ld "../CLOS/regular-class-defclass.lisp" c r)))
