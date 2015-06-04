@@ -17,6 +17,7 @@
     (ld "../CLOS/standard-method-defclass.lisp" c r)
     (ld "../CLOS/standard-accessor-method-defclass.lisp" c r)
     (ld "../CLOS/standard-reader-method-defclass.lisp" c r)
+    (ld "../CLOS/standard-writer-method-defclass.lisp" c r)
     (ld "../CLOS/specializer-defclass.lisp" c r)
     (ld "../CLOS/class-defclass.lisp" c r)
     (ld "../CLOS/forward-referenced-class-defclass.lisp" c r)
