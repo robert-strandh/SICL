@@ -6,6 +6,7 @@
     (ld "../CLOS/t-defclass.lisp" c r)
     (ld "../CLOS/function-defclass.lisp" c r)
     (ld "../CLOS/funcallable-standard-object-defclass.lisp" c r)
+    (ld "../CLOS/generic-function-defclass.lisp" c r)
     (ld "../CLOS/standard-object-defclass.lisp" c r)
     (ld "../CLOS/metaobject-defclass.lisp" c r)
     (ld "../CLOS/method-combination-defclass.lisp" c r)
