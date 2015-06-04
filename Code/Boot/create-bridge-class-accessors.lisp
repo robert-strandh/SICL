@@ -41,6 +41,7 @@
     (ld "../CLOS/specializer-direct-generic-functions-defgeneric.lisp" c r)
     (ld "../CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" c r)
     (ld "../CLOS/specializer-direct-methods-defgeneric.lisp" c r)
+    (ld "../CLOS/eql-specializer-object-defgeneric.lisp" c r)
     (ld "../CLOS/setf-specializer-direct-methods-defgeneric.lisp" c r)
     (ld "../CLOS/specializer-profile-defgeneric.lisp" c r)
     (ld "../CLOS/setf-specializer-profile-defgeneric.lisp" c r)
