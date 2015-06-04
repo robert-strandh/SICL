@@ -23,6 +23,7 @@
     (ld "../CLOS/standard-reader-method-defclass.lisp" c r)
     (ld "../CLOS/standard-writer-method-defclass.lisp" c r)
     (ld "../CLOS/specializer-defclass.lisp" c r)
+    (ld "../CLOS/eql-specializer-defclass.lisp" c r)
     (ld "../CLOS/class-defclass.lisp" c r)
     (ld "../CLOS/forward-referenced-class-defclass.lisp" c r)
     (ld "../CLOS/real-class-defclass.lisp" c r)
