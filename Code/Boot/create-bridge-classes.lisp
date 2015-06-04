@@ -10,6 +10,7 @@
     (ld "../CLOS/slot-definition-defclass.lisp" c r)
     (ld "../CLOS/standard-slot-definition-defclass.lisp" c r)
     (ld "../CLOS/direct-slot-definition-defclass.lisp" c r)
+    (ld "../CLOS/effective-slot-definition-defclass.lisp" c r)
     (ld "../CLOS/specializer-defclass.lisp" c r)
     (ld "../CLOS/class-defclass.lisp" c r)
     (ld "../CLOS/forward-referenced-class-defclass.lisp" c r)
