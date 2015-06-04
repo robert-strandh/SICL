@@ -34,6 +34,7 @@
     (ld "../CLOS/slot-definition-readers-defgeneric.lisp" c r)
     (ld "../CLOS/slot-definition-writers-defgeneric.lisp" c r)
     (ld "../CLOS/slot-definition-location-defgeneric.lisp" c r)
+    (ld "../CLOS/setf-slot-definition-location-defgeneric.lisp" c r)
     (ld "../CLOS/slot-definition-storage-defgeneric.lisp" c r)
     ;; Accessors for specializer metaobjects.
     (ld "../CLOS/specializer-direct-generic-functions-defgeneric.lisp" c r)
