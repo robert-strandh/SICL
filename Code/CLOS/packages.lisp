@@ -17,6 +17,7 @@
    #:generic-function #:standard-generic-function
    #:method #:standard-method
    #:metaobject
+   #:specializer
    #:method-combination
    #:slot-definition
    #:direct-slot-definition
