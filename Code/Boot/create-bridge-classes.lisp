@@ -12,4 +12,5 @@
     (ld "../CLOS/real-class-defclass.lisp" c r)
     (ld "../CLOS/regular-class-defclass.lisp" c r)
     (ld "../CLOS/built-in-class-defclass.lisp" c r)
-    (ld "../CLOS/standard-class-defclass.lisp" c r)))
+    (ld "../CLOS/standard-class-defclass.lisp" c r)
+    (ld "../CLOS/funcallable-standard-class-defclass.lisp" c r)))
