@@ -6,6 +6,7 @@
     (ld "../CLOS/t-defclass.lisp" c r)
     (ld "../CLOS/standard-object-defclass.lisp" c r)
     (ld "../CLOS/metaobject-defclass.lisp" c r)
+    (ld "../CLOS/method-combination-defclass.lisp" c r)
     (ld "../CLOS/specializer-defclass.lisp" c r)
     (ld "../CLOS/class-defclass.lisp" c r)
     (ld "../CLOS/forward-referenced-class-defclass.lisp" c r)
