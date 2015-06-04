@@ -56,6 +56,12 @@
 	  (declare (ignore arguments))
 	  (sicl-genv:find-class 'sicl-clos:standard-reader-method (r1 boot)))))
 
+(defun define-writer-method-class (boot)
+  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class (r2 boot))
+	(lambda (&rest arguments)
+	  (declare (ignore arguments))
+	  (sicl-genv:find-class 'sicl-clos:standard-writer-method (r1 boot)))))
+
 (defun define-add-method (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:add-method (r2 boot))
 	(lambda (generic-function method)
@@ -72,6 +78,7 @@
     (define-ensure-generic-function boot)
     (define-default-superclasses boot)
     (define-reader-method-class boot)
+    (define-writer-method-class boot)
     (define-add-method boot)
     (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c r)))
 
