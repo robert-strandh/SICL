@@ -87,6 +87,7 @@
    #:print-object #:describe-object #:documentation
    #:make-method-lambda
    #:direct-slot-definition-class
+   #:effective-slot-definition-class
    #:reader-method-class #:writer-method-class
    #:validate-superclass
    ;; Other functions
