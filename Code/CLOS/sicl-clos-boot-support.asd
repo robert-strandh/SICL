@@ -70,6 +70,9 @@
    ;; SLOT-DEFINITION-LOCATION.
    (:file "slot-definition-location-defgeneric")
    ;; This file contains the definition of the generic function
+   ;; SLOT-DEFINITION-STORAGE.
+   (:file "slot-definition-storage-defgeneric")
+   ;; This file contains the definition of the generic function
    ;; SPECIALIZER-DIRECT-GENERIC-FUNCTIONS.
    (:file "specializer-direct-generic-functions-defgeneric")
    ;; This file contains the definition of the generic function
