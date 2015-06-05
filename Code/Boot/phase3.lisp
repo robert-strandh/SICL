@@ -11,4 +11,5 @@
     (export-to-host 'sicl-clos::compute-effective-slot-definition-default r)
     (export-to-host 'sicl-clos::compute-class-precedence-list-default r)
     (export-to-host 'sicl-clos::finalize-inheritance-default r)
-    (export-to-host 'sicl-clos::effective-slot-definition-class r)))
+    (export-to-host 'sicl-clos::effective-slot-definition-class r)
+    (ld "../CLOS/class-finalization-defmethods.lisp" c r)))
