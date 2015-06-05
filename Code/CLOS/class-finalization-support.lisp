@@ -300,8 +300,8 @@
   (setf (precedence-list class) (compute-class-precedence-list class))
   (let* ((effective-slots (compute-slots class))
 	 (slot-count
-	   (count-list :instance effective-slots
-		       :test #'eq :key #'slot-definition-allocation)))
+	   (count :instance effective-slots
+		  :test #'eq :key #'slot-definition-allocation)))
     (setf (instance-size class) (+ slot-count 2))
     (setf (class-slots class) effective-slots))
   (setf (class-default-initargs class) (compute-default-initargs class))
