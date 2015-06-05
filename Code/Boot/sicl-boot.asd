@@ -23,4 +23,5 @@
    (:file "create-bridge-classes")
    (:file "phase2")
    (:file "define-effective-slot-definition-class")
+   (:file "phase3")
    (:file "fill")))
