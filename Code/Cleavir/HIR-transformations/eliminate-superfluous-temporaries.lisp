@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-hir-transformations)
 
-(defun eleminate-superfluous-temporaries (initial-instruction)
+(defun eliminate-superfluous-temporaries (initial-instruction)
   ;; Make sure we are working with an up-to-date graph, both with
   ;; respect to instructions and with respect to data.
   (cleavir-ir:set-predecessors initial-instruction)
