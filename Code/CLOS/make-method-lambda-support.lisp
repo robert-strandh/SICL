@@ -65,7 +65,7 @@
 			(when (null ,next-methods)
 			  ;; FIXME: do this better.
 			  (error "no next method"))
-			(funcall (car ,next-methods)
+			(funcall (method-function (car ,next-methods))
 				 (or args ,args)
 				 (cdr ,next-methods))))
 		 (declare (ignorable #'next-method-p #'call-next-method))
