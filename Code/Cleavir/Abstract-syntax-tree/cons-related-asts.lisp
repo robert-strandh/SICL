@@ -7,7 +7,7 @@
 ;;; This AST is used to test whether its child AST computes an object
 ;;; of type CONS.  It can only occur as the test of an IF-AST.
 
-(defclass consp-ast (ast)
+(defclass consp-ast (ast boolean-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
 (defun make-consp-ast (object-ast)
