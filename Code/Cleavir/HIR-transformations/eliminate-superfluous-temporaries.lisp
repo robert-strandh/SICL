@@ -7,16 +7,15 @@
   (cleavir-ir:reinitialize-data initial-instruction)
   (let (;; This hash table contains ASSIGNMENT-INSTRUCTIONs that can
 	;; be eliminated because they assign to a superfluous
-	;; DYNAMIC-LEXICAL-LOCATION.
+	;; LEXICAL-LOCATION.
 	(superfluous-instructions (make-hash-table :test #'eq))
-	;; This hash table contains DYNAMICAL-LEXICAL-LOCATIONs each
-	;; of which is essential to keep because it is going to be
-	;; used in place of some superfluous
-	;; DYNAMICAL-LEXICAL-LOCATION.
+	;; This hash table contains LEXICAL-LOCATIONs each of which is
+	;; essential to keep because it is going to be used in place
+	;; of some superfluous LEXICAL-LOCATION.
 	(essential-locations (make-hash-table :test #'eq))
-	;; This hash table contains DYNAMICAL-LEXICAL-LOCATIONs each
-	;; of which is superfluous because it is being assigned to
-	;; from some essential DYNAMICAL-LEXICAL-LOCATION.
+	;; This hash table contains LEXICAL-LOCATIONs each of which is
+	;; superfluous because it is being assigned to from some
+	;; essential LEXICAL-LOCATION.
 	(superfluous-locations (make-hash-table :test #'eq)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
@@ -24,10 +23,10 @@
 			 'cleavir-ir:assignment-instruction)
 		  (let ((input (car (cleavir-ir:inputs instruction)))
 			(output (car (cleavir-ir:outputs instruction))))
-		    (and (typep input 'cleavir-ir:dynamic-lexical-location)
+		    (and (typep input 'cleavir-ir:lexical-location)
 			 (= (length (cleavir-ir:defining-instructions input)) 1)
 			 (not (gethash input superfluous-locations))
-			 (typep output 'cleavir-ir:dynamic-lexical-location)
+			 (typep output 'cleavir-ir:lexical-location)
 			 (= (length (cleavir-ir:using-instructions output)) 1)
 			 (not (gethash output essential-locations)))))
 	 (setf (gethash instruction superfluous-instructions) t)
@@ -44,4 +43,4 @@
 		 (cleavir-ir:delete-instruction instruction)))
 	     superfluous-instructions)
     ;; Return the number of instructions that were eliminated.
-    (hash-table-size superfluous-instructions)))
+    (hash-table-count superfluous-instructions)))
