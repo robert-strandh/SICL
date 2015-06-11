@@ -279,7 +279,7 @@
     (value-cell entry)))
 
 (defmethod sicl-genv:find-class (symbol (env simple-environment))
-  (cdr (assoc symbol (classes env) :test #'eq)))
+  (gethash symbol (classes env)))
 
 (defmethod sicl-genv:variable-unbound (symbol (env simple-environment))
   (declare (ignore symbol))
@@ -287,10 +287,7 @@
 
 (defmethod (setf sicl-genv:find-class)
     (new-class symbol (env simple-environment))
-  (let ((association (assoc symbol (classes env) :test #'eq)))
-    (if (null association)
-	(push (cons symbol new-class) (classes env))
-	(setf (cdr association) new-class)))
+  (setf (gethash symbol (classes env)) new-class)
   new-class)
 
 (defmethod sicl-genv:setf-expander (symbol (env simple-environment))
