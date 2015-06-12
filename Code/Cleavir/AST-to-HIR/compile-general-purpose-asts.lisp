@@ -154,18 +154,21 @@
 ;;; itself.  All the others are compiled in a context where no value is
 ;;; required, and with the code for the following form as a single
 ;;; successor.
+;;;
+;;; In the process of converting forms to ASTs, we make sure that
+;;; every PROGN-AST has at least one FORM-AST in it.  Otherwise a
+;;; different AST is generated instead.
 
 (defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
   (let ((form-asts (cleavir-ast:form-asts ast)))
-    (if (null form-asts)
-	(compile-ast (cleavir-ast:make-constant-ast nil) context)
-	(let ((next (compile-ast (car (last form-asts)) context)))
-	  (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
-		do (setf next (compile-ast sub-ast
-					   (context '()
-						    (list next)
-						    (invocation context)))))
-	  next))))
+    (assert (not (null form-asts)))
+    (let ((next (compile-ast (car (last form-asts)) context)))
+      (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
+	    do (setf next (compile-ast sub-ast
+				       (context '()
+						(list next)
+						(invocation context)))))
+      next)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
