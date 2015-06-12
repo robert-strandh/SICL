@@ -40,12 +40,7 @@
 
 ;;; When an AST that is meant for a test (as indicated by it being an
 ;;; instance of BOOLEAN-AST-MIXIN) is compiled in a context where one
-;;; or more values are needed, we generate two branches; one where NIL
-;;; is assigned to the first result and one where T is assigned to it
-;;; (remaining results are filled with NIL).  Then we compile the AST
-;;; in a context with the two branches and no result.  This way, we
-;;; can be sure that the primary methods for compiling all Boolean
-;;; ASTs are passed a context with two successors and no results.
+;;; or more values are needed, we signal an error.
 (defmethod compile-ast :around ((ast cleavir-ast:boolean-ast-mixin) context)
   (with-accessors ((results results)
 		   (successors successors)
@@ -53,22 +48,8 @@
       context
     (ecase (length successors)
       (1
-       (let* ((result (car results))
-	      (successor (nil-fill (cdr results) (car successors)))
-	      (true (cleavir-ir:make-constant-input T))
-	      (false (cleavir-ir:make-constant-input NIL))
-	      (true-branch (make-instance 'cleavir-ir:assignment-instruction
-			     :inputs (list true)
-			     :outputs (list result)
-			     :successors (list successor)))
-	      (false-branch (make-instance 'cleavir-ir:assignment-instruction
-			      :inputs (list false)
-			      :outputs (list result)
-			      :successors (list successor))))
-	 (call-next-method ast
-			   (context '()
-				    (list true-branch false-branch)
-				    invocation))))
+       ;; FIXME: Use a specific condition
+       (error "Boolean AST in a context requiring a value"))
       (2
        (call-next-method)))))
 
@@ -79,9 +60,10 @@
 ;;; This :AROUND method serves as an adapter for the compilation of
 ;;; ASTs that generate a single value.  If such an AST is compiled in
 ;;; a unfit context (i.e, a context other than one that has a single
-;;; successor and a single required value), this method creates a
-;;; perfect context for compiling that AST together with instructions
-;;; for satisfying the unfit context.
+;;; successor and a single required value), this method either creates
+;;; a perfect context for compiling that AST together with
+;;; instructions for satisfying the unfit context, or it signals an
+;;; error if appropriate.
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
   (with-accessors ((results results)
 		   (successors successors)
@@ -131,20 +113,9 @@
 					   (list successor)
 					   invocation))))))
       (2
-       ;; We have a context where a test of a Boolean is required.  We
-       ;; create a new context where the result is compared to NIL
-       ;; using EQ-INSTRUCTION, and compile the AST in that context
-       ;; instead.
-       (let* ((false (cleavir-ir:make-constant-input NIL))
-	      (temp (cleavir-ir:new-temporary))
-	      (successor (make-instance 'cleavir-ir:eq-instruction
-			   :inputs (list temp false)
-			   :outputs '()
-			   :successors (reverse successors))))
-	 (call-next-method ast
-			   (context (list temp)
-				    (list successor)
-				    (invocation context))))))))
+       ;; We have a context where a test of a Boolean is required.
+       ;; FIXME: Use a specific condition.
+       (error "AST generating value(s) found where a Boolean AST is required")))))
 
 (defun check-context-for-one-value-ast (context)
   (assert (and (= (length (results context)) 1)
