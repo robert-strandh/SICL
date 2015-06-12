@@ -221,7 +221,7 @@
 		    (gensym)
 		    (make-symbol (string-downcase supplied-p))))
 	 (lexical-supplied-p-ast (cleavir-ast:make-lexical-ast name2)))
-    (values (cleavir-ast:make-progn-ast
+    (values (process-progn
 	     (list (generate-initialization lexical-var-ast
 					    lexical-supplied-p-ast
 					    init-ast
