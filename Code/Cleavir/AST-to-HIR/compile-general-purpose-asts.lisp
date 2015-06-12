@@ -576,61 +576,20 @@
 ;;;
 ;;; Compile a TYPEQ-AST.
 
-(defun make-boolean (boolean result successor)
-  (cleavir-ir:make-assignment-instruction
-   (cleavir-ir:make-constant-input boolean)
-   result
-   successor))
-
 (defmethod compile-ast ((ast cleavir-ast:typeq-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (ecase (length successors)
-      (1 (if (null results)
-	     (progn (warn "test compiled in a context with no results")
-		    (car successors))
-	     (let* ((false (make-boolean nil (car results) (car successors)))
-		    (true (make-boolean t (car results) (car successors)))
-		    (temp (make-temp)))
-	       (compile-ast
-		(cleavir-ast:form-ast ast)
-		(context
-		 (list temp)
-		 (list
-		  (nil-fill
-		   (cdr results)
-		   (cleavir-ir:make-typeq-instruction
-		    temp
-		    (list false true)
-		    (cleavir-ast:type-specifier ast))))
-		 (invocation context))))))
-      (2 (if (null results)
-	     (let ((temp (make-temp)))
-	       (compile-ast
-		(cleavir-ast:form-ast ast)
-		(context
-		 (list temp)
-		 (list (cleavir-ir:make-typeq-instruction
-			temp
-			successors
-			(cleavir-ast:type-specifier ast)))
-		 (invocation context))))
-	     (let ((false (make-boolean nil (car results) (car successors)))
-		   (true (make-boolean t (car results) (cadr successors)))
-		   (temp (make-temp)))
-	       (compile-ast
-		(cleavir-ast:form-ast ast)
-		(context
-		 (list temp)
-		 (list
-		  (nil-fill
-		   (cdr results)
-		   (cleavir-ir:make-typeq-instruction
-		    temp
-		    (list false true)
-		    (cleavir-ast:type-specifier ast))))
-		 (invocation context)))))))))
+    (let ((temp (make-temp)))
+      (compile-ast
+       (cleavir-ast:form-ast ast)
+       (context
+	(list temp)
+	(list (cleavir-ir:make-typeq-instruction
+	       temp
+	       successors
+	       (cleavir-ast:type-specifier ast)))
+	(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
