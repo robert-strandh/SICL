@@ -2,7 +2,7 @@
 
 (defun ast-from-stream (stream environment system)
   (let ((*compiler* 'compile-file))
-    (cleavir-ast:make-progn-ast
+    (process-progn
      (let ((eof (list nil)))
        (loop for form = (read stream nil eof)
 	     until (eq form eof)
