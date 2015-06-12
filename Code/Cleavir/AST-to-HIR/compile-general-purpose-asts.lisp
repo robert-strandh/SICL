@@ -350,20 +350,7 @@
 		  (list (cleavir-ir:make-multiple-to-fixed-instruction
 			 values-temp results (first successors)))))))
 	 (2
-	  (let* ((temp (cleavir-ir:new-temporary))
-		 (values-temp (make-instance 'cleavir-ir:values-location))
-		 (false (cleavir-ir:make-constant-input nil)))
-	    (make-instance 'cleavir-ir:funcall-instruction
-	      :inputs temps
-	      :outputs (list values-temp)
-	      :successors
-	      (list (cleavir-ir:make-multiple-to-fixed-instruction
-		     values-temp
-		     (list temp)
-		     (make-instance 'cleavir-ir:eq-instruction
-		       :inputs (list temp false)
-		       :outputs '()
-		       :successors (reverse successors))))))))
+	  (error "CALL-AST appears in a Boolean context.")))
        (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
