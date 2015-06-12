@@ -179,14 +179,20 @@
 ;;; Converting IF.
 
 (defmethod convert-special ((symbol (eql 'if)) form env system)
-  (cleavir-ast:make-if-ast
-   (cleavir-ast:make-eq-ast
-    (convert (cadr form) env system)
-    (convert-constant nil env system))
-   (if (null (cdddr form))
-       (convert-constant nil env system)
-       (convert (cadddr form) env system))
-   (convert (caddr form) env system)))
+  (let ((test-ast (convert (second form) env system))
+	(true-ast (convert (third form) env system))
+	(false-ast (if (null (cdddr form))
+		       (convert-constant nil env system)
+		       (convert (fourth form) env system))))
+    (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
+	(cleavir-ast:make-if-ast
+	 test-ast
+	 true-ast
+	 false-ast)
+	(cleavir-ast:make-if-ast
+	 (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
+	 false-ast
+	 true-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
