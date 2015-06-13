@@ -656,6 +656,8 @@
     :ignore
     (let ((entry (function-ignore environment defining-info)))
       (if (null entry) nil (ignore entry)))
+    :inline (function-inline environment defining-info)
+    :ast (ast defining-info)
     ;; FIXME: add compiler-macro
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
