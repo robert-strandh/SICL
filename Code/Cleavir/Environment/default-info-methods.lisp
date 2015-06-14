@@ -589,8 +589,8 @@
 ;;; This method is called when the environment is the global
 ;;; environment.
 (defmethod function-inline (environment defining-info)
-  (declare (cl:ignorable environment defining-info))
-  nil)
+  (declare (cl:ignore environment))
+  (inline defining-info))
 
 ;;; This method is called when the entry is not related to the
 ;;; defining info instance. 
