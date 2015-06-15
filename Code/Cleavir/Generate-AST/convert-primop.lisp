@@ -2,6 +2,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:EQ.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:eq)) form env system)
+  (cleavir-ast:make-eq-ast
+   (convert (second form) env system)
+   (convert (third form) env system)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:TYPEQ.
 
 (defmethod convert-special
