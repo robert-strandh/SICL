@@ -3,6 +3,7 @@
 (defpackage #:cleavir-primop
   (:use)
   (:export
+   #:eq
    #:typeq
    #:consp
    #:car #:cdr #:rplaca #:rplacd
