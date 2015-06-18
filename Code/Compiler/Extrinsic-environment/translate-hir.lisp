@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
+(defclass fun (closer-mop:funcallable-standard-object)
+  ((%untied :initform nil :initarg :untied :accessor untied)
+   (%arg-forms :initform nil :initarg :arg-forms :accessor arg-forms))
+  (:metaclass closer-mop:funcallable-standard-class))
+
 ;;; The first argument to this function is an instruction that has a
 ;;; single successor.  Whether a GO is required at the end of this
 ;;; function is determined by the code layout algorithm.  
@@ -158,9 +163,13 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:enclose-instruction) inputs outputs)
   (declare (ignore inputs))
-  (let ((enter-instruction (cleavir-ir:code instruction)))
+  (let* ((enter-instruction (cleavir-ir:code instruction))
+	 (temp (gensym))
+	 (proc (layout-procedure enter-instruction)))
     `(setq ,(first outputs)
-	   ,(layout-procedure enter-instruction))))
+	   (let ((,temp (make-instance 'fun)))
+	     (closer-mop:set-funcallable-instance-function ,temp ,proc)
+	     ,temp))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:enter-instruction) inputs outputs)

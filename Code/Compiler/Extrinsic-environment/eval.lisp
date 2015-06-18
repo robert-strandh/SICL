@@ -4,6 +4,19 @@
 ;;;
 ;;; Main entry point.
 
+(defun tie (untied arg-forms environment1 environment2)
+  (let* ((args (loop for arg-form in arg-forms
+		     collect (cleavir-env:eval
+			      arg-form environment1 environment2)))
+	 (result (apply untied args)))
+    (if (typep result 'fun)
+	(let ((tied (make-instance 'fun)))
+	  (setf (untied tied) untied)
+	  (setf (arg-forms tied) arg-forms)
+	  (closer-mop:set-funcallable-instance-function tied result)
+	  tied)
+	result)))
+
 (defmethod cleavir-env:eval (form environment1 (environment2 environment))
   (cond ((and (consp form)
 	      (consp (cdr form))
@@ -74,9 +87,6 @@
 		(hir (cleavir-ast-to-hir:compile-toplevel ast-bis))
 		(ignore (cleavir-hir-transformations:eliminate-typeq hir))
 		(lambda-expr (translate hir environment2))
-		(fun (compile nil lambda-expr))
-		(args (loop for arg in (cleavir-ir:forms hir)
-			    collect (cleavir-env:eval
-				     arg environment1 environment2))))
+		(fun (compile nil lambda-expr)))
 	   (declare (ignore ignore))
-	   (apply fun args)))))
+	   (tie fun (cleavir-ir:forms hir) environment1 environment2)))))
