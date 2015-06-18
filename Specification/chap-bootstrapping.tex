@@ -144,15 +144,15 @@ including:
 
 \begin{definition}
 A \emph{host class} is a class in the host system.  If it is an
-instance of the host class \texttt{host:standard-class}, then
-it is typically created by \texttt{host:defclass}.
+instance of the host class \texttt{standard-class}, then it is
+typically created by the host macro \texttt{defclass}.
 \end{definition}
 
 \begin{definition}
 A \emph{host instance} is an instance of a host class.  If it is an
-instance of the class \texttt{host:standard-object}, then it is
-typically created by a call to \texttt{host:make-instance} using a
-host class or the name of a host class.
+instance of the host class \texttt{standard-object}, then it is
+typically created by a call to the host function
+\texttt{make-instance} using a host class or the name of a host class.
 \end{definition}
 
 \begin{definition}
@@ -179,31 +179,32 @@ not an ersatz class, but a bridge class.
 \end{definition}
 
 \begin{definition}
-A \emph{host generic function} is a generic function created by
-\texttt{host:defgeneric}, so it is a host instance of the host class
-\texttt{host:generic-function}.  Arguments to the discriminating
-function of such a generic function are host instances.
-\texttt{host:class-of} is called on some required arguments in order
-to determine what methods to call.
+A \emph{host generic function} is a generic function created by the
+host macro \texttt{defgeneric}, so it is a host instance of the host
+class \texttt{generic-function}.  Arguments to the discriminating
+function of such a generic function are host instances.  The host
+function \texttt{class-of} is called on some required arguments in
+order to determine what methods to call.
 \end{definition}
 
 \begin{definition}
-A \emph{host method} is a method created by \texttt{host:defmethod},
-so it is a host instance of the host class \texttt{host:method}.  The
-class specializers of such a method are host classes.
+A \emph{host method} is a method created by the host macro
+\texttt{defmethod}, so it is a host instance of the host class
+\texttt{method}.  The class specializers of such a method are host
+classes.
 \end{definition}
 
 \begin{definition}
 An \emph{ersatz generic function} is an instance of the ersatz class
-\texttt{target:generic-function}.  An ersatz generic function can not
-be executed.  It can only be translated into a target generic function.
-The methods on an ersatz generic function are ersatz methods. 
+\texttt{generic-function}.  An ersatz generic function can not be
+executed.  It can only be translated into a target generic function.
+The methods on an ersatz generic function are ersatz methods.
 \end{definition}
 
 \begin{definition}
 An \emph{ersatz method} is an instance of the ersatz class
-\texttt{target:method}.  The class specializers of such a method are
-ersatz classes.
+\texttt{method}.  The class specializers of such a method are ersatz
+classes.
 \end{definition}
 
 \begin{definition}

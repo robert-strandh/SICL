@@ -1,4 +1,4 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
 ;;;; In the Cleavir intermediate representation, an AST representing a
 ;;;; top-level form is compiled into FLOWCHART.  A flowchart is a
@@ -79,7 +79,7 @@
 ;;;; independent, whereas P will share code with some ancestor of its
 ;;;; parent.
 
-(asdf:defsystem :cleavir-ir
+(defsystem :cleavir-ir
   :depends-on (:cleavir-meter)
   :serial t
   :components

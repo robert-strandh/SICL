@@ -12,4 +12,5 @@
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
    (:file "segregate-lexicals")
+   (:file "eliminate-superfluous-temporaries")
    (:file "hir-transformations")))

@@ -152,7 +152,7 @@
 		(length (cleavir-ast:lambda-list ast))))
 	;; We can inline the call.
 	(let ((clone (cleavir-ast-transformations:clone-ast ast)))
-	  (cleavir-ast:make-progn-ast
+	  (process-progn
 	   (append
 	    (loop with ll = (cleavir-ast:lambda-list clone)
 		  for parameter in ll

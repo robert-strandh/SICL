@@ -20,10 +20,9 @@
 (defmethod convert-special
     ((symbol (eql 'block)) form env system)
   (let* ((ast (cleavir-ast:make-block-ast nil))
-	 (new-env (cleavir-env:add-block env (cadr form) ast))
-	 (forms (convert-sequence (cddr form) new-env system)))
+	 (new-env (cleavir-env:add-block env (cadr form) ast)))
     (setf (cleavir-ast:body-ast ast)
-	  (cleavir-ast:make-progn-ast forms))
+	  (process-progn (convert-sequence (cddr form) new-env system)))
     ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,7 +38,7 @@
 	      (not *current-form-is-top-level-p*))
 	  (if (or (member :execute situations)
 		  (member 'eval situations))
-	      (cleavir-ast:make-progn-ast
+	      (process-progn
 	       (convert-sequence (cddr form) environment system))
 	      (convert nil environment system))
 	  (cond ((or (and (or (member :compile-toplevel situations)
@@ -113,7 +112,7 @@
 		 (reduce #'append (mapcar #'cdr declarations)))))
 	  (setf new-env (augment-environment-with-declarations
 			 new-env canonicalized-dspecs)))
-	(cleavir-ast:make-progn-ast
+	(process-progn
 	 (append init-asts (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -179,14 +178,20 @@
 ;;; Converting IF.
 
 (defmethod convert-special ((symbol (eql 'if)) form env system)
-  (cleavir-ast:make-if-ast
-   (cleavir-ast:make-eq-ast
-    (convert (cadr form) env system)
-    (convert-constant nil env system))
-   (if (null (cdddr form))
-       (convert-constant nil env system)
-       (convert (cadddr form) env system))
-   (convert (caddr form) env system)))
+  (let ((test-ast (convert (second form) env system))
+	(true-ast (convert (third form) env system))
+	(false-ast (if (null (cdddr form))
+		       (convert-constant nil env system)
+		       (convert (fourth form) env system))))
+    (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
+	(cleavir-ast:make-if-ast
+	 test-ast
+	 true-ast
+	 false-ast)
+	(cleavir-ast:make-if-ast
+	 (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
+	 false-ast
+	 true-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -214,7 +219,7 @@
 		 (reduce #'append (mapcar #'cdr declarations)))))
 	  (setf new-env (augment-environment-with-declarations
 			 new-env canonicalized-dspecs)))
-	(cleavir-ast:make-progn-ast
+	(process-progn
 	 (append init-asts (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -254,7 +259,7 @@
       ;; We ran out of bindings.  We must build an AST for the body of
       ;; the function.
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
-	(cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
+	(process-progn (convert-sequence forms new-env system)))
       (destructuring-bind (var . lexical-ast) (first bindings)
 	(let* (;; We enter the new variable into the environment and
 	       ;; then we process remaining parameters and ultimately
@@ -298,7 +303,7 @@
 	    (itemize-declaration-specifiers
 	     (mapcar #'list variables)
 	     canonical-dspecs)
-	  (cleavir-ast:make-progn-ast
+	  (process-progn
 	   (append init-asts
 		   (list (process-remaining-let-bindings
 			  (mapcar #'cons variables temp-asts)
@@ -323,7 +328,7 @@
       ;; We ran out of bindings.  We must build an AST for the body of
       ;; the function.
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
-	(cleavir-ast:make-progn-ast (convert-sequence forms new-env system)))
+	(process-progn (convert-sequence forms new-env system)))
       (destructuring-bind (var . init-form) (first bindings)
 	(let* (;; We enter the new variable into the environment and
 	       ;; then we process remaining parameters and ultimately
@@ -400,7 +405,7 @@
       (let ((new-env (augment-environment-with-declarations
 		      env canonicalized-dspecs)))
 	(with-preserved-toplevel-ness
-	  (cleavir-ast:make-progn-ast
+	  (process-progn
 	   (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -433,7 +438,7 @@
 (defmethod convert-special
     ((head (eql 'progn)) form environment system)
   (with-preserved-toplevel-ness
-    (cleavir-ast:make-progn-ast
+    (process-progn
      (convert-sequence (cdr form) environment system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -465,7 +470,7 @@
 
 (defmethod convert-setq
     ((info cleavir-env:lexical-variable-info) form env system)
-  (cleavir-ast:make-progn-ast 
+  (process-progn 
    (list (cleavir-ast:make-setq-ast
 	  (cleavir-env:identity info)
 	  (convert form env system))
@@ -488,7 +493,7 @@
     (info form-ast global-env system)
   (declare (ignore system))
   (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
-    (cleavir-ast:make-progn-ast
+    (process-progn
      (list (cleavir-ast:make-setq-ast temp form-ast)
 	   (cleavir-ast:make-set-symbol-value-ast
 	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info))
@@ -514,7 +519,7 @@
   (let ((form-asts (loop for (var form) on (cdr form) by #'cddr
 			 collect (convert-elementary-setq
 				  var form environment system))))
-    (cleavir-ast:make-progn-ast form-asts)))
+    (process-progn form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -552,7 +557,7 @@
 		       collect (if (symbolp item)
 				   (pop tag-asts)
 				   (convert item new-env system)))))
-      (cleavir-ast:make-progn-ast
+      (process-progn
        (list (cleavir-ast:make-tagbody-ast items)
 	     (convert-constant nil env system))))))
 

@@ -9,6 +9,9 @@
 ;;; cloned.  Otherwise, the return value of FUNCTION is a node that
 ;;; should replace N in the copy.
 
+(defun reinitialize (instance keyword replacement)
+  (reinitialize-instance instance keyword replacement))
+
 (defun replace-ast (ast function)
   (let ((dictionary (make-hash-table :test #'eq)))
     (cleavir-ast:map-ast-depth-first-preorder
@@ -23,5 +26,5 @@
 	     for value = (funcall reader node)
 	     for replacement = (gethash value dictionary)
 	     unless (null replacement)
-	       do (reinitialize-instance node keyword replacement)))
+	       do (reinitialize node keyword replacement)))
      ast)))

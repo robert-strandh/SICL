@@ -40,12 +40,7 @@
 
 ;;; When an AST that is meant for a test (as indicated by it being an
 ;;; instance of BOOLEAN-AST-MIXIN) is compiled in a context where one
-;;; or more values are needed, we generate two branches; one where NIL
-;;; is assigned to the first result and one where T is assigned to it
-;;; (remaining results are filled with NIL).  Then we compile the AST
-;;; in a context with the two branches and no result.  This way, we
-;;; can be sure that the primary methods for compiling all Boolean
-;;; ASTs are passed a context with two successors and no results.
+;;; or more values are needed, we signal an error.
 (defmethod compile-ast :around ((ast cleavir-ast:boolean-ast-mixin) context)
   (with-accessors ((results results)
 		   (successors successors)
@@ -53,22 +48,8 @@
       context
     (ecase (length successors)
       (1
-       (let* ((result (car results))
-	      (successor (nil-fill (cdr results) (car successors)))
-	      (true (cleavir-ir:make-constant-input T))
-	      (false (cleavir-ir:make-constant-input NIL))
-	      (true-branch (make-instance 'cleavir-ir:assignment-instruction
-			     :inputs (list true)
-			     :outputs (list result)
-			     :successors (list successor)))
-	      (false-branch (make-instance 'cleavir-ir:assignment-instruction
-			      :inputs (list false)
-			      :outputs (list result)
-			      :successors (list successor))))
-	 (call-next-method ast
-			   (context '()
-				    (list true-branch false-branch)
-				    invocation))))
+       ;; FIXME: Use a specific condition
+       (error "Boolean AST in a context requiring a value"))
       (2
        (call-next-method)))))
 
@@ -79,9 +60,10 @@
 ;;; This :AROUND method serves as an adapter for the compilation of
 ;;; ASTs that generate a single value.  If such an AST is compiled in
 ;;; a unfit context (i.e, a context other than one that has a single
-;;; successor and a single required value), this method creates a
-;;; perfect context for compiling that AST together with instructions
-;;; for satisfying the unfit context.
+;;; successor and a single required value), this method either creates
+;;; a perfect context for compiling that AST together with
+;;; instructions for satisfying the unfit context, or it signals an
+;;; error if appropriate.
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
   (with-accessors ((results results)
 		   (successors successors)
@@ -131,20 +113,9 @@
 					   (list successor)
 					   invocation))))))
       (2
-       ;; We have a context where a test of a Boolean is required.  We
-       ;; create a new context where the result is compared to NIL
-       ;; using EQ-INSTRUCTION, and compile the AST in that context
-       ;; instead.
-       (let* ((false (cleavir-ir:make-constant-input NIL))
-	      (temp (cleavir-ir:new-temporary))
-	      (successor (make-instance 'cleavir-ir:eq-instruction
-			   :inputs (list temp false)
-			   :outputs '()
-			   :successors (reverse successors))))
-	 (call-next-method ast
-			   (context (list temp)
-				    (list successor)
-				    (invocation context))))))))
+       ;; We have a context where a test of a Boolean is required.
+       ;; FIXME: Use a specific condition.
+       (error "AST generating value(s) found where a Boolean AST is required")))))
 
 (defun check-context-for-one-value-ast (context)
   (assert (and (= (length (results context)) 1)
@@ -183,18 +154,21 @@
 ;;; itself.  All the others are compiled in a context where no value is
 ;;; required, and with the code for the following form as a single
 ;;; successor.
+;;;
+;;; In the process of converting forms to ASTs, we make sure that
+;;; every PROGN-AST has at least one FORM-AST in it.  Otherwise a
+;;; different AST is generated instead.
 
 (defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
   (let ((form-asts (cleavir-ast:form-asts ast)))
-    (if (null form-asts)
-	(compile-ast (cleavir-ast:make-constant-ast nil) context)
-	(let ((next (compile-ast (car (last form-asts)) context)))
-	  (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
-		do (setf next (compile-ast sub-ast
-					   (context '()
-						    (list next)
-						    (invocation context)))))
-	  next))))
+    (assert (not (null form-asts)))
+    (let ((next (compile-ast (car (last form-asts)) context)))
+      (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
+	    do (setf next (compile-ast sub-ast
+				       (context '()
+						(list next)
+						(invocation context)))))
+      next)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -376,20 +350,7 @@
 		  (list (cleavir-ir:make-multiple-to-fixed-instruction
 			 values-temp results (first successors)))))))
 	 (2
-	  (let* ((temp (cleavir-ir:new-temporary))
-		 (values-temp (make-instance 'cleavir-ir:values-location))
-		 (false (cleavir-ir:make-constant-input nil)))
-	    (make-instance 'cleavir-ir:funcall-instruction
-	      :inputs temps
-	      :outputs (list values-temp)
-	      :successors
-	      (list (cleavir-ir:make-multiple-to-fixed-instruction
-		     values-temp
-		     (list temp)
-		     (make-instance 'cleavir-ir:eq-instruction
-		       :inputs (list temp false)
-		       :outputs '()
-		       :successors (reverse successors))))))))
+	  (error "CALL-AST appears in a Boolean context.")))
        (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -615,61 +576,20 @@
 ;;;
 ;;; Compile a TYPEQ-AST.
 
-(defun make-boolean (boolean result successor)
-  (cleavir-ir:make-assignment-instruction
-   (cleavir-ir:make-constant-input boolean)
-   result
-   successor))
-
 (defmethod compile-ast ((ast cleavir-ast:typeq-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (ecase (length successors)
-      (1 (if (null results)
-	     (progn (warn "test compiled in a context with no results")
-		    (car successors))
-	     (let* ((false (make-boolean nil (car results) (car successors)))
-		    (true (make-boolean t (car results) (car successors)))
-		    (temp (make-temp)))
-	       (compile-ast
-		(cleavir-ast:form-ast ast)
-		(context
-		 (list temp)
-		 (list
-		  (nil-fill
-		   (cdr results)
-		   (cleavir-ir:make-typeq-instruction
-		    temp
-		    (list false true)
-		    (cleavir-ast:type-specifier ast))))
-		 (invocation context))))))
-      (2 (if (null results)
-	     (let ((temp (make-temp)))
-	       (compile-ast
-		(cleavir-ast:form-ast ast)
-		(context
-		 (list temp)
-		 (list (cleavir-ir:make-typeq-instruction
-			temp
-			successors
-			(cleavir-ast:type-specifier ast)))
-		 (invocation context))))
-	     (let ((false (make-boolean nil (car results) (car successors)))
-		   (true (make-boolean t (car results) (cadr successors)))
-		   (temp (make-temp)))
-	       (compile-ast
-		(cleavir-ast:form-ast ast)
-		(context
-		 (list temp)
-		 (list
-		  (nil-fill
-		   (cdr results)
-		   (cleavir-ir:make-typeq-instruction
-		    temp
-		    (list false true)
-		    (cleavir-ast:type-specifier ast))))
-		 (invocation context)))))))))
+    (let ((temp (make-temp)))
+      (compile-ast
+       (cleavir-ast:form-ast ast)
+       (context
+	(list temp)
+	(list (cleavir-ir:make-typeq-instruction
+	       temp
+	       successors
+	       (cleavir-ast:type-specifier ast)))
+	(invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -758,23 +678,6 @@
       context
     (cleavir-ir:make-assignment-instruction
      (cleavir-ir:make-immediate-input (cleavir-ast:value ast))
-     (first results)
-     (first successors))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a CONSTANT-AST.
-;;;
-;;; The CONSTANT-AST is a subclass of ONE-VALUE-AST-MIXIN, so the
-;;; :AROUND method on COMPILE-AST has adapted the context so that it
-;;; has a single result.
-
-(defmethod compile-ast ((ast cleavir-ast:constant-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (cleavir-ir:make-assignment-instruction
-     (cleavir-ir:make-constant-input (cleavir-ast:value ast))
      (first results)
      (first successors))))
 

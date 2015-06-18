@@ -43,9 +43,9 @@
    (%unbound :initform (list nil) :reader unbound)
    ;; The package namespace.  A list of packages.
    (%packages :initform '() :accessor packages)
-   ;; The class namespace.  An association list mapping names to
+   ;; The class namespace.  An #'EQ hash table mapping names to
    ;; classes.
-   (%classes :initform '() :accessor classes)
+   (%classes :initform (make-hash-table :test #'eq) :accessor classes)
    ;; This slot holds an association list, mapping symbols to
    ;; type-expander functions.
    (%type-expanders :initform '() :accessor type-expanders)

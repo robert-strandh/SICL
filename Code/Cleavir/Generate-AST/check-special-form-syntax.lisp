@@ -311,3 +311,11 @@
 (defmethod check-special-form-syntax ((head (eql 'cleavir-primop:rplacd)) form)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking CONSP.
+
+(defmethod check-special-form-syntax ((head (eql 'cleavir-primop:consp)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 1))

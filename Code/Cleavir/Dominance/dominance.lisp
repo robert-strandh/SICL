@@ -1,4 +1,4 @@
-(in-package #:cleavir-dominance)
+(cl:in-package #:cleavir-dominance)
 
 ;;;; Recall that a node A is said to DOMINATE a node B if and only if
 ;;;; every path from the start node to B includes A.  The dominance

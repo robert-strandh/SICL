@@ -10,4 +10,5 @@
    #:compute-ownerships
    #:segregate-lexicals
    #:hir-transformations
-   #:introduce-intermediate))
+   #:introduce-intermediate
+   #:eliminate-superfluous-temporaries))

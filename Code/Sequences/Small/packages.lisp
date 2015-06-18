@@ -9,7 +9,7 @@
     (:use #:common-lisp
 	  #:sicl-additional-types
 	  #:sicl-additional-conditions
-	  #:sicl-code-utilities)
+	  #:cleavir-code-utilities)
   (:shadow . #1=(#:find #:find-if #:find-if-not
                  #:position #:position-if #:position-if-not
                  #:length #:subseq

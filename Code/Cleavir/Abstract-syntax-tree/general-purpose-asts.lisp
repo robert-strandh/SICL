@@ -541,11 +541,10 @@
 ;;; This AST can be thought of as a translation to an AST of a
 ;;; hypothetical special form (TYPEQ <form> <type-specifier>) which is
 ;;; like the function TYPEP, except that the type specifier is not
-;;; evaluated.  
+;;; evaluated.
 ;;;
-;;; Like a call to the function TYPEP, the value of this AST is a
-;;; generalized Boolean that is TRUE if and only if <form> is of type
-;;; <type-specifier>.
+;;; However, this AST can only occur in the conditional position of an
+;;; IF-AST.
 ;;;
 ;;; Implementations that interpret the special form (THE <type>
 ;;; <form>) as an error if <form> is not of type <type> might generate
@@ -564,7 +563,7 @@
 ;;; value of the TYPEQ-AST, then no runtime test is required.  If not,
 ;;; then a call to TYPEP is generated instead. 
 
-(defclass typeq-ast (ast)
+(defclass typeq-ast (ast boolean-ast-mixin)
   (;; This slot contains the type specifier as an S-expression.  When
    ;; this AST is compiled to HIR, the contents of this slot will be
    ;; transmitted to the TYPEQ-INSTRUCTION so that it can be used by

@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-liveness
+(defsystem :cleavir-liveness
   :depends-on (:cleavir-utilities)
   :components
   ((:file "packages")

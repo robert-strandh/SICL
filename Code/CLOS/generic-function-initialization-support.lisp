@@ -1,4 +1,4 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 (defun check-argument-precedence-order
     (argument-precedence-order required-parameters)

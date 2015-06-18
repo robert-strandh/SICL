@@ -15,6 +15,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Turn a list of ASTs into either a PROGN-AST or a
+;;; LOAD-TIME-VALUE-AST containing NIL in case the list of ASTs is
+;;; NIL.
+
+(defun process-progn (asts)
+  (if (null asts)
+      (cleavir-ast:make-load-time-value-ast 'nil t)
+      (cleavir-ast:make-progn-ast asts)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; CONVERT-CONSTANT is called when a constant is found, either in the
 ;;; form of a literal or in the form of a constant variable.
 ;;;
@@ -210,7 +221,7 @@
 		    (gensym)
 		    (make-symbol (string-downcase supplied-p))))
 	 (lexical-supplied-p-ast (cleavir-ast:make-lexical-ast name2)))
-    (values (cleavir-ast:make-progn-ast
+    (values (process-progn
 	     (list (generate-initialization lexical-var-ast
 					    lexical-supplied-p-ast
 					    init-ast

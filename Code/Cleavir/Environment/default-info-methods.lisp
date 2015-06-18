@@ -589,8 +589,8 @@
 ;;; This method is called when the environment is the global
 ;;; environment.
 (defmethod function-inline (environment defining-info)
-  (declare (cl:ignorable environment defining-info))
-  nil)
+  (declare (cl:ignore environment))
+  (inline defining-info))
 
 ;;; This method is called when the entry is not related to the
 ;;; defining info instance. 
@@ -656,6 +656,8 @@
     :ignore
     (let ((entry (function-ignore environment defining-info)))
       (if (null entry) nil (ignore entry)))
+    :inline (function-inline environment defining-info)
+    :ast (ast defining-info)
     ;; FIXME: add compiler-macro
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
