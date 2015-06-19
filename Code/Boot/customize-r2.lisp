@@ -25,7 +25,7 @@
 		     (class-name (sicl-genv:find-class 'class (r1 boot)))
 		     type)))))
 
-(defun define-ensure-generic-function (boot)
+(defun define-ensure-generic-function-r2 (boot)
   (setf (sicl-genv:fdefinition 'ensure-generic-function (r2 boot))
 	(lambda (function-name &rest arguments)
 	  (declare (ignore arguments))
@@ -76,7 +76,7 @@
     (define-find-class boot)
     (define-validate-superclass boot)
     (define-typep boot)
-    (define-ensure-generic-function boot)
+    (define-ensure-generic-function-r2 boot)
     (define-default-superclasses boot)
     (define-reader-method-class boot)
     (define-writer-method-class boot)
