@@ -70,6 +70,7 @@
 (defun customize-r2 (boot)
   (let ((c (c1 boot))
 	(r (r2 boot)))
+    (message "Customizing run-time environment R2~%")
     (define-make-instance boot)
     (define-direct-slot-definition-class boot)
     (define-find-class boot)
@@ -80,6 +81,7 @@
     (define-reader-method-class boot)
     (define-writer-method-class boot)
     (define-add-method boot)
-    (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c r)))
+    (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c r)
+    (message "Finished customizing run-time environment R2~%")))
 
 ;;  LocalWords:  metaobject
