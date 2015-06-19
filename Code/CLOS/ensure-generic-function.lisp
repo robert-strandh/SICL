@@ -9,7 +9,7 @@
 (defun ensure-generic-function
     (name
      &rest keys
-     &key (environment sicl-env:*global-environment*)
+     &key (environment (sicl-genv:global-environment))
      &allow-other-keys)
   (let ((generic-function
 	  (if (sicl-environment:fboundp name environment)
