@@ -28,6 +28,8 @@
 	     (setf (sicl-genv:fdefinition ',(second form) ,(r3 boot)) gf)))))
 
 (defun customize-c2 (boot)
-  (define-defgeneric boot))
+  (message "Customizing compilation environment C2~%")
+  (define-defgeneric boot)
+  (message "Finished customizing compilation environment C2~%"))
 
 ;;  LocalWords:  accessors
