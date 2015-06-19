@@ -2,6 +2,7 @@
 
 (defun fill-boot (boot)
   (customize-c1 boot)
+  (customize-r1 boot)
   (phase1 boot)
   (customize-r2 boot)
   (customize-c2 boot)
