@@ -9,6 +9,7 @@
 		(sicl-genv:fdefinition function-name (r1 boot))
 		(setf (sicl-genv:fdefinition function-name (r1 boot))
 		      (apply #'make-instance 'standard-generic-function
+			     :name function-name
 			     args)))))))
 
 (defun customize-r1 (boot)
