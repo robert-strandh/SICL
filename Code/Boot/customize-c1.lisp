@@ -25,6 +25,9 @@
 			(sicl-genv:fdefinition ',(second form) ,(r1 boot)))))))
 
 (defun customize-c1 (boot)
-  (message "Customizing compilation environment C1~%")
-  (define-defgeneric-c1 boot)
-  (message "Finished customizing compilation environment C1~%"))
+  (let ((c (c1 boot)))
+    (message "Customizing compilation environment C1~%")
+    (define-defgeneric-c1 boot)
+    (ld "../CLOS/make-method-lambda-support.lisp" c c)
+    (ld "../CLOS/make-method-lambda-defuns.lisp" c c)
+    (message "Finished customizing compilation environment C1~%")))
