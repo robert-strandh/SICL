@@ -32,4 +32,6 @@
     (ld "../CLOS/make-method-lambda-support.lisp" c c)
     (ld "../CLOS/make-method-lambda-defuns.lisp" c c)
     (ld "../CLOS/ensure-method.lisp" c r)
+    (define-generic-function-method-class c)
+    (define-generic-function-method-class r)
     (message "Finished customizing compilation environment C1~%")))
