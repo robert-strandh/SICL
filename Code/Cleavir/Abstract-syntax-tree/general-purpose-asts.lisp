@@ -21,10 +21,11 @@
 ;;;
 ;;; Class AST.  The base class for all AST classes.
 ;;;
-;;; SOURCE-INFO
+;;; ORIGIN is a client-supplied object that is not interpreted by
+;;; Cleavir.
 
 (defclass ast ()
-  ((%source-info :initform nil :initarg source-info :accessor source-info)))
+  ((%origin :initform nil :initarg origin :accessor origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
