@@ -35,13 +35,15 @@
 
 ;;; Data structure for source tracking.
 (defclass source-location ()
-  ((%location :initarg :location :reader location)
+  ((%expression :initarg :expression :reader expression)
+   (%location :initarg :location :reader location)
    (%children :initarg :children :reader children)))
 
 (defun build-source-info (source-info expression)
   (let ((location (begin-source source-info expression)))
     (unless (null location)
       (make-instance 'source-location
+	:expression expression
 	:location location
 	:children
 	(if (atom expression)
