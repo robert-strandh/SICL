@@ -31,7 +31,15 @@
 
 (defgeneric begin-source (source-info expression))
 
+(defmethod begin-source (source-info expression)
+  (declare (ignore source-info expression))
+  nil)
+
 (defgeneric end-source (source-info))
+
+(defmethod end-source (source-info)
+  (declare (ignore source-info))
+  nil)
 
 ;;; Data structure for source tracking.
 (defclass source-location ()
