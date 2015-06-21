@@ -57,7 +57,7 @@
 	(if (atom expression)
 	    '()
 	    (let ((result '()))
-	      (loop for sub-expressions = (rest expression)
+	      (loop for sub-expressions = expression
 		      then (rest sub-expressions)
 		    while (consp sub-expressions)
 		    do (push (build-source-info source-info (first sub-expressions))
