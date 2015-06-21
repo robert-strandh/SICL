@@ -6,6 +6,7 @@
   (:export
    #:ast #:children
    #:source-info
+   #:origin
    #:boolean-ast-mixin
    #:no-value-ast-mixin
    #:one-value-ast-mixin
