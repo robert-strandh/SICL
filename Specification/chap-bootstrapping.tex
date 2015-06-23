@@ -252,16 +252,6 @@ compile-time environments $C_1$, $C_2$, etc., and the different
 run-time environments $R_1$, $R_2$, etc.  The global host environment
 is called $H$.
 
-\subsubsection{Phase 0}
-
-We start by creating a \sysname{} global environment that will be the
-start-up environment for the compiler, the evaluation environment
-during compilation, and the global part of the compilation environment
-during compilation.  Call this environment $E_0$.  It contains
-definitions of all standard \commonlisp{} macros that are needed
-during phase~1 of bootstrapping, as well as support code required to
-expand these macros.
-
 \subsubsection{Phase 1}
 
 The purpose of phase~1 is to create a hierarchy of host standard
