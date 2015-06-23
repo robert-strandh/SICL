@@ -11,7 +11,6 @@
    (:file "load")
    (:file "export-to-host")
    (:file "customize-c1")
-   (:file "customize-r1")
    (:file "define-make-instance-defun")
    (:file "define-class-prototype-defun")
    (:file "define-generic-function-method-class-defun")
