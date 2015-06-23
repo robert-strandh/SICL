@@ -25,16 +25,23 @@
 		     (class-name (sicl-genv:find-class 'class (r1 boot)))
 		     type)))))
 
+;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
+;;; run-time environment R2.  This version checks whether there is
+;;; already a function named FUNCTION-NAME in R2.  If so that function
+;;; is returned, and it is assumed to be a generic function.  If not,
+;;; an instance of the host class STANDARD-GENERIC-FUNCTION is created
+;;; and associated with FUNCTION-NAME in R2.
 (defun define-ensure-generic-function-r2 (boot)
   (setf (sicl-genv:fdefinition 'ensure-generic-function (r2 boot))
 	(lambda (function-name &rest arguments)
-	  (declare (ignore arguments))
-	  (assert (sicl-genv:fboundp function-name (r3 boot)))
-	  (let ((result (sicl-genv:fdefinition function-name (r3 boot))))
-	    (assert (eq (class-of result)
-			(sicl-genv:find-class 'standard-generic-function
-					      (r1 boot))))
-	    result))))
+	  (let ((args (copy-list arguments)))
+	    (loop while (remf args :environment))
+	    (if (sicl-genv:fboundp function-name (r2 boot))
+		(sicl-genv:fdefinition function-name (r2 boot))
+		(setf (sicl-genv:fdefinition function-name (r2 boot))
+		      (apply #'make-instance 'standard-generic-function
+			     :name function-name
+			     args)))))))
 
 (defun define-default-superclasses (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses (r2 boot))
