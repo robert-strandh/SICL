@@ -296,6 +296,18 @@ Several adaptations are necessary in order to accomplish phase~1:
   there is an existing generic function,
   \texttt{ensure-generic-function} makes no checks that the parameters
   of that function agree with its arguments.
+\item The function \texttt{ensure-class} has a special version in
+  $R_1$.  Before calling the host function \texttt{make-instance}, it
+  removes the \texttt{:readers} and \texttt{:writers} entries from the
+  canonicalized slot specifications in the \texttt{:direct-slots}
+  keyword argument.  The result is that the class will be created
+  without any slot accessors.  We must do it this way to avoid that
+  the class-initialization protocol of the host create these accessors
+  in the host global environment $H$.  Instead, \texttt{ensure-class}
+  will create instances of the host class \texttt{standard-method}
+  using a function that call the host functions \texttt{slot-value}
+  and \texttt{(setf slot-value)} and it will add these methods to the
+  appropriate generic function found in $R_2$.
 \end{itemize}
 
 Phase~1 is divided into two steps:
