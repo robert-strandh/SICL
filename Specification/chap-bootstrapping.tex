@@ -234,21 +234,7 @@ ordinary host function.
 
 Before bootstrapping can start, a certain number of \asdf{} systems
 must be loaded, and in particular the system called
-\texttt{sicl-clos-boot-support}.  This system compiles and loads
-\texttt{defgeneric} forms of standard metaobject readers \emph{except}
-those that have names in the \texttt{common-lisp} package.  The
-purpose of defining those readers prior to bootstrapping is so that
-these functions already exist when the environments for bootstrapping
-are created, and so that they consequently get imported into those
-environments automatically.  A single reader%
-\fixme{Check that there is only this one}
-has a name in the \texttt{common-lisp} package, namely
-\texttt{class-name} and it already exists in the host environment, so
-there is no need to create it.
-
-These metaobject readers are ordinary host generic functions, so they
-are specialized to host classes, and they take arguments that are
-instances of host classes.
+\texttt{sicl-clos-boot-support}.
 
 \subsubsection{Phase 0}
 
