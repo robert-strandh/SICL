@@ -3,7 +3,7 @@
 ;;; Define the macro DEFGENERIC in compile-time environment C1.  We
 ;;; define it a bit differently from its usual definition.  Its main
 ;;; purpose is to define a generic function in the run-time
-;;; environment R1.  However, before definining it, we remove the
+;;; environment R2.  However, before definining it, we remove the
 ;;; existing generic function if it exists.  This way, we are sure to
 ;;; get a fresh generic function, as opposed to one that happened to
 ;;; have been imported from the host.  We must, of course, make sure
@@ -16,14 +16,14 @@
   (setf (sicl-genv:macro-function 'defgeneric (c1 boot))
 	(lambda (form environment)
 	  (declare (ignore environment))
-	  `(progn (sicl-genv:fmakunbound ',(second form) ,(r1 boot))
-		  (setf (sicl-genv:fdefinition ',(second form) ,(r1 boot))
+	  `(progn (sicl-genv:fmakunbound ',(second form) ,(r2 boot))
+		  (setf (sicl-genv:fdefinition ',(second form) ,(r2 boot))
 			(ensure-generic-function
 			 ',(second form)
 			 :name ',(second form)
 			 :lambda-list ',(third form)))
 		  (setf (sicl-genv:fdefinition ',(second form) ,(c1 boot))
-			(sicl-genv:fdefinition ',(second form) ,(r1 boot)))))))
+			(sicl-genv:fdefinition ',(second form) ,(r2 boot)))))))
 
 (defun customize-c1 (boot)
   (let ((c (c1 boot))
