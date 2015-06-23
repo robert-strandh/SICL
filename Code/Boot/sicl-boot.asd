@@ -10,7 +10,7 @@
    (:file "boot")
    (:file "load")
    (:file "export-to-host")
-   (:file "customize-c1")
+   (:file "customize-environments")
    (:file "define-make-instance-defun")
    (:file "define-class-prototype-defun")
    (:file "define-generic-function-method-class-defun")
