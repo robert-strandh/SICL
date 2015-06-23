@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot)
 
 (defun fill-boot (boot)
-  (customize-c1 boot)
+  (customize-environments boot)
   (customize-r2 boot)
   (phase1 boot)
   (phase2 boot)

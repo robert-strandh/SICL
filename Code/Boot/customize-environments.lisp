@@ -52,7 +52,7 @@
 			:method-class method-class)))
 	     (setf (sicl-genv:fdefinition ',(second form) ,(r3 boot)) gf)))))
 
-(defun customize-c1 (boot)
+(defun customize-environments (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot)))
     (message "Customizing environments~%")
