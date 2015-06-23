@@ -17,10 +17,11 @@
 	(lambda (form environment)
 	  (declare (ignore environment))
 	  `(progn (sicl-genv:fmakunbound ',(second form) ,(r1 boot))
-		  (ensure-generic-function
-		   ',(second form)
-		   :name ',(second form)
-		   :lambda-list ',(third form))
+		  (setf (sicl-genv:fdefinition ',(second form) ,(r1 boot))
+			(ensure-generic-function
+			 ',(second form)
+			 :name ',(second form)
+			 :lambda-list ',(third form)))
 		  (setf (sicl-genv:fdefinition ',(second form) ,(c1 boot))
 			(sicl-genv:fdefinition ',(second form) ,(r1 boot)))))))
 
