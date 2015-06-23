@@ -278,6 +278,26 @@ Four different environments are involved in phase~1:
   host classes created in $R_1$.
 \end{itemize}
 
+Several adaptations are necessary in order to accomplish phase~1:
+
+\begin{itemize}
+\item The macro \texttt{defgeneric} is defined in $C_1$ to remove
+  unbind the name in the run-time environment (which will be $R_2$)
+  before calling \texttt{ensure-generic-function} to create a fresh
+  generic function in the run-time environment.  This way, we make
+  sure that we have a fresh generic function with no methods as a
+  result of a call to \texttt{defgeneric}.  However, we must also make
+  sure we make one single call to \texttt{defgeneric}.
+\item The function \texttt{ensure-generic-function} is defined in
+  $R_2$ to either return an existing generic function with the name
+  passed as an argument, or to create an instance of the host class
+  \texttt{standard-generic-function} and associate it with the name in
+  $R_2$ if no generic function with that name exists in $R_2$.  If
+  there is an existing generic function,
+  \texttt{ensure-generic-function} makes no checks that the parameters
+  of that function agree with its arguments.
+\end{itemize}
+
 \subsubsection{Phase 2}
 
 Phase 2 is characterized by the fact that MOP names are names of
