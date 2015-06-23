@@ -17,7 +17,10 @@
 ;;; apply the general rule in SICL, namely to use explicit
 ;;; environments whenever we can.  Since this function is not part of
 ;;; any specification, we are free to do what we want, so we add the
-;;; environment as a required parameter.
+;;; environment as a required parameter.  When this function is used
+;;; in the expansion of DEFMETHOD, the environment supplied as the
+;;; second argument is the run-time environment (and not the
+;;; compile-time environment) in which the call to DEFMETHOD is made.
 ;;;
 ;;; Since the environment might be a lexical environment or a global
 ;;; environment, we use the function SICL-ENVIRONMENT:FIND-CLASS for
