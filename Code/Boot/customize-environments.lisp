@@ -176,6 +176,11 @@
 	      (loop for slot-spec in direct-slots
 		    do (define-accessors slot-spec class boot)))))))
 
+(defun define-class-function-r1 (boot)
+  (setf (sicl-genv:find-class 'function (r1 boot))
+	(make-instance 'closer-mop:funcallable-standard-class
+	  :name 'ought-to-be-function)))
+
 (defun customize-environments (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot))
@@ -183,6 +188,7 @@
     (message "Customizing environments~%")
     (define-defgeneric-c1 boot)
     (define-defgeneric-c2 boot)
+    (define-class-function-r1 boot)
     (ld "../CLOS/make-method-lambda-support.lisp" c1 c1)
     (ld "../CLOS/make-method-lambda-defuns.lisp" c1 c1)
     (ld "../CLOS/ensure-method.lisp" c1 r1)
