@@ -38,7 +38,6 @@
     (ld "../CLOS/standard-class-defclass.lisp" c1 r1)
     (ld "../CLOS/funcallable-standard-class-defclass.lisp" c1 r1)
     (ld "../CLOS/built-in-class-defclass.lisp" c1 r1)
-    (ld "function-temporary-defclass.lisp" c1 r1)
     (ld "../CLOS/funcallable-standard-object-defclass.lisp" c1 r1)
     (ld "../CLOS/generic-function-defclass.lisp" c1 r1)
     (ld "../CLOS/standard-generic-function-defclass.lisp" c1 r1)))
