@@ -187,6 +187,7 @@
     (ld "../CLOS/ensure-method.lisp" c1 r1)
     (define-generic-function-method-class c1)
     (define-generic-function-method-class r1)
+    (define-ensure-class-r1 boot)
     (define-make-instance boot)
     (define-direct-slot-definition-class boot)
     (define-find-class boot)
