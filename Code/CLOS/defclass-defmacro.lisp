@@ -21,6 +21,7 @@
 		    slot-specifiers
 		    &rest options)
   `(ensure-class ',name
+		 :name ',name
 		 :direct-superclasses 
 		 ,(canonicalize-direct-superclass-names superclass-names)
 		 :direct-slots
