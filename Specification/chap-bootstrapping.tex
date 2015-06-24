@@ -330,8 +330,20 @@ Phase~1 is divided into two steps:
 
 \subsubsection{Phase 2}
 
-Phase 2 is characterized by the fact that MOP names are names of
-bridge classes and bridge generic functions.
+The purpose of phase~2 is to create a hierarchy of bridge classes that
+has the same structure as the hierarchy of MOP classes.
+
+Four different environments are involved in phase~2:
+
+\begin{itemize}
+\item The compilation environment $C_2$.
+\item The run-time environment $R_1$ is used to look up metaclasses to
+  instantiate in order to create the bridge classes.
+\item The run-time environment $R_2$ is the one in which bridge
+  classes will be associated with names.
+\item The run-time environment $R_3$ is the one in which bridge
+  generic functions will be associated with names.
+\end{itemize}
 
 We create bridge classes corresponding to the classes of the MOP
 hierarchy.  When a bridge class is created, it will automatically
