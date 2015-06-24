@@ -169,7 +169,7 @@
 		  (loop for name in direct-superclass-names
 			collect (sicl-genv:find-class name (r1 boot)))))
 	    (let ((class (make-instance metaclass
-			   :name name
+			   :name (gensym)
 			   :direct-slots slot-copies
 			   :direct-superclasses direct-superclasses)))
 	      (setf (sicl-genv:find-class class-name (r1 boot)) class)
