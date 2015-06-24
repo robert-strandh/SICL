@@ -181,6 +181,10 @@
 	(make-instance 'closer-mop:funcallable-standard-class
 	  :name 'ought-to-be-function)))
 
+(defun define-funcallable-standard-class ()
+  (setf (find-class 'sicl-clos:funcallable-standard-class)
+	(find-class 'closer-mop:funcallable-standard-class)))
+
 (defun customize-environments (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot))
@@ -189,6 +193,7 @@
     (define-defgeneric-c1 boot)
     (define-defgeneric-c2 boot)
     (define-class-function-r1 boot)
+    (define-funcallable-standard-class)
     (ld "../CLOS/make-method-lambda-support.lisp" c1 c1)
     (ld "../CLOS/make-method-lambda-defuns.lisp" c1 c1)
     (ld "../CLOS/ensure-method.lisp" c1 r1)
