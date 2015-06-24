@@ -14,6 +14,7 @@
   (let ((c1 (c1 boot))
 	(r1 (r1 boot))
 	(r2 (r1 boot)))
+    (ld "../CLOS/accessor-defgenerics.lisp" c1 r2)
     (ld "../CLOS/standard-object-defclass.lisp" c1 r1)
     (ld "../CLOS/metaobject-defclass.lisp" c1 r1)
     (ld "../CLOS/method-defclass.lisp" c1 r1)
