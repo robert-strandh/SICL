@@ -126,6 +126,28 @@
 	(lambda (generic-function method)
 	  (push method (sicl-clos:generic-function-methods generic-function)))))
 
+(defun define-accessors (slot-spec class boot)
+  (let ((slot-name (getf slot-spec :name)))
+    (loop for reader in (getf slot-spec :readers)
+	  for function = (compile nil `(lambda (args next-methods)
+					 (declare (ignore next-methods))
+					 (slot-value (car args) ',slot-name)))
+	  for method = (make-instance 'standard-method
+			 :lambda-list '(object)
+			 :specializers (list class)
+			 :function function)
+	  do (add-method (sicl-genv:fdefinition reader (r2 boot)) method))
+    (loop for writer in (getf slot-spec :writers)
+	  for function = (compile nil `(lambda (args next-methods)
+					 (declare (ignore next-methods))
+					 (setf (slot-value (cadr args) ',slot-name)
+					       (car args))))
+	  for method = (make-instance 'standard-method
+			 :lambda-list '(object)
+			 :specializers (list class)
+			 :function function)
+	  do (add-method (sicl-genv:fdefinition writer (r2 boot)) method))))
+
 (defun customize-environments (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot))
