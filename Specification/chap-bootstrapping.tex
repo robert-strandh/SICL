@@ -331,15 +331,9 @@ Phase~1 is divided into two steps:
 \subsubsection{Phase 2}
 
 Phase 2 is characterized by the fact that MOP names are names of
-bridge classes and bridge generic functions.  For that purpose, we
-define the specified macros \texttt{defclass}, \texttt{defgeneric},
-and \texttt{defmethod}.  These macros expand to calls to corresponding
-\texttt{ensure-...} functions of phase 1.  These macros need some
-support code that is also defined here, such as the canonicalization
-functions for \texttt{defclass} and \texttt{make-method-lambda} for
-\texttt{defmethod}.
+bridge classes and bridge generic functions.
 
-Next, we create bridge classes corresponding to the classes of the MOP
+We create bridge classes corresponding to the classes of the MOP
 hierarchy.  When a bridge class is created, it will automatically
 create bridge generic functions corresponding to slot readers and
 writers.  This is done by calling \texttt{ensure-generic-function} of
