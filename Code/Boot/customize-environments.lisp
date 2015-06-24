@@ -143,7 +143,7 @@
 					 (setf (slot-value (cadr args) ',slot-name)
 					       (car args))))
 	  for method = (make-instance 'standard-method
-			 :lambda-list '(object)
+			 :lambda-list '(new-value object)
 			 :specializers (list class)
 			 :function function)
 	  do (add-method (sicl-genv:fdefinition writer (r2 boot)) method))))
