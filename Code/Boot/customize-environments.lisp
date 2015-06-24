@@ -144,7 +144,7 @@
 					       (car args))))
 	  for method = (make-instance 'standard-method
 			 :lambda-list '(new-value object)
-			 :specializers (list class)
+			 :specializers (list (find-class t) class)
 			 :function function)
 	  do (add-method (sicl-genv:fdefinition writer (r2 boot)) method))))
 
@@ -157,6 +157,7 @@
 		   name
 		   ((:metaclass metaclass-name) 'standard-class)
 		 &allow-other-keys)
+	  (message "Creating class ~s~%" class-name)
 	  (let ((metaclass (find-class metaclass-name))
 		(slot-copies
 		  (loop for slot-spec in direct-slots
