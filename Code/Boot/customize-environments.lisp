@@ -148,6 +148,33 @@
 			 :function function)
 	  do (add-method (sicl-genv:fdefinition writer (r2 boot)) method))))
 
+(defun define-ensure-class-r1 (boot)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class (r1 boot))
+	(lambda (class-name
+		 &key
+		   direct-slots
+		   ((:direct-superclasses direct-superclass-names))
+		   name
+		   ((:metaclass metaclass-name) 'standard-class)
+		 &allow-other-keys)
+	  (let ((metaclass (find-class metaclass-name))
+		(slot-copies
+		  (loop for slot-spec in direct-slots
+			collect (loop for (name value) on slot-spec by #'cddr
+				      unless (member name '(:readers :writers))
+					collect name
+					and collect value)))
+		(direct-superclasses
+		  (loop for name in direct-superclass-names
+			collect (sicl-genv:find-class name (r1 boot)))))
+	    (let ((class (make-instance metaclass
+			   :name name
+			   :direct-slots slot-copies
+			   :direct-superclasses direct-superclasses)))
+	      (setf (sicl-genv:find-class class-name (r1 boot)) class)
+	      (loop for slot-spec in direct-slots
+		    do (define-accessors slot-spec class boot)))))))
+
 (defun customize-environments (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot))
