@@ -3,7 +3,7 @@
 ;;; Define the macro DEFGENERIC in compile-time environment C1.  We
 ;;; define it a bit differently from its usual definition.  Its main
 ;;; purpose is to define a generic function in the run-time
-;;; environment R2.  However, before definining it, we remove the
+;;; environment R1.  However, before definining it, we remove the
 ;;; existing generic function if it exists.  This way, we are sure to
 ;;; get a fresh generic function, as opposed to one that happened to
 ;;; have been imported from the host.  We must, of course, make sure
@@ -16,14 +16,14 @@
   (setf (sicl-genv:macro-function 'defgeneric (c1 boot))
 	(lambda (form environment)
 	  (declare (ignore environment))
-	  `(progn (sicl-genv:fmakunbound ',(second form) ,(r2 boot))
-		  (setf (sicl-genv:fdefinition ',(second form) ,(r2 boot))
+	  `(progn (sicl-genv:fmakunbound ',(second form) ,(r1 boot))
+		  (setf (sicl-genv:fdefinition ',(second form) ,(r1 boot))
 			(ensure-generic-function
 			 ',(second form)
 			 :name ',(second form)
 			 :lambda-list ',(third form)))
 		  (setf (sicl-genv:fdefinition ',(second form) ,(c1 boot))
-			(sicl-genv:fdefinition ',(second form) ,(r2 boot)))))))
+			(sicl-genv:fdefinition ',(second form) ,(r1 boot)))))))
 
 ;;; The purpose of this function is to redefine the macro DEFGENERIC
 ;;; in the compilation environment C2.  The new definition is only
@@ -78,19 +78,19 @@
 		     type)))))
 
 ;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
-;;; run-time environment R2.  This version checks whether there is
-;;; already a function named FUNCTION-NAME in R2.  If so that function
+;;; run-time environment R1.  This version checks whether there is
+;;; already a function named FUNCTION-NAME in R1.  If so that function
 ;;; is returned, and it is assumed to be a generic function.  If not,
 ;;; an instance of the host class STANDARD-GENERIC-FUNCTION is created
-;;; and associated with FUNCTION-NAME in R2.
-(defun define-ensure-generic-function-r2 (boot)
-  (setf (sicl-genv:fdefinition 'ensure-generic-function (r2 boot))
+;;; and associated with FUNCTION-NAME in R1.
+(defun define-ensure-generic-function-r1 (boot)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function (r1 boot))
 	(lambda (function-name &rest arguments)
 	  (let ((args (copy-list arguments)))
 	    (loop while (remf args :environment))
-	    (if (sicl-genv:fboundp function-name (r2 boot))
-		(sicl-genv:fdefinition function-name (r2 boot))
-		(setf (sicl-genv:fdefinition function-name (r2 boot))
+	    (if (sicl-genv:fboundp function-name (r1 boot))
+		(sicl-genv:fdefinition function-name (r1 boot))
+		(setf (sicl-genv:fdefinition function-name (r1 boot))
 		      (apply #'make-instance 'standard-generic-function
 			     :name function-name
 			     args)))))))
@@ -136,7 +136,7 @@
 			 :lambda-list '(object)
 			 :specializers (list class)
 			 :function function)
-	  do (add-method (sicl-genv:fdefinition reader (r2 boot)) method))
+	  do (add-method (sicl-genv:fdefinition reader (r1 boot)) method))
     (loop for writer in (getf slot-spec :writers)
 	  for function = (compile nil `(lambda (args next-methods)
 					 (declare (ignore next-methods))
@@ -146,7 +146,7 @@
 			 :lambda-list '(new-value object)
 			 :specializers (list (find-class t) class)
 			 :function function)
-	  do (add-method (sicl-genv:fdefinition writer (r2 boot)) method))))
+	  do (add-method (sicl-genv:fdefinition writer (r1 boot)) method))))
 
 (defun define-ensure-class-r1 (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class (r1 boot))
@@ -169,7 +169,7 @@
 		  (loop for name in direct-superclass-names
 			collect (sicl-genv:find-class name (r1 boot)))))
 	    (let ((class (make-instance metaclass
-			   :name (gensym)
+			   :name (make-symbol (symbol-name name))
 			   :direct-slots slot-copies
 			   :direct-superclasses direct-superclasses)))
 	      (setf (sicl-genv:find-class class-name (r1 boot)) class)
@@ -183,7 +183,7 @@
 (defun define-class-function-r1 (boot)
   (setf (sicl-genv:find-class 'function (r1 boot))
 	(make-instance 'closer-mop:funcallable-standard-class
-	  :name 'ought-to-be-function)))
+	  :name (make-symbol (symbol-name '#:function)))))
 
 (defun define-funcallable-standard-class ()
   (setf (find-class 'sicl-clos:funcallable-standard-class)
@@ -210,7 +210,7 @@
     (define-find-class boot)
     (define-validate-superclass boot)
     (define-typep boot)
-    (define-ensure-generic-function-r2 boot)
+    (define-ensure-generic-function-r1 boot)
     (define-default-superclasses boot)
     (define-reader-method-class boot)
     (define-writer-method-class boot)
