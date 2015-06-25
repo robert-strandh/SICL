@@ -176,6 +176,15 @@
 	      (loop for slot-spec in direct-slots
 		    do (define-accessors slot-spec class boot)))))))
 
+;;; Since we do not use the host DEFCLASS macro nor the host version
+;;; of ENSURE-CLASS in phase 1, our classes do not automatically have
+;;; the host class named STANDARD-OBJECT as a superclass.  But being a
+;;; subclass of STANDARD-OBJECT is a requirement for the host generic
+;;; function INITIALIZE-INSTANCE to be able to initialize instances of
+;;; a class.  We solve this problem by defining a special version of
+;;; the class named T in R1 that in fact is the same as the host class
+;;; STANDARD-OBJECT.  This way, we are sure that all our MOP classes
+;;; in phase 1 are in fact subclass of the host class STANDARD-OBJECT.
 (defun define-class-t-r1 (boot)
   (setf (sicl-genv:find-class 't (r1 boot))
 	(find-class 'standard-object)))
@@ -192,7 +201,7 @@
 ;;; This function defines class SICL-CLOS:FUNCALLABLE-STANDARD-CLASS
 ;;; in the host environment to be the same as the host version of that
 ;;; class.  It is needed because, although we import definitions in
-;;; the host environment that are associated with the the package
+;;; the host environment that are associated with the package
 ;;; CLOSER-MOP, in fact those symbols do not have CLOSER-MOP as their
 ;;; package.  Instead they are imported into the CLOSER-MOP package
 ;;; from the corresponding host-specific package.  We should eliminate
