@@ -234,6 +234,7 @@
 	(r2 (r2 boot)))
     (message "Customizing environments~%")
     (define-defgeneric-c1 boot)
+    (ld "defmethod-defmacro-r1.lisp" c1 r1)
     (define-defgeneric-c2 boot)
     (define-class-t-r1 boot)
     (define-class-function-r1 boot)
