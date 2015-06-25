@@ -278,6 +278,22 @@ Four different environments are involved in phase~1:
   host classes created in $R_1$.
 \end{itemize}
 
+One might ask at this point why generic functions are not defined in
+the same environment as classes.  The simple answer is that there are
+some generic functions that were automatically imported into $R_1$
+from the host, that we still need in $R_1$, and that would have been
+overwritten by new ones if we had defined new generic functions in
+$R_1$.  In particular, we need following functions from the host:
+
+\begin{itemize}
+\item \texttt{generic-function-method-class} is needed by the macro
+  \texttt{defmethod} in order to instantiate a method of the right
+  class to be added to a host generic function.
+\item \texttt{class-prototype} is also needed by the macro
+  \texttt{defmethod} in order to create instances to pass to
+  \texttt{make-method-lambda} for the purpose of dispatch.
+\end{itemize}
+
 Several adaptations are necessary in order to accomplish phase~1:
 
 \begin{itemize}
