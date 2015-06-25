@@ -180,6 +180,10 @@
   (setf (sicl-genv:find-class 't (r1 boot))
 	(find-class 'standard-object)))
 
+;;; We need a special definition of the class named FUNCTION in R1,
+;;; because we want instances of this class to be funcallable in the
+;;; host.  For that reason, we create this class as an instance of the
+;;; host class FUNCALLABLE-STANDARD-CLASS.
 (defun define-class-function-r1 (boot)
   (setf (sicl-genv:find-class 'function (r1 boot))
 	(make-instance 'closer-mop:funcallable-standard-class
