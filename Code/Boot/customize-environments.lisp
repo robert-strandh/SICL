@@ -52,6 +52,26 @@
 			:method-class method-class)))
 	     (setf (sicl-genv:fdefinition ',(second form) ,(r3 boot)) gf)))))
 
+(defun define-temporary-ensure-method-r1 (boot)
+  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))
+	(lambda (function-name
+		 lambda-list
+		 qualifiers
+		 specializers
+		 documentation
+		 function)
+	  (let* ((fun (sicl-genv:fdefinition function-name (r1 boot)))
+		 (specs (loop for s in specializers
+			      collect (sicl-genv:find-class s (r1 boot))))
+		 (method (make-instance 'standard-method
+			  :lambda-list lambda-list
+			  :qualifiers qualifiers
+			  :specializers specs
+			  :documentation documentation
+			  :function function)))
+	    (add-method fun method)
+	    method))))
+
 (defun define-validate-superclass (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass (r2 boot))
 	(constantly t)))
@@ -125,6 +145,10 @@
 		(t
 		 '())))))
 
+;;; Recall that the function READER-METHOD-CLASS is called as part of
+;;; the class-initialization protocol as described in this section
+;;; http://metamodular.com/CLOS-MOP/initialization-of-class-metaobjects2.html
+;;; of the AMOP.
 (defun define-reader-method-class (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class (r2 boot))
 	(lambda (&rest arguments)
@@ -234,6 +258,7 @@
 	(r2 (r2 boot)))
     (message "Customizing environments~%")
     (define-defgeneric-c1 boot)
+    (define-temporary-ensure-method-r1 boot)
     (ld "defmethod-defmacro-r1.lisp" c1 r1)
     (define-defgeneric-c2 boot)
     (define-class-t-r1 boot)
