@@ -52,7 +52,7 @@
 			:method-class method-class)))
 	     (setf (sicl-genv:fdefinition ',(second form) ,(r3 boot)) gf)))))
 
-(defun define-temporary-ensure-method-r1 (boot)
+(defun define-temporary-ensure-method-c1-r1 (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))
 	(lambda (function-name
 		 lambda-list
@@ -70,7 +70,9 @@
 			  :documentation documentation
 			  :function function)))
 	    (add-method fun method)
-	    method))))
+	    method)))
+  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (r1 boot))
+	(sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))))
 
 (defun define-validate-superclass (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass (r2 boot))
@@ -258,7 +260,7 @@
 	(r2 (r2 boot)))
     (message "Customizing environments~%")
     (define-defgeneric-c1 boot)
-    (define-temporary-ensure-method-r1 boot)
+    (define-temporary-ensure-method-c1-r1 boot)
     (ld "defmethod-defmacro-c1.lisp" c1 c1)
     (define-defgeneric-c2 boot)
     (define-class-t-r1 boot)
