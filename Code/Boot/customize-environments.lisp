@@ -259,7 +259,7 @@
     (message "Customizing environments~%")
     (define-defgeneric-c1 boot)
     (define-temporary-ensure-method-r1 boot)
-    (ld "defmethod-defmacro-r1.lisp" c1 c1)
+    (ld "defmethod-defmacro-c1.lisp" c1 c1)
     (define-defgeneric-c2 boot)
     (define-class-t-r1 boot)
     (define-class-function-r1 boot)
