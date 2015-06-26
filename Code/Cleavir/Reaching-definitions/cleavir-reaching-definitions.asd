@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :cleavir-reaching-definitions
+(defsystem :cleavir-reaching-definitions
   :depends-on (:cleavir-utilities)
   :components
   ((:file "packages")
