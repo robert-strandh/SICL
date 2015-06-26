@@ -1,4 +1,4 @@
-(in-package #:cleavir-generate-ast)
+(cl:in-package #:cleavir-generate-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
