@@ -264,7 +264,6 @@
     (define-funcallable-standard-class)
     (ld "defmethod-defmacro-c1.lisp" c1 c1)
     (ld "../CLOS/make-method-lambda-support.lisp" c1 c1)
-    (ld "../CLOS/make-method-lambda-defuns.lisp" c1 c1)
     (ld "../CLOS/ensure-method.lisp" c1 r1)
     (define-generic-function-method-class c1)
     (define-generic-function-method-class r1)
