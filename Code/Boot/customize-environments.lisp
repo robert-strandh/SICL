@@ -262,7 +262,12 @@
     (define-class-t-r1 boot)
     (define-class-function-r1 boot)
     (define-funcallable-standard-class)
+    ;; Rather than calling MAKE-METHOD-LAMBDA, the temporary
+    ;; definition of the macro DEFMETHOD calls
+    ;; MAKE-METHOD-LAMBDA-DEFAULT directly.
     (ld "defmethod-defmacro-c1.lisp" c1 c1)
+    ;; Load a definition of MAKE-METHOD-LAMBDA-DEFAULT to be used with
+    ;; the temporary definition of the macro DEFMETHOD.
     (ld "../CLOS/make-method-lambda-support.lisp" c1 c1)
     (ld "../CLOS/ensure-method.lisp" c1 r1)
     (define-generic-function-method-class c1)
