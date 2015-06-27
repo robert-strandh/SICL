@@ -270,8 +270,6 @@
     ;; the temporary definition of the macro DEFMETHOD.
     (ld "../CLOS/make-method-lambda-support.lisp" c1 c1)
     (ld "../CLOS/ensure-method.lisp" c1 r1)
-    (define-generic-function-method-class c1)
-    (define-generic-function-method-class r1)
     (define-ensure-class-r1 boot)
     (define-make-instance boot)))
 
