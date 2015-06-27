@@ -13,7 +13,6 @@
    (:file "customize-environments")
    (:file "define-make-instance-defun")
    (:file "define-class-prototype-defun")
-   (:file "define-generic-function-method-class-defun")
    (:file "phase1")
    (:file "define-direct-slot-definition-class")
    (:file "define-find-class")
