@@ -22,7 +22,7 @@
 ;;; non-negative, then a BIGNUM with the value VARIABLE - 2^n should
 ;;; be created.
 
-(defclass fixnum-add-ast (ast)
+(defclass fixnum-add-ast (ast boolean-ast-mixin)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
@@ -56,7 +56,7 @@
 ;;; non-negative, then a BIGNUM with the value VARIABLE - 2^n should
 ;;; be created.
 
-(defclass fixnum-sub-ast (ast)
+(defclass fixnum-sub-ast (ast boolean-ast-mixin)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
