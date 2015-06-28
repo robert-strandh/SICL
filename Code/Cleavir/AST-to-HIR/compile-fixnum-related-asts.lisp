@@ -34,8 +34,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (and (= (length results) 1)
-		 (= (length successors) 2))
+    (unless (= (length successors) 2)
       (error "Invalid context for FIXNUM-SUB-AST."))
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp))
@@ -46,10 +45,10 @@
 		(list (compile-ast
 		       (cleavir-ast:arg2-ast ast)
 		       (context (list temp2)
-				(cleavir-ir:make-fixnum-sub-instruction
-				 (list temp1 temp2)
-				 (list result)
-				 successors)
+				(list (cleavir-ir:make-fixnum-sub-instruction
+				       (list temp1 temp2)
+				       result
+				       successors))
 				(invocation context))))
 		(invocation context))))))
 
