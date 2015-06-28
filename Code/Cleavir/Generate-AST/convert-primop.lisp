@@ -93,8 +93,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:fixnum-+)) form env system)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 3 3)
   (destructuring-bind (arg1 arg2 variable) (cdr form)
     (cleavir-ast:make-fixnum-add-ast (convert arg1 env system)
 				     (convert arg2 env system)
