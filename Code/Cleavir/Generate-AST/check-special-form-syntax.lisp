@@ -330,3 +330,12 @@
   (cleavir-code-utilities:check-argcount form 1 nil)
   (assert (cleavir-code-utilities:proper-list-p (second form)))
   (assert (every #'symbolp (second form))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-+
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-+)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 3 3))
