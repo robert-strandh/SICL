@@ -319,3 +319,14 @@
 (defmethod check-special-form-syntax ((head (eql 'cleavir-primop:consp)) form)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 1 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking LET-UNINITIALIZED.
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:let-uninitialized)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil)
+  (assert (cleavir-code-utilities:proper-list-p (second form)))
+  (assert (every #'symbolp (second form))))
