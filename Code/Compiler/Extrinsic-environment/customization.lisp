@@ -104,3 +104,16 @@
 		:value value)
 	      *dynamic-environment*))
   (funcall thunk))
+
+;;; For this environment, whenever Cleavir asks for information about
+;;; a function name and that function name is a symbol in the
+;;; CLEAVIR-PRIMOP package, we want to return an object of type
+;;; CLEAVIR-ENV:SPECIAL-OPERATOR-INFO so that the form can be treated
+;;; as a special form by GENERATE-AST.
+(defmethod cleavir-env:function-info :around ((env environment) function-name)
+  (if (and (symbolp function-name)
+	   (eq (symbol-package function-name)
+	       (find-package '#:cleavir-primop)))
+      (make-instance 'cleavir-env:special-operator-info
+	:name function-name)
+      (call-next-method)))
