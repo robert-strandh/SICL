@@ -11,4 +11,5 @@
    #:fixnum-< #:fixnum-<= #:fixnum-> #:fixnum->= #:fixnum-=
    #:slot-read #:slot-write
    #:aref #:aset
-   #:call-with-variable-bound))
+   #:call-with-variable-bound
+   #:let-uninitialized))
