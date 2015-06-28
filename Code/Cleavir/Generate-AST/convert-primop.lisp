@@ -178,3 +178,28 @@
     (make-instance 'cleavir-ast:fixnum-equal-ast
       :arg1-ast (convert arg1 env system)
       :arg2-ast (convert arg2 env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:LET-UNINITIALIZED.
+;;;
+;;; A form using the operator LET-UNINITIALIZED has the following
+;;; syntax:
+;;;
+;;; (CLEAVIR-PRIMOP:LET-UNINITIALIZED (var*) form*)
+;;;
+;;; It sole purpose is to create a lexical environment for the
+;;; variables in which the forms are evaluated.  An absolute
+;;; requirement is that the variables must be assigned to before they
+;;; are used in the forms, or else things will fail spectacularly.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:let-uninitialized)) form env system)
+  (destructuring-bind (variables &rest body) (rest form)
+    (let ((new-env env))
+      (loop for variable in variables
+	    for variable-ast = (cleavir-ast:make-lexical-ast variable)
+	    do (setf new-env
+		     (cleavir-env:add-lexical-variable
+		      new-env variable variable-ast)))
+      (process-progn (convert-sequence body new-env system)))))
