@@ -339,3 +339,12 @@
     ((head (eql 'cleavir-primop:fixnum-+)) form)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 3 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-+
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum--)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 3 3))
