@@ -11,7 +11,9 @@
 
 (defmethod convert-special
     ((symbol (eql 'quote)) form env system)
-  (convert-constant (cadr form) env system))
+  (db s (quote const) form
+    (declare (ignore quote))
+    (convert-constant const env system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
