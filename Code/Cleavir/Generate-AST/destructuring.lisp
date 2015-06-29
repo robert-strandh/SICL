@@ -92,4 +92,5 @@
 				  (location ,form-var)
 				  nil))
 	    ,@(destructure-variables tree form-var))
+       (declare (ignorable ,source-info-var))
        ,@body)))
