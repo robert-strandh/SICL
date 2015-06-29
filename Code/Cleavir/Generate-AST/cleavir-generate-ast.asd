@@ -13,6 +13,7 @@
    (:file "conditions")
    (:file "condition-reporters-english")
    (:file "source-tracking")
+   (:file "destructuring")
    (:file "check-special-form-syntax")
    (:file "environment-query")
    (:file "utilities")
