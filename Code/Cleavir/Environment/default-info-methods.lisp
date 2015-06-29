@@ -658,7 +658,7 @@
       (if (null entry) nil (ignore entry)))
     :inline (function-inline environment defining-info)
     :ast (ast defining-info)
-    ;; FIXME: add compiler-macro
+    :compiler-macro (compiler-macro defining-info)
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))
