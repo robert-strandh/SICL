@@ -678,6 +678,39 @@
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; PARSE-COMPILER-MACRO
+;;;
+;;; This function differs from parse-macro only in the code that
+;;; destructures the lambda list from the arguments.
+
+(defun parse-compiler-macro (name lambda-list body &optional environment)
+  (declare (ignore name environment)) ; For now.
+  (let* ((parsed-lambda-list (parse-macro-lambda-list lambda-list))
+	 (env-var (environment parsed-lambda-list))
+	 (final-env-var (if (eq env-var :none) (gensym) env-var))
+	 (form-var (whole parsed-lambda-list))
+	 (final-form-var (if (eq form-var :none) (gensym) form-var))
+	 (args-var (gensym)))
+    (multiple-value-bind (bindings ignored-variables)
+	(destructure-lambda-list parsed-lambda-list args-var)
+      `(lambda (,final-form-var ,final-env-var)
+	 ;; If the lambda list does not contain &environment, then
+	 ;; we IGNORE the GENSYMed parameter to avoid warnings.
+	 ;; If the lambda list does contain &environment, we do
+	 ;; not want to make it IGNORABLE because we would want a
+	 ;; warning if it is not used then.
+	 ,@(if (eq env-var :none)
+	       `((declare (ignore ,final-env-var)))
+	       `())
+	 (let ((,args-var (if (eq (car ,final-form-var 'funcall)
+				  (cddr ,final-form-var)
+				  (cdr ,final-form-var)))))
+	   (let* ,bindings
+	     (declare (ignore ,@ignored-variables))
+	     ,@body))))))
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; PARSE-DEFTYPE
 
 (defun parse-deftype (name lambda-list body)
