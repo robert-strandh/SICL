@@ -21,4 +21,6 @@
 	   #:begin-source
 	   #:end-source
 	   #:consider-special
-	   #:consider-global))
+	   #:consider-global
+	   #:db
+	   #:raw))
