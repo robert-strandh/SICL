@@ -21,11 +21,13 @@
 
 (defmethod convert-special
     ((symbol (eql 'block)) form env system)
-  (let* ((ast (cleavir-ast:make-block-ast nil))
-	 (new-env (cleavir-env:add-block env (cadr form) ast)))
-    (setf (cleavir-ast:body-ast ast)
-	  (process-progn (convert-sequence (cddr form) new-env system)))
-    ast))
+  (db s (block name . body) form
+    (declare (ignore block))
+    (let* ((ast (cleavir-ast:make-block-ast nil))
+	   (new-env (cleavir-env:add-block env name ast)))
+      (setf (cleavir-ast:body-ast ast)
+	    (process-progn (convert-sequence body new-env system)))
+      ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -41,7 +43,7 @@
 	  (if (or (member :execute situations)
 		  (member 'eval situations))
 	      (process-progn
-	       (convert-sequence (cddr form) environment system))
+	       (convert-sequence body environment system))
 	      (convert nil environment system))
 	  (cond ((or (and (or (member :compile-toplevel situations)
 			      (member 'compile situations))
@@ -55,7 +57,7 @@
 			      (member 'eval situations))
 			  *compile-time-too*))
 		 (let ((*compile-time-too* t))
-		   (convert `(progn ,@(cddr form)) environment system)))
+		   (convert `(progn ,@body) environment system)))
 		((or (and (not (or (member :compile-toplevel situations)
 				   (member 'compile situations)))
 			  (or (member :load-toplevel situations)
@@ -70,7 +72,7 @@
 			  (not (or (member :execute situations)
 				   (member 'eval situations)))))
 		 (let ((*compile-time-too* nil))
-		   (convert `(progn ,@(cddr form)) environment system)))
+		   (convert `(progn ,@body) environment system)))
 		((or (and (or (member :compile-toplevel situations)
 			      (member 'compile situations))
 			  (not (or (member :load-toplevel situations)
