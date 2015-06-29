@@ -31,7 +31,7 @@
   x)
 
 (defmethod raw ((x source-location))
-  (children x))
+  (expression x))
 
 (defgeneric dfirst (x))
 
