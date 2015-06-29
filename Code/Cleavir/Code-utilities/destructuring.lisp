@@ -665,7 +665,7 @@
       `(lambda (,final-form-var ,final-env-var)
 	 ;; If the lambda list does not contain &environment, then
 	 ;; we IGNORE the GENSYMed parameter to avoid warnings.
-	 ;; If the lambda list does contain &envionrment, we do
+	 ;; If the lambda list does contain &environment, we do
 	 ;; not want to make it IGNORABLE because we would want a
 	 ;; warning if it is not used then.
 	 ,@(if (eq env-var :none)
@@ -675,7 +675,6 @@
 	   (let* ,bindings
 	     (declare (ignore ,@ignored-variables))
 	     ,@body))))))
-
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
