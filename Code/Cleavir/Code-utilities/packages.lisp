@@ -36,6 +36,7 @@
 	   #:destructure-lambda-list
 	   #:match-lambda-list
 	   #:parse-macro
+	   #:parse-compiler-macro
 	   #:parse-deftype
 	   #:lambda-lists-congruent-p
 	   #:generate-congruent-lambda-list
