@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-clos)
 
-;;; FIXME: check whether these methods should specialize on
-;;; GENERIC-FUNCTION rather than on STANDARD-GENERIC-FUNCTION.
-
 (defmethod shared-initialize :around
     ((generic-function generic-function)
      slot-names
