@@ -36,7 +36,8 @@
 (defmethod convert-special
     ((symbol (eql 'eval-when)) form environment system)
   (with-preserved-toplevel-ness
-    (destructuring-bind (situations . body) (rest form)
+    (db s (eval-when situations . body) form
+      (declare (ignore eval-when))
       (if (or (eq *compiler* 'cl:compile)
 	      (eq *compiler* 'cl:eval)
 	      (not *current-form-is-top-level-p*))
