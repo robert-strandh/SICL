@@ -96,29 +96,31 @@
 
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
-  (let ((new-env env))
-    ;; Create a new environment with the additional names.
-    (loop for def in (cadr form)
-	  for name = (car def)
-	  for var-ast = (cleavir-ast:make-lexical-ast name)
-	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
-    (let ((init-asts
-	    (loop for (name lambda-list . body) in (cadr form)
-		  for block-name = (if (symbolp name) name (second name))
-		  for fun = (convert-code lambda-list body env system block-name)
-		  collect (cleavir-ast:make-setq-ast
-			   (let ((info (cleavir-env:function-info new-env name)))
-			     (cleavir-env:identity info))
-			   fun))))
-      (multiple-value-bind (declarations forms)
-	  (cleavir-code-utilities:separate-ordinary-body (cddr form))
-	(let ((canonicalized-dspecs
-		(cleavir-code-utilities:canonicalize-declaration-specifiers
-		 (reduce #'append (mapcar #'cdr declarations)))))
-	  (setf new-env (augment-environment-with-declarations
-			 new-env canonicalized-dspecs)))
-	(process-progn
-	 (append init-asts (convert-sequence forms new-env system)))))))
+  (db s (flet definitions . body) form
+    (declare (ignore flet))
+    (let ((new-env env))
+      ;; Create a new environment with the additional names.
+      (loop for def in definitions
+	    for name = (car def)
+	    for var-ast = (cleavir-ast:make-lexical-ast name)
+	    do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
+      (let ((init-asts
+	      (loop for (name lambda-list . body) in definitions
+		    for block-name = (if (symbolp name) name (second name))
+		    for fun = (convert-code lambda-list body env system block-name)
+		    collect (cleavir-ast:make-setq-ast
+			     (let ((info (cleavir-env:function-info new-env name)))
+			       (cleavir-env:identity info))
+			     fun))))
+	(multiple-value-bind (declarations forms)
+	    (cleavir-code-utilities:separate-ordinary-body body)
+	  (let ((canonicalized-dspecs
+		  (cleavir-code-utilities:canonicalize-declaration-specifiers
+		   (reduce #'append (mapcar #'cdr declarations)))))
+	    (setf new-env (augment-environment-with-declarations
+			   new-env canonicalized-dspecs)))
+	  (process-progn
+	   (append init-asts (convert-sequence forms new-env system))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
