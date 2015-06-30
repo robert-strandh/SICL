@@ -53,7 +53,10 @@
   (rest x))
 
 (defmethod drest ((x source-location))
-  (drest (children x)))
+  (make-instance 'source-location
+    :expression (rest (expression x))
+    :location (location x)
+    :children (drest (children x))))
 
 ;;; This function generates code for destructuring a value according
 ;;; to a tree of variables.  TREE is a tree of variable names
