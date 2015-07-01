@@ -1,6 +1,6 @@
-(in-package #:cl-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-sequences-small
+(defsystem :sicl-sequences-small
   :depends-on ("sicl-additional-types"
 	       "sicl-additional-conditions"
 	       "cleavir-code-utilities")
