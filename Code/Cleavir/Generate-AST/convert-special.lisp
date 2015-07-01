@@ -166,9 +166,11 @@
   (convert-code (cadr lambda-form) (cddr lambda-form) env system))
 
 (defmethod convert-special ((symbol (eql 'function)) form env system)
-  (if (proper-function-name-p (cadr form))
-      (convert-named-function (cadr form) env system)
-      (convert-lambda-function (cadr form) env system)))
+  (db s (function name) form
+    (declare (ignore function))
+    (if (proper-function-name-p name)
+	(convert-named-function name env system)
+	(convert-lambda-function name env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
