@@ -210,25 +210,25 @@
   (declare (ignore char))
   (let ((reversed-result '())
 	(tail nil)
-	(*consing-dot-allowed-p* t)
-	(*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
-    (handler-case
-	(loop for object = (read stream t nil t)
-	      do (if (eq object *consing-dot*)
-		     (progn (setf *consing-dot-allowed-p* nil)
-			    (handler-case
-				(setf tail (read stream t nil t))
-			      (end-of-list ()
-				(error 'consing-dot-most-be-followed-by-object
-				       :stream stream)))
-			    ;; This call to read must not succeed.
-			    (read stream t nil t)
-			    (error 'multiple-objects-following-consing-dot
-				   :stream stream))
-		     (push object reversed-result)))
-      (end-of-list ()
-	(return-from left-parenthesis
-	  (nreconc reversed-result tail))))))
+	(*consing-dot-allowed-p* t))
+    (with-preserved-backquote-context
+      (handler-case
+	  (loop for object = (read stream t nil t)
+		do (if (eq object *consing-dot*)
+		       (progn (setf *consing-dot-allowed-p* nil)
+			      (handler-case
+				  (setf tail (read stream t nil t))
+				(end-of-list ()
+				  (error 'consing-dot-most-be-followed-by-object
+					 :stream stream)))
+			      ;; This call to read must not succeed.
+			      (read stream t nil t)
+			      (error 'multiple-objects-following-consing-dot
+				     :stream stream))
+		       (push object reversed-result)))
+	(end-of-list ()
+	  (return-from left-parenthesis
+	    (nreconc reversed-result tail)))))))
 
 (defun right-parenthesis (stream char)
   (declare (ignore char))
