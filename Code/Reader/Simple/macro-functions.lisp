@@ -258,7 +258,7 @@
 
 (defun sharpsign-left-parenthesis (stream char parameter)
   (declare (ignore char))
-  (let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
+  (with-preserved-backquote-context
     (if (null parameter)
 	(let ((reversed-elements '()))
 	  (handler-case
