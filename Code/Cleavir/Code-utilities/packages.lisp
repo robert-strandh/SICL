@@ -43,5 +43,31 @@
 	   #:lambda-list-type-specifier
 	   #:canonicalize-declaration-specifiers
 	   #:separate-ordinary-body
-	   #:separate-function-body))
-
+	   #:separate-function-body
+	   #:lambda-list-must-be-list
+	   #:lambda-list-must-not-be-circular
+	   #:lambda-list-must-be-proper-list
+	   #:lambda-list-keyword-not-allowed
+	   #:lambda-list-keyword-not-allowed-in-dotted-lambda-list
+	   #:multiple-occurrences-of-lambda-list-keyword
+	   #:incorrect-keyword-order
+	   #:both-rest-and-body-occur-in-lambda-list
+	   #:rest/body-must-be-followed-by-variable
+	   #:atomic-lambda-list-tail-must-be-variable
+	   #:whole-must-be-followed-by-variable
+	   #:whole-must-appear-first
+	   #:whole-must-be-followed-by-variable
+	   #:environment-must-be-followed-by-variable
+	   #:environment-can-appear-at-most-once
+	   #:suspect-lambda-list-keyword
+	   #:malformed-specialized-required
+	   #:malformed-ordinary-optional
+	   #:malformed-defgeneric-optional
+	   #:malformed-destructuring-optional
+	   #:malformed-ordinary-key
+	   #:malformed-defgeneric-key
+	   #:malformed-destructuring-key
+	   #:malformed-destructuring-tree
+	   #:malformed-aux
+	   #:malformed-lambda-list-pattern
+	   #:required-must-be-variable))
