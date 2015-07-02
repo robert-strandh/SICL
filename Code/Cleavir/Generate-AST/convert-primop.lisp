@@ -18,7 +18,7 @@
     ((symbol (eql 'cleavir-primop:typeq)) form env system)
   (cleavir-ast:make-typeq-ast
    (convert (second form) env system)
-   (convert-constant (third form) env system)))
+   (third form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
