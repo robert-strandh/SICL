@@ -308,7 +308,8 @@
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
 	  :macro-name 'sharpsign-dot))
-  (eval (read stream t nil t)))
+  (with-preserved-backquote-context
+    (eval (read stream t nil t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
