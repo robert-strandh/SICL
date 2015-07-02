@@ -1,4 +1,4 @@
-(in-package #:cleavir-test-generate-ast)
+(cl:in-package #:cleavir-test-generate-ast)
 
 (defgeneric same-p (ast1 ast2))
 
