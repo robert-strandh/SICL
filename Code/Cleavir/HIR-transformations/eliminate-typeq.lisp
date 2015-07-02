@@ -19,11 +19,17 @@
 		(list typep-function object type-descriptor-constant)
 		(list boolean-value)))
 	 (nil-constant (cleavir-ir:make-constant-input 'nil)))
-    (cleavir-ir:insert-instruction-before fdefinition instruction)
-    (cleavir-ir:insert-instruction-before call instruction)
-    (change-class instruction 'cleavir-ir:eq-instruction
-		  :inputs (list boolean-value nil-constant)
-		  :successors (reverse (cleavir-ir:successors instruction)))))
+    (cond ((and (subtypep type 'fixnum) (subtypep 'fixnum type))
+	   (change-class instruction 'cleavir-ir:fixnump-instruction))
+	  ((and (subtypep type 'cons) (subtypep 'cons type))
+	   (change-class instruction 'cleavir-ir:consp-instruction))
+	  (t
+	   (cleavir-ir:insert-instruction-before fdefinition instruction)
+	   (cleavir-ir:insert-instruction-before call instruction)
+	   (change-class instruction 'cleavir-ir:eq-instruction
+			 :inputs (list boolean-value nil-constant)
+			 :successors
+			 (reverse (cleavir-ir:successors instruction)))))))
 
 (defun eliminate-typeq (initial-instruction)
   (cleavir-ir:map-instructions #'maybe-eliminate initial-instruction))
