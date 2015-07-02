@@ -38,7 +38,7 @@
 
 (defun single-quote (stream char)
   (declare (ignore char))
-  (let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
+  (with-preserved-backquote-context
     (list 'quote (read stream t nil t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
