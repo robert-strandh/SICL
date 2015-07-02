@@ -2,6 +2,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Macro WITH-PRESERVED-BACKQUOTE-CONTEXT.
+;;;
+;;; This macros allows backquotes in sub-forms if and only if
+;;; backquotes are allowed in the main form.
+
+(defmacro with-preserved-backquote-context (&body body)
+  `(let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
+     ,@body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Reader macro for semicolon.
 ;;;
 ;;; We read characters until end-of-file or until we have read a
