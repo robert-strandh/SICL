@@ -768,7 +768,7 @@
 	  collect i))
 
 (defun parse-ordinary-lambda-list (lambda-list)
-  (let ((allowed '(&optional &rest &body &key &allow-other-keys &aux)))
+  (let ((allowed '(&optional &rest &key &allow-other-keys &aux)))
     (check-lambda-list-proper lambda-list 'parse-ordinary-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
@@ -794,7 +794,7 @@
       result)))
 	
 (defun parse-generic-function-lambda-list (lambda-list)
-  (let ((allowed '(&optional &rest &body &key &allow-other-keys)))
+  (let ((allowed '(&optional &rest &key &allow-other-keys)))
     (check-lambda-list-proper lambda-list 'parse-generic-function-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
@@ -818,7 +818,7 @@
       result)))
 	
 (defun parse-specialized-lambda-list (lambda-list)
-  (let ((allowed '(&optional &rest &body &key &allow-other-keys &aux)))
+  (let ((allowed '(&optional &rest &key &allow-other-keys &aux)))
     (check-lambda-list-proper lambda-list 'parse-specialized-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
@@ -1190,7 +1190,7 @@
 	      result))))))
 
 (defun parse-defsetf-lambda-list (lambda-list)
-  (let ((allowed '(&optional &rest &body &key &allow-other-keys &environment)))
+  (let ((allowed '(&optional &rest &key &allow-other-keys &environment)))
     (check-lambda-list-proper lambda-list 'parse-defsetf-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
@@ -1217,7 +1217,7 @@
       result)))
 	
 (defun parse-define-modify-macro-lambda-list (lambda-list)
-  (let ((allowed '(&optional &rest &body)))
+  (let ((allowed '(&optional &rest)))
     (check-lambda-list-proper lambda-list 'parse-define-modify-macro-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
@@ -1237,7 +1237,7 @@
 
 (defun parse-define-method-combination-arguments-lambda-list
     (lambda-list)
-  (let ((allowed '(&whole &optional &rest &body &key &allow-other-keys &aux)))
+  (let ((allowed '(&whole &optional &rest &key &allow-other-keys &aux)))
     (check-lambda-list-proper
      lambda-list
      'parse-define-method-combination-arguments-lambda-list)
