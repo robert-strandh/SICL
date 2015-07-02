@@ -178,9 +178,11 @@
 
 (defmethod convert-special ((symbol (eql 'go)) form env system)
   (declare (ignore system))
-  (let ((info (tag-info env (cadr form))))
-    (cleavir-ast:make-go-ast
-     (cleavir-env:identity info))))
+  (db s (go tag) form
+    (declare (ignore go))
+    (let ((info (tag-info env (raw tag))))
+      (cleavir-ast:make-go-ast
+       (cleavir-env:identity info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
