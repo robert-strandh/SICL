@@ -136,12 +136,12 @@
 	 (at-sign-p (if (eql char2 #\@)
 			t
 			(progn (unread-char char2 stream) nil)))
-	 (*backquote-depth* (1- *backquote-depth*))
-	 (*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
-    (let ((form (read stream t nil t)))
-      (if at-sign-p
-	  `(unquote-splicing ,form)
-	  `(unquote ,form)))))
+	 (*backquote-depth* (1- *backquote-depth*)))
+    (with-preserved-backquote-context
+      (let ((form (read stream t nil t)))
+	(if at-sign-p
+	    `(unquote-splicing ,form)
+	    `(unquote ,form))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
