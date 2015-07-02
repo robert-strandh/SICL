@@ -123,9 +123,9 @@
   (unless *backquote-allowed-p*
     (error 'invalid-context-for-backquote
 	   :stream stream))
-  (let ((*backquote-depth* (1+ *backquote-depth*))
-	(*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
-    `(quasiquote ,(read stream t nil t))))
+  (let ((*backquote-depth* (1+ *backquote-depth*)))
+    (with-preserved-backquote-context
+      `(quasiquote ,(read stream t nil t)))))
 
 (defun comma (stream char)
   (declare (ignore char))
