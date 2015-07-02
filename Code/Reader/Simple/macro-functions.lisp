@@ -249,7 +249,7 @@
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
 	  :macro-name 'sharpsign-single-quote))
-  (let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
+  (with-preserved-backquote-context
     `(function ,(read stream t nil t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
