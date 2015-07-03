@@ -563,6 +563,15 @@
 ;;; type inference phase.  If static type inference can determine the
 ;;; value of the TYPEQ-AST, then no runtime test is required.  If not,
 ;;; then a call to TYPEP is generated instead. 
+;;;
+;;; It used to be the case that we would have an :AFTER method on
+;;; INITIALIZE-INSTANCE that would compute the TYPE-SPECIFIER-AST slot
+;;; from the TYPE-SPECIFIER slot.  However this technique will not
+;;; work when ASTs are cloned, because it is assumed in the cloning
+;;; code that an instance of the AST can be created without any
+;;; initialization arguments.  So instead, we initialize the
+;;; TYPE-SPECIFIER-AST slot with NIL and we compute the real value of
+;;; it only when it is requested.
 
 (defclass typeq-ast (ast boolean-ast-mixin)
   (;; This slot contains the type specifier as an S-expression.  When
@@ -575,15 +584,19 @@
    ;; hoisted so that the type specifier is provided as a load-time
    ;; constant to be used with TYPEP, should it turn out to be
    ;; necessary to use TYPEP at runtime to determine the type.
-   (%type-specifier-ast :initarg :type-specifier-ast :reader type-specifier-ast)
+   (%type-specifier-ast :initform nil
+			:initarg :type-specifier-ast
+			:reader type-specifier-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defmethod initialize-instance :after
-    ((ast typeq-ast) &key &allow-other-keys)
-  (reinitialize-instance
-   ast
-   :type-specifier-ast
-   (make-load-time-value-ast `',(type-specifier ast))))
+(defmethod type-specifier-ast :around ((ast typeq-ast))
+  (let ((value (call-next-method)))
+    (when (null value)
+      (setq value (make-load-time-value-ast `',(type-specifier ast)))
+      (reinitialize-instance
+       ast
+       :type-specifier-ast value))
+    value))
 
 (defun make-typeq-ast (form-ast type-specifier)
   (make-instance 'typeq-ast
