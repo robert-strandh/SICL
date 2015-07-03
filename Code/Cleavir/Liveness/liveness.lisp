@@ -49,10 +49,8 @@
 ;;; return value should be considered to be an opaque object, only to
 ;;; be used as the first argument of the functions LIVE-BEFORE and
 ;;; LIVE-AFTER.
-(defun liveness (start-node successor-fun input-fun output-fun)
-  (let ((predecessor-fun (cleavir-utilities:predecessor-function
-			  start-node successor-fun))
-	(liveness (make-instance 'liveness)))
+(defun liveness (start-node successor-fun predecessor-fun input-fun output-fun)
+  (let ((liveness (make-instance 'liveness)))
     (with-accessors ((btable btable) (atable atable)) liveness
       (flet ((successors (node)
 	       (funcall successor-fun node))
