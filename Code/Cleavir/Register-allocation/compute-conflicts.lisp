@@ -36,6 +36,7 @@
 	(liveness (cleavir-liveness:liveness
 		   initial-instruction
 		   #'cleavir-ir:successors
+		   #'cleavir-ir:predecessors
 		   (lambda (instruction)
 		     (remove-if-not
 		      (lambda (input)
