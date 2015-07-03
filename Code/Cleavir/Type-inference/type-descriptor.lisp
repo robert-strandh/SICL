@@ -242,4 +242,44 @@
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of LONG-FLOAT.
 
+(defgeneric binary-join (descriptor1 descriptor2))
+
+(defgeneric binary-meet (descriptor1 descriptor2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on BINARY-JOIN.
+
+;;; This method is applicable when neither of the two descriptors is
+;;; NIL.  In that case, if the two are EQ, we return the first one.
+;;; If they are not EQ, we do the conservative thing and return T.
+(defmethod binary-join (descriptor1 descriptor2)
+  (if (eq descriptor1 descriptor2)
+      descriptor1
+      t))
+
+(defmethod binary-join ((descriptor1 (eql 'nil)) descriptor2)
+  descriptor2)
+
+(defmethod binary-join (descriptor1 (descriptor2 (eql 'nil)))
+  descriptor1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on BINARY-MEET.
+
+;;; This method is applicable when neither of the two descriptors is
+;;; T.  In that case, if the two are EQ, we return the first one.
+;;; If they are not EQ, we return NIL.
+(defmethod binary-meet (descriptor1 descriptor2)
+  (if (eq descriptor1 descriptor2)
+      descriptor1
+      nil))
+
+(defmethod binary-meet ((descriptor1 (eql 't)) descriptor2)
+  descriptor2)
+
+(defmethod binary-meet (descriptor1 (descriptor2 (eql 't)))
+  descriptor1)
+
 ;;  LocalWords:  canonicalize inferencer
