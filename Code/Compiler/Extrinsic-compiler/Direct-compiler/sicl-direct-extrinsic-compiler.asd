@@ -1,4 +1,4 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
 ;;;; The direct extrinsic compiler is a compiler that runs on some
 ;;;; host environment perhaps other than SICL.  It supplies a function
@@ -6,7 +6,7 @@
 ;;;; environment, and it produces a small graph of objects that can be
 ;;;; turned into target binary code in a straightforward way.
 
-(asdf:defsystem :sicl-direct-extrinsic-compiler
+(defsystem :sicl-direct-extrinsic-compiler
   :depends-on (:sicl-extrinsic-environment
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
