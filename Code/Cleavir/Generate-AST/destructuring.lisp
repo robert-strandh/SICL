@@ -52,11 +52,30 @@
 (defmethod drest ((x cons))
   (rest x))
 
+;;; Take the REST of a source location.  The children of the source
+;;; location must be a list with at least one element in it, i.e. a
+;;; CONS cell.  The CDR of that list can be of three different types.
+;;; Either it is another CONS cell, in which case there are still more
+;;; children.  In that case, we construct a new source location out of
+;;; the remaining children.  If it is not another CONS cell, it might
+;;; be NIL, in which case we ran out of children, and we return NIL.
+;;; Finally, it can be another source location, meaning that the
+;;; expression is a dotted list, so we return that source location.
 (defmethod drest ((x source-location))
-  (make-instance 'source-location
-    :expression (rest (expression x))
-    :location (location x)
-    :children (drest (children x))))
+  (let ((expression (expression x))
+	(children (children x)))
+    (unless (consp children)
+      (error "invalid argument ~s~%" x))
+    (typecase (rest children)
+      (cons
+       (make-instance 'source-location
+	 :expression (rest expression)
+	 :location (location x)
+	 :children (rest children)))
+      (null
+       '())
+      (t
+       (rest children)))))
 
 ;;; This function generates code for destructuring a value according
 ;;; to a tree of variables.  TREE is a tree of variable names
