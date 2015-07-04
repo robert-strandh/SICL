@@ -282,4 +282,18 @@
 (defmethod binary-meet (descriptor1 (descriptor2 (eql 't)))
   descriptor1)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function JOIN.
+
+(defun join (&rest descriptors)
+  (reduce #'binary-join descriptors :initial-value 'nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function MEET.
+
+(defun meet (&rest descriptors)
+  (reduce #'binary-meet descriptors :initial-value 't))
+
 ;;  LocalWords:  canonicalize inferencer
