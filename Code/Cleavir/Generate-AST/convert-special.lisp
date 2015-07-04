@@ -397,8 +397,6 @@
 (defmethod convert-special
     ((symbol (eql 'load-time-value)) form environment system)
   (declare (ignore system))
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 2)
   (cleavir-ast:make-load-time-value-ast
    (cadr form) (caddr form)))
 
