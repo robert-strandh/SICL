@@ -397,8 +397,14 @@
 (defmethod convert-special
     ((symbol (eql 'load-time-value)) form environment system)
   (declare (ignore system))
-  (cleavir-ast:make-load-time-value-ast
-   (cadr form) (caddr form)))
+  (db s (load-time-value form . remaining) form
+    (declare (ignore load-time-value))
+    (cleavir-ast:make-load-time-value-ast
+     form
+     (if (null remaining)
+	 nil
+	 (db s (read-only-p) remaining
+	   (raw read-only-p))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
