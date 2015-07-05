@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-cons-package
+(defsystem :sicl-cons-package
   :serial t
   :components
   ((:file "packages")))
