@@ -177,6 +177,11 @@
 
 (defmethod convert-form
     (form (info cleavir-env:global-function-info) env system)
+  ;; When we compile a call to a global function, it is possible that
+  ;; we are in COMPILE-TIME-TOO mode.  In that case, we must first
+  ;; evaluate the form.
+  (when (and *current-form-is-top-level-p* *compile-time-too*)
+    (cleavir-env:eval form env env))
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
 	;; There is no compiler macro.  Create the call.
@@ -203,6 +208,15 @@
 ;;; Converting a special form.
 
 (defgeneric convert-special (head form environment system))
+
+(defmethod convert-special :around (head form environment system)
+  (declare (ignore system))
+  (when (and *compile-time-too*
+	     *current-form-is-top-level-p*
+	     (not (member head
+			  '(progn locally macrolet symbol-macrolet eval-when))))
+    (cleavir-env:eval form environment environment))
+  (call-next-method))
 
 (defmethod convert-form
     (form (info cleavir-env:special-operator-info) env system)
