@@ -3,8 +3,7 @@
 (defsystem :sicl-initialize-environment-1
   :depends-on (:sicl-compiler)
   :components
-  ((:file "macros")
-   (:file "constants")
+  ((:file "constants")
    (:file "functions")
    (:file "types")))
 
