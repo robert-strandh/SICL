@@ -471,8 +471,9 @@
 (defmethod convert-special
     ((head (eql 'progn)) form environment system)
   (with-preserved-toplevel-ness
-    (process-progn
-     (convert-sequence (cdr form) environment system))))
+    (db s (progn . forms) form
+      (process-progn
+       (convert-sequence forms environment system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
