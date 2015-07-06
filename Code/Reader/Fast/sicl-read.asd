@@ -1,6 +1,6 @@
-(in-package #:common-lisp-user)
+(in-package #:asdf-user)
 
-(asdf:defsystem :sicl-read
+(defsystem :sicl-read
     :components
   ((:file "packages" :depends-on ())
    (:file "float" :depends-on ("packages"))
