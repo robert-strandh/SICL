@@ -74,10 +74,9 @@
   ;; Call ADD-DIRECT-METHOD for each of the specializers of METHOD.
   (loop for specializer in (method-specializers method)
 	do (add-direct-method specializer method))
-  ;; Call COMPUTE-DISCRIMINATING-FUNCTION and install its result
-  ;; with SET-FUNCALLABLE-INSTANCE-FUNCTION. 
-  (let ((df (compute-discriminating-function generic-function)))
-    (set-funcallable-instance-function generic-function df))
+  ;; In validate the current discriminating function so that it will
+  ;; be recomputed next time the generic function is called.
+  (invalidate-discriminating-function generic-function)
   ;; Update the dependents of GENERIC-FUNCTION.
   (map-dependents generic-function
 		  (lambda (dependent)
@@ -109,10 +108,9 @@
 	do (remove-direct-method specializer method))
   ;; Disassociate GENERIC-FUNCTION from METHOD.
   (setf (method-generic-function method) nil)
-  ;; Call COMPUTE-DISCRIMINATING-FUNCTION and install its result
-  ;; with SET-FUNCALLABLE-INSTANCE-FUNCTION. 
-  (let ((df (compute-discriminating-function generic-function)))
-    (set-funcallable-instance-function generic-function df))
+  ;; In validate the current discriminating function so that it will
+  ;; be recomputed next time the generic function is called.
+  (invalidate-discriminating-function generic-function)
   ;; Update the dependents of GENERIC-FUNCTION.
   (map-dependents generic-function
 		  (lambda (dependent)
