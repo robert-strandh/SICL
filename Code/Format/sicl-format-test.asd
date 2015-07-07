@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-format-test
+(defsystem :sicl-format-test
   :depends-on (:lisp-unit :sicl-format)
   :components
   ((:file "format-test" :depends-on ())))
