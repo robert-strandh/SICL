@@ -47,4 +47,5 @@
 		 :method-class method-class
 		 :name name
 		 initargs)))
-  (invalidate-discriminating-function generic-function))
+  (invalidate-discriminating-function generic-function)
+  generic-function)
