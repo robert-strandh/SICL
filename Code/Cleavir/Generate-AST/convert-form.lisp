@@ -211,6 +211,7 @@
 
 (defmethod convert-special :around (head form environment system)
   (declare (ignore system))
+  (check-special-form-syntax head (raw form))
   (when (and *compile-time-too*
 	     *current-form-is-top-level-p*
 	     (not (member head

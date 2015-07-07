@@ -1,10 +1,5 @@
 (in-package #:cleavir-generate-ast)
 
-(defmethod convert-special :around (symbol form env system)
-  (declare (ignore env))
-  (check-special-form-syntax symbol (raw form))
-  (call-next-method))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting QUOTE.
