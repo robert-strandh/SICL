@@ -467,6 +467,7 @@
     ((head (eql 'progn)) form environment system)
   (with-preserved-toplevel-ness
     (db s (progn . forms) form
+      (declare (ignore progn))
       (process-progn
        (convert-sequence forms environment system)))))
 
