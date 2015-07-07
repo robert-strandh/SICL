@@ -39,11 +39,11 @@
       (if argument-precedence-order-p
 	  (error "when argument precedence order appears,~@
                   so must lambda list")
-	(apply #'call-next-method
-	       generic-function
-	       slot-names
-	       :documentation documentation
-	       :declarations declarations
-	       :method-class method-class
-	       :name name
-	       initargs))))
+	  (apply #'call-next-method
+		 generic-function
+		 slot-names
+		 :documentation documentation
+		 :declarations declarations
+		 :method-class method-class
+		 :name name
+		 initargs))))
