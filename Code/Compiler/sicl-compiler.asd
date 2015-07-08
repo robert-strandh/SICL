@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-compiler
+(defsystem :sicl-compiler
   :depends-on (:cleavir-code-utilities
 	       :sicl-global-environment
 	       :sicl-reader-simple
