@@ -11,6 +11,7 @@
    (:file "type-inference")
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
+   (:file "function-tree")
    (:file "segregate-lexicals")
    (:file "eliminate-superfluous-temporaries")
    (:file "hir-transformations")))
