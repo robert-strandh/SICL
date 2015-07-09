@@ -309,3 +309,16 @@
            But the following was found instead:~@
            ~s"
           (code c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;  Conditions for forms with BODY.
+
+(defmethod cleavir-i18n:report-condition
+    ((c ordinary-body-must-be-proper-list) stream (language cleavir-i18n:english))
+  (format stream
+	  "The BODY of a form such as LET, LET*, FLET, LABELS,~@
+           or LOCALLY, must be a proper list.
+           But the following was found instead:~@
+           ~s"
+          (body c)))
