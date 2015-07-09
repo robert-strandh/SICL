@@ -90,7 +90,8 @@
 
 (defun separate-ordinary-body (body)
   (unless (proper-list-p body)
-    (error "body must be a proper list"))
+    (error 'ordinary-body-must-be-proper-list
+	   :body body))
   (let ((pos (position-if-not (lambda (item)
 				(and (consp item)
 				     (eq (car item) 'declare)))
@@ -113,7 +114,8 @@
 
 (defun separate-function-body (body)
   (unless (proper-list-p body)
-    (error "body must be a proper list"))
+    (error 'function-body-must-be-proper-list
+	   :body body))
   (let ((declarations '())
 	(documentation nil)
 	(forms '()))
