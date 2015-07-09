@@ -188,3 +188,7 @@
 (define-condition ordinary-body-must-be-proper-list
     (style-warning cleavir-i18n:condition)
   ((%body :initarg :body :reader body)))
+
+(define-condition function-body-must-be-proper-list
+    (style-warning cleavir-i18n:condition)
+  ((%body :initarg :body :reader body)))
