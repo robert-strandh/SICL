@@ -322,3 +322,11 @@
            But the following was found instead:~@
            ~s"
           (body c)))
+
+(defmethod cleavir-i18n:report-condition
+    ((c function-body-must-be-proper-list) stream (language cleavir-i18n:english))
+  (format stream
+	  "The BODY of a function must be a proper list.
+           But the following was found instead:~@
+           ~s"
+          (body c)))
