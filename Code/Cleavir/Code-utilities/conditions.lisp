@@ -180,3 +180,11 @@
 (define-condition suspect-lambda-list-keyword
     (style-warning cleavir-i18n:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;  Conditions for forms with BODY.
+
+(define-condition ordinary-body-must-be-proper-list
+    (style-warning cleavir-i18n:condition)
+  ((%body :initarg :body :reader body)))
