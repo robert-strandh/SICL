@@ -15,6 +15,8 @@
 ;;;; node is either the root, or it contains the ENCLOSE-INSTRUCTION
 ;;;; that the ENTER-INSTRUCTION is associated with.
 
+(defgeneric enter-instruction (node))
+
 (defclass tree-node ()
   ((%children :initform '() :accessor children)))
 
@@ -23,10 +25,16 @@
 			 :reader initial-instruction)
    (%tree-nodes :initarg :tree-nodes :reader tree-nodes)))
 
+(defmethod enter-instruction ((node function-tree))
+  (initial-instruction node))
+
 (defclass interior-node (tree-node)
   ((%parent :initarg :parent :reader parent)
    (%enclose-instruction :initarg :enclose-instruction
 			 :reader enclose-instruction)))
+
+(defmethod enter-instruction ((node interior-node))
+  (cleavir-ir:code (enclose-instruction node)))
 
 (defun build-function-tree (initial-instruction)
   (let* (;; Create an EQ hash table that maps ENTER-INSTRUCTIONs to
