@@ -19,7 +19,9 @@
   ((%children :initform '() :accessor children)))
 
 (defclass function-tree (tree-node)
-  ((%tree-nodes :initarg :tree-nodes :reader tree-nodes)))
+  ((%initial-instruction :initarg :initial-instruction
+			 :reader initial-instruction)
+   (%tree-nodes :initarg :tree-nodes :reader tree-nodes)))
 
 (defclass interior-node (tree-node)
   ((%enclose-instruction :initarg :enclose-instruction
@@ -33,7 +35,9 @@
 	 (table (make-hash-table :test #'eq))
 	 ;; Create the root of the tree that is ultimately going to be
 	 ;; returned as the value of this function.
-	 (root (make-instance 'function-tree :tree-nodes table)))
+	 (root (make-instance 'function-tree
+		 :tree-nodes table
+		 :initial-instruction initial-instruction)))
     ;; Enter the root into the table.
     (setf (gethash initial-instruction table) root)
     (cleavir-ir:map-instructions-by/with-owner
