@@ -60,3 +60,10 @@
 	   (setf (gethash (cleavir-ir:code instruction) table) node))))
      initial-instruction)
     root))
+
+;;; Given a function tree and an ENTER-INSTRUCTION, find the parent
+;;; ENTER-INSTRUCTION of the ENTER-INSTRUCTION passed as an argument.
+(defun parent-enter (function-tree enter-instruction)
+  (let ((node (gethash enter-instruction (tree-nodes function-tree))))
+    (assert (typep node 'interior-node))
+    (enter-instruction (parent node))))
