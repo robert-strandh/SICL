@@ -17,16 +17,20 @@
 
 (defvar *basic-blocks*)
 
-;;; This variable holds an EQ hash table mapping each instruction and
-;;; each datum to its owner.  The owner is an ENTER-INSTRUCTION.
-(defvar *ownerships*)
+;;; This variable holds an EQ hash table mapping each instruction
+;;; to its owner.  The owner is an ENTER-INSTRUCTION.
+(defvar *instruction-ownerships*)
+
+;;; This variable holds an EQ hash table mapping each datum to its
+;;; owner.  The owner is an ENTER-INSTRUCTION.
+(defvar *location-ownerships*)
 
 ;;; For a given owner (which can be an ENTER-INSTRUCTION or NIL),
 ;;; return a list of all the variables (lexical or values) that are
 ;;; owned by that instruction.
 (defun compute-owned-variables (owner)
   (let ((function-p (typep owner 'cleavir-ir:enter-instruction)))
-    (loop for var being each hash-key of *ownerships*
+    (loop for var being each hash-key of *location-ownerships*
 	    using (hash-value value)
 	  when (and (typep var '(or
 				 cleavir-ir:lexical-location
@@ -147,8 +151,12 @@
 
 (defun translate (initial-instruction linkage-environment)
   (cleavir-meter:with-meter (m *hir-to-cl-translation-meter*)
-    (let ((*ownerships*
-	    (cleavir-hir-transformations:compute-ownerships initial-instruction))
+    (let ((*instruction-ownerships*
+	    (cleavir-hir-transformations:compute-instruction-owners
+	     initial-instruction))
+	  (*location-ownerships*
+	    (cleavir-hir-transformations:compute-location-owners
+	     initial-instruction))
 	  (*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
 	  (*linkage-environment* linkage-environment)
 	  (*tags* (make-hash-table :test #'eq))
@@ -182,7 +190,7 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs)
-  (let* ((owner (gethash instruction *ownerships*))
+  (let* ((owner (gethash instruction *instruction-ownerships*))
 	 (var (gethash owner *dynamic-environment-variables*)))
     `(progn (setf *dynamic-environment* ,var)
 	    (setf ,(first outputs)
@@ -201,7 +209,7 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:tailcall-instruction) inputs outputs)
   (declare (ignore outputs))
-  (let* ((owner (gethash instruction *ownerships*))
+  (let* ((owner (gethash instruction *instruction-ownerships*))
 	 (var (gethash owner *dynamic-environment-variables*)))
     ;; It is not quite correct to set the dynamic environment to that
     ;; of the current function.  Since it is a tail call it should
@@ -462,7 +470,7 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:funcall-instruction) inputs outputs successors)
   (declare (ignore outputs successors))
-  (let* ((owner (gethash instruction *ownerships*))
+  (let* ((owner (gethash instruction *instruction-ownerships*))
 	 (var (gethash owner *dynamic-environment-variables*)))
     `(progn (setf *dynamic-environment* ,var)
 	    (traced-funcall
