@@ -41,7 +41,7 @@
 
 ;;; This variable is true if and only if the subforms of the current
 ;;; form are top-level forms.
-(defparameter *subforms-are-top-level-p* t)
+(defvar *subforms-are-top-level-p*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -593,7 +593,8 @@
 	 (convert-lambda-call form environment system))))
 
 (defun generate-ast (form environment system)
-  (convert form environment system))
+  (let ((*subforms-are-top-level-p* t))
+    (convert form environment system)))
 
 (defmacro with-preserved-toplevel-ness (&body body)
   `(progn (setf *subforms-are-top-level-p* *current-form-is-top-level-p*)
