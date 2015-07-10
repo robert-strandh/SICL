@@ -139,11 +139,7 @@
 	unless (eq enter owner)
 	  do (let* ((node (gethash enter tree-nodes))
 		    (enclose (enclose-instruction node))
-		    (parent (parent node))
-		    (parent-enter (if (typep parent 'function-tree)
-				      (initial-instruction parent)
-				      (cleavir-ir:code
-				       (enclose-instruction parent))))
+		    (parent-enter (parent-enter function-tree enter))
 		    (import (cdr (assoc parent-enter cell-locations))))
 	       (transmit-cell enclose import enter cell-location))))
 
@@ -159,18 +155,11 @@
 ;;; function in the program that reads or writes the location.
 (defun add-intermediate-functions (enter-instructions function-tree owner)
   (let ((result enter-instructions))
-    (loop with tree-nodes = (tree-nodes function-tree)
-	  for enter-instruction in enter-instructions
+    (loop for enter-instruction in enter-instructions
 	  do (loop with enter = enter-instruction
 		   until (eq enter owner)
 		   do (pushnew enter result :test #'eq)
-		      (let* ((node (gethash enter tree-nodes))
-			     (parent (parent node))
-			     (new-enter (if (typep parent 'function-tree)
-					    (initial-instruction parent)
-					    (cleavir-ir:code
-					     (enclose-instruction parent)))))
-			(setf enter new-enter))))
+		      (setf enter (parent-enter function-tree enter))))
     result))
 
 ;;; Given a single static lexical location SLOC, a dynamic lexical
