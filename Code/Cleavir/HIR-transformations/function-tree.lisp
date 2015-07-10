@@ -24,7 +24,8 @@
    (%tree-nodes :initarg :tree-nodes :reader tree-nodes)))
 
 (defclass interior-node (tree-node)
-  ((%enclose-instruction :initarg :enclose-instruction
+  ((%parent :initarg :parent :reader parent)
+   (%enclose-instruction :initarg :enclose-instruction
 			 :reader enclose-instruction)))
 
 (defun build-function-tree (initial-instruction)
@@ -43,9 +44,11 @@
     (cleavir-ir:map-instructions-by/with-owner
      (lambda (instruction owner)
        (when (typep instruction 'cleavir-ir:enclose-instruction)
-	 (let ((node (make-instance 'interior-node
-		       :enclose-instruction instruction)))
-	   (push node (children (gethash owner table)))
+	 (let* ((parent (gethash owner table))
+		(node (make-instance 'interior-node
+			:parent parent
+			:enclose-instruction instruction)))
+	   (push node (children parent))
 	   (setf (gethash (cleavir-ir:code instruction) table) node))))
      initial-instruction)
     root))
