@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "traverse")
+   (:file "compute-ownership")
    (:file "inline-calls")
    (:file "static-few-assignments")
    (:file "type-inference")
