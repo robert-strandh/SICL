@@ -7,6 +7,8 @@
    #:eliminate-typeq
    #:type-inference
    #:process-captured-variables
+   #:compute-instruction-owners
+   #:compute-location-owners
    #:segregate-lexicals
    #:hir-transformations
    #:introduce-intermediate
