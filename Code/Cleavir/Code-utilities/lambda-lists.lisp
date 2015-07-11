@@ -207,7 +207,8 @@
     (flet ((check-arity (keyword number-of-args)
 	     (if (eq keyword '&whole)
 		 (when (zerop number-of-args)
-		   (error "arity zero not allowed"))
+		   (error 'whole-must-be-followed-by-variable
+			  :code lambda-list))
 		 (let ((arities (cdr (assoc keyword *lambda-list-keywords*))))
 		   (when (or (< number-of-args (car arities))
 			     (and (not (null (cadr arities)))
