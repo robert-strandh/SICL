@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "type-descriptor")
-   (:file "filter")))
+   (:file "filter")
+   (:file "bag-equal")))
