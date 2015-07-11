@@ -806,7 +806,7 @@
 	    (parse-all-optionals
 	     lambda-list positions #'parse-defgeneric-optional))
       (setf (values (rest-body result) positions)
-	    (values (parse-rest/body lambda-list positions)))
+	    (parse-rest/body lambda-list positions))
       (setf (values (keys result) positions)
 	    (parse-all-keys
 	     lambda-list positions #'parse-defgeneric-key))
@@ -830,7 +830,7 @@
 	    (parse-all-optionals
 	     lambda-list positions #'parse-ordinary-optional))
       (setf (values (rest-body result) positions)
-	    (values (parse-rest/body lambda-list positions)))
+	    (parse-rest/body lambda-list positions))
       (setf (values (keys result) positions)
 	    (parse-all-keys
 	     lambda-list positions #'parse-ordinary-key))
@@ -1042,7 +1042,7 @@
 		    (parse-all-optionals
 		     lambda-list positions #'parse-destructuring-optional))
 	      (setf (values (rest-body result) positions)
-		    (values (parse-rest/body lambda-list positions)))
+		    (parse-rest/body lambda-list positions))
 	      (setf (values (keys result) positions)
 		    (parse-all-keys
 		     lambda-list positions #'parse-destructuring-key))
@@ -1203,7 +1203,7 @@
 	    (parse-all-optionals
 	     lambda-list positions #'parse-ordinary-optional))
       (setf (values (rest-body result) positions)
-	    (values (parse-rest/body lambda-list positions)))
+	    (parse-rest/body lambda-list positions))
       (setf (values (keys result) positions)
 	    (parse-all-keys
 	     lambda-list positions #'parse-ordinary-key))
@@ -1229,7 +1229,7 @@
 	    (parse-all-optionals
 	     lambda-list positions #'parse-ordinary-optional))
       (setf (values (rest-body result) positions)
-	    (values (parse-rest/body lambda-list positions)))
+	    (parse-rest/body lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
 	(error "something is seriously wrong here"))
@@ -1251,7 +1251,7 @@
 	    (parse-all-optionals
 	     lambda-list positions #'parse-ordinary-optional))
       (setf (values (rest-body result) positions)
-	    (values (parse-rest/body lambda-list positions)))
+	    (parse-rest/body lambda-list positions))
       (setf (values (keys result) positions)
 	    (parse-all-keys
 	     lambda-list positions #'parse-ordinary-key))
