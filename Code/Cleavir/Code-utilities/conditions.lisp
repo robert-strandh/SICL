@@ -70,10 +70,6 @@
     (program-error cleavir-i18n:condition)
   ())
 
-(define-condition whole-must-be-followed-by-variable
-    (program-error cleavir-i18n:condition)
-  ())
-
 (define-condition whole-must-appear-first
     (program-error cleavir-i18n:condition)
   ())
