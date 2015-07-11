@@ -2,7 +2,7 @@
 
 ;;;; Copyright (c) 2010
 ;;;;
-;;;;     Robert Strandh (strandh@labri.fr)
+;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
 ;;;; all rights reserved. 
 ;;;;
