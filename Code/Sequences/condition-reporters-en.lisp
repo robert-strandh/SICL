@@ -1,6 +1,6 @@
 (cl:in-package :sicl-sequence)
 
-;;;; Copyright (c) 2010
+;;;; Copyright (c) 2010, 2015
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
