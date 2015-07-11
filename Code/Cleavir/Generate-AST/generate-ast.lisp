@@ -54,7 +54,7 @@
 
 ;;; This variable indicates whether a form should be evaluated in
 ;;; addition to be being processed by the compiler.
-(defparameter *compile-time-too* nil)
+(defvar *compile-time-too*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -593,7 +593,8 @@
 	 (convert-lambda-call form environment system))))
 
 (defun generate-ast (form environment system)
-  (let ((*subforms-are-top-level-p* t))
+  (let ((*subforms-are-top-level-p* t)
+	(*compile-time-too* nil))
     (convert form environment system)))
 
 (defmacro with-preserved-toplevel-ness (&body body)
