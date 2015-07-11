@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "type-descriptor")
    (:file "filter")
-   (:file "bag-equal")))
+   (:file "bag-equal")
+   (:file "transfer")))
