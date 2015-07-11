@@ -76,7 +76,7 @@
 
 (define-condition whole-must-be-followed-by-variable
     (program-error cleavir-i18n:condition)
-  ())
+  ((%code :initarg :code :reader code)))
 
 (define-condition environment-must-be-followed-by-variable
     (program-error cleavir-i18n:condition)
