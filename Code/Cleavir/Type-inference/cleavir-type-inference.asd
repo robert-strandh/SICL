@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "type-descriptor")))
+   (:file "type-descriptor")
+   (:file "filter")))
