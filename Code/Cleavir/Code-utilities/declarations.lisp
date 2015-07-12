@@ -92,14 +92,13 @@
   (unless (proper-list-p body)
     (error 'ordinary-body-must-be-proper-list
 	   :body body))
-  (let ((pos (position-if (lambda (item)
-			    (and (consp item)
-				 (eq (car item) 'declare)))
-			  body
-			  :from-end t)))
+  (let ((pos (position-if-not (lambda (item)
+				(and (consp item)
+				     (eq (car item) 'declare)))
+			      body)))
     (if (null pos)
-	(values '() body)
-	(values (subseq body 0 (1+ pos)) (subseq body (1+ pos))))))
+	(values body '())
+	(values (subseq body 0 pos) (subseq body pos)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
