@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "type-descriptor")
+   (:file "sanity-checks")
    (:file "filter")
    (:file "bag-equal")
    (:file "update")
