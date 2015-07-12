@@ -8,4 +8,5 @@
    (:file "type-descriptor")
    (:file "filter")
    (:file "bag-equal")
+   (:file "update")
    (:file "transfer")))
