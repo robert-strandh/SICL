@@ -6,7 +6,5 @@
   (loop with result = input-bag
 	for output in (cleavir-ir:outputs instruction)
 	when (typep output 'cleavir-ir:lexical-location)
-	  do (setf result
-		   (cons (cons output t)
-			 (remove output result :test #'eq :key #'first)))
+	  do (setf result (update output t result))
 	finally (return result)))
