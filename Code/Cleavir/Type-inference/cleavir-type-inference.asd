@@ -9,5 +9,6 @@
    (:file "sanity-checks")
    (:file "filter")
    (:file "bag-equal")
+   (:file "bag-join")
    (:file "update")
    (:file "transfer")))
