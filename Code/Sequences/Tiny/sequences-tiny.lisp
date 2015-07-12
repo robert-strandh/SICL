@@ -1,4 +1,4 @@
-(in-package #:sicl-sequences-tiny)
+(cl:in-package #:sicl-sequences-tiny)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
