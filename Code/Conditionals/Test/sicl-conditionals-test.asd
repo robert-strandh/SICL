@@ -14,9 +14,9 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file conditionals.text for a description of the module.
 
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-conditionals-test
+(defsystem :sicl-conditionals-test
   :depends-on (:sicl-conditionals)
   :components
   ((:file "test" :depends-on ())))
