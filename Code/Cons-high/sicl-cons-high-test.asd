@@ -1,4 +1,4 @@
-(in-package #:cl-user)
+(in-package #:asdf-user)
 
 ;;;; Copyright (c) 2008 - 2013
 ;;;;
@@ -16,7 +16,7 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
 
-(asdf:defsystem :sicl-cons-high-test
+(defsystem :sicl-cons-high-test
   :depends-on (:sicl-cons-high)
   :components
   ((:file "test" :depends-on ())))
