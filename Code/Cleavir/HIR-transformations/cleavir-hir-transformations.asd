@@ -10,6 +10,7 @@
    (:file "inline-calls")
    (:file "static-few-assignments")
    (:file "type-inference")
+   (:file "eliminate-load-time-value-inputs")
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
    (:file "function-tree")
