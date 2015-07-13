@@ -54,7 +54,7 @@
 
 (defun phase2 (boot)
   (let ((c (c1 boot))
-	(r (r2 boot)))
+	(r (r1 boot)))
     (create-bridge-class-accessors boot)
     (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     (ld "../CLOS/add-accessor-method.lisp" c r)
@@ -63,7 +63,7 @@
 	   'sicl-clos:shared-initialize-around-real-class-default)
 	  (sicl-genv:fdefinition
 	   'sicl-clos:shared-initialize-around-real-class-default
-	   (r2 boot)))
+	   r))
     (ld "../CLOS/class-initialization-defmethods.lisp" c r)
     (ld "../CLOS/ensure-class-using-class-support.lisp" c r)
     (ld "ensure-class-defun-phase2.lisp" c r)
