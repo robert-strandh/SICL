@@ -168,7 +168,7 @@
 	(lambda (generic-function method)
 	  (push method (sicl-clos:generic-function-methods generic-function)))))
 
-(defun define-accessors (slot-spec class boot)
+(defun define-accessors (slot-spec class r)
   (let ((slot-name (getf slot-spec :name)))
     (loop for reader in (getf slot-spec :readers)
 	  for function = (compile nil `(lambda (args next-methods)
@@ -178,7 +178,7 @@
 			 :lambda-list '(object)
 			 :specializers (list class)
 			 :function function)
-	  do (add-method (sicl-genv:fdefinition reader (r1 boot)) method))
+	  do (add-method (sicl-genv:fdefinition reader r) method))
     (loop for writer in (getf slot-spec :writers)
 	  for function = (compile nil `(lambda (args next-methods)
 					 (declare (ignore next-methods))
@@ -188,7 +188,7 @@
 			 :lambda-list '(new-value object)
 			 :specializers (list (find-class t) class)
 			 :function function)
-	  do (add-method (sicl-genv:fdefinition writer (r1 boot)) method))))
+	  do (add-method (sicl-genv:fdefinition writer r) method))))
 
 (defun define-ensure-class-r1 (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class (r1 boot))
@@ -216,7 +216,7 @@
 			   :direct-superclasses direct-superclasses)))
 	      (setf (sicl-genv:find-class class-name (r1 boot)) class)
 	      (loop for slot-spec in direct-slots
-		    do (define-accessors slot-spec class boot)))))))
+		    do (define-accessors slot-spec class (r1 boot))))))))
 
 ;;; Since we do not use the host DEFCLASS macro nor the host version
 ;;; of ENSURE-CLASS in phase 1, our classes do not automatically have
