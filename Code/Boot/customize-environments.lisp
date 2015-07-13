@@ -257,6 +257,7 @@
 (defun customize-for-phase1 (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot)))
+    (message "Customizing environments for phase 1~%")
     (define-defgeneric-c1 boot)
     (define-temporary-ensure-method-c1-r1 boot)
     (define-class-t-r1 boot)
@@ -270,12 +271,14 @@
     ;; the temporary definition of the macro DEFMETHOD.
     (ld "../CLOS/make-method-lambda-support.lisp" c1 c1)
     (ld "../CLOS/ensure-method.lisp" c1 r1)
-    (define-ensure-class-r1 boot)))
+    (define-ensure-class-r1 boot)
+    (message "Finished customizing environments for phase 1~%")))
 
 (defun customize-for-phase2 (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot))
 	(r2 (r2 boot)))
+    (message "Customizing environments for phase 2~%")
     (define-make-instance boot)
     (define-defgeneric-c2 boot)
     (define-direct-slot-definition-class boot)
@@ -287,7 +290,8 @@
     (define-reader-method-class boot)
     (define-writer-method-class boot)
     (define-add-method boot)
-    (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c1 r2)))
+    (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c1 r2)
+    (message "Finished customizing environments for phase 2~%")))
 
 (defun customize-environments (boot)
   (let ((c1 (c1 boot))
