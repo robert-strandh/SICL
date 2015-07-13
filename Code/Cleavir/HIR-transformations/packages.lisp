@@ -4,6 +4,8 @@
   (:use #:common-lisp)
   (:export
    #:traverse
+   #:convert-constant-to-immediate
+   #:eliminate-load-time-value-inputs
    #:eliminate-typeq
    #:type-inference
    #:process-captured-variables
