@@ -290,6 +290,7 @@
     (define-reader-method-class boot)
     (define-writer-method-class boot)
     (define-add-method boot)
+    (ld "../CLOS/invalidate-discriminating-function.lisp" c1 r1)
     (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c1 r2)
     (message "Finished customizing environments for phase 2~%")))
 
