@@ -190,8 +190,8 @@
 			 :function function)
 	  do (add-method (sicl-genv:fdefinition writer r) method))))
 
-(defun define-ensure-class-r1 (boot)
-  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class (r1 boot))
+(defun define-ensure-class (r)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class r)
 	(lambda (class-name
 		 &key
 		   direct-slots
@@ -209,14 +209,14 @@
 					and collect value)))
 		(direct-superclasses
 		  (loop for name in direct-superclass-names
-			collect (sicl-genv:find-class name (r1 boot)))))
+			collect (sicl-genv:find-class name r))))
 	    (let ((class (make-instance metaclass
 			   :name (make-symbol (symbol-name name))
 			   :direct-slots slot-copies
 			   :direct-superclasses direct-superclasses)))
-	      (setf (sicl-genv:find-class class-name (r1 boot)) class)
+	      (setf (sicl-genv:find-class class-name r) class)
 	      (loop for slot-spec in direct-slots
-		    do (define-accessors slot-spec class (r1 boot))))))))
+		    do (define-accessors slot-spec class r)))))))
 
 ;;; Since we do not use the host DEFCLASS macro nor the host version
 ;;; of ENSURE-CLASS in phase 1, our classes do not automatically have
@@ -271,7 +271,7 @@
     ;; the temporary definition of the macro DEFMETHOD.
     (ld "../CLOS/make-method-lambda-support.lisp" c1 c1)
     (ld "../CLOS/ensure-method.lisp" c1 r1)
-    (define-ensure-class-r1 boot)
+    (define-ensure-class r1)
     (message "Finished customizing environments for phase 1~%")))
 
 (defun customize-for-phase2 (boot)
@@ -289,6 +289,7 @@
     (define-default-superclasses boot)
     (define-reader-method-class boot)
     (define-writer-method-class boot)
+    (define-ensure-class r2)
     (define-add-method boot)
     (ld "../CLOS/invalidate-discriminating-function.lisp" c1 r1)
     (ld "../CLOS/generic-function-initialization-defmethods.lisp" c1 r1)
