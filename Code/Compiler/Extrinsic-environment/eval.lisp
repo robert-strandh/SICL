@@ -17,6 +17,8 @@
 	  tied)
 	result)))
 
+(defparameter *caching* nil)
+
 ;;; This variable is part of an attempt at caching the result of
 ;;; loading files.  It is bound by SICL-EXTRINSIC-ENVIRONMENT:LOAD to
 ;;; the hash value (computed by SXHASH) of the form.  Here, we check
