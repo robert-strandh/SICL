@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-compiler-test-utilities
+(defsystem :sicl-compiler-test-utilities
   :depends-on (:sicl-compiler-utilities)
   :components
   ((:file "packages")
