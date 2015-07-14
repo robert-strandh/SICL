@@ -65,8 +65,8 @@
 	   'sicl-clos:shared-initialize-around-real-class-default
 	   r))
     (ld "../CLOS/class-initialization-defmethods.lisp" c r)
-    (ld "../CLOS/ensure-class-using-class-support.lisp" c r)
-    (ld "ensure-class-defun-phase2.lisp" c r)
+    (ld "../CLOS/ensure-class-using-class-support.lisp" c (r2 boot))
+    (ld "ensure-class-defun-phase2.lisp" c (r2 boot))
     (create-bridge-classes boot)))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
