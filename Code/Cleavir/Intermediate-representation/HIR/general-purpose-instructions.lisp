@@ -48,7 +48,7 @@
 ;;; supplied as arguments.
 
 (defclass top-level-enter-instruction (enter-instruction)
-  ((%forms :initarg :forms :reader forms)))
+  ((%forms :initarg :forms :accessor forms)))
 
 (defun make-top-level-enter-instruction (lambda-list forms)
   (let ((enter (make-enter-instruction lambda-list)))
