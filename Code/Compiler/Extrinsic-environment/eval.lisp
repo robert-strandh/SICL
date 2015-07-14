@@ -26,6 +26,12 @@
 ;;; compilation.  Otherwise, we compile the form and cache the result.
 (defparameter *form-being-compiled* nil)
 
+;;; This variable holds an EQUAL hash table mapping identifiers of
+;;; forms to compiled functions.  An identifier of a form is a pair
+;;; consisting of the file name in which the form is located and the
+;;; number of the form within the file (starting at 0).
+(defparameter *compiled-form-cache* (make-hash-table :test #'equal))
+
 (defmethod cleavir-env:eval (form environment1 (environment2 environment))
   (cond ((and (consp form)
 	      (consp (cdr form))
