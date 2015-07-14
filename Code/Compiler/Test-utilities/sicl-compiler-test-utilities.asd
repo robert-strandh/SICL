@@ -2,6 +2,7 @@
 
 (defsystem :sicl-compiler-test-utilities
   :depends-on (:sicl-compiler-utilities)
+  :serial t
   :components
   ((:file "packages")
-   (:file "test-utilities" :depends-on ("packages"))))
+   (:file "test-utilities")))
