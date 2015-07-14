@@ -17,6 +17,15 @@
 	  tied)
 	result)))
 
+;;; This variable is part of an attempt at caching the result of
+;;; loading files.  It is bound by SICL-EXTRINSIC-ENVIRONMENT:LOAD to
+;;; a pair consisting of the file name and the number of the form
+;;; within the file (starting at 0).  Here, we check whether this
+;;; variable is bound, and if so, whether we have already compiled the
+;;; form in question, in which case, we just return the result of that
+;;; compilation.  Otherwise, we compile the form and cache the result.
+(defparameter *form-being-compiled* nil)
+
 (defmethod cleavir-env:eval (form environment1 (environment2 environment))
   (cond ((and (consp form)
 	      (consp (cdr form))
