@@ -84,20 +84,16 @@
 ;;; if we use the host version of TYPEP, it will return NIL because a
 ;;; bridge class is not a host class.  We solve this problem by
 ;;; supplying a slightly modified version of TYPEP in R2.  This
-;;; modified version calls the host TYPEP in all cases except when the
-;;; second argument is the symbol CLASS.  In that case, it instead
-;;; supplies a different second argument to the host TYPEP.  This
-;;; second argument is the name that the class named CLASS is know to
-;;; by the host.  We can find this name by applying CLASS-NAME to the
-;;; metaobject that we obtain by calling FIND-CLASS in R1 with the
-;;; symbol CLASS.
+;;; modified version relies on the fact that when TYPEP is called this
+;;; way, it is either called with a symbol or with a bridge class.  We
+;;; capture this case, and return T when we are called with a standard
+;;; object.
 (defun define-typep (boot)
   (setf (sicl-genv:fdefinition 'typep (r2 boot))
 	(lambda (object type)
-	  (typep object
-		 (if (eq type 'class)
-		     (class-name (sicl-genv:find-class 'class (r1 boot)))
-		     type)))))
+	  (if (eq type 'class)
+	      (typep object 'standard-object)
+	      (typep object type)))))
 
 ;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
 ;;; run-time environment R1.  This version checks whether there is
