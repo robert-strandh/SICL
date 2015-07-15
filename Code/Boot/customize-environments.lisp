@@ -50,7 +50,7 @@
 			;; FIXME: supply a method-combination metaobject.
 			:method-combination nil
 			:method-class method-class)))
-	     (setf (sicl-genv:fdefinition ',(second form) ,(r3 boot)) gf)))))
+	     (setf (sicl-genv:fdefinition ',(second form) ,(r2 boot)) gf)))))
 
 (defun define-temporary-ensure-method-c1-r1 (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))
