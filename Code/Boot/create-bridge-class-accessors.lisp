@@ -2,7 +2,7 @@
 
 (defun create-bridge-class-accessors (boot)
   (let ((c (c2 boot))
-	(r (r3 boot)))
+	(r (r2 boot)))
     ;; Accessors for generic function metaobjects.
     (ld "../CLOS/generic-function-name-defgeneric.lisp" c r)
     (ld "../CLOS/generic-function-lambda-list-defgeneric.lisp" c r)
