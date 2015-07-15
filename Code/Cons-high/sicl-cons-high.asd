@@ -17,9 +17,10 @@
 ;;;; See the file cons-high.text for a description of the module.
 
 (defsystem :sicl-cons-high
-    :components
-  ((:file "packages" :depends-on ())
-   (:file "cons-high" :depends-on ("packages"))
-   (:file "conditions" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "conditions"))
-   (:file "docstrings-en" :depends-on ("packages"))))
+  :serial t
+  :components
+  ((:file "packages")
+   (:file "cons-high")
+   (:file "conditions")
+   (:file "condition-reporters-en")
+   (:file "docstrings-en")))
