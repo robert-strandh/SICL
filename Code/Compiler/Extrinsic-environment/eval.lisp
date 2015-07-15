@@ -17,21 +17,6 @@
 	  tied)
 	result)))
 
-(defparameter *caching* nil)
-
-;;; This variable is part of an attempt at caching the result of
-;;; loading files.  It is bound by SICL-EXTRINSIC-ENVIRONMENT:LOAD to
-;;; the hash value (computed by SXHASH) of the form.  Here, we check
-;;; whether this variable is bound, and if so, whether we have already
-;;; compiled the form in question, in which case, we just return the
-;;; result of that compilation.  Otherwise, we compile the form and
-;;; cache the result.
-(defparameter *form-being-compiled* nil)
-
-;;; This variable holds an EQUAL hash table mapping hash values
-;;; (computed by SXHASH) of forms to compiled functions.
-(defparameter *compiled-form-cache* (make-hash-table :test #'eql))
-
 (defmethod cleavir-env:eval (form environment1 (environment2 environment))
   (cond ((and (consp form)
 	      (consp (cdr form))
