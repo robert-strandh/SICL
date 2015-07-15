@@ -97,8 +97,6 @@
 	 environment2)
 	(t
 	 (let (fun-and-forms)
-
-
 	   (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
 		  (ast (cleavir-generate-ast:generate-ast form environment1 nil))
 		  (ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
