@@ -122,10 +122,12 @@
   ;; Load a file containing the definition of the macro DOLIST.
   (load-file "../../Iteration/dolist-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macros DO and DO*.
-  (load-file "../../Iteration/do-dostar-defmacro.lisp" environment)
+  ;; Temporarility comment this out because we don't use these macros
+  ;; anyway.
+  ;;  (load-file "../../Iteration/do-dostar-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro
   ;; WITH-OPEN-STREAM.
-;;  (load-file "../../Stream/with-open-stream-defmacro.lisp" environment)
+  ;;  (load-file "../../Stream/with-open-stream-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro WITH-SLOTS.
   (load-file "../../CLOS/with-slots-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro WITH-ACCESSORS.
