@@ -77,5 +77,7 @@
 ;;; Main entry point of phase 1.
 
 (defun phase1 (boot)
+  (message "Start of phase 1~%")
   (create-class-accessor-generic-functions-phase1 boot)
-  (create-mop-classes-phase1 boot))
+  (create-mop-classes-phase1 boot)
+  (message "End of phase 1~%"))
