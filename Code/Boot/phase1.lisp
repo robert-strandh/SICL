@@ -30,13 +30,13 @@
 			 :name ',(second form)
 			 :lambda-list ',(third form)))))))
 
-(defun create-class-accessor-generic-functions (boot)
+(defun create-class-accessor-generic-functions-phase1 (boot)
   (let ((r2 (r2 boot)))
     (define-defgeneric-phase1 r2)
     (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
 
 (defun phase1 (boot)
-  (create-class-accessor-generic-functions boot)
+  (create-class-accessor-generic-functions-phase1 boot)
     ;; (ld "../CLOS/standard-object-defclass.lisp" c1 r1)
     ;; (ld "../CLOS/metaobject-defclass.lisp" c1 r1)
     ;; (ld "../CLOS/method-defclass.lisp" c1 r1)
