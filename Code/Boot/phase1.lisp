@@ -10,6 +10,10 @@
 ;;;; environment contains the normal definition of DEFCLASS, which
 ;;;; expands to a call to ENSURE-CLASS.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Creating class accessor generic functions.
+
 ;;; Define the macro DEFGENERIC for use in phase 1.  We define it a
 ;;; bit differently from its usual definition.  Its main purpose is to
 ;;; define a generic function in the environment ENV.  However, before
