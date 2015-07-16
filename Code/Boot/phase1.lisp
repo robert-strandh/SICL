@@ -47,8 +47,22 @@
 ;;;
 ;;; Manual creation of some MOP classes.
 
+;;; Since we do not use the host DEFCLASS macro nor the host version
+;;; of ENSURE-CLASS in phase 1, our classes do not automatically have
+;;; the host class named STANDARD-OBJECT as a superclass.  But being a
+;;; subclass of STANDARD-OBJECT is a requirement for the host generic
+;;; function INITIALIZE-INSTANCE to be able to initialize instances of
+;;; a class.  We solve this problem by defining a special version of
+;;; the class named T in phase 1 that in fact is the same as the host
+;;; class STANDARD-OBJECT.  This way, we are sure that all our MOP
+;;; classes in phase 1 are in fact subclass of the host class
+;;; STANDARD-OBJECT.
+(defun define-class-t-phase1 (env)
+  (setf (sicl-genv:find-class 't env)
+	(find-class 'standard-object)))
+
 (defun create-exceptional-mop-classes-phase1 (env)
-  nil)
+  (define-class-t-phase1 env))
 
 (defun create-mop-classes-phase1 (boot)
   (create-exceptional-mop-classes-phase1 (r2 boot))

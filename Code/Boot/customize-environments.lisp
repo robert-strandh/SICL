@@ -200,20 +200,6 @@
 	      (loop for slot-spec in direct-slots
 		    do (define-accessors slot-spec class r)))))))
 
-;;; Since we do not use the host DEFCLASS macro nor the host version
-;;; of ENSURE-CLASS in phase 1, our classes do not automatically have
-;;; the host class named STANDARD-OBJECT as a superclass.  But being a
-;;; subclass of STANDARD-OBJECT is a requirement for the host generic
-;;; function INITIALIZE-INSTANCE to be able to initialize instances of
-;;; a class.  We solve this problem by defining a special version of
-;;; the class named T in phase 1 that in fact is the same as the host
-;;; class STANDARD-OBJECT.  This way, we are sure that all our MOP
-;;; classes in phase 1 are in fact subclass of the host class
-;;; STANDARD-OBJECT.
-(defun define-class-t-phase1 (environment)
-  (setf (sicl-genv:find-class 't environment)
-	(find-class 'standard-object)))
-
 ;;; We need a special definition of the class named FUNCTION in R1,
 ;;; because we want instances of this class to be funcallable in the
 ;;; host.  For that reason, we create this class as an instance of the
@@ -242,7 +228,6 @@
 	(r1 (r1 boot)))
     (message "Customizing environments for phase 1~%")
     (define-temporary-ensure-method-c1-r1 boot)
-    (define-class-t-phase1 r1)
     (define-class-function-r1 boot)
     (define-funcallable-standard-class)
     ;; Rather than calling MAKE-METHOD-LAMBDA, the temporary
