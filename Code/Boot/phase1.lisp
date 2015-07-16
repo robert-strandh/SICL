@@ -43,7 +43,15 @@
 ;;;
 ;;; Creating MOP classes.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Manual creation of some MOP classes.
+
+(defun create-exceptional-mop-classes-phase1 (env)
+  nil)
+
 (defun create-mop-classes-phase1 (boot)
+  (create-exceptional-mop-classes-phase1 (r2 boot))
   ;; (ld "../CLOS/standard-object-defclass.lisp" c1 r1)
   ;; (ld "../CLOS/metaobject-defclass.lisp" c1 r1)
   ;; (ld "../CLOS/method-defclass.lisp" c1 r1)
