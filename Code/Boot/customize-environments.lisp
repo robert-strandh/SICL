@@ -60,9 +60,20 @@
 		 specializers
 		 documentation
 		 function)
+	  (format t "Calling temporary-ensure-method ~s ~s~%"
+		  function-name specializers)
 	  (let* ((fun (sicl-genv:fdefinition function-name (r1 boot)))
 		 (specs (loop for s in specializers
-			      collect (sicl-genv:find-class s (r1 boot))))
+			      collect
+			      (if (eq s 't)
+				  ;; When the specializer is T, we
+				  ;; don't mean the class named T in
+				  ;; R1, and instead we mean "not
+				  ;; specialized", and for that to
+				  ;; happen, we need to find the host
+				  ;; class named T.
+				  (find-class t)
+				  (sicl-genv:find-class s (r1 boot)))))
 		 (method (make-instance 'standard-method
 			  :lambda-list lambda-list
 			  :qualifiers qualifiers
