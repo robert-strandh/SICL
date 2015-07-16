@@ -3,7 +3,7 @@
 ;;; Define the macro DEFGENERIC in compile-time environment C1.  We
 ;;; define it a bit differently from its usual definition.  Its main
 ;;; purpose is to define a generic function in the run-time
-;;; environment R1.  However, before definining it, we remove the
+;;; environment R2.  However, before definining it, we remove the
 ;;; existing generic function if it exists.  This way, we are sure to
 ;;; get a fresh generic function, as opposed to one that happened to
 ;;; have been imported from the host.  We must, of course, make sure
@@ -16,14 +16,14 @@
   (setf (sicl-genv:macro-function 'defgeneric (c1 boot))
 	(lambda (form environment)
 	  (declare (ignore environment))
-	  `(progn (sicl-genv:fmakunbound ',(second form) ,(r1 boot))
-		  (setf (sicl-genv:fdefinition ',(second form) ,(r1 boot))
+	  `(progn (sicl-genv:fmakunbound ',(second form) ,(r2 boot))
+		  (setf (sicl-genv:fdefinition ',(second form) ,(r2 boot))
 			(ensure-generic-function
 			 ',(second form)
 			 :name ',(second form)
 			 :lambda-list ',(third form)))
 		  (setf (sicl-genv:fdefinition ',(second form) ,(c1 boot))
-			(sicl-genv:fdefinition ',(second form) ,(r1 boot)))))))
+			(sicl-genv:fdefinition ',(second form) ,(r2 boot)))))))
 
 ;;; The purpose of this function is to redefine the macro DEFGENERIC
 ;;; in the compilation environment C2.  The new definition is only
@@ -231,11 +231,12 @@
 ;;; subclass of STANDARD-OBJECT is a requirement for the host generic
 ;;; function INITIALIZE-INSTANCE to be able to initialize instances of
 ;;; a class.  We solve this problem by defining a special version of
-;;; the class named T in R1 that in fact is the same as the host class
-;;; STANDARD-OBJECT.  This way, we are sure that all our MOP classes
-;;; in phase 1 are in fact subclass of the host class STANDARD-OBJECT.
-(defun define-class-t-r1 (boot)
-  (setf (sicl-genv:find-class 't (r1 boot))
+;;; the class named T in phase 1 that in fact is the same as the host
+;;; class STANDARD-OBJECT.  This way, we are sure that all our MOP
+;;; classes in phase 1 are in fact subclass of the host class
+;;; STANDARD-OBJECT.
+(defun define-class-t-phase1 (environment)
+  (setf (sicl-genv:find-class 't environment)
 	(find-class 'standard-object)))
 
 ;;; We need a special definition of the class named FUNCTION in R1,
@@ -267,7 +268,7 @@
     (message "Customizing environments for phase 1~%")
     (define-defgeneric-c1 boot)
     (define-temporary-ensure-method-c1-r1 boot)
-    (define-class-t-r1 boot)
+    (define-class-t-phase1 r1)
     (define-class-function-r1 boot)
     (define-funcallable-standard-class)
     ;; Rather than calling MAKE-METHOD-LAMBDA, the temporary
@@ -309,5 +310,5 @@
 	(r2 (r2 boot)))
     (message "Customizing environments~%")
     (customize-for-phase1 boot)
-    (customize-for-phase2 boot)
+    ;; (customize-for-phase2 boot)
     (message "Finished customizing environments~%")))
