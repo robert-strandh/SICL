@@ -10,18 +10,15 @@
 ;;;; environment contains the normal definition of DEFCLASS, which
 ;;;; expands to a call to ENSURE-CLASS.
 
-;;; Define the macro DEFGENERIC in compile-time environment C1.  We
-;;; define it a bit differently from its usual definition.  Its main
-;;; purpose is to define a generic function in the run-time
-;;; environment R2.  However, before definining it, we remove the
-;;; existing generic function if it exists.  This way, we are sure to
-;;; get a fresh generic function, as opposed to one that happened to
-;;; have been imported from the host.  We must, of course, make sure
-;;; that we execute a DEFGENERIC form for a particular generic
-;;; function exactly once, but we can do that because we completely
-;;; master the boot process.  We also put the same definition in the
-;;; compile-time environment C1 so that the compiler sees it when
-;;; subsequent forms that use this function are compiled.
+;;; Define the macro DEFGENERIC for use in phase 1.  We define it a
+;;; bit differently from its usual definition.  Its main purpose is to
+;;; define a generic function in the environment ENV.  However, before
+;;; definining it, we remove the existing generic function if it
+;;; exists.  This way, we are sure to get a fresh generic function, as
+;;; opposed to one that happened to have been imported from the host.
+;;; We must, of course, make sure that we execute a DEFGENERIC form
+;;; for a particular generic function exactly once, but we can do that
+;;; because we completely master the boot process.
 (defun define-defgeneric-phase1 (env)
   (setf (sicl-genv:macro-function 'defgeneric env)
 	(lambda (form environment)
