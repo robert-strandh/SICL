@@ -262,12 +262,3 @@
     (ld "../CLOS/generic-function-initialization-defmethods.lisp" c1 r1)
     (ld "../CLOS/ensure-generic-function-using-class-support.lisp" c1 r2)
     (message "Finished customizing environments for phase 2~%")))
-
-(defun customize-environments (boot)
-  (let ((c1 (c1 boot))
-	(r1 (r1 boot))
-	(r2 (r2 boot)))
-    (message "Customizing environments~%")
-    (customize-for-phase1 boot)
-    ;; (customize-for-phase2 boot)
-    (message "Finished customizing environments~%")))
