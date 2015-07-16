@@ -61,8 +61,18 @@
   (setf (sicl-genv:find-class 't env)
 	(find-class 'standard-object)))
 
+;;; We need a special definition of the class named FUNCTION in phase
+;;; 1, because we want instances of this class to be funcallable in
+;;; the host.  For that reason, we create this class as an instance of
+;;; the host class FUNCALLABLE-STANDARD-CLASS.
+(defun define-class-function-phase1 (env)
+  (setf (sicl-genv:find-class 'function env)
+	(make-instance 'closer-mop:funcallable-standard-class
+	  :name (make-symbol (symbol-name '#:function)))))
+
 (defun create-exceptional-mop-classes-phase1 (env)
-  (define-class-t-phase1 env))
+  (define-class-t-phase1 env)
+  (define-class-function-phase1 env))
 
 (defun create-mop-classes-phase1 (boot)
   (create-exceptional-mop-classes-phase1 (r2 boot))

@@ -200,15 +200,6 @@
 	      (loop for slot-spec in direct-slots
 		    do (define-accessors slot-spec class r)))))))
 
-;;; We need a special definition of the class named FUNCTION in R1,
-;;; because we want instances of this class to be funcallable in the
-;;; host.  For that reason, we create this class as an instance of the
-;;; host class FUNCALLABLE-STANDARD-CLASS.
-(defun define-class-function-r1 (boot)
-  (setf (sicl-genv:find-class 'function (r1 boot))
-	(make-instance 'closer-mop:funcallable-standard-class
-	  :name (make-symbol (symbol-name '#:function)))))
-
 ;;; This function defines class SICL-CLOS:FUNCALLABLE-STANDARD-CLASS
 ;;; in the host environment to be the same as the host version of that
 ;;; class.  It is needed because, although we import definitions in
