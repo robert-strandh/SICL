@@ -50,7 +50,7 @@
 ;;; a generic function.  If not, an instance of the host class
 ;;; STANDARD-GENERIC-FUNCTION is created and associated with
 ;;; FUNCTION-NAME in ENV2.
-(defun define-ensure-generic-function-r1 (env1 env2)
+(defun define-ensure-generic-function-phase1 (env1 env2)
   (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
 	(lambda (function-name &rest arguments)
 	  (let ((args (copy-list arguments)))
@@ -85,7 +85,7 @@
 
 (defun create-class-accessor-generic-functions-phase1 (boot)
   (let ((r2 (r2 boot)))
-    (define-ensure-generic-function-r1 r2 r2)
+    (define-ensure-generic-function-phase1 r2 r2)
     (define-defgeneric-phase1 r2 r2)
     (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
 
