@@ -41,6 +41,12 @@
 ;;; additional functionality in the form of other generic functions.
 ;;; So to keep things simple, we supply a special bootstrapping
 ;;; version of it.
+;;;
+;;; We can rely entirely on the host executing the generic-function
+;;; initialization protocol.  There is a little question about the
+;;; initialization argument :METHOD-COMBINATION, but it appears that
+;;; it defaults to the standard method combination, so we do not have
+;;; to pass a method-combination metaobject here.
 
 ;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
 ;;; run-time environment to be used in phase 1.  This version of
@@ -183,4 +189,4 @@
   (create-mop-classes-phase1 boot)
   (message "End of phase 1~%"))
 
-;;  LocalWords:  accessor
+;;  LocalWords:  accessor metaobject
