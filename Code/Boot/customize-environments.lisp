@@ -81,24 +81,6 @@
 	      (typep object 'standard-object)
 	      (typep object type)))))
 
-;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
-;;; run-time environment R1.  This version checks whether there is
-;;; already a function named FUNCTION-NAME in R1.  If so that function
-;;; is returned, and it is assumed to be a generic function.  If not,
-;;; an instance of the host class STANDARD-GENERIC-FUNCTION is created
-;;; and associated with FUNCTION-NAME in R1.
-(defun define-ensure-generic-function-r1 (boot)
-  (setf (sicl-genv:fdefinition 'ensure-generic-function (r1 boot))
-	(lambda (function-name &rest arguments)
-	  (let ((args (copy-list arguments)))
-	    (loop while (remf args :environment))
-	    (if (sicl-genv:fboundp function-name (r1 boot))
-		(sicl-genv:fdefinition function-name (r1 boot))
-		(setf (sicl-genv:fdefinition function-name (r1 boot))
-		      (apply #'make-instance 'standard-generic-function
-			     :name function-name
-			     args)))))))
-
 ;;; Recall that the function DEFAULT-SUPERCLASSES is a SICL-SPECIFIC
 ;;; function that is called by the class-initialization protocol to
 ;;; determine a list of default superclasses when no superclasses are
