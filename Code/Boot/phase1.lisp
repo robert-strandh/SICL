@@ -94,6 +94,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Creating MOP classes.
+;;;
+;;; The purpose of this step of phase 1 is to create a class hierarchy
+;;; corresponding to the MOP classes.  These classes will mostly be
+;;; host standard classes.
+;;;
+;;; The main problem we need to solve is that we can not let the host
+;;; be in charge of the full class-initialization protocol.  The
+;;; reason for that is that, as part of the class-initialization
+;;; protocol, reader and writer methods are added on named generic
+;;; functions.  If we were to let the host be in charge of that part
+;;; of the class-initialization protocol, it would add methods to
+;;; generic functions associated with names in the global host
+;;; environment, which we do not want.  To solve this problem, we
+;;; create host classes using arguments that suggest that slots have
+;;; no readers and no writers.  We then add those readers and writers
+;;; here.  These reader and writers will call the host functions
+;;; SLOT-VALUE and (SETF SLOT-VALUE) to accomplish their task.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
