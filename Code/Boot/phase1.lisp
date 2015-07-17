@@ -13,6 +13,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Creating class accessor generic functions.
+;;;
+;;; There are different ways in which we can accomplish this task,
+;;; given the constraint that it has to be done by loading DEFGENERIC
+;;; forms corresponding to the class accessor generic functions.
+;;;
+;;; We obviously can not use the host definition of DEFGENERIC because
+;;; it might clobber any existing host definition.  In particular,
+;;; this is the case for class accessor functions that have names in
+;;; the COMMON-LISP package, for instance CLASS-NAME.  Since we must
+;;; supply our own definition of DEFGENERIC, we are free to do what we
+;;; want.
+;;;
+;;; The way we have chosen to do it is to provide both a specific
+;;; definition of DEFGENERIC and a specific definition of
+;;; ENSURE-GENERIC-FUNCTION.  The difference between the standard
+;;; version of DEFGENERIC is that it deletes any existing function
+;;; associated with the name before creating a new one.  This way, we
+;;; are sure that each time we run the bootstrapping process, we have
+;;; a fresh generic function.  We do NOT delete any existing function
+;;; in the special version of ENSURE-GENERIC-FUNCTION, because we want
+;;; to use that special version to find the existing generic function
+;;; when the class-initialization protocol needs to add a reader or a
+;;; writer method on the generic function.  On the other hand, we do
+;;; not want to use the ordinary SICL version of
+;;; ENSURE-GENERIC-FUNCTION because it requires a battery of
+;;; additional functionality in the form of other generic functions.
+;;; So to keep things simple, we supply a special bootstrapping
+;;; version of it.
 
 ;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
 ;;; run-time environment to be used in phase 1.  This version of
@@ -133,3 +161,5 @@
   (create-class-accessor-generic-functions-phase1 boot)
   (create-mop-classes-phase1 boot)
   (message "End of phase 1~%"))
+
+;;  LocalWords:  accessor
