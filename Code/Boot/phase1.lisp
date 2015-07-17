@@ -63,21 +63,23 @@
 			     args)))))))
 
 ;;; Define the macro DEFGENERIC for use in phase 1.  We define it a
-;;; bit differently from its usual definition.  It is defined in ENV1
-;;; and it operates in ENV2.  Its main purpose is to define a generic
-;;; function in the environment ENV2.  However, before definining it,
-;;; we remove the existing generic function if it exists.  This way,
-;;; we are sure to get a fresh generic function, as opposed to one
-;;; that happened to have been imported from the host.  We must, of
-;;; course, make sure that we execute a DEFGENERIC form for a
-;;; particular generic function exactly once, but we can do that
+;;; bit differently from its usual definition.  It is defined in the
+;;; environment ENV.  The expansion defines a generic function in the
+;;; environment in which the form is executed.  However, before
+;;; definining it, we remove the existing generic function if it
+;;; exists.  This way, we are sure to get a fresh generic function, as
+;;; opposed to one that happened to have been imported from the host.
+;;; We must, of course, make sure that we execute a DEFGENERIC form
+;;; for a particular generic function exactly once, but we can do that
 ;;; because we completely master the boot process.
-(defun define-defgeneric-phase1 (env1 env2)
-  (setf (sicl-genv:macro-function 'defgeneric env1)
+(defun define-defgeneric-phase1 (env)
+  (setf (sicl-genv:macro-function 'defgeneric env)
 	(lambda (form environment)
 	  (declare (ignore environment))
-	  `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
-		  (setf (sicl-genv:fdefinition ',(second form) ,env2)
+	  `(progn (sicl-genv:fmakunbound ',(second form)
+					 (sicl-genv:global-environment))
+		  (setf (sicl-genv:fdefinition ',(second form)
+					       (sicl-genv:global-environment))
 			(ensure-generic-function
 			 ',(second form)
 			 :name ',(second form)
@@ -86,7 +88,7 @@
 (defun create-class-accessor-generic-functions-phase1 (boot)
   (let ((r2 (r2 boot)))
     (define-ensure-generic-function-phase1 r2 r2)
-    (define-defgeneric-phase1 r2 r2)
+    (define-defgeneric-phase1 r2)
     (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
