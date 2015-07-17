@@ -1,14 +1,14 @@
 (cl:in-package #:sicl-boot)
 
-;;;; The purpose of phase 1 is to create in the run-time environment
-;;;; number 1 a class hierarchy that mirrors the MOP class hierarchy.
-;;;; The classes we create are all host standard classes.  We create
-;;;; these classes by loading files from the CLOS sub-directory that
-;;;; contain DEFCLASS forms defining these classes.
+;;;; The purpose of phase 1 is to create a class hierarchy that
+;;;; mirrors the MOP class hierarchy.  The classes we create are all
+;;;; host standard classes.  We create these classes by loading files
+;;;; from the CLOS sub-directory that contain DEFCLASS forms defining
+;;;; these classes.
 ;;;;
-;;;; For compilation we use compilation environment number 1.  This
-;;;; environment contains the normal definition of DEFCLASS, which
-;;;; expands to a call to ENSURE-CLASS.
+;;;; For compilation we use a compilation environment that contains
+;;;; the normal definition of DEFCLASS, which expands to a call to
+;;;; ENSURE-CLASS.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
