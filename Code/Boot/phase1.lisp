@@ -44,19 +44,20 @@
 
 ;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
 ;;; run-time environment to be used in phase 1.  This version of
-;;; ENSURE-GENERIC-FUNCTION operates in ENV.  It checks whether there
-;;; is already a function named FUNCTION-NAME in ENV.  If so that
-;;; function is returned, and it is assumed to be a generic function.
-;;; If not, an instance of the host class STANDARD-GENERIC-FUNCTION is
-;;; created and associated with FUNCTION-NAME in ENV.
-(defun define-ensure-generic-function-r1 (env)
-  (setf (sicl-genv:fdefinition 'ensure-generic-function env)
+;;; ENSURE-GENERIC-FUNCTION is defined in ENV1 and operates in ENV2.
+;;; It checks whether there is already a function named FUNCTION-NAME
+;;; in ENV2.  If so that function is returned, and it is assumed to be
+;;; a generic function.  If not, an instance of the host class
+;;; STANDARD-GENERIC-FUNCTION is created and associated with
+;;; FUNCTION-NAME in ENV2.
+(defun define-ensure-generic-function-r1 (env1 env2)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
 	(lambda (function-name &rest arguments)
 	  (let ((args (copy-list arguments)))
 	    (loop while (remf args :environment))
-	    (if (sicl-genv:fboundp function-name env)
-		(sicl-genv:fdefinition function-name env)
-		(setf (sicl-genv:fdefinition function-name env)
+	    (if (sicl-genv:fboundp function-name env2)
+		(sicl-genv:fdefinition function-name env2)
+		(setf (sicl-genv:fdefinition function-name env2)
 		      (apply #'make-instance 'standard-generic-function
 			     :name function-name
 			     args)))))))
@@ -83,7 +84,7 @@
 
 (defun create-class-accessor-generic-functions-phase1 (boot)
   (let ((r2 (r2 boot)))
-    (define-ensure-generic-function-r1 r2)
+    (define-ensure-generic-function-r1 r2 r2)
     (define-defgeneric-phase1 r2)
     (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
 
