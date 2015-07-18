@@ -117,6 +117,14 @@
 ;;; no readers and no writers.  We then add those readers and writers
 ;;; here.  These reader and writers will call the host functions
 ;;; SLOT-VALUE and (SETF SLOT-VALUE) to accomplish their task.
+;;;
+;;; We can, however, let the host take care of executing the full
+;;; slot-definition-initialization protocol.  All we need to do is to
+;;; make sure that we pass a list of canonicalized slot specifications
+;;; as the :DIRECT-SLOTS keyword argument to MAKE-INSTANCE when we
+;;; create a class.  As mentioned before, though, we must remove the
+;;; :READERS and WRITERS entries in those canonicalized slot
+;;; specifications.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -189,4 +197,4 @@
   (create-mop-classes-phase1 boot)
   (message "End of phase 1~%"))
 
-;;  LocalWords:  accessor metaobject
+;;  LocalWords:  accessor metaobject canonicalized
