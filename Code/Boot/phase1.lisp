@@ -136,6 +136,15 @@
 	      (declare (ignore next-methods))
 	      (slot-value (car args) ',slot-name))))
 
+;;; Create a reader method.  SLOT-NAME is the name of a slot for which
+;;; a reader method should be created.  CLASS is a class metaobject
+;;; and it is the specializer to be used in the method.
+(defun make-reader-method (slot-name class)
+  (make-instance 'standard-method
+    :lambda-list '(object)
+    :specializers (list class)
+    :function (make-reader-function slot-name)))
+
 ;;; Take the name of a slot and define a writer function to be used in
 ;;; a method.  This writer function sets the value of the slot.  The
 ;;; resulting function calls the host function (SETF SLOT-VALUE) to
