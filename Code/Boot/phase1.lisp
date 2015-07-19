@@ -191,6 +191,16 @@
 (defun add-writer-method (generic-function slot-name class)
   (add-method generic-function (make-writer-method slot-name class)))
 
+;;; Add new writer methods to each generic function in a list of
+;;; generic functions.  GENERIC-FUNCTIONS is a list of generic
+;;; function metaobjects to which new writer methods should be added.
+;;; SLOT-NAME is the name of the slot to be written by each of the the
+;;; new writer methods.  CLASS is a class metaobject and it is the
+;;; specializer to be used in the new methods.
+(defun add-writer-methods (generic-functions slot-name class)
+  (loop for generic-function in generic-functions
+	do (add-writer-method generic-function slot-name class)))
+
 (defun define-accessors (slot-spec class env)
   (let ((slot-name (getf slot-spec :name)))
     (loop for reader in (getf slot-spec :readers)
