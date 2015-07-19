@@ -154,13 +154,16 @@
   (add-method generic-function (make-reader-method slot-name class)))
 
 ;;; Add new reader methods to each generic function in a list of
-;;; generic functions.  GENERIC-FUNCTIONS is a list of generic
-;;; function metaobjects to which new reader methods should be added.
-;;; SLOT-NAME is the name of the slot to be read by each of the the
-;;; new reader methods.  CLASS is a class metaobject and it is the
-;;; specializer to be used in the new methods.
-(defun add-reader-methods (generic-functions slot-name class)
-  (loop for generic-function in generic-functions
+;;; generic functions, each given by its name.  GENERIC-FUNCTION-NAMES
+;;; is a list of names of generic functions to which new reader
+;;; methods should be added.  ENV is the environment in which the name
+;;; of each generic function should be mapped to a generic-function
+;;; metaobject.  SLOT-NAME is the name of the slot to be read by each
+;;; of the the new reader methods.  CLASS is a class metaobject and it
+;;; is the specializer to be used in the new methods.
+(defun add-reader-methods (generic-function-names env slot-name class)
+  (loop for name in generic-function-names
+	for generic-function = (sicl-genv:fdefinition name env)
 	do (add-reader-method generic-function slot-name class)))
 
 ;;; Take the name of a slot and define a writer function to be used in
@@ -192,13 +195,16 @@
   (add-method generic-function (make-writer-method slot-name class)))
 
 ;;; Add new writer methods to each generic function in a list of
-;;; generic functions.  GENERIC-FUNCTIONS is a list of generic
-;;; function metaobjects to which new writer methods should be added.
-;;; SLOT-NAME is the name of the slot to be written by each of the the
-;;; new writer methods.  CLASS is a class metaobject and it is the
-;;; specializer to be used in the new methods.
-(defun add-writer-methods (generic-functions slot-name class)
-  (loop for generic-function in generic-functions
+;;; generic functions, each given by its name.  GENERIC-FUNCTION-NAMES
+;;; is a list of names of generic functions to which new writer
+;;; methods should be added.  ENV is the environment in which the name
+;;; of each generic function should be mapped to a generic-function
+;;; metaobject.  SLOT-NAME is the name of the slot to be written by
+;;; each of the the new writer methods.  CLASS is a class metaobject
+;;; and it is the specializer to be used in the new methods.
+(defun add-writer-methods (generic-function-names env slot-name class)
+  (loop for name in generic-function-names
+	for generic-function = (sicl-genv:fdefinition name env)
 	do (add-writer-method generic-function slot-name class)))
 
 (defun define-accessors (slot-spec class env)
