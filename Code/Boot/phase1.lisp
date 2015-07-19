@@ -207,7 +207,7 @@
 	for generic-function = (sicl-genv:fdefinition name env)
 	do (add-writer-method generic-function slot-name class)))
 
-(defun define-accessors (slot-spec class env)
+(defun add-accessor-methods (slot-spec class env)
   (let ((slot-name (getf slot-spec :name)))
     (add-reader-methods (getf slot-spec :readers) env slot-name class)
     (add-writer-methods (getf slot-spec :writers) env slot-name class)))

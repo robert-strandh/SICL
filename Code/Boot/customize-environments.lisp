@@ -158,7 +158,7 @@
 			   :direct-superclasses direct-superclasses)))
 	      (setf (sicl-genv:find-class class-name r) class)
 	      (loop for slot-spec in direct-slots
-		    do (define-accessors slot-spec class r)))))))
+		    do (add-accessor-methods slot-spec class r)))))))
 
 ;;; This function defines class SICL-CLOS:FUNCALLABLE-STANDARD-CLASS
 ;;; in the host environment to be the same as the host version of that
