@@ -225,6 +225,21 @@
     (add-reader-methods (getf slot-spec :readers) env slot-name class)
     (add-writer-methods (getf slot-spec :writers) env slot-name class)))
 
+;;; Recall that a canonicalized slot specification is a property list
+;;; with alternating keywords arguments and values to be passed to
+;;; MAKE-INSTANCE in order to create a DIRECT-SLOT-DEFINITION
+;;; metaobject.  SLOT-SPEC is such a canonicalized slot specification.
+;;; In particular, it might contain keyword arguments :READERS and
+;;; WRITERS where the value is a list of names of generic functions to
+;;; which to add reader and writer methods.  We return a copy of
+;;; SLOT-SPEC in which the keyword arguments :READERS and WRITERS have
+;;; been removed.
+(defun remove-readers-and-writers-from-slot-spec (slot-spec)
+  (loop for (name value) on slot-spec by #'cddr
+	unless (member name '(:readers :writers))
+	  collect name
+	  and collect value))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Manual creation of some MOP classes.
