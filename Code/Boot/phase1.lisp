@@ -209,25 +209,8 @@
 
 (defun define-accessors (slot-spec class env)
   (let ((slot-name (getf slot-spec :name)))
-    (loop for reader in (getf slot-spec :readers)
-	  for function = (compile nil `(lambda (args next-methods)
-					 (declare (ignore next-methods))
-					 (slot-value (car args) ',slot-name)))
-	  for method = (make-instance 'standard-method
-			 :lambda-list '(object)
-			 :specializers (list class)
-			 :function function)
-	  do (add-method (sicl-genv:fdefinition reader env) method))
-    (loop for writer in (getf slot-spec :writers)
-	  for function = (compile nil `(lambda (args next-methods)
-					 (declare (ignore next-methods))
-					 (setf (slot-value (cadr args) ',slot-name)
-					       (car args))))
-	  for method = (make-instance 'standard-method
-			 :lambda-list '(new-value object)
-			 :specializers (list (find-class t) class)
-			 :function function)
-	  do (add-method (sicl-genv:fdefinition writer env) method))))
+    (add-reader-methods (getf slot-spec :readers) env slot-name class)
+    (add-writer-methods (getf slot-spec :writers) env slot-name class)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
