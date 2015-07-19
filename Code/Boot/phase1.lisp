@@ -156,6 +156,15 @@
 	      (setf (slot-value (cadr args) ',slot-name)
 		    (car args)))))
 
+;;; Create a writer method.  SLOT-NAME is the name of a slot for which
+;;; a writer method should be created.  CLASS is a class metaobject
+;;; and it is the specializer to be used in the method.
+(defun make-writer-method (slot-name class)
+  (make-instance 'standard-method
+    :lambda-list '(object)
+    :specializers (list (find-class t) class)
+    :function (make-writer-function slot-name)))
+
 (defun define-accessors (slot-spec class env)
   (let ((slot-name (getf slot-spec :name)))
     (loop for reader in (getf slot-spec :readers)
