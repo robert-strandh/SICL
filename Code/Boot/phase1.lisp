@@ -131,9 +131,21 @@
 ;;; The resulting function calls the host function SLOT-VALUE to
 ;;; accomplish its task.
 (defun make-reader-function (slot-name)
-  (compile nil `(lambda (args next-methods)
-		  (declare (ignore next-methods))
-		  (slot-value (car args) ',slot-name))))
+  (compile nil
+	   `(lambda (args next-methods)
+	      (declare (ignore next-methods))
+	      (slot-value (car args) ',slot-name))))
+
+;;; Take the name of a slot and define a writer function to be used in
+;;; a method.  This writer function sets the value of the slot.  The
+;;; resulting function calls the host function (SETF SLOT-VALUE) to
+;;; accomplish its task.
+(defun make-writer-function (slot-name)
+  (compile nil
+	   `(lambda (args next-methods)
+	      (declare (ignore next-methods))
+	      (setf (slot-value (cadr args) ',slot-name)
+		    (car args)))))
 
 (defun define-accessors (slot-spec class env)
   (let ((slot-name (getf slot-spec :name)))
