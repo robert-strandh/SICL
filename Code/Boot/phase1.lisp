@@ -207,6 +207,19 @@
 	for generic-function = (sicl-genv:fdefinition name env)
 	do (add-writer-method generic-function slot-name class)))
 
+;;; Add accessor methods according to a canonicalized slot
+;;; specification.  Recall that a canonicalized slot specification is
+;;; a property list with alternating keywords arguments and values to
+;;; be passed to MAKE-INSTANCE in order to create a
+;;; DIRECT-SLOT-DEFINITION metaobject.  SLOT-SPEC is such a
+;;; canonicalized slot specification.  In particular, it might contain
+;;; keyword arguments :READERS and WRITERS where the value is a list
+;;; of names of generic functions to which to add reader and writer
+;;; methods.  It also contains a keyword argument :NAME where the
+;;; value is a symbol naming the slot.  CLASS is a class metaobject
+;;; with a direct slot corresponding to SLOT-SPEC.  ENV is an
+;;; environment to be used to translate names of generic functions to
+;;; generic function metaobjects.
 (defun add-accessor-methods (slot-spec class env)
   (let ((slot-name (getf slot-spec :name)))
     (add-reader-methods (getf slot-spec :readers) env slot-name class)
