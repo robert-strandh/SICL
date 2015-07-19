@@ -258,11 +258,7 @@
 	  (message "Creating class ~s~%" class-name)
 	  (let ((metaclass (find-class metaclass-name))
 		(slot-copies
-		  (loop for slot-spec in direct-slots
-			collect (loop for (name value) on slot-spec by #'cddr
-				      unless (member name '(:readers :writers))
-					collect name
-					and collect value)))
+		  (remove-readers-and-writers-from-slot-specs direct-slots))
 		(direct-superclasses
 		  (loop for name in direct-superclass-names
 			collect (sicl-genv:find-class name r))))
