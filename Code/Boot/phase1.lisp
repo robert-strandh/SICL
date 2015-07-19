@@ -146,12 +146,22 @@
     :function (make-reader-function slot-name)))
 
 ;;; Add a new reader method to a generic function.  GENERIC-FUNCTION
-;;; is a a generic function metaobject to which the new reader method
+;;; is a generic function metaobject to which the new reader method
 ;;; should be added.  SLOT-NAME is the name of the slot to be read by
 ;;; the new reader method.  CLASS is a class metaobject and it is the
 ;;; specializer to be used in the new method.
 (defun add-reader-method (generic-function slot-name class)
   (add-method generic-function (make-reader-method slot-name class)))
+
+;;; Add new reader methods to each generic function in a list of
+;;; generic functions.  GENERIC-FUNCTIONS is a list of generic
+;;; function metaobjects to which new reader methods should be added.
+;;; SLOT-NAME is the name of the slot to be read by each of the the
+;;; new reader methods.  CLASS is a class metaobject and it is the
+;;; specializer to be used in the new methods.
+(defun add-reader-methods (generic-functions slot-name class)
+  (loop for generic-function in generic-functions
+	do (add-reader-method generic-function slot-name class)))
 
 ;;; Take the name of a slot and define a writer function to be used in
 ;;; a method.  This writer function sets the value of the slot.  The
@@ -174,7 +184,7 @@
     :function (make-writer-function slot-name)))
 
 ;;; Add a new writer method to a generic function.  GENERIC-FUNCTION
-;;; is a a generic function metaobject to which the new writer method
+;;; is a generic function metaobject to which the new writer method
 ;;; should be added.  SLOT-NAME is the name of the slot to be written
 ;;; by the new writer method.  CLASS is a class metaobject and it is
 ;;; the specializer to be used in the new method.
