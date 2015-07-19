@@ -145,6 +145,14 @@
     :specializers (list class)
     :function (make-reader-function slot-name)))
 
+;;; Add a new reader method to a generic function.  GENERIC-FUNCTION
+;;; is a a generic function metaobject to which the new reader method
+;;; should be added.  SLOT-NAME is the name of the slot to be read by
+;;; the new reader method.  CLASS is a class metaobject and it is the
+;;; specializer to be used in the new method.
+(defun add-reader-method (generic-function slot-name class)
+  (add-method generic-function (make-reader-method slot-name class)))
+
 ;;; Take the name of a slot and define a writer function to be used in
 ;;; a method.  This writer function sets the value of the slot.  The
 ;;; resulting function calls the host function (SETF SLOT-VALUE) to
