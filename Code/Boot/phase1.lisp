@@ -240,6 +240,12 @@
 	  collect name
 	  and collect value))
 
+;;; Remove keyword arguments :READERS and :WRITERS fro each canonical
+;;; slot specification in a list of such canonical slot
+;;; specifications.
+(defun remove-readers-and-writers-from-slot-specs (slot-specs)
+  (mapcar #'remove-readers-and-writers-from-slot-spec slot-specs))
+
 (defun define-ensure-class (r)
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class r)
 	(lambda (class-name
