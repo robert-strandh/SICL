@@ -126,6 +126,15 @@
 ;;; :READERS and WRITERS entries in those canonicalized slot
 ;;; specifications.
 
+;;; Take the name of a slot and define a reader function to be used in
+;;; a method.  This reader function returns the value of the slot.
+;;; The resulting function calls the host function SLOT-VALUE to
+;;; accomplish its task.
+(defun make-reader-function (slot-name)
+  (compile nil `(lambda (args next-methods)
+		  (declare (ignore next-methods))
+		  (slot-value (car args) ',slot-name))))
+
 (defun define-accessors (slot-spec class env)
   (let ((slot-name (getf slot-spec :name)))
     (loop for reader in (getf slot-spec :readers)
