@@ -329,3 +329,12 @@
 		 (member name (package-nicknames package)
 			 :test #'string=))
 	  return package))
+
+(defmethod sicl-genv:find-method-combination-class
+    (symbol (env simple-environment))
+  (gethash symbol (method-combination-classes env)))
+
+(defmethod (setf sicl-genv:find-method-combination-class)
+    (new-class symbol (env simple-environment))
+  (setf (gethash symbol (method-combination-classes env)) new-class)
+  new-class)
