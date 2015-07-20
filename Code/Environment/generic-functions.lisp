@@ -640,3 +640,31 @@
 ;;; package object as its argument.  It has to be a string.
 
 (defgeneric find-package (name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FIND-METHOD-COMBINATION-CLASS.
+;;;
+;;; If SYMBOL has a definition as a subclass of the class
+;;; METHOD-COMBINATION in ENVIRONMENT, then that class metaobject is
+;;; returned.  Otherwise NIL is returned.
+
+(defgeneric find-method-combination-class (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF FIND-METHOD-COMBINATION-CLASS).
+;;;
+;;; This function is used in order to associate a subclass of the
+;;; class METHOD-COMBINATION class with a method-combination name in
+;;; ENVIRONMENT.
+;;;
+;;; If NEW-CLASS is a class metaobject, then that class metaobject is
+;;; associated with the name SYMBOL in ENVIRONMENT.  If SYMBOL already
+;;; names a method-combination class in ENVIRONMENT than that
+;;; association is lost.
+;;;
+;;; If NEW-CLASS is NIL, then SYMBOL is no longer associated with a
+;;; method-combination class in ENVIRONMENT.
+
+(defgeneric (setf find-method-combination-class) (new-class symbol environment))
