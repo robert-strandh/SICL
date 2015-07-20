@@ -81,29 +81,15 @@
 		 documentation
 		 function)
 	  (let* ((fun (sicl-genv:fdefinition function-name env2))
-		 (specs (loop for s in specializers
-			      collect
-			      (if (eq s 't)
-				  ;; When the specializer is T, we
-				  ;; don't mean the class named T in
-				  ;; R1, and instead we mean "not
-				  ;; specialized", and for that to
-				  ;; happen, we need to find the host
-				  ;; class named T.
-				  (find-class t)
-				  (sicl-genv:find-class s (r1 boot)))))
+		 (specs (loop for specializer in specializers
+			      collect (class-from-name specializer env3)))
 		 (method (make-instance 'standard-method
 			  :lambda-list lambda-list
 			  :qualifiers qualifiers
 			  :specializers specs
 			  :documentation documentation
 			  :function function)))
-	    (add-method fun method)
-	    method)))
-  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (r1 boot))
-	(sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))))
-
-
+	    (add-method fun method)))))
 
 (defun phase2 (boot)
   (let ((c (c1 boot))
