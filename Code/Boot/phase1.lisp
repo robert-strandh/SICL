@@ -338,6 +338,7 @@
     (ld "../CLOS/effective-slot-definition-defclass.lisp" r2 r2)
     (ld "../CLOS/standard-direct-slot-definition-defclass.lisp" r2 r2)
     (ld "../CLOS/standard-effective-slot-definition-defclass.lisp" r2 r2)
+    (ld "../CLOS/method-combination-defclass.lisp" r2 r2)
     (ld "../CLOS/specializer-defclass.lisp" r2 r2)
     (ld "../CLOS/eql-specializer-defclass.lisp" r2 r2)
     (ld "../CLOS/class-unique-number-defparameter.lisp" r2 r2)
