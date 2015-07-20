@@ -246,8 +246,14 @@
 (defun remove-readers-and-writers-from-slot-specs (slot-specs)
   (mapcar #'remove-readers-and-writers-from-slot-spec slot-specs))
 
-(defun define-ensure-class (r)
-  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class r)
+;;; This function defines a version of ENSURE-CLASS to be used in
+;;; phase 1.  The definition of ENSURE-CLASS is made in ENV1.  This
+;;; version of ENSURE-CLASS defines a new class in ENV2.  It also uses
+;;; ENV2 to find superclasses of the class to be defined.  ENV3 is the
+;;; environment containing the generic functions to which slot reader
+;;; and slot writer methods are to be added.
+(defun define-ensure-class (env1 env2 env3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class env1)
 	(lambda (class-name
 		 &key
 		   direct-slots
@@ -255,20 +261,19 @@
 		   name
 		   ((:metaclass metaclass-name) 'standard-class)
 		 &allow-other-keys)
-	  (message "Creating class ~s~%" class-name)
 	  (let ((metaclass (find-class metaclass-name))
 		(slot-copies
 		  (remove-readers-and-writers-from-slot-specs direct-slots))
 		(direct-superclasses
 		  (loop for name in direct-superclass-names
-			collect (sicl-genv:find-class name r))))
+			collect (sicl-genv:find-class name env2))))
 	    (let ((class (make-instance metaclass
 			   :name (make-symbol (symbol-name name))
 			   :direct-slots slot-copies
 			   :direct-superclasses direct-superclasses)))
-	      (setf (sicl-genv:find-class class-name r) class)
+	      (setf (sicl-genv:find-class class-name env2) class)
 	      (loop for slot-spec in direct-slots
-		    do (add-accessor-methods slot-spec class r)))))))
+		    do (add-accessor-methods slot-spec class env3)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
