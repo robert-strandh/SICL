@@ -182,7 +182,7 @@
 ;;; and it is the specializer to be used in the method.
 (defun make-writer-method (slot-name class)
   (make-instance 'standard-method
-    :lambda-list '(object)
+    :lambda-list '(new-value object)
     :specializers (list (find-class t) class)
     :function (make-writer-function slot-name)))
 
