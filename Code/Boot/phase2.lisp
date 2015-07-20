@@ -1,56 +1,51 @@
 (cl:in-package #:sicl-boot)
 
-;;;; The main purpose of phase 2 is to create a mirror of the MOP
-;;;; class hierarchy in run-time environment R2.  We call the classes
-;;;; in this hierarchy BRIDGE CLASSES.  A bridge class is neither a
-;;;; host class nor a target class.  Instead, a bridge class is an
-;;;; instance of one of the host classes we created in phase 1.
-;;;; However, a bridge class behaves pretty much like a target class
-;;;; in that we have accessor functions that let us query all aspects
-;;;; of it as if it were a target class.
+;;;; In phase 2, we create instances of the host classes that we
+;;;; created in phase 1, and we use the host generic functions that we
+;;;; created in phase 1 to access slots of those instances.
 ;;;;
-;;;; To create a bridge class, we need to instantiate a host class.
-;;;; Therefore, calling MAKE-INSTANCE in the run-time environment R2
-;;;; ultimately calls the host function with the same name.  However,
-;;;; if MAKE-INSTANCE is invoked with the name of a class, rather than
-;;;; with a class metaobject, then we need for that name to mean the
-;;;; name it was given during phase 1.  Therefore, in the run-time
-;;;; environment, MAKE-INSTANCE is associated with a temporary
-;;;; function that looks up the name in the run-time environment R1
-;;;; before calling the host function named make-instance.
+;;;; We start phase 2 by creating BRIDGE GENERIC FUNCTIONS
+;;;; corresponding to the MOP class accessors.  A bridge generic
+;;;; function is an instance of the host class that we associated with
+;;;; the name STANDARD-GENERIC-FUNCTION when we created it in phase 1.
+;;;; A bridge generic function is executable as a host function due to
+;;;; the fact that the host class named FUNCALLABLE-STANDARD-OBJECT is
+;;;; a superclass of the host class that we associated with the name
+;;;; STANDARD-GENERIC-FUNCTION when we created it in phase 1.
+;;;; However, a bridge generic function is not a host generic
+;;;; function.
 ;;;;
-;;;; The main difficulty with phase 2 is that we need to implement the
-;;;; class initialization protocol.  This protocol mainly works on the
-;;;; classes metaobjects themselves.  So for instance, it is the
-;;;; responsibility of the class initialization protocol to convert
-;;;; canonicalized slot descriptors to direct-slot-definition
-;;;; metaobjects and associate them with the class metaobjects.
+;;;; Once the bridge generic functions are created, we create a
+;;;; hierarchy of BRIDGE CLASSES corresponding to the MOP class
+;;;; hierarchy.  Notice, though, that a bridge class is not a host
+;;;; class at all.  As a side effect of creating a bridge class, we
+;;;; will add instances of the host class that we associated with the
+;;;; name STANDARD-METHOD when we created it in phase 1, and we will
+;;;; add those instances to some bridge generic function.  Also as a
+;;;; side effect of creating a bridge class, we will create instances
+;;;; of the host class that we associated with the name
+;;;; STANDARD-DIRECT-SLOT-DEFINITION when we created it in phase 1.
+;;;; These instances will be added to some certain slots of the bridge
+;;;; classes.
 ;;;;
-;;;; However, the class initialization protocol is also in charge of
-;;;; adding accessor methods to generic functions that are mentioned
-;;;; in the slot descriptors of the DEFCLASS forms.  These generic
-;;;; functions and methods do not take bridge classes as arguments,
-;;;; but INSTANCES of bridge classes that will be created in a later
-;;;; phase.  We are thus dealing with two different families of
-;;;; accessor generic functions with the same names during phase 2.
-;;;; The first family consists of HOST GENERIC FUNCTIONS that were
-;;;; created before bootstrapping commenced, and that had methods
-;;;; added to them during phase 1.  Arguments to these generic
-;;;; functions are bridge classes.  The second family is called BRIDGE
-;;;; GENERIC FUNCTIONS and they are created as a result of bridge
-;;;; classes being created through the instantiation of host classes
-;;;; created in phase 1.  To avoid clashes between these two families
-;;;; of generic functions, we make the names map to host generic
-;;;; functions in run-time-environment R2, and we make the names map
-;;;; to bridge generic functions in the run-time environment R3.
+;;;; Since all these instances are only host STANDARD-OBJECTs with no
+;;;; special status, any initialization beyond what the host is doing
+;;;; by default, we must take care of ourselves.  Thus, for bridge
+;;;; generic functions, we must make sure that we execute the
+;;;; generic-function initialization protocol, for bridge classes, we
+;;;; must make sure that we execute the class initialization protocol,
+;;;; and for bridge slot definitions, we must execute the
+;;;; slot-definition initialization protocol.
 ;;;;
-;;;; The class initialization protocol is triggered by auxiliary
-;;;; methods on the functions INITIALIZE-INSTANCE,
+;;;; These initialization protocols take the form of auxiliary methods
+;;;; on the generic functions INITIALIZE-INSTANCE,
 ;;;; REINITIALIZE-INSTANCE, and SHARED-INITIALIZE.  Since we are
-;;;; initializing ordinary host classes, these functions are those of
-;;;; the host.  Therefore, in phase 2, DEFMETHOD translates to a host
-;;;; DEFMETHOD after the names of the specializer classes have been
-;;;; translated to the names that the host knows them by.
+;;;; instantiating host classes using the host function MAKE-INSTANCE,
+;;;; these functions are the ordinary host functions with those names.
+;;;; In preparation for phase 2, we must therefore make sure that we
+;;;; can create methods on these generic functions, and we must make
+;;;; sure that these methods can be specialized to the classes that we
+;;;; created in phase 1.
 
 (defun phase2 (boot)
   (let ((c (c1 boot))
@@ -70,4 +65,4 @@
     (create-bridge-classes boot)))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
-;;  LocalWords:  accessors instantiation specializer
+;;  LocalWords:  accessors instantiation specializer superclass
