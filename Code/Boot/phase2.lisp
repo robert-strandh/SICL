@@ -55,6 +55,23 @@
 ;;; We use the SICL default version of the DEFMETHOD macro.  This
 ;;; macro expands to a call to the SICL-specific function ENSURE-METHOD.
 
+;;; This function is similar to FIND-CLASS.  NAME is the name of a
+;;; class.  ENV is the environment to use for finding the
+;;; corresponding class.  The purpose of this function is to translate
+;;; class names in a DEFMETHOD form to class metaobjects.  For the
+;;; most part, these class names are names that we associated with
+;;; classes in phase 1.  For that reason, ENV must be the environment
+;;; that was used in phase 1 for that purpose.  However, when some
+;;; method parameter is not specialized, we do not want to use the
+;;; class that we associated with the name T in phase 1; we want to
+;;; use the host class named T so that the corresponding parameter
+;;; remains "unspecialized".
+(defun class-from-name (name env)
+  (assert (symbolp name))
+  (if (eq name 't)
+      (find-class t)
+      (sicl-genv:find-class name env)))
+
 (defun define-ensure-method-phase2 (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method env1)
 	(lambda (function-name
