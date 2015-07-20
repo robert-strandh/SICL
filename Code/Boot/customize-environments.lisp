@@ -132,20 +132,6 @@
 	(lambda (generic-function method)
 	  (push method (sicl-clos:generic-function-methods generic-function)))))
 
-;;; This function defines class SICL-CLOS:FUNCALLABLE-STANDARD-CLASS
-;;; in the host environment to be the same as the host version of that
-;;; class.  It is needed because, although we import definitions in
-;;; the host environment that are associated with the package
-;;; CLOSER-MOP, in fact those symbols do not have CLOSER-MOP as their
-;;; package.  Instead they are imported into the CLOSER-MOP package
-;;; from the corresponding host-specific package.  We should eliminate
-;;; the need for this function by not importing based on the package
-;;; of the symbols, but based on whether the symbols are accessible in
-;;; the CLOSER-MOP package.
-(defun define-funcallable-standard-class ()
-  (setf (find-class 'sicl-clos:funcallable-standard-class)
-	(find-class 'closer-mop:funcallable-standard-class)))
-
 (defun customize-for-phase1 (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot)))
