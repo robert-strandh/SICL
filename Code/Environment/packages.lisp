@@ -47,6 +47,7 @@
    #:find-package
    #:special-operator
    #:get-setf-expansion
+   #:find-method-combination-class
    ;; This special variable is deprecated, it should replaced by the
    ;; constant variable +global-environment+
    #:*global-environment*
