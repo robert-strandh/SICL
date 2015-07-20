@@ -261,6 +261,10 @@
 		   name
 		   ((:metaclass metaclass-name) 'standard-class)
 		 &allow-other-keys)
+	  ;; We should be called only for the expansion of DEFCLASS,
+	  ;; and we make sure that we always pass the name of a
+	  ;; metaclass, and never a class metaobject.
+	  (assert (symbolp metaclass-name))
 	  (let ((metaclass (find-class metaclass-name))
 		(slot-copies
 		  (remove-readers-and-writers-from-slot-specs direct-slots))
