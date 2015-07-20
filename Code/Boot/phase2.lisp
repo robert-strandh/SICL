@@ -47,6 +47,47 @@
 ;;;; sure that these methods can be specialized to the classes that we
 ;;;; created in phase 1.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Make it possible to define methods specialized to the classes that
+;;; were created in phase 1.
+;;;
+;;; We use the SICL default version of the DEFMETHOD macro.  This
+;;; macro expands to a call to the SICL-specific function ENSURE-METHOD.
+
+(defun define-ensure-method-phase2 (env1 env2 env3)
+  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method env1)
+	(lambda (function-name
+		 lambda-list
+		 qualifiers
+		 specializers
+		 documentation
+		 function)
+	  (let* ((fun (sicl-genv:fdefinition function-name env2))
+		 (specs (loop for s in specializers
+			      collect
+			      (if (eq s 't)
+				  ;; When the specializer is T, we
+				  ;; don't mean the class named T in
+				  ;; R1, and instead we mean "not
+				  ;; specialized", and for that to
+				  ;; happen, we need to find the host
+				  ;; class named T.
+				  (find-class t)
+				  (sicl-genv:find-class s (r1 boot)))))
+		 (method (make-instance 'standard-method
+			  :lambda-list lambda-list
+			  :qualifiers qualifiers
+			  :specializers specs
+			  :documentation documentation
+			  :function function)))
+	    (add-method fun method)
+	    method)))
+  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (r1 boot))
+	(sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))))
+
+
+
 (defun phase2 (boot)
   (let ((c (c1 boot))
 	(r (r1 boot)))

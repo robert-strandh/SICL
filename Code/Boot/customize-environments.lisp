@@ -27,39 +27,6 @@
 			:method-class method-class)))
 	     (setf (sicl-genv:fdefinition ',(second form) ,(r2 boot)) gf)))))
 
-(defun define-temporary-ensure-method-c1-r1 (boot)
-  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))
-	(lambda (function-name
-		 lambda-list
-		 qualifiers
-		 specializers
-		 documentation
-		 function)
-	  (format t "Calling temporary-ensure-method ~s ~s~%"
-		  function-name specializers)
-	  (let* ((fun (sicl-genv:fdefinition function-name (r1 boot)))
-		 (specs (loop for s in specializers
-			      collect
-			      (if (eq s 't)
-				  ;; When the specializer is T, we
-				  ;; don't mean the class named T in
-				  ;; R1, and instead we mean "not
-				  ;; specialized", and for that to
-				  ;; happen, we need to find the host
-				  ;; class named T.
-				  (find-class t)
-				  (sicl-genv:find-class s (r1 boot)))))
-		 (method (make-instance 'standard-method
-			  :lambda-list lambda-list
-			  :qualifiers qualifiers
-			  :specializers specs
-			  :documentation documentation
-			  :function function)))
-	    (add-method fun method)
-	    method)))
-  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (r1 boot))
-	(sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method (c1 boot))))
-
 (defun define-validate-superclass (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass (r2 boot))
 	(constantly t)))
