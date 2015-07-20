@@ -65,9 +65,10 @@
    ;; DECLARATION.  Others are auxiliary entries such as TYPE, INLINE,
    ;; DYNAMIC-EXTENT.
    (%proclamations :initform '() :accessor proclamations)
-   ;; This slot holds an association list, mapping names to method
-   ;; combinations.
-   (%method-combinations :initform '() :accessor method-combinations)
+   ;; This slot holds an EQ hash table, mapping symbols to
+   ;; method-combination classes.
+   (%method-combination-classes :initform (make-hash-table :test #'eq)
+				:accessor method-combination-classes)
    ;; The value of this slot is either a SETF expander function, or
    ;; NIL if the function name of this entry does not have a SETF
    ;; expander associated with it.
