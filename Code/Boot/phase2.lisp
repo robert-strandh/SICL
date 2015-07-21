@@ -72,8 +72,14 @@
       (find-class t)
       (sicl-genv:find-class name env)))
 
+;;; Define a special version of ENSURE-METHOD for phase 2.  Three
+;;; environments are involved.  ENV1 is the environment in which the
+;;; function ENSURE-METHOD will be defined.  ENV2 is the environment
+;;; in which the name of the function to add a method to is defined.
+;;; ENV3 is the environment in which class names (specializers) are
+;;; associated with class metaobjects.
 (defun define-ensure-method-phase2 (env1 env2 env3)
-  (setf (sicl-genv:fdefinition 'sicl-clos::temporary-ensure-method env1)
+  (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method env1)
 	(lambda (function-name
 		 lambda-list
 		 qualifiers
