@@ -191,7 +191,7 @@
 	(r2 (r2 boot))
 	(r3 (r3 boot)))
     (message "Start of phase 2~%")
-    (define-ensure-method-phase2 r1 r1 r1)
+    (define-ensure-method-phase2 r1 r1 r2)
     (define-defmethod-phase2 r1)
     (ld "../CLOS/generic-function-initialization-support.lisp" r1 r1)
     (ld "../CLOS/invalidate-discriminating-function.lisp" r1 r1)
