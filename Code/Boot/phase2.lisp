@@ -146,10 +146,10 @@
 ;;; ENSURE-GENERIC-FUNCTION is defined in ENV1 and operates in ENV2.
 ;;; It checks whether there is already a function named FUNCTION-NAME
 ;;; in ENV2.  If so that function is returned, and it is assumed to be
-;;; a generic function.  If not, an instance of the host class
-;;; STANDARD-GENERIC-FUNCTION is created and associated with
+;;; a generic function.  If not, an instance of the class
+;;; STANDARD-GENERIC-FUNCTION in ENV3 is created and associated with
 ;;; FUNCTION-NAME in ENV2.
-(defun define-ensure-generic-function-phase2 (env1 env2)
+(defun define-ensure-generic-function-phase2 (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
 	(lambda (function-name &rest arguments)
 	  (let ((args (copy-list arguments)))
@@ -157,7 +157,9 @@
 	    (if (sicl-genv:fboundp function-name env2)
 		(sicl-genv:fdefinition function-name env2)
 		(setf (sicl-genv:fdefinition function-name env2)
-		      (apply #'make-instance 'standard-generic-function
+		      (apply #'make-instance
+			     (sicl-genv:find-class 'standard-generic-function
+						   env3)
 			     :name function-name
 			     args)))))))
 
@@ -170,7 +172,7 @@
     (ld "../CLOS/generic-function-initialization-support.lisp" r2 r2)
     (ld "../CLOS/invalidate-discriminating-function.lisp" r2 r2)
     (ld "../CLOS/generic-function-initialization-defmethods.lisp" r2 r2)
-    (define-ensure-generic-function-phase2 r3 r3)
+    (define-ensure-generic-function-phase2 r3 r3 r2)
     ;; (create-bridge-class-accessors boot)
     ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     ;; (ld "../CLOS/add-accessor-method.lisp" c r)
