@@ -148,7 +148,11 @@
 ;;; in ENV2.  If so that function is returned, and it is assumed to be
 ;;; a generic function.  If not, an instance of the class
 ;;; STANDARD-GENERIC-FUNCTION in ENV3 is created and associated with
-;;; FUNCTION-NAME in ENV2.
+;;; FUNCTION-NAME in ENV2.  We must pass an explicit value of
+;;; :METHOD-CLASS to the host function MAKE-INSTANCE, and we look up
+;;; that value as the class named STANDARD-METHOD in ENV3.  Failing to
+;;; do so would make the generic-function initialization protocol
+;;; provide a default value, and it would be the wrong one.
 (defun define-ensure-generic-function-phase2 (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
 	(lambda (function-name &rest arguments)
