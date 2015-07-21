@@ -102,6 +102,17 @@
 			  :function function)))
 	    (add-method fun method)))))
 
+;;; Define a special version of the macro DEFMETHOD for phase 2.  This
+;;; special version only works for defining instances of
+;;; STANDARD-METHOD on instances of STANDARD-GENERIC-FUNCTION.  Rather
+;;; than using the full generality of MAKE-METHOD-LAMBDA, we just use
+;;; MAKE-METHOD-LAMBDA-DEFAULT which does exactly what is required for
+;;; an instance of STANDARD-METHOD on a STANDARD-GENERIC-FUNCTION.
+;;;
+;;; Notice that the expansion contains a call to ENSURE-METHOD, which
+;;; is a symbol in the package SICL-BOOT, as opposed to the package
+;;; SICL-CLOS.  Therefore this macro only works together with the
+;;; version of ENSURE-METHOD defined above.
 (defun define-defmethod-phase2 (env)
   (setf (sicl-genv:macro-function 'defmethod env)
 	(lambda (form environment)
