@@ -78,6 +78,11 @@
 ;;; in which the name of the function to add a method to is defined.
 ;;; ENV3 is the environment in which class names (specializers) are
 ;;; associated with class metaobjects.
+;;;
+;;; Notice that the name ENSURE-METHOD is a symbol in the SICL-BOOT
+;;; package, rather than in the SICL-CLOS package.  It makes no
+;;; difference where we put it because it is only going to be used in
+;;; the expansion of DEFMETHOD which is also defined here.
 (defun define-ensure-method-phase2 (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'ensure-method env1)
 	(lambda (function-name
