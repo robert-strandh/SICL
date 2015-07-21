@@ -78,22 +78,6 @@
 		(t
 		 '())))))
 
-;;; Recall that the function READER-METHOD-CLASS is called as part of
-;;; the class-initialization protocol as described in this section
-;;; http://metamodular.com/CLOS-MOP/initialization-of-class-metaobjects2.html
-;;; of the AMOP.
-(defun define-reader-method-class (boot)
-  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class (r2 boot))
-	(lambda (&rest arguments)
-	  (declare (ignore arguments))
-	  (sicl-genv:find-class 'sicl-clos:standard-reader-method (r1 boot)))))
-
-(defun define-writer-method-class (boot)
-  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class (r2 boot))
-	(lambda (&rest arguments)
-	  (declare (ignore arguments))
-	  (sicl-genv:find-class 'sicl-clos:standard-writer-method (r1 boot)))))
-
 (defun define-add-method (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:add-method (r2 boot))
 	(lambda (generic-function method)

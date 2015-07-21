@@ -200,6 +200,23 @@
 	  (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition
 				env2))))
 
+;;; Recall that the functions READER-METHOD-CLASS and
+;;; WRITER-METHOD-CLASS are called as part of the class-initialization
+;;; protocol as described in this section
+;;; http://metamodular.com/CLOS-MOP/initialization-of-class-metaobjects2.html
+;;; of the AMOP.
+(defun define-reader-method-class (env1 env2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class env1)
+	(lambda (&rest arguments)
+	  (declare (ignore arguments))
+	  (sicl-genv:find-class 'sicl-clos:standard-reader-method env2))))
+
+(defun define-writer-method-class (env1 env2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class env1)
+	(lambda (&rest arguments)
+	  (declare (ignore arguments))
+	  (sicl-genv:find-class 'sicl-clos:standard-writer-method env2))))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
