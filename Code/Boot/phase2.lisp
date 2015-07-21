@@ -79,7 +79,7 @@
 ;;; ENV3 is the environment in which class names (specializers) are
 ;;; associated with class metaobjects.
 (defun define-ensure-method-phase2 (env1 env2 env3)
-  (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method env1)
+  (setf (sicl-genv:fdefinition 'ensure-method env1)
 	(lambda (function-name
 		 lambda-list
 		 qualifiers
