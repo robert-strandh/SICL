@@ -137,6 +137,30 @@
 		  ,documentation
 		  ,function)))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Creating class accessor generic functions.
+
+;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
+;;; run-time environment to be used in phase 2.  This version of
+;;; ENSURE-GENERIC-FUNCTION is defined in ENV1 and operates in ENV2.
+;;; It checks whether there is already a function named FUNCTION-NAME
+;;; in ENV2.  If so that function is returned, and it is assumed to be
+;;; a generic function.  If not, an instance of the host class
+;;; STANDARD-GENERIC-FUNCTION is created and associated with
+;;; FUNCTION-NAME in ENV2.
+(defun define-ensure-generic-function-phase2 (env1 env2)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
+	(lambda (function-name &rest arguments)
+	  (let ((args (copy-list arguments)))
+	    (loop while (remf args :environment))
+	    (if (sicl-genv:fboundp function-name env2)
+		(sicl-genv:fdefinition function-name env2)
+		(setf (sicl-genv:fdefinition function-name env2)
+		      (apply #'make-instance 'standard-generic-function
+			     :name function-name
+			     args)))))))
+
 (defun phase2 (boot)
   (let ((r2 (r2 boot))
 	(r3 (r3 boot)))
