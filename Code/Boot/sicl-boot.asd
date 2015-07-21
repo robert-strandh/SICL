@@ -15,7 +15,6 @@
    (:file "define-class-prototype-defun")
    (:file "phase1")
    (:file "define-find-class")
-   (:file "create-bridge-class-accessors")
    (:file "create-bridge-classes")
    (:file "phase2")
    (:file "define-effective-slot-definition-class")
