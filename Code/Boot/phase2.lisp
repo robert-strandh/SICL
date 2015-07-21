@@ -214,6 +214,7 @@
     (define-defgeneric-phase2 r3)
     (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)
     (define-direct-slot-definition-class-phase2 r3 r2)
+    (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r1 r1)
     ;; (create-bridge-class-accessors boot)
     ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     ;; (ld "../CLOS/add-accessor-method.lisp" c r)
