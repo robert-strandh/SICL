@@ -124,7 +124,6 @@
     (message "Customizing environments for phase 2~%")
     (define-make-instance boot)
     (define-defgeneric-c2 boot)
-    (define-direct-slot-definition-class boot)
     (define-find-class boot)
     (define-validate-superclass boot)
     (define-typep boot)
