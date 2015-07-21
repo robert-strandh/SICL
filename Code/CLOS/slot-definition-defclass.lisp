@@ -18,6 +18,7 @@
     :reader slot-definition-initargs)
    (%initform 
     :initarg :initform 
+    :initform nil
     :reader slot-definition-initform)
    (%initfunction 
     :initform nil
