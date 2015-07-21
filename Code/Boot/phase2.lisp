@@ -193,6 +193,13 @@
 			 :name ',(second form)
 			 :lambda-list ',(third form)))))))
 
+(defun define-direct-slot-definition-class-phase2 (env1 env2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class env1)
+	(lambda (&rest arguments)
+	  (declare (ignore arguments))
+	  (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition
+				env2))))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
@@ -206,6 +213,7 @@
     (define-ensure-generic-function-phase2 r3 r3 r2)
     (define-defgeneric-phase2 r3)
     (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)
+    (define-direct-slot-definition-class-phase2 r3 r2)
     ;; (create-bridge-class-accessors boot)
     ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     ;; (ld "../CLOS/add-accessor-method.lisp" c r)
