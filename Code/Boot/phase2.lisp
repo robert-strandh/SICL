@@ -122,8 +122,10 @@
 		  ,function)))))))
 
 (defun phase2 (boot)
-  (let ((c (c1 boot))
-	(r (r1 boot)))
+  (let ((r2 (r2 boot))
+	(r3 (r3 boot)))
+    (define-ensure-method-phase2 r2 r2 r2)
+    (define-defmethod-phase2 r2)
     ;; (create-bridge-class-accessors boot)
     ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     ;; (ld "../CLOS/add-accessor-method.lisp" c r)
