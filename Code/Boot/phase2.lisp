@@ -140,6 +140,7 @@
 (defun phase2 (boot)
   (let ((r2 (r2 boot))
 	(r3 (r3 boot)))
+    (message "Start of phase 2~%")
     (define-ensure-method-phase2 r2 r2 r2)
     (define-defmethod-phase2 r2)
     (ld "../CLOS/generic-function-initialization-support.lisp" r2 r2)
@@ -158,7 +159,7 @@
     ;; (ld "../CLOS/ensure-class-using-class-support.lisp" c (r2 boot))
     ;; (ld "ensure-class-defun-phase2.lisp" c (r2 boot))
     ;; (create-bridge-classes boot)
-    ))
+    (message "End of phase 2~%")))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
 ;;  LocalWords:  accessors instantiation specializer superclass
