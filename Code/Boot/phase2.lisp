@@ -97,22 +97,47 @@
 			  :function function)))
 	    (add-method fun method)))))
 
+(defun define-defmethod-phase2 (env)
+  (setf (sicl-genv:macro-function 'defmethod env)
+	(lambda (form environment)
+	  (declare (ignore environment))
+	  (destructuring-bind (function-name . rest)
+	      (rest form)
+	    (multiple-value-bind
+		  (qualifiers lambda-list specializers
+		   declarations documentation forms)
+		(sicl-clos::parse-defmethod rest)
+	      (let ((function (sicl-clos::make-method-lambda-default
+			       nil nil
+			       `(lambda ,lambda-list
+				  ,@declarations
+				  ,@forms)
+			       nil)))
+		`(ensure-method
+		  ',function-name
+		  ',lambda-list
+		  ',qualifiers
+		  ,(sicl-clos::canonicalize-specializers specializers)
+		  ,documentation
+		  ,function)))))))
+
 (defun phase2 (boot)
   (let ((c (c1 boot))
 	(r (r1 boot)))
-    (create-bridge-class-accessors boot)
-    (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
-    (ld "../CLOS/add-accessor-method.lisp" c r)
-    (ld "../CLOS/class-initialization-support.lisp" c r)
-    (setf (fdefinition
-	   'sicl-clos:shared-initialize-around-real-class-default)
-	  (sicl-genv:fdefinition
-	   'sicl-clos:shared-initialize-around-real-class-default
-	   r))
-    (ld "../CLOS/class-initialization-defmethods.lisp" c r)
-    (ld "../CLOS/ensure-class-using-class-support.lisp" c (r2 boot))
-    (ld "ensure-class-defun-phase2.lisp" c (r2 boot))
-    (create-bridge-classes boot)))
+    ;; (create-bridge-class-accessors boot)
+    ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
+    ;; (ld "../CLOS/add-accessor-method.lisp" c r)
+    ;; (ld "../CLOS/class-initialization-support.lisp" c r)
+    ;; (setf (fdefinition
+    ;; 	   'sicl-clos:shared-initialize-around-real-class-default)
+    ;; 	  (sicl-genv:fdefinition
+    ;; 	   'sicl-clos:shared-initialize-around-real-class-default
+    ;; 	   r))
+    ;; (ld "../CLOS/class-initialization-defmethods.lisp" c r)
+    ;; (ld "../CLOS/ensure-class-using-class-support.lisp" c (r2 boot))
+    ;; (ld "ensure-class-defun-phase2.lisp" c (r2 boot))
+    ;; (create-bridge-classes boot)
+    ))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
 ;;  LocalWords:  accessors instantiation specializer superclass
