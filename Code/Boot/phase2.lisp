@@ -160,6 +160,9 @@
 		      (apply #'make-instance
 			     (sicl-genv:find-class 'standard-generic-function
 						   env3)
+			     :method-class
+			     (sicl-genv:find-class 'standard-method
+						   env3)
 			     :name function-name
 			     args)))))))
 
