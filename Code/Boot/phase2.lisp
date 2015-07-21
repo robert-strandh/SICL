@@ -25,7 +25,7 @@
 ;;;; side effect of creating a bridge class, we will create instances
 ;;;; of the host class that we associated with the name
 ;;;; STANDARD-DIRECT-SLOT-DEFINITION when we created it in phase 1.
-;;;; These instances will be added to some certain slots of the bridge
+;;;; These instances will be added to certain slots of the bridge
 ;;;; classes.
 ;;;;
 ;;;; Since all these instances are only host STANDARD-OBJECTs with no
