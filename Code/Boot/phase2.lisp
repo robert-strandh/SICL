@@ -144,6 +144,7 @@
     (define-defmethod-phase2 r2)
     (ld "../CLOS/generic-function-initialization-support.lisp" r2 r2)
     (ld "../CLOS/invalidate-discriminating-function.lisp" r2 r2)
+    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r2 r2)
     ;; (create-bridge-class-accessors boot)
     ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     ;; (ld "../CLOS/add-accessor-method.lisp" c r)
