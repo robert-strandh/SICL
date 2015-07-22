@@ -217,6 +217,26 @@
 	  (declare (ignore arguments))
 	  (sicl-genv:find-class 'sicl-clos:standard-writer-method env2))))
 
+;;; This function is in charge of making sure that all the MOP
+;;; accessor generic functions are properly defined as bridge generic
+;;; functions in phase 2.
+(defun define-accessor-generic-functions-phase2 (boot)
+  (let ((r1 (r1 boot))
+	(r2 (r2 boot))
+	(r3 (r3 boot)))
+    ;; Before we can start creating generic functions, we must make
+    ;; sure that the generic-function initialization protocol is in
+    ;; place.
+    (ld "../CLOS/generic-function-initialization-support.lisp" r1 r1)
+    (ld "../CLOS/invalidate-discriminating-function.lisp" r1 r1)
+    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r1 r1)
+    ;; We must also make sure that DEFGENERIC is handled properly for
+    ;; phase 2.
+    (define-ensure-generic-function-phase2 r3 r3 r2)
+    (define-defgeneric-phase2 r3)
+    ;; Define the accessor generic functions.
+    (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
@@ -224,14 +244,10 @@
     (message "Start of phase 2~%")
     (define-ensure-method-phase2 r1 r1 r2)
     (define-defmethod-phase2 r1)
-    (ld "../CLOS/generic-function-initialization-support.lisp" r1 r1)
-    (ld "../CLOS/invalidate-discriminating-function.lisp" r1 r1)
-    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r1 r1)
-    (define-ensure-generic-function-phase2 r3 r3 r2)
-    (define-defgeneric-phase2 r3)
-    (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)
+    (define-accessor-generic-functions-phase2 boot)
     (define-direct-slot-definition-class-phase2 r3 r2)
     (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r1 r1)
+    (ld "../CLOS/add-remove-direct-subclass-support.lisp" r3 r3)
     ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     ;; (ld "../CLOS/add-accessor-method.lisp" c r)
     ;; (ld "../CLOS/class-initialization-support.lisp" c r)
