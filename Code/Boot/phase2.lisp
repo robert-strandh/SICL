@@ -242,8 +242,16 @@
 	(r2 (r2 boot))
 	(r3 (r3 boot)))
     (message "Start of phase 2~%")
+    ;; In order to make it possible to execute the initialization
+    ;; protocols for generic functions, methods, classes, and slot
+    ;; definitions, we must be able to define host methods on host
+    ;; generic functions such as INITIALIZE-INSTANCE and
+    ;; SHARED-INITIALIZE.  For that purpose, we define appropriate
+    ;; versions of ENSURE-METHOD and DEFMETHOD.
     (define-ensure-method-phase2 r1 r1 r2)
     (define-defmethod-phase2 r1)
+    ;; Do everything necessary to define all the MOP accessor generic
+    ;; functions.
     (define-accessor-generic-functions-phase2 boot)
     (define-direct-slot-definition-class-phase2 r3 r2)
     (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r1 r1)
