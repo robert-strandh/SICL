@@ -10,7 +10,7 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-(in-package #:asdf-user)
+(cl:in-package #:asdf-user)
 
 (defsystem :sicl-loop-support
   :depends-on (:sicl-additional-conditions
