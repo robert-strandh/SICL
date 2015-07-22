@@ -193,6 +193,12 @@
 			 :name ',(second form)
 			 :lambda-list ',(third form)))))))
 
+;;; When the class-initialization protocol turns a canonicalized slot
+;;; specification into a DIRECT-SLOT-DEFINITION metaobject, it calls
+;;; the function DIRECT-SLOT-DEFINITION-CLASS, passing it the class
+;;; metaobject and some other arguments.  For simplicity, we define a
+;;; special version of that function here.  It always returns the
+;;; class named STANDARD-DIRECT-SLOT-DEFINITION.
 (defun define-direct-slot-definition-class-phase2 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class env1)
 	(lambda (&rest arguments)
@@ -225,8 +231,8 @@
 	(r2 (r2 boot))
 	(r3 (r3 boot)))
     ;; Before we can start creating generic functions, we must make
-    ;; sure that the generic-function initialization protocol is in
-    ;; place.
+    ;; sure that the generic-function initialization protocol is
+    ;; enabled.
     (ld "../CLOS/generic-function-initialization-support.lisp" r1 r1)
     (ld "../CLOS/invalidate-discriminating-function.lisp" r1 r1)
     (ld "../CLOS/generic-function-initialization-defmethods.lisp" r1 r1)
