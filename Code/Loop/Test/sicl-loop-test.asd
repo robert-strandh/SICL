@@ -7,7 +7,6 @@
   ((:file "test-packages")
    (:file "loop-defmacro")
    (:file "loop-test")
-   (:file "simple-loop")
    (:file "loop1")
    (:file "loop2")
    (:file "loop3")
