@@ -9,7 +9,7 @@
 ;;; integrate it as it is into their systems, without having to
 ;;; implement and maintain a specific version of it. 
 ;;;
-;;; Author: Robert Strandh (strandh@labri.fr)
+;;; Author: Robert Strandh (robert.strandh@gmail.com)
 ;;; Date: 2008
 ;;;
 ;;; A portable implementation of the Common Lisp FORMAT function.
