@@ -13,7 +13,7 @@
 ;;; FIXME: Pass an implementation instance (rather than NIL) to
 ;;; GENERATE-AST.
 (defun test (form value)
-  (let* ((ast (cleavir-generate-ast:generate-ast form *e*))
+  (let* ((ast (cleavir-generate-ast:generate-ast form *e* nil))
 	 (hoisted (cleavir-ast-transformations:hoist-load-time-value ast))
 	 (v (cleavir-ast-interpreter:interpret hoisted)))
     (assert (equalp v value))))
