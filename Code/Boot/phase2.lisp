@@ -248,9 +248,9 @@
     ;; Before we can start creating generic functions, we must make
     ;; sure that the generic-function initialization protocol is
     ;; enabled.
-    (ld "../CLOS/generic-function-initialization-support.lisp" r1 r1)
-    (ld "../CLOS/invalidate-discriminating-function.lisp" r1 r1)
-    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r1 r1)
+    (ld "../CLOS/generic-function-initialization-support.lisp" r3 r3)
+    (ld "../CLOS/invalidate-discriminating-function.lisp" r3 r3)
+    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r3 r3)
     ;; We must also make sure that DEFGENERIC is handled properly for
     ;; phase 2.
     (define-ensure-generic-function-phase2 r3 r3 r2)
@@ -269,13 +269,13 @@
     ;; generic functions such as INITIALIZE-INSTANCE and
     ;; SHARED-INITIALIZE.  For that purpose, we define appropriate
     ;; versions of ENSURE-METHOD and DEFMETHOD.
-    (define-ensure-method-phase2 r1 r1 r2)
-    (define-defmethod-phase2 r1 r1)
+    (define-ensure-method-phase2 r3 r3 r2)
+    (define-defmethod-phase2 r3 r1)
     ;; Do everything necessary to define all the MOP accessor generic
     ;; functions.
     (define-accessor-generic-functions-phase2 boot)
     (define-direct-slot-definition-class-phase2 r3 r2)
-    (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r1 r1)
+    (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r3 r3)
     (ld "../CLOS/add-remove-direct-subclass-support.lisp" r3 r3)
     ;; (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" c r)
     ;; (ld "../CLOS/add-accessor-method.lisp" c r)
