@@ -285,6 +285,36 @@
 			 :name name
 			 remaining-keys))))))
 
+;;; Recall that the function DEFAULT-SUPERCLASSES is a SICL-SPECIFIC
+;;; function that is called by the class-initialization protocol to
+;;; determine a list of default superclasses when no superclasses are
+;;; given for the creation of a class.  This AMOP section:
+;;; http://metamodular.com/CLOS-MOP/initialization-of-class-metaobjects2.html
+;;; describes that when the class that is being instantiated is
+;;; STANDARD-CLASS, then the default superclasses is a list of a
+;;; single class, namely the class named STANDARD-OBJECT, and that
+;;; when the class that is being instantiated is
+;;; FUNCALLABLE-STANDARD-CLASS, then the default superclasses is a
+;;; list of a single class, namely the class named
+;;; FUNCALLABLE-STANDARD-OBJECT.  However, in SICL, we turned that
+;;; rule into a generic function called DEFAULT-SUPERCLASSES that have
+;;; methods specialized to STANDARD-CLASS, and
+;;; FUNCALLABLE-STANDARD-CLASS, but other methods can be added as
+;;; well.
+(defun define-default-superclasses-phase2 (env1 env2 env3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses env1)
+	(lambda (class)
+	  (cond ((eq (class-of class)
+		     (sicl-genv:find-class 'standard-class env2))
+		 (sicl-genv:find-class 'standard-object env3))
+		((eq (class-of class)
+		     (sicl-genv:find-class 'sicl-clos:funcallable-standard-class
+					   env2))
+		 (sicl-genv:find-class 'sicl-clos:funcallable-standard-object
+				       env3))
+		(t
+		 '())))))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
@@ -315,6 +345,7 @@
     (ld "../CLOS/class-initialization-defmethods.lisp" r3 r3)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
     (define-ensure-class-phase2 r3 r2)
+    (define-default-superclasses-phase2 r3 r2 r3)
     ;; (create-bridge-classes r3 r3)
     (message "End of phase 2~%")))
 
