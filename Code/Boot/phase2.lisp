@@ -261,7 +261,7 @@
 ;;; ENSURE-CLASS-USING-CLASS-NULL.
 (defun define-ensure-class-phase2 (env)
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class env)
-	(sicl-genv:fdefinition 'sicl-clos:ensure-class-using-class-null env)))
+	(sicl-genv:fdefinition 'sicl-clos::ensure-class-using-class-null env)))
 
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
@@ -291,7 +291,7 @@
     ;; 	   'sicl-clos:shared-initialize-around-real-class-default
     ;; 	   r))
     (ld "../CLOS/class-initialization-defmethods.lisp" r3 r3)
-    ;; (ld "../CLOS/ensure-class-using-class-support.lisp" c (r2 boot))
+    (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
     ;; (ld "ensure-class-defun-phase2.lisp" c (r2 boot))
     ;; (create-bridge-classes boot)
     (message "End of phase 2~%")))
