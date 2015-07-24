@@ -278,7 +278,7 @@
     (ld "../CLOS/add-remove-direct-subclass-support.lisp" r3 r3)
     (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" r3 r3)
     (ld "../CLOS/add-accessor-method.lisp" r3 r3)
-    ;; (ld "../CLOS/class-initialization-support.lisp" c r)
+    (ld "../CLOS/class-initialization-support.lisp" r3 r3)
     ;; (setf (fdefinition
     ;; 	   'sicl-clos:shared-initialize-around-real-class-default)
     ;; 	  (sicl-genv:fdefinition
