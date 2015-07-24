@@ -292,7 +292,7 @@
     ;; 	   r))
     (ld "../CLOS/class-initialization-defmethods.lisp" r3 r3)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
-    ;; (ld "ensure-class-defun-phase2.lisp" c (r2 boot))
+    (define-ensure-class-phase2 r3)
     ;; (create-bridge-classes boot)
     (message "End of phase 2~%")))
 
