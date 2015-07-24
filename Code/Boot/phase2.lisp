@@ -105,16 +105,20 @@
 ;;; Define a special version of the macro DEFMETHOD for phase 2.  This
 ;;; special version only works for defining instances of
 ;;; STANDARD-METHOD on instances of STANDARD-GENERIC-FUNCTION.  Rather
-;;; than using the full generality of MAKE-METHOD-LAMBDA, we just use
-;;; MAKE-METHOD-LAMBDA-DEFAULT which does exactly what is required for
-;;; an instance of STANDARD-METHOD on a STANDARD-GENERIC-FUNCTION.
+;;; than using the full generality of MAKE-METHOD-LAMBDA, we just do
+;;; exactly what is required for an instance of STANDARD-METHOD on a
+;;; STANDARD-GENERIC-FUNCTION.
 ;;;
 ;;; Notice that the expansion contains a call to ENSURE-METHOD, which
 ;;; is a symbol in the package SICL-BOOT, as opposed to the package
 ;;; SICL-CLOS.  Therefore this macro only works together with the
 ;;; version of ENSURE-METHOD defined above.
-(defun define-defmethod-phase2 (env)
-  (setf (sicl-genv:macro-function 'defmethod env)
+;;;
+;;; ENV1 is the environment in which the macro is defined.  ENV2 is
+;;; the environment in which we look up the function named
+;;; SICL-CLOS:METHOD-FUNCTION.
+(defun define-defmethod-phase2 (env1 env2)
+  (setf (sicl-genv:macro-function 'defmethod env1)
 	(lambda (form environment)
 	  (declare (ignore environment))
 	  (destructuring-bind (function-name . rest)
@@ -123,19 +127,30 @@
 		  (qualifiers lambda-list specializers
 		   declarations documentation forms)
 		(sicl-clos::parse-defmethod rest)
-	      (let ((function (sicl-clos::make-method-lambda-default
-			       nil nil
-			       `(lambda ,lambda-list
-				  ,@declarations
-				  ,@forms)
-			       nil)))
+	      (let ((args (gensym))
+		    (next-methods (gensym)))
 		`(ensure-method
 		  ',function-name
 		  ',lambda-list
 		  ',qualifiers
 		  ,(sicl-clos::canonicalize-specializers specializers)
 		  ,documentation
-		  ,function)))))))
+		  (lambda (,args ,next-methods)
+		    (flet ((next-method-p ()
+			     (not (null ,next-methods)))
+			   (call-next-method (&rest args)
+			     (when (null ,next-methods)
+			       (error "no next method"))
+			     (funcall (funcall (sicl-genv:fdefinition
+						'sicl-clos:method-function
+						,env2)
+					       (car ,next-methods))
+				      (or args ,args)
+				      (cdr ,next-methods))))
+		      (apply (lambda ,lambda-list
+			       ,@declarations
+			       ,@forms)
+			     ,args))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -255,7 +270,7 @@
     ;; SHARED-INITIALIZE.  For that purpose, we define appropriate
     ;; versions of ENSURE-METHOD and DEFMETHOD.
     (define-ensure-method-phase2 r1 r1 r2)
-    (define-defmethod-phase2 r1)
+    (define-defmethod-phase2 r1 r1)
     ;; Do everything necessary to define all the MOP accessor generic
     ;; functions.
     (define-accessor-generic-functions-phase2 boot)
