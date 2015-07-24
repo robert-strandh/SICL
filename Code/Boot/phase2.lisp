@@ -259,9 +259,31 @@
 
 ;;; Define ENSURE-CLASS to be an alias for the default function
 ;;; ENSURE-CLASS-USING-CLASS-NULL.
-(defun define-ensure-class-phase2 (env)
-  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class env)
-	(sicl-genv:fdefinition 'sicl-clos::ensure-class-using-class-null env)))
+(defun define-ensure-class-phase2 (env1 env2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class env1)
+	(lambda (name
+		 &rest keys
+		 &key
+		   direct-default-initargs
+		   direct-slots
+		   direct-superclasses
+		   ((:metaclass metaclass-name) nil metaclass-p)
+		 &allow-other-keys)
+	  (unless metaclass-p
+	    (setf metaclass-name 'standard-class))
+	  (setf direct-superclasses
+		(sicl-clos::process-direct-superclasses direct-superclasses))
+	  (let ((remaining-keys (copy-list keys))
+		(metaclass (sicl-genv:find-class metaclass-name env2)))
+	    (loop while (remf remaining-keys :metaclass))
+	    (loop while (remf remaining-keys :direct-superclasses))
+	    (setf (find-class name)
+		  (apply #'make-instance metaclass
+			 :direct-default-initargs direct-default-initargs
+			 :direct-slots direct-slots
+			 :direct-superclasses direct-superclasses
+			 :name name
+			 remaining-keys))))))
 
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
@@ -292,8 +314,8 @@
     ;; 	   r))
     (ld "../CLOS/class-initialization-defmethods.lisp" r3 r3)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
-    (define-ensure-class-phase2 r3)
-    ;; (create-bridge-classes boot)
+    (define-ensure-class-phase2 r3 r2)
+    ;; (create-bridge-classes r3 r3)
     (message "End of phase 2~%")))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
