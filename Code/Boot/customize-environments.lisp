@@ -48,36 +48,6 @@
 	      (typep object 'standard-object)
 	      (typep object type)))))
 
-;;; Recall that the function DEFAULT-SUPERCLASSES is a SICL-SPECIFIC
-;;; function that is called by the class-initialization protocol to
-;;; determine a list of default superclasses when no superclasses are
-;;; given for the creation of a class.  This AMOP section:
-;;; http://metamodular.com/CLOS-MOP/initialization-of-class-metaobjects2.html
-;;; describes that when the class that is being instantiated is
-;;; STANDARD-CLASS, then the default superclasses is a list of a
-;;; single class, namely the class named STANDARD-OBJECT, and that
-;;; when the class that is being instantiated is
-;;; FUNCALLABLE-STANDARD-CLASS, then the default superclasses is a
-;;; list of a single class, namely the class named
-;;; FUNCALLABLE-STANDARD-OBJECT.  However, in SICL, we turned that
-;;; rule into a generic function called DEFAULT-SUPERCLASSES that have
-;;; methods specialized to STANDARD-CLASS, and
-;;; FUNCALLABLE-STANDARD-CLASS, but other methods can be added as
-;;; well.
-(defun define-default-superclasses (boot)
-  (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses (r2 boot))
-	(lambda (class)
-	  (cond ((eq (class-of class)
-		     (sicl-genv:find-class 'standard-class (r1 boot)))
-		 (sicl-genv:find-class 'standard-object (r2 boot)))
-		((eq (class-of class)
-		     (sicl-genv:find-class 'sicl-clos:funcallable-standard-class
-					   (r1 boot)))
-		 (sicl-genv:find-class 'sicl-clos:funcallable-standard-object
-				       (r2 boot)))
-		(t
-		 '())))))
-
 (defun define-add-method (boot)
   (setf (sicl-genv:fdefinition 'sicl-clos:add-method (r2 boot))
 	(lambda (generic-function method)
@@ -112,7 +82,6 @@
     (define-validate-superclass boot)
     (define-typep boot)
     (define-ensure-generic-function-r1 boot)
-    (define-default-superclasses boot)
     (define-reader-method-class boot)
     (define-writer-method-class boot)
     (define-ensure-class r2)
