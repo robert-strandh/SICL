@@ -324,6 +324,10 @@
   (setf (sicl-genv:fdefinition 'sicl-clos::check-direct-superclasses env)
 	(constantly t)))
 
+(defun define-heap-instance-p (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos::heap-instance-p env)
+	(constantly t)))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
@@ -357,6 +361,7 @@
     (define-default-superclasses-phase2 r3 r2 r3)
     (define-validate-superclass-phase2 r3)
     (define-check-direct-superclasses-phase2 r3)
+    (define-heap-instance-p r3)
     ;; (create-bridge-classes r3 r3)
     (message "End of phase 2~%")))
 
