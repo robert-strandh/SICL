@@ -242,8 +242,7 @@
 ;;; accessor generic functions are properly defined as bridge generic
 ;;; functions in phase 2.
 (defun define-accessor-generic-functions-phase2 (boot)
-  (let ((r1 (r1 boot))
-	(r2 (r2 boot))
+  (let ((r2 (r2 boot))
 	(r3 (r3 boot)))
     ;; Before we can start creating generic functions, we must make
     ;; sure that the generic-function initialization protocol is
