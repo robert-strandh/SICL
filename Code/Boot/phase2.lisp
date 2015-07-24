@@ -315,6 +315,10 @@
 		(t
 		 '())))))
 
+(defun define-validate-superclass-phase2 (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass env)
+	(constantly t)))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
@@ -346,6 +350,7 @@
     (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
     (define-ensure-class-phase2 r3 r2 r3)
     (define-default-superclasses-phase2 r3 r2 r3)
+    (define-validate-superclass-phase2 r3)
     ;; (create-bridge-classes r3 r3)
     (message "End of phase 2~%")))
 
