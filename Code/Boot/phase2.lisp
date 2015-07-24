@@ -257,6 +257,12 @@
     ;; Define the accessor generic functions.
     (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)))
 
+;;; Define ENSURE-CLASS to be an alias for the default function
+;;; ENSURE-CLASS-USING-CLASS-NULL.
+(defun define-ensure-class-phase2 (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class env)
+	(sicl-genv:fdefinition 'sicl-clos:ensure-class-using-class-null env)))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
