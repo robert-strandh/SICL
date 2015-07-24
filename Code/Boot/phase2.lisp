@@ -266,15 +266,16 @@
 		 &key
 		   direct-default-initargs
 		   direct-slots
-		   direct-superclasses
+		   ((:direct-superclasses direct-superclass-names))
 		   ((:metaclass metaclass-name) nil metaclass-p)
 		 &allow-other-keys)
 	  (unless metaclass-p
 	    (setf metaclass-name 'standard-class))
-	  (setf direct-superclasses
-		(sicl-clos::process-direct-superclasses direct-superclasses))
 	  (let ((remaining-keys (copy-list keys))
-		(metaclass (sicl-genv:find-class metaclass-name env2)))
+		(metaclass (sicl-genv:find-class metaclass-name env2))
+		(direct-superclasses
+		  (loop for name in direct-superclass-names
+			collect (sicl-genv:find-class name env3))))
 	    (loop while (remf remaining-keys :metaclass))
 	    (loop while (remf remaining-keys :direct-superclasses))
 	    (setf (sicl-genv:find-class name env3)
