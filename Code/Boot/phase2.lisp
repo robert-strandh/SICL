@@ -366,6 +366,8 @@
     (define-check-direct-superclasses-phase2 r2)
     (define-heap-instance-p r2)
     (define-all-descendants-phase2 r2)
+    (define-reader-method-class-phase2 r2 r1)
+    (define-writer-method-class-phase2 r2 r1)
     ;; (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
     (create-bridge-classes r2 r2)
     (message "End of phase 2~%")))
