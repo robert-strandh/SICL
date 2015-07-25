@@ -328,7 +328,7 @@
 	(constantly t)))
 
 (defun define-all-descendants-phase2 (env)
-  (setf (sicl-genv:fdefinition 'sicl-clos::all-descendents env)
+  (setf (sicl-genv:fdefinition 'sicl-clos::all-descendants env)
 	(constantly t)))
 
 (defun phase2 (boot)

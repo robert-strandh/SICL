@@ -403,12 +403,12 @@
 ;;; applicable methods and the effective method and load up the call
 ;;; history.  Finally, compute and set the discriminating function.
 
-;;; Return all descendents of a class, including the class itself.
-(defun all-descendents (class)
+;;; Return all descendants of a class, including the class itself.
+(defun all-descendants (class)
   (let ((subclasses (class-direct-subclasses class)))
     (remove-duplicates (cons class
 			     (reduce #'append
-				     (mapcar #'all-descendents subclasses))))))
+				     (mapcar #'all-descendants subclasses))))))
 
 (defun cartesian-product (sets)
   (if (null (cdr sets))
@@ -425,7 +425,7 @@
 		     for flag in profile
 		     collect (if (null flag)
 				 (list class)
-				 (all-descendents class))))
+				 (all-descendants class))))
 	 (all-combinations (cartesian-product sets)))
     (loop for combination in all-combinations
 	  for methods = (compute-applicable-methods-using-classes
