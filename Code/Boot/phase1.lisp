@@ -78,14 +78,14 @@
 ;;; We must, of course, make sure that we execute a DEFGENERIC form
 ;;; for a particular generic function exactly once, but we can do that
 ;;; because we completely master the boot process.
-(defun define-defgeneric-phase1 (env)
-  (setf (sicl-genv:macro-function 'defgeneric env)
+(defun define-defgeneric-phase1 (env1 env2)
+  (setf (sicl-genv:macro-function 'defgeneric env1)
 	(lambda (form environment)
 	  (declare (ignore environment))
-	  `(progn (sicl-genv:fmakunbound ',(second form)
-					 (sicl-genv:global-environment))
-		  (setf (sicl-genv:fdefinition ',(second form)
-					       (sicl-genv:global-environment))
+	  `(progn (format t "defining ~s in ~s~%"
+			  ',(second form) ,env2)
+		  (sicl-genv:fmakunbound ',(second form) ,env2)
+		  (setf (sicl-genv:fdefinition ',(second form) ,env2)
 			(ensure-generic-function
 			 ',(second form)
 			 :name ',(second form)
@@ -94,7 +94,7 @@
 (defun create-class-accessor-generic-functions-phase1 ()
   (let ((env *phase1-mop-accessor-env*))
     (define-ensure-generic-function-phase1 env env)
-    (define-defgeneric-phase1 env)
+    (define-defgeneric-phase1 env env)
     (ld "../CLOS/accessor-defgenerics.lisp" env env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
