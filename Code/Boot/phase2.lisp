@@ -242,20 +242,20 @@
 ;;; accessor generic functions are properly defined as bridge generic
 ;;; functions in phase 2.
 (defun define-accessor-generic-functions-phase2 (boot)
-  (let ((r2 (r2 boot))
-	(r3 (r3 boot)))
+  (let ((r1 (r1 boot))
+	(r2 (r2 boot)))
     ;; Before we can start creating generic functions, we must make
     ;; sure that the generic-function initialization protocol is
     ;; enabled.
-    (ld "../CLOS/generic-function-initialization-support.lisp" r3 r3)
-    (ld "../CLOS/invalidate-discriminating-function.lisp" r3 r3)
-    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r3 r3)
+    (ld "../CLOS/generic-function-initialization-support.lisp" r2 r2)
+    (ld "../CLOS/invalidate-discriminating-function.lisp" r2 r2)
+    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r2 r2)
     ;; We must also make sure that DEFGENERIC is handled properly for
     ;; phase 2.
-    (define-ensure-generic-function-phase2 r3 r3 r2)
-    (define-defgeneric-phase2 r3)
+    (define-ensure-generic-function-phase2 r2 r1 r1)
+    (define-defgeneric-phase2 r2)
     ;; Define the accessor generic functions.
-    (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)))
+    (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
 
 ;;; Define ENSURE-CLASS to be an alias for the default function
 ;;; ENSURE-CLASS-USING-CLASS-NULL.
@@ -343,8 +343,8 @@
     ;; generic functions such as INITIALIZE-INSTANCE and
     ;; SHARED-INITIALIZE.  For that purpose, we define appropriate
     ;; versions of ENSURE-METHOD and DEFMETHOD.
-    (define-ensure-method-phase2 r3 r3 r2)
-    (define-defmethod-phase2 r3 r1)
+    (define-ensure-method-phase2 r2 r2 r1)
+    (define-defmethod-phase2 r2 r1)
     ;; Do everything necessary to define all the MOP accessor generic
     ;; functions.
     (define-accessor-generic-functions-phase2 boot)
@@ -367,7 +367,8 @@
     (define-check-direct-superclasses-phase2 r3)
     (define-heap-instance-p r3)
     (define-all-descendants-phase2 r3)
-    ;; (create-bridge-classes r3 r3)
+    ;; (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
+    (create-bridge-classes r3 r3)
     (message "End of phase 2~%")))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
