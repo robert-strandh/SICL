@@ -13,6 +13,7 @@
    (:file "customize-environments")
    (:file "define-make-instance-defun")
    (:file "define-class-prototype-defun")
+   (:file "environment-variables")
    (:file "phase1")
    (:file "define-find-class")
    (:file "create-bridge-classes")
