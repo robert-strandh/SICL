@@ -195,14 +195,12 @@
 ;;; We must, of course, make sure that we execute a DEFGENERIC form
 ;;; for a particular generic function exactly once, but we can do that
 ;;; because we completely master the boot process.
-(defun define-defgeneric-phase2 (env)
-  (setf (sicl-genv:macro-function 'defgeneric env)
+(defun define-defgeneric-phase2 (env1 env2)
+  (setf (sicl-genv:macro-function 'defgeneric env1)
 	(lambda (form environment)
 	  (declare (ignore environment))
-	  `(progn (sicl-genv:fmakunbound ',(second form)
-					 (sicl-genv:global-environment))
-		  (setf (sicl-genv:fdefinition ',(second form)
-					       (sicl-genv:global-environment))
+	  `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
+		  (setf (sicl-genv:fdefinition ',(second form) ,env2)
 			(ensure-generic-function
 			 ',(second form)
 			 :name ',(second form)
@@ -243,7 +241,8 @@
 ;;; functions in phase 2.
 (defun define-accessor-generic-functions-phase2 (boot)
   (let ((r1 (r1 boot))
-	(r2 (r2 boot)))
+	(r2 (r2 boot))
+	(r3 (r3 boot)))
     ;; Before we can start creating generic functions, we must make
     ;; sure that the generic-function initialization protocol is
     ;; enabled.
@@ -253,7 +252,7 @@
     ;; We must also make sure that DEFGENERIC is handled properly for
     ;; phase 2.
     (define-ensure-generic-function-phase2 r2 r1 r1)
-    (define-defgeneric-phase2 r2)
+    (define-defgeneric-phase2 r2 r3)
     ;; Define the accessor generic functions.
     (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
 
@@ -348,27 +347,27 @@
     ;; Do everything necessary to define all the MOP accessor generic
     ;; functions.
     (define-accessor-generic-functions-phase2 boot)
-    (define-direct-slot-definition-class-phase2 r3 r2)
-    (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r3 r3)
-    (ld "../CLOS/add-remove-direct-subclass-support.lisp" r3 r3)
-    (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" r3 r3)
-    (ld "../CLOS/add-accessor-method.lisp" r3 r3)
-    (ld "../CLOS/class-initialization-support.lisp" r3 r3)
+    (define-direct-slot-definition-class-phase2 r2 r1)
+    (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r2 r2)
+    (ld "../CLOS/add-remove-direct-subclass-support.lisp" r2 r2)
+    (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" r2 r2)
+    (ld "../CLOS/add-accessor-method.lisp" r2 r2)
+    (ld "../CLOS/class-initialization-support.lisp" r2 r2)
     ;; (setf (fdefinition
     ;; 	   'sicl-clos:shared-initialize-around-real-class-default)
     ;; 	  (sicl-genv:fdefinition
     ;; 	   'sicl-clos:shared-initialize-around-real-class-default
     ;; 	   r))
-    (ld "../CLOS/class-initialization-defmethods.lisp" r3 r3)
-    (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
-    (define-ensure-class-phase2 r3 r2 r3)
-    (define-default-superclasses-phase2 r3 r2 r3)
-    (define-validate-superclass-phase2 r3)
-    (define-check-direct-superclasses-phase2 r3)
-    (define-heap-instance-p r3)
-    (define-all-descendants-phase2 r3)
+    (ld "../CLOS/class-initialization-defmethods.lisp" r2 r2)
+    (ld "../CLOS/ensure-class-using-class-support.lisp" r2 r2)
+    (define-ensure-class-phase2 r2 r1 r2)
+    (define-default-superclasses-phase2 r2 r2 r2)
+    (define-validate-superclass-phase2 r2)
+    (define-check-direct-superclasses-phase2 r2)
+    (define-heap-instance-p r2)
+    (define-all-descendants-phase2 r2)
     ;; (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
-    (create-bridge-classes r3 r3)
+    (create-bridge-classes r2 r2)
     (message "End of phase 2~%")))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
