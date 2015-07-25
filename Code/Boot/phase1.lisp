@@ -82,9 +82,7 @@
   (setf (sicl-genv:macro-function 'defgeneric env1)
 	(lambda (form environment)
 	  (declare (ignore environment))
-	  `(progn (format t "defining ~s in ~s~%"
-			  ',(second form) ,env2)
-		  (sicl-genv:fmakunbound ',(second form) ,env2)
+	  `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
 		  (setf (sicl-genv:fdefinition ',(second form) ,env2)
 			(ensure-generic-function
 			 ',(second form)
