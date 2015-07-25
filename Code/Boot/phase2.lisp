@@ -224,13 +224,13 @@
 ;;; protocol as described in this section
 ;;; http://metamodular.com/CLOS-MOP/initialization-of-class-metaobjects2.html
 ;;; of the AMOP.
-(defun define-reader-method-class (env1 env2)
+(defun define-reader-method-class-phase2 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class env1)
 	(lambda (&rest arguments)
 	  (declare (ignore arguments))
 	  (sicl-genv:find-class 'sicl-clos:standard-reader-method env2))))
 
-(defun define-writer-method-class (env1 env2)
+(defun define-writer-method-class-phase2 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class env1)
 	(lambda (&rest arguments)
 	  (declare (ignore arguments))
