@@ -91,11 +91,11 @@
 			 :name ',(second form)
 			 :lambda-list ',(third form)))))))
 
-(defun create-class-accessor-generic-functions-phase1 (boot)
-  (let ((r2 (r2 boot)))
-    (define-ensure-generic-function-phase1 r2 r2)
-    (define-defgeneric-phase1 r2)
-    (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
+(defun create-class-accessor-generic-functions-phase1 ()
+  (let ((env *phase1-mop-accessor-env*))
+    (define-ensure-generic-function-phase1 env env)
+    (define-defgeneric-phase1 env)
+    (ld "../CLOS/accessor-defgenerics.lisp" env env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -364,7 +364,7 @@
 
 (defun phase1 (boot)
   (message "Start of phase 1~%")
-  (create-class-accessor-generic-functions-phase1 boot)
+  (create-class-accessor-generic-functions-phase1)
   (create-mop-classes-phase1 boot)
   (message "End of phase 1~%"))
 
