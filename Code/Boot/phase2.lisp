@@ -335,11 +335,11 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:add-method env1)
 	(lambda (generic-function method)
 	  (funcall (sicl-genv:fdefinition
-		    '(setf generic-function-methods)
+		    '(setf sicl-clos:generic-function-methods)
 		    env2)
 		   (cons method
 			 (funcall (sicl-genv:fdefinition
-				   'generic-function-methods
+				   'sicl-clos:generic-function-methods
 				   env2)
 				  generic-function))
 		   generic-function))))
@@ -382,6 +382,7 @@
     (define-reader-method-class-phase2 r2 r1)
     (define-writer-method-class-phase2 r2 r1)
     ;; (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
+    (define-add-method-phase2 r2 r3)
     (create-bridge-classes r2 r2)
     (message "End of phase 2~%")))
 
