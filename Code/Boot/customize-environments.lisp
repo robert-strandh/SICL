@@ -48,11 +48,6 @@
 	      (typep object 'standard-object)
 	      (typep object type)))))
 
-(defun define-add-method (boot)
-  (setf (sicl-genv:fdefinition 'sicl-clos:add-method (r2 boot))
-	(lambda (generic-function method)
-	  (push method (sicl-clos:generic-function-methods generic-function)))))
-
 (defun customize-for-phase1 (boot)
   (let ((c1 (c1 boot))
 	(r1 (r1 boot)))

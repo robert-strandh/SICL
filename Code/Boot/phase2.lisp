@@ -331,6 +331,19 @@
   (setf (sicl-genv:fdefinition 'sicl-clos::all-descendants env)
 	(constantly t)))
 
+(defun define-add-method-phase2 (env1 env2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:add-method env1)
+	(lambda (generic-function method)
+	  (funcall (sicl-genv:fdefinition
+		    '(setf generic-function-methods)
+		    env2)
+		   (cons method
+			 (funcall (sicl-genv:fdefinition
+				   'generic-function-methods
+				   env2)
+				  generic-function))
+		   generic-function))))
+
 (defun phase2 (boot)
   (let ((r1 (r1 boot))
 	(r2 (r2 boot))
