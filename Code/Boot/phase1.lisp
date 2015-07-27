@@ -361,8 +361,7 @@
 ;;;
 ;;; Main entry point of phase 1.
 
-(defun phase1 (boot)
-  (declare (ignore boot))
+(defun phase1 ()
   (message "Start of phase 1~%")
   (create-class-accessor-generic-functions-phase1)
   (create-mop-classes-phase1)

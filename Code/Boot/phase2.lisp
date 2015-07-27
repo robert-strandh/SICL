@@ -341,7 +341,7 @@
 				  generic-function))
 		   generic-function))))
 
-(defun phase2 (boot)
+(defun phase2 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
 	(r3 *phase2-mop-accessor-env*))
