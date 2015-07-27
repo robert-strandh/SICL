@@ -27,10 +27,6 @@
 			:method-class method-class)))
 	     (setf (sicl-genv:fdefinition ',(second form) ,(r2 boot)) gf)))))
 
-(defun define-validate-superclass (boot)
-  (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass (r2 boot))
-	(constantly t)))
-
 ;;; The problem that we are solving here is that during class
 ;;; initialization, there is a test that each superclass is of type
 ;;; CLASS, and that test uses TYPEP like this (TYPEP c 'CLASS).  But
@@ -74,7 +70,6 @@
     (define-make-instance boot)
     (define-defgeneric-c2 boot)
     (define-find-class boot)
-    (define-validate-superclass boot)
     (define-typep boot)
     (define-ensure-generic-function-r1 boot)
     (define-reader-method-class boot)
