@@ -251,10 +251,10 @@
     (ld "../CLOS/generic-function-initialization-defmethods.lisp" r2 r2)
     ;; We must also make sure that DEFGENERIC is handled properly for
     ;; phase 2.
-    (define-ensure-generic-function-phase2 r3 r3 r1)
-    (define-defgeneric-phase2 r3 r3)
+    (define-ensure-generic-function-phase2 r2 r3 r1)
+    (define-defgeneric-phase2 r2 r3)
     ;; Define the accessor generic functions.
-    (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)))
+    (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
 
 ;;; Define ENSURE-CLASS to be an alias for the default function
 ;;; ENSURE-CLASS-USING-CLASS-NULL.
@@ -334,7 +334,6 @@
 (defun define-add-method-phase2 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:add-method env1)
 	(lambda (generic-function method)
-	  (format t "Calling add-method~%")
 	  (funcall (sicl-genv:fdefinition
 		    '(setf sicl-clos:generic-function-methods)
 		    env2)
@@ -383,7 +382,7 @@
     (define-reader-method-class-phase2 r2 r1)
     (define-writer-method-class-phase2 r2 r1)
     ;; (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
-    (define-add-method-phase2 r2 r3)
+    (define-add-method-phase2 r2 r2)
     (create-bridge-classes r2 r2)
     (message "End of phase 2~%")))
 
