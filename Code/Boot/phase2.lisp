@@ -345,9 +345,9 @@
 		   generic-function))))
 
 (defun phase2 (boot)
-  (let ((r1 (r1 boot))
-	(r2 (r2 boot))
-	(r3 (r3 boot)))
+  (let ((r1 *phase1-mop-class-env*)
+	(r2 *phase2-mop-class-env*)
+	(r3 *phase2-mop-accessor-env*))
     (message "Start of phase 2~%")
     ;; In order to make it possible to execute the initialization
     ;; protocols for generic functions, methods, classes, and slot
