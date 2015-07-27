@@ -239,22 +239,19 @@
 ;;; This function is in charge of making sure that all the MOP
 ;;; accessor generic functions are properly defined as bridge generic
 ;;; functions in phase 2.
-(defun define-accessor-generic-functions-phase2 (boot)
-  (let ((r1 (r1 boot))
-	(r2 (r2 boot))
-	(r3 (r3 boot)))
-    ;; Before we can start creating generic functions, we must make
-    ;; sure that the generic-function initialization protocol is
-    ;; enabled.
-    (ld "../CLOS/generic-function-initialization-support.lisp" r2 r2)
-    (ld "../CLOS/invalidate-discriminating-function.lisp" r2 r2)
-    (ld "../CLOS/generic-function-initialization-defmethods.lisp" r2 r2)
-    ;; We must also make sure that DEFGENERIC is handled properly for
-    ;; phase 2.
-    (define-ensure-generic-function-phase2 r2 r3 r1)
-    (define-defgeneric-phase2 r2 r3)
-    ;; Define the accessor generic functions.
-    (ld "../CLOS/accessor-defgenerics.lisp" r2 r2)))
+(defun define-accessor-generic-functions-phase2 (env1 env2 env3)
+  ;; Before we can start creating generic functions, we must make
+  ;; sure that the generic-function initialization protocol is
+  ;; enabled.
+  (ld "../CLOS/generic-function-initialization-support.lisp" env2 env2)
+  (ld "../CLOS/invalidate-discriminating-function.lisp" env2 env2)
+  (ld "../CLOS/generic-function-initialization-defmethods.lisp" env2 env2)
+  ;; We must also make sure that DEFGENERIC is handled properly for
+  ;; phase 2.
+  (define-ensure-generic-function-phase2 env2 env3 env1)
+  (define-defgeneric-phase2 env2 env3)
+  ;; Define the accessor generic functions.
+  (ld "../CLOS/accessor-defgenerics.lisp" env2 env2))
 
 ;;; Define ENSURE-CLASS to be an alias for the default function
 ;;; ENSURE-CLASS-USING-CLASS-NULL.
@@ -359,7 +356,7 @@
     (define-defmethod-phase2 r2 r1)
     ;; Do everything necessary to define all the MOP accessor generic
     ;; functions.
-    (define-accessor-generic-functions-phase2 boot)
+    (define-accessor-generic-functions-phase2 r1 r2 r3)
     (define-direct-slot-definition-class-phase2 r2 r1)
     (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r2 r2)
     (ld "../CLOS/add-remove-direct-subclass-support.lisp" r2 r2)
