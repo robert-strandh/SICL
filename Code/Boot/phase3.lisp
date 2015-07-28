@@ -14,5 +14,7 @@
 (defun phase3 ()
   (let ((r2 *phase2-mop-class-env*)
 	(r3 *phase2-mop-accessor-env*))
+    (message "Start of phase 3~%")
     (ld "../CLOS/class-finalization-support.lisp" r2 r2)
-    (define-allocate-general-instance r3)))
+    (define-allocate-general-instance r3)
+    (message "End of phase 3~%")))
