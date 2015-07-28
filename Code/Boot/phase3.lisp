@@ -16,5 +16,6 @@
 	(r3 *phase2-mop-accessor-env*))
     (message "Start of phase 3~%")
     (ld "../CLOS/class-finalization-support.lisp" r2 r2)
+    (ld "../CLOS/class-finalization-defuns.lisp" r2 r2)
     (define-allocate-general-instance r3)
     (message "End of phase 3~%")))
