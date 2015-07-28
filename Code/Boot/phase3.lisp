@@ -12,5 +12,7 @@
 	    :rack (make-array size)))))
 
 (defun phase3 ()
-  (let ((r3 *phase2-mop-accessor-env*))
+  (let ((r2 *phase2-mop-class-env*)
+	(r3 *phase2-mop-accessor-env*))
+    (ld "../CLOS/class-finalization-support.lisp" r2 r2)
     (define-allocate-general-instance r3)))
