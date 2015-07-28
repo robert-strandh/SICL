@@ -10,7 +10,6 @@
    (:file "boot")
    (:file "load")
    (:file "export-to-host")
-   (:file "customize-environments")
    (:file "define-make-instance-defun")
    (:file "define-class-prototype-defun")
    (:file "environment-variables")
