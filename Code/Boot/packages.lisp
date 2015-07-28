@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-boot
   (:use #:common-lisp)
+  (:shadow #:class)
   (:export))
