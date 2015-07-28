@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-boot)
 
+(defclass header ()
+  ((%class :initarg :class :accessor class)
+   (%rack :initarg :rack :reader rack)))
+
 (defun phase3 (boot)
   (let ((c (c1 boot))
 	(r (r2 boot)))
