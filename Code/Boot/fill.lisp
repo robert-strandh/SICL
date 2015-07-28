@@ -3,8 +3,7 @@
 (defun fill-boot ()
   (phase1)
   (phase2)
-  ;; (phase3 boot)
-  )
+  (phase3))
 
 (defmethod initialize-instance :after ((boot boot) &key &allow-other-keys)
   (let ((*pristine-env* (c1 boot))
