@@ -98,5 +98,6 @@
    ;; SICL-specific functions
    #:ensure-method
    #:default-superclasses
+   #:allocate-general-instance
    ;; SICL-specific macro
    #:subclassp))
