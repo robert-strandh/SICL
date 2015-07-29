@@ -10,7 +10,7 @@
 ;;; implement and maintain a specific version of it. 
 ;;;
 ;;; Author: Robert Strandh (robert.strandh@gmail.com)
-;;; Date: 2008
+;;; Date: 2008, 2015.
 ;;;
 ;;; SETF expanders for standard accessors that can be expressed
 ;;; by portable code.  For that to be possible, Common Lisp must
