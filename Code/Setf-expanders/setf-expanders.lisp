@@ -1,3 +1,5 @@
+(cl:in-package #:sicl-setf)
+
 ;;; This code is in the public domain.
 ;;;
 ;;; The name for this project is SICL, which doesn't stand for
@@ -15,8 +17,6 @@
 ;;; SETF expanders for standard accessors that can be expressed
 ;;; by portable code.  For that to be possible, Common Lisp must
 ;;; also define primitive functions for storing values. 
-
-(cl:in-package #:sicl-setf)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
