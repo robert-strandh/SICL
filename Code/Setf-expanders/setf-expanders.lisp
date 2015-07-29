@@ -16,11 +16,6 @@
 ;;; by portable code.  For that to be possible, Common Lisp must
 ;;; also define primitive functions for storing values. 
 
-;;; Ultimately, this form should be moved to a central place, such as
-;;; packages.lisp.
-(defpackage #:sicl-setf
-    (:use #:common-lisp))
-
 (cl:in-package #:sicl-setf)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
