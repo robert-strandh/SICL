@@ -1,7 +1,7 @@
 ;;; This code is in the public domain.
 ;;;
-;;; The preliminary name for this project is SICL, which doesn't stand
-;;; for anything in particular.  Pronounce it like "sickle".
+;;; The name for this project is SICL, which doesn't stand for
+;;; anything in particular.  Pronounce it like "sickle".
 ;;;
 ;;; The purpose of this code is to provide a totally portable
 ;;; implementation of some high-level functionality of the Common Lisp
