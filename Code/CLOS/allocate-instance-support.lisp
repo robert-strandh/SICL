@@ -32,9 +32,9 @@
 
 (defun allocate-instance-default (class &rest initargs)
   (declare (ignore initargs))
-  (let* ((slots (allocate-slot-storage (instance-size class)))
-	 (instance (allocate-general-instance class slots)))
+  (let* ((size (instance-size class))
+	 (instance (allocate-general-instance class size)))
     ;; Store the unique number of the class in the instance.
-    (setf (standard-instance-access instance +class-unique-number-offset+)
+    (setf (general-instance-access instance +class-unique-number-offset+)
 	  (unique-number class))
     instance))
