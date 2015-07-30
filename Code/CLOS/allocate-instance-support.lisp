@@ -11,8 +11,7 @@
 ;;; function.  The first one is specialized for STANDARD-CLASS.  The
 ;;; second one is specialized for FUNCALLABLE-STANDARD-CLASS.  The
 ;;; third one is specialized for BUILT-IN-CLASS.  The last one signals
-;;; an error.  The default action below is valid for the first two
-;;; methods.
+;;; an error.
 
 ;;; This function implements the action of the default methods on
 ;;; ALLOCATE-INSTANCE, i.e., the methods specialized for
