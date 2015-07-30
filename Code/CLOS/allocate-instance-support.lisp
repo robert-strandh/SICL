@@ -21,10 +21,10 @@
 ;;; in MAKE-INSTANCE, before ALLOCATE-INSTANCE is called, which makes
 ;;; more sense.
 
-;;; This function implements the action of the methods on
+;;; This function implements the action of the method on
 ;;; ALLOCATE-INSTANCE, specialized to REGULAR-CLASS.  Every instance
-;;; of these classes has two initial cells (the STAMP, and the list of
-;;; effective slots of the class) in the rack.  These cells are not
+;;; of a regular class has two initial cells (the STAMP, and the list
+;;; of effective slots of the class) in the rack.  These cells are not
 ;;; counted among the slots, because they are accessed directly, using
 ;;; offsets.  For that reason, we must allocate more slot storage than
 ;;; there are slots with :INSTANCE allocation.
@@ -32,6 +32,22 @@
   (declare (ignore initargs))
   (let* ((size (instance-size class))
 	 (instance (allocate-general-instance class (+ size 2))))
+    ;; Store the unique number of the class in the instance.
+    (setf (general-instance-access instance +class-unique-number-offset+)
+	  (unique-number class))
+    instance))
+
+;;; This function implements the action of method on
+;;; ALLOCATE-INSTANCE, specialized to BUILT-IN-CLASS.  Every instance
+;;; of a built-in class has one initial cell (the STAMP) in the rack.
+;;; This cell is not counted among the slots, because it is accessed
+;;; directly, using offsets.  For that reason, we must allocate more
+;;; slot storage than there are slots with :INSTANCE allocation.
+
+(defun allocate-instance-built-in-class (class &rest initargs)
+  (declare (ignore initargs))
+  (let* ((size (instance-size class))
+	 (instance (allocate-general-instance class (+ size 1))))
     ;; Store the unique number of the class in the instance.
     (setf (general-instance-access instance +class-unique-number-offset+)
 	  (unique-number class))
