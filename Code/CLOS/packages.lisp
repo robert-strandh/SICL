@@ -44,6 +44,7 @@
    #:class-default-initargs
    #:class-finalized-p
    #:class-prototype
+   #:instance-size
    ;; Accessors for generic function metaobjects.
    #:generic-function-name
    #:generic-function-argument-precedence-order
@@ -99,5 +100,6 @@
    #:ensure-method
    #:default-superclasses
    #:allocate-general-instance
+   #:general-instance-access
    ;; SICL-specific macro
    #:subclassp))
