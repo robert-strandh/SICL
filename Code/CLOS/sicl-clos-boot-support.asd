@@ -30,8 +30,6 @@
    ;; This file contains code for generating the discriminating
    ;; automaton of generic functions.
    (:file "discriminating-automaton")
-   (:file "add-remove-direct-subclass-support")
-   (:file "add-remove-direct-subclass-defgenerics")
    (:file "default-superclasses-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
