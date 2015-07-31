@@ -8,6 +8,11 @@
 	  (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition
 				env2))))
 
+;;; During bootstrapping, we need a way to represent instances with a
+;;; structure similar to that used in the final target.  We call such
+;;; instances ERSATZ INSTANCES.  Here, we represent an ersatz instance
+;;; as an instance of the host class HEADER containing the class of
+;;; the instance and a RACK in the form of a host simple vector.
 (defclass header ()
   ((%class :initarg :class :accessor class)
    (%rack :initarg :rack :reader rack)))
