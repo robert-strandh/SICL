@@ -91,6 +91,7 @@
    #:effective-slot-definition-class
    #:reader-method-class #:writer-method-class
    #:validate-superclass
+   #:finalize-inheritance
    ;; Other functions
    #:set-funcallable-instance-function
    #:shared-initialize-around-real-class-default
