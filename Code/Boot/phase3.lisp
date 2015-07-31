@@ -19,6 +19,11 @@
 	    :class class
 	    :rack (make-array size)))))
 
+(defun define-general-instance-access-phase3 (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos:general-instance-access env)
+	(lambda (instance offset)
+	  (aref (rack instance) offset))))
+
 (defun define-setf-general-instance-access-phase3 (env)
   (setf (sicl-genv:fdefinition '(setf sicl-clos:general-instance-access) env)
 	(lambda (value instance offset)
@@ -33,6 +38,7 @@
     (ld "../CLOS/class-finalization-defuns.lisp" r2 r2)
     (define-effective-slot-definition-class-phase3 r2 r1)
     (define-allocate-general-instance r2)
+    (define-general-instance-access-phase3 r2)
     (define-setf-general-instance-access-phase3 r2)
     (ld "../CLOS/class-unique-number-offset-defconstant.lisp" r2 r2)
     (ld "../CLOS/allocate-instance-support.lisp" r2 r2)
