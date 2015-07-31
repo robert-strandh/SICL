@@ -37,4 +37,5 @@
     (ld "../CLOS/class-unique-number-offset-defconstant.lisp" r2 r2)
     (ld "../CLOS/allocate-instance-support.lisp" r2 r2)
     (ld "../CLOS/allocate-instance-defgenerics.lisp" r1 r1)
+    (ld "../CLOS/allocate-instance-defmethods.lisp" r2 r2)
     (message "End of phase 3~%")))
