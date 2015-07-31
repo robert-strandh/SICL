@@ -19,6 +19,13 @@
 	    :class class
 	    :rack (make-array size)))))
 
+;;; We need special versions of the functions GENERAL-INSTANCE-ACCESS
+;;; and (SETF GENERAL-INSTANCE-ACCESS), because they depend on the way
+;;; general instances are represented.  During bootstrapping, a
+;;; general instance is represented as an instance of the host class
+;;; HEADER defined above and a rack in the form of a host simple
+;;; vector.
+
 (defun define-general-instance-access-phase3 (env)
   (setf (sicl-genv:fdefinition 'sicl-clos:general-instance-access env)
 	(lambda (instance offset)
