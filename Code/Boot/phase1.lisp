@@ -92,9 +92,9 @@
 (defun create-class-accessor-generic-functions-phase1 ()
   (let ((env1 *phase1-mop-class-env*)
 	(env2 *phase1-mop-accessor-env*))
-    (define-ensure-generic-function-phase1 env2 env2)
-    (define-defgeneric-phase1 env2 env2)
-    (ld "../CLOS/accessor-defgenerics.lisp" env2 env2)))
+    (define-ensure-generic-function-phase1 env1 env2)
+    (define-defgeneric-phase1 env1 env2)
+    (ld "../CLOS/accessor-defgenerics.lisp" env1 env1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
