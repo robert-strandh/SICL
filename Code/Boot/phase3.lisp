@@ -12,7 +12,7 @@
   ((%class :initarg :class :accessor class)
    (%rack :initarg :rack :reader rack)))
 
-(defun define-allocate-general-instance (env)
+(defun define-allocate-general-instance-phase3 (env)
   (setf (sicl-genv:fdefinition 'sicl-clos:allocate-general-instance env)
 	(lambda (class size)
 	  (make-instance 'header
@@ -37,7 +37,7 @@
     (ld "../CLOS/class-finalization-support.lisp" r2 r2)
     (ld "../CLOS/class-finalization-defuns.lisp" r2 r2)
     (define-effective-slot-definition-class-phase3 r2 r1)
-    (define-allocate-general-instance r2)
+    (define-allocate-general-instance-phase3 r2)
     (define-general-instance-access-phase3 r2)
     (define-setf-general-instance-access-phase3 r2)
     (ld "../CLOS/class-unique-number-offset-defconstant.lisp" r2 r2)
