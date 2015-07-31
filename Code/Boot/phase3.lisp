@@ -34,5 +34,6 @@
     (define-effective-slot-definition-class-phase3 r2 r1)
     (define-allocate-general-instance r3)
     (define-setf-general-instance-access-phase3 r2)
+    (ld "../CLOS/class-unique-number-offset-defconstant.lisp" r2 r2)
     (ld "../CLOS/allocate-instance-defgenerics.lisp" r1 r1)
     (message "End of phase 3~%")))
