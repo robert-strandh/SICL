@@ -17,6 +17,12 @@
   ((%class :initarg :class :accessor class)
    (%rack :initarg :rack :reader rack)))
 
+;;; Define a special version of ALLOCATE-GENERAL-INSTANCE.  Recall
+;;; that ALLOCATE-GENERAL-INSTANCE takes a class metaobject and a
+;;; non-negative integer representing the number of words to be
+;;; allocated for the rack.  This special version allocates an ersatz
+;;; instance in the form of an instance of the host class HEADER
+;;; defined above, and a host simple vector for the rack.
 (defun define-allocate-general-instance-phase3 (env)
   (setf (sicl-genv:fdefinition 'sicl-clos:allocate-general-instance env)
 	(lambda (class size)
