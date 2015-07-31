@@ -19,6 +19,11 @@
 	    :class class
 	    :rack (make-array size)))))
 
+(defun define-setf-general-instance-access-phase3 (env)
+  (setf (sicl-genv:fdefinition '(setf sicl-clos:general-instance-access) env)
+	(lambda (value instance offset)
+	  (setf (aref (rack instance) offset) value))))
+
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
