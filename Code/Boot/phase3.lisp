@@ -29,6 +29,24 @@
 	(lambda (value instance offset)
 	  (setf (aref (rack instance) offset) value))))
 
+(defun define-make-instance-phase3 (env1 env2 env3)
+  (setf (sicl-genv:fdefinition 'make-instance env1)
+	(lambda (class-name &rest args)
+	  (let ((class (sicl-genv:find-class class-name env2))
+		(finalized-p
+		  (sicl-genv:fdefinition
+		   'sicl-clos:class-finalized-p env3))
+		(finalize-inheritance
+		  (sicl-genv:fdefinition
+		   'sicl-clos:finalize-inheritance env3))
+		(allocate-instance
+		  (sicl-genv:fdefinition
+		   'allocate-instance env3)))
+	    (unless (funcall finalized-p class)
+	      (funcall finalize-inheritance class))
+	    (let ((result (apply allocate-instance class args)))
+	      result)))))
+
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
@@ -44,4 +62,5 @@
     (ld "../CLOS/allocate-instance-support.lisp" r2 r2)
     (ld "../CLOS/allocate-instance-defgenerics.lisp" r1 r1)
     (ld "../CLOS/allocate-instance-defmethods.lisp" r2 r2)
+    (define-make-instance-phase3 r3 r2 r2)
     (message "End of phase 3~%")))
