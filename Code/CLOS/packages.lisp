@@ -101,6 +101,7 @@
    #:ensure-method
    #:default-superclasses
    #:allocate-general-instance
+   #:general-instance-p
    #:general-instance-access
    ;; SICL-specific macro
    #:subclassp))
