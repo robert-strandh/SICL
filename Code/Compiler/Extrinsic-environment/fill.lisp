@@ -136,6 +136,7 @@
   (load-file "../../Cons/remf-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DEFGENERIC.
   (load-file "../../CLOS/defgeneric-defmacro.lisp" environment)
+  (load-file "../../Conditions/assert-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro DEFMETHOD.
   (load-file "../../CLOS/defmethod-defmacro.lisp" environment)
   (load-file "../../CLOS/defclass-support.lisp" environment)
