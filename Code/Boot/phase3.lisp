@@ -82,6 +82,11 @@
 	    (let ((result (apply allocate-instance class args)))
 	      result)))))
 
+(defun define-general-instance-p-phase3 (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos:general-instance-p env)
+	(lambda (obj)
+	  (typep obj 'header))))
+
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
