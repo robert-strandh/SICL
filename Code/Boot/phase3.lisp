@@ -98,6 +98,7 @@
     (ld "../CLOS/allocate-instance-defgenerics.lisp" r1 r1)
     (ld "../CLOS/allocate-instance-defmethods.lisp" r2 r2)
     (define-make-instance-phase3 r3 r2 r2)
+    (ld "../CLOS/discriminating-automaton.lisp" r3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
