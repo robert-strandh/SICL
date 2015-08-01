@@ -110,6 +110,7 @@
 	     (declare (ignore condition))
 	   (invoke-restart 'cleavir-generate-ast:consider-global))))
       (ld "../CLOS/discriminating-tagbody.lisp" r3 r3))
+    (define-general-instance-p-phase3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
