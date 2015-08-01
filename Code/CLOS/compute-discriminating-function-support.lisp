@@ -187,8 +187,8 @@
 ;;; The implementation of this function is not complete.  Furthermore,
 ;;; this is probably not a good location for it.
 (defun instance-class-number (instance)
-  (if (heap-instance-p instance)
-      (standard-instance-access instance 0)
+  (if (general-instance-p instance)
+      (general-instance-access instance 0)
       ;; For now, anything else is considered to be an instance of
       ;; class T, and we know that T has unique number 0.
       0))
