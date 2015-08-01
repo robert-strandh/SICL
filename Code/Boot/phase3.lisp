@@ -104,14 +104,14 @@
     (ld "../CLOS/allocate-instance-defmethods.lisp" r2 r2)
     (define-make-instance-phase3 r3 r2 r2)
     (ld "../CLOS/discriminating-automaton.lisp" r3 r3)
+    (define-general-instance-p-phase3 r3)
     (handler-bind
 	((cleavir-env:no-function-info
 	   (lambda (condition)
 	     (declare (ignore condition))
 	   (invoke-restart 'cleavir-generate-ast:consider-global))))
-      (ld "../CLOS/discriminating-tagbody.lisp" r3 r3))
-    (define-general-instance-p-phase3 r3)
-    (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
+      (ld "../CLOS/discriminating-tagbody.lisp" r3 r3)
+      (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3))
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
