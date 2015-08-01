@@ -177,10 +177,10 @@
     ;; At this point, STATE is an internal state with no transition
     ;; with the first label in LABELS.  Now, we create new states
     ;; until right before we reach a final state.
-    (loop until (null (cdr remaining-labels))
-	  for label = (car remaining-labels)
+    (loop for label = (car remaining-labels)
 	  for target = (make-internal-state)
 	  for transition = (make-transition label target)
+	  until (null (cdr remaining-labels))
 	  do (push transition (state-transitions state))
 	     (push target (layer-states (car layers)))
 	     (pop remaining-labels)
