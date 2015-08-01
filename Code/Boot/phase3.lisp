@@ -112,6 +112,7 @@
 	   (invoke-restart 'cleavir-generate-ast:consider-global))))
       (ld "../CLOS/discriminating-tagbody.lisp" r3 r3)
       (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3))
+    (ld "../CLOS/compute-discriminating-function-support-a.lisp" r3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
