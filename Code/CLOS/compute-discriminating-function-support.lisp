@@ -239,7 +239,7 @@
 					  :key #'slot-definition-name
 					  :test #'eq)))
 	       (slot-definition-location effective-slot))))
-      (cond ((eq method-class *standard-reader-method*)
+      (cond ((eq method-class (find-class 'standard-reader-method))
 	     (let* ((direct-slot (accessor-method-slot-definition method))
 		    (location (slot-location direct-slot (car classes)))
 		    (lambda-expression
@@ -249,14 +249,14 @@
 			      `(car ',location)
 			      `(standard-instance-access
 				(car arguments) ,location)))))
-	       (make-instance *standard-reader-method*
+	       (make-instance (find-class 'standard-reader-method)
 		 :qualifiers '()
 		 :specializers (method-specializers method)
 		 :lambda-list (method-lambda-list method)
 		 :slot-definition direct-slot
 		 :documentation nil
 		 :function (compile nil lambda-expression))))
-	    ((eq method-class *standard-writer-method*)
+	    ((eq method-class (find-class 'standard-writer-method))
 	     (let* ((direct-slot (accessor-method-slot-definition method))
 		    (location (slot-location direct-slot (cadr classes)))
 		    (lambda-expression
@@ -268,7 +268,7 @@
 			      `(setf (standard-instance-access
 				      (cadr arguments) ,location)
 				     (car arguments))))))
-	       (make-instance *standard-writer-method*
+	       (make-instance (find-class 'standard-writer-method)
 		 :qualifiers '()
 		 :specializers (method-specializers method)
 		 :lambda-list (method-lambda-list method)
