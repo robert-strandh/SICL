@@ -149,10 +149,10 @@
       (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3))
     (ld "../CLOS/compute-discriminating-function-support-a.lisp" r3 r3)
     (ld "../CLOS/instance-slots-offset-defconstant.lisp" r3 r3)
-    (ld "../CLOS/shared-initialize-support.lisp" r3 r3)
-    (ld "../CLOS/shared-initialize-defgenerics.lisp" r2 r2)
     (define-ensure-method-phase3 r3 r3 r2 r1 r2)
     (define-defmethod-phase2 r3 r2)
+    (ld "../CLOS/shared-initialize-support.lisp" r3 r3)
+    (ld "../CLOS/shared-initialize-defgenerics.lisp" r2 r2)
     (ld "../CLOS/shared-initialize-defmethods.lisp" r3 r3)
     (message "End of phase 3~%")))
 
