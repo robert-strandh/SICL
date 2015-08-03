@@ -111,7 +111,7 @@
 		 function)
 	  (let* ((fun (sicl-genv:fdefinition function-name env2))
 		 (specs (loop for specializer in specializers
-			      collect (class-from-name specializer env3)))
+			      collect (sicl-genv:find-class specializer env3)))
 		 (method-class (sicl-genv:find-class 'standard-method env4))
 		 (add-method (sicl-genv:fdefinition 'add-method env5))
 		 (method (make-instance method-class
