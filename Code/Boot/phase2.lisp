@@ -363,11 +363,6 @@
     (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" r2 r2)
     (ld "../CLOS/add-accessor-method.lisp" r2 r2)
     (ld "../CLOS/class-initialization-support.lisp" r2 r2)
-    ;; (setf (fdefinition
-    ;; 	   'sicl-clos:shared-initialize-around-real-class-default)
-    ;; 	  (sicl-genv:fdefinition
-    ;; 	   'sicl-clos:shared-initialize-around-real-class-default
-    ;; 	   r))
     (ld "../CLOS/class-initialization-defmethods.lisp" r2 r2)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r2 r2)
     (define-ensure-class-phase2 r2 r1 r2)
