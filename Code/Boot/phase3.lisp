@@ -154,6 +154,7 @@
     (ld "../CLOS/shared-initialize-support.lisp" r3 r3)
     (ld "../CLOS/shared-initialize-defgenerics.lisp" r2 r2)
     (ld "../CLOS/shared-initialize-defmethods.lisp" r3 r3)
+    (ld "../CLOS/initialize-instance-support.lisp" r3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
