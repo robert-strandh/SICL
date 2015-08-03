@@ -153,6 +153,7 @@
     (ld "../CLOS/shared-initialize-defgenerics.lisp" r2 r2)
     (define-ensure-method-phase3 r3 r3 r2 r1 r2)
     (define-defmethod-phase2 r3 r2)
+    (ld "../CLOS/shared-initialize-defmethods.lisp" r3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
