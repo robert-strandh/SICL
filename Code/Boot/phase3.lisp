@@ -94,13 +94,14 @@
 ;;; ENV3 is the environment in which class names (specializers) are
 ;;; associated with class metaobjects.  ENV4 is the environment in
 ;;; which the name STANDARD-METHOD is associated with the method class
-;;; to be instantiated.
+;;; to be instantiated.  ENV5 is the environment in which ADD-METHOD
+;;; is defined.
 ;;;
 ;;; Notice that the name ENSURE-METHOD is a symbol in the SICL-BOOT
 ;;; package, rather than in the SICL-CLOS package.  It makes no
 ;;; difference where we put it because it is only going to be used in
 ;;; the expansion of DEFMETHOD which is also defined here.
-(defun define-ensure-method-phase3 (env1 env2 env3 env4)
+(defun define-ensure-method-phase3 (env1 env2 env3 env4 env5)
   (setf (sicl-genv:fdefinition 'ensure-method env1)
 	(lambda (function-name
 		 lambda-list
@@ -112,13 +113,14 @@
 		 (specs (loop for specializer in specializers
 			      collect (class-from-name specializer env3)))
 		 (method-class (sicl-genv:find-class 'standard-method env4))
+		 (add-method (sicl-genv:fdefinition 'add-method env5))
 		 (method (make-instance method-class
 			  :lambda-list lambda-list
 			  :qualifiers qualifiers
 			  :specializers specs
 			  :documentation documentation
 			  :function function)))
-	    (add-method fun method)))))
+	    (funcall add-method fun method)))))
 
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
@@ -149,7 +151,7 @@
     (ld "../CLOS/instance-slots-offset-defconstant.lisp" r3 r3)
     (ld "../CLOS/shared-initialize-support.lisp" r3 r3)
     (ld "../CLOS/shared-initialize-defgenerics.lisp" r2 r2)
-    (define-ensure-method-phase3 r3 r3 r2 r1)
+    (define-ensure-method-phase3 r3 r3 r2 r1 r2)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
