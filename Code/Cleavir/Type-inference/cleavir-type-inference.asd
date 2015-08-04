@@ -12,4 +12,5 @@
    (:file "bag-equal")
    (:file "bag-join")
    (:file "update")
-   (:file "transfer")))
+   (:file "transfer")
+   (:file "type-inference")))
