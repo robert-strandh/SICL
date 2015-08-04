@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem cleavir-type-inference
-  :depends-on (:cleavir-hir)
+  :depends-on (:cleavir-hir
+	       :cleavir-liveness)
   :serial t
   :components
   ((:file "packages")
