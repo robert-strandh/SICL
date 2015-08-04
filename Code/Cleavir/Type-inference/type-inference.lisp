@@ -41,3 +41,10 @@
 	     (0 nil)
 	     (1 (one-successor-transfer instruction bag-input))
 	     (2 (two-successors-transfer instruction bag-input)))))
+
+(defun infer-types (initial-instruction)
+  (let ((*work-list* (compute-initial-work-list initial-instruction))
+	(*dictionary* (compute-initial-dictionary initial-instruction)))
+    (loop until (null *work-list*)
+	  do (process-instruction (pop *work-list*)))
+    *dictionary*))
