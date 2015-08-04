@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "dictionary")
    (:file "type-descriptor")
    (:file "sanity-checks")
    (:file "filter")
