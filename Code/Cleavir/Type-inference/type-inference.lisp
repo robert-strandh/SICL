@@ -31,3 +31,13 @@
 					  result)))))
        initial-instruction)
       result)))
+
+(defun process-instruction (instruction)
+  (loop with successor-count = (length (cleavir-ir:successors instruction))
+	for predecessor in (cleavir-ir:predecessors instruction)
+	for key = (cons predecessor instruction)
+	for bag-input = (gethash key *dictionary*)
+	do (ecase successor-count
+	     (0 nil)
+	     (1 (one-successor-transfer instruction bag-input))
+	     (2 (two-successors-transfer instruction bag-input)))))
