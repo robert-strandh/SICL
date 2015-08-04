@@ -257,7 +257,7 @@ is called $H$.
 The purpose of phase~1 is to create a hierarchy of host standard
 classes that has the same structure as the hierarchy of MOP classes.
 
-Four different environments are involved in phase~1:
+Three different environments are involved in phase~1:
 
 \begin{itemize}
 \item The global host environment $H$ is used to find the host classes
@@ -265,8 +265,6 @@ Four different environments are involved in phase~1:
   \texttt{built-in-class}, and \texttt{standard-generic-function}.
   These classes are used by \texttt{make-instance} in order to create
   the classes in $R1$ and the generic functions in $R2$
-\item The compilation environment $C_1$ is used to compile the forms
-  to be evaluated during phase~1.
 \item The run-time environment $R_1$ is where instances of the host
   classes named \texttt{standard-class},
   \texttt{funcallable-standard-class}, and \texttt{built-in-class}
@@ -283,16 +281,7 @@ the same environment as classes.  The simple answer is that there are
 some generic functions that were automatically imported into $R_1$
 from the host, that we still need in $R_1$, and that would have been
 overwritten by new ones if we had defined new generic functions in
-$R_1$.  In particular, we need following functions from the host:
-
-\begin{itemize}
-\item \texttt{generic-function-method-class} is needed by the macro
-  \texttt{defmethod} in order to instantiate a method of the right
-  class to be added to a host generic function.
-\item \texttt{class-prototype} is also needed by the macro
-  \texttt{defmethod} in order to create instances to pass to
-  \texttt{make-method-lambda} for the purpose of dispatch.
-\end{itemize}
+$R_1$.
 
 Several adaptations are necessary in order to accomplish phase~1:
 
