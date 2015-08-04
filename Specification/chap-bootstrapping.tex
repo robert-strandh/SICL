@@ -328,12 +328,12 @@ Phase~1 is divided into two steps:
 \begin{enumerate}
 \item First, the \texttt{defgeneric} forms corresponding to the
   accessors of the classes of the MOP hierarchy are evaluated using
-  $C_1$ as the compilation environment and $R_2$ as the run-time
-  environment.  The result of this step is a set of host generic
-  functions in $R_2$, each having no methods.
+  $R_1$ as both the compilation environment and run-time environment.
+  The result of this step is a set of host generic functions in $R_2$,
+  each having no methods.
 \item Next, the \texttt{defclass} forms corresponding to the classes
-  of the MOP hierarchy are evaluated using $C_1$ as the compilation
-  environment and $R_1$ as the run-time environment.  The result of
+  of the MOP hierarchy are evaluated using $R_1$ as both the
+  compilation environment and run-time environment.  The result of
   this step is a set of host classes in $R_1$ and host standard
   methods on the accessor generic functions created in step~1
   specialized to these classes.
