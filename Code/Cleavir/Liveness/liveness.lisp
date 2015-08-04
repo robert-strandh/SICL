@@ -1,6 +1,6 @@
 (in-package #:cleavir-liveness)
 
-;;;; Liveness analysis
+;;;; Liveness analysis.
 ;;;;
 ;;;; Each instruction I in a flow chart representing some program
 ;;;; defines a PROGRAM POINT, which is located IMMEDIATELY BEFORE I.
@@ -49,7 +49,12 @@
 ;;; return value should be considered to be an opaque object, only to
 ;;; be used as the first argument of the functions LIVE-BEFORE and
 ;;; LIVE-AFTER.
-(defun liveness (start-node successor-fun predecessor-fun input-fun output-fun)
+(defun liveness (start-node
+		 successor-fun
+		 predecessor-fun
+		 input-fun
+		 output-fun
+		 variable-p-fun)
   (let ((liveness (make-instance 'liveness)))
     (with-accessors ((btable btable) (atable atable)) liveness
       (flet ((successors (node)
@@ -59,7 +64,9 @@
 	     (inputs (node)
 	       (funcall input-fun node))
 	     (outputs (node)
-	       (funcall output-fun node)))
+	       (funcall output-fun node))
+	     (variable-p (input)
+	       (funcall variable-p-fun input)))
 	(labels
 	    ((traverse (node)
 	       (let ((live '()))
@@ -80,7 +87,8 @@
 		     ;; Add to the set the items used by NODE
 		     ;; that are registers or lexical locations.
 		     (loop for input in (inputs node)
-			   do (pushnew input live :test #'eq))
+			   when (variable-p input)
+			     do (pushnew input live :test #'eq))
 		     (setf (gethash node btable) live)
 		     (loop for pred in (predecessors node)
 			   do (traverse pred)))))))
