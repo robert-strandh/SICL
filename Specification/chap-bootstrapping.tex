@@ -268,12 +268,12 @@ Three different environments are involved in phase~1:
 \item The run-time environment $R_1$ is where instances of the host
   classes named \texttt{standard-class},
   \texttt{funcallable-standard-class}, and \texttt{built-in-class}
-  will be stored and associated with the names of the MOP hierarchy of
-  classes.  These instances are thus, host classes.
+  will be associated with the names of the MOP hierarchy of classes.
+  These instances are thus host classes.
 \item The run-time environment $R_2$ is where instances of the host
-  class named \texttt{standard-generic-function} will be stored and
-  associated with the names of the different accessors specialized to
-  host classes created in $R_1$.
+  class named \texttt{standard-generic-function} will be associated
+  with the names of the different accessors specialized to host
+  classes created in $R_1$.
 \end{itemize}
 
 One might ask at this point why generic functions are not defined in
