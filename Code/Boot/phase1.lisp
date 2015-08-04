@@ -5,10 +5,6 @@
 ;;;; host standard classes.  We create these classes by loading files
 ;;;; from the CLOS sub-directory that contain DEFCLASS forms defining
 ;;;; these classes.
-;;;;
-;;;; For compilation we use a compilation environment that contains
-;;;; the normal definition of DEFCLASS, which expands to a call to
-;;;; ENSURE-CLASS.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
