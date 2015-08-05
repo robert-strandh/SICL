@@ -81,6 +81,16 @@
   (let ((output (first (cleavir-ir:outputs instruction))))
     (update output 'double-float input-bag)))
 
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:long-float-unbox-instruction) input-bag)
+  (let ((output (first (cleavir-ir:outputs instruction))))
+    (update output 'unboxed-long-float input-bag)))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:long-float-box-instruction) input-bag)
+  (let ((output (first (cleavir-ir:outputs instruction))))
+    (update output 'long-float input-bag)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TWO-SUCCESSORS-TRANSFER.
