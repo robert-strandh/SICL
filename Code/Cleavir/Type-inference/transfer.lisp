@@ -50,3 +50,26 @@
   (update (first (cleavir-ir:outputs instruction))
 	  (find-type (first (cleavir-ir:inputs instruction)) input-bag)
 	  input-bag))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on TWO-SUCCESSORS-TRANSFER.
+
+(defmethod two-successors-transfer
+    ((instruction cleavir-ir:typeq-instruction) input-bag)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+	 (input-type (find-type input input-bag))
+	 (type (cleavir-ir:value-type instruction))
+	 (type-descriptor (canonicalize-type type)))
+    (if (null type-descriptor)
+	;; This situation happens when the value type of the
+	;; instruction is not type equal to any of the types that we
+	;; recognize.  We handle this case by assuming that the type
+	;; of the input is possible in both branches.
+	(values input-bag input-bag)
+	(values (update input
+			(binary-meet type-descriptor input-type)
+			input-bag)
+		(update input
+			(binary-join type-descriptor input-type)
+			input-bag)))))
