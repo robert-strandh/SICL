@@ -5,3 +5,5 @@
 	(remove location bag
 		:test #'eq :key #'first)))
 
+(defun find-type (location bag)
+  (cdr (assoc location bag :test #'eq)))
