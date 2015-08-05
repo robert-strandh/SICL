@@ -38,3 +38,15 @@
 	unless (bag-equal filtered-result existing)
 	  do (push successor *work-list*)
 	     (setf (gethash key *dictionary*) filtered-result)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on ONE-SUCCESSOR-TRANSFER.
+
+;;; For the assignment instruction, type information about the input
+;;; is propagated to the output.
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:assignment-instruction) input-bag)
+  (update (first (cleavir-ir:outputs instruction))
+	  (find-type (first (cleavir-ir:inputs instruction)) input-bag)
+	  input-bag))
