@@ -52,9 +52,9 @@
 	  input-bag))
 
 (defmethod one-successor-transfer
-    ((instruction short-float-unbox-instruction) input-bag)
+    ((instruction cleavir-ir:short-float-unbox-instruction) input-bag)
   (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'unboxed-short-float)))
+    (update output 'unboxed-short-float input-bag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
