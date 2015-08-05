@@ -9,28 +9,19 @@
      initial-instruction)))
 
 (defun compute-initial-dictionary (initial-instruction)
-  (flet ((variable-p (datum)
-	   (or (typep datum 'cleavir-ir:lexical-location)
-	       (typep datum 'cleavir-ir:values-location))))
-    (let ((liveness (cleavir-liveness:liveness
-		     initial-instruction
-		     #'cleavir-ir:successors
-		     #'cleavir-ir:predecessors
-		     #'cleavir-ir:inputs
-		     #'cleavir-ir:outputs
-		     #'variable-p))
-	  (result (make-hash-table :test #'equal)))
-      (cleavir-ir:map-instructions-arbitrary-order
-       (lambda (instruction)
-	 (loop for predecessor in (cleavir-ir:predecessors instruction)
-	       for key = (cons predecessor instruction)
-	       for live = (cleavir-liveness:live-before liveness instruction)
-	       do (loop for var in live
-			do (push (cons var t)
-				 (gethash (cons predecessor instruction)
-					  result)))))
-       initial-instruction)
-      result)))
+  (let ((liveness (cleavir-liveness:liveness initial-instruction))
+	(result (make-hash-table :test #'equal)))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (loop for predecessor in (cleavir-ir:predecessors instruction)
+	     for key = (cons predecessor instruction)
+	     for live = (cleavir-liveness:live-before liveness instruction)
+	     do (loop for var in live
+		      do (push (cons var t)
+			       (gethash (cons predecessor instruction)
+					result)))))
+     initial-instruction)
+    result))
 
 (defun process-instruction (instruction)
   (loop with successor-count = (length (cleavir-ir:successors instruction))
