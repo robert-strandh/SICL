@@ -28,9 +28,6 @@
 ;;;; from items to indices and from indices to items respectively.
 ;;;; Instead we attempt to maintain the sets as Lisp lists.  If
 ;;;; performance becomes a problem, we might revisit this decision.
-;;;;
-;;;; Computing liveness can be done either on a flow chart or a flow
-;;;; graph.  
 
 (defclass liveness ()
   ((%btable :initform (make-hash-table :test #'eq) :reader btable)
@@ -39,34 +36,24 @@
 (defun set-equal (set1 set2)
   (and (subsetp set1 set2 :test #'eq) (subsetp set2 set1 :test #'eq)))
 
-;;; An input/output of a node can be any type of object as long as two
-;;; such objects can be compared with EQ.  INPUT-FUN is a function
-;;; that takes a node and returns the inputs of that node.  Similarly,
-;;; OUTPUT-FUN is a function that take a node and return the outputs
-;;; of that node.
-;;;
 ;;; The return value is an instance of the class LIVENESS.  This
 ;;; return value should be considered to be an opaque object, only to
 ;;; be used as the first argument of the functions LIVE-BEFORE and
 ;;; LIVE-AFTER.
-(defun liveness (start-node
-		 successor-fun
-		 predecessor-fun
-		 input-fun
-		 output-fun
-		 variable-p-fun)
+(defun liveness (start-node)
   (let ((liveness (make-instance 'liveness)))
     (with-accessors ((btable btable) (atable atable)) liveness
       (flet ((successors (node)
-	       (funcall successor-fun node))
+	       (cleavir-ir:successors node))
 	     (predecessors (node)
-	       (funcall predecessor-fun node))
+	       (cleavir-ir:predecessors node))
 	     (inputs (node)
-	       (funcall input-fun node))
+	       (cleavir-ir:inputs node))
 	     (outputs (node)
-	       (funcall output-fun node))
+	       (cleavir-ir:outputs node))
 	     (variable-p (input)
-	       (funcall variable-p-fun input)))
+	       (or (typep input 'cleavir-ir:lexical-location)
+		   (typep input 'cleavir-ir:values-location))))
 	(labels
 	    ((traverse (node)
 	       (let ((live '()))
@@ -92,14 +79,11 @@
 		     (setf (gethash node btable) live)
 		     (loop for pred in (predecessors node)
 			   do (traverse pred)))))))
-	  (let ((table (make-hash-table :test #'eq)))
-	    (labels ((depth-first-search (node)
-		       (unless (gethash node table)
-			 (setf (gethash node table) t)
-			 (if (null (successors node))
-			     (traverse node)
-			     (mapc #'depth-first-search (successors node))))))
-	      (depth-first-search start-node))))))
+	  (cleavir-ir:map-instructions-arbitrary-order
+	   (lambda (instruction)
+	     (when (null (successors instruction))
+	       (traverse instruction)))
+	   start-node))))
     liveness))
 
 (defun live-before (liveness node)
