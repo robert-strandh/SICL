@@ -51,6 +51,11 @@
 	  (find-type (first (cleavir-ir:inputs instruction)) input-bag)
 	  input-bag))
 
+(defmethod one-successor-transfer
+    ((instruction short-float-unbox-instruction) input-bag)
+  (let ((output (first (cleavir-ir:outputs instruction))))
+    (update output 'unboxed-short-float)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TWO-SUCCESSORS-TRANSFER.
