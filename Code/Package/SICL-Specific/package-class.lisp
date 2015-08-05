@@ -1,4 +1,4 @@
-(in-package #:sicl-package)
+(cl:in-package #:sicl-package)
 
 (defclass package (t)
   ((%name
