@@ -1,5 +1,18 @@
 (cl:in-package #:cleavir-path-replication)
 
+;;; Check whether the transformation is applicable.  For that to be
+;;; the case, PUTATIVE-DOMINATOR must indeed be a dominator of
+;;; INSTRUCTION, and for each instruction I on every execution path
+;;; between PUTATIVE-DOMINATOR and INSTRUCTION (including
+;;; PUTATIVE-DOMINATOR) it must not be the case that I writes a
+;;; variable that is read by INSTRUCTION.
+;;;
+;;; We accomplish the task by maintaining a work list of instructions
+;;; between PUTATIVE-DOMINATOR and INSTRUCTION and for each one,
+;;; checking that it does not write any variable read by INSTRUCTION.
+;;; If we reach PUTATIVE-DOMINATOR in some path, we are done checking
+;;; that path.  If we reach an instruction with no predecessors, then
+;;; PUTATIVE-DOMINATOR is not a dominator of INSTRUCTION.
 (defun transformation-applicable-p (instruction putative-dominator)
   (when (eq instruction putative-dominator)
     (return-from transformation-applicable-p nil))
