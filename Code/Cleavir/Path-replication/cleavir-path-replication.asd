@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "rewrite")))
+   (:file "rewrite")
+   (:file "path-replication")))
