@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "rewrite")
+   (:file "applicability")
    (:file "path-replication")))
