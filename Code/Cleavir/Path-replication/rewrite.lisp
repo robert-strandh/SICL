@@ -1,19 +1,19 @@
 (cl:in-package #:cleavir-path-replication)
 
-;;; This transformation is used as a preparation for moving
-;;; INSTRUCTION past its predecessors, because in order to do that,
-;;; INSTRUCTION must have a single predecessor.  This function
-;;; replicates INSTRUCTION for each predecessor P.  It does that by
-;;; creating a replica RP of INSTRUCTION, then it replaces INSTRUCTION
-;;; with RP in the successors of P.  Finally, it replaces INSTRUCTION
-;;; by all the RPs in each successor of INSTRUCTION.
+;;; This rewrite rule is used as a preparation for moving INSTRUCTION
+;;; past its predecessors, because in order to do that, INSTRUCTION
+;;; must have a single predecessor.  This function replicates
+;;; INSTRUCTION for each predecessor P.  It does that by creating a
+;;; replica RP of INSTRUCTION, then it replaces INSTRUCTION with RP in
+;;; the successors of P.  Finally, it replaces INSTRUCTION by all the
+;;; RPs in each successor of INSTRUCTION.
 ;;;
 ;;; We return a list of the copies that were created.
 ;;;
 ;;; Notice that we do NOT update the defining and using instructions
-;;; of the inputs and outputs of INSTRUCTION.  After this
-;;; transformation has been accomplished, this information must be
-;;; updated explicitly if required.
+;;; of the inputs and outputs of INSTRUCTION.  After this rewrite has
+;;; been accomplished, this information must be updated explicitly if
+;;; required.
 (defun replicate-instruction (instruction)
   (let ((copies
 	  (loop for predecessor in (cleavir-ir:predecessors instruction)
@@ -35,9 +35,9 @@
 			   collect predecessor)))
     copies))
 
-;;; This transformation moves INSTRUCTION so that it precedes its
+;;; This rewrite rule moves INSTRUCTION so that it precedes its
 ;;; current predecessor.  INSTRUCTION must have a single predecessor.
-;;; It accomplishes the transformation by replicating its current
+;;; It accomplishes the rewrite rule by replicating its current
 ;;; predecessor between itself and each of its current successors.
 (defun move-instruction (instruction)
   (assert (= (length (cleavir-ir:predecessors instruction)) 1))
