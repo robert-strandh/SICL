@@ -58,3 +58,37 @@
 	   (loop for pred in (cleavir-ir:predecessors predecessor)
 		 do (nsubstitute instruction predecessor
 				 (cleavir-ir:successors pred)))))
+
+;;; This rewrite rule shortcuts every non-black predecessor P of
+;;; INSTRUCTION, so that instead of having INSTRUCTiON as its
+;;; successor it has either the red or the blue successor of
+;;; INSTRUCTION as its new successor.
+(defun shortcut-predecessors (instruction red-instructions blue-instructions)
+  (let* ((predecessors (cleavir-ir:predecessors instruction))
+	 (successors (cleavir-ir:successors instruction))
+	 (red-successor (first successors))
+	 (blue-successor (second successors))
+	 (red-predecessors (loop for predecessor in predecessors
+				 when (gethash predecessor red-instructions)
+				   collect predecessor))
+	 (blue-predecessors (loop for predecessor in predecessors
+				  when (gethash predecessor blue-instructions)
+				    collect predecessor)))
+    ;; Shortcut red predecessors to go to the red successor.
+    (loop for predecessor in red-predecessors
+	  do (nsubstitute red-successor instruction
+			  (cleavir-ir:successors predecessor))
+	     (pushnew predecessor (cleavir-ir:predecessors red-successor)
+		      :test #'eq))
+    ;; Shortcut blue predecessors to go to the blue successor.
+    (loop for predecessor in blue-predecessors
+	  do (nsubstitute blue-successor instruction
+			  (cleavir-ir:successors predecessor))
+	     (pushnew predecessor (cleavir-ir:predecessors blue-successor)
+		      :test #'eq))
+    ;; Keep only the black predecessors of INSTRUCTION.
+    (setf (cleavir-ir:predecessors instruction)
+	  (loop for predecessor in predecessors
+		unless (or (gethash predecessor red-instructions)
+			   (gethash predecessor blue-instructions))
+		  collect predecessor))))
