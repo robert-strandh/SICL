@@ -50,7 +50,10 @@
 		     :successors (substitute successor instruction successors)
 		     :inputs (cleavir-ir:inputs predecessor)
 		     :outputs (cleavir-ir:outputs predecessor))
-	do (setf (first remaining) copy)
+	do (assert (null (intersection (cleavir-ir:outputs predecessor)
+				       (cleavir-ir:inputs instruction)
+				       :test #'eq)))
+	   (setf (first remaining) copy)
 	   (nsubstitute copy instruction (cleavir-ir:predecessors successor))
 	   (loop for pred in (cleavir-ir:predecessors predecessor)
 		 do (nsubstitute instruction predecessor
