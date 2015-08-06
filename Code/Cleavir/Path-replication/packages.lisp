@@ -2,4 +2,4 @@
 
 (defpackage #:cleavir-path-replication
   (:use #:common-lisp)
-  (:export))
+  (:export #:path-replication))
