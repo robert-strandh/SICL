@@ -5,17 +5,18 @@
 ;;;; Also consider an instruction D such that D dominates every
 ;;;; element of S and D is not an element of S.  Let R be the set of
 ;;;; instructions that are ancestors of some instruction in S and that
-;;;; are dominated by D.  The set R includes D.  This transformation
-;;;; turns R into the empty set by systematically removing
-;;;; instructions from the set according to specific rules.  In order
-;;;; to preserve the semantics of the program, when an instruction is
-;;;; removed from R, one or more equivalent instruction are added as
-;;;; successors of some instruction in S.  Notice that it is possible
-;;;; that the instructions in S are elements of R.  This situation may
-;;;; occur when there is a back arc from the initial instruction I to
-;;;; one of its predecessors.  For this transformation to apply, no
-;;;; instruction in R is allowed to write to an output that is an
-;;;; input of I.
+;;;; are dominated by D, but excluding the set S itself.  The set R
+;;;; includes D.  This transformation turns R into the empty set by
+;;;; systematically removing instructions from the set according to
+;;;; specific rules.  In order to preserve the semantics of the
+;;;; program, when an instruction is removed from R, one or more
+;;;; equivalent instruction are added as successors of some
+;;;; instruction in S.  While by definition the elements of S are not
+;;;; elements of R, it is possible that some successor of some element
+;;;; in S IS a member of R.  This situation may occur when there is a
+;;;; back arc from the initial instruction I to one of its
+;;;; predecessors.  For this transformation to apply, no instruction
+;;;; in R is allowed to write to an output that is an input of I.
 ;;;;
 ;;;; To understand the purpose of the transformation, imagine that
 ;;;; instructions have one of the three colors black, red, and blue.
