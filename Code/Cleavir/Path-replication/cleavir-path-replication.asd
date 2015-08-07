@@ -54,7 +54,20 @@
 ;;;; the semantics of the program are preserved by this rewrite rule
 ;;;; as well.
 ;;;;
-;;;; FIXME: Prove termination.
+;;;; To prove termination, we first consider each rewrite operation to
+;;;; be a member of a GROUP of at most tree rewrite operations.  A
+;;;; rewrite operation according to the first rule is associated with
+;;;; either a rewrite operation according to the second rule or a
+;;;; rewrite rule according to the third rule according to the number
+;;;; of black predecessors of s when the rule applies.  A rewrite
+;;;; operation according to the second rule is associated with one of
+;;;; the rewrite operations according to the third rule that results
+;;;; from applying the second rewrite rule.  Each group contains
+;;;; exactly one rewrite operation according to the third rule.
+;;;; Termination is now obvious since a rewrite operation according to
+;;;; the third rule decreases the number of black instructions in R,
+;;;; and since the number of such instructions is finite, it must
+;;;; ultimately reach zero.
 
 (defsystem :cleavir-path-replication
   :depends-on (:cleavir-hir)
