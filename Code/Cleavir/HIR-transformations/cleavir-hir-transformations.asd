@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "constant-load-time-value")
    (:file "traverse")
    (:file "compute-ownership")
    (:file "inline-calls")
