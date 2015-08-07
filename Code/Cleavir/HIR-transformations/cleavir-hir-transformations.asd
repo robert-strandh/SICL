@@ -12,6 +12,7 @@
    (:file "static-few-assignments")
    (:file "type-inference")
    (:file "eliminate-load-time-value-inputs")
+   (:file "coalesce-load-time-values")
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
    (:file "function-tree")
