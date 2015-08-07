@@ -10,3 +10,9 @@
 	 (consp (rest form))
 	 (null (rest (rest form)))
 	 (eq (first form) 'quote))))
+
+;;; Return the constant of a LOAD-TIME-VALUE-INPUT that represents a
+;;; constant.
+(defun load-time-value-constant (load-time-value-input)
+  (assert (load-time-value-is-constant-p load-time-value-input))
+  (second (cleavir-ir:form load-time-value-input)))
