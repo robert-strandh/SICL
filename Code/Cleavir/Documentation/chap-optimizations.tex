@@ -50,7 +50,40 @@ functions on \texttt{cons} cells.  The code for these functions must
 first test whether the argument is a \texttt{cons} cell.  If the user
 code contains both a call to \texttt{car} and a call to \texttt{cdr}
 in the same execution path, then the second such test is redundant
-since the outcome is the same.
+since the outcome is the same.  Redundant tests occur in other,
+similar, situations such as tests to determine whether a variable
+contains a \texttt{fixnum} as part of arithmetic operation on that
+variable.
+
+The main problem we must solve in order to remove these redundant
+tests is that the execution paths will merge after the first
+occurrence of the test, so that the outcome of the test is not known
+at the point of the second occurrence of the test.  Consider the
+following code that might exist explicitly or implicitly as a result
+of \emph{destructuring}:
+
+\begin{verbatim}
+(let ((x (car w))
+      (y (cdr w)))
+  ...)
+\end{verbatim}
+
+\refFig{fig-path-merging} shows the equivalent HIR code.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-path-merging.pdf_t}
+\end{center}
+\caption{\label{fig-path-merging}
+Path merging.}
+\end{figure}
+
+In \refFig{fig-path-merging}, \texttt{consp} is an instruction that
+tests whether the input is a \texttt{cons} cell and branches
+accordingly.  The instructions \texttt{car} and \texttt{cdr}
+correspond to the \commonlisp{} operations with the same name, except
+that they assume that the input has been determined to be a
+\texttt{cons} cell.
 
 \section{Static single assignment form}
 \label{mir-optimizations-ssa-form}
@@ -354,4 +387,4 @@ described in \refChap{chap-ir}.  After this type of transformation,
 the instruction graph should be
 \emph{reduced}. \seesec{mir-optimizations-reduction} 
 
-%%  LocalWords:  optimizations inlined
+%%  LocalWords:  optimizations inlined cdr fixnum destructuring
