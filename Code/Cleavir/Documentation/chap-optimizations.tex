@@ -98,6 +98,13 @@ instructions.  The transformation describe in this section replicates
 all those instructions so that the second \texttt{consp} instruction
 can be eliminated.
 
+For this transformation to be applicable, there must not be an
+assignment to the variable being tested between the two tests.
+Furthermore, the first test must dominate the second test.
+
+The transformation is accomplished by local rewrite rules applying to
+the second test, or to replicas of that test.
+
 \section{Static single assignment form}
 \label{mir-optimizations-ssa-form}
 
