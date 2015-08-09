@@ -29,6 +29,29 @@ is $p$.  We remove $p$ as follows:
   the list of predecessors of $i$.
 \end{itemize}
 
+\section{Path replication}
+\label{hir-optimizations-path-replication}
+
+Certain optimizations and other transformations consist of eliminating
+redundant tests.  These optimizations are of great importance because
+of the potentially high cost of such tests, especially if the test is
+in a loop and it is loop invariant.  In contrast to other redundant
+computations, eliminating redundant tests is not just a matter of
+replacing a computation by a reference to a variable.  Instead, the
+outcome of the test must be remembered by replicating some
+instructions.
+
+Redundant tests occur frequently, not because the programmer wrote
+redundant code, but because they are introduced by different
+\commonlisp{} operators, especially when the code for these operators
+is inlined.  Consider the two very common \commonlisp{} functions
+\texttt{car} and \texttt{cdr}.  These functions are the lowest-level
+functions on \texttt{cons} cells.  The code for these functions must
+first test whether the argument is a \texttt{cons} cell.  If the user
+code contains both a call to \texttt{car} and a call to \texttt{cdr}
+in the same execution path, then the second such test is redundant
+since the outcome is the same.
+
 \section{Static single assignment form}
 \label{mir-optimizations-ssa-form}
 
@@ -330,3 +353,5 @@ would then be an instruction graph that is not \emph{well formed} as
 described in \refChap{chap-ir}.  After this type of transformation,
 the instruction graph should be
 \emph{reduced}. \seesec{mir-optimizations-reduction} 
+
+%%  LocalWords:  optimizations inlined
