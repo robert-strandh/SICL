@@ -83,7 +83,20 @@ tests whether the input is a \texttt{cons} cell and branches
 accordingly.  The instructions \texttt{car} and \texttt{cdr}
 correspond to the \commonlisp{} operations with the same name, except
 that they assume that the input has been determined to be a
-\texttt{cons} cell.
+\texttt{cons} cell.  The cloud-shaped computations correspond to tests
+for \texttt{w} being \texttt{nil} and to a call to \texttt{error} if
+those tests fail.
+
+As can be seen in \refFig{fig-path-merging}, before the second
+\texttt{consp} instruction, the execution paths merge, so that at that
+point it is not known whether \texttt{w} contains a \texttt{cons} cell
+or something else.  The situation is complicated by the fact that
+there may be an arbitrary number of instructions between the point
+where the paths merge and the second \texttt{consp} instruction.
+There can even be arbitrary branching and loops among those
+instructions.  The transformation describe in this section replicates
+all those instructions so that the second \texttt{consp} instruction
+can be eliminated.
 
 \section{Static single assignment form}
 \label{mir-optimizations-ssa-form}
