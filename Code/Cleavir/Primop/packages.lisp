@@ -33,6 +33,18 @@
    #:single-float-sin
    #:single-float-cos
    #:single-float-sqrt
+   #:double-float-add
+   #:double-float-sub
+   #:double-float-mul
+   #:double-float-div
+   #:double-float-less
+   #:double-float-not-greater
+   #:double-float-greater
+   #:double-float-not-less
+   #:double-float-equal
+   #:double-float-sin
+   #:double-float-cos
+   #:double-float-sqrt
    #:slot-read #:slot-write
    #:aref #:aset
    #:call-with-variable-bound
