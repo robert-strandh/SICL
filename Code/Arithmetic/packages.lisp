@@ -11,14 +11,4 @@
    #:binary-not-greater
    #:binary-greater
    #:binary-not-less
-   #:binary-equal
-   #:fixnum-
-   #:fixnum--
-   #:fixnum-*
-   #:fixnum-/
-   #:fixnum-<
-   #:fixnum-<=
-   #:fixnum->
-   #:fixnum->=
-   #:fixnum-=
-   ))
+   #:binary-equal))
