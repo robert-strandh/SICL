@@ -37,11 +37,18 @@
 	 (general-binary-not-greater x y))))
 
 (defun binary-greater (x y)
-  ;; (declare (type real x y))
-  (if (and (typep x 'fixnum)
-	   (typep y 'fixnum))
-      (cleavir-primop:fixnum-less y x)
-      (general-binary-greater x y)))
+  (cond ((and (typep x 'fixnum) (typep y 'fixnum))
+	 (cleavir-primop:fixnum-greater x y))
+	((and (typep x 'short-float) (typep y 'short-float))
+	 (cleavir-primop:short-float-greater x y))
+	((and (typep x 'single-float) (typep y 'single-float))
+	 (cleavir-primop:single-float-greater x y))
+	((and (typep x 'double-float) (typep y 'double-float))
+	 (cleavir-primop:double-float-greater x y))
+	((and (typep x 'long-float) (typep y 'long-float))
+	 (cleavir-primop:long-float-greater x y))
+	(t
+	 (general-binary-greater x y))))
 
 (defun binary-not-less (x y)
   ;; (declare (type real x y))
