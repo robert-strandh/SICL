@@ -3,16 +3,16 @@
 (defpackage #:sicl-arithmetic
   (:use #:common-lisp)
   (:export
-   #:binary-+
-   #:binary--
-   #:binary-*
-   #:binary-/
-   #:binary-<
-   #:binary-<=
-   #:binary->
-   #:binary->=
-   #:binary-=
-   #:fixnum-+
+   #:binary-add
+   #:binary-sub
+   #:binary-mul
+   #:binary-div
+   #:binary-less
+   #:binary-not-greater
+   #:binary-greater
+   #:binary-not-less
+   #:binary-equal
+   #:fixnum-
    #:fixnum--
    #:fixnum-*
    #:fixnum-/
