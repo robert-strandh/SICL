@@ -1,10 +1,17 @@
 (cl:in-package #:sicl-arithmetic)
 
 (declaim (ftype (function (number number) number)
-		binary-+ binary-- binary-* binary-/))
+		binary-add
+		binary-sub
+		binary-mul
+		binary-div))
 
 (declaim (ftype (function (real real) t)
-		binary-< binary-<= binary-> binary->= binary-=))
+		binary-less
+		binary-not-greater
+		binary-greater
+		binary-not-less
+		binary-equal))
 
 (declaim (ftype (function (list) number)
 		+ - * /))
