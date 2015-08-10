@@ -45,6 +45,18 @@
    #:double-float-sin
    #:double-float-cos
    #:double-float-sqrt
+   #:long-float-add
+   #:long-float-sub
+   #:long-float-mul
+   #:long-float-div
+   #:long-float-less
+   #:long-float-not-greater
+   #:long-float-greater
+   #:long-float-not-less
+   #:long-float-equal
+   #:long-float-sin
+   #:long-float-cos
+   #:long-float-sqrt
    #:slot-read #:slot-write
    #:aref #:aset
    #:call-with-variable-bound
