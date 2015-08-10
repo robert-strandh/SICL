@@ -8,6 +8,23 @@
 		 binary-greater binary-not-less
 		 binary-equal binary-not-equal))
 
+(defun binary-add (x y)
+  (cond ((and (typep x 'fixnum) (typep y 'fixnum))
+	 (cleavir-primop:let-uninitialized (z)
+	   (if (cleavir-primop:fixnum-add x y z)
+	       z
+	       (convert-fixnum-to-bignum z))))
+	((and (typep x 'short-float) (typep y 'short-float))
+	 (cleavir-primop:short-float-add x y))
+	((and (typep x 'single-float) (typep y 'single-float))
+	 (cleavir-primop:single-float-add x y))
+	((and (typep x 'double-float) (typep y 'double-float))
+	 (cleavir-primop:double-float-add x y))
+	((and (typep x 'long-float) (typep y 'long-float))
+	 (cleavir-primop:long-float-add x y))
+	(t
+	 (general-binary-add x y))))
+
 (defun binary-less (x y)
   (cond ((and (typep x 'fixnum) (typep y 'fixnum))
 	 (cleavir-primop:fixnum-less x y))
