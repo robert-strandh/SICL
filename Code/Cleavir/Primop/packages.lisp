@@ -9,6 +9,13 @@
    #:car #:cdr #:rplaca #:rplacd
    #:fixnum-arithmetic #:fixnum-+ #:fixnum--
    #:fixnum-< #:fixnum-<= #:fixnum-> #:fixnum->= #:fixnum-=
+   #:fixnum-add
+   #:fixnum-sub
+   #:fixnum-less
+   #:fixnum-not-greater
+   #:fixnum-greater
+   #:fixnum-not-less
+   #:fixnum-equal
    #:short-float-add
    #:short-float-sub
    #:short-float-mul
