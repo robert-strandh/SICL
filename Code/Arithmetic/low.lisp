@@ -65,11 +65,18 @@
 	 (general-binary-not-less x y))))
 
 (defun binary-equal (x y)
-  ;; (declare (type number x y))
-  (if (and (typep x 'fixnum)
-	   (typep y 'fixnum))
-      (cleavir-primop:fixnum-equal x y)
-      (general-binary-equal x y)))
+  (cond ((and (typep x 'fixnum) (typep y 'fixnum))
+	 (cleavir-primop:fixnum-equal x y))
+	((and (typep x 'short-float) (typep y 'short-float))
+	 (cleavir-primop:short-float-equal x y))
+	((and (typep x 'single-float) (typep y 'single-float))
+	 (cleavir-primop:single-float-equal x y))
+	((and (typep x 'double-float) (typep y 'double-float))
+	 (cleavir-primop:double-float-equal x y))
+	((and (typep x 'long-float) (typep y 'long-float))
+	 (cleavir-primop:long-float-equal x y))
+	(t
+	 (general-binary-equal x y))))
 
 (defun binary-not-equal (x y)
   ;; (declare (type number x y))
