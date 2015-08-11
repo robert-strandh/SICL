@@ -2,6 +2,4 @@
 
 (defpackage #:cleavir-equivalent-lexical-locations
   (:use #:common-lisp)
-  (:export))
-
-
+  (:export #:compute-equivalent-lexical-locations))
