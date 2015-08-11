@@ -88,7 +88,9 @@
 					    (mapcar (lambda (p)
 						      (gethash p after))
 						    predecessors)))
-		     unless (partition-equality join (gethash successor before))
+		     when (or (null (nth-value 1 (gethash successor before)))
+			      (not (partition-equality
+				    join (gethash successor before))))
 		       do (setf (gethash successor before) join)
 			  (push successor work-list))))
     before))
