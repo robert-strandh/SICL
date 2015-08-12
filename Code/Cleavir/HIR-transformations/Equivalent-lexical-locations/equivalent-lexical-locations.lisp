@@ -26,14 +26,14 @@
 ;;; them, we need to remove any such equivalence class before
 ;;; returning the result.
 (defun remove-location (partition variable)
-  (let ((dclass (find variable partition :test #'member)))
-    (cond ((null dclass)
+  (let ((class (find variable partition :test #'member)))
+    (cond ((null class)
 	   partition)
-	  ((= (length dclass) 2)
-	   (remove dclass partition :test #'eq))
+	  ((= (length class) 2)
+	   (remove class partition :test #'eq))
 	  (t
-	   (cons (remove variable dclass :test #'eq)
-		 (remove dclass partition :test #'eq))))))
+	   (cons (remove variable class :test #'eq)
+		 (remove class partition :test #'eq))))))
 
 (defun add-equivalence (partition defined used)
   (let ((uclass (find used partition :test #'member)))
