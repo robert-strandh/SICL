@@ -51,11 +51,11 @@
 		 (remove class partition :test #'eq))))))
 
 (defun add-equivalence (partition defined used)
-  (let ((uclass (find used partition :test #'member)))
-    (if (null uclass)
+  (let ((class (find used partition :test #'member)))
+    (if (null class)
 	(cons (list defined used) partition)
-	(cons (cons defined uclass)
-	      (remove uclass partition :test #'eq)))))
+	(cons (cons defined class)
+	      (remove class partition :test #'eq)))))
 
 (defun update-for-meet (instruction partition)
   (let ((temp partition))
