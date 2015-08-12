@@ -630,6 +630,24 @@
       (cleavir-ir:set-predecessors enter)
       enter)))
 
+(defun compile-toplevel-unhoisted (ast)
+  (let ((*block-info* (make-hash-table :test #'eq))
+	(*go-info* (make-hash-table :test #'eq))
+	(*location-info* (make-hash-table :test #'eq)))
+    (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
+	   (enter (cleavir-ir:make-enter-instruction ll))
+	   (values (cleavir-ir:make-values-location))
+	   (return (cleavir-ir:make-return-instruction (list values)))
+	   (body-context (context values (list return) enter))
+	   (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
+      ;; Now we must set the successors of the ENTER-INSTRUCTION to a
+      ;; list of the result of compiling the AST.
+      (reinitialize-instance enter :successors (list body))
+      ;; Make sure the list of predecessors of each instruction is
+      ;; initialized correctly.
+      (cleavir-ir:set-predecessors enter)
+      enter)))
+
 ;;; When the FUNCTION-AST is in fact a TOP-LEVEL-FUNCTION-AST it also
 ;;; contains a list of LOAD-TIME-VALUE forms to be evaluated and then
 ;;; supplied as arguments to the function.  We need to preserve that
