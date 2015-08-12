@@ -59,7 +59,14 @@
 (defun add-equivalence (partition defined used)
   (let ((class (find used partition :test #'member)))
     (if (null class)
+	;; USED is not represented in PARTITION.  We return a new
+	;; partition where DEFINED and USED are in an equivalence
+	;; class by themselves.
 	(cons (list defined used) partition)
+	;; USED is a member of CLASS in PARTITION.  We return a new
+	;; partition which is like the original one, except that the
+	;; original equivalence class that contained USED is replaced
+	;; by one that also contains DEFINED.
 	(cons (cons defined class)
 	      (remove class partition :test #'eq)))))
 
