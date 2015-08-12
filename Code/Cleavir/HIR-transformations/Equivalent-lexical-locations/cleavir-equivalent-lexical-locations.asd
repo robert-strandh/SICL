@@ -43,6 +43,22 @@
 ;;;; value of a simple expression such as the addition of two register
 ;;;; operands is extremely fast.  For that reason, we do not use the
 ;;;; general technique of the paper.
+;;;;
+;;;; Instead of avoiding computations of expressions, we use global
+;;;; value numbering to avoid redundant tests.  The idea is that if
+;;;; some test is performed on some lexical location L1 by some
+;;;; instruction I1, and there exists an instruction I2 dominated by
+;;;; I1 that performs the same test on some lexical location L2
+;;;; equivalent to L1, then the test at I2 can be eliminated.  To
+;;;; eliminate I2, we use local rewrite techniques to replicate the
+;;;; instructions between I1 and I2.  In one replica, the test in I1
+;;;; has one outcome, and in the other replica, the test in I2 has the
+;;;; opposite outcome.  Thus, rather than having the two sets of paths
+;;;; converge in I2 and perform the test again, we can eliminate I2
+;;;; altogether.  Path replication has been proposed in the paper
+;;;; "Avoiding Conditional Branches by Code Replication" by Frank
+;;;; Mueller and David B. Whalley, but they do not explain how the
+;;;; replication is done.
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir)
