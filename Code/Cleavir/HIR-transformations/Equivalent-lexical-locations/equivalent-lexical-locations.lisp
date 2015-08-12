@@ -28,10 +28,25 @@
 (defun remove-location (partition location)
   (let ((class (find location partition :test #'member)))
     (cond ((null class)
+	   ;; LOCATION is not represented in PARTITION, meaning it is
+	   ;; in an equivalence class by itself.  We return the
+	   ;; original partition unmodified.
 	   partition)
 	  ((= (length class) 2)
+	   ;; LOCATION is present, and it is in an equivalence class
+	   ;; with exactly one more location.  Since we are removing
+	   ;; LOCATION from the partition, the other location is from
+	   ;; now one by itself in its equivalence class, and since we
+	   ;; do not include such equivalence classes in the
+	   ;; representation, we remove the entire equivalence class
+	   ;; from the result.
 	   (remove class partition :test #'eq))
 	  (t
+	   ;; LOCATION is present, and it is in an equivalence class
+	   ;; with at least two more locations.  We need to return a
+	   ;; partition that is like the original one, except that we
+	   ;; need to replace the class that LOCATION is in by one
+	   ;; that no longer contains LOCATION.
 	   (cons (remove location class :test #'eq)
 		 (remove class partition :test #'eq))))))
 
