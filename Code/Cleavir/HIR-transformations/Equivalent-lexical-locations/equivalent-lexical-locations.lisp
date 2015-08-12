@@ -12,6 +12,9 @@
 (defun class-equality (class1 class2)
   (set-equality class1 class2 #'eq))
 
+;;; Return true if and only if two partitions are the same.  Recall
+;;; that a partition is a set (represented as a list) of equivalence
+;;; classes.
 (defun partition-equality (partition1 partition2)
   (set-equality partition1 partition2 #'class-equality))
 
