@@ -7,6 +7,10 @@
 ;;;; which lexical locations are equivalent at that point.  By
 ;;;; EQUIVALENT, we mean that they provably contain the same value at
 ;;;; that point.
+;;;;
+;;;; We use a simplified version of the algorithm as documented in the
+;;;; paper "A Unified Approach to Global Program Optimization" by Gary
+;;;; A. Kildall.
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir)
