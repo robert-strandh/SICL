@@ -20,6 +20,14 @@
 ;;;; section, it is not a technique for common subexpression
 ;;;; elimination as it is now defined, but instead a technique for
 ;;;; what is now called "Global Value Numbering".
+;;;;
+;;;; The essence of section 4 of the paper is the representation of
+;;;; the data being manipulated by the algorithm.  The expressions
+;;;; computed by a program are organized as a PARTITION for each
+;;;; program point.  A partition is a set of equivalence classes.  The
+;;;; expressions that are elements of some equivalence class of the
+;;;; partition are the ones that can be proven to be equivalent at
+;;;; that program point.
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir)
