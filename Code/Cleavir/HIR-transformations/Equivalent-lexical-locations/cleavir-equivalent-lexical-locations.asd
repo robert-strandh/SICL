@@ -28,6 +28,21 @@
 ;;;; expressions that are elements of some equivalence class of the
 ;;;; partition are the ones that can be proven to be equivalent at
 ;;;; that program point.
+;;;;
+;;;; The technique in the paper is capable of determining equivalence
+;;;; of every expression used in the program.  Traditionally, global
+;;;; value numbering is used to avoid recomputing some value that has
+;;;; already been computed and that is available in some lexical
+;;;; variable.  This use of global value numbering is dubious these
+;;;; days, because it is often cheaper to recompute the value of an
+;;;; expression than to store a value for later use.  In particular,
+;;;; when the processor has relatively few registers (as is the case
+;;;; with the x86-family processors), keeping a value for later use
+;;;; might require spilling a register to the stack, which involves a
+;;;; memory write and a memory read.  In comparison, recomputing the
+;;;; value of a simple expression such as the addition of two register
+;;;; operands is extremely fast.  For that reason, we do not use the
+;;;; general technique of the paper.
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir)
