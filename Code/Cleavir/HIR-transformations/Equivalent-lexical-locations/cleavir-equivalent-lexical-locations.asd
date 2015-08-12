@@ -59,6 +59,14 @@
 ;;;; "Avoiding Conditional Branches by Code Replication" by Frank
 ;;;; Mueller and David B. Whalley, but they do not explain how the
 ;;;; replication is done.
+;;;;
+;;;; As opposed to the traditional use of global value numbering,
+;;;; using it to eliminate redundant tests does not require an
+;;;; additional value to be stored for later use.  Instead, the
+;;;; outcome of the test is fully encoded in the value of the program
+;;;; counter.  Furthermore, the operation that is avoided (i.e., the
+;;;; second test) is potentially very costly on modern architectures.
+;;;; We therefore consider this optimization to be an important one.
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir)
