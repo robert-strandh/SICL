@@ -11,6 +11,15 @@
 ;;;; We use a simplified version of the algorithm as documented in the
 ;;;; paper "A Unified Approach to Global Program Optimization" by Gary
 ;;;; A. Kildall.
+;;;;
+;;;; The paper by Kildall is mostly a general description of the now
+;;;; traditional technique for forward data flow analysis, using
+;;;; fixpoint iteration.  However, section 4 of that paper is entitled
+;;;; "Common Subexpression Elimination", and the technique used in
+;;;; this system is based on that section.  Despite the title of the
+;;;; section, it is not a technique for common subexpression
+;;;; elimination as it is now defined, but instead a technique for
+;;;; what is now called "Global Value Numbering".
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir)
@@ -18,3 +27,5 @@
   :components
   ((:file "packages")
    (:file "equivalent-lexical-locations")))
+
+;;  LocalWords:  Subexpression fixpoint subexpression
