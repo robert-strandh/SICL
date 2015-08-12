@@ -18,6 +18,13 @@
 (defun partition-equality (partition1 partition2)
   (set-equality partition1 partition2 #'class-equality))
 
+;;; Given a partition and a lexical location, return a new partition
+;;; that is like the original one, except that the lexical location
+;;; has been removed.  Recall that the lexical location is a member of
+;;; at most one of the equivalence classes of PARTITION.  Since we do
+;;; not include equivalence classes with a single lexical location in
+;;; them, we need to remove any such equivalence class before
+;;; returning the result.
 (defun remove-location (partition variable)
   (let ((dclass (find variable partition :test #'member)))
     (cond ((null dclass)
