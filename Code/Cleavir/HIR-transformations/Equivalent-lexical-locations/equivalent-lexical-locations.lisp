@@ -1,5 +1,7 @@
 (cl:in-package #:cleavir-equivalent-lexical-locations)
 
+;;; Return true if and only if two sets contain the same objects.  Use
+;;; TEST to determine whether two objects are the same.
 (defun set-equality (set1 set2 test)
   (and (null (set-difference set1 set2 :test test))
        (null (set-difference set2 set1 :test test))))
