@@ -6,6 +6,9 @@
   (and (null (set-difference set1 set2 :test test))
        (null (set-difference set2 set1 :test test))))
 
+;;; Return true if and only if two equivalence classes are the same.
+;;; Recall that an equivalence class is a set (represented as a list)
+;;; of lexical locations.
 (defun class-equality (class1 class2)
   (set-equality class1 class2 #'eq))
 
