@@ -25,14 +25,14 @@
 ;;; not include equivalence classes with a single lexical location in
 ;;; them, we need to remove any such equivalence class before
 ;;; returning the result.
-(defun remove-location (partition variable)
-  (let ((class (find variable partition :test #'member)))
+(defun remove-location (partition location)
+  (let ((class (find location partition :test #'member)))
     (cond ((null class)
 	   partition)
 	  ((= (length class) 2)
 	   (remove class partition :test #'eq))
 	  (t
-	   (cons (remove variable class :test #'eq)
+	   (cons (remove location class :test #'eq)
 		 (remove class partition :test #'eq))))))
 
 (defun add-equivalence (partition defined used)
