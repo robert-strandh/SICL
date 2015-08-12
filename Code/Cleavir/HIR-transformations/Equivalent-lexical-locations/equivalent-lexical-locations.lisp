@@ -50,6 +50,12 @@
 	   (cons (remove location class :test #'eq)
 		 (remove class partition :test #'eq))))))
 
+;;; Given a partition in which the variable DEFINED is not a member of
+;;; any equivalence class, return a new partition which is like the
+;;; original one, except that in it, the location DEFINED is in the
+;;; same equivalence class as the location USED.  The location USED
+;;; may or may not be represented in some equivalence class of
+;;; PARTITION.
 (defun add-equivalence (partition defined used)
   (let ((class (find used partition :test #'member)))
     (if (null class)
