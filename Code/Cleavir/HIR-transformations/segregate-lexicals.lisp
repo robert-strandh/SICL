@@ -23,29 +23,35 @@
 ;;; We return a list of the lexical locations that have been
 ;;; categorized as static lexical locations.
 
+(defparameter *segregate-lexicals-meter*
+  (make-instance 'cleavir-meter:size-meter
+    :name "SEGREGATE-LEXICALS-METER"))
+
 (defun segregate-lexicals (initial-instruction location-owners)
-  (let ((result '()))
-    (cleavir-ir:map-instructions-with-owner
-     (lambda (instruction owner)
-       (loop for datum in (data instruction)
-	     do (when (eq (class-of datum)
-			  (find-class 'cleavir-ir:lexical-location))
-		  (unless (eq owner (gethash datum location-owners))
+  (cleavir-meter:with-meter (m *segregate-lexicals-meter*)
+    (let ((result '()))
+      (cleavir-ir:map-instructions-with-owner
+       (lambda (instruction owner)
+	 (cleavir-meter:increment-size m)
+	 (loop for datum in (data instruction)
+	       do (when (eq (class-of datum)
+			    (find-class 'cleavir-ir:lexical-location))
+		    (unless (eq owner (gethash datum location-owners))
+		      (change-class
+		       datum
+		       'cleavir-ir:static-lexical-location)
+		      (push datum result)))))
+       initial-instruction)
+      (cleavir-ir:map-instructions
+       (lambda (instruction)
+	 (loop for datum in (data instruction)
+	       do (when (eq (class-of datum)
+			    (find-class 'cleavir-ir:lexical-location))
 		    (change-class
 		     datum
-		     'cleavir-ir:static-lexical-location)
-		    (push datum result)))))
-     initial-instruction)
-    (cleavir-ir:map-instructions
-     (lambda (instruction)
-       (loop for datum in (data instruction)
-	     do (when (eq (class-of datum)
-			  (find-class 'cleavir-ir:lexical-location))
-		  (change-class
-		   datum
-		   'cleavir-ir:dynamic-lexical-location))))
-     initial-instruction)
-    result))
+		     'cleavir-ir:dynamic-lexical-location))))
+       initial-instruction)
+      result)))
 
 ;;; Given a static lexical location and an EQ hash table giving the
 ;;; owner of each instruction, return a list of all the functions
