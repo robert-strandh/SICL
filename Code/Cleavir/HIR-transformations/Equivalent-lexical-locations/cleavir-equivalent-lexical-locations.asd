@@ -67,6 +67,17 @@
 ;;;; counter.  Furthermore, the operation that is avoided (i.e., the
 ;;;; second test) is potentially very costly on modern architectures.
 ;;;; We therefore consider this optimization to be an important one.
+;;;;
+;;;; Since a test is always performed on some lexical variable, we do
+;;;; not need to compute the equivalence of all expressions in the
+;;;; program.  We only need the equivalence between lexical variables.
+;;;; The partitions manipulated here, are therefore partitions of the
+;;;; lexical variables of the program.  We represent such a partition
+;;;; as a set (represented as a list) of equivalence classes, where
+;;;; each equivalence class is represented as a set (also represented
+;;;; as a list) of lexical variables.  As it turns out, we do not need
+;;;; to include an equivalence class with a single lexical location in
+;;;; it, which improves performance of this technique.
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir)
