@@ -70,18 +70,31 @@
 	(cons (cons defined class)
 	      (remove class partition :test #'eq)))))
 
-(defun update-for-meet (instruction partition)
-  (let ((temp partition))
+;;; Return true if and only if CLASS contains a live variable.
+(defun class-contains-live-variable-p (class live-locations)
+  (not (null (intersection class live-locations))))
+
+;;; Keep a class only if at least one of its variables is live
+(defun filter-partition (partition live-locations)
+  (remove-if-not (lambda (class)
+		   (class-contains-live-variable-p class live-locations))
+		 partition))
+
+(defun update-for-meet (instruction partition liveness)
+  (let ((temp partition)
+	(live-locations (cleavir-liveness:live-after liveness instruction)))
     (loop for output in (cleavir-ir:outputs instruction)
 	  do (setf temp (remove-location temp output)))
     (if (typep instruction 'cleavir-ir:assignment-instruction)
 	(let ((input (first (cleavir-ir:inputs instruction)))
 	      (output (first (cleavir-ir:outputs instruction))))
-	  (if (and (typep input 'cleavir-ir:lexical-location)
-		   (typep output 'cleavir-ir:lexical-location))
-	      (add-equivalence temp output input)
-	      temp))
-	temp)))
+	  (filter-partition
+	   (if (and (typep input 'cleavir-ir:lexical-location)
+		    (typep output 'cleavir-ir:lexical-location))
+	       (add-equivalence temp output input)
+	       temp)
+	   live-locations))
+	(filter-partition temp live-locations))))
 
 (defun update-for-join (partition1 partition2)
   (let* ((locations1 (reduce #'append partition1 :from-end t))
@@ -120,7 +133,8 @@
 
 (defun compute-equivalent-lexical-locations (initial-instruction)
   (cleavir-meter:with-meter (m *equivalent-lexical-locations-meter*)
-    (let ((work-list (list initial-instruction))
+    (let ((liveness (cleavir-liveness:liveness initial-instruction))
+	  (work-list (list initial-instruction))
 	  (before (make-hash-table :test #'eq))
 	  (after (make-hash-table :test #'eq)))
       (cleavir-meter:increment-size m)
@@ -133,7 +147,9 @@
 		     (push enter work-list)
 		     (cleavir-meter:increment-size m)))
 		 (setf (gethash instruction after)
-		       (update-for-meet instruction (gethash instruction before)))
+		       (update-for-meet instruction
+					(gethash instruction before)
+					liveness))
 		 (loop for successor in (cleavir-ir:successors instruction)
 		       for predecessors = (cleavir-ir:predecessors successor)
 		       for join = (if (= (length predecessors) 1)
