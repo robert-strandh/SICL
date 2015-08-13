@@ -80,10 +80,12 @@
 ;;;; it, which improves performance of this technique.
 
 (defsystem :cleavir-equivalent-lexical-locations
-  :depends-on (:cleavir-hir)
+  :depends-on (:cleavir-hir
+	       :cleavir-meter)
   :serial t
   :components
   ((:file "packages")
+   (:file "meter")
    (:file "equivalent-lexical-locations")))
 
 ;;  LocalWords:  Subexpression fixpoint subexpression
