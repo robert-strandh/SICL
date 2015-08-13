@@ -240,3 +240,9 @@
 			       function-tree
 			       instruction-owners
 			       owner))))
+
+(defun segregate-only (initial-instruction)
+  ;; Make sure everything is up to date.
+  (cleavir-ir:reinitialize-data initial-instruction)
+  (let ((location-owners (compute-location-owners initial-instruction)))
+    (segregate-lexicals initial-instruction location-owners)))
