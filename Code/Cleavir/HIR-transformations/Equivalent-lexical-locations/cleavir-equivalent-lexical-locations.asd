@@ -81,6 +81,7 @@
 
 (defsystem :cleavir-equivalent-lexical-locations
   :depends-on (:cleavir-hir
+	       :cleavir-liveness
 	       :cleavir-meter)
   :serial t
   :components
