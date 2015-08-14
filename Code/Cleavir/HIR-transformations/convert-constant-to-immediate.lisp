@@ -25,3 +25,23 @@
 (defmethod convert-constant-to-immediate (constant system)
   (declare (ignore constant system))
   nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; CONVERT-CONSTANTS-TO-IMMEDIATE.
+;;;
+
+(defun convert-constants-to-immediate (initial-instruction system)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (loop for input in (cleavir-ir:inputs instruction)
+	   when (and (typep input 'cleavir-ir:load-time-value-input)
+		     (load-time-value-is-constant-p input))
+	     do (let* ((constant (load-time-value-constant input))
+		       (possible-immediate
+			 (convert-constant-to-immediate constant system)))
+		  (unless (null possible-immediate)
+		    (change-class input
+				  'cleavir-ir:immediate-input
+				  :value possible-immediate)))))
+   initial-instruction))
