@@ -7,6 +7,7 @@
   ((:file "packages")
    (:file "constant-load-time-value")
    (:file "traverse")
+   (:file "convert-constant-to-immediate")
    (:file "hoist-load-time-values")
    (:file "compute-ownership")
    (:file "inline-calls")
