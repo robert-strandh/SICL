@@ -5,6 +5,7 @@
   (:export
    #:traverse
    #:convert-constant-to-immediate
+   #:convert-constants-to-immediate
    #:eliminate-load-time-value-inputs
    #:eliminate-typeq
    #:type-inference
