@@ -105,10 +105,19 @@
 	   live-locations))
 	(filter-partition temp live-locations))))
 
+;;; This function computes the "intersection" of two partitions.
 (defun update-for-join (partition1 partition2)
-  (let* ((locations1 (reduce #'append partition1 :from-end t))
+  (let* (;; Compute all the locations present in PARTITION1.
+	 (locations1 (reduce #'append partition1 :from-end t))
+	 ;; Compute all the locations present in PARTITION2.
 	 (locations2 (reduce #'append partition2 :from-end t))
+	 ;; Compute the locations that are common to the two
+	 ;; partitions.  These are the only locations that are going
+	 ;; to be present in the output.
 	 (common (intersection locations1 locations2 :test #'eq))
+	 ;; Compute a "stripped" version of each partition.  It is
+	 ;; stripped, in that only classes that contain at least two
+	 ;; common locations are kept.
 	 (p1 (loop for class in partition1
 		   for stripped = (intersection class common :test #'eq)
 		   when (> (length stripped) 1)
@@ -117,6 +126,8 @@
 		   for stripped = (intersection class common :test #'eq)
 		   when (> (length stripped) 1)
 		     collect stripped))
+	 ;; Compute the locations that are common to the stripped
+	 ;; partitions.
 	 (l1 (reduce #'append p1 :from-end t))
 	 (l2 (reduce #'append p2 :from-end t))
 	 (c (intersection l1 l2 :test #'eq))
