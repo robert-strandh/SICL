@@ -17,6 +17,7 @@
 ;;;; See the file cons-high.text for a description of the module.
 
 (defsystem :sicl-cons-high
+  :depends-on (:cleavir-internationalization)
   :serial t
   :components
   ((:file "packages")
