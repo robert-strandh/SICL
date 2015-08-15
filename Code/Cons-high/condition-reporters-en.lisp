@@ -1,4 +1,4 @@
-(in-package :sicl-cons-high)
+(cl:in-package :sicl-cons-high)
 
 ;;;; Copyright (c) 2008 - 2013
 ;;;;
