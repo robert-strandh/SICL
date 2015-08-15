@@ -326,30 +326,6 @@
 ;; (define-setf-c*r-expander ninth   "ADDDDDDDD")
 ;; (define-setf-c*r-expander tenth   "ADDDDDDDDD")
 
-;; ;;;FIXME: use the new improved condition instead.
-;; (eval-when (:compile-toplevel :load-toplevel)
-;;   (defmacro define-setf-c*r-function (function-name letters)
-;;     (flet ((primitive (letter)
-;;              (if (eql letter #\A) 'car 'cdr)))
-;;       (flet ((one-iteration (letter)
-;;                `(progn (if (consp remaining)
-;; 			   (setf remaining
-;; 				 (,(primitive letter) remaining))
-;; 			   (error 'must-be-cons
-;; 				  :datum remaining
-;; 				  :name '(setf ,function-name))))))
-;;         `(defun (setf ,function-name) (new-object list)
-;;            (let ((remaining list))
-;;              ,@(append (loop for i downfrom (1- (length letters)) to 0
-;; 			     for letter = (aref letters i)
-;; 			     collect (one-iteration letter))
-;; 		       `((if (consp remaining)
-;; 			     (setf (,(primitive (aref letters 0)) remaining)
-;; 				   new-object)
-;; 			     (error 'must-be-cons
-;; 				    :datum remaining
-;; 				    :name '(setf ,function-name)))))))))))
-
 ;; ;;; These are commented out for now because they
 ;; ;;; trip the package lock of the CL package.
 ;; ;; (defun (setf car) (object cons)
@@ -360,45 +336,129 @@
 ;; ;;   (rplacd cons object)
 ;; ;;   object)
 
-;; (define-setf-c*r-function caar "AA")
-;; (define-setf-c*r-function cadr "AD")
-;; (define-setf-c*r-function cdar "DA")
-;; (define-setf-c*r-function cddr "DD")
-;; (define-setf-c*r-function caaar "AAA")
-;; (define-setf-c*r-function caadr "AAD")
-;; (define-setf-c*r-function cadar "ADA")
-;; (define-setf-c*r-function caddr "ADD")
-;; (define-setf-c*r-function cdaar "DAA")
-;; (define-setf-c*r-function cdadr "DAD")
-;; (define-setf-c*r-function cddar "DDA")
-;; (define-setf-c*r-function cdddr "DDD")
-;; (define-setf-c*r-function caaaar "AAAA")
-;; (define-setf-c*r-function caaadr "AAAD")
-;; (define-setf-c*r-function caadar "AADA")
-;; (define-setf-c*r-function caaddr "AADD")
-;; (define-setf-c*r-function cadaar "ADAA")
-;; (define-setf-c*r-function cadadr "ADAD")
-;; (define-setf-c*r-function caddar "ADDA")
-;; (define-setf-c*r-function cadddr "ADDD")
-;; (define-setf-c*r-function cdaaar "DAAA")
-;; (define-setf-c*r-function cdaadr "DAAD")
-;; (define-setf-c*r-function cdadar "DADA")
-;; (define-setf-c*r-function cdaddr "DADD")
-;; (define-setf-c*r-function cddaar "DDAA")
-;; (define-setf-c*r-function cddadr "DDAD")
-;; (define-setf-c*r-function cdddar "DDDA")
-;; (define-setf-c*r-function cddddr "DDDD")
+(defun (setf caar) (new-value cons)
+  (setf (car (car cons)) new-value))
 
-;; (define-setf-c*r-function first   "A")
-;; (define-setf-c*r-function second  "AD")
-;; (define-setf-c*r-function third   "ADD")
-;; (define-setf-c*r-function fourth  "ADDD")
-;; (define-setf-c*r-function fifth   "ADDDD")
-;; (define-setf-c*r-function sixth   "ADDDDD")
-;; (define-setf-c*r-function seventh "ADDDDDD")
-;; (define-setf-c*r-function eighth  "ADDDDDDD")
-;; (define-setf-c*r-function ninth   "ADDDDDDDD")
-;; (define-setf-c*r-function tenth   "ADDDDDDDDD")
+(defun (setf cadr) (new-value cons)
+  (setf (car (cdr cons)) new-value))
+
+(defun (setf cdar) (new-value cons)
+  (setf (cdr (car cons)) new-value))
+
+(defun (setf cddr) (new-value cons)
+  (setf (cdr (cdr cons)) new-value))
+
+(defun (setf caaar) (new-value cons)
+  (setf (car (caar cons)) new-value))
+
+(defun (setf caadr) (new-value cons)
+  (setf (car (cadr cons)) new-value))
+
+(defun (setf cadar) (new-value cons)
+  (setf (car (cdar cons)) new-value))
+
+(defun (setf caddr) (new-value cons)
+  (setf (car (cddr cons)) new-value))
+
+(defun (setf cdaar) (new-value cons)
+  (setf (cdr (caar cons)) new-value))
+
+(defun (setf cdadr) (new-value cons)
+  (setf (cdr (cadr cons)) new-value))
+
+(defun (setf cddar) (new-value cons)
+  (setf (cdr (cdar cons)) new-value))
+
+(defun (setf cdddr) (new-value cons)
+  (setf (cdr (cddr cons)) new-value))
+
+(defun (setf caaaar) (new-value cons)
+  (setf (car (caaar cons)) new-value))
+
+(defun (setf caaadr) (new-value cons)
+  (setf (car (caadr cons)) new-value))
+
+(defun (setf caadar) (new-value cons)
+  (setf (car (cadar cons)) new-value))
+
+(defun (setf caaddr) (new-value cons)
+  (setf (car (caddr cons)) new-value))
+
+(defun (setf cadaar) (new-value cons)
+  (setf (car (cdaar cons)) new-value))
+
+(defun (setf cadadr) (new-value cons)
+  (setf (car (cdadr cons)) new-value))
+
+(defun (setf caddar) (new-value cons)
+  (setf (car (cddar cons)) new-value))
+
+(defun (setf cadddr) (new-value cons)
+  (setf (car (cdddr cons)) new-value))
+
+(defun (setf cdaaar) (new-value cons)
+  (setf (cdr (caaar cons)) new-value))
+
+(defun (setf cdaadr) (new-value cons)
+  (setf (cdr (caadr cons)) new-value))
+
+(defun (setf cdadar) (new-value cons)
+  (setf (cdr (cadar cons)) new-value))
+
+(defun (setf cdaddr) (new-value cons)
+  (setf (cdr (caddr cons)) new-value))
+
+(defun (setf cddaar) (new-value cons)
+  (setf (cdr (cdaar cons)) new-value))
+
+(defun (setf cddadr) (new-value cons)
+  (setf (cdr (cdadr cons)) new-value))
+
+(defun (setf cdddar) (new-value cons)
+  (setf (cdr (cddar cons)) new-value))
+
+(defun (setf cddddr) (new-value cons)
+  (setf (cdr (cdddr cons)) new-value))
+
+(defun (setf first) (new-value cons)
+  (setf (car cons)
+	new-value))
+
+(defun (setf second) (new-value cons)
+  (setf (first (rest cons))
+	new-value))
+
+(defun (setf third) (new-value cons)
+  (setf (first (rest (rest cons)))
+	new-value))
+
+(defun (setf fourth) (new-value cons)
+  (setf (first (rest (rest (rest cons))))
+	new-value))
+
+(defun (setf fifth) (new-value cons)
+  (setf (first (rest (rest (rest (rest cons)))))
+	new-value))
+
+(defun (setf sixth) (new-value cons)
+  (setf (first (rest (rest (rest (rest (rest cons))))))
+	new-value))
+
+(defun (setf seventh) (new-value cons)
+  (setf (first (rest (rest (rest (rest (rest (rest cons)))))))
+	new-value))
+
+(defun (setf eighth) (new-value cons)
+  (setf (first (rest (rest (rest (rest (rest (rest (rest cons))))))))
+	new-value))
+
+(defun (setf ninth) (new-value cons)
+  (setf (first (rest (rest (rest (rest (rest (rest (rest (rest cons)))))))))
+	new-value))
+
+(defun (setf tenth) (new-value cons)
+  (setf (first (rest (rest (rest (rest (rest (rest (rest (rest (rest cons))))))))))
+	new-value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
