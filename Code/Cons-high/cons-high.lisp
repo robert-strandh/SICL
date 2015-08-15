@@ -1,4 +1,4 @@
-(in-package :sicl-cons-high)
+(cl:in-package :sicl-cons-high)
 
 ;;;; Copyright (c) 2008 - 2015
 ;;;;
@@ -325,16 +325,6 @@
 ;; (define-setf-c*r-expander eighth  "ADDDDDDD")
 ;; (define-setf-c*r-expander ninth   "ADDDDDDDD")
 ;; (define-setf-c*r-expander tenth   "ADDDDDDDDD")
-
-;; ;;; These are commented out for now because they
-;; ;;; trip the package lock of the CL package.
-;; ;; (defun (setf car) (object cons)
-;; ;;   (rplaca cons object)
-;; ;;   object)
-
-;; ;; (defun (setf cdr) (object cons)
-;; ;;   (rplacd cons object)
-;; ;;   object)
 
 (defun (setf caar) (new-value cons)
   (setf (car (car cons)) new-value))
