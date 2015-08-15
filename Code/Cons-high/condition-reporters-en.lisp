@@ -16,29 +16,22 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
 
-(defparameter *language* 'en-us)
-
 (defun name-package (name)
   (let ((real-name (if (symbolp name) name (cadr name))))
     (package-name (symbol-package real-name))))
 
-(defgeneric report-condition (condition stream language))
-
-(defmethod print-object ((c name-mixin) stream)
-  (report-condition c stream *language*))
-
-(defmethod report-condition  ((c both-test-and-test-not-given)
-			      stream
-			      (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c both-test-and-test-not-given)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            Both keyword arguments :test and :test-not were given."
 	  (name c)
 	  (name-package (name c))))
 
-(defmethod report-condition ((c must-be-nonnegative-integer)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-nonnegative-integer)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A nonnegative integer was required,~@
@@ -48,9 +41,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c must-be-cons)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-cons)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A cons cell was required,~@
@@ -60,9 +53,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c must-be-list)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-list)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A list (a cons or nil) was required,~@
@@ -72,9 +65,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c must-be-proper-list)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-proper-list)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A proper list was required,~@
@@ -84,9 +77,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c must-be-proper-or-circular-list)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-proper-or-circular-list)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A proper or circular list was required,~@
@@ -96,9 +89,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c must-be-proper-or-dotted-list)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-proper-or-dotted-list)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A proper or dotted list was required,~@
@@ -108,9 +101,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c must-be-property-list)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-property-list)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A property list was required,~@
@@ -120,9 +113,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c must-be-association-list)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c must-be-association-list)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            A association list was required,~@
@@ -132,9 +125,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c at-least-one-list-required)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c at-least-one-list-required)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            At least one list argument is required,~@
@@ -142,19 +135,19 @@
 	  (name c)
 	  (name-package (name c))))
 	  
-(defmethod report-condition ((c at-least-one-argument-required)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c at-least-one-argument-required)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            At least one argument is required,~@
            but none was given."
 	  (name c)
 	  (name-package (name c))))
-	  
-(defmethod report-condition ((c lists-must-have-the-same-length)
-			     stream
-			     (language (eql 'en-us)))
+
+(defmethod cleavir-i18n:report-condition ((c lists-must-have-the-same-length)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            The two lists passed as arguments must~@
@@ -168,9 +161,9 @@
 	  (list1 c)
 	  (list2 c)))
 
-(defmethod report-condition ((c setf-c*r-must-be-cons)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c setf-c*r-must-be-cons)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In the SETF expander for ~a (in the ~a package),~@
            the ~aargument ~s~@
@@ -184,9 +177,9 @@
 	  (original-tree c)
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c setf-nth-must-be-cons)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c setf-nth-must-be-cons)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In the SETF expander for ~a (in the ~a package),~@
            the ~:R CDR of the argument ~s~@
@@ -198,9 +191,9 @@
 	  (original-tree c)
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c warn-both-test-and-test-not-given)
-			     stream
-			     (language (eql 'en-us)))
+(defmethod cleavir-i18n:report-condition ((c warn-both-test-and-test-not-given)
+					  stream
+					  (language cleavir-i18n:english))
   (format stream
 	  "In ~a (in the ~a package),~@
            both keyword arguments :test and :test-not were given."
