@@ -199,3 +199,14 @@
            both keyword arguments :test and :test-not were given."
 	  (name c)
 	  (name-package (name c))))
+
+(defmethod cleavir-i18n:report-condition
+    ((c expected-list-with-at-least-n-elements)
+     stream
+     (language cleavir-i18n:english))
+  (format stream
+	  "Expected a list with at least ~d elements,~@
+           but the following was given instead:~@
+           ~s."
+	  (at-least c)
+	  (found c)))
