@@ -127,3 +127,7 @@
 (define-condition warn-both-test-and-test-not-given (warning name-mixin)
   ())
 
+(define-condition expected-list-with-at-least-n-elements
+    (error cleavir-i18n:condition)
+  ((%found :initarg :found :reader found)
+   (%at-least :initarg :at-least :reader at-least)))
