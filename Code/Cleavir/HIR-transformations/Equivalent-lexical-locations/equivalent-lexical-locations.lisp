@@ -80,6 +80,15 @@
 		   (class-contains-live-variable-p class live-locations))
 		 partition))
 
+;;; This function is used in order to update a partition according to
+;;; a single instruction.  For all types of instructions, we remove
+;;; the outputs of that instruction from the partition, because these
+;;; locations have new values so they are not equivalent to any other
+;;; locations.  When the instruction is an assignment instruction,
+;;; which is the only type we consider to be special at the moment,
+;;; then we make the input equivalent to the output in the new
+;;; partition.  Before returning the result, we filter it according to
+;;; the locations that are live after the instruction.
 (defun update-for-meet (instruction partition liveness)
   (let ((temp partition)
 	(live-locations (cleavir-liveness:live-after liveness instruction)))
