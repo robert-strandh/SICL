@@ -1,7 +1,7 @@
 \chapter{x86-64}
 \label{chapter-backend-x86-64}
 
-The standard calling conventions use the registers as follows
+The standard calling conventions use the registers as follows:
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -61,9 +61,9 @@ usual.  In addition, every function object has $8$ entry points:
 \begin{itemize}
 \item Five entry points used for calls (ordinary calls or tail calls)
   with $0 - 5$ arguments.
-\item One entry point used for ordinary calls with more than $4$
+\item One entry point used for ordinary calls with more than $5$
   arguments.
-\item One entry point used for tail calls with more than $4$
+\item One entry point used for tail calls with more than $5$
   arguments.
 \end{itemize}
 
@@ -102,7 +102,7 @@ Normal call to external function, passing at most $5$ arguments:
   the callee.
 \end{enumerate}
 
-Normal call to external function, passing at more than $4$ arguments:
+Normal call to external function, passing at more than $5$ arguments:
 
 \begin{enumerate}
 \item Compute the callee function object and the arguments into
