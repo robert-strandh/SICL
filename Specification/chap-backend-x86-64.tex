@@ -220,3 +220,15 @@ Return from callee to caller with more than $4$ values:
   callee can use the LEA instruction.
 \item Return to the caller by executing the RET instruction.
 \end{enumerate}
+
+\section{Parsing keyword arguments}
+
+When the callee accepts keyword arguments, it is convenient to have
+all the arguments in a properly-ordered sequence somewhere in memory.
+We obtain this sequence by pushing the register arguments to the stack
+in reverse order, so that the first argument is at the top of the
+stack.  When more than $5$ arguments are passed, the program counter
+is popped off the top of the stack, thereby moving it to its final
+destination before the register arguments are pushed.
+
+%%  LocalWords:  callee
