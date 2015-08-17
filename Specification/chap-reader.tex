@@ -37,7 +37,7 @@ macros \#\# and \#=.
 
 The second reason for the reader to be over-engineered is that we
 wanted to create a very fast implementation (and we still do).  The
-way we imagined doing this was to create bspecial versions of the
+way we imagined doing this was to create special versions of the
 reader according to important parameters such as the input base and
 the readtable case.  We still think this is a good idea, but it might
 be better to do it in different phases.  Phase 1 would be to create a
@@ -57,8 +57,8 @@ Only the macros \texttt{\#\#} and \texttt{\#=} (see
 \refSec{sec-reader-portability-problems}) and the \texttt{\#S} macro
 are missing.  
 
-We have made no attemp to make this reader fast.  Its main virtue is
-its simplicity.  
+We have made no attempt to make this reader fast.  Its main virtue is
+its simplicity.
 
 \section{Reading floating-point numbers}
 
@@ -77,13 +77,13 @@ cannot be done portably.
 Another (minor) problem with respect to portability has to do with the
 \emph{backquote} facility.  The \hs{} explicitly encourages
 implementations to use more specific constructs than the standard
-\commonlisp{} functions \texttt{append}, \texttt{list}, and \texttt{cons} as a
-result of parsing the \emph{backquote} reader macro.  The reason for
-is so that the \emph{pretty printer} can print such forms in a more
-convenient way (i.e. using the backquote and comma characters).
-However, the result is often an implementation-specific encoding that
-would have to be translated into standard \commonlisp{} constructs by the
-compiler, for instance by writing macros for this encoding.  Such
-macros would then necessarily be implementation specific, which is a
-problem for bootstrapping \sysname{}.  
-
+\commonlisp{} functions \texttt{append}, \texttt{list}, and
+\texttt{cons} as a result of parsing the \emph{backquote} reader
+macro.  The reason for is so that the \emph{pretty printer} can print
+such forms in a more convenient way (i.e. using the backquote and
+comma characters).  However, the result is often an
+implementation-specific encoding that would have to be translated into
+standard \commonlisp{} constructs by the compiler, for instance by
+writing macros for this encoding.  Such macros would then necessarily
+be implementation specific, which is a problem for bootstrapping
+\sysname{}.
