@@ -1,7 +1,8 @@
 \chapter{x86-64}
 \label{chapter-backend-x86-64}
 
-The standard calling conventions use the registers as follows:
+The standard calling conventions defined by the vendors, and used by
+languages such as \clanguage{} use the registers as follows:
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -27,7 +28,8 @@ R15 & Temporary & Callee\\
 \hline
 \end{tabular}
 
-We mostly respect this standard, and allocate as follows:
+We mostly respect this standard, and define the register allocation as
+follows:
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -59,7 +61,7 @@ For this backend, a function object contains its static environment as
 usual.  In addition, every function object has $8$ entry points:
 
 \begin{itemize}
-\item Five entry points used for calls (ordinary calls or tail calls)
+\item Six entry points used for calls (ordinary calls or tail calls)
   with $0 - 5$ arguments.
 \item One entry point used for ordinary calls with more than $5$
   arguments.
@@ -107,17 +109,18 @@ Normal call to external function, passing at more than $5$ arguments:
 \begin{enumerate}
 \item Compute the callee function object and the arguments into
   temporary locations.
-\item Subtract $8(N - 2)$ from RSP, where $N$ is the number of
+\item Subtract $8(N - 3)$ from RSP, where $N$ is the number of
   arguments to pass, thus leaving room in the callee stack frame for
   the $N - 5$ arguments, the return address, and the caller RBP.
 \item Store the first $5$ arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the remaining arguments in [RSP$ + 0$], [RSP$ + 8$],
-  $\ldots$, [RSP$ + 8(N - 7)$].
+  $\ldots$, [RSP$ + 8(N - 6)$] in that order, so that the sixth
+  argument is on top of the stack.
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
-\item Store the value of RBP into [RSP + 8(N - 3)]
-\item Copy the value of RSP$ + 8(N - 3)$ into RBP, establishing the
+\item Store the value of RBP into [RSP + 8(N - 4)]
+\item Copy the value of RSP$ + 8(N - 4)$ into RBP, establishing the
   stack frame for the callee.  The instruction LEA can be used for
   this purpose.
 \item Load the entry point address (i.e. the entry point to be used
