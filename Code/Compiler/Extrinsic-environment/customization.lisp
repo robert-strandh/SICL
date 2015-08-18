@@ -1,22 +1,5 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-;;; Introduce immediates where appropriate.  The definition of the
-;;; generic function says that we return an integer if we want to
-;;; introduce an immediate value, and NIL if we do not want to
-;;; introduce an immediate value.
-(defmethod cleavir-generate-ast:convert-constant-to-immediate
-    (constant (environment environment) system)
-  (declare (ignore system))
-  (cond ((and (typep constant 'integer)
-	      (<= #.(- (expt 2 30)) constant #.(1- (expt 2 30))))
-	 (* 2 constant))
-	((typep constant 'character)
-	 ;; FIXME: Currently, we depend on the host having the same
-	 ;; character encoding as the target.
-	 (+ #b11 (ash (char-code constant) 3)))
-	(t
-	 nil)))
-
 ;;; When we are asked to compile the name of a global function, by
 ;;; default Cleavir generates an FDEFINITION-AST taking the function
 ;;; name as an input.  For SICL, we do not want that.  Instead we want
