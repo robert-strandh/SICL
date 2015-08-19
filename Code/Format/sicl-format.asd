@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "conditions")
    (:file "format")))
