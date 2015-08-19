@@ -44,7 +44,7 @@
 ;;;     of some characters might be altered (for ignored newline 
 ;;;     directive)?
 
-(in-package #:sicl-format)
+(cl:in-package #:sicl-format)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
