@@ -12,21 +12,8 @@
   ((%control-string :initarg :control-string :reader control-string)
    (%tilde-position :initarg :tilde-position :reader tilde-position)))
 
-(defun report-control-string-and-directive-start-position
-    (condition stream)
-  (format stream
-	  "In the control-string \"~a\",~%~
-           in the directive that starts at position ~a,~%"
-	  (control-string condition)
-	  (tilde-position condition)))
-
 (define-condition end-of-control-string-error (directive-parse-error)
-  ((%why :initarg :why :reader why))
-  (:report (lambda (condition stream)
-	     (report-control-string-and-directive-start-position condition stream)
-	     (format stream
-		     "~a, but reached the end of the control string"
-		     (why condition)))))
+  ((%why :initarg :why :reader why)))
 
 (define-condition found-something-else-error (directive-parse-error)
   ((%index :initarg :index :reader index)))
