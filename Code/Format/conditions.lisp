@@ -19,14 +19,7 @@
   ((%index :initarg :index :reader index)))
 
 (define-condition expected-integer-error (found-something-else-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-start-position condition stream)
-     (format stream
-	     "expected an integer at index ~a,~% but found the character `~a' instead"
-	     (index condition)
-	     (char (control-string condition) (index condition))))))
+  ())
 
 (define-condition expected-parameter-start (found-something-else-error)
   ()
