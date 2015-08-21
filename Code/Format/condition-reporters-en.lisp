@@ -25,3 +25,14 @@
 	  "expected an integer at index ~a,~% but found the character `~a' instead"
 	  (index condition)
 	  (char (control-string condition) (index condition))))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition expected-parameter-start)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-start-position condition stream)
+  (format stream
+	  "expected one of ', +, -, or a decimal digit at index ~a,~%~
+              but found the character `~a' instead"
+	  (index condition)
+	  (char (control-string condition) (index condition))))

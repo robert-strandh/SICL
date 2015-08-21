@@ -22,15 +22,7 @@
   ())
 
 (define-condition expected-parameter-start (found-something-else-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-start-position condition stream)
-     (format stream
-	     "expected one of ', +, -, or a decimal digit at index ~a,~%~
-              but found the character `~a' instead"
-	     (index condition)
-	     (char (control-string condition) (index condition))))))
+  ())
 
 (define-condition two-identical-modifiers (found-something-else-error)
   ()
