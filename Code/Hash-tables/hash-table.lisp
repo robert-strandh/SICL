@@ -1,4 +1,4 @@
-(in-package #:sicl-hash-tables)
+(in-package #:sicl-hash-table)
 
 (defstruct (hash-table (:constructor %make-hash-table)
                        (:print-function print-hash-table))

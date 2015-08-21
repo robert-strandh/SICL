@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-hash-tables
+(defpackage #:sicl-hash-table
   (:use #:common-lisp)
   ;; Shadow these for now.  Ultimately, import them with
   ;; the rest of the CL package. 
