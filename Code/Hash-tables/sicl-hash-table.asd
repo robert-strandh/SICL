@@ -3,4 +3,6 @@
 (defsystem :sicl-hash-table
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "hash-table")))
+
