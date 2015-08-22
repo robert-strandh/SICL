@@ -7,4 +7,11 @@
 ;;; designators.
 (defvar *constant-designators*)
 
+(defun constant-designator (constant)
+  (let ((result (gethash constant *constant-designators*)))
+    (when (null result)
+      (setf result (make-instance 'value-designator))
+      (setf (gethash constant *constant-designators*) result))
+    result))
+
 ;;  LocalWords:  designator designators
