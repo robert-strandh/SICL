@@ -4,4 +4,5 @@
   :depends-on (:cleavir-meter)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "simple-value-numbering")))
