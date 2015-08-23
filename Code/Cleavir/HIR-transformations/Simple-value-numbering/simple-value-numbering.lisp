@@ -1,5 +1,13 @@
 (cl:in-package #:cleavir-simple-value-numbering)
 
+;;; We attribute a unique number to each value designator.  That way,
+;;; we can keep the value designators in a partition sorted by the
+;;; unique number which makes operations on partitions faster.
+;;;
+;;; This variable should be bound to some small integer at the
+;;; beginning of processing.
+(defvar *unique-number*)
+
 ;;; We use instances of this class to designate values.
 (defclass value-designator () ())
 
