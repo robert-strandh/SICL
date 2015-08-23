@@ -9,7 +9,8 @@
 (defvar *unique-number*)
 
 ;;; We use instances of this class to designate values.
-(defclass value-designator () ())
+(defclass value-designator ()
+  ((%unique-number :initform (incf *unique-number*) :reader unique-number)))
 
 ;;; This variable holds and EQ hash table mapping constants to value
 ;;; designators.
