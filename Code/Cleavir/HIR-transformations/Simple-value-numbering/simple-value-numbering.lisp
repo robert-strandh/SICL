@@ -23,4 +23,9 @@
       (setf (gethash constant *constant-designators*) result))
     result))
 
+(defun simple-value-numbering (initial-instruction)
+  (declare (ignore initial-instruction))
+  (let ((*unique-number* 0)
+	(*constant-designators* (make-hash-table :test #'eq)))))
+
 ;;  LocalWords:  designator designators
