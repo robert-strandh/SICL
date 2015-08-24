@@ -38,8 +38,10 @@
   (remove location partition :key #'location :test #'eq))
 
 (defun add-equivalence (location1 location2 partition)
-  (cons (cons location1 (cdr (assoc location2 partition :test #'eq)))
-	partition))
+  (inherit-value location1
+		 (location (find location2 partition
+				 :test #'eq
+				 :key #'location))))
 
 ;;; Compute the intersection of two partitions.
 ;;;
