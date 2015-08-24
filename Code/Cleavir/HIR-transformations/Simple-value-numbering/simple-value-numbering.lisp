@@ -35,7 +35,7 @@
     result))
 
 (defun remove-location (location partition)
-  (remove location partition :key #'car :test #'eq))
+  (remove location partition :key #'location :test #'eq))
 
 (defun add-equivalence (location1 location2 partition)
   (cons (cons location1 (cdr (assoc location2 partition :test #'eq)))
