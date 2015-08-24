@@ -11,6 +11,12 @@
    (%value :initarg :value :reader value)
    (%new-p :initarg :new-p :reader new-p)))
 
+(defun new-value (location)
+  (make-instance 'entry
+    :location location
+    :value (make-instance 'value-designator)
+    :new-p t))
+
 ;;; This variable holds and EQ hash table mapping constants to value
 ;;; designators.
 (defvar *constant-designators*)
