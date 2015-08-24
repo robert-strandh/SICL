@@ -48,6 +48,12 @@
 				(remove pair1 result :test #'eq))))))
     result))
 
+;;; Keep a pair only if the location is live.
+(defun filter-partition (partition live-locations)
+  (remove-if-not (lambda (pair)
+		   (member (car pair) live-locations :test #'eq))
+		 partition))
+
 (defun simple-value-numbering (initial-instruction)
   (declare (ignore initial-instruction))
   (let ((*constant-designators* (make-hash-table :test #'eq)))))
