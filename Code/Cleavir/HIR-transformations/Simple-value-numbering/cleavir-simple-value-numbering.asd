@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "meter")
    (:file "simple-value-numbering")))
