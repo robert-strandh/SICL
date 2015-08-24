@@ -22,6 +22,16 @@
   (cons (cons location1 (cdr (assoc location2 partition :test #'eq)))
 	partition))
 
+;;; Compute the intersection of two partitions.
+;;;
+;;; If a location is present in a pair in only one of the partitions,
+;;; then keep that pair in the intersection.  If a location is present
+;;; in a pair in both partitions, and the two pairs have the same
+;;; value designator, then keep a single copy in the intersection.
+;;; Otherwise, i.e., if the location is present in a pair in both
+;;; partitions but with different value designators, then keep a pair
+;;; with the location in the result, but with NIL in place of the
+;;; value designator.
 (defun partition-intersection (partition1 partition2)
   (let ((result partition1))
     (loop for pair2 in partition2
