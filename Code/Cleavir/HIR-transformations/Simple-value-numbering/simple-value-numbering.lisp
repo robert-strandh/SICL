@@ -17,6 +17,12 @@
     :value (make-instance 'value-designator)
     :new-p t))
 
+(defun inherit-value (location value)
+  (make-instance 'entry
+    :location location
+    :value value
+    :new-p nil))
+
 ;;; This variable holds and EQ hash table mapping constants to value
 ;;; designators.
 (defvar *constant-designators*)
