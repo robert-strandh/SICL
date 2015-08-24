@@ -70,10 +70,10 @@
 				   (remove entry1 result :test #'eq)))))))
     result))
 
-;;; Keep a pair only if the location is live.
+;;; Keep an entry only if the location is live.
 (defun filter-partition (partition live-locations)
-  (remove-if-not (lambda (pair)
-		   (member (car pair) live-locations :test #'eq))
+  (remove-if-not (lambda (entry)
+		   (member (location pair) live-locations :test #'eq))
 		 partition))
 
 (defun simple-value-numbering (initial-instruction)
