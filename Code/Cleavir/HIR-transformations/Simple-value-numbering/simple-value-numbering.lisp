@@ -85,6 +85,31 @@
 		   (member (location entry) live-locations :test #'eq))
 		 partition))
 
+;;; This function is used in order to update a partition according to
+;;; a single instruction.  For all types of instructions, we remove
+;;; the outputs of that instruction from the partition, because these
+;;; locations have new values so they are not equivalent to any other
+;;; locations.  When the instruction is an assignment instruction,
+;;; which is the only type we consider to be special at the moment,
+;;; then we make the input equivalent to the output in the new
+;;; partition.  Before returning the result, we filter it according to
+;;; the locations that are live after the instruction.
+(defun update-for-meet (instruction partition liveness)
+  (let ((temp partition)
+	(live-locations (cleavir-liveness:live-after liveness instruction)))
+    (loop for output in (cleavir-ir:outputs instruction)
+	  do (setf temp (remove-location temp output)))
+    (if (typep instruction 'cleavir-ir:assignment-instruction)
+	(let ((input (first (cleavir-ir:inputs instruction)))
+	      (output (first (cleavir-ir:outputs instruction))))
+	  (filter-partition
+	   (if (and (typep input 'cleavir-ir:lexical-location)
+		    (typep output 'cleavir-ir:lexical-location))
+	       (add-equivalence output input temp)
+	       temp)
+	   live-locations))
+	(filter-partition temp live-locations))))
+
 (defun simple-value-numbering (initial-instruction)
   (declare (ignore initial-instruction))
   (let ((*constant-designators* (make-hash-table :test #'eq)))))
