@@ -4,6 +4,13 @@
 (defclass value-designator ()
   ())
 
+;;; A list of instances of this class is used to represent a
+;;; partition.
+(defclass entry ()
+  ((%location :initarg :location :reader location)
+   (%value :initarg :value :reader value)
+   (%new-p :initarg :new-p :reader new-p)))
+
 ;;; This variable holds and EQ hash table mapping constants to value
 ;;; designators.
 (defvar *constant-designators*)
