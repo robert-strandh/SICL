@@ -24,18 +24,18 @@
 
 (defun partition-intersection (partition1 partition2)
   (let ((result partition1))
-    (loop for value2 in partition2
-	  for (location . designator2) = value2
-	  for value1 = (assoc location result :test #'eq)
-	  for designator1 = (cdr value1)
-	  do (cond ((null value1)
-		    (push value2 result))
+    (loop for pair2 in partition2
+	  for (location . designator2) = pair2
+	  for pair1 = (assoc location result :test #'eq)
+	  for designator1 = (cdr pair1)
+	  do (cond ((null pair1)
+		    (push pair2 result))
 		   ((eq designator1 designator2)
 		    nil)
 		   (t
 		    (setf result
 			  (cons (cons location nil)
-				(remove value1 result :test #'eq))))))
+				(remove pair1 result :test #'eq))))))
     result))
 
 (defun simple-value-numbering (initial-instruction)
