@@ -15,6 +15,9 @@
       (setf (gethash constant *constant-designators*) result))
     result))
 
+(defun remove-location (location partition)
+  (remove location partition :key #'car :test #'eq))
+
 (defun simple-value-numbering (initial-instruction)
   (declare (ignore initial-instruction))
   (let ((*constant-designators* (make-hash-table :test #'eq)))))
