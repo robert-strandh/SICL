@@ -70,10 +70,19 @@
 				   (remove entry1 result :test #'eq)))))))
     result))
 
+(defun same-partition-p (new old)
+  (and (= (length new) (length old))
+       (loop for new-entry in new
+	     for location = (location new-entry)
+	     for old-entry = (find location old :test #'eq :key location)
+	     always (and (not (null old-entry))
+			 (or (and (new-p old-entry) (new-p old-entry))
+			     (eq (value new-entry) (value old-entry)))))))
+
 ;;; Keep an entry only if the location is live.
 (defun filter-partition (partition live-locations)
   (remove-if-not (lambda (entry)
-		   (member (location pair) live-locations :test #'eq))
+		   (member (location entry) live-locations :test #'eq))
 		 partition))
 
 (defun simple-value-numbering (initial-instruction)
