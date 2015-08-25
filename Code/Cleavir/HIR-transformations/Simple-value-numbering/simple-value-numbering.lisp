@@ -100,7 +100,8 @@
   (let ((temp partition)
 	(live-locations (cleavir-liveness:live-after liveness instruction)))
     (loop for output in (cleavir-ir:outputs instruction)
-	  do (setf temp (remove-location temp output)))
+	  do (setf temp (remove-location temp output))
+	     (push (new-value output) temp))
     (filter-partition temp live-locations)))
 
 (defmethod update-for-meet
