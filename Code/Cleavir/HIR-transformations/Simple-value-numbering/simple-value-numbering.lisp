@@ -85,6 +85,8 @@
 		   (member (location entry) live-locations :test #'eq))
 		 partition))
 
+(defgeneric update-for-assignment (partition input output))
+
 ;;; This function is used in order to update a partition according to
 ;;; a single instruction.
 (defgeneric update-for-meet (instruction partition liveness))
