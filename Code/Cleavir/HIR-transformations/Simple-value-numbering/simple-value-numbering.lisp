@@ -94,6 +94,15 @@
       partition
       (add-equivalence output input (remove-location partition output))))
 
+(defmethod update-for-assignment (partition
+				  (input cleavir-ir:load-time-value-input)
+				  (output cleavir-ir:lexical-location))
+  (if (cleavir-hir-transformations:load-time-value-is-constant-p input)
+      (let ((c (cleavir-hir-transformations:load-time-value-constant input)))
+	(cons (inherit-value output (constant-designator c))
+	      partition))
+      (cons (new-value output) (remove-location output partition))))
+
 ;;; This function is used in order to update a partition according to
 ;;; a single instruction.
 (defgeneric update-for-meet (instruction partition liveness))
