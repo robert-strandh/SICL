@@ -42,11 +42,13 @@
   (remove location partition :key #'location :test #'eq))
 
 (defun add-equivalence (location1 location2 partition)
-  (cons (inherit-value location1
-		       (value (find location2 partition
-				    :test #'eq
-				    :key #'location)))
-	partition))
+  (let ((designator (find location2 partition
+			  :test #'eq
+			  :key #'location)))
+    (cons (if (null designator)
+	      (new-value location1)
+	      (inherit-value location1 (value designator)))
+	  partition)))
 
 ;;; Compute the intersection of two partitions.
 ;;;
