@@ -5,6 +5,7 @@
   (:export
    #:traverse
    #:load-time-value-is-constant-p
+   #:load-time-value-constant
    #:convert-constant-to-immediate
    #:convert-constants-to-immediate
    #:eliminate-load-time-value-inputs
