@@ -94,7 +94,9 @@
 ;;; then we make the input equivalent to the output in the new
 ;;; partition.  Before returning the result, we filter it according to
 ;;; the locations that are live after the instruction.
-(defun update-for-meet (instruction partition liveness)
+(defgeneric update-for-meet (instruction partition liveness))
+
+(defmethod update-for-meet (instruction partition liveness)
   (let ((temp partition)
 	(live-locations (cleavir-liveness:live-after liveness instruction)))
     (loop for output in (cleavir-ir:outputs instruction)
