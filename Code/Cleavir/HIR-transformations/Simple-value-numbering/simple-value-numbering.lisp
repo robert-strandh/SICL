@@ -39,9 +39,9 @@
 
 (defun add-equivalence (location1 location2 partition)
   (cons (inherit-value location1
-		       (location (find location2 partition
-				       :test #'eq
-				       :key #'location)))
+		       (value (find location2 partition
+				    :test #'eq
+				    :key #'location)))
 	partition))
 
 ;;; Compute the intersection of two partitions.
