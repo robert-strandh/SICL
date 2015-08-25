@@ -101,16 +101,22 @@
 	(live-locations (cleavir-liveness:live-after liveness instruction)))
     (loop for output in (cleavir-ir:outputs instruction)
 	  do (setf temp (remove-location temp output)))
-    (if (typep instruction 'cleavir-ir:assignment-instruction)
-	(let ((input (first (cleavir-ir:inputs instruction)))
-	      (output (first (cleavir-ir:outputs instruction))))
-	  (filter-partition
-	   (if (and (typep input 'cleavir-ir:lexical-location)
-		    (typep output 'cleavir-ir:lexical-location))
-	       (add-equivalence output input temp)
-	       temp)
-	   live-locations))
-	(filter-partition temp live-locations))))
+    (filter-partition temp live-locations)))
+
+(defmethod update-for-meet
+    ((instruction cleavir-ir:assignment-instruction) partition liveness)
+  (let ((temp partition)
+	(live-locations (cleavir-liveness:live-after liveness instruction)))
+    (loop for output in (cleavir-ir:outputs instruction)
+	  do (setf temp (remove-location temp output)))
+    (let ((input (first (cleavir-ir:inputs instruction)))
+	  (output (first (cleavir-ir:outputs instruction))))
+      (filter-partition
+       (if (and (typep input 'cleavir-ir:lexical-location)
+		(typep output 'cleavir-ir:lexical-location))
+	   (add-equivalence output input temp)
+	   temp)
+       live-locations))))
 
 (defun simple-value-numbering (initial-instruction)
   (cleavir-meter:with-meter (m *simple-value-numbering-meter*)
