@@ -81,7 +81,7 @@
   (and (= (length new) (length old))
        (loop for new-entry in new
 	     for location = (location new-entry)
-	     for old-entry = (find location old :test #'eq :key location)
+	     for old-entry = (find location old :test #'eq :key #'location)
 	     always (and (not (null old-entry))
 			 (or (and (new-p old-entry) (new-p old-entry))
 			     (eq (value new-entry) (value old-entry)))))))
