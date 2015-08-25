@@ -87,6 +87,13 @@
 
 (defgeneric update-for-assignment (partition input output))
 
+(defmethod update-for-assignment (partition
+				  (input cleavir-ir:lexical-location)
+				  (output cleavir-ir:lexical-location))
+  (if (eq input output)
+      partition
+      (add-equivalence output input (remove-location partition output))))
+
 ;;; This function is used in order to update a partition according to
 ;;; a single instruction.
 (defgeneric update-for-meet (instruction partition liveness))
