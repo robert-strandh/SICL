@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export
    #:traverse
+   #:load-time-value-is-constant-p
    #:convert-constant-to-immediate
    #:convert-constants-to-immediate
    #:eliminate-load-time-value-inputs
