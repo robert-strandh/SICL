@@ -98,7 +98,7 @@
 				  (output cleavir-ir:lexical-location))
   (if (eq input output)
       partition
-      (add-equivalence output input (remove-location partition output))))
+      (add-equivalence output input (remove-location output partition))))
 
 (defmethod update-for-assignment (partition
 				  (input cleavir-ir:load-time-value-input)
@@ -123,7 +123,7 @@
   (declare (ignore liveness))
   (let ((temp partition))
     (loop for output in (cleavir-ir:outputs instruction)
-	  do (setf temp (remove-location temp output))
+	  do (setf temp (remove-location output temp))
 	     (push (new-value output) temp))
     temp))
 
