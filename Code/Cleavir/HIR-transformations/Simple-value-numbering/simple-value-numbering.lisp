@@ -4,6 +4,9 @@
 (defclass value-designator ()
   ())
 
+(defclass constant-value-designator (value-designator)
+  ((%value :initarg :value :reader value)))
+
 ;;; A list of instances of this class is used to represent a
 ;;; partition.
 (defclass entry ()
@@ -30,7 +33,8 @@
 (defun constant-designator (constant)
   (let ((result (gethash constant *constant-designators*)))
     (when (null result)
-      (setf result (make-instance 'value-designator))
+      (setf result (make-instance 'constant-value-designator
+		     :value constant))
       (setf (gethash constant *constant-designators*) result))
     result))
 
