@@ -2,4 +2,4 @@
 
 (defpackage #:cleavir-simple-value-numbering
   (:use #:common-lisp)
-  (:export))
+  (:export #:simple-value-numbering))
