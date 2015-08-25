@@ -1,7 +1,9 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir-simple-value-numbering
-  :depends-on (:cleavir-meter :cleavir-liveness)
+  :depends-on (:cleavir-meter
+	       :cleavir-hir-transformations
+	       :cleavir-liveness)
   :serial t
   :components
   ((:file "packages")
