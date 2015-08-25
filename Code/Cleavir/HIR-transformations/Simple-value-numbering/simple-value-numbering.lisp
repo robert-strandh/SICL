@@ -88,6 +88,11 @@
 
 (defgeneric update-for-assignment (partition input output))
 
+(defmethod update-for-assignment (partition input output)
+  (declare (ignore partition))
+  (error "Attempt to update for assignment with input ~s and output ~s."
+	 input output))
+
 (defmethod update-for-assignment (partition
 				  (input cleavir-ir:lexical-location)
 				  (output cleavir-ir:lexical-location))
