@@ -130,15 +130,9 @@
 (defmethod update-for-meet
     ((instruction cleavir-ir:assignment-instruction) partition liveness)
   (declare (ignore liveness))
-  (let ((temp partition))
-    (loop for output in (cleavir-ir:outputs instruction)
-	  do (setf temp (remove-location temp output)))
-    (let ((input (first (cleavir-ir:inputs instruction)))
-	  (output (first (cleavir-ir:outputs instruction))))
-      (if (and (typep input 'cleavir-ir:lexical-location)
-	       (typep output 'cleavir-ir:lexical-location))
-	  (add-equivalence output input temp)
-	  temp))))
+  (update-for-assignment partition
+			 (first (cleavir-ir:inputs instruction))
+			 (first (cleavir-ir:outputs instruction))))
 
 (defun simple-value-numbering (initial-instruction)
   (cleavir-meter:with-meter (m *simple-value-numbering-meter*)
