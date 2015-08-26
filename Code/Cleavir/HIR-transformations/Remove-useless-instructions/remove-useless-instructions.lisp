@@ -1,5 +1,7 @@
 (cl:in-package #:cleavir-remove-useless-instructions)
 
+(defgeneric instruction-may-be-removed-p (instruction))
+
 (defun remove-useless-instructions (initial-instruction)
   (cleavir-ir:reinitialize-data initial-instruction)
   (let ((useless-instructions '()))
