@@ -1,12 +1,5 @@
 (cl:in-package #:cleavir-boolean-elimination)
 
-;;; Return true if and only if INPUT is a LOAD-TIME-VALUE with a
-;;; constant form in it, and if that constant is EQ to BOOLEAN.
-(defun boolean-input-p (input boolean)
-  (and (typep input 'cleavir-ir:load-time-value-input)
-       (cleavir-hir-transformations:load-time-value-is-constant-p input)
-       (eq boolean (cleavir-hir-transformations:load-time-value-constant input))))
-
 ;;; We search for pairs of assignment instructions I1 and I2 such that
 ;;; I1 and I2 are the only predecessors of some instruction I, I1 and
 ;;; I2 assign to the same lexical location, and the inputs of I1 and

@@ -5,5 +5,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "boolean-input-p")
    (:file "find-boolean-assignments")
    (:file "find-boolean-tests")))
