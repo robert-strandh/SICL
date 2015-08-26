@@ -1,0 +1,28 @@
+(cl:in-package #:cleavir-boolean-elimination)
+
+(defun boolean-input-p (input boolean)
+  (and (typep input 'cleavir-ir:load-time-value-input)
+       (cleavir-hir-transformations:load-time-value-is-constant-p input)
+       (eq boolean (cleavir-hir-transformations:load-time-value-constant input))))
+
+(defun find-boolean-assignments (initial-instruction)
+  (let ((result '()))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (let ((predecessors (cleavir-ir:predecessors instruction)))
+	 (when (= (length predecessors) 2)
+	   (destructuring-bind (p1 p2) predecessors
+	     (when (and (typep p1 'cleavir-ir:assignment-instruction)
+			(typep p2 'cleavir-ir:assignment-instruction))
+	       (let ((i1 (first (cleavir-ir:inputs p1)))
+		     (o1 (first (cleavir-ir:outputs p1)))
+		     (i2 (first (cleavir-ir:inputs p2)))
+		     (o2 (first (cleavir-ir:outputs p2))))
+		 (when (and (eq o1 o2)
+			    (or (and (boolean-input-p i1 nil)
+				     (boolean-input-p i2 t))
+				(and (boolean-input-p i1 t)
+				     (boolean-input-p i2 nil))))
+		   (push (cons p1 p2) result))))))))
+     initial-instruction)
+    result))

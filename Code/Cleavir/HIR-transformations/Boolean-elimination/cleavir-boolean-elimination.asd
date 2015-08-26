@@ -4,4 +4,5 @@
   :depends-on (:cleavir-simple-value-numbering)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "find-boolean-assignments")))
