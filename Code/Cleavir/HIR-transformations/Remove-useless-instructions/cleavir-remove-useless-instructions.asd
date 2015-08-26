@@ -3,4 +3,4 @@
 (defsystem :cleavir-remove-useless-instructions
   :serial t
   :components
-  ())
+  ((:file "packages")))
