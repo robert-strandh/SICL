@@ -19,6 +19,10 @@
     ((instruction cleavir-ir:funcall-instruction))
   nil)
 
+(defmethod instruction-may-be-removed-p
+    ((instruction cleavir-ir:return-instruction))
+  nil)
+
 (defun remove-useless-instructions (initial-instruction)
   (cleavir-ir:reinitialize-data initial-instruction)
   (let ((useless-instructions '()))
