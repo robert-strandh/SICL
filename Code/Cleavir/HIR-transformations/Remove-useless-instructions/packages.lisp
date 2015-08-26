@@ -2,4 +2,4 @@
 
 (defpackage #:cleavir-remove-useless-instructions
   (:use #:common-lisp)
-  (:export))
+  (:export #:remove-useless-instructions))
