@@ -28,4 +28,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "meter")
    (:file "remove-useless-instructions")))
+
+;;  LocalWords:  FUNCALL
