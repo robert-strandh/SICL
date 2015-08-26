@@ -1,4 +1,4 @@
-(in-package #:sicl-additional-conditions)
+(cl:in-package #:sicl-additional-conditions)
 
 ;;;; Copyright (c) 2008, 2009, 2010, 2012, 2015
 ;;;;
