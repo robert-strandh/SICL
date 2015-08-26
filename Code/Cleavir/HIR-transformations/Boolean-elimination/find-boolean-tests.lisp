@@ -1,5 +1,9 @@
 (cl:in-package #:cleavir-boolean-elimination)
 
+;;; We search for EQ-INSTRUCTIONs where one of the inputs is a
+;;; LOAD-TIME-VALUE-INPUT with a constant form of NIL, meaning that
+;;; the instruction tests its other input as a Boolean.  We return a
+;;; list of such instructions in the program.
 (defun find-boolean-tests (initial-instruction)
   (let ((result '()))
     (cleavir-ir:map-instructions-arbitrary-order
