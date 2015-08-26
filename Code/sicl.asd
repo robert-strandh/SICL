@@ -1,4 +1,6 @@
-(asdf:defsystem :sicl
+(cl:in-package #:asdf-user)
+
+(defsystem :sicl
   :name "sicl"
   :components ((:file "packages")
 	       (:file "tags" :depends-on ("packages"))
