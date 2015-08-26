@@ -7,6 +7,10 @@
        (loop for output in (cleavir-ir:outputs instruction)
 	     always (null (cleavir-ir:using-instructions output)))))
 
+(defmethod instruction-may-be-removed-p
+    ((instruction cleavir-ir:enter-instruction))
+  nil)
+
 (defun remove-useless-instructions (initial-instruction)
   (cleavir-ir:reinitialize-data initial-instruction)
   (let ((useless-instructions '()))
