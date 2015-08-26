@@ -282,6 +282,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking EQ.
+
+(defmethod check-special-form-syntax ((head (eql 'cleavir-primop:eq)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking CAR.
 
 (defmethod check-special-form-syntax ((head (eql 'cleavir-primop:car)) form)
