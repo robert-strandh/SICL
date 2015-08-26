@@ -25,14 +25,7 @@
   ())
 
 (define-condition two-identical-modifiers (found-something-else-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-start-position condition stream)
-     (format stream
-	     "found two identical modifiers `~a' at index ~a"
-	     (char (control-string condition) (index condition))
-	     (index condition)))))
+  ())
 
 (define-condition more-than-two-modifiers (found-something-else-error)
   ()

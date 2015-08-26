@@ -36,3 +36,13 @@
               but found the character `~a' instead"
 	  (index condition)
 	  (char (control-string condition) (index condition))))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition two-identical-modifiers)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-start-position condition stream)
+  (format stream
+	  "found two identical modifiers `~a' at index ~a"
+	  (char (control-string condition) (index condition))
+	  (index condition)))
