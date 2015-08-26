@@ -3,4 +3,4 @@
 (defsystem :cleavir-boolean-elimination
   :serial t
   :components
-  ())
+  ((:file "packages")))
