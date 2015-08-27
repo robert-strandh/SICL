@@ -46,3 +46,13 @@
 	  "found two identical modifiers `~a' at index ~a"
 	  (char (control-string condition) (index condition))
 	  (index condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition more-than-two-modifiers)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-start-position condition stream)
+  (format stream
+	  "found a sequence of more than two modifiers at index ~a"
+	  (index condition)))
+

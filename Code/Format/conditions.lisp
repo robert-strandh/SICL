@@ -28,13 +28,7 @@
   ())
 
 (define-condition more-than-two-modifiers (found-something-else-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-start-position condition stream)
-     (format stream
-	     "found a sequence of more than two modifiers at index ~a"
-	     (index condition)))))
+  ())
 
 (define-condition unknown-format-directive (found-something-else-error)
   ()
