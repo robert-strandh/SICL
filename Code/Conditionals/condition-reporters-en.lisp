@@ -19,10 +19,11 @@
 (defmethod cleavir-i18n:report-condition ((condition malformed-body)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "Expected a proper list of forms," stream)
-  (terpri stream)
-  (princ "but found: " stream)
-  (print (body condition) stream))
+  (format stream
+          "Expected a proper list of forms,~@
+           but the following was given instead:~@
+           ~s"
+	  (body condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition malformed-cond-clauses)
 					  stream
