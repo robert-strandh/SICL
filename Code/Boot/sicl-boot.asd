@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-boot
-  :depends-on (:sicl-extrinsic-environment
+  :depends-on (:cleavir-simple-value-numbering
+	       :sicl-extrinsic-environment
 	       :sicl-clos-boot-support)
   :serial t
   :components
