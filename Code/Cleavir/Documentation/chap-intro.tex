@@ -21,7 +21,9 @@ generic functions that allow \sysname{} to access the compilation and
 evaluation environments of the implementation.  \sysname{} uses those
 functions to turn a form into an \emph{abstract syntax tree}, or AST.
 \seechap{chap-abstract-syntax-tree} \sysname{} then translates the AST
-into an intermediate representation called MIR.  \seechap{chap-ir}
+into an intermediate representation called HIR.%
+\footnote{HIR stands for High-level Intermediate Representation.}
+\seechap{chap-ir}
 This translation can be customized by the implementation.  \sysname{}
 then provides a number of transformations on this representation such
 as:
@@ -34,9 +36,14 @@ as:
 \end{itemize}
 
 Once these implementation-independent and backend-independent
-transformations have been accomplished, the MIR notation is gradually
+transformations have been accomplished, the HIR notation is gradually
 transformed into a notation that is specific both to the
-implementation and to the backend.  The notation becomes
+implementation and to the backend.  The result of the first step of
+this transformation is an intermediate form called MIR.%
+\footnote{MIR means Medium-level Intermediate Representation.}  MIR
+differs from HIR in that it exposes address calculations and memory
+accesses using those addresses, whereas HIR manipulates only
+\commonlisp{} objects.  The notation becomes even more
 backend-specific in that it introduces features such as registers and
 stack frames.  The notation also becomes implementation specific in
 that it exposes choices such as argument passing.
