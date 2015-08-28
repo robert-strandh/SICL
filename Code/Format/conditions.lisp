@@ -31,14 +31,7 @@
   ())
 
 (define-condition unknown-format-directive (found-something-else-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-start-position condition stream)
-     (format stream
-	     "unknown format directive `~a' at index ~a"
-	     (char (control-string condition) (index condition))
-	     (index condition)))))
+  ())
 
 ;;; The base class of all syntax errors.  When one of these is
 ;;; signaled, we have correctly parsed the directive, so we know where
