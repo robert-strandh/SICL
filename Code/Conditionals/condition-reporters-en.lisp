@@ -28,10 +28,11 @@
 (defmethod cleavir-i18n:report-condition ((condition malformed-cond-clauses)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "Expected a proper list of cond clauses," stream)
-  (terpri stream)
-  (princ "but found: " stream)
-  (print (clauses condition) stream))
+  (format stream
+          "Expected a proper list of cond clauses,~@
+           but the following was given instead:~@
+           ~s"
+	  (clauses condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition malformed-cond-clause)
 					  stream
