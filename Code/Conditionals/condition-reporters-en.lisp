@@ -37,12 +37,12 @@
 (defmethod cleavir-i18n:report-condition ((condition malformed-cond-clause)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "Expected a cond clause of the form," stream)
-  (terpri stream)
-  (princ "(test-form form*)," stream)
-  (terpri stream)
-  (princ "but found: " stream)
-  (print (clause condition) stream))
+  (format stream
+	  "Expected a cond clause of the form,~@
+           (test-form form*),~@
+           but the following was given instead:~@
+           ~s"
+	  (clause condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition malformed-case-clauses)
 					  stream
