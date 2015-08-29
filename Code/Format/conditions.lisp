@@ -40,13 +40,7 @@
   ((%directive :initarg :directive :reader directive)))
 
 (define-condition unknown-directive-character (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "unknown directive character: ~c~%"
-	     (directive-character (directive condition))))))
+  ())
 
 ;;; FIXME, report the index
 (define-condition directive-takes-no-modifiers (directive-syntax-error)

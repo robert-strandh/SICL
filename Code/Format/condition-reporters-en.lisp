@@ -77,3 +77,12 @@
 	  "unknown format directive `~a' at index ~a"
 	  (char (control-string condition) (index condition))
 	  (index condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition unknown-directive-character)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream
+	  "unknown directive character: ~c~%"
+	  (directive-character (directive condition))))
