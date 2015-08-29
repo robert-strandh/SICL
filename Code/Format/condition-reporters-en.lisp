@@ -7,6 +7,18 @@
 	  (control-string condition)
 	  (tilde-position condition)))
 
+(defun report-control-string-and-directive-position (condition stream)
+  (with-accessors ((control-string control-string)
+		   (start start)
+		   (end end))
+    (directive condition)
+    (format stream
+	    "In the control-string \"~a\",~%in the directive that ~
+             starts at position ~a and ends at position ~a,~%"
+	    control-string
+	    start
+	    end)))
+
 (defmethod cleavir-i18n:report-condition
     ((condition end-of-control-string-error)
      stream
@@ -65,6 +77,3 @@
 	  "unknown format directive `~a' at index ~a"
 	  (char (control-string condition) (index condition))
 	  (index condition)))
-
-
-

@@ -39,18 +39,6 @@
 (define-condition directive-syntax-error (format-error)
   ((%directive :initarg :directive :reader directive)))
 
-(defun report-control-string-and-directive-position (condition stream)
-  (with-accessors ((control-string control-string)
-		   (start start)
-		   (end end))
-    (directive condition)
-    (format stream
-	    "In the control-string \"~a\",~%in the directive that ~
-             starts at position ~a and ends at position ~a,~%"
-	    control-string
-	    start
-	    end)))
-
 (define-condition unknown-directive-character (directive-syntax-error)
   ()
   (:report
