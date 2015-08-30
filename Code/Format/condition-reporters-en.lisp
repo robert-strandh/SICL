@@ -86,3 +86,13 @@
   (format stream
 	  "unknown directive character: ~c~%"
 	  (directive-character (directive condition))))
+
+;;; FIXME, report the index
+(defmethod cleavir-i18n:report-condition
+    ((condition directive-takes-no-modifiers)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream
+	  "found a modifier at index,~%but this ~
+           directive takes no modifiers"))

@@ -44,13 +44,7 @@
 
 ;;; FIXME, report the index
 (define-condition directive-takes-no-modifiers (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "found a modifier at index,~%but this ~
-              directive takes no modifiers"))))
+  ())
 
 ;;; FIXME, report the index
 (define-condition directive-takes-only-colon (directive-syntax-error)
