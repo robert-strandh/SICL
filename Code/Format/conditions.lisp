@@ -46,15 +46,8 @@
 (define-condition directive-takes-no-modifiers (directive-syntax-error)
   ())
 
-;;; FIXME, report the index
 (define-condition directive-takes-only-colon (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "found an at-sign at index,~%but this directive ~
-              takes only the colon modifier"))))
+  ())
 
 ;;; FIXME, report the index
 (define-condition directive-takes-only-at-sign (directive-syntax-error)
