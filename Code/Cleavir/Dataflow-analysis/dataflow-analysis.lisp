@@ -14,8 +14,8 @@
 
 (defclass operation ()
   ((%instruction :initarg :instruction :reader instruction)
-   (%inputs :initform '() :initarg inputs :accessor inputs)
-   (%outputs :initform '() :initarg outputs :accessor outputs)))
+   (%inputs :initform '() :initarg inputs :reader inputs)
+   (%outputs :initform '() :initarg outputs :reader outputs)))
 
 (defclass dataflow ()
   (;; This hash table maps each instruction to its corresponding
