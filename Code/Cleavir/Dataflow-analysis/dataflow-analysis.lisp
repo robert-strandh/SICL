@@ -6,4 +6,8 @@
    (%outputs :initform '() :initarg outputs :accessor outputs)))
 
 (defclass dataflow ()
-  ((%operations :initarg :operations :accessor operations)))
+  (;; This hash table maps each instruction to its corresponding
+   ;; operation
+   (%operations :initform (make-hash-table :test #'eq)
+		:initarg :operations
+		:accessor operations)))
