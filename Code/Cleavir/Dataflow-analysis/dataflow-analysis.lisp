@@ -7,6 +7,9 @@
 (defclass input (port)
   ((%outputs :initform '() :initarg outputs :accessor outputs)))
 
+(defclass output (port)
+  ((%inputs :initform '() :initarg inputs :accessor inputs)))
+
 (defclass operation ()
   ((%instruction :initarg :instruction :reader instruction)
    (%inputs :initform '() :initarg inputs :accessor inputs)
