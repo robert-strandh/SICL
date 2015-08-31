@@ -3,6 +3,7 @@
 (defclass port ()
   (;; The operation to which this port belongs.
    (%operation :initarg :operation :reader operation)
+   ;; The datum that this port is using or defining.
    (%datum :initarg :datum :reader datum)))
 
 (defclass input (port)
