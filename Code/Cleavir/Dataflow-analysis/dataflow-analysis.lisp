@@ -4,6 +4,9 @@
   ((%operation :initarg :operation :reader operation)
    (%datum :initarg :datum :reader datum)))
 
+(defclass input (port)
+  ((%outputs :initform '() :initarg outputs :accessor outputs)))
+
 (defclass operation ()
   ((%instruction :initarg :instruction :reader instruction)
    (%inputs :initform '() :initarg inputs :accessor inputs)
