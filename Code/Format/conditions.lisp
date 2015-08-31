@@ -42,7 +42,6 @@
 (define-condition unknown-directive-character (directive-syntax-error)
   ())
 
-;;; FIXME, report the index
 (define-condition directive-takes-no-modifiers (directive-syntax-error)
   ())
 
