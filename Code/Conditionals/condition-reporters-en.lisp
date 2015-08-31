@@ -56,12 +56,12 @@
 (defmethod cleavir-i18n:report-condition ((condition malformed-case-clause)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "Expected a case clause of the form," stream)
-  (terpri stream)
-  (princ "(keys form*)," stream)
-  (terpri stream)
-  (princ "but found: " stream)
-  (print (clause condition) stream))
+  (format stream
+	  "Expected a case clause of the form,~@
+           (keys form*),~@
+           but the following was given instead:~@
+           ~s"
+	  (clause condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition otherwise-clause-not-last)
 					  stream
