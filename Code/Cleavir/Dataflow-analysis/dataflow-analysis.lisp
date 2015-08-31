@@ -28,8 +28,20 @@
   (let ((result (make-instance 'dataflow)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
-       (setf (gethash instruction (operations result))
-	     (make-instance 'operation
-	       :instruction instruction)))
+       (let* ((operation (make-instance 'operation
+			   :instruction instruction))
+	      (inputs (loop for input in (cleavir-ir:inputs instruction)
+			    collect (make-instance 'input
+				      :operation operation
+				      :datum input)))
+	      (outputs (loop for output in (cleavir-ir:outputs instruction)
+			     collect (make-instance 'output
+				       :operation operation
+				       :datum output))))
+	 (reinitialize-instance operation
+				:inputs inputs
+				:outputs outputs)
+	 (setf (gethash instruction (operations result))
+	       operation)))
      initial-instruction)
     result))
