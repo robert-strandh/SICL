@@ -1,7 +1,8 @@
 (cl:in-package #:cleavir-dataflow-analysis)
 
 (defclass port ()
-  ((%operation :initarg :operation :reader operation)
+  (;; The operation to which this port belongs.
+   (%operation :initarg :operation :reader operation)
    (%datum :initarg :datum :reader datum)))
 
 (defclass input (port)
