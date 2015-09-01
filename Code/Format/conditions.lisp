@@ -58,15 +58,8 @@
 	     "found a colon at index,~%but this directive ~
               takes only the at-sign modifier"))))
 
-;;; FIXME, report the index
 (define-condition directive-takes-at-most-one-modifier (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "found both modifiers,~%but this directive ~
-              takes at most one modifier"))))
+  ())
 
 (define-condition too-many-parameters (directive-syntax-error)
   ((%at-most-how-many :initarg :at-most-how-many :reader at-most-how-many)

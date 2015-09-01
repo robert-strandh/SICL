@@ -107,3 +107,12 @@
 	  "found an at-sign at index,~%but this directive ~
            takes only the colon modifier"))
 
+;;; FIXME, report the index
+(defmethod cleavir-i18n:report-condition
+    ((condition directive-takes-at-most-one-modifier)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream
+	  "found both modifiers,~%but this directive ~
+           takes at most one modifier"))
