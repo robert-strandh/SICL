@@ -66,10 +66,11 @@
 (defmethod cleavir-i18n:report-condition ((condition otherwise-clause-not-last)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "The `otherwise' or `t' clause must be last in a case form," stream)
-  (terpri stream)
-  (princ "but but it was followed by: " stream)
-  (print (clauses condition) stream))
+  (format stream
+	  "The `otherwise' or `t' clause must be last in a case form,~@
+           but but it was followed by:~@
+           ~s"
+	  (clauses condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition malformed-keys)
 					  stream
