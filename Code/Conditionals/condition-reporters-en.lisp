@@ -75,10 +75,11 @@
 (defmethod cleavir-i18n:report-condition ((condition malformed-keys)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "Expected a designator for a list of keys," stream)
-  (terpri stream)
-  (princ "but found: " stream)
-  (print (keys condition) stream))
+  (format stream
+	  "Expected a designator for a list of keys,~@
+           but the following was given instead:~@
+           ~s"
+	  (keys condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition malformed-typecase-clauses)
 					  stream
