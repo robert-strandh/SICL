@@ -109,6 +109,16 @@
 
 ;;; FIXME, report the index
 (defmethod cleavir-i18n:report-condition
+    ((condition directive-takes-only-at-sign)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream
+	  "found a colon at index,~%but this directive ~
+           takes only the at-sign modifier"))
+
+;;; FIXME, report the index
+(defmethod cleavir-i18n:report-condition
     ((condition directive-takes-at-most-one-modifier)
      stream
      (language cleavir-i18n:english))

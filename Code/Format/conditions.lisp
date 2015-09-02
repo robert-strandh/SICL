@@ -50,13 +50,7 @@
 
 ;;; FIXME, report the index
 (define-condition directive-takes-only-at-sign (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "found a colon at index,~%but this directive ~
-              takes only the at-sign modifier"))))
+  ())
 
 (define-condition directive-takes-at-most-one-modifier (directive-syntax-error)
   ())
