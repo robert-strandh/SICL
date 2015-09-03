@@ -126,3 +126,13 @@
   (format stream
 	  "found both modifiers,~%but this directive ~
            takes at most one modifier"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition too-many-parameters)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream
+	  "the directive takes at most ~a parameters,~%but ~a found"
+	  (at-most-how-many condition)
+	  (how-many-found condition)))

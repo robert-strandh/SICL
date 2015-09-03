@@ -57,14 +57,7 @@
 
 (define-condition too-many-parameters (directive-syntax-error)
   ((%at-most-how-many :initarg :at-most-how-many :reader at-most-how-many)
-   (%how-many-found :initarg :how-many-found :reader how-many-found))
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "the directive takes at most ~a parameters,~%but ~a found"
-	     (at-most-how-many condition)
-	     (how-many-found condition)))))
+   (%how-many-found :initarg :how-many-found :reader how-many-found)))
 
 (define-condition parameter-type-error (directive-syntax-error type-error)
   ()
