@@ -84,10 +84,11 @@
 (defmethod cleavir-i18n:report-condition ((condition malformed-typecase-clauses)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "Expected a proper list of typecase clauses," stream)
-  (terpri stream)
-  (princ "but found: " stream)
-  (print (clauses condition) stream))
+  (format stream
+	  "Expected a proper list of typecase clauses,~@
+           but the following was given instead:~@
+           ~s"
+	  (clauses condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition malformed-typecase-clause)
 					  stream
