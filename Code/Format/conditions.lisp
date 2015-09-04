@@ -60,13 +60,7 @@
    (%how-many-found :initarg :how-many-found :reader how-many-found)))
 
 (define-condition parameter-type-error (directive-syntax-error type-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (format stream
-	     "~a was required as parameter, but ~a was found"
-	     (type-name (type-error-expected-type condition))
-	     (type-error-datum condition)))))
+  ())
 
 ;;; Runtime conditions
 

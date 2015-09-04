@@ -136,3 +136,12 @@
 	  "the directive takes at most ~a parameters,~%but ~a found"
 	  (at-most-how-many condition)
 	  (how-many-found condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition parameter-type-error)
+     stream
+     (language cleavir-i18n:english))
+  (format stream
+	  "~a was required as parameter, but ~a was found"
+	  (type-name (type-error-expected-type condition))
+	  (type-error-datum condition)))
