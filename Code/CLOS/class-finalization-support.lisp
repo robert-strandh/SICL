@@ -302,7 +302,7 @@
 	 (slot-count
 	   (count :instance effective-slots
 		  :test #'eq :key #'slot-definition-allocation)))
-    (setf (instance-size class) (+ slot-count 2))
+    (setf (instance-size class) slot-count)
     (setf (class-slots class) effective-slots))
   (setf (class-default-initargs class) (compute-default-initargs class))
   ;; We set FINALIZED-P to TRUE before allocating the prototype
