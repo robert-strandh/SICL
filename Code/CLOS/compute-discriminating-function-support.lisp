@@ -256,6 +256,16 @@
 		     `(car ',location)
 		     `(standard-instance-access instance ,location))))))
 
+(defun effective-method-from-writer-method (class method)
+  (let ((location (determine-slot-location class method)))
+    (compile nil
+	     `(lambda (new-value instance)
+		(declare (ignorable instance))
+		(setf ,(if (consp location)
+			   `(car ',location)
+			   `(standard-instance-access instance ,location))
+		      new-value)))))
+
 ;;; This function takes a method and, if it is a standard reader
 ;;; method or a standard writer method, it replaces it with a method
 ;;; that does a direct instance access according to the relevant class
