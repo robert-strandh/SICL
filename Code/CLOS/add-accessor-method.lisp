@@ -24,10 +24,11 @@
 			    function-name
 			    :lambda-list lambda-list))
 	 (specializers (list class))
+	 (slot-name (slot-definition-name slot-definition))
 	 (method-function
 	   (compile nil `(lambda (arguments next-methods)
 			   (declare (ignore arguments next-methods))
-			   (error "this should not happen"))))
+			   (slot-value (car arguments) ',slot-name))))
 	 (method-class (reader-method-class
 			class slot-definition
 			:lambda-list lambda-list
