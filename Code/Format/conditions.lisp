@@ -69,11 +69,7 @@
 (define-condition no-more-arguments (format-runtime-error)
   ;; maybe add the number of the argument that
   ;; was accessed?
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "an attempt was made to access more arguments than available"))))
+  ())
 
 (define-condition argument-type-error (format-runtime-error type-error)
   ()

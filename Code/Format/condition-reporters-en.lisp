@@ -145,3 +145,9 @@
 	  "~a was required as parameter, but ~a was found"
 	  (type-name (type-error-expected-type condition))
 	  (type-error-datum condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition no-more-arguments)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "an attempt was made to access more arguments than available"))
