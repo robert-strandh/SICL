@@ -226,6 +226,27 @@
 ;;; the slot with the right name, and finally getting its location by
 ;;; using SLOT-DEFINITION-LOCATION.
 
+;;; When the applicable methods for a particular list of classes has
+;;; no auxiliary methods and the most specific primary method is an
+;;; accessor method, then we can create an effective method that calls
+;;; STANDARD-INSTANCE-ACCESS or (SETF STANDARD-INSTANCE-ACCESS) as
+;;; appropriate.  For that, we need to know the slot position of the
+;;; particular slot in the class of the instance being accessed.  We
+;;; do that by first finding the name of the slot in the
+;;; DIRECT-SLOT-DEFINITION stored in the accessor method, using
+;;; CLASS-SLOTS on the class of the instance to find the EFFECTIVE
+;;; slots of the class, then finding the slot with the right name, and
+;;; finally getting its location by using SLOT-DEFINITION-LOCATION.
+
+(defun determine-slot-location (class accessor-method)
+  (let* ((slot-definition (accessor-method-slot-definition accessor-method))
+	 (slot-name (slot-definition-name slot-defintion))
+	 (effective-slots (class-slots class))
+	 (effective-slot (find slot-name effective-slots
+			       :key #'slot-definition-name
+			       :test #'eq)))
+    (slot-definition-location effective-slot)))
+
 ;;; This function takes a method and, if it is a standard reader
 ;;; method or a standard writer method, it replaces it with a method
 ;;; that does a direct instance access according to the relevant class
