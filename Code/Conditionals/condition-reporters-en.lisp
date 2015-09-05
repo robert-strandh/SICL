@@ -107,12 +107,14 @@
 (defmethod cleavir-i18n:report-condition ((condition ecase-type-error)
 					  stream
 					  (language cleavir-i18n:english))
-  (princ "No key matched in ecase expression." stream)
-  (terpri stream)
-  (princ "Offending datum: " stream)
-  (print (type-error-datum condition) stream)
-  (princ "Offending datum: " stream)
-  (print (type-error-expected-type condition) stream))
+  (format stream
+	  "No key matched in ecase expression.~@
+           Offending datum:~@
+           ~s~@
+           Offending type:~@
+           ~s"
+          (type-error-datum condition)
+	  (type-error-expected-type condition)))
 
 (defmethod cleavir-i18n:report-condition ((condition ccase-type-error)
 					  stream
