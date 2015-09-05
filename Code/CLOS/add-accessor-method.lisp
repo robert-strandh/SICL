@@ -59,10 +59,12 @@
 			    function-name
 			    :lambda-list lambda-list))
 	 (specializers (list (find-class t) class))
+	 (slot-name (slot-definition-name slot-definition))
 	 (method-function
 	   (compile nil `(lambda (arguments next-methods)
-			   (declare (ignore arguments next-methods))
-			   (error "this should not happen"))))
+			   (declare (ignore next-methods))
+			   (setf (slot-value (cadr arguments) ',slot-name)
+				 (car arguments)))))
 	 (method-class (writer-method-class
 			class slot-definition
 			:lambda-list lambda-list
