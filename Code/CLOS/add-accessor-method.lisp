@@ -27,7 +27,7 @@
 	 (slot-name (slot-definition-name slot-definition))
 	 (method-function
 	   (compile nil `(lambda (arguments next-methods)
-			   (declare (ignore arguments next-methods))
+			   (declare (ignore next-methods))
 			   (slot-value (car arguments) ',slot-name))))
 	 (method-class (reader-method-class
 			class slot-definition
