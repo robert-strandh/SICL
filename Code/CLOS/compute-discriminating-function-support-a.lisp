@@ -10,6 +10,11 @@
 	 ;; we might want to define it as a generic function.
 	 (active-arg-count (loop for x in specializer-profile
 				 count x))
+	 (lambda-list (generic-function-lambda-list generic-function))
+	 ;; This variable is true if and only if this generic function
+	 ;; has only required parameters.
+	 (only-required-p
+	   (null (intersection lambda-list lambda-list-keywords)))
 	 (class-number-vars (loop for x in specializer-profile
 				  when x collect (gensym)))
 	 (call-history (call-history generic-function)))
@@ -36,8 +41,11 @@
 	     (effective-method
 	       (compute-effective-method generic-function mc methods)))
       (return-from make-discriminating-function-lambda
-	`(lambda (&rest arguments)
-	   (apply ,effective-method arguments)))))
+	(if only-required-p
+	    `(lambda ,lambda-list
+	       (funcall ,effective-method ,@lambda-list))
+	    `(lambda (&rest arguments)
+	       (apply ,effective-method arguments))))))
     ;; Check for the special case when the call history is empty.  In
     ;; that case, we just generate a call to the default
     ;; discriminating function.
@@ -58,7 +66,9 @@
 	    do (when (null (assoc effective-method dico :test #'eq))
 		 (push (cons effective-method
 			     `(return-from b
-				(apply ,effective-method arguments)))
+				,(if only-required-p
+				     `(funcall ,effective-method ,@lambda-list)
+				     `(apply ,effective-method arguments))))
 		       dico)))
       ;; Create a discriminating automaton with the entries in the call
       ;; history.
@@ -69,21 +79,32 @@
 	      for action = (cdr (assoc effective-method dico :test #'eq))
 	      do (add-path automaton class-number-cache action))
 	(let* ((info (extract-transition-information automaton))
-	       (tagbody (compute-discriminating-tagbody info class-number-vars)))
-	  `(lambda (&rest arguments)
-	     (block b
-	       (let ,(loop with i = 0
-			   for x in specializer-profile
-			   for j from 0
-			   when x
-			     collect `(,(nth i class-number-vars)
-				       (instance-class-number
-					(nth ,j arguments)))
-			     and do (incf i))
-		 ,tagbody
-		 (default-discriminating-function ,generic-function
-						  arguments
-						  ',specializer-profile)))))))))
+	       (tagbody (compute-discriminating-tagbody info class-number-vars))
+	       (bindings (loop with i = 0
+			       for x in specializer-profile
+			       for j from 0
+			       when x
+				 collect `(,(nth i class-number-vars)
+					   (instance-class-number
+					    (nth ,j arguments)))
+				 and do (incf i))))
+	  (if only-required-p
+	      `(lambda ,lambda-list
+		 (block b
+		   (let ,bindings
+		     ,tagbody
+		     (default-discriminating-function
+		      ,generic-function
+		      (list ,@lambda-list)
+		      ',specializer-profile))))
+	      `(lambda (&rest arguments)
+		 (block b
+		   (let ,bindings
+		     ,tagbody
+		     (default-discriminating-function
+		      ,generic-function
+		      arguments
+		      ',specializer-profile))))))))))
 
 ;;; This function takes a generic function an returns a discriminating
 ;;; function for it that has the GENERIC-FUNCTION argument compiled in
