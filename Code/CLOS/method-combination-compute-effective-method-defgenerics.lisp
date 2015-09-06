@@ -19,4 +19,4 @@
 ;;; mechanism to add methods to this generic function. 
 
 (defgeneric method-combination-compute-effective-method
-    (method-combination methods))
+    (method-combination methods generic-function))

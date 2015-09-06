@@ -49,7 +49,7 @@
 ;;; not have a primary method, so we delay the error signaling until
 ;;; this invocation actually happens.
 
-(defun compute-effective-method-default (methods)
+(defun compute-effective-method-default (generic-function methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
 	(before-methods (remove-if-not #'before-method-p methods))
 	(after-methods (remove-if-not  #'after-method-p methods))
