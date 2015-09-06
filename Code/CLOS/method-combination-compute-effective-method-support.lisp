@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-clos)
 
 (defun method-combination-compute-effective-method-default
-    (method-combination methods generic-function)
+    (method-combination methods)
   (declare (ignore method-combination))
-  (compute-effective-method-default generic-function methods))
+  (compute-effective-method-default methods))
 
