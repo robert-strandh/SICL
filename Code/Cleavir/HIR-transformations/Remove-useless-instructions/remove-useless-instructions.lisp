@@ -25,12 +25,14 @@
 
 (defun remove-useless-instructions (initial-instruction)
   (cleavir-meter:with-meter (m *remove-useless-instructions-meter*)
-    (cleavir-ir:reinitialize-data initial-instruction)
-    (let ((useless-instructions '()))
-      (cleavir-ir:map-instructions-arbitrary-order
-       (lambda (instruction)
-	 (cleavir-meter:increment-size m)
-	 (when (instruction-may-be-removed-p instruction)
-	   (push instruction useless-instructions)))
-       initial-instruction)
-      (mapc #'cleavir-ir:delete-instruction useless-instructions))))
+    (loop do (cleavir-ir:reinitialize-data initial-instruction)
+	     (let ((useless-instructions '()))
+	       (cleavir-ir:map-instructions-arbitrary-order
+		(lambda (instruction)
+		  (cleavir-meter:increment-size m)
+		  (when (instruction-may-be-removed-p instruction)
+		    (push instruction useless-instructions)))
+		initial-instruction)
+	       (when (null useless-instructions)
+		 (loop-finish))
+	       (mapc #'cleavir-ir:delete-instruction useless-instructions)))))
