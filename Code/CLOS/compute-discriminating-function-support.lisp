@@ -240,7 +240,7 @@
 
 (defun determine-slot-location (class accessor-method)
   (let* ((slot-definition (accessor-method-slot-definition accessor-method))
-	 (slot-name (slot-definition-name slot-defintion))
+	 (slot-name (slot-definition-name slot-definition))
 	 (effective-slots (class-slots class))
 	 (effective-slot (find slot-name effective-slots
 			       :key #'slot-definition-name
