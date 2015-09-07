@@ -42,6 +42,8 @@
 	  (declare (ignore ignore))
 	  ;; Run this just for test and to check performance.
 	  (cleavir-hir-transformations:segregate-only hir)
+	  ;; Run this just for test and to check performance.
+	  (cleavir-simple-value-numbering:simple-value-numbering hir)
 	  (maybe-cache form fun (cleavir-ir:forms hir))
 	  (cons fun (cleavir-ir:forms hir)))
 	cached-value)))
