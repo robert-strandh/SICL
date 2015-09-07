@@ -122,6 +122,14 @@
 			  :function function)))
 	    (funcall add-method fun method)))))
 
+(defun ldp (file env1 env2)
+  (handler-bind
+      ((cleavir-env:no-function-info
+	 (lambda (condition)
+	   (declare (ignore condition))
+	   (invoke-restart 'cleavir-generate-ast:consider-global))))
+    (ld file env1 env2)))
+
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
