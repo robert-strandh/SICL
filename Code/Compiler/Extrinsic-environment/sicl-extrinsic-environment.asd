@@ -117,7 +117,8 @@
 	       :sicl-data-and-control-flow-support
 	       :sicl-conditionals-support
 	       :sicl-iteration-support
-	       :sicl-reader-simple)
+	       :sicl-reader-simple
+	       :cleavir-equivalent-lexical-locations)
   :serial t
   :components
   ((:file "packages")
