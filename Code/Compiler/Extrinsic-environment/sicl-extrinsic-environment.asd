@@ -111,6 +111,7 @@
 	       :cleavir-ast-to-hir
 	       :cleavir-hir
 	       :cleavir-hir-transformations
+	       :cleavir-remove-useless-instructions
 	       :cleavir-basic-blocks
 	       :cleavir-meter
 	       :sicl-evaluation-and-compilation
