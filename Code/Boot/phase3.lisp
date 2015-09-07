@@ -147,6 +147,7 @@
 	   (invoke-restart 'cleavir-generate-ast:consider-global))))
       (ld "../CLOS/discriminating-tagbody.lisp" r3 r3)
       (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
+      (ld "../CLOS/compute-applicable-methods-support.lisp" r2 r2)
       (ld "../CLOS/satiation.lisp" r2 r2))
     (ld "../CLOS/compute-discriminating-function-support-a.lisp" r3 r3)
     (ld "../CLOS/instance-slots-offset-defconstant.lisp" r3 r3)
