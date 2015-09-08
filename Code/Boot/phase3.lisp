@@ -122,6 +122,14 @@
 			  :function function)))
 	    (funcall add-method fun method)))))
 
+;;; Function LDP (protected loading).  It wraps the loading of a file
+;;; in a handler that invokes a restart that tells the compiler to
+;;; treat all undefined functions as if they were global.  This
+;;; function should only be used in exceptional cases because it is
+;;; better to find undefined functions at compile time than at run
+;;; time.  However, sometimes we need it.  In particular, since
+;;; Cleavir is currently not smart enough to recognize self-recursive
+;;; functions, we need this function in those situations.
 (defun ldp (file env1 env2)
   (handler-bind
       ((cleavir-env:no-function-info
