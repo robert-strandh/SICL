@@ -160,6 +160,7 @@
     (ldp "../CLOS/discriminating-tagbody.lisp" r3 r3)
     (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
     (ld "../CLOS/classp-defgeneric.lisp" r1 r1)
+    (ld "../CLOS/classp-defmethods.lisp" r2 r2)
     (ld "../CLOS/compute-applicable-methods-support.lisp" r2 r2)
     (ld "../CLOS/compute-applicable-methods-defgenerics.lisp" r1 r1)
     (ld "../CLOS/compute-applicable-methods-defmethods.lisp" r2 r2)
