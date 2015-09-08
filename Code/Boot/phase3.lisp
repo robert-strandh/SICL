@@ -64,6 +64,12 @@
 ;;; Since we know that during bootstrapping, MAKE-INSTANCE is always
 ;;; called with the NAME of a class, as opposed to with a class
 ;;; metaobject, we do not have to handle both those cases.
+(defun finalize-inheritance-phase3 (class env)
+  (let ((finalize-inheritance
+	  (sicl-genv:fdefinition
+	   'sicl-clos:finalize-inheritance env)))
+    (funcall finalize-inheritance class)))
+
 (defun define-make-instance-phase3 (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'make-instance env1)
 	(lambda (class-name &rest args)
@@ -71,14 +77,11 @@
 		(finalized-p
 		  (sicl-genv:fdefinition
 		   'sicl-clos:class-finalized-p env3))
-		(finalize-inheritance
-		  (sicl-genv:fdefinition
-		   'sicl-clos:finalize-inheritance env3))
 		(allocate-instance
 		  (sicl-genv:fdefinition
 		   'allocate-instance env3)))
 	    (unless (funcall finalized-p class)
-	      (funcall finalize-inheritance class))
+	      (finalize-inheritance-phase3 class env3))
 	    (let ((result (apply allocate-instance class args)))
 	      result)))))
 
