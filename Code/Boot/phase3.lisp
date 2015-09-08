@@ -161,6 +161,7 @@
     (ld "../CLOS/compute-discriminating-function-support.lisp" r3 r3)
     (ld "../CLOS/compute-applicable-methods-support.lisp" r2 r2)
     (ld "../CLOS/compute-applicable-methods-defgenerics.lisp" r1 r1)
+    (ld "../CLOS/compute-applicable-methods-defmethods.lisp" r2 r2)
     (ldp "../CLOS/satiation.lisp" r2 r2)
     (ld "../CLOS/compute-discriminating-function-support-a.lisp" r3 r3)
     (ld "../CLOS/instance-slots-offset-defconstant.lisp" r3 r3)
