@@ -72,13 +72,7 @@
   ())
 
 (define-condition argument-type-error (format-runtime-error type-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (format stream
-	     "~a was required as argument, but ~a was found"
-	     (type-name (type-error-expected-type condition))
-	     (type-error-datum condition)))))
+  ())
 
 (define-condition too-many-package-markers (directive-syntax-error)
   ()

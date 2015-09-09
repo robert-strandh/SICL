@@ -151,3 +151,12 @@
      stream
      (language cleavir-i18n:english))
   (format stream "an attempt was made to access more arguments than available"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition argument-type-error)
+     stream
+     (language cleavir-i18n:english))
+  (format stream
+	  "~a was required as argument, but ~a was found"
+	  (type-name (type-error-expected-type condition))
+	  (type-error-datum condition)))))
