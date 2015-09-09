@@ -668,3 +668,28 @@
 ;;; method-combination class in ENVIRONMENT.
 
 (defgeneric (setf find-method-combination-class) (new-class symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FIND-STANDARD-METHOD-COMBINATION.
+;;;
+;;; Return the unique instance of the method-combination class named
+;;; STANDARD.  This generic function exists in order to avoid
+;;; allocating a new instance of the STANDARD method-combination class
+;;; each time a generic function using the standard method combination
+;;; is created.
+;;;
+;;; If no preceding call to (SETF FIND-STANDARD-METHOD-COMBINATION)
+;;; has been made, then this call signals an error.
+
+(defgeneric find-standard-method-combination (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF FIND-METHOD-COMBINATION-CLASS).
+;;;
+;;; Set the unique instance of the method-combination class named
+;;; STANDARD.  After this generic function has been called, subsequent
+;;; calls to FIND-STANDARD-METHOD-COMBINATION will return NEW-INSTANCE.
+
+(defgeneric (setf find-standard-method-combination) (new-instance environment))
