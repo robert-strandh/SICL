@@ -338,3 +338,7 @@
     (new-class symbol (env simple-environment))
   (setf (gethash symbol (method-combination-classes env)) new-class)
   new-class)
+
+(defmethod sicl-genv:find-standard-method-combination
+    ((env simple-environment))
+  (standard-method-combination env))
