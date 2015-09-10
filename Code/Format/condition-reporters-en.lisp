@@ -159,4 +159,11 @@
   (format stream
 	  "~a was required as argument, but ~a was found"
 	  (type-name (type-error-expected-type condition))
-	  (type-error-datum condition)))))
+	  (type-error-datum condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition too-many-package-markers)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream "the function name contains too many package markers"))

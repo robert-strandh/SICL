@@ -75,11 +75,7 @@
   ())
 
 (define-condition too-many-package-markers (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream "the function name contains too many package markers"))))
+  ())
 
 (define-condition no-such-package (directive-syntax-error)
   ()
