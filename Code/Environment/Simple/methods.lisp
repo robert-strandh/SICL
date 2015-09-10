@@ -342,3 +342,7 @@
 (defmethod sicl-genv:find-standard-method-combination
     ((env simple-environment))
   (standard-method-combination env))
+
+(defmethod (setf sicl-genv:find-standard-method-combination)
+    (new-instance (env simple-environment))
+  (setf (standard-method-combination env) new-instance))
