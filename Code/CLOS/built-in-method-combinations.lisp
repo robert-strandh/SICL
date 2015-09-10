@@ -6,7 +6,7 @@
 
 (define-method-combination or :identity-with-one-argument t)
 
-(define-method-combination append :identity-with-one-argument nil)
+(define-method-combination append :identity-with-one-argument t)
 
 (define-method-combination nconc :identity-with-one-argument t)
 
