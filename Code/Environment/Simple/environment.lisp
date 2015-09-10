@@ -69,6 +69,9 @@
    ;; method-combination classes.
    (%method-combination-classes :initform (make-hash-table :test #'eq)
 				:accessor method-combination-classes)
+   ;; The value of this slot is the standard method combination as
+   ;; a unique instance of the corresponding class.
+   (%standard-method-combination :accessor standard-method-combination)
    ;; The value of this slot is either a SETF expander function, or
    ;; NIL if the function name of this entry does not have a SETF
    ;; expander associated with it.
