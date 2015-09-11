@@ -1,4 +1,4 @@
-(in-package #:sicl-standard-environment-functions)
+(cl:in-package #:sicl-standard-environment-functions)
 
 ;;;; Macro expansion.
 
