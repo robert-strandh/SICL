@@ -167,3 +167,10 @@
      (language cleavir-i18n:english))
   (report-control-string-and-directive-position condition stream)
   (format stream "the function name contains too many package markers"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition no-such-package)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream "the named package does not exist"))

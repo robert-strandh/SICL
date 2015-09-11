@@ -78,11 +78,7 @@
   ())
 
 (define-condition no-such-package (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream "the named package does not exist"))))
+  ())
 
 (define-condition no-such-symbol (directive-syntax-error)
   ()
