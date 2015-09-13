@@ -17,6 +17,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-string
+  :depends-on (:cleavir-internationalization)
   :serial t
   :components
   ((:file "packages")
