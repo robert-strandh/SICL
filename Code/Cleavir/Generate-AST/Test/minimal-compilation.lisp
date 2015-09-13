@@ -1,4 +1,4 @@
-(in-package #:cleavir-test-minimal-compilation)
+(cl:in-package #:cleavir-test-minimal-compilation)
 
 (defparameter *e* (make-instance 'bogus-environment))
 
