@@ -81,11 +81,7 @@
   ())
 
 (define-condition no-such-symbol (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream "a symbol with that name does not exist"))))
+  ())
 
 (define-condition symbol-not-external (directive-syntax-error)
   ()

@@ -174,3 +174,12 @@
      (language cleavir-i18n:english))
   (report-control-string-and-directive-position condition stream)
   (format stream "the named package does not exist"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition no-such-symbol)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream "a symbol with that name does not exist"))
+
+
