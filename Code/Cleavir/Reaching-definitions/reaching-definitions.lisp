@@ -1,4 +1,4 @@
-(in-package #:cleavir-reaching-definitions)
+(cl:in-package #:cleavir-reaching-definitions)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
