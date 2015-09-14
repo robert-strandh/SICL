@@ -16,7 +16,10 @@
 
 (cl:in-package #:sicl-string)
 
-(defmethod report-string-condition ((c bag-is-dotted-list) stream)
+(defmethod cleavir-i18n:report-condition
+    ((c bag-is-dotted-list)
+     stream
+     cleavir-i18n:english)
   (format stream
 	  "If a character bag is a list, it must be a proper list.~@
            But the following dotted list was found instead:~@
