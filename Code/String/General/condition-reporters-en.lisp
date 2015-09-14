@@ -26,7 +26,10 @@
            ~s."
 	  (type-error-datum c)))
 
-(defmethod report-string-condition ((c bag-is-circular-list) stream)
+(defmethod cleavir-i18n:report-condition
+    ((c bag-is-circular-list)
+     stream
+     cleavir-i18n:english)
   (format stream
 	  "If a character bag is a list, it must be a proper list.~@
            But the following circular list was found instead:~@
