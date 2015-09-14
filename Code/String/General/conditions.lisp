@@ -32,7 +32,8 @@
   ()
   (:report report-string-condition))
 
-(define-condition invalid-bounding-indices (error)
+(define-condition invalid-bounding-indices
+    (error cleavir-i18n:condition)
   ((%target :initarg :target :reader target)
    (%start :initarg start :reader start)
    (%end :initarg end :reader end)))
