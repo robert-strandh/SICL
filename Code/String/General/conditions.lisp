@@ -22,8 +22,7 @@
 
 (define-condition bag-is-circular-list
     (type-error cleavir-i18n:condition)
-  ()
-  (:report report-string-condition))
+  ())
 
 (define-condition bag-contains-non-character
     (type-error cleavir-i18n:condition)
