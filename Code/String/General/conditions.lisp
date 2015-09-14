@@ -18,15 +18,18 @@
 
 (defgeneric report-string-condition (condition stream))
 
-(define-condition bag-is-dotted-list (type-error)
+(define-condition bag-is-dotted-list
+    (type-error cleavir-i18n:condition)
   ()
   (:report report-string-condition))
 
-(define-condition bag-is-circular-list (type-error)
+(define-condition bag-is-circular-list
+    (type-error cleavir-i18n:condition)
   ()
   (:report report-string-condition))
 
-(define-condition bag-contains-non-character (type-error)
+(define-condition bag-contains-non-character
+    (type-error cleavir-i18n:condition)
   ()
   (:report report-string-condition))
 
