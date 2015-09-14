@@ -16,8 +16,6 @@
 
 (cl:in-package #:sicl-string)
 
-(defgeneric report-string-condition (condition stream))
-
 (define-condition bag-is-dotted-list
     (type-error cleavir-i18n:condition)
   ())
