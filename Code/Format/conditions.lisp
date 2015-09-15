@@ -84,11 +84,7 @@
   ())
 
 (define-condition symbol-not-external (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream "the symbol is not external in the package"))))
+  ())
 
 (define-condition go-to-out-of-bounds (format-runtime-error)
   ((%what-argument :initarg :what-argument :reader what-argument)

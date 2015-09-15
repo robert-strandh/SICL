@@ -182,4 +182,9 @@
   (report-control-string-and-directive-position condition stream)
   (format stream "a symbol with that name does not exist"))
 
-
+(defmethod cleavir-i18n:report-condition
+    ((condition symbol-not-external)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream "the symbol is not external in the package"))
