@@ -26,8 +26,7 @@
 
 (define-condition bag-contains-non-character
     (type-error cleavir-i18n:condition)
-  ()
-  (:report report-string-condition))
+  ())
 
 (define-condition invalid-bounding-indices
     (error cleavir-i18n:condition)
