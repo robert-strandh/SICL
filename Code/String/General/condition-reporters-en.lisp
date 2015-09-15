@@ -36,7 +36,10 @@
            ~s."
 	  (type-error-datum c)))
 
-(defmethod report-string-condition ((c bag-contains-non-character) stream)
+(defmethod cleavir-i18n:report-condition
+    ((c bag-contains-non-character)
+     stream
+     cleavir-i18n:english)
   (format stream
 	  "A character bag must be a sequence that contains only characters.~@
            But the following element was found which is not a character:~@
