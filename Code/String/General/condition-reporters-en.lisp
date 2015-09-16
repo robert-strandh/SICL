@@ -46,7 +46,10 @@
            ~s."
 	  (type-error-datum c)))
 
-(defmethod report-string-condition ((c invalid-bounding-indices) stream)
+(defmethod cleavir-i18n:report-condition
+    ((c invalid-bounding-indices)
+     stream
+     cleavir-i18n:english)
   (format stream
 	  "In order for START and END to be valid bounding indices,~@
            START must between 0 and the length of the string, and~@
