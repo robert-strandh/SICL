@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler)
+(cl:in-package #:sicl-compiler)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
