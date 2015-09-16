@@ -188,3 +188,12 @@
      (language cleavir-i18n:english))
   (report-control-string-and-directive-position condition stream)
   (format stream "the symbol is not external in the package"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition go-to-out-of-bounds)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "an attempt was made to go to argument number ~d ~
+                  instead of one between 0 and ~d"
+	  (what-argument condition)
+	  (max-arguments condition)))

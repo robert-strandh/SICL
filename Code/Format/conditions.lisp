@@ -88,13 +88,7 @@
 
 (define-condition go-to-out-of-bounds (format-runtime-error)
   ((%what-argument :initarg :what-argument :reader what-argument)
-   (%max-arguments :initarg :max-arguments :reader max-arguments))
-  (:report
-   (lambda (condition stream)
-     (format stream "an attempt was made to go to argument number ~d ~
-                     instead of one between 0 and ~d"
-	     (what-argument condition)
-	     (max-arguments condition)))))
+   (%max-arguments :initarg :max-arguments :reader max-arguments)))
 
 (define-condition modifier-and-parameter (directive-syntax-error)
   ()
