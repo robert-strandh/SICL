@@ -197,3 +197,11 @@
                   instead of one between 0 and ~d"
 	  (what-argument condition)
 	  (max-arguments condition)))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition modifier-and-parameter)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "a parameter can be used only of there are no modifiers"))
+
+

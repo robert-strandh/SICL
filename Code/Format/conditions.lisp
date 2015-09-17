@@ -91,11 +91,7 @@
    (%max-arguments :initarg :max-arguments :reader max-arguments)))
 
 (define-condition modifier-and-parameter (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "a parameter can be used only of there are no modifiers"))))
+  ())
 
 (define-condition illegal-clause-separators (directive-syntax-error)
   ()
