@@ -18,7 +18,7 @@
 ;;; instead uses print and princ for error reporting.  This makes it
 ;;; possible for format to use the conditional constructs define here.
 
-(in-package #:sicl-conditionals)
+(cl:in-package #:sicl-conditionals)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
