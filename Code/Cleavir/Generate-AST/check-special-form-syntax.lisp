@@ -341,6 +341,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking FUNCALL.
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:funcall)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking TYPEQ.
 
 (defmethod check-special-form-syntax
