@@ -67,4 +67,5 @@
    #:slot-read #:slot-write
    #:aref #:aset
    #:call-with-variable-bound
-   #:let-uninitialized))
+   #:let-uninitialized
+   #:funcall))
