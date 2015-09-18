@@ -193,6 +193,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FUNCALL.
+;;;
+;;; This primop is similar to the function CL:FUNCALL.  The difference
+;;; is that the primop does not allow function NAMES as its first
+;;; argument.  It has to be a form that evaluates to a function.
+;;;
+;;; In order to inline CL:FUNCALL, a possible strategy would be to
+;;; define a compiler macro on that function that expands to a form
+;;; that turns the first argument into a function if it is not already
+;;; a function and then calls this primop.
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:funcall)) form env system)
