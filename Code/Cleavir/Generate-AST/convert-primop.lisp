@@ -189,3 +189,15 @@
 		     (cleavir-env:add-lexical-variable
 		      new-env variable variable-ast)))
       (process-progn (convert-sequence body new-env system)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FUNCALL.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:funcall)) form env system)
+  (destructuring-bind (function-form . argument-forms) (rest form)
+    (cleavir-ast:make-call-ast
+     (convert function-form env system)
+     (loop for argument-form in argument-forms
+	   collect (convert argument-form env system)))))
