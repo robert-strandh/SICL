@@ -1,4 +1,4 @@
-(in-package #:asdf-user)
+(cl:in-package #:asdf-user)
 
 ;;;; Copyright (c) 2008 - 2015
 ;;;;
