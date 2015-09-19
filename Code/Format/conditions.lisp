@@ -94,12 +94,7 @@
   ())
 
 (define-condition illegal-clause-separators (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "at most the last clause separator can have ~
-                     a `:' modifier"))))
+  ())
 
 (define-condition clause-separator-with-colon-modifier-not-allowed
     (directive-syntax-error)

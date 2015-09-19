@@ -204,4 +204,10 @@
      (language cleavir-i18n:english))
   (format stream "a parameter can be used only of there are no modifiers"))
 
+(defmethod cleavir-i18n:report-condition
+    ((condition illegal-clause-separators)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "at most the last clause separator can have ~
+                  a `:' modifier"))
 
