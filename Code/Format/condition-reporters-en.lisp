@@ -211,3 +211,8 @@
   (format stream "at most the last clause separator can have ~
                   a `:' modifier"))
 
+(defmethod cleavir-i18n:report-condition
+    ((condition clause-separator-with-colon-modifier-not-allowed)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "a default clause is incompatible with modifiers"))
