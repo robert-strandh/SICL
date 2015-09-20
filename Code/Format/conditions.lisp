@@ -98,11 +98,7 @@
 
 (define-condition clause-separator-with-colon-modifier-not-allowed
     (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "a default clause is incompatible with modifiers"))))
+  ())
 
 (define-condition at-least-one-item-required (directive-syntax-error)
   ()
