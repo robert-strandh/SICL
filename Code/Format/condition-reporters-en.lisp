@@ -216,3 +216,10 @@
      stream
      (language cleavir-i18n:english))
   (format stream "a default clause is incompatible with modifiers"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition at-least-one-item-required)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "there must be at least one clause in a ~
+                  conditional directive"))
