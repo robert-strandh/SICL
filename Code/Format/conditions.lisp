@@ -101,12 +101,7 @@
   ())
 
 (define-condition at-least-one-item-required (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "there must be at least one clause in a ~
-                     conditional directive"))))
+  ())
 
 (define-condition colon-modifier-requires-two-clauses
     (directive-syntax-error)
