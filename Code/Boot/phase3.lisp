@@ -47,23 +47,6 @@
 	(lambda (value instance offset)
 	  (setf (aref (rack instance) offset) value))))
 
-;;; Define a special version of MAKE-INSTANCE.  MAKE-INSTANCE is
-;;; peculiar because it calls ALLOCATE-INSTANCE which takes a class
-;;; metaobject to be instantiated, and then it calls
-;;; INITIALIZE-INSTANCE with the resulting instance.  During
-;;; bootstrapping, a class metaobject and the instances of that class
-;;; metaobject are stored in two different environments, which is why
-;;; we need a special version of MAKE-INSTANCE during bootstrapping.
-;;;
-;;; ENV1 is the environment in which MAKE-INSTANCE will be defined.
-;;; ENV2 is the environment in which class the metaobject is looked
-;;; up, given the name of the class.  ENV3 is the environment to use
-;;; to look up the definitions of CLASS-FINALIZED-P,
-;;; FINALIZE-INHERITANCE, and ALLOCATE-INSTANCE.
-;;;
-;;; Since we know that during bootstrapping, MAKE-INSTANCE is always
-;;; called with the NAME of a class, as opposed to with a class
-;;; metaobject, we do not have to handle both those cases.
 (defun finalize-inheritance-phase3 (class env)
   (let ((finalize-inheritance
 	  (sicl-genv:fdefinition
@@ -82,6 +65,23 @@
 			  'sicl-clos:funcallable-standard-class env2))))
 	(finalize-inheritance-phase3 class env3)))))
 
+;;; Define a special version of MAKE-INSTANCE.  MAKE-INSTANCE is
+;;; peculiar because it calls ALLOCATE-INSTANCE which takes a class
+;;; metaobject to be instantiated, and then it calls
+;;; INITIALIZE-INSTANCE with the resulting instance.  During
+;;; bootstrapping, a class metaobject and the instances of that class
+;;; metaobject are stored in two different environments, which is why
+;;; we need a special version of MAKE-INSTANCE during bootstrapping.
+;;;
+;;; ENV1 is the environment in which MAKE-INSTANCE will be defined.
+;;; ENV2 is the environment in which class the metaobject is looked
+;;; up, given the name of the class.  ENV3 is the environment to use
+;;; to look up the definitions of CLASS-FINALIZED-P,
+;;; FINALIZE-INHERITANCE, and ALLOCATE-INSTANCE.
+;;;
+;;; Since we know that during bootstrapping, MAKE-INSTANCE is always
+;;; called with the NAME of a class, as opposed to with a class
+;;; metaobject, we do not have to handle both those cases.
 (defun define-make-instance-phase3 (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'make-instance env1)
 	(lambda (class-name &rest args)
