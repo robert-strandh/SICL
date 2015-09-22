@@ -70,6 +70,18 @@
 	   'sicl-clos:finalize-inheritance env)))
     (funcall finalize-inheritance class)))
 
+(defun finalize-all-classes-phase3 (env1 env2 env3)
+  (do-all-symbols (symbol)
+    (let ((class (sicl-genv:find-class symbol env1)))
+      (when (and (not (null class))
+		 (or (eq (class-of class)
+			 (sicl-genv:find-class
+			  'standard-class env2))
+		     (eq (class-of class)
+			 (sicl-genv:find-class
+			  'sicl-clos:funcallable-standard-class env2))))
+	(finalize-inheritance-phase3 class env3)))))
+
 (defun define-make-instance-phase3 (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'make-instance env1)
 	(lambda (class-name &rest args)
