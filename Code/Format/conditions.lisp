@@ -105,11 +105,7 @@
 
 (define-condition colon-modifier-requires-two-clauses
     (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "a colon modifier requires two clauses"))))
+  ())
 
 (define-condition at-sign-modifier-requires-one-clause
     (directive-syntax-error)
