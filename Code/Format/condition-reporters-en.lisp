@@ -223,3 +223,10 @@
      (language cleavir-i18n:english))
   (format stream "there must be at least one clause in a ~
                   conditional directive"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition colon-modifier-requires-two-clauses)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "a colon modifier requires two clauses"))
+
