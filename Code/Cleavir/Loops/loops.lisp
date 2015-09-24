@@ -1,4 +1,4 @@
-(in-package #:cleavir-loops)
+(cl:in-package #:cleavir-loops)
 
 ;;;; Loops.
 ;;;;
