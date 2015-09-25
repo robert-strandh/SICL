@@ -230,3 +230,10 @@
      (language cleavir-i18n:english))
   (format stream "a colon modifier requires two clauses"))
 
+(defmethod cleavir-i18n:report-condition
+    ((condition at-sign-modifier-requires-one-clause)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "an at-sign modifier requires a single clause"))
+
+
