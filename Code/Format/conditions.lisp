@@ -109,11 +109,7 @@
 
 (define-condition at-sign-modifier-requires-one-clause
     (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "an at-sign modifier requires a single clause"))))
+  ())
 
 (define-condition parameter-omitted (directive-syntax-error)
   ((%parameter1 :initarg :parameter1 :reader parameter1)
