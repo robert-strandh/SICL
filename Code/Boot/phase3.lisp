@@ -161,14 +161,14 @@
       (funcall (sicl-genv:fdefinition
 		'sicl-clos::compute-and-set-specializer-profile
 		env3)
-	       (class-of (sicl-genv:fdefinition symbol env1))))
+	       (sicl-genv:fdefinition symbol env1)))
     (when (and (sicl-genv:fboundp `(setf ,symbol) env1)
 	       (eq (class-of (sicl-genv:fdefinition `(setf ,symbol) env1))
 		   (sicl-genv:find-class 'standard-generic-function env2)))
       (funcall (sicl-genv:fdefinition
 		'sicl-clos::compute-and-set-specializer-profile
 		env3)
-	       (class-of (sicl-genv:fdefinition `(setf ,symbol) env1))))))
+	       (sicl-genv:fdefinition `(setf ,symbol) env1)))))
 
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
