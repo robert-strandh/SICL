@@ -191,8 +191,8 @@
     (ld "../CLOS/initialize-instance-defgenerics.lisp" r2 r2)
     (ld "../CLOS/initialize-instance-defmethods.lisp" r3 r3)
     (finalize-all-classes-phase3 r2 r1 r2)
-    (ld "../CLOS/invalidate-discriminating-function.lisp" r3 r3)
-    (ld "../CLOS/add-remove-method-support.lisp" r3 r3)
+    (ld "../CLOS/invalidate-discriminating-function.lisp" r2 r2)
+    (ld "../CLOS/add-remove-method-support.lisp" r2 r2)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
