@@ -1,4 +1,4 @@
-(in-package #:cleavir-liveness)
+(cl:in-package #:cleavir-liveness)
 
 ;;;; Liveness analysis.
 ;;;;
