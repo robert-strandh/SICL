@@ -211,6 +211,7 @@
     (ld "../CLOS/invalidate-discriminating-function.lisp" r2 r2)
     (ld "../CLOS/add-remove-method-support.lisp" r2 r2)
     (set-specializer-profiles-phase3 r3 r1 r2)
+    (ld "../CLOS/compute-effective-method-support.lisp" r2 r2)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
