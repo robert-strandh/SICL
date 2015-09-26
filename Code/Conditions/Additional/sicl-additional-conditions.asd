@@ -1,4 +1,4 @@
-(in-package #:asdf-user)
+(cl:in-package #:asdf-user)
 
 (defsystem #:sicl-additional-conditions
   :depends-on (:cleavir-internationalization
