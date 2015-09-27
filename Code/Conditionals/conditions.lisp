@@ -100,4 +100,3 @@
 (define-condition ctypecase-type-error
     (type-error name-mixin cleavir-i18n:condition)
   ())
-
