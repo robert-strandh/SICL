@@ -33,10 +33,6 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file conditionals.text for a description of the module.
 
-;;; This implementation also does not use the format function, and
-;;; instead uses print and princ for error reporting.  This makes it
-;;; possible for format to use the conditional constructs define here.
-
 (in-package #:sicl-conditionals)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
