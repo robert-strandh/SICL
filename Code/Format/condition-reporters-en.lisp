@@ -236,4 +236,14 @@
      (language cleavir-i18n:english))
   (format stream "an at-sign modifier requires a single clause"))
 
+(defmethod cleavir-i18n:report-condition
+    ((condition parameter-omitted)
+     stream
+     (language cleavir-i18n:english))
+  (format stream
+	  "parameter number ~d was given, but parameter ~d ~
+           was omitted, which is not allowed"
+	  (parameter1 condition)
+	  (parameter2 condition)))
+
 
