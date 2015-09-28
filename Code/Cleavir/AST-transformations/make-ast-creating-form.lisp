@@ -10,3 +10,11 @@
 ;;; load time.  We do this by creating a form (to be used with
 ;;; LOAD-TIME-VALUE) from an AST that creates an AST isomorphic to the
 ;;; original one.
+
+(defun create-variable-dictionary (ast)
+  (let ((dictionary (make-hash-table :test #'eq)))
+    (cleavir-ast:map-ast-depth-first-preorder
+     (lambda (node)
+       (setf (gethash node dictionary) (gensym)))
+     ast)
+    dictionary))
