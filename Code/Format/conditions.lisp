@@ -113,14 +113,7 @@
 
 (define-condition parameter-omitted (directive-syntax-error)
   ((%parameter1 :initarg :parameter1 :reader parameter1)
-   (%parameter2 :initarg :parameter2 :reader parameter2))
-  (:report
-   (lambda (condition stream)
-     (format stream
-	     "parameter number ~d was given, but parameter ~d ~
-              was omitted, which is not allowed"
-	     (parameter1 condition)
-	     (parameter2 condition)))))
+   (%parameter2 :initarg :parameter2 :reader parameter2)))
 
 (define-condition unmatched-directive (directive-syntax-error)
   ()
