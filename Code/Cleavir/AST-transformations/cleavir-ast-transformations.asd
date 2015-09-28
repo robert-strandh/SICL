@@ -6,6 +6,5 @@
   :components
   ((:file "packages")
    (:file "clone")
-   (:file "make-ast-creating-form")
    (:file "replace")
    (:file "hoist-load-time-value")))
