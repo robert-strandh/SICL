@@ -246,4 +246,10 @@
 	  (parameter1 condition)
 	  (parameter2 condition)))
 
-
+(defmethod cleavir-i18n:report-condition
+    ((condition unmatched-directive)
+     stream
+     (language cleavir-i18n:english))
+  (report-control-string-and-directive-position condition stream)
+  (format stream
+	  "there is no matching directive"))
