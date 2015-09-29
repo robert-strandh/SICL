@@ -116,12 +116,7 @@
    (%parameter2 :initarg :parameter2 :reader parameter2)))
 
 (define-condition unmatched-directive (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "there is no matching directive"))))
+  ())
 
 (define-condition nesting-violation (directive-syntax-error)
   ()
