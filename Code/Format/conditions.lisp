@@ -119,12 +119,7 @@
   ())
 
 (define-condition nesting-violation (directive-syntax-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (report-control-string-and-directive-position condition stream)
-     (format stream
-	     "the directive is not nested properly"))))
+  ())
 
 (define-condition invalid-destination (format-error)
   ((%destination :initarg :destination :reader destination))
