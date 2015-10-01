@@ -214,6 +214,7 @@
     (ld "../CLOS/compute-effective-method-support.lisp" r2 r2)
     (ld "../CLOS/compute-effective-method-support-a.lisp" r2 r2)
     (ld "../CLOS/method-combination-compute-effective-method-support.lisp" r2 r2)
+    (ld "../CLOS/method-combination-compute-effective-method-defuns.lisp" r2 r2)
     (ld "../CLOS/compute-effective-method-defgenerics.lisp" r1 r1)
     (ld "../CLOS/compute-discriminating-function-defgenerics.lisp" r1 r1)
     (message "End of phase 3~%")))
