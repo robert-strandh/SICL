@@ -79,19 +79,17 @@
 	      for action = (cdr (assoc effective-method dico :test #'eq))
 	      do (add-path automaton class-number-cache action))
 	(let* ((info (extract-transition-information automaton))
-	       (tagbody (compute-discriminating-tagbody info class-number-vars))
-	       (bindings (loop with i = 0
-			       for x in specializer-profile
-			       for j from 0
-			       when x
-				 collect `(,(nth i class-number-vars)
-					   (instance-class-number
-					    (nth ,j arguments)))
-				 and do (incf i))))
+	       (tagbody (compute-discriminating-tagbody info class-number-vars)))
 	  (if only-required-p
 	      `(lambda ,lambda-list
 		 (block b
-		   (let ,bindings
+		   (let ,(loop with i = 0
+			       for x in specializer-profile
+			       for arg in lambda-list
+			       when x
+				 collect `(,(nth i class-number-vars)
+					   (instance-class-number ,arg))
+				 and do (incf i))
 		     ,tagbody
 		     (default-discriminating-function
 		      ,generic-function
@@ -99,7 +97,14 @@
 		      ',specializer-profile))))
 	      `(lambda (&rest arguments)
 		 (block b
-		   (let ,bindings
+		   (let ,(loop with i = 0
+			       for x in specializer-profile
+			       for j from 0
+			       when x
+				 collect `(,(nth i class-number-vars)
+					   (instance-class-number
+					    (nth ,j arguments)))
+				 and do (incf i))
 		     ,tagbody
 		     (default-discriminating-function
 		      ,generic-function
