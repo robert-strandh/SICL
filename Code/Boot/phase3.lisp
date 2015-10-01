@@ -213,6 +213,7 @@
     (set-specializer-profiles-phase3 r3 r1 r2)
     (ld "../CLOS/compute-effective-method-support.lisp" r2 r2)
     (ld "../CLOS/compute-effective-method-defgenerics.lisp" r1 r1)
+    (ld "../CLOS/compute-discriminating-function-defgenerics.lisp" r1 r1)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
