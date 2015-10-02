@@ -192,6 +192,7 @@
     (ld "../CLOS/allocate-instance-defgenerics.lisp" r1 r1)
     (ld "../CLOS/allocate-instance-defmethods.lisp" r2 r2)
     (define-make-instance-phase3 r3 r2 r2)
+    (define-compile-phase3 r2)
     (ld "../CLOS/discriminating-automaton.lisp" r3 r3)
     (define-general-instance-p-phase3 r2)
     (ldp "../CLOS/list-utilities.lisp" r2 r2)
