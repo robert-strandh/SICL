@@ -170,6 +170,12 @@
 		env3)
 	       (sicl-genv:fdefinition `(setf ,symbol) env1)))))
 
+(defun define-compile-phase3 (env)
+  (setf (sicl-genv:fdefinition 'compile env)
+	(lambda (ignore lambda-expression)
+	  (declare (ignore ignore))
+	  (cleavir-env:eval lambda-expression env env))))
+
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
