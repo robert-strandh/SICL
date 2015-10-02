@@ -7,6 +7,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "multiple-value-prog1")
    (:file "message")
    (:file "boot")
    (:file "load")
