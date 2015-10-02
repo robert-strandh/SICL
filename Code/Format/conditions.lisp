@@ -122,9 +122,4 @@
   ())
 
 (define-condition invalid-destination (format-error)
-  ((%destination :initarg :destination :reader destination))
-  (:report
-   (lambda (condition stream)
-     (format stream
-	     "the object ~s is not a valid destination for a format operation"
-	     (destination condition)))))
+  ((%destination :initarg :destination :reader destination)))
