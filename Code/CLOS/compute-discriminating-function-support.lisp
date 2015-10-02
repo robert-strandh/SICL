@@ -385,7 +385,6 @@
 ;;; closed-over variable, from a compiled-in constant, or perhaps by
 ;;; some other mechanism.
 (defun default-discriminating-function (generic-function arguments profile)
-  (break)
   (let* ((required-argument-count (length profile))
 	 (required-arguments (subseq arguments 0 required-argument-count))
 	 (class-numbers (loop for argument in required-arguments
