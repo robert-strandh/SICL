@@ -262,4 +262,13 @@
   (format stream
 	  "the directive is not nested properly"))
 
+(defmethod cleavir-i18n:report-condition
+    ((condition invalid-destination)
+     stream
+     (language cleavir-i18n:english))
+  (format stream
+	  "the object ~s is not a valid destination for a format operation"
+	  (destination condition)))
+
+
 
