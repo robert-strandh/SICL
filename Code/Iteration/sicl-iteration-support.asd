@@ -1,4 +1,4 @@
-(in-package #:asdf-user)
+(cl:in-package #:asdf-user)
 
 (defsystem :sicl-iteration-support
   :depends-on (:cleavir-code-utilities
