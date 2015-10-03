@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-read)
 
+(define-condition sicl-reader-error (reader-error cleavir-i18n:condition)
+  ())
+
 (define-condition unmatched-right-parenthesis (reader-error)
   ()
   (:report
