@@ -4,11 +4,7 @@
   ())
 
 (define-condition unmatched-right-parenthesis (sicl-reader-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "Unmatched right parenthesis found."))))
+  ())
 
 ;;; This condition is signaled when a token consisting
 ;;; only of (unescaped) dots was found.
