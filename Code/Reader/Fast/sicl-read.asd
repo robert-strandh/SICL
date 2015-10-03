@@ -4,5 +4,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "conditions")
    (:file "float")
    (:file "read")))
