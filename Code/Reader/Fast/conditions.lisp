@@ -9,11 +9,7 @@
 ;;; This condition is signaled when a token consisting
 ;;; only of (unescaped) dots was found.
 (define-condition only-dots-in-token (sicl-reader-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "A token with only dots in it was found"))))
+  ())
 
 ;;; This condition is signaled when a token consisting
 ;;; of a single (unescaped) dot was found.
