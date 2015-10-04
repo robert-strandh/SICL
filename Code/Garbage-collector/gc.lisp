@@ -1,4 +1,4 @@
-(in-package #:sicl-gc)
+(cl:in-package #:sicl-gc)
 
 ;;; Sliding garbage collector for the nursery.
 
