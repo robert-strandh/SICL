@@ -176,7 +176,7 @@
 	  (declare (ignore ignore))
 	  (cleavir-env:eval lambda-expression env env))))
 
-(defun satiate-phase2 (env1 env2 env3)
+(defun satiate-phase3 (env1 env2 env3)
   (do-all-symbols (symbol)
     (when (and (sicl-genv:fboundp symbol env1)
 	       (eq (class-of (sicl-genv:fdefinition symbol env1))
