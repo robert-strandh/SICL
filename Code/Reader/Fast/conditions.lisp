@@ -14,12 +14,7 @@
 ;;; This condition is signaled when a token consisting
 ;;; of a single (unescaped) dot was found.
 (define-condition single-dot-token (only-dots-in-token)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "A token consisting of a single dot was found ~@
-                     in a context that does not permit such a token."))))
+  ())
 
 (define-condition no-object-preceding-dot (sicl-reader-error)
   ()
