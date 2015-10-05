@@ -176,6 +176,23 @@
 	  (declare (ignore ignore))
 	  (cleavir-env:eval lambda-expression env env))))
 
+(defun satiate-phase2 (env1 env2 env3)
+  (do-all-symbols (symbol)
+    (when (and (sicl-genv:fboundp symbol env1)
+	       (eq (class-of (sicl-genv:fdefinition symbol env1))
+		   (sicl-genv:find-class 'standard-generic-function env2)))
+      (funcall (sicl-genv:fdefinition
+		'sicl-clos::satiate-generic-function
+		env3)
+	       (sicl-genv:fdefinition symbol env1)))
+    (when (and (sicl-genv:fboundp `(setf ,symbol) env1)
+	       (eq (class-of (sicl-genv:fdefinition `(setf ,symbol) env1))
+		   (sicl-genv:find-class 'standard-generic-function env2)))
+      (funcall (sicl-genv:fdefinition
+		'sicl-clos::satiate-generic-function
+		env3)
+	       (sicl-genv:fdefinition `(setf ,symbol) env1)))))
+
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
