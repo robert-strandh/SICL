@@ -243,6 +243,7 @@
     (ld "../CLOS/compute-effective-method-defmethods.lisp" r2 r2)
     (ld "../CLOS/compute-discriminating-function-defgenerics.lisp" r1 r1)
     (ld "../CLOS/compute-discriminating-function-defmethods.lisp" r2 r2)
+    (satiate-phase3 r3 r1 r2)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
