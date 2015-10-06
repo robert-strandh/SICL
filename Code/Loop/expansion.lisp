@@ -10,7 +10,7 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-(in-package #:sicl-loop)
+(cl:in-package #:sicl-loop)
 
 ;;; The purpose of this generic function is to generate a list of all
 ;;; bound variables in a clause.  The same variable occurs as many
