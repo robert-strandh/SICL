@@ -18,3 +18,10 @@
      (language cleavir-i18n:english))
   (format stream "A token consisting of a single dot was found ~@
                   in a context that does not permit such a token."))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition no-object-preceding-dot)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "A left parenthesis cannot be ~
+                  immediately followed by a dot"))
