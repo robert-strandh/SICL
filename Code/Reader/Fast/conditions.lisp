@@ -17,12 +17,7 @@
   ())
 
 (define-condition no-object-preceding-dot (sicl-reader-error)
-  ()
-  (:report
-   (lambda (condition stream)
-     (declare (ignore condition))
-     (format stream "A left parenthesis cannot be ~
-                     immediately followed by a dot"))))
+  ())
 
 (define-condition multiple-objects-following-dot (sicl-reader-error)
   ((%offending-expression
