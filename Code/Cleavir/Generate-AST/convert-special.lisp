@@ -124,12 +124,7 @@
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
     (declare (ignore flet))
-    (let ((new-env env))
-      ;; Create a new environment with the additional names.
-      (loop for defs = definitions then (drest defs)
-	    until (null defs)
-	    do (setf new-env
-		     (augment-environment-from-fdef new-env (dfirst defs))))
+    (let ((new-env (augment-environment-from-fdefs env definitions)))
       (let ((init-asts
 	      (loop for (name lambda-list . body) in definitions
 		    for block-name = (if (symbolp name) name (second name))
