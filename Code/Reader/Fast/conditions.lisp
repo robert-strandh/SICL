@@ -22,12 +22,7 @@
 (define-condition multiple-objects-following-dot (sicl-reader-error)
   ((%offending-expression
     :initarg :offending-expression
-    :reader offending-expression))
-  (:report
-   (lambda (condition stream)
-     (format stream "A second expression following a dot~@
-                     inside a list was found: ~S."
-	     (offending-expression condition)))))
+    :reader offending-expression)))
 
 (define-condition no-parameter-allowed (sicl-reader-error)
   ((%which-directive :initarg :which-directive :reader which-directive)
