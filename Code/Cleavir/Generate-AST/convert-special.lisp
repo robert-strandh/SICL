@@ -104,6 +104,11 @@
 ;;;
 ;;; Converting FLET.
 
+(defun augment-environment-from-fdef (environment definition)
+  (let* ((name (dfirst definition))
+	 (var-ast (cleavir-ast:make-lexical-ast name)))
+    (cleavir-env:add-local-function environment name var-ast)))
+
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
@@ -112,11 +117,8 @@
       ;; Create a new environment with the additional names.
       (loop for defs = definitions then (drest defs)
 	    until (null defs)
-	    do (let* ((def (dfirst defs))
-		      (name (car def))
-		      (var-ast (cleavir-ast:make-lexical-ast name)))
-		 (setf new-env
-		       (cleavir-env:add-local-function new-env name var-ast))))
+	    do (setf new-env
+		     (augment-environment-from-fdef new-env (dfirst defs))))
       (let ((init-asts
 	      (loop for (name lambda-list . body) in definitions
 		    for block-name = (if (symbolp name) name (second name))
