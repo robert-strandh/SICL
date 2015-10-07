@@ -25,3 +25,11 @@
      (language cleavir-i18n:english))
   (format stream "A left parenthesis cannot be ~
                   immediately followed by a dot"))
+
+(defmethod cleavir-i18n:report-condition
+    ((condition multiple-objects-following-dot)
+     stream
+     (language cleavir-i18n:english))
+  (format stream "A second expression following a dot~@
+                  inside a list was found: ~S."
+	  (offending-expression condition)))
