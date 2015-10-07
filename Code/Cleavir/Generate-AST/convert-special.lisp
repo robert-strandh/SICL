@@ -141,8 +141,7 @@
 		    for block-name = (if (symbolp name) name (second name))
 		    for fun = (convert-code lambda-list body env system block-name)
 		    collect (cleavir-ast:make-setq-ast
-			     (let ((info (cleavir-env:function-info new-env name)))
-			       (cleavir-env:identity info))
+			     (function-lexical new-env name)
 			     fun))))
 	(multiple-value-bind (declarations forms)
 	    (cleavir-code-utilities:separate-ordinary-body body)
