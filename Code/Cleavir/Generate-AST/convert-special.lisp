@@ -112,6 +112,14 @@
 	 (var-ast (cleavir-ast:make-lexical-ast name)))
     (cleavir-env:add-local-function environment name var-ast)))
 
+(defun augment-environment-from-fdefs (environment definitions)
+  (loop with result = environment
+	for defs = definitions then (drest defs)
+	until (null defs)
+	do (setf result
+		 (augment-environment-from-fdef result (dfirst defs)))
+	finally (return result)))
+
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
