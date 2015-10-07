@@ -112,6 +112,10 @@
 	 (var-ast (cleavir-ast:make-lexical-ast name)))
     (cleavir-env:add-local-function environment name var-ast)))
 
+;;; Take an environment and a list of function definitions, and return
+;;; a new environment which is like the one passed as an argument,
+;;; except that is has been augmented by the names of the local
+;;; functions in the list.
 (defun augment-environment-from-fdefs (environment definitions)
   (loop with result = environment
 	for defs = definitions then (drest defs)
