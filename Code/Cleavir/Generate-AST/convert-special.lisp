@@ -257,9 +257,8 @@
     (declare (ignore labels))
     (let* ((new-env (augment-environment-from-fdefs env definitions))
 	   (init-asts
-	     (loop for (name lambda-list . body) in definitions
-		   for block-name = (if (symbolp name) name (second name))
-		   for fun = (convert-code lambda-list body new-env system block-name)
+	     (loop for fun in (convert-local-functions definitions new-env system)
+		   for name in (function-names definitions)
 		   collect (cleavir-ast:make-setq-ast
 			    (function-lexical new-env name)
 			    fun))))
