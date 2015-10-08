@@ -150,7 +150,7 @@
       (let* ((funs (convert-local-functions definitions env system))
 	     (init-asts
 	       (loop for fun in funs
-		     for (name) in definitions
+		     for name in (function-names definitions)
 		     collect (cleavir-ast:make-setq-ast
 			      (function-lexical new-env name)
 			      fun))))
