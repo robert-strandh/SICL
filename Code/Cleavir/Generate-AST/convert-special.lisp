@@ -146,23 +146,23 @@
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
     (declare (ignore flet))
-    (let ((new-env (augment-environment-from-fdefs env definitions)))
-      (let* ((funs (convert-local-functions definitions env system))
-	     (init-asts
-	       (loop for fun in funs
-		     for name in (function-names definitions)
-		     collect (cleavir-ast:make-setq-ast
-			      (function-lexical new-env name)
-			      fun))))
-	(multiple-value-bind (declarations forms)
-	    (cleavir-code-utilities:separate-ordinary-body body)
-	  (let ((canonicalized-dspecs
-		  (cleavir-code-utilities:canonicalize-declaration-specifiers
-		   (reduce #'append (mapcar #'cdr declarations)))))
-	    (setf new-env (augment-environment-with-declarations
-			   new-env canonicalized-dspecs)))
-	  (process-progn
-	   (append init-asts (convert-sequence forms new-env system))))))))
+    (let* ((new-env (augment-environment-from-fdefs env definitions))
+	   (funs (convert-local-functions definitions env system))
+	   (init-asts
+	     (loop for fun in funs
+		   for name in (function-names definitions)
+		   collect (cleavir-ast:make-setq-ast
+			    (function-lexical new-env name)
+			    fun))))
+      (multiple-value-bind (declarations forms)
+	  (cleavir-code-utilities:separate-ordinary-body body)
+	(let ((canonicalized-dspecs
+		(cleavir-code-utilities:canonicalize-declaration-specifiers
+		 (reduce #'append (mapcar #'cdr declarations)))))
+	  (setf new-env (augment-environment-with-declarations
+			 new-env canonicalized-dspecs)))
+	(process-progn
+	 (append init-asts (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
