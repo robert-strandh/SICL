@@ -147,9 +147,8 @@
   (db s (flet definitions . body) form
     (declare (ignore flet))
     (let* ((new-env (augment-environment-from-fdefs env definitions))
-	   (funs (convert-local-functions definitions env system))
 	   (init-asts
-	     (loop for fun in funs
+	     (loop for fun in (convert-local-functions definitions env system)
 		   for name in (function-names definitions)
 		   collect (cleavir-ast:make-setq-ast
 			    (function-lexical new-env name)
