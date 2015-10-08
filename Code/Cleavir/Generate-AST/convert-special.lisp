@@ -245,12 +245,7 @@
 (defmethod convert-special ((symbol (eql 'labels)) form env system)
   (db s (labels definitions . body) form
     (declare (ignore labels))
-    (let ((new-env env))
-      ;; Create a new environment with the additional names.
-      (loop for def in definitions
-	    for name = (car def)
-	    for var-ast = (cleavir-ast:make-lexical-ast name)
-	    do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
+    (let ((new-env (augment-environment-from-fdefs env definitions)))
       (let ((init-asts
 	      (loop for (name lambda-list . body) in definitions
 		    for block-name = (if (symbolp name) name (second name))
