@@ -255,23 +255,23 @@
 (defmethod convert-special ((symbol (eql 'labels)) form env system)
   (db s (labels definitions . body) form
     (declare (ignore labels))
-    (let ((new-env (augment-environment-from-fdefs env definitions)))
-      (let ((init-asts
-	      (loop for (name lambda-list . body) in definitions
-		    for block-name = (if (symbolp name) name (second name))
-		    for fun = (convert-code lambda-list body new-env system block-name)
-		    collect (cleavir-ast:make-setq-ast
-			     (function-lexical new-env name)
-			     fun))))
-	(multiple-value-bind (declarations forms)
-	    (cleavir-code-utilities:separate-ordinary-body body)
-	  (let ((canonicalized-dspecs
-		  (cleavir-code-utilities:canonicalize-declaration-specifiers
-		   (reduce #'append (mapcar #'cdr declarations)))))
-	    (setf new-env (augment-environment-with-declarations
-			   new-env canonicalized-dspecs)))
-	  (process-progn
-	   (append init-asts (convert-sequence forms new-env system))))))))
+    (let* ((new-env (augment-environment-from-fdefs env definitions))
+	   (init-asts
+	     (loop for (name lambda-list . body) in definitions
+		   for block-name = (if (symbolp name) name (second name))
+		   for fun = (convert-code lambda-list body new-env system block-name)
+		   collect (cleavir-ast:make-setq-ast
+			    (function-lexical new-env name)
+			    fun))))
+      (multiple-value-bind (declarations forms)
+	  (cleavir-code-utilities:separate-ordinary-body body)
+	(let ((canonicalized-dspecs
+		(cleavir-code-utilities:canonicalize-declaration-specifiers
+		 (reduce #'append (mapcar #'cdr declarations)))))
+	  (setf new-env (augment-environment-with-declarations
+			 new-env canonicalized-dspecs)))
+	(process-progn
+	 (append init-asts (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
