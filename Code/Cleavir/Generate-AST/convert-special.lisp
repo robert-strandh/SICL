@@ -137,6 +137,11 @@
 	for block-name = (if (symbolp name) name (second name))
 	collect (convert-code lambda-list body environment system block-name)))
 
+;;; Given a list of local function definitions, return a list of
+;;; the names of those functions.
+(defun function-names (definitions)
+  (mapcar #'car definitions))
+
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
