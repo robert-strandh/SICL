@@ -131,6 +131,14 @@
 (defun function-lexical (environment name)
   (cleavir-env:identity (cleavir-env:function-info environment name)))
 
+(defun convert-local-function (definitions env1 env2 system)
+  (loop for (name lambda-list . body) in definitions
+	for block-name = (if (symbolp name) name (second name))
+	for fun = (convert-code lambda-list body env1 system block-name)
+	collect (cleavir-ast:make-setq-ast
+		 (function-lexical env2 name)
+		 fun)))
+
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
