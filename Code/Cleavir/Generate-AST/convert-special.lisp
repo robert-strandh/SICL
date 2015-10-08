@@ -332,6 +332,9 @@
 	  ;; remaining computation as components.
 	  (set-or-bind-variable var lexical-ast next-ast new-env system)))))
 
+(defun binding-vars (bindings)
+  (mapcar #'binding-var bindings))
+
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
   (destructuring-bind (bindings &rest body) (cdr form)
