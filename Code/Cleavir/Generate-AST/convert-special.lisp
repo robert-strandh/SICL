@@ -419,7 +419,7 @@
       (let* ((canonical-dspecs
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
-	     (variables (mapcar #'binding-var bindings))
+	     (variables (binding-vars bindings))
 	     (init-forms (mapcar #'binding-init-form bindings)))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
