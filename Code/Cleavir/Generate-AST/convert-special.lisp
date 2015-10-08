@@ -132,7 +132,7 @@
   (cleavir-env:identity (cleavir-env:function-info environment name)))
 
 ;;; Convert a list of local function definitions.
-(defun convert-local-function (definitions environment system)
+(defun convert-local-functions (definitions environment system)
   (loop for (name lambda-list . body) in definitions
 	for block-name = (if (symbolp name) name (second name))
 	collect (convert-code lambda-list body environment system block-name)))
@@ -142,13 +142,13 @@
   (db s (flet definitions . body) form
     (declare (ignore flet))
     (let ((new-env (augment-environment-from-fdefs env definitions)))
-      (let ((init-asts
-	      (loop for (name lambda-list . body) in definitions
-		    for block-name = (if (symbolp name) name (second name))
-		    for fun = (convert-code lambda-list body env system block-name)
-		    collect (cleavir-ast:make-setq-ast
-			     (function-lexical new-env name)
-			     fun))))
+      (let* ((funs (convert-local-functions definitions env system))
+	     (init-asts
+	       (loop for fun in funs
+		     for (name) in definitions
+		     collect (cleavir-ast:make-setq-ast
+			      (function-lexical new-env name)
+			      fun))))
 	(multiple-value-bind (declarations forms)
 	    (cleavir-code-utilities:separate-ordinary-body body)
 	  (let ((canonicalized-dspecs
