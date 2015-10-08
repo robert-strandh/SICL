@@ -343,7 +343,7 @@
       (let* ((canonical-dspecs
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
-	     (variables (mapcar #'binding-var bindings))
+	     (variables (binding-vars bindings))
 	     (temp-asts (loop for var in variables
 			      collect (cleavir-ast:make-lexical-ast (gensym))))
 	     (init-asts (loop for binding in bindings
