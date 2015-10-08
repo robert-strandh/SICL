@@ -348,8 +348,7 @@
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (binding-vars bindings))
-	     (temp-asts (loop for var in variables
-			      collect (cleavir-ast:make-lexical-ast (gensym))))
+	     (temp-asts (temp-asts-from-bindings bindings))
 	     (init-asts (loop for binding in bindings
 			      for init-form = (binding-init-form binding)
 			      for temp-ast in temp-asts
