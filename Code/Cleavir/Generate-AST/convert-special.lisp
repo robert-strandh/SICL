@@ -335,6 +335,10 @@
 (defun binding-vars (bindings)
   (mapcar #'binding-var bindings))
 
+(defun temp-asts-from-bindings (bindings)
+  (loop repeat (length bindings)
+	collect (cleavir-ast:make-lexical-ast (gensym))))
+
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
   (destructuring-bind (bindings &rest body) (cdr form)
