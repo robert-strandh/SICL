@@ -341,7 +341,8 @@
 
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
-  (destructuring-bind (bindings &rest body) (cdr form)
+  (db s (let bindings . body) form
+    (declare (ignore let))
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let* ((canonical-dspecs
