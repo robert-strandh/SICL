@@ -294,7 +294,7 @@
 	  (cleavir-code-utilities:separate-ordinary-body body)
 	(let ((canonicalized-dspecs
 		(cleavir-code-utilities:canonicalize-declaration-specifiers
-		 (reduce #'append (mapcar #'cdr declarations)))))
+		 (declaration-specifiers declarations))))
 	  (setf new-env (augment-environment-with-declarations
 			 new-env canonicalized-dspecs)))
 	(process-progn
