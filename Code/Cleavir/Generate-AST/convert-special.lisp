@@ -118,10 +118,9 @@
 ;;; functions in the list.
 (defun augment-environment-from-fdefs (environment definitions)
   (loop with result = environment
-	for defs = definitions then (drest defs)
-	until (null defs)
+	for definition in (raw definitions)
 	do (setf result
-		 (augment-environment-from-fdef result (dfirst defs)))
+		 (augment-environment-from-fdef result definition))
 	finally (return result)))
 
 ;;; Given an environment and the name of a function, return the
