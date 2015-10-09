@@ -146,7 +146,7 @@
 
 ;;; Convert a list of local function definitions.
 (defun convert-local-functions (definitions environment system)
-  (loop for definition in definitions
+  (loop for definition in (raw definitions)
 	collect (convert-local-function definition environment system)))
 
 ;;; Given a list of local function definitions, return a list of
