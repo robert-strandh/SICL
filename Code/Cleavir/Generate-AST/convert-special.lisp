@@ -166,6 +166,17 @@
 		 (function-lexical env2 name)
 		 fun)))
 
+;;; Given a list of declarations, i.e., a list of the form:
+;;;
+;;; ((DECLARE <declaration-specifier> ... <declaration-specifier>)
+;;;  (DECLARE <declaration-specifier> ... <declaration-specifier>)
+;;;  ...
+;;;  (DECLARE <declaration-specifier> ... <declaration-specifier>))
+;;;
+;;; Return a list of all the declaration specifiers.
+(defun declaration-specifiers (declarations)
+  (reduce #'append (mapcar #'cdr declarations)))
+
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
