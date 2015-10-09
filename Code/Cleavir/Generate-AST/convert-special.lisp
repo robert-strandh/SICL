@@ -281,6 +281,9 @@
       nil
       (cadr binding)))
 
+(defun binding-init-forms (bindings)
+  (mapcar #'binding-init-form bindings))
+
 (defun binding-var (binding)
   (if (symbolp binding)
       binding
