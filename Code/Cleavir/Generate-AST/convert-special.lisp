@@ -424,7 +424,7 @@
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
 		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (binding-vars bindings))
-	     (init-forms (mapcar #'binding-init-form bindings)))
+	     (init-forms (binding-init-forms bindings)))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
 	     (mapcar #'list variables)
