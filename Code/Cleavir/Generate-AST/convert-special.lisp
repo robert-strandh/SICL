@@ -153,6 +153,19 @@
 (defun function-names (definitions)
   (mapcar #'car definitions))
 
+;;; Compute and return a list of SETQ-ASTs that will assign the
+;;; definition of each function in a list of function definitions to
+;;; its associated LEXICAL-AST.  ENV1 is the environment in which the
+;;; function definitions will be converted.  ENV2 is the environment
+;;; in which the LEXICAL-AST associated with the function name is
+;;; looked up.
+(defun compute-function-init-asts (definitions env1 env2 system)
+  (loop for fun in (convert-local-functions definitions env1 system)
+	for name in (function-names definitions)
+	collect (cleavir-ast:make-setq-ast
+		 (function-lexical env2 name)
+		 fun)))
+
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
