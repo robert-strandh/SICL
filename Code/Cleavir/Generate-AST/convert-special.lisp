@@ -541,10 +541,12 @@
 
 (defmethod convert-special
     ((symbol (eql 'return-from)) form env system)
-  (let ((info (block-info env (cadr form))))
-    (cleavir-ast:make-return-from-ast
-     (cleavir-env:identity info)
-     (convert (caddr form) env system))))
+  (db s (return-from block-name value-form) form
+    (declare (ignore return-from))
+    (let ((info (block-info env block-name)))
+      (cleavir-ast:make-return-from-ast
+       (cleavir-env:identity info)
+       (convert value-form env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
