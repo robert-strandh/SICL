@@ -146,9 +146,8 @@
 
 ;;; Convert a list of local function definitions.
 (defun convert-local-functions (definitions environment system)
-  (loop for (name lambda-list . body) in definitions
-	for block-name = (block-name-from-function-name name)
-	collect (convert-code lambda-list body environment system block-name)))
+  (loop for definition in definitions
+	collect (convert-local-function definition environment system)))
 
 ;;; Given a list of local function definitions, return a list of
 ;;; the names of those functions.
