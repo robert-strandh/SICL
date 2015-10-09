@@ -131,6 +131,13 @@
 (defun function-lexical (environment name)
   (cleavir-env:identity (cleavir-env:function-info environment name)))
 
+;;; Given a function name, determine the name of a block that should
+;;; be associated with the function with that name.
+(defun block-name (function-name)
+  (if (symbolp function-name)
+      function-name
+      (second function-name)))
+
 ;;; Convert a list of local function definitions.
 (defun convert-local-functions (definitions environment system)
   (loop for (name lambda-list . body) in definitions
