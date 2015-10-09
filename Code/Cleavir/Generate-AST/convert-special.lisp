@@ -286,6 +286,9 @@
       binding
       (first binding)))
 
+(defun binding-vars (bindings)
+  (mapcar #'binding-var bindings))
+
 ;;; For converting LET, we use a method that is very close to the
 ;;; exact wording of the Common Lisp HyperSpec, in that we first
 ;;; evaluate the INIT-FORMs in the original environment and save the
@@ -331,9 +334,6 @@
 	  ;; return by using the new variable and the AST of the
 	  ;; remaining computation as components.
 	  (set-or-bind-variable var lexical-ast next-ast new-env system)))))
-
-(defun binding-vars (bindings)
-  (mapcar #'binding-var bindings))
 
 (defun temp-asts-from-bindings (bindings)
   (loop repeat (length bindings)
