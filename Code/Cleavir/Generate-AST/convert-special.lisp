@@ -140,7 +140,7 @@
 
 ;;; Convert a local function definition.
 (defun convert-local-function (definition environment system)
-  (destructuring-bind (name lambda-list . body) definition
+  (db s (name lambda-list . body) definition
     (let ((block-name (block-name-from-function-name name)))
       (convert-code lambda-list body environment system block-name))))
 
