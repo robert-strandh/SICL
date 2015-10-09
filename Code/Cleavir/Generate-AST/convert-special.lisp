@@ -133,7 +133,7 @@
 
 ;;; Given a function name, determine the name of a block that should
 ;;; be associated with the function with that name.
-(defun block-name (function-name)
+(defun block-name-from-function-name (function-name)
   (if (symbolp function-name)
       function-name
       (second function-name)))
