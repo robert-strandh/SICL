@@ -353,8 +353,7 @@
 		(reduce #'append (mapcar #'cdr declarations))))
 	     (variables (binding-vars bindings))
 	     (temp-asts (temp-asts-from-bindings bindings))
-	     (init-asts (loop for binding in bindings
-			      for init-form = (binding-init-form binding)
+	     (init-asts (loop for init-form in (binding-init-forms bindings)
 			      for temp-ast in temp-asts
 			      collect (cleavir-ast:make-setq-ast
 				       temp-ast
