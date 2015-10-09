@@ -141,7 +141,7 @@
 ;;; Convert a list of local function definitions.
 (defun convert-local-functions (definitions environment system)
   (loop for (name lambda-list . body) in definitions
-	for block-name = (if (symbolp name) name (second name))
+	for block-name = (block-name-from-function-name name)
 	collect (convert-code lambda-list body environment system block-name)))
 
 ;;; Given a list of local function definitions, return a list of
