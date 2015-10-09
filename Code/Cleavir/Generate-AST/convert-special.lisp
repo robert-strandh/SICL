@@ -175,7 +175,8 @@
 ;;;
 ;;; Return a list of all the declaration specifiers.
 (defun declaration-specifiers (declarations)
-  (reduce #'append (mapcar #'cdr declarations)))
+  (reduce #'append (mapcar #'cdr declarations)
+	  :from-end t))
 
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
