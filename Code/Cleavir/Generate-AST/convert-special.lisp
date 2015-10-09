@@ -172,11 +172,7 @@
     (declare (ignore flet))
     (let* ((new-env (augment-environment-from-fdefs env definitions))
 	   (init-asts
-	     (loop for fun in (convert-local-functions definitions env system)
-		   for name in (function-names definitions)
-		   collect (cleavir-ast:make-setq-ast
-			    (function-lexical new-env name)
-			    fun))))
+	     (compute-function-init-asts definitions env new-env system)))
       (multiple-value-bind (declarations forms)
 	  (cleavir-code-utilities:separate-ordinary-body body)
 	(let ((canonicalized-dspecs
