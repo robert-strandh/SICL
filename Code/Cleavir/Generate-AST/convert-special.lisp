@@ -193,9 +193,7 @@
 	     (compute-function-init-asts definitions env new-env system)))
       (multiple-value-bind (declarations forms)
 	  (cleavir-code-utilities:separate-ordinary-body body)
-	(let ((canonicalized-dspecs
-		(cleavir-code-utilities:canonicalize-declaration-specifiers
-		 (declaration-specifiers declarations))))
+	(let ((canonicalized-dspecs (canonicalize-declarations declarations)))
 	  (setf new-env (augment-environment-with-declarations
 			 new-env canonicalized-dspecs)))
 	(process-progn
