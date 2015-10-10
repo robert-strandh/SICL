@@ -378,7 +378,7 @@
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let* ((canonical-dspecs
 	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
-		(reduce #'append (mapcar #'cdr declarations))))
+		(declaration-specifiers declarations)))
 	     (variables (binding-vars bindings))
 	     (temp-asts (temp-asts-from-bindings bindings))
 	     (init-asts (loop for init-form in (binding-init-forms bindings)
