@@ -178,6 +178,10 @@
   (reduce #'append (mapcar #'cdr declarations)
 	  :from-end t))
 
+(defun canonicalize-declarations (declarations)
+  (cleavir-code-utilities:canonicalize-declaration-specifiers
+   (declaration-specifiers declarations)))
+
 (defmethod convert-special
     ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
