@@ -513,6 +513,15 @@
 ;;; According to section 3.2.3.1 of the HyperSpec, MACROLET processes
 ;;; its subforms the same way as the form itself.
 
+(defun expander (definition environment)
+  (destructuring-bind (name lambda-list . body) definition
+    (let ((lambda-expression
+	    (cleavir-code-utilities:parse-macro name
+						lambda-list
+						body
+						environment)))
+      (cleavir-env:eval lambda-expression environment environment))))
+
 (defmethod convert-special
     ((symbol (eql 'macrolet)) form env system)
   (destructuring-bind (definitions &rest body) (rest form)
