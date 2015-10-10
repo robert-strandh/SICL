@@ -526,10 +526,9 @@
     ((symbol (eql 'macrolet)) form env system)
   (destructuring-bind (definitions &rest body) (rest form)
     (let ((new-env env))
-      (loop for (name lambda-list . body) in definitions
-	    for lambda-expr = (cleavir-code-utilities:parse-macro
-			        name lambda-list body env)
-	    for expander = (cleavir-env:eval lambda-expr env env)
+      (loop for definition in definitions
+	    for name = (first definition)
+	    for expander = (expander definition env)
 	    do (setf new-env
 		     (cleavir-env:add-local-macro new-env name expander)))
       (with-preserved-toplevel-ness
