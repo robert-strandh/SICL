@@ -178,6 +178,8 @@
   (reduce #'append (mapcar #'cdr declarations)
 	  :from-end t))
 
+;;; Given a list of declarations, return a list of canonicalized
+;;; declaration specifiers of all the declarations.
 (defun canonicalize-declarations (declarations)
   (cleavir-code-utilities:canonicalize-declaration-specifiers
    (declaration-specifiers declarations)))
