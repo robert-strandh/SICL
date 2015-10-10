@@ -499,7 +499,7 @@
       (cleavir-code-utilities:separate-ordinary-body (cdr form))
     (let ((canonicalized-dspecs
 	    (cleavir-code-utilities:canonicalize-declaration-specifiers
-	     (reduce #'append (mapcar #'cdr declarations)))))
+	     (declaration-specifiers declarations))))
       (let ((new-env (augment-environment-with-declarations
 		      env canonicalized-dspecs)))
 	(with-preserved-toplevel-ness
