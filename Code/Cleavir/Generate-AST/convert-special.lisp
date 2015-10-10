@@ -511,6 +511,8 @@
 ;;; According to section 3.2.3.1 of the HyperSpec, MACROLET processes
 ;;; its subforms the same way as the form itself.
 
+;;; Given a MACROLET definition and an environment, return a macro
+;;; expander (or macro function) for the definition.
 (defun expander (definition environment)
   (destructuring-bind (name lambda-list . body) definition
     (let ((lambda-expression
