@@ -29,7 +29,7 @@
 ;;;; OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ;;;; POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :sicl-conditionals)
+(cl:in-package :sicl-conditionals)
 
 (defmethod cleavir-i18n:report-condition ((condition malformed-body)
 					  stream
