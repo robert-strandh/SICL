@@ -389,10 +389,9 @@
 			      collect (cleavir-ast:make-setq-ast
 				       temp-ast
 				       (convert init-form env system)))))
-	(multiple-value-bind (idspecs rdspecs)
-	    (itemize-declaration-specifiers
-	     (mapcar #'list variables)
-	     canonical-dspecs)
+	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
+						(listify variables)
+						canonical-dspecs)
 	  (process-progn
 	   (append init-asts
 		   (list (process-remaining-let-bindings
