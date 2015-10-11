@@ -453,10 +453,9 @@
       (let* ((canonical-dspecs (canonicalize-declarations declarations))
 	     (variables (binding-vars bindings))
 	     (init-forms (binding-init-forms bindings)))
-	(multiple-value-bind (idspecs rdspecs)
-	    (itemize-declaration-specifiers
-	     (mapcar #'list variables)
-	     canonical-dspecs)
+	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
+						(listify variables)
+						canonical-dspecs)
 	  (process-remaining-let*-bindings (mapcar #'cons variables init-forms)
 					   idspecs
 					   rdspecs
