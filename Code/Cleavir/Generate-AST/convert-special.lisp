@@ -372,6 +372,9 @@
   (loop repeat (length bindings)
 	collect (cleavir-ast:make-lexical-ast (gensym))))
 
+(defun listify (items)
+  (mapcar #'list items))
+
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
   (db s (let bindings . body) form
