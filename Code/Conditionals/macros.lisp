@@ -30,7 +30,7 @@
 ;;;; POSSIBILITY OF SUCH DAMAGE.
 
 ;;;; This file is part of the conditionals module of the SICL project.
-;;;; See the file SICL.text for a description of the project. 
+;;;; See the file SICL.text for a description of the project.
 ;;;; See the file conditionals.text for a description of the module.
 
 ;;; This implementation also does not use the format function, and
