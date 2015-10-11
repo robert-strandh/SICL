@@ -450,9 +450,7 @@
     (declare (ignore let*))
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
-      (let* ((canonical-dspecs
-	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
-		(declaration-specifiers declarations)))
+      (let* ((canonical-dspecs (canonicalize-declarations declarations))
 	     (variables (binding-vars bindings))
 	     (init-forms (binding-init-forms bindings)))
 	(multiple-value-bind (idspecs rdspecs)
