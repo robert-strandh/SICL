@@ -459,7 +459,7 @@
 	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
 						(listify variables)
 						canonical-dspecs)
-	  (process-remaining-let*-bindings (mapcar #'cons variables init-forms)
+	  (process-remaining-let*-bindings (pair-items variables init-forms)
 					   idspecs
 					   rdspecs
 					   forms
