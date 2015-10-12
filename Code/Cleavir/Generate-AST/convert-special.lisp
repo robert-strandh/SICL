@@ -375,6 +375,10 @@
 (defun listify (items)
   (mapcar #'list items))
 
+;;; Given two lists of equal length, pair the items so that the items
+;;; in LIST1 are stored in the CAR of the resulting CONS cells, and
+;;; the items in LIST2 are stored in the CDR of the resulting CONS
+;;; cells.  The order is preserved from the original lists.
 (defun pair-items (list1 list2)
   (mapcar #'cons list1 list2))
 
