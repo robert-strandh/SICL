@@ -398,7 +398,7 @@
 	  (process-progn
 	   (append init-asts
 		   (list (process-remaining-let-bindings
-			  (mapcar #'cons variables temp-asts)
+			  (pair-items variables temp-asts)
 			  idspecs
 			  rdspecs
 			  forms
