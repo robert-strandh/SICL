@@ -375,6 +375,9 @@
 (defun listify (items)
   (mapcar #'list items))
 
+(defun pair-items (list1 list2)
+  (mapcar #'cons list1 list2))
+
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
   (db s (let bindings . body) form
