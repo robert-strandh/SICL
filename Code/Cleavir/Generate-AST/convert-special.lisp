@@ -395,10 +395,10 @@
 	     (variables (binding-vars bindings))
 	     (temp-asts (temp-asts-from-bindings bindings))
 	     (init-asts (loop for init-form in (binding-init-forms bindings)
+			      for converted = (convert init-form env system)
 			      for temp-ast in temp-asts
 			      collect (cleavir-ast:make-setq-ast
-				       temp-ast
-				       (convert init-form env system)))))
+				       temp-ast converted))))
 	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
 						(listify variables)
 						canonical-dspecs)
