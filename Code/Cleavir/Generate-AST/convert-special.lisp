@@ -633,7 +633,7 @@
   
 (defmethod convert-special
     ((symbol (eql 'setq)) form environment system)
-  (let ((form-asts (loop for (var form) on (cdr form) by #'cddr
+  (let ((form-asts (loop for (var form) on (cdr (raw form)) by #'cddr
 			 collect (convert-elementary-setq
 				  var form environment system))))
     (process-progn form-asts)))
