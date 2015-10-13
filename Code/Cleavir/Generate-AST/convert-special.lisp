@@ -372,6 +372,9 @@
   (loop repeat (length bindings)
 	collect (cleavir-ast:make-lexical-ast (gensym))))
 
+;;; Given a list of items, return which is like the one given as
+;;; argument, except that each item has been wrapped in a (singleton)
+;;; list.
 (defun listify (items)
   (mapcar #'list items))
 
