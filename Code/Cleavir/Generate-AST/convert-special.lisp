@@ -400,11 +400,7 @@
       (let* ((canonical-dspecs (canonicalize-declarations declarations))
 	     (variables (binding-vars bindings))
 	     (temp-asts (temp-asts-from-bindings bindings))
-	     (init-asts (loop for init-form in (binding-init-forms bindings)
-			      for converted = (convert init-form env system)
-			      for temp-ast in temp-asts
-			      collect (cleavir-ast:make-setq-ast
-				       temp-ast converted))))
+	     (init-asts (make-let-init-asts bindings temp-asts env system)))
 	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
 						(listify variables)
 						canonical-dspecs)
