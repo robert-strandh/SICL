@@ -385,6 +385,12 @@
 (defun pair-items (list1 list2)
   (mapcar #'cons list1 list2))
 
+(defun make-let-init-asts (bindings temp-asts env system)
+  (loop for init-form in (binding-init-forms bindings)
+	for converted = (convert init-form env system)
+	for temp-ast in temp-asts
+	collect (cleavir-ast:make-setq-ast temp-ast converted)))
+
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
   (db s (let bindings . body) form
