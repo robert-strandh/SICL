@@ -23,7 +23,7 @@ simply suggest creating this class manually.
 
 The second issue involves the fact that generic functions are required
 in order to create classes, but during bootstrapping, there are no
-generic functions since generic functions are instances of classes.
+generic functions, since generic functions are instances of classes.
 The technique used to handle such issues is to define ordinary
 functions to contain code for essential methods, so that such
 functions can be called during bootstrapping.  To avoid code
