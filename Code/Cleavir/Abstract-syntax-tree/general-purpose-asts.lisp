@@ -409,8 +409,9 @@
   ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-setq-ast (lhs-ast value-ast)
+(defun make-setq-ast (lhs-ast value-ast &key origin)
   (make-instance 'setq-ast
+    :origin origin
     :lhs-ast lhs-ast
     :value-ast value-ast))
 
