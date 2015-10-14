@@ -577,16 +577,18 @@
 ;;; therefore make sure it is always compiled in a context where its
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
-(defgeneric convert-setq (info form env system))
+(defgeneric convert-setq (info var form env system))
 
 (defmethod convert-setq
-    ((info cleavir-env:constant-variable-info) form env system)
+    ((info cleavir-env:constant-variable-info) var form env system)
+  (declare (ignore var))
   (declare (ignore env system form))
   (error 'setq-constant-variable
 	 :form (cleavir-env:name info)))
 
 (defmethod convert-setq
-    ((info cleavir-env:lexical-variable-info) form env system)
+    ((info cleavir-env:lexical-variable-info) var form env system)
+  (declare (ignore var))
   (process-progn 
    (list (cleavir-ast:make-setq-ast
 	  (cleavir-env:identity info)
@@ -594,7 +596,8 @@
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
-    ((info cleavir-env:symbol-macro-info) form env system)
+    ((info cleavir-env:symbol-macro-info) var form env system)
+  (declare (ignore var))
   (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
 			    (lambda (form env)
 			      (declare (ignore form env))
@@ -618,7 +621,8 @@
 	   temp))))
 
 (defmethod convert-setq
-    ((info cleavir-env:special-variable-info) form env system)
+    ((info cleavir-env:special-variable-info) var form env system)
+  (declare (ignore var))
   (let ((global-env (cleavir-env:global-environment env)))
     (convert-setq-special-variable info
 				   (convert form env system)
@@ -627,6 +631,7 @@
 
 (defun convert-elementary-setq (var form env system)
   (convert-setq (variable-info env (raw var))
+		var
 		form
 		env
 		system))
