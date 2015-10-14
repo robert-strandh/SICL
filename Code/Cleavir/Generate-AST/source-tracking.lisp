@@ -41,6 +41,12 @@
   (declare (ignore source-info))
   nil)
 
+;;; This function returns the location of an object.  If the argument
+;;; is an instance of SOURCE-LOCATION, then the corresponding
+;;; client-supplied location information is returned.  Otherwise, NIL
+;;; is returned.
+(defgeneric location (object))
+
 ;;; Data structure for source tracking.
 (defclass source-location ()
   ((%expression :initarg :expression :reader expression)
