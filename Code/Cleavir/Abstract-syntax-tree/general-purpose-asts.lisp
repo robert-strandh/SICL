@@ -25,7 +25,7 @@
 ;;; Cleavir.
 
 (defclass ast ()
-  ((%origin :initform nil :initarg origin :accessor origin)))
+  ((%origin :initform nil :initarg :origin :accessor origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
