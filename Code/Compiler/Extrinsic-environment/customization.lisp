@@ -52,7 +52,8 @@
 ;;; SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE), passing it the new
 ;;; value, the symbol naming the variable, and the environment.
 (defmethod cleavir-generate-ast:convert-setq-special-variable
-    ((info cleavir-env:special-variable-info) form-ast (env environment) system)
+    ((info cleavir-env:special-variable-info) var form-ast (env environment) system)
+  (declare (ignore var))
   (declare (ignore system))
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
