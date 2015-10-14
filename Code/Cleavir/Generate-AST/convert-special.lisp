@@ -626,7 +626,7 @@
 				   system)))
 
 (defun convert-elementary-setq (var form env system)
-  (convert-setq (variable-info env var)
+  (convert-setq (variable-info env (raw var))
 		form
 		env
 		system))
