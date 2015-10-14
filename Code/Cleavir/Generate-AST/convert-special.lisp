@@ -617,7 +617,8 @@
      (list (cleavir-ast:make-setq-ast temp form-ast)
 	   (cleavir-ast:make-set-symbol-value-ast
 	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info))
-	    temp)
+	    temp
+	    :origin (location var))
 	   temp))))
 
 (defmethod convert-setq
