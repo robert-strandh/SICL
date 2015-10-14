@@ -607,10 +607,10 @@
     (convert `(setf ,expansion ,form) env system)))
 
 (defgeneric convert-setq-special-variable
-    (info form-ast global-env system))
+    (info var form-ast global-env system))
 
 (defmethod convert-setq-special-variable
-    (info form-ast global-env system)
+    (info var form-ast global-env system)
   (declare (ignore system))
   (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
     (process-progn
@@ -622,9 +622,9 @@
 
 (defmethod convert-setq
     ((info cleavir-env:special-variable-info) var form env system)
-  (declare (ignore var))
   (let ((global-env (cleavir-env:global-environment env)))
     (convert-setq-special-variable info
+				   var
 				   (convert form env system)
 				   global-env
 				   system)))
