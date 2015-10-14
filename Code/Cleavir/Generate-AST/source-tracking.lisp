@@ -47,6 +47,10 @@
    (%location :initarg :location :reader location)
    (%children :initarg :children :reader children)))
 
+(defmethod location (object)
+  (declare (ignore object))
+  nil)
+
 (defun build-source-info (source-info expression)
   (let ((location (begin-source source-info expression)))
     (unless (null location)
