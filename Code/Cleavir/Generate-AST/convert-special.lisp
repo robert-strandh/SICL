@@ -588,11 +588,11 @@
 
 (defmethod convert-setq
     ((info cleavir-env:lexical-variable-info) var form env system)
-  (declare (ignore var))
   (process-progn 
    (list (cleavir-ast:make-setq-ast
 	  (cleavir-env:identity info)
-	  (convert form env system))
+	  (convert form env system)
+	  :origin (location var))
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
