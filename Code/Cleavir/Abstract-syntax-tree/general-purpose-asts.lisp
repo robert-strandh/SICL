@@ -197,8 +197,9 @@
   ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-set-symbol-value-ast (symbol-ast value-ast)
+(defun make-set-symbol-value-ast (symbol-ast value-ast &key origin)
   (make-instance 'set-symbol-value-ast
+    :origin origin
     :symbol-ast symbol-ast
     :value-ast value-ast))
 
