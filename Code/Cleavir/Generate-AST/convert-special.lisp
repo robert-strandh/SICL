@@ -18,7 +18,8 @@
     ((symbol (eql 'block)) form env system)
   (db s (block name . body) form
     (declare (ignore block))
-    (let* ((ast (cleavir-ast:make-block-ast nil))
+    (let* ((origin (location form))
+	   (ast (cleavir-ast:make-block-ast nil :origin origin))
 	   (new-env (cleavir-env:add-block env name ast)))
       (setf (cleavir-ast:body-ast ast)
 	    (process-progn (convert-sequence body new-env system)))
