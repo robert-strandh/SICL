@@ -11,8 +11,9 @@
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-t-aref-ast (array-ast index-ast)
+(defun make-t-aref-ast (array-ast index-ast &key origin)
   (make-instance 't-aref-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
@@ -37,8 +38,9 @@
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-t-aset-ast (array-ast index-ast value-ast)
+(defun make-t-aset-ast (array-ast index-ast value-ast &key origin)
   (make-instance 't-aset-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
@@ -62,8 +64,9 @@
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-short-float-aref-ast (array-ast index-ast)
+(defun make-short-float-aref-ast (array-ast index-ast &key origin)
   (make-instance 'short-float-aref-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
@@ -86,8 +89,9 @@
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-short-float-aset-ast (array-ast index-ast value-ast)
+(defun make-short-float-aset-ast (array-ast index-ast value-ast &key origin)
   (make-instance 'short-float-aset-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
@@ -111,8 +115,9 @@
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-single-float-aref-ast (array-ast index-ast)
+(defun make-single-float-aref-ast (array-ast index-ast &key origin)
   (make-instance 'single-float-aref-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
@@ -135,8 +140,9 @@
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-single-float-aset-ast (array-ast index-ast value-ast)
+(defun make-single-float-aset-ast (array-ast index-ast value-ast &key origin)
   (make-instance 'single-float-aset-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
@@ -160,8 +166,9 @@
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-double-float-aref-ast (array-ast index-ast)
+(defun make-double-float-aref-ast (array-ast index-ast &key origin)
   (make-instance 'double-float-aref-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
@@ -184,8 +191,9 @@
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-double-float-aset-ast (array-ast index-ast value-ast)
+(defun make-double-float-aset-ast (array-ast index-ast value-ast &key origin)
   (make-instance 'double-float-aset-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
@@ -209,8 +217,9 @@
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-long-float-aref-ast (array-ast index-ast)
+(defun make-long-float-aref-ast (array-ast index-ast &key origin)
   (make-instance 'long-float-aref-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
@@ -233,8 +242,9 @@
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-long-float-aset-ast (array-ast index-ast value-ast)
+(defun make-long-float-aset-ast (array-ast index-ast value-ast &key origin)
   (make-instance 'long-float-aset-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
@@ -258,8 +268,9 @@
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-bit-aref-ast (array-ast index-ast)
+(defun make-bit-aref-ast (array-ast index-ast &key origin)
   (make-instance 'bit-aref-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
@@ -282,8 +293,9 @@
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-bit-aset-ast (array-ast index-ast value-ast)
+(defun make-bit-aset-ast (array-ast index-ast value-ast &key origin)
   (make-instance 'bit-aset-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
@@ -307,8 +319,9 @@
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-unsigned-byte-8-aref-ast (array-ast index-ast)
+(defun make-unsigned-byte-8-aref-ast (array-ast index-ast &key origin)
   (make-instance 'unsigned-byte-8-aref-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
@@ -331,8 +344,9 @@
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-unsigned-byte-8-aset-ast (array-ast index-ast value-ast)
+(defun make-unsigned-byte-8-aset-ast (array-ast index-ast value-ast &key origin)
   (make-instance 'unsigned-byte-8-aset-ast
+    :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
