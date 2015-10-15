@@ -112,8 +112,10 @@
 (defclass immediate-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
-(defun make-immediate-ast (value)
-  (make-instance 'immediate-ast :value value))
+(defun make-immediate-ast (value &key origin)
+  (make-instance 'immediate-ast
+    :origin origin
+    :value value))
 
 (cleavir-io:define-save-info immediate-ast
   (:value value))
@@ -138,8 +140,10 @@
 (defclass constant-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
-(defun make-constant-ast (value)
-  (make-instance 'constant-ast :value value))
+(defun make-constant-ast (value &key origin)
+  (make-instance 'constant-ast
+    :origin origin
+    :value value))
 
 (cleavir-io:define-save-info constant-ast
   (:value value))
@@ -159,8 +163,10 @@
 (defclass lexical-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
-(defun make-lexical-ast (name)
-  (make-instance 'lexical-ast :name name))
+(defun make-lexical-ast (name &key origin)
+  (make-instance 'lexical-ast
+    :origin origin
+    :name name))
 
 (cleavir-io:define-save-info lexical-ast
   (:name name))
@@ -178,8 +184,10 @@
 (defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
 
-(defun make-symbol-value-ast (symbol-ast)
-  (make-instance 'symbol-value-ast :symbol-ast symbol-ast))
+(defun make-symbol-value-ast (symbol-ast &key origin)
+  (make-instance 'symbol-value-ast
+    :origin origin
+    :symbol-ast symbol-ast))
 
 (cleavir-io:define-save-info symbol-value-ast
   (:symbol-ast symbol-ast))
@@ -223,8 +231,11 @@
    ;; the environment query.
    (%info :initarg :info :reader info)))
 
-(defun make-fdefinition-ast (name-ast info)
-  (make-instance 'fdefinition-ast :name-ast name-ast :info info))
+(defun make-fdefinition-ast (name-ast info &key origin)
+  (make-instance 'fdefinition-ast
+    :origin origin
+    :name-ast name-ast
+    :info info))
 
 (cleavir-io:define-save-info fdefinition-ast
   (:name-ast name-ast))
@@ -242,8 +253,9 @@
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
-(defun make-call-ast (callee-ast argument-asts)
+(defun make-call-ast (callee-ast argument-asts &key origin)
   (make-instance 'call-ast
+    :origin origin
     :callee-ast callee-ast
     :argument-asts argument-asts))
 
@@ -298,8 +310,9 @@
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defun make-function-ast (body-ast lambda-list)
+(defun make-function-ast (body-ast lambda-list &key origin)
   (make-instance 'function-ast
+    :origin origin
     :body-ast body-ast
     :lambda-list lambda-list))
 
@@ -336,8 +349,9 @@
 (defclass top-level-function-ast (function-ast)
   ((%forms :initarg :forms :reader forms)))
 
-(defun make-top-level-function-ast (body-ast lambda-list forms)
+(defun make-top-level-function-ast (body-ast lambda-list forms &key origin)
   (make-instance 'top-level-function-ast
+    :origin origin
     :body-ast body-ast
     :lambda-list lambda-list
     :forms forms))
@@ -352,8 +366,9 @@
 (defclass progn-ast (ast)
   ((%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-progn-ast (form-asts)
+(defun make-progn-ast (form-asts &key origin)
   (make-instance 'progn-ast
+    :origin origin
     :form-asts form-asts))
 
 (cleavir-io:define-save-info progn-ast
@@ -369,8 +384,9 @@
 (defclass block-ast (ast)
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
-(defun make-block-ast (body-ast)
+(defun make-block-ast (body-ast &key origin)
   (make-instance 'block-ast
+    :origin origin
     :body-ast body-ast))
   
 (cleavir-io:define-save-info block-ast
@@ -387,8 +403,9 @@
   ((%block-ast :initarg :block-ast :reader block-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defun make-return-from-ast (block-ast form-ast)
+(defun make-return-from-ast (block-ast form-ast &key origin)
   (make-instance 'return-from-ast
+    :origin origin
     :block-ast block-ast
     :form-ast form-ast))
   
@@ -444,8 +461,9 @@
   ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defun make-multiple-value-setq-ast (lhs-asts form-ast)
+(defun make-multiple-value-setq-ast (lhs-asts form-ast &key origin)
   (make-instance 'multiple-value-setq-ast
+    :origin origin
     :lhs-asts lhs-asts
     :form-ast form-ast))
 
@@ -463,8 +481,9 @@
 (defclass tag-ast (ast)
   ((%name :initarg :name :reader name)))
 
-(defun make-tag-ast (name)
+(defun make-tag-ast (name &key origin)
   (make-instance 'tag-ast
+    :origin origin
     :name name))
 
 (cleavir-io:define-save-info tag-ast
@@ -481,8 +500,9 @@
 (defclass tagbody-ast (ast no-value-ast-mixin)
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
-(defun make-tagbody-ast (item-asts)
+(defun make-tagbody-ast (item-asts &key origin)
   (make-instance 'tagbody-ast
+    :origin origin
     :item-asts item-asts))
 
 (cleavir-io:define-save-info tagbody-ast
@@ -498,8 +518,9 @@
 (defclass go-ast (ast)
   ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
-(defun make-go-ast (tag-ast)
+(defun make-go-ast (tag-ast &key origin)
   (make-instance 'go-ast
+    :origin origin
     :tag-ast tag-ast))
 
 (cleavir-io:define-save-info go-ast
@@ -525,8 +546,9 @@
   ((%form-ast :initarg :form-ast :reader form-ast)
    (%type-specifiers :initarg :type-specifiers :reader type-specifiers)))
 
-(defun make-the-ast (form-ast type-specifiers)
+(defun make-the-ast (form-ast type-specifiers &key origin)
   (make-instance 'the-ast
+    :origin origin
     :form-ast form-ast
     :type-specifiers type-specifiers))
 
@@ -600,8 +622,9 @@
        :type-specifier-ast value))
     value))
 
-(defun make-typeq-ast (form-ast type-specifier)
+(defun make-typeq-ast (form-ast type-specifier &key origin)
   (make-instance 'typeq-ast
+    :origin origin
     :form-ast form-ast
     :type-specifier type-specifier))
 
@@ -627,8 +650,9 @@
   ((%form :initarg :form :reader form)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
-(defun make-load-time-value-ast (form &optional read-only-p)
+(defun make-load-time-value-ast (form &optional read-only-p &key origin)
   (make-instance 'load-time-value-ast
+    :origin origin
     :form form
     :read-only-p read-only-p))
 
@@ -654,8 +678,9 @@
    (%then-ast :initarg :then-ast :reader then-ast)
    (%else-ast :initarg :else-ast :reader else-ast)))
 
-(defun make-if-ast (test-ast then-ast else-ast)
+(defun make-if-ast (test-ast then-ast else-ast &key origin)
   (make-instance 'if-ast
+    :origin origin
     :test-ast test-ast
     :then-ast then-ast
     :else-ast else-ast))
@@ -676,8 +701,9 @@
   ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
    (%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-multiple-value-call-ast (function-form-ast form-asts)
+(defun make-multiple-value-call-ast (function-form-ast form-asts &key origin)
   (make-instance 'multiple-value-call-ast
+    :origin origin
     :function-form-ast function-form-ast
     :form-asts form-asts))
 
@@ -698,8 +724,9 @@
    ;; A list of ASTs
    (%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-multiple-value-prog1-ast (first-form-ast form-asts)
+(defun make-multiple-value-prog1-ast (first-form-ast form-asts &key origin)
   (make-instance 'multiple-value-prog1-ast
+    :origin origin
     :first-form-ast first-form-ast
     :form-asts form-asts))
 
@@ -725,8 +752,9 @@
    (%value-ast :initarg :value-ast :reader value-ast)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defun make-bind-ast (symbol value-ast body-ast)
+(defun make-bind-ast (symbol value-ast body-ast &key origin)
   (make-instance 'bind-ast
+    :origin origin
     :symbol symbol
     :value-ast value-ast
     :body-ast body-ast))
@@ -751,8 +779,9 @@
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(defun make-eq-ast (arg1-ast arg2-ast)
+(defun make-eq-ast (arg1-ast arg2-ast &key origin)
   (make-instance 'eq-ast
+    :origin origin
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
 
