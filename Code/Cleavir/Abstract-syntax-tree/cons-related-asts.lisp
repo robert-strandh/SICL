@@ -10,8 +10,9 @@
 (defclass consp-ast (ast boolean-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)))
 
-(defun make-consp-ast (object-ast)
+(defun make-consp-ast (object-ast &key origin)
   (make-instance 'consp-ast
+    :origin origin
     :object-ast object-ast))
 
 (cleavir-io:define-save-info consp-ast
@@ -31,8 +32,9 @@
 (defclass car-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
-(defun make-car-ast (cons-ast)
+(defun make-car-ast (cons-ast &key origin)
   (make-instance 'car-ast
+    :origin origin
     :cons-ast cons-ast))
 
 (cleavir-io:define-save-info car-ast
@@ -52,8 +54,9 @@
 (defclass cdr-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
-(defun make-cdr-ast (cons-ast)
+(defun make-cdr-ast (cons-ast &key origin)
   (make-instance 'cdr-ast
+    :origin origin
     :cons-ast cons-ast))
 
 (cleavir-io:define-save-info cdr-ast
@@ -76,8 +79,9 @@
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
-(defun make-rplaca-ast (cons-ast object-ast)
+(defun make-rplaca-ast (cons-ast object-ast &key origin)
   (make-instance 'rplaca-ast
+    :origin origin
     :cons-ast cons-ast
     :object-ast object-ast))
 
@@ -102,8 +106,9 @@
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
-(defun make-rplacd-ast (cons-ast object-ast)
+(defun make-rplacd-ast (cons-ast object-ast &key origin)
   (make-instance 'rplacd-ast
+    :origin origin
     :cons-ast cons-ast
     :object-ast object-ast))
 
