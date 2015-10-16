@@ -276,16 +276,19 @@
 	  (false-ast (if (null tail)
 			 (convert-constant nil env system)
 			 (db s (else) tail
-			   (convert else env system)))))
+			   (convert else env system))))
+	  (location (location form)))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
 	  (cleavir-ast:make-if-ast
 	   test-ast
 	   true-ast
-	   false-ast)
+	   false-ast
+	   :origin location)
 	  (cleavir-ast:make-if-ast
 	   (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
 	   false-ast
-	   true-ast)))))
+	   true-ast
+	   :origin location)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
