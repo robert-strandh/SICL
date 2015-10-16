@@ -573,7 +573,8 @@
     (let ((info (block-info env block-name)))
       (cleavir-ast:make-return-from-ast
        (cleavir-env:identity info)
-       (convert value-form env system)))))
+       (convert value-form env system)
+       :origin (location form)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
