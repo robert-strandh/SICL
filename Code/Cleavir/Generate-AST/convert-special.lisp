@@ -688,7 +688,7 @@
 				   (pop tag-asts)
 				   (convert item new-env system)))))
       (process-progn
-       (list (cleavir-ast:make-tagbody-ast items)
+       (list (cleavir-ast:make-tagbody-ast items :origin (location form))
 	     (convert-constant nil env system))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
