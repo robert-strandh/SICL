@@ -261,7 +261,8 @@
     (declare (ignore go))
     (let ((info (tag-info env (raw tag))))
       (cleavir-ast:make-go-ast
-       (cleavir-env:identity info)))))
+       (cleavir-env:identity info)
+       :origin (location form)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
