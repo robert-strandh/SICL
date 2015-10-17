@@ -702,7 +702,8 @@
      (convert subform environment system)
      (if (and (consp value-type) (eq (car value-type) 'values))
 	 (cdr value-type)
-	 (list value-type)))))
+	 (list value-type))
+     :origin (location form))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
