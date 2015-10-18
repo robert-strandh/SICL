@@ -27,8 +27,9 @@
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(defun make-fixnum-add-ast (arg1-ast arg2-ast variable-ast)
+(defun make-fixnum-add-ast (arg1-ast arg2-ast variable-ast &key origin)
   (make-instance 'fixnum-add-ast
+    :origin origin
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast
     :variable-ast variable-ast))
@@ -61,8 +62,9 @@
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(defun make-fixnum-sub-ast (arg1-ast arg2-ast variable-ast)
+(defun make-fixnum-sub-ast (arg1-ast arg2-ast variable-ast &key origin)
   (make-instance 'fixnum-sub-ast
+    :origin origin
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast
     :variable-ast variable-ast))
