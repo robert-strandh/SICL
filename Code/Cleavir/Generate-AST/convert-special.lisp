@@ -718,7 +718,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting MULTIPLE-VALUE-CALL.
+;;; Converting MULTIPLE-VALUE-PROG1.
 
 (defmethod convert-special
     ((symbol (eql 'multiple-value-prog1)) form environment system)
