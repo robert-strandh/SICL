@@ -725,7 +725,8 @@
   (destructuring-bind (first-form . forms) (rest form)
     (cleavir-ast:make-multiple-value-prog1-ast
      (convert first-form environment system)
-     (convert-sequence forms environment system))))
+     (convert-sequence forms environment system)
+     :origin (location form))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
