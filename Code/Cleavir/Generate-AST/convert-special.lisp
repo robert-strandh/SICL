@@ -722,7 +722,8 @@
 
 (defmethod convert-special
     ((symbol (eql 'multiple-value-prog1)) form environment system)
-  (destructuring-bind (first-form . forms) (rest form)
+  (db s (multiple-value-prog1 first-form . forms) form
+    (declare (ignore multiple-value-prog1))
     (cleavir-ast:make-multiple-value-prog1-ast
      (convert first-form environment system)
      (convert-sequence forms environment system)
