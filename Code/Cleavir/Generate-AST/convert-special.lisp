@@ -678,7 +678,7 @@
   (db s (tagbody . items) form
     (declare (ignore tagbody))
     (let ((tag-asts
-	    (loop for item in items
+	    (loop for item in (raw items)
 		  when (symbolp item)
 		    collect (cleavir-ast:make-tag-ast item)))
 	  (new-env env))
