@@ -506,16 +506,18 @@
 
 (defmethod convert-special
     ((symbol (eql 'locally)) form env system)
-  (multiple-value-bind (declarations forms)
-      (cleavir-code-utilities:separate-ordinary-body (cdr form))
-    (let ((canonicalized-dspecs
-	    (cleavir-code-utilities:canonicalize-declaration-specifiers
-	     (declaration-specifiers declarations))))
-      (let ((new-env (augment-environment-with-declarations
-		      env canonicalized-dspecs)))
-	(with-preserved-toplevel-ness
-	  (process-progn
-	   (convert-sequence forms new-env system)))))))
+  (db s (locally . body) form
+    (declare (ignore locally))
+    (multiple-value-bind (declarations forms)
+	(cleavir-code-utilities:separate-ordinary-body body)
+      (let ((canonicalized-dspecs
+	      (cleavir-code-utilities:canonicalize-declaration-specifiers
+	       (declaration-specifiers declarations))))
+	(let ((new-env (augment-environment-with-declarations
+			env canonicalized-dspecs)))
+	  (with-preserved-toplevel-ness
+	    (process-progn
+	     (convert-sequence forms new-env system))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
