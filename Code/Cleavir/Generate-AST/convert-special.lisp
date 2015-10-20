@@ -683,12 +683,13 @@
     (loop for ast in tag-asts
 	  do (setf new-env (cleavir-env:add-tag
 			    new-env (cleavir-ast:name ast) ast)))
-    (let ((items (loop for item in (cdr form)
-		       collect (if (symbolp item)
-				   (pop tag-asts)
-				   (convert item new-env system)))))
+    (let ((item-asts (loop for item in (cdr form)
+			   collect (if (symbolp item)
+				       (pop tag-asts)
+				       (convert item new-env system)))))
       (process-progn
-       (list (cleavir-ast:make-tagbody-ast items :origin (location form))
+       (list (cleavir-ast:make-tagbody-ast item-asts
+					   :origin (location form))
 	     (convert-constant nil env system))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
