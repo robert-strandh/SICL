@@ -1,4 +1,4 @@
-(in-package #:sicl-direct-extrinsic-compiler)
+(cl:in-package #:sicl-direct-extrinsic-compiler)
 
 (defclass code ()
   (;; In the direct extrinsic compiler, this slot contains a simple
