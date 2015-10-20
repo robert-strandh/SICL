@@ -1,4 +1,4 @@
-(in-package #:sicl-gc)
+(cl:in-package #:sicl-gc)
 
 ;;; The total number of garbage collections of the nursery.
 (defparameter *number-of-nursery-gcs* 0)
