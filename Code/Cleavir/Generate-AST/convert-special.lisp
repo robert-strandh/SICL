@@ -716,7 +716,8 @@
     (declare (ignore multiple-value-call))
     (cleavir-ast:make-multiple-value-call-ast
      (convert function-form environment system)
-     (convert-sequence forms environment system))))
+     (convert-sequence forms environment system)
+     :origin (location form))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
