@@ -675,22 +675,24 @@
 
 (defmethod convert-special
     ((symbol (eql 'tagbody)) form env system)
-  (let ((tag-asts
-	  (loop for item in (cdr form)
-		when (symbolp item)
-		  collect (cleavir-ast:make-tag-ast item)))
-	(new-env env))
-    (loop for ast in tag-asts
-	  do (setf new-env (cleavir-env:add-tag
-			    new-env (cleavir-ast:name ast) ast)))
-    (let ((item-asts (loop for item in (cdr form)
-			   collect (if (symbolp item)
-				       (pop tag-asts)
-				       (convert item new-env system)))))
-      (process-progn
-       (list (cleavir-ast:make-tagbody-ast item-asts
-					   :origin (location form))
-	     (convert-constant nil env system))))))
+  (db s (tagbody . items) form
+    (declare (ignore tagbody))
+    (let ((tag-asts
+	    (loop for item in items
+		  when (symbolp item)
+		    collect (cleavir-ast:make-tag-ast item)))
+	  (new-env env))
+      (loop for ast in tag-asts
+	    do (setf new-env (cleavir-env:add-tag
+			      new-env (cleavir-ast:name ast) ast)))
+      (let ((item-asts (loop for item in (cdr form)
+			     collect (if (symbolp item)
+					 (pop tag-asts)
+					 (convert item new-env system)))))
+	(process-progn
+	 (list (cleavir-ast:make-tagbody-ast item-asts
+					     :origin (location form))
+	       (convert-constant nil env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
