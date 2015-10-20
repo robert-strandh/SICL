@@ -681,7 +681,9 @@
 	    (loop for item in (raw items)
 		  for raw-item = (raw item)
 		  when (symbolp raw-item)
-		    collect (cleavir-ast:make-tag-ast raw-item)))
+		    collect (cleavir-ast:make-tag-ast
+			     raw-item
+			     :origin (location item))))
 	  (new-env env))
       (loop for ast in tag-asts
 	    do (setf new-env (cleavir-env:add-tag
