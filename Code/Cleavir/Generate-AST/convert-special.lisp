@@ -711,7 +711,8 @@
 
 (defmethod convert-special
     ((symbol (eql 'multiple-value-call)) form environment system)
-  (destructuring-bind (function-form . forms) (rest form)
+  (db s (multiple-value-call function-form . forms) form
+    (declare (ignore multiple-value-call))
     (cleavir-ast:make-multiple-value-call-ast
      (convert function-form environment system)
      (convert-sequence forms environment system))))
