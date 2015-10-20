@@ -679,8 +679,9 @@
     (declare (ignore tagbody))
     (let ((tag-asts
 	    (loop for item in (raw items)
-		  when (symbolp item)
-		    collect (cleavir-ast:make-tag-ast item)))
+		  for raw-item = (raw item)
+		  when (symbolp raw-item)
+		    collect (cleavir-ast:make-tag-ast raw-item)))
 	  (new-env env))
       (loop for ast in tag-asts
 	    do (setf new-env (cleavir-env:add-tag
