@@ -687,7 +687,7 @@
 	    do (setf new-env (cleavir-env:add-tag
 			      new-env (cleavir-ast:name ast) ast)))
       (let ((item-asts (loop for item in (raw items)
-			     collect (if (symbolp item)
+			     collect (if (symbolp (raw item))
 					 (pop tag-asts)
 					 (convert item new-env system)))))
 	(process-progn
