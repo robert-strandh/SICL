@@ -20,10 +20,6 @@
   nil)
 
 (defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:multiple-value-call-instruction))
-  nil)
-
-(defmethod instruction-may-be-removed-p
     ((instruction cleavir-ir:set-symbol-value-instruction))
   nil)
 
