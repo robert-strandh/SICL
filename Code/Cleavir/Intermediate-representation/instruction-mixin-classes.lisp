@@ -12,3 +12,11 @@
 
 ;;; Mixin class for instructions with tow successors.
 (defclass two-successors-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Other mixin classes.
+
+;;; Mixin class for instructions that have side effects so that they
+;;; should not be removed.
+(defclass side-effect-mixin () ())
