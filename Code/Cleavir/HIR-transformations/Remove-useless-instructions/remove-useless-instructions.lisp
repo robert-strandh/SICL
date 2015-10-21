@@ -35,18 +35,6 @@
     ((instruction cleavir-ir:set-symbol-value-instruction))
   nil)
 
-(defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:t-aset-instruction))
-  nil)
-
-(defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:bit-aset-instruction))
-  nil)
-
-(defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:unsigned-byte-8-aset-instruction))
-  nil)
-
 (defun remove-useless-instructions (initial-instruction)
   (cleavir-meter:with-meter (m *remove-useless-instructions-meter*)
     (loop do (cleavir-ir:reinitialize-data initial-instruction)
