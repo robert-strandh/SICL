@@ -32,14 +32,6 @@
   nil)
 
 (defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:rplaca-instruction))
-  nil)
-
-(defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:rplacd-instruction))
-  nil)
-
-(defmethod instruction-may-be-removed-p
     ((instruction cleavir-ir:set-symbol-value-instruction))
   nil)
 
