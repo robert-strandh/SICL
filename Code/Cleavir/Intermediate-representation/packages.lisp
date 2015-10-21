@@ -32,6 +32,7 @@
    #:no-successors-mixin
    #:one-successor-mixin
    #:two-successors-mixin
+   #:side-effect-mixin
    #:box-instruction-mixin #:box-instruction-p
    #:unbox-instruction-mixin #:unbox-instruction-p
    #:side-effect-free-mixin #:side-effect-free-p
