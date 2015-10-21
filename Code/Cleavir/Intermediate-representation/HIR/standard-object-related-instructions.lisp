@@ -29,7 +29,8 @@
 ;;; written.  The third is the value to write.  This instruction
 ;;; replaces the contents of the slot with the new value.
 
-(defclass slot-write-instruction (instruction one-successor-mixin)
+(defclass slot-write-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-slot-write-instruction (input1 input2 input3 successor)
