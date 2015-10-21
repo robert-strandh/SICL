@@ -84,7 +84,8 @@
 ;;;
 ;;; Instruction FUNCALL-INSTRUCTION.
 
-(defclass funcall-instruction (instruction one-successor-mixin)
+(defclass funcall-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-funcall-instruction
