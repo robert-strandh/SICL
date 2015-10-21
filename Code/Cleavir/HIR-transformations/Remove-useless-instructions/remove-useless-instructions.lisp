@@ -20,10 +20,6 @@
   nil)
 
 (defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:funcall-instruction))
-  nil)
-
-(defmethod instruction-may-be-removed-p
     ((instruction cleavir-ir:return-instruction))
   nil)
 
