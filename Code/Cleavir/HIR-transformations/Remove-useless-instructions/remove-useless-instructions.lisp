@@ -16,10 +16,6 @@
   nil)
 
 (defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:unwind-instruction))
-  nil)
-
-(defmethod instruction-may-be-removed-p
     ((instruction cleavir-ir:return-instruction))
   nil)
 
