@@ -43,7 +43,8 @@
 ;;; outputs.  It replaces the CAR of the CONS cell with the object in
 ;;; the second input. 
 
-(defclass rplaca-instruction (instruction one-successor-mixin)
+(defclass rplaca-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-rplaca-instruction (input1 input2 successor)
@@ -61,7 +62,8 @@
 ;;; outputs.  It replaces the CDR of the CONS cell with the object in
 ;;; the second input. 
 
-(defclass rplacd-instruction (instruction one-successor-mixin)
+(defclass rplacd-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-rplacd-instruction (input1 input2 successor)
