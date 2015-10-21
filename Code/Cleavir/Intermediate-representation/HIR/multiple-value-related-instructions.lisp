@@ -55,7 +55,8 @@
 ;;; some form.  This instruction has a single output, also of the type
 ;;; VALUES-LOCATION.
 
-(defclass multiple-value-call-instruction (instruction one-successor-mixin)
+(defclass multiple-value-call-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-multiple-value-call-instruction
