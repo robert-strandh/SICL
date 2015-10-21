@@ -220,7 +220,8 @@
 ;;; This instruction is used to indicate a lexical non-local transfer
 ;;; of control resulting form a GO or a RETURN-FROM form.
 
-(defclass unwind-instruction (instruction one-successor-mixin)
+(defclass unwind-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   (;; The invocation of the UNWIND-INSTRUCTION is the
    ;; ENTER-INSTRUCTION that represents the function invocation at
    ;; which execution should continue after the stack has been
