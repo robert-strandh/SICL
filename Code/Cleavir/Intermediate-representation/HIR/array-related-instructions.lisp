@@ -141,7 +141,8 @@
 ;;; and represents the index in the instance of the element to be read.
 ;;; The third input is the element to be stored in the array.
 
-(defclass t-aset-instruction (instruction one-successor-mixin)
+(defclass t-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-t-aset-instruction (input1 input2 input3 successor)
@@ -160,7 +161,8 @@
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; BIT to be stored as an element in the array.
 
-(defclass bit-aset-instruction (instruction one-successor-mixin)
+(defclass bit-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-bit-aset-instruction (input1 input2 input3 successor)
@@ -179,7 +181,8 @@
 ;;; the element to be read.  The third input is assumed to be an
 ;;; unboxed (UNSIGNED-BYTE 8) to be stored as an element in the array.
 
-(defclass unsigned-byte-8-aset-instruction (instruction one-successor-mixin)
+(defclass unsigned-byte-8-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-unsigned-byte-8-aset-instruction (input1 input2 input3 successor)
@@ -198,7 +201,8 @@
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; SHORT-FLOAT to be stored as an element in the array.
 
-(defclass short-float-aset-instruction (instruction one-successor-mixin)
+(defclass short-float-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-short-float-aset-instruction (input1 input2 input3 successor)
@@ -217,7 +221,8 @@
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; SINGLE-FLOAT to be stored as an element in the array.
 
-(defclass single-float-aset-instruction (instruction one-successor-mixin)
+(defclass single-float-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-single-float-aset-instruction (input1 input2 input3 successor)
@@ -236,7 +241,8 @@
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; DOUBLE-FLOAT to be stored as an element in the array.
 
-(defclass double-float-aset-instruction (instruction one-successor-mixin)
+(defclass double-float-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-double-float-aset-instruction (input1 input2 input3 successor)
@@ -255,7 +261,8 @@
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; LONG-FLOAT to be stored as an element in the array.
 
-(defclass long-float-aset-instruction (instruction one-successor-mixin)
+(defclass long-float-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-long-float-aset-instruction (input1 input2 input3 successor)
