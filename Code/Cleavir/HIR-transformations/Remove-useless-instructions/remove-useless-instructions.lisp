@@ -8,6 +8,10 @@
 	     always (null (cleavir-ir:using-instructions output)))))
 
 (defmethod instruction-may-be-removed-p
+    ((instruction cleavir-ir:side-effect-mixin))
+  nil)
+
+(defmethod instruction-may-be-removed-p
     ((instruction cleavir-ir:enter-instruction))
   nil)
 
