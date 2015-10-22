@@ -6,6 +6,11 @@
 ;;;;
 ;;;; This system contains functions for manipulating such
 ;;;; representations in various ways.
+;;;;
+;;;; Notice that there is obviously no way to distinguish between a
+;;;; CST and a Common Lisp expression that happens to be an atom in
+;;;; the form of a CST.  Client code that uses functions of this
+;;;; system must therefore be sure that CSTs are being used.
 
 (defsystem :cleavir-cst
   :serial t
