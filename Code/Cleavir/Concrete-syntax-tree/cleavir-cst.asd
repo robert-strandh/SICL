@@ -3,4 +3,5 @@
 (defsystem :cleavir-cst
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "concrete-syntax-tree")))
