@@ -5,7 +5,7 @@
    ;; represented by the CST.  It is guaranteed that there is sharing
    ;; between the expression of a CST and the expression of each child
    ;; of the CST.
-   (%expression :initarg :expression :reader expression)
+   (%expression :initarg :expression :accessor expression)
    ;; This slot contains the source location of the expression
    ;; represented by the CST, or NIL if such source location is not
    ;; available.  The nature of the contents of this slot is not
