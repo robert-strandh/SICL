@@ -17,4 +17,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "concrete-syntax-tree")))
+   (:file "concrete-syntax-tree")
+   (:file "complete")))
