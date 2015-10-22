@@ -13,6 +13,7 @@
 ;;;; system must therefore be sure that CSTs are being used.
 
 (defsystem :cleavir-cst
+  :depends-on (:cleavir-code-utilities)
   :serial t
   :components
   ((:file "packages")
