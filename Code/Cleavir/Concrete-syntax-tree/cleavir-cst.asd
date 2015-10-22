@@ -18,4 +18,5 @@
   :components
   ((:file "packages")
    (:file "concrete-syntax-tree")
-   (:file "complete")))
+   (:file "complete")
+   (:file "rebuild")))
