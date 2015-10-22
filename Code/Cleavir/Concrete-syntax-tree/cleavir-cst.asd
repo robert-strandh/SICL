@@ -3,4 +3,4 @@
 (defsystem :cleavir-cst
   :serial t
   :components
-  ())
+  ((:file "packages")))
