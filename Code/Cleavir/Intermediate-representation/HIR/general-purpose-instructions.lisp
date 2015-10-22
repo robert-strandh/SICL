@@ -296,7 +296,8 @@
 ;;;
 ;;; Instruction SET-SYMBOL-VALUE-INSTRUCTION.
 
-(defclass set-symbol-value-instruction (instruction one-successor-mixin)
+(defclass set-symbol-value-instruction
+    (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-set-symbol-value-instruction (symbol-input value-input successor)
