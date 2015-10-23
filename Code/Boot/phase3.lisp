@@ -5,6 +5,10 @@
 ;;; easy to recognize in the inspector and the debugger.
 (defparameter *unbound-value* 123123123)
 
+(defun define-unbound-value-p-phase3 (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos::unbound-value-p env)
+	(lambda (x) (eql x *unbound-value*))))
+
 (defun define-effective-slot-definition-class-phase3 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:effective-slot-definition-class
 			       env1)
