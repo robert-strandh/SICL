@@ -2,7 +2,8 @@
 
 (defclass fun (closer-mop:funcallable-standard-object)
   ((%untied :initform nil :initarg :untied :accessor untied)
-   (%arg-forms :initform nil :initarg :arg-forms :accessor arg-forms))
+   (%arg-forms :initform nil :initarg :arg-forms :accessor arg-forms)
+   (%name :initform NIL :accessor name))
   (:metaclass closer-mop:funcallable-standard-class))
 
 ;;; The first argument to this function is an instruction that has a
