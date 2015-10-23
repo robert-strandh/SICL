@@ -262,6 +262,7 @@
     (satiate-phase3 r3 r1 r2)
     (define-class-of-phase3 r3)
     (define-unbound-value-p-phase3 r3)
+    (define-unbound-value-phase3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
