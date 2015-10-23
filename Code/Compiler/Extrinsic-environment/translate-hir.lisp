@@ -6,6 +6,10 @@
    (%name :initform NIL :accessor name))
   (:metaclass closer-mop:funcallable-standard-class))
 
+(defmethod print-object ((object fun) stream)
+  (print-unreadable-object (object stream)
+    (format stream "Host function named: ~s" (name object))))
+
 ;;; The first argument to this function is an instruction that has a
 ;;; single successor.  Whether a GO is required at the end of this
 ;;; function is determined by the code layout algorithm.  
