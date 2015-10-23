@@ -17,6 +17,9 @@
   ((%class :initarg :class :accessor class)
    (%rack :initarg :rack :reader rack)))
 
+(defun define-class-of-phase3 (env)
+  (setf (sicl-genv:fdefinition 'class-of env) #'class))
+
 ;;; Define a special version of ALLOCATE-GENERAL-INSTANCE.  Recall
 ;;; that ALLOCATE-GENERAL-INSTANCE takes a class metaobject and a
 ;;; non-negative integer representing the number of words to be
@@ -244,6 +247,7 @@
     (ld "../CLOS/compute-discriminating-function-defgenerics.lisp" r1 r1)
     (ld "../CLOS/compute-discriminating-function-defmethods.lisp" r2 r2)
     (satiate-phase3 r3 r1 r2)
+    (define-class-of-phase3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
