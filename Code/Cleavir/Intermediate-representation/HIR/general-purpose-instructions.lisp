@@ -110,7 +110,8 @@
 ;;;
 ;;; Instruction RETURN-INSTRUCTION.
 
-(defclass return-instruction (instruction no-successors-mixin)
+(defclass return-instruction
+    (instruction no-successors-mixin side-effect-mixin)
   ())
 
 (defun make-return-instruction (inputs)
