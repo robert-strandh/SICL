@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-boot)
 
+;;; During bootstrapping, we need to reserve a valid host object to
+;;; mean the unbound slot value.  We choose an integer so that it is
+;;; easy to recognize in the inspector and the debugger.
+(defparameter *unbound-value* 123123123)
+
 (defun define-effective-slot-definition-class-phase3 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:effective-slot-definition-class
 			       env1)
