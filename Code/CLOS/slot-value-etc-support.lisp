@@ -70,5 +70,5 @@
     (if (consp location)
 	(setf (car location) *unbound-value*)
   	(setf (slot-contents (heap-instance-slots object) location)
-	      *unbound-value*)))
+	      (unbound-value))))
   nil)
