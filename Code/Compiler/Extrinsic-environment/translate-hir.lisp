@@ -10,6 +10,10 @@
   (print-unreadable-object (object stream)
     (format stream "Host function named: ~s" (name object))))
 
+(defmethod (setf sicl-genv:fdefinition)
+    :after ((new-definition fun) function-name environment)
+  (setf (name new-definition) function-name))
+
 ;;; The first argument to this function is an instruction that has a
 ;;; single successor.  Whether a GO is required at the end of this
 ;;; function is determined by the code layout algorithm.  
