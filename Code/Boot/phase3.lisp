@@ -36,7 +36,7 @@
 	(lambda (class size)
 	  (make-instance 'header
 	    :class class
-	    :rack (make-array size)))))
+	    :rack (make-array size :initial-element *unbound-value*)))))
 
 ;;; We need special versions of the functions GENERAL-INSTANCE-ACCESS
 ;;; and (SETF GENERAL-INSTANCE-ACCESS), because they depend on the way
