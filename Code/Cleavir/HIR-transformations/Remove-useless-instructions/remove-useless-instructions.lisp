@@ -15,10 +15,6 @@
     ((instruction cleavir-ir:enter-instruction))
   nil)
 
-(defmethod instruction-may-be-removed-p
-    ((instruction cleavir-ir:return-instruction))
-  nil)
-
 (defun remove-useless-instructions (initial-instruction)
   (cleavir-meter:with-meter (m *remove-useless-instructions-meter*)
     (loop do (cleavir-ir:reinitialize-data initial-instruction)
