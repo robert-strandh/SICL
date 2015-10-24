@@ -54,7 +54,7 @@
 		       ;; location is an offset into the slot vector.
 		       (when (and (eq (slot-contents
 				       (heap-instance-slots instance) location)
-				      *unbound-value*)
+				      +unbound-slot-value+)
 				  (not (null (slot-definition-initfunction slot))))
 			 ;; Evaluate the initform by executing the
 			 ;; initfunction.
@@ -64,7 +64,7 @@
 		       ;; The slot has allocation :class, so the
 		       ;; location is a CONS cell where the CAR
 		       ;; contains the value.
-		       (when (and (eq (car location) *unbound-value*)
+		       (when (and (eq (car location) +unbound-slot-value+)
 				  (not (null (slot-definition-initfunction slot))))
 			 ;; Evaluate the initform by executing the
 			 ;; initfunction.
