@@ -5,7 +5,7 @@
 ;;; easy to recognize in the inspector and the debugger.
 (defparameter *unbound-value* 123123123)
 
-(defun define-unbound-value-phase3 (env)
+(defun define-unbound-slot-value-phase3 (env)
   (setf (sicl-genv:constant-variable 'sicl-clos::+unbound-slot-value+ env)
 	*unbound-value*))
 
@@ -257,7 +257,7 @@
     (ld "../CLOS/compute-discriminating-function-defmethods.lisp" r2 r2)
     (satiate-phase3 r3 r1 r2)
     (define-class-of-phase3 r3)
-    (define-unbound-value-phase3 r3)
+    (define-unbound-slot-value-phase3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
