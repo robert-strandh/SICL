@@ -1,8 +1,8 @@
 (cl:in-package #:sicl-clos)
 
-;;; We do not want to use SLOT-BOUNDP (SETF SLOT-VALUE) here.  Given
-;;; the name of a slot, those functions find a slot metaobject with
-;;; that name, and then call the ...-USING-CLASS version of the
+;;; We do not want to use SLOT-BOUNDP and (SETF SLOT-VALUE) here.
+;;; Given the name of a slot, those functions find a slot metaobject
+;;; with that name, and then call the ...-USING-CLASS version of the
 ;;; function.  The main difficulty for those functions is to find the
 ;;; slot metaobject.  In SHARED-INITIALIZE, we already have the slot
 ;;; metaobject available, so we use the ...-USING-CLASS version
