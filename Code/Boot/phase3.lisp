@@ -7,7 +7,7 @@
 
 (defun define-unbound-value-phase3 (env)
   (setf (sicl-genv:constant-variable 'sicl-clos::+unbound-slot-value+ env)
-	123123123))
+	*unbound-value*))
 
 (defun define-effective-slot-definition-class-phase3 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:effective-slot-definition-class
