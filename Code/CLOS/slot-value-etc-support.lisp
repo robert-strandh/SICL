@@ -36,7 +36,7 @@
 	       (car location)
 	       (slot-contents (heap-instance-slots object)
 			      location))))
-    (if (unbound-value-p value)
+    (if (eq value +unbound-slot-value+)
 	(slot-unbound class object (slot-definition-name slot))
 	value)))
 
@@ -55,10 +55,10 @@
 (defun slot-boundp-using-class-default (class object slot)
   (declare (ignore class))
   (let ((location (slot-definition-location slot)))
-    (not (unbound-value-p
-	  (if (consp location)
-	      (car location)
-	      (slot-contents (heap-instance-slots object) location))))))
+    (not (eq (if (consp location)
+		 (car location)
+		 (slot-contents (heap-instance-slots object) location))
+	     +unbound-slot-value+))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
