@@ -11,8 +11,8 @@
 (defun shared-initialize-default
     (instance slot-names &rest initargs)
   (let* ((class (class-of instance))
-	 (class-slots (class-slots class)))
-    (loop for slot in class-slots
+	 (slots (class-slots class)))
+    (loop for slot in slots
 	  do (multiple-value-bind (key value foundp)
 		 ;; Find the first key/value pair in initargs where the
 		 ;; key is one of the initargs of the slot. 
@@ -35,5 +35,5 @@
     ;; Store the class slots in the instance so that we can update the instance
     ;; when the class changes.
     (setf (standard-instance-access instance +instance-slots-offset+)
-	  class-slots))
+	  slots))
   instance)
