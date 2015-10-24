@@ -3,11 +3,11 @@
 ;;; During bootstrapping, we need to reserve a valid host object to
 ;;; mean the unbound slot value.  We choose an integer so that it is
 ;;; easy to recognize in the inspector and the debugger.
-(defparameter *unbound-value* 123123123)
+(defparameter *unbound-slot-value* 123123123)
 
 (defun define-unbound-slot-value-phase3 (env)
   (setf (sicl-genv:constant-variable 'sicl-clos::+unbound-slot-value+ env)
-	*unbound-value*))
+	*unbound-slot-value*))
 
 (defun define-effective-slot-definition-class-phase3 (env1 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos:effective-slot-definition-class
@@ -40,7 +40,7 @@
 	(lambda (class size)
 	  (make-instance 'header
 	    :class class
-	    :rack (make-array size :initial-element *unbound-value*)))))
+	    :rack (make-array size :initial-element *unbound-slot-value*)))))
 
 ;;; We need special versions of the functions GENERAL-INSTANCE-ACCESS
 ;;; and (SETF GENERAL-INSTANCE-ACCESS), because they depend on the way
