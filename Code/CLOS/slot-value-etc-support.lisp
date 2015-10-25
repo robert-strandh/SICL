@@ -68,6 +68,5 @@
   (let ((location (slot-definition-location slot)))
     (if (consp location)
 	(setf (car location) +unbound-slot-value+)
-  	(setf (slot-contents (heap-instance-slots object) location)
-	      +unbound-slot-value+)))
+	(slot-makunbound-using-index object location)))
   nil)
