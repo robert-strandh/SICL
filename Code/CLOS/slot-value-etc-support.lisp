@@ -34,8 +34,7 @@
 	 (value 
 	   (if (consp location)
 	       (car location)
-	       (slot-contents (heap-instance-slots object)
-			      location))))
+	       (standard-instance-access object location))))
     (if (eq value +unbound-slot-value+)
 	(slot-unbound class object (slot-definition-name slot))
 	value)))
