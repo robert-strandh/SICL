@@ -55,10 +55,9 @@
 (defun slot-boundp-using-class-default (class object slot)
   (declare (ignore class))
   (let ((location (slot-definition-location slot)))
-    (not (eq (if (consp location)
-		 (car location)
-		 (slot-contents (heap-instance-slots object) location))
-	     +unbound-slot-value+))))
+    (if (consp location)
+	(not (eq (car location) +unbound-slot-value+))
+	(slot-boundp-using-index object location))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
