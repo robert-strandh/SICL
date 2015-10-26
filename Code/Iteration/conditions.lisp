@@ -1,4 +1,4 @@
-(in-package #:sicl-iteration)
+(cl:in-package #:sicl-iteration)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
