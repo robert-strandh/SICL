@@ -215,6 +215,7 @@
     (define-effective-slot-definition-class-phase3 r2 r1)
     (define-allocate-general-instance-phase3 r2)
     (define-general-instance-access-phase3 r2)
+    (define-general-instance-access-phase3 r3)
     (define-setf-general-instance-access-phase3 r2)
     (ld "../CLOS/class-unique-number-offset-defconstant.lisp" r2 r2)
     (ld "../CLOS/allocate-instance-support.lisp" r2 r2)
