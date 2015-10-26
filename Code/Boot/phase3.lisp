@@ -259,6 +259,7 @@
     (satiate-phase3 r3 r1 r2)
     (define-class-of-phase3 r3)
     (define-unbound-slot-value-phase3 r3)
+    (ld "../CLOS/slot-bound-using-index.lisp" r3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
