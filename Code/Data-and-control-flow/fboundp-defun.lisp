@@ -3,4 +3,4 @@
 (defun fboundp (function-name)
   (sicl-global-environment:fboundp
    function-name
-   sicl-global-environment:*global-environment*))
+   (sicl-global-environment:global-environment)))
