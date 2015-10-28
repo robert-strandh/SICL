@@ -14,28 +14,8 @@
 	  (proclamations *global-environment*))))
 
 (defun proclaim-ftype (name type)
-  (let ((entry (find-if (lambda (entry)
-			  ;; FIXME: Are there any other entry types
-			  ;; in this list?
-			  (and (typep entry 'function-entry)
-			       (eq (name entry) name)))
-			(functions *global-environment*))))
-    (when (null entry)
-      (setf entry (make-function-entry name))
-      (push entry (functions *global-environment*)))
-    (let ((existing-declaration
-	    (find-if (lambda (decl)
-		       (and (typep decl 'type-declaration-entry)
-			    (eq (base-entry decl) entry)))
-		     (proclamations *global-environment*))))
-      (cond ((null existing-declaration)
-	     (push (make-type-declaration-entry entry type)
-		   (proclamations *global-environment*)))
-	    ((equal (type existing-declaration) type)
-	     nil)
-	    (t
-	     ;; make that an error for now
-	     (error "function already has a type proclamation"))))))
+  (setf (sicl-genv:function-type name (global-environment))
+	type))
 
 (defun proclaim-special (name)
   (pushnew (make-special-variable-entry name)
