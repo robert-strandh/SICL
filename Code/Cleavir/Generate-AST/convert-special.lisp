@@ -268,26 +268,25 @@
 ;;; Converting IF.
 
 (defmethod convert-special ((symbol (eql 'if)) form env system)
-  (db s (if test then . tail) form
+  (db origin (if test then . tail) form
     (declare (ignore if))
     (let ((test-ast (convert test env system))
 	  (true-ast (convert then env system))
 	  (false-ast (if (null tail)
 			 (convert-constant nil env system)
 			 (db s (else) tail
-			   (convert else env system))))
-	  (location (location form)))
+			   (convert else env system)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
 	  (cleavir-ast:make-if-ast
 	   test-ast
 	   true-ast
 	   false-ast
-	   :origin location)
+	   :origin origin)
 	  (cleavir-ast:make-if-ast
 	   (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
 	   false-ast
 	   true-ast
-	   :origin location)))))
+	   :origin origin)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
