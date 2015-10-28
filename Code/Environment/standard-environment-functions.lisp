@@ -99,7 +99,9 @@
 
 (defun fmakunbound (function-name)
   (declare (type function-name function-name))
-  (sicl-genv:fmakunbound function-name sicl-genv:*global-environment*))
+  (sicl-genv:fmakunbound
+   function-name
+   (load-time-value (sicl-genv:global-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
