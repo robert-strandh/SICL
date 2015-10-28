@@ -109,7 +109,9 @@
 
 (defun fdefinition (function-name)
   (declare (type function-name function-name))
-  (sicl-genv:fdefinition function-name sicl-genv:*global-environment*))
+  (sicl-genv:fdefinition
+   function-name
+   (load-time-value (sicl-genv:global-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
