@@ -256,12 +256,12 @@
 
 (defmethod convert-special ((symbol (eql 'go)) form env system)
   (declare (ignore system))
-  (db s (go tag) form
+  (db origin (go tag) form
     (declare (ignore go))
     (let ((info (tag-info env (raw tag))))
       (cleavir-ast:make-go-ast
        (cleavir-env:identity info)
-       :origin (location form)))))
+       :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
