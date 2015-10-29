@@ -16,7 +16,7 @@
 			   (format stream "Substitute a different name."))
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
-				(list (read)))
+				(list (read *query-io*)))
 		 (setq result (cleavir-env:variable-info environment new-symbol)))))
     result))
 
