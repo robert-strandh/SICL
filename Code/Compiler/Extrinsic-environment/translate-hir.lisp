@@ -176,7 +176,6 @@
     ((instruction cleavir-ir:enclose-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
-  (declare (ignore inputs))
   (let* ((enter-instruction (cleavir-ir:code instruction))
 	 (temp (gensym))
 	 (proc (layout-procedure enter-instruction nil)))
