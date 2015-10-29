@@ -487,7 +487,8 @@
 ;;; location.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:create-cell-instruction)
-     inputs outputs static-environement)
+     inputs outputs static-environment)
+  (declare (ignore inputs static-environment))
   `(setq ,(first outputs)
 	 (list nil)))
 
