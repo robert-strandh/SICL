@@ -18,10 +18,11 @@
 	type))
 
 (defun proclaim-special (name)
-  (pushnew (make-special-variable-entry name)
-	   (special-variables *global-environment*)
-	   :key #'name
-	   :test #'eq))
+  (setf (sicl-genv:special-variable
+	 name
+	 (load-time-value (sicl-genv:global-environment))
+	 nil)
+	nil))
 
 (defun proclaim-inline (name)
   (setf (sicl-genv:function-inline name) 'inline))
