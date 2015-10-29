@@ -466,6 +466,17 @@
   `(setq ,(first outputs)
 	 (car ,(first inputs))))
 
+;;; Recall that the WRITE-CELL instruction has two inputs.  The first
+;;; input is a lexical location holding a CELL and the second input is
+;;; the value to be written to the cell.  Since we represent CELLs as
+;;; CONSes, this instruction is implemented by SETF-ing the CAR of the
+;;; CONS cell.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:write-cell-instruction)
+     inputs outputs static-environement)
+  `(setq (car ,(first inputs))
+	 ,(second inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
