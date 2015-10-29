@@ -37,7 +37,7 @@
 			   (format stream "Substitute a different name."))
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
-				(list (read)))
+				(list (read *query-io*)))
 		 (setq result (cleavir-env:function-info environment new-function-name)))))
     result))
 
@@ -51,7 +51,7 @@
 			   (format stream "Substitute a different name."))
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
-				(list (read)))
+				(list (read *query-io*)))
 		 (setq result (cleavir-env:block-info environment new-block-name)))))
     result))
 
@@ -65,7 +65,7 @@
 			   (format stream "Substitute a different name."))
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
-				(list (read)))
+				(list (read *query-io*)))
 		 (setq result (cleavir-env:tag-info environment new-tag-name)))))
     result))
 
