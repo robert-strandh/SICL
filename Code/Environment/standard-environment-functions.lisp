@@ -120,7 +120,9 @@
 (defun (setf fdefinition) (new-definition function-name)
   (declare (type function-name function-name)
 	   (type function new-definition))
-  (setf (sicl-genv:fdefinition function-name sicl-genv:*global-environment*)
+  (setf (sicl-genv:fdefinition
+	 function-name
+	 (load-time-value (sicl-genv:global-environment)))
 	new-definition))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
