@@ -475,7 +475,8 @@
 ;;; CONS cell.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:write-cell-instruction)
-     inputs outputs static-environement)
+     inputs outputs static-environment)
+  (declare (ignore outputs static-environment))
   `(setq (car ,(first inputs))
 	 ,(second inputs)))
 
