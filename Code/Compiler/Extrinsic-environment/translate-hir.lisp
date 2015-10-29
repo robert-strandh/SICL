@@ -81,7 +81,7 @@
 		      (t
 		       (translate-datum item)))))
 
-(defun layout-basic-block (basic-block)
+(defun layout-basic-block (basic-block static-environment)
   (destructuring-bind (first last owner) basic-block
     (declare (ignore owner))
     (append (loop for instruction = first
@@ -92,7 +92,8 @@
 		  for output-vars = (mapcar #'translate-datum outputs)
 		  until (eq instruction last)
 		  collect (translate-simple-instruction
-			   instruction input-vars output-vars nil))
+			   instruction input-vars output-vars
+			   static-environment))
 	    (let* ((inputs (cleavir-ir:inputs last))
 		   (input-vars (mapcar #'translate-datum inputs))
 		   (outputs (cleavir-ir:outputs last))
@@ -102,7 +103,7 @@
 					 collect (gethash successor *tags*))))
 	      (if (= (length successors) 1)
 		  (list (translate-simple-instruction
-			 last input-vars output-vars nil)
+			 last input-vars output-vars static-environment)
 			`(go ,(gethash (first successors) *tags*)))
 		  (list (translate-branch-instruction
 			 last input-vars output-vars successor-tags)))))))
@@ -130,10 +131,10 @@
 	  do (setf (gethash instruction *tags*) (gensym)))
     (let ((tagbody
 	     `(tagbody
-		 ,@(layout-basic-block first)
+		 ,@(layout-basic-block first nil)
 		 ,@(loop for basic-block in rest
 			 collect (gethash (first basic-block) *tags*)
-			 append (layout-basic-block basic-block))))
+			 append (layout-basic-block basic-block nil))))
 	  (owned-vars (compute-owned-variables initial-instruction)))
       `(lambda (&rest args)
 	 (block nil
