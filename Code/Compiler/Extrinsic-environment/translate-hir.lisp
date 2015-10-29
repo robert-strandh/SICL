@@ -439,6 +439,22 @@
 		   *dynamic-environment-variables*)))
     `(unwind ,dynamic-environment-variable)))
 
+;;; Recall that the FETCH-INSTRUCTION fetches a CELL from the static
+;;; environment.  The instruction has two inputs and one output.  The
+;;; first input is a lexical variable holding the static environment
+;;; and the second is an immediate number that serves as an index into
+;;; the static environment.  However, here, we do not represent the
+;;; static environment as a vector at run-time, because then we would
+;;; have to allocate that vector when we create a closure.  Instead,
+;;; we represent the static environment at compile-time as a list of
+;;; symbols representing host variables.  The second input of the
+;;; instruction will indicate the element in the list to be used.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:fetch-instruction)
+     inputs outputs static-environement)
+  `(setq ,(first outputs)
+	 ,(second inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
