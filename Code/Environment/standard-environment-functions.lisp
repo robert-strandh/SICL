@@ -131,7 +131,9 @@
 
 (defun symbol-function (symbol)
   (declare (type symbol symbol))
-  (sicl-genv:fdefinition symbol sicl-genv:*global-environment*))
+  (sicl-genv:fdefinition
+   symbol
+   (load-time-value (sicl-genv:global-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
