@@ -28,28 +28,7 @@
   (setf (sicl-genv:function-inline name) 'inline))
   
 (defun proclaim-notinline (name)
-  (let ((base-entry (find name (functions *global-environment*)
-			  :key #'name)))
-    ;; If there is not an base entry for the function, then create
-    ;; one.
-    (when (null base-entry)
-      (setf base-entry (make-function-entry name))
-      (push base-entry (functions *global-environment*)))
-    ;; Next, check whether there is already an INLINE or a NOTINLINE
-    ;; proclamation.
-    (let ((aux-entry (find-if
-		      (lambda (entry)
-			(and (or (typep entry 'inline-declaration-entry)
-				 (typep entry 'notinline-declaration-entry))
-			     (eq (base-entry entry) base-entry)))
-		      (proclamations *global-environment*))))
-      (cond ((null aux-entry)
-	     (push (make-notinline-declaration-entry base-entry)
-		   (proclamations *global-environment*)))
-	    ((typep aux-entry 'inline-declaration-entry)
-	     (change-class aux-entry 'notinline-declaration-entry))
-	    (t
-	     nil)))))
+  (setf (sicl-genv:function-inline name) 'notinline))
   
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
