@@ -19,8 +19,10 @@
 ;;; function is determined by the code layout algorithm.  
 ;;; 
 ;;; The inputs are forms to be evaluated.  The outputs are symbols
-;;; that are names of variables.
-(defgeneric translate-simple-instruction (instruction inputs outputs))
+;;; that are names of variables.  STATIC-ENVIRONMENT is a list of
+;;; symbols.
+(defgeneric translate-simple-instruction
+    (instruction inputs outputs static-environment))
 
 (defgeneric translate-branch-instruction (instruction inputs outputs successors))
 
@@ -90,7 +92,7 @@
 		  for output-vars = (mapcar #'translate-datum outputs)
 		  until (eq instruction last)
 		  collect (translate-simple-instruction
-			   instruction input-vars output-vars))
+			   instruction input-vars output-vars nil))
 	    (let* ((inputs (cleavir-ir:inputs last))
 		   (input-vars (mapcar #'translate-datum inputs))
 		   (outputs (cleavir-ir:outputs last))
@@ -100,7 +102,7 @@
 					 collect (gethash successor *tags*))))
 	      (if (= (length successors) 1)
 		  (list (translate-simple-instruction
-			 last input-vars output-vars)
+			 last input-vars output-vars nil)
 			`(go ,(gethash (first successors) *tags*)))
 		  (list (translate-branch-instruction
 			 last input-vars output-vars successor-tags)))))))
@@ -169,7 +171,9 @@
 ;;; Methods on TRANSLATE-SIMPLE-INSTRUCTION.
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:enclose-instruction) inputs outputs)
+    ((instruction cleavir-ir:enclose-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore inputs))
   (let* ((enter-instruction (cleavir-ir:code instruction))
 	 (temp (gensym))
@@ -180,16 +184,22 @@
 	     ,temp))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:enter-instruction) inputs outputs)
+    ((instruction cleavir-ir:enter-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore inputs outputs))
   (gensym))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:assignment-instruction) inputs outputs)
+    ((instruction cleavir-ir:assignment-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs) ,(first inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:funcall-instruction) inputs outputs)
+    ((instruction cleavir-ir:funcall-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (let* ((owner (gethash instruction *instruction-ownerships*))
 	 (var (gethash owner *dynamic-environment-variables*)))
     `(progn (setf *dynamic-environment* ,var)
@@ -200,14 +210,18 @@
 					,@(rest inputs)))))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:multiple-value-call-instruction) inputs outputs)
+    ((instruction cleavir-ir:multiple-value-call-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setf ,(first outputs)
 	 (multiple-value-list
 	  (apply ,(first inputs)
 		 (append ,@(rest inputs))))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:tailcall-instruction) inputs outputs)
+    ((instruction cleavir-ir:tailcall-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   (let* ((owner (gethash instruction *instruction-ownerships*))
 	 (var (gethash owner *dynamic-environment-variables*)))
@@ -224,7 +238,9 @@
 		     ,@(rest inputs))))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:the-instruction) inputs outputs)
+    ((instruction cleavir-ir:the-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(unless (traced-funcall
 	    ,*linkage-environment*
@@ -247,104 +263,142 @@
       :datum ,(first inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:car-instruction) inputs outputs)
+    ((instruction cleavir-ir:car-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (car ,(first inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:cdr-instruction) inputs outputs)
+    ((instruction cleavir-ir:cdr-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (cdr ,(first inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:rplaca-instruction) inputs outputs)
+    ((instruction cleavir-ir:rplaca-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(rplaca ,(first inputs) ,(second inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:rplacd-instruction) inputs outputs)
+    ((instruction cleavir-ir:rplacd-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(rplacd ,(first inputs) ,(second inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:t-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:t-aref-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:bit-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:bit-aref-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:unsigned-byte-8-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:unsigned-byte-8-aref-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:short-float-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:short-float-aref-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:single-float-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:single-float-aref-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:double-float-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:double-float-aref-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:long-float-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:long-float-aref-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:t-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:t-aset-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:bit-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:bit-aset-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:unsigned-byte-8-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:unsigned-byte-8-aset-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:short-float-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:short-float-aset-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:single-float-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:single-float-aset-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:double-float-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:double-float-aset-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:long-float-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:long-float-aset-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:fdefinition-instruction) inputs outputs)
+    ((instruction cleavir-ir:fdefinition-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setf ,(first outputs)
 	 (car (load-time-value
 	       (sicl-env:function-cell ,(first inputs)
@@ -352,12 +406,16 @@
 	       nil))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:fixed-to-multiple-instruction) inputs outputs)
+    ((instruction cleavir-ir:fixed-to-multiple-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (list ,@inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:multiple-to-fixed-instruction) inputs outputs)
+    ((instruction cleavir-ir:multiple-to-fixed-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (let ((temp (gensym)))
     `(let ((,temp ,(first inputs)))
        (declare (ignorable ,temp))
@@ -365,12 +423,16 @@
 	       collect `(setf ,output (pop ,temp))))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:nop-instruction) inputs outputs)
+    ((instruction cleavir-ir:nop-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore inputs outputs))
   '(progn))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:unwind-instruction) inputs outputs)
+    ((instruction cleavir-ir:unwind-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   (declare (ignore inputs outputs))
   (let ((dynamic-environment-variable
 	  (gethash (cleavir-ir:invocation instruction)
