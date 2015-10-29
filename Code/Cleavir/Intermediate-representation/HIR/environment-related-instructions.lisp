@@ -73,9 +73,9 @@
 ;;; value held in such a CELL.
 ;;;
 ;;; This instruction takes two inputs. The first input is a dynamic
-;;;  lexical location holding the cell to be written to.  The second
-;;;  input is a constant input or a dynamic lexical input holding the
-;;;  value to write to the cell.  This instruction has no outputs. 
+;;; lexical location holding the cell to be written to.  The second
+;;; input is a constant input or a dynamic lexical input holding the
+;;; value to write to the cell.  This instruction has no outputs.
 
 (defclass write-cell-instruction (instruction one-successor-mixin)
   ())
