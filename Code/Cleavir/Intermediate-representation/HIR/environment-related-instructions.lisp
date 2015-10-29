@@ -3,6 +3,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction CREATE-CELL-INSTRUCTION.
+;;;
+;;; This instruction has no inputs and a single output.  The output is
+;;; a lexical location that will hold the cell being created by the
+;;; instruction.
 
 (defclass create-cell-instruction (instruction one-successor-mixin)
   ())
