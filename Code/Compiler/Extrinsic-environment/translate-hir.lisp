@@ -464,7 +464,8 @@
 ;;; the cell.
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:read-cell-instruction)
-     inputs outputs static-environement)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (car ,(first inputs))))
 
