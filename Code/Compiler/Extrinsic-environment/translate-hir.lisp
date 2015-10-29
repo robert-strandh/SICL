@@ -180,10 +180,14 @@
 	 (static-environment (loop repeat (length inputs)
 				   collect (gensym)))
 	 (temp (gensym))
-	 (proc (layout-procedure enter-instruction static-environment)))
+	 (proc (layout-procedure enter-instruction static-environment))
+	 (wrap `(let ,(loop for input in inputs
+			    for var in static-environment
+			    collect `(,var input))
+		  ,proc)))
     `(setq ,(first outputs)
 	   (let ((,temp (make-instance 'fun)))
-	     (closer-mop:set-funcallable-instance-function ,temp ,proc)
+	     (closer-mop:set-funcallable-instance-function ,temp ,wrap)
 	     ,temp))))
 
 (defmethod translate-simple-instruction
