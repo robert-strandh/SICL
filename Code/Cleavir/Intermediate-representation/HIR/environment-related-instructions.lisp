@@ -27,7 +27,7 @@
 ;;; This instruction takes two inputs.  The first input is a dynamic
 ;;; lexical location that holds the static environment.  The second
 ;;; input is an immediate input containing a non-negative integer and
-;;; which serves ad an index into the static environment.  This
+;;; which serves as an index into the static environment.  This
 ;;; instruction has a single output, which is a dynamic lexical
 ;;; location.
 
