@@ -455,6 +455,17 @@
   `(setq ,(first outputs)
 	 ,(second inputs)))
 
+;;; Recall that the READ-CELL instruction has a single input and a
+;;; single output.  The input is a lexical location holding a CELL and
+;;; the output is the contents of the cell.  Since we represent CELLs
+;;; as CONSes, this instruction is implemented by taking the CAR of
+;;; the cell.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:read-cell-instruction)
+     inputs outputs static-environement)
+  `(setq ,(first outputs)
+	 (car ,(first inputs))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
