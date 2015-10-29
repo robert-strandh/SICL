@@ -477,6 +477,18 @@
   `(setq (car ,(first inputs))
 	 ,(second inputs)))
 
+;;; Recall that the CREATE-CELL instruction has a single output,
+;;; namely a lexical location that will hold the CELL that is being
+;;; created by the instruction.  Since we represent cells as CONSes,
+;;; this instruction is implemented by calling LIST to allocate a list
+;;; with a single element NIL and assigning that list to the lexical
+;;; location.
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:create-cell-instruction)
+     inputs outputs static-environement)
+  `(setq ,(first outputs)
+	 (list nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
