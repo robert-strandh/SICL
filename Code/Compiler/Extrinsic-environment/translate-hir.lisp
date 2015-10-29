@@ -108,7 +108,7 @@
 		  (list (translate-branch-instruction
 			 last input-vars output-vars successor-tags)))))))
 
-(defun layout-procedure (initial-instruction)
+(defun layout-procedure (initial-instruction static-environment)
   ;; Make sure we have an ENTER-INSTRUCTION.
   (assert (typep initial-instruction 'cleavir-ir:enter-instruction))
   ;; Make sure we do not already have a variable associated with this
@@ -131,10 +131,11 @@
 	  do (setf (gethash instruction *tags*) (gensym)))
     (let ((tagbody
 	     `(tagbody
-		 ,@(layout-basic-block first nil)
+		 ,@(layout-basic-block first static-environment)
 		 ,@(loop for basic-block in rest
 			 collect (gethash (first basic-block) *tags*)
-			 append (layout-basic-block basic-block nil))))
+			 append (layout-basic-block
+				 basic-block static-environment))))
 	  (owned-vars (compute-owned-variables initial-instruction)))
       `(lambda (&rest args)
 	 (block nil
@@ -165,7 +166,7 @@
 	  (*tags* (make-hash-table :test #'eq))
 	  (*vars* (make-hash-table :test #'eq))
 	  (*dynamic-environment-variables* (make-hash-table :test #'eq)))
-      (layout-procedure initial-instruction))))
+      (layout-procedure initial-instruction nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -178,7 +179,7 @@
   (declare (ignore inputs))
   (let* ((enter-instruction (cleavir-ir:code instruction))
 	 (temp (gensym))
-	 (proc (layout-procedure enter-instruction)))
+	 (proc (layout-procedure enter-instruction nil)))
     `(setq ,(first outputs)
 	   (let ((,temp (make-instance 'fun)))
 	     (closer-mop:set-funcallable-instance-function ,temp ,proc)
