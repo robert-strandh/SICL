@@ -349,3 +349,8 @@
 
 (defmethod sicl-genv:declaration (name (env simple-environment))
   (gethash name (declarations env)))
+
+(defmethod (setf sicl-genv:declaration) (value name (env simple-environment))
+  (if (null value)
+      (remhash name (declarations env))
+      (setf (gethash name (declarations env)) t)))
