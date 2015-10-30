@@ -48,6 +48,7 @@
 	   #:find-class
 	   #:find-package
 	   #:get-setf-expansion
+	   #:declaration
 	   )
   (:export
    #:environment
