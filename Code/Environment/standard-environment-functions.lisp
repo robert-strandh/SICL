@@ -147,7 +147,9 @@
 (defun (setf symbol-function) (new-definition symbol)
   (declare (type function new-definition)
 	   (type symbol symbol))
-  (setf (sicl-genv:fdefinition symbol sicl-genv:*global-environment*)
+  (setf (sicl-genv:fdefinition
+	 symbol
+	 (load-time-value (sicl-genv:global-environment)))
 	new-definition))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
