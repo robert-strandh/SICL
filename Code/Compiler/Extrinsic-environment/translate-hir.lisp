@@ -36,6 +36,15 @@
 ;;; owner.  The owner is an ENTER-INSTRUCTION.
 (defvar *location-ownerships*)
 
+(defvar *vars*)
+
+(defun translate-datum (datum)
+  (let ((var (gethash datum *vars*)))
+    (when (null var)
+      (setf var (gensym))
+      (setf (gethash datum *vars*) var))
+    var))
+
 ;;; For a given owner (which can be an ENTER-INSTRUCTION or NIL),
 ;;; return a list of all the variables (lexical or values) that are
 ;;; owned by that instruction.
@@ -52,20 +61,12 @@
 	    collect (translate-datum var))))
 
 (defvar *tags*)
-(defvar *vars*)
 
 ;;; This variable holds an EQ hash table, mapping each
 ;;; ENTER-INSTRUCTION to a GENSYMed symbol that is used to hold the
 ;;; dynamic environment as it was when the function corresponding to
 ;;; that ENTER-INSTRUCTION was called.
 (defvar *dynamic-environment-variables*)
-
-(defun translate-datum (datum)
-  (let ((var (gethash datum *vars*)))
-    (when (null var)
-      (setf var (gensym))
-      (setf (gethash datum *vars*) var))
-    var))
 
 (defun translate-lambda-list (lambda-list)
   (loop for item in lambda-list
