@@ -78,7 +78,11 @@
    (%setf-expanders :initform nil :accessor setf-expanders)
    ;; The default SETF expander, to be used when no other SETF
    ;; expander exists.
-   (%default-setf-expander :initform nil :accessor default-setf-expander)))
+   (%default-setf-expander :initform nil :accessor default-setf-expander)
+   ;; An EQ hash table that acts as a dictionary, recording
+   ;; proclamations of DECLARATION.
+   (%declarations :initform (make-hash-table :test #'eq)
+		  :reader declarations)))
 
 (cl:defvar *global-environment*)
 
