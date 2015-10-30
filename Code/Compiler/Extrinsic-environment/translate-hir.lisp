@@ -38,12 +38,20 @@
 
 (defvar *vars*)
 
-(defun translate-datum (datum)
+(defgeneric translate-datum (datum))
+
+(defun lookup-datum (datum)
   (let ((var (gethash datum *vars*)))
     (when (null var)
       (setf var (gensym))
       (setf (gethash datum *vars*) var))
     var))
+
+(defmethod translate-datum ((datum cleavir-ir:lexical-location))
+  (lookup-datum datum))
+
+(defmethod translate-datum ((datum cleavir-ir:values-location))
+  (lookup-datum datum))
 
 ;;; For a given owner (which can be an ENTER-INSTRUCTION or NIL),
 ;;; return a list of all the variables (lexical or values) that are
