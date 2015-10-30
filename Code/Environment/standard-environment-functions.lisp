@@ -158,7 +158,9 @@
 
 (defun special-operator-p (symbol)
   (declare (type symbol symbol))
-  (sicl-genv:special-operator symbol sicl-genv:*global-environment*))
+  (sicl-genv:special-operator
+   symbol
+   (load-time-value (sicl-genv:global-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
