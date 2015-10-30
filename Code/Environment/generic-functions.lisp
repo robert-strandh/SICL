@@ -702,3 +702,15 @@
 ;;; false otherwise.
 
 (defgeneric declaration (name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF DECLARATION).
+;;;
+;;; If VALUE is true, record that NAME has been proclaimed as a
+;;; DECLARATION in ENVIRONMENT, so that a subsequent call to
+;;; DECLARATION returns true.  If value is false, delete the record
+;;; that NAME has been proclaimed as a DECLARATION in ENVIRONMENT, so
+;;; that a subsequent call to DECLARATION returns false.
+
+(defgeneric (setf declaration) (value name environment))
