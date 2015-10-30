@@ -5,13 +5,10 @@
 ;;; Function PROCLAIM.
 
 (defun proclaim-declaration (name)
-  (unless (find-if (lambda (entry)
-		     (and (typep entry 'declaration-declaration-entry)
-			  (eq (name entry) name)))
-		   (proclamations *global-environment*))
-    (push (make-instance 'declaration-declaration-entry
-	    :name name)
-	  (proclamations *global-environment*))))
+  (setf (sicl-genv:declaration
+	 name
+	 (load-time-value (sicl-genv:global-environment)))
+	t))
 
 (defun proclaim-ftype (name type)
   (setf (sicl-genv:function-type name (global-environment))
