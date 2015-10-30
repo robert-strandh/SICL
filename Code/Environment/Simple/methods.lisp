@@ -346,3 +346,6 @@
 (defmethod (setf sicl-genv:find-standard-method-combination)
     (new-instance (env simple-environment))
   (setf (standard-method-combination env) new-instance))
+
+(defmethod sicl-genv:declaration (name (env simple-environment))
+  (gethash name (declarations env)))
