@@ -693,3 +693,12 @@
 ;;; calls to FIND-STANDARD-METHOD-COMBINATION will return NEW-INSTANCE.
 
 (defgeneric (setf find-standard-method-combination) (new-instance environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function DECLARATION.
+;;;
+;;; Return true if NAME has been proclaimed as a DECLARATION, and
+;;; false otherwise.
+
+(defgeneric declaration (name environment))
