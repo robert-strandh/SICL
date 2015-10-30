@@ -40,6 +40,9 @@
 
 (defgeneric translate-datum (datum))
 
+(defmethod translate-datum ((datum cleavir-ir:constant-input))
+  (cleavir-ir:value datum))
+
 (defun lookup-datum (datum)
   (let ((var (gethash datum *vars*)))
     (when (null var)
