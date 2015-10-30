@@ -86,6 +86,7 @@
    #:*global-environment*
    #:+global-environment+
    #:global-environment
+   #:declaration
    ))
 
 (defpackage #:sicl-standard-environment-functions
