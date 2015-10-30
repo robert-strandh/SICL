@@ -32,7 +32,7 @@
   
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
-    (declaration
+    (cl:declaration
      (mapc #'proclaim-declaration
 	   (cdr declaration-specifier)))
     (ftype
