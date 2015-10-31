@@ -179,7 +179,8 @@
 (defun (setf compiler-macro-function)
     (new-definition name &optional environment)
   (when (null environment)
-    (setf environment sicl-genv:*global-environment*))
+    (setf environment
+	  (load-time-value (sicl-genv:global-environment))))
   (setf (sicl-genv:compiler-macro-function name environment)
 	new-definition))
 
