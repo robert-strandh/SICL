@@ -675,7 +675,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'tagbody)) form env system)
-  (db s (tagbody . items) form
+  (db origin (tagbody . items) form
     (declare (ignore tagbody))
     (let ((tag-asts
 	    (loop for item in (raw items)
@@ -694,7 +694,7 @@
 					 (convert item new-env system)))))
 	(process-progn
 	 (list (cleavir-ast:make-tagbody-ast item-asts
-					     :origin (location form))
+					     :origin origin)
 	       (convert-constant nil env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
