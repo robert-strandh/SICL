@@ -189,7 +189,9 @@
 ;;; Function GET-SETF-EXPANSION.
 
 (defun get-setf-expansion
-    (place &optional (environment sicl-genv:*global-environment*))
+    (place
+     &optional
+       (environment (load-time-value (sicl-genv:global-environment))))
   (let ((global-environment (cleavir-env:global-environment environment)))
     (if (symbolp place)
 	(let ((temp (gensym)))
