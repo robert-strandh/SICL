@@ -703,14 +703,14 @@
 
 (defmethod convert-special
     ((symbol (eql 'the)) form environment system)
-  (db s (the value-type subform) (rest form)
+  (db origin (the value-type subform) (rest form)
     (declare (ignore the))
     (cleavir-ast:make-the-ast
      (convert subform environment system)
      (if (and (consp value-type) (eq (car value-type) 'values))
 	 (cdr value-type)
 	 (list value-type))
-     :origin (location form))))
+     :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
