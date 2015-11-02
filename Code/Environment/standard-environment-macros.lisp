@@ -1,4 +1,4 @@
-(in-package #:sicl-standard-environment-macros)
+(cl:in-package #:sicl-standard-environment-macros)
 
 ;;;; The macros in this file have an important shared property,
 ;;;; namely, they all access or modify the global environment at
