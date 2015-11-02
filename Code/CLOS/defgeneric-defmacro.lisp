@@ -15,4 +15,6 @@
 	    (ensure-generic-function
 	     ',name
 	     :lambda-list ',lambda-list
-	     :environment sicl-global-environment:*global-environment*)))))
+	     :environment
+	     (load-time-value
+	      (sicl-global-environment:global-environment)))))))
