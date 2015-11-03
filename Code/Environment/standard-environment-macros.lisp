@@ -47,7 +47,7 @@
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (sicl-genv:constant-variable
 	    ',name
-	    sicl-genv:*global-environment*)
+	    (load-time-value (sicl-genv:global-environment)))
 	   ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
