@@ -365,21 +365,24 @@
       (make-instance 'local-function-info
 	:name function-name
 	:identity (identity environment))
-      (defining-function-info (next environment) function-name)))
+      nil))
 
 (defmethod defining-function-info ((environment macro) symbol)
   (if (eq symbol (name environment))
       (make-instance 'local-macro-info
 	:name symbol
 	:expander (expander environment))
-      (defining-function-info (next environment) symbol)))
+      nil))
 
 ;;; This method implements the action to take when the argument is an
 ;;; ENTRY, but it is not an entry defining a function.  We handle this
 ;;; situation by just making a recursive call, passing the next entry
 ;;; in the environment.
-(defmethod defining-function-info ((environment entry) function-name)
-  (defining-function-info (next environment) function-name))
+(defmethod defining-function-info ((environment environment) function-name)
+  (or (loop for entry in (augmentations environment)
+	    when (defining-function-info entry symbol)
+	      return it)
+      (definining-function-info (global-environment environment))))
 
 ;;; This method implements the action to take when the argument is the
 ;;; global environment.  We detect this situation by the fact that the
