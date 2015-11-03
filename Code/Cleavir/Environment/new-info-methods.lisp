@@ -728,13 +728,22 @@
 ;;; Finding info about a TAG is particularly easy because there can
 ;;; be no entries modifying the properties of the tag. 
 
+;;; This method implements the action to take when the argument is a
+;;; TAG entry.
+(defmethod tag-info ((environment tag) symbol)
+  (if (eq symbol (name environment))
+      ;; We found a TAG entry with the same name, so we are done.
+      ;; Create and return a valid TAG-INFO instance for this
+      ;; environment.
+      (make-instance 'tag-info
+	:name symbol
+	:identity (identity environment))
+      nil))
+
 (defmethod tag-info ((environment environment) symbol)
   (loop for entry in (augmentations environment)
-	when (and (typep entry 'tag)
-		  (eq symbol (name entry)))
-	  return (make-instance 'tag-info
-		   :name symbol
-		   :identity (identity environment))))
+	when (tag-info entry symbol)
+	  return it))
 
 ;;; This method implements the action to take when the argument is the
 ;;; global environment.  We detect this situation by the fact that the
