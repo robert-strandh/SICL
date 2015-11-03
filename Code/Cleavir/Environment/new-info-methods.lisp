@@ -56,28 +56,27 @@
       (make-instance 'lexical-variable-info
 	:name symbol
 	:identity (identity environment))
-      (defining-variable-info (next environment) symbol)))
+      nil))
 
 (defmethod defining-variable-info ((environment special-variable) symbol)
   (if (eq symbol (name environment))
       (make-instance 'special-variable-info
 	:name symbol
 	:global-p nil)
-      (defining-variable-info (next environment) symbol)))
+      nil))
 
 (defmethod defining-variable-info ((environment symbol-macro) symbol)
   (if (eq symbol (name environment))
       (make-instance 'symbol-macro-info
 	:name symbol
 	:expansion (expansion environment))
-      (defining-variable-info (next environment) symbol)))
+      nil))
 
-;;; This method implements the action to take when the argument is an
-;;; ENTRY, but it is not an entry defining a variable.  We handle this
-;;; situation by just making a recursive call, passing the next entry
-;;; in the environment.
-(defmethod defining-variable-info ((environment entry) symbol)
-  (defining-variable-info (next environment) symbol))
+(defmethod defining-variable-info ((environment environment) symbol)
+  (or (loop for entry in (augmentations environment)
+	    when (defining-variable-info entry symbol)
+	      return it)
+      (definining-variable-info (global-environment environment))))
 
 ;;; This method implements the action to take when the argument is the
 ;;; global environment.  We detect this situation by the fact that the
