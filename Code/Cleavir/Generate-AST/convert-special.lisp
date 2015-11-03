@@ -110,7 +110,7 @@
 (defun augment-environment-from-fdef (environment definition)
   (db origin (name . rest) definition
     (declare (ignore rest))
-    (let ((var-ast (cleavir-ast:make-lexical-ast name :origin origin)))
+    (let ((var-ast (cleavir-ast:make-lexical-ast (raw name) :origin origin)))
       (cleavir-env:add-local-function environment name var-ast))))
 
 ;;; Take an environment and a list of function definitions, and return
