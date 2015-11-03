@@ -108,10 +108,10 @@
 ;;; new environment which is like the one passed as an argument except
 ;;; that it has been augmented by the name of the local function.
 (defun augment-environment-from-fdef (environment definition)
-  (let* ((location (location definition))
-	 (name (dfirst definition))
-	 (var-ast (cleavir-ast:make-lexical-ast name :origin location)))
-    (cleavir-env:add-local-function environment name var-ast)))
+  (db origin (name . rest) definition
+    (declare (ignore rest))
+    (let ((var-ast (cleavir-ast:make-lexical-ast name :origin origin)))
+      (cleavir-env:add-local-function environment name var-ast))))
 
 ;;; Take an environment and a list of function definitions, and return
 ;;; a new environment which is like the one passed as an argument,
