@@ -98,18 +98,18 @@
 
 (defmethod variable-type ((environment lexical-variable) symbol)
   (if (eq (name environment) symbol)
-      (type defining-info)
-      nil)
+      (list (type defining-info))
+      '())
 
 (defmethod variable-type ((environment special-variable) symbol)
   (if (eq (name environment) symbol)
-      (type defining-info)
-      nil))
+      (list (type defining-info))
+      '()))
 
 (defmethod variable-type ((environment symbol-macro) symbol)
   (if (eq (name environment) symbol)
-      (type defining-info)
-      nil))
+      (list (type defining-info))
+      '()))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
