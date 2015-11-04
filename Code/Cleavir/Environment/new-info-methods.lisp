@@ -109,7 +109,7 @@
 	       (variable-type augmentation symbol)
 	     (when valid-p
 	       (push type result)))
-	finally (return (nreverse result))))
+	finally (return result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
