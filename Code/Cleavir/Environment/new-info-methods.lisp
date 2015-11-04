@@ -111,6 +111,11 @@
       (list (type defining-info))
       '()))
 
+(defun find-variable-types (augmentations symbol sentinel)
+  (loop for augmentation in augmentations
+	until (eq augmentation sentinel)
+	nconc (variable-type augmentation symbol)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function VARIABLE-IGNORE.
