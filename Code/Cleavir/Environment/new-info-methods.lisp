@@ -92,6 +92,10 @@
 
 (defgeneric variable-type (environment symbol))
 
+(defmethod variable-type (environment symbol)
+  (declare (ignore environment symbol))
+  '())
+
 ;;; The following three methods are called when the environment entry
 ;;; is of the same type as the one that resulted in the creation of
 ;;; the defining info instance.
