@@ -96,24 +96,10 @@
   (declare (ignore environment symbol))
   '())
 
-;;; The following three methods are called when the environment entry
-;;; is of the same type as the one that resulted in the creation of
-;;; the defining info instance.
-
-(defmethod variable-type ((environment lexical-variable) symbol)
+(defmethod variable-type ((environment variable-type) symbol)
   (if (eq (name environment) symbol)
-      (list (type defining-info))
+      (list (type environment))
       '())
-
-(defmethod variable-type ((environment special-variable) symbol)
-  (if (eq (name environment) symbol)
-      (list (type defining-info))
-      '()))
-
-(defmethod variable-type ((environment symbol-macro) symbol)
-  (if (eq (name environment) symbol)
-      (list (type defining-info))
-      '()))
 
 (defun find-variable-types (augmentations symbol sentinel)
   (loop for augmentation in augmentations
