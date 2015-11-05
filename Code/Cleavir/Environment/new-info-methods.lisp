@@ -126,56 +126,6 @@
       (ignore environment)
       nil))
 
-;;; This method is called when the environment is the global
-;;; environment.
-(defmethod variable-ignore (environment defining-info)
-  (declare (cl:ignorable environment defining-info))
-  nil)
-
-;;; This method is called when the entry is not related to the
-;;; defining info instance. 
-(defmethod variable-ignore ((environment entry) defining-info)
-  (declare (cl:ignorable environment defining-info))
-  (variable-ignore (next environment) defining-info))
-
-;;; The following two methods are called when the environment entry
-;;; is of the same type as the one that resulted in the creation of
-;;; the defining info instance.  If the name of the environment entry
-;;; is the same as the name of the info instance, then this entry was
-;;; the one that resulted in the creation of the defining info
-;;; instance.  In other words, we have found no variable type entries
-;;; before entry that resulted in the creation of the defining info.
-;;; If the names are not the same, we continue the search. 
-
-(defmethod variable-ignore ((environment lexical-variable)
-			    (defining-info lexical-variable-info))
-  (if (eq (name environment) (name defining-info))
-      nil
-      (variable-ignore (next environment) defining-info)))
-
-(defmethod variable-ignore ((environment special-variable)
-			    (defining-info special-variable-info))
-  (if (eq (name environment) (name defining-info))
-      nil
-      (variable-ignore (next environment) defining-info)))
-
-;;; The following two methods are called when the current entry is a
-;;; candidate for being the entry containing ignore information for a
-;;; variable info.  We found the right one if the names are the same.
-;;; If not, then we continue the search.
-
-(defmethod variable-ignore ((environment variable-ignore)
-			    (defining-info lexical-variable-info))
-  (if (eq (name environment) (name defining-info))
-      environment
-      (variable-ignore (next environment) defining-info)))
-
-(defmethod variable-ignore ((environment variable-ignore)
-			    (defining-info special-variable-info))
-  (if (eq (name environment) (name defining-info))
-      environment
-      (variable-ignore (next environment) defining-info)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function VARIABLE-DYNAMIC-EXTENT.
