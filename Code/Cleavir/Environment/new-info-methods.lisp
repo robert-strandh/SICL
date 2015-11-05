@@ -114,13 +114,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function VARIABLE-IGNORE.
-;;;
-;;; This function takes an environment and a defining info instance
-;;; and returns the first entry in the environment that contains ignore
-;;; information for the defining info instance, or NIL if there is not
-;;; such entry.
 
-(defgeneric variable-ignore (environment defining-info))
+(defgeneric variable-ignore (environment symbol))
+
+(defmethod variable-ignore (environment symbol)
+  (declare (ignore environment symbol))
+  (values nil nil))
+
+(defmethod variable-ignore ((environment variable-ignore) symbol)
+  (if (eq (name environment) symbol)
+      (ignore environment)
+      nil))
 
 ;;; This method is called when the environment is the global
 ;;; environment.
