@@ -3,4 +3,5 @@
 (defun fdefinition (function-name)
   (sicl-global-environment:fdefinition
    function-name
-   sicl-global-environment:*global-environment*))
+   (load-time-value
+    (sicl-global-environment:global-environment))))
