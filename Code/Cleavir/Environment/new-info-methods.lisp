@@ -129,51 +129,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function VARIABLE-DYNAMIC-EXTENT.
-;;;
-;;; This function takes an environment and a defining info instance
-;;; and returns the first entry in the environment that contains
-;;; dynamic-extent information for the defining info instance, or NIL
-;;; if there is not such entry.
 
-(defgeneric variable-dynamic-extent (environment defining-info))
+(defgeneric variable-dynamic-extent (environment symbols))
 
-;;; This method is called when the environment is the global
-;;; environment.
-(defmethod variable-dynamic-extent (environment defining-info)
-  (declare (cl:ignorable environment defining-info))
+(defmethod variable-dynamic-extent (environment symbol)
+  (declare (cl:ignorable environment symbol))
   nil)
 
 ;;; This method is called when the entry is not related to the
 ;;; defining info instance. 
-(defmethod variable-dynamic-extent ((environment entry) defining-info)
-  (declare (cl:ignorable environment defining-info))
-  (variable-dynamic-extent (next environment) defining-info))
+(defmethod variable-dynamic-extent ((environment entry) symbol)
+  (declare (cl:ignorable environment symbol))
+  nil)
 
-;;; The following method is called when the environment entry is of
-;;; the same type as the one that resulted in the creation of the
-;;; defining info instance.  If the name of the environment entry is
-;;; the same as the name of the info instance, then this entry was the
-;;; one that resulted in the creation of the defining info instance.
-;;; In other words, we have found no variable type entries before
-;;; entry that resulted in the creation of the defining info.  If the
-;;; names are not the same, we continue the search.
-
-(defmethod variable-dynamic-extent ((environment lexical-variable)
-			  (defining-info lexical-variable-info))
-  (if (eq (name environment) (name defining-info))
-      nil
-      (variable-dynamic-extent (next environment) defining-info)))
-
-;;; The following method is called when the current entry is a
-;;; candidate for being the entry containing dynamic extent
-;;; information for a variable info.  We found the right one if the
-;;; names are the same.  If not, then we continue the search.
-
-(defmethod variable-dynamic-extent ((environment variable-dynamic-extent)
-			  (defining-info lexical-variable-info))
-  (if (eq (name environment) (name defining-info))
-      environment
-      (variable-dynamic-extent (next environment) defining-info)))
+(defmethod variable-dynamic-extent ((environment variable-dynamic-extent) symbol)
+  (eq (name environment) symbol))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
