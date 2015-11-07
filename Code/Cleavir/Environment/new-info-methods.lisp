@@ -274,40 +274,16 @@
 ;;; environment that contains type information for the defining info
 ;;; instance.
 
-(defgeneric function-type (environment defining-info))
+(defgeneric function-type (environment symbol))
 
-;;; This method is called when the environment is the global
-;;; environment.
-(defmethod function-type (environment defining-info)
-  (declare (cl:ignorable environment))
-  (type defining-info))
+(defmethod function-type (environment symbol)
+  (declare (ignore environment symbol))
+  (values nil nil))
 
-;;; This method is called when the entry is not related to the
-;;; defining info instance. 
-(defmethod function-type ((environment entry) defining-info)
-  (declare (cl:ignorable environment defining-info))
-  (function-type (next environment) defining-info))
-
-;;; The following two methods are called when the environment entry
-;;; is of the same type as the one that resulted in the creation of
-;;; the defining info instance.  If the name of the environment entry
-;;; is the same as the name of the info instance, then this entry was
-;;; the one that resulted in the creation of the defining info
-;;; instance.  In other words, we have found no function type entries
-;;; before entry that resulted in the creation of the defining info.
-;;; If the names are not the same, we continue the search. 
-
-(defmethod function-type ((environment function)
-			  (defining-info local-function-info))
-  (if (equal (name environment) (name defining-info))
-      (list (type defining-info))
-      (function-type (next environment) defining-info)))
-
-(defmethod function-type ((environment macro)
-			  (defining-info local-macro-info))
-  (if (eq (name environment) (name defining-info))
-      (list (type defining-info))
-      (function-type (next environment) defining-info)))
+(defmethod function-type ((environment function-type) symbol)
+  (if (eq (name environment) symbol)
+      (values (type environment) t)
+      (values nil nil)))
 
 ;;; The following four methods are called when the current entry is a
 ;;; candidate for being the entry containing type information for a
