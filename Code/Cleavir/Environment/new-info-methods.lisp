@@ -285,25 +285,6 @@
       (values (type environment) t)
       (values nil nil)))
 
-;;; The following four methods are called when the current entry is a
-;;; candidate for being the entry containing type information for a
-;;; function info.  We found the right one if the names are the same.
-;;; If not, then we continue the search.
-
-(defmethod function-type ((environment function-type)
-			  (defining-info local-function-info))
-  (if (equal (name environment) (name defining-info))
-      (cons (type environment)
-	    (function-type (next environment) defining-info))
-      (function-type (next environment) defining-info)))
-
-(defmethod function-type ((environment function-type)
-			  (defining-info global-function-info))
-  (if (equal (name environment) (name defining-info))
-      (cons (type environment)
-	    (function-type (next environment) defining-info))
-      (function-type (next environment) defining-info)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function FUNCTION-IGNORE.
