@@ -289,69 +289,16 @@
 ;;;
 ;;; Generic function FUNCTION-IGNORE.
 
-(defgeneric function-ignore (environment defining-info))
+(defgeneric function-ignore (environment function-name))
 
-;;; This method is called when the environment is the global
-;;; environment.
-(defmethod function-ignore (environment defining-info)
-  (declare (cl:ignorable environment defining-info))
-  nil)
+(defmethod function-ignore (environment function-name)
+  (declare (ignore environment function-name))
+  (values nil nil))
 
-;;; This method is called when the entry is not related to the
-;;; defining info instance. 
-(defmethod function-ignore ((environment entry) defining-info)
-  (declare (cl:ignorable environment defining-info))
-  (function-ignore (next environment) defining-info))
-
-;;; The following two methods are called when the environment entry
-;;; is of the same type as the one that resulted in the creation of
-;;; the defining info instance.  If the name of the environment entry
-;;; is the same as the name of the info instance, then this entry was
-;;; the one that resulted in the creation of the defining info
-;;; instance.  In other words, we have found no function type entries
-;;; before entry that resulted in the creation of the defining info.
-;;; If the names are not the same, we continue the search. 
-
-(defmethod function-ignore ((environment function)
-			  (defining-info local-function-info))
-  (if (equal (name environment) (name defining-info))
-      nil
-      (function-ignore (next environment) defining-info)))
-
-(defmethod function-ignore ((environment macro)
-			  (defining-info local-macro-info))
-  (if (eq (name environment) (name defining-info))
-      nil
-      (function-ignore (next environment) defining-info)))
-
-;;; The following four methods are called when the current entry is a
-;;; candidate for being the entry containing ignore information for a
-;;; function info.  We found the right one if the names are the same.
-;;; If not, then we continue the search.
-
-(defmethod function-ignore ((environment function-ignore)
-			  (defining-info local-function-info))
-  (if (equal (name environment) (name defining-info))
-      environment
-      (function-ignore (next environment) defining-info)))
-
-(defmethod function-ignore ((environment function-ignore)
-			  (defining-info global-function-info))
-  (if (equal (name environment) (name defining-info))
-      environment
-      (function-ignore (next environment) defining-info)))
-
-(defmethod function-ignore ((environment function-ignore)
-			  (defining-info local-macro-info))
-  (if (eq (name environment) (name defining-info))
-      environment
-      (function-ignore (next environment) defining-info)))
-
-(defmethod function-ignore ((environment function-ignore)
-			  (defining-info global-macro-info))
-  (if (eq (name environment) (name defining-info))
-      environment
-      (function-ignore (next environment) defining-info)))
+(defmethod function-ignore ((environment function-ignore) function-name)
+  (if (equal (name environment) function-name)
+      (ignore environment)
+      nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
