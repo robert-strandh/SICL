@@ -1,4 +1,4 @@
-(defpackage #:sicl-condition-signaling
+(cl:defpackage #:sicl-condition-signaling
     (:use #:common-lisp)
   (:shadow #:error
 	   #:cerror
