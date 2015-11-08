@@ -403,7 +403,7 @@
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let* ((canonical-dspecs (canonicalize-declarations declarations))
 	     (variables (binding-vars bindings))
-	     (temp-asts (temp-asts-from-bindings bindings))
+	     (temp-asts (temp-asts-from-bindings (raw bindings)))
 	     (init-asts (make-let-init-asts bindings temp-asts env system)))
 	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
 						(listify variables)
