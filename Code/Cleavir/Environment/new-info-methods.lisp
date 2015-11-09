@@ -303,11 +303,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function FUNCTION-DYNAMIC-EXTENT.
-;;;
-;;; This function takes an environment and a defining info instance
-;;; and returns the first entry in the environment that contains
-;;; dynamic-extent information for the defining info instance, or NIL
-;;; if there is not such entry.
 
 (defgeneric function-dynamic-extent (environment defining-info))
 
