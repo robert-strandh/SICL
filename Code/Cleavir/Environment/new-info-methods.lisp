@@ -93,7 +93,7 @@
 (defgeneric variable-type (environment symbol))
 
 (defmethod variable-type (environment symbol)
-  (declare (ignore environment symbol))
+  (declare (cl:ignore environment symbol))
   (values nil nil))
 
 (defmethod variable-type ((environment variable-type) symbol)
