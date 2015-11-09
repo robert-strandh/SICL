@@ -75,8 +75,9 @@
 		 nil)
 	   ',name)
 	 (eval-when (:load-toplevel :execute)
-	   (unless (sicl-genv:boundp ',name
-				    sicl-genv:*global-environment*)
+	   (unless (sicl-genv:boundp
+		    ',name
+		    (load-time-value (sicl-genv:global-environment)))
 	     (setf (sicl-genv:special-variable
 		    ',name
 		    sicl-genv:*global-environment*
