@@ -304,6 +304,17 @@
 ;;;
 ;;; Generic function FUNCTION-DYNAMIC-EXTENT.
 
+(defgeneric function-dynamic-extent (environment function-name))
+
+(defmethod function-dynamic-extent (environment function-name)
+  (declare (ignore environment function-name))
+  (values nil nil))
+
+(defmethod function-dynamic-extent ((environment function-dynamic-extent) function-name)
+  (if (equal (name environment) function-name)
+      (dynamic-extent environment)
+      nil))
+
 (defgeneric function-dynamic-extent (environment defining-info))
 
 ;;; This method is called when the environment is the global
