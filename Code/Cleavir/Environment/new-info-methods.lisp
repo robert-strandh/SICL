@@ -324,51 +324,16 @@
 ;;; information for the defining info instance, or NIL if there is not
 ;;; such entry.
 
-(defgeneric function-inline (environment defining-info))
+(defgeneric function-inline (environment function-name))
 
-;;; This method is called when the environment is the global
-;;; environment.
-(defmethod function-inline (environment defining-info)
-  (declare (cl:ignore environment))
-  (inline defining-info))
-
-;;; This method is called when the entry is not related to the
-;;; defining info instance. 
-(defmethod function-inline ((environment entry) defining-info)
+(defmethod function-inline ((environment entry) function-name)
   (declare (cl:ignorable environment defining-info))
-  (function-inline (next environment) defining-info))
+  nil)
 
-;;; The following method is called when the environment entry is of
-;;; the same type as the one that resulted in the creation of the
-;;; defining info instance.  If the name of the environment entry is
-;;; the same as the name of the info instance, then this entry was the
-;;; one that resulted in the creation of the defining info instance.
-;;; In other words, we have found no function type entries before
-;;; entry that resulted in the creation of the defining info.  If the
-;;; names are not the same, we continue the search.
-
-(defmethod function-inline ((environment function)
-			  (defining-info local-function-info))
+(defmethod function-inline ((environment inline) function-name)
   (if (equal (name environment) (name defining-info))
-      nil
-      (function-inline (next environment) defining-info)))
-
-;;; The following two methods are called when the current entry is a
-;;; candidate for being the entry containing inline information for a
-;;; function info.  We found the right one if the names are the same.
-;;; If not, then we continue the search.
-
-(defmethod function-inline ((environment inline)
-			    (defining-info local-function-info))
-  (if (equal (name environment) (name defining-info))
-      environment
-      (function-inline (next environment) defining-info)))
-
-(defmethod function-inline ((environment inline)
-			    (defining-info global-function-info))
-  (if (equal (name environment) (name defining-info))
-      environment
-      (function-inline (next environment) defining-info)))
+      (inline environment)
+      nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
