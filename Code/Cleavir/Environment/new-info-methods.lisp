@@ -318,11 +318,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function FUNCTION-INLINE.
-;;;
-;;; This function takes an environment and a defining info instance
-;;; and returns the first entry in the environment that contains inline
-;;; information for the defining info instance, or NIL if there is not
-;;; such entry.
 
 (defgeneric function-inline (environment function-name))
 
