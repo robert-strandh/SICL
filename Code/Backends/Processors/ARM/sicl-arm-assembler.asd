@@ -2,9 +2,10 @@
 
 (defsystem :sicl-arm-assembler
   :depends-on (:split-sequence :sicl-compiler)
+  :serial t
   :components
   ((:file "packages")
-   (:file "emulator" :depends-on ("packages"))
-   (:file "instructions" :depends-on ("packages" "emulator"))
-   (:file "lir" :depends-on ("packages" "instructions"))))
+   (:file "emulator")
+   (:file "instructions")
+   (:file "lir")))
 
