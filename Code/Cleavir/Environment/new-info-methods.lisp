@@ -480,17 +480,18 @@
 
 ;;; This method is called when the entry is unrelated.
 (defmethod quality-value ((environment entry) name)
-  (quality-value (next environment) name))
+  (declare (cl:ignore name))
+  nil)
 
 ;;; This method is called when we have an OPTIMIZE entry.
 (defmethod quality-value ((environment optimize) name)
   (if (eq name (quality environment))
       ;; We found an entry with the right quality.  We are done.
-      ;; Return its value
+      ;; Return its value.
       (value environment)
       ;; It was an optimize entry, but it does not mention the
-      ;; quality we are interested in.  Search further.  
-      (quality-value (next environment) name)))
+      ;; quality we are interested in.  Return NIL.
+      nil))
 
 (defmethod optimize-info ((environment entry))
   (make-instance 'optimize-info
