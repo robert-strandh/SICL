@@ -591,7 +591,7 @@
   (declare (ignore var))
   (declare (ignore env system form))
   (error 'setq-constant-variable
-	 :form (cleavir-env:name info)))
+	 :expr (cleavir-env:name info)))
 
 (defmethod convert-setq
     ((info cleavir-env:lexical-variable-info) var form env system)
