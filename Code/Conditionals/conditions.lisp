@@ -33,7 +33,7 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file conditionals.text for a description of the module.
 
-(in-package #:sicl-conditionals)
+(cl:in-package #:sicl-conditionals)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
