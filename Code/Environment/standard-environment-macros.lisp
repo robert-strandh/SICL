@@ -87,7 +87,7 @@
       `(eval-when (:compile-toplevel :load-toplevel :execute)
 	 (setf (sicl-genv:special-variable
 		',name
-		sicl-genv:*global-environment*
+		(load-time-value (sicl-genv:global-environment))
 		nil)
 	       nil)
 	 ',name)))
