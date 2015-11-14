@@ -18,9 +18,11 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:typeq)) form env system)
-  (cleavir-ast:make-typeq-ast
-   (convert (second form) env system)
-   (third form)))
+  (db origin (op arg1 arg2) form
+    (declare (ignore op))
+    (cleavir-ast:make-typeq-ast
+     (convert arg1 env system)
+     arg2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
