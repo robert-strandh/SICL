@@ -3,6 +3,7 @@
 (defsystem :cleavir-dominance
   :depends-on (:cleavir-utilities
 	       :cleavir-meter)
+  :serial t
   :components
-  ((:file "packages" :depends-on ())
-   (:file "dominance" :depends-on ("packages"))))
+  ((:file "packages")
+   (:file "dominance")))
