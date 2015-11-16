@@ -30,7 +30,9 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:consp)) form env system)
-  (cleavir-ast:make-consp-ast (convert (second form) env system)))
+  (db origin (op arg) form
+    (declare (ignore op))
+    (cleavir-ast:make-consp-ast (convert arg env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
