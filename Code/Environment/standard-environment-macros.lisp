@@ -115,7 +115,7 @@
      (eval-when (:load-toplevel :execute)
        (setf (sicl-genv:special-variable
 	      ',name
-	      (sicl-genv:global-environment)
+	      (load-time-value (sicl-genv:global-environment))
 	      t)
 	     ,initial-value)
        ',name)))
