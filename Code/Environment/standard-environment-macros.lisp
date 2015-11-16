@@ -128,7 +128,7 @@
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (sicl-genv:type-expander
 	    ',name
-	    sicl-genv:*global-environment*)
+	    (load-time-value (sicl-genv:global-environment)))
 	   (function ,(cleavir-code-utilities:parse-deftype 
 		       name
 		       lambda-list
