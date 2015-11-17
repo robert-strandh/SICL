@@ -7,4 +7,3 @@
   :components
   ((:file "packages")
    (:file "ssa-form")))
-
