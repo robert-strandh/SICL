@@ -40,7 +40,9 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:car)) form env system)
-  (cleavir-ast:make-car-ast (convert (second form) env system)))
+  (db origin (op arg) form
+    (declare (ignore op))
+    (cleavir-ast:make-car-ast (convert arg env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
