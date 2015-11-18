@@ -50,7 +50,9 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:cdr)) form env system)
-  (cleavir-ast:make-cdr-ast (convert (second form) env system)))
+  (db origin (op arg) form
+    (declare (ignore op))
+    (cleavir-ast:make-cdr-ast (convert arg env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
