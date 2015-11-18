@@ -142,7 +142,7 @@
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (sicl-genv:compiler-macro-function
 	    ',name
-	    sicl-genv:*global-environment*)
+	    (load-time-value (sicl-genv:global-environment)))
 	   (function ,(cleavir-code-utilities:parse-macro
 		       name
 		       lambda-list
