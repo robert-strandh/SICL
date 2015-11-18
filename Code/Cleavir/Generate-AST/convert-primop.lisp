@@ -50,8 +50,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:cdr)) form env system)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 1)
   (cleavir-ast:make-cdr-ast (convert (second form) env system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
