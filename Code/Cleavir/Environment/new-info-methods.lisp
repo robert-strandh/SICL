@@ -493,6 +493,11 @@
       ;; quality we are interested in.  Return NIL.
       nil))
 
+(defun find-quality-value (environment name)
+  (or (loop for entry in (augmentations environment)
+	    thereis (quality-value entry name))
+      (quality-value (global-environment environment))))
+
 (defmethod optimize-info ((environment entry))
   (make-instance 'optimize-info
     :speed (quality-value environment 'speed)
