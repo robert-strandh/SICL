@@ -140,4 +140,3 @@
 ;;; The root of all semantic errors.
 (define-condition loop-semantic-error (program-error cleavir-i18n:condition)
   ())
-
