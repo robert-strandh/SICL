@@ -1,4 +1,4 @@
-(in-package #:sicl-program)
+(cl:in-package #:sicl-program)
 
 ;;; FIXME: perhaps I should figure out whether I can accomplish what
 ;;; is being done here by using ASDF instead of rolling my own.
