@@ -9,12 +9,6 @@
 ;;;; this way of doing it is so as to allow for an implementation to
 ;;;; specialize or override every such elementary step by defining
 ;;;; methods on those generic functions.
-;;;;
-;;;; In addition, even though the augmentation environments are chains
-;;;; of small class instances resembling a list, we do not use
-;;;; iteration in order to traverse them.  Instead we use recursion
-;;;; where the default action is to make a recursive call, passing the
-;;;; next instance in the chain.
 
 (defgeneric make-info (environment defining-info))
 
