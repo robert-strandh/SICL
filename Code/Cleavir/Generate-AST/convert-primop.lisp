@@ -71,8 +71,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:rplacd)) form env system)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 2 2)
   (cleavir-ast:make-rplacd-ast (convert (second form) env system)
 			       (convert (third form) env system)))
 
