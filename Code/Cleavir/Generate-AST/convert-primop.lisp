@@ -71,8 +71,10 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:rplacd)) form env system)
-  (cleavir-ast:make-rplacd-ast (convert (second form) env system)
-			       (convert (third form) env system)))
+  (db origin (op arg1 arg2) form
+    (declare (ignore op))
+    (cleavir-ast:make-rplacd-ast (convert arg1 env system)
+				 (convert arg2 env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
