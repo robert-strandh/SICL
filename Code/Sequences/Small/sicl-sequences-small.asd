@@ -4,6 +4,7 @@
   :depends-on (:sicl-additional-types
 	       :sicl-additional-conditions
 	       :cleavir-code-utilities)
+  :serial t
   :components
-  ((:file "packages" :depends-on ())
-   (:file "sequences" :depends-on ("packages"))))
+  ((:file "packages")
+   (:file "sequences")))
