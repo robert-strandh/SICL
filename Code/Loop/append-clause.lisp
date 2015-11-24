@@ -133,4 +133,3 @@
 		      (copy-list ,*it-var*))
 	      (setq ,(tail-variable (into-var clause))
 		    (last ,(tail-variable (into-var clause)))))))
-
