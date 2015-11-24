@@ -107,29 +107,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; FUNCTION.
-
-;;; This class is used to augment an environment with a local function
-;;; introduced by FLET or LABELS.  Client code can supply an IDENTITY
-;;; object that is used to distinguish between different local
-;;; functions with the same name.
-(defclass function (entry)
-  ((%name :initarg :name :reader name)
-   (%identity :initarg :identity :reader identity)))
-
-(defmethod add-local-function
-    (environment function-name &optional (identity (gensym)))
-  (augment-environment environment
-		       (make-instance 'function
-			 :name function-name
-			 :identity identity)))
-
-(defmethod print-object ((object function) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s ~s" (name object) (identity object))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; MACRO.
 
 ;;; This class is used to augment an environment with a local macro
