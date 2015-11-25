@@ -107,26 +107,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; MACRO.
-
-;;; This class is used to augment an environment with a local macro
-;;; introduced by MACROLET.  
-(defclass macro (entry)
-  ((%name :initarg :name :reader name)
-   (%expander :initarg :expander :reader expander)))
-
-(defmethod add-local-macro (environment symbol expander)
-  (augment-environment environment
-		       (make-instance 'macro
-			 :name symbol
-			 :expander expander)))
-
-(defmethod print-object ((object macro) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s" (name object))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; BLOCK.
 
 ;;; This class is used to augment an environment with a block
