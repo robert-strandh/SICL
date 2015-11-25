@@ -6,7 +6,7 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (push (make-constant-variable-entry nil nil)
-	(constant-variables *global-environment*)))
+	(constant-variables (global-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -14,4 +14,4 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (push (make-constant-variable-entry t t)
-	(constant-variables *global-environment*)))
+	(constant-variables (global-environment))))
