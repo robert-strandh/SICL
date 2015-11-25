@@ -97,7 +97,8 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:fixnum-+)) form env system)
-  (destructuring-bind (arg1 arg2 variable) (cdr form)
+  (db origin (op arg1 arg2 variable) form
+    (declare (ignore op))
     (cleavir-ast:make-fixnum-add-ast (convert arg1 env system)
 				     (convert arg2 env system)
 				     (convert variable env system))))
