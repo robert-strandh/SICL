@@ -208,5 +208,3 @@
 (defun load-docstrings ()
   (let ((*readtable* *documentation-readtable*))
     (load "docstrings.lisp")))
-
-
