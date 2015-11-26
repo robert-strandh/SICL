@@ -2,6 +2,7 @@
 
 (defsystem :cleavir-test-utilities
   :depends-on (:cleavir-utilities)
+  :serial t
   :components
   ((:file "packages")
-   (:file "test-utilities" :depends-on ("packages"))))
+   (:file "test-utilities")))
