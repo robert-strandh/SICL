@@ -11,7 +11,7 @@
 	type
 	(funcall expander
 		 (if (symbolp type) (list type) type)
-		 *global-environment*))))
+		 (global-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
