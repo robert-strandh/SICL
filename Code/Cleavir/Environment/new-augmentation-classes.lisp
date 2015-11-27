@@ -33,28 +33,12 @@
 
 (defclass entry () ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; LEXICAL-VARIABLE.
-
-;;; This class is used to augment an environment with a lexical
-;;; variable introduced by LET or LET*.  Client code can supply an
-;;; IDENTITY object that is used to distinguish between different
-;;; lexical variables with the same name.
-(defclass lexical-variable (entry)
-  ((%name :initarg :name :reader name)
-   (%identity :initarg :identity :reader identity)))
-
 (defmethod add-lexical-variable
     (environment symbol &optional (identity (gensym)))
   (augment-environment environment
 		       (make-instance 'lexical-variable
 			 :name symbol
 			 :identity identity)))
-
-(defmethod print-object ((object lexical-variable) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s ~s" (name object) (identity object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
