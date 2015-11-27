@@ -90,4 +90,3 @@
 (declaim (ftype (or (function (number) number)
 		    (function (real real) number))
 		atan))
-
