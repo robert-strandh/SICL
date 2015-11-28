@@ -42,34 +42,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; SPECIAL-VARIABLE.
-
-;;; This class is used to augment an environment with a special
-;;; variable.  This class is only used when a binding of a special
-;;; variable is seen, and that variable is not globally special.  By
-;;; `globally special', we mean that a proclamation has been used
-;;; directly or indirectly to proclaim the variable as special.  
-;;;
-;;; Whereas a lexical variable needs some kind of identity in order to
-;;; distinguish between different lexical variables with the same
-;;; name, no such identity is needed for special variables, simply
-;;; because there is only one special variable with a particular name.
-;;; Thus, the name of the special variable is sufficient to determine
-;;; which special variable is meant.
-(defclass special-variable (entry)
-  ((%name :initarg :name :reader name)))
-
-(defmethod add-special-variable (environment symbol)
-  (augment-environment environment
-		       (make-instance 'special-variable
-			 :name symbol)))
-
-(defmethod print-object ((object special-variable) stream)
-  (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s" (name object))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; SYMBOL-MACRO.
 
 ;;; This class is used to augment an environment with a symbol macro.
