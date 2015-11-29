@@ -42,6 +42,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Augment with a local function.
+
+(defmethod add-local-function
+    (environment function-name &optional (identity (gensym)))
+  (augment-environment
+   environment
+   (make-instance 'local-function-info
+     :name function-name
+     :identity identity)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; SYMBOL-MACRO.
 
 ;;; This class is used to augment an environment with a symbol macro.
