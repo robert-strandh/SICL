@@ -54,6 +54,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Augment with a local macro.
+
+(defmethod add-local-macro (environment symbol expander)
+  (augment-environment
+   environment
+   (make-instance 'local-macro
+     :name symbol
+     :expander expander)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; SYMBOL-MACRO.
 
 ;;; This class is used to augment an environment with a symbol macro.
