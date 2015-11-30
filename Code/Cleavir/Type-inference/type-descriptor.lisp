@@ -58,7 +58,7 @@
 ;;;; Another important consideration for the lattice used here is that
 ;;;; an instance of STANDARD-OBJECT can have its class changed at any
 ;;;; time.  Therefore, it is not meaningful to distinguish between
-;;;; sub-classes of STANDARD-OBJECT.  We go one step further and
+;;;; subclasses of STANDARD-OBJECT.  We go one step further and
 ;;;; consider that any operation on a STANDARD-OBJECT requires a test
 ;;;; to determine the class of the object.  For that reason, we
 ;;;; canonicalize any STANDARD-OBJECT to T.
