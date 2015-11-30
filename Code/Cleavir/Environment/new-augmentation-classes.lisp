@@ -56,6 +56,18 @@
 ;;;
 ;;; Augment with a local macro.
 
+(defmethod add-local-macro
+    (environment symbol &optional (identity (gensym)))
+  (augment-environment
+   environment
+   (make-instance 'local-function-info
+     :name symbol
+     :identity identity)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Augment with a local macro.
+
 (defmethod add-local-macro (environment symbol expander)
   (augment-environment
    environment
