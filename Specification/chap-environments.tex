@@ -60,31 +60,6 @@ A global environment in \sysname{} would then contain:
 \item etc.\fixme{State exactly what the global environment contains.}
 \end{itemize}
 
-There are many possible choices for representing the global
-environment.  For instance, it might seem reasonable to have the
-global environment contain a single entry for each \emph{name} in a
-particular namespece, and to have that entry contain all the relevant
-information about the name.  In \sysname{} we have chosen to do it
-differently.  Each name can be associated with several different
-entries, and each entry only handles one aspect of the name.  For
-instance, for a function name, there might be one entry for it as a
-special operator and another as a macro, or there might be one entry
-for it as a function, another for its type, a third one indicating
-that it can be inlined, etc. 
-
-We divide the entries into \emph{base entries} and \emph{auxiliary
-  entries}.  A base entry does not refer to any other entries.
-Macros, functions, special operators, and autonomous proclamations are
-represented by base entries.  An auxiliary entry refers to a base
-entry.  Declarations such as \texttt{inline}, \texttt{type}, and
-\texttt{dynamic-extent} are represented by auxiliary entries. 
-
-There can be several auxiliary entries referring to one base entry and
-they may combine in different ways.  For instance, the type
-declaration entries referring to one base entry combine as
-\texttt{and}, whereas with several \texttt{inline} entries only the
-first one found (i.e., the most recent one established) counts. 
-
 \subsection{Functions, macros, compiler macros, and special operators}
 
 This mapping is manipulated by \texttt{symbol-function}, \texttt{(setf
