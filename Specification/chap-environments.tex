@@ -197,6 +197,14 @@ It returns true if \texttt{function-name} has a definition in
 \texttt{environment} as an ordinary function, a generic function, a
 macro, or a special operator.
 
+\Defgeneric {fmakunbound} {function-name environment}
+
+This generic function is a generic version of the \commonlisp{}
+function named \texttt{fmakunbound}.
+
+This function makes \emph{unbound} in the function namespace of
+\textit{environment}. 
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
