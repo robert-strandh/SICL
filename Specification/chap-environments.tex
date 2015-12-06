@@ -205,6 +205,13 @@ function named \texttt{fmakunbound}.
 This function makes \textit{function-name} \emph{unbound} in the
 function namespace of \textit{environment}.
 
+If \textit{function-name} already has a definition in
+\textit{environment} as an ordinary function, as a generic function,
+as a macro, or as a special operator, then that definition is lost.
+
+If \textit{function-name} has a \texttt{setf} expander associated with
+it, then that \texttt{setf} expander is lost.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
