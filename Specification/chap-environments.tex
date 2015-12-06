@@ -212,6 +212,16 @@ as a macro, or as a special operator, then that definition is lost.
 If \textit{function-name} has a \texttt{setf} expander associated with
 it, then that \texttt{setf} expander is lost.
 
+\Defgeneric {special-operator} {function-name environment}
+
+If \textit{function-name} has a definition as a special operator in
+\textit{environment}, then that definition is returned.  The
+definition is the object that was used as an argument to \texttt{(setf
+  special-operator)}.  The exact nature of this object is not
+specified, other than that it can not be \texttt{nil}.  If
+\textit{function-name} does not have a definition as a special
+operator in \textit{environment}, then \texttt{nil} is returned.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
