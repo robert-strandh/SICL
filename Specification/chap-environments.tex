@@ -222,6 +222,21 @@ specified, other than that it can not be \texttt{nil}.  If
 \textit{function-name} does not have a definition as a special
 operator in \textit{environment}, then \texttt{nil} is returned.
 
+\Defgeneric {(setf special-operator)} {new function-name environment}
+
+Set the definition of \textit{function-name} to be a special operator.
+The exact nature of \textit{new} is not specified, except that a
+value of \texttt{nil} means that \textit{function-name} no longer has
+a definition as a special operator in \textit{environment}.
+
+If a value other than \texttt{nil} is given for \textit{new}, and
+\textit{function-name} already has a definition as an ordinary
+function, as a generic function, or as a macro, then an error is
+signaled.  As a consequence, if it is desirable for
+\textit{function-name} to have a definition both as a special operator
+and as a macro, then the definition as a special operator should be
+set first.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
