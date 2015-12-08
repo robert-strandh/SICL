@@ -21,5 +21,3 @@
   (cond ((null args) (invert x))
 	((null (cdr args)) (binary-div x (car args)))
 	(t (apply #'/ (binary-div x (car args)) (cdr args)))))
- 
-
