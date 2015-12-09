@@ -1,0 +1,15 @@
+\chapter{Metering}
+
+The system named \texttt{cleavir-meter} defines a package with the
+same name, and functionality for \emph{metering}. 
+
+Metering is an idea inspired by the \multics{} operating system, and
+consists of accumulating performance information whenever doing so
+does not noticeably degrade performance of the subsystem being
+metered.  The performance information consists at the very least of
+counting the number of invocations of a function and the processor
+time the invocations took to execute.
+
+\Defclass {meter}
+
+This class is the base class for all meters.
