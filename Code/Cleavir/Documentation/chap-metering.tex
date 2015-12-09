@@ -13,3 +13,11 @@ time the invocations took to execute.
 \Defclass {meter}
 
 This class is the base class for all meters.
+
+\Defclass {basic-meter}
+
+This class is a subclass of the class \texttt{meter}.  Meters of this
+type collect information about processor time and number of
+invocations in a way that make it possible to determine minimum and
+maximum processor time for the invocations as well as the standard
+deviation for the processor time.
