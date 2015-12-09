@@ -237,6 +237,30 @@ signaled.  As a consequence, if it is desirable for
 and as a macro, then the definition as a special operator should be
 set first.
 
+\Defgeneric {fdefinition} {function-name environment}
+
+This generic function is a generic version of the \commonlisp{}
+function named \texttt{cl:fdefinition}.
+
+If \textit{function-name} has a definition in the function namespace
+of \textit{environment} (i.e., if \texttt{fboundp} returns true), then
+a call to this function succeeds.  Otherwise an error of type
+\texttt{undefined-function} is signaled.
+
+If \textit{function-name} is defined as an ordinary function or a generic
+function, then a call to this function returns the associated
+function object.
+
+If \textit{function-name} is defined as a macro, then a list of the form
+\texttt{(cl:macro-function \textrm{\textit{function}})} is returned, where
+\textit{function} is the macro expansion function associated with the
+macro.
+
+If \textit{function-name} is defined as a special operator, then a
+list of the form \texttt{(cl:special \textrm{\textit{object}})} is
+returned, where the nature of \textit{object} is currently not
+specified.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
