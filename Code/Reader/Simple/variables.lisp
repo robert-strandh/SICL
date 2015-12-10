@@ -18,4 +18,3 @@
 (defparameter *read-default-float-format* 'single-float)
 
 (defparameter *read-suppress* nil)
-
