@@ -261,6 +261,19 @@ list of the form \texttt{(cl:special \textrm{\textit{object}})} is
 returned, where the nature of \textit{object} is currently not
 specified.
 
+\Defgeneric {(setf fdefinition)} {new-def function-name environment}
+
+This generic function is a generic version of the \commonlisp{}
+function named \texttt{(setf cl:fdefinition)}.
+
+\textit{new-def} must be an ordinary function or a generic function.
+If \textit{function-name} already names a function or a macro, then
+the previous definition is lost.  If \textit{function-name} already
+names a special operator, then an error is signaled.
+
+If \textit{function-name} is a symbol and it has an associated
+\texttt{setf} expander, then that \texttt{setf} expander is preserved.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
