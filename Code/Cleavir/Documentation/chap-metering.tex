@@ -21,3 +21,10 @@ type collect information about processor time and number of
 invocations in a way that make it possible to determine minimum and
 maximum processor time for the invocations as well as the standard
 deviation for the processor time.
+
+\Defclass {size-meter}
+
+This class is a subclass of the class \texttt{basic-meter}.  In
+addition to counting the number of invocations and measuring processor
+time, this class allows client code to associate a \emph{size} with
+each invocation.
