@@ -28,3 +28,14 @@ This class is a subclass of the class \texttt{basic-meter}.  In
 addition to counting the number of invocations and measuring processor
 time, this class allows client code to associate a \emph{size} with
 each invocation.
+
+\Defgeneric {reset} {meter}
+
+This generic function uses the \texttt{progn} method combination.  It
+resets all information to its initial value.
+
+\Defun {report} {meter \optional{} stream}
+
+This function generates a report on \texttt{stream}.
+The \texttt{stream} argument defaults to the value of the special
+variable \texttt{*standard-output*}.
