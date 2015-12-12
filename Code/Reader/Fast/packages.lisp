@@ -31,4 +31,3 @@
     (:shadowing-import-from #:sicl-read .
                             #.(package-shadowing-symbols '#:sicl-read))
     (:use #:sicl-read #:cl #:lisp-unit))
-
