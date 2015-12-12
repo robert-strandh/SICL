@@ -274,6 +274,19 @@ names a special operator, then an error is signaled.
 If \textit{function-name} is a symbol and it has an associated
 \texttt{setf} expander, then that \texttt{setf} expander is preserved.
 
+\Defgeneric {macro-function} {symbol environment}
+
+This generic function is a generic version of the \commonlisp{}
+function named \texttt{cl:macro-function}.
+
+If \textit{symbol} has a definition as a macro in
+\textit{environment}, then the corresponding macro expansion function
+is returned.
+
+If \textit{symbol} has no definition in the function namespace of
+\textit{environment}, or if the definition is not a macro, then this
+function returns \texttt{nil}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
