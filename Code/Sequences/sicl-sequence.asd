@@ -5,7 +5,7 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "common")
+   (:file "conditions")
    (:file "sequences")
    (:file "condition-reporters-en")
    (:file "docstrings-en")))
@@ -15,7 +15,7 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "common")
+   (:file "conditions")
    (:file "Tiny/sequences-tiny")
    (:file "condition-reporters-en")
    (:file "docstrings-en")))
