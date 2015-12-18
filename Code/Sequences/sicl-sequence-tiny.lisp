@@ -1,11 +1,11 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-sequences
+(defsystem :sicl-sequence-tiny
   :depends-on (:lisp-unit)
   :serial t
   :components
   ((:file "packages")
    (:file "conditions")
-   (:file "sequences")
+   (:file "Tiny/sequences-tiny")
    (:file "condition-reporters-en")
    (:file "docstrings-en")))
