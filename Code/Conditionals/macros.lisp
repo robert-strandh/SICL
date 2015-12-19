@@ -228,4 +228,3 @@
 	   (tagbody
 	      ,label
 	      ,(expand-e/ctypecase-clauses clauses (car store-vars) final 'ctypecase)))))))
-
