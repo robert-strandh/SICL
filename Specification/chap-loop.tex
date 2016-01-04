@@ -8,23 +8,23 @@ macro-expansion time, and for a new Common Lisp system, it would be
 executed during cross compilation by another full Common Lisp
 implementation.
 
-Our \texttt{loop} module will use only standard Common Lisp code in
-its expansion, so that macro-expanded uses of \texttt{loop} will not
-require any other \sysname{} module in order to work.  
+Our \texttt{loop} module uses only standard Common Lisp code in its
+expansion, so that macro-expanded uses of \texttt{loop} will not
+require any other \sysname{} module in order to work.
 
 The code for the \sysname{} \texttt{loop} macro is located in the
 directory \texttt{Code/Loop}.  
 
 For parsing a \texttt{loop} expression, we use a technique called
-\emph{combinatory parsing}.
+\emph{combinatory parsing}, except that we do not handle arbitrary
+backtracking.  Luckily, arbitrary backtracking is not required to
+parse the fairly simple syntax of \texttt{loop} clauses.
 
 \section{Current state}
 
-At the moment, the full \texttt{loop} syntax is parsed.  Code
-generation is incomplete, however.  Only the constructs have code
-generators: \texttt{initially}, \texttt{finally}, \texttt{until},
-\texttt{while}, \texttt{do}, \texttt{with}, \texttt{repeat},
-\texttt{collect}, \texttt{sum}.
+All \texttt{loop} clauses have been tested with the test cases
+provided by Paul Dietz' ANSI \commonlisp{} test suite.
 
-
-
+Future work includes providing an alternative parser to be used when
+the normal parser fails.  The purpose of the alternative parser is to
+provide good error messages to the programmer.
