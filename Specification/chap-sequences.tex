@@ -26,7 +26,11 @@ compared to existing commonly used implementations of \commonlisp{}.  However,
 the existence of all those special cases also makes the module hard to
 read and difficult to test.  
 
+For that reason, we plan to rewrite this module, using an alternative
+strategy. \seesec{sec-sequence-functions-future-work}
+
 \section{Future work}
+\label{sec-sequence-functions-future-work}
 
 Concerning the \emph{sorting functions} (i.e., \texttt{sort} and
 \texttt{stable-sort}) there is an interesting challenge with respect
@@ -39,14 +43,7 @@ possible to obtain an in-place stable version of mergesort.   Since
 mergesort is typically significantly faster than quicksort, this would
 be a worthwhile direction to pursue.
 
-We might pursue some alternative to manually creating specialized
-versions of various functions.  Perhaps it would be worthwhile to look
-into techniques related to partial evaluation.  It is possible to
-obtain some of the desired results by writing a macro that takes
-combinations of keyword arguments and generates the appropriate
-specialized function, but the code for this macro becomes less obvious
-to read.  We would prefer to see some general version of each function
-and then some automatic method for transforming that general version
-into specialized versions.  
-
-
+Recent development in the \cleavir{} compiler framework
+strongly suggest that we can use a technique that will generate these
+specialized versions automatically from only a few general versions.
+This technique works on intermediate code.
