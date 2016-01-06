@@ -287,6 +287,31 @@ If \textit{symbol} has no definition in the function namespace of
 \textit{environment}, or if the definition is not a macro, then this
 function returns \texttt{nil}.
 
+\Defgeneric {(setf macro-function)} {new-def symbol environment}
+
+This generic function is a generic version of the \commonlisp{}
+function \texttt{(setf cl:macro-function)}.
+
+\textit{new-def} must be a macro expansion function or \texttt{nil}.
+A call to this function then always succeeds.  A value of \texttt{nil}
+means that the \textit{symbol} no longer has a macro function
+associated with it.  If \textit{symbol} already names a macro or a
+function, then the previous definition is lost.  If \textit{symbol}
+already names a special operator, that definition is kept.
+
+If \textit{symbol} already names a function, then any proclamation of
+the type of that function is lost.  In other words, if at some later
+point \textit{symbol} is again defined as a function, its proclaimed
+type will be \texttt{t}.
+
+If \textit{symbol} already names a function, then any \texttt{inline} or
+\texttt{notinline} proclamation of the type of that function is lost.  In other
+words, if at some later point \textit{symbol} is again defined as a
+function, its proclaimed inline information will be \texttt{nil}.
+
+If \textit{symbol} has an associated \texttt{setf} expander, then that
+\texttt{setf} expander is preserved.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
