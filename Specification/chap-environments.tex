@@ -312,6 +312,18 @@ function, its proclaimed inline information will be \texttt{nil}.
 If \textit{symbol} has an associated \texttt{setf} expander, then that
 \texttt{setf} expander is preserved.
 
+\Defgeneric {compiler-macro-function} {function-name environment}
+
+This generic function is a generic version of the \commonlisp{}
+function \texttt{cl:compiler-macro-function}.
+
+If \textit{function-name} has a definition as a compiler macro in
+\textit{environment}, then the corresponding compiler macro function
+is returned.
+
+If \textit{function-name} has no definition as a compiler macro in
+\textit{environment}, then this function returns \texttt{nil}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
