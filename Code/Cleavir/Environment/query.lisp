@@ -235,7 +235,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; BLOCK-INFO.
+;;; TAG-INFO.
 
 ;;; Cleavir tools call this function in order to obtain information
 ;;; about a symbol used as an argument to GO. 
