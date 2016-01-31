@@ -33,48 +33,48 @@
 ;;;  Lambda list conditions.
 
 (define-condition lambda-list-must-be-list
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition lambda-list-must-not-be-circular
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition lambda-list-must-be-proper-list
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition lambda-list-keyword-not-allowed
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
 
 (define-condition lambda-list-keyword-not-allowed-in-dotted-lambda-list
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
 
 (define-condition multiple-occurrences-of-lambda-list-keyword
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
 
 (define-condition incorrect-keyword-order
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ((%keyword1 :initarg :keyword1 :reader lambda-list-keyword1)
    (%keyword2 :initarg :keyword2 :reader lambda-list-keyword2)))
 
 (define-condition both-rest-and-body-occur-in-lambda-list
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition rest/body-must-be-followed-by-variable
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition atomic-lambda-list-tail-must-be-variable
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition whole-must-appear-first
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition whole-must-be-followed-by-variable
