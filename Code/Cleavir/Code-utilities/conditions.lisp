@@ -1,5 +1,8 @@
 (cl:in-package #:cleavir-code-utilities)
 
+(define-condition code-condition ()
+  ((%code :initarg :code :reader code)))
+
 (define-condition form-must-be-proper-list
     (program-error cleavir-i18n:condition)
   ((%form :initarg :form :reader form)))
@@ -79,15 +82,15 @@
   ((%code :initarg :code :reader code)))
 
 (define-condition environment-must-be-followed-by-variable
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition environment-can-appear-at-most-once
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition malformed-specialized-required
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 ;;; This condition is used to indicate that there is a malformed item
@@ -105,7 +108,7 @@
 ;;; where var and supplied-p-parameter are symbols that are not names
 ;;; of constants.
 (define-condition malformed-ordinary-optional
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 ;;; This condition is used to indicate that there is a malformed item
@@ -117,7 +120,7 @@
 ;;;
 ;;; where var is a symbol that is not a name of a constant.
 (define-condition malformed-defgeneric-optional
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 ;;; This condition is used to indicate that there is a malformed item
@@ -133,30 +136,30 @@
 ;;; where var and supplied-p-parameter are symbols that are not names
 ;;; of constants, and pattern is any destructuring pattern.
 (define-condition malformed-destructuring-optional
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition malformed-ordinary-key
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition malformed-defgeneric-key
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition malformed-destructuring-key
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition malformed-aux
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 ;;; This condition is used to indicate that a destructuring tree
 ;;; contains some item other than a CONS cell or a symbol which is not
 ;;; also the name of a constant. 
 (define-condition malformed-destructuring-tree
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 ;;; This condition is used to indicate that something that ought
@@ -164,13 +167,13 @@
 ;;; keywords in fact is something else, such as a constant or some
 ;;; illegal atomic object.
 (define-condition malformed-lambda-list-pattern
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 ;;; This condition is used to indicate that in a (non destructuring)
 ;;; lambda list, the required parameter must be a variable
 (define-condition required-must-be-variable
-    (program-error cleavir-i18n:condition)
+    (program-error code-condition cleavir-i18n:condition)
   ())
 
 (define-condition suspect-lambda-list-keyword
