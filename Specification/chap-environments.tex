@@ -324,6 +324,19 @@ is returned.
 If \textit{function-name} has no definition as a compiler macro in
 \textit{environment}, then this function returns \texttt{nil}.
 
+\Defgeneric {(setf compiler-macro-function)}\\
+{new-def function-name environment}
+
+This generic function is a generic version of the \commonlisp{}
+function \texttt{(setf cl:compiler-macro-function)}.
+
+\textit{new-def} can be a compiler macro function or \texttt{nil}.
+When it is a compiler macro function, then it establishes
+\textit{new-def} as a compiler macro for \textit{function-name} and
+any existing definition is lost.  A value of \texttt{nil} means that
+\textit{function-name} no longer has a compiler macro associated with
+it in \textit{environment}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
