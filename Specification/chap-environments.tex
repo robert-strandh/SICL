@@ -337,6 +337,20 @@ any existing definition is lost.  A value of \texttt{nil} means that
 \textit{function-name} no longer has a compiler macro associated with
 it in \textit{environment}.
 
+\Defgeneric {function-type} {function-name environment}
+
+This generic function returns the proclaimed type of the function
+associated with \textit{function-name} in \textit{environment}.
+
+If \textit{function-name} is not associated with an ordinary function
+or a generic function in \textit{environment}, then an error is
+signaled.
+
+If \textit{function-name} is associated with an ordinary function or a
+generic function in \textit{environment}, but no type proclamation for
+that function has been made, then this generic function returns
+\texttt{t}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
