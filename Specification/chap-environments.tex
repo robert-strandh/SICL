@@ -351,6 +351,15 @@ generic function in \textit{environment}, but no type proclamation for
 that function has been made, then this generic function returns
 \texttt{t}.
 
+\Defgeneric {(setf function-type)} {new-type function-name environment}
+
+This generic function is used to set the proclaimed type of the
+function associated with \textit{function-name} in
+\textit{environment} to \textit{new-type}.
+
+If \textit{function-name} is associated with a macro or a special
+operator in \textit{environment}, then an error is signaled.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
