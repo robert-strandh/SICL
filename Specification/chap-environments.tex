@@ -360,6 +360,22 @@ function associated with \textit{function-name} in
 If \textit{function-name} is associated with a macro or a special
 operator in \textit{environment}, then an error is signaled.
 
+\Defgeneric {function-inline} {function-name environment}
+
+This generic function returns the proclaimed inline information of the
+function associated with \textit{function-name} in
+\textit{environment}.
+
+If \textit{function-name} is not associated with an ordinary function
+or a generic function in \textit{environment}, then an error is
+signaled.
+
+If \textit{function-name} is associated with an ordinary function or a
+generic function in \textit{environment}, then the return value of
+this function is either \texttt{nil}, \texttt{inline}, or
+\texttt{notinline}.  If no inline proclamation has been made, then
+this generic function returns \texttt{nil}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
