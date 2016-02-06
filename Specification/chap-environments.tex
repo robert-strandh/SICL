@@ -376,6 +376,20 @@ this function is either \texttt{nil}, \texttt{inline}, or
 \texttt{notinline}.  If no inline proclamation has been made, then
 this generic function returns \texttt{nil}.
 
+\Defgeneric {(setf function-inline)}\\
+{new-inline function-name environment}
+
+This generic function is used to set the proclaimed inline information
+of the function associated with \textit{function-name} in
+\textit{environment} to \textit{new-inline}.
+
+\textit{new-inline} must have one of the values \texttt{nil},
+\texttt{inline}, or \texttt{notinline}.
+
+If \textit{function-name} is not associated with an ordinary function
+or a generic function in \textit{environment}, then an error is
+signaled.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
