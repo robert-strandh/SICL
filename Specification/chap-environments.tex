@@ -390,6 +390,19 @@ If \textit{function-name} is not associated with an ordinary function
 or a generic function in \textit{environment}, then an error is
 signaled.
 
+\Defgeneric {function-cell} {function-name environment}
+
+A call to this function always succeeds.  It returns a \texttt{cons}
+cell, in which the \texttt{car} always holds the current definition of
+the function named \textit{function-name}.  When
+\textit{function-name} has no definition as a function, the
+\texttt{car} of this cell will contain a function that, when called,
+signals an error of type \texttt{undefined-function}.  The return
+value of this function is always the same (in the sense of
+\texttt{eq}) when it is passed the same (in the sense of
+\texttt{equal}) function name and the same (in the sense of
+\texttt{eq}) environment.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
