@@ -3,4 +3,5 @@
 (defpackage #:cleavir-cst
   (:use #:common-lisp)
   (:export
-   #:canonicalize-declaration-specifier))
+   #:canonicalize-declaration-specifier
+   #:cst-is-declaration-p))
