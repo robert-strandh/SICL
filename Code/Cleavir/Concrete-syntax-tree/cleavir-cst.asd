@@ -21,4 +21,5 @@
    (:file "concrete-syntax-tree")
    (:file "complete")
    (:file "rebuild")
-   (:file "declarations")))
+   (:file "declarations")
+   (:file "body")))
