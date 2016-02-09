@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export
    #:canonicalize-declaration-specifier
-   #:cst-is-declaration-p))
+   #:cst-is-declaration-p
+   #:separate-ordinary-body))
