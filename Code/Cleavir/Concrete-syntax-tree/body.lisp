@@ -9,6 +9,11 @@
     (and (consp expression)
 	 (eq (car expression) 'declare))))
 
+;;; Return true if and only if the concrete syntax tree CST represents
+;;; a literal string.
+(defun cst-is-literal-string-p (cst)
+  (stringp (expression cst)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Separate a concrete syntax tree representing an ordinary body such
