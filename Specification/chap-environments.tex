@@ -418,6 +418,13 @@ the return value of this function to determine whether
 attempt is made to evaluate the form \texttt{(function
   \textrm{\textit{function-name}})}.
 
+\Defgeneric {function-lambda-list} {fname environment}
+
+This function returns two values.  The first value is an ordinary
+lambda list, or \texttt{nil} if no lambda list has been defined for
+\textit{function-name}.  The second value is true if and only if a
+lambda list has been defined for \textit{function-name}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
