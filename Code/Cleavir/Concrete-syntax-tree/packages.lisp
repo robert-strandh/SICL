@@ -5,4 +5,5 @@
   (:export
    #:canonicalize-declaration-specifier
    #:cst-is-declaration-p
+   #:cst-is-literal-string-p
    #:separate-ordinary-body))
