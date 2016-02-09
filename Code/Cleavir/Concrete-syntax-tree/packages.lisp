@@ -2,4 +2,5 @@
 
 (defpackage #:cleavir-cst
   (:use #:common-lisp)
-  (:export))
+  (:export
+   #:canonicalize-declaration-specifier))
