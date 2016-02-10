@@ -1,3 +1,13 @@
 \section{Benefits of our method}
  
-%%  LocalWords:  Sanboxing startup
+As already mentioned in \refSec{sec-our-technique}, the main advantage
+of our technique is that it allows for a \emph{modular} structure of
+the \texttt{loop} implementation.
+
+This modularity also makes it very simple for additional clause types
+to be added by the \commonlisp{} implementation, such as the extension
+for iterating over the user-extensible sequences described by Rhodes
+in his paper on user-extensible sequences
+\cite{Rhodes:2007:USC:1622123.1622138}.  This extension defines the
+new \texttt{loop} keywords \texttt{element} and \texttt{elements} for
+this purpose.
