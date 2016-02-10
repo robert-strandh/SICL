@@ -12,3 +12,16 @@ With this parsing technique, client code defines \emph{elementary
 \emph{modular} in that individual parsers do not have to be listed in
 one single place.  For the \texttt{loop} clauses, this modularity
 means that each type of clause can be defined in a different module.
+
+Initially, the \texttt{loop} body is parsed as a sequence of
+individual \texttt{loop} clauses, without any consideration for the
+order between those clauses.  A failure to parse during this phase
+will manifest itself as an error relating to a particular clause,
+whether it is in a valid position or not.  Furthermore, ignoring
+restrictions on clause ordering allows us to check the syntax of each
+clause.  If order had been taken into account, we would either have to
+abandon the parsing phase when a syntactically correct clause were
+found in the wrong position and thereby being unable to verify
+subsequent clauses, or else we would have to implement some
+sophisticated error recovery, allowing the parsing process to continue
+after a failure.
