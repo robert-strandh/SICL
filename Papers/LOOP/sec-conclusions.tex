@@ -1,1 +1,29 @@
 \section{Conclusions and future work}
+
+\subsection{Second clause parser}
+
+As mentioned in \label{sec-our-technique}, we are able to signal
+appropriate conditions in some cases when the initial attempt is made
+to parse the body of the \texttt{loop} form as individual clauses.
+However, when a syntax error is detected in some clause, all further
+analysis is abandoned.  It would clearly be better if the analysis
+could continue with the remaining clauses, and if an appropriate error
+condition could be signaled for the faulty clause.
+
+A simple way of improving error reporting would be to add more parsers
+for each clause type.  This additional parsers would recognize
+incorrect clause syntax and ultimately result in an error being
+signaled, but more importantly, they would succeed so that parsing
+could continue with subsequent clauses.
+
+Unfortunately, however, while the parsing technique we use has many
+advantages as described in refSec{sec-benefits}, it also has the main
+disadvantage that parsing gets slower as more parsers need to be
+tried, in particular if no care is taken to order the parsers with
+respect to probability of success.
+
+We plan to avoid this conundrum by implementing a \emph{second parser}
+for parsing individual clauses.  This second parser would be invoked
+only when the first one fails.  In that situation, we estimate that
+performance is of secondary importance and that emphasis should be on
+appropriate error signaling.
