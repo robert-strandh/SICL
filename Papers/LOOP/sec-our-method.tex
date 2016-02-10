@@ -1,5 +1,14 @@
 \section{Our technique}
 
-In order to parse \texttt{loop} clauses We use a simplified version of
-a parsing technique known as \emph{combinator parsing}
-\cite{Wadler:1985:RFL:5280.5288}
+In order to parse \texttt{loop} clauses We use a simplified version%
+\footnote{It is simplified because we do not need the full
+  backtracking power of combinator parsing.}
+of a parsing technique known as \emph{combinator parsing}
+\cite{Wadler:1985:RFL:5280.5288}.
+
+With this parsing technique, client code defines \emph{elementary
+  parsers} that are then combined using combinators such as
+\emph{alternative} and \emph{sequence}.  The resulting parser code is
+\emph{modular} in that individual parsers do not have to be listed in
+one single place.  For the \texttt{loop} clauses, this modularity
+means that each type of clause can be defined in a different module.
