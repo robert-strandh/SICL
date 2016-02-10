@@ -34,3 +34,8 @@ each clause has been turned into a standard instance%
   ``standard instance'' representing a \texttt{loop} clause is created
   by calling \texttt{make-instance} on a class defined by
   \texttt{defclass}.}
+
+Checking the validity of the order between clauses is done in the
+first step of the \emph{semantic analysis}, allowing us to signal
+pertinent error conditions if the restrictions concerning the order of
+clauses are not respected.
