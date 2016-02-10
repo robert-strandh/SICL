@@ -276,11 +276,13 @@
 ;;;
 ;;; The lambda list is not a normal lambda list.  It has the following
 ;;; form: 
-;;; ([r1 .. rl [&optional o1 ..om] [&key k1 .. kn &allow-other-keys]]]) 
+;;; ([r1 .. rl [&rest r] [&optional o1 ..om] [&key k1 .. kn &allow-other-keys]]])
 ;;;
 ;;; where: 
 ;;;
 ;;;   - Each ri is a LEXICAL-AST. 
+;;;
+;;;   - r is a LEXICAL-AST.
 ;;;
 ;;;   - Each oi is a list of two LEXICAL-ASTs.  The second of the 
 ;;;     two conceptually contains a Boolean value indicating whether
