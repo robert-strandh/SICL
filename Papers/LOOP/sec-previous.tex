@@ -4,5 +4,10 @@ One of the first implementations of the \commonlisp{} \texttt{loop}
 macro is the one that is often referred to as ``MIT LOOP''
 \cite{Burke:Moon:MIT.loop}.
 
-Describe the SBCL extension for supporting the extended sequences
-protocol.
+\sbcl{} includes an implementation of the \texttt{loop} macro that was
+originally derived from MIT LOOP, but that also includes code from the
+\texttt{loop} macro of the \genera{} operating system.  Furthermore,
+the \sbcl{} implementation of the \texttt{loop} macro has been
+modified and improved to allow for user-definable extensions, such as
+the extension defined in \cite{Rhodes:2007:USC:1622123.1622138} for
+iterating over user-definable sequences.
