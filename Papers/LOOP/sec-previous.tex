@@ -11,3 +11,8 @@ the \sbcl{} implementation of the \texttt{loop} macro has been
 modified and improved to allow for user-definable extensions, such as
 the extension defined in \cite{Rhodes:2007:USC:1622123.1622138} for
 iterating over user-definable sequences.
+
+\clisp{} has its own implementation of the \texttt{loop} macro.  The
+bulk of the implementation can be found in a function named
+\texttt{expand-loop}.  This function consists of more than $900$ lines
+of code.
