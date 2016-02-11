@@ -26,6 +26,21 @@ is a \emph{main clause} whereas \texttt{for} is a \emph{variable
 
 However, MIT LOOP and its variation accepts the code in the example.
 
+Another example of non-conforming behavior is illustrated by the
+following code:
+
+\begin{verbatim}
+    (loop for i from 0 below 10
+          sum i
+          finally (print i))
+\end{verbatim}
+
+The \commonlisp{} standard clearly states that the loop variable does
+not take on the value of the upper limit, here $10$, so the value
+printed in the \texttt{finally} clause should be $9$.  However,
+\texttt{loop} implementations derived from MIT LOOP print $10$
+instead.
+
 \subsection{\ecl{} and \clasp{}}
 
 \ecl{}%
