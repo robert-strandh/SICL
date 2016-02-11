@@ -28,13 +28,19 @@ sophisticated error recovery, allowing the parsing process to continue
 after a failure.
 
 The result of the initial parsing process is a list of clauses, where
-each clause has been turned into a standard instance%
+each clause has been turned into a standard instance.%
 \footnote{We avoid using language such as ``an instance of a \clos{}
   class'' since all classes are \clos{} classes and therefore all
   \commonlisp{} objects are instances of \clos{} classes.  A
   ``standard instance'' representing a \texttt{loop} clause is created
   by calling \texttt{make-instance} on a class defined by
   \texttt{defclass}.}
+
+We use generic functions to analyze the contents of the parsed
+clauses, and to generate code from them.  The reason for using generic
+functions is again one of modularity.  A method specialized to a
+particular clause type, represented by a particular standard class,
+can be physically close to other code related that clause type.
 
 Checking the validity of the order between clauses is done in the
 first step of the \emph{semantic analysis}, allowing us to signal
