@@ -7,6 +7,24 @@ macro is the one that is often referred to as ``MIT LOOP''
 \cite{Burke:Moon:MIT.loop}.  A popular variation of this
 implementation includes modifications by \symbolics{}.
 
+This implementation of the \texttt{loop} macro is sometimes more
+permissive than the \commonlisp{} standard.  For example, the standard
+requires all \emph{variable clauses} to precede all \emph{main
+  clauses}.  Code such as the one in this example:
+
+\begin{verbatim}
+    (loop until (> i 20)
+          for i from 0
+          do (print i))
+\end{verbatim}
+
+\noindent
+is thus not conforming according to the standard, since \texttt{until}
+is a \emph{main clause} whereas \texttt{for} is a \emph{variable
+  clause}.
+
+However, MIT LOOP and its variation accepts the code in the example.
+
 \subsection{ECL and Clasp}
 
 \ecl{} includes two implementations of the \texttt{loop} macro, namely
