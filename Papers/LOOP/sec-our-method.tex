@@ -55,6 +55,12 @@ This organization allows us to capture commonalities between different
 clause types by defining methods on generic functions that are
 specialized to the appropriate class in this graph.
 
+In addition to representing each clause as a standard instance, we
+also represent the \texttt{loop} body itself as an instance of the
+class named \texttt{loop-body}.  This instance contains a list of all
+the clauses, but also other information, in particular about default
+accumulation for this call to the \texttt{loop} macro.
+
 \subsection{Semantic analysis}
 \label{sec-our-technique-semantic-analysis}
 
