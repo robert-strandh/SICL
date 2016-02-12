@@ -17,6 +17,19 @@ With this parsing technique, client code defines \emph{elementary
 one single place.  For the \texttt{loop} clauses, this modularity
 means that each type of clause can be defined in a different module.
 
+In our parsing framework, an individual parser is an ordinary
+\commonlisp{} function that takes a list of \commonlisp{} expressions
+and that returns three values:
+
+\begin{enumerate}
+\item A generalized Boolean indicating whether the parse succeeded.
+\item The result of the parse.  If the parse does not succeed, then
+  this value is unspecified.
+\item A list of the tokens that remain after the parse.  If the
+  parse does not succeed, then this list contains the original
+  list of tokens passed as an argument.
+\end{enumerate}
+
 Initially, the \texttt{loop} body is parsed as a sequence of
 individual \texttt{loop} clauses, without any consideration for the
 order between those clauses.  A failure to parse during this phase
