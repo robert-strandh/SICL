@@ -1,6 +1,8 @@
 \section{Our technique}
 \label{sec-our-technique}
 
+\subsection{Parsing clauses}
+
 In order to parse \texttt{loop} clauses We use a simplified version%
 \footnote{It is simplified because we do not need the full
   backtracking power of combinator parsing.}
@@ -26,6 +28,8 @@ found in the wrong position and thereby being unable to verify
 subsequent clauses, or else we would have to implement some
 sophisticated error recovery, allowing the parsing process to continue
 after a failure.
+
+\subsection{Representing parsed clauses}
 
 The result of the initial parsing process is a list of clauses, where
 each clause has been turned into a standard instance.%
