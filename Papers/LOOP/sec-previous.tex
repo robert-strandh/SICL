@@ -41,6 +41,23 @@ printed in the \texttt{finally} clause should be $9$.  However,
 \texttt{loop} implementations derived from MIT LOOP print $10$
 instead.
 
+Notice that the two examples above are non-conforming in two different
+ways, as explained in section 1.5 of the \commonlisp{} standard.
+
+In the first case, we have an example of \emph{a non-conforming
+  program} as explained in section 1.5.2 for the simple reason that
+the standard does not specify what an implementation must do when the
+clause order is violated.  By default, then, the behavior is said to
+be \emph{undefined}, meaning that the implementation is free to reject
+the non-conforming program or to accept it and interpret it in some
+(perhaps unexpected) way.  The MIT LOOP implementation is therefore
+conforming in this respect.
+
+In the second case, we have an example of \emph{a non-conforming
+  implementation} as explained in section 1.5.1.  The reason is that
+the standard clearly stipulates that every implementation must print
+$9$, whereas MIT LOOP prints $10$.
+
 The MIT LOOP implementation is \emph{monolithic} and that holds true
 for its variations too.  The code is contained in a single file with
 around $2000$ lines of code in it.
