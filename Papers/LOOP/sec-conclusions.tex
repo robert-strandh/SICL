@@ -1,5 +1,32 @@
 \section{Conclusions and future work}
 
+\subsection{Use external parser framework}
+
+When we started the work on this library, we were unaware of any
+existing libraries for combinator parsing written in \commonlisp{}.
+Since then, we have been made aware of the library named
+``cl-parser-combinators''%
+\footnote{https://github.com/Ramarren/cl-parser-combinators} which is
+a library for combinator parsing inspired by Parsec
+\cite{Leijen:Meijer:Parsec}.  Parsec was originally written in
+Haskell, and later re-implemented in other languages as well.
+
+We plan to evaluate cl-parser-combinators to determine whether it
+provides the functionality required for parsing \texttt{loop} clauses,
+and if not, whether it can be extended to provide such functionality.
+
+A significant advantage of using cl-parser-combinators over the
+existing technique is that cl-parser-combinators has full support for
+the most general backtracking capabilities of combinator parsing.
+Using it rather than our current technique would make it unnecessary
+to consider careful ordering of clause parsers the way we currently
+need to do.
+
+A possible disadvantage might be that full backtracking is potentially
+costly in terms of performance.  However, we do not expect performance
+of clause parsers to be a determining factor for the overall
+performance of a \commonlisp{} compiler.
+
 \subsection{Second clause parser}
 
 As mentioned in \refSec{sec-our-technique}, we are able to signal
