@@ -1,5 +1,30 @@
 \section{Conclusions and future work}
 
+We have described a modern implementation of the \commonlisp{}
+\texttt{loop} macro.  The main benefit of our method is better
+\emph{modularity} compared to existing implementations, which makes
+maintenance easier, and also allows for more modular integration of
+client-defined extensions.
+
+Our implementation contains significantly more code than, for
+instance, MIT LOOP; more than $5000$ lines compared to $2000$.  There
+are several explanations for this discrepancy:
+
+\begin{itemize}
+\item Our code has more lines of comments; nearly $1500$ compared to
+  less than $200$ for MIT LOOP.
+\item Our implementation is divided into nearly $50$ files, or
+  \emph{modules}, and each new file represents some overhead in terms
+  of code size,
+\item Our implementation contains more semantic verification as shown
+  by the fact that it rejects the examples of non-conforming code shown
+  in \refSec{sec-mit-loop}.
+\item Commonalities between clause types are captured as explicit
+  class definitions which require additional code.
+\item We most likely have not identified all the instances where
+  refactoring the code would be beneficial.
+\end{itemize}
+
 \subsection{Use external parser framework}
 
 When we started the work on this library, we were unaware of any
