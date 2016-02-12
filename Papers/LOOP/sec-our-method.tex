@@ -90,3 +90,14 @@ clauses are not respected.
 
 \subsection{Code generation}
 \label{sec-our-technique-code generation}
+
+\subsection{Tests}
+\label{sec-our-technique-tests}
+
+Our code has been thoroughly tested.  The code for testing contains
+almost $5000$ lines.  This code has been taken from the Paul Dietz'
+ANSI test suite%
+\footnote{See: https://gitlab.common-lisp.net/groups/ansi-test}
+and adapted to our needs.  In particular, we had to remove some tests
+that did not conform to the standard, and we added tests where the
+test suite omitted to test potentially non-conforming behavior.
