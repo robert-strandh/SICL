@@ -42,14 +42,14 @@ each clause has been turned into a standard instance.%
   by calling \texttt{make-instance} on a class defined by
   \texttt{defclass}.}
 
+\subsection{Semantic analysis}
+\label{sec-our-technique-semantic-analysis}
+
 We use generic functions to analyze the contents of the parsed
 clauses, and to generate code from them.  The reason for using generic
 functions is again one of modularity.  A method specialized to a
 particular clause type, represented by a particular standard class,
 can be physically close to other code related that clause type.
-
-\subsection{Semantic analysis}
-\label{sec-our-technique-semantic-analysis}
 
 Checking the validity of the order between clauses is done in the
 first step of the \emph{semantic analysis}, allowing us to signal
