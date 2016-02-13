@@ -30,6 +30,30 @@ and that returns three values:
   list of tokens passed as an argument.
 \end{enumerate}
 
+Consider the following example:
+
+{\small\begin{verbatim}
+       (define-parser arithmetic-up-1-parser
+         (consecutive
+          (lambda (var type-spec from to by)
+            (make-instance 'for-as-arithmetic-up
+              :order '(from to by)
+              :var-spec var
+              :type-spec type-spec
+              :start-form from
+              :end-form (cdr to)
+              :by-form by
+              :termination-test (car to)))
+          'simple-var-parser
+          'optional-type-spec-parser
+          (alternative 'from-parser
+                       'upfrom-parser)
+          (alternative 'to-parser
+                       'upto-parser
+                       'below-parser)
+          'by-parser))
+\end{verbatim}}
+
 Initially, the \texttt{loop} body is parsed as a sequence of
 individual \texttt{loop} clauses, without any consideration for the
 order between those clauses.  A failure to parse during this phase
