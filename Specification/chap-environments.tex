@@ -425,6 +425,12 @@ lambda list, or \texttt{nil} if no lambda list has been defined for
 \textit{function-name}.  The second value is true if and only if a
 lambda list has been defined for \textit{function-name}.
 
+\Defgeneric {boundp} {symbol environment}
+
+It returns true if \textit{symbol} has a definition in
+\textit{environment} as a constant variable, as a special variable, or
+as a symbol macro.  Otherwise, it returns \texttt{nil}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
