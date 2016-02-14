@@ -431,6 +431,14 @@ It returns true if \textit{symbol} has a definition in
 \textit{environment} as a constant variable, as a special variable, or
 as a symbol macro.  Otherwise, it returns \texttt{nil}.
 
+\Defgeneric {constant-variable} {symbol environment}
+
+This function returns the value of the constant variable
+\textit{symbol}.
+
+If \textit{symbol} does not have a definition as a constant variable,
+then an error is signaled.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
