@@ -1,0 +1,58 @@
+\section{Introduction}
+\label{sec-introduction}
+
+For the purpose of this paper, by \emph{bootstrapping} a \commonlisp{}
+system, we mean creating some \emph{target} \commonlisp{} system by
+building it from its associated source code, using various
+\emph{tools} and \emph{language processors} to transform that source
+code into an \emph{executable file} for some typical operating system
+such as GNU/Linux.  When a target \commonlisp{} system can be
+bootstrapped this way, the typical way of making it evolve through
+maintenance, is to modify its source code and then restart the
+bootstrapping process to build an updated executable file.
+
+Not all \commonlisp{} systems are created so that they can evolve this
+way.  Some systems evolve by the careful modification of an existing
+\emph{executing image} which is then saved as an executable file that
+can be executed as usual.
+
+Without arguing pros and cons of either technique, in this paper, we
+will concentrate on the technique of bootstrapping.
+
+Before we can start investigating different options for bootstrapping,
+we must deal with an annoying but crucial detail, namely the
+definition of \emph{source code}.  The Free Software Foundation
+defines it as ``the preferred form of a work for making modifications
+to it''.  We agree completely with this definition.  It excludes the
+use of code that was automatically produced from code in some other
+form.  In practice, it also excludes code written directly in machine
+language and most code written in some assembly language, with the
+exception of small code fragments that can not be expressed very
+easily in some other language, and of code fragments that are part of
+a code generator written in some higher-level language.
+
+However, for it to be possible for the source code of a \commonlisp{}
+system to be turned into an executable file, there must be
+\emph{language processors} (i.e., compilers and/or interpreters)
+available that can handle the languages used to create the source
+code.  The main debate when it comes to bootstrapping techniques seems
+to be what is meant by \emph{available} in this context.  A common
+definition seems to be something like \emph{whatever is available on a
+  GNU/Linux system out of the box}.
+
+One of the consequences of such a definition of \emph{available} is
+usually that, in order to write a \commonlisp{} system, one has to use
+some programming language considered lower level than \commonlisp{}
+itself.  Typically, \clanguage{} plays this role.
+
+In this paper, we argue that one of the main reasons of the creator(s)
+for wanting a target \commonlisp{} system in the first place is
+typically that they are convinced of the virtues of this language for
+writing programs.  Furthermore, \commonlisp{} is uniquely well adapted
+to writing language processors.  The obvious choice for a language for
+writing a \commonlisp{} system is therefore \commonlisp{} itself.
+Since there is now a multitude of good \commonlisp{} implementations
+available and easily installable on most widely-used operating
+systems, we think that \commonlisp{} should be considered to be a
+language for which there are language processors available for
+bootstrapping.
