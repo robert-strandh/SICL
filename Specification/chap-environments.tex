@@ -439,6 +439,18 @@ This function returns the value of the constant variable
 If \textit{symbol} does not have a definition as a constant variable,
 then an error is signaled.
 
+\Defgeneric {(setf constant-variable)} {value symbol environment}
+
+This function is used in order to define \textit{symbol} as a constant
+variable in \textit{environment}, with \textit{value} as its value.
+
+If \textit{symbol} already has a definition as a special variable or
+as a symbol macro in \textit{environment}, then an error is signaled.
+
+If \textit{symbol} already has a definition as a constant variable,
+and its current value is not \texttt{eql} to \textit{value}, then an
+error is signaled.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
