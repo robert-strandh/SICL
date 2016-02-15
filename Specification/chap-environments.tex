@@ -451,6 +451,22 @@ If \textit{symbol} already has a definition as a constant variable,
 and its current value is not \texttt{eql} to \textit{value}, then an
 error is signaled.
 
+\Defgeneric {special-variable} {symbol environment}
+
+This function returns two values.  The first value is the value of
+\textit{symbol} as a special variable in \textit{environment}, or
+\texttt{nil} if \textit{symbol} does not have a value as a special
+variable in \textit{environment}.  The second value is true if
+\textit{symbol} does have a value as a special variable in
+\textit{environment} and \texttt{nil} otherwise.
+
+Notice that the symbol can have a value even though this function
+returns \texttt{nil} and \texttt{nil}.  The first such case is when
+the symbol has a value as a constant variable in \textit{environment}.
+The second case is when the symbol was assigned a value using
+\texttt{(setf symbol-value)} without declaring the variable as
+\texttt{special}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
