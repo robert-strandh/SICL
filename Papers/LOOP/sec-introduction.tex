@@ -1,5 +1,20 @@
 \section{Introduction}
+\label{sec-introduction}
 
 The \texttt{loop} macro is part of the \commonlisp{} standard, so
 every conforming \commonlisp{} implementation contains an
 implementation of this macro. 
+
+This macro is frequently criticized as un-Lispy since it does not use
+S-expressions for its clauses, and for being impossible to extend, at
+least by using only features available in the \commonlisp{} standard.
+In addition, advocates of purely-functional programming also criticize
+it, along with all other iteration constructs that can not be
+explained in terms of recursion.
+
+Despite all this criticism, the \texttt{loop} macro is an essential
+and widely-used part of any non-trivial \commonlisp{} program.  It is
+able to satisfy the vast majority of iteration needs.  In addition, it
+is far easier to understand than equivalent loops using other
+iteration constructs such as \texttt{dotimes}, \texttt{dolist}, and
+\texttt{do}.
