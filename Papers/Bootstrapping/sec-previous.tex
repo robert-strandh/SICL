@@ -5,6 +5,35 @@ In his excellent paper describing how \sbcl{} is bootstrapped
 how different existing \commonlisp{} systems are made to evolve.  We
 summarize the description in that paper here.
 
+We can roughly divide \commonlisp{} implementations into those that
+are mostly written in some other language, and those that are mostly
+written in \commonlisp{}.
 
+In the first category, there are implementations that specifically
+cater to applications written in that other language and that need
+some scripting capabilities that are supplied by the \commonlisp{}
+implementation.  Whether it is advantageous or not for these
+implementations to be written mainly in that other language is outside
+the scope of this paper.  Other implementations in the first category
+are written that other language for other reasons that are also
+unimportant to this paper.
 
+Of the implementations in the second category that are currently
+actively used, Rhodes claims%
+\footnote{For the commercial \commonlisp{} implementations cited in
+  the paper by Rhodes, he includes a disclaimer that only anecdotal
+  evidence for this information is available.}
+that \allegro{}, \lispworks{}, \cmucl{}, Scieneer, and \ccl{} are only
+possible to build using older versions of the same system, and only
+using image-based techniques.  Only \sbcl{} can be bootstrapped using
+several other \commonlisp{} implementations.
 
+Even a \commonlisp{} implementation that is largely written in
+\commonlisp{} such as \sbcl{} has some amount of code written in other
+languages.  In the case of \sbcl{}, Rhodes gives the number
+$35\thinspace000$ lines of \clanguage{} and assembly code ``for
+services such as signal handling and garbage collection'', of which
+$8\thinspace000$ is for the garbage collector.  The remaining lines
+can be summarized as around $2\thinspace000$ lines per operating
+system supported.  This amount of code written in other languages is
+very modest.
