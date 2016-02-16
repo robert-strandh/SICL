@@ -6,6 +6,8 @@
 \def\inputal#1{\input #1}
 \def\inputcode#1{\input #1}
 
+\def\mitloop{MIT \texttt{loop}}
+
 \inputtex{logos.tex}
 \inputtex{refmacros.tex}
 \inputtex{other-macros.tex}
@@ -21,15 +23,22 @@ Robert Strandh\\
 \affaddr{Talence, France}\\
 \email{robert.strandh@u-bordeaux1.fr}}
 
-
 \maketitle
 
 \begin{abstract}
-We describe a modern implementation of the \commonlisp{} \texttt{loop}
-macro.  This implementation is part of the \sicl{} project.
+Most \commonlisp{} implementations seem to use a derivative of
+\mitloop{}.  This implementation predates the \commonlisp{} standard,
+which means that it does not use some of the features of the language
+that were not part of the language before 1994.  As a consequence, the
+\texttt{loop} implementation in all major \commonlisp{} implementation
+is \emph{monolithic} and therefore hard to maintain and extend.
 
-We use \emph{combinator parsing} to recognize \texttt{loop} clauses,
-and we use \clos{} for code generation. 
+We describe a modern implementation of the \commonlisp{} \texttt{loop}
+macro.  This implementation is part of the \sicl{} project.  To make
+this implementation of the macro modular, maintainable, and
+extensible, we use \emph{combinator parsing} to recognize
+\texttt{loop} clauses, and we use \clos{} generic function for code
+generation.
 \end{abstract}
 
 \begin{CCSXML}
