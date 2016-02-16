@@ -1,10 +1,10 @@
 \section{Previous work}
 
-\subsection{MIT LOOP with variations}
+\subsection{\mitloop{} with variations}
 \label{sec-mit-loop}
 
 One of the first implementations of the \commonlisp{} \texttt{loop}
-macro is the one that is often referred to as ``MIT LOOP''
+macro is the one that is often referred to as ``\mitloop{}''
 \cite{Burke:Moon:MIT.loop}.  A popular variation of this
 implementation includes modifications by \symbolics{}.
 
@@ -24,7 +24,7 @@ is thus not conforming according to the standard, since \texttt{until}
 is a \emph{main clause} whereas \texttt{for} is a \emph{variable
   clause}.
 
-However, MIT LOOP and its variation accepts the code in the example.
+However, \mitloop{} and its variation accepts the code in the example.
 
 Another example of non-conforming behavior is illustrated by the
 following code:
@@ -38,7 +38,7 @@ following code:
 The \commonlisp{} standard clearly states that the loop variable does
 not take on the value of the upper limit, here $10$, so the value
 printed in the \texttt{finally} clause should be $9$.  However,
-\texttt{loop} implementations derived from MIT LOOP print $10$
+\texttt{loop} implementations derived from \mitloop{} print $10$
 instead.
 
 Notice that the two examples above are non-conforming in two different
@@ -50,15 +50,15 @@ the standard does not specify what an implementation must do when the
 clause order is violated.  By default, then, the behavior is said to
 be \emph{undefined}, meaning that the implementation is free to reject
 the non-conforming program or to accept it and interpret it in some
-(perhaps unexpected) way.  The MIT LOOP implementation is therefore
+(perhaps unexpected) way.  The \mitloop{} implementation is therefore
 conforming in this respect.
 
 In the second case, we have an example of \emph{a non-conforming
   implementation} as explained in section 1.5.1.  The reason is that
 the standard clearly stipulates that every implementation must print
-$9$, whereas MIT LOOP prints $10$.
+$9$, whereas \mitloop{} prints $10$.
 
-The MIT LOOP implementation is \emph{monolithic} and that holds true
+The \mitloop{} implementation is \emph{monolithic} and that holds true
 for its variations too.  The code is contained in a single file with
 around $2000$ lines of code in it.
 
@@ -72,7 +72,7 @@ final expansion of the macro.
 \footnote{\ecl{} stands for ``Embedded Common Lisp.\\
 See: //https://gitlab.com/embeddable-common-lisp/ecl}
 includes two implementations of the \texttt{loop} macro, namely
-the initial MIT LOOP with only minor modifications, and the variation
+the initial \mitloop{} with only minor modifications, and the variation
 by \symbolics{} also with minor modifications.
 
 \clasp{}%
@@ -83,7 +83,7 @@ translated to \cplusplus{} whereas most of the \commonlisp{} code has
 been included with no modification, including the code for the
 \texttt{loop} macro.
 
-\ecl{} \texttt{loop} being derived from MIT LOOP, the unconforming
+\ecl{} \texttt{loop} being derived from \mitloop{}, the unconforming
 example shown in \refSec{sec-mit-loop} is also accepted by \ecl{} and
 \clasp{}.
 
@@ -93,14 +93,14 @@ example shown in \refSec{sec-mit-loop} is also accepted by \ecl{} and
 \footnote{\sbcl{} stands for Steel-Bank \commonlisp{}.\\
 See: http://www.sbcl.org/}
 includes an implementation of the \texttt{loop} macro that was
-originally derived from MIT LOOP, but that also includes code from the
+originally derived from \mitloop{}, but that also includes code from the
 \texttt{loop} macro of the \genera{} operating system.  Furthermore,
 the \sbcl{} implementation of the \texttt{loop} macro has been
 modified and improved to allow for user-definable extensions, such as
 the extension defined in \cite{Rhodes:2007:USC:1622123.1622138} for
 iterating over user-definable sequences.
 
-\sbcl{} \texttt{loop} being derived from MIT LOOP, the unconforming
+\sbcl{} \texttt{loop} being derived from \mitloop{}, the unconforming
 example shown in \refSec{sec-mit-loop} is also accepted by \sbcl{}.
 
 \subsection{\clisp{}}
@@ -113,15 +113,14 @@ of code.
 \subsection{\ccl{}}
 
 Like many other implementations, \ccl{}%
-\footnote{\ccl{} stands for Clozure \commonlisp.\\
-See: http://ccl.clozure.com/}
-includes the variation of MIT
-LOOP containing modifications by \symbolics{}.
+\footnote{\ccl{} stands for Clozure \commonlisp.\\ See:
+  http://ccl.clozure.com/} includes the variation of \mitloop{}
+containing modifications by \symbolics{}.
 
 \subsection{\lispworks}
 
 Evaluating the two examples in \refSec{sec-mit-loop} on \lispworks{}%
 \footnote{See: http://www.lispworks.com/}
-gives the same result as the implementations using MIT LOOP,
+gives the same result as the implementations using \mitloop{},
 suggesting that \lispworks{} also uses a derivative of that
 \texttt{loop} implementation.
