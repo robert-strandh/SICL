@@ -137,6 +137,12 @@ first step of the \emph{semantic analysis}, allowing us to signal
 pertinent error conditions if the restrictions concerning the order of
 clauses are not respected.
 
+Next, we verify that the variables introduced by a clause are unique
+when it would not make sense to have multiple occurrences of the same
+variable.  We also verify that there is at most one \emph{default
+accumulation category}, i.e, either numeric accumulation or list
+accumulation.
+
 \subsection{Code generation}
 \label{sec-our-technique-code generation}
 
