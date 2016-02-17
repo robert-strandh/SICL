@@ -146,6 +146,23 @@ accumulation.
 \subsection{Code generation}
 \label{sec-our-technique-code generation}
 
+The essence of code generation is handled by a number of generic
+functions, each extracting different information from a clause:
+
+\begin{itemize}
+\item \texttt{accumulation-variables} extracts the accumulation
+  variables of a clause, indicating also whether the \texttt{loop}
+  keyword \texttt{into} is present.
+\item \texttt{declarations} extracts any declarations that result from
+  the clause.
+\item \texttt{prologue-form} returns a form that should go in the
+  \texttt{loop} prologue, or \texttt{nil} if no prologue form is
+  required for the clause.
+\item \texttt{termination-form} returns a form that should become a
+  termination test, or \texttt{nil} if the clause does not result in a
+  termination test.
+\end{itemize}
+
 \subsection{Tests}
 \label{sec-our-technique-tests}
 
