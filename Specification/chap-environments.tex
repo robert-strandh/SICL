@@ -467,6 +467,24 @@ The second case is when the symbol was assigned a value using
 \texttt{(setf symbol-value)} without declaring the variable as
 \texttt{special}.
 
+\Defgeneric {(setf special-variable)} {value symbol environment init-p}
+
+This function is used in order to define \textit{symbol} as a special
+variable in \textit{environment}.
+
+If \textit{symbol} already has a definition as a constant variable or
+as a symbol macro in \textit{environment}, then an error is signaled.
+Otherwise, \textit{symbol} is defined as a special variable in
+\textit{environment}.
+
+If \textit{symbol} already has a definition as a special variable, and
+\textit{init-p} is \texttt{nil}, then this function has no effect.
+The current value is not altered, or if \textit{symbol} is currently
+unbound, then it remains unbound.
+
+If \textit{init-p} is true, then \textit{value} becomes the new value
+of the special variable \textit{symbol}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
