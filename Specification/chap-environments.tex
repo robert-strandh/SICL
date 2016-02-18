@@ -485,6 +485,20 @@ unbound, then it remains unbound.
 If \textit{init-p} is true, then \textit{value} becomes the new value
 of the special variable \textit{symbol}.
 
+\Defgeneric {symbol-macro} {symbol environment}
+
+This function returns two values.  The first value is a macro
+expansion function associated with the symbol macro named by
+\textit{symbol}, or \texttt{nil} if \textit{symbol} does not have a
+definition as a symbol macro.  The second value is the form that
+\textit{symbol} expands to as a macro, or \texttt{nil} if symbol does
+not have a definition as a symbol macro.
+
+It is guaranteed that the same (in the sense of \texttt{eq}) function
+is returned by two consecutive calls to this function with the same
+symbol as the first argument, as long as the definition of
+\textit{symbol} does not change.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
