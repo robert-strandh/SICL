@@ -113,6 +113,9 @@ the root class of all clauses of that type mentioned in the standard.
 The same is true for \texttt{variable-clause}, \texttt{name-clause},
 etc.
 
+Classes representing clauses that admit the \texttt{loop} keyword
+\texttt{and} also have a list of sub-clauses.
+
 This organization allows us to capture commonalities between different
 clause types by defining methods on generic functions that are
 specialized to the appropriate class in this graph.
