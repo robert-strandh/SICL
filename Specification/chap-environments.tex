@@ -522,6 +522,24 @@ in \textit{environment}, and no previous type proclamation has been
 made for \textit{symbol} in \textit{environment}, then this function
 returns \texttt{t}.
 
+\Defgeneric {(setf variable-type)} {new-type symbol environment}
+
+This generic function is used to set the proclaimed type of the
+variable associated with \textit{symbol} in \textit{environment}.
+
+If \textit{symbol} has a definition as a constant variable in
+\textit{environment}, then an error is signaled.
+
+It is meaningful to set the proclaimed type even if \textit{symbol}
+has not previously been defined as a special variable or as a symbol
+macro, because it is meaningful to use \texttt{(setf symbol-value)} on
+such a symbol.
+
+Recall that the \hs{} defines the meaning of proclaiming the type of a
+symbol macro.  Therefore, it is meaningful to call this function when
+\textit{symbol} has a definition as a symbol macro in
+\textit{environment}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
