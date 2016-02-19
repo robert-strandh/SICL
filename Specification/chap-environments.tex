@@ -499,6 +499,15 @@ is returned by two consecutive calls to this function with the same
 symbol as the first argument, as long as the definition of
 \textit{symbol} does not change.
 
+\Defgeneric {(setf symbol-macro)} {expansion symbol environment}
+
+This function is used in order to define \textit{symbol} as a symbol
+macro with the given \textit{expansion} in \textit{environment}.
+
+If \textit{symbol} already has a definition as a constant variable, or
+as a special variable, then an error of type \texttt{program-error} is
+signaled.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
