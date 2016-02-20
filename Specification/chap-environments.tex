@@ -540,6 +540,18 @@ symbol macro.  Therefore, it is meaningful to call this function when
 \textit{symbol} has a definition as a symbol macro in
 \textit{environment}.
 
+\Defgeneric {variable-cell} {symbol environment}
+
+A call to this function always succeeds.  It returns a \texttt{cons}
+cell, in which the \texttt{car} always holds the current definition of
+the variable named \textit{symbol}.  When \textit{symbol} has no
+definition as a variable, the \texttt{car} of this cell will contain
+an object that indicates that the variable is unbound.  This object is
+the return value of the function \texttt{variable-unbound}.  The
+return value of this function is always the same (in the sense of
+\texttt{eq}) when it is passed the same symbol and the same
+environment.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
