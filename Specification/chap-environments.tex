@@ -552,6 +552,17 @@ return value of this function is always the same (in the sense of
 \texttt{eq}) when it is passed the same symbol and the same
 environment.
 
+\Defgeneric {variable-unbound} {symbol environment}
+
+A call to this function always succeeds.  It returns an object that
+indicates that the variable is unbound.  The \texttt{cons} cell
+returned by the function \texttt{variable-cell} contains this object
+whenever the variable named \textit{symbol} is unbound.  The return
+value of this function is always the same (in the sense of
+\texttt{eq}) when it is passed the same symbol and the same
+environment.  Client code can use the return value of this function to
+determine whether \textit{symbol} is unbound.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
