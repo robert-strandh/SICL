@@ -563,6 +563,15 @@ value of this function is always the same (in the sense of
 environment.  Client code can use the return value of this function to
 determine whether \textit{symbol} is unbound.
 
+\Defgeneric {find-class} {symbol environment}
+
+This generic function is a generic version of the Common Lisp function
+\texttt{cl:find-class}.
+
+If \textit{symbol} has a definition as a class in
+\textit{environment}, then that class metaobject is returned.
+Otherwise \texttt{nil} is returned.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
