@@ -155,6 +155,11 @@
   `(let ,(final-bindings subclause)
      ,inner-form))
 
+;;; Default method for WRAP-CLAUSE.  This method is applicable only if
+;;; the clause type does not admit any subclauses.  For this type of
+;;; clause, the default implemented here is to wrap the clause in all
+;;; the bindings, i.e., both the initial and the final bindings of
+;;; both exist.
 (defmethod wrap-clause (clause inner-form)
   `(let* ,(bindings clause)
      ,inner-form))
