@@ -148,6 +148,9 @@
 ;;; determines how this is done.
 (defgeneric wrap-subclause (subclause inner-form))
 
+;;; Default method for WRAP-SUBCLAUSE.  By default, the wrapper for
+;;; each subclause contains only the final bindings, leaving the
+;;; initial bindings to a single binding form of the entire clause.
 (defmethod wrap-subclause (subclause inner-form)
   `(let ,(final-bindings subclause)
      ,inner-form))
