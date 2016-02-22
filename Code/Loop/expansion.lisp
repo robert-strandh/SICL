@@ -176,6 +176,9 @@
     `(let ,(initial-bindings clause)
        ,result)))
 
+;;; Process all clauses by first computing the prologue, the body, and
+;;; the epilogue, and then applying the clause-specific wrapper for
+;;; each clause to the result.
 (defun do-clauses (all-clauses end-tag)
   (let ((result (prologue-body-epilogue all-clauses end-tag)))
     (mapc (lambda (clause)
