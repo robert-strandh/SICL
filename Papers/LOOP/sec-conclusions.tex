@@ -29,23 +29,32 @@ are several explanations for this discrepancy:
 
 When we started the work on this library, we were unaware of any
 existing libraries for combinator parsing written in \commonlisp{}.
-Since then, we have been made aware of the library named
-``cl-parser-combinators''%
+Since then, we have been made aware of several libraries with such
+functionality, in particular:
+
+\begin{itemize}
+\item ``cl-parser-combinators''%
 \footnote{https://github.com/Ramarren/cl-parser-combinators} which is
 a library for combinator parsing inspired by Parsec
 \cite{Leijen:Meijer:Parsec}.  Parsec was originally written in
 Haskell, and later re-implemented in other languages as well.
+\item ``SMUG''%
+\footnote{https://github.com/drewc/smug} which seems to be more
+self contained than cl-parser-combinators, especially when it
+comes to the documentation.
+\end{itemize}
 
-We plan to evaluate cl-parser-combinators to determine whether it
-provides the functionality required for parsing \texttt{loop} clauses,
-and if not, whether it can be extended to provide such functionality.
+We plan to evaluate cl-parser-combinators and SMUG to determine
+whether they provide the functionality required for parsing
+\texttt{loop} clauses, and if not, whether any of them can extended to
+obtain this functionality.
 
-A significant advantage of using cl-parser-combinators over the
-existing technique is that cl-parser-combinators has full support for
-the most general backtracking capabilities of combinator parsing.
-Using it rather than our current technique would make it unnecessary
-to consider careful ordering of clause parsers the way we currently
-need to do.
+A significant advantage of using one of these libraries over the
+existing technique is that they both have full support for the most
+general backtracking capabilities of combinator parsing.  Using one of
+them rather than our current technique would make it unnecessary to
+consider careful ordering of clause parsers the way we currently need
+to do.
 
 A possible disadvantage might be that full backtracking is potentially
 costly in terms of performance.  However, we do not expect performance
