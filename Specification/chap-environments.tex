@@ -572,6 +572,25 @@ If \textit{symbol} has a definition as a class in
 \textit{environment}, then that class metaobject is returned.
 Otherwise \texttt{nil} is returned.
 
+\Defgeneric {(setf find-class)} {new-class symbol environment}
+
+This generic function is a generic version of the Common Lisp function
+\texttt{(setf cl:find-class)}.
+
+This function is used in order to associate a class with a class name
+in \textit{environment}.
+
+If \textit{new-class} is a class metaobject, then that class
+metaobject is associated with the name \textit{symbol} in
+\textit{environment}.  If \textit{symbol} already names a class in
+\textit{environment} than that association is lost.
+
+If \textit{new-class} is \texttt{nil}, then \textit{symbol} is no
+longer associated with a class in \textit{environment}.
+
+If \textit{new-class} is neither a class metaobject nor \texttt{nil},
+then an error of type \texttt{type-error} is signaled.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
