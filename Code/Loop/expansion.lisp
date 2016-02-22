@@ -164,6 +164,10 @@
   `(let* ,(bindings clause)
      ,inner-form))
 
+;;; Method on WRAP-CLAUSE specialized to clause types that admit
+;;; subclauses.  This method overrides the default method above.  It
+;;; wraps each subclause individually, and then wraps the result in
+;;; the initial bindings for the entire clause.
 (defmethod wrap-clause ((clause subclauses-mixin) inner-form)
   (let ((result inner-form))
     (mapc (lambda (subclause)
