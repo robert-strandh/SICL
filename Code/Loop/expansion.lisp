@@ -134,8 +134,18 @@
 	       (return-from ,*loop-name*
 		 ,*accumulation-variable*)))))
 
+;;; Once the LOOP prologue, the LOOP body, and the LOOP epilogue have
+;;; all been constructed, a bunch of successive WRAPPERS are applied
+;;; so as to obtain the final expansion.  Each clause type defines how
+;;; it needs to be wrapped.  Some clauses only require the
+;;; establishment of variable bindings in the wrapper.  Other clauses
+;;; might need to be wrapped in some iterator form.  The generic
+;;; function WRAP-CLAUSE defines how each clause type is wrapped.
 (defgeneric wrap-clause (clause inner-form))
 
+;;; If a clause can have subclauses, then each subclause may need to
+;;; be wrapped separately.  The generic function WRAP-SUBCLAUSE
+;;; determines how this is done.
 (defgeneric wrap-subclause (subclause inner-form))
 
 (defmethod wrap-subclause (subclause inner-form)
