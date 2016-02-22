@@ -149,6 +149,19 @@ accumulation category}, i.e, one of the categories \emph{list},
 \subsection{Code generation}
 \label{sec-our-technique-code generation}
 
+The main control structure for code generation consists of two steps:
+
+\begin{itemize}
+\item First, the \texttt{loop} prologue, the \texttt{loop} body, and
+  the \texttt{loop} epilogue are constructed in the form of a
+  \texttt{tagbody} special form.
+\item To the resulting \texttt{tagbody} form is then applied a set of
+  nested \emph{wrappers}, one for each clause.  A wrapper for a clause
+  typically contains \texttt{let} \emph{bindings} required for the
+  clause, but also iterator forms where such iterators are required by
+  the clause type, for example \texttt{with-package-iterator}.
+\end{itemize}
+
 The essence of code generation is handled by a number of generic
 functions, each extracting different information from a clause:
 
