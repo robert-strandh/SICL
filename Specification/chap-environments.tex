@@ -598,6 +598,25 @@ with \textit{symbol} in \textit{environment}.  If \textit{symbol} is
 not associated with any \texttt{setf} expander in
 \textit{environment}, then \texttt{nil} is returned.
 
+\Defgeneric {(setf setf-expander)} {new-expander symbol environment}
+
+This generic function is used to set the \texttt{setf} expander
+associated with \textit{symbol} in \textit{environment}.
+
+If \textit{symbol} is not associated with an ordinary function, a
+generic function, or a macro in \textit{environment}, then an error is
+signaled.
+
+If there is already a \texttt{setf} expander associated with
+\textit{symbol} in \textit{environment}, then the old \texttt{setf}
+expander is lost.
+
+If a value of \texttt{nil} is given for \textit{new-expander}, then
+any current \texttt{setf} expander associated with \textit{symbol} is
+removed.  In this case, no error is signaled, even if \textit{symbol}
+is not associated with any ordinary function, generic function, or
+macro in \textit{environment}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
