@@ -591,6 +591,13 @@ longer associated with a class in \textit{environment}.
 If \textit{new-class} is neither a class metaobject nor \texttt{nil},
 then an error of type \texttt{type-error} is signaled.
 
+\Defgeneric {setf-expander} {symbol environment}
+
+This generic function returns the \texttt{setf} expander associated
+with \textit{symbol} in \textit{environment}.  If \textit{symbol} is
+not associated with any \texttt{setf} expander in
+\textit{environment}, then \texttt{nil} is returned.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
