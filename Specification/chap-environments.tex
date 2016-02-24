@@ -623,6 +623,11 @@ This generic function returns the default \texttt{setf} expander, to
 be used when the function \texttt{setf-expander} returns \texttt{nil}.
 This function always returns a valid \texttt{setf} expander.
 
+\Defgeneric {(setf default-setf-expander)} {new-expander environment}
+
+This generic function is used to set the default \texttt{setf}
+expander in \texttt{environment}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
