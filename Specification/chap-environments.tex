@@ -617,6 +617,12 @@ removed.  In this case, no error is signaled, even if \textit{symbol}
 is not associated with any ordinary function, generic function, or
 macro in \textit{environment}.
 
+\Defgeneric {default-setf-expander} {environment}
+
+This generic function returns the default \texttt{setf} expander, to
+be used when the function \texttt{setf-expander} returns \texttt{nil}.
+This function always returns a valid \texttt{setf} expander.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
