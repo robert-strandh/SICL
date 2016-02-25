@@ -635,6 +635,14 @@ This generic function returns the type expander associated with
 associated with any type expander in \texttt{environment}, then
 \texttt{nil} is returned.
 
+\Defgeneric {(setf type-expander)} {new-expander symbol environment}
+
+This generic function is used to set the type expander associated with
+\textit{symbol} in \texttt{environment}.
+
+If there is already a type expander associated with \textit{symbol} in
+\texttt{environment}, then the old type expander is lost.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
