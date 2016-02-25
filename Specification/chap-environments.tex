@@ -628,6 +628,13 @@ This function always returns a valid \texttt{setf} expander.
 This generic function is used to set the default \texttt{setf}
 expander in \texttt{environment}.
 
+\Defgeneric {type-expander} {symbol environment}
+
+This generic function returns the type expander associated with
+\textit{symbol} in \texttt{environment}.  If \textit{symbol} is not
+associated with any type expander in \texttt{environment}, then
+\texttt{nil} is returned.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
