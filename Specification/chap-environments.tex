@@ -651,6 +651,14 @@ name in \textit{environment}, then return \texttt{nil}.  Contrary to
 the standard \commonlisp{} function \texttt{cl:find-package}, for this
 function, \textit{name} must be a string.
 
+\Defgeneric {package-name} {package environment}
+
+Return the string that names \textit{package} in \textit{environment}.
+If \textit{package} is not associated with any name in
+\textit{environment}, then \texttt{nil} is returned.  Contrary to the
+standard \commonlisp{} function \texttt{cl:package-name}, for this
+function, \textit{package} must be a package object.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
