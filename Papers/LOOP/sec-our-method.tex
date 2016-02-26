@@ -180,6 +180,10 @@ functions, each extracting different information from a clause:
 \item \texttt{termination-form} returns a form that should become a
   termination test, or \texttt{nil} if the clause does not result in a
   termination test.
+\item \texttt{step-form} returns a form that should be included in the
+  part of expansion that handles stepping, for those clause types that
+  define stepping.  This generic function returns \texttt{nil} if the
+  clause does not have any step forms associated with it.
 \item \texttt{body-form} returns a form that should be present in the
   body of the expansion, or \texttt{nil} if the clause does not result
   in any form for the body.
