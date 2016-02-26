@@ -643,6 +643,14 @@ This generic function is used to set the type expander associated with
 If there is already a type expander associated with \textit{symbol} in
 \texttt{environment}, then the old type expander is lost.
 
+\Defgeneric {find-package} {name environment}
+
+Return the package with the name or the nickname \textit{name} in the
+environment \textit{environment}.  If there is no package with that
+name in \textit{environment}, then return \texttt{nil}.  Contrary to
+the standard \commonlisp{} function \texttt{cl:find-package}, for this
+function, \textit{name} must be a string.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
