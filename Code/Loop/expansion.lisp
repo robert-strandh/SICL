@@ -66,7 +66,7 @@
     (declare (ignore clause))
     nil))
 
-(defgeneric epilogue (clause)
+(defgeneric epilogue-form (clause)
   (:method (clause)
     (declare (ignore clause))
     nil))
@@ -130,7 +130,7 @@
 	(progn ,@(mapcar #'step-form clauses))
 	(go ,start-tag)
 	,end-tag
-	(progn ,@(mapcar #'epilogue clauses)
+	(progn ,@(mapcar #'epilogue-form clauses)
 	       (return-from ,*loop-name*
 		 ,*accumulation-variable*)))))
 

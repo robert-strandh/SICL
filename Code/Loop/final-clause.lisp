@@ -51,5 +51,5 @@
 ;;;
 ;;; Compute epilogue.
 
-(defmethod epilogue ((clause final-clause))
+(defmethod epilogue-form ((clause final-clause))
   (form clause))
