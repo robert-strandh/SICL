@@ -18,3 +18,28 @@ able to satisfy the vast majority of iteration needs.  In addition, it
 is far easier to understand than equivalent loops using other
 iteration constructs such as \texttt{dotimes}, \texttt{dolist}, and
 \texttt{do}.
+
+Most current implementations of \commonlisp{} seem to use an
+implementation of the \texttt{loop} macro that was largely written
+before the \commonlisp{} standard was adopted.  Consequently, some of
+the interesting features of the standardized \commonlisp{} language
+are not used in the implementation of the \texttt{loop} macro in
+these implementations.  In particular, the use of \emph{generic
+  functions} is typically minimal.  As a result, the implementation of
+this macro is quite \emph{monolithic}, making it hard to maintain,
+whether in order to remove defects or to extend it.
+
+We present a modern implementation of the \texttt{loop} macro.  This
+implementation was written as part of the \sicl{}%
+\footnote{See https://github.com/robert-strandh/SICL} project, of
+which one of the explicit goals is to use improved coding techniques.
+
+We are able to obtain a more modular \texttt{loop} implementation by
+using two key techniques.  The first one is to parse the clauses using
+a parsing technique that allows for individual clause parsers to be
+\emph{physically separated} according to clause type.  The second
+modularity technique is to use \emph{generic functions} for semantic
+analysis and code generation.  By defining clause types as standard
+classes, we are able to physically separate processing according to
+clause type through the use of methods specialized to these clause
+classes.
