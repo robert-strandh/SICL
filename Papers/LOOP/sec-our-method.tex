@@ -180,6 +180,9 @@ functions, each extracting different information from a clause:
 \item \texttt{termination-form} returns a form that should become a
   termination test, or \texttt{nil} if the clause does not result in a
   termination test.
+\item \texttt{body-form} returns a form that should be present in the
+  body of the expansion, or \texttt{nil} if the clause does not result
+  in any form for the body.
 \end{itemize}
 
 \subsection{Tests}
