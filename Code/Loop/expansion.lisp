@@ -73,6 +73,10 @@
     (declare (ignore clause end-tag))
     nil))
 
+;;; This generic function returns a form for CLAUSE that should go
+;;; after the main body code and the termination tests in the body of
+;;; the expanded code.  The FOR-AS clauses and also the REPEAT clause
+;;; generate code here.
 (defgeneric step-form (clause)
   (:method (clause)
     (declare (ignore clause))
