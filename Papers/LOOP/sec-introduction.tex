@@ -37,9 +37,9 @@ which one of the explicit goals is to use improved coding techniques.
 We are able to obtain a more modular \texttt{loop} implementation by
 using two key techniques.  The first one is to parse the clauses using
 a parsing technique that allows for individual clause parsers to be
-\emph{physically separated} according to clause type.  The second
+\emph{textually separated} according to clause type.  The second
 modularity technique is to use \emph{generic functions} for semantic
 analysis and code generation.  By defining clause types as standard
-classes, we are able to physically separate processing according to
+classes, we are able to textually separate processing according to
 clause type through the use of methods specialized to these clause
 classes.
