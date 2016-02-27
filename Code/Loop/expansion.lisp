@@ -58,6 +58,11 @@
     (declare (ignore clause end-tag))
     nil))
 
+;;; This generic function returns a form for CLAUSE that should go
+;;; between the body code and the stepping forms in the body of the
+;;; expanded code.  Some of the FOR-AS clauses and also the REPEAT
+;;; clause generate code here.  END-TAG is the tag to GO to when
+;;; iteration should terminate.
 (defgeneric termination-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
