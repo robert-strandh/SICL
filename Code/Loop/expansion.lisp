@@ -68,6 +68,14 @@
     (declare (ignore clause end-tag))
     nil))
 
+;;; This generic function returns a form for CLAUSE that should go in
+;;; the main the body code, before the termination test and the
+;;; stepping forms, in the body of the expanded code.  The DO clause
+;;; and the accumulation clauses are obvious candidates for such code.
+;;;
+;;; FIXME: Currently, END-TAG is used only in the WHILE clause as a
+;;; termination test.  Investigate whether the WHILE clause should use
+;;; TERMINATION-TEST instead, so that we can eliminate this parameter.
 (defgeneric body-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
