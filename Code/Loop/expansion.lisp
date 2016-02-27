@@ -46,6 +46,13 @@
   (:method (clause)
     (append (initial-bindings clause) (final-bindings clause))))
 
+;;; This generic function returns a form for CLAUSE that should go in
+;;; the LOOP prologue.  The INITIALLY clause is an obvious candidate
+;;; for such code.  But the stepping clauses also have code that goes
+;;; in the prologue, namely an initial termination test to determine
+;;; whether any iterations at all should be executed.  END-TAG is the
+;;; tag to GO to when the initial termination test says that no
+;;; iterations should be executed.
 (defgeneric prologue-form (clause end-tag)
   (:method (clause end-tag)
     (declare (ignore clause end-tag))
