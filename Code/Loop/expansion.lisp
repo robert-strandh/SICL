@@ -66,6 +66,10 @@
     (declare (ignore clause))
     nil))
 
+;;; This generic function returns a form for CLAUSE that should go in
+;;; the LOOP epilogue.  Of the clause types defined by the Common Lisp
+;;; standard, only the method specialized to the FINALLY clause
+;;; returns a value other than NIL.
 (defgeneric epilogue-form (clause)
   (:method (clause)
     (declare (ignore clause))
