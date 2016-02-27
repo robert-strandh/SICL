@@ -189,6 +189,13 @@ functions, each extracting different information from a clause:
   in any form for the body.
 \end{itemize}
 
+The generic function \texttt{prologue-form} takes a clause argument
+and returns a form that should go in the \texttt{loop} prologue.  The
+\texttt{initially} clause is an obvious candidate for such code.  But
+the stepping clauses also have code that goes in the prologue, namely
+an initial termination test to determine whether any iterations at all
+should be executed.
+
 \subsection{Tests}
 \label{sec-our-technique-tests}
 
