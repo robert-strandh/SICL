@@ -196,6 +196,10 @@ the stepping clauses also have code that goes in the prologue, namely
 an initial termination test to determine whether any iterations at all
 should be executed.
 
+Of the clause types defined by the \commonlisp{} standard, only the
+\texttt{finally} clause has a method that returns a value other than
+\texttt{nil} on the generic function \texttt{epilogue-form}.
+
 \subsection{Tests}
 \label{sec-our-technique-tests}
 
