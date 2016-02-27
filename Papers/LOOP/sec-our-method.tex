@@ -167,7 +167,7 @@ The \texttt{loop} body consists of three consecutive parts:
 \begin{enumerate}
 \item The \emph{main} body, containing code for the \texttt{do} clause
   and the accumulation clauses.
-\item The \emph{termination test} part, containing code that checks
+\item The \emph{termination-test} part, containing code that checks
   whether iteration should terminate.
 \item The \emph{stepping} part, containing code that updates iteration
   variables in preparation for the next iteration.
@@ -192,12 +192,12 @@ functions, each extracting different information from a clause:
   termination test, or \texttt{nil} if the clause does not result in a
   termination test.
 \item \texttt{step-form} returns a form that should be included in the
-  part of expansion that handles stepping, for those clause types that
+  stepping part of the \texttt{loop} body, for those clause types that
   define stepping.  This generic function returns \texttt{nil} if the
   clause does not have any step forms associated with it.
 \item \texttt{body-form} returns a form that should be present in the
-  body of the expansion, or \texttt{nil} if the clause does not result
-  in any form for the body.
+  main body of the expansion, or \texttt{nil} if the clause does not
+  result in any form for the body.
 \end{itemize}
 
 The generic function \texttt{prologue-form} takes a clause argument
@@ -212,9 +212,9 @@ Of the clause types defined by the \commonlisp{} standard, only the
 \texttt{nil} on the generic function \texttt{epilogue-form}.
 
 The generic function \texttt{termination-form} takes a clause argument
-and returns a form for that clause that should go between the body
-code and the stepping forms in the body of the expanded code.  Some of
-the \texttt{for/as} clauses and also the \texttt{repeat} clause have
+and returns a form for that clause that should go in the
+termination-test part of the body of the expanded code.  Some of the
+\texttt{for/as} clauses and also the \texttt{repeat} clause have
 specialized methods on this generic function.
 
 The generic function \texttt{step-form} returns takes a clause
