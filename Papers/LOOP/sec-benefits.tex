@@ -5,6 +5,12 @@ As already mentioned in \refSec{sec-our-technique-parsing-clauses},
 the main advantage of our technique is that it allows for a
 \emph{modular} structure of the \texttt{loop} implementation.
 
+The most immediate consequence of this improved modularity is that the
+code is easier to maintain than a monolithic code for the same
+purpose.  There is less code that a maintainer needs to understand for
+a given modification, and a modification in one module is less likely
+to break other modules.
+
 This modularity also makes it very simple for additional clause types
 to be added by the \commonlisp{} implementation, such as the extension
 for iterating over the user-extensible sequences described by Rhodes
