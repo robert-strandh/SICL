@@ -659,6 +659,12 @@ If \textit{package} is not associated with any name in
 standard \commonlisp{} function \texttt{cl:package-name}, for this
 function, \textit{package} must be a package object.
 
+\Defgeneric {(setf package-name)} {new-name package environment}
+
+Make the string \textit{new-name} the new name of \textit{package} in
+\textit{environment}.  If \textit{new-name} is \texttt{nil}, then
+\textit{package} no longer has a name in \textit{environment}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
