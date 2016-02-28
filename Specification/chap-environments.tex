@@ -672,6 +672,11 @@ Return a list of the strings that are nicknames of \textit{package} in
 \texttt{cl:package-nicknames}, for this function, \textit{package}
 must be a package object.
 
+\Defgeneric {(setf package-nicknames)} {new-names package environment}
+
+Associate the strings in the list \textit{new-names} as nicknames of
+\textit{package} in \textit{environment}.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
