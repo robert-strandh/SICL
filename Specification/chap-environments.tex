@@ -665,6 +665,13 @@ Make the string \textit{new-name} the new name of \textit{package} in
 \textit{environment}.  If \textit{new-name} is \texttt{nil}, then
 \textit{package} no longer has a name in \textit{environment}.
 
+\Defgeneric {package-nicknames} {package environment}
+
+Return a list of the strings that are nicknames of \textit{package} in
+\textit{environment}.  Contrary to the standard \commonlisp{} function
+\texttt{cl:package-nicknames}, for this function, \textit{package}
+must be a package object.
+
 \section{The static runtime environment}
 \label{sec-environments-static-runtime}
 
