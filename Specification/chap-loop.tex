@@ -28,3 +28,11 @@ provided by Paul Dietz' ANSI \commonlisp{} test suite.
 Future work includes providing an alternative parser to be used when
 the normal parser fails.  The purpose of the alternative parser is to
 provide good error messages to the programmer.
+
+\section{Protocol}
+
+\Defgeneric{bound-variables} {clause}
+
+The purpose of this generic function is to generate a list of all
+bound variables in a clause.  The same variable occurs as many times
+in the list as the number of times it is bound in the clause.
