@@ -36,3 +36,14 @@ provide good error messages to the programmer.
 The purpose of this generic function is to generate a list of all
 bound variables in a clause.  The same variable occurs as many times
 in the list as the number of times it is bound in the clause.
+
+\Defgeneric{accumulation-variables} {clause}
+
+The purpose of this generic function is to generate a list of all the
+accumulation variables in a clause.  Each element of the list is
+itself a list of three elements.  The first element is the name of a
+variable used in an \texttt{into} clause, or \texttt{nil} if the
+clause has no \texttt{into}.  The second element determines the kind
+of accumulation, and can be one of the symbols \texttt{list},
+\texttt{count/sum}, or \texttt{max/min}.  The third element is a type
+specifier which can be \texttt{t}.
