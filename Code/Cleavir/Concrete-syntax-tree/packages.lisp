@@ -8,11 +8,13 @@
    #:cst-is-literal-string-p
    #:separate-ordinary-body
    #:separate-function-body
-   #:optional-or-keyword-parameter
+   #:facultative-parameter
    #:variables-cst
    #:init-form-cst
    #:supplied-p-parameter-cst
+   #:facultative-parameter
    #:optional-parameter
+   #:facultative-parameters
    #:optional-parameters
    #:keyword-cst
    #:parameters
