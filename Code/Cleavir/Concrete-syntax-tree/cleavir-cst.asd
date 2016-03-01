@@ -22,4 +22,5 @@
    (:file "complete")
    (:file "rebuild")
    (:file "declarations")
-   (:file "body")))
+   (:file "body")
+   (:file "lambda-list")))
