@@ -14,6 +14,9 @@
    (%supplied-p-parameter-cst :initarg :supplied-p-parameter-cst
 			      :reader supplied-p-parameter-cst)))
 
+(defclass optional-parameter (optional-or-keyword-parameter)
+  ())
+
 (defclass optional-parameters ()
   (;; This slot contains a CST for the lambda-list keyword.
    ;; Typically, this keyword will be &OPTIONAL, but client code may
