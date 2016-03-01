@@ -27,6 +27,10 @@
 ;;; element is a type specifier which can be T.
 (defgeneric accumulation-variables (clause))
 
+;;; The purpose of this generic function is to extract a list of
+;;; declaration specifiers from the clause.  Notice that it is a list
+;;; of declaration specifiers, not a list of declarations.  In other
+;;; words, the symbol DECLARE is omitted.
 (defgeneric declarations (clause)
   (:method (clause)
     (declare (ignore clause))
