@@ -26,3 +26,10 @@
    ;; This slot contains a list of instances of the class
    ;; OPTIONAL-PARAMETER.
    (%parameters :initarg :parameters :reader parameters)))
+
+(defclass keyword-parameter (optional-or-keyword-parameter)
+  (;; This slot contains a CST for the KEYWORD-NAME of the keyword
+   ;; parameter.  If no KEYWORD-NAME was given, then this slot
+   ;; contains a CST with the KEYWORD-NAME derived from the VARIABLE
+   ;; name, and with a LOCATION of NIL.
+   (%keyword-name :initarg :keyword-name :reader keyword-name)))
