@@ -47,3 +47,10 @@ clause has no \texttt{into}.  The second element determines the kind
 of accumulation, and can be one of the symbols \texttt{list},
 \texttt{count/sum}, or \texttt{max/min}.  The third element is a type
 specifier which can be \texttt{t}.
+
+\Defgeneric{declarations} {clause}
+
+The purpose of this generic function is to extract a list of
+declaration specifiers from the clause.  Notice that it is a list of
+declaration specifiers, not a list of declarations.  In other words,
+the symbol \texttt{declare} is omitted.
