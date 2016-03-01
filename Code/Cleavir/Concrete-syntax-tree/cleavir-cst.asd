@@ -14,7 +14,8 @@
 
 (defsystem :cleavir-cst
   :depends-on (:cleavir-code-utilities
-	       :alexandria)
+	       :alexandria
+	       :smug)
   :serial t
   :components
   ((:file "packages")
