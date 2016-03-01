@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst)
 
-(defclass optional-or-keyword--parameter ()
+(defclass facultative--parameter ()
   (;; This slot contains the CST for the obligatory variable of the
    ;; parameter.
    (%variable-cst :initarg :variable-cst :reader variable-cst)
@@ -14,7 +14,7 @@
    (%supplied-p-parameter-cst :initarg :supplied-p-parameter-cst
 			      :reader supplied-p-parameter-cst)))
 
-(defclass optional-parameter (optional-or-keyword-parameter)
+(defclass optional-parameter (facultative-parameter)
   ())
 
 ;;; This class is used to represent a list of parameters that is not
@@ -30,22 +30,15 @@
 (defclass optional-parameters (facultative-parameters)
   ())
 
-(defclass keyword-parameter (optional-or-keyword-parameter)
+(defclass keyword-parameter (facultative-parameter)
   (;; This slot contains a CST for the KEYWORD-NAME of the keyword
    ;; parameter.  If no KEYWORD-NAME was given, then this slot
    ;; contains a CST with the KEYWORD-NAME derived from the VARIABLE
    ;; name, and with a LOCATION of NIL.
    (%keyword-name-cst :initarg :keyword-name-cst :reader keyword-name-cst)))
 
-(defclass keyword-parameters ()
-  (;; This slot contains a CST for the lambda-list keyword.
-   ;; Typically, this keyword will be &KEY, but client code may define
-   ;; other lambda-list keywords that work the same way as &KEY.
-   (%keyword-cst :initarg :keyword-cst :reader keyword-cst)
-   ;; This slot contains a list of instances of the class
-   ;; KEYWORD-PARAMETER.
-   (%parameters :initarg :parameters :reader parameters)
-   ;; This slot contains a CST for the lambda-list keyword
+(defclass keyword-parameters (facultative-parameters)
+  (;; This slot contains a CST for the lambda-list keyword
    ;; &ALLOW-OTHER-KEYS.  If no &ALLOW-OTHER-KEYS was given, then this
    ;; slot contains NIL.
    (%allow-other-keys-cst :initarg :allow-other-keys-cst
