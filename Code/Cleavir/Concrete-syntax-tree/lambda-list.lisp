@@ -32,4 +32,4 @@
    ;; parameter.  If no KEYWORD-NAME was given, then this slot
    ;; contains a CST with the KEYWORD-NAME derived from the VARIABLE
    ;; name, and with a LOCATION of NIL.
-   (%keyword-name :initarg :keyword-name :reader keyword-name)))
+   (%keyword-name-cst :initarg :keyword-name-cst :reader keyword-name-cst)))
