@@ -27,6 +27,9 @@
    ;; subclass defines what kind of objects this list may contain.
    (%parameters :initarg :parameters :reader parameters)))
 
+(defclass optional-parameters (facultative-parameters)
+  ())
+
 (defclass keyword-parameter (optional-or-keyword-parameter)
   (;; This slot contains a CST for the KEYWORD-NAME of the keyword
    ;; parameter.  If no KEYWORD-NAME was given, then this slot
