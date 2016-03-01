@@ -17,14 +17,14 @@
 (defclass optional-parameter (optional-or-keyword-parameter)
   ())
 
-(defclass optional-parameters ()
-  (;; This slot contains a CST for the lambda-list keyword.
-   ;; Typically, this keyword will be &OPTIONAL, but client code may
-   ;; define other lambda-list keywords that work the same way as
-   ;; &OPTIONAL.
+;;; This class is used to represent a list of parameters that is not
+;;; required to be present in a lambda list.
+(defclass facultative-parameters ()
+  (;; This slot contains a CST for the lambda-list keyword that is
+   ;; used to introduce the list of parameters.
    (%keyword-cst :initarg :keyword-cst :reader keyword-cst)
-   ;; This slot contains a list of instances of the class
-   ;; OPTIONAL-PARAMETER.
+   ;; This slot contains a list of the parameters given.  Each
+   ;; subclass defines what kind of objects this list may contain.
    (%parameters :initarg :parameters :reader parameters)))
 
 (defclass keyword-parameter (optional-or-keyword-parameter)
@@ -33,3 +33,17 @@
    ;; contains a CST with the KEYWORD-NAME derived from the VARIABLE
    ;; name, and with a LOCATION of NIL.
    (%keyword-name-cst :initarg :keyword-name-cst :reader keyword-name-cst)))
+
+(defclass keyword-parameters ()
+  (;; This slot contains a CST for the lambda-list keyword.
+   ;; Typically, this keyword will be &KEY, but client code may define
+   ;; other lambda-list keywords that work the same way as &KEY.
+   (%keyword-cst :initarg :keyword-cst :reader keyword-cst)
+   ;; This slot contains a list of instances of the class
+   ;; KEYWORD-PARAMETER.
+   (%parameters :initarg :parameters :reader parameters)
+   ;; This slot contains a CST for the lambda-list keyword
+   ;; &ALLOW-OTHER-KEYS.  If no &ALLOW-OTHER-KEYS was given, then this
+   ;; slot contains NIL.
+   (%allow-other-keys-cst :initarg :allow-other-keys-cst
+			  :reader allow-other-keys-cst)))
