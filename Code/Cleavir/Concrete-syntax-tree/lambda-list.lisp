@@ -12,7 +12,7 @@
    ;; This slot contains a CST for the SUPPLIED-P-PARAMETER of the
    ;; optional parameter.  If no SUPPLIED-P-PARAMETER was given, then
    ;; this slot contains NIL.
-   (%supplied-p-parameter-cst :initform :supplied-p-parameter-cst
+   (%supplied-p-parameter-cst :initarg :supplied-p-parameter-cst
 			      :reader supplied-p-parameter-cst)))
 
 (defclass optional-parameters ()
