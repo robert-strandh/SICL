@@ -64,3 +64,9 @@ of bindings required by the clause.
 
 The purpose of this generic function is to extract the innermost level
 of bindings required by the clause.
+
+\Defgeneric {bindings} {clause}
+
+The default method of this generic function appends the result of
+calling \texttt{initial-bindings} and that of calling
+\texttt{final-bindings}.
