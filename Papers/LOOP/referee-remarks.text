@@ -1,0 +1,283 @@
+
+------------------------------------------------------------
+Rules:
+1- All submissions should be formatted following the ACM SIGS guidelines and
+include ACM classification categories and terms. For more information on the
+submission guidelines and the ACM keywords, see:
+http://www.acm.org/sigs/publications/proceedings-templates and http://www.acm.org/about/class/1998
+The conference proceedings will be referenced in the ACM Digital Library.
+
+2- The paper should not be longer than 8 pages.
+
+3- The pdf file should not contain any page number.
+
+4- In the bibliography, urls should not be used unless there is a
+retreive date with it. See
+http://www.cs.ucy.ac.cy/~chryssis/specs/ACM-refguide.pdf
+
+------------------------------------------------------------
+
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 19
+TITLE: A modern implementation of the LOOP macro
+AUTHORS: Robert Strandh
+
+OVERALL EVALUATION: 2 (accept)
+REVIEWER'S CONFIDENCE: 5 (expert)
+
+----------- Review -----------
+GENERAL
+
+Overall this paper seems a useful case history in a large-scale
+refactoring.  I didn't see any big surprises but the presentation is
+mostly clean and rrasonably well-researched, if lacking a bit in
+examples that might help readers less familiar with this situation to
+follow along better.
+
+ABSTRACT
+
+Maybe there is a particular paper style that says don't put citations
+in an abstract, but it certainly makes it confusing to see terms like
+MIT loop and SICL in the abstract with no way of resolving them.
+
+1
+
+Criticisms could use citation.
+
+It's confusing to have both a citation index at the end and a footnote
+index. Maybe that's standard, and I just don't read enough papers
+lately, but I found it confusing to know where to look since bother
+are numbered. For the things where you're just going to cite urls, I
+might suggest making these be endnotes rather than footnotes. Only
+footnotes 7 and 8 seem to me to really be warranted as footnotes, and
+these occur on different pages. If you just used daggers for these and
+made the rest be numbered at the end, that might feel better to
+me. I'm not asserting that's consistent with published style rules, to
+which I am largely happily oblivious these days.  This comment is not
+a must-do, just a note about pragmatics.
+
+I would probably say to cite the CL spec in some form, paper or
+hypertext, to give the reader someplace to go to compare MIT loop with
+CL's loop.
+
+It feels like it might be helpful to include the bnf of the LOOP macro
+from the ANSI CL spec just to help people who are unfamiliar to
+navigate.  (Maybe that's prohibitively large for this small paper,
+though.  I just wanted to raise the idea. Short of that, maybe a
+reference into CLHS at the LispWorks site.)
+
+2.1
+
+I'm not sure "loop" in the section name needs to be in font code. It
+looks awkward.
+
+2.3
+
+You refer back to "the non-conforming example" but as it looks to my
+eye, there are two such examples.
+
+Would this have yielded to a Pratt parser?
+(https://en.wikipedia.org/wiki/Pratt_parser) I don't know the answer
+but would be curious. I'm personally a fan of Pratt parsers. Symbolic
+languages like CGOL and Macsyma have used them successfully.
+
+C and C++ probably need citations.
+
+Symbolics Inc almost certainly needs a citation of some sort, since
+it's unusual and perhaps unknown to many, but also you refer to Genera
+elsewhere and it might be best to use the same reference style for
+both. You might wish to be allowing for the LMITI (LMI/MIT/TI)
+systems, which may share that code branch, but those are not
+Symbolics, so probably Genera and Symbolics are the same in this
+context.
+
+3.1
+
+The notion of "generalized boolean" is Common Lisp specific, so that's
+another reason for at least one citation of either CLHS or the ANSI CL
+spec. It might be worth footnoting this term and explaining it.
+
+3.2
+
+Regarding text here, clarified by footnote 8, why not at the
+implementation level just have a class like loop-class or something
+such that you can say you turn things into an instance of that
+class. Saying it's a standard instance is still overbroad.
+
+3.4, a sketch of what a loop body is producing might help motivate the
+discussion of tagbody, etc.
+
+Without syntax or some kind of guide rails like this, it's kind of
+hard to audit this paper for completeness of approach. Mostly these
+parts sound plausible, but one would have to be highly adept at the
+internals of these facilities to know if anything was amiss.
+
+Some kind of analysis of the composed structure of the result might be
+interesting to see, too.
+
+4
+
+When referring to less code, how do you quantify that? Numbers of
+lines? Of functions? Of function calls? Whatever the case, a concrete
+indication of measure her would be good. I am assuming you actually
+have the two code bases to compare.  Maybe this is the stuff in
+section 5.  But mostly conclusions should restate and merely shape
+points already made in the running text of the paper, not introduce
+new evidence.
+
+5
+
+Bullet two ends in a comma
+
+It would be good to clarify why a 2.5x increase in the number of lines
+of code is an improvement.  Is some of that extensions? If so, you
+should separate that out.  A table might be useful.  You got into much
+detail here (5 bullets worth) in why the discrepancy happens but not
+why it's judged good.
+
+I'm not sure that a lot of this should be in the conclusions part.
+
+Can you quantify the cost of backtracking so the reader can assess the
+goodness of your judgment on the acceptability of this trade?
+
+5.2
+
+I'm doubtful about the idea of proceeding with more parsing once an
+error is found, especially in a backtracking parser, unless you're
+saying this is a way of finding valid alternate parses.  If it's only
+a theory that you can report the various errors, I'm not sure all
+errors you find are going to be ones that will make sense to the
+user--they may just mean the clause shouldn't have been tried. But
+without an example it's hard to say.  This is in a future work
+section, so it's mostly OK to mention these plans, but I would either
+be more clear about why you express certainty about some of this or
+adjust the text to acknowledge these are just experiments to try.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 19
+TITLE: A modern implementation of the LOOP macro
+AUTHORS: Robert Strandh
+
+OVERALL EVALUATION: 0 (borderline paper)
+REVIEWER'S CONFIDENCE: 4 (high)
+
+----------- Review -----------
+Summary
+-------
+
+The author presents a new implementation for the Common Lisp LOOP
+macro, as part of the implementation SICL.  Unlike previous
+implementations, most of them based on the original MIT loop macro
+and/or its modified variant developed at Symbolics, this new
+implementation strives for increased compliance with the Standard; it
+also uses modern techniques: parsing combinators for parsing, and CLOS
+for modularity and extensibility, resulting in cleaner code.
+
+
+Major Issues
+------------
+
+The paper is generally well-written, though it tends to assume a bit
+more familiarity with Common Lisp from the reader than the
+conference's target audience probably has.  This should be easy to
+fix.
+
+The reason why I only give 0 (borderline paper) to the paper is that
+whereas the paper describes a useful result, the result seems to bring
+limited novelty or enlightenment: Yes, this new implementation of LOOP
+seems to be better and more modular, by making use of techniques that
+didn't exist when the macro was first written 40 years ago (namely,
+CLOS, and parser combinators). But is there any lesson learned?  Or is
+the lesson all too "modular"? That is, yes, we can see yet another
+example of how each of these techniques is indeed better than what
+preceded it, but without finding any new synergy between them or any
+particularly good match with the existing problem, or any novel
+insight along the way.
+
+This paper has some solid foundation but, as is, it fails to build
+upon these foundations and fulfill its potential.  Maybe if the paper
+were extended to address one or more of the concerns I raise below, it
+would make a more compelling candidate to publication.
+
+
+Minor Issues
+------------
+
+2.1 "The MIT loop implementation is monolithic".
+It would be nice if some words (e.g. "Besides", "Also") would clearly
+distinguish this paragraph from the preceding one. This is not part of
+the second clause, and this isn't a third clause either but an
+unrelated topic.
+
+2.2 vs 2.3 - is the variation by Symbolics used by ECL the same as the
+code from Genera partially used by SBCL? Same as used by CCL?
+
+2.x Also, I'm not saying that Allegro or ABCL deserve special mention,
+but then again, they are two notable implementations missing from this
+seemingly arbitrary list of implementations.
+
+Finally, I would either put all these past implementations in a single
+subsection to save space for other discussions.
+
+
+3.1 If you don't have "full" backtracking in your monad, how do you
+handle from being ambiguous as to being part of arithmetic-up vs
+arithmetic-down?  Would it be that you do have "full" backtracking
+(i.e. failure and alternatives), just with a single depth-first-search
+strategy and no way to accumulate more than one result?
+
+Do you provide a useful error message for e.g.
+(loop for i downfrom 10 upto 1 collect i)
+
+I don't suppose that the pattern matching involved in various
+left-hand-side statements is particularly difficult, but it may or may
+not have implications in terms of fitting in a larger parsing
+framework.
+[Speaking of which, does SICL have some way of handling
+source-locations when reporting errors? A way that works well across
+macro invocations?]
+
+3.4 The loop is expanded into a TAGBODY special form. For the sake of
+readers not familiar with Common Lisp, you should explain that this
+form allows labels and goto jumps, that are not otherwise allowed in
+regular Lisp code (goto may or may not be considered harmful when used
+in contexts other than the expansion of higher-level macros).
+
+Related points that may or may not deserve a remark:
+
+* Are there implications regarding further passes of binding analysis,
+  type analysis?  Are these difficulties inherent in the semantics of
+  LOOP?  Do you need or use special tricks in your analysis and
+  optimization passes to recover some higher-level control flow
+  information and make use of it?
+* What about unused binding analysis? If an iteration variable is
+  unused, is there a warning?  Can the user hush it? (e.g. in CCL you
+  have to use (PROGN X) to ignore unused variable X.)
+
+This section reminds me of the discussion on loop shapes in Olin
+Shivers' famous "Anatomy of a Loop" paper; are there notable
+commonalities or differences that bear mentioning?
+
+4. The MIT loop macro seems to be also extensible; I have seen
+extensions written at least for the variants in CCL and SBCL. Is this
+new macro implementation easier or harder to extend?  Can it express
+extensions that were not possible or not easy to express previously?
+
+You implement an extension with keywords element and elements. But
+this runs afoul of one potential use of your new better-conforming
+implementation which might have been to better detect non-conforming
+code that relies on non-standard construct and validate conforming
+code that doesn't. Is there a way to dynamically control and disable
+such implementations?
+
+5.2 refSecsec-benefits -> is that some bad LaTeX code that ought to be
+a bibliography entry?
+
+Also, while I am no specialist in the topic, a Google search for
+"parser combinator error reporting" has several results, and better
+search terms might reveal yet more results.
+
+Would you be able to write the second error-reporting parser based on
+the same declarations, or would it be a separate endeavor?
