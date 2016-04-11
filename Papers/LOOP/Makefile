@@ -18,7 +18,7 @@ all : $(NAME).pdf
 %.code: %.lisp 
 	./codify $<
 
-$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES)
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) sig-alternate-05-2015.cls
 	pdflatex $<
 	bibtex $(NAME)
 	pdflatex $<
