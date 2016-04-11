@@ -1658,10 +1658,9 @@
   \if@printcopyright
     \copyright\ \the\copyrtyr\ \@copyrightowner
   \fi
-%  \if@acmowned ISBN \else\ifnum\acm@copyrightmode=2 ISBN \else \par\smallskip ACM ISBN \fi\fi
-% \the\acmcopyr\ifx\@acmPrice\@empty.\else\dots\@acmPrice\fi\par\smallskip
-%{DOI: \small\expandafter\printdoi\expandafter{\@doi}}
-} 
+  \if@acmowned ISBN \else\ifnum\acm@copyrightmode=2 ISBN \else \par\smallskip ACM ISBN \fi\fi
+ \the\acmcopyr\ifx\@acmPrice\@empty.\else\dots\@acmPrice\fi\par\smallskip
+{DOI: \small\expandafter\printdoi\expandafter{\@doi}}} 
 \toappear{\fontsize{7pt}{8pt}\fontfamily{ptm}\selectfont
   \the\boilerplate\par\smallskip
  \the\copyrightetc}
