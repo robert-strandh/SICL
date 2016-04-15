@@ -55,12 +55,6 @@ I would probably say to cite the CL spec in some form, paper or
 hypertext, to give the reader someplace to go to compare MIT loop with
 CL's loop.
 
-It feels like it might be helpful to include the bnf of the LOOP macro
-from the ANSI CL spec just to help people who are unfamiliar to
-navigate.  (Maybe that's prohibitively large for this small paper,
-though.  I just wanted to raise the idea. Short of that, maybe a
-reference into CLHS at the LispWorks site.)
-
 2.1
 
 I'm not sure "loop" in the section name needs to be in font code. It
