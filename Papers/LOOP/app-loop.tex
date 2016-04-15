@@ -1,0 +1,83 @@
+\appendix
+
+\section{LOOP syntax}
+
+In this appendix, we present some parts of the syntax of the
+\texttt{loop} macro that are relevant to the discussion in this paper.
+Parts that are not relevant to this paper have been left out.
+
+\begin{verbatim}
+loop [name-clause] 
+     {variable-clause}* 
+     {main-clause}* 
+=> result*
+\end{verbatim}
+
+\begin{verbatim}
+name-clause::= named name 
+
+variable-clause::= with-clause | 
+                   initial-final | 
+                   for-as-clause 
+
+with-clause::= with var1 [type-spec] [= form1] 
+               {and var2 [type-spec] [= form2]}* 
+
+main-clause::= unconditional | 
+               accumulation | 
+               conditional | 
+               termination-test | 
+               initial-final 
+
+initial-final::= initially compound-form+ | 
+                 finally compound-form+ 
+
+unconditional::= {do | doing} compound-form+ | 
+                 return {form | it} 
+
+accumulation::= list-accumulation | 
+                numeric-accumulation 
+
+list-accumulation::= {collect | collecting | 
+                      append | appending | 
+                      nconc | nconcing} 
+                     {form | it}  
+                     [into simple-var] 
+
+numeric-accumulation::= {count | counting | 
+                         sum | summing | } 
+                        maximize | maximizing | 
+                        minimize | minimizing 
+                        {form | it} 
+                        [into simple-var] 
+                        [type-spec] 
+
+conditional::= {if | when | unless} 
+               form selectable-clause 
+               {and selectable-clause}*  
+               [else selectable-clause 
+               {and selectable-clause}*]  
+               [end] 
+
+selectable-clause::= unconditional | 
+                     accumulation | 
+                     conditional 
+
+termination-test::= while form | 
+                    until form | 
+                    repeat form | 
+                    always form | 
+                    never form | 
+                    thereis form 
+
+for-as-clause::= {for | as} for-as-subclause 
+                 {and for-as-subclause}* 
+
+for-as-subclause::= for-as-arithmetic | 
+                    for-as-in-list | 
+                    for-as-on-list | 
+                    for-as-equals-then | 
+                    for-as-across | 
+                    for-as-hash | 
+                    for-as-package 
+\end{verbatim}
