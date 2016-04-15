@@ -27,11 +27,12 @@ Robert Strandh\\
 
 \begin{abstract}
 Most \commonlisp{} implementations seem to use a derivative of
-\mitloop{}.  This implementation predates the \commonlisp{} standard,
-which means that it does not use some of the features of \commonlisp{}
-that were not part of the language before 1994.  As a consequence, the
-\texttt{loop} implementation in all major \commonlisp{} implementation
-is \emph{monolithic} and therefore hard to maintain and extend.
+\mitloop{} \cite{Burke:Moon:MIT.loop}.  This implementation predates
+the \commonlisp{} standard, which means that it does not use some of
+the features of \commonlisp{} that were not part of the language
+before 1994.  As a consequence, the \texttt{loop} implementation in
+all major \commonlisp{} implementation is \emph{monolithic} and
+therefore hard to maintain and extend.
 
 Furthermore, \mitloop{} is not a conforming \texttt{loop}
 implementation, in that it produces the wrong result for certain
@@ -40,7 +41,9 @@ clauses with undefined behavior according to the standard, though
 whether such extended behavior is a problem is debatable.
 
 We describe a modern implementation of the \commonlisp{} \texttt{loop}
-macro.  This implementation is part of the \sicl{} project.  To make
+macro.  This implementation is part of the \sicl{}%
+\footnote{See https://github.com/robert-strandh/SICL}
+project.  To make
 this implementation of the macro modular, maintainable, and
 extensible, we use \emph{combinator parsing} to recognize
 \texttt{loop} clauses, and we use \clos{} generic functions for code
