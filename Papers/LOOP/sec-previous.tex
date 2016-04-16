@@ -58,9 +58,10 @@ In the second case, we have an example of \emph{a non-conforming
 the standard clearly stipulates that every implementation must print
 $9$, whereas \mitloop{} prints $10$.
 
-The \mitloop{} implementation is \emph{monolithic} and that holds true
-for its variations too.  The code is contained in a single file with
-around $2000$ lines of code in it.
+In addition to the non-conforming problems, \mitloop{} has issues with
+modularity, in that the implementation is \emph{monolithic}, and that
+holds true for its variations too.  The code is contained in a single
+file with around $2000$ lines of code in it.
 
 Code generation uses a significant number of special variables holding
 various pieces of information that are ultimately assembled into the
