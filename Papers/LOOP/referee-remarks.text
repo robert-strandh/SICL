@@ -185,12 +185,6 @@ would make a more compelling candidate to publication.
 Minor Issues
 ------------
 
-2.1 "The MIT loop implementation is monolithic".
-It would be nice if some words (e.g. "Besides", "Also") would clearly
-distinguish this paragraph from the preceding one. This is not part of
-the second clause, and this isn't a third clause either but an
-unrelated topic.
-
 2.2 vs 2.3 - is the variation by Symbolics used by ECL the same as the
 code from Genera partially used by SBCL? Same as used by CCL?
 
