@@ -5,10 +5,18 @@
 \label{sec-our-technique-parsing-clauses}
 
 In order to parse \texttt{loop} clauses, we use a simplified version%
-\footnote{It is simplified because we do not need the full
-  backtracking power of combinator parsing.}
 of a parsing technique known as \emph{combinator parsing}
-\cite{Wadler:1985:RFL:5280.5288}.
+\cite{Wadler:1985:RFL:5280.5288}.  It is simplified in that we do not
+need the full backtracking power of this technique.  It is fairly easy
+to structure the individual clause and sub-clause parsers so that a
+parser either succeeds or fails, simply because the \texttt{loop}
+grammar is unambiguous at this level.  When a parser succeeds, the
+result is correct and unambiguous, and when it fails, other parsers
+are tried in sequence.  Obtaining the correct result requires the
+individual parsers to be tried in a particular order, which is a
+disadvantage of the simplification.  As discussed in
+\refSec{sec-using-external-parser-framework}, we plan to avoid this
+restriction by using an external parsing framework.
 
 With this parsing technique, client code defines \emph{elementary
   parsers} that are then combined using combinators such as
