@@ -196,11 +196,7 @@ Finally, I would either put all these past implementations in a single
 subsection to save space for other discussions.
 
 
-3.1 If you don't have "full" backtracking in your monad, how do you
-handle from being ambiguous as to being part of arithmetic-up vs
-arithmetic-down?  Would it be that you do have "full" backtracking
-(i.e. failure and alternatives), just with a single depth-first-search
-strategy and no way to accumulate more than one result?
+3.1 
 
 Do you provide a useful error message for e.g.
 (loop for i downfrom 10 upto 1 collect i)
