@@ -114,13 +114,8 @@ the situation.
 \label{sec-our-technique-representing-parsed-clauses}
 
 The result of the initial parsing process is a list of clauses, where
-each clause has been turned into a standard instance.%
-\footnote{We avoid using language such as ``an instance of a \clos{}
-  class'' since all classes are \clos{} classes and therefore all
-  \commonlisp{} objects are instances of \clos{} classes.  A
-  ``standard instance'' representing a \texttt{loop} clause is created
-  by calling \texttt{make-instance} on a class defined by
-  \texttt{defclass}.}
+each clause has been turned into an instance of (a subclass of) the
+class \texttt{clause}.
 
 The classes representing different clause are organized into a graph
 that that mostly mirrors the names and descriptions of different
@@ -138,11 +133,12 @@ This organization allows us to capture commonalities between different
 clause types by defining methods on generic functions that are
 specialized to the appropriate class in this graph.
 
-In addition to representing each clause as a standard instance, we
-also represent the \texttt{loop} body itself as an instance of the
-class named \texttt{loop-body}.  This instance contains a list of all
-the clauses, but also other information, in particular about default
-accumulation for this call to the \texttt{loop} macro.
+In addition to representing each clause as an instance of the
+\code{clause} class, we also represent the \texttt{loop} body itself
+as an instance of the class named \texttt{loop-body}.  This instance
+contains a list of all the clauses, but also other information, in
+particular about default accumulation for this call to the
+\texttt{loop} macro.
 
 \subsection{Semantic analysis}
 \label{sec-our-technique-semantic-analysis}
