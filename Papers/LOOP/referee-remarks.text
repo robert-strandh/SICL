@@ -63,12 +63,6 @@ systems, which may share that code branch, but those are not
 Symbolics, so probably Genera and Symbolics are the same in this
 context.
 
-3.1
-
-The notion of "generalized boolean" is Common Lisp specific, so that's
-another reason for at least one citation of either CLHS or the ANSI CL
-spec. It might be worth footnoting this term and explaining it.
-
 3.2
 
 Regarding text here, clarified by footnote 8, why not at the
