@@ -90,6 +90,19 @@ only when the first one fails.  In that situation, we estimate that
 performance is of secondary importance and that emphasis should be on
 appropriate error signaling.
 
+\subsection{Alternative parsing techniques}
+
+While a number of different parsing techniques such as LALR or Pratt
+\cite{Pratt:1973:TDO:512927.512931} would be feasible for the parsing
+the \texttt{loop} grammar as specified in the standard
+\seeapp{loop-syntax}, an explicit goal of our work is to make it
+possible for client code to extend the grammar in a modular way.  Most
+parsing techniques require the full grammar to be available a priori
+which is incompatible with this goal.  There are parsing techniques
+other than combinator parsing that could be used, and we plan to
+investigate the feasibility of such techniques, in particular Earlay
+parsing.
+
 \subsection{Code refactoring}
 
 As suggested in the beginning of this section, there are very likely
