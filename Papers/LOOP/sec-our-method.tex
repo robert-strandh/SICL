@@ -172,7 +172,14 @@ The main control structure for code generation consists of two steps:
 \begin{itemize}
 \item First, the \texttt{loop} prologue, the \texttt{loop} body, and
   the \texttt{loop} epilogue are constructed in the form of a
-  \texttt{tagbody} special form.
+  \texttt{tagbody}%
+  \footnote{For readers unfamiliar with \commonlisp{}, the
+    \texttt{tagbody} special form allows low-level constructs such as
+    arbitrary control transfers to arbitrary statements through the
+    use of labels and \texttt{go} forms that jump to such labels.
+    This special form is mostly used in the expansion of high-level
+    macros such as \texttt{loop} and other iteration constructs.}
+  special form.
 \item To the resulting \texttt{tagbody} form is then applied a set of
   nested \emph{wrappers}, one for each clause.  A wrapper for a clause
   typically contains \texttt{let} \emph{bindings} required for the
