@@ -177,11 +177,7 @@ framework.
 source-locations when reporting errors? A way that works well across
 macro invocations?]
 
-3.4 The loop is expanded into a TAGBODY special form. For the sake of
-readers not familiar with Common Lisp, you should explain that this
-form allows labels and goto jumps, that are not otherwise allowed in
-regular Lisp code (goto may or may not be considered harmful when used
-in contexts other than the expansion of higher-level macros).
+3.4
 
 Related points that may or may not deserve a remark:
 
