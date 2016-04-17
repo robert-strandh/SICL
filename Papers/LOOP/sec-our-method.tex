@@ -30,7 +30,12 @@ In our parsing framework, an individual parser is an ordinary
 and that returns three values:
 
 \begin{enumerate}
-\item A generalized Boolean indicating whether the parse succeeded.
+\item A generalized Boolean%
+  \footnote{The term \emph{generalized Boolean} is part of the
+    \commonlisp{} \cite{ansi:common:lisp} terminology.  It means any
+    value where \texttt{nil} stands for \emph{false} and any other
+    value stands for \emph{true}.}
+  indicating whether the parse succeeded.
 \item The result of the parse.  If the parse does not succeed, then
   this value is unspecified.
 \item A list of the tokens that remain after the parse.  If the
