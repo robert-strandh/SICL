@@ -57,11 +57,6 @@ CL's loop.
 
 2.3
 
-Would this have yielded to a Pratt parser?
-(https://en.wikipedia.org/wiki/Pratt_parser) I don't know the answer
-but would be curious. I'm personally a fan of Pratt parsers. Symbolic
-languages like CGOL and Macsyma have used them successfully.
-
 C and C++ probably need citations.
 
 Symbolics Inc almost certainly needs a citation of some sort, since
