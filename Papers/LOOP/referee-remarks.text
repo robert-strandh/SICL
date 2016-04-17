@@ -65,11 +65,6 @@ context.
 
 3.2
 
-Regarding text here, clarified by footnote 8, why not at the
-implementation level just have a class like loop-class or something
-such that you can say you turn things into an instance of that
-class. Saying it's a standard instance is still overbroad.
-
 3.4, a sketch of what a loop body is producing might help motivate the
 discussion of tagbody, etc.
 
