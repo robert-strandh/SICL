@@ -169,9 +169,6 @@ subsection to save space for other discussions.
 
 3.1 
 
-Do you provide a useful error message for e.g.
-(loop for i downfrom 10 upto 1 collect i)
-
 I don't suppose that the pattern matching involved in various
 left-hand-side statements is particularly difficult, but it may or may
 not have implications in terms of fitting in a larger parsing
