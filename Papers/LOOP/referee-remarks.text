@@ -106,20 +106,6 @@ I'm not sure that a lot of this should be in the conclusions part.
 Can you quantify the cost of backtracking so the reader can assess the
 goodness of your judgment on the acceptability of this trade?
 
-5.2
-
-I'm doubtful about the idea of proceeding with more parsing once an
-error is found, especially in a backtracking parser, unless you're
-saying this is a way of finding valid alternate parses.  If it's only
-a theory that you can report the various errors, I'm not sure all
-errors you find are going to be ones that will make sense to the
-user--they may just mean the clause shouldn't have been tried. But
-without an example it's hard to say.  This is in a future work
-section, so it's mostly OK to mention these plans, but I would either
-be more clear about why you express certainty about some of this or
-adjust the text to acknowledge these are just experiments to try.
-
-
 ----------------------- REVIEW 2 ---------------------
 PAPER: 19
 TITLE: A modern implementation of the LOOP macro
