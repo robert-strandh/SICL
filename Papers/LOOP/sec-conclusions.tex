@@ -76,7 +76,11 @@ A simple way of improving error reporting would be to add more parsers
 for each clause type.  This additional parsers would recognize
 incorrect clause syntax and ultimately result in an error being
 signaled, but more importantly, they would succeed so that parsing
-could continue with subsequent clauses.
+could continue with subsequent clauses.  For example, a common mistake
+is to omit the \texttt{=} character in a \texttt{with} clause
+\seeapp{loop-syntax}.  A second parser would recognize this defective
+\texttt{with} clause and either signal an appropriate error or issue a
+warning and recognizing the clause as a valid \texttt{with} clause.
 
 Unfortunately, however, while the parsing technique we use has many
 advantages as described in \refSec{sec-benefits}, it also has the main
@@ -88,7 +92,10 @@ We plan to avoid this conundrum by implementing a \emph{second parser}
 for parsing individual clauses.  This second parser would be invoked
 only when the first one fails.  In that situation, we estimate that
 performance is of secondary importance and that emphasis should be on
-appropriate error signaling.
+appropriate error signaling.  Only this second parser would contain
+the additional clause parsers that recognize common incorrect clause
+syntax, and each such parser would be associated with an error or a
+warning appropriate for the situation.
 
 \subsection{Alternative parsing techniques}
 
