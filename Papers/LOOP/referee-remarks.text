@@ -227,9 +227,6 @@ code that relies on non-standard construct and validate conforming
 code that doesn't. Is there a way to dynamically control and disable
 such implementations?
 
-5.2 refSecsec-benefits -> is that some bad LaTeX code that ought to be
-a bibliography entry?
-
 Also, while I am no specialist in the topic, a Google search for
 "parser combinator error reporting" has several results, and better
 search terms might reveal yet more results.
