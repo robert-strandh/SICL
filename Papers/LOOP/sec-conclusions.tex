@@ -92,17 +92,16 @@ appropriate error signaling.
 
 \subsection{Alternative parsing techniques}
 
-While a number of different parsing techniques such as LALR or Pratt
-\cite{Pratt:1973:TDO:512927.512931} would be feasible for the parsing
-the \texttt{loop} grammar as specified in the standard
-\seeapp{loop-syntax}, an explicit goal of our work is to make it
-possible for client code to extend the grammar in a modular way.  Most
-parsing techniques require the full grammar to be available a priori
-which is incompatible with this goal.  There are parsing techniques
-other than combinator parsing that could be used, and we plan to
-investigate the feasibility of such techniques, in particular Earley
-\cite{Earley:1970:ECP:362007.362035}
-parsing.
+While a number of different parsing techniques such as LALR
+\cite{DeRemer:lalr} or Pratt \cite{Pratt:1973:TDO:512927.512931} would
+be feasible for the parsing the \texttt{loop} grammar as specified in
+the standard \seeapp{loop-syntax}, an explicit goal of our work is to
+make it possible for client code to extend the grammar in a modular
+way.  Most parsing techniques require the full grammar to be available
+a priori which is incompatible with this goal.  There are parsing
+techniques other than combinator parsing that could be used, and we
+plan to investigate the feasibility of such techniques, in particular
+Earley \cite{Earley:1970:ECP:362007.362035} parsing.
 
 \subsection{Code refactoring}
 
