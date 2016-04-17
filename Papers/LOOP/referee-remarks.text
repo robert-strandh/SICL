@@ -216,6 +216,3 @@ such implementations?
 Also, while I am no specialist in the topic, a Google search for
 "parser combinator error reporting" has several results, and better
 search terms might reveal yet more results.
-
-Would you be able to write the second error-reporting parser based on
-the same declarations, or would it be a separate endeavor?
