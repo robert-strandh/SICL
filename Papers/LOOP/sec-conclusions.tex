@@ -95,7 +95,10 @@ performance is of secondary importance and that emphasis should be on
 appropriate error signaling.  Only this second parser would contain
 the additional clause parsers that recognize common incorrect clause
 syntax, and each such parser would be associated with an error or a
-warning appropriate for the situation.
+warning appropriate for the situation.  Existing clause parsers that
+recognize correct clause syntax would be re-used, and additional
+parsers for each clause type would be added to the set of parsers for
+that clause type.
 
 \subsection{Alternative parsing techniques}
 
