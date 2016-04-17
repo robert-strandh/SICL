@@ -105,6 +105,11 @@ subsequent clauses, or else we would have to implement some
 sophisticated error recovery, allowing the parsing process to continue
 after a failure.
 
+Our technique for parsing clauses does not work very well for
+signaling useful errors when a clause fails to parse.  In
+\refSec{sec-second-clause-parser}, we discuss our plans for improving
+the situation.
+
 \subsection{Representing parsed clauses}
 \label{sec-our-technique-representing-parsed-clauses}
 
