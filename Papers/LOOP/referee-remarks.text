@@ -110,11 +110,6 @@ for modularity and extensibility, resulting in cleaner code.
 Major Issues
 ------------
 
-The paper is generally well-written, though it tends to assume a bit
-more familiarity with Common Lisp from the reader than the
-conference's target audience probably has.  This should be easy to
-fix.
-
 The reason why I only give 0 (borderline paper) to the paper is that
 whereas the paper describes a useful result, the result seems to bring
 limited novelty or enlightenment: Yes, this new implementation of LOOP
