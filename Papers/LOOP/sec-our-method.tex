@@ -194,6 +194,48 @@ The \texttt{loop} body consists of three consecutive parts:
   variables in preparation for the next iteration.
 \end{enumerate}
 
+\noindent
+For a small example of expanded code, consider the following
+\texttt{loop} form:
+
+{\small\begin{verbatim}
+       (loop for i from 2 to 20 
+             when (> i 10) do (print i))
+\end{verbatim}}
+
+\noindent
+It expands to%
+\footnote{We cleaned it up somewhat by removing unnecessary
+  \texttt{progn} forms and we inserted the comments manually.}
+the following code:
+
+{\small\begin{verbatim}
+       (macrolet ((loop-finish ()
+                    `(go ,'#:g956)))
+         (block nil
+           (let ((#:g957 2) (#:g958 20) (#:g959 1))
+             (let ((#:g960 #:g957) (i #:g957))
+               (tagbody
+                  (if (<= #:g960 #:g958)
+                      (incf #:g960 #:g959)
+                      (go #:g956))
+                #:g963
+                  ;; main body
+                  (let ((#:g964 (> i 10)))
+                    (if #:g964
+                        (print i)
+                        (progn)))
+                  ;; termination test
+                  (unless (<= #:g960 #:g958)
+                    (go #:g956))
+                  ;; stepping
+                  (progn (setq i #:g960) 
+                         (incf #:g960 #:g959))
+                  (go #:g963)
+                #:g956
+                  (return-from nil nil))))))
+\end{verbatim}}
+
 The essence of code generation is handled by a number of generic
 functions, each extracting different information from a clause:
 
