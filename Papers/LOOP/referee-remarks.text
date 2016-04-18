@@ -147,16 +147,6 @@ Finally, I would either put all these past implementations in a single
 subsection to save space for other discussions.
 
 
-3.1 
-
-I don't suppose that the pattern matching involved in various
-left-hand-side statements is particularly difficult, but it may or may
-not have implications in terms of fitting in a larger parsing
-framework.
-[Speaking of which, does SICL have some way of handling
-source-locations when reporting errors? A way that works well across
-macro invocations?]
-
 3.4
 
 Related points that may or may not deserve a remark:
