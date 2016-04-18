@@ -163,6 +163,11 @@ accumulation category}, i.e, one of the categories \emph{list},
 \subsection{Code generation}
 \label{sec-our-technique-code generation}
 
+Our code generation consists of a direct expansion to lower-level
+\commonlisp{} code.  We do not make any attempts to detect problems
+such as unused variables, type conflicts, etc.  All these problems
+will be detected by the compiler when it processes the expanded code.
+
 The main control structure for code generation consists of two steps:
 
 \begin{itemize}
