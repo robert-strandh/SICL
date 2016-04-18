@@ -63,19 +63,6 @@ systems, which may share that code branch, but those are not
 Symbolics, so probably Genera and Symbolics are the same in this
 context.
 
-3.2
-
-3.4, a sketch of what a loop body is producing might help motivate the
-discussion of tagbody, etc.
-
-Without syntax or some kind of guide rails like this, it's kind of
-hard to audit this paper for completeness of approach. Mostly these
-parts sound plausible, but one would have to be highly adept at the
-internals of these facilities to know if anything was amiss.
-
-Some kind of analysis of the composed structure of the result might be
-interesting to see, too.
-
 4
 
 When referring to less code, how do you quantify that? Numbers of
