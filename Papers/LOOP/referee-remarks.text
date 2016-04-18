@@ -65,8 +65,8 @@ context.
 
 4
 
-When referring to less code, how do you quantify that? Numbers of
-lines? Of functions? Of function calls? Whatever the case, a concrete
+[When referring to less code, how do you quantify that? Numbers of
+lines? Of functions? Of function calls?] Whatever the case, a concrete
 indication of measure her would be good. I am assuming you actually
 have the two code bases to compare.  Maybe this is the stuff in
 section 5.  But mostly conclusions should restate and merely shape
@@ -168,13 +168,6 @@ commonalities or differences that bear mentioning?
 extensions written at least for the variants in CCL and SBCL. Is this
 new macro implementation easier or harder to extend?  Can it express
 extensions that were not possible or not easy to express previously?
-
-You implement an extension with keywords element and elements. But
-this runs afoul of one potential use of your new better-conforming
-implementation which might have been to better detect non-conforming
-code that relies on non-standard construct and validate conforming
-code that doesn't. Is there a way to dynamically control and disable
-such implementations?
 
 Also, while I am no specialist in the topic, a Google search for
 "parser combinator error reporting" has several results, and better
