@@ -147,23 +147,6 @@ Finally, I would either put all these past implementations in a single
 subsection to save space for other discussions.
 
 
-3.4
-
-Related points that may or may not deserve a remark:
-
-* Are there implications regarding further passes of binding analysis,
-  type analysis?  Are these difficulties inherent in the semantics of
-  LOOP?  Do you need or use special tricks in your analysis and
-  optimization passes to recover some higher-level control flow
-  information and make use of it?
-* What about unused binding analysis? If an iteration variable is
-  unused, is there a warning?  Can the user hush it? (e.g. in CCL you
-  have to use (PROGN X) to ignore unused variable X.)
-
-This section reminds me of the discussion on loop shapes in Olin
-Shivers' famous "Anatomy of a Loop" paper; are there notable
-commonalities or differences that bear mentioning?
-
 4. The MIT loop macro seems to be also extensible; I have seen
 extensions written at least for the variants in CCL and SBCL. Is this
 new macro implementation easier or harder to extend?  Can it express
