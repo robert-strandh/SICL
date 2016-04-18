@@ -17,3 +17,10 @@ in his paper on user-extensible sequences
 \cite{Rhodes:2007:USC:1622123.1622138}.  This extension defines the
 new \texttt{loop} keywords \texttt{element} and \texttt{elements} for
 this purpose.
+
+Furthermore, since the parsing technology we use does not require any
+costly pre-processing, extensions could be added by client code on a
+per-module basis, rather than as a permanent extension.  Then, client
+code can maintain the capacity of detecting non-conforming constructs
+in most code, while allowing for selected extensions in specific
+modules.
