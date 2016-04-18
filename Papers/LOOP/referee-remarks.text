@@ -142,11 +142,6 @@ Finally, I would either put all these past implementations in a single
 subsection to save space for other discussions.
 
 
-4. The MIT loop macro seems to be also extensible; I have seen
-extensions written at least for the variants in CCL and SBCL. Is this
-new macro implementation easier or harder to extend?  Can it express
-extensions that were not possible or not easy to express previously?
-
 Also, while I am no specialist in the topic, a Google search for
 "parser combinator error reporting" has several results, and better
 search terms might reveal yet more results.
