@@ -5,6 +5,20 @@ As already mentioned in \refSec{sec-our-technique-parsing-clauses},
 the main advantage of our technique is that it allows for a
 \emph{modular} structure of the \texttt{loop} implementation.
 
+\mitloop{} has extension capabilities as well, through the use of
+so-called \emph{loop universes}.  A loop universe is a structure
+instance that contains information on how to parse and translate all
+loop constructs.  The ease with which an extension can be added
+depends on how well the extension fits into the framework provided.
+It is relatively easy to provide an additional keyword for a
+\texttt{for \emph{var} being ...}, but it would be much more difficult
+to allow for a clause like \texttt{when \emph{form} is-a \emph{type}
+  ...} to take but one example.
+
+Furthermore, since \mitloop{} does not use generic functions,
+customizing existing behavior by extending existing methods for
+processing \texttt{loop} elements such as clauses is not an option.
+
 The most immediate consequence of this improved modularity is that the
 code is easier to maintain than a monolithic code for the same
 purpose.  A modification in one module is less likely to break other
