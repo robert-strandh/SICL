@@ -65,14 +65,6 @@ section 5.  But mostly conclusions should restate and merely shape
 points already made in the running text of the paper, not introduce
 new evidence.
 
-5
-
-It would be good to clarify why a 2.5x increase in the number of lines
-of code is an improvement.  Is some of that extensions? If so, you
-should separate that out.  A table might be useful.  You got into much
-detail here (5 bullets worth) in why the discrepancy happens but not
-why it's judged good.
-
 ----------------------- REVIEW 2 ---------------------
 PAPER: 19
 TITLE: A modern implementation of the LOOP macro
