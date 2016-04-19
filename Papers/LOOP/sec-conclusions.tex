@@ -101,6 +101,13 @@ recognize correct clause syntax would be re-used, and additional
 parsers for each clause type would be added to the set of parsers for
 that clause type.
 
+At the moment, we have no quantifiable estimate of the cost of a fully
+backtracking parser, as compared to our simplified technique.  At this
+point, we are also unable to quantify the additional performance
+penalty of having additional parsers for incorrect clause syntax when
+only correct \texttt{loop} syntax is parsed.  Further work is required
+for a precise estimate.
+
 \subsection{Alternative parsing techniques}
 
 While a number of different parsing techniques such as LALR
