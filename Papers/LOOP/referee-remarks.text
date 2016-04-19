@@ -73,11 +73,6 @@ should separate that out.  A table might be useful.  You got into much
 detail here (5 bullets worth) in why the discrepancy happens but not
 why it's judged good.
 
-I'm not sure that a lot of this should be in the conclusions part.
-
-Can you quantify the cost of backtracking so the reader can assess the
-goodness of your judgment on the acceptability of this trade?
-
 ----------------------- REVIEW 2 ---------------------
 PAPER: 19
 TITLE: A modern implementation of the LOOP macro
