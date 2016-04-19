@@ -55,14 +55,6 @@ a must-do, just a note about pragmatics.
 
 C and C++ probably need citations.
 
-Symbolics Inc almost certainly needs a citation of some sort, since
-it's unusual and perhaps unknown to many, but also you refer to Genera
-elsewhere and it might be best to use the same reference style for
-both. You might wish to be allowing for the LMITI (LMI/MIT/TI)
-systems, which may share that code branch, but those are not
-Symbolics, so probably Genera and Symbolics are the same in this
-context.
-
 4
 
 [When referring to less code, how do you quantify that? Numbers of
