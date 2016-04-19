@@ -38,3 +38,13 @@ per-module basis, rather than as a permanent extension.  Then, client
 code can maintain the capacity of detecting non-conforming constructs
 in most code, while allowing for selected extensions in specific
 modules.
+
+As a consequence of this additional modularity, we think it is
+feasible to avoid the current problem of derivatives of \mitloop{},
+namely that each implementation has had to introduce modifications to
+the single file that contains the code.  With better modularity, we
+think it is possible to maintain the code for the \texttt{loop} macro
+as a separate entity, with each \commonlisp{} implementation supplying
+modifications in separate, small modules.  Such a common code base
+would reduce the total maintenance cost for all \commonlisp{}
+implementations using this code base.
