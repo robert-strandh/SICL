@@ -73,7 +73,8 @@ final expansion of the macro.
 \footnote{\ecl{} stands for ``Embedded Common Lisp.\\
 See: //https://gitlab.com/embeddable-common-lisp/ecl}
 includes two implementations of the \texttt{loop} macro, namely
-the initial \mitloop{} with only minor modifications, and the variation
+the initial \mitloop{} with only minor modifications, and a variation
+of \mitloop{} that also includes code written
 by \symbolics{} also with minor modifications.
 
 \clasp{}%
@@ -94,12 +95,10 @@ examples shown in \refSec{sec-mit-loop} are also accepted by \ecl{} and
 \footnote{\sbcl{} stands for Steel-Bank \commonlisp{}.\\ See:
   http://www.sbcl.org/} includes an implementation of the
 \texttt{loop} macro that was originally derived from \mitloop{}, but
-that also includes code from the \texttt{loop} macro of the \genera{}
-operating system.  Furthermore, the \sbcl{} implementation of the
-\texttt{loop} macro has been modified and improved to allow for
-user-definable extensions, such as the extension defined in
-\cite{Rhodes:2007:USC:1622123.1622138} for iterating over
-user-definable sequences.
+that also includes code created by \symbolics{}.  Because of the way
+the code has evolved, it is hard to determine whether, at some point,
+the code of the \texttt{loop} macro of \sbcl{} and that of \ecl{} were
+the same, but a rough comparison suggests that this is the case.
 
 \sbcl{} \texttt{loop} being derived from \mitloop{}, the
 non-conforming examples shown in \refSec{sec-mit-loop} are also accepted
