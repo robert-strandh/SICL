@@ -131,9 +131,6 @@ would make a more compelling candidate to publication.
 Minor Issues
 ------------
 
-2.2 vs 2.3 - is the variation by Symbolics used by ECL the same as the
-code from Genera partially used by SBCL? Same as used by CCL?
-
 2.x Also, I'm not saying that Allegro or ABCL deserve special mention,
 but then again, they are two notable implementations missing from this
 seemingly arbitrary list of implementations.
