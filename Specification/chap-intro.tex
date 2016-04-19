@@ -13,12 +13,18 @@ easier to write compilers, such as parsers of lambda lists, code for
 manipulating declarations, etc.  Other planned modules include a
 module that provides localized docstrings for all of Common Lisp.
 
-We attempt to make the modules as portable as possible, and to
-decrease interdependence as much as possible in order to make
-bootstrapping easier, and to allow for modules to serve as drop-in
-replacements in different implementations with as few modifications as
-possible.  The lower layers use as few primitives as possible, without
-sacrificing performance.  We think it is important that the code of
+Initially, we planned to decrease the interdependence of modules as
+much as possible by creating a partial order between the modules,
+thereby enabling an implementation of a small subset of \commonlisp{}
+to become a fully compliant implementation by adding these modules in
+some order.  This goal turned out to be unreasonable in that many
+modules would have to be written in a subset of the full language,
+thereby making them less maintainable.  Instead, we think the most
+reasonable strategy for creating a new \commonlisp{} implementation is
+to write it using the full language, and to bootstrap the new
+implementation on an existing fully compliant implementation.
+
+We think it is important that the code of
 \sysname{} be of very high quality.  To that end, error messages
 should be as explicit as possible.  Macros, for instance, do extensive
 syntax analysis so as to prevent error messages from being phrased in
