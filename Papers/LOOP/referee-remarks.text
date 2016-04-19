@@ -74,38 +74,6 @@ OVERALL EVALUATION: 0 (borderline paper)
 REVIEWER'S CONFIDENCE: 4 (high)
 
 ----------- Review -----------
-Summary
--------
-
-The author presents a new implementation for the Common Lisp LOOP
-macro, as part of the implementation SICL.  Unlike previous
-implementations, most of them based on the original MIT loop macro
-and/or its modified variant developed at Symbolics, this new
-implementation strives for increased compliance with the Standard; it
-also uses modern techniques: parsing combinators for parsing, and CLOS
-for modularity and extensibility, resulting in cleaner code.
-
-
-Major Issues
-------------
-
-The reason why I only give 0 (borderline paper) to the paper is that
-whereas the paper describes a useful result, the result seems to bring
-limited novelty or enlightenment: Yes, this new implementation of LOOP
-seems to be better and more modular, by making use of techniques that
-didn't exist when the macro was first written 40 years ago (namely,
-CLOS, and parser combinators). But is there any lesson learned?  Or is
-the lesson all too "modular"? That is, yes, we can see yet another
-example of how each of these techniques is indeed better than what
-preceded it, but without finding any new synergy between them or any
-particularly good match with the existing problem, or any novel
-insight along the way.
-
-This paper has some solid foundation but, as is, it fails to build
-upon these foundations and fulfill its potential.  Maybe if the paper
-were extended to address one or more of the concerns I raise below, it
-would make a more compelling candidate to publication.
-
 
 Minor Issues
 ------------
