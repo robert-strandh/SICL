@@ -3,14 +3,16 @@
 
 The \texttt{loop} macro is part of the \commonlisp{} standard
 \cite{ansi:common:lisp}, so every conforming \commonlisp{}
-implementation contains an implementation of this macro.
+implementation contains an implementation of this
+macro. \refApp{loop-syntax} contains the part of the syntax of the
+\texttt{loop} macro that is relevant for this paper.
 
-This macro is frequently criticized as un-Lispy since it does not use
-S-expressions for its clauses, and for being impossible to extend, at
-least by using only features available in the \commonlisp{} standard.
-In addition, advocates of purely-functional programming also criticize
-it, along with all other iteration constructs that can not be
-explained in terms of recursion.
+The \texttt{loop} macro is frequently criticized as un-Lispy since it
+does not use S-expressions for its clauses, and for being impossible
+to extend, at least by using only features available in the
+\commonlisp{} standard.  In addition, advocates of purely-functional
+programming also criticize it, along with all other iteration
+constructs that can not be explained in terms of recursion.
 
 Despite all this criticism, the \texttt{loop} macro is an essential
 and widely used part of any non-trivial \commonlisp{} program.  It is
