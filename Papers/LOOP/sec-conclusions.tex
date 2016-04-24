@@ -90,8 +90,8 @@ signaled, but more importantly, they would succeed so that parsing
 could continue with subsequent clauses.  For example, a common mistake
 is to omit the \texttt{=} character in a \texttt{with} clause
 \seeapp{loop-syntax}.  A second parser would recognize this defective
-\texttt{with} clause and either signal an appropriate error or issue a
-warning and recognizing the clause as a valid \texttt{with} clause.
+\texttt{with} clause as valid, but then either signal an appropriate
+error or issue a warning.
 
 Unfortunately, however, while the parsing technique we use has many
 advantages as described in \refSec{sec-benefits}, it also has the main
