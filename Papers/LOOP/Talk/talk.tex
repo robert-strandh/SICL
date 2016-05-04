@@ -172,6 +172,23 @@ But the standard requires variable clauses to precede main clauses.
 }
 
 \frame{
+  \frametitle{Code generation}
+
+  \begin{itemize}
+  \item Clause parsers generate instances of the class \texttt{clause}.
+  \item Generic functions are used to extract information from parsed
+    clauses:
+    \begin{itemize}
+    \item Variable bindings including type information.
+    \item Termination test.
+    \item Iteration.
+    \item etc.
+    \end{itemize}
+  \end{itemize}
+
+}
+
+\frame{
   \frametitle{Future work}
 
   \begin{itemize}
