@@ -141,6 +141,23 @@ This form should print $9$, but MIT \texttt{loop} prints $10$.
 }
 
 \frame{
+  \frametitle{MIT LOOP accepts non-conforming code}
+
+\begin{alltt}
+(loop until (> i 20)
+      for i from 0
+      do (print i))
+\end{alltt}
+
+\vskip 0.3cm
+The \texttt{until} clause is a \emph{main clause} whereas \texttt{for}
+is a \emph{variable clause}.
+\vskip 0.3cm
+But the standard requires variable clauses to precede main clauses.
+
+}
+
+\frame{
   \frametitle{Combinator parsing}
 
   \begin{itemize}
