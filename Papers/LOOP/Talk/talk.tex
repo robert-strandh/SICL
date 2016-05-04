@@ -4,6 +4,7 @@
 %\usepackage{fancybox}
 \usepackage{epsfig}
 \usepackage{verbatim}
+\usepackage{alltt}
 \usepackage{url}
 %\usepackage{graphics}
 %\usepackage{xcolor}
@@ -123,6 +124,20 @@ Several objectives:
   \item The exception is CLISP which has a highly monolithic
     implementation of the \texttt{loop} macro.
   \end{itemize}
+}
+
+\frame{
+  \frametitle{MIT LOOP is not conforming}
+
+\begin{alltt}
+(loop for i from 0 below 10
+      sum i
+      finally (print i))
+\end{alltt}
+
+\vskip 0.3cm
+This form should print $9$, but MIT \texttt{loop} prints $10$.
+
 }
 
 \frame{
