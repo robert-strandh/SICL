@@ -180,6 +180,18 @@ But the standard requires variable clauses to precede main clauses.
     can be textually separated, and no preprocessing of the combined
     grammar is needed.
   \end{itemize}
+}
+
+\frame{
+  \frametitle{Representation of parsed clauses}
+
+  \begin{itemize}
+  \item Clause parsers generate instances of the class \texttt{clause}.
+  \item Different clause types are instances of different sub-classes
+    of the class \texttt{clause}.
+  \item Clauses admitting the \texttt{and} loop keyword also have a
+    list of sub-clauses.
+  \end{itemize}
 
 }
 
@@ -198,7 +210,6 @@ But the standard requires variable clauses to precede main clauses.
   \frametitle{Code generation}
 
   \begin{itemize}
-  \item Clause parsers generate instances of the class \texttt{clause}.
   \item Generic functions are used to extract information from parsed
     clauses:
     \begin{itemize}
