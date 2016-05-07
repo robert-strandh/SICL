@@ -252,6 +252,21 @@ following benefits:
 }
 
 \frame{
+  \frametitle{A word about bootstrapping}
+
+  \begin{itemize}
+  \item Many implementations are bootstrapped from some other
+    language, typically C or C++.
+  \item Our \texttt{loop} implementation can not be used by such an
+    implementation, because it requires \clos{} and also
+    \texttt{loop}.
+  \item This decision was made because it is too hard to write and
+    maintain code that is only allowed to use a subset of
+    \commonlisp{}.
+  \end{itemize}
+}
+
+\frame{
   \frametitle{Future work}
 
   \begin{itemize}
