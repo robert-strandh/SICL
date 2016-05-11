@@ -64,7 +64,27 @@
 (defclass context ()
   ((%results :initarg :results :reader results)
    (%successors :initarg :successors :accessor successors)
-   (%invocation :initarg :invocation :reader invocation)))
+   (%invocation :initarg :invocation :reader invocation)
+   (%speed-value
+    :initform 1
+    :initarg :speed-value
+    :reader speed-value)
+   (%debug-value
+    :initform 1
+    :initarg :debug-value
+    :reader debug-value)
+   (%safety-value
+    :initform 1
+    :initarg :safety-value
+    :reader safety-value)
+   (%space-value
+    :initform 1
+    :initarg :space-value
+    :reader space-value)
+   (%compilation-speed-value
+    :initform 1
+    :initarg :compilation-speed-value
+    :reader compilation-speed-value)))
 
 (defun context (results successors invocation)
   (unless (or (and (listp results)
