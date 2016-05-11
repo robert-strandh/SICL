@@ -66,3 +66,16 @@
     :origin origin
     :child-ast child-ast
     :value-asts value-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class COMPILATION-SPEED-AST.
+
+(defclass compilation-speed-ast (optimize-ast)
+  ())
+
+(defun make-compilation-speed-ast (child-ast value-ast &key origin)
+  (make-instance 'compilation-speed-ast
+    :origin origin
+    :child-ast child-ast
+    :value-asts value-ast))
