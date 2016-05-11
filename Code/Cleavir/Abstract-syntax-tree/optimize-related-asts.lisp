@@ -40,3 +40,16 @@
     :origin origin
     :child-ast child-ast
     :value-asts value-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SPACE-AST.
+
+(defclass space-ast (optimize-ast)
+  ())
+
+(defun make-space-ast (child-ast value-ast &key origin)
+  (make-instance 'space-ast
+    :origin origin
+    :child-ast child-ast
+    :value-asts value-ast))
