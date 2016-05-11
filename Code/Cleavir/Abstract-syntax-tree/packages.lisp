@@ -120,6 +120,12 @@
    #:bit-aset-ast #:make-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
    #:unsigned-byte-8-aset-ast #:make-unsigned-byte-8-aset-ast
+   #:optimize-ast
+   #:speed-ast #:make-speed-ast
+   #:space-ast #:make-space-ast
+   #:debug-ast #:make-debug-ast
+   #:safety-ast #:make-safety-ast
+   #:compilation-speed-ast #:make-compilation-speed-ast
    #:map-ast-depth-first-preorder
    ))
 
