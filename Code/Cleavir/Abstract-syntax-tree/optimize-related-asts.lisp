@@ -53,3 +53,16 @@
     :origin origin
     :child-ast child-ast
     :value-asts value-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SAFETY-AST.
+
+(defclass safety-ast (optimize-ast)
+  ())
+
+(defun make-safety-ast (child-ast value-ast &key origin)
+  (make-instance 'safety-ast
+    :origin origin
+    :child-ast child-ast
+    :value-asts value-ast))
