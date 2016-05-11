@@ -27,3 +27,16 @@
     :origin origin
     :child-ast child-ast
     :value-asts value-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class DEBUG-AST.
+
+(defclass debug-ast (optimize-ast)
+  ())
+
+(defun make-debug-ast (child-ast value-ast &key origin)
+  (make-instance 'debug-ast
+    :origin origin
+    :child-ast child-ast
+    :value-asts value-ast))
