@@ -112,3 +112,16 @@
   (print-unreadable-object (obj stream)
     (format stream " results: ~s" (results obj))
     (format stream " successors: ~s" (successors obj))))
+
+(defun clone-context (context &rest args)
+  (apply #'reinitialize-instance
+	 (make-instance 'context
+			:result (results context)
+			:successor (successors context)
+			:invocation (invocation context)
+			:speed-value (speed-value context)
+			:debug-value (debug-value context)
+			:safety-value (safety-value context)
+			:space-value (space-value context)
+			:compilation-speed-value (compilation-speed-value context))
+	 args))
