@@ -120,7 +120,7 @@
    #:bit-aset-ast #:make-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
    #:unsigned-byte-8-aset-ast #:make-unsigned-byte-8-aset-ast
-   #:optimize-ast
+   #:optimize-ast #:child-ast
    #:speed-ast #:make-speed-ast
    #:space-ast #:make-space-ast
    #:debug-ast #:make-debug-ast
