@@ -14,3 +14,8 @@
   (compile-ast (cleavir-ast:child-ast ast)
 	       (clone-context context
 			      :safety-value (cleavir-ast:value ast))))
+
+(defmethod compile-ast ((ast cleavir-ast:space-ast) context)
+  (compile-ast (cleavir-ast:child-ast ast)
+	       (clone-context context
+			      :space-value (cleavir-ast:value ast))))
