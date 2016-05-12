@@ -19,3 +19,8 @@
   (compile-ast (cleavir-ast:child-ast ast)
 	       (clone-context context
 			      :space-value (cleavir-ast:value ast))))
+
+(defmethod compile-ast ((ast cleavir-ast:compilation-speed-ast) context)
+  (compile-ast (cleavir-ast:child-ast ast)
+	       (clone-context context
+			      :compilation-speed-value (cleavir-ast:value ast))))
