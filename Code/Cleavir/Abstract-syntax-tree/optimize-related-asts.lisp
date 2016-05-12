@@ -6,11 +6,11 @@
 
 (defclass optimize-ast (ast)
   ((%child-ast :initarg :child-ast :reader child-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+   (%value :initarg :value :reader value)))
 
 (cleavir-io:define-save-info optimize-ast
   (:child-ast child-ast)
-  (:value-ast value-ast))
+  (:value value))
 
 (defmethod children ((ast optimize-ast))
   (list (child-ast ast)))
@@ -22,11 +22,11 @@
 (defclass speed-ast (optimize-ast)
   ())
 
-(defun make-speed-ast (child-ast value-ast &key origin)
+(defun make-speed-ast (child-ast value &key origin)
   (make-instance 'speed-ast
     :origin origin
     :child-ast child-ast
-    :value-asts value-ast))
+    :values value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -35,11 +35,11 @@
 (defclass debug-ast (optimize-ast)
   ())
 
-(defun make-debug-ast (child-ast value-ast &key origin)
+(defun make-debug-ast (child-ast value &key origin)
   (make-instance 'debug-ast
     :origin origin
     :child-ast child-ast
-    :value-asts value-ast))
+    :values value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -48,11 +48,11 @@
 (defclass space-ast (optimize-ast)
   ())
 
-(defun make-space-ast (child-ast value-ast &key origin)
+(defun make-space-ast (child-ast value &key origin)
   (make-instance 'space-ast
     :origin origin
     :child-ast child-ast
-    :value-asts value-ast))
+    :values value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -61,11 +61,11 @@
 (defclass safety-ast (optimize-ast)
   ())
 
-(defun make-safety-ast (child-ast value-ast &key origin)
+(defun make-safety-ast (child-ast value &key origin)
   (make-instance 'safety-ast
     :origin origin
     :child-ast child-ast
-    :value-asts value-ast))
+    :values value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -74,8 +74,8 @@
 (defclass compilation-speed-ast (optimize-ast)
   ())
 
-(defun make-compilation-speed-ast (child-ast value-ast &key origin)
+(defun make-compilation-speed-ast (child-ast value &key origin)
   (make-instance 'compilation-speed-ast
     :origin origin
     :child-ast child-ast
-    :value-asts value-ast))
+    :values value))
