@@ -9,3 +9,8 @@
   (compile-ast (cleavir-ast:child-ast ast)
 	       (clone-context context
 			      :debug-value (cleavir-ast:value ast))))
+
+(defmethod compile-ast ((ast cleavir-ast:safety-ast) context)
+  (compile-ast (cleavir-ast:child-ast ast)
+	       (clone-context context
+			      :safety-value (cleavir-ast:value ast))))
