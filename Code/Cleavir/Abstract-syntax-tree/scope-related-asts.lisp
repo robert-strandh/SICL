@@ -6,4 +6,10 @@
 
 (cleavir-io:define-save-info scope-ast
   (:child-ast child-ast)
-  (:variable-ast variagble-ast))
+  (:variable-ast variable-ast))
+
+(defun make-scope-ast (variable-ast child-ast &key origin)
+  (make-instance 'scope-east
+    :origin origin
+    :variable-ast variable-ast
+    :child-ast child-ast))
