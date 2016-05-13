@@ -126,6 +126,7 @@
    #:debug-ast #:make-debug-ast
    #:safety-ast #:make-safety-ast
    #:compilation-speed-ast #:make-compilation-speed-ast
+   #:scope-ast #:make-scope-ast
    #:map-ast-depth-first-preorder
    ))
 
