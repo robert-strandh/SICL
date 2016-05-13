@@ -13,5 +13,6 @@
    (:file "standard-object-related-asts")
    (:file "array-related-asts")
    (:file "optimize-related-asts")
+   (:file "scope-related-asts")
    (:file "graphviz-drawing")
    (:file "map-ast")))
