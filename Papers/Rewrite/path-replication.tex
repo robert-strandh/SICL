@@ -26,7 +26,20 @@ Robert Strandh\\
 \maketitle
 
 \begin{abstract}
-
+We describe a technique for removing redundant tests in intermediate
+code by replicating the control paths between two identical tests, the
+second of which is dominated by the first.  The two replicas encode
+different outcomes of the test, making it possible to remove the
+second of the two.  Our technique uses local graph rewriting, making
+its correctness easy to prove.  We also present a proof that the
+rewriting always terminates.  This technique can be used to eliminate
+multiple tests that occur naturally such as the test for
+\texttt{cons}-ness when both \texttt{car} and \texttt{cdr} are applied
+to the same object, but we also show how this technique can be used to
+automatically create specialized versions of general code, for example
+in order to create fast specialized versions of sequence functions
+such as \texttt{find} depending on the type of the sequence and the
+values of the keyword arguments supplied.
 \end{abstract}
 
 %% \begin{CCSXML}
