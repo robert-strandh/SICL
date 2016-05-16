@@ -1,0 +1,47 @@
+\section{Introduction}
+
+In a language such as \commonlisp{}, it is hard to avoid redundant
+tests, even if the programmer goes to great lengths to avoid such
+redundancies.  The reason is that even the lowest-level operators in
+\commonlisp{} require \emph{type checks} to determine the exact way to
+accomplish the operation, so that two or more calls to similar
+operators may introduce redundant tests that are impossible to
+eliminate manually.
+
+As an example of such an introduction of redundant tests, consider the
+basic list operators \texttt{car} and \texttt{cdr}.  We can think of
+these operators to be defined in a way similar to the code below:
+
+\begin{verbatim}
+  (defun car (x)
+    (cond ((consp x) (cons-car x))
+          ((null x) nil)
+          (t (error 'type-error ...))))
+
+  (defun cdr (x)
+    (cond ((consp x) (cons-cdr x))
+          ((null x) nil)
+          (t (error 'type-error ...))))
+\end{verbatim}
+
+\noindent
+where \texttt{cons-car} and \texttt{cons-cdr} are operations that
+assume that the argument is of type \texttt{cons}.  These operations
+are implementation defined and not available to the application
+programmer.
+
+Now consider some typical%
+\footnote{In this case, the programmer might use the standard macro
+  \texttt{destructuring-bind}, but for reasons of simplicity, that
+  macro will very likely expand to calls to \texttt{car} and
+  \texttt{cdr}, rather than to some implementation-specific code that
+  avoids the redundant tests.}
+use of \texttt{car} and \texttt{cdr} such as
+in the following code:
+
+\begin{verbatim}
+  (let ((a (car x))
+        (b (cdr x)))
+    ...)
+\end{verbatim}
+
