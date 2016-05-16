@@ -51,3 +51,20 @@ in the following code:
     ...)
 \end{verbatim}
 
+After inlining of the \texttt{car} and \texttt{cdr} operations, the
+code looks like this:
+
+\begin{verbatim}
+  (let ((a (cond ((consp x) (cons-car x))
+                 ((null x) nil)
+                 (t (error 'type-error ...)))
+        (b (cond ((consp x) (cons-cdr x))
+                 ((null x) nil)
+                 (t (error 'type-error ...)))
+    ...)
+\end{verbatim}
+
+We notice that the test for \texttt{consp} occurs twice, and that the
+second occurrence is \emph{dominated by} the first one, i.e., every
+control path leading to the second occurrence must pass by the first
+occurrence as well.
