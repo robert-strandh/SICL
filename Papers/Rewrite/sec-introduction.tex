@@ -10,7 +10,13 @@ eliminate manually.
 
 As an example of such an introduction of redundant tests, consider the
 basic list operators \texttt{car} and \texttt{cdr}.  We can think of
-these operators to be defined in a way similar to the code below:
+these operators to be defined%
+\footnote{For these particular operators, an implementation may use
+  some tricks to avoid some of these tests, but such tricks are not
+  generally usable for other operators.  We still prefer to use
+  \texttt{car} and \texttt{cdr} as examples, because their definitions
+  are easy to understand.}
+in a way similar to the code below:
 
 \begin{verbatim}
   (defun car (x)
