@@ -181,7 +181,7 @@
     ;; Check for suspect keywords.
     (unless (null suspect)
       (warn 'suspect-lambda-list-keyword
-	    :form lambda-list
+	    :code lambda-list
 	    :keyword (car suspect)))
     ;; Check for multiple occurrences.
     (loop for keyword in to-process
