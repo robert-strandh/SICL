@@ -177,7 +177,7 @@
   ())
 
 (define-condition suspect-lambda-list-keyword
-    (style-warning cleavir-i18n:condition)
+    (style-warning code-condition cleavir-i18n:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
