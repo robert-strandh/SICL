@@ -703,7 +703,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'the)) form environment system)
-  (db origin (the value-type subform) (rest form)
+  (db origin (the value-type subform) form
     (declare (ignore the))
     (cleavir-ast:make-the-ast
      (convert subform environment system)
