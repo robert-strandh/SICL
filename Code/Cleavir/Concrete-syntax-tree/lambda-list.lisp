@@ -1,5 +1,12 @@
 (cl:in-package #:cleavir-cst)
 
+;;; This mixin class is used as a superclass of all classes that
+;;; contain a CST for a lambda-list keyword.
+(defclass keyword-mixin ()
+  (;; This slot contains a CST for the lambda-list keyword that is
+   ;; used to introduce the list of parameters.
+   (%keyword-cst :initarg :keyword-cst :reader keyword-cst)))
+
 (defclass parameter ()
   (;; This slot contains the CST for the obligatory variable of the
    ;; parameter.
@@ -24,11 +31,8 @@
 
 ;;; This class is used to represent a list of parameters that is not
 ;;; required to be present in a lambda list.
-(defclass facultative-parameters ()
-  (;; This slot contains a CST for the lambda-list keyword that is
-   ;; used to introduce the list of parameters.
-   (%keyword-cst :initarg :keyword-cst :reader keyword-cst)
-   ;; This slot contains a list of the parameters given.  Each
+(defclass facultative-parameters (keyword-mixin)
+  (;; This slot contains a list of the parameters given.  Each
    ;; subclass defines what kind of objects this list may contain.
    (%parameters :initarg :parameters :reader parameters)))
 
