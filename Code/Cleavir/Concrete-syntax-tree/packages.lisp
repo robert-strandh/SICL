@@ -8,7 +8,6 @@
    #:cst-is-literal-string-p
    #:separate-ordinary-body
    #:separate-function-body
-   #:facultative-parameter
    #:variables-cst
    #:init-form-cst
    #:supplied-p-parameter-cst
