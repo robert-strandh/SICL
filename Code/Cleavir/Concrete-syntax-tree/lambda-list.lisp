@@ -1,5 +1,10 @@
 (cl:in-package #:cleavir-cst)
 
+(defclass parameter ()
+  (;; This slot contains the CST for the obligatory variable of the
+   ;; parameter.
+   (%variable-cst :initarg :variable-cst :reader variable-cst)))
+
 (defclass facultative-parameter ()
   (;; This slot contains the CST for the obligatory variable of the
    ;; parameter.
