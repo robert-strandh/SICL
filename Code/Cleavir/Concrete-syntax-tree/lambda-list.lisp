@@ -5,11 +5,8 @@
    ;; parameter.
    (%variable-cst :initarg :variable-cst :reader variable-cst)))
 
-(defclass facultative-parameter ()
-  (;; This slot contains the CST for the obligatory variable of the
-   ;; parameter.
-   (%variable-cst :initarg :variable-cst :reader variable-cst)
-   ;; This slot contains a CST for the INIT-FORM of the parameter.  If
+(defclass facultative-parameter (parameter)
+  (;; This slot contains a CST for the INIT-FORM of the parameter.  If
    ;; no INIT-FORM was supplied, then this slot contains a CST for
    ;; which both EXPRESSION and LOCATION return NIL.
    (%init-form-cst :initarg :init-form-cst :reader init-form-cst)
