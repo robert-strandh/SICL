@@ -5,6 +5,9 @@
    ;; parameter.
    (%variable-cst :initarg :variable-cst :reader variable-cst)))
 
+(defclass required-parameter (parameter)
+  ())
+
 (defclass facultative-parameter (parameter)
   (;; This slot contains a CST for the INIT-FORM of the parameter.  If
    ;; no INIT-FORM was supplied, then this slot contains a CST for
