@@ -55,5 +55,5 @@
 
 ;;; This class represents the lambda-list keyword &ENVIRONMENT and the
 ;;; following variable.
-(defclass environment-parameter (parameter)
+(defclass environment-parameter (parameter keyword-mixin)
   ())
