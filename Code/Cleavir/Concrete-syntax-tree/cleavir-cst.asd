@@ -24,4 +24,5 @@
    (:file "rebuild")
    (:file "declarations")
    (:file "body")
-   (:file "lambda-list")))
+   (:file "lambda-list")
+   (:file "lambda-list-parsing")))
