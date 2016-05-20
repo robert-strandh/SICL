@@ -48,3 +48,8 @@
    ;; slot contains NIL.
    (%allow-other-keys-cst :initarg :allow-other-keys-cst
 			  :reader allow-other-keys-cst)))
+
+;;; This class represents the lambda-list keyword &ENVIRONMENT and the
+;;; following variable.
+(defclass environment-parameter (parameter)
+  ())
