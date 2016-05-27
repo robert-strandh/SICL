@@ -232,3 +232,21 @@
     (cleavir-ast:make-slot-read-ast
      (convert instance-form env system)
      (convert slot-number-form env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SLOT-WRITE.
+;;;
+;;; This primop takes three arguments.  The first argument is a form
+;;; that must evaluate to a standard instance.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the slot
+;;; number to be written.  The third argument is a form that evaluates
+;;; to the object that will be written to the slot.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:slot-write)) form env system)
+  (destructuring-bind (instance-form slot-number-form value-form) (rest form)
+    (cleavir-ast:make-slot-write-ast
+     (convert instance-form env system)
+     (convert slot-number-form env system)
+     (convert value-form env system))))
