@@ -216,3 +216,19 @@
      (convert function-form env system)
      (loop for argument-form in argument-forms
 	   collect (convert argument-form env system)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SLOT-READ.
+;;;
+;;; This primop takes two arguments.  The first argument is a form
+;;; that must evaluate to a standard instance.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the slot
+;;; number to be read.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:slot-read)) form env system)
+  (destructuring-bind (instance-form slot-number-form) (rest form)
+    (cleavir-ast:make-slot-read-ast
+     (convert instance-form env system)
+     (convert slot-number-form env system))))
