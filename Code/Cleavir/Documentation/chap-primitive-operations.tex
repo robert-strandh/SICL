@@ -1,0 +1,29 @@
+\chapter{Primitive operations}
+
+\section{Purpose}
+
+Primitive operations (or primops for short) are similar to
+\commonlisp{} special operators in that the compiler handles them
+specially.  They are different from \commonlisp{} special operators in
+that a primop does not necessarily have an evaluation rule that is
+different from that of a function call.
+
+Generally speaking, primops should not be used directly in application
+code.  Instead, they are used in system code for implementing certain
+basic \commonlisp{} function.  So, for example, the \texttt{consp}
+primop would typically be used only in the code for the \commonlisp{}
+function \texttt{consp}.  That function would then be inlined by the
+compiler, so that the resulting AST and ultimately the resulting HIR
+instruction that the \texttt{consp} primop translates to will be
+present also in application code.
+
+Frequently, the need for a primop comes from arises because some HIR
+instruction is needed.  Take, for example, the HIR instruction named
+\texttt{eq-instruction} for comparing two pointer values for equality.
+The existence of that instruction requires an AST doing the same
+thing, and it is called \texttt{eq-ast}.  When compiled to HIR, the
+\texttt{eq-ast} generates the an \texttt{eq-instruction}.  Finally, in
+order to produce the source for the \commonlisp{} function
+\texttt{eq}, it must be possible to produce the \texttt{eq-ast} from
+some \commonlisp{} code, which is why the \texttt{eq} primop is
+needed.
