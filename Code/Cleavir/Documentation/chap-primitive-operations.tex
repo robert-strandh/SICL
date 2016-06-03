@@ -27,3 +27,13 @@ order to produce the source for the \commonlisp{} function
 \texttt{eq}, it must be possible to produce the \texttt{eq-ast} from
 some \commonlisp{} code, which is why the \texttt{eq} primop is
 needed.
+
+\section{Package}
+
+All primitive operations have names that are symbols in the package
+named \texttt{cleavir-primop}.  This package contains only those
+symbols that name the primitive operations.  There is no code directly
+associated with the primitive operations.  Instead, the code for
+translating primitive operations to abstract syntax trees
+\seechap{chap-abstract-syntax-tree} is in the form of methods on the
+function \texttt{cleavir-generate-ast:convert-special}.
