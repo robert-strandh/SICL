@@ -51,3 +51,26 @@ code.  Instead, its main purpose is for defining the code for that
 function will be declared \texttt{inline} so that the abstract syntax
 tree and HIR instruction resulting from this primop will eventually
 end up in the compiled code of many applications.
+
+\defprimop{typeq}
+
+This primitive operation is similar to the \commonlisp{} function
+\texttt{typep}.  It differs from the \commonlisp{} function in that it
+does not evaluate its second argument, i.e., the type specifier.
+Also, it does not take an optional environment argument%
+\footnote{We may have to add an environment argument to
+  \texttt{typeq}.  Alternatively we may have to specify that it only
+  takes certain types that do not depend on the environment.}
+like \texttt{typep} does.
+
+This primitive operation should not be used directly in application
+code.  The implementation may have a compiler macro on the function
+\texttt{typep} so that it turns into \texttt{typeq} when the second
+argument is a constant.  The \texttt{typeq} primitive operation can
+also be used in the implementation of certain system functions that
+need to check for constant types.
+
+The \texttt{typeq} generates a \texttt{typeq} AST and ultimately a
+\texttt{typeq} HIR instruction.  This instruction is used by the type
+inferencer \seesec{sec-optimizations-type-inference} to infer
+different types in different successor branches.
