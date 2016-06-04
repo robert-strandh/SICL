@@ -45,12 +45,14 @@ function \texttt{cleavir-generate-ast:convert-special}.
 \defprimop{eq}
 
 This primitive operation has the same semantics as the \commonlisp{}
-function \texttt{eq}.  It should not be used directly in application
-code.  Instead, its main purpose is for defining the code for that
-\commonlisp{} function.  Typically the \commonlisp{} \texttt{eq}
-function will be declared \texttt{inline} so that the abstract syntax
-tree and HIR instruction resulting from this primop will eventually
-end up in the compiled code of many applications.
+function \texttt{eq}, except that it can only appear as the
+\emph{test-form} in the special form \texttt{if}.  It should not be
+used directly in application code.  Instead, its main purpose is for
+defining the code for that \commonlisp{} function.  Typically the
+\commonlisp{} \texttt{eq} function will be declared \texttt{inline} so
+that the abstract syntax tree and HIR instruction resulting from this
+primop will eventually end up in the compiled code of many
+applications.
 
 \defprimop{typeq}
 
