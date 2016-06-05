@@ -46,9 +46,8 @@ function \texttt{cleavir-generate-ast:convert-special}.
 
 This primitive operation has the same semantics as the \commonlisp{}
 function \texttt{eq}, except that it can only appear as the
-\emph{test-form} in the special form \texttt{if}.  It should not be
-used directly in application code.  Instead, its main purpose is for
-defining the code for that \commonlisp{} function.  Typically the
+\emph{test-form} in the special form \texttt{if}.  Its main purpose is
+for defining the code for that \commonlisp{} function.  Typically the
 \commonlisp{} \texttt{eq} function will be declared \texttt{inline} so
 that the abstract syntax tree and HIR instruction resulting from this
 primop will eventually end up in the compiled code of many
@@ -65,8 +64,7 @@ Also, it does not take an optional environment argument%
   takes certain types that do not depend on the environment.}
 like \texttt{typep} does.
 
-This primitive operation should not be used directly in application
-code.  The implementation may have a compiler macro on the function
+The implementation may have a compiler macro on the function
 \texttt{typep} so that it turns into \texttt{typeq} when the second
 argument is a constant.  The \texttt{typeq} primitive operation can
 also be used in the implementation of certain system functions that
@@ -80,8 +78,7 @@ different types in different successor branches.
 \defprimop{consp}
 
 This primitive operation has the same semantics as the \commonlisp{}
-function \texttt{consp}.  It should not be used directly in
-application code.  Instead, its main purpose is for defining the code
+function \texttt{consp}.  Its main purpose is for defining the code
 for that \commonlisp{} function.  Typically the \commonlisp{}
 \texttt{consp} function will be declared \texttt{inline} so that the
 abstract syntax tree and HIR instruction resulting from this primop
