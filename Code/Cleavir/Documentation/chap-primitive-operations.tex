@@ -111,3 +111,31 @@ The \commonlisp{} \texttt{car} function will typically be declared
 \texttt{inline}, allowing the type inferencer
 \seesec{sec-optimizations-type-inference} to use the \texttt{typeq}
 primitive operation to remove redundant type checks.
+
+\defprimop{cdr}
+
+This primitive operation is typically used in the implementation of
+the \commonlisp{} function \texttt{cdr}.  The main difference between
+this primitive operation and the \commonlisp{} function is that the
+primitive operation requires its argument to evaluate to a
+\texttt{cons}.  For that reason, if used to implement the
+\commonlisp{} function \texttt{cdr}, this primitive operation should
+be preceded by a test (using the primitive operation \texttt{typeq})
+to verify that the argument is a \texttt{cons}.  A typical
+implementation of the \texttt{cdr} function might look like this:
+
+\begin{verbatim}
+  (defun cdr (object)
+    (if (cleavir-primop:typeq object cons)
+        (cleavir-primop:cdr object)
+        (if (cleavir-primop:typeq object null)
+            nil
+            (error 'type-error
+                   :datum object
+                   :expected-type '(or cons null)))))
+\end{verbatim}
+
+The \commonlisp{} \texttt{cdr} function will typically be declared
+\texttt{inline}, allowing the type inferencer
+\seesec{sec-optimizations-type-inference} to use the \texttt{typeq}
+primitive operation to remove redundant type checks.
