@@ -84,6 +84,10 @@ for that \commonlisp{} function.  Typically the \commonlisp{}
 abstract syntax tree and HIR instruction resulting from this primop
 will eventually end up in the compiled code of many applications.
 
+The primitive operation \texttt{consp} is deprecated.  The same
+semantics can be expressed with the \texttt{typeq} primitive
+operation, using \texttt{cons} as the second argument.
+
 \defprimop{car}
 
 This primitive operation is typically used in the implementation of
