@@ -10,12 +10,12 @@ different from that of a function call.
 
 Generally speaking, primops should not be used directly in application
 code.  Instead, they are used in system code for implementing certain
-basic \commonlisp{} function.  So, for example, the \texttt{consp}
+basic \commonlisp{} function.  So, for example, the \texttt{car}
 primop would typically be used only in the code for the \commonlisp{}
-function \texttt{consp}.  That function would then be inlined by the
+function \texttt{car}.  That function would then be inlined by the
 compiler, so that the resulting AST and ultimately the resulting HIR
-instruction that the \texttt{consp} primop translates to will be
-present also in application code.
+instruction that the \texttt{car} primop translates to will be present
+also in application code.
 
 Frequently, the need for a primop comes from arises because some HIR
 instruction is needed.  Take, for example, the HIR instruction named
