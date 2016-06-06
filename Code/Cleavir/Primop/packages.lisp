@@ -5,7 +5,6 @@
   (:export
    #:eq
    #:typeq
-   #:consp
    #:car #:cdr #:rplaca #:rplacd
    #:fixnum-arithmetic #:fixnum-+ #:fixnum--
    #:fixnum-< #:fixnum-<= #:fixnum-> #:fixnum->= #:fixnum-=
