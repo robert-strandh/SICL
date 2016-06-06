@@ -26,16 +26,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting CLEAVIR-PRIMOP:CONSP.
-
-(defmethod convert-special
-    ((symbol (eql 'cleavir-primop:consp)) form env system)
-  (db origin (op arg) form
-    (declare (ignore op))
-    (cleavir-ast:make-consp-ast (convert arg env system))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Converting CLEAVIR-PRIMOP:CAR.
 
 (defmethod convert-special
