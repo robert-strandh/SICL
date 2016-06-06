@@ -2,22 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a CONSP-AST
-
-(defmethod compile-ast ((ast cleavir-ast:consp-ast) context)
-  (check-context-for-boolean-ast context)
-  (let ((temp (make-temp)))
-    (compile-ast
-     (cleavir-ast:object-ast ast)
-     (context (list temp)
-	      (list (make-instance 'cleavir-ir:consp-instruction
-		      :inputs (list temp)
-		      :outputs '()
-		      :successors (successors context)))
-	      (invocation context)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compile a CAR-AST
 
 (defmethod compile-ast ((ast cleavir-ast:car-ast) context)
