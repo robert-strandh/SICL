@@ -150,3 +150,23 @@ this:
                :datum object
                :expected-type '(or cons null))))
 \end{verbatim}
+
+\defprimop{rplacd}
+
+This primitive operation is typically used in the implementation of
+the \commonlisp{} function \texttt{rplacd}.  It requires its first
+argument to be a \texttt{cons}.  For that reason, if used to implement
+the \commonlisp{} function \texttt{rplacd}, this primitive operation
+should be preceded by a test (using the primitive operation
+\texttt{typeq}) to verify that the argument is a \texttt{cons}.  A
+typical implementation of the \texttt{rplacd} function might look like
+this:
+
+\begin{verbatim}
+  (defun rplacd (cons object)
+    (if (cleavir-primop:typeq object cons)
+        (cleavir-primop:rplacd cons object)
+        (error 'type-error
+               :datum object
+               :expected-type '(or cons null))))
+\end{verbatim}
