@@ -130,3 +130,23 @@ The \commonlisp{} \texttt{cdr} function will typically be declared
 \texttt{inline}, allowing the type inferencer
 \seesec{sec-optimizations-type-inference} to use the \texttt{typeq}
 primitive operation to remove redundant type checks.
+
+\defprimop{rplaca}
+
+This primitive operation is typically used in the implementation of
+the \commonlisp{} function \texttt{rplaca}.  It requires its first
+argument to be a \texttt{cons}.  For that reason, if used to implement
+the \commonlisp{} function \texttt{rplaca}, this primitive operation
+should be preceded by a test (using the primitive operation
+\texttt{typeq}) to verify that the argument is a \texttt{cons}.  A
+typical implementation of the \texttt{rplaca} function might look like
+this:
+
+\begin{verbatim}
+  (defun rplaca (cons object)
+    (if (cleavir-primop:typeq object cons)
+        (cleavir-primop:rplaca cons object)
+        (error 'type-error
+               :datum object
+               :expected-type '(or cons null))))
+\end{verbatim}
