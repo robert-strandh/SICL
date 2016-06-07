@@ -115,6 +115,8 @@ instruction classes can appear in this initial graph:
 \hline
 \texttt{enclose-instruction} & \refSec{mir-instruction-enclose} \\
 \hline
+\texttt{eq-instruction} & \refSec{mir-instruction-eq} \\
+\hline
 \texttt{car-instruction} & \refSec{mir-instruction-car} \\
 \hline
 \texttt{cdr-instruction} & \refSec{mir-instruction-cdr} \\
@@ -464,12 +466,12 @@ environment and the code resulting from the input instruction graph.
 \texttt{enclose-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{test-instruction}}
-\label{mir-instruction-test}
+\subsection{Instruction \texttt{eq-instruction}}
+\label{mir-instruction-eq}
 
 \begin{tabular}{|l|l|}
 \hline
-Number of inputs & 1\\
+Number of inputs & 2\\
 \hline
 Number of outputs & 0\\
 \hline
@@ -483,15 +485,15 @@ The input of this instruction is a generalized Boolean.  The first
 successor is chosen if the value of the input is \emph{true} and the
 second successor is chosen of the value of the input is \emph{false}.
 
-\refFig{fig-test-instruction} shows the Graphviz illustration of the
-\texttt{test-instruction}
+\refFig{fig-eq-instruction} shows the Graphviz illustration of the
+\texttt{eq-instruction}
 
 \begin{figure}
 \begin{center}
-\inputfig{fig-test-instruction.pdf_t}
+\inputfig{fig-eq-instruction.pdf_t}
 \end{center}
-\caption{\label{fig-test-instruction}
-\texttt{test-instruction}.}
+\caption{\label{fig-eq-instruction}
+\texttt{eq-instruction}.}
 \end{figure}
 
 \subsection{Instruction \texttt{car-instruction}}
