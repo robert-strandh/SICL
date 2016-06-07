@@ -4,11 +4,11 @@
 \section{Instruction graph}
 
 The compiler translates an abstract syntax tree into a \emph{graph} of
-\emph{instructions} in a language named \emph{HIR} which stands for
-High-level Intermediate Representation.  This graph is a variation on
-a \emph{control flow graph}.  As such, it has a unique instruction
-called the \emph{initial instruction} which is the instruction where
-the execution of the HIR program starts.
+\emph{instructions}.
+
+This graph is a variation on a \emph{control flow graph}.  As such, it
+has a unique instruction called the \emph{initial instruction} which
+is the instruction where the execution of the program starts.
 
 In general an instruction can have zero, one, or more
 \emph{successors}, and zero, one, or more \emph{predecessors}.
@@ -20,26 +20,27 @@ value or a \emph{lexical variable}.%
   \texttt{enclose-instruction} has an \texttt{enter-instruction} as
   its input.}  An output may only be a lexical variable.
 
-The execution of a a HIR instruction consists of generating the
-outputs as a function of the inputs, and also of choosing a successor
-based on the inputs.
+The execution of an instruction consists of generating the outputs as
+a function of the inputs, and also of choosing a successor based on
+the inputs.
 
-The execution of a HIR program consists of starting execution at the
+The execution of a program consists of starting execution at the
 \emph{initial instruction} and executing a sequence of instructions
 where an instruction in the sequence is the successor chosen during
 the execution of the preceding instruction in the sequence.
 
-A HIR program is said to be \emph{well formed} if and only if the
-restrictions on each of the instructions are respected, as defined in
-\refSec{sec-ir-instructions}.
+An instruction graph is said to be \emph{well formed} if and only if
+the restrictions on each of the instructions are respected, as defined
+in \refSec{sec-ir-instructions}.
 
-It is possible for a well-formed HIR program to contain instructions
-that are not \emph{reachable} in that there is no execution path from
-the initial instruction to such an instruction.  This situation can
-arise as a result of certain optimizations that determine that a
-particular successor arc of some instruction can never be chosen, and
-so removes that arc.  In certain cases, the instruction at the head of
-that arc may then not be reachable from the initial instruction.  
+It is possible for a well-formed instruction graph to contain
+instructions that are not \emph{reachable} in that there is no
+execution path from the initial instruction to such an instruction.
+This situation can arise as a result of certain optimizations that
+determine that a particular successor arc of some instruction can
+never be chosen, and so removes that arc.  In certain cases, the
+instruction at the head of that arc may then not be reachable from the
+initial instruction.
 
 Because of the existence of \texttt{enclose-instruction}s, the concept
 of reachability is actually a bit more complicated than what was
@@ -55,13 +56,14 @@ By stating that every \texttt{enter-instruction} is reachable a
 priori, we implicitly assume that the closure generated as the output
 of every \texttt{enclose-instruction} is actually \emph{used}.
 Whether this is the case or not is of course \emph{undecidable}, but
-the translation from an abstract syntax tree to HIR eliminates some of
-the cases where the closure may not be used, in that it does not
-generate output for anonymous functions that are evaluated in a
-context where the resulting closure is obviously not needed.
+the translation from an abstract syntax tree to an instruction graph
+eliminates some of the cases where the closure may not be used, in
+that it does not generate output for anonymous functions that are
+evaluated in a context where the resulting closure is obviously not
+needed.
 
-A HIR program is said to be \emph{reduced} if and only if it is
-\emph{well formed} and every instruction is \emph{reachable}. 
+An instruction graph program is said to be \emph{reduced} if and only
+if it is \emph{well formed} and every instruction is \emph{reachable}.
 
 \section{Succession of levels of detail}
 
