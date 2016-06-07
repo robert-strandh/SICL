@@ -65,14 +65,24 @@ needed.
 An instruction graph program is said to be \emph{reduced} if and only
 if it is \emph{well formed} and every instruction is \emph{reachable}.
 
-\section{Succession of levels of detail}
+\section{Levels of detail}
 
-MIR is not a single representation.  Rather, it is a succession of
-different representations, according to the \emph{level of detail}
-that is required.  The levels are distinguished by what types of
-instructions and what types of data are present. 
+From its initial creation, the instruction graph is transformed in
+various ways.  A transformation may add or delete instructions, alter
+the predecessor/successor relationship between instructions, or add or
+delete inputs or outputs.
 
-\subsection{Level 0}
+Furthermore, some transformations may add new \emph{types} of
+instructions that were not present before, and some transformations
+may remove all instructions of a particular type.
+
+Globally speaking, however, the instruction graph comes in two major
+varieties defined by what types of instructions it contains.  These
+two varieties are called \emph{High-level Intermediate Representation}
+(or HIR) and \emph{Medium-level Intermediate Representation} (or MIR)
+respectively.
+
+\subsection{High-level Intermediate Representation}
 
 The first level is \emph{backend independent} and mostly
 implementation independent.  The dependence on the implementation
