@@ -84,12 +84,7 @@ respectively.
 
 \subsection{High-level Intermediate Representation}
 
-The first level is \emph{backend independent} and mostly
-implementation independent.  The dependence on the implementation
-consists of what floating-point operations might be present, depending
-on the different floating-point types supported.
-
-At this level, no address calculations are exposed.  All variables
+At the HIR level, no address calculations are exposed.  All variables
 contain \commonlisp{} objects, except that some variables may contain
 \emph{unboxed} or \emph{raw} versions of such objects, in particular
 integers, floating-point numbers, and characters.
@@ -100,7 +95,17 @@ are called and how values are returned is hidden.  A single
 instruction is used to access the fields of a \texttt{cons} cell, the
 element of an array, and the slot of a standard instance. 
 
-At this level, all lexical locations are treated the same way. 
+\subsection{Initial instruction graph}
+
+The initial instruction graph is created from an abstract syntax tree
+as described in \refChap{chap-abstract-syntax-tree}.  The following
+instruction classes can appear in this initial graph:
+
+\begin{tabular}{|l|l|}
+\hline
+\texttt{enter-instruction} & \refSec{mir-instruction-enter} \\
+\hline
+\end{tabular}
 
 \subsection{Level 1}
 
