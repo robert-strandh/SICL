@@ -3063,6 +3063,27 @@ The output is the square root of the input.
 \texttt{long-float-sqrt-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{create-cell-instruction}}
+\label{mir-instruction-create-cell}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 0\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction creates a \emph{cell} to be used as part of the
+captured static environment of a closure.  The exact nature of the
+cell that is created is not specified.  Most implementations would
+probably just return a \texttt{cons} cell since \texttt{cons} cells
+already exist.
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
