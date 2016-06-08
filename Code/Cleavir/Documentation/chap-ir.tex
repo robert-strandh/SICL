@@ -3111,6 +3111,30 @@ is an immediate input containing a non-negative integer and which
 serves as an index into the static environment.  This instruction has
 a single output, which is a dynamic lexical location.
 
+\subsection{Instruction \texttt{read-cell-instruction}}
+\label{mir-instruction-read-cell}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+Since the structure of a cell holding the value of a closed-over
+variable is unspecified, we use this instruction to obtain the value
+held in such a cell.
+
+This instruction takes a single input, namely a dynamic lexical
+location holding the cell to be read from.  This instruction has a
+single output, namely a dynamic lexical location to hold the value of
+the variable.
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
