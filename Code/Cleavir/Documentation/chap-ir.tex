@@ -3135,6 +3135,30 @@ location holding the cell to be read from.  This instruction has a
 single output, namely a dynamic lexical location to hold the value of
 the variable.
 
+\subsection{Instruction \texttt{write-cell-instruction}}
+\label{mir-instruction-write-cell}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+Since the structure of a cell holding the value of a closed-over
+variable is unspecified, we use this instruction to write the value
+held in such a cell.
+
+This instruction takes two inputs. The first input is a dynamic
+lexical location holding the cell to be written to.  The second input
+is a constant input or a dynamic lexical input holding the value to
+write to the cell.  This instruction has no outputs.
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
