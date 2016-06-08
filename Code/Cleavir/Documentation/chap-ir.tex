@@ -3084,6 +3084,33 @@ cell that is created is not specified.  Most implementations would
 probably just return a \texttt{cons} cell since \texttt{cons} cells
 already exist.
 
+\subsection{Instruction \texttt{fetch-instruction}}
+\label{mir-instruction-fetch}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is used when the static environment is represented as
+a single vector containing an entry for each closed-over variable.
+Such an entry is either a \emph{cell} (with unspecified
+representation) if the corresponding variable is modified, or the
+entry can be the variable itself if it is not modified.
+
+This instruction takes two inputs.  The first input is a dynamic
+lexical location that holds the static environment.  The second input
+is an immediate input containing a non-negative integer and which
+serves as an index into the static environment.  This instruction has
+a single output, which is a dynamic lexical location.
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
