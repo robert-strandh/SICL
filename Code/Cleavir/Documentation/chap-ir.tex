@@ -135,14 +135,14 @@ instruction classes can appear in this initial graph:
 
 The transformation from the previous level to this level consists of a
 \emph{closure analysis}.  Lexical locations are divided into two
-sub-categories, namely \emph{simple locations} and \emph{captured
+sub-categories, namely \emph{simple locations} and \emph{shared
   locations}.  
 
 A simple location is a lexical location that is assigned and used
 within a single \emph{function}, which makes it possible to allocate
 it in a register or in the stack frame belonging to that function.
 
-A captured location, on the other hand, is a location that is assigned
+A shared location, on the other hand, is a location that is assigned
 and/or used in more than one function.  Such a variable can not be
 allocated in a register or in the stack frame, and must instead be
 allocated in the \emph{static runtime environment}. 
@@ -154,7 +154,7 @@ in one function and the destination is in a different function.
 
 \subsection{Level 2}
 
-The distinction between simple locations and captured locations is
+The distinction between simple locations and shared locations is
 necessary because only simple locations are subject to conversion to
 \emph{static single assignment} (SSA) form, which is what this level is
 about.  
@@ -169,7 +169,7 @@ The result of this operation is that some parts of the instruction
 graph may be removed.
 
 Since parts of the instruction graph may be removed, it could be the
-case that variables that were previously considered captured no longer
+case that variables that were previously considered shared no longer
 are.  Therefore, additional variables may be converted to SSA form
 here. 
 
@@ -3221,24 +3221,24 @@ this type.
 \texttt{simple-location}.}
 \end{figure}
 
-\subsection{Location \texttt{captured-location}}
+\subsection{Location \texttt{shared-location}}
 
 This data type corresponds is a subtype of \texttt{lexical-location}.
 It is used for lexical locations that are referred to from several
-function, i.e., for \emph{captured} variables.  A location of this
+function, i.e., for \emph{shared} variables.  A location of this
 type can \emph{not} be allocated in a register or on the stack.
 Instead, it has to be allocated in the \emph{static runtime
   environment}. 
 
-\refFig{fig-captured-location} shows the Graphviz illustration of the
-\texttt{captured-location}
+\refFig{fig-shared-location} shows the Graphviz illustration of the
+\texttt{shared-location}
 
 \begin{figure}
 \begin{center}
-\inputfig{fig-captured-location.pdf_t}
+\inputfig{fig-shared-location.pdf_t}
 \end{center}
-\caption{\label{fig-captured-location}
-\texttt{captured-location}.}
+\caption{\label{fig-shared-location}
+\texttt{shared-location}.}
 \end{figure}
 
 \section{Operations on intermediate code}
