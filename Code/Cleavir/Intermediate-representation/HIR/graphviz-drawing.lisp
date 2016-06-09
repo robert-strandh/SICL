@@ -35,9 +35,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum DYNAMIC-LEXICAL-LOCATION.
+;;; Drawing datum SIMPLE-LOCATION.
 
-(defmethod draw-datum ((datum dynamic-lexical-location) stream)
+(defmethod draw-datum ((datum simple-location) stream)
   (format stream "  ~a [shape = hexagon, style = filled];~%"
 	  (datum-id datum))
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
