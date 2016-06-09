@@ -193,7 +193,7 @@ backend.
 
 This is the level where \emph{register allocation} is accomplished.
 
-\section{Definition of MIR instructions}
+\section{Definition of instructions}
 \label{sec-ir-instructions}
 
 \subsection{Instruction \texttt{enter-instruction}}
@@ -211,10 +211,10 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-An instruction of this type is either the initial instruction of a MIR
-program, or an input to an \texttt{enclose-instruction}.  The outputs
-of this instruction corresponds to the parameters the function as
-follows: 
+An instruction of this type is either the initial instruction of an
+instruction graph, or an input to an \texttt{enclose-instruction}.
+The outputs of this instruction corresponds to the parameters the
+function as follows:
 
 \begin{itemize}
 \item There is an output for every required parameter.
@@ -3241,7 +3241,7 @@ Instead, it has to be allocated in the \emph{static runtime
 \texttt{captured-location}.}
 \end{figure}
 
-\section{Operations on MIR programs}
+\section{Operations on intermediate code}
 
 \subsection{Cloning an instruction}
 
