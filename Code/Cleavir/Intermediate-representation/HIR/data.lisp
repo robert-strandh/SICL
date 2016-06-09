@@ -119,7 +119,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class STATIC-LEXICAL-LOCATION.
+;;; Datum class SHARED-LOCATION.
 ;;;
 ;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
 ;;; for locations that are referred to from within several functions.
@@ -128,7 +128,21 @@
 ;;; indefinite extent (so that it must be allocated on the heap)
 ;;; depends on further analyses.
 
-(defclass static-lexical-location (lexical-location)
+(defclass shared-location (lexical-location)
+  ())
+
+(defun make-shared-location (name)
+  (make-instance 'shared-location
+    :name name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum class STATIC-LEXICAL-LOCATION.
+;;;
+;;; This class is deprecated.  Please use the class
+;;; SHARED-LOCATION instead.
+
+(defclass static-lexical-location (shared-location)
   ())
 
 (defun make-static-lexical-location (name)
