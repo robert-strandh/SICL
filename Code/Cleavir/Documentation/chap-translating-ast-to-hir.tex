@@ -34,3 +34,21 @@ assigned.  The length of the list corresponds to the number of values
 required by the context.  The context also contains a \emph{list of
   successors} which represent MIR instructions to which transfer
 control after evaluation of the current AST.
+
+\Defclass {context}
+
+This class is the base class for compilation contexts.
+
+\Definitarg {:results}
+
+\Definitarg {:successors}
+
+\Definitarg {:speed-value}
+
+\Definitarg {:debug-value}
+
+\Definitarg {:safety-value}
+
+\Definitarg {:space-value}
+
+\Definitarg {:compilation-speed-value}
