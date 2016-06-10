@@ -2,7 +2,7 @@
 \label{chap-translating-ast-to-hir}
 
 The translation of an abstract syntax tree
-\seechap{chap-abstract-syntax-tree} to medium-level intermediate
+\seechap{chap-abstract-syntax-tree} to high-level intermediate
 representation \seechap{chap-ir} is done by an algorithm that is
 similar to that of CPS-conversion.%
 \footnote{CPS means Continuation Passing Style.}
@@ -10,6 +10,13 @@ similar to that of CPS-conversion.%
 As with CPS-conversion, translation makes the control structure
 explicit.  Another similarity is that translation is done from the end
 of the program to the beginning.
+
+\section{\asdf{} system name}
+
+
+\section{Package}
+
+\section{Compilation context}
 
 Translation of a form is accomplished with respect to a
 \emph{compilation context}.  This context contains a \emph{list of
