@@ -119,7 +119,8 @@
 	       :sicl-conditionals-support
 	       :sicl-iteration-support
 	       :sicl-reader-simple
-	       :cleavir-equivalent-lexical-locations)
+	       :cleavir-equivalent-lexical-locations
+	       :cleavir-simple-value-numbering)
   :serial t
   :components
   ((:file "packages")
