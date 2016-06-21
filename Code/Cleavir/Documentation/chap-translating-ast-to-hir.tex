@@ -85,3 +85,20 @@ argument as the \texttt{:successors} initarg, and the
 \textit{invocation} argument as the \texttt{:invocation} initarg.
 All other slots of the new context are initialized according to the
 \texttt{:initform} of the slot.
+
+\Defun {clone-context} {context \rest arguments}
+
+This function makes a copy of \textit{context} and then calls
+\texttt{reinitialize-instance}, passing it the copy and all the
+\textit{arguments}.  Here, \textit{arguments} should contain
+alternating keywords and keyword arguments that are acceptable for
+re-initializing an instance of the class \texttt{context}.  The net
+effect is that \textit{context} is cloned with the exception of the
+initialization arguments in \textit{arguments}.
+
+The reason for the existence of this function is that it is possible
+to add future slots to the class \texttt{context} without breaking
+existing code.  Such slots will simply be copied by existing code.
+Another reason is that frequently a new context is only slightly
+different from some existing context that is available when the new
+context must be created.
