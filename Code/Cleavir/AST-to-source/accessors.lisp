@@ -29,11 +29,13 @@
     ,(to-source (cleavir-ast:slot-number-ast ast) dictionary)
     ,(to-source (cleavir-ast:value-ast ast) dictionary)))
 
+#+ (or)
 (defmethod to-source ((ast cleavir-ast:aref-ast) dictionary)
   `(cleavir-primop:aref
     ,(to-source (cleavir-ast:array-ast ast) dictionary)
     ,(to-source (cleavir-ast:index-ast ast) dictionary)))
 
+#+ (or)
 (defmethod to-source ((ast cleavir-ast:aset-ast) dictionary)
   `(cleavir-primop:aset
     ,(to-source (cleavir-ast:array-ast ast) dictionary)
