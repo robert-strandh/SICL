@@ -166,3 +166,18 @@ This initarg controls whether the compiler performs type inference.
 Typically, the value of this option would be \emph{true}.  Only with a
 high value of the \texttt{compilation-speed} optimize quality would
 the value of this option be \emph{false}.
+
+\Defgeneric {compute-compilation-options} {optimize-qualities}
+
+This generic function takes an instance of (a subclass of) the class
+\texttt{optimize-qualities} and computes a list of initialization
+arguments that will be supplied to \texttt{make-instance} for making
+an instance of (a subclass of) the class \texttt{compilation-options}.
+
+This generic function uses the \texttt{append} method combination with
+option \texttt{:most-specific-first} effectively allowing a method
+specialized to a subclass of \texttt{optimize-qualities} to override
+the default initialization arguments supplied by \sysname{}.  The same
+mechanism also allows the implementation to supply additional
+initialization arguments that are defined only for its own subclass of
+the class \texttt{compilation-options}.
