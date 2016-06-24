@@ -1311,3 +1311,30 @@ floating-point data type.
 The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
+
+\subsection{\texttt{scope-ast}}
+\label{sec-ast-scope}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:child-ast} & \texttt{child-ast} & The child.\\
+\hline
+\texttt{:variable-ast} & \texttt{variable-ast} & The variable having the\\
+ & &  scope for the duration of the child.\\
+\hline
+\end{tabular}
+
+This AST is used to indicate the scope of some variable.  The variable
+indicated by \texttt{variable-ast} is in scope for the duration of the
+execution of the \texttt{child-ast}.
+
+The \texttt{variable-ast} must be a lexical variable.
+
+Whether the compiler uses this AST to determine liveness of the
+variable, depends on the optimization options in effect when this AST
+is compiled.  Typically when the \texttt{debug} optimize quality has a
+high value, then the compiler maintains the variable live for the
+duration of the execution of the child.  Otherwise, liveness is
+determined by the last time the variable is used.
