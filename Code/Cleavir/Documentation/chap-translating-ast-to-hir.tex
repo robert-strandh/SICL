@@ -131,3 +131,31 @@ To each optimize quality corresponds a reader.
 \Defgeneric {safety} {optimize-qualities}
 
 \Defgeneric {compilation-speed} {optimize-qualities}
+
+An implementation typically does not only need its own optimize
+qualities, but it may need to have its own mapping from combinations
+of values of these optimize qualities to different behavior of the
+compiler in different situations.  Furthermore, an implementation may
+introduce new ASTs that also influence this behavior without any
+\texttt{optimize} declarations.  For that reason, the following
+object, also contained in the compilation context controls the details
+of the compilation process.
+
+\Defclass {compilation-options}
+
+This class is a container for several options that control the
+details of the compilation process.  Instances of this class are
+immutable.  Implementations may specialize this class by creating a
+subclass containing implementation-specific compilation options.
+
+\Definitarg {:liveness-from-scope-p}
+
+This initarg controls what the compiler does when it sees a
+\texttt{scope-ast}, as defined in \refSec{sec-ast-scope}.  If the
+value of this option is \emph{true}, then the compiler emits
+an instruction that will artificially use the variable at the end of
+the scope so that it will be kept alive for the duration of that scope
+If the value of this option is \emph{false}, the compiler ignores the
+\texttt{scope-ast} and compiles its \texttt{child-ast}, resulting in
+the liveness of the variable being determined by the last time it is
+used instead.
