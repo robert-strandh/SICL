@@ -159,3 +159,10 @@ If the value of this option is \emph{false}, the compiler ignores the
 \texttt{scope-ast} and compiles its \texttt{child-ast}, resulting in
 the liveness of the variable being determined by the last time it is
 used instead.
+
+\Definitarg {:perform-type-inference-p}
+
+This initarg controls whether the compiler performs type inference.
+Typically, the value of this option would be \emph{true}.  Only with a
+high value of the \texttt{compilation-speed} optimize quality would
+the value of this option be \emph{false}.
