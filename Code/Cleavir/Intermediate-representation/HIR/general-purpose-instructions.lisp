@@ -341,3 +341,24 @@
     :inputs inputs
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction USE-INSTRUCTION.
+;;;
+;;; This instruction is similar to the NOP-INSTRUCTION in that it does
+;;; nothing.  The difference is that this instruction takes a single
+;;; input, is a lexical variable.  The purpose is to create an
+;;; artificial use for the input so that it will be kept alive until
+;;; after this instruction is encountered.  An instance of this
+;;; instruction class will typically be emitted when the DEBUG quality
+;;; has a high value and a SCOPE-AST is encountered.
+
+(defclass use-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-use-instruction (input successor)
+  (make-instance 'use-instruction
+    :inputs (list input)
+    :outputs '()
+    :successors (list successor)))
