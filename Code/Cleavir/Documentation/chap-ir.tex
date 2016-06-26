@@ -1375,8 +1375,28 @@ instructions.  We may propose a \emph{cluster/uncluster}
 transformation on the entire program so that both representations are
 accessible. 
 
+\subsection{Instruction \texttt{nop-instruction}}
+\label{mir-instruction-nop}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs &  0\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction does nothing.  The compiler may generate an instance
+of this class when it needs a successor of some other instruction, and
+the real successor is not yet available.  Subsequent optimization
+passes will eliminate occurrences of this instruction.
+
 \subsection{Instruction \texttt{use-instruction}}
-\label{mir-instruction-phi}
+\label{mir-instruction-use}
 
 \begin{tabular}{|l|l|}
 \hline
