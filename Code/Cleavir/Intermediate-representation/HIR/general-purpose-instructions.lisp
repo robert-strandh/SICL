@@ -337,7 +337,7 @@
   ())
 
 (defun make-phi-instruction (inputs output successor)
-  (make-instance 'eq-instruction
+  (make-instance 'phi-instruction
     :inputs inputs
     :outputs (list output)
     :successors (list successor)))
