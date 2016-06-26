@@ -60,6 +60,7 @@
    #:consp-instruction #:make-consp-instruction
    #:fixnump-instruction #:make-fixnump-instruction
    #:phi-instruction #:make-phi-instruction
+   #:use-instruction #:make-use-instruction
    #:fixnum-add-instruction #:make-fixnum-add-instruction
    #:fixnum-sub-instruction #:make-fixnum-sub-instruction
    #:fixnum-less-instruction #:make-fixnum-less-instruction
