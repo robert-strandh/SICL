@@ -1375,6 +1375,29 @@ instructions.  We may propose a \emph{cluster/uncluster}
 transformation on the entire program so that both representations are
 accessible. 
 
+\subsection{Instruction \texttt{use-instruction}}
+\label{mir-instruction-phi}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs &  1\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is similar to the \texttt{nop-instruction} in that it
+does nothing.  The difference is that this instruction takes a single
+input, is a lexical variable.  The purpose is to create an artificial
+use for the input so that it will be kept alive until after this
+instruction is encountered.  An instance of this instruction class
+will typically be emitted when the DEBUG quality has a high value and
+a \texttt{scope-ast} is encountered.
+
 \subsection{Instruction \texttt{typeq-instruction}}
 \label{mir-instruction-typeq}
 
