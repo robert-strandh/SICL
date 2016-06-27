@@ -97,7 +97,8 @@
 
 (defun translate (initial-instruction)
   (let* ((ownerships
-	   (cleavir-hir-transformations:compute-ownerships initial-instruction))
+          (cleavir-hir-transformations:compute-instruction-owners
+           initial-instruction))
 	 (*ownerships* ownerships)
 	 (*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
 	 (*tags* (make-hash-table :test #'eq))

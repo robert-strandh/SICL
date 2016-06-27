@@ -34,7 +34,7 @@
 (defsystem :sicl-global-environment
   :depends-on (:cleavir-code-utilities
 	       :cleavir-environment
-	       :cleavir-internationalization)
+               :acclimation)
   :serial t
   :components
   ((:file "packages")
