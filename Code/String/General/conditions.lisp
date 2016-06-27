@@ -17,19 +17,19 @@
 (cl:in-package #:sicl-string)
 
 (define-condition bag-is-dotted-list
-    (type-error cleavir-i18n:condition)
+    (type-error acclimation:condition)
   ())
 
 (define-condition bag-is-circular-list
-    (type-error cleavir-i18n:condition)
+    (type-error acclimation:condition)
   ())
 
 (define-condition bag-contains-non-character
-    (type-error cleavir-i18n:condition)
+    (type-error acclimation:condition)
   ())
 
 (define-condition invalid-bounding-indices
-    (error cleavir-i18n:condition)
+    (error acclimation:condition)
   ((%target :initarg :target :reader target)
    (%start :initarg start :reader start)
    (%end :initarg end :reader end)))

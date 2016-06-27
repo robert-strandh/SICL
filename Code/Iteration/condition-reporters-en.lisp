@@ -7,9 +7,9 @@
 ;;; I used to think that we should not use FORMAT for these condition
 ;;; reporters.  I now think it is OK.  RS -- 2014-09-15.
 
-(defmethod cleavir-i18n:report-condition ((c malformed-binding-var)
+(defmethod acclimation:report-condition ((c malformed-binding-var)
 					  stream
-					  (language cleavir-i18n:english))
+					  (language acclimation:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            The binding variable must be a symbol,~@
@@ -19,9 +19,9 @@
 	  (name-package (name c))
           (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition ((c malformed-list-form)
+(defmethod acclimation:report-condition ((c malformed-list-form)
 					  stream
-					  (language cleavir-i18n:english))
+					  (language acclimation:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            The list form must be a list,~@
@@ -31,9 +31,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition ((c malformed-count-form)
+(defmethod acclimation:report-condition ((c malformed-count-form)
 					  stream
-					  (language cleavir-i18n:english))
+					  (language acclimation:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            The count form must be a non-negative integer,~@
@@ -43,9 +43,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition ((c malformed-body)
+(defmethod acclimation:report-condition ((c malformed-body)
 					  stream
-					  (language cleavir-i18n:english))
+					  (language acclimation:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            The body must be a proper list,~@
@@ -55,9 +55,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition ((c malformed-variable-clauses)
+(defmethod acclimation:report-condition ((c malformed-variable-clauses)
 					  stream
-					  (language cleavir-i18n:english))
+					  (language acclimation:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            Expected a proper list of variable clauses~@
@@ -67,9 +67,9 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition ((c malformed-variable-clause)
+(defmethod acclimation:report-condition ((c malformed-variable-clause)
 					  stream
-					  (language cleavir-i18n:english))
+					  (language acclimation:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            Expected a variable clause of the form~@
@@ -80,9 +80,9 @@
 	  (name-package (name c))
 	  (found c)))
 
-(defmethod cleavir-i18n:report-condition ((c malformed-end-test)
+(defmethod acclimation:report-condition ((c malformed-end-test)
 					  stream
-					  (language cleavir-i18n:english))
+					  (language acclimation:english))
   (format stream
 	  "In ~a (in the ~a package):~@
            Expected an end test clause of the form~@

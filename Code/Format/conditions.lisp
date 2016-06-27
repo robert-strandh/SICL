@@ -2,7 +2,7 @@
 
 ;;; The base class of all format errors.
 
-(define-condition format-error (error cleavir-i18n:condition) ())
+(define-condition format-error (error acclimation:condition) ())
 
 ;;; This is the base class for all parse errors, i.e. error found
 ;;; before we were able to construct a directive object at all.  All

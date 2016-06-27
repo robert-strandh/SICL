@@ -5,15 +5,15 @@
 ;;; The base classes for conditions used here. 
 
 (define-condition compilation-program-error
-    (program-error cleavir-i18n:condition)
+    (program-error acclimation:condition)
   ((%expr :initarg :expr :reader expr)))
 
 (define-condition compilation-warning
-    (warning cleavir-i18n:condition)
+    (warning acclimation:condition)
   ((%expr :initarg :expr :reader expr)))
 
 (define-condition compilation-style-warning
-    (cleavir-i18n:condition style-warning)
+    (acclimation:condition style-warning)
   ((%expr :initarg :expr :reader expr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

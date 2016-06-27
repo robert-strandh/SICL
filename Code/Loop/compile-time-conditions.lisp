@@ -19,12 +19,12 @@
 ;;; FIXME: Remove condition reporters from the DEFINE-CONDITION forms
 ;;; and put them in a separate (language-specific) file.  
 
-(define-condition loop-parse-error (parse-error cleavir-i18n:condition)
+(define-condition loop-parse-error (parse-error acclimation:condition)
   ())
 
 ;;; Root class for loop parse errors that report something that was
 ;;; found, but should not be there.
-(define-condition loop-parse-error-found (parse-error cleavir-i18n:condition)
+(define-condition loop-parse-error-found (parse-error acclimation:condition)
   ((%found :initarg :found :reader found)))
 
 (define-condition expected-var-spec-but-end (loop-parse-error)
@@ -116,7 +116,7 @@
 ;;;        conditions.
 
 ;;; The root of all syntax errors.
-(define-condition loop-syntax-error (program-error cleavir-i18n:condition)
+(define-condition loop-syntax-error (program-error acclimation:condition)
   ())
 
 ;;; This condition is signaled when a name-clause is found
@@ -138,5 +138,5 @@
   ((%bound-variable :initarg :bound-variable :reader bound-variable)))
 
 ;;; The root of all semantic errors.
-(define-condition loop-semantic-error (program-error cleavir-i18n:condition)
+(define-condition loop-semantic-error (program-error acclimation:condition)
   ())

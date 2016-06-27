@@ -12,13 +12,13 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-(define-condition sicl-warning (cleavir-i18n:condition warning) ())
-(define-condition sicl-style-warning (cleavir-i18n:condition style-warning) ())
-(define-condition sicl-error (cleavir-i18n:condition  error) ())
-(define-condition sicl-type-error (cleavir-i18n:condition type-error) ())
-(define-condition sicl-cell-error (cleavir-i18n:condition cell-error) ())
-(define-condition sicl-unbound-variable (cleavir-i18n:condition unbound-variable) ())
-(define-condition sicl-undefined-function (cleavir-i18n:condition undefined-function) ())
+(define-condition sicl-warning (acclimation:condition warning) ())
+(define-condition sicl-style-warning (acclimation:condition style-warning) ())
+(define-condition sicl-error (acclimation:condition  error) ())
+(define-condition sicl-type-error (acclimation:condition type-error) ())
+(define-condition sicl-cell-error (acclimation:condition cell-error) ())
+(define-condition sicl-unbound-variable (acclimation:condition unbound-variable) ())
+(define-condition sicl-undefined-function (acclimation:condition undefined-function) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -86,16 +86,16 @@
 ;;;
 ;;; Compile time conditions. 
 
-(define-condition sicl-program-error (cleavir-i18n:condition program-error)
+(define-condition sicl-program-error (acclimation:condition program-error)
   ())
 
 (define-condition sicl-syntax-error (sicl-program-error)
   ((%code :initarg :code :reader code)))
 
-(define-condition sicl-program-warning (cleavir-i18n:condition warning)
+(define-condition sicl-program-warning (acclimation:condition warning)
   ((%code :initarg :code :reader code)))
 
-(define-condition sicl-program-style-warning (cleavir-i18n:condition style-warning)
+(define-condition sicl-program-style-warning (acclimation:condition style-warning)
   ((%code :initarg :code :reader code)))
 
 
