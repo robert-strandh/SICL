@@ -16,40 +16,40 @@
 
 (cl:in-package #:sicl-string)
 
-(defmethod cleavir-i18n:report-condition
+(defmethod acclimation:report-condition
     ((c bag-is-dotted-list)
      stream
-     cleavir-i18n:english)
+     acclimation:english)
   (format stream
 	  "If a character bag is a list, it must be a proper list.~@
            But the following dotted list was found instead:~@
            ~s."
 	  (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition
+(defmethod acclimation:report-condition
     ((c bag-is-circular-list)
      stream
-     cleavir-i18n:english)
+     acclimation:english)
   (format stream
 	  "If a character bag is a list, it must be a proper list.~@
            But the following circular list was found instead:~@
            ~s."
 	  (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition
+(defmethod acclimation:report-condition
     ((c bag-contains-non-character)
      stream
-     cleavir-i18n:english)
+     acclimation:english)
   (format stream
 	  "A character bag must be a sequence that contains only characters.~@
            But the following element was found which is not a character:~@
            ~s."
 	  (type-error-datum c)))
 
-(defmethod cleavir-i18n:report-condition
+(defmethod acclimation:report-condition
     ((c invalid-bounding-indices)
      stream
-     cleavir-i18n:english)
+     acclimation:english)
   (format stream
 	  "In order for START and END to be valid bounding indices,~@
            START must between 0 and the length of the string, and~@
