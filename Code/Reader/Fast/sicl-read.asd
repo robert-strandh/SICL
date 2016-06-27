@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-read
-  :depends-on (:cleavir-internationalization)
+  :depends-on (:acclimation)
   :serial t
   :components
   ((:file "packages")

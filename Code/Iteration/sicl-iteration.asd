@@ -2,7 +2,7 @@
 
 (defsystem :sicl-iteration
   :depends-on (:cleavir-code-utilities
-	       :cleavir-internationalization
+               :acclimation
 	       :sicl-iteration-support)
   :serial t
   :components

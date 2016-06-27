@@ -14,7 +14,7 @@
 
 (defsystem :sicl-loop-support
   :depends-on (:sicl-additional-conditions
-	       :cleavir-internationalization)
+	       :acclimation)
   :serial t
   :components
   ((:file "packages")

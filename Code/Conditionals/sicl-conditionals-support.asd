@@ -36,7 +36,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-conditionals-support
-  :depends-on (:cleavir-internationalization
+  :depends-on (:acclimation
 	       :cleavir-code-utilities)
   :serial t
   :components

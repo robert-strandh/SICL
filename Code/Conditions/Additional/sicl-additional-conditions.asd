@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-additional-conditions
-  :depends-on (:cleavir-internationalization
+  :depends-on (:acclimation
 	       :sicl-additional-types)
   :components
   ((:file "packages")
