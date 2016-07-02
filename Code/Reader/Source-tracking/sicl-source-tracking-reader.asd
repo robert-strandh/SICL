@@ -2,7 +2,8 @@
 
 (defsystem sicl-source-tracking-reader
   :depends-on (:sicl-reader-simple
-	       :cleavir-cst)
+	       :cleavir-cst
+	       :trivial-gray-streams)
   :serial t
   :components
   ((:file "read")))
