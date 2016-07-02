@@ -14,15 +14,17 @@
       result)))
 
 (defun read-with-source-tracking
-    (&optional (a nil a-p) (b nil b-p) (c nil c-p) (d nil d-p))
+    (&optional
+       (stream *standard-input* stream-p)
+       (b nil b-p) (c nil c-p) (d nil d-p))
   (let* ((*syntax-trees* (list nil))
-	 (result (if a-p
+	 (result (if stream-p
 		     (if b-p
 			 (if c-p
 			     (if d-p
-				 (read a b c d)
-				 (read a b c))
-			     (read a b))
-			 (read a))
+				 (read stream b c d)
+				 (read stream b c))
+			     (read stream b))
+			 (read stream))
 		     (read))))
     (values result (car *syntax-trees*))))
