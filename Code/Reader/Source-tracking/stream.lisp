@@ -2,6 +2,7 @@
 
 (defun make-contents ()
   (make-array 10
+	      :fill-pointer 0
 	      :element-type 'character
 	      :adjustable t))
 
