@@ -12,3 +12,7 @@
    (%index :initform 0 :accessor index)
    (%line :initform 0 :accessor line)
    (%column :initform 0 :accessor column)))
+
+(defun make-source-tracking-stream (stream)
+  (make-instance 'source-tracking-stream
+    :original stream))
