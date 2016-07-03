@@ -6,5 +6,6 @@
 	       :trivial-gray-streams)
   :serial t
   :components
-  ((:file "read")
+  ((:file "packages")
+   (:file "read")
    (:file "stream")))
