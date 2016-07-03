@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-reader)
+(cl:in-package #:sicl-source-tracking-reader)
 
 (defun make-contents ()
   (make-array 10
