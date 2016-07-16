@@ -41,9 +41,9 @@
 		     (if b-p
 			 (if c-p
 			     (if d-p
-				 (read stream b c d)
-				 (read stream b c))
-			     (read stream b))
-			 (read stream))
-		     (read))))
+				 (sicl-reader:read stream b c d)
+				 (sicl-reader:read stream b c))
+			     (sicl-reader:read stream b))
+			 (sicl-reader:read stream))
+		     (sicl-reader:read))))
     (values result (car *syntax-trees*))))
