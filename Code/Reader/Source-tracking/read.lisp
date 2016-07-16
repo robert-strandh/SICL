@@ -17,7 +17,7 @@
        (eof-value nil)
        (recursive-p nil))
   (let ((sicl-reader::*preserve-whitespace* recursive-p)
-	(*syntax-trees* (cons (list nil) *syntax-trees*)))
+	(*syntax-trees* (cons '() *syntax-trees*)))
     (let ((result (sicl-reader::read-common input-stream eof-error-p eof-value)))
       (push (if (and (consp result)
 		     (total-correspondance result (reverse (car *syntax-trees*))))
