@@ -3,6 +3,7 @@
 (defpackage #:cleavir-cst
   (:use #:common-lisp)
   (:export
+   #:cst
    #:expression
    #:canonicalize-declaration-specifier
    #:cst-is-declaration-p
