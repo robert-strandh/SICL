@@ -1,5 +1,13 @@
 (cl:in-package #:sicl-source-tracking-reader)
 
+(defun total-correspondance (forms syntax-trees)
+  (and (null (cdr (last forms)))
+       (= (length forms) (length syntax-trees))
+       (every (lambda (form syntax-tree)
+		(eql form (cleavir-cst:expression syntax-tree)))
+	      forms
+	      syntax-trees)))
+
 (defparameter *syntax-trees* '())
 
 (defun sicl-reader:read
