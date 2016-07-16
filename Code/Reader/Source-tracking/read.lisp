@@ -11,7 +11,17 @@
   (let ((sicl-reader::*preserve-whitespace* recursive-p)
 	(*syntax-trees* (cons (list nil) *syntax-trees*)))
     (let ((result (sicl-reader::read-common input-stream eof-error-p eof-value)))
-      (push result (cadr *syntax-trees*))
+      (push (if (and (consp result)
+		     (total-correspondance result (reverse (car *syntax-trees*))))
+		(make-instance 'cleavir-cst:cst
+		  :expression result
+		  :location nil
+		  :children (reverse (car *syntax-trees*)))
+		(make-instance 'cleavir-cst:cst
+		  :expression result
+		  :location nil
+		  :children '()))
+	    (second *syntax-trees*))
       result)))
 
 (defun read-with-source-tracking
