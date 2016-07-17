@@ -7,5 +7,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "location")
    (:file "read")
    (:file "stream")))
