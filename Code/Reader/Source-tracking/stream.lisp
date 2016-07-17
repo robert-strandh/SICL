@@ -31,3 +31,7 @@
 	char)
       (prog1 (char-to-read stream)
 	(setf (char-to-read stream) nil))))
+
+(defmethod trivial-gray-streams:stream-unread-char
+    ((stream source-tracking-stream) character)
+  (setf (char-to-read stream) character))
