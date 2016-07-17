@@ -22,7 +22,7 @@
 (defmethod trivial-gray-streams:stream-read-char
     ((stream source-tracking-stream))
   (if (null (char-to-read stream))
-      (let ((char (trivial-gray-streams:stream-read-char (original stream))))
+      (let ((char (read-char (original stream))))
 	(vector-push-extend char (contents stream) 10)
 	(if (eql char #\Newline)
 	    (progn (setf (column stream) 0)
