@@ -12,22 +12,31 @@
 
 (defun sicl-reader:read
     (&optional
-       (input-stream *standard-input*)
+       (stream *standard-input*)
        (eof-error-p t)
        (eof-value nil)
        (recursive-p nil))
   (let ((sicl-reader::*preserve-whitespace* recursive-p)
 	(*syntax-trees* (cons '() *syntax-trees*)))
-    (let ((result (sicl-reader::read-common input-stream eof-error-p eof-value)))
+    (let* ((start-line (line stream))
+	   (start-column (column stream))
+	   (result (sicl-reader::read-common stream eof-error-p eof-value))
+	   (end-line (line stream))
+	   (end-column (column stream))
+	   (location (make-instance 'location
+		       :start-line start-line
+		       :start-column start-column
+		       :end-line end-line
+		       :end-column end-column)))
       (push (if (and (consp result)
 		     (total-correspondance result (reverse (car *syntax-trees*))))
 		(make-instance 'cleavir-cst:cst
 		  :expression result
-		  :location nil
+		  :location location
 		  :children (reverse (car *syntax-trees*)))
 		(make-instance 'cleavir-cst:cst
 		  :expression result
-		  :location nil
+		  :location location
 		  :children '()))
 	    (second *syntax-trees*))
       result)))
