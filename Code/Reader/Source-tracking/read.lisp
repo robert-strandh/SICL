@@ -37,11 +37,12 @@
        (stream *standard-input*)
        (b nil b-p) (c nil c-p) (d nil d-p))
   (let* ((*syntax-trees* (list nil))
+	 (new-stream (make-source-tracking-stream stream))
 	 (result (if b-p
 		     (if c-p
 			 (if d-p
-			     (sicl-reader:read stream b c d)
-			     (sicl-reader:read stream b c))
-			 (sicl-reader:read stream b))
-		     (sicl-reader:read stream))))
+			     (sicl-reader:read new-stream b c d)
+			     (sicl-reader:read new-stream b c))
+			 (sicl-reader:read new-stream b))
+		     (sicl-reader:read new-stream))))
     (values result (car *syntax-trees*))))
