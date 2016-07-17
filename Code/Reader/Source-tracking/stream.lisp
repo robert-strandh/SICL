@@ -12,7 +12,8 @@
    (%contents :initform (make-contents) :reader contents)
    (%index :initform 0 :accessor index)
    (%line :initform 0 :accessor line)
-   (%column :initform 0 :accessor column)))
+   (%column :initform 0 :accessor column)
+   (%char-to-read :initform nil :accessor char-to-read)))
 
 (defun make-source-tracking-stream (stream)
   (make-instance 'source-tracking-stream
