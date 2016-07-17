@@ -34,16 +34,14 @@
 
 (defun read-with-source-tracking
     (&optional
-       (stream *standard-input* stream-p)
+       (stream *standard-input*)
        (b nil b-p) (c nil c-p) (d nil d-p))
   (let* ((*syntax-trees* (list nil))
-	 (result (if stream-p
-		     (if b-p
-			 (if c-p
-			     (if d-p
-				 (sicl-reader:read stream b c d)
-				 (sicl-reader:read stream b c))
-			     (sicl-reader:read stream b))
-			 (sicl-reader:read stream))
-		     (sicl-reader:read))))
+	 (result (if b-p
+		     (if c-p
+			 (if d-p
+			     (sicl-reader:read stream b c d)
+			     (sicl-reader:read stream b c))
+			 (sicl-reader:read stream b))
+		     (sicl-reader:read stream))))
     (values result (car *syntax-trees*))))
