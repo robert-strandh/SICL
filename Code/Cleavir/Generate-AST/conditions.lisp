@@ -163,3 +163,9 @@
 (define-condition no-default-method
     (compilation-program-error)
   ((%operator :initarg :operator :reader operator)))
+
+;;; This condition is signaled when a LAMBDA-CALL expression is
+;;; encountered, but the first symbol isn't LAMBDA.
+(define-condition lambda-call-first-symbol-not-lambda
+    (compilation-program-error)
+  ())

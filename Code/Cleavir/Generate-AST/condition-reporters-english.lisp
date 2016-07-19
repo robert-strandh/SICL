@@ -227,3 +227,14 @@
            The following operator was found:~@
            ~s"
 	  (expr condition)))
+
+(defmethod acclimation:report-condition
+    ((condition lambda-call-first-symbol-not-lambda)
+     stream
+     (language acclimation:english))
+  (format stream
+          "Lambda call form was used with the malformed lambda block~@
+          first argument instead of the symbol LAMBDA. The following~@
+          form was found:~@
+          ~s"
+          (expr condition)))

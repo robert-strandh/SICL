@@ -128,7 +128,8 @@
 
 (defmethod convert-lambda-call (form env system)
   (destructuring-bind ((lambda lambda-list &rest body) &rest args) form
-    (declare (ignore lambda))
+    (assert (eql lambda 'cl:lambda) nil
+            'lambda-call-first-symbol-not-lambda :expr lambda)
     (cleavir-ast:make-call-ast
      (convert-code lambda-list body env system)
      (convert-sequence args env system))))
