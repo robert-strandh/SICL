@@ -166,7 +166,7 @@ standard specifically allows for these updates to be delayed and not
 happen as a direct result of the class redefinition.  They must happen
 before an attempt is made to access some slot (or some other
 information about the slots) of the instance.  It is undesirable to
-make the all instances directly accessible from the class, because
+make all instances directly accessible from the class, because
 such a solution would waste space and would have to make sure that
 memory leaks are avoided.  We must thus take into account the presence
 of \emph{obsolete instance} in the system, i.e., instances that must
