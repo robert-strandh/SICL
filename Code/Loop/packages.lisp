@@ -26,4 +26,5 @@
    ;; need to shadow this name
    #:condition
    )
-  (:export #:define-parser))
+  (:export #:define-parser
+	   #:clause))
