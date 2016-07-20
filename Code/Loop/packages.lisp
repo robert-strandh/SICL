@@ -28,4 +28,5 @@
    )
   (:export #:define-parser
 	   #:clause
-	   #:subclauses-mixin))
+	   #:subclauses-mixin
+	   #:var-and-type-spec-mixin))
