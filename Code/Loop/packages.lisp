@@ -29,4 +29,5 @@
   (:export #:define-parser
 	   #:clause
 	   #:subclauses-mixin
-	   #:var-and-type-spec-mixin))
+	   #:var-and-type-spec-mixin
+	   #:compound-forms-mixin))
