@@ -9,10 +9,9 @@ represent four different \emph{tags} as follows:
 \begin{itemize}
 \item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
   tags are used for fixnums.  The bits except the last one represent
-  integer in two's complement representation.  fixnum is thus in the
-  interval $[2^{-62}, 2^{62} - 1]$.  On a 32-bit machine, a fixnum is
-  thus in the interval $[2^{-30}, 2^{30} - 1]$.  On a 64-bit machine
-  the corresponding interval is $[2^{-62}, 2^{62} - 1]$.
+  integer in two's complement representation.  On a 32-bit machine, a
+  fixnum is thus in the interval $[2^{-30}, 2^{30} - 1]$.  On a 64-bit
+  machine the corresponding interval is $[2^{-62}, 2^{62} - 1]$.
 \item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
   pointer to a \texttt{cons} cell is thus a pointer aligned to a
   double word to which the machine integer $1$ has been added.
