@@ -18,22 +18,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Common classes
+;;; Common classes.
 
-;;; The base class of all clauses
+;;; The base class of all clauses.
 (defclass clause () ())
 
-;;; Mixin for clauses that accept `and'
+;;; Mixin for clauses that accept `AND'.
 (defclass subclauses-mixin ()
   ((%subclauses :initarg :subclauses :reader subclauses)))
 
 ;;; Mixin for clauses and subclauses that take
-;;; a var-spec and a type-spec
+;;; a VAR-SPEC and a TYPE-SPEC.
 (defclass var-and-type-spec-mixin ()
   ((%var-spec :initarg :var-spec :accessor var-spec)
    (%type-spec :initarg :type-spec :accessor type-spec)))
 
-;;; Mixin for clauses that take a list of compound forms
+;;; Mixin for clauses that take a list of compound forms.
 (defclass compound-forms-mixin ()
   ((%forms :initarg :forms :reader forms)))
 
