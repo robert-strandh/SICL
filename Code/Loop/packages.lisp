@@ -27,4 +27,5 @@
    #:condition
    )
   (:export #:define-parser
-	   #:clause))
+	   #:clause
+	   #:subclauses-mixin))
