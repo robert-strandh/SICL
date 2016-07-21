@@ -30,4 +30,5 @@
 	   #:clause
 	   #:subclauses-mixin
 	   #:var-and-type-spec-mixin
-	   #:compound-forms-mixin))
+	   #:compound-forms-mixin
+	   #:loop-return-clause-mixin))
