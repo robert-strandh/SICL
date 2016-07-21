@@ -399,6 +399,15 @@ This function is a generic version of the \commonlisp{} function
 Return the \emph{property list} of \textit{symbol} in
 \textit{environment}.
 
+\Defgeneric {(setf symbol-plist)} {new-plist symbol environment}
+
+This function is a generic version of the standard \commonlisp{}
+function named (\texttt{setf cl:symbol-plist}).
+
+Set the \emph{property list} of \textit{symbol} in
+\textit{environment} to \textit{new-plist}.  The consequences are
+undefined if \textit{new-plist} is not a property list.
+
 \Defgeneric {variable-type} {symbol environment}
 
 This generic function returns the proclaimed type of the variable
