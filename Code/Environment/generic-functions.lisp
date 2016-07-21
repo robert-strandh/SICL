@@ -460,6 +460,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF SYMBOL-PLIST).
+;;;
+;;; This function sets the PROPERTY LIST of SYMBOL in ENVIRONMENT to
+;;; NEW-PLIST.
+
+(defgeneric (setf symbol-plist) (new-plist symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function VARIABLE-TYPE.
 ;;;
 ;;; This generic function returns the proclaimed type of the variable
