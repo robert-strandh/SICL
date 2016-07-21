@@ -452,6 +452,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function SYMBOL-PLIST.
+;;;
+;;; This function returns the PROPERTY LIST of SYMBOL in ENVIRONMENT.
+
+(defgeneric symbol-plist (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function VARIABLE-TYPE.
 ;;;
 ;;; This generic function returns the proclaimed type of the variable
