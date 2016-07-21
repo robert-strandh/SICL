@@ -362,7 +362,7 @@ could be represented in a single byte.  Thus the rack of a
 \subsection{Symbols}
 
 A symbol is represented with a two-word header (as usual) and a
-rack of four consecutive words.  The four words contain:
+rack of three consecutive words.  The three words contain:
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
@@ -370,14 +370,19 @@ rack of four consecutive words.  The four words contain:
   string.
 \item The \emph{package} of the symbol.  The value of this slot is a
   package or \texttt{NIL} if this symbol does not have a package.
-\item The \emph{plist} of the symbol.  The value of this slot is a
-  property list.
 \end{enumerate}
 
 Notice that the symbol does not contain its \emph{value} as a global
 variable, nor does it contain its definition as a \emph{function} in
 the global environment.  Instead, this information is contained in an
 explicit \emph{global environment} object.
+
+Notice also that the symbol does not contain the \emph{property list}
+associated with it.  This information is also kept separately in an
+explicit \emph{global environment} object.
+
+See \refSec{sec-the-global-environment} for more information on
+global environments.
 
 \subsection{Packages}
 
