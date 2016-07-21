@@ -49,6 +49,7 @@
 	   #:find-package
 	   #:get-setf-expansion
 	   #:declaration
+	   #:symbol-plist
 	   )
   (:export
    #:environment
@@ -65,6 +66,7 @@
    #:constant-variable
    #:special-variable
    #:symbol-macro
+   #:symbol-plist
    #:variable-type
    #:setf-expander
    #:default-setf-expander
