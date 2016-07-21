@@ -12,13 +12,13 @@ types, etc.
 \section{The global environment}
 \label{sec-the-global-environment}
 
-In many \commonlisp{} systems the global environment is \emph{spread out} in
-that it does not have an explicit definition as a data type.  Parts of
-it might be contained in global locations such as the set of packages
-or the set of classes.  Other parts of it may be stored in symbols
-such as the value or the function definition of a symbol.  The
+In many \commonlisp{} systems the global environment is \emph{spread
+  out} in that it does not have an explicit definition as a data type.
+Parts of it, such as the set of packages or the set of classes, might
+be contained in global locations.  Other parts of it may be stored in
+symbols such as the value or the function definition of a symbol.  The
 standard specifically allows for this kind of spread-out
-representation.  
+representation.
 
 In \sysname{}, we prefer to have an explicit representation of the
 global environment as a data object.  By doing it this way, we can
