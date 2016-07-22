@@ -86,11 +86,11 @@ of the slots of the instance is attempted.   The reason for that rule
 is so that implementations would not have to maintain a reference from
 a class to each of its instance.  Such references would be costly in
 terms of space, and would have to be \emph{weak}%
-\footnote{A \emph{weak} reference is a reference that does not
+\footnote{A \emph{weak} reference is a reference that is not
   sufficient for the garbage collector to keep the object alive.  The
-  object is kept alive only if there are \emph{strong} (i.e. normal)
-  references to it as well.}
-so as to avoid memory leaks. 
+  object is kept alive only if there is at least one \emph{strong}
+  (i.e. normal) reference to it as well.}  so as to avoid memory
+leaks.
 
 Instead of keeping weak references from classes to instances,
 implementations solve the problem of updating obsolete instance by
