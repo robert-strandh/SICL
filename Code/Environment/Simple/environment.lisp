@@ -84,7 +84,8 @@
    (%declarations :initform (make-hash-table :test #'eq)
 		  :reader declarations)
    ;; An EQ hash table containing property lists for symbols.
-   (%property-lists :initform (make-hash-table :test #'eq))))
+   (%property-lists :initform (make-hash-table :test #'eq)
+		    :reader property-lists)))
 
 (cl:defvar *global-environment*)
 
