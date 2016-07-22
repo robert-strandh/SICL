@@ -156,9 +156,10 @@ them will be structure classes.
 
 Even though \sysname{} will implement many of the system classes as
 built-in classes, this does not mean that we have to use
-special-purpose ways of implementing them.  We plan to take advantage
-of features of the metaobject protocol such as inheritance and class
-finalization to define our built-in classes.  
+special-purpose ways of implementing them.  The \sysname{} object
+system takes advantage of features of the metaobject protocol such as
+inheritance and class finalization to define built-in classes as well
+as standard classes.
 
 Even for system classes where instances do not all have the same size,
 notably the \texttt{array} class and its subclasses, we plan to take
