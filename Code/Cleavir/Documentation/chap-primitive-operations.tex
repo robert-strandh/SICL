@@ -216,3 +216,37 @@ the \texttt{fixnum-add} form is a Boolean value that is used to
 determine the which branch of the \texttt{if} form is evaluated next.
 If the addition produced a number that can be represented as a fixnum,
 then the Boolean value is \emph{true}.  Otherwise it is \emph{false}.
+
+\defprimop{fixnum-sub}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{+}.  It takes three arguments.  The
+first two arguments can be arbitrary expressions that must both
+evaluate to \texttt{fixnum}s.   The third argument is a symbol.  It is
+not evaluated and it must be the name of an existing lexical
+variable.  This variable is typically created by the primitive
+operation \texttt{let-uninitialized}.
+
+The \texttt{fixnum-sub} operation can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+This primitive operation subtracts the two fixnum values to produce a
+\emph{result} $r$ that is stored in the variable represented by the
+third argument.  The result is always a fixnum.  If the subtraction
+produces a number that can be represented as a fixnum, then the $r$ is
+that number.  If the subtraction produces a number that can \emph{not}
+be represented as a fixnum, then there are two cases:
+
+\begin{enumerate}
+\item If $r$ is \emph{negative}, then the subtraction yielded the
+  number $2^n + r$, where $n$ is the number of bits in a word.
+\item If $r$ is \emph{non-negative}, then the subtraction yielded the
+  number $2^n - r$, where $n$ is the number of bits in a word.
+\end{enumerate}
+
+In subtraction to producing a result in the variable, the \emph{value}
+of the \texttt{fixnum-sub} form is a Boolean value that is used to
+determine the which branch of the \texttt{if} form is evaluated next.
+If the subtraction produced a number that can be represented as a
+fixnum, then the Boolean value is \emph{true}.  Otherwise it is
+\emph{false}.
