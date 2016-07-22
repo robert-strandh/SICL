@@ -354,3 +354,6 @@
   (if (null value)
       (remhash name (declarations env))
       (setf (gethash name (declarations env)) t)))
+
+(defmethod sicl-genv:symbol-plist (symbol (env simple-environment))
+  (gethash symbol (property-lists env)))
