@@ -6,29 +6,33 @@ the following function call forms to have a corresponding
 \texttt{setf} form:
 
 \begin{itemize}
-\item Accessors for parts of a list: 
-  car, cdr, caar, cadr, cdar, cddr, caaar, caadr, cadar, caddr,
-  cdaar, cdadr, cddar, cdddr, caaaar, caaadr, caadar, caaddr, 
-  cadaar, cadadr, caddar, cadddr, 
-  cdaaar, cdaadr, cdadar, cdaddr, 
-  cddaar, cddadr, cdddar, cddddr, 
-  first, second, third, fourth, fifth,
-  sixth, seventh, eighth, ninth, tenth
-  rest, nth.
-\item Array element accessors: 
-  aref, row-major-aref, char, schar, bit, sbit, svref.
-\item Other array accessors: fill-pointer
-\item Sequence element accessors: elt.
-\item Other sequence accessors: subseq.
-\item Symbol properties: symbol-plist.
-\item Environment accessors:
-  symbol-function, symbol-value, fdefinition, 
-  macro-function, compiler-macro-function.
-\item Hash table accessors: gethash.
-\item CLOS-related accessors: class-name, slot-value, find-class.
-\item Miscellaneous: documentation,
-  logical-pathname-translations, get, 
-  readtable-case.
+\item Accessors for parts of a list: \texttt{car}, \texttt{cdr},
+  \texttt{caar}, \texttt{cadr}, \texttt{cdar}, \texttt{cddr},
+  \texttt{caaar}, \texttt{caadr}, \texttt{cadar}, \texttt{caddr},
+  \texttt{cdaar}, \texttt{cdadr}, \texttt{cddar}, \texttt{cdddr},
+  \texttt{caaaar}, \texttt{caaadr}, \texttt{caadar}, \texttt{caaddr},
+  \texttt{cadaar}, \texttt{cadadr}, \texttt{caddar}, \texttt{cadddr},
+  \texttt{cdaaar}, \texttt{cdaadr}, \texttt{cdadar}, \texttt{cdaddr},
+  \texttt{cddaar}, \texttt{cddadr}, \texttt{cdddar}, \texttt{cddddr},
+  \texttt{first}, \texttt{second}, \texttt{third}, \texttt{fourth},
+  \texttt{fifth}, \texttt{sixth}, \texttt{seventh}, \texttt{eighth},
+  \texttt{ninth}, \texttt{tenth} \texttt{rest}, \texttt{nth}.
+\item Array element accessors: \texttt{aref}, \texttt{row-major-aref},
+  \texttt{char}, \texttt{schar}, \texttt{bit}, \texttt{sbit},
+  \texttt{svref}.
+\item Other array accessors: \texttt{fill-pointer}
+\item Sequence element accessors: \texttt{elt}.
+\item Other sequence accessors: \texttt{subseq}.
+\item Symbol properties: \texttt{symbol-plist}.
+\item Environment accessors: \texttt{symbol-function},
+  \texttt{symbol-value}, \texttt{fdefinition},
+  \texttt{macro-function}, \texttt{compiler-macro-function}.
+\item Hash table accessors: \texttt{gethash}.
+\item CLOS-related accessors: \texttt{class-name},
+  \texttt{slot-value}, \texttt{find-class}.
+\item Miscellaneous: \texttt{documentation},
+  \texttt{logical-pathname-translations}, \texttt{get},
+  \texttt{readtable-case}.
 \end{itemize}
 
 The \hs{} also gives the implementer a choice concerning the
