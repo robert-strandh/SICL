@@ -17,8 +17,8 @@ compiler, so that the resulting AST and ultimately the resulting HIR
 instruction that the \texttt{car} primop translates to will be present
 also in application code.
 
-Frequently, the need for a primop comes from arises because some HIR
-instruction is needed.  Take, for example, the HIR instruction named
+Frequently, the need for a primop arises because some HIR instruction
+is needed.  Take, for example, the HIR instruction named
 \texttt{eq-instruction} for comparing two pointer values for equality.
 The existence of that instruction requires an AST doing the same
 thing, and it is called \texttt{eq-ast}.  When compiled to HIR, the
