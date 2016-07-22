@@ -53,12 +53,12 @@ correspond to any classes.%
 
 Every \emph{general instance}%
 \footnote{Recall that a \emph{general instance} is an instance
-  allocated on the heap, excluding \texttt{cons} cells.}  contains a
-\emph{stamp}, which is the unique number of its class as it was when
-the instance was created.  This number is always the first element of
-the rack of the general instance.  Even though built-in
-classes can not be redefined, general instances of built-in classes
-contain a stamp.
+  allocated on the heap, excluding \texttt{cons}
+  cells. \seechap{chap-data-representation}} contains a \emph{stamp},
+which is the unique number of its class as it was when the instance
+was created.  This number is always the first element of the rack of
+the general instance.  Even though built-in classes can not be
+redefined, general instances of built-in classes contain a stamp.
 
 \subsection{Standard classes}
 \label{object-system-standard-classes}
