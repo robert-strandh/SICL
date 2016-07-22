@@ -357,3 +357,7 @@
 
 (defmethod sicl-genv:symbol-plist (symbol (env simple-environment))
   (gethash symbol (property-lists env)))
+
+(defmethod (setf sicl-genv:symbol-plist)
+    (new-plist symbol (env simple-environment))
+  (setf (gethash symbol (property-lists env)) new-plist))
