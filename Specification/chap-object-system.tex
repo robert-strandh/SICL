@@ -43,12 +43,10 @@ metaclass is not specified.
 
 In \sysname{}, every class (i.e., ever instance of a class metaclass)
 contains a \emph{unique number} which is an integer assigned
-sequentially from $0$ as a class is finalized.% 
-\fixme{It has to be
-assigned when the class is \emph{unfinalized}}
-When a class is finalized a second time, its old unique number is
-never reused, leaving \emph{holes} in the sequence corresponding to
-numbers that no longer correspond to any classes.%
+sequentially from $0$ as a class is created or modified.  When a class
+is modified, its old unique number is never reused, leaving
+\emph{holes} in the sequence corresponding to numbers that no longer
+correspond to any classes.%
 \footnote{It might be possible for the garbage collector to change the
   unique numbers of the classed, compacting the sequence, but that
   probably will not be necessary.}
