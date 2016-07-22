@@ -82,7 +82,9 @@
    ;; An EQ hash table that acts as a dictionary, recording
    ;; proclamations of DECLARATION.
    (%declarations :initform (make-hash-table :test #'eq)
-		  :reader declarations)))
+		  :reader declarations)
+   ;; An EQ hash table containing property lists for symbols.
+   (%property-lists :initform (make-hash-table :test #'eq))))
 
 (cl:defvar *global-environment*)
 
