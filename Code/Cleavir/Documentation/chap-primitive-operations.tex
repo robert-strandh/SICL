@@ -315,3 +315,20 @@ type \texttt{floating-point-overflow} is signaled.
 If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-short-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
+
+\defprimop{short-float-sub}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{-}.  It takes two arguments, both forms
+that must evaluate to \emph{unboxed} short floats.
+
+The value of a form with this operator is an unboxed short float
+representing the difference of the two arguments.
+
+If the result of the operation is greater than the value of the
+constant variable \texttt{most-positive-short-float}, then an error of
+type \texttt{floating-point-overflow} is signaled.
+
+If the result of the operation is less than the value of the
+constant variable \texttt{most-negative-short-float}, then an error of
+type \texttt{floating-point-underflow} is signaled.
