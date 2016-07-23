@@ -299,6 +299,13 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
+\defprimop{short-float-unbox}
+
+This primitive operation is used to convert a \emph{boxed} short float
+to an \emph{unboxed} short float.  It takes a single argument which is
+a form that must evaluate to a short float.  The value is the
+corresponding unboxed short float value.
+
 \defprimop{short-float-add}
 
 This primitive operation is used in the implementation of the
