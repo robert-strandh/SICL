@@ -15,8 +15,6 @@
    #:fixnum-greater
    #:fixnum-not-less
    #:fixnum-equal
-   #:short-float-unbox
-   #:short-float-box
    #:short-float-add
    #:short-float-sub
    #:short-float-mul
@@ -29,8 +27,6 @@
    #:short-float-sin
    #:short-float-cos
    #:short-float-sqrt
-   #:single-float-unbox
-   #:single-float-box
    #:single-float-add
    #:single-float-sub
    #:single-float-mul
@@ -43,8 +39,6 @@
    #:single-float-sin
    #:single-float-cos
    #:single-float-sqrt
-   #:double-float-unbox
-   #:double-float-box
    #:double-float-add
    #:double-float-sub
    #:double-float-mul
@@ -57,8 +51,6 @@
    #:double-float-sin
    #:double-float-cos
    #:double-float-sqrt
-   #:long-float-unbox
-   #:long-float-box
    #:long-float-add
    #:long-float-sub
    #:long-float-mul
