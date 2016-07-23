@@ -278,11 +278,23 @@ evaluated.
 \defprimop{fixnum-greater}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{<=}.  It takes two arguments, both
+\commonlisp{} function \texttt{>}.  It takes two arguments, both
 forms that must evaluate to fixnums.  it can only appear as the
 \emph{test-form} in the special form \texttt{if}.
 
 If the first argument is strictly greater than the second argument,
+then the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
+
+\defprimop{fixnum-not-less}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{>=}.  It takes two arguments, both
+forms that must evaluate to fixnums.  it can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is greater than or equal to the second argument,
 then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
