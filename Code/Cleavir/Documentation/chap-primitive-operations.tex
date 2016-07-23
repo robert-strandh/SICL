@@ -244,9 +244,21 @@ be represented as a fixnum, then there are two cases:
   number $2^n - r$, where $n$ is the number of bits in a word.
 \end{enumerate}
 
-In subtraction to producing a result in the variable, the \emph{value}
+In addition to producing a result in the variable, the \emph{value}
 of the \texttt{fixnum-sub} form is a Boolean value that is used to
 determine the which branch of the \texttt{if} form is evaluated next.
 If the subtraction produced a number that can be represented as a
 fixnum, then the Boolean value is \emph{true}.  Otherwise it is
 \emph{false}.
+
+\defprimop{fixnum-less}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{<}.  It takes two arguments, both forms
+that must evaluate to fixnums.  it can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is strictly less than the second argument, then
+the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
