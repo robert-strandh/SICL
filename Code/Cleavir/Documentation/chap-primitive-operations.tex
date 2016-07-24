@@ -790,3 +790,167 @@ the \emph{square root} of the argument.
 
 This operation always succeeds, since the value of the \texttt{SQRT}
 function is closer to $1$ than its argument.
+
+\defprimop{long-float-add}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{+}.  It takes two arguments, both forms
+that must evaluate to long floats.
+
+The value of a form with this operator is an long float
+representing the sum of the two arguments.
+
+If the result of the operation is greater than the value of the
+constant variable \texttt{most-positive-long-float}, then an error of
+type \texttt{floating-point-overflow} is signaled.
+
+If the result of the operation is less than the value of the
+constant variable \texttt{most-negative-long-float}, then an error of
+type \texttt{floating-point-underflow} is signaled.
+
+\defprimop{long-float-sub}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{-}.  It takes two arguments, both forms
+that must evaluate to long floats.
+
+The value of a form with this operator is an long float
+representing the difference of the two arguments.
+
+If the result of the operation is greater than the value of the
+constant variable \texttt{most-positive-long-float}, then an error of
+type \texttt{floating-point-overflow} is signaled.
+
+If the result of the operation is less than the value of the
+constant variable \texttt{most-negative-long-float}, then an error of
+type \texttt{floating-point-underflow} is signaled.
+
+\defprimop{long-float-mul}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{*}.  It takes two arguments, both forms
+that must evaluate to long floats.
+
+The value of a form with this operator is an long float
+representing the product of the two arguments.
+
+If the result of the operation is greater than the value of the
+constant variable \texttt{most-positive-long-float}, then an error of
+type \texttt{floating-point-overflow} is signaled.
+
+If the result of the operation is less than the value of the constant
+variable \texttt{most-negative-long-float}, then an error of type
+\texttt{floating-point-underflow} is signaled.
+
+\defprimop{long-float-div}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{/}.  It takes two arguments, both forms
+that must evaluate to long floats.
+
+The value of a form with this operator is an long float
+representing the quotient of the two arguments.
+
+If the result of the operation is greater than the value of the
+constant variable \texttt{most-positive-long-float}, then an error of
+type \texttt{floating-point-overflow} is signaled.
+
+If the result of the operation is less than the value of the constant
+variable \texttt{most-negative-long-float}, then an error of type
+\texttt{floating-point-underflow} is signaled.
+
+\defprimop{long-float-less}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{<}.  It takes two arguments, both forms
+that must evaluate to long floats.  It can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is strictly less than the second argument, then
+the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
+
+\defprimop{long-float-not-greater}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{<=}.  It takes two arguments, both forms
+that must evaluate to long floats.  It can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is less than or equal to the second argument,
+then the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
+
+\defprimop{long-float-greater}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{>}.  It takes two arguments, both forms
+that must evaluate to long floats.  It can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is strictly greater than the second argument,
+then the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
+
+\defprimop{long-float-not-less}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{>=}.  It takes two arguments, both forms
+that must evaluate to long floats.  It can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is greater than or equal to the second argument,
+then the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
+
+\defprimop{long-float-equal}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{=}.  It takes two arguments, both forms
+that must evaluate to long floats.  It can only appear as the
+\emph{test-form} in the special form \texttt{if}.
+
+If the first argument is numerically equal to the second argument,
+then the \emph{then} branch of the \texttt{if} form is evaluated.
+Otherwise, the \emph{else} branch of the \texttt{if} form is
+evaluated.
+
+\defprimop{long-float-sin}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{sin}.  It takes a single argument which
+much be a long float.
+
+The value of a form with this operation is a long float representing
+the \emph{sine} of the argument.
+
+This operation always succeeds, since the value of the \texttt{sin}
+function is always in the range allowed by long floats.
+
+\defprimop{long-float-cos}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{cos}.  It takes a single argument which
+much be a long float.
+
+The value of a form with this operation is a long float representing
+the \emph{cosine} of the argument.
+
+This operation always succeeds, since the value of the \texttt{cos}
+function is always in the range allowed by long floats.
+
+\defprimop{long-float-sqrt}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{sqrt}.  It takes a single argument which
+much be a non-negative long float.
+
+The value of a form with this operation is a long float representing
+the \emph{square root} of the argument.
+
+This operation always succeeds, since the value of the \texttt{SQRT}
+function is closer to $1$ than its argument.
