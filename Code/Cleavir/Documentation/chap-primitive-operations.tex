@@ -131,7 +131,7 @@ The \commonlisp{} \texttt{cdr} function will typically be declared
 \seesec{sec-optimizations-type-inference} to use the \texttt{typeq}
 primitive operation to remove redundant type checks.
 
-\Defprimop{rplaca} {}
+\Defprimop{rplaca} {cons object}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{rplaca}.  It requires its first
@@ -151,7 +151,7 @@ this:
                :expected-type '(or cons null))))
 \end{verbatim}
 
-\Defprimop{rplacd} {}
+\Defprimop{rplacd} {cons object}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{rplacd}.  It requires its first
