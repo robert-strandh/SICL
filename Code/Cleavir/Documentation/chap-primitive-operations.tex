@@ -969,3 +969,20 @@ The second argument is a form that must evaluate to a fixnum.
 This operation returns the contents of the slot at the offset
 indicated by the second argument in the instance indicated by the
 first argument.
+
+\defprimop{slot-write}
+
+This primitive operation is used in the implementation of the MOP
+function \texttt{(setf standard-instance-access)}.  I takes three
+arguments.  The first argument is a form that must evaluate to a
+standard instance%
+\footnote{As with the primitive operation SLOT-READ, implementations
+  are free to use this primitive operation for other purposes as
+  well.}
+The second argument is a form that must evaluate to a fixnum and that
+indicates the slot number to be written.  The third argument is a form
+that evaluates to the object that will be written to the slot.
+
+Forms using this primitive operation must occur in a context that does
+not require a value, such as in a \texttt{progn} other than as the
+last form.
