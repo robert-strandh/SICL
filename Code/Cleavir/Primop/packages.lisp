@@ -64,7 +64,7 @@
    #:long-float-cos
    #:long-float-sqrt
    #:slot-read #:slot-write
-   #:aref #:aset
+   #:t-aref #:t-aset
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall))
