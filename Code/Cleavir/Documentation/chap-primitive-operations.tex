@@ -171,7 +171,7 @@ this:
                :expected-type '(or cons null))))
 \end{verbatim}
 
-\Defprimop{let-uninitialized} {}
+\Defprimop{let-uninitialized} {(\rest vars) \body forms}
 
 This primitive operation is used for creating uninitialized lexical
 variables.  It takes at least one argument which must be a list of
