@@ -53,11 +53,11 @@ that the abstract syntax tree and HIR instruction resulting from this
 primop will eventually end up in the compiled code of many
 applications.
 
-\Defprimop{typeq} {}
+\Defprimop{typeq} {object type-specifier}
 
 This primitive operation is similar to the \commonlisp{} function
 \texttt{typep}.  It differs from the \commonlisp{} function in that it
-does not evaluate its second argument, i.e., the type specifier.
+does not evaluate its second argument.
 Also, it does not take an optional environment argument%
 \footnote{We may have to add an environment argument to
   \texttt{typeq}.  Alternatively we may have to specify that it only
