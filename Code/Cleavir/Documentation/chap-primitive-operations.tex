@@ -40,9 +40,9 @@ function \texttt{cleavir-generate-ast:convert-special}.
 
 \section{Existing primitive operations}
 
-\def\defprimop #1 {\dodocv {#1} {Primitive operation}}
+\def\Defprimop #1 #2 {\Dodocf {#1} {#2} {Primitive operation}}
 
-\defprimop{eq}
+\Defprimop{eq} {}
 
 This primitive operation has the same semantics as the \commonlisp{}
 function \texttt{eq}, except that it can only appear as the
@@ -53,7 +53,7 @@ that the abstract syntax tree and HIR instruction resulting from this
 primop will eventually end up in the compiled code of many
 applications.
 
-\defprimop{typeq}
+\Defprimop{typeq} {}
 
 This primitive operation is similar to the \commonlisp{} function
 \texttt{typep}.  It differs from the \commonlisp{} function in that it
@@ -75,7 +75,7 @@ The \texttt{typeq} generates a \texttt{typeq} AST and ultimately a
 inferencer \seesec{sec-optimizations-type-inference} to infer
 different types in different successor branches.
 
-\defprimop{car}
+\Defprimop{car} {}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{car}.  The main difference between
@@ -103,7 +103,7 @@ The \commonlisp{} \texttt{car} function will typically be declared
 \seesec{sec-optimizations-type-inference} to use the \texttt{typeq}
 primitive operation to remove redundant type checks.
 
-\defprimop{cdr}
+\Defprimop{cdr} {}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{cdr}.  The main difference between
@@ -131,7 +131,7 @@ The \commonlisp{} \texttt{cdr} function will typically be declared
 \seesec{sec-optimizations-type-inference} to use the \texttt{typeq}
 primitive operation to remove redundant type checks.
 
-\defprimop{rplaca}
+\Defprimop{rplaca} {}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{rplaca}.  It requires its first
@@ -151,7 +151,7 @@ this:
                :expected-type '(or cons null))))
 \end{verbatim}
 
-\defprimop{rplacd}
+\Defprimop{rplacd} {}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{rplacd}.  It requires its first
@@ -171,7 +171,7 @@ this:
                :expected-type '(or cons null))))
 \end{verbatim}
 
-\defprimop{let-uninitialized}
+\Defprimop{let-uninitialized} {}
 
 This primitive operation is used for creating uninitialized lexical
 variables.  It takes at least one argument which must be a list of
@@ -184,7 +184,7 @@ operations such as \texttt{fixnum-add} and \texttt{fixnum-sub} that
 must appear as the \emph{test-form} form in an \texttt{if} form, but
 that also produce output.
 
-\defprimop{fixnum-add}
+\Defprimop{fixnum-add} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{+}.  It takes three arguments.  The
@@ -217,7 +217,7 @@ determine the which branch of the \texttt{if} form is evaluated next.
 If the addition produced a number that can be represented as a fixnum,
 then the Boolean value is \emph{true}.  Otherwise it is \emph{false}.
 
-\defprimop{fixnum-sub}
+\Defprimop{fixnum-sub} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{+}.  It takes three arguments.  The
@@ -251,7 +251,7 @@ If the subtraction produced a number that can be represented as a
 fixnum, then the Boolean value is \emph{true}.  Otherwise it is
 \emph{false}.
 
-\defprimop{fixnum-less}
+\Defprimop{fixnum-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<}.  It takes two arguments, both forms
@@ -263,7 +263,7 @@ the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{fixnum-not-greater}
+\Defprimop{fixnum-not-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<=}.  It takes two arguments, both
@@ -275,7 +275,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{fixnum-greater}
+\Defprimop{fixnum-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>}.  It takes two arguments, both
@@ -287,7 +287,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{fixnum-not-less}
+\Defprimop{fixnum-not-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>=}.  It takes two arguments, both
@@ -299,7 +299,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{short-float-add}
+\Defprimop{short-float-add} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{+}.  It takes two arguments, both forms
@@ -316,7 +316,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-short-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{short-float-sub}
+\Defprimop{short-float-sub} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{-}.  It takes two arguments, both forms
@@ -333,7 +333,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-short-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{short-float-mul}
+\Defprimop{short-float-mul} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{*}.  It takes two arguments, both forms
@@ -350,7 +350,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-short-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{short-float-div}
+\Defprimop{short-float-div} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{/}.  It takes two arguments, both forms
@@ -367,7 +367,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-short-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{short-float-less}
+\Defprimop{short-float-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<}.  It takes two arguments, both forms
@@ -379,7 +379,7 @@ the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{short-float-not-greater}
+\Defprimop{short-float-not-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<=}.  It takes two arguments, both forms
@@ -391,7 +391,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{short-float-greater}
+\Defprimop{short-float-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>}.  It takes two arguments, both forms
@@ -403,7 +403,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{short-float-not-less}
+\Defprimop{short-float-not-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>=}.  It takes two arguments, both forms
@@ -415,7 +415,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{short-float-equal}
+\Defprimop{short-float-equal} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{=}.  It takes two arguments, both forms
@@ -427,7 +427,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{short-float-sin}
+\Defprimop{short-float-sin} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sin}.  It takes a single argument which
@@ -439,7 +439,7 @@ the \emph{sine} of the argument.
 This operation always succeeds, since the value of the \texttt{sin}
 function is always in the range allowed by short floats.
 
-\defprimop{short-float-cos}
+\Defprimop{short-float-cos} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{cos}.  It takes a single argument which
@@ -451,7 +451,7 @@ the \emph{cosine} of the argument.
 This operation always succeeds, since the value of the \texttt{cos}
 function is always in the range allowed by short floats.
 
-\defprimop{short-float-sqrt}
+\Defprimop{short-float-sqrt} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sqrt}.  It takes a single argument which
@@ -463,7 +463,7 @@ the \emph{square root} of the argument.
 This operation always succeeds, since the value of the \texttt{SQRT}
 function is closer to $1$ than its argument.
 
-\defprimop{single-float-add}
+\Defprimop{single-float-add} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{+}.  It takes two arguments, both forms
@@ -480,7 +480,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-single-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{single-float-sub}
+\Defprimop{single-float-sub} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{-}.  It takes two arguments, both forms
@@ -497,7 +497,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-single-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{single-float-mul}
+\Defprimop{single-float-mul} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{*}.  It takes two arguments, both forms
@@ -514,7 +514,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-single-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{single-float-div}
+\Defprimop{single-float-div} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{/}.  It takes two arguments, both forms
@@ -531,7 +531,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-single-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{single-float-less}
+\Defprimop{single-float-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<}.  It takes two arguments, both forms
@@ -543,7 +543,7 @@ the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{single-float-not-greater}
+\Defprimop{single-float-not-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<=}.  It takes two arguments, both forms
@@ -555,7 +555,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{single-float-greater}
+\Defprimop{single-float-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>}.  It takes two arguments, both forms
@@ -567,7 +567,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{single-float-not-less}
+\Defprimop{single-float-not-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>=}.  It takes two arguments, both forms
@@ -579,7 +579,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{single-float-equal}
+\Defprimop{single-float-equal} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{=}.  It takes two arguments, both forms
@@ -591,7 +591,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{single-float-sin}
+\Defprimop{single-float-sin} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sin}.  It takes a single argument which
@@ -603,7 +603,7 @@ the \emph{sine} of the argument.
 This operation always succeeds, since the value of the \texttt{sin}
 function is always in the range allowed by single floats.
 
-\defprimop{single-float-cos}
+\Defprimop{single-float-cos} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{cos}.  It takes a single argument which
@@ -615,7 +615,7 @@ the \emph{cosine} of the argument.
 This operation always succeeds, since the value of the \texttt{cos}
 function is always in the range allowed by single floats.
 
-\defprimop{single-float-sqrt}
+\Defprimop{single-float-sqrt} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sqrt}.  It takes a single argument which
@@ -627,7 +627,7 @@ the \emph{square root} of the argument.
 This operation always succeeds, since the value of the \texttt{SQRT}
 function is closer to $1$ than its argument.
 
-\defprimop{double-float-add}
+\Defprimop{double-float-add} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{+}.  It takes two arguments, both forms
@@ -644,7 +644,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-double-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{double-float-sub}
+\Defprimop{double-float-sub} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{-}.  It takes two arguments, both forms
@@ -661,7 +661,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-double-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{double-float-mul}
+\Defprimop{double-float-mul} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{*}.  It takes two arguments, both forms
@@ -678,7 +678,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-double-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{double-float-div}
+\Defprimop{double-float-div} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{/}.  It takes two arguments, both forms
@@ -695,7 +695,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-double-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{double-float-less}
+\Defprimop{double-float-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<}.  It takes two arguments, both forms
@@ -707,7 +707,7 @@ the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{double-float-not-greater}
+\Defprimop{double-float-not-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<=}.  It takes two arguments, both forms
@@ -719,7 +719,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{double-float-greater}
+\Defprimop{double-float-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>}.  It takes two arguments, both forms
@@ -731,7 +731,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{double-float-not-less}
+\Defprimop{double-float-not-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>=}.  It takes two arguments, both forms
@@ -743,7 +743,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{double-float-equal}
+\Defprimop{double-float-equal} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{=}.  It takes two arguments, both forms
@@ -755,7 +755,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{double-float-sin}
+\Defprimop{double-float-sin} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sin}.  It takes a single argument which
@@ -767,7 +767,7 @@ the \emph{sine} of the argument.
 This operation always succeeds, since the value of the \texttt{sin}
 function is always in the range allowed by double floats.
 
-\defprimop{double-float-cos}
+\Defprimop{double-float-cos} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{cos}.  It takes a single argument which
@@ -779,7 +779,7 @@ the \emph{cosine} of the argument.
 This operation always succeeds, since the value of the \texttt{cos}
 function is always in the range allowed by double floats.
 
-\defprimop{double-float-sqrt}
+\Defprimop{double-float-sqrt} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sqrt}.  It takes a single argument which
@@ -791,7 +791,7 @@ the \emph{square root} of the argument.
 This operation always succeeds, since the value of the \texttt{SQRT}
 function is closer to $1$ than its argument.
 
-\defprimop{long-float-add}
+\Defprimop{long-float-add} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{+}.  It takes two arguments, both forms
@@ -808,7 +808,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-long-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{long-float-sub}
+\Defprimop{long-float-sub} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{-}.  It takes two arguments, both forms
@@ -825,7 +825,7 @@ If the result of the operation is less than the value of the
 constant variable \texttt{most-negative-long-float}, then an error of
 type \texttt{floating-point-underflow} is signaled.
 
-\defprimop{long-float-mul}
+\Defprimop{long-float-mul} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{*}.  It takes two arguments, both forms
@@ -842,7 +842,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-long-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{long-float-div}
+\Defprimop{long-float-div} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{/}.  It takes two arguments, both forms
@@ -859,7 +859,7 @@ If the result of the operation is less than the value of the constant
 variable \texttt{most-negative-long-float}, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\defprimop{long-float-less}
+\Defprimop{long-float-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<}.  It takes two arguments, both forms
@@ -871,7 +871,7 @@ the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{long-float-not-greater}
+\Defprimop{long-float-not-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{<=}.  It takes two arguments, both forms
@@ -883,7 +883,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{long-float-greater}
+\Defprimop{long-float-greater} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>}.  It takes two arguments, both forms
@@ -895,7 +895,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{long-float-not-less}
+\Defprimop{long-float-not-less} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{>=}.  It takes two arguments, both forms
@@ -907,7 +907,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{long-float-equal}
+\Defprimop{long-float-equal} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{=}.  It takes two arguments, both forms
@@ -919,7 +919,7 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\defprimop{long-float-sin}
+\Defprimop{long-float-sin} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sin}.  It takes a single argument which
@@ -931,7 +931,7 @@ the \emph{sine} of the argument.
 This operation always succeeds, since the value of the \texttt{sin}
 function is always in the range allowed by long floats.
 
-\defprimop{long-float-cos}
+\Defprimop{long-float-cos} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{cos}.  It takes a single argument which
@@ -943,7 +943,7 @@ the \emph{cosine} of the argument.
 This operation always succeeds, since the value of the \texttt{cos}
 function is always in the range allowed by long floats.
 
-\defprimop{long-float-sqrt}
+\Defprimop{long-float-sqrt} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sqrt}.  It takes a single argument which
@@ -955,7 +955,7 @@ the \emph{square root} of the argument.
 This operation always succeeds, since the value of the \texttt{SQRT}
 function is closer to $1$ than its argument.
 
-\defprimop{slot-read}
+\Defprimop{slot-read} {}
 
 This primitive operation is used in the implementation of the MOP
 function \texttt{standard-instance-access}.  I takes two arguments.
@@ -970,7 +970,7 @@ This operation returns the contents of the slot at the offset
 indicated by the second argument in the instance indicated by the
 first argument.
 
-\defprimop{slot-write}
+\Defprimop{slot-write} {}
 
 This primitive operation is used in the implementation of the MOP
 function \texttt{(setf standard-instance-access)}.  I takes three
