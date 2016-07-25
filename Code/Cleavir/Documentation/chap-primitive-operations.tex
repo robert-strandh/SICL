@@ -954,3 +954,18 @@ the \emph{square root} of the argument.
 
 This operation always succeeds, since the value of the \texttt{SQRT}
 function is closer to $1$ than its argument.
+
+\defprimop{slot-read}
+
+This primitive operation is used in the implementation of the MOP
+function \texttt{standard-instance-access}.  I takes two arguments.
+The first argument is a form that must evaluate to a standard
+instance%
+\footnote{Implementations are free to use this operation to access
+  other objects as well, provided that those objects have the same
+  memory layout as standard instances.}
+The second argument is a form that must evaluate to a fixnum.
+
+This operation returns the contents of the slot at the offset
+indicated by the second argument in the instance indicated by the
+first argument.
