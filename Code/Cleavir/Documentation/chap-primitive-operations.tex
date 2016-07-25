@@ -75,7 +75,7 @@ The \texttt{typeq} generates a \texttt{typeq} AST and ultimately a
 inferencer \seesec{sec-optimizations-type-inference} to infer
 different types in different successor branches.
 
-\Defprimop{car} {}
+\Defprimop{car} {cons}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{car}.  The main difference between
@@ -103,7 +103,7 @@ The \commonlisp{} \texttt{car} function will typically be declared
 \seesec{sec-optimizations-type-inference} to use the \texttt{typeq}
 primitive operation to remove redundant type checks.
 
-\Defprimop{cdr} {}
+\Defprimop{cdr} {cons}
 
 This primitive operation is typically used in the implementation of
 the \commonlisp{} function \texttt{cdr}.  The main difference between
