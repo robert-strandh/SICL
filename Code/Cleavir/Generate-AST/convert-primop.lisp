@@ -244,6 +244,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:SHORT-FLOAT-MUL.
+;;;
+;;; This primitive operation is used in the implementation of the
+;;; Common Lisp function *.  It takes two arguments, both forms that
+;;; must evaluate to short floats.
+;;;
+;;; The value of a form with this operator is a short float
+;;; representing the product of the two arguments.
+;;;
+;;; If the result of the operation is greater than the value of the
+;;; constant variable MOST-POSITIVE-SHORT-FLOAT, then an error of type
+;;; FLOATING-POINT-OVERFLOW is signaled.
+;;;
+;;; If the result of the operation is less than the value of the
+;;; constant variable MOST-NEGATIVE-SHORT-FLOAT, then an error of
+;;; type FLOATING-POINT-UNDERFLOW is signaled.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:short-float-mul)) form env system)
+  (db origin (op arg1 arg2) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:short-float-mul-ast
+      :arg1-ast (convert arg1 env system)
+      :arg2-ast (convert arg2 env system)
+      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:FUNCALL.
 ;;;
 ;;; This primop is similar to the function CL:FUNCALL.  The difference
