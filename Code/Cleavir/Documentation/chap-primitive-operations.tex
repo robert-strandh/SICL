@@ -1128,11 +1128,11 @@ last form.
 \Defprimop{bit-aref} {array index}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{aref}.  The \textit{array} argument is
-a form that must evaluate to a specialized array with element type
-\texttt{bit}.  The \texttt{index} argument is a form that must
-evaluate to a fixnum.  It represents a valid row-major index into
-\textit{array}.
+\commonlisp{} functions \texttt{aref} and \texttt{bit}.  The
+\textit{array} argument is a form that must evaluate to a specialized
+array with element type \texttt{bit}.  The \texttt{index} argument is
+a form that must evaluate to a fixnum.  It represents a valid
+row-major index into \textit{array}.
 
 This primitive operation returns the bit value at \textit{index} in
 \textit{array}.
@@ -1140,11 +1140,11 @@ This primitive operation returns the bit value at \textit{index} in
 \Defprimop{bit-aset} {array index bit}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
-argument is a form that must evaluate to a specialized array with
-element type \texttt{bit}.  The \texttt{index} argument is a form that
-must evaluate to a fixnum.  It represents a valid row-major index into
-\textit{array}.
+\commonlisp{} functions \texttt{(setf aref)} and \texttt{(setf bit)}.
+The \textit{array} argument is a form that must evaluate to a
+specialized array with element type \texttt{bit}.  The \texttt{index}
+argument is a form that must evaluate to a fixnum.  It represents a
+valid row-major index into \textit{array}.
 
 This primitive operation stores the value \textit{bit} at
 \textit{index} in \textit{array}.
