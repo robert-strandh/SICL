@@ -300,6 +300,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:SHORT-FLOAT-LESS.
+;;;
+;;; This primitive operation is used in the implementation of the
+;;; Common Lisp function <.  It takes two arguments, both forms that
+;;; must evaluate to short floats.  It can only appear as the
+;;; TEST-FORM in the special form IF.
+;;;
+;;; The value of a form with this operator is a short float
+;;; representing the quotient of the two arguments.
+;;;
+;;; If the first argument is strictly less than the second argument,
+;;; then the THEN branch of the IF form is evaluated.  Otherwise, the
+;;; ELSE branch of the IF form is evaluated.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:short-float-less)) form env system)
+  (db origin (op arg1 arg2) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:short-float-less-ast
+      :arg1-ast (convert arg1 env system)
+      :arg2-ast (convert arg2 env system)
+      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:FUNCALL.
 ;;;
 ;;; This primop is similar to the function CL:FUNCALL.  The difference
