@@ -146,8 +146,8 @@
 (deflabel short-float-sin-ast "shf sin")
 (deflabel short-float-cos-ast "shf cos")
 (deflabel short-float-sqrt-ast "shf sqrt")
-(deflabel short-float-aref-ast "shf aref")
-(deflabel short-float-aset-ast "shf aset")
+(deflabel simple-short-float-aref-ast "simple shf aref")
+(deflabel simple-short-float-aset-ast "simple shf aset")
 
 (deflabel single-float-add-ast "sf +")
 (deflabel single-float-sub-ast "sf -")
