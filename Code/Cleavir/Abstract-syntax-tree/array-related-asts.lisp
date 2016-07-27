@@ -2,55 +2,56 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class T-AREF-AST
+;;; Class SIMPLE-T-AREF-AST.
 ;;;
-;;; This AST can be used to read an element of an unspecialized array.
-;;; It corresponds roughly to the standard function ROW-MAJOR-AREF.
+;;; This AST can be used to read an element of a simple unspecialized
+;;; array.  It corresponds roughly to the standard function
+;;; ROW-MAJOR-AREF.
 
-(defclass t-aref-ast (ast one-value-ast-mixin)
+(defclass simple-t-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-t-aref-ast (array-ast index-ast &key origin)
-  (make-instance 't-aref-ast
+(defun make-simple-t-aref-ast (array-ast index-ast &key origin)
+  (make-instance 'simple-t-aref-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
-(cleavir-io:define-save-info t-aref-ast
+(cleavir-io:define-save-info simple-t-aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast))
 
-(defmethod children ((ast t-aref-ast))
+(defmethod children ((ast simple-t-aref-ast))
   (list (array-ast ast) (index-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class T-ASET-AST
+;;; Class SIMPLE-T-ASET-AST
 ;;;
-;;; This AST can be used to write an element of an unspecialized
-;;; array.  It corresponds roughly to a function (SETF
+;;; This AST can be used to write an element of a a simple
+;;; unspecialized array.  It corresponds roughly to a function (SETF
 ;;; ROW-MAJOR-ASET).  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass t-aset-ast (ast no-value-ast-mixin)
+(defclass simple-t-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-t-aset-ast (array-ast index-ast value-ast &key origin)
-  (make-instance 't-aset-ast
+(defun make-simple-t-aset-ast (array-ast index-ast value-ast &key origin)
+  (make-instance 'simple-t-aset-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
 
-(cleavir-io:define-save-info t-aset-ast
+(cleavir-io:define-save-info simple-t-aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:value-ast value-ast))
 
-(defmethod children ((ast t-aset-ast))
+(defmethod children ((ast simple-t-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
