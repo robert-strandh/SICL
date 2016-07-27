@@ -58,19 +58,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction SHORT-FLOAT-AREF-INSTRUCTION.
+;;; Instruction SIMPLE-SHORT-FLOAT-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be an array specialized to SHORT-FLOAT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
-;;; element to be read.  This instruction produces a single output,
-;;; the element read, which is an unboxed SHORT-FLOAT.
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a simple array specialized to SHORT-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  This instruction produces a single
+;;; output, the element read, which is an unboxed SHORT-FLOAT.
 
-(defclass short-float-aref-instruction (instruction one-successor-mixin)
+(defclass simple-short-float-aref-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-short-float-aref-instruction (input1 input2 output successor)
-  (make-instance 'short-float-aref-instruction
+(defun make-simple-short-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'simple-short-float-aref-instruction
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))
@@ -193,20 +193,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction SHORT-FLOAT-ASET-INSTRUCTION.
+;;; Instruction SIMPLE-SHORT-FLOAT-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
-;;; to be an array specialized to SHORT-FLOAT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
-;;; element to be read.  The third input is assumed to be an unboxed
-;;; SHORT-FLOAT to be stored as an element in the array.
+;;; to be a simple array specialized to SHORT-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  The third input is assumed to be an
+;;; unboxed SHORT-FLOAT to be stored as an element in the array.
 
-(defclass short-float-aset-instruction
+(defclass simple-short-float-aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-short-float-aset-instruction (input1 input2 input3 successor)
-  (make-instance 'short-float-aset-instruction
+(defun make-simple-short-float-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'simple-short-float-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))
