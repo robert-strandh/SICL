@@ -85,8 +85,8 @@
 			      cleavir-ir:bit-aref-instruction
 			      cleavir-ir:bit-box-instruction)
 
-(compile-specialized-aref-ast cleavir-ast:short-float-aref-ast
-			      cleavir-ir:short-float-aref-instruction
+(compile-specialized-aref-ast cleavir-ast:simple-short-float-aref-ast
+			      cleavir-ir:simple-short-float-aref-instruction
 			      cleavir-ir:short-float-box-instruction)
 
 (compile-specialized-aref-ast cleavir-ast:single-float-aref-ast
@@ -137,8 +137,8 @@
 			      cleavir-ir:bit-aset-instruction
 			      cleavir-ir:bit-unbox-instruction)
 
-(compile-specialized-aset-ast cleavir-ast:short-float-aset-ast
-			      cleavir-ir:short-float-aset-instruction
+(compile-specialized-aset-ast cleavir-ast:simple-short-float-aset-ast
+			      cleavir-ir:simple-short-float-aset-instruction
 			      cleavir-ir:short-float-unbox-instruction)
 
 (compile-specialized-aset-ast cleavir-ast:single-float-aset-ast
