@@ -2,18 +2,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction T-AREF-INSTRUCTION.
+;;; Instruction SIMPLE-T-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be a general array.  The second is assumed to be a FIXNUM
 ;;; and represents the index in the instance of the element to be read.
 ;;; This instruction produces a single output, the element read.
 
-(defclass t-aref-instruction (instruction one-successor-mixin)
+(defclass simple-t-aref-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-t-aref-instruction (input1 input2 output successor)
-  (make-instance 't-aref-instruction
+(defun make-simple-t-aref-instruction (input1 input2 output successor)
+  (make-instance 'simple-t-aref-instruction
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))
@@ -134,19 +134,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction T-ASET-INSTRUCTION.
+;;; Instruction SIMPLE-T-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
 ;;; to be a general array.  The second is assumed to be a FIXNUM
 ;;; and represents the index in the instance of the element to be read.
 ;;; The third input is the element to be stored in the array.
 
-(defclass t-aset-instruction
+(defclass simple-t-aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-t-aset-instruction (input1 input2 input3 successor)
-  (make-instance 't-aset-instruction
+(defun make-simple-t-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'simple-t-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))
