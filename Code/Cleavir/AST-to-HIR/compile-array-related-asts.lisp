@@ -40,7 +40,7 @@
 	     (context
 	      (list temp2)
 	      (compile-ast
-	       (cleavir-ast:value-ast ast)
+	       (cleavir-ast:object-ast ast)
 	       (context
 		(list temp3)
 		(list (make-instance 'cleavir-ir:simple-t-aset-instruction
