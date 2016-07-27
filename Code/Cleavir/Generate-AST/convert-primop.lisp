@@ -471,3 +471,50 @@
      :index-ast (convert index env system)
      :object-ast (convert object env system)
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SIMPLE-SHORT-FLOAT-AREF.
+;;;
+;;; This primitive operation is used in the implementation of the
+;;; Common Lisp function AREF.  The ARRAY argument is a form that must
+;;; evaluate to a simple array specialized to SHORT-FLOAT.  The INDEX
+;;; argument is a form that must evaluate to a fixnum.  It represents
+;;; a valid row-major index into ARRAY.
+;;;
+;;; This primitive operation returns the object at INDEX in ARRAY.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:simple-short-float-aref)) form env system)
+  (db origin (op array index) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:simple-short-float-aref-ast
+     :array-ast (convert array env system)
+     :index-ast (convert index env system)
+     :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SIMPLE-SHORT-FLOAT-ASET.
+;;;
+;;; This primitive operation is used in the implementation of the
+;;; Common Lisp function (SETF AREF).  The ARRAY argument is a form
+;;; that must evaluate to a simple array specialized to SHORT-FLOAT.
+;;; The INDEX argument is a form that must evaluate to a fixnum.  It
+;;; represents a valid row-major index into ARRAY.
+;;;
+;;; This primitive operation stores SHORT-FLOAT at INDEX in ARRAY.
+;;;
+;;; Forms using this primitive operation must occur in a context that
+;;; does not require a value, such as in a PROGN other than as the
+;;; last form.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:simple-short-float-aset)) form env system)
+  (db origin (op array index short-float) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:simple-short-float-aset-ast
+     :array-ast (convert array env system)
+     :index-ast (convert index env system)
+     :object-ast (convert short-float env system)
+     :origin origin)))
