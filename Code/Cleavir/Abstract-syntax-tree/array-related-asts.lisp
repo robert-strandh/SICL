@@ -110,54 +110,54 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class SHORT-FLOAT-AREF-AST
+;;; Class SIMPLE-SHORT-FLOAT-AREF-AST
 ;;;
-;;; This AST can be used to read an element of an array specialized to
-;;; SHORT-FLOAT.
+;;; This AST can be used to read an element of a simple array
+;;; specialized to SHORT-FLOAT.
 
-(defclass short-float-aref-ast (ast one-value-ast-mixin)
+(defclass simple-short-float-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-short-float-aref-ast (array-ast index-ast &key origin)
-  (make-instance 'short-float-aref-ast
+(defun make-simple-short-float-aref-ast (array-ast index-ast &key origin)
+  (make-instance 'simple-short-float-aref-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
-(cleavir-io:define-save-info short-float-aref-ast
+(cleavir-io:define-save-info simple-short-float-aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast))
 
-(defmethod children ((ast short-float-aref-ast))
+(defmethod children ((ast simple-short-float-aref-ast))
   (list (array-ast ast) (index-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class SHORT-FLOAT-ASET-AST
+;;; Class SIMPLE-SHORT-FLOAT-ASET-AST
 ;;;
-;;; This AST can be used to write an element of an array specialized
-;;; to SHORT-FLOAT.
+;;; This AST can be used to write an element to a simple array
+;;; specialized to SHORT-FLOAT.
 
-(defclass short-float-aset-ast (ast no-value-ast-mixin)
+(defclass simple-short-float-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+   (%object-ast :initarg :object-ast :reader object-ast)))
 
-(defun make-short-float-aset-ast (array-ast index-ast value-ast &key origin)
-  (make-instance 'short-float-aset-ast
+(defun make-simple-short-float-aset-ast (array-ast index-ast object-ast &key origin)
+  (make-instance 'simple-short-float-aset-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast
-    :value-ast value-ast))
+    :object-ast object-ast))
 
-(cleavir-io:define-save-info short-float-aset-ast
+(cleavir-io:define-save-info simple-short-float-aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
-  (:value-ast value-ast))
+  (:object-ast object-ast))
 
-(defmethod children ((ast short-float-aset-ast))
-  (list (array-ast ast) (index-ast ast) (value-ast ast)))
+(defmethod children ((ast simple-short-float-aset-ast))
+  (list (array-ast ast) (index-ast ast) (object-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
