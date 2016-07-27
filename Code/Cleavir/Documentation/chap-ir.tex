@@ -722,8 +722,8 @@ element of the array.
 \texttt{aref-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{short-float-aref-instruction}}
-\label{mir-instruction-short-float-aref}
+\subsection{Instruction \texttt{simple-short-float-aref-instruction}}
+\label{mir-instruction-simple-short-float-aref}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -740,7 +740,7 @@ Number of successors & 1\\
 This instruction can be used by implementations that support arrays
 specialized to \texttt{short-float}.
 
-The first input to this instruction must be an \emph{array}
+The first input to this instruction must be a simple \emph{array}
 specialized to \texttt{short-float}.  If the MIR program is
 \emph{safe}, then control must reach this instruction only if this
 restriction is verified.  The second input is a non-negative fixnum
@@ -748,15 +748,15 @@ indicating the \emph{row-major index} of an element of the array.  The
 output is the contents of the corresponding element of the array.  The
 output is an unboxed \texttt{short-float} number.
 
-\refFig{fig-short-float-aref-instruction} shows the Graphviz illustration of the
-\texttt{short-float-aref-instruction}
+\refFig{fig-simple-short-float-aref-instruction} shows the Graphviz illustration of the
+\texttt{simple-short-float-aref-instruction}
 
 \begin{figure}
 \begin{center}
-\inputfig{fig-short-float-aref-instruction.pdf_t}
+\inputfig{fig-simple-short-float-aref-instruction.pdf_t}
 \end{center}
-\caption{\label{fig-short-float-aref-instruction}
-\texttt{short-float-aref-instruction}.}
+\caption{\label{fig-simple-short-float-aref-instruction}
+\texttt{simple-short-float-aref-instruction}.}
 \end{figure}
 
 \subsection{Instruction \texttt{single-float-aref-instruction}}
@@ -941,8 +941,8 @@ the third input.
 \texttt{aset-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{short-float-aset-instruction}}
-\label{mir-instruction-short-float-aset}
+\subsection{Instruction \texttt{simple-short-float-aset-instruction}}
+\label{mir-instruction-simple-short-float-aset}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -959,7 +959,7 @@ Number of successors & 1\\
 This instruction can be used by implementations that support arrays
 specialized to \texttt{short-float}.
 
-The first input to this instruction must be an \emph{array}
+The first input to this instruction must be a simple \emph{array}
 specialized to \texttt{short-float}.  If the MIR program is
 \emph{safe}, then control must reach this instruction only if this
 restriction is verified.  The second input is a non-negative fixnum
@@ -969,15 +969,15 @@ The third input is an unboxed \texttt{short-float} number.
 The effect of the instruction is to replace the contents of the
 corresponding element by the third input.
 
-\refFig{fig-short-float-aset-instruction} shows the Graphviz illustration of the
-\texttt{short-float-aset-instruction}
+\refFig{fig-simple-short-float-aset-instruction} shows the Graphviz illustration of the
+\texttt{simple-short-float-aset-instruction}
 
 \begin{figure}
 \begin{center}
-\inputfig{fig-short-float-aset-instruction.pdf_t}
+\inputfig{fig-simple-short-float-aset-instruction.pdf_t}
 \end{center}
-\caption{\label{fig-short-float-aset-instruction}
-\texttt{short-float-aset-instruction}.}
+\caption{\label{fig-simple-short-float-aset-instruction}
+\texttt{simple-short-float-aset-instruction}.}
 \end{figure}
 
 \subsection{Instruction \texttt{single-float-aset-instruction}}
