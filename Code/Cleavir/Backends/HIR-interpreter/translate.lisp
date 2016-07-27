@@ -193,7 +193,7 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:short-float-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:simple-short-float-aref-instruction) inputs outputs)
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
@@ -231,7 +231,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:short-float-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:simple-short-float-aset-instruction) inputs outputs)
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
