@@ -377,3 +377,24 @@
      (convert instance-form env system)
      (convert slot-number-form env system)
      (convert value-form env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SIMPLE-T-AREF.
+;;;
+;;; This primitive operation is used in the implementation of the
+;;; Common Lisp function AREF.  The ARRAY argument is a form that must
+;;; evaluate to a simple and unspecialized array.  The INDEX argument
+;;; is a form that must evaluate to a fixnum.  It represents a valid
+;;; row-major index into ARRAY.
+;;;
+;;; This primitive operation returns the object at INDEX in ARRAY.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:simple-t-aref)) form env system)
+  (db origin (op array index) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:simple-t-aref-ast
+     :array-ast (convert array env system)
+     :index-ast (convert index env system)
+     :origin origin)))
