@@ -37,22 +37,22 @@
 (defclass simple-t-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+   (%object-ast :initarg :object-ast :reader object-ast)))
 
-(defun make-simple-t-aset-ast (array-ast index-ast value-ast &key origin)
+(defun make-simple-t-aset-ast (array-ast index-ast object-ast &key origin)
   (make-instance 'simple-t-aset-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast
-    :value-ast value-ast))
+    :object-ast object-ast))
 
 (cleavir-io:define-save-info simple-t-aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
-  (:value-ast value-ast))
+  (:object-ast object-ast))
 
 (defmethod children ((ast simple-t-aset-ast))
-  (list (array-ast ast) (index-ast ast) (value-ast ast)))
+  (list (array-ast ast) (index-ast ast) (object-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
