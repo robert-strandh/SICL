@@ -107,6 +107,8 @@
    #:slot-write-ast #:make-slot-write-ast
    #:simple-t-aref-ast #:make-simple-t-aref-ast #:array-ast #:index-ast
    #:simple-t-aset-ast #:make-simple-t-aset-ast
+   #:intricate-t-aref-ast #:make-intricate-t-aref-ast #:array-ast
+   #:intricate-t-aset-ast #:make-intricate-t-aset-ast
    #:short-float-aref-ast #:make-short-float-aref-ast
    #:short-float-aset-ast #:make-short-float-aset-ast 
    #:single-float-aref-ast #:make-single-float-aref-ast
