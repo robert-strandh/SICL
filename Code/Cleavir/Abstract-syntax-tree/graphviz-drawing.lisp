@@ -125,8 +125,8 @@
 ;;;
 ;;; Labels for unspecialized array ASTs
 
-(deflabel t-aref-ast "t aref")
-(deflabel t-aset-ast "t aset")
+(deflabel simple-t-aref-ast "simple t aref")
+(deflabel simple-t-aset-ast "simple t aset")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
