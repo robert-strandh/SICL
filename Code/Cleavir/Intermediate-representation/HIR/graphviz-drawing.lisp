@@ -360,7 +360,8 @@
 ;;;
 ;;; Floating-point array accessors.
 
-(defmethod label ((instruction short-float-aref-instruction)) "shf aref")
+(defmethod label ((instruction simple-short-float-aref-instruction))
+  "simple shf aref")
 
 (defmethod label ((instruction single-float-aref-instruction)) "sf aref")
 
@@ -368,7 +369,8 @@
 
 (defmethod label ((instruction long-float-aref-instruction)) "lf aref")
 
-(defmethod label ((instruction short-float-aset-instruction)) "shf aset")
+(defmethod label ((instruction simple-short-float-aset-instruction))
+  "simple shf aset")
 
 (defmethod label ((instruction single-float-aset-instruction)) "sf aset")
 
