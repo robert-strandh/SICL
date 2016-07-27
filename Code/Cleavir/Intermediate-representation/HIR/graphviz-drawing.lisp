@@ -344,9 +344,9 @@
 
 (defmethod label ((instruction slot-write-instruction)) "rplacd")
 
-(defmethod label ((instruction t-aref-instruction)) "t aref")
+(defmethod label ((instruction simple-t-aref-instruction)) "simple t aref")
 
-(defmethod label ((instruction t-aset-instruction)) "t aset")
+(defmethod label ((instruction simple-t-aset-instruction)) "simple t aset")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
