@@ -313,7 +313,7 @@
   `(rplacd ,(first inputs) ,(second inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:t-aref-instruction)
+    ((instruction cleavir-ir:simple-t-aref-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   `(setq ,(first outputs)
@@ -334,7 +334,7 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:short-float-aref-instruction)
+    ((instruction cleavir-ir:simple-short-float-aref-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   `(setq ,(first outputs)
@@ -362,7 +362,7 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:t-aset-instruction)
+    ((instruction cleavir-ir:simple-t-aset-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
@@ -386,7 +386,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:short-float-aset-instruction)
+    ((instruction cleavir-ir:simple-short-float-aset-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
