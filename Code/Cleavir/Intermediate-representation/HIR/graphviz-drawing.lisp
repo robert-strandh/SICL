@@ -369,14 +369,20 @@
 (defmethod label ((instruction simple-short-float-aref-instruction))
   "simple shf aref")
 
+(defmethod label ((instruction simple-short-float-aset-instruction))
+  "simple shf aset")
+
+(defmethod label ((instruction non-simple-short-float-aref-instruction))
+  "non-simple shf aref")
+
+(defmethod label ((instruction non-simple-short-float-aset-instruction))
+  "non-simple shf aset")
+
 (defmethod label ((instruction single-float-aref-instruction)) "sf aref")
 
 (defmethod label ((instruction double-float-aref-instruction)) "df aref")
 
 (defmethod label ((instruction long-float-aref-instruction)) "lf aref")
-
-(defmethod label ((instruction simple-short-float-aset-instruction))
-  "simple shf aset")
 
 (defmethod label ((instruction single-float-aset-instruction)) "sf aset")
 
