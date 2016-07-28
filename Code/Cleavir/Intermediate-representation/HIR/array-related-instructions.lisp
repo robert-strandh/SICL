@@ -242,10 +242,10 @@
 ;;; Instruction SIMPLE-SINGLE-FLOAT-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed to
-;;; be a simple array specialized to SIMPLE-SINGLE-FLOAT.  The second
-;;; is assumed to be a FIXNUM and represents the index in the instance
-;;; of the element to be read.  This instruction produces a single
-;;; output, the element read, which is an unboxed SIMPLE-SINGLE-FLOAT.
+;;; be a simple array specialized to SINGLE-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  This instruction produces a single
+;;; output, the element read, which is an unboxed SINGLE-FLOAT.
 
 (defclass simple-single-float-aref-instruction
     (instruction one-successor-mixin)
@@ -263,11 +263,10 @@
 ;;; Instruction SIMPLE-SINGLE-FLOAT-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
-;;; to be a simple array specialized to SIMPLE-SINGLE-FLOAT.  The
-;;; second is assumed to be a FIXNUM and represents the index in the
-;;; instance of the element to be read.  The third input is assumed to
-;;; be an unboxed SIMPLE-SINGLE-FLOAT to be stored as an element in
-;;; the array.
+;;; to be a simple array specialized to SINGLE-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  The third input is assumed to be an
+;;; unboxed SINGLE-FLOAT to be stored as an element in the array.
 
 (defclass simple-single-float-aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
@@ -276,6 +275,48 @@
 (defun make-simple-single-float-aset-instruction
     (input1 input2 input3 successor)
   (make-instance 'simple-single-float-aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NON-SIMPLE-SINGLE-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a non-simple array specialized to SINGLE-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  This instruction produces a single
+;;; output, the element read, which is an unboxed SINGLE-FLOAT.
+
+(defclass non-simple-single-float-aref-instruction
+    (instruction one-successor-mixin)
+  ())
+
+(defun make-non-simple-single-float-aref-instruction
+    (input1 input2 output successor)
+  (make-instance 'non-simple-single-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NON-SIMPLE-SINGLE-FLOAT-ASET-INSTRUCTION.
+;;;
+;;; This instruction takes three inputs.  The first input is assumed
+;;; to be a non-simple array specialized to SINGLE-FLOAT.  The second
+;;; is assumed to be a FIXNUM and represents the index in the instance
+;;; of the element to be read.  The third input is assumed to be an
+;;; unboxed SINGLE-FLOAT to be stored as an element in the array.
+
+(defclass non-simple-single-float-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
+
+(defun make-non-simple-single-float-aset-instruction
+    (input1 input2 input3 successor)
+  (make-instance 'non-simple-single-float-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))
