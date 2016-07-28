@@ -1014,7 +1014,7 @@ Forms using this primitive operation must occur in a context that does
 not require a value, such as in a \texttt{progn} other than as the
 last form.
 
-\Defprimop{intricate-t-aref} {array index}
+\Defprimop{non-simple-t-aref} {array index}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{aref}.  The \textit{array} argument is
@@ -1026,7 +1026,7 @@ into \textit{array}.
 This primitive operation returns the object at \textit{index} in
 \textit{array}.
 
-\Defprimop{intricate-t-aset} {array index object}
+\Defprimop{non-simple-t-aset} {array index object}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
