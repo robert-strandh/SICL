@@ -197,6 +197,48 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction NON-SIMPLE-SHORT-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a non-simple array specialized to SHORT-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  This instruction produces a single
+;;; output, the element read, which is an unboxed SHORT-FLOAT.
+
+(defclass non-simple-short-float-aref-instruction
+    (instruction one-successor-mixin)
+  ())
+
+(defun make-non-simple-short-float-aref-instruction
+    (input1 input2 output successor)
+  (make-instance 'non-simple-short-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NON-SIMPLE-SHORT-FLOAT-ASET-INSTRUCTION.
+;;;
+;;; This instruction takes three inputs.  The first input is assumed
+;;; to be a non-simple array specialized to SHORT-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  The third input is assumed to be an
+;;; unboxed SHORT-FLOAT to be stored as an element in the array.
+
+(defclass non-simple-short-float-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
+
+(defun make-non-simple-short-float-aset-instruction
+    (input1 input2 input3 successor)
+  (make-instance 'non-simple-short-float-aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SINGLE-FLOAT-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
