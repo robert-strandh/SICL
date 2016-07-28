@@ -39,6 +39,43 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction NON-SIMPLE-T-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed
+;;; to be a general array.  The second is assumed to be a FIXNUM
+;;; and represents the index in the instance of the element to be read.
+;;; This instruction produces a single output, the element read.
+
+(defclass non-simple-t-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-non-simple-t-aref-instruction (input1 input2 output successor)
+  (make-instance 'non-simple-t-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NON-SIMPLE-T-ASET-INSTRUCTION.
+;;;
+;;; This instruction takes three inputs.  The first input is assumed
+;;; to be a general array.  The second is assumed to be a FIXNUM
+;;; and represents the index in the instance of the element to be read.
+;;; The third input is the element to be stored in the array.
+
+(defclass non-simple-t-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
+
+(defun make-non-simple-t-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'non-simple-t-aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction BIT-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
