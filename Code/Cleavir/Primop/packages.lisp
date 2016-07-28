@@ -68,6 +68,7 @@
    #:non-simple-t-aref #:non-simple-t-aset
    #:bit-aref #:bit-aset
    #:simple-short-float-aref #:simple-short-float-aset
+   #:non-simple-short-float-aref #:non-simple-short-float-aset
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall))
