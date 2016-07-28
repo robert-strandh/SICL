@@ -216,7 +216,7 @@
 ;;; Class SIMPLE-SINGLE-FLOAT-AREF-AST
 ;;;
 ;;; This AST can be used to read an element of a simple array
-;;; specialized to SIMPLE-SINGLE-FLOAT.
+;;; specialized to SINGLE-FLOAT.
 
 (defclass simple-single-float-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
@@ -240,7 +240,7 @@
 ;;; Class SIMPLE-SINGLE-FLOAT-ASET-AST
 ;;;
 ;;; This AST can be used to write an element of a simple array
-;;; specialized to SIMPLE-SINGLE-FLOAT.
+;;; specialized to SINGLE-FLOAT.
 
 (defclass simple-single-float-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
