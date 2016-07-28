@@ -138,18 +138,22 @@
    #:non-simple-t-aset-instruction #:make-non-simple-t-aset-instruction
    #:bit-aref-instruction #:make-bit-aref-instruction
    #:unsigned-byte-8-aref-instruction #:make-unsigned-byte-8-aref-instruction
-   #:simple-short-float-aref-instruction #:make-simple-short-float-aref-instruction
-   #:simple-short-float-aset-instruction #:make-simple-short-float-aset-instruction
+   #:simple-short-float-aref-instruction
+   #:make-simple-short-float-aref-instruction
+   #:simple-short-float-aset-instruction
+   #:make-simple-short-float-aset-instruction
    #:non-simple-short-float-aref-instruction
    #:make-non-simple-short-float-aref-instruction
    #:non-simple-short-float-aset-instruction
    #:make-non-simple-short-float-aset-instruction
-   #:single-float-aref-instruction #:make-single-float-aref-instruction
+   #:simple-single-float-aref-instruction
+   #:make-simple-single-float-aref-instruction
+   #:simple-single-float-aset-instruction
+   #:make-simple-single-float-aset-instruction
    #:double-float-aref-instruction #:make-double-float-aref-instruction
    #:long-float-aref-instruction #:make-long-float-aref-instruction
    #:bit-aset-instruction #:make-bit-aset-instruction
    #:unsigned-byte-8-aset-instruction #:make-unsigned-byte-8-aset-instruction
-   #:single-float-aset-instruction #:make-single-float-aset-instruction
    #:double-float-aset-instruction #:make-double-float-aset-instruction
    #:long-float-aset-instruction #:make-long-float-aset-instruction
    #:memref1-instruction #:make-memref1-instruction

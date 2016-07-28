@@ -113,8 +113,8 @@
    #:simple-short-float-aset-ast #:make-simple-short-float-aset-ast
    #:non-simple-short-float-aref-ast #:make-non-simple-short-float-aref-ast
    #:non-simple-short-float-aset-ast #:make-non-simple-short-float-aset-ast
-   #:single-float-aref-ast #:make-single-float-aref-ast
-   #:single-float-aset-ast #:make-single-float-aset-ast 
+   #:simple-single-float-aref-ast #:make-simple-single-float-aref-ast
+   #:simple-single-float-aset-ast #:make-simple-single-float-aset-ast
    #:double-float-aref-ast #:make-double-float-aref-ast
    #:double-float-aset-ast #:make-double-float-aset-ast 
    #:long-float-aref-ast #:make-long-float-aref-ast

@@ -163,8 +163,8 @@
 (deflabel single-float-sin-ast "sf sin")
 (deflabel single-float-cos-ast "sf cos")
 (deflabel single-float-sqrt-ast "sf sqrt")
-(deflabel single-float-aref-ast "sf aref")
-(deflabel single-float-aset-ast "sf aset")
+(deflabel simple-single-float-aref-ast "simple sf aref")
+(deflabel simple-single-float-aset-ast "simple sf aset")
 
 (deflabel double-float-add-ast "df +")
 (deflabel double-float-sub-ast "df -")
