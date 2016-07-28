@@ -4,10 +4,11 @@
 ;;;
 ;;; Instruction SIMPLE-T-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be a general array.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the element to be read.
-;;; This instruction produces a single output, the element read.
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be an unspecialized simple array.  The second is assumed to be a
+;;; FIXNUM and represents the index in the instance of the element to
+;;; be read.  This instruction produces a single output, the element
+;;; read.
 
 (defclass simple-t-aref-instruction (instruction one-successor-mixin)
   ())
@@ -23,9 +24,10 @@
 ;;; Instruction SIMPLE-T-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
-;;; to be a general array.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the element to be read.
-;;; The third input is the element to be stored in the array.
+;;; to be an unspecialized simple array.  The second is assumed to be
+;;; a FIXNUM and represents the index in the instance of the element
+;;; to be read.  The third input is the element to be stored in the
+;;; array.
 
 (defclass simple-t-aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
@@ -41,10 +43,11 @@
 ;;;
 ;;; Instruction NON-SIMPLE-T-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be a general array.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the element to be read.
-;;; This instruction produces a single output, the element read.
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be an unspecialized non-simple array.  The second is assumed to be
+;;; a FIXNUM and represents the index in the instance of the element
+;;; to be read.  This instruction produces a single output, the
+;;; element read.
 
 (defclass non-simple-t-aref-instruction (instruction one-successor-mixin)
   ())
@@ -60,9 +63,10 @@
 ;;; Instruction NON-SIMPLE-T-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
-;;; to be a general array.  The second is assumed to be a FIXNUM
-;;; and represents the index in the instance of the element to be read.
-;;; The third input is the element to be stored in the array.
+;;; to be an unspecialized non-simple array.  The second is assumed to
+;;; be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  The third input is the element to be stored
+;;; in the array.
 
 (defclass non-simple-t-aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
