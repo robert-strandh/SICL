@@ -56,56 +56,56 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class INTRICATE-T-AREF-AST.
+;;; Class NON-SIMPLE-T-AREF-AST.
 ;;;
 ;;; This AST can be used to read an element of a non-simple
 ;;; unspecialized array.  It corresponds roughly to the standard
 ;;; function ROW-MAJOR-AREF.
 
-(defclass intricate-t-aref-ast (ast one-value-ast-mixin)
+(defclass non-simple-t-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-intricate-t-aref-ast (array-ast index-ast &key origin)
-  (make-instance 'intricate-t-aref-ast
+(defun make-non-simple-t-aref-ast (array-ast index-ast &key origin)
+  (make-instance 'non-simple-t-aref-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
-(cleavir-io:define-save-info intricate-t-aref-ast
+(cleavir-io:define-save-info non-simple-t-aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast))
 
-(defmethod children ((ast intricate-t-aref-ast))
+(defmethod children ((ast non-simple-t-aref-ast))
   (list (array-ast ast) (index-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class INTRICATE-T-ASET-AST
+;;; Class NON-SIMPLE-T-ASET-AST
 ;;;
 ;;; This AST can be used to write an element of a non-simple
 ;;; unspecialized array.  It corresponds roughly to a function (SETF
 ;;; ROW-MAJOR-ASET).  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass intricate-t-aset-ast (ast no-value-ast-mixin)
+(defclass non-simple-t-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-intricate-t-aset-ast (array-ast index-ast value-ast &key origin)
-  (make-instance 'intricate-t-aset-ast
+(defun make-non-simple-t-aset-ast (array-ast index-ast value-ast &key origin)
+  (make-instance 'non-simple-t-aset-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
 
-(cleavir-io:define-save-info intricate-t-aset-ast
+(cleavir-io:define-save-info non-simple-t-aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:value-ast value-ast))
 
-(defmethod children ((ast intricate-t-aset-ast))
+(defmethod children ((ast non-simple-t-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

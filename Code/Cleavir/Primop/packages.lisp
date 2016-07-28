@@ -65,7 +65,7 @@
    #:long-float-sqrt
    #:slot-read #:slot-write
    #:simple-t-aref #:simple-t-aset
-   #:intricate-t-aref #:intricate-t-aset
+   #:non-simple-t-aref #:non-simple-t-aset
    #:bit-aref #:bit-aset
    #:simple-short-float-aref #:simple-short-float-aset
    #:call-with-variable-bound

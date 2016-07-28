@@ -127,8 +127,8 @@
 
 (deflabel simple-t-aref-ast "simple t aref")
 (deflabel simple-t-aset-ast "simple t aset")
-(deflabel intricate-t-aref-ast "intricate t aref")
-(deflabel intricate-t-aset-ast "intricate t aset")
+(deflabel non-simple-t-aref-ast "non-simple t aref")
+(deflabel non-simple-t-aset-ast "non-simple t aset")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

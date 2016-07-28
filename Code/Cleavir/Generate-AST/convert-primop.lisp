@@ -427,7 +427,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting CLEAVIR-PRIMOP:INTRICATE-T-AREF.
+;;; Converting CLEAVIR-PRIMOP:NON-SIMPLE-T-AREF.
 ;;;
 ;;; This primitive operation is used in the implementation of the
 ;;; Common Lisp function AREF.  The ARRAY argument is a form that must
@@ -438,17 +438,17 @@
 ;;; This primitive operation returns the object at INDEX in ARRAY.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:intricate-t-aref)) form env system)
+    ((symbol (eql 'cleavir-primop:non-simple-t-aref)) form env system)
   (db origin (op array index) form
     (declare (ignore op))
-    (make-instance 'cleavir-ast:intricate-t-aref-ast
+    (make-instance 'cleavir-ast:non-simple-t-aref-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting CLEAVIR-PRIMOP:INTRICATE-T-ASET.
+;;; Converting CLEAVIR-PRIMOP:NON-SIMPLE-T-ASET.
 ;;;
 ;;; This primitive operation is used in the implementation of the
 ;;; Common Lisp function (SETF AREF).  The ARRAY argument is a form
@@ -463,10 +463,10 @@
 ;;; last form.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:intricate-t-aset)) form env system)
+    ((symbol (eql 'cleavir-primop:non-simple-t-aset)) form env system)
   (db origin (op array index object) form
     (declare (ignore op))
-    (make-instance 'cleavir-ast:intricate-t-aset-ast
+    (make-instance 'cleavir-ast:non-simple-t-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
      :object-ast (convert object env system)
