@@ -20,120 +20,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction BIT-AREF-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be an array specialized to BIT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
-;;; element to be read.  This instruction produces a single output,
-;;; the element read, which is an unboxed BIT.
-
-(defclass bit-aref-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-bit-aref-instruction (input1 input2 output successor)
-  (make-instance 'bit-aref-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction UNSIGNED-BYTE-8-AREF-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed to
-;;; be an array specialized to (UNSIGNED-BYTE 8).  The second is
-;;; assumed to be a FIXNUM and represents the index in the instance of
-;;; the element to be read.  This instruction produces a single
-;;; output, the element read, which is an unboxed (UNSIGNED-BYTE 8).
-
-(defclass unsigned-byte-8-aref-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-unsigned-byte-8-aref-instruction (input1 input2 output successor)
-  (make-instance 'unsigned-byte-8-aref-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction SIMPLE-SHORT-FLOAT-AREF-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed to
-;;; be a simple array specialized to SHORT-FLOAT.  The second is
-;;; assumed to be a FIXNUM and represents the index in the instance of
-;;; the element to be read.  This instruction produces a single
-;;; output, the element read, which is an unboxed SHORT-FLOAT.
-
-(defclass simple-short-float-aref-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-simple-short-float-aref-instruction (input1 input2 output successor)
-  (make-instance 'simple-short-float-aref-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction SINGLE-FLOAT-AREF-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be an array specialized to SINGLE-FLOAT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
-;;; element to be read.  This instruction produces a single output,
-;;; the element read, which is an unboxed SINGLE-FLOAT.
-
-(defclass single-float-aref-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-single-float-aref-instruction (input1 input2 output successor)
-  (make-instance 'single-float-aref-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction DOUBLE-FLOAT-AREF-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be an array specialized to DOUBLE-FLOAT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
-;;; element to be read.  This instruction produces a single output,
-;;; the element read, which is an unboxed DOUBLE-FLOAT.
-
-(defclass double-float-aref-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-double-float-aref-instruction (input1 input2 output successor)
-  (make-instance 'double-float-aref-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction LONG-FLOAT-AREF-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be an array specialized to LONG-FLOAT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
-;;; element to be read.  This instruction produces a single output,
-;;; the element read, which is an unboxed LONG-FLOAT.
-
-(defclass long-float-aref-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-long-float-aref-instruction (input1 input2 output successor)
-  (make-instance 'long-float-aref-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction SIMPLE-T-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
@@ -149,6 +35,25 @@
   (make-instance 'simple-t-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction BIT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed
+;;; to be an array specialized to BIT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  This instruction produces a single output,
+;;; the element read, which is an unboxed BIT.
+
+(defclass bit-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-bit-aref-instruction (input1 input2 output successor)
+  (make-instance 'bit-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
     :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -173,6 +78,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction UNSIGNED-BYTE-8-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be an array specialized to (UNSIGNED-BYTE 8).  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  This instruction produces a single
+;;; output, the element read, which is an unboxed (UNSIGNED-BYTE 8).
+
+(defclass unsigned-byte-8-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-unsigned-byte-8-aref-instruction (input1 input2 output successor)
+  (make-instance 'unsigned-byte-8-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction UNSIGNED-BYTE-8-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
@@ -189,6 +113,25 @@
   (make-instance 'unsigned-byte-8-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SIMPLE-SHORT-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a simple array specialized to SHORT-FLOAT.  The second is
+;;; assumed to be a FIXNUM and represents the index in the instance of
+;;; the element to be read.  This instruction produces a single
+;;; output, the element read, which is an unboxed SHORT-FLOAT.
+
+(defclass simple-short-float-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-simple-short-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'simple-short-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
     :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -213,6 +156,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction SINGLE-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed
+;;; to be an array specialized to SINGLE-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  This instruction produces a single output,
+;;; the element read, which is an unboxed SINGLE-FLOAT.
+
+(defclass single-float-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-single-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'single-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SINGLE-FLOAT-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
@@ -233,6 +195,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction DOUBLE-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed
+;;; to be an array specialized to DOUBLE-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  This instruction produces a single output,
+;;; the element read, which is an unboxed DOUBLE-FLOAT.
+
+(defclass double-float-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-double-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'double-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction DOUBLE-FLOAT-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
@@ -249,6 +230,25 @@
   (make-instance 'double-float-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LONG-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed
+;;; to be an array specialized to LONG-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  This instruction produces a single output,
+;;; the element read, which is an unboxed LONG-FLOAT.
+
+(defclass long-float-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-long-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'long-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
     :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
