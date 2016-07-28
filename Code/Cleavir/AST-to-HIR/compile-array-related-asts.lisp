@@ -21,7 +21,7 @@
 			      :successors (successors context)))
 		      (invocation context))))
       (invocation context)))))
-  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a SIMPLE-T-ASET-AST
@@ -44,6 +44,57 @@
 	       (context
 		(list temp3)
 		(list (make-instance 'cleavir-ir:simple-t-aset-instruction
+			:inputs (list temp1 temp2 temp3)
+			:outputs '()
+			:successors (successors context)))
+		(invocation context)))
+	      (invocation context))))
+      (invocation context)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a NON-SIMPLE-T-AREF-AST
+
+(defmethod compile-ast ((ast cleavir-ast:non-simple-t-aref-ast) context)
+  (check-context-for-one-value-ast context)
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp)))
+    (compile-ast
+     (cleavir-ast:array-ast ast)
+     (context
+      (list temp1)
+      (list (compile-ast
+	     (cleavir-ast:index-ast ast)
+	     (context (list temp2)
+		      (list (make-instance 'cleavir-ir:non-simple-t-aref-instruction
+			      :inputs (list temp1 temp2)
+			      :outputs (results context)
+			      :successors (successors context)))
+		      (invocation context))))
+      (invocation context)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a NON-SIMPLE-T-ASET-AST
+
+(defmethod compile-ast ((ast cleavir-ast:non-simple-t-aset-ast) context)
+  (check-context-for-no-value-ast context)
+  (let ((temp1 (make-temp))
+	(temp2 (make-temp))
+	(temp3 (make-temp)))
+    (compile-ast
+     (cleavir-ast:array-ast ast)
+     (context
+      (list temp1)
+      (list (compile-ast
+	     (cleavir-ast:index-ast ast)
+	     (context
+	      (list temp2)
+	      (compile-ast
+	       (cleavir-ast:object-ast ast)
+	       (context
+		(list temp3)
+		(list (make-instance 'cleavir-ir:non-simple-t-aset-instruction
 			:inputs (list temp1 temp2 temp3)
 			:outputs '()
 			:successors (successors context)))
