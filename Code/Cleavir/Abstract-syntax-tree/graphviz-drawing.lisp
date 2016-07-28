@@ -165,6 +165,8 @@
 (deflabel single-float-sqrt-ast "sf sqrt")
 (deflabel simple-single-float-aref-ast "simple sf aref")
 (deflabel simple-single-float-aset-ast "simple sf aset")
+(deflabel non-simple-single-float-aref-ast "non-simple sf aref")
+(deflabel non-simple-single-float-aset-ast "non-simple sf aset")
 
 (deflabel double-float-add-ast "df +")
 (deflabel double-float-sub-ast "df -")
