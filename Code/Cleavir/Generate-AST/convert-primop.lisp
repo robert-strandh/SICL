@@ -612,3 +612,50 @@
      :index-ast (convert index env system)
      :object-ast (convert single-float env system)
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:NON-SIMPLE-SINGLE-FLOAT-AREF.
+;;;
+;;; This primitive operation is used in the implementation of the
+;;; Common Lisp function AREF.  The ARRAY argument is a form that must
+;;; evaluate to a non-simple array specialized to SINGLE-FLOAT.  The INDEX
+;;; argument is a form that must evaluate to a fixnum.  It represents
+;;; a valid row-major index into ARRAY.
+;;;
+;;; This primitive operation returns the object at INDEX in ARRAY.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:non-simple-single-float-aref)) form env system)
+  (db origin (op array index) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:non-simple-single-float-aref-ast
+     :array-ast (convert array env system)
+     :index-ast (convert index env system)
+     :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:NON-SIMPLE-SINGLE-FLOAT-ASET.
+;;;
+;;; This primitive operation is used in the implementation of the
+;;; Common Lisp function (SETF AREF).  The ARRAY argument is a form
+;;; that must evaluate to a non-simple array specialized to SINGLE-FLOAT.
+;;; The INDEX argument is a form that must evaluate to a fixnum.  It
+;;; represents a valid row-major index into ARRAY.
+;;;
+;;; This primitive operation stores SINGLE-FLOAT at INDEX in ARRAY.
+;;;
+;;; Forms using this primitive operation must occur in a context that
+;;; does not require a value, such as in a PROGN other than as the
+;;; last form.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:non-simple-single-float-aset)) form env system)
+  (db origin (op array index single-float) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:non-simple-single-float-aset-ast
+     :array-ast (convert array env system)
+     :index-ast (convert index env system)
+     :object-ast (convert single-float env system)
+     :origin origin)))
