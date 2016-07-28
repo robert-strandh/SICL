@@ -161,6 +161,58 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class NON-SIMPLE-SHORT-FLOAT-AREF-AST
+;;;
+;;; This AST can be used to read an element of a non-simple array
+;;; specialized to SHORT-FLOAT.
+
+(defclass non-simple-short-float-aref-ast (ast one-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)))
+
+(defun make-non-simple-short-float-aref-ast (array-ast index-ast &key origin)
+  (make-instance 'non-simple-short-float-aref-ast
+    :origin origin
+    :array-ast array-ast
+    :index-ast index-ast))
+
+(cleavir-io:define-save-info non-simple-short-float-aref-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast))
+
+(defmethod children ((ast non-simple-short-float-aref-ast))
+  (list (array-ast ast) (index-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class NON-SIMPLE-SHORT-FLOAT-ASET-AST
+;;;
+;;; This AST can be used to write an element to a non-simple array
+;;; specialized to SHORT-FLOAT.
+
+(defclass non-simple-short-float-aset-ast (ast no-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)
+   (%object-ast :initarg :object-ast :reader object-ast)))
+
+(defun make-non-simple-short-float-aset-ast
+    (array-ast index-ast object-ast &key origin)
+  (make-instance 'non-simple-short-float-aset-ast
+    :origin origin
+    :array-ast array-ast
+    :index-ast index-ast
+    :object-ast object-ast))
+
+(cleavir-io:define-save-info non-simple-short-float-aset-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast)
+  (:object-ast object-ast))
+
+(defmethod children ((ast non-simple-short-float-aset-ast))
+  (list (array-ast ast) (index-ast ast) (object-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class SINGLE-FLOAT-AREF-AST
 ;;;
 ;;; This AST can be used to read an element of an array specialized to
