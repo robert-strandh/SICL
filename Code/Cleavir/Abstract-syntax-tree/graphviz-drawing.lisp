@@ -148,6 +148,8 @@
 (deflabel short-float-sqrt-ast "shf sqrt")
 (deflabel simple-short-float-aref-ast "simple shf aref")
 (deflabel simple-short-float-aset-ast "simple shf aset")
+(deflabel non-simple-short-float-aref-ast "non-simple shf aref")
+(deflabel non-simple-short-float-aset-ast "non-simple shf aset")
 
 (deflabel single-float-add-ast "sf +")
 (deflabel single-float-sub-ast "sf -")
