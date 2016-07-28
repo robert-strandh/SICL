@@ -150,6 +150,10 @@
    #:make-simple-single-float-aref-instruction
    #:simple-single-float-aset-instruction
    #:make-simple-single-float-aset-instruction
+   #:non-simple-single-float-aref-instruction
+   #:make-non-simple-single-float-aref-instruction
+   #:non-simple-single-float-aset-instruction
+   #:make-non-simple-single-float-aset-instruction
    #:double-float-aref-instruction #:make-double-float-aref-instruction
    #:long-float-aref-instruction #:make-long-float-aref-instruction
    #:bit-aset-instruction #:make-bit-aset-instruction
