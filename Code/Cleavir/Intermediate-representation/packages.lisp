@@ -133,13 +133,15 @@
    #:slot-read-instruction #:make-slot-read-instruction
    #:slot-write-instruction #:make-slot-write-instruction
    #:simple-t-aref-instruction #:make-simple-t-aref-instruction
+   #:simple-t-aset-instruction #:make-simple-t-aset-instruction
+   #:non-simple-t-aref-instruction #:make-non-simple-t-aref-instruction
+   #:non-simple-t-aset-instruction #:make-non-simple-t-aset-instruction
    #:bit-aref-instruction #:make-bit-aref-instruction
    #:unsigned-byte-8-aref-instruction #:make-unsigned-byte-8-aref-instruction
    #:simple-short-float-aref-instruction #:make-simple-short-float-aref-instruction
    #:single-float-aref-instruction #:make-single-float-aref-instruction
    #:double-float-aref-instruction #:make-double-float-aref-instruction
    #:long-float-aref-instruction #:make-long-float-aref-instruction
-   #:simple-t-aset-instruction #:make-simple-t-aset-instruction
    #:bit-aset-instruction #:make-bit-aset-instruction
    #:unsigned-byte-8-aset-instruction #:make-unsigned-byte-8-aset-instruction
    #:simple-short-float-aset-instruction #:make-simple-short-float-aset-instruction
