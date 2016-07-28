@@ -348,6 +348,12 @@
 
 (defmethod label ((instruction simple-t-aset-instruction)) "simple t aset")
 
+(defmethod label ((instruction non-simple-t-aref-instruction))
+  "non-simple t aref")
+
+(defmethod label ((instruction non-simple-t-aset-instruction))
+  "non-simple t aset")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Integer array accessors.
