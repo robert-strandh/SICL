@@ -317,8 +317,8 @@
 ;;;
 ;;; Class SIMPLE-DOUBLE-FLOAT-AREF-AST
 ;;;
-;;; This AST can be used to read an element of an array specialized to
-;;; DOUBLE-FLOAT.
+;;; This AST can be used to read an element of a simple array
+;;; specialized to DOUBLE-FLOAT.
 
 (defclass simple-double-float-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
@@ -341,8 +341,8 @@
 ;;;
 ;;; Class SIMPLE-DOUBLE-FLOAT-ASET-AST
 ;;;
-;;; This AST can be used to write an element of an array specialized
-;;; to DOUBLE-FLOAT.
+;;; This AST can be used to write an element of a simple array
+;;; specialized to DOUBLE-FLOAT.
 
 (defclass simple-double-float-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
