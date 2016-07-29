@@ -182,6 +182,8 @@
 (deflabel double-float-sqrt-ast "df sqrt")
 (deflabel simple-double-float-aref-ast "simple df aref")
 (deflabel simple-double-float-aset-ast "simple df aset")
+(deflabel non-simple-double-float-aref-ast "non-simple df aref")
+(deflabel non-simple-double-float-aset-ast "non-simple df aset")
 
 (deflabel long-float-add-ast "lf +")
 (deflabel long-float-sub-ast "lf -")
