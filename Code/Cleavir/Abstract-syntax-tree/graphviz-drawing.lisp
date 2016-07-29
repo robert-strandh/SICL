@@ -180,8 +180,8 @@
 (deflabel double-float-sin-ast "df sin")
 (deflabel double-float-cos-ast "df cos")
 (deflabel double-float-sqrt-ast "df sqrt")
-(deflabel simple-double-float-aref-ast "df aref")
-(deflabel simple-double-float-aset-ast "df aset")
+(deflabel simple-double-float-aref-ast "simple df aref")
+(deflabel simple-double-float-aset-ast "simple df aset")
 
 (deflabel long-float-add-ast "lf +")
 (deflabel long-float-sub-ast "lf -")
