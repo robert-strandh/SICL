@@ -154,11 +154,17 @@
    #:make-non-simple-single-float-aref-instruction
    #:non-simple-single-float-aset-instruction
    #:make-non-simple-single-float-aset-instruction
-   #:simple-double-float-aref-instruction #:make-simple-double-float-aref-instruction
+   #:simple-double-float-aref-instruction
+   #:make-simple-double-float-aref-instruction
+   #:non-simple-double-float-aref-instruction
+   #:make-non-simple-double-float-aref-instruction
    #:long-float-aref-instruction #:make-long-float-aref-instruction
    #:bit-aset-instruction #:make-bit-aset-instruction
    #:unsigned-byte-8-aset-instruction #:make-unsigned-byte-8-aset-instruction
-   #:simple-double-float-aset-instruction #:make-simple-double-float-aset-instruction
+   #:simple-double-float-aset-instruction
+   #:make-simple-double-float-aset-instruction
+   #:non-simple-double-float-aset-instruction
+   #:make-non-simple-double-float-aset-instruction
    #:long-float-aset-instruction #:make-long-float-aset-instruction
    #:memref1-instruction #:make-memref1-instruction
    #:memref2-instruction #:make-memref2-instruction
