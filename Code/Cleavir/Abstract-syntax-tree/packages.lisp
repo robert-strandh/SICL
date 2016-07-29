@@ -123,6 +123,10 @@
    #:make-non-simple-single-float-aset-ast
    #:simple-double-float-aref-ast #:make-simple-double-float-aref-ast
    #:simple-double-float-aset-ast #:make-simple-double-float-aset-ast 
+   #:non-simple-double-float-aref-ast
+   #:make-non-simple-double-float-aref-ast
+   #:non-simple-double-float-aset-ast
+   #:make-non-simple-double-float-aset-ast 
    #:long-float-aref-ast #:make-long-float-aref-ast
    #:long-float-aset-ast #:make-long-float-aset-ast 
    #:bit-aref-ast #:make-bit-aref-ast
