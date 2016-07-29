@@ -323,7 +323,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction DOUBLE-FLOAT-AREF-INSTRUCTION.
+;;; Instruction SIMPLE-DOUBLE-FLOAT-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be an array specialized to DOUBLE-FLOAT.  The second is assumed
@@ -331,18 +331,18 @@
 ;;; element to be read.  This instruction produces a single output,
 ;;; the element read, which is an unboxed DOUBLE-FLOAT.
 
-(defclass double-float-aref-instruction (instruction one-successor-mixin)
+(defclass simple-double-float-aref-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-double-float-aref-instruction (input1 input2 output successor)
-  (make-instance 'double-float-aref-instruction
+(defun make-simple-double-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'simple-double-float-aref-instruction
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction DOUBLE-FLOAT-ASET-INSTRUCTION.
+;;; Instruction SIMPLE-DOUBLE-FLOAT-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
 ;;; to be an array specialized to DOUBLE-FLOAT.  The second is assumed
@@ -350,12 +350,12 @@
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; DOUBLE-FLOAT to be stored as an element in the array.
 
-(defclass double-float-aset-instruction
+(defclass simple-double-float-aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-double-float-aset-instruction (input1 input2 input3 successor)
-  (make-instance 'double-float-aset-instruction
+(defun make-simple-double-float-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'simple-double-float-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))

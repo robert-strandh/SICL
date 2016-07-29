@@ -315,53 +315,53 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class DOUBLE-FLOAT-AREF-AST
+;;; Class SIMPLE-DOUBLE-FLOAT-AREF-AST
 ;;;
 ;;; This AST can be used to read an element of an array specialized to
 ;;; DOUBLE-FLOAT.
 
-(defclass double-float-aref-ast (ast one-value-ast-mixin)
+(defclass simple-double-float-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-double-float-aref-ast (array-ast index-ast &key origin)
-  (make-instance 'double-float-aref-ast
+(defun make-simple-double-float-aref-ast (array-ast index-ast &key origin)
+  (make-instance 'simple-double-float-aref-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
-(cleavir-io:define-save-info double-float-aref-ast
+(cleavir-io:define-save-info simple-double-float-aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast))
 
-(defmethod children ((ast double-float-aref-ast))
+(defmethod children ((ast simple-double-float-aref-ast))
   (list (array-ast ast) (index-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class DOUBLE-FLOAT-ASET-AST
+;;; Class SIMPLE-DOUBLE-FLOAT-ASET-AST
 ;;;
 ;;; This AST can be used to write an element of an array specialized
 ;;; to DOUBLE-FLOAT.
 
-(defclass double-float-aset-ast (ast no-value-ast-mixin)
+(defclass simple-double-float-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-double-float-aset-ast (array-ast index-ast value-ast &key origin)
-  (make-instance 'double-float-aset-ast
+(defun make-simple-double-float-aset-ast (array-ast index-ast value-ast &key origin)
+  (make-instance 'simple-double-float-aset-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
 
-(cleavir-io:define-save-info double-float-aset-ast
+(cleavir-io:define-save-info simple-double-float-aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:value-ast value-ast))
 
-(defmethod children ((ast double-float-aset-ast))
+(defmethod children ((ast simple-double-float-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
