@@ -156,6 +156,10 @@
 			      cleavir-ir:simple-double-float-aref-instruction
 			      cleavir-ir:double-float-box-instruction)
 
+(compile-specialized-aref-ast cleavir-ast:non-simple-double-float-aref-ast
+			      cleavir-ir:non-simple-double-float-aref-instruction
+			      cleavir-ir:double-float-box-instruction)
+
 (compile-specialized-aref-ast cleavir-ast:long-float-aref-ast
 			      cleavir-ir:long-float-aref-instruction
 			      cleavir-ir:long-float-box-instruction)
@@ -214,6 +218,10 @@
 
 (compile-specialized-aset-ast cleavir-ast:simple-double-float-aset-ast
 			      cleavir-ir:simple-double-float-aset-instruction
+			      cleavir-ir:double-float-unbox-instruction)
+
+(compile-specialized-aset-ast cleavir-ast:non-simple-double-float-aset-ast
+			      cleavir-ir:non-simple-double-float-aset-instruction
 			      cleavir-ir:double-float-unbox-instruction)
 
 (compile-specialized-aset-ast cleavir-ast:long-float-aset-ast
