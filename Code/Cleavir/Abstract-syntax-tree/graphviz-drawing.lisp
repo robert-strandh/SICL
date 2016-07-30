@@ -199,4 +199,5 @@
 (deflabel long-float-sqrt-ast "lf sqrt")
 (deflabel simple-long-float-aref-ast "simple lf aref")
 (deflabel simple-long-float-aset-ast "simple lf aset")
-
+(deflabel non-simple-long-float-aref-ast "non-simple lf aref")
+(deflabel non-simple-long-float-aset-ast "non-simple lf aset")
