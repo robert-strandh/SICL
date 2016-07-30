@@ -469,6 +469,58 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class NON-SIMPLE-LONG-FLOAT-AREF-AST
+;;;
+;;; This AST can be used to read an element of a non-simple array
+;;; specialized to LONG-FLOAT.
+
+(defclass non-simple-long-float-aref-ast (ast one-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)))
+
+(defun make-non-simple-long-float-aref-ast (array-ast index-ast &key origin)
+  (make-instance 'non-simple-long-float-aref-ast
+    :origin origin
+    :array-ast array-ast
+    :index-ast index-ast))
+
+(cleavir-io:define-save-info non-simple-long-float-aref-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast))
+
+(defmethod children ((ast non-simple-long-float-aref-ast))
+  (list (array-ast ast) (index-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class NON-SIMPLE-LONG-FLOAT-ASET-AST
+;;;
+;;; This AST can be used to write an element of a non-simple array
+;;; specialized to LONG-FLOAT.
+
+(defclass non-simple-long-float-aset-ast (ast no-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-non-simple-long-float-aset-ast
+    (array-ast index-ast value-ast &key origin)
+  (make-instance 'non-simple-long-float-aset-ast
+    :origin origin
+    :array-ast array-ast
+    :index-ast index-ast
+    :value-ast value-ast))
+
+(cleavir-io:define-save-info non-simple-long-float-aset-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast)
+  (:value-ast value-ast))
+
+(defmethod children ((ast non-simple-long-float-aset-ast))
+  (list (array-ast ast) (index-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class BIT-AREF-AST
 ;;;
 ;;; This AST can be used to read an element of an array specialized to
