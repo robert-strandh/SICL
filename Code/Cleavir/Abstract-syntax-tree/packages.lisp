@@ -26,9 +26,9 @@
    #:go-ast #:make-go-ast #:tag-ast
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
    #:multiple-value-call-ast #:make-multiple-value-call-ast
-   #:function-form-ast 
+   #:function-form-ast
    #:multiple-value-prog1-ast #:make-multiple-value-prog1-ast
-   #:first-form-ast 
+   #:first-form-ast
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
    #:form
    #:body-asts
@@ -122,13 +122,19 @@
    #:non-simple-single-float-aset-ast
    #:make-non-simple-single-float-aset-ast
    #:simple-double-float-aref-ast #:make-simple-double-float-aref-ast
-   #:simple-double-float-aset-ast #:make-simple-double-float-aset-ast 
+   #:simple-double-float-aset-ast #:make-simple-double-float-aset-ast
    #:non-simple-double-float-aref-ast
    #:make-non-simple-double-float-aref-ast
    #:non-simple-double-float-aset-ast
-   #:make-non-simple-double-float-aset-ast 
-   #:simple-long-float-aref-ast #:make-simple-long-float-aref-ast
-   #:simple-long-float-aset-ast #:make-simple-long-float-aset-ast 
+   #:make-non-simple-double-float-aset-ast
+   #:simple-long-float-aref-ast
+   #:make-simple-long-float-aref-ast
+   #:simple-long-float-aset-ast
+   #:make-simple-long-float-aset-ast
+   #:non-simple-long-float-aref-ast
+   #:make-non-simple-long-float-aref-ast
+   #:non-simple-long-float-aset-ast
+   #:make-non-simple-long-float-aset-ast
    #:bit-aref-ast #:make-bit-aref-ast
    #:bit-aset-ast #:make-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
@@ -148,5 +154,3 @@
   (:shadowing-import-from #:cleavir-ast #:symbol)
   (:export
    #:draw-ast))
-
-  
