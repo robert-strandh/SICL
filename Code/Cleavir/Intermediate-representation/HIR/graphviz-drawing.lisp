@@ -402,9 +402,9 @@
 (defmethod label ((instruction non-simple-double-float-aset-instruction))
   "non-simple df aset")
 
-(defmethod label ((instruction long-float-aref-instruction)) "lf aref")
+(defmethod label ((instruction simple-long-float-aref-instruction)) "lf aref")
 
-(defmethod label ((instruction long-float-aset-instruction)) "lf aset")
+(defmethod label ((instruction simple-long-float-aset-instruction)) "lf aset")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

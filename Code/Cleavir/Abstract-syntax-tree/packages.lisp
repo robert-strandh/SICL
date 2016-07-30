@@ -127,8 +127,8 @@
    #:make-non-simple-double-float-aref-ast
    #:non-simple-double-float-aset-ast
    #:make-non-simple-double-float-aset-ast 
-   #:long-float-aref-ast #:make-long-float-aref-ast
-   #:long-float-aset-ast #:make-long-float-aset-ast 
+   #:simple-long-float-aref-ast #:make-simple-long-float-aref-ast
+   #:simple-long-float-aset-ast #:make-simple-long-float-aset-ast 
    #:bit-aref-ast #:make-bit-aref-ast
    #:bit-aset-ast #:make-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast

@@ -403,7 +403,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction LONG-FLOAT-AREF-INSTRUCTION.
+;;; Instruction SIMPLE-LONG-FLOAT-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be an array specialized to LONG-FLOAT.  The second is assumed
@@ -411,18 +411,18 @@
 ;;; element to be read.  This instruction produces a single output,
 ;;; the element read, which is an unboxed LONG-FLOAT.
 
-(defclass long-float-aref-instruction (instruction one-successor-mixin)
+(defclass simple-long-float-aref-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-long-float-aref-instruction (input1 input2 output successor)
-  (make-instance 'long-float-aref-instruction
+(defun make-simple-long-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'simple-long-float-aref-instruction
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction LONG-FLOAT-ASET-INSTRUCTION.
+;;; Instruction SIMPLE-LONG-FLOAT-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
 ;;; to be an array specialized to LONG-FLOAT.  The second is assumed
@@ -430,12 +430,12 @@
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; LONG-FLOAT to be stored as an element in the array.
 
-(defclass long-float-aset-instruction
+(defclass simple-long-float-aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-long-float-aset-instruction (input1 input2 input3 successor)
-  (make-instance 'long-float-aset-instruction
+(defun make-simple-long-float-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'simple-long-float-aset-instruction
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))

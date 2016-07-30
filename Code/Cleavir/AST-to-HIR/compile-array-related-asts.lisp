@@ -160,8 +160,8 @@
 			      cleavir-ir:non-simple-double-float-aref-instruction
 			      cleavir-ir:double-float-box-instruction)
 
-(compile-specialized-aref-ast cleavir-ast:long-float-aref-ast
-			      cleavir-ir:long-float-aref-instruction
+(compile-specialized-aref-ast cleavir-ast:simple-long-float-aref-ast
+			      cleavir-ir:simple-long-float-aref-instruction
 			      cleavir-ir:long-float-box-instruction)
 
 (defmacro compile-specialized-aset-ast
@@ -224,6 +224,6 @@
 			      cleavir-ir:non-simple-double-float-aset-instruction
 			      cleavir-ir:double-float-unbox-instruction)
 
-(compile-specialized-aset-ast cleavir-ast:long-float-aset-ast
-			      cleavir-ir:long-float-aset-instruction
+(compile-specialized-aset-ast cleavir-ast:simple-long-float-aset-ast
+			      cleavir-ir:simple-long-float-aset-instruction
 			      cleavir-ir:long-float-unbox-instruction)

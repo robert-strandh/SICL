@@ -197,6 +197,6 @@
 (deflabel long-float-sin-ast "lf sin")
 (deflabel long-float-cos-ast "lf cos")
 (deflabel long-float-sqrt-ast "lf sqrt")
-(deflabel long-float-aref-ast "lf aref")
-(deflabel long-float-aset-ast "lf aset")
+(deflabel simple-long-float-aref-ast "lf aref")
+(deflabel simple-long-float-aset-ast "lf aset")
 
