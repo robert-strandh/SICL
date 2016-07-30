@@ -408,6 +408,12 @@
 (defmethod label ((instruction simple-long-float-aset-instruction))
   "simple lf aset")
 
+(defmethod label ((instruction non-simple-long-float-aref-instruction))
+  "non-simple lf aref")
+
+(defmethod label ((instruction non-simple-long-float-aset-instruction))
+  "non-simple lf aset")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions for multiple values.
