@@ -223,6 +223,11 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
+    ((instruction cleavir-ir:non-simple-long-float-aref-instruction) inputs outputs)
+  `(setq ,(first outputs)
+	 (row-major-aref ,(first inputs) ,(second inputs))))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:t-aset-instruction) inputs outputs)
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
@@ -272,6 +277,12 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:simple-long-float-aset-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(setf (row-major-aref ,(first inputs) ,(second inputs))
+	 ,(third inputs)))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:non-simple-long-float-aset-instruction) inputs outputs)
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
