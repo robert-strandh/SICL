@@ -420,8 +420,8 @@
 ;;;
 ;;; Class SIMPLE-LONG-FLOAT-AREF-AST
 ;;;
-;;; This AST can be used to read an element of an array specialized to
-;;; LONG-FLOAT.
+;;; This AST can be used to read an element of a simple array
+;;; specialized to LONG-FLOAT.
 
 (defclass simple-long-float-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
@@ -444,8 +444,8 @@
 ;;;
 ;;; Class SIMPLE-LONG-FLOAT-ASET-AST
 ;;;
-;;; This AST can be used to write an element of an array specialized
-;;; to LONG-FLOAT.
+;;; This AST can be used to write an element of a simple array
+;;; specialized to LONG-FLOAT.
 
 (defclass simple-long-float-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
