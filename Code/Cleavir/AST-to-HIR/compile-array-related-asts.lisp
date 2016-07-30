@@ -164,6 +164,10 @@
 			      cleavir-ir:simple-long-float-aref-instruction
 			      cleavir-ir:long-float-box-instruction)
 
+(compile-specialized-aref-ast cleavir-ast:non-simple-long-float-aref-ast
+			      cleavir-ir:non-simple-long-float-aref-instruction
+			      cleavir-ir:long-float-box-instruction)
+
 (defmacro compile-specialized-aset-ast
     (ast-class aset-instruction-class unbox-instruction-class)
   `(defmethod compile-ast ((ast ,ast-class) context)
@@ -226,4 +230,8 @@
 
 (compile-specialized-aset-ast cleavir-ast:simple-long-float-aset-ast
 			      cleavir-ir:simple-long-float-aset-instruction
+			      cleavir-ir:long-float-unbox-instruction)
+
+(compile-specialized-aset-ast cleavir-ast:non-simple-long-float-aset-ast
+			      cleavir-ir:non-simple-long-float-aset-instruction
 			      cleavir-ir:long-float-unbox-instruction)
