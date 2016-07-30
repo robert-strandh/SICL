@@ -73,6 +73,7 @@
    #:non-simple-single-float-aref #:non-simple-single-float-aset
    #:simple-double-float-aref #:simple-double-float-aset
    #:non-simple-double-float-aref #:non-simple-double-float-aset
+   #:simple-long-float-aref #:simple-long-float-aset
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall))
