@@ -521,26 +521,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class BIT-AREF-AST
+;;; Class SIMPLE-BIT-AREF-AST
 ;;;
 ;;; This AST can be used to read an element of an array specialized to
 ;;; BIT.
 
-(defclass bit-aref-ast (ast one-value-ast-mixin)
+(defclass simple-bit-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-bit-aref-ast (array-ast index-ast &key origin)
-  (make-instance 'bit-aref-ast
+(defun make-simple-bit-aref-ast (array-ast index-ast &key origin)
+  (make-instance 'simple-bit-aref-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast))
 
-(cleavir-io:define-save-info bit-aref-ast
+(cleavir-io:define-save-info simple-bit-aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast))
 
-(defmethod children ((ast bit-aref-ast))
+(defmethod children ((ast simple-bit-aref-ast))
   (list (array-ast ast) (index-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

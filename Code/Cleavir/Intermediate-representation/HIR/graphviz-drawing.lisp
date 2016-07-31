@@ -358,7 +358,7 @@
 ;;;
 ;;; Integer array accessors.
 
-(defmethod label ((instruction bit-aref-instruction)) "bit aref")
+(defmethod label ((instruction simple-bit-aref-instruction)) "bit aref")
 
 (defmethod label ((instruction bit-aset-instruction)) "bit aset")
 

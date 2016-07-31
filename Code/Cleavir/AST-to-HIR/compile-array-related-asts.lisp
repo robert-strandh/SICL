@@ -132,8 +132,8 @@
 		 (invocation context))))
 	 (invocation context))))))
 
-(compile-specialized-aref-ast cleavir-ast:bit-aref-ast
-			      cleavir-ir:bit-aref-instruction
+(compile-specialized-aref-ast cleavir-ast:simple-bit-aref-ast
+			      cleavir-ir:simple-bit-aref-instruction
 			      cleavir-ir:bit-box-instruction)
 
 (compile-specialized-aref-ast cleavir-ast:simple-short-float-aref-ast

@@ -80,7 +80,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction BIT-AREF-INSTRUCTION.
+;;; Instruction SIMPLE-BIT-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be an array specialized to BIT.  The second is assumed
@@ -88,11 +88,11 @@
 ;;; element to be read.  This instruction produces a single output,
 ;;; the element read, which is an unboxed BIT.
 
-(defclass bit-aref-instruction (instruction one-successor-mixin)
+(defclass simple-bit-aref-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-bit-aref-instruction (input1 input2 output successor)
-  (make-instance 'bit-aref-instruction
+(defun make-simple-bit-aref-instruction (input1 input2 output successor)
+  (make-instance 'simple-bit-aref-instruction
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))

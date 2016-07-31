@@ -135,7 +135,7 @@
    #:make-non-simple-long-float-aref-ast
    #:non-simple-long-float-aset-ast
    #:make-non-simple-long-float-aset-ast
-   #:bit-aref-ast #:make-bit-aref-ast
+   #:simple-bit-aref-ast #:make-simple-bit-aref-ast
    #:bit-aset-ast #:make-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
    #:unsigned-byte-8-aset-ast #:make-unsigned-byte-8-aset-ast

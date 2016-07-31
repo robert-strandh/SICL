@@ -183,7 +183,7 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:bit-aref-instruction) inputs outputs)
+    ((instruction cleavir-ir:simple-bit-aref-instruction) inputs outputs)
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
