@@ -202,5 +202,5 @@
 (deflabel non-simple-long-float-aref-ast "non-simple lf aref")
 (deflabel non-simple-long-float-aset-ast "non-simple lf aset")
 
-(deflabel simple-bit-aref-ast "bit aref")
-(deflabel simple-bit-aset-ast "bit aset")
+(deflabel simple-bit-aref-ast "simple bit aref")
+(deflabel simple-bit-aset-ast "simple bit aset")
