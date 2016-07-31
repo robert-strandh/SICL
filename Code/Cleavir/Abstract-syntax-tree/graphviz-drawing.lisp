@@ -204,3 +204,5 @@
 
 (deflabel simple-bit-aref-ast "simple bit aref")
 (deflabel simple-bit-aset-ast "simple bit aset")
+(deflabel non-simple-bit-aref-ast "non-simple bit aref")
+(deflabel non-simple-bit-aset-ast "non-simple bit aset")
