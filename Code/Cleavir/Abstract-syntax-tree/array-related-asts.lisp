@@ -523,8 +523,8 @@
 ;;;
 ;;; Class SIMPLE-BIT-AREF-AST
 ;;;
-;;; This AST can be used to read an element of an array specialized to
-;;; BIT.
+;;; This AST can be used to read an element of a simple array
+;;; specialized to BIT.
 
 (defclass simple-bit-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
@@ -547,8 +547,8 @@
 ;;;
 ;;; Class SIMPLE-BIT-ASET-AST
 ;;;
-;;; This AST can be used to write an element of an array specialized
-;;; to BIT.
+;;; This AST can be used to write an element of a simple array
+;;; specialized to BIT.
 
 (defclass simple-bit-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
