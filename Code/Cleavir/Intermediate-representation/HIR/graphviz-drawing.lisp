@@ -364,6 +364,12 @@
 (defmethod label ((instruction simple-bit-aset-instruction))
   "simple bit aset")
 
+(defmethod label ((instruction non-simple-bit-aref-instruction))
+  "non-simple bit aref")
+
+(defmethod label ((instruction non-simple-bit-aset-instruction))
+  "non-simple bit aset")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Floating-point array accessors.
