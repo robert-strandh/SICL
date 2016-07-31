@@ -119,6 +119,45 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction NON-SIMPLE-BIT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a non-simple array specialized to BIT.  The second is assumed to be
+;;; a FIXNUM and represents the index in the instance of the element
+;;; to be read.  This instruction produces a single output, the
+;;; element read, which is an unboxed BIT.
+
+(defclass non-simple-bit-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-non-simple-bit-aref-instruction (input1 input2 output successor)
+  (make-instance 'non-simple-bit-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NON-SIMPLE-BIT-ASET-INSTRUCTION.
+;;;
+;;; This instruction takes three inputs.  The first input is assumed
+;;; to be a non-simple array specialized to BIT.  The second is assumed to
+;;; be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  The third input is assumed to be an unboxed
+;;; BIT to be stored as an element in the array.
+
+(defclass non-simple-bit-aset-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
+
+(defun make-non-simple-bit-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'non-simple-bit-aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction UNSIGNED-BYTE-8-AREF-INSTRUCTION.
 ;;;
 ;;; This instruction takes two inputs.  The first input is assumed to
