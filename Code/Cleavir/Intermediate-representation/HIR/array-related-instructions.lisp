@@ -82,11 +82,11 @@
 ;;;
 ;;; Instruction SIMPLE-BIT-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes two inputs.  The first input is assumed
-;;; to be an array specialized to BIT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
-;;; element to be read.  This instruction produces a single output,
-;;; the element read, which is an unboxed BIT.
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a simple array specialized to BIT.  The second is assumed to be
+;;; a FIXNUM and represents the index in the instance of the element
+;;; to be read.  This instruction produces a single output, the
+;;; element read, which is an unboxed BIT.
 
 (defclass simple-bit-aref-instruction (instruction one-successor-mixin)
   ())
@@ -102,8 +102,8 @@
 ;;; Instruction SIMPLE-BIT-ASET-INSTRUCTION.
 ;;;
 ;;; This instruction takes three inputs.  The first input is assumed
-;;; to be an array specialized to BIT.  The second is assumed
-;;; to be a FIXNUM and represents the index in the instance of the
+;;; to be a simple array specialized to BIT.  The second is assumed to
+;;; be a FIXNUM and represents the index in the instance of the
 ;;; element to be read.  The third input is assumed to be an unboxed
 ;;; BIT to be stored as an element in the array.
 
