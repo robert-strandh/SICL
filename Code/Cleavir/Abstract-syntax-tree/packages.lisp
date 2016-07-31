@@ -136,7 +136,7 @@
    #:non-simple-long-float-aset-ast
    #:make-non-simple-long-float-aset-ast
    #:simple-bit-aref-ast #:make-simple-bit-aref-ast
-   #:bit-aset-ast #:make-bit-aset-ast
+   #:simple-bit-aset-ast #:make-simple-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
    #:unsigned-byte-8-aset-ast #:make-unsigned-byte-8-aset-ast
    #:optimize-ast #:child-ast

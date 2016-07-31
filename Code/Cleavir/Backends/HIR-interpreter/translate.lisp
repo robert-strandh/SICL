@@ -234,7 +234,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:bit-aset-instruction) inputs outputs)
+    ((instruction cleavir-ir:simple-bit-aset-instruction) inputs outputs)
   (declare (ignore outputs))
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))

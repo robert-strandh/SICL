@@ -360,7 +360,7 @@
 
 (defmethod label ((instruction simple-bit-aref-instruction)) "bit aref")
 
-(defmethod label ((instruction bit-aset-instruction)) "bit aset")
+(defmethod label ((instruction simple-bit-aset-instruction)) "bit aset")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

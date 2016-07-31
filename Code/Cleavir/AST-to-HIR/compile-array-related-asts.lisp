@@ -200,8 +200,8 @@
 		 (invocation context))))
 	 (invocation context))))))
 
-(compile-specialized-aset-ast cleavir-ast:bit-aset-ast
-			      cleavir-ir:bit-aset-instruction
+(compile-specialized-aset-ast cleavir-ast:simple-bit-aset-ast
+			      cleavir-ir:simple-bit-aset-instruction
 			      cleavir-ir:bit-unbox-instruction)
 
 (compile-specialized-aset-ast cleavir-ast:simple-short-float-aset-ast

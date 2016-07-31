@@ -545,29 +545,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class BIT-ASET-AST
+;;; Class SIMPLE-BIT-ASET-AST
 ;;;
 ;;; This AST can be used to write an element of an array specialized
 ;;; to BIT.
 
-(defclass bit-aset-ast (ast no-value-ast-mixin)
+(defclass simple-bit-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-bit-aset-ast (array-ast index-ast value-ast &key origin)
-  (make-instance 'bit-aset-ast
+(defun make-simple-bit-aset-ast (array-ast index-ast value-ast &key origin)
+  (make-instance 'simple-bit-aset-ast
     :origin origin
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
 
-(cleavir-io:define-save-info bit-aset-ast
+(cleavir-io:define-save-info simple-bit-aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:value-ast value-ast))
 
-(defmethod children ((ast bit-aset-ast))
+(defmethod children ((ast simple-bit-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
