@@ -137,6 +137,7 @@
    #:non-simple-t-aref-instruction #:make-non-simple-t-aref-instruction
    #:non-simple-t-aset-instruction #:make-non-simple-t-aset-instruction
    #:simple-bit-aref-instruction #:make-simple-bit-aref-instruction
+   #:non-simple-bit-aref-instruction #:make-non-simple-bit-aref-instruction
    #:unsigned-byte-8-aref-instruction #:make-unsigned-byte-8-aref-instruction
    #:simple-short-float-aref-instruction
    #:make-simple-short-float-aref-instruction
@@ -163,6 +164,7 @@
    #:non-simple-long-float-aref-instruction
    #:make-non-simple-long-float-aref-instruction
    #:simple-bit-aset-instruction #:make-simple-bit-aset-instruction
+   #:non-simple-bit-aset-instruction #:make-non-simple-bit-aset-instruction
    #:unsigned-byte-8-aset-instruction #:make-unsigned-byte-8-aset-instruction
    #:simple-double-float-aset-instruction
    #:make-simple-double-float-aset-instruction
