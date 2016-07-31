@@ -67,6 +67,7 @@
    #:simple-t-aref #:simple-t-aset
    #:non-simple-t-aref #:non-simple-t-aset
    #:simple-bit-aref #:simple-bit-aset
+   #:non-simple-bit-aref #:non-simple-bit-aset
    #:simple-short-float-aref #:simple-short-float-aset
    #:non-simple-short-float-aref #:non-simple-short-float-aset
    #:simple-single-float-aref #:simple-single-float-aset
