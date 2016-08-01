@@ -47,6 +47,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Macro DEFINE-ARRAY-ASTS.
+;;;
+
+(defmacro define-array-asts (reader-class-name
+			     reader-class-constructor-name
+			     writer-class-name
+			     writer-class-constructor-name)
+  `(progn
+     (defclass ,reader-class-name (aref-ast)
+       ())
+
+     (defun ,reader-class-constructor-name
+	 (array-ast index-ast &key origin)
+       (make-instance ',reader-class-name
+	 :origin origin
+	 :array-ast array-ast
+	 :index-ast index-ast))
+
+     (defclass ,writer-class-name (aset-ast)
+       ())
+
+     (defun ,writer-class-constructor-name
+	 (array-ast index-ast object-ast &key origin)
+       (make-instance ',writer-class-name
+	 :origin origin
+	 :array-ast array-ast
+	 :index-ast index-ast
+	 :element-ast element-ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class SIMPLE-T-AREF-AST.
 ;;;
 ;;; This AST can be used to read an element of a simple unspecialized
