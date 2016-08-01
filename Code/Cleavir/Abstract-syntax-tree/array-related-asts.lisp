@@ -73,7 +73,7 @@
        ())
 
      (defun ,simple-writer-class-constructor-name
-	 (array-ast index-ast object-ast &key origin)
+	 (array-ast index-ast element-ast &key origin)
        (make-instance ',simple-writer-class-name
 	 :origin origin
 	 :array-ast array-ast
@@ -94,120 +94,22 @@
        ())
 
      (defun ,non-simple-writer-class-constructor-name
-	 (array-ast index-ast object-ast &key origin)
+	 (array-ast index-ast element-ast &key origin)
        (make-instance ',non-simple-writer-class-name
 	 :origin origin
 	 :array-ast array-ast
 	 :index-ast index-ast
 	 :element-ast element-ast))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class SIMPLE-T-AREF-AST.
-;;;
-;;; This AST can be used to read an element of a simple unspecialized
-;;; array.  It corresponds roughly to the standard function
-;;; ROW-MAJOR-AREF.
-
-(defclass simple-t-aref-ast (ast one-value-ast-mixin)
-  ((%array-ast :initarg :array-ast :reader array-ast)
-   (%index-ast :initarg :index-ast :reader index-ast)))
-
-(defun make-simple-t-aref-ast (array-ast index-ast &key origin)
-  (make-instance 'simple-t-aref-ast
-    :origin origin
-    :array-ast array-ast
-    :index-ast index-ast))
-
-(cleavir-io:define-save-info simple-t-aref-ast
-  (:array-ast array-ast)
-  (:index-ast index-ast))
-
-(defmethod children ((ast simple-t-aref-ast))
-  (list (array-ast ast) (index-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class SIMPLE-T-ASET-AST
-;;;
-;;; This AST can be used to write an element of a a simple
-;;; unspecialized array.  It corresponds roughly to a function (SETF
-;;; ROW-MAJOR-ASET).  An attempt to compile this AST in a context
-;;; where a value is needed will result in an error being signaled.
-
-(defclass simple-t-aset-ast (ast no-value-ast-mixin)
-  ((%array-ast :initarg :array-ast :reader array-ast)
-   (%index-ast :initarg :index-ast :reader index-ast)
-   (%object-ast :initarg :object-ast :reader object-ast)))
-
-(defun make-simple-t-aset-ast (array-ast index-ast object-ast &key origin)
-  (make-instance 'simple-t-aset-ast
-    :origin origin
-    :array-ast array-ast
-    :index-ast index-ast
-    :object-ast object-ast))
-
-(cleavir-io:define-save-info simple-t-aset-ast
-  (:array-ast array-ast)
-  (:index-ast index-ast)
-  (:object-ast object-ast))
-
-(defmethod children ((ast simple-t-aset-ast))
-  (list (array-ast ast) (index-ast ast) (object-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class NON-SIMPLE-T-AREF-AST.
-;;;
-;;; This AST can be used to read an element of a non-simple
-;;; unspecialized array.  It corresponds roughly to the standard
-;;; function ROW-MAJOR-AREF.
-
-(defclass non-simple-t-aref-ast (ast one-value-ast-mixin)
-  ((%array-ast :initarg :array-ast :reader array-ast)
-   (%index-ast :initarg :index-ast :reader index-ast)))
-
-(defun make-non-simple-t-aref-ast (array-ast index-ast &key origin)
-  (make-instance 'non-simple-t-aref-ast
-    :origin origin
-    :array-ast array-ast
-    :index-ast index-ast))
-
-(cleavir-io:define-save-info non-simple-t-aref-ast
-  (:array-ast array-ast)
-  (:index-ast index-ast))
-
-(defmethod children ((ast non-simple-t-aref-ast))
-  (list (array-ast ast) (index-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class NON-SIMPLE-T-ASET-AST
-;;;
-;;; This AST can be used to write an element of a non-simple
-;;; unspecialized array.  It corresponds roughly to a function (SETF
-;;; ROW-MAJOR-ASET).  An attempt to compile this AST in a context
-;;; where a value is needed will result in an error being signaled.
-
-(defclass non-simple-t-aset-ast (ast no-value-ast-mixin)
-  ((%array-ast :initarg :array-ast :reader array-ast)
-   (%index-ast :initarg :index-ast :reader index-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
-
-(defun make-non-simple-t-aset-ast (array-ast index-ast value-ast &key origin)
-  (make-instance 'non-simple-t-aset-ast
-    :origin origin
-    :array-ast array-ast
-    :index-ast index-ast
-    :value-ast value-ast))
-
-(cleavir-io:define-save-info non-simple-t-aset-ast
-  (:array-ast array-ast)
-  (:index-ast index-ast)
-  (:value-ast value-ast))
-
-(defmethod children ((ast non-simple-t-aset-ast))
-  (list (array-ast ast) (index-ast ast) (value-ast ast)))
+(define-array-asts
+  simple-t-aref-ast
+  make-simple-t-aref-ast
+  simple-t-aset-ast
+  make-simple-t-aset-ast
+  non-simple-t-aref-ast
+  make-non-simple-t-aref-ast
+  non-simple-t-aset-ast
+  make-non-simple-t-aset-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
