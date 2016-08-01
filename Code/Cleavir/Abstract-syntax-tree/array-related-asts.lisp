@@ -50,27 +50,52 @@
 ;;; Macro DEFINE-ARRAY-ASTS.
 ;;;
 
-(defmacro define-array-asts (reader-class-name
-			     reader-class-constructor-name
-			     writer-class-name
-			     writer-class-constructor-name)
+(defmacro define-array-asts (simple-reader-class-name
+			     simple-reader-class-constructor-name
+			     simple-writer-class-name
+			     simple-writer-class-constructor-name
+			     non-simple-reader-class-name
+			     non-simple-reader-class-constructor-name
+			     non-simple-writer-class-name
+			     non-simple-writer-class-constructor-name)
   `(progn
-     (defclass ,reader-class-name (aref-ast)
+     (defclass ,simple-reader-class-name (aref-ast)
        ())
 
-     (defun ,reader-class-constructor-name
+     (defun ,simple-reader-class-constructor-name
 	 (array-ast index-ast &key origin)
-       (make-instance ',reader-class-name
+       (make-instance ',simple-reader-class-name
 	 :origin origin
 	 :array-ast array-ast
 	 :index-ast index-ast))
 
-     (defclass ,writer-class-name (aset-ast)
+     (defclass ,simple-writer-class-name (aset-ast)
        ())
 
-     (defun ,writer-class-constructor-name
+     (defun ,simple-writer-class-constructor-name
 	 (array-ast index-ast object-ast &key origin)
-       (make-instance ',writer-class-name
+       (make-instance ',simple-writer-class-name
+	 :origin origin
+	 :array-ast array-ast
+	 :index-ast index-ast
+	 :element-ast element-ast))
+
+     (defclass ,non-simple-reader-class-name (aref-ast)
+       ())
+
+     (defun ,non-simple-reader-class-constructor-name
+	 (array-ast index-ast &key origin)
+       (make-instance ',non-simple-reader-class-name
+	 :origin origin
+	 :array-ast array-ast
+	 :index-ast index-ast))
+
+     (defclass ,non-simple-writer-class-name (aset-ast)
+       ())
+
+     (defun ,non-simple-writer-class-constructor-name
+	 (array-ast index-ast object-ast &key origin)
+       (make-instance ',non-simple-writer-class-name
 	 :origin origin
 	 :array-ast array-ast
 	 :index-ast index-ast
