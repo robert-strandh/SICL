@@ -189,7 +189,7 @@
 		(context
 		 (list temp2)
 		 (compile-ast
-		  (cleavir-ast:value-ast ast)
+		  (cleavir-ast:element-ast ast)
 		  (context
 		   (list temp3)
 		   (list (make-instance ',unbox-instruction-class
