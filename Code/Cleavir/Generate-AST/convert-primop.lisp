@@ -422,7 +422,7 @@
     (make-instance 'cleavir-ast:simple-t-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert object env system)
+     :element-ast (convert object env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -469,7 +469,7 @@
     (make-instance 'cleavir-ast:non-simple-t-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert object env system)
+     :element-ast (convert object env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -516,7 +516,7 @@
     (make-instance 'cleavir-ast:simple-short-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert short-float env system)
+     :element-ast (convert short-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -563,7 +563,7 @@
     (make-instance 'cleavir-ast:non-simple-short-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert short-float env system)
+     :element-ast (convert short-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -610,7 +610,7 @@
     (make-instance 'cleavir-ast:simple-single-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert single-float env system)
+     :element-ast (convert single-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -657,7 +657,7 @@
     (make-instance 'cleavir-ast:non-simple-single-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert single-float env system)
+     :element-ast (convert single-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -704,7 +704,7 @@
     (make-instance 'cleavir-ast:simple-double-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert double-float env system)
+     :element-ast (convert double-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -751,7 +751,7 @@
     (make-instance 'cleavir-ast:non-simple-double-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert double-float env system)
+     :element-ast (convert double-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -798,7 +798,7 @@
     (make-instance 'cleavir-ast:simple-long-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert long-float env system)
+     :element-ast (convert long-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -845,7 +845,7 @@
     (make-instance 'cleavir-ast:non-simple-long-float-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert long-float env system)
+     :element-ast (convert long-float env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -892,7 +892,7 @@
     (make-instance 'cleavir-ast:simple-bit-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert bit env system)
+     :element-ast (convert bit env system)
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -939,5 +939,5 @@
     (make-instance 'cleavir-ast:non-simple-bit-aset-ast
      :array-ast (convert array env system)
      :index-ast (convert index env system)
-     :object-ast (convert bit env system)
+     :element-ast (convert bit env system)
      :origin origin)))
