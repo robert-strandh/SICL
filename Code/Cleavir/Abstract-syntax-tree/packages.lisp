@@ -105,6 +105,7 @@
    #:long-float-sqrt-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
+   #:aref-ast #:aset-ast
    #:simple-t-aref-ast #:make-simple-t-aref-ast #:array-ast #:index-ast
    #:simple-t-aset-ast #:make-simple-t-aset-ast
    #:non-simple-t-aref-ast #:make-non-simple-t-aref-ast #:array-ast
