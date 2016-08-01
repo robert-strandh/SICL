@@ -1,5 +1,14 @@
 (cl:in-package #:cleavir-ast)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class AREF-AST.
+;;;
+;;; This AST is the base class for all AST classes used to read an
+;;; element from an array, whether unspecialized or specialized.  The
+;;; INDEX-AST is an AST that evaluates to a row-major index into the
+;;; array that is the value of ARRAY-AST.
+
 (defclass aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
@@ -7,6 +16,18 @@
 (cleavir-io:define-save-info aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class ASET-AST.
+;;;
+;;; This AST is the base class for all AST classes used to write an
+;;; element to an array, whether unspecialized or specialized.  The
+;;; INDEX-AST is an AST that evaluates to a row-major index into the
+;;; array that is the value of ARRAY-AST.  The ELEMENT-AST evaluates
+;;; to the element to be written, and that element must be of a type
+;;; that is acceptable to store in the array, according to how the
+;;; array is specialized.
 
 (defclass aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
