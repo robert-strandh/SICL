@@ -107,6 +107,7 @@
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:aset-ast
    #:element-ast
+   #:define-array-asts
    #:simple-t-aref-ast #:make-simple-t-aref-ast #:array-ast #:index-ast
    #:simple-t-aset-ast #:make-simple-t-aset-ast
    #:non-simple-t-aref-ast #:make-non-simple-t-aref-ast #:array-ast
