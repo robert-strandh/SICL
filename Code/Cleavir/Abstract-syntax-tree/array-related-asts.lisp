@@ -17,6 +17,9 @@
   (:array-ast array-ast)
   (:index-ast index-ast))
 
+(defmethod children ((ast aref-ast))
+  (list (array-ast ast) (index-ast ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class ASET-AST.
@@ -38,6 +41,9 @@
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:element-ast element-ast))
+
+(defmethod children ((ast aset-ast))
+  (list (array-ast ast) (index-ast ast) (element-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
