@@ -142,8 +142,14 @@
    #:simple-bit-aset-ast #:make-simple-bit-aset-ast
    #:non-simple-bit-aref-ast #:make-non-simple-bit-aref-ast
    #:non-simple-bit-aset-ast #:make-non-simple-bit-aset-ast
-   #:simple-unsigned-byte-8-aref-ast #:make-simple-unsigned-byte-8-aref-ast
-   #:simple-unsigned-byte-8-aset-ast #:make-simple-unsigned-byte-8-aset-ast
+   #:simple-unsigned-byte-8-aref-ast
+   #:make-simple-unsigned-byte-8-aref-ast
+   #:simple-unsigned-byte-8-aset-ast
+   #:make-simple-unsigned-byte-8-aset-ast
+   #:non-simple-unsigned-byte-8-aref-ast
+   #:make-non-simple-unsigned-byte-8-aref-ast
+   #:non-simple-unsigned-byte-8-aset-ast
+   #:make-non-simple-unsigned-byte-8-aset-ast
    #:optimize-ast #:child-ast
    #:speed-ast #:make-speed-ast
    #:space-ast #:make-space-ast
