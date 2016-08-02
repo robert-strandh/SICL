@@ -76,6 +76,7 @@
    #:non-simple-double-float-aref #:non-simple-double-float-aset
    #:simple-long-float-aref #:simple-long-float-aset
    #:non-simple-long-float-aref #:non-simple-long-float-aset
+   #:simple-unsigned-byte-8-aset-ast #:non-simple-unsigned-byte-8-aset-ast
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall))
