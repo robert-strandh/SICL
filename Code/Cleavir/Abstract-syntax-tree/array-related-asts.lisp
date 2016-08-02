@@ -161,53 +161,12 @@
   non-simple-bit-aset-ast
   make-non-simple-bit-aset-ast)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class UNSIGNED-BYTE-8-AREF-AST
-;;;
-;;; This AST can be used to read an element of an array specialized to
-;;; (UNSIGNED-BYTE 8)
-
-(defclass unsigned-byte-8-aref-ast (ast one-value-ast-mixin)
-  ((%array-ast :initarg :array-ast :reader array-ast)
-   (%index-ast :initarg :index-ast :reader index-ast)))
-
-(defun make-unsigned-byte-8-aref-ast (array-ast index-ast &key origin)
-  (make-instance 'unsigned-byte-8-aref-ast
-    :origin origin
-    :array-ast array-ast
-    :index-ast index-ast))
-
-(cleavir-io:define-save-info unsigned-byte-8-aref-ast
-  (:array-ast array-ast)
-  (:index-ast index-ast))
-
-(defmethod children ((ast unsigned-byte-8-aref-ast))
-  (list (array-ast ast) (index-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class UNSIGNED-BYTE-8-ASET-AST
-;;;
-;;; This AST can be used to write an element of an array specialized
-;;; to (UNSIGNED-BYTE 8).
-
-(defclass unsigned-byte-8-aset-ast (ast no-value-ast-mixin)
-  ((%array-ast :initarg :array-ast :reader array-ast)
-   (%index-ast :initarg :index-ast :reader index-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
-
-(defun make-unsigned-byte-8-aset-ast (array-ast index-ast value-ast &key origin)
-  (make-instance 'unsigned-byte-8-aset-ast
-    :origin origin
-    :array-ast array-ast
-    :index-ast index-ast
-    :value-ast value-ast))
-
-(cleavir-io:define-save-info unsigned-byte-8-aset-ast
-  (:array-ast array-ast)
-  (:index-ast index-ast)
-  (:value-ast value-ast))
-
-(defmethod children ((ast unsigned-byte-8-aset-ast))
-  (list (array-ast ast) (index-ast ast) (value-ast ast)))
+(define-array-asts
+  simple-unsigned-byte-8-aref-ast
+  make-simple-unsigned-byte-8-aref-ast
+  simple-unsigned-byte-8-aset-ast
+  make-simple-unsigned-byte-8-aset-ast
+  non-simple-unsigned-byte-8-aref-ast
+  make-non-simple-unsigned-byte-8-aref-ast
+  non-simple-unsigned-byte-8-aset-ast
+  make-non-simple-unsigned-byte-8-aset-ast)
