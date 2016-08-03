@@ -378,6 +378,53 @@
      (convert slot-number-form env system)
      (convert value-form env system))))
 
+(defmacro define-array-conversion (simple-aref-primop-name
+				   simple-aref-ast-name
+				   simple-aset-primop-name
+				   simple-aset-ast-name
+				   non-simple-aref-primop-name
+				   non-simple-aref-ast-name
+				   non-simple-aset-primop-name
+				   non-simple-aset-ast-name)
+  `(progn
+     (defmethod convert-special
+	 ((symbol (eql ',simple-aref-primop-name)) form env system)
+       (db origin (op array index) form
+	 (declare (ignore op))
+	 (make-instance ',simple-aref-ast-name
+	   :array-ast (convert array env system)
+	   :index-ast (convert index env system)
+	   :origin origin)))
+
+     (defmethod convert-special
+	 ((symbol (eql ',simple-aset-primop-name)) form env system)
+       (db origin (op array index object) form
+	 (declare (ignore op))
+	 (make-instance ',simple-aset-ast-name
+	   :array-ast (convert array env system)
+	   :index-ast (convert index env system)
+	   :element-ast (convert object env system)
+	   :origin origin)))
+
+     (defmethod convert-special
+	 ((symbol (eql ',non-simple-aref-primop-name)) form env system)
+       (db origin (op array index) form
+	 (declare (ignore op))
+	 (make-instance ',non-simple-aref-ast-name
+	   :array-ast (convert array env system)
+	   :index-ast (convert index env system)
+	   :origin origin)))
+
+     (defmethod convert-special
+	 ((symbol (eql ',non-simple-aset-primop-name)) form env system)
+       (db origin (op array index object) form
+	 (declare (ignore op))
+	 (make-instance ',non-simple-aset-ast-name
+	   :array-ast (convert array env system)
+	   :index-ast (convert index env system)
+	   :element-ast (convert object env system)
+	   :origin origin)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:SIMPLE-T-AREF.
