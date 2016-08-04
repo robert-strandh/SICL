@@ -80,6 +80,10 @@
    #:simple-unsigned-byte-8-aset-ast
    #:non-simple-unsigned-byte-8-aref-ast
    #:non-simple-unsigned-byte-8-aset-ast
+   #:simple-unsigned-byte-16-aref-ast
+   #:simple-unsigned-byte-16-aset-ast
+   #:non-simple-unsigned-byte-16-aref-ast
+   #:non-simple-unsigned-byte-16-aset-ast
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall))
