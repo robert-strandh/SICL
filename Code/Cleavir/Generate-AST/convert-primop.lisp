@@ -163,6 +163,86 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-ADD.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-add)) form env system)
+  (db origin (op arg1 arg2 variable) form
+    (declare (ignore op))
+    (cleavir-ast:make-fixnum-add-ast (convert arg1 env system)
+				     (convert arg2 env system)
+				     (convert variable env system))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-SUB.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-sub)) form env system)
+  (db origin (op arg1 arg2 variable) form
+    (declare (ignore op))
+    (cleavir-ast:make-fixnum-sub-ast (convert arg1 env system)
+				     (convert arg2 env system)
+				     (convert variable env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-LESS.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-less)) form env system)
+  (destructuring-bind (arg1 arg2) (cdr form)
+    (make-instance 'cleavir-ast:fixnum-less-ast
+      :arg1-ast (convert arg1 env system)
+      :arg2-ast (convert arg2 env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-NOT-GREATER.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-<=)) form env system)
+  (destructuring-bind (arg1 arg2) (cdr form)
+    (make-instance 'cleavir-ast:fixnum-not-greater-ast
+      :arg1-ast (convert arg1 env system)
+      :arg2-ast (convert arg2 env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-GREATER.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-GREATER)) form env system)
+  (destructuring-bind (arg1 arg2) (cdr form)
+    (make-instance 'cleavir-ast:fixnum-greater-ast
+      :arg1-ast (convert arg1 env system)
+      :arg2-ast (convert arg2 env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-NOT-LESS.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-not-less)) form env system)
+  (destructuring-bind (arg1 arg2) (cdr form)
+    (make-instance 'cleavir-ast:fixnum-not-less-ast
+      :arg1-ast (convert arg1 env system)
+      :arg2-ast (convert arg2 env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-EQUAL.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-equal)) form env system)
+  (destructuring-bind (arg1 arg2) (cdr form)
+    (make-instance 'cleavir-ast:fixnum-equal-ast
+      :arg1-ast (convert arg1 env system)
+      :arg2-ast (convert arg2 env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:LET-UNINITIALIZED.
 ;;;
 ;;; A form using the operator LET-UNINITIALIZED has the following
