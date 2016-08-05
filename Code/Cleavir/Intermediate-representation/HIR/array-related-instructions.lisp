@@ -119,41 +119,12 @@
   non-simple-long-float-aset-instruction
   make-non-simple-long-float-aset-instruction)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction UNSIGNED-BYTE-8-AREF-INSTRUCTION.
-;;;
-;;; This instruction takes two inputs.  The first input is assumed to
-;;; be an array specialized to (UNSIGNED-BYTE 8).  The second is
-;;; assumed to be a FIXNUM and represents the index in the instance of
-;;; the element to be read.  This instruction produces a single
-;;; output, the element read, which is an unboxed (UNSIGNED-BYTE 8).
-
-(defclass unsigned-byte-8-aref-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-unsigned-byte-8-aref-instruction (input1 input2 output successor)
-  (make-instance 'unsigned-byte-8-aref-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction UNSIGNED-BYTE-8-ASET-INSTRUCTION.
-;;;
-;;; This instruction takes three inputs.  The first input is assumed
-;;; to be an array specialized to (UNSIGNED-BYTE 8).  The second is
-;;; assumed to be a FIXNUM and represents the index in the instance of
-;;; the element to be read.  The third input is assumed to be an
-;;; unboxed (UNSIGNED-BYTE 8) to be stored as an element in the array.
-
-(defclass unsigned-byte-8-aset-instruction
-    (instruction one-successor-mixin side-effect-mixin)
-  ())
-
-(defun make-unsigned-byte-8-aset-instruction (input1 input2 input3 successor)
-  (make-instance 'unsigned-byte-8-aset-instruction
-    :inputs (list input1 input2 input3)
-    :outputs ()
-    :successors (list successor)))
+(define-array-instructions
+  simple-unsigned-byte-8-aref-instruction
+  make-simple-unsigned-byte-8-aref-instruction
+  simple-unsigned-byte-8-aset-instruction
+  make-simple-unsigned-byte-8-aset-instruction
+  non-simple-unsigned-byte-8-aref-instruction
+  make-non-simple-unsigned-byte-8-aref-instruction
+  non-simple-unsigned-byte-8-aset-instruction
+  make-non-simple-unsigned-byte-8-aset-instruction)
