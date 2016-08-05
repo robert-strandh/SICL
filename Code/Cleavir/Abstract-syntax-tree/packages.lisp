@@ -150,6 +150,14 @@
    #:make-non-simple-unsigned-byte-8-aref-ast
    #:non-simple-unsigned-byte-8-aset-ast
    #:make-non-simple-unsigned-byte-8-aset-ast
+   #:simple-unsigned-byte-16-aref-ast
+   #:make-simple-unsigned-byte-16-aref-ast
+   #:simple-unsigned-byte-16-aset-ast
+   #:make-simple-unsigned-byte-16-aset-ast
+   #:non-simple-unsigned-byte-16-aref-ast
+   #:make-non-simple-unsigned-byte-16-aref-ast
+   #:non-simple-unsigned-byte-16-aset-ast
+   #:make-non-simple-unsigned-byte-16-aset-ast
    #:optimize-ast #:child-ast
    #:speed-ast #:make-speed-ast
    #:space-ast #:make-space-ast
