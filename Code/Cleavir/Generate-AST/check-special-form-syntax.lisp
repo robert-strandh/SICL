@@ -280,6 +280,14 @@
 ;;;
 ;;; Syntax checks for the PRIMOPs.
 
+;;; This macro can be used to define a simple syntax-check method,
+;;; where the form must be a proper list and it has a fixed number of
+;;; arguments.
+(defmacro define-simple-check (operation argcount)
+  `(defmethod check-special-form-syntax ((head (eql ',operation)) form)
+     (cleavir-code-utilities:check-form-proper-list form)
+     (cleavir-code-utilities:check-argcount form ,argcount ,argcount)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking EQ.
