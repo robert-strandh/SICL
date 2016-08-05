@@ -303,6 +303,22 @@
 (define-simple-check cleavir-primop:fixnum-greater 2)
 (define-simple-check cleavir-primop:fixnum-not-less 2)
 (define-simple-check cleavir-primop:fixnum-equal 2)
+(define-simple-check cleavir-primop:simple-short-float-aref 2)
+(define-simple-check cleavir-primop:simple-short-float-aset 3)
+(define-simple-check cleavir-primop:non-simple-short-float-aref 2)
+(define-simple-check cleavir-primop:non-simple-short-float-aset 3)
+(define-simple-check cleavir-primop:simple-single-float-aref 2)
+(define-simple-check cleavir-primop:simple-single-float-aset 3)
+(define-simple-check cleavir-primop:non-simple-single-float-aref 2)
+(define-simple-check cleavir-primop:non-simple-single-float-aset 3)
+(define-simple-check cleavir-primop:simple-double-float-aref 2)
+(define-simple-check cleavir-primop:simple-double-float-aset 3)
+(define-simple-check cleavir-primop:non-simple-double-float-aref 2)
+(define-simple-check cleavir-primop:non-simple-double-float-aset 3)
+(define-simple-check cleavir-primop:simple-long-float-aref 2)
+(define-simple-check cleavir-primop:simple-long-float-aset 3)
+(define-simple-check cleavir-primop:non-simple-long-float-aref 2)
+(define-simple-check cleavir-primop:non-simple-long-float-aset 3)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
