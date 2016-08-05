@@ -411,3 +411,66 @@
     ((head (eql 'cleavir-primop:fixnum-=)) form)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-ADD
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-add)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 3 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-SUB
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-sub)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 3 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-LESS
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-less)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-NOT-GREATER
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-not-greater)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-GREATER
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-greater)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-NOT-LESS
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-not-less)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-equal
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:fixnum-equal)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2))
