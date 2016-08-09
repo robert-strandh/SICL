@@ -320,14 +320,14 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:bit-aref-instruction)
+    ((instruction cleavir-ir:simple-bit-aref-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:unsigned-byte-8-aref-instruction)
+    ((instruction cleavir-ir:simple-unsigned-byte-8-aref-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   `(setq ,(first outputs)
@@ -341,21 +341,21 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:single-float-aref-instruction)
+    ((instruction cleavir-ir:simple-single-float-aref-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:double-float-aref-instruction)
+    ((instruction cleavir-ir:simple-double-float-aref-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:long-float-aref-instruction)
+    ((instruction cleavir-ir:simple-long-float-aref-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   `(setq ,(first outputs)
@@ -370,7 +370,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:bit-aset-instruction)
+    ((instruction cleavir-ir:simple-bit-aset-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
@@ -378,7 +378,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:unsigned-byte-8-aset-instruction)
+    ((instruction cleavir-ir:simple-unsigned-byte-8-aset-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
@@ -394,7 +394,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:single-float-aset-instruction)
+    ((instruction cleavir-ir:simple-single-float-aset-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
@@ -402,7 +402,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:double-float-aset-instruction)
+    ((instruction cleavir-ir:simple-double-float-aset-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
@@ -410,7 +410,7 @@
 	 ,(third inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:long-float-aset-instruction)
+    ((instruction cleavir-ir:simple-long-float-aset-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
