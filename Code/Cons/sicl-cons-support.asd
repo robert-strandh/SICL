@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "make-bindings-defun")
-   (:file "conditions")))
+   (:file "conditions")
+   (:file "condition-reporters-english")))
