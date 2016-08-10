@@ -1,23 +1,25 @@
 (cl:in-package #:sicl-cons)
 
 (defun car (list)
-  (declare (type list list))
   (if (consp list)
       (cleavir-primop:car list)
-      nil))
+      (if (null list)
+	  nil
+	  (error 'must-be-list :datum list))))
 
 (defun cdr (list)
-  (declare (type list list))
   (if (consp list)
       (cleavir-primop:cdr list)
-      nil))
+      (if (null list)
+	  nil
+	  (error 'must-be-list :datum list))))
   
 (defun rplaca (cons object)
-  (declare (type cons cons))
-  (cleavir-primop:rplaca cons object)
-  cons)
+  (if (consp list)
+      (progn (cleavir-primop:rplaca cons object) cons)
+      (error 'must-be-cons cons)))
 
 (defun rplacd (cons object)
-  (declare (type cons cons))
-  (cleavir-primop:rplacd cons object)
-  cons)
+  (if (consp list)
+      (progn (cleavir-primop:rplacd cons object) cons)
+      (error 'must-be-cons cons)))
