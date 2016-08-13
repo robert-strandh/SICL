@@ -4,5 +4,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "utilities")
    (:file "find")
    (:file "position")))
