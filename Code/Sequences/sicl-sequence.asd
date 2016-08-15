@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-sequences
+(defsystem :sicl-sequence
   :depends-on (:lisp-unit)
   :serial t
   :components
