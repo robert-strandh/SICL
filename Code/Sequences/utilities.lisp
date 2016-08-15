@@ -281,3 +281,19 @@
 		(not (funcall test-not item element)))))
 	(t
 	 (error "Both test and test-not given."))))
+
+(defmacro for-each-relevant-element
+    ((element-var index-var array start end from-end) &body body)
+  (let ((array-var (gensym))
+	(start-var (gensym))
+	(end-var (gensym)))
+    `(let ((,array-var ,array)
+	   (,start-var ,start)
+	   (,end-var ,end))
+       (if ,from-end
+	   (loop for ,index-var of-type fixnum downfrom (1- ,end-var) to ,start-var
+		 do (progn (setf ,element-var (aref ,array-var ,index-var))
+			   ,@body))
+	   (loop for ,index-var of-type fixnum from ,start-var below ,end-var
+		 do (progn (setf ,element-var (aref ,array-var ,index-var))
+			   ,@body))))))
