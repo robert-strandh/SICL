@@ -233,3 +233,23 @@
 				   (loop-finish)
 				   (progn (setf ,cons-var ,rest-var)
 					  ,@body)))))))))
+
+(defmacro with-test-and-test-not ((test-var test-not-var) &body body)
+  `(cond ((and (null ,test-var) (null ,test-not-var))
+	  ,@body)
+	 ((null ,test-not-var)
+	  (cond ((or (eq ,test-var #'eq) (eq ,test-var 'eq))
+		 ,@body)
+		((or (eq ,test-var #'eql) (eq ,test-var 'eql))
+		 ,@body)
+		(t
+		 ,@body)))
+	 ((null ,test-var)
+	  (cond ((or (eq ,test-not-var #'eq) (eq ,test-not-var 'eq))
+		 ,@body)
+		((or (eq ,test-not-var #'eql) (eq ,test-not-var 'eql))
+		 ,@body)
+		(t
+		 ,@body)))
+	 (t
+	  (error "Both test and test-not given."))))
