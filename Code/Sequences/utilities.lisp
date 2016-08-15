@@ -253,3 +253,8 @@
 		 ,@body)))
 	 (t
 	  (error "Both test and test-not given."))))
+
+(defmacro with-from-end (from-end-var &body body)
+  `(if ,from-end-var
+       (progn ,@body)
+       (progn ,@body)))
