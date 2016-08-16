@@ -127,7 +127,8 @@
    ;; NOTINLINE declaration in scope.  INLINE means that there is an
    ;; INLINE declaration in scope, and NOTINLINE means that there is a
    ;; NOTINLINE declaration in scope.
-   (%inline :initform nil :initarg :inline :reader inline)
+   (%inline :initform nil :initarg :inline :reader inline
+	    :type (member nil inline notinline))
    ;; There are three possible values here, namely NIL, IGNORE, and
    ;; IGNORABLE.  NIL means that no IGNORE information has been
    ;; supplied.  IGNORE means and IGNORE declaration is in scope, and
@@ -157,7 +158,8 @@
    ;; NOTINLINE declaration in scope.  INLINE means that there is an
    ;; INLINE declaration in scope, and NOTINLINE means that there is a
    ;; NOTINLINE declaration in scope.
-   (%inline :initform nil :initarg :inline :reader inline)
+   (%inline :initform nil :initarg :inline :reader inline
+	    :type (member nil inline notinline))
    ;; If the value of this slot is NIL, it means that there is no
    ;; compiler macro associated with this function.  If not, the value
    ;; must be a compiler macro function.
