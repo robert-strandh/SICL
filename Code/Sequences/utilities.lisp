@@ -292,11 +292,11 @@
 	   (,end-var ,end))
        (if ,from-end
 	   (loop for ,index-var of-type fixnum downfrom (1- ,end-var) to ,start-var
-		 do (progn (setf ,element-var (aref ,array-var ,index-var))
-			   ,@body))
+		 do (let ((,element-var (aref ,array-var ,index-var)))
+		      ,@body))
 	   (loop for ,index-var of-type fixnum from ,start-var below ,end-var
-		 do (progn (setf ,element-var (aref ,array-var ,index-var))
-			   ,@body))))))
+		 do (let ((,element-var (aref ,array-var ,index-var)))
+		      ,@body))))))
 
 (defmacro with-simple (array &body body)
   `(if (typep ,array 'simple-array)
