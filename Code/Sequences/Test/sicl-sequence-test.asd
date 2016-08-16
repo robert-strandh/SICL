@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "utilities")
    (:file "position-defun")
    (:file "sequence-test")
    (:file "position-test")))
