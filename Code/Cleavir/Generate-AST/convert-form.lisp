@@ -187,6 +187,7 @@ This function should not require an environment or system, but it unfortunately 
 		   and collect (cleavir-ast:make-setq-ast
 				(first parameter)
 				(second parameter))
+		   and do (setf arg-asts (rest arg-asts))
 	         else
 		   collect (cleavir-ast:make-setq-ast
 			    (second parameter)
