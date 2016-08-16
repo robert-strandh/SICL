@@ -130,9 +130,7 @@
 
 (defmethod convert-form
     (form (info cleavir-env:local-function-info) env system)
-  (let ((function-ast (cleavir-env:identity info))
-	(argument-asts (convert-sequence (cdr form) env system)))
-    (cleavir-ast:make-call-ast function-ast argument-asts)))
+  (make-call info env (cdr form) system))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -177,7 +175,7 @@
 	         else
 		   collect (cleavir-ast:make-setq-ast
 			    (second parameter)
-			    (generate-ast nil env system))
+			    (convert nil env system))
 	  else do (return-from inline-lambda-init (noinline)))))
 
 (defun make-call (info env arguments system)
