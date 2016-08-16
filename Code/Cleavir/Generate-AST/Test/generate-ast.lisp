@@ -191,6 +191,84 @@
 	    m))
 	12))
 
+(defun no-local-calls (ast)
+  ;; this is probably a bit fragile, but it searches for call-asts
+  ;;  and returns nil if any of them don't call an (fdefinition x)
+  (cleavir-ast:map-ast-depth-first-preorder
+   (lambda (ast)
+     (when (and (typep ast 'cleavir-ast:call-ast)
+		(typep (cleavir-ast:callee-ast ast)
+		       '(not cleavir-ast:fdefinition-ast)))
+       (return-from no-local-calls nil)))
+   ast)
+  t)
+
+(defun local-inline-test (form)
+  (let ((inline (subst '(declare (inline f))
+		       'shibboleth form))
+	(noinline (subst '(declare (noinline f))
+			 'shibboleth form)))
+    (let ((inline
+	    (cleavir-generate-ast:generate-ast inline *e* nil))
+	  (noinline
+	    (cleavir-generate-ast:generate-ast noinline *e* nil)))
+      (assert (no-local-calls inline))
+      (assert (not (no-local-calls noinline)))
+      (let ((inline
+	      (cleavir-ast-interpreter:interpret
+	       (cleavir-ast-transformations:hoist-load-time-value
+		inline)))
+	    (noinline
+	      (cleavir-ast-interpreter:interpret
+	       (cleavir-ast-transformations:hoist-load-time-value
+		noinline))))
+	(assert (equalp inline noinline))))))
+
+(defun local-inline-test-error (form)
+  (let* ((ast (cleavir-generate-ast:generate-ast form *e* nil))
+	 (hoist (cleavir-ast-transformations:hoist-load-time-value
+		 ast)))
+    (multiple-value-bind (val cond)
+	(ignore-errors (cleavir-ast-interpreter:interpret hoist))
+      ;; too many arguments, etc. signals a program error.
+      ;;  or rather it should, but the interpreter does not.
+      (assert (and (null val) (typep cond 'error))))))
+
+(defun test-local-inline ()
+  (local-inline-test '(flet ((f ())) shibboleth (f)))
+  (local-inline-test
+   '(flet ((f (x) (1+ x))) shibboleth (f 38919)))
+  (local-inline-test
+   '(flet ((f (x &optional (y 234)) (+ x y)))
+     shibboleth
+     (f 10 20)))
+  (local-inline-test
+   '(flet ((f (x &optional (y 234) (z t z-p)) (list x y z)))
+     shibboleth
+     (f 10 20)))
+  (local-inline-test '(flet ((f (x) x)) shibboleth (+ (f 1) 2)))
+  (local-inline-test
+   '(flet ((f (x &optional (y 234 y-p)) (list x y y-p)))
+     shibboleth
+     (f 10)))
+  (local-inline-test
+   '(flet ((f (x &rest y) (list x y)))
+     shibboleth
+     (f 1 3 89 47)))
+  (local-inline-test
+   '(labels ((f (x &optional y &rest z) (list x y z)))
+     shibboleth
+     (list (f 1 2 3 4) (f 1 2) (f 1))))
+  (local-inline-test-error '(flet ((f ()))
+			     (declare (inline f))
+			     (f 0)))
+  (local-inline-test-error '(flet ((f (x) x))
+			     (declare (inline f))
+			     (f)))
+  (local-inline-test-error '(flet ((f (&optional x) x))
+			     (declare (inline f))
+			     (f 0 0))))
+
 (defun run-tests ()
   (test-constant-ast)
   (test-lexical-ast)
@@ -204,4 +282,5 @@
   (test-let*)
   (test-the)
   (test-symbol-macrolet)
-  (test-function))
+  (test-function)
+  (test-local-inline))
