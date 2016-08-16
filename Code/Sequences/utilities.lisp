@@ -290,6 +290,7 @@
     `(let ((,array-var ,array)
 	   (,start-var ,start)
 	   (,end-var ,end))
+       (declare (type fixnum ,start-var ,end-var))
        (if ,from-end
 	   (loop for ,index-var of-type fixnum downfrom (1- ,end-var) to ,start-var
 		 do (let ((,element-var (aref ,array-var ,index-var)))
