@@ -3,7 +3,8 @@
 (defgeneric interpret-ast (ast env))
 
 (defun interpret (ast)
-  (assert (typep ast 'cleavir-ast:top-level-function-ast))
+  (check-type ast cleavir-ast:top-level-function-ast
+	      "a top-level function AST")
   (let ((fun (interpret-ast ast '())))
     (apply fun
 	   (mapcar #'eval (cleavir-ast:forms ast)))))
@@ -34,7 +35,7 @@
   (lookup-lexical ast env))
 
 (defmethod interpret-ast ((ast cleavir-ast:symbol-value-ast) env)
-  (symbol-value (cleavir-ast:symbol ast)))
+  (symbol-value (interpret-ast (cleavir-ast:symbol-ast ast) env)))
 
 (defmethod interpret-ast ((ast cleavir-ast:block-ast) env)
   (let ((tag (list nil)))
@@ -103,7 +104,7 @@
 			   (member go-tag-ast item-asts)))))))))
 
 (defmethod interpret-ast ((ast cleavir-ast:fdefinition-ast) env)
-  (let ((name (cleavir-ast:name ast)))
+  (let ((name (interpret-ast (cleavir-ast:name-ast ast) env)))
     (fdefinition name)))
 
 (defun load-environment (environment arguments lambda-list)
@@ -266,6 +267,15 @@
 			       env))
 	(args (loop for arg-ast in (cleavir-ast:argument-asts ast)
 		    collect (interpret-ast arg-ast env))))
+    (apply callee args)))
+
+(defmethod interpret-ast ((ast cleavir-ast:multiple-value-call-ast)
+			  env)
+  (let ((callee (interpret-ast (cleavir-ast:function-form-ast ast)
+			       env))
+	(args (loop for arg-ast in (cleavir-ast:form-asts ast)
+		    append (multiple-value-list
+			    (interpret-ast arg-ast env)))))
     (apply callee args)))
 
 (defmethod interpret-ast ((ast cleavir-ast:bind-ast) env)
