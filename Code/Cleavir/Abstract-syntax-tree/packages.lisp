@@ -16,7 +16,8 @@
    #:constant-ast #:make-constant-ast #:value
    #:lexical-ast #:make-lexical-ast
    #:symbol-value-ast #:make-symbol-value-ast
-   #:set-symbol-value-ast #:make-set-symbol-value-ast #:symbol-ast
+   #:set-symbol-value-ast #:make-set-symbol-value-ast
+   #:symbol #:symbol-ast
    #:fdefinition-ast #:make-fdefinition-ast #:info #:name-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body

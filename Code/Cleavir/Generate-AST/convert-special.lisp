@@ -746,20 +746,20 @@
 
 (defmethod convert-special
     ((symbol (eql 'unwind-protect)) form environment system)
-  (declare (ignore form environment system))
-  (error 'no-default-method :operator symbol))
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
 
 (defmethod convert-special
     ((symbol (eql 'catch)) form environment system)
-  (declare (ignore form environment system))
-  (error 'no-default-method :operator symbol))
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
 
 (defmethod convert-special
     ((symbol (eql 'throw)) form environment system)
-  (declare (ignore form environment system))
-  (error 'no-default-method :operator symbol))
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
 
 (defmethod convert-special
     ((symbol (eql 'progv)) form environment system)
-  (declare (ignore form environment system))
-  (error 'no-default-method :operator symbol))
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
