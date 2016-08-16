@@ -224,7 +224,7 @@
            Client code must either define these operators as macros,~@
            or supply a method on CONVERT-SPECIAL, specialized to the~@
            name of the operator and to the implementation-specific environment.~@
-           The following operator was found:~@
+           The following form was found:~@
            ~s"
 	  (expr condition)))
 
