@@ -153,27 +153,64 @@
 ;;; Converting a compound form that calls a global function.
 ;;; A global function can have  compiler macro associated with it.
 
+(defun inline-lambda-init (env system lambda-list arg-asts)
+  (flet ((noinline (&optional (error t))
+	   (return-from inline-lambda-init (values nil error))))
+    (loop with state = :required
+	  for parameter in lambda-list
+	  when (find parameter '(&rest &optional &key))
+	    do (setf state parameter)
+	  else when (eq state :required)
+		 if arg-asts
+		   collect (cleavir-ast:make-setq-ast
+			    parameter (first arg-asts))
+		   and do (setf arg-asts (rest arg-asts))
+	         else do (noinline :not-enough-arguments)
+	  else when (eq state '&optional)
+		 if arg-asts
+		   collect (cleavir-ast:make-setq-ast
+			    (second parameter)
+			    (first arg-asts))
+		   and collect (cleavir-ast:make-setq-ast
+				(first parameter)
+				(second parameter))
+	         else
+		   collect (cleavir-ast:make-setq-ast
+			    (second parameter)
+			    (generate-ast nil env system))
+	  else do (return-from inline-lambda-init (noinline)))))
+
 (defun make-call (info env arguments system)
   (let ((argument-asts (convert-sequence arguments env system))
 	(ast (cleavir-env:ast info)))
-    (if (and (eq (cleavir-env:inline info) 'cl:inline)
-	     (not (null ast))
-	     (loop for parameter in (cleavir-ast:lambda-list ast)
-		   never (member parameter lambda-list-keywords :test #'eq))
-	     (= (length arguments)
-		(length (cleavir-ast:lambda-list ast))))
-	;; We can inline the call.
-	(let ((clone (cleavir-ast-transformations:clone-ast ast)))
-	  (process-progn
-	   (append
-	    (loop with ll = (cleavir-ast:lambda-list clone)
-		  for parameter in ll
-		  for argument-ast in argument-asts
-		  collect (cleavir-ast:make-setq-ast parameter argument-ast))
-	    (list (cleavir-ast:body-ast clone)))))
-	;; Generate an ordinary call.
-	(let ((function-ast (convert-function info env system)))
-	  (cleavir-ast:make-call-ast function-ast argument-asts)))))
+    (flet ((err ()
+	     (generate-ast '(error "bad arguments") env system))
+	   (noinline ()
+	     (let ((function-ast
+		     (convert-function info env system)))
+	       (cleavir-ast:make-call-ast function-ast
+					  argument-asts))))
+      (if (and (eq (cleavir-env:inline info) 'cl:inline)
+	       (not (null ast)))
+	  ;; We might be able to inline the call.
+	  ;; Try to make the expansion.
+	  ;; We must clone first, because the lambda list lvars
+	  ;;  have to match those in the setqs.
+	  (let ((clone
+		  (cleavir-ast-transformations:clone-ast ast)))
+	    (multiple-value-bind (init failure)
+		(inline-lambda-init env system
+				    (cleavir-ast:lambda-list clone)
+				    argument-asts)
+	      (cond ((eq failure t) (noinline))
+		    (failure (err))
+		    (t
+		     (process-progn
+		      (append
+		       init
+		       (list (cleavir-ast:body-ast clone))))))))
+	  ;; Generate an ordinary call.
+	  (noinline)))))
 
 (defmethod convert-form
     (form (info cleavir-env:global-function-info) env system)
