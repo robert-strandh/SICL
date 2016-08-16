@@ -18,6 +18,7 @@
 ;;; non-negative fixnums.  KEY must be a designator for function.
 (defun find-vector (item vector from-end test test-not start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (declare (type fixnum start end))
   (with-test-and-test-not (test test-not)
     (with-from-end from-end
       (with-element-type vector
