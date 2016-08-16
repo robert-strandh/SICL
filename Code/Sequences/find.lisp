@@ -9,15 +9,15 @@
 	  (when (satisfies-two-argument-test-p item element test test-not)
 	    (return-from find-list element)))))))
 
-(defun find-array (item array from-end test test-not start end key)
+(defun find-vector (item vector from-end test test-not start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (with-test-and-test-not (test test-not)
     (with-from-end from-end
-      (with-element-type array
-	(for-each-relevant-element (e index array start end from-end)
+      (with-element-type vector
+	(for-each-relevant-element (e index vector start end from-end)
 	  (let ((element (apply-key-function (car e) key)))
 	    (when (satisfies-two-argument-test-p item element test test-not)
-	      (return-from find-array element))))))))
+	      (return-from find-vector element))))))))
 
 (defun find-aux (item sequence from-end test test-not start end key)
   ;; (declare (optimize (debug 0) (speed 3) (safety 0))
