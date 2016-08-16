@@ -152,9 +152,24 @@
 ;;; A global function can have  compiler macro associated with it.
 
 (defun inline-lambda-init (env system lambda-list arg-asts)
+  "This mess takes an environment and system, and then a lambda list and a list of converted arguments, and returns a list of forms that initialize the lambda variables with the arguments.
+If this is impossible for some reason, a second non-nil value will be returned. T indicates that the call is still valid, so this function is declining for some other reason (like not having the semantics implemented). Anything else is an error message of some kind. Currently NOT-ENOUGH-ARGUMENTS or TOO-MANY-ARGUMENTS.
+This function should not require an environment or system, but it unfortunately does its own conversions (a call to cl:list for &rest, and a constant nil for &optional)."
   (flet ((noinline (&optional (error t))
-	   (return-from inline-lambda-init (values nil error))))
+	   (return-from inline-lambda-init (values nil error)))
+	 (make-list-call (args)
+	   ;; ew.
+	   (let* ((info (cleavir-env:function-info env 'list))
+		  (function-ast
+		   (convert-function info env system)))
+	     (cleavir-ast:make-call-ast function-ast args))))
+    ;; we know the list's format from general-purpose-asts, so we
+    ;;  don't do any error checking.
+    ;; we do a standard "parse". state is the last
+    ;;  lambda-list-keyword or :required. rest is whether we've
+    ;;  seen a &rest parameter, useful for error checking and &key
     (loop with state = :required
+	  with rest = nil
 	  for parameter in lambda-list
 	  when (find parameter '(&rest &optional &key))
 	    do (setf state parameter)
@@ -163,7 +178,7 @@
 		   collect (cleavir-ast:make-setq-ast
 			    parameter (first arg-asts))
 		   and do (setf arg-asts (rest arg-asts))
-	         else do (noinline :not-enough-arguments)
+	         else do (noinline 'not-enough-arguments)
 	  else when (eq state '&optional)
 		 if arg-asts
 		   collect (cleavir-ast:make-setq-ast
@@ -176,18 +191,40 @@
 		   collect (cleavir-ast:make-setq-ast
 			    (second parameter)
 			    (convert nil env system))
-	  else do (return-from inline-lambda-init (noinline)))))
+	  else when (eq state '&rest)
+		 collect (cleavir-ast:make-setq-ast
+			  parameter (make-list-call arg-asts))
+		 and do (setf rest parameter)
+	  else when (eq state '&key)
+		 ;; TODO
+		 ;; There are 3 major issues with &key inlining:
+		 ;; 1) in general we need a &rest list. if there's
+		 ;;    no &rest, that means we have to add an lvar.
+		 ;; 2) we'd like to deal with constant keys, but
+		 ;;    these are converted into inscrutable ASTs.
+		 ;;    One solution would be to avoid converting
+		 ;;     arguments and just look for keys; the
+		 ;;     general solution is type inference.
+		 ;; 3) parsing keys sucks. &aok and getf, oy vey
+		 do (return (noinline))
+	  finally (when (and arg-asts (not rest))
+		    ;; out of parameters; if arg-asts = nil,
+		    ;;  we return normally
+		    (return (values nil 'too-many-arguments))))))
 
 (defun make-call (info env arguments system)
   (let ((argument-asts (convert-sequence arguments env system))
 	(ast (cleavir-env:ast info)))
-    (flet ((err ()
-	     (generate-ast '(error "bad arguments") env system))
-	   (noinline ()
-	     (let ((function-ast
-		     (convert-function info env system)))
-	       (cleavir-ast:make-call-ast function-ast
-					  argument-asts))))
+    (labels ((err (message)
+	       ;; here is where we would warn and return a
+	       ;;  form that signals an error. but for now,
+	       (declare (ignore message))
+	       (noinline))
+	     (noinline ()
+	       (let ((function-ast
+		       (convert-function info env system)))
+		 (cleavir-ast:make-call-ast function-ast
+					    argument-asts))))
       (if (and (eq (cleavir-env:inline info) 'cl:inline)
 	       (not (null ast)))
 	  ;; We might be able to inline the call.
@@ -201,7 +238,7 @@
 				    (cleavir-ast:lambda-list clone)
 				    argument-asts)
 	      (cond ((eq failure t) (noinline))
-		    (failure (err))
+		    (failure (err failure))
 		    (t
 		     (process-progn
 		      (append
