@@ -106,22 +106,43 @@
 
 ;;; Take an environment and a single function definition, and return a
 ;;; new environment which is like the one passed as an argument except
-;;; that it has been augmented by the name of the local function.
+;;; that it has been augmented by the local function name.
 (defun augment-environment-from-fdef (environment definition)
   (db origin (name . rest) definition
     (declare (ignore rest))
-    (let ((var-ast (cleavir-ast:make-lexical-ast (raw name) :origin origin)))
+    (let ((var-ast (cleavir-ast:make-lexical-ast (raw name)
+						 :origin origin)))
       (cleavir-env:add-local-function environment name var-ast))))
 
-;;; Take an environment and a list of function definitions, and return
-;;; a new environment which is like the one passed as an argument,
-;;; except that is has been augmented by the names of the local
-;;; functions in the list.
+;;; Take an environment, a list of function definitions, and bound
+;;; decls, and return a new environment which is like the one passed
+;;; as an argument, except that is has been augmented by the
+;;; local function names in the list.
 (defun augment-environment-from-fdefs (environment definitions)
   (loop with result = environment
 	for definition in (raw definitions)
 	do (setf result
 		 (augment-environment-from-fdef result definition))
+	finally (return result)))
+
+;;; As of now, this unconditionally saves an inline expansion
+;;;  for all local functions. Hypothetically, we could be more
+;;;  thrifty and only safe if there's a bound inline decl or w/e.
+;;; But (a) we need the AST anyway and referencing it isn't a big
+;;;  deal, and (b) we're in the middle of compiling, these local
+;;;  environments are ephemeral.
+(defun augment-environment-with-ast (environment definition)
+  (db origin (name . ast) definition
+    (cleavir-env:add-inline-expansion environment name ast)))
+
+;;; This is done separately from augmenting with fdefs for the sake
+;;;  of recursive bindings, which need just the names and not
+;;;  inline expansions in their bodies.
+(defun augment-environment-with-asts (environment definitions)
+  (loop with result = environment
+	for definition in definitions
+	do (setf result
+		 (augment-environment-with-ast result definition))
 	finally (return result)))
 
 ;;; Given an environment and the name of a function, return the
@@ -144,28 +165,14 @@
     (let ((block-name (block-name-from-function-name name)))
       (convert-code lambda-list body environment system block-name))))
 
-;;; Convert a list of local function definitions.
-(defun convert-local-functions (definitions environment system)
-  (loop for definition in (raw definitions)
-	collect (convert-local-function definition environment system)))
-
-;;; Given a list of local function definitions, return a list of
-;;; the names of those functions.
-(defun function-names (definitions)
-  (mapcar #'car definitions))
-
 ;;; Compute and return a list of SETQ-ASTs that will assign the
 ;;; definition of each function in a list of function definitions to
-;;; its associated LEXICAL-AST.  ENV1 is the environment in which the
-;;; function definitions will be converted.  ENV2 is the environment
-;;; in which the LEXICAL-AST associated with the function name is
-;;; looked up.
-(defun compute-function-init-asts (definitions env1 env2 system)
-  (loop for fun in (convert-local-functions definitions env1 system)
-	for name in (function-names definitions)
+;;; its associated LEXICAL-AST.
+(defun compute-function-init-asts (definitions env)
+  (loop for (name . fun-ast) in definitions
 	collect (cleavir-ast:make-setq-ast
-		 (function-lexical env2 name)
-		 fun)))
+		 (function-lexical env name)
+		 fun-ast)))
 
 ;;; Given a list of declarations, i.e., a list of the form:
 ;;;
@@ -185,20 +192,26 @@
   (cleavir-code-utilities:canonicalize-declaration-specifiers
    (declaration-specifiers declarations)))
 
-(defmethod convert-special
-    ((symbol (eql 'flet)) form env system)
+(defmethod convert-special ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
     (declare (ignore flet))
-    (let* ((new-env (augment-environment-from-fdefs env definitions))
-	   (init-asts
-	     (compute-function-init-asts definitions env new-env system)))
-      (multiple-value-bind (declarations forms)
-	  (cleavir-code-utilities:separate-ordinary-body body)
-	(let ((canonicalized-dspecs (canonicalize-declarations declarations)))
-	  (setf new-env (augment-environment-with-declarations
-			 new-env canonicalized-dspecs)))
+    (multiple-value-bind (declarations forms)
+	(cleavir-code-utilities:separate-ordinary-body body)
+      (let* ((defs (loop for def in (raw definitions)
+			 collect (cons (first def)
+				       (convert-local-function
+					def env system))))
+	     (canonicalized-dspecs
+	       (canonicalize-declarations declarations))
+	     (new-env (augment-environment-from-fdefs env defs))
+	     (new-env (augment-environment-with-asts new-env defs))
+	     (init-asts
+	       (compute-function-init-asts defs new-env))
+	     (new-env (augment-environment-with-declarations
+		       new-env canonicalized-dspecs)))
 	(process-progn
-	 (append init-asts (convert-sequence forms new-env system)))))))
+	 (append init-asts
+		 (convert-sequence forms new-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -292,19 +305,63 @@
 ;;;
 ;;; Converting LABELS.
 
+;;; Given a list of local function definitions, return a list of
+;;; the names of those functions.
+(defun function-names (definitions)
+  (mapcar #'car definitions))
+
+;;; "for labels, any inline, notinline, or ftype declarations that
+;;;  refer to the locally defined functions do apply to the local
+;;;  function bodies"
+(defun labels-dspecs (dspecs defs)
+  "Given a list of canoncalized dspecs from the body of a LABELS form, and the labels definitions, picks out those declarations that apply to the function bodies, i.e. ftype, inline, and notinline on the names."
+  (loop with names = (function-names defs)
+	for dspec in dspecs
+	when (eq (first dspec) 'ftype)
+	  when (find (third dspec) names)
+	    collect dspec
+	when (find (first dspec) '(inline notinline))
+	  when (find (second dspec) names)
+	    collect dspec))
+
 (defmethod convert-special ((symbol (eql 'labels)) form env system)
   (db s (labels definitions . body) form
     (declare (ignore labels))
-    (let* ((new-env (augment-environment-from-fdefs env definitions))
-	   (init-asts
-	     (compute-function-init-asts definitions new-env new-env system)))
-      (multiple-value-bind (declarations forms)
-	  (cleavir-code-utilities:separate-ordinary-body body)
-	(let ((canonicalized-dspecs (canonicalize-declarations declarations)))
-	  (setf new-env (augment-environment-with-declarations
-			 new-env canonicalized-dspecs)))
+    (multiple-value-bind (declarations forms)
+	(cleavir-code-utilities:separate-ordinary-body body)
+      ;; basically, makes a new env with the function names
+      ;;  and selected declarations (labels-dspecs) and converts
+      ;;  the function bodies there. then, makes a new child of
+      ;;  that with the inline expansions and all declarations.
+      ;; FIXME?: right now the local bodies cannot inline each
+      ;;  other at all (as is allowed, but not required). A more
+      ;;  sophisticated thing would be to check which have INLINE
+      ;;  declarations, convert those bodies, and have those
+      ;;  expansions available while converting the others.
+      ;; Even more sophisticated would be making a graph of what
+      ;;  can inline what and converting in several stages, but
+      ;;  that's probably too clever by half.
+      (let* ((canonicalized-dspecs
+	       (canonicalize-declarations declarations))
+	     (outer-env
+	       (augment-environment-from-fdefs env definitions))
+	     (body-dspecs
+	       (labels-dspecs canonicalized-dspecs
+			      (raw definitions)))
+	     (outer-env (augment-environment-with-declarations
+			 outer-env body-dspecs))
+	     (defs (loop for def in (raw definitions)
+			 collect (cons (first def)
+				       (convert-local-function
+					def outer-env system))))
+	     (inner-env (augment-environment-with-asts env defs))
+	     (init-asts
+	       (compute-function-init-asts defs inner-env))
+	     (inner-env (augment-environment-with-declarations
+			 inner-env canonicalized-dspecs)))
 	(process-progn
-	 (append init-asts (convert-sequence forms new-env system)))))))
+	 (append init-asts
+		 (convert-sequence forms inner-env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
