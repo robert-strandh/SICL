@@ -354,7 +354,8 @@
 			 collect (cons (first def)
 				       (convert-local-function
 					def outer-env system))))
-	     (inner-env (augment-environment-with-asts env defs))
+	     (inner-env (augment-environment-with-asts
+			 outer-env defs))
 	     (init-asts
 	       (compute-function-init-asts defs inner-env))
 	     (inner-env (augment-environment-with-declarations
