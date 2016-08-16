@@ -297,3 +297,8 @@
 	   (loop for ,index-var of-type fixnum from ,start-var below ,end-var
 		 do (progn (setf ,element-var (aref ,array-var ,index-var))
 			   ,@body))))))
+
+(defmacro with-simple (array &body body)
+  `(if (typep ,array 'simple-array)
+       (progn ,@body)
+       (progn ,@body)))
