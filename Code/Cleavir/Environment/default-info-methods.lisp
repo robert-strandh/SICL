@@ -663,8 +663,8 @@
 ;;; entry that resulted in the creation of the defining info.  If the
 ;;; names are not the same, we continue the search.
 
-(defmethod function-inline ((environment function)
-			  (defining-info local-function-info))
+(defmethod function-inline-expansion
+    ((environment function) (defining-info local-function-info))
   (if (equal (name environment) (name defining-info))
       nil
       (function-inline-expansion (next environment) defining-info)))
