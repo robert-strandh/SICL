@@ -9,6 +9,13 @@
 	  (when (satisfies-two-argument-test-p item element test test-not)
 	    (return-from find-list element)))))))
 
+;;; A version of FIND, specialized to a vector.  ITEM is the item to
+;;; find.  VECTOR is the vector to search.  FROM-END is a generalized
+;;; Boolean indicating the direction of the search.  At least one of
+;;; TEST and TEST-NOT must be NIL.  If both are NIL it is as if TEST
+;;; had the value #'EQL.  If one of TEST and TEST-NOT is not NIL, it
+;;; must be a designator for a function.  START and END must be
+;;; non-negative fixnums.  KEY must be a designator for function.
 (defun find-vector (item vector from-end test test-not start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (with-test-and-test-not (test test-not)
