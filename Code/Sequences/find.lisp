@@ -42,3 +42,11 @@
       (progn (when (null end)
 	       (setf end (length sequence)))
 	     (find-vector item sequence from-end test test-not start end key))))
+
+(defun find-if-list (predicate list from-end start end key)
+  (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (with-from-end from-end
+    (for-each-relevant-cons (cons index list start end from-end)
+      (let ((element (apply-key-function (car cons) key)))
+	(when (funcall predicate element)
+	  (return-from find-if-list element))))))
