@@ -4,7 +4,7 @@
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (with-test-and-test-not (test test-not)
     (with-from-end from-end
-      (for-each-relevant-cons (cons list start end from-end)
+      (for-each-relevant-cons (cons index list start end from-end)
 	(let ((element (apply-key-function (car cons) key)))
 	  (when (satisfies-two-argument-test-p item element test test-not)
 	    (return-from find-list element)))))))
