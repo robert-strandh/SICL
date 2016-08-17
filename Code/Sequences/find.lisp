@@ -50,3 +50,13 @@
       (let ((element (apply-key-function (car cons) key)))
 	(when (funcall predicate element)
 	  (return-from find-if-list element))))))
+
+(defun find-if-vector (predicate vector from-end start end key)
+  (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (declare (type fixnum start end))
+  (with-from-end from-end
+    (with-element-type vector
+      (for-each-relevant-element (e index vector start end from-end)
+	(let ((element (apply-key-function (car e) key)))
+	  (when (funcall predicate element)
+	    (return-from find-if-vector element)))))))
