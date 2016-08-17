@@ -60,3 +60,21 @@
 	(let ((element (apply-key-function (car e) key)))
 	  (when (funcall predicate element)
 	    (return-from find-if-vector element)))))))
+
+(defun find-if-not-list (predicate list from-end start end key)
+  (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (with-from-end from-end
+    (for-each-relevant-cons (cons index list start end from-end)
+      (let ((element (apply-key-function (car cons) key)))
+	(unless (funcall predicate element)
+	  (return-from find-if-not-list element))))))
+
+(defun find-if-not-vector (predicate vector from-end start end key)
+  (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (declare (type fixnum start end))
+  (with-from-end from-end
+    (with-element-type vector
+      (for-each-relevant-element (e index vector start end from-end)
+	(let ((element (apply-key-function (car e) key)))
+	  (unless (funcall predicate element)
+	    (return-from find-if-not-vector element)))))))
