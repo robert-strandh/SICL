@@ -221,7 +221,7 @@
 	   (progn (if (null ,start-var)
 		      (setf ,start-var 0)
 		      (setf ,list-var (nthcdr ,start-var ,list-var)))
-		  (loop for ,iter-var of-type fixnum from start
+		  (loop for ,iter-var of-type fixnum from ,start-var
 			for ,rest-var = ,list-var then (cdr ,rest-var)
 			do (if (atom ,rest-var)
 			       (if (null ,rest-var)
