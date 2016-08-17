@@ -29,3 +29,5 @@
 (defgeneric add-optimize (environment quality value))
 
 (defgeneric add-inline (environment function-name inline))
+
+(defgeneric add-inline-expansion (environment function-name expansion))

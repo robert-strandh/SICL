@@ -581,7 +581,7 @@
 ;;;
 ;;; This function takes an environment and a defining info instance
 ;;; and returns the first entry in the environment that contains inline
-;;; information for the defining info instance, or NIL if there is not
+;;; information for the defining info instance, or NIL if there is no
 ;;; such entry.
 
 (defgeneric function-inline (environment defining-info))
@@ -590,7 +590,7 @@
 ;;; environment.
 (defmethod function-inline (environment defining-info)
   (declare (cl:ignore environment))
-  (inline defining-info))
+  nil)
 
 ;;; This method is called when the entry is not related to the
 ;;; defining info instance. 
@@ -632,6 +632,59 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FUNCTION-INLINE-EXPANSION.
+;;;
+;;; This function takes an environment and a defining info instance
+;;; and returns the first entry in the environment that contains
+;;; an expansion for the defining info instance, or NIL if there is
+;;; no such entry.
+
+(defgeneric function-inline-expansion (environment defining-info))
+
+;;; This method is called when the environment is the global
+;;; environment.
+(defmethod function-inline-expansion (environment defining-info)
+  (declare (cl:ignore environment))
+  nil)
+
+;;; This method is called when the entry is not related to the
+;;; defining info instance. 
+(defmethod function-inline-expansion
+    ((environment entry) defining-info)
+  (declare (cl:ignorable environment defining-info))
+  (function-inline-expansion (next environment) defining-info))
+
+;;; The following method is called when the environment entry is of
+;;; the same type as the one that resulted in the creation of the
+;;; defining info instance.  If the name of the environment entry is
+;;; the same as the name of the info instance, then this entry was the
+;;; one that resulted in the creation of the defining info instance.
+;;; In other words, we have found no function type entries before
+;;; entry that resulted in the creation of the defining info.  If the
+;;; names are not the same, we continue the search.
+
+(defmethod function-inline-expansion
+    ((environment function) (defining-info local-function-info))
+  (if (equal (name environment) (name defining-info))
+      nil
+      (function-inline-expansion (next environment) defining-info)))
+
+;;; The following method is called when the current entry is a
+;;; candidate for being the entry containing inline information for a
+;;; function info.  We found the right one if the names are the same.
+;;; If not, then we continue the search.
+
+(defmethod function-inline-expansion
+    ((environment inline-expansion)
+     (defining-info local-function-info))
+  (if (equal (name environment) (name defining-info))
+      environment
+      (function-inline-expansion (next environment) defining-info)))
+
+;;; No inline-expansions for global function infos.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Methods on MAKE-INFO specialized to INFO classes returned by
 ;;; FUNCTION-INFO.
 
@@ -643,7 +696,14 @@
     :type (cons 'and (function-type environment defining-info))
     :ignore
     (let ((entry (function-ignore environment defining-info)))
-      (if (null entry) nil (ignore entry)))
+      (ignore (or entry defining-info)))
+    :inline
+    (let ((entry (function-inline environment defining-info)))
+      (inline (or entry defining-info)))
+    :ast
+    (let ((entry (function-inline-expansion environment
+					    defining-info)))
+      (ast (or entry defining-info)))
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))
@@ -655,8 +715,12 @@
     :type (cons 'and (function-type environment defining-info))
     :ignore
     (let ((entry (function-ignore environment defining-info)))
-      (if (null entry) nil (ignore entry)))
-    :inline (function-inline environment defining-info)
+      (ignore (or entry defining-info)))
+    :inline
+    (let ((entry (function-inline environment defining-info)))
+      (inline (or entry defining-info)))
+    ;; don't bother with function-inline-expansion, since there
+    ;;  shouldn't be local expansions for global functions.
     :ast (ast defining-info)
     :compiler-macro (compiler-macro defining-info)
     :dynamic-extent
