@@ -268,6 +268,42 @@
       (push index result))
     (assert (equal (reverse result) '()))))
 
+(defun relevant-conses-15 ()
+  (let ((l '(a b c))
+	(result '()))
+    (sicl-sequence::for-each-relevant-cons
+	(cons index l 0 nil nil)
+      (push (car cons) result)
+      (push index result))
+    (assert (equal (reverse result) '(a 0 b 1 c 2)))))
+
+(defun relevant-conses-16 ()
+  (let ((l '(a b c))
+	(result '()))
+    (sicl-sequence::for-each-relevant-cons
+	(cons index l 1 nil t)
+      (push (car cons) result)
+      (push index result))
+    (assert (equal (reverse result) '(c 2 b 1)))))
+
+(defun relevant-conses-17 ()
+  (let ((l '(a b c))
+	(result '()))
+    (sicl-sequence::for-each-relevant-cons
+	(cons index l 2 nil t)
+      (push (car cons) result)
+      (push index result))
+    (assert (equal (reverse result) '(c 2)))))
+
+(defun relevant-conses-18 ()
+  (let ((l '(a b c))
+	(result '()))
+    (sicl-sequence::for-each-relevant-cons
+	(cons index l 3 nil t)
+      (push (car cons) result)
+      (push index result))
+    (assert (equal (reverse result) '()))))
+
 (defun relevant-conses ()
   (relevant-conses-1)
   (relevant-conses-2)
@@ -282,4 +318,8 @@
   (relevant-conses-11)
   (relevant-conses-12)
   (relevant-conses-13)
-  (relevant-conses-14))
+  (relevant-conses-14)
+  (relevant-conses-15)
+  (relevant-conses-16)
+  (relevant-conses-17)
+  (relevant-conses-18))
