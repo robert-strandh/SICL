@@ -349,3 +349,28 @@
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~s ~s" (name object) (inline object))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
+;;; INLINE-EXPANSION.
+
+;;; This class is used to augment an environment with an inline
+;;; expansion for a function (i.e., the :ast initarg to
+;;; local- and global-function-info).
+;;; It is separate from INLINE because having an expansion doesn't
+;;; mean using it, and separate from the defining info because
+;;; sometimes you have the name but want to add the expansion lower
+;;; down.
+(defclass inline-expansion (entry)
+  ((%name :initarg :name :reader name)
+   (%ast :initarg :ast :reader ast)))
+
+(defmethod add-inline-expansion (environment function-name expansioN)
+  (make-instance 'inline-expansion
+    :next environment
+    :name function-name
+    :ast expansion))
+
+(defmethod print-object ((object inline-expansion) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (name object))))

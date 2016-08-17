@@ -71,6 +71,7 @@
    #:add-function-dynamic-extent
    #:add-optimize
    #:add-inline
+   #:add-inline-expansion
    #:eval
    #:macro-function
    #:compiler-macro-function
