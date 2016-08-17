@@ -146,8 +146,7 @@
 	(rest-var (gensym))
 	(length-var (gensym))
 	(iter-var (gensym)))
-    `(let (,cons-var
-	   ,length-var
+    `(let (,length-var
 	   (,list-var ,list)
 	   (,start-var ,start)
 	   (,end-var ,end))
@@ -163,8 +162,8 @@
 			     (when (> ,length-var 0)
 			       (when (consp ,rest-var)
 				 (traverse (cdr ,rest-var) (1- ,length-var))
-				 (setf ,cons-var ,rest-var)
-				 ,@body)))
+				 (let ((,cons-var ,rest-var))
+				   ,@body))))
 			   (traverse (rest length)
 			     (declare (type fixnum length))
 			     (if (< length 100)
@@ -231,8 +230,8 @@
 			       (if (and (not (null ,end-var))
 					(>= ,iter-var ,end-var))
 				   (loop-finish)
-				   (progn (setf ,cons-var ,rest-var)
-					  ,@body)))))))))
+				   (let ((,cons-var ,rest-var))
+				     ,@body)))))))))
 
 (defmacro with-test-and-test-not ((test-var test-not-var) &body body)
   `(cond ((and (null ,test-var) (null ,test-not-var))
