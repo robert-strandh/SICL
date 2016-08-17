@@ -235,6 +235,7 @@
 				   (loop-finish)
 				   (let ((,cons-var ,rest-var)
 					 (,index-var ,iter-var))
+				     (declare (ignorable ,index-var))
 				     ,@body)))))))))
 
 (defmacro with-test-and-test-not ((test-var test-not-var) &body body)
