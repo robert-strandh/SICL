@@ -6,7 +6,8 @@
      (lambda (instruction)
        (when (typep instruction 'cleavir-ir:enter-instruction)
 	 (push instruction result)))
-     initial-instruction)))
+     initial-instruction)
+    result))
 
 (defun compute-initial-dictionary (initial-instruction)
   (let ((liveness (cleavir-liveness:liveness initial-instruction))
