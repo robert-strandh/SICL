@@ -32,12 +32,19 @@
   ;; (declare (optimize (debug 0) (speed 3) (safety 0))
   ;; 	   (type (and fixnum (integer 0)) start)
   ;; 	   (type (or null (and fixnum (integer 0))) end))
-  (unless (and (numberp start) (>= start 0))
-    (error "invalid start value"))
-  (unless (or (null end) (and (numberp end) (>= end 0)))
-    (error "invalid end value"))
+  (unless (and (integerp start) (>= start 0))
+    (error 'invalid-start-index-type
+	   :expected-type '(integer 0)
+	   :datum start
+	   :name 'position))
+  (unless (or (null end) (and (integerp end) (>= end 0)))
+    (error 'invalid-end-index-type
+	   :expected-type '(or null (integer 0))
+	   :datum end
+	   :name 'position))
   (when (and (not (null test)) (not (null test-not)))
-    (error "both test and test-not given"))
+    (error 'both-test-and-test-not-given
+	   :name 'position))
   (if (listp sequence)
       (position-list item sequence from-end test test-not start end key)
       (progn (when (null end)
