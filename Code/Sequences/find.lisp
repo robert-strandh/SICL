@@ -42,7 +42,8 @@
 	   :datum end
 	   :name 'find))
   (when (and (not (null test)) (not (null test-not)))
-    (error "both test and test-not given"))
+    (error 'both-test-and-test-not-given
+	   :name 'find))
   (if (listp sequence)
       (find-list item sequence from-end test test-not start end key)
       (progn (when (null end)
