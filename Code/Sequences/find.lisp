@@ -31,12 +31,12 @@
   ;; (declare (optimize (debug 0) (speed 3) (safety 0))
   ;; 	   (type (and fixnum (integer 0)) start)
   ;; 	   (type (or null (and fixnum (integer 0))) end))
-  (unless (and (numberp start) (>= start 0))
+  (unless (and (integerp start) (>= start 0))
     (error 'invalid-start-index-type
 	   :expected-type '(integer 0)
 	   :datum start
 	   :name 'find))
-  (unless (or (null end) (and (numberp end) (>= end 0)))
+  (unless (or (null end) (and (integerp end) (>= end 0)))
     (error 'invalid-end-index-type
 	   :expected-type '(or null (integer 0))
 	   :datum end
