@@ -62,18 +62,10 @@
 (defmethod to-source ((ast cleavir-ast:lexical-ast) dictionary)
   (or (cdr (assoc ast dictionary)) (cleavir-ast:name ast)))
 
-#+(or)
-(defmethod to-source ((ast cleavir-ast:special-ast) dictionary)
-  (cdr (assoc ast dictionary)))
-
 (defmethod to-source ((ast cleavir-ast:call-ast) dictionary)
   `(funcall ,(to-source (cleavir-ast:callee-ast ast) dictionary)
 	    ,@(list-to-sources (cleavir-ast:argument-asts ast)
 			       dictionary)))
-
-#+ (or)
-(defmethod to-source ((ast cleavir-ast:global-ast) dictionary)
-  `#',(cleavir-ast:name ast))
 
 (defmethod to-source ((ast cleavir-ast:progn-ast) dictionary)
   `(progn ,@(list-to-sources (cleavir-ast:children ast)
