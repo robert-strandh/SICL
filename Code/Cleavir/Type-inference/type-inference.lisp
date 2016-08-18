@@ -5,7 +5,8 @@
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
        (when (typep instruction 'cleavir-ir:enter-instruction)
-	 (push instruction result)))
+	 (push (first (cleavir-ir:successors instruction))
+	       result)))
      initial-instruction)
     result))
 
