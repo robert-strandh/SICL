@@ -37,7 +37,10 @@
 	   :datum start
 	   :name 'find))
   (unless (or (null end) (and (numberp end) (>= end 0)))
-    (error "invalid end value"))
+    (error 'invalid-end-index-type
+	   :expected-type '(or null (integer 0))
+	   :datum end
+	   :name 'find))
   (when (and (not (null test)) (not (null test-not)))
     (error "both test and test-not given"))
   (if (listp sequence)
