@@ -113,25 +113,3 @@
 		(update input
 			(binary-join type-descriptor input-type)
 			input-bag)))))
-
-(defmethod two-successors-transfer
-    ((instruction cleavir-ir:fixnump-instruction) input-bag)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-	 (input-type (find-type input input-bag)))
-    (values (update input
-		    (binary-meet 'fixnum input-type)
-		    input-bag)
-	    (update input
-		    (binary-join 'fixnum input-type)
-		    input-bag))))
-
-(defmethod two-successors-transfer
-    ((instruction cleavir-ir:consp-instruction) input-bag)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-	 (input-type (find-type input input-bag)))
-    (values (update input
-		    (binary-meet 'cons input-type)
-		    input-bag)
-	    (update input
-		    (binary-join 'cons input-type)
-		    input-bag))))
