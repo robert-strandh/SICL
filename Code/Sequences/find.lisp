@@ -32,7 +32,10 @@
   ;; 	   (type (and fixnum (integer 0)) start)
   ;; 	   (type (or null (and fixnum (integer 0))) end))
   (unless (and (numberp start) (>= start 0))
-    (error "invalid start value"))
+    (error 'invalid-start-index-type
+	   :expected-type '(integer 0)
+	   :datum start
+	   :name 'find))
   (unless (or (null end) (and (numberp end) (>= end 0)))
     (error "invalid end value"))
   (when (and (not (null test)) (not (null test-not)))
