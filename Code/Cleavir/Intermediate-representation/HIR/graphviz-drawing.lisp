@@ -166,6 +166,11 @@
 ;;;
 ;;; General-purpose instructions.
 
+(defmethod draw-instruction ((instruction the-instruction) stream)
+  (format stream "   ~a [label = \"the ~a\"];~%"
+	  (instruction-id instruction)
+	  (value-type instruction)))
+
 (defmethod draw-instruction ((instruction typeq-instruction) stream)
   (format stream "   ~a [label = \"typeq ~a\"];~%"
 	  (instruction-id instruction)
