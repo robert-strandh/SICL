@@ -5,9 +5,14 @@
 (defun ast-to-source (ast)
   (to-source ast nil))
 
+(defun list-to-sources (list dictionary)
+  (loop for elem in list collect (to-source elem dictionary)))
+
 (defmethod to-source (ast dictionary)
-  `(??? ,@(loop for child in (cleavir-ast:children ast)
-		collect (to-source child dictionary))))
+  (warn "Don't know how to sourcify a ~a"
+	(class-name (class-of ast)))
+  `(??? ,@(list-to-sources (cleavir-ast:children ast)
+			   dictionary)))
 
 (defmethod to-source ((ast cleavir-ast:function-ast) dictionary)
   (let* ((entries '())
@@ -37,7 +42,7 @@
        ,(to-source (cleavir-ast:body-ast ast) (append entries dictionary)))))
 
 (defmethod to-source ((ast cleavir-ast:setq-ast) dictionary)
-  `(setq ,(cdr (assoc (cleavir-ast:variable-ast ast) dictionary))
+  `(setq ,(to-source (cleavir-ast:lhs-ast ast) dictionary)
 	 ,(to-source (cleavir-ast:value-ast ast) dictionary)))
 
 (defmethod to-source ((ast cleavir-ast:if-ast) dictionary)
@@ -55,21 +60,66 @@
   `',(cleavir-ast:value ast))
 
 (defmethod to-source ((ast cleavir-ast:lexical-ast) dictionary)
-  (cdr (assoc ast dictionary)))
-
-#+ (or)
-(defmethod to-source ((ast cleavir-ast:special-ast) dictionary)
-  (cdr (assoc ast dictionary)))
+  (or (cdr (assoc ast dictionary)) (cleavir-ast:name ast)))
 
 (defmethod to-source ((ast cleavir-ast:call-ast) dictionary)
   `(funcall ,(to-source (cleavir-ast:callee-ast ast) dictionary)
-	    ,@(loop for arg in (cleavir-ast:argument-asts ast)
-		    collect (to-source arg dictionary))))
-
-#+ (or)
-(defmethod to-source ((ast cleavir-ast:global-ast) dictionary)
-  `#',(cleavir-ast:name ast))
+	    ,@(list-to-sources (cleavir-ast:argument-asts ast)
+			       dictionary)))
 
 (defmethod to-source ((ast cleavir-ast:progn-ast) dictionary)
-  `(progn ,@(loop for child in (cleavir-ast:children ast)
-		  collect (to-source child dictionary))))
+  `(progn ,@(list-to-sources (cleavir-ast:children ast)
+			     dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:multiple-value-call-ast)
+		      dictionary)
+  `(multiple-value-call
+       ,(to-source (cleavir-ast:function-form-ast ast) dictionary)
+     ,@(list-to-sources (cleavir-ast:form-asts ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:load-time-value-ast)
+		      dictionary)
+  `(load-time-value ,(cleavir-ast:form ast)
+		    ,(cleavir-ast:read-only-p ast)))
+
+(defmethod to-source ((ast cleavir-ast:fdefinition-ast) dictionary)
+  `(fdefinition
+    ,(to-source (cleavir-ast:name-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:eq-ast) dictionary)
+  `(eq ,(to-source (cleavir-ast:arg1-ast ast) dictionary)
+       ,(to-source (cleavir-ast:arg2-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:symbol-value-ast)
+		      dictionary)
+  `(symbol-value
+    ,(to-source (cleavir-ast:symbol-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:the-ast) dictionary)
+  `(the (values ,@(cleavir-ast:type-specifiers ast))
+	,(to-source (cleavir-ast:form-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:go-ast) dictionary)
+  `(go ,(cleavir-ast:name (cleavir-ast:tag-ast ast))))
+
+(defmethod to-source ((ast cleavir-ast:block-ast) dictionary)
+  (let ((name (gensym "BLOCK")))
+    `(block ,name
+       ,(to-source (cleavir-ast:body-ast ast)
+		   (acons ast name dictionary)))))
+
+(defmethod to-source ((ast cleavir-ast:return-from-ast)
+		      dictionary)
+  (let ((name (cdr (assoc (cleavir-ast:block-ast ast)
+			  dictionary))))
+    (unless name
+      (error "BUG: Orphaned return-from ~a" ast))
+    `(return-from ,name
+       ,(to-source (cleavir-ast:form-ast ast) dictionary))))
+
+(defmethod to-source ((ast cleavir-ast:tagbody-ast) dictionary)
+  `(tagbody
+      ,@(loop for item in (cleavir-ast:item-asts ast)
+	      when (typep item 'cleavir-ast:tag-ast)
+		collect (cleavir-ast:name item)
+	      else collect (to-source item dictionary))))
