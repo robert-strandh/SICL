@@ -4,9 +4,8 @@
   (let ((result '()))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
-       (when (typep instruction 'cleavir-ir:enter-instruction)
-	 (push (first (cleavir-ir:successors instruction))
-	       result)))
+       (unless (typep instruction 'cleavir-ir:enter-instruction)
+	 (push instruction result)))
      initial-instruction)
     result))
 
@@ -19,7 +18,10 @@
 	     for key = (cons predecessor instruction)
 	     for live = (cleavir-liveness:live-before liveness instruction)
 	     do (loop for var in live
-		      do (push (cons var t)
+		      do (push (cons var (etypecase var
+					   (cleavir-ir:lexical-location t)
+					   (cleavir-ir:values-location
+					    '(values &rest t))))
 			       (gethash (cons predecessor instruction)
 					result)))))
      initial-instruction)
