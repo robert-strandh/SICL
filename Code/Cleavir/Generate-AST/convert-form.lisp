@@ -27,23 +27,26 @@
 ;;;
 ;;; Converting a symbol that has a definition as a lexical variable.
 
+(defun maybe-wrap-the (type ast)
+  "Given a non-values TYPE, return the AST wrapped in a THE-AST if that is helpful, or otherwise the AST."
+  (if (subtypep t type)
+      ;; The only way T can be a subtype of some other type is if
+      ;; that other type is also T, so this is our way of testing
+      ;; whether the type of the variable is equivalent to T.  We
+      ;; use this information to avoid wrapping a THE-AST around
+      ;; the variable.
+      ast
+      ;; Otherwise, we are not sure whether the type is equivalent
+      ;; to T, so we wrap it.
+      (cleavir-ast:make-the-ast ast (list type))))
+
 (defmethod convert-form
     (form (info cleavir-env:lexical-variable-info) env system)
   (declare (ignore system))
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn "Reference to a variable declared IGNORE"))
-  (let ((type (cleavir-env:type info)))
-    (if (subtypep t type)
-	;; The only way T can be a subtype of some other type is if
-	;; that other type is also T, so this is our way of testing
-	;; whether the type of the variable is equivalent to T.  We
-	;; use this information to avoid wrapping a THE-AST around the
-	;; variable.
-	(cleavir-env:identity info)
-	;; Otherwise, we are not sure whether the type is equivalent
-	;; to T, so we wrap it.
-	(cleavir-ast:make-the-ast (cleavir-env:identity info)
-				  (list type)))))
+  (maybe-wrap-the (cleavir-env:type info)
+		  (cleavir-env:identity info)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -151,6 +154,78 @@
 ;;; Converting a compound form that calls a global function.
 ;;; A global function can have  compiler macro associated with it.
 
+;; Force a type from ftype information (thus, hopefully a subtype
+;;  of FUNCTION) into a strict (function lambda-list return-values)
+;; FIXME: This is bad. Good type canonicalization is important.
+(defun canonicalize-ftype (type)
+  (if (consp type)
+      (case (first type)
+	((and or) (if (= (length type) 2)
+		      (canonicalize-ftype (second type))
+		      '(function (&rest t) (values &rest t))))
+	((function)
+	 (destructuring-bind (&optional (ll '*) (ret '*))
+	     (rest type)
+	   (let ((ll (if (eq ll '*)
+			 ;; (function *) and (function (&rest t))
+			 ;;  actually mean different things: the
+			 ;;  first is a strict superset of the
+			 ;;  second. But for our purposes here,
+			 ;;  there's no problem.
+			 '(&rest t)
+			 ll))
+		 (ret (cond ((eq ret '*)
+			     ;; these actually are equivalent.
+			     '(values &rest t))
+			    ((and (consp ret)
+				  (eq (first ret) 'values))
+			     ret)
+			    (t `(values ,ret)))))
+	     `(function ,ll ,ret))))
+	(t '(function (&rest t) (values &rest t))))
+      '(function (&rest t) (values &rest t))))
+
+;; ftype must be canonicalized.
+(defun function-type-lambda-list (ftype) (second ftype))
+(defun function-type-return-values (ftype) (third ftype))
+
+;; assumes ftype is valid!
+(defun maybe-type-wrap-arguments (ftype-ll arg-asts)
+  "Given the lambda list of a function's ftype, and a list of ASTs in a call to that function, returns a list of ASTs possibly wrapped in THE-ASTs, based on the ftype."
+  (loop with state = :required
+	for param in ftype-ll
+	when (find param '(&optional &rest &key))
+	  do (setf state param)
+	else when (eq state :required)
+	       when (null arg-asts)
+		 do (return (values nil 'not-enough-arguments))
+	       else collect (maybe-wrap-the param (first arg-asts))
+		      into result
+		    and do (setf arg-asts (rest arg-asts))
+	else when (eq state '&optional)
+	       when arg-asts
+		 collect (maybe-wrap-the param (first arg-asts))
+		   into result
+		 and do (setf arg-asts (rest arg-asts))
+	       else do (return result)
+	else when (eq state '&rest)
+	  ;; technically, there could be a &key, but that is such
+	  ;;  a bizarre circumstance that I don't mind ignoring it.
+	  do (return
+	       (nconc result
+		      (mapcar
+		       (lambda (a)
+			 (maybe-wrap-the param a))
+		       arg-asts)))
+	else when (eq state '&key)
+	       do (return (if (evenp (length arg-asts))
+			      (nconc result arg-asts)
+			      (values nil 'odd-keys)))
+	finally (return
+		  (if (null arg-asts)
+		      result
+		      (values nil 'too-many-arguments)))))
+
 (defun inline-lambda-init (env system lambda-list arg-asts)
   "This mess takes an environment and system, and then a lambda list and a list of converted arguments, and returns a list of forms that initialize the lambda variables with the arguments.
 If this is impossible for some reason, a second non-nil value will be returned. T indicates that the call is still valid, so this function is declining for some other reason (like not having the semantics implemented). Anything else is an error message of some kind. Currently NOT-ENOUGH-ARGUMENTS or TOO-MANY-ARGUMENTS.
@@ -215,17 +290,38 @@ This function should not require an environment or system, but it unfortunately 
 
 (defun make-call (info env arguments system)
   (let ((argument-asts (convert-sequence arguments env system))
-	(ast (cleavir-env:ast info)))
+	(ast (cleavir-env:ast info))
+	(ftype (canonicalize-ftype (cleavir-env:type info))))
     (labels ((err (message)
 	       ;; here is where we would warn and return a
 	       ;;  form that signals an error. but for now,
-	       (declare (ignore message))
+	       (warn "~a" message)
+	       ;(declare (ignore message))
 	       (noinline))
+	     (maybe-wrap-the (ast)
+	       ;; fun lisp fact: there's no way to say that a form
+	       ;;  takes AT MOST n values (or exactly n, etc.)
+	       ;; function types can be more demanding, but THE
+	       ;;  introduces fudge for friendliness's sake.
+	       ;; FIXME: maybe add an EXACTLY-THE AST? THE can
+	       ;;  expand to it (by adding &rest)
+	       (let ((ret (function-type-return-values ftype)))
+		 (if (equal ret '(values &rest t))
+		     ast
+		     (cleavir-ast:make-the-ast ast (rest ret)))))
 	     (noinline ()
 	       (let ((function-ast
 		       (convert-function info env system)))
-		 (cleavir-ast:make-call-ast function-ast
-					    argument-asts))))
+		 (maybe-wrap-the
+		  (cleavir-ast:make-call-ast function-ast
+					     argument-asts)))))
+      (multiple-value-bind (asts failure)
+	  (maybe-type-wrap-arguments
+	   (function-type-lambda-list ftype)
+	   argument-asts)
+	(if failure
+	    (err failure)
+	    (setf argument-asts asts)))
       (if (and (eq (cleavir-env:inline info) 'cl:inline)
 	       (not (null ast)))
 	  ;; We might be able to inline the call.
@@ -244,7 +340,8 @@ This function should not require an environment or system, but it unfortunately 
 		     (process-progn
 		      (append
 		       init
-		       (list (cleavir-ast:body-ast clone))))))))
+		       (list (maybe-wrap-the
+			      (cleavir-ast:body-ast clone)))))))))
 	  ;; Generate an ordinary call.
 	  (noinline)))))
 
