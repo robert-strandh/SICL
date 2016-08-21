@@ -171,6 +171,12 @@
 	  (instruction-id instruction)
 	  (value-type instruction)))
 
+(defmethod draw-instruction ((instruction the-values-instruction)
+			     stream)
+  (format stream "   ~a [label = \"the (values ~{~a~^ ~})\"];~%"
+	  (instruction-id instruction)
+	  (values-type instruction)))
+
 (defmethod draw-instruction ((instruction typeq-instruction) stream)
   (format stream "   ~a [label = \"typeq ~a\"];~%"
 	  (instruction-id instruction)
