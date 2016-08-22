@@ -49,6 +49,7 @@
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction
+   #:funcall-no-return-instruction #:make-funcall-no-return-instruction
    #:tailcall-instruction #:make-tailcall-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code

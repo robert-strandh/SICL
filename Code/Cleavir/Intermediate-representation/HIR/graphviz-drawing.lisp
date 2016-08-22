@@ -203,6 +203,9 @@
 
 (defmethod label ((instruction funcall-instruction)) "funcall")
 
+(defmethod label ((instruction funcall-no-return-instruction))
+  "funcall-no-return")
+
 (defmethod label ((instruction tailcall-instruction)) "tailcall")
 
 (defmethod label ((instruction return-instruction)) "ret")

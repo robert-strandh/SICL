@@ -97,6 +97,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction FUNCALL-NO-RETURN-INSTRUCTION.
+;;;
+;;; This is for calls that are known to never return normally,
+;;; e.g. calls to ERROR. Having no successor simplifies analysis
+;;; by making whatever leads here irrelevant to other code.
+;;;
+;;; It's a separate class because funcall having one-successor-mixin
+;;; is pretty convenient.
+
+(defclass funcall-no-return-instruction
+    (instruction no-successors-mixin side-effect-mixin)
+  ())
+
+(defun make-funcall-no-return-instruction (inputs)
+  (make-instance 'funcall-no-return-instruction
+    :inputs inputs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction TAILCALL-INSTRUCTION.
 
 (defclass tailcall-instruction (instruction no-successors-mixin)
