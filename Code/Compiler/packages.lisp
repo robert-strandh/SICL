@@ -204,7 +204,6 @@
    #:*program*
    #:touch
    #:instruction-graph
-   #:no-redundant-temporaries
    #:no-error-successors
    #:simplified-instructions
    #:remove-nop-instructions

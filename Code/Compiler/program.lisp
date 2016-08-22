@@ -761,36 +761,6 @@
 	     (return-from simple-path-p nil)))
   t)
 
-(defun remove-redundant-temporaries (program)
-  (let ((modified-p nil))
-    (map-lexical-locations
-     (lambda (location)
-       (let ((defining-instructions (sicl-mir:defining-instructions location))
-	     (using-instructions (sicl-mir:using-instructions location)))
-	 (when (and (= 1 (length defining-instructions))
-		    (= 1 (length using-instructions))
-		    (typep (car defining-instructions)
-			   'sicl-mir:assignment-instruction))
-	   (let* ((defining (car defining-instructions))
-		  (using (car using-instructions))
-		  (input (car (sicl-mir:inputs defining))))
-	     (when (or (typep input 'sicl-mir:constant-input)
-		       (typep input 'sicl-mir:immediate-input)
-		       (and (typep input 'sicl-mir:lexical-location)
-			    (simple-path-p defining using input)))
-	       (setf modified-p t)
-	       (sicl-mir:delete-instruction defining)
-	       (setf (sicl-mir:inputs using)
-		     (substitute input location (sicl-mir:inputs using)))))))))
-    (when modified-p
-      (touch program 'instruction-graph))))
-
-(set-processor 'no-redundant-temporaries
-	       'remove-redundant-temporaries)
-
-(add-dependencies 'no-redundant-temporaries
-		  '(instruction-graph))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Do some initial transformations.
@@ -799,12 +769,10 @@
   ;; There are typically unused locations in the initial
   ;; program. 
   (make program 'no-unused-locations)
-  (make program 'no-redundant-temporaries)
   (make program 'type-inference)
   ;; Type inference may create unused locations, so apply
   ;; this transformation again.
   (make program 'no-unused-locations)
-  (make program 'no-redundant-temporaries)
   (make program 'remove-nop-instructions)
   (make program 'backend-specific-constants)
   (make program 'unique-constants)
