@@ -52,6 +52,60 @@
 	  input-bag))
 
 (defmethod one-successor-transfer
+    ((instruction cleavir-ir:enclose-instruction) input-bag)
+  ;; hypothetically this method could wait for the results of type
+  ;;  inference on the function (and give up only for recursion)
+  (let* ((enter (cleavir-ir:code instruction))
+	 (ll (loop for thing in (cleavir-ir:lambda-list enter)
+		   when (find thing lambda-list-keywords)
+		     collect thing
+		   else collect t)))
+    (update (first (cleavir-ir:outputs instruction))
+	    `(function ,ll *)
+	    input-bag)))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:nop-instruction) input-bag)
+  input-bag)
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:use-instruction) input-bag)
+  input-bag)
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:the-instruction) input-bag)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+	 (input-type (find-type input input-bag))
+	 (type (cleavir-ir:value-type instruction))
+	 (type-descriptor (canonicalize-type type)))
+    (if (top-p type-descriptor)
+	input-bag ; don't bother
+	(update input (binary-meet type-descriptor input-type)
+		input-bag))))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:fixed-to-multiple-instruction)
+     input-bag)
+  (update (first (cleavir-ir:outputs instruction))
+	  `(values ,@(mapcar (lambda (input)
+			       (find-type input input-bag))
+			     (cleavir-ir:inputs instruction)))
+	  input-bag))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:multiple-to-fixed-instruction)
+     input-bag)
+  (loop with input = (first (cleavir-ir:inputs instruction))
+	for i from 0
+	for output in (cleavir-ir:outputs instruction)
+	for result = input-bag
+	  then (update input
+		       (values-type-nth-forgiving
+			i (as-values (find-type input input-bag)))
+		       result)
+	finally (return result)))
+
+(defmethod one-successor-transfer
     ((instruction cleavir-ir:short-float-unbox-instruction) input-bag)
   (let ((output (first (cleavir-ir:outputs instruction))))
     (update output 'unboxed-short-float input-bag)))
@@ -101,15 +155,27 @@
 	 (input-type (find-type input input-bag))
 	 (type (cleavir-ir:value-type instruction))
 	 (type-descriptor (canonicalize-type type)))
-    (if (null type-descriptor)
+    (if (top-p type-descriptor)
 	;; This situation happens when the value type of the
 	;; instruction is not type equal to any of the types that we
 	;; recognize.  We handle this case by assuming that the type
 	;; of the input is possible in both branches.
 	(values input-bag input-bag)
 	(values (update input
-			(binary-meet type-descriptor input-type)
+			(binary-meet input-type type-descriptor)
 			input-bag)
 		(update input
-			(binary-join type-descriptor input-type)
+			(difference input-type type-descriptor)
 			input-bag)))))
+
+(defmethod two-successors-transfer
+    ((instruction cleavir-ir:eq-instruction) input-bag)
+  (let* ((left (first (cleavir-ir:inputs instruction)))
+	 (left-type (canonicalize-type (find-type left input-bag)))
+	 (right (second (cleavir-ir:inputs instruction)))
+	 (right-type
+	   (canonicalize-type (find-type right input-bag)))
+	 (meet (binary-meet left-type right-type)))
+    (values
+     (update left meet (update right meet input-bag))
+     input-bag)))

@@ -248,15 +248,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function DIFFERENCE.
+
+(defun difference (descriptor1 descriptor2)
+  (binary-meet descriptor1 `(not ,descriptor2)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Methods on BINARY-JOIN.
 
-;;; This method is applicable when neither of the two descriptors is
-;;; NIL.  In that case, if the two are EQ, we return the first one.
-;;; If they are not EQ, we do the conservative thing and return T.
 (defmethod binary-join (descriptor1 descriptor2)
-  (if (eq descriptor1 descriptor2)
-      descriptor1
-      t))
+  (canonicalize-type `(or ,descriptor1 ,descriptor2)))
 
 (defmethod binary-join ((descriptor1 (eql 'nil)) descriptor2)
   descriptor2)
@@ -268,13 +270,8 @@
 ;;;
 ;;; Methods on BINARY-MEET.
 
-;;; This method is applicable when neither of the two descriptors is
-;;; T.  In that case, if the two are EQ, we return the first one.
-;;; If they are not EQ, we return NIL.
 (defmethod binary-meet (descriptor1 descriptor2)
-  (if (eq descriptor1 descriptor2)
-      descriptor1
-      nil))
+  (canonicalize-type `(and ,descriptor1 ,descriptor2)))
 
 (defmethod binary-meet ((descriptor1 (eql 't)) descriptor2)
   descriptor2)
