@@ -57,6 +57,37 @@
     (mapc #'cleavir-ir:delete-instruction death-row))
   initial)
 
+;; convert a THE instructions into a typeq instruction
+(defun the->typeq (the-instruction)
+  (change-class
+   the-instruction 'cleavir-ir:typeq-instruction
+   :successors (list (first (cleavir-ir:successors the-instruction))
+		     ;; (error 'type-error :datum value :expected-type 'type)
+		     (let ((fdef (cleavir-ir:new-temporary)))
+		       (cleavir-ir:make-fdefinition-instruction
+			(cleavir-ir:make-load-time-value-input ''cl:error)
+			fdef
+			(cleavir-ir::make-funcall-no-return-instruction
+			 (list fdef
+			       (cleavir-ir:make-load-time-value-input ''cl:type-error)
+			       (cleavir-ir:make-load-time-value-input '':datum)
+			       (first (cleavir-ir:inputs the-instruction))
+			       (cleavir-ir:make-load-time-value-input '':expected-type)
+			       (cleavir-ir:make-load-time-value-input
+				`',(cleavir-ir:value-type the-instruction)))))))))
+
+;; convert all of them. intended for safe code, before type inference.
+(defun thes->typeqs (initial)
+  (let (thes)
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (i)
+       (when (typep i 'cleavir-ir:the-instruction)
+	 (push i thes)))
+     initial)
+    (mapc #'the->typeq thes)
+    ;; we only added some branches, so we don't need to reinitialize etc.
+    initial))
+
 ;; remove all THE instructions - for unsafe code
 (defun delete-the (initial)
   (let (death-row)
