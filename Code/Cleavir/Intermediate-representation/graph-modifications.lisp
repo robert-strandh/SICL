@@ -33,7 +33,7 @@
   (assert (= (length (successors existing)) 1))
   (insert-instruction-between new existing (car (successors existing))))
 
-;;; Delete and instruction I.  I must have a single successor S.  S
+;;; Delete an instruction I.  I must have a single successor S.  S
 ;;; replaces I as the successor of every predecessor P of I.  The
 ;;; predecessors of I become the predecessors of S.
 (defun delete-instruction (instruction)
@@ -54,6 +54,31 @@
     (loop for predecessor in predecessors
 	  do (pushnew predecessor (predecessors successor)
 		      :test #'eq))))
+
+;;; Delete an instruction I. I must have at least two successors,
+;;; one of which is the provided S. S replaces I as the successor
+;;; of every predecessor P of I. The predecessors of I become the
+;;; predecessors of S.
+;;; All other successors of I lose I from their predecessors.
+;;; Because this function often disconnects successors of S from
+;;; the instruction graph (by removing their only predecessor), you
+;;; usually want to reinitialize-data and set-predecessors after
+;;; calling it.
+(defun bypass-instruction (instruction successor)
+  (assert (find successor (successors instruction)))
+  (setf (inputs instruction) '()
+	(outputs instruction) '())
+  (loop for predecessor in (predecessors instruction)
+	;; hook up the successors of P
+	do (setf (successors predecessor)
+		 (substitute successor instruction
+			     (successors predecessor)))
+	;; and the predecessors of S
+	do (pushnew predecessor (predecessors successor)))
+  ;; finally remove I from the predecessors of all successors of I
+  (loop for successor in (successors instruction)
+	do (setf (predecessors successor)
+		 (remove instruction (predecessors successor)))))
 
 ;;; When there has been some significant modifications to an
 ;;; instruction graph, it is possible that some instructions that are

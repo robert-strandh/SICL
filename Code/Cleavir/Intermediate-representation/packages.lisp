@@ -28,7 +28,7 @@
    #:insert-instruction-before
    #:insert-instruction-between
    #:insert-instruction-after
-   #:delete-instruction
+   #:delete-instruction #:bypass-instruction
    #:reinitialize-data
    #:defining-instructions #:using-instructions
    #:instruction

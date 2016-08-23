@@ -6,25 +6,24 @@
 		   (arc-bag pred instruction types))
 		 (cleavir-ir:predecessors instruction))))
 
-;; connects the replacement, a successor of instruction, to all of
-;;  instruction's predecessors (in instruction's place)
-;; a generalization of cleavir-ir:delete-instruction
-;; TODO: remove now-unreachable instructions.
-(defun bypass (instruction replacement)
-  (mapc (lambda (i)
-	  (setf (cleavir-ir:predecessors replacement)
-		(substitute i instruction
-			    (cleavir-ir:predecessors replacement))
-		(cleavir-ir:successors i)
-		(substitute replacement instruction
-			    (cleavir-ir:successors i))))
-	(cleavir-ir:predecessors instruction)))
+;;; TODO: values type passes.
 
-;; given an arc, recursively remove all instructions (which may be
-;;  none) only reachable through it.
-;(defun kill (from to)
-
-;; the master
+;; the master. remove redundant typeqs by removing impossible
+;;  branches, which can massively reduce the instruction graph.
+;; The original plan was to just look through TYPES and find any
+;;  arcs with NIL variables. This presents two problems. One, the
+;;  dictionary only tracks live variables, so if a variable is last
+;;  used by an instruction that adds type information (e.g. TYPEQ)
+;;  an arc-cutter will miss it. Two, the arc cutting must proceed
+;;  through predecessors to avoid leaving a one-successor
+;;  instruction successorless, but it is not always obvious how to
+;;  cut the path. Consider, e.g., the bad code
+;;   ENTER - FIXNUM+ - CAR - F->M - RETURN
+;;  Gotta insert an error somewhere.
+;; This typeq-centric approach does mean that if an impossible arc
+;;  can be inferred by other means than typeq, it will not be cut.
+;; So far inferencing is primitive enough for this not to matter,
+;;  except for THE (see TODO). We'll see what happens.
 (defun prune-typeqs (initial types)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (i)
@@ -33,9 +32,11 @@
 	     (vtype (find-type (first (cleavir-ir:inputs i))
 			       (input i types))))
 	 (cond ((bottom-p (binary-meet vtype ttype))
-		(bypass i (second (cleavir-ir:successors i))))
+		(cleavir-ir:bypass-instruction
+		 i (second (cleavir-ir:successors i))))
 	       ((bottom-p (difference vtype ttype))
-		(bypass i (first (cleavir-ir:successors i))))))))
+		(cleavir-ir:bypass-instruction
+		 i (first (cleavir-ir:successors i))))))))
    initial)
   ;; we've possibly excised huge portions of this function, so do
   ;;  some cleanup
