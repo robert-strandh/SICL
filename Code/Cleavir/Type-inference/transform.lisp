@@ -3,7 +3,7 @@
 (defun input (instruction types)
   (apply #'bag-join
 	 (mapcar (lambda (pred)
-		   (gethash (cons pred instruction) types))
+		   (arc-bag pred instruction types))
 		 (cleavir-ir:predecessors instruction))))
 
 ;; connects the replacement, a successor of instruction, to all of
@@ -88,7 +88,7 @@
     ;; we only added some branches, so we don't need to reinitialize etc.
     initial))
 
-;; remove all THE instructions - for unsafe code
+;; remove all THE and THE-VALUES instructions - for unsafe code
 (defun delete-the (initial)
   (let (death-row)
     (cleavir-ir:map-instructions-arbitrary-order
