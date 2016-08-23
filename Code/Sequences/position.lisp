@@ -76,3 +76,13 @@
       (let ((element (apply-key-function (car cons) key)))
 	(unless (funcall predicate element)
 	  (return-from position-if-not-list index))))))
+
+(defun position-if-not-vector (predicate vector from-end start end key)
+  (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (declare (type fixnum start end))
+  (with-from-end from-end
+    (with-element-type vector
+      (for-each-relevant-element (e index vector start end from-end)
+	(let ((element (apply-key-function (car e) key)))
+	  (unless (funcall predicate element)
+	    (return-from position-if-not-vector index)))))))
