@@ -55,7 +55,8 @@
    #:enclose-instruction #:make-enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
-   #:the-values-instruction #:make-the-values-instruction #:values-type
+   #:the-values-instruction #:make-the-values-instruction
+   #:required-types #:optional-types #:rest-type
    #:catch-instruction #:make-catch-instruction
    #:unwind-instruction #:make-unwind-instruction #:invocation
    #:eq-instruction #:make-eq-instruction

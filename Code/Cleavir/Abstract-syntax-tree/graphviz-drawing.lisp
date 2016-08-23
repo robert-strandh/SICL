@@ -117,9 +117,11 @@
 ;;; Drawing a THE-AST.
 
 (defmethod stream-draw-ast ((ast the-ast) stream)
-  (format stream "   ~a [label = \"the ~s\"];~%"
+  (format stream "   ~a [label = \"the (values ~@[~s~] ~@[&optional ~s~] &rest ~s\"];~%"
 	  (id ast)
-	  (cleavir-ast:type-specifiers ast)))
+	  (cleavir-ast:required-types ast)
+	  (cleavir-ast:optional-types ast)
+	  (cleavir-ast:rest-type ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

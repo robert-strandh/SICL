@@ -546,17 +546,23 @@
 
 (defclass the-ast (ast)
   ((%form-ast :initarg :form-ast :reader form-ast)
-   (%type-specifiers :initarg :type-specifiers :reader type-specifiers)))
+   (%required-types :initarg :required :reader required-types)
+   (%optional-types :initarg :optional :reader optional-types)
+   (%rest-type :initarg :rest :reader rest-type)))
 
-(defun make-the-ast (form-ast type-specifiers &key origin)
+(defun make-the-ast (form-ast required optional rest &key origin)
   (make-instance 'the-ast
     :origin origin
     :form-ast form-ast
-    :type-specifiers type-specifiers))
+    :required required
+    :optional optional
+    :rest rest))
 
 (cleavir-io:define-save-info the-ast
   (:form-ast form-ast)
-  (:type-specifiers type-specifiers))
+  (:required required-types)
+  (:optional optional-types)
+  (:rest rest-type))
 
 (defmethod children ((ast the-ast))
   (list (form-ast ast)))

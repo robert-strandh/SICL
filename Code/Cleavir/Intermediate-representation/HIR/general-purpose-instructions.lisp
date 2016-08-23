@@ -201,20 +201,25 @@
 ;;; Instruction THE-VALUES-INSTRUCTION.
 ;;;
 ;;; This is like THE-INSTRUCTION, but takes a VALUES-LOCATION
-;;; as input instead of a lexical one, and correspondingly, a values
-;;; type (actually the CDR of one) instead of a single-value type.
-;;; A separate instruction is useful because values locations can have
-;;; an unknown or varying number of values.
+;;; as input instead of a lexical one, and correspondingly, a
+;;; (decomposed) values type instead of a single-value type.
+;;; A separate instruction is useful because values locations can
+;;; have an unknown or varying number of values.
 
 (defclass the-values-instruction (instruction one-successor-mixin)
-  ((%values-type :initarg :values-type :reader values-type)))
+  ((%required-types :initarg :required :reader required-types)
+   (%optional-types :initarg :optional :reader optional-types)
+   (%rest-type :initarg :rest :reader rest-type)))
 
-(defun make-the-values-instruction (input successor values-type)
+(defun make-the-values-instruction (input successor
+				    required optional rest)
   (make-instance 'the-values-instruction
     :inputs (list input)
     :outputs '()
     :successors (list successor)
-    :values-type values-type))
+    :required required
+    :optional optional
+    :rest rest))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

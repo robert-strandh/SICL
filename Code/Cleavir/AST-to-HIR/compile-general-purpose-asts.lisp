@@ -445,48 +445,30 @@
       context
     (assert (= (length successors) 1))
     (let ((form-ast (cleavir-ast:form-ast ast))
-	  (types (cleavir-ast:type-specifiers ast))
+	  (required (cleavir-ast:required-types ast))
+	  (optional (cleavir-ast:optional-types ast))
+	  (rest (cleavir-ast:rest-type ast))
 	  (successor (first successors)))
-      (if (typep results 'cleavir-ir:values-location)
-	  (compile-ast form-ast
-		       (context results
-				(list
-				 (cleavir-ir:make-the-values-instruction
-				  results successor types))
-				invocation))
-	  (loop with state = :required
-		for lex in results
-		do (setf successor
-			 (cleavir-ir:make-the-instruction
-			  lex successor
-			  ;; this runs through a VALUES type.
-			  (prog1
-			      (cond ((eq state '&rest)
-				     (first types))
-				    ((null types)
-				     ;; this is for cl:the permissiveness.
-				     ;; less permissively we'd error.
-				     (loop-finish))
-				    ((eq (first types) '&optional)
-				     (setf types (rest types)
-					   ;; does nothing right now
-					   state '&optional)
-				     (if types
-					 (first types)
-					 ;; again, permissive
-					 (loop-finish)))
-				    ((eq (first types) '&rest)
-				     (setf types (rest types)
-					   state '&rest)
-				     (first types))
-				    (t (first types)))
-			    (unless (eq state '&rest)
-			      (setf types (rest types))))))
-		finally (return
-			  (compile-ast form-ast
-				     (context results
-					      (list successor)
-					      invocation))))))))
+      (cond
+	((typep results 'cleavir-ir:values-location)
+	 (compile-ast form-ast
+		      (context results
+			       (list
+				(cleavir-ir:make-the-values-instruction
+				 results successor
+				 required optional rest))
+			       invocation)))
+	(t ; lexical locations
+	 (loop for lex in results
+	       do (setf successor
+			(cleavir-ir:make-the-instruction
+			 lex successor (cond
+					 (required (pop required))
+					 (optional (pop optional))
+					 (t rest)))))
+	 (compile-ast form-ast (context results
+					(list successor)
+					invocation)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

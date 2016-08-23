@@ -28,17 +28,27 @@
 ;;; Converting a symbol that has a definition as a lexical variable.
 
 (defun maybe-wrap-the (type ast)
-  "Given a non-values TYPE, return the AST wrapped in a THE-AST if that is helpful, or otherwise the AST."
-  (if (subtypep t type)
-      ;; The only way T can be a subtype of some other type is if
-      ;; that other type is also T, so this is our way of testing
-      ;; whether the type of the variable is equivalent to T.  We
-      ;; use this information to avoid wrapping a THE-AST around
-      ;; the variable.
-      ast
-      ;; Otherwise, we are not sure whether the type is equivalent
-      ;; to T, so we wrap it.
-      (cleavir-ast:make-the-ast ast (list type))))
+  "Make a THE ast if the type is actually helpful (i.e. not all T)
+If AST is already a THE-AST, collapses both into one."
+  (multiple-value-bind (req opt rest restp)
+      (parse-values-type type)
+    ;; this takes care of the THE fudginess.
+    (unless restp (setf rest t))
+    ;; collapse (the ... (the ...))
+    (loop while (typep ast 'cleavir-ast:the-ast)
+	  do (setf (values req opt rest)
+		   (meet-values-types
+		    req opt rest
+		    (cleavir-ast:required-types ast)
+		    (cleavir-ast:optional-types ast)
+		    (cleavir-ast:rest-type ast))
+		   ast (cleavir-ast:form-ast ast)))
+    (if (and (every (lambda (x) (subtypep t x)) req)
+	     (every (lambda (x) (subtypep t x)) opt)
+	     (subtypep t rest))
+	;; useless type, don't bother
+	ast
+	(cleavir-ast:make-the-ast ast req opt rest))))
 
 (defmethod convert-form
     (form (info cleavir-env:lexical-variable-info) env system)
@@ -295,24 +305,22 @@ This function should not require an environment or system, but it unfortunately 
     (labels ((err (message)
 	       ;; here is where we would warn and return a
 	       ;;  form that signals an error. but for now,
-	       (warn "~a" message)
-	       ;(declare (ignore message))
+	       ;(warn "~a" message)
+	       (declare (ignore message))
 	       (noinline))
-	     (maybe-wrap-the (ast)
-	       ;; fun lisp fact: there's no way to say that a form
+	     (maybe-wrap-return (ast)
+	       ;; fun lisp fact: it's obscure to say that a form
 	       ;;  takes AT MOST n values (or exactly n, etc.)
 	       ;; function types can be more demanding, but THE
 	       ;;  introduces fudge for friendliness's sake.
 	       ;; FIXME: maybe add an EXACTLY-THE AST? THE can
 	       ;;  expand to it (by adding &rest)
 	       (let ((ret (function-type-return-values ftype)))
-		 (if (equal ret '(values &rest t))
-		     ast
-		     (cleavir-ast:make-the-ast ast (rest ret)))))
+		 (maybe-wrap-the ret ast)))
 	     (noinline ()
 	       (let ((function-ast
 		       (convert-function info env system)))
-		 (maybe-wrap-the
+		 (maybe-wrap-return
 		  (cleavir-ast:make-call-ast function-ast
 					     argument-asts)))))
       (multiple-value-bind (asts failure)
@@ -340,7 +348,7 @@ This function should not require an environment or system, but it unfortunately 
 		     (process-progn
 		      (append
 		       init
-		       (list (maybe-wrap-the
+		       (list (maybe-wrap-return
 			      (cleavir-ast:body-ast clone)))))))))
 	  ;; Generate an ordinary call.
 	  (noinline)))))

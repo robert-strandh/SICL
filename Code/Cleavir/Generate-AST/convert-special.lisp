@@ -764,12 +764,15 @@
     ((symbol (eql 'the)) form environment system)
   (db origin (the value-type subform) form
     (declare (ignore the))
-    (cleavir-ast:make-the-ast
-     (convert subform environment system)
-     (if (and (consp value-type) (eq (car value-type) 'values))
-	 (cdr value-type)
-	 (list value-type))
-     :origin origin)))
+    (multiple-value-bind (req opt rest restp)
+	(parse-values-type value-type)
+      ;; THE fudge
+      (unless restp (setf rest 't))
+      ;; we don't bother collapsing THE forms for user code.
+      (cleavir-ast:make-the-ast
+       (convert subform environment system)
+       req opt rest
+       :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
