@@ -4,8 +4,7 @@
   (and (every (lambda (restriction)
 		(and (consp restriction)
 		     (typep (first restriction)
-			    '(or cleavir-ir:lexical-location
-			      cleavir-ir:values-location))
+			    'cleavir-ir:lexical-location)
 		     (symbolp (cdr restriction))))
 	      bag)
        (= (length bag)

@@ -18,10 +18,8 @@
 	     for key = (cons predecessor instruction)
 	     for live = (cleavir-liveness:live-before liveness instruction)
 	     do (loop for var in live
-		      do (push (cons var (etypecase var
-					   (cleavir-ir:lexical-location t)
-					   (cleavir-ir:values-location
-					    '(values &rest t))))
+		      when (typep var 'cleavir-ir:lexical-location)
+		      do (push (cons var t)
 			       (gethash (cons predecessor instruction)
 					result)))))
      initial-instruction)

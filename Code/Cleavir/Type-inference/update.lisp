@@ -27,22 +27,3 @@
       (approximate-type
        `(eql ,(second (cleavir-ir:form location))))
       (call-next-method)))
-
-(defun as-values (type)
-  (if (and (consp type) (eq (first type) 'values))
-      type
-      `(values ,type)))
-
-(defun values-type-nth-forgiving (n values-type)
-  (or (values-type-nth n values-type) 'null))
-
-(defun values-type-nth (n values-type)
-  (loop with i = 0
-	for (current . rest) on (rest values-type)
-	when (eq current '&rest)
-	       ;; count no longer matters
-	       do (return (first rest))
-	unless (eq current '&optional)
-	  when (= i n) do (return current)
-	    else do (incf i)
-	finally (return nil)))

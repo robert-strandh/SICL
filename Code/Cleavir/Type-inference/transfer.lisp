@@ -80,28 +80,6 @@
 		input-bag))))
 
 (defmethod one-successor-transfer
-    ((instruction cleavir-ir:fixed-to-multiple-instruction)
-     input-bag)
-  (update (first (cleavir-ir:outputs instruction))
-	  `(values ,@(mapcar (lambda (input)
-			       (find-type input input-bag))
-			     (cleavir-ir:inputs instruction)))
-	  input-bag))
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:multiple-to-fixed-instruction)
-     input-bag)
-  (loop with input = (first (cleavir-ir:inputs instruction))
-	for i from 0
-	for output in (cleavir-ir:outputs instruction)
-	for result = input-bag
-	  then (update input
-		       (values-type-nth-forgiving
-			i (as-values (find-type input input-bag)))
-		       result)
-	finally (return result)))
-
-(defmethod one-successor-transfer
     ((instruction cleavir-ir:short-float-unbox-instruction) input-bag)
   (let ((output (first (cleavir-ir:outputs instruction))))
     (update output 'unboxed-short-float input-bag)))
