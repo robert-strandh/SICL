@@ -242,51 +242,174 @@
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     simple array with an upgraded element type of LONG-FLOAT.
 
+;;;; Ideally, other code in this system will not worry itself with
+;;;;  subtypep and so on, and only use the functions here.
+;;;; The basic type versus descriptor rules are as follows:
+;;;; 1) TYPEQ, etc. store their original types, not descriptors.
+;;;;    No reason to lose information.
+;;;; 2) Dictionaries and bags only store descriptors.
+;;;;    Call approximate- and canonicalize-type a lot.
+;;;; 3) All functions in this file return descriptors.
+;;;;    Other than approximate- and canonicalize-type,
+;;;;     they only accept descriptors.
+
+;;;; An alternate implementation option for this code is to lean
+;;;;  heavily on cl:subtypep: join = `(or ,d1 ,d2), so on. If this
+;;;;  is done, a coarser lattice can still be used by only storing
+;;;;  canonicalized-types in the dictionary. But it means unboxed
+;;;;  types are annoying (you could use satisfies, maybe?)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function APPROXIMATE-TYPE.
+;;;
+;;; Converts a CL type specifier into whatever descriptor is
+;;;  smallest that still fits it. Useful for THE; see note below.
+;;; FIXME: handle more types.
+;;; FIXME: environment junk (typexpand).
+
+(defun approximate-type (type)
+  (cond ((subtypep type 'nil) 'nil)
+	((subtypep type 'fixnum) 'fixnum)
+	((subtypep type 'null) 'null)
+	((subtypep type 'cons) 'cons)
+	((subtypep type 'short-float) 'short-float)
+	((subtypep type 'single-float) 'single-float)
+	((subtypep type 'double-float) 'double-float)
+	((subtypep type 'long-float) 'long-float)
+	(t t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function CANONICALIZE-TYPE.
+;;;
+;;; Converts a CL type specifier into an equivalent descriptor.
+;;; If this is successful, returns (values descriptor t), otherwise
+;;;  (values nil nil).
+;;; This is necessary and distinct from approximate-type for the
+;;;  sake of typeq. E.g., consider (typeq (eql 3)). It is correct
+;;;  to use the descriptor fixnum and say that the "then" branch
+;;;  has whatever variable as a fixnum; but incorrect to say that
+;;;  in the "else" branch it is not a fixnum.
+
+;; unexported helper
+(defun type-equal (t1 t2)
+  (and (subtypep t1 t2) (subtypep t2 t1)))
+
+;; FIXME: duplicates approximate-type too much. Could have a
+;;  macro-time map from types to descriptors.
+(defun canonicalize-type (type)
+  (cond ((subtypep type 'nil) (values 'nil t))
+	((type-equal type 'fixnum) (values 'fixnum t))
+	((type-equal type 'null) (values 'null t))
+	((type-equal type 'cons) (values 'cons t))
+	((type-equal type 'short-float) (values 'short-float t))
+	((type-equal type 'single-float) (values 'single-float t))
+	((type-equal type 'double-float) (values 'double-float t))
+	((type-equal type 'long-float) (values 'long-float t))
+	(t (values nil nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Descriptor operations: TOP-P, BOTTOM-P.
+;;;
+;;; True if a descriptor is the top (T) or bottom (NIL) type, resp.
+
+(defun top-p (descriptor) (eq descriptor 't))
+(defun bottom-p (descriptor) (eq descriptor 'nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Lattice operations: Functions BINARY-JOIN, BINARY-MEET.
+
 (defgeneric binary-join (descriptor1 descriptor2))
 
 (defgeneric binary-meet (descriptor1 descriptor2))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function DIFFERENCE.
+;;;
+;;; (difference a b) = (meet a (negate b))
+;;; but negate is difficult, and we only actually need difference
+;;;  for typeq.
 
-(defun difference (descriptor1 descriptor2)
-  (binary-meet descriptor1 `(not ,descriptor2)))
+(defgeneric difference (descriptor1 descriptor2))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; we only actually need more methods if we include descriptors
+;;  that are subtypes of one another.
+(defmethod difference (descriptor1 descriptor2)
+  (if (eq descriptor1 descriptor2)
+      nil ; x - x = 0
+      descriptor1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on BINARY-JOIN.
 
 (defmethod binary-join (descriptor1 descriptor2)
-  (canonicalize-type `(or ,descriptor1 ,descriptor2)))
+  (if (eq descriptor1 descriptor2)
+      descriptor1
+      t))
 
 (defmethod binary-join ((descriptor1 (eql 'nil)) descriptor2)
   descriptor2)
-
 (defmethod binary-join (descriptor1 (descriptor2 (eql 'nil)))
   descriptor1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod binary-join ((descriptor1 (eql 't)) descriptor2) 't)
+(defmethod binary-join (descriptor1 (descriptor2 (eql 't))) 't)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on BINARY-MEET.
 
 (defmethod binary-meet (descriptor1 descriptor2)
-  (canonicalize-type `(and ,descriptor1 ,descriptor2)))
+  (declare (ignore descriptor2))
+  ;; we could just as well return descriptor2. the true result is
+  ;;  a subtype of both of them.
+  descriptor1)
 
+(defmethod binary-meet ((descriptor1 (eql 'nil)) descriptor2) nil)
+(defmethod binary-meet (descriptor1 (descriptor2 (eql 'nil))) nil)
 (defmethod binary-meet ((descriptor1 (eql 't)) descriptor2)
   descriptor2)
-
 (defmethod binary-meet (descriptor1 (descriptor2 (eql 't)))
   descriptor1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on both.
+(macrolet ((disjoin (d1 d2)
+	     `(progn
+		(defmethod binary-join ((descriptor1 (eql ',d1))
+					(descriptor2 (eql ',d2)))
+		  t)
+		(defmethod binary-join ((descriptor1 (eql ',d2))
+					(descriptor2 (eql ',d1)))
+		  t)
+		(defmethod binary-meet ((descriptor1 (eql ',d1))
+					(descriptor2 (eql ',d2)))
+		  nil)
+		(defmethod binary-meet ((descriptor1 (eql ',d2))
+					(descriptor2 (eql ',d1)))
+		  nil)))
+	   (pairwise (&rest descriptors)
+	     `(progn
+		,@(loop for (d1 . rest) on descriptors
+			append (loop for d2 in rest
+				     collect `(disjoin ,d1 ,d2))))))
+  (pairwise fixnum null cons
+	    short-float single-float double-float long-float))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function JOIN.
 
 (defun join (&rest descriptors)
   (reduce #'binary-join descriptors :initial-value 'nil))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function MEET.
 

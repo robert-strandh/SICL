@@ -55,14 +55,10 @@
     ((instruction cleavir-ir:enclose-instruction) input-bag)
   ;; hypothetically this method could wait for the results of type
   ;;  inference on the function (and give up only for recursion)
-  (let* ((enter (cleavir-ir:code instruction))
-	 (ll (loop for thing in (cleavir-ir:lambda-list enter)
-		   when (find thing lambda-list-keywords)
-		     collect thing
-		   else collect t)))
-    (update (first (cleavir-ir:outputs instruction))
-	    `(function ,ll *)
-	    input-bag)))
+  ;; or include a lambda list. but we don't care yet.
+  (update (first (cleavir-ir:outputs instruction))
+	  (approximate-type 'function)
+	  input-bag))
 
 (defmethod one-successor-transfer
     ((instruction cleavir-ir:nop-instruction) input-bag)
@@ -77,7 +73,7 @@
   (let* ((input (first (cleavir-ir:inputs instruction)))
 	 (input-type (find-type input input-bag))
 	 (type (cleavir-ir:value-type instruction))
-	 (type-descriptor (canonicalize-type type)))
+	 (type-descriptor (approximate-type type)))
     (if (top-p type-descriptor)
 	input-bag ; don't bother
 	(update input (binary-meet type-descriptor input-type)
@@ -153,28 +149,25 @@
     ((instruction cleavir-ir:typeq-instruction) input-bag)
   (let* ((input (first (cleavir-ir:inputs instruction)))
 	 (input-type (find-type input input-bag))
-	 (type (cleavir-ir:value-type instruction))
-	 (type-descriptor (canonicalize-type type)))
-    (if (top-p type-descriptor)
-	;; This situation happens when the value type of the
-	;; instruction is not type equal to any of the types that we
-	;; recognize.  We handle this case by assuming that the type
-	;; of the input is possible in both branches.
-	(values input-bag input-bag)
-	(values (update input
-			(binary-meet input-type type-descriptor)
-			input-bag)
-		(update input
-			(difference input-type type-descriptor)
-			input-bag)))))
+	 (type (cleavir-ir:value-type instruction)))
+    (multiple-value-bind (type-descriptor canon)
+	(canonicalize-type type)
+      (if canon
+	  (values (update input
+			  (binary-meet input-type type-descriptor)
+			  input-bag)
+		  (update input
+			  (difference input-type type-descriptor)
+			  input-bag))
+	  ;; couldn't find a type descriptor, so infer nothing.
+	  (values input-bag input-bag)))))
 
 (defmethod two-successors-transfer
     ((instruction cleavir-ir:eq-instruction) input-bag)
   (let* ((left (first (cleavir-ir:inputs instruction)))
-	 (left-type (canonicalize-type (find-type left input-bag)))
+	 (left-type (find-type left input-bag))
 	 (right (second (cleavir-ir:inputs instruction)))
-	 (right-type
-	   (canonicalize-type (find-type right input-bag)))
+	 (right-type (find-type right input-bag))
 	 (meet (binary-meet left-type right-type)))
     (values
      (update left meet (update right meet input-bag))
