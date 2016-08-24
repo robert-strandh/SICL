@@ -354,7 +354,7 @@
 
 (defmethod acclimation:report-condition ((c class-option-must-be-non-empty-list)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "A class option must be a a non-empty list, but~@
            ~s was found."
@@ -362,7 +362,7 @@
 
 (defmethod acclimation:report-condition ((c class-option-name-must-be-symbol)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "A class option name must be a symbol, but~@
            ~s was found."
@@ -370,7 +370,7 @@
 
 (defmethod acclimation:report-condition ((c malformed-documentation-option)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "A documentation option must have the form~@
            (:documentation <name>), but~@
@@ -379,7 +379,7 @@
 
 (defmethod acclimation:report-condition ((c malformed-metaclass-option)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "A documentation option must have the form~@
            (:documentation <name>), but~@
@@ -388,7 +388,7 @@
 
 (defmethod acclimation:report-condition ((c malformed-default-initargs-option)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "The DEFAULT-INITARG option takes the form~@
            (:default-initargs <name> <value> <name> <value>...), but~@
@@ -397,7 +397,7 @@
 
 (defmethod acclimation:report-condition ((c default-initargs-option-once)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "The default-initargs option can appear only once in the~@
            list of class options, but a second such option:~@
@@ -406,7 +406,7 @@
 
 (defmethod acclimation:report-condition ((c documentation-option-once)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "The documentation option can appear only once in the~@
            list of class options, but a second such option:~@
@@ -415,7 +415,7 @@
 
 (defmethod acclimation:report-condition ((c metaclass-option-once)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "The metaclass option can appear only once in the~@
            list of class options, but a second such option:~@
@@ -424,7 +424,7 @@
 
 (defmethod acclimation:report-condition ((c unknown-class-option)
 			     stream
-			     (langauge acclimation:english))
+			     (language acclimation:english))
   (format stream
 	  "A class option is either ~@
            :default-initargs, :documentation, or :metaclass, but~@

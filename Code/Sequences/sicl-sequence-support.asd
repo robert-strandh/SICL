@@ -5,5 +5,6 @@
   :components
   ((:file "packages")
    (:file "utilities")
+   (:file "conditions")
    (:file "find")
    (:file "position")))

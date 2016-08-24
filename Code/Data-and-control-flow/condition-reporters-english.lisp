@@ -3,7 +3,7 @@
 (defmethod acclimation:report-condition
     ((condition odd-number-of-arguments-to-setf)
      stream
-     (langauge acclimation:english))
+     (language acclimation:english))
   (format stream
 	  "An odd number of arguments was given to SETF~@
            in the following form:~@
@@ -13,7 +13,7 @@
 (defmethod acclimation:report-condition
     ((condition odd-number-of-arguments-to-psetf)
      stream
-     (langauge acclimation:english))
+     (language acclimation:english))
   (format stream
 	  "An odd number of arguments was given to PSETF~@
            in the following form:~@
@@ -23,7 +23,7 @@
 (defmethod acclimation:report-condition
     ((condition odd-number-of-arguments-to-psetq)
      stream
-     (langauge acclimation:english))
+     (language acclimation:english))
   (format stream
 	  "An odd number of arguments was given to PSETQ~@
            in the following form:~@
@@ -33,7 +33,7 @@
 (defmethod acclimation:report-condition
     ((condition too-few-arguments-to-shiftf)
      stream
-     (langauge acclimation:english))
+     (language acclimation:english))
   (format stream
 	  "Too few arguments were given to SHIFTF~@
            in the following form:~@
