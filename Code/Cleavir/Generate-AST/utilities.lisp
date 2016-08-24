@@ -222,3 +222,50 @@
 		(cleavir-env:identity info)
 		value-ast)
 	       next-ast)))))
+
+;;; Given a type in values position (i.e. argument to THE or return
+;;;  value of a function type), return three values: a list of REQUIRED
+;;;  types, a list of OPTIONAL types, a REST type, and whether REST
+;;;  was present (to find &rest nil). e.g.
+;;; (values integer &optional cons &rest symbol)
+;;; => (INTEGER), (CONS), SYMBOL, T
+
+;; FIXME: typexpand
+(defun parse-values-type (values-type)
+  (cond
+    ((and (consp values-type) (eq (car values-type) 'values))
+     (setf values-type (rest values-type))
+     (values
+      (loop while (and (consp values-type)
+		       (not (find (car values-type)
+				  '(&optional &rest))))
+	    collect (pop values-type))
+      (when (eq (car values-type) '&optional)
+	(pop values-type)
+	(loop while (and (consp values-type)
+			 (not (eq (car values-type) '&rest)))
+	      collect (pop values-type)))
+      (when (eq (car values-type) '&rest)
+	(assert (null (cddr values-type)))
+	(second values-type))
+      (eq (car values-type) '&rest)))
+    (t (values (list values-type) nil nil))))
+
+;;; Given two decomposed values types, return something like their
+;;;  meet/conjunction.
+;;; i.e., (the t1 form) and (the t2 form) iff (the result form),
+;;;  except without THE's fudge.
+;; FIXME: move this? it'll be useful later
+;; assume these have been canonicalized, so rest does mean a type
+(defun meet-values-types (req1 opt1 rest1 req2 opt2 rest2)
+  (flet ((next-type-1 ()
+	   (cond (req1 (pop req1)) (opt1 (pop opt1)) (t rest1)))
+	 (next-type-2 ()
+	   (cond (req2 (pop req2)) (opt2 (pop opt2)) (t rest2)))
+	 (meet (t1 t2) `(and ,t1 ,t2)))
+    (values
+     (loop while (or req1 req2)
+	   collect (meet (next-type-1) (next-type-2)))
+     (loop while (or opt1 opt2)
+	   collect (meet (next-type-1) (next-type-2)))
+     (meet rest1 rest2))))

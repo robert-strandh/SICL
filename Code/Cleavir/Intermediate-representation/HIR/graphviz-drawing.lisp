@@ -166,6 +166,19 @@
 ;;;
 ;;; General-purpose instructions.
 
+(defmethod draw-instruction ((instruction the-instruction) stream)
+  (format stream "   ~a [label = \"the ~a\"];~%"
+	  (instruction-id instruction)
+	  (value-type instruction)))
+
+(defmethod draw-instruction ((instruction the-values-instruction)
+			     stream)
+  (format stream "   ~a [label = \"the (values ~@[~{~s~}~]~@[ &optional ~{~s~}~]~@[ &rest ~s~])\"];~%"
+	  (instruction-id instruction)
+	  (required-types instruction)
+	  (optional-types instruction)
+	  (rest-type instruction)))
+
 (defmethod draw-instruction ((instruction typeq-instruction) stream)
   (format stream "   ~a [label = \"typeq ~a\"];~%"
 	  (instruction-id instruction)
@@ -191,6 +204,9 @@
 (defmethod label ((instruction assignment-instruction)) "<-")
 
 (defmethod label ((instruction funcall-instruction)) "funcall")
+
+(defmethod label ((instruction funcall-no-return-instruction))
+  "funcall-no-return")
 
 (defmethod label ((instruction tailcall-instruction)) "tailcall")
 

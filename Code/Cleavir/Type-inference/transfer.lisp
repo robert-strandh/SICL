@@ -7,12 +7,12 @@
 (defmethod one-successor-transfer :around (instruction input-bag)
   (let* ((result (call-next-method))
 	 (successor (first (cleavir-ir:successors instruction)))
-	 (key (cons instruction successor))
-	 (existing (gethash key *dictionary*))
+	 (existing (arc-bag instruction successor *dictionary*))
 	 (filtered-result (filter result existing)))
     (unless (bag-equal filtered-result existing)
       (push successor *work-list*)
-      (setf (gethash key *dictionary*) filtered-result))))
+      (setf (arc-bag instruction successor *dictionary*)
+	    filtered-result))))
 
 (defmethod one-successor-transfer (instruction input-bag)
   (loop with result = input-bag
@@ -32,12 +32,12 @@
   (loop with results = (multiple-value-list (call-next-method))
 	for result in results
 	for successor in (cleavir-ir:successors instruction)
-	for key = (cons instruction successor)
-	for existing = (gethash key *dictionary*)
+	for existing = (arc-bag instruction successor *dictionary*)
 	for filtered-result = (filter result existing)
 	unless (bag-equal filtered-result existing)
 	  do (push successor *work-list*)
-	     (setf (gethash key *dictionary*) filtered-result)))
+	     (setf (arc-bag instruction successor *dictionary*)
+		   filtered-result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -50,6 +50,34 @@
   (update (first (cleavir-ir:outputs instruction))
 	  (find-type (first (cleavir-ir:inputs instruction)) input-bag)
 	  input-bag))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:enclose-instruction) input-bag)
+  ;; hypothetically this method could wait for the results of type
+  ;;  inference on the function (and give up only for recursion)
+  ;; or include a lambda list. but we don't care yet.
+  (update (first (cleavir-ir:outputs instruction))
+	  (approximate-type 'function)
+	  input-bag))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:nop-instruction) input-bag)
+  input-bag)
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:use-instruction) input-bag)
+  input-bag)
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:the-instruction) input-bag)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+	 (input-type (find-type input input-bag))
+	 (type (cleavir-ir:value-type instruction))
+	 (type-descriptor (approximate-type type)))
+    (if (top-p type-descriptor)
+	input-bag ; don't bother
+	(update input (binary-meet type-descriptor input-type)
+		input-bag))))
 
 (defmethod one-successor-transfer
     ((instruction cleavir-ir:short-float-unbox-instruction) input-bag)
@@ -99,39 +127,26 @@
     ((instruction cleavir-ir:typeq-instruction) input-bag)
   (let* ((input (first (cleavir-ir:inputs instruction)))
 	 (input-type (find-type input input-bag))
-	 (type (cleavir-ir:value-type instruction))
-	 (type-descriptor (canonicalize-type type)))
-    (if (null type-descriptor)
-	;; This situation happens when the value type of the
-	;; instruction is not type equal to any of the types that we
-	;; recognize.  We handle this case by assuming that the type
-	;; of the input is possible in both branches.
-	(values input-bag input-bag)
-	(values (update input
-			(binary-meet type-descriptor input-type)
-			input-bag)
-		(update input
-			(binary-join type-descriptor input-type)
-			input-bag)))))
+	 (type (cleavir-ir:value-type instruction)))
+    (multiple-value-bind (type-descriptor canon)
+	(canonicalize-type type)
+      (if canon
+	  (values (update input
+			  (binary-meet input-type type-descriptor)
+			  input-bag)
+		  (update input
+			  (difference input-type type-descriptor)
+			  input-bag))
+	  ;; couldn't find a type descriptor, so infer nothing.
+	  (values input-bag input-bag)))))
 
 (defmethod two-successors-transfer
-    ((instruction cleavir-ir:fixnump-instruction) input-bag)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-	 (input-type (find-type input input-bag)))
-    (values (update input
-		    (binary-meet 'fixnum input-type)
-		    input-bag)
-	    (update input
-		    (binary-join 'fixnum input-type)
-		    input-bag))))
-
-(defmethod two-successors-transfer
-    ((instruction cleavir-ir:consp-instruction) input-bag)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-	 (input-type (find-type input input-bag)))
-    (values (update input
-		    (binary-meet 'cons input-type)
-		    input-bag)
-	    (update input
-		    (binary-join 'cons input-type)
-		    input-bag))))
+    ((instruction cleavir-ir:eq-instruction) input-bag)
+  (let* ((left (first (cleavir-ir:inputs instruction)))
+	 (left-type (find-type left input-bag))
+	 (right (second (cleavir-ir:inputs instruction)))
+	 (right-type (find-type right input-bag))
+	 (meet (binary-meet left-type right-type)))
+    (values
+     (update left meet (update right meet input-bag))
+     input-bag)))

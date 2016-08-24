@@ -405,7 +405,7 @@
 ;;; environment.
 (defmethod function-type (environment defining-info)
   (declare (cl:ignorable environment))
-  (type defining-info))
+  (list (type defining-info)))
 
 ;;; This method is called when the entry is not related to the
 ;;; defining info instance. 

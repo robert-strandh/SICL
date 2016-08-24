@@ -97,6 +97,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction FUNCALL-NO-RETURN-INSTRUCTION.
+;;;
+;;; This is for calls that are known to never return normally,
+;;; e.g. calls to ERROR. Having no successor simplifies analysis
+;;; by making whatever leads here irrelevant to other code.
+;;;
+;;; It's a separate class because funcall having one-successor-mixin
+;;; is pretty convenient.
+
+(defclass funcall-no-return-instruction
+    (instruction no-successors-mixin side-effect-mixin)
+  ())
+
+(defun make-funcall-no-return-instruction (inputs)
+  (make-instance 'funcall-no-return-instruction
+    :inputs inputs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction TAILCALL-INSTRUCTION.
 
 (defclass tailcall-instruction (instruction no-successors-mixin)
@@ -176,6 +195,31 @@
     :outputs '()
     :successors (list successor)
     :value-type value-type))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction THE-VALUES-INSTRUCTION.
+;;;
+;;; This is like THE-INSTRUCTION, but takes a VALUES-LOCATION
+;;; as input instead of a lexical one, and correspondingly, a
+;;; (decomposed) values type instead of a single-value type.
+;;; A separate instruction is useful because values locations can
+;;; have an unknown or varying number of values.
+
+(defclass the-values-instruction (instruction one-successor-mixin)
+  ((%required-types :initarg :required :reader required-types)
+   (%optional-types :initarg :optional :reader optional-types)
+   (%rest-type :initarg :rest :reader rest-type)))
+
+(defun make-the-values-instruction (input successor
+				    required optional rest)
+  (make-instance 'the-values-instruction
+    :inputs (list input)
+    :outputs '()
+    :successors (list successor)
+    :required required
+    :optional optional
+    :rest rest))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

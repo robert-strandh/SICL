@@ -443,80 +443,32 @@
 		   (successors successors)
 		   (invocation invocation))
       context
+    (assert (= (length successors) 1))
     (let ((form-ast (cleavir-ast:form-ast ast))
-	  (type-specifiers (cleavir-ast:type-specifiers ast)))
-      (ecase (length successors)
-	(1
-	 (cond  ((typep results 'cleavir-ir:values-location)
-		 (let ((temps (loop repeat (length type-specifiers)
-				    collect (cleavir-ir:new-temporary)))
-		       (successor (first successors)))
-		   (loop for type-specifier in (reverse type-specifiers)
-			 for temp in (reverse temps)
-			 do (setf successor
-				  (make-type-check type-specifier temp successor)))
-		   (setf successor
-			 (cleavir-ir:make-multiple-to-fixed-instruction
-			  results
-			  temps
-			  successor))
-		   (compile-ast
-		    form-ast
-		    (context results (list successor) invocation))))
-		((< (length results) (length type-specifiers))
-		 (let ((temps (loop repeat (- (length type-specifiers)
-					      (length results))
-				    collect (cleavir-ir:new-temporary)))
-		       (successor (first successors)))
-		   (loop for type-specifier in (reverse type-specifiers)
-			 for var in (reverse (append results temps))
-			 do (setf successor
-				  (make-type-check type-specifier var successor)))
-		   (compile-ast
-		    form-ast
-		    (context (append results temps)
-			     (list successor)
-			     invocation))))
-		(t
-		 (let ((successor (first successors))
-		       (vars (subseq results 0 (length type-specifiers))))
-		   (loop for type-specifier in (reverse type-specifiers)
-			 for var in (reverse vars)
-			 do (setf successor
-				  (make-type-check type-specifier var successor)))
-		   (compile-ast
-		    form-ast
-		    (context results
-			     (list successor)
-			     invocation))))))
-	(2
-	 (cond ((null type-specifiers)
-		(let ((temp (make-temp)))
-		  (compile-ast
-		   ast
-		   (context
-		    (list temp)
-		    (list (cleavir-ir:make-eq-instruction
-			   (list temp (cleavir-ir:make-constant-input 'nil))
-			   successors))
-		    invocation))))
-	       (t
-		(let ((temp (make-temp))
-		      (temps (loop repeat (1- (length type-specifiers))
-				   collect (cleavir-ir:new-temporary)))
-		      (successor (first successors)))
-		   (loop for type-specifier in (reverse type-specifiers)
-			 for var in (reverse (cons temp temps))
-			 do (setf successor
-				  (make-type-check type-specifier temp successor)))
-		  (compile-ast
-		   ast
-		   (context
-		    (cons temp temps)
-		    (list (cleavir-ir:make-eq-instruction
-			   (list temp (cleavir-ir:make-constant-input 'nil))
-			   successors))
-		    invocation))))))))))
+	  (required (cleavir-ast:required-types ast))
+	  (optional (cleavir-ast:optional-types ast))
+	  (rest (cleavir-ast:rest-type ast))
+	  (successor (first successors)))
+      (cond
+	((typep results 'cleavir-ir:values-location)
+	 (compile-ast form-ast
+		      (context results
+			       (list
+				(cleavir-ir:make-the-values-instruction
+				 results successor
+				 required optional rest))
+			       invocation)))
+	(t ; lexical locations
+	 (loop for lex in results
+	       do (setf successor
+			(cleavir-ir:make-the-instruction
+			 lex successor (cond
+					 (required (pop required))
+					 (optional (pop optional))
+					 (t rest)))))
+	 (compile-ast form-ast (context results
+					(list successor)
+					invocation)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

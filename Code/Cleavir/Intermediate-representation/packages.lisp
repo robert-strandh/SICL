@@ -28,7 +28,7 @@
    #:insert-instruction-before
    #:insert-instruction-between
    #:insert-instruction-after
-   #:delete-instruction
+   #:delete-instruction #:bypass-instruction
    #:reinitialize-data
    #:defining-instructions #:using-instructions
    #:instruction
@@ -49,11 +49,14 @@
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction
+   #:funcall-no-return-instruction #:make-funcall-no-return-instruction
    #:tailcall-instruction #:make-tailcall-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
+   #:the-values-instruction #:make-the-values-instruction
+   #:required-types #:optional-types #:rest-type
    #:catch-instruction #:make-catch-instruction
    #:unwind-instruction #:make-unwind-instruction #:invocation
    #:eq-instruction #:make-eq-instruction

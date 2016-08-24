@@ -4,22 +4,24 @@
   (let ((result '()))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
-       (when (typep instruction 'cleavir-ir:enter-instruction)
+       (unless (typep instruction 'cleavir-ir:enter-instruction)
 	 (push instruction result)))
-     initial-instruction)))
+     initial-instruction)
+    result))
 
 (defun compute-initial-dictionary (initial-instruction)
   (let ((liveness (cleavir-liveness:liveness initial-instruction))
-	(result (make-hash-table :test #'equal)))
+	(result (make-dictionary)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
        (loop for predecessor in (cleavir-ir:predecessors instruction)
 	     for key = (cons predecessor instruction)
 	     for live = (cleavir-liveness:live-before liveness instruction)
 	     do (loop for var in live
-		      do (push (cons var t)
-			       (gethash (cons predecessor instruction)
-					result)))))
+		      when (typep var 'cleavir-ir:lexical-location)
+			do (push (cons var t)
+				 (arc-bag predecessor instruction
+					  result)))))
      initial-instruction)
     result))
 
@@ -27,7 +29,7 @@
   (loop with successor-count = (length (cleavir-ir:successors instruction))
 	for predecessor in (cleavir-ir:predecessors instruction)
 	for key = (cons predecessor instruction)
-	for bag-input = (gethash key *dictionary*)
+	for bag-input = (arc-bag predecessor instruction *dictionary*)
 	do (ecase successor-count
 	     (0 nil)
 	     (1 (one-successor-transfer instruction bag-input))

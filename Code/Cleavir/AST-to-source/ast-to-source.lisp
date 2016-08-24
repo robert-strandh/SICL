@@ -96,8 +96,13 @@
     ,(to-source (cleavir-ast:symbol-ast ast) dictionary)))
 
 (defmethod to-source ((ast cleavir-ast:the-ast) dictionary)
-  `(the (values ,@(cleavir-ast:type-specifiers ast))
-	,(to-source (cleavir-ast:form-ast ast) dictionary)))
+  (let ((req (cleavir-ast:required-types ast))
+	(opt (cleavir-ast:optional-types ast))
+	(rest (cleavir-ast:rest-type ast)))
+    (when opt (setf opt `(&optional ,@opt)))
+    (when rest (setf rest `(&rest ,rest)))
+    `(the (values ,@req ,@opt ,@rest)
+	  ,(to-source (cleavir-ast:form-ast ast) dictionary))))
 
 (defmethod to-source ((ast cleavir-ast:go-ast) dictionary)
   `(go ,(cleavir-ast:name (cleavir-ast:tag-ast ast))))
