@@ -7,4 +7,5 @@
    (:file "utilities")
    (:file "conditions")
    (:file "find")
-   (:file "position")))
+   (:file "position")
+   (:file "count")))
