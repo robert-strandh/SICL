@@ -42,7 +42,22 @@ Robert Strandh\\
 \maketitle
 
 \begin{abstract}
-Abstract
+The \commonlisp{} sequence functions are challenging to implement
+because of the numerous cases that need to be taken into account
+according to the keyword arguments given and the type of the sequence
+argument, including the element type when the sequence is a vector.
+
+For the resulting code to be fast, the different cases need to be
+handled separately, but doing so may make the code hard to understand
+and maintain.  Writing tests that cover all cases may also be
+difficult.
+
+In this paper, we present a technique that relies on a good compiler
+to optimize each separate case according to the information available
+to it with respect to types and values of keyword arguments.  Our
+technique uses a few custom macros that duplicate a general
+implementation of the body of a sequence function.  The compiler then
+specializes that body in different ways for each copy.
 \end{abstract}
 
 \category{D.3.4}{Programming Languages}{Processors}
@@ -50,7 +65,7 @@ Abstract
 
 \terms{Algorithms, Languages, Performance}
 
-\keywords{\clos{}, \cl{}, Generic dispatch, Method dispatch}
+\keywords{\clos{}, \commonlisp{}, Generic dispatch, Method dispatch}
 
 \inputtex{sec-introduction.tex}
 \inputtex{sec-previous.tex}
