@@ -1,11 +1,5 @@
 (in-package #:cleavir-type-inference)
 
-(defun input (instruction types)
-  (apply #'bag-join
-	 (mapcar (lambda (pred)
-		   (arc-bag pred instruction types))
-		 (cleavir-ir:predecessors instruction))))
-
 ;;; TODO: values type passes.
 
 ;; the master. remove redundant typeqs by removing impossible
@@ -30,7 +24,7 @@
      (when (typep i 'cleavir-ir:typeq-instruction)
        (let ((ttype (cleavir-ir:value-type i))
 	     (vtype (find-type (first (cleavir-ir:inputs i))
-			       (input i types))))
+			       (instruction-input i types))))
 	 (cond ((bottom-p (binary-meet vtype ttype))
 		(cleavir-ir:bypass-instruction
 		 i (second (cleavir-ir:successors i))))
@@ -51,7 +45,7 @@
      (lambda (i)
        (when (typep i 'cleavir-ir:the-instruction)
 	 (when (subtypep (find-type (first (cleavir-ir:inputs i))
-				    (input i types))
+				    (instruction-input i types))
 			 (cleavir-ir:value-type i))
 	   (push i death-row))))
      initial)
@@ -60,22 +54,30 @@
 
 ;; convert a THE instructions into a typeq instruction
 (defun the->typeq (the-instruction)
-  (change-class
-   the-instruction 'cleavir-ir:typeq-instruction
-   :successors (list (first (cleavir-ir:successors the-instruction))
-		     ;; (error 'type-error :datum value :expected-type 'type)
-		     (let ((fdef (cleavir-ir:new-temporary)))
-		       (cleavir-ir:make-fdefinition-instruction
-			(cleavir-ir:make-load-time-value-input ''cl:error)
-			fdef
-			(cleavir-ir::make-funcall-no-return-instruction
-			 (list fdef
-			       (cleavir-ir:make-load-time-value-input ''cl:type-error)
-			       (cleavir-ir:make-load-time-value-input '':datum)
-			       (first (cleavir-ir:inputs the-instruction))
-			       (cleavir-ir:make-load-time-value-input '':expected-type)
-			       (cleavir-ir:make-load-time-value-input
-				`',(cleavir-ir:value-type the-instruction)))))))))
+  ;; FIXME: programmatic HIR could probably be made nicer.
+  (let* ((fdef (cleavir-ir:new-temporary))
+	 (fdefinition-instruction
+	   (cleavir-ir:make-fdefinition-instruction
+	    (cleavir-ir:make-load-time-value-input ''cl:error)
+	    fdef))
+	 (fnr-instruction
+	   (cleavir-ir:make-funcall-no-return-instruction
+	    (list fdef
+		  (cleavir-ir:make-load-time-value-input ''cl:type-error)
+		  (cleavir-ir:make-load-time-value-input '':datum)
+		  (first (cleavir-ir:inputs the-instruction))
+		  (cleavir-ir:make-load-time-value-input '':expected-type)
+		  (cleavir-ir:make-load-time-value-input
+		   `',(cleavir-ir:value-type the-instruction))))))
+    (cleavir-ir:insert-instruction-before fdefinition-instruction
+					  fnr-instruction)
+    (setf (cleavir-ir:predecessors fdefinition-instruction)
+	  (list the-instruction))
+    (change-class
+     the-instruction 'cleavir-ir:typeq-instruction
+     :successors (list (first
+			(cleavir-ir:successors the-instruction))
+		       fdefinition-instruction))))
 
 ;; convert all of them. intended for safe code, before type inference.
 (defun thes->typeqs (initial)

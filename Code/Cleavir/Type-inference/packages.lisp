@@ -6,4 +6,5 @@
 	   #:top-p #:bottom-p
 	   #:binary-join #:binary-meet #:difference
 	   #:join #:meet)
-  (:export #:infer-types #:arc-bag #:find-type))
+  (:export #:infer-types #:arc-bag
+	   #:instruction-input #:find-type))

@@ -739,7 +739,9 @@
     (let ((tag-asts
 	    (loop for item in (raw items)
 		  for raw-item = (raw item)
-		  when (symbolp raw-item)
+		  ;; go tags are symbols or integers, per CLHS glossary.
+		  when (or (symbolp raw-item)
+			   (integerp raw-item))
 		    collect (cleavir-ast:make-tag-ast
 			     raw-item
 			     :origin (location item))))
