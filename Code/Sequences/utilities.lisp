@@ -379,3 +379,38 @@
 	      (locally (declare (type fixnum ,start-var)
 				(type null ,end-var))
 		,@body))))
+
+;;; This function is used when the sequence is a vector of some kind
+;;; in order to verify that start and end are valid bounding indexes.
+(defun verify-bounding-indices-vector (vector start end)
+  (let ((length (length vector)))
+    (when (> start length)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,length)
+	     :in-sequence vector))
+    (unless (<= 0 end length)
+      (error 'invalid-end-index
+	     :datum end
+	     :expected-type `(integer 0 ,length)
+	     :in-sequence vector))
+    (unless (<= start end)
+      (error 'end-less-than-start
+	     :datum start
+	     :expected-type `(integer 0 ,end)
+	     :end-index end
+	     :in-sequence vector))))
+
+;;; This macro is used when the sequence is a vector in order to check
+;;; that the START and END parameters are valid.  BODY is duplicated
+;;; in two different contexts, according to the type of the END
+;;; parameter (i.e., NULL or FIXNUM), and in the context where END is
+;;; of type NULL, it is rebound to the length of the vector
+(defmacro with-bounding-indices-vector (vector-var start-var end-var &body body)
+  `(progn (verify-bounding-indexes-vector ,vector-var ,start-var ,end-var)
+	  (if (typep ,end-var 'fixnum)
+	      (locally (declare (type fixnum ,start-var ,end-var))
+		,@body)
+	      (let ((,end-var (length ,vector-var)))
+		(locally (declare (type fixnum ,start-var ,end-var))
+		  ,@body)))))
