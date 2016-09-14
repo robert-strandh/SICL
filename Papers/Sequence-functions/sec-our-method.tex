@@ -1,2 +1,131 @@
 \section{Our technique}
 
+We illustrate our technique with a simplified version of the function
+\texttt{find}.  Recall that this function searches a sequence for the
+first occurrence of some item passed as an argument, and that the
+behavior can be altered as usual with parameters for determining the
+comparison function, a key function to apply to each element, the
+direction of the search, and the interval to search.
+
+Our version is simplified in the following way:
+
+\begin{itemize}
+\item The \texttt{test} function is fixed to be \texttt{eql}.
+\item The interval to search is the entire vector.
+\item The key function to apply to each element is fixed to be
+  \texttt{identity}.
+\item The search is from the beginning of the vector.
+\end{itemize}
+
+In the general version of the \texttt{find} function, all these
+parameters must of course be taken into account, and then our
+technique becomes even more applicable and even more important.  But
+the general version does not require any additional difficulty beyond
+what is needed for the special case, and the general case would only
+clutter the presentation, hence the special version which we will call
+\texttt{find-vector}.
+
+Clearly, in terms of portability and maintainability, it would be
+desirable to implement \texttt{find-vector} like this:
+
+{\small\begin{verbatim}
+(defun find-vector-1 (item vector)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (loop for index from 0 below (length vector)
+        for element = (aref vector index)
+        when (eql item element)
+          return element))
+\end{verbatim}}
+
+Unfortunately, most implementations would have difficulties optimizing
+this version, simply because the exact action required by the function
+\texttt{aref} depends on the \emph{element type} of the vector, and
+whether the vector is a \emph{simple-array}.  This information is
+clearly \emph{loop invariant}, but most compilers do not contain
+adequate optimization passes in order to duplicate and specialize the
+loop.
+
+To improve code layout, in what follows, we assume the following type
+definition:
+
+{\small\begin{verbatim}
+(deftype simple-byte-vector ()
+  `(simple-array (unsigned-byte 8)))
+\end{verbatim}}
+
+To help the compiler, one can imagine a version like this:
+
+{\small\begin{verbatim}
+(defun find-vector-2 (item vector)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (if (typep vector 'simple-byte-vector)
+      (loop for index from 0 below (length vector)
+            for element = (aref vector index)
+            when (eql item element)
+              return element)
+      (loop for index from 0 below (length vector)
+            for element = (aref vector index)
+            when (eql item element)
+              return element)))
+\end{verbatim}}
+
+Here, we have illustrated the specialization with a non-standard
+element type, so that either an implementation-specific type predicate
+has to be used, or (as in our example) a call to \texttt{typep} is
+needed.
+
+Whether a local declaration of the type of the vector in additional to
+the call to \texttt{typep} is required for the compiler to optimize
+the call to \texttt{aref} is of course implementation specific.
+Similarly, whether a special version (possibly
+implementation-specific) of \texttt{aref} is required also depends on
+the implementation.
+
+Not only, do we know have implementation-specific code, but we also
+have a maintenance problem.  The loop will have to be duplicated for
+each sequence function, and for all specific type that the
+implementation can handle.  This duplication requires separate tests
+for each case so as to guarantee as much coverage as possible.  Given
+the number of combinations of types, plus the additional parameters we
+have omitted, this requirement quickly becomes unmanageable.
+
+To solve this problem, we introduce a macro \texttt{with-type} that
+abstracts the implementation-specific information and that takes care
+of duplicating the loop:
+
+{\small\begin{verbatim}
+(defmacro with-vector-type (vector-var &body body)
+  `(macrolet ((vref (array index)
+                `(aref (,array ,index))))
+     (if (typep ,vector-var 'simple-byte-vector)
+         (locally (declare (type simple-byte-vector
+                                 ,vector-var))
+           ,@body)
+         (progn
+           ,@body))))
+\end{verbatim}}
+
+Here, we have introduced a new operator named \texttt{vref} in the
+form of a local macro, and that is globally defined to expand to
+\texttt{aref}.  This global definition works for SBCL, but different
+implementations may need different expansions in different branches.
+For example, some implementations might need for the macro to expand a
+call to \texttt{sbit} in a branch where the vector is a simple bit
+vector.
+
+We have also introduced a local declaration for exact type of the
+vector in the specialized branch.  Each implementation must determine
+whether such a declaration is necessary.
+
+Using this macro, we can now write our function \texttt{find-vector}
+like this:
+
+{\small\begin{verbatim}
+(defun find-vector-4 (item vector)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (with-vector-type vector
+    (loop for index from 0 below (length vector)
+          for element = (vref vector index)
+          when (eql item element)
+            return element)))
+\end{verbatim}}
