@@ -352,7 +352,7 @@
 	     ((same-type-p ,type-var '(complex long-float))
 	      ,@body)))))
 
-(defun verify-bounding-indexes-list (start end)
+(defun verify-bounding-indices-list (start end)
   (unless (typep start 'fixnum)
     (error 'invalid-start-index-type
 	   :datum start
@@ -372,7 +372,7 @@
 ;;; in two different contexts, according to the type of the END
 ;;; parameter (i.e., NULL or FIXNUM).
 (defmacro with-bounding-indices-list ((start-var end-var) &body body)
-  `(progn (verify-bounding-indexes-list ,start-var ,end-var)
+  `(progn (verify-bounding-indices-list ,start-var ,end-var)
 	  (if (typep ,end-var 'fixnum)
 	      (locally (declare (type fixnum ,start-var ,end-var))
 		,@body)
