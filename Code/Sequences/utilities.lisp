@@ -110,7 +110,6 @@
 	 finally (unless (null ,cons-var)
 		   (error "Not a proper list"))))
 
-
 ;;; This function calls KEY-FUNCTION with ELEMENT as the only
 ;;; argument.  It is semantically equivalent to FUNCALL.  However, we
 ;;; do not trust the implementation of FUNCALL to optimize when
@@ -352,3 +351,31 @@
 	      ,@body)
 	     ((same-type-p ,type-var '(complex long-float))
 	      ,@body)))))
+
+(defun verify-bounding-indexes-list (start end)
+  (unless (typep start 'fixnum)
+    (error 'invalid-start-index-type
+	   :datum start
+	   :expected-type 'fixnum))
+  (unless (typep end '(or null fixnum))
+    (error 'invalid-end-index-type
+	   :datum start
+	   :expected-type '(or null fixnum)))
+  (when (and (typep end 'fixnum)
+	     (< end start))
+    (error 'end-less-than-start
+	   :datum end
+	   :expected-type `(integer ,start))))
+
+;;; This macro is used when the sequence is a list in order to check
+;;; that the START and END parameters are valid.  BODY is duplicated
+;;; in two different contexts, according to the type of the END
+;;; parameter (i.e., NULL or FIXNUM).
+(defmacro with-bounding-indices-list (start-var end-var &body body)
+  `(progn (verify-bounding-indexes-list ,start-var ,end-var)
+	  (if (typep ,end-var 'fixnum)
+	      (locally (declare (type fixnum ,start-var ,end-var))
+		,@body)
+	      (locally (declare (type fixnum ,start-var)
+				(type null ,end-var))
+		,@body))))
