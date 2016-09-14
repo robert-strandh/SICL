@@ -371,7 +371,7 @@
 ;;; that the START and END parameters are valid.  BODY is duplicated
 ;;; in two different contexts, according to the type of the END
 ;;; parameter (i.e., NULL or FIXNUM).
-(defmacro with-bounding-indices-list (start-var end-var &body body)
+(defmacro with-bounding-indices-list ((start-var end-var) &body body)
   `(progn (verify-bounding-indexes-list ,start-var ,end-var)
 	  (if (typep ,end-var 'fixnum)
 	      (locally (declare (type fixnum ,start-var ,end-var))
@@ -406,7 +406,7 @@
 ;;; in two different contexts, according to the type of the END
 ;;; parameter (i.e., NULL or FIXNUM), and in the context where END is
 ;;; of type NULL, it is rebound to the length of the vector
-(defmacro with-bounding-indices-vector (vector-var start-var end-var &body body)
+(defmacro with-bounding-indices-vector ((vector-var start-var end-var) &body body)
   `(progn (verify-bounding-indexes-vector ,vector-var ,start-var ,end-var)
 	  (if (typep ,end-var 'fixnum)
 	      (locally (declare (type fixnum ,start-var ,end-var))
