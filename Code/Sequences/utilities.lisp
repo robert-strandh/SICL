@@ -354,7 +354,9 @@
 
 (defmacro with-vector-type (vector-var &body body)
   `(cond ,@(loop for (type . accessor-name) in *special-array-information*
-		 collect (make-situation vector-var type accessor-name body))))
+		 collect (make-situation vector-var type accessor-name body))
+	 (t (macrolet ((vref (vector index) `(aref ,vector ,index)))
+	      ,@body))))
 
 (defun same-type-p (type1 type2)
   (and (subtypep type1 type2) (subtypep type2 type1)))
