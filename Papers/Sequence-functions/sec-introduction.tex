@@ -1,1 +1,16 @@
 \section{Introduction}
+
+The \commonlisp{} \cite{ansi:common:lisp} sequence functions are
+challenging to implement for several reasons:
+
+\begin{itemize}
+\item They take several keyword parameters that modify the behavior in
+  different ways.  Several special cases must therefore be taken into
+  account according to the value of these keyword parameters.
+\item In order for performance to be acceptable, different variations
+  may have to be implemented according to the type of the sequence to
+  be traversed.
+\item When the sequence is a vector, it may be necessary to specialize
+  the implementation according to the element type of the vector, and
+  according to whether the vector is a \emph{simple array} or not.
+\end{itemize}
