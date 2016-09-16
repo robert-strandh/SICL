@@ -1,1 +1,9 @@
 \section{Previous work}
+
+Most implementations process list elements in reverse order when
+\texttt{:from-end} is true only when the specification requires it,
+i.e., only for the functions \texttt{count} and \texttt{reduce}.
+
+We designed a technique \cite{Durand:2015:ELS:reverse} that allows us
+to always process list elements in reverse order very efficiently when
+\texttt{:from-end} is true.
