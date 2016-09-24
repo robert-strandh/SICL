@@ -7,3 +7,24 @@ i.e., only for the functions \texttt{count} and \texttt{reduce}.
 We designed a technique \cite{Durand:2015:ELS:reverse} that allows us
 to always process list elements in reverse order very efficiently when
 \texttt{:from-end} is true.
+
+\subsection{ECL and Clasp}
+
+The sequence functions of ECL have a similar superficial structure to
+ours, in that they take advantage of custom macros for managing common
+aspects of many functions such as the interaction between the
+\texttt{test} and \texttt{test-not} keyword arguments, the existence
+of keyword arguments \texttt{start} and \texttt{and}, etc.
+But these macros just provide convenient syntax for handling shared
+aspects of the sequence functions.  They do not assist the compiler
+with the optimization of the body of the code.
+
+For functions for which the \commonlisp{} specification allows the
+implementation to process elements from the beginning of the sequence
+even when \texttt{from-end} is \emph{true}, ECL takes advantage of
+this possibility.  For the \texttt{count} function applied to a list,
+ECL simply reverses the list before processing the elements.
+
+The \commonlisp{} code base of Clasp is derived from that of ECL, and
+the code for the sequence functions of Clasp is the same as that of
+ECL.
