@@ -31,6 +31,7 @@
    #:*readtable*
    #:read
    #:read-preserving-whitespace
+   #:read-common
    #:make-dispatch-macro-character
    #:set-dispatch-macro-character
    #:get-dispatch-macro-character
