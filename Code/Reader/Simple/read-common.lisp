@@ -7,10 +7,9 @@
 	   input-stream
 	   char))
 
-(defun read-common (&optional
-		      (input-stream *standard-input*)
-		      (eof-error-p t)
-		      (eof-value nil))
+(defgeneric read-common (input-stream eof-error-p eof-value))
+
+(defmethod read-common (input-stream eof-error-p eof-value)
   (let ((token (make-array 100
 			   :element-type 'character
 			   :adjustable t
