@@ -32,6 +32,7 @@
    #:read
    #:read-preserving-whitespace
    #:read-common
+   #:call-reader-macro
    #:make-dispatch-macro-character
    #:set-dispatch-macro-character
    #:get-dispatch-macro-character
