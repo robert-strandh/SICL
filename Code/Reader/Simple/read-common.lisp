@@ -1,6 +1,12 @@
 (cl:in-package #:sicl-reader)
 
-;;; FIXME: handle characters with invalid consituent traits.
+(defgeneric call-reader-macro (function input-stream char))
+
+(defmethod call-reader-macro (function input-stream char)
+  (funcall (get-macro-character char)
+	   input-stream
+	   char))
+
 (defun read-common (&optional
 		      (input-stream *standard-input*)
 		      (eof-error-p t)
@@ -26,9 +32,9 @@
 	    (go step-1-start))
 	   ((:terminating-macro :non-terminating-macro)
 	    (let ((values (multiple-value-list
-			   (funcall (get-macro-character char)
-				    input-stream
-				    char))))
+			   (call-reader-macro (get-macro-character char)
+					      input-stream
+					      char))))
 	      (if (null values)
 		  (go step-1-start)
 		  (return-from read-common (car values)))))
