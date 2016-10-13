@@ -360,8 +360,9 @@ This function should not require an environment or system, but it unfortunately 
   ;; evaluate the form.
   (when (and *current-form-is-top-level-p* *compile-time-too*)
     (cleavir-env:eval form env env))
-  (let ((compiler-macro (cleavir-env:compiler-macro info)))
-    (if (null compiler-macro)
+  (let ((compiler-macro (cleavir-env:compiler-macro info))
+	(notinline (eq 'notinline (cleavir-env:inline info))))
+    (if (or notinline (null compiler-macro))
 	;; There is no compiler macro.  Create the call.
 	(make-call info env (cdr form) system)
 	;; There is a compiler macro.  We must see whether it will
