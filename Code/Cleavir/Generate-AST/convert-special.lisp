@@ -211,7 +211,10 @@
 		       new-env canonicalized-dspecs)))
 	(process-progn
 	 (append init-asts
-		 (convert-sequence forms new-env system)))))))
+		 ;; so that flet with empty body works.
+		 (list
+		  (process-progn
+		   (convert-sequence forms new-env system)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -361,8 +364,11 @@
 	     (inner-env (augment-environment-with-declarations
 			 inner-env canonicalized-dspecs)))
 	(process-progn
-	 (append init-asts
-		 (convert-sequence forms inner-env system)))))))
+	 (append
+	  init-asts
+	  (list
+	   (process-progn
+	    (convert-sequence forms inner-env system)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
