@@ -18,4 +18,5 @@
    #:segregate-lexicals
    #:hir-transformations
    #:introduce-intermediate
-   #:eliminate-superfluous-temporaries))
+   #:eliminate-superfluous-temporaries
+   #:maybe-eliminate))
