@@ -7,4 +7,6 @@
 	   #:binary-join #:binary-meet #:difference
 	   #:join #:meet)
   (:export #:infer-types #:arc-bag
-	   #:instruction-input #:find-type))
+	   #:instruction-input #:find-type)
+  (:export #:type-missing
+	   #:type-missing-location #:type-missing-bag))
