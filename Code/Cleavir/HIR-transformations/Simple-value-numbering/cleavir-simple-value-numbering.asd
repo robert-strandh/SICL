@@ -39,16 +39,6 @@
 ;;;;     As a result, we can first remove both the EQ-INSTRUCTION, and
 ;;;;     then we recognize that the value assigned to V is not used,
 ;;;;     so the assignments of T and NIL to V can be removed as well.
-;;;;
-;;;;   * We use path replication to specialize loops.  In code such as
-;;;;     (progn (if x nil nil) (loop ... do (if x ... ...))) we can
-;;;;     use path replication to remove the test in the loop and
-;;;;     replace it with two versions of the loop, one in which X is
-;;;;     true and one it in which X is false.  This technique allows
-;;;;     us to write compact and maintainable code without sacrificing
-;;;;     performance.  In particular, this technique can be used to
-;;;;     produce fast yet maintainable versions of the sequence
-;;;;     functions.
 
 (defsystem :cleavir-simple-value-numbering
   :depends-on (:cleavir-meter
