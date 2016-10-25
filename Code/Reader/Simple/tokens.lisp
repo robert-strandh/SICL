@@ -1,6 +1,8 @@
 (cl:in-package #:sicl-reader)
 
-(defun interpret-token (token token-escapes input-stream)
+(defgeneric interpret-token (token token-escapes input-stream))
+
+(defmethod interpret-token (token token-escapes input-stream)
   (convert-according-to-readtable-case token token-escapes)
   (let ((length (length token))
 	(sign 1)
