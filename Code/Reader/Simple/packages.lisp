@@ -33,6 +33,7 @@
    #:read-preserving-whitespace
    #:read-common
    #:call-reader-macro
+   #:interpret-token
    #:make-dispatch-macro-character
    #:set-dispatch-macro-character
    #:get-dispatch-macro-character
