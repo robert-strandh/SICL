@@ -238,3 +238,54 @@
           form was found:~@
           ~s"
           (expr condition)))
+
+;; Helper for below.
+
+
+(defmethod acclimation:report-condition
+  ((condition too-many-arguments)
+   stream
+   (language acclimation:english))
+  (format stream
+	  "~s was called with too many arguments:~%~s~@
+          Expected at most ~d,"
+	  (car (expr condition))
+	  (expr condition)
+	  (expected-max condition)))
+
+(defmethod acclimation:report-condition
+  ((condition not-enough-arguments)
+   stream
+   (language acclimation:english))
+  (format stream
+	  "~s was called with too few arguments:~%~s~@
+          Expected at least ~d,"
+	  (car (expr condition))
+	  (expr condition)
+	  (expected-min condition)))
+
+(defmethod acclimation:report-condition
+  ((condition odd-keyword-portion)
+   stream
+   (language acclimation:english))
+  (format stream
+	  "~s was called with an odd number of arguments in the keyword portion:~%~s"
+	  (car (expr condition))
+	  (expr condition)))
+
+;; Display the type declaration that informed us of the problem.
+(defmethod acclimation:report-condition :after
+    ((condition argument-mismatch-warning)
+     stream
+     (language acclimation:english))
+  (format stream
+	  " as determined from the function's type,~%~s"
+	  (callee-ftype condition)))
+
+;; NOTE: In the future, there may be other ways to signal this.
+(defmethod acclimation:report-condition :after
+    ((condition argument-mismatch-style-warning)
+     stream
+     (language acclimation:english))
+  (format stream
+	  " as inferred from its inline definition."))

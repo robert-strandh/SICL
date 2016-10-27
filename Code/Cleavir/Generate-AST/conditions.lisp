@@ -18,6 +18,46 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; More specific but still general conditions.
+
+;;; The class of conditions for function calls that can be
+;;; determined to be invalid.
+;;; These can be either style- or full warnings, so there's one
+;;; class for each. Bulky...
+;;; In the future there could be more for unknown keywords, etc.
+(define-condition argument-mismatch
+    (acclimation:condition)
+  ((%expected-min :initarg :expected-min :reader expected-min)
+   (%expected-max :initarg :expected-max :reader expected-max)))
+
+(define-condition argument-mismatch-warning
+    (argument-mismatch compilation-warning)
+  ;; The type is canonicalized.
+  ((%callee-ftype :initarg :callee-ftype :reader callee-ftype)))
+
+(define-condition argument-mismatch-style-warning
+    (argument-mismatch compilation-style-warning)
+  ;; FIXME: might include a "reason" field for when there's more
+  ;; than one possible way to signal this.
+  ())
+
+;;; These three are further specialized with the above two below.
+(define-condition too-many-arguments
+    (argument-mismatch)
+  ())
+
+(define-condition not-enough-arguments
+    (argument-mismatch)
+  ())
+
+;;; The class of conditions signaled when an odd number of
+;;; arguments is passed to the &key portion of a lambda list.
+(define-condition odd-keyword-portion
+    (argument-mismatch)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Specific conditions.
 
 ;;; This condition is signaled when the first argument to BLOCK or
@@ -168,4 +208,38 @@
 ;;; encountered, but the first symbol isn't LAMBDA.
 (define-condition lambda-call-first-symbol-not-lambda
     (compilation-program-error)
+  ())
+
+;;; This condition is signaled when a function of known type is
+;;; called with too many arguments.
+(define-condition too-many-arguments-warning
+    (too-many-arguments argument-mismatch-warning)
+  ())
+
+;;; This condition is called when a function is called with too
+;;; many arguments, but we only know that for other reasons. For
+;;; example, from an inline definition. Technically the programmer
+;;; could redefine the function to make the call okay.
+(define-condition too-many-arguments-style-warning
+    (too-many-arguments argument-mismatch-style-warning)
+  ())
+
+;;; This condition is signaled when a function of known type is
+;;; called with too few arguments.
+(define-condition not-enough-arguments-warning
+    (not-enough-arguments argument-mismatch-warning)
+  ())
+
+;;; See too-many-arguments-style-warning.
+(define-condition not-enough-arguments-style-warning
+    (not-enough-arguments argument-mismatch-style-warning)
+  ())
+
+;;; See odd-keyword-portion.
+(define-condition odd-keyword-portion-warning
+    (odd-keyword-portion argument-mismatch-warning)
+  ())
+
+(define-condition odd-keyword-portion-style-warning
+    (odd-keyword-portion argument-mismatch-style-warning)
   ())

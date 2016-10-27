@@ -273,6 +273,12 @@
       environment
       (variable-dynamic-extent (next environment) defining-info)))
 
+;;; This utility function is used so that the types returned by
+;;; MAKE-INFO are a bit cleaner and easier to work with.
+(defun conjoin-types (&rest types)
+  ;; (and) = T so the degenerate case is no problem.
+  (cons 'and (remove t types)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on MAKE-INFO specialized to INFO classes returned by
@@ -283,7 +289,8 @@
   (make-instance 'lexical-variable-info
     :name (name defining-info)
     :identity (identity defining-info)
-    :type (cons 'and (variable-type environment defining-info))
+    :type (apply #'conjoin-types
+		 (variable-type environment defining-info))
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
       (if (null entry) nil (ignore defining-info)))
@@ -295,7 +302,8 @@
     (environment (defining-info special-variable-info))
   (make-instance 'special-variable-info
     :name (name defining-info)
-    :type (cons 'and (variable-type environment defining-info))
+    :type (apply #'conjoin-types
+		 (variable-type environment defining-info))
     :global-p (global-p defining-info)
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
@@ -311,7 +319,8 @@
   (make-instance 'symbol-macro-info
     :name (name defining-info)
     :expansion (expansion defining-info)
-    :type (cons 'and (variable-type environment defining-info))))
+    :type (apply #'conjoin-types
+		 (variable-type environment defining-info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -693,7 +702,8 @@
   (make-instance 'local-function-info
     :name (name defining-info)
     :identity (identity defining-info)
-    :type (cons 'and (function-type environment defining-info))
+    :type (apply #'conjoin-types
+		 (function-type environment defining-info))
     :ignore
     (let ((entry (function-ignore environment defining-info)))
       (ignore (or entry defining-info)))
@@ -712,7 +722,8 @@
     (environment (defining-info global-function-info))
   (make-instance 'global-function-info
     :name (name defining-info)
-    :type (cons 'and (function-type environment defining-info))
+    :type (apply #'conjoin-types
+		 (function-type environment defining-info))
     :ignore
     (let ((entry (function-ignore environment defining-info)))
       (ignore (or entry defining-info)))
