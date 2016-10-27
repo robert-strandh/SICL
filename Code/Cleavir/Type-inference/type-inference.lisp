@@ -14,7 +14,8 @@
 	(result (make-dictionary)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
-       (loop for predecessor in (cleavir-ir:predecessors instruction)
+       (loop for predecessor in (remove-duplicates
+				 (cleavir-ir:predecessors instruction))
 	     for live = (cleavir-liveness:live-before liveness instruction)
 	     do (loop for var in live
 		      when (typep var 'cleavir-ir:lexical-location)

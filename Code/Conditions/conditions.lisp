@@ -2,7 +2,7 @@
 
 (define-condition condition () ())
 
-(defparameter *langauge* 'english)
+(defparameter *language* 'english)
 
 (defgeneric report-condition (condition stream language))
 

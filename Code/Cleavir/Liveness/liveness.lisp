@@ -46,51 +46,43 @@
 ;;; LIVE-AFTER.
 (defun liveness (start-node)
   (cleavir-meter:with-meter (m *liveness-meter*)
-    (let ((liveness (make-instance 'liveness)))
-      (with-accessors ((btable btable) (atable atable)) liveness
-	(flet ((successors (node)
-		 (cleavir-ir:successors node))
-	       (predecessors (node)
-		 (cleavir-ir:predecessors node))
-	       (inputs (node)
-		 (cleavir-ir:inputs node))
-	       (outputs (node)
-		 (cleavir-ir:outputs node))
-	       (variable-p (input)
-		 (or (typep input 'cleavir-ir:lexical-location)
-		     (typep input 'cleavir-ir:values-location))))
-	  (labels
-	      ((traverse (node)
-		 (let ((live '()))
-		   ;; First compute the union of the items that are live
-		   ;; before each of the successors of NODE.
-		   (loop for successor in (successors node)
-			 do (setf live
-				  (union live (gethash successor btable))))
-		   (multiple-value-bind (current present-p)
-		       (gethash node atable)
-		     (unless (and present-p (set-equal live current))
-		       ;; Something has changed.  Propagate!
-		       (setf (gethash node atable) live)
-		       ;; Remove from the set the items that are written
-		       ;; by NODE.
-		       (loop for output in (outputs node)
-			     do (setf live (remove output live :test #'eq)))
-		       ;; Add to the set the items used by NODE
-		       ;; that are registers or lexical locations.
-		       (loop for input in (inputs node)
-			     when (variable-p input)
-			       do (pushnew input live :test #'eq))
-		       (setf (gethash node btable) live)
-		       (loop for pred in (predecessors node)
-			     do (traverse pred)))))))
-	    (cleavir-ir:map-instructions-arbitrary-order
-	     (lambda (instruction)
-	       (cleavir-meter:increment-size m)
-	       (when (null (successors instruction))
-		 (traverse instruction)))
-	     start-node))))
-      liveness)))
+    (let ((liveness (make-instance 'liveness))
+          stack)
+      (flet ((variable-p (input)
+               (or (typep input 'cleavir-ir:lexical-location)
+                   (typep input 'cleavir-ir:values-location)))
+             (successor-btable (successor)
+               (gethash successor (btable liveness))))
+        (cleavir-ir:map-instructions-arbitrary-order
+         (lambda (instruction)
+           (cleavir-meter:increment-size m)
+           (when (null (cleavir-ir:successors instruction))
+             (push instruction stack)))
+         start-node)
+        ;; traverse iteratively
+        (do ((node #1=(pop stack) #1#))
+            ((null node) liveness)
+          ;; Compute the union of the items that are live before each
+          ;; of the successors of NODE.
+          (let ((live (reduce #'union
+                              (mapcar #'successor-btable
+                                      (cleavir-ir:successors node))
+                              :initial-value nil)))
+            (multiple-value-bind (current present-p)
+                (gethash node (atable liveness))
+              (unless (and present-p (set-equal live current))
+                ;; Something has changed.  Propagate!
+                (setf
+                 (gethash node (atable liveness)) live
+                 ;; Remove from the set the items that are
+                 ;; written by NODE.
+                 live (set-difference live (cleavir-ir:outputs node))
+                 ;; Add to the set the items used by NODE that
+                 ;; are registers or lexical locations.
+                 live (union live (remove-if-not #'variable-p
+                                                 (cleavir-ir:inputs node)))
+                 (gethash node (btable liveness)) live
+                 stack (append stack (cleavir-ir:predecessors node)))))))))))
 
 (defun live-before (liveness node)
   (gethash node (btable liveness)))
