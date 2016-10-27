@@ -56,7 +56,7 @@
 ;;; canonicalized declaration specifiers.
 (defun canonicalize-declaration-specifier (declaration-specifier)
   (cond ((member (car declaration-specifier)
-		 '(declaration dynamic-extent ftype ignore ignorable
+		 '(declaration dynamic-extent ignore ignorable
 		   inline notinline special))
 	 (loop for entity in (cdr declaration-specifier)
 	       collect `(,(car declaration-specifier) ,entity)))
@@ -65,9 +65,10 @@
 	       collect (if (symbolp entity)
 			   `(optimize (,entity 3))
 			   `(optimize ,entity))))
-	((eq (car declaration-specifier) 'type)
+	((member (car declaration-specifier) '(type ftype))
 	 (loop for entity in (cddr declaration-specifier)
-	       collect `(type ,(cadr declaration-specifier) ,entity)))
+	       collect `(,(car declaration-specifier)
+			 ,(cadr declaration-specifier) ,entity)))
 	(t
 	 (loop for entity in (cdr declaration-specifier)
 	       collect `(type ,(car declaration-specifier) ,entity)))))
