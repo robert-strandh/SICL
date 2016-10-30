@@ -256,24 +256,23 @@
 	 (t nil)))
 
 (defmacro with-test-and-test-not ((test-var test-not-var) &body body)
-  `(cond ((and (null ,test-var) (null ,test-not-var))
-	  ,@body)
-	 ((null ,test-not-var)
-	  (cond ((eq ,test-var #'eq)
-		 ,@body)
-		((eq ,test-var #'eql)
-		 ,@body)
-		(t
-		 ,@body)))
+  `(cond ((null ,test-not-var)
+	  (locally (declare (type function ,test-var))
+	    (cond ((eq ,test-var #'eq)
+		   ,@body)
+		  ((eq ,test-var #'eql)
+		   ,@body)
+		  (t
+		   ,@body))))
 	 ((null ,test-var)
-	  (cond ((eq ,test-not-var #'eq)
-		 ,@body)
-		((eq ,test-not-var #'eql)
-		 ,@body)
-		(t
-		 ,@body)))
-	 (t
-	  (error "Both test and test-not given."))))
+	  (locally (declare (type function ,test-not-var))
+	    (cond ((eq ,test-not-var #'eq)
+		   ,@body)
+		  ((eq ,test-not-var #'eql)
+		   ,@body)
+		  (t
+		   ,@body))))
+	 (t nil)))
 
 (defmacro with-from-end (from-end-var &body body)
   `(if ,from-end-var
