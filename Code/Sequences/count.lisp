@@ -47,9 +47,7 @@
 	   :expected-type '(or null (integer 0))
 	   :datum end
 	   :name 'count))
-  (when (and (not (null test)) (not (null test-not)))
-    (error 'both-test-and-test-not-given
-	   :name 'count))
+  (canonicalize-test-and-test-not test test-not count)
   (if (listp sequence)
       (count-list item sequence from-end test test-not start end key)
       (progn (when (null end)

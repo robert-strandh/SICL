@@ -42,9 +42,7 @@
 	   :expected-type '(or null (integer 0))
 	   :datum end
 	   :name 'position))
-  (when (and (not (null test)) (not (null test-not)))
-    (error 'both-test-and-test-not-given
-	   :name 'position))
+  (canonicalize-test-and-test-not test test-not position)
   (if (listp sequence)
       (position-list item sequence from-end test test-not start end key)
       (progn (when (null end)
