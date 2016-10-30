@@ -240,6 +240,21 @@
 				     (declare (ignorable ,index-var))
 				     ,@body)))))))))
 
+(defmacro canonicalize-test-and-test-not (test-var test-not-var caller-name)
+  `(cond ((and (not (null ,test-var)) (not (null ,test-not-var)))
+	  (error 'both-test-and-test-not-given
+		 :name ',caller-name))
+	 ((null ,test-var)
+	  (cond ((null ,test-not-var)
+		 (setf ,test-var #'eql))
+		((not (functionp ,test-not-var))
+		 (setf ,test-not-var (fdefinition ,test-not-var)))
+		(t nil)))
+	 ((null ,test-not-var)
+	  (unless (functionp ,test-var)
+	    (setf ,test-var (fdefinition ,test-var))))
+	 (t nil)))
+
 (defmacro with-test-and-test-not ((test-var test-not-var) &body body)
   `(cond ((and (null ,test-var) (null ,test-not-var))
 	  ,@body)
