@@ -1,5 +1,7 @@
 (cl:in-package :sicl-sequence)
 
+#+sbcl(declaim (sb-ext:muffle-conditions sb-ext:code-deletion-note))
+
 (defun find-list (item list from-end test test-not start end key)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (with-bounding-indices-list (start end)
