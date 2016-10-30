@@ -111,10 +111,11 @@
 		   (error "Not a proper list"))))
 
 ;;; This function calls KEY-FUNCTION with ELEMENT as the only
-;;; argument.  It is semantically equivalent to FUNCALL.  However, we
-;;; do not trust the implementation of FUNCALL to optimize when
-;;; KEY-FUNCTION is either #'IDENTITY, #'CAR, or #'CDR, so we treat
-;;; those cases separately here.
+;;; argument.  It is semantically equivalent to FUNCALL except that
+;;; only functions are allowed, and not any other function
+;;; designators.  However, we do not trust the implementation of
+;;; FUNCALL to optimize when KEY-FUNCTION is either #'IDENTITY, #'CAR,
+;;; or #'CDR, so we treat those cases separately here.
 ;;;
 ;;; When this function is inlined in a context where the key-function
 ;;; is EQ to one of the constants tested for in the function body, a
