@@ -289,24 +289,23 @@
 
 (defun satisfies-two-argument-test-p (item element test test-not)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
-  (cond ((and (null test) (null test-not))
-	 (eql item element))
-	((null test-not)
-	 (cond ((or (eq test #'eq) (eq test 'eq))
-		(eq item element))
-	       ((or (eq test #'eql) (eq test 'eql))
-		(eql item element))
-	       (t
-		(funcall test item element))))
+  (cond ((null test-not)
+	 (locally (declare (type function test))
+	   (cond ((eq test #'eq)
+		  (eq item element))
+		 ((eq test #'eql)
+		  (eql item element))
+		 (t
+		  (funcall test item element)))))
 	((null test)
-	 (cond ((or (eq test-not #'eq) (eq test-not 'eq))
-		(not (eq item element)))
-	       ((or (eq test-not #'eql) (eq test-not 'eql))
-		(not (eql item element)))
-	       (t
-		(not (funcall test-not item element)))))
-	(t
-	 (error "Both test and test-not given."))))
+	 (locally (declare (type function test-not))
+	   (cond ((eq test-not #'eq)
+		  (not (eq item element)))
+		 ((eq test-not #'eql)
+		  (not (eql item element)))
+		 (t
+		  (not (funcall test-not item element))))))
+	(t nil)))
 
 (defmacro for-each-relevant-element
     ((element-var index-var array start end from-end) &body body)
