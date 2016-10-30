@@ -4,6 +4,7 @@
 
 (defun find-list (item list from-end test test-not start end key)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (declare (type list list))
   (with-bounding-indices-list (start end)
     (with-test-and-test-not (test test-not)
       (with-from-end from-end
