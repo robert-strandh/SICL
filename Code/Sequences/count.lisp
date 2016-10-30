@@ -57,6 +57,7 @@
 
 (defun count-if-list (predicate list from-end start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (declare (type function predicate))
   (with-from-end from-end
     (let ((result 0))
       (declare (type fixnum result))
@@ -69,6 +70,7 @@
 (defun count-if-vector (predicate vector from-end start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (declare (type fixnum start end))
+  (declare (type function predicate))
   (with-from-end from-end
     (with-element-type vector
       (let ((result 0))
@@ -81,6 +83,7 @@
 
 (defun count-if-not-list (predicate list from-end start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (declare (type function predicate))
   (with-from-end from-end
     (let ((result 0))
       (declare (type fixnum result))
@@ -93,6 +96,7 @@
 (defun count-if-not-vector (predicate vector from-end start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (declare (type fixnum start end))
+  (declare (type function predicate))
   (with-from-end from-end
     (with-element-type vector
       (let ((result 0))
