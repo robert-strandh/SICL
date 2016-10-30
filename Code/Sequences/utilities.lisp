@@ -137,6 +137,13 @@
 	(t
 	 (funcall key-function element))))
 
+(defmacro canonicalize-key (key-var)
+  `(cond ((null ,key-var)
+	  (setf ,key-var #'identity))
+	 ((not (functionp ,key-var))
+	  (setf ,key-var (fdefinition ,key-var)))
+	 (t nil)))
+
 (defmacro for-each-relevant-cons
     ((cons-var index-var list start end from-end) &body body)
   (let ((fun-var (gensym))
