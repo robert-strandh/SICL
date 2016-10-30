@@ -45,6 +45,7 @@
 	   :datum end
 	   :name 'find))
   (canonicalize-test-and-test-not test test-not find)
+  (canonicalize-key key)
   (if (listp sequence)
       (find-list item sequence from-end test test-not start end key)
       (progn (when (null end)

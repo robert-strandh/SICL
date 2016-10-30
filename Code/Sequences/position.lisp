@@ -43,6 +43,7 @@
 	   :datum end
 	   :name 'position))
   (canonicalize-test-and-test-not test test-not position)
+  (canonicalize-key key)
   (if (listp sequence)
       (position-list item sequence from-end test test-not start end key)
       (progn (when (null end)
