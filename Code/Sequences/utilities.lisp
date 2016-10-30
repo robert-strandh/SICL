@@ -126,14 +126,12 @@
 
 (defun apply-key-function (element key-function)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
-  (cond ((or (eq key-function #'identity)
-	     (eq key-function 'identity))
+  (declare (type function key-function))
+  (cond ((eq key-function #'identity)
 	 element)
-	((or (eq key-function #'car)
-	     (eq key-function 'car))
+	((eq key-function #'car)
 	 (car element))
-	((or (eq key-function #'cdr)
-	     (eq key-function 'cdr))
+	((eq key-function #'cdr)
 	 (cdr element))
 	(t
 	 (funcall key-function element))))
