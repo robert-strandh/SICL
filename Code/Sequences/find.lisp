@@ -44,9 +44,7 @@
 	   :expected-type '(or null (integer 0))
 	   :datum end
 	   :name 'find))
-  (when (and (not (null test)) (not (null test-not)))
-    (error 'both-test-and-test-not-given
-	   :name 'find))
+  (canonicalize-test-and-test-not test test-not find)
   (if (listp sequence)
       (find-list item sequence from-end test test-not start end key)
       (progn (when (null end)
