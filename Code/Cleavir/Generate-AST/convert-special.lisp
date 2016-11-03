@@ -738,6 +738,11 @@
 ;;; TAGBODY-AST (unlike hte TAGBODY special form) does not generate a
 ;;; value.
 
+(defun tagp (item)
+  ;; go tags are symbols or integers, per CLHS glossary.
+  (or (symbolp item)
+      (integerp item)))
+
 (defmethod convert-special
     ((symbol (eql 'tagbody)) form env system)
   (db origin (tagbody . items) form
@@ -745,9 +750,7 @@
     (let ((tag-asts
 	    (loop for item in (raw items)
 		  for raw-item = (raw item)
-		  ;; go tags are symbols or integers, per CLHS glossary.
-		  when (or (symbolp raw-item)
-			   (integerp raw-item))
+		  when (tagp raw-item)
 		    collect (cleavir-ast:make-tag-ast
 			     raw-item
 			     :origin (location item))))
@@ -756,7 +759,7 @@
 	    do (setf new-env (cleavir-env:add-tag
 			      new-env (cleavir-ast:name ast) ast)))
       (let ((item-asts (loop for item in (raw items)
-			     collect (if (symbolp (raw item))
+			     collect (if (tagp (raw item))
 					 (pop tag-asts)
 					 (convert item new-env system)))))
 	(process-progn
