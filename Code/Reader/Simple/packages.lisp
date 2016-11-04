@@ -45,7 +45,6 @@
    ;; Names of additional conditions.
    #:backquote-condition
    #:invalid-context-for-backquote
-   #:invalid-context-for-comma
    #:comma-not-inside-backquote
    #:undefined-use-of-backquote
    #:invalid-context-for-consing-dot
