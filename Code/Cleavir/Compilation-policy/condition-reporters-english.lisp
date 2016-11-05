@@ -12,3 +12,9 @@
     ((condition unknown-optimize-quality) stream (language acclimation:english))
   (format stream "Unknown OPTIMIZE quality ~s"
 	  (first (specifier condition))))
+
+(defmethod acclimation:report-condition
+    ((condition no-policy-computer) stream (language acclimation:english))
+  (format stream "~s is a defined policy quality for ~s, but there~@
+                  is no method on COMPUTE-POLICY-QUALITY for it."
+	  (quality condition) (environment condition)))

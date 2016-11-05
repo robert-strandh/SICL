@@ -8,3 +8,8 @@
 (define-condition unknown-optimize-quality
     (warning acclimation:condition)
   ((%specifier :initarg :specifier :reader specifier)))
+
+(define-condition no-policy-computer
+    (error acclimation:condition)
+  ((%quality :initarg :quality :reader quality)
+   (%environment :initarg :env :reader environment)))
