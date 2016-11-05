@@ -16,9 +16,13 @@
 ;;; it should specialize POLICY-QUALITIES.
 (defvar *cleavir-policy-qualities* nil)
 
-;;; Default method.
+;;; Default method for all global environments.
 (defmethod policy-qualities append (environment)
   *cleavir-policy-qualities*)
+
+(defmethod policy-qualities append (environment)
+  (policy-qualities
+   (cleavir-environment:global-environment environment)))
 
 ;;; Define a cleavir policy quality, respecting redefinition.
 (defun make-cleavir-policy-quality (name type default)

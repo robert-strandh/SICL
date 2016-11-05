@@ -1,6 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir-compilation-policy
+  :depends-on (:cleavir-environment :acclimation)
   :serial t
   :components
   ((:file "packages")
