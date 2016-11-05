@@ -7,6 +7,7 @@
    #:ast #:children
    #:source-info
    #:origin
+   #:*policy* #:policy
    #:boolean-ast-mixin
    #:no-value-ast-mixin
    #:one-value-ast-mixin
@@ -160,12 +161,7 @@
    #:make-non-simple-unsigned-byte-16-aref-ast
    #:non-simple-unsigned-byte-16-aset-ast
    #:make-non-simple-unsigned-byte-16-aset-ast
-   #:optimize-ast #:child-ast
-   #:speed-ast #:make-speed-ast
-   #:space-ast #:make-space-ast
-   #:debug-ast #:make-debug-ast
-   #:safety-ast #:make-safety-ast
-   #:compilation-speed-ast #:make-compilation-speed-ast
+   #:child-ast
    #:scope-ast #:make-scope-ast
    #:map-ast-depth-first-preorder
    ))
