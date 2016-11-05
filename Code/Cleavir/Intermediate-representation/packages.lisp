@@ -41,6 +41,7 @@
    #:side-effect-free-mixin #:side-effect-free-p
    #:inputs #:outputs
    #:successors #:predecessors
+   #:policy #:*policy*
    #:symbol-value-instruction #:make-symbol-value-instruction
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
