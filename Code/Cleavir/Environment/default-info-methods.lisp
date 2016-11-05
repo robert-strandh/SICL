@@ -861,7 +861,7 @@
     :policy (policy environment)))
 
 (defmethod optimize-info ((environment entry))
-  (optimize-info (next entry)))
+  (optimize-info (next environment)))
 
 ;;; OK it's a big enough deal that here is a helper.
 (defun environment-policy (environment)
