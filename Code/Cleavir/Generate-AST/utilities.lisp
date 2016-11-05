@@ -77,7 +77,9 @@
 		 (append optimize previous)
 		 environment))
 	 ;; compute also normalizes, so this is slightly wasteful.
-	 (policy (cleavir-policy:compute-policy total environment)))
+	 (policy (cleavir-policy:compute-policy
+		  total
+		  (cleavir-env:global-environment environment))))
     (cleavir-env:add-optimize environment total policy)))
 
 ;;; Augment the environment with a list of canonicalized declartion
