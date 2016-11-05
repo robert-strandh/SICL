@@ -16,13 +16,13 @@
 ;;; it should specialize POLICY-QUALITIES.
 (defvar *cleavir-policy-qualities* nil)
 
-;;; Default method for all global environments.
+;;; Default method. If global, use cleavir's. If not, jump up.
 (defmethod policy-qualities append (environment)
-  *cleavir-policy-qualities*)
-
-(defmethod policy-qualities append (environment)
-  (policy-qualities
-   (cleavir-environment:global-environment environment)))
+  ;; FIXME
+  (let ((global (cleavir-env:global-environment environment)))
+    (if (eq global environment)
+	*cleavir-policy-qualities*
+	(policy-qualities global))))
 
 ;;; Define a cleavir policy quality, respecting redefinition.
 (defun make-cleavir-policy-quality (name type default)
