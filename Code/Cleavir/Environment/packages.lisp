@@ -82,4 +82,6 @@
    #:variable-dynamic-extent
    #:function-dynamic-extent
    #:inline
-   #:optimize))
+   #:optimize
+   #:policy
+   #:environment-policy))

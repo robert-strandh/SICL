@@ -71,7 +71,8 @@
 ;;; Augment the environment with an OPTIMIZE specifier.
 (defun augment-environment-with-optimize (optimize environment)
   ;; make sure every environment has a complete optimize & policy.
-  (let* ((previous (cleavir-env:optimize (cleavir-env:optimize-info environment)))
+  (let* ((previous (cleavir-env:optimize
+		    (cleavir-env:optimize-info environment)))
 	 (total (cleavir-policy:normalize-optimize
 		 (append optimize previous)
 		 environment))

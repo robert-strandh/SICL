@@ -19,13 +19,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Variable *POLICY*. Default for :policy initarg.
+;;; This is useful because every AST has a policy, but they're
+;;; shared very heavily and generated all over the place.
+
+(defvar *policy*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class AST.  The base class for all AST classes.
 ;;;
 ;;; ORIGIN is a client-supplied object that is not interpreted by
 ;;; Cleavir.
+;;; POLICY is the compilation policy in force for the AST.
 
 (defclass ast ()
-  ((%origin :initform nil :initarg :origin :accessor origin)))
+  ((%origin :initform nil :initarg :origin :accessor origin)
+   (%policy :initform *policy* :initarg :policy :accessor policy)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -112,9 +122,9 @@
 (defclass immediate-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
-(defun make-immediate-ast (value &key origin)
+(defun make-immediate-ast (value &key origin (policy *policy*))
   (make-instance 'immediate-ast
-    :origin origin
+    :origin origin :policy policy
     :value value))
 
 (cleavir-io:define-save-info immediate-ast
@@ -140,9 +150,9 @@
 (defclass constant-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
-(defun make-constant-ast (value &key origin)
+(defun make-constant-ast (value &key origin (policy *policy*))
   (make-instance 'constant-ast
-    :origin origin
+    :origin origin :policy policy
     :value value))
 
 (cleavir-io:define-save-info constant-ast
@@ -163,9 +173,9 @@
 (defclass lexical-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
-(defun make-lexical-ast (name &key origin)
+(defun make-lexical-ast (name &key origin (policy *policy*))
   (make-instance 'lexical-ast
-    :origin origin
+    :origin origin :policy policy
     :name name))
 
 (cleavir-io:define-save-info lexical-ast
@@ -184,9 +194,9 @@
 (defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
 
-(defun make-symbol-value-ast (symbol-ast &key origin)
+(defun make-symbol-value-ast (symbol-ast &key origin (policy *policy*))
   (make-instance 'symbol-value-ast
-    :origin origin
+    :origin origin :policy policy
     :symbol-ast symbol-ast))
 
 (cleavir-io:define-save-info symbol-value-ast
@@ -205,9 +215,9 @@
   ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-set-symbol-value-ast (symbol-ast value-ast &key origin)
+(defun make-set-symbol-value-ast (symbol-ast value-ast &key origin (policy *policy*))
   (make-instance 'set-symbol-value-ast
-    :origin origin
+    :origin origin :policy policy
     :symbol-ast symbol-ast
     :value-ast value-ast))
 
@@ -231,9 +241,9 @@
    ;; the environment query.
    (%info :initarg :info :reader info)))
 
-(defun make-fdefinition-ast (name-ast info &key origin)
+(defun make-fdefinition-ast (name-ast info &key origin (policy *policy*))
   (make-instance 'fdefinition-ast
-    :origin origin
+    :origin origin :policy policy
     :name-ast name-ast
     :info info))
 
@@ -253,9 +263,9 @@
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
-(defun make-call-ast (callee-ast argument-asts &key origin)
+(defun make-call-ast (callee-ast argument-asts &key origin (policy *policy*))
   (make-instance 'call-ast
-    :origin origin
+    :origin origin :policy policy
     :callee-ast callee-ast
     :argument-asts argument-asts))
 
@@ -312,9 +322,9 @@
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defun make-function-ast (body-ast lambda-list &key origin)
+(defun make-function-ast (body-ast lambda-list &key origin (policy *policy*))
   (make-instance 'function-ast
-    :origin origin
+    :origin origin :policy policy
     :body-ast body-ast
     :lambda-list lambda-list))
 
@@ -351,9 +361,9 @@
 (defclass top-level-function-ast (function-ast)
   ((%forms :initarg :forms :reader forms)))
 
-(defun make-top-level-function-ast (body-ast lambda-list forms &key origin)
+(defun make-top-level-function-ast (body-ast lambda-list forms &key origin (policy *policy*))
   (make-instance 'top-level-function-ast
-    :origin origin
+    :origin origin :policy policy
     :body-ast body-ast
     :lambda-list lambda-list
     :forms forms))
@@ -368,9 +378,9 @@
 (defclass progn-ast (ast)
   ((%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-progn-ast (form-asts &key origin)
+(defun make-progn-ast (form-asts &key origin (policy *policy*))
   (make-instance 'progn-ast
-    :origin origin
+    :origin origin :policy policy
     :form-asts form-asts))
 
 (cleavir-io:define-save-info progn-ast
@@ -386,9 +396,9 @@
 (defclass block-ast (ast)
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
-(defun make-block-ast (body-ast &key origin)
+(defun make-block-ast (body-ast &key origin (policy *policy*))
   (make-instance 'block-ast
-    :origin origin
+    :origin origin :policy policy
     :body-ast body-ast))
   
 (cleavir-io:define-save-info block-ast
@@ -405,9 +415,9 @@
   ((%block-ast :initarg :block-ast :reader block-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defun make-return-from-ast (block-ast form-ast &key origin)
+(defun make-return-from-ast (block-ast form-ast &key origin (policy *policy*))
   (make-instance 'return-from-ast
-    :origin origin
+    :origin origin :policy policy
     :block-ast block-ast
     :form-ast form-ast))
   
@@ -429,9 +439,9 @@
   ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-setq-ast (lhs-ast value-ast &key origin)
+(defun make-setq-ast (lhs-ast value-ast &key origin (policy *policy*))
   (make-instance 'setq-ast
-    :origin origin
+    :origin origin :policy policy
     :lhs-ast lhs-ast
     :value-ast value-ast))
 
@@ -463,9 +473,9 @@
   ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defun make-multiple-value-setq-ast (lhs-asts form-ast &key origin)
+(defun make-multiple-value-setq-ast (lhs-asts form-ast &key origin (policy *policy*))
   (make-instance 'multiple-value-setq-ast
-    :origin origin
+    :origin origin :policy policy
     :lhs-asts lhs-asts
     :form-ast form-ast))
 
@@ -483,9 +493,9 @@
 (defclass tag-ast (ast)
   ((%name :initarg :name :reader name)))
 
-(defun make-tag-ast (name &key origin)
+(defun make-tag-ast (name &key origin (policy *policy*))
   (make-instance 'tag-ast
-    :origin origin
+    :origin origin :policy policy
     :name name))
 
 (cleavir-io:define-save-info tag-ast
@@ -502,9 +512,9 @@
 (defclass tagbody-ast (ast no-value-ast-mixin)
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
-(defun make-tagbody-ast (item-asts &key origin)
+(defun make-tagbody-ast (item-asts &key origin (policy *policy*))
   (make-instance 'tagbody-ast
-    :origin origin
+    :origin origin :policy policy
     :item-asts item-asts))
 
 (cleavir-io:define-save-info tagbody-ast
@@ -520,9 +530,9 @@
 (defclass go-ast (ast)
   ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
-(defun make-go-ast (tag-ast &key origin)
+(defun make-go-ast (tag-ast &key origin (policy *policy*))
   (make-instance 'go-ast
-    :origin origin
+    :origin origin :policy policy
     :tag-ast tag-ast))
 
 (cleavir-io:define-save-info go-ast
@@ -550,9 +560,9 @@
    (%optional-types :initarg :optional :reader optional-types)
    (%rest-type :initarg :rest :reader rest-type)))
 
-(defun make-the-ast (form-ast required optional rest &key origin)
+(defun make-the-ast (form-ast required optional rest &key origin (policy *policy*))
   (make-instance 'the-ast
-    :origin origin
+    :origin origin :policy policy
     :form-ast form-ast
     :required required
     :optional optional
@@ -630,9 +640,9 @@
        :type-specifier-ast value))
     value))
 
-(defun make-typeq-ast (form-ast type-specifier &key origin)
+(defun make-typeq-ast (form-ast type-specifier &key origin (policy *policy*))
   (make-instance 'typeq-ast
-    :origin origin
+    :origin origin :policy policy
     :form-ast form-ast
     :type-specifier type-specifier))
 
@@ -658,9 +668,9 @@
   ((%form :initarg :form :reader form)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
-(defun make-load-time-value-ast (form &optional read-only-p &key origin)
+(defun make-load-time-value-ast (form &optional read-only-p &key origin (policy *policy*))
   (make-instance 'load-time-value-ast
-    :origin origin
+    :origin origin :policy policy
     :form form
     :read-only-p read-only-p))
 
@@ -686,9 +696,9 @@
    (%then-ast :initarg :then-ast :reader then-ast)
    (%else-ast :initarg :else-ast :reader else-ast)))
 
-(defun make-if-ast (test-ast then-ast else-ast &key origin)
+(defun make-if-ast (test-ast then-ast else-ast &key origin (policy *policy*))
   (make-instance 'if-ast
-    :origin origin
+    :origin origin :policy policy
     :test-ast test-ast
     :then-ast then-ast
     :else-ast else-ast))
@@ -709,9 +719,9 @@
   ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
    (%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-multiple-value-call-ast (function-form-ast form-asts &key origin)
+(defun make-multiple-value-call-ast (function-form-ast form-asts &key origin (policy *policy*))
   (make-instance 'multiple-value-call-ast
-    :origin origin
+    :origin origin :policy policy
     :function-form-ast function-form-ast
     :form-asts form-asts))
 
@@ -732,9 +742,9 @@
    ;; A list of ASTs
    (%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-multiple-value-prog1-ast (first-form-ast form-asts &key origin)
+(defun make-multiple-value-prog1-ast (first-form-ast form-asts &key origin (policy *policy*))
   (make-instance 'multiple-value-prog1-ast
-    :origin origin
+    :origin origin :policy policy
     :first-form-ast first-form-ast
     :form-asts form-asts))
 
@@ -760,9 +770,9 @@
    (%value-ast :initarg :value-ast :reader value-ast)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defun make-bind-ast (symbol value-ast body-ast &key origin)
+(defun make-bind-ast (symbol value-ast body-ast &key origin (policy *policy*))
   (make-instance 'bind-ast
-    :origin origin
+    :origin origin :policy policy
     :symbol symbol
     :value-ast value-ast
     :body-ast body-ast))
@@ -787,9 +797,9 @@
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(defun make-eq-ast (arg1-ast arg2-ast &key origin)
+(defun make-eq-ast (arg1-ast arg2-ast &key origin (policy *policy*))
   (make-instance 'eq-ast
-    :origin origin
+    :origin origin :policy policy
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
 

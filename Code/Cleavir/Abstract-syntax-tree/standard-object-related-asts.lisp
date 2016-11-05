@@ -14,9 +14,9 @@
   ((%object-ast :initarg :object-ast :reader object-ast)
    (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)))
 
-(defun make-slot-read-ast (object-ast slot-number-ast &key origin)
+(defun make-slot-read-ast (object-ast slot-number-ast &key origin (policy *policy*))
   (make-instance 'slot-read-ast
-    :origin origin
+    :origin origin :policy policy
     :object-ast object-ast
     :slot-number-ast slot-number-ast))
 
@@ -44,9 +44,9 @@
    (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-slot-write-ast (object-ast slot-number-ast value-ast &key origin)
+(defun make-slot-write-ast (object-ast slot-number-ast value-ast &key origin (policy *policy*))
   (make-instance 'slot-write-ast
-    :origin origin
+    :origin origin :policy policy
     :object-ast object-ast
     :slot-number-ast slot-number-ast
     :value-ast value-ast))

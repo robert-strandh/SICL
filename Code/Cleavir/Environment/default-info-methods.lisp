@@ -863,6 +863,10 @@
 (defmethod optimize-info ((environment entry))
   (optimize-info (next entry)))
 
+;;; OK it's a big enough deal that here is a helper.
+(defun environment-policy (environment)
+  (policy (optimize-info environment)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; GLOBAL-ENVIRONMENT.
