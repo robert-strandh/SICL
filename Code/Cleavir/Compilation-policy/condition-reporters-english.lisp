@@ -2,7 +2,7 @@
 
 (defmethod acclimation:report-condition
     ((condition bad-optimize-value) stream (language acclimation:english))
-  (format stream "Bad optimize value for ~s: ~s~@
+  (format stream "Ignoring bad optimize value for ~s: ~s~@
                   Expected ~s"
 	  (first (specifier condition))
 	  (second (specifier condition))
@@ -10,7 +10,7 @@
 
 (defmethod acclimation:report-condition
     ((condition unknown-optimize-quality) stream (language acclimation:english))
-  (format stream "Unknown OPTIMIZE quality ~s"
+  (format stream "Ignoring unknown OPTIMIZE quality ~s"
 	  (first (specifier condition))))
 
 (defmethod acclimation:report-condition
