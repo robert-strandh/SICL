@@ -7,11 +7,18 @@
 (defgeneric compute-policy-quality (name optimize environment)
   (:argument-precedence-order name environment optimize))
 
-(defmethod no-applicable-method
-    ((gf (eql #'compute-policy-quality)) &rest args)
-  (destructuring-bind (name optimize environment) args
-    (declare (ignore optimize))
-    (error 'no-policy-computer :quality name :env environment)))
+;;; If a policy is directly specified, just use that.
+(defmethod compute-policy-quality :around
+    (name optimize environment)
+  (multiple-value-bind (value present-p)
+      (optimize-value optimize name)
+    (if present-p
+	value
+	(call-next-method))))
+
+(defmethod compute-policy-quality (name optimize environment)
+  (declare (ignore optimize))
+  (error 'no-policy-computer :quality name :env environment))
 
 ;;; Compute the entire policy for given OPTIMIZE info.
 ;;; ENVIRONMENT is global and used for system dispatch.
