@@ -24,29 +24,32 @@
 	 (all-qualities
 	   (append optimize-qualities policy-qualities))
 	 normalized)
-    ;; use a DOLIST instead of LOOP because it gets tricky with
-    ;; all the nested conditionals and collecting.
-    (dolist (spec optimize normalized)
-      (if (consp spec) ; like (optimize (speed 3))
-	  (destructuring-bind (name value) spec
-	    (let ((info (assoc name all-qualities)))
+    (flet ((collect (spec)
+	     ;; only collect the first of each quality.
+	     (pushnew spec normalized :key #'car)))
+      ;; use a DOLIST instead of LOOP because it gets tricky with
+      ;; all the nested conditionals and collecting.
+      (dolist (spec optimize normalized)
+	(if (consp spec) ; like (optimize (speed 3))
+	    (destructuring-bind (name value) spec
+	      (let ((info (assoc name all-qualities)))
+		(if info
+		    (destructuring-bind (name type default) info
+		      (declare (ignore default))
+		      (if (typep value type)
+			  (collect spec)
+			  ;; TODO: add more restarts? This will
+			  ;; just ignore the bad spec.
+			  (warn 'bad-optimize-value
+				:specifier spec
+				:expected type)))
+		    (warn 'unknown-optimize-quality
+			  :specifier spec))))
+	    ;; like (optimize speed)
+	    (let ((info (assoc spec all-qualities)))
 	      (if info
 		  (destructuring-bind (name type default) info
-		    (declare (ignore default))
-		    (if (typep value type)
-			(push spec normalized) ; collect
-			;; TODO: add more restarts? This will just
-			;; ignore the bad spec.
-			(warn 'bad-optimize-value
-			      :specifier spec
-			      :expected type)))
+		    (declare (ignore type))
+		    (collect (list spec default)))
 		  (warn 'unknown-optimize-quality
-			:specifier spec))))
-	  ;; like (optimize speed)
-	  (let ((info (assoc spec all-qualities)))
-	    (if info
-		(destructuring-bind (name type default) info
-		  (declare (ignore type))
-		  (push (list spec default) normalized)) ; collect
-		(warn 'unknown-optimize-quality
-		      :specifier spec)))))))
+			:specifier spec))))))))
