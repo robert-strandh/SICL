@@ -315,18 +315,18 @@
 ;;; declarations, introduced by a declaration in a special form that
 ;;; allows such declarations.
 (defclass optimize (entry)
-  ((%quality :initarg :quality :reader quality)
-   (%value :initarg :value :reader value)))
+  ((%optimize :initarg :optimize :reader optimize)
+   (%policy :initarg :policy :reader policy)))
 
-(defmethod add-optimize (environment quality value)
+(defmethod add-optimize (environment optimize policy)
   (make-instance 'optimize
     :next environment
-    :quality quality
-    :value value))
+    :optimize optimize
+    :policy policy))
 
 (defmethod print-object ((object optimize) stream)
   (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s ~s" (quality object) (value object))))
+    (format stream "~s" (optimize object))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

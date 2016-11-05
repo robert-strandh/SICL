@@ -848,40 +848,20 @@
 ;;;
 ;;; OPTIMIZE-INFO
 ;;;
-;;; To determine the optimize info, we determine each component
-;;; individually, and then create the final INFO instance.
 ;;;
-;;; Each component is found by obtaining the first entry in the
-;;; environment that corresponds, or of there are no entries, we get
-;;; the value from the info instance returned for the global environment. 
+;;; In order to avoid recomputing policies, full optimize info and
+;;; policies are stored in each optimize entry.
+;;;
+;;; This makes the existence of a dedicated optimize-info class
+;;; redundant, but it's not a big deal.
 
-(defgeneric quality-value (environment name))
-
-;;; This method is called on the global environment
-(defmethod quality-value (environment name)
-  (funcall name (optimize-info environment)))
-
-;;; This method is called when the entry is unrelated.
-(defmethod quality-value ((environment entry) name)
-  (quality-value (next environment) name))
-
-;;; This method is called when we have an OPTIMIZE entry.
-(defmethod quality-value ((environment optimize) name)
-  (if (eq name (quality environment))
-      ;; We found an entry with the right quality.  We are done.
-      ;; Return its value
-      (value environment)
-      ;; It was an optimize entry, but it does not mention the
-      ;; quality we are interested in.  Search further.  
-      (quality-value (next environment) name)))
+(defmethod optimize-info ((environment optimize))
+  (make-instance 'optimize-info
+    :optimize (optimize environment)
+    :policy (policy environment)))
 
 (defmethod optimize-info ((environment entry))
-  (make-instance 'optimize-info
-    :speed (quality-value environment 'speed)
-    :debug (quality-value environment 'debug)
-    :space (quality-value environment 'space)
-    :compilation-speed (quality-value environment 'compilation-speed)
-    :safety (quality-value environment 'safety)))
+  (optimize-info (next entry)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
