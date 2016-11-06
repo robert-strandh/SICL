@@ -605,5 +605,8 @@
 (defmethod convert :around (form environment system)
   (declare (ignore system))
   (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
-	(*subforms-are-top-level-p* nil))
+	(*subforms-are-top-level-p* nil)
+	;; gives all generated ASTs the appropriate policy.
+	(cleavir-ast:*policy*
+	  (cleavir-env:environment-policy environment)))
     (call-next-method)))

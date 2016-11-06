@@ -38,6 +38,12 @@
 ;;; instruction resulting from the compilation.
 (defgeneric compile-ast (ast context))
 
+;;; Instructions inherit policies from the AST that birthed them.
+(defmethod compile-ast :around ((ast cleavir-ast:ast) context)
+  (declare (ignore context))
+  (let ((cleavir-ir:*policy* (cleavir-ast:policy ast)))
+    (call-next-method)))
+
 ;;; When an AST that is meant for a test (as indicated by it being an
 ;;; instance of BOOLEAN-AST-MIXIN) is compiled in a context where one
 ;;; or more values are needed, we signal an error.
@@ -565,7 +571,8 @@
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
-	(*location-info* (make-hash-table :test #'eq)))
+	(*location-info* (make-hash-table :test #'eq))
+	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (assert (typep ast 'cleavir-ast:top-level-function-ast))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
 	   (forms (cleavir-ast:forms ast))
@@ -585,7 +592,8 @@
 (defun compile-toplevel-unhoisted (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
-	(*location-info* (make-hash-table :test #'eq)))
+	(*location-info* (make-hash-table :test #'eq))
+	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
 	   (enter (cleavir-ir:make-enter-instruction ll))
 	   (values (cleavir-ir:make-values-location))

@@ -49,9 +49,8 @@
       ((inline notinline)
        (cleavir-env:add-inline
 	environment (car rest) head))
-      (optimize
-       (destructuring-bind (quality value) (car rest)
-	 (cleavir-env:add-optimize environment quality value)))
+      (optimize ; handled in -declarations; ignore
+       environment)
       (special
        ;; This case is a bit tricky, because if the
        ;; variable is globally special, nothing should
@@ -69,10 +68,30 @@
 	     canonicalized-declaration-specifier)
        environment))))
 
+;;; Augment the environment with an OPTIMIZE specifier.
+(defun augment-environment-with-optimize (optimize environment)
+  ;; make sure every environment has a complete optimize & policy.
+  (let* ((previous (cleavir-env:optimize
+		    (cleavir-env:optimize-info environment)))
+	 (total (cleavir-policy:normalize-optimize
+		 (append optimize previous)
+		 environment))
+	 ;; compute also normalizes, so this is slightly wasteful.
+	 (policy (cleavir-policy:compute-policy
+		  total
+		  (cleavir-env:global-environment environment))))
+    (cleavir-env:add-optimize environment total policy)))
+
 ;;; Augment the environment with a list of canonicalized declartion
 ;;; specifiers.
 (defun augment-environment-with-declarations (environment canonicalized-dspecs)
-  (let ((new-env environment))
+  (let ((new-env
+	  ;; handle OPTIMIZE specially.
+	  (let ((optimize (loop for spec in canonicalized-dspecs
+				when (eq (first spec) 'optimize) append (rest spec))))
+	    (if optimize
+		(augment-environment-with-optimize optimize environment)
+		environment))))
     (loop for spec in canonicalized-dspecs
 	  do (setf new-env (augment-environment-with-declaration spec new-env)))
     new-env))

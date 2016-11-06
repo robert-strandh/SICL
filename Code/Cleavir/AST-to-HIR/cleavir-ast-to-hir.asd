@@ -17,5 +17,4 @@
    (:file "compile-float-related-asts")
    (:file "compile-cons-related-asts")
    (:file "compile-standard-object-related-asts")
-   (:file "compile-array-related-asts")
-   (:file "compile-optimize-related-asts")))
+   (:file "compile-array-related-asts")))

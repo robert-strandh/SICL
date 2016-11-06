@@ -26,7 +26,7 @@
 
 (defgeneric add-function-dynamic-extent (environment function-name))
 
-(defgeneric add-optimize (environment quality value))
+(defgeneric add-optimize (environment optimize policy))
 
 (defgeneric add-inline (environment function-name inline))
 

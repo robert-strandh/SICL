@@ -8,11 +8,6 @@
 	   #:ignore
 	   #:dynamic-extent
 	   #:compiler-macro
-	   #:speed
-	   #:safety
-	   #:compilation-speed
-	   #:space
-	   #:debug
 	   #:eval
 	   #:macro-function
 	   #:compiler-macro-function
@@ -47,11 +42,6 @@
    #:expansion
    #:expander
    #:compiler-macro
-   #:speed
-   #:safety
-   #:compilation-speed
-   #:space
-   #:debug
    #:no-variable-info
    #:no-function-info
    #:no-block-info
@@ -92,4 +82,6 @@
    #:variable-dynamic-extent
    #:function-dynamic-extent
    #:inline
-   #:optimize))
+   #:optimize
+   #:policy
+   #:environment-policy))

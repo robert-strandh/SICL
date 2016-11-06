@@ -6,6 +6,7 @@
 	       :cleavir-primop
 	       :cleavir-code-utilities
 	       :cleavir-environment
+	       :cleavir-compilation-policy
                :acclimation)
   :serial t
   :components

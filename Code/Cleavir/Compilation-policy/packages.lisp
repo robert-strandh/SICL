@@ -3,5 +3,7 @@
 (defpackage #:cleavir-compilation-policy
   (:use #:common-lisp)
   (:nicknames #:cleavir-policy)
-  (:export #:policy
-	   #:infer-types-p))
+  (:export #:policy-value)
+  (:export #:policy-qualities #:define-cleavir-policy-quality)
+  (:export #:optimize-value #:normalize-optimize)
+  (:export #:compute-policy #:compute-policy-quality))

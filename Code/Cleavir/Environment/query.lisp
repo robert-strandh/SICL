@@ -262,17 +262,13 @@
 ;;; OPTIMIZE-INFO.
 
 ;;; Cleavir tools call this function in order to obtain information
-;;; about optimization levels that are in scope.
+;;; about the policy and optimization levels that are in scope.
+
 (defgeneric optimize-info (environment))
 
 (defclass optimize-info ()
-  ((%speed :initform 3 :initarg :speed :reader speed)
-   (%debug :initform 3 :initarg :debug :reader debug)
-   (%space :initform 3 :initarg :space :reader space)
-   (%safety :initform 3 :initarg :safety :reader safety)
-   (%compilation-speed :initform 3
-		       :initarg :compilation-speed
-		       :reader compilation-speed)))
+  ((%optimize :initarg :optimize :reader optimize)
+   (%policy :initarg :policy :reader policy)))
 
 (defgeneric type-expand (environment type))
 

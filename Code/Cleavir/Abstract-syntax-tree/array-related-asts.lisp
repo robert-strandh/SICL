@@ -63,9 +63,9 @@
        ())
 
      (defun ,simple-reader-class-constructor-name
-	 (array-ast index-ast &key origin)
+	 (array-ast index-ast &key origin (policy *policy*))
        (make-instance ',simple-reader-class-name
-	 :origin origin
+	 :origin origin :policy policy
 	 :array-ast array-ast
 	 :index-ast index-ast))
 
@@ -73,9 +73,9 @@
        ())
 
      (defun ,simple-writer-class-constructor-name
-	 (array-ast index-ast element-ast &key origin)
+	 (array-ast index-ast element-ast &key origin (policy *policy*))
        (make-instance ',simple-writer-class-name
-	 :origin origin
+	 :origin origin :policy policy
 	 :array-ast array-ast
 	 :index-ast index-ast
 	 :element-ast element-ast))
@@ -84,9 +84,9 @@
        ())
 
      (defun ,non-simple-reader-class-constructor-name
-	 (array-ast index-ast &key origin)
+	 (array-ast index-ast &key origin (policy *policy*))
        (make-instance ',non-simple-reader-class-name
-	 :origin origin
+	 :origin origin :policy policy
 	 :array-ast array-ast
 	 :index-ast index-ast))
 
@@ -94,9 +94,9 @@
        ())
 
      (defun ,non-simple-writer-class-constructor-name
-	 (array-ast index-ast element-ast &key origin)
+	 (array-ast index-ast element-ast &key origin (policy *policy*))
        (make-instance ',non-simple-writer-class-name
-	 :origin origin
+	 :origin origin :policy policy
 	 :array-ast array-ast
 	 :index-ast index-ast
 	 :element-ast element-ast))))

@@ -61,61 +61,10 @@
 ;;;   currently not used.  It is meant to be used for forms like CASE,
 ;;;   TYPECASE, etc.  Again, the RESULTS would be the empty list.
 
-;;; It is highly likely that the slots corresponding to optimize
-;;; qualities will disappear in the future, and be replaced by a
-;;; different organization.  There are several reasons for this
-;;; change:
-;;;
-;;;  * We think it is difficult to come up with a technique that
-;;;    allows the implementation to add its own optimize qualities
-;;;    while relying on default treatment of the standard ones.
-;;;
-;;;  * We think we need a bunch of flags that allow finer control of
-;;;    the compilation process, such as controlling whether a variable
-;;;    should be kept alive until it is out of scope in the source,
-;;;    whether a variable should be available even though the compiler
-;;;    can prove that it is constant and so could remove it, etc.
-;;;
-;;;  * Since there would typically be many more of these compilation
-;;;    flags than there are optimize qualities, an initial set of flag
-;;;    values would have to be computed from the optimize quality
-;;;    values, but then the flag values could evolve independently of
-;;;    the optimize.
-;;;
-;;; A tentative solution to this problem would be to have two objects
-;;; in the context; one object that contains the current optimize
-;;; qualities and another object that contains current flags.  We
-;;; would provide default methods for computing a flag object from an
-;;; object containing optimize qualities.  The implementation would be
-;;; allowed to created subclasses from both these classes so as to add
-;;; new optimize qualities and new flags.  We would provide a
-;;; mechanism to customize the computation that would only need to
-;;; provide differences from the default.
-
 (defclass context ()
   ((%results :initarg :results :reader results)
    (%successors :initarg :successors :accessor successors)
-   (%invocation :initarg :invocation :reader invocation)
-   (%speed-value
-    :initform 1
-    :initarg :speed-value
-    :reader speed-value)
-   (%debug-value
-    :initform 1
-    :initarg :debug-value
-    :reader debug-value)
-   (%safety-value
-    :initform 1
-    :initarg :safety-value
-    :reader safety-value)
-   (%space-value
-    :initform 1
-    :initarg :space-value
-    :reader space-value)
-   (%compilation-speed-value
-    :initform 1
-    :initarg :compilation-speed-value
-    :reader compilation-speed-value)))
+   (%invocation :initarg :invocation :reader invocation)))
 
 (defun context (results successors invocation)
   (unless (or (and (listp results)
@@ -149,10 +98,5 @@
 	 (make-instance 'context
 			:result (results context)
 			:successor (successors context)
-			:invocation (invocation context)
-			:speed-value (speed-value context)
-			:debug-value (debug-value context)
-			:safety-value (safety-value context)
-			:space-value (space-value context)
-			:compilation-speed-value (compilation-speed-value context))
+			:invocation (invocation context))
 	 args))

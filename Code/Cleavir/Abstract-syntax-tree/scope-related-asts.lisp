@@ -24,8 +24,8 @@
   (:child-ast child-ast)
   (:variable-ast variable-ast))
 
-(defun make-scope-ast (variable-ast child-ast &key origin)
+(defun make-scope-ast (variable-ast child-ast &key origin (policy *policy*))
   (make-instance 'scope-east
-    :origin origin
+    :origin origin :policy policy
     :variable-ast variable-ast
     :child-ast child-ast))

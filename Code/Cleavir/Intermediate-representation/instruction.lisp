@@ -44,11 +44,16 @@
   (loop for output in (outputs instruction)
 	do (push instruction (defining-instructions output))))
 
+;;; Default value, since it can be shared by several instructions
+;;; during generation, similar to the AST case.
+(defvar *policy*)
+
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
    (%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :accessor inputs)
-   (%outputs :initform '() :initarg :outputs :accessor outputs)))
+   (%outputs :initform '() :initarg :outputs :accessor outputs)
+   (%policy :initform *policy* :initarg :policy :accessor policy)))
 
 (defmethod initialize-instance :after ((obj instruction) &key)
   (unless (and (listp (successors obj))
