@@ -129,3 +129,16 @@ like this:
           when (eql item element)
             return element)))
 \end{verbatim}}
+
+We notice a couple of essential properties of this code:
+
+\begin{itemize}
+\item The exact set of available vector types in the implementation is
+  hidden inside the macro \texttt{with-vector-type}, which would have
+  a different version in different \commonlisp{} implementations, but
+  there will be a single occurrence of this macro for all the sequence
+  functions.
+\item The maintenance problem resulting from duplicating the loop has
+  disappeared, because the macro \texttt{with-vector-type} is in
+  charge of the duplication, making it certain that the copy is exact.
+\end{itemize}
