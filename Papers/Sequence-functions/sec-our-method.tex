@@ -96,7 +96,7 @@ of duplicating the loop:
 {\small\begin{verbatim}
 (defmacro with-vector-type (vector-var &body body)
   `(macrolet ((vref (array index)
-                `(aref (,array ,index))))
+                `(aref ,array ,index)))
      (if (typep ,vector-var 'simple-byte-vector)
          (locally (declare (type simple-byte-vector
                                  ,vector-var))
