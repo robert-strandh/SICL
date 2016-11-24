@@ -142,3 +142,47 @@ We notice a couple of essential properties of this code:
   disappeared, because the macro \texttt{with-vector-type} is in
   charge of the duplication, making it certain that the copy is exact.
 \end{itemize}
+
+For a second example in the same spirit, consider how the keyword
+parameter \texttt{end} is handled when the sequence is a list.
+Again, we illustrate our technique with a simplified version of the
+\texttt{find} function.
+
+As for the previous example, in terms of portability and
+maintainability, it would be desirable to implement
+\texttt{find-list} like this:
+
+{\small\begin{verbatim}
+(defun find-list-1 (item list &key end)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (loop for index from 0
+        for element in vector
+        when (and (not (null end)) (>= index end))
+          return nil
+        when (eql item element)
+          return element))
+\end{verbatim}}
+
+As with the previous example, most \commonlisp{} implementations would
+have difficulties optimizing the code, even though the test
+\texttt{(null end)} is loop invariant.  We solve this problem by
+introducing the following macro:
+
+{\small\begin{verbatim}
+(defmacro with-end (end-var &body body)
+  `(if (null ,end-var)
+       (progn ,@body)
+       (progn ,@body)))
+\end{verbatim}}
+
+{\small\begin{verbatim}
+(defun find-list-2 (item list &key end)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (with-end-var end
+    (loop for index from 0
+          for element in vector
+          when (and (not (null end)) (>= index end))
+            return nil
+          when (eql item element)
+            return element))
+\end{verbatim}}
