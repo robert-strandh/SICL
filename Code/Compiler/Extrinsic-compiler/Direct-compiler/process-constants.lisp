@@ -46,7 +46,7 @@
     ;; Insert the instruction that accesses the element in
     ;; the static runtime environment.
     (cleavir-ir:insert-instruction-before
-     (cleavir-ir:make-t-aref-instruction
+     (cleavir-ir:make-simple-t-aref-instruction
       temp2
       (make-instance 'cleavir-ir:immediate-input
 	:value (ash (1+ (length constants)) 1))
@@ -73,7 +73,7 @@
 	;; Insert the instruction that accesses the element in
 	;; the static runtime environment.
 	(cleavir-ir:insert-instruction-before
-	 (cleavir-ir:make-t-aref-instruction
+	 (cleavir-ir:make-simple-t-aref-instruction
 	  temp
 	  (make-instance 'cleavir-ir:immediate-input
 	    :value (ash (1+ (length constants)) 1))
