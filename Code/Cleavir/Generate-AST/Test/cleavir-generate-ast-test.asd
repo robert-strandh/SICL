@@ -2,12 +2,10 @@
 
 (defsystem :cleavir-generate-ast-test
   :depends-on (:cleavir-generate-ast
-	       :cleavir-ast-transformations
-	       :cleavir-ast-interpreter)
+	       :cleavir-ast-transformations)
   :serial t
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "minimal-compilation")
-   (:file "generate-ast")))
+   (:file "minimal-compilation")))
 
