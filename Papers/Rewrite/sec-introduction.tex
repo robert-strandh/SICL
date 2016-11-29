@@ -98,3 +98,12 @@ is the start of the second \texttt{let} binding.  As a consequence,
 after the second \texttt{let} binding has been established, the type
 information available for \texttt{x} is \texttt{(or cons null)}, which
 is the same as \texttt{list}.
+
+In order to avoid the second test for \texttt{consp}, we need to
+\emph{replicate} the instructions corresponding to the establishment
+of the second \texttt{let} binding.  In this paper, we introduce a
+technique for accomplishing this replication using \emph{local graph
+  rewriting}.  The advantage of this technique is that it is very
+simple to implement, and that its semantic soundness is trivial to
+prove.  We also prove that the technique always terminates, no matter
+how complicated the intermediate computation between the two tests.
