@@ -90,7 +90,10 @@ as to simplify the presentation.  Each control arc is annotated by a
 type descriptor, indicating the type of the variable \texttt{x} at
 that point in the execution of the program.
 
-Because different type information is available from the two
-predecessor of the second test for \texttt{consp}, in that
-instruction, we only know that \texttt{x} is of type \texttt{list},
-which is the same as \texttt{(or cons null)}.
+After the first \texttt{let} binding has been executed, the control
+arc with the type \texttt{cons} and that with the type \texttt{null}
+both arrive at the instruction that calls \texttt{some-function} which
+is the start of the second \texttt{let} binding.  As a consequence,
+after the second \texttt{let} binding has been established, the type
+information available for \texttt{x} is \texttt{(or cons null)}, which
+is the same as \texttt{list}.
