@@ -25,15 +25,12 @@ versions.
 
    ```
    $ git clone https://github.com/robert-strandh/SICL
-   $
+   cd SICL 
    ```
-
 
 [source]: https://github.com/robert-strandh/SICL
 
    
-   ``Install with  ASDF
-    ``
 
    
 
@@ -62,6 +59,7 @@ The SICL community members are usually on various IRC channels, mostly
 [#lisp]: https://webchat.freenode.net/
 [#clim]: https://webchat.freenode.net/
 [logs]:http://irclog.tymoon.eu/freenode/%23clim
+[LICENSE-BSD]:https://github.com/robert-strandh/SICL/blob/master/LICENSE
 
 Keep up on SICL by reading the IRC [logs]
 
