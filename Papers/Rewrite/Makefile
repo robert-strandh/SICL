@@ -1,10 +1,35 @@
-all: looppng redundantpng
+NAME=path-replication
 
-looppng: loop1.png loop2.png loop3.png loop4.png loop5.png loop6.png loop7.png
-redundantpng: redundant1.png redundant2.png redundant3.png redundant4.png redundant5.png redundant6.png redundant7.png redundant8.png
+TEXFILES=$(NAME).tex $(shell ./tex-dependencies $(NAME).tex)
+BIBFILES=$(NAME).bib
+PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
+VERBATIM=$(shell ./strip-dependence verbatimtabinput $(TEXFILES))
+CODEFILES=$(shell ./strip-dependence inputcode $(TEXFILES))
+PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 
-%.png: %.dot
-	dot -Tpng $< >$@
+all : $(NAME).pdf
+
+%.pdf: %.fig
+	fig2dev -Lpdftex -m 0.75  $< $@
+
+%.pdf_t: %.fig %.pdf
+	fig2dev -Lpdftex_t -m 0.75 -p $(basename $<).pdf $< $@
+
+%.code: %.lisp 
+	./codify $<
+
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES)
+	pdflatex $<
+	bibtex $(NAME)
+	pdflatex $<
+	pdflatex $<
+
+view: $(NAME).pdf
+	xpdf $<
 
 clean:
-	rm -f *.png *~
+	rm -f *.aux *.log *~ *.pdf *.pdf *.pdf_t *.bbl *.blg
+
+spotless: clean
+	rm -f *.ps *.dvi *.pdf *.pdf_t *.toc *.idx *.ilg *.ind *.fig.bak
+	rm -f *.out *.cb *.cb2
