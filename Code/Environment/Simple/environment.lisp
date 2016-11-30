@@ -85,7 +85,11 @@
 		  :reader declarations)
    ;; An EQ hash table containing property lists for symbols.
    (%property-lists :initform (make-hash-table :test #'eq)
-		    :reader property-lists)))
+		    :reader property-lists)
+   (%speed :initform 2 :accessor sicl-genv:speed)
+   (%space :initform 2 :accessor sicl-genv:space)
+   (%debug :initform 2 :accessor sicl-genv:debug)
+   (%compilation-speed :initform 2 :accessor sicl-genv:compilation-speed)))
 
 (cl:defvar *global-environment*)
 
