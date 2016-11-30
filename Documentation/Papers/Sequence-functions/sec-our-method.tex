@@ -81,9 +81,9 @@ Similarly, whether a special version (possibly
 implementation-specific) of \texttt{aref} is required also depends on
 the implementation.
 
-Not only, do we know have implementation-specific code, but we also
+Not only, do we now have implementation-specific code, but we also
 have a maintenance problem.  The loop will have to be duplicated for
-each sequence function, and for all specific type that the
+each sequence function, and for every specific type that the
 implementation can handle.  This duplication requires separate tests
 for each case so as to guarantee as much coverage as possible.  Given
 the number of combinations of types, plus the additional parameters we
@@ -96,7 +96,7 @@ of duplicating the loop:
 {\small\begin{verbatim}
 (defmacro with-vector-type (vector-var &body body)
   `(macrolet ((vref (array index)
-                `(aref (,array ,index))))
+                `(aref ,array ,index)))
      (if (typep ,vector-var 'simple-byte-vector)
          (locally (declare (type simple-byte-vector
                                  ,vector-var))
@@ -128,4 +128,61 @@ like this:
           for element = (vref vector index)
           when (eql item element)
             return element)))
+\end{verbatim}}
+
+We notice a couple of essential properties of this code:
+
+\begin{itemize}
+\item The exact set of available vector types in the implementation is
+  hidden inside the macro \texttt{with-vector-type}, which would have
+  a different version in different \commonlisp{} implementations, but
+  there will be a single occurrence of this macro for all the sequence
+  functions.
+\item The maintenance problem resulting from duplicating the loop has
+  disappeared, because the macro \texttt{with-vector-type} is in
+  charge of the duplication, making it certain that the copy is exact.
+\end{itemize}
+
+For a second example in the same spirit, consider how the keyword
+parameter \texttt{end} is handled when the sequence is a list.
+Again, we illustrate our technique with a simplified version of the
+\texttt{find} function.
+
+As for the previous example, in terms of portability and
+maintainability, it would be desirable to implement
+\texttt{find-list} like this:
+
+{\small\begin{verbatim}
+(defun find-list-1 (item list &key end)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (loop for index from 0
+        for element in vector
+        when (and (not (null end)) (>= index end))
+          return nil
+        when (eql item element)
+          return element))
+\end{verbatim}}
+
+As with the previous example, most \commonlisp{} implementations would
+have difficulties optimizing the code, even though the test
+\texttt{(null end)} is loop invariant.  We solve this problem by
+introducing the following macro:
+
+{\small\begin{verbatim}
+(defmacro with-end (end-var &body body)
+  `(if (null ,end-var)
+       (progn ,@body)
+       (progn ,@body)))
+\end{verbatim}}
+
+{\small\begin{verbatim}
+(defun find-list-2 (item list &key end)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (with-end-var end
+    (loop for index from 0
+          for element in vector
+          when (and (not (null end)) (>= index end))
+            return nil
+          when (eql item element)
+            return element))
 \end{verbatim}}

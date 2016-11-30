@@ -18,6 +18,5 @@
   :components
   ((:file "packages")
    (:file "classes")
-   (:file "introduce-immediates")
    (:file "process-constants")
    (:file "compile")))

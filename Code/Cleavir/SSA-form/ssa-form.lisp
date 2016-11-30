@@ -105,23 +105,23 @@
 (defun phi-instructions (top-node phi-nodes original-variable live-p dominees)
   (let ((time (get-internal-run-time))
 	(funs (loop for node in phi-nodes
-		    for count = (length (cleavir-mir:predecessors node))
+		    for count = (length (cleavir-ir:predecessors node))
 		    collect (cons node (make-list (1+ count)))))
-	(name (cleavir-mir:name original-variable)))
+	(name (cleavir-ir:name original-variable)))
     (labels
 	((traverse (node variable)
 	   (if (not (funcall live-p node))
 	       nil
 	       (let ((phi-fun (rest (assoc node funs :test #'eq))))
-		 (setf (cleavir-mir:inputs node)
+		 (setf (cleavir-ir:inputs node)
 		       (substitute variable original-variable
-				   (cleavir-mir:inputs node)))
+				   (cleavir-ir:inputs node)))
 		 (unless (null phi-fun)
-		   (setf variable (cleavir-mir:make-lexical-location name))
+		   (setf variable (cleavir-ir:make-lexical-location name))
 		   (setf (first phi-fun) variable))
-		 (loop for succ in (cleavir-mir:successors node)
+		 (loop for succ in (cleavir-ir:successors node)
 		       for phi-fun = (rest (assoc succ funs :test #'eq))
-		       for pos = (position node (cleavir-mir:predecessors succ))
+		       for pos = (position node (cleavir-ir:predecessors succ))
 		       do (unless (null phi-fun)
 			    (setf (first (nthcdr pos (rest phi-fun)))
 				  variable)))
@@ -129,7 +129,7 @@
 		       do (traverse dominee variable))))))
       (traverse top-node original-variable))
     (loop for (node output . inputs) in funs
-	  collect (cleavir-mir:make-phi-instruction inputs output node)
+	  collect (cleavir-ir:make-phi-instruction inputs output node)
 	  finally (incf *ssa2-call-count*)
 		  (incf *ssa2-run-time* (- (get-internal-run-time) time)))))
 

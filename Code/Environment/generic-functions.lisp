@@ -731,3 +731,67 @@
 ;;; that a subsequent call to DECLARATION returns false.
 
 (defgeneric (setf declaration) (value name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function SPEED
+;;;
+;;; Return the value for the opimize quality SPEED.
+
+(defgeneric speed (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF SPEED)
+;;;
+;;; Set the value of the optimize-quality SPEED.
+
+(defgeneric (setf speed) (value environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function SPACE
+;;;
+;;; Return the value for the opimize quality SPACE.
+
+(defgeneric space (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF SPACE)
+;;;
+;;; Set the value of the optimize-quality SPACE.
+
+(defgeneric (setf space) (value environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function DEBUG
+;;;
+;;; Return the value for the opimize quality DEBUG.
+
+(defgeneric debug (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF DEBUG)
+;;;
+;;; Set the value of the optimize-quality DEBUG.
+
+(defgeneric (setf debug) (value environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function COMPILATION-SPEED
+;;;
+;;; Return the value for the opimize quality COMPILATION-SPEED.
+
+(defgeneric compilation-speed (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF COMPILATION-SPEED)
+;;;
+;;; Set the value of the optimize-quality COMPILATION-SPEED.
+
+(defgeneric (setf compilation-speed) (value environment))
