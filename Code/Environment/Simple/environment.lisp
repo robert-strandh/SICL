@@ -90,9 +90,15 @@
    ;; (QUALITY-NAME . VALUE) for each OPTIMIZE quality allowed in this
    ;; environment.
    (%optimize-quality-values
-    :initform `((speed . 0) (compilation-speed . 0)
+    :initform '((speed . 0) (compilation-speed . 0)
 		(space . 0) (debug . 3))
-    :reader sicl-global-environment:optimize-quality-values)))
+    :reader sicl-global-environment:optimize-quality-values)
+   ;; An association list where each element is of the form
+   ;; (POLICY-NAME . VALUE) for each policy allowed in this
+   ;; environment.
+   (%policy-values
+    :initform '()
+    :reader sicl-global-environment:policy-values)))
 
 (cl:defvar *global-environment*)
 
