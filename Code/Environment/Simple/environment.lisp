@@ -85,7 +85,14 @@
 		  :reader declarations)
    ;; An EQ hash table containing property lists for symbols.
    (%property-lists :initform (make-hash-table :test #'eq)
-		    :reader property-lists)))
+		    :reader property-lists)
+   ;; An association list where each element is of the form
+   ;; (QUALITY-NAME . VALUE) for each OPTIMIZE quality allowed in this
+   ;; environment.
+   (%optimize-quality-values
+    :initform `((speed . 0) (compilation-speed . 0)
+		(space . 0) (debug . 3))
+    :reader sicl-global-environment:optimize-quality-values)))
 
 (cl:defvar *global-environment*)
 
