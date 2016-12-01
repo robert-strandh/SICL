@@ -50,10 +50,6 @@
 	   #:get-setf-expansion
 	   #:declaration
 	   #:symbol-plist
-	   #:speed
-	   #:space
-	   #:debug
-	   #:compilation-speed
 	   )
   (:export
    #:environment
@@ -93,10 +89,6 @@
    #:+global-environment+
    #:global-environment
    #:declaration
-   #:speed
-   #:space
-   #:debug
-   #:compilation-speed
    ))
 
 (defpackage #:sicl-standard-environment-functions
