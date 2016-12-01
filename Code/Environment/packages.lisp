@@ -89,6 +89,7 @@
    #:+global-environment+
    #:global-environment
    #:declaration
+   #:optimize-quality-values
    ))
 
 (defpackage #:sicl-standard-environment-functions
