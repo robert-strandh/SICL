@@ -741,3 +741,13 @@
 ;;; environement allows.
 
 (defun optimize-quality-values (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function POLICY-VALUES.
+;;;
+;;; Return an association list containing pairs of the form
+;;; (POLICY-NAME . VALUE) for each policy that this environement
+;;; allows.
+
+(defun policy-values (environment))
