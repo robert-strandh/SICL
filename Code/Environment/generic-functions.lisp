@@ -731,3 +731,13 @@
 ;;; that a subsequent call to DECLARATION returns false.
 
 (defgeneric (setf declaration) (value name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function OPTIMIZE-QUALITY-VALUES.
+;;;
+;;; Return an association list containing pairs of the form
+;;; (QUALITY-NAME . VALUE) for all the OPTIMIZE qualities that this
+;;; environement allows.
+
+(defun optimize-quality-values (environment))
