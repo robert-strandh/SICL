@@ -86,10 +86,19 @@
    ;; An EQ hash table containing property lists for symbols.
    (%property-lists :initform (make-hash-table :test #'eq)
 		    :reader property-lists)
-   (%speed :initform 2 :accessor sicl-genv:speed)
-   (%space :initform 2 :accessor sicl-genv:space)
-   (%debug :initform 2 :accessor sicl-genv:debug)
-   (%compilation-speed :initform 2 :accessor sicl-genv:compilation-speed)))
+   ;; An association list where each element is of the form
+   ;; (QUALITY-NAME . VALUE) for each OPTIMIZE quality allowed in this
+   ;; environment.
+   (%optimize-quality-values
+    :initform '((speed . 0) (compilation-speed . 0)
+		(space . 0) (debug . 3))
+    :reader sicl-global-environment:optimize-quality-values)
+   ;; An association list where each element is of the form
+   ;; (POLICY-NAME . VALUE) for each policy allowed in this
+   ;; environment.
+   (%policy-values
+    :initform '()
+    :reader sicl-global-environment:policy-values)))
 
 (cl:defvar *global-environment*)
 

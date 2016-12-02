@@ -734,64 +734,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function SPEED
+;;; Generic function OPTIMIZE-QUALITY-VALUES.
 ;;;
-;;; Return the value for the opimize quality SPEED.
+;;; Return an association list containing pairs of the form
+;;; (QUALITY-NAME . VALUE) for all the OPTIMIZE qualities that this
+;;; environement allows.
 
-(defgeneric speed (environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function (SETF SPEED)
-;;;
-;;; Set the value of the optimize-quality SPEED.
-
-(defgeneric (setf speed) (value environment))
+(defun optimize-quality-values (environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function SPACE
+;;; Generic function POLICY-VALUES.
 ;;;
-;;; Return the value for the opimize quality SPACE.
+;;; Return an association list containing pairs of the form
+;;; (POLICY-NAME . VALUE) for each policy that this environement
+;;; allows.
 
-(defgeneric space (environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function (SETF SPACE)
-;;;
-;;; Set the value of the optimize-quality SPACE.
-
-(defgeneric (setf space) (value environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function DEBUG
-;;;
-;;; Return the value for the opimize quality DEBUG.
-
-(defgeneric debug (environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function (SETF DEBUG)
-;;;
-;;; Set the value of the optimize-quality DEBUG.
-
-(defgeneric (setf debug) (value environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function COMPILATION-SPEED
-;;;
-;;; Return the value for the opimize quality COMPILATION-SPEED.
-
-(defgeneric compilation-speed (environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function (SETF COMPILATION-SPEED)
-;;;
-;;; Set the value of the optimize-quality COMPILATION-SPEED.
-
-(defgeneric (setf compilation-speed) (value environment))
+(defun policy-values (environment))
