@@ -1,0 +1,87 @@
+Symbols from the COMMON-LISP package that are defined in the CLOS
+package: 
+
+   * function-keywords.  A generic function that takes a method and
+     return the keyword parameters for that method.
+
+   * ensure-generic-function.
+
+   * allocate-instance.
+
+   * reinitialize-instance.
+
+   * shared-initialize
+
+   * update-instance-for-different-class.
+
+   * update-instance-for-redefined-class.
+
+   * change-class.
+
+   * slot-boundp.
+
+   * slot-exists-p.
+
+   * slot-makunbound.
+
+   * slot-missing.  A generic function that is called when a slot is
+     missing in some object.
+
+   * slot-unbound.  A generic function that is called when a slot is
+     unbound in some object.
+
+   * slot-value.
+
+   * method-qualifiers.  
+
+   * no-applicable-method
+
+   * no-next-method
+
+   * remove-method
+
+   * make-instance.
+
+   * make-instances-obsolete.
+
+   (* make-load-form.)
+
+   (* make-load-form-saving-slots)
+
+   * with-accessors
+
+   * with-slots.
+
+   * defclass
+
+   * defgeneric
+
+   * defmethod
+
+   * find-class
+
+   * next-method-p
+
+   * call-method
+
+   * make-method
+
+   * call-next-method
+
+   * compute-applicable-methods
+
+   * define-method-combination
+
+   * find-method
+
+   * add-method
+
+   * initialize-instance.
+
+   * class-name  (generic function, also (setf class-name).
+
+   * class-of.
+
+   * unbound-slot (condition type)
+
+   * unbound-slot-instance (function on condition unbound-slot)
