@@ -42,8 +42,14 @@
 ;;; If the substructure of an AST is another AST, then the
 ;;; corresponding substructure of the new AST is obtained from the
 ;;; dictionary.
+;;; If it's not in the dictionary, it is not part of the AST being
+;;; cloned, e.g. because it's an outer block. So use the original.
 (defmethod finalize-substructure ((object cleavir-ast:ast) dictionary)
-  (gethash object dictionary))
+  (multiple-value-bind (ast present-p)
+      (gethash object dictionary)
+    (if present-p
+	ast
+	object)))
 
 ;;; Given an AST to finalize and the MODEL AST of which the AST is a
 ;;; clone,  reinitialize the AST with new substructure.
@@ -88,7 +94,11 @@
 	 ,(codegen-finalize-substructure (cdr object) dictionary)))
 
 (defmethod codegen-finalize-substructure ((object cleavir-ast:ast) dictionary)
-  (gethash object dictionary))
+  (multiple-value-bind (ast present-p)
+      (gethash object dictionary)
+    (if present-p
+	ast
+	object)))
 
 (defun codegen-finalize (model dictionary)
   `(reinitialize-instance

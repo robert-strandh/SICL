@@ -426,7 +426,7 @@
   (:form-ast form-ast))
 
 (defmethod children ((ast return-from-ast))
-  (list (block-ast ast) (form-ast ast)))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
