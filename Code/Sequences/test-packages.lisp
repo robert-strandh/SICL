@@ -36,27 +36,3 @@
     (:shadowing-import-from #:sicl-sequence .
                             #.(package-shadowing-symbols '#:sicl-sequence))
     (:use #:sicl-sequence #:cl #:lisp-unit))
-
-;;; The `tiny' package is identical to the ordinary sequence package,
-;;; but it needs a different name because they might be both
-;;; loaded into an image, for instance when we test functions
-;;; in the ordinary package against functions in the `tiny' package. 
-(defpackage #:sicl-sequence-tiny
-    (:use #:common-lisp)
-  (:shadow . #1=(#:find #:find-if #:find-if-not
-                 #:position #:position-if #:position-if-not
-                 #:length #:subseq
-                 #:reduce
-                 #:fill
-		 #:remove #:remove-if #:remove-if-not
-		 #:delete #:delete-if #:delete-if-not
-		 #:count #:count-if #:count-if-not
-		 #:substitute #:substitute-if #:substitute-if-not
-		 #:nsubstitute #:nsubstitute-if #:nsubstitute-if-not
-		 #:copy-seq #:elt
-		 #:merge #:sort
-		 #:mismatch
-		 #:reverse #:nreverse
-		 #:map #:map-into))
-  (:export . #1#))
-
