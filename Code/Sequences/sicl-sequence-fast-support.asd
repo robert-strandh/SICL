@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-sequence-fast
+(defsystem :sicl-sequence-fast-support
   :serial t
   :components
   ((:file "Common/packages")
