@@ -7,7 +7,8 @@
   nil)
 
 (defmethod maybe-eliminate ((instruction cleavir-ir:typeq-instruction))
-  (let* ((object (first (cleavir-ir:inputs instruction)))
+  (let* ((cleavir-ir:*policy* (cleavir-ir:policy instruction))
+	 (object (first (cleavir-ir:inputs instruction)))
 	 (typep-constant (cleavir-ir:make-constant-input 'typep))
 	 (typep-function (cleavir-ir:new-temporary))
 	 (fdefinition (cleavir-ir:make-fdefinition-instruction
