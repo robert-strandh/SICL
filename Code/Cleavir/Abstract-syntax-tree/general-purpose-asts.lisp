@@ -37,6 +37,10 @@
   ((%origin :initform nil :initarg :origin :accessor origin)
    (%policy :initform *policy* :initarg :policy :accessor policy)))
 
+;;; Policies must be saved
+(cleavir-io:define-save-info ast
+  (:policy policy))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin classes.
