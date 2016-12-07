@@ -178,7 +178,7 @@ introducing the following macro:
 {\small\begin{verbatim}
 (defun find-list-2 (item list &key end)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
-  (with-end-var end
+  (with-end end
     (loop for index from 0
           for element in vector
           when (and (not (null end)) (>= index end))
