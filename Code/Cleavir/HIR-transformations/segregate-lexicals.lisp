@@ -94,7 +94,8 @@
   (let ((imports (cleavir-ir:inputs enclose))
 	;; The dynamic lexical variable that holds the static
 	;; environment is the first output of the enter instruction.
-	(env-location (first (cleavir-ir:outputs enter))))
+	(env-location (first (cleavir-ir:outputs enter)))
+	(cleavir-ir:*policy* (cleavir-ir:policy enter)))
     ;; Start by adding the new import to the end of the existing
     ;; imports of the ENCLOSE-INSTRUCTION.
     (setf (cleavir-ir:inputs enclose) (append imports (list import)))
@@ -134,9 +135,10 @@
 (defun ensure-cell-available (function-tree cell-locations owner)
   ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
   ;; the static lexical location to be eliminated.
-  (cleavir-ir:insert-instruction-after
-   (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
-   owner)
+  (let ((cleavir-ir:*policy* (cleavir-ir:policy owner)))
+    (cleavir-ir:insert-instruction-after
+     (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
+     owner))
   ;; Next, for each entry in CELL-LOCATIONS other than OWNER, transmit
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
   ;; ENTER-INSTRUCTION of that entry.
@@ -176,7 +178,8 @@
 ;;; the contents of CLOC in SLOC, and replace all occurrences of SLOC
 ;;; in the inputs of I by D.
 (defun replace-inputs (sloc cloc instruction)
-  (let ((d (cleavir-ir:new-dynamic-temporary)))
+  (let ((d (cleavir-ir:new-dynamic-temporary))
+	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
     (cleavir-ir:insert-instruction-before
      (cleavir-ir:make-read-cell-instruction cloc d)
      instruction)
@@ -191,7 +194,8 @@
 ;;; insert a new WRITE-CELL instruction after INSTRUCTION that puts
 ;;; the value of D in CLOC.
 (defun replace-outputs (sloc cloc instruction)
-  (let ((d (cleavir-ir:new-dynamic-temporary)))
+  (let ((d (cleavir-ir:new-dynamic-temporary))
+	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
     (setf (cleavir-ir:outputs instruction)
 	  (substitute d sloc (cleavir-ir:outputs instruction)))
     (cleavir-ir:insert-instruction-after
