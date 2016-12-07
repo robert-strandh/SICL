@@ -129,7 +129,9 @@
 		       do (traverse dominee variable))))))
       (traverse top-node original-variable))
     (loop for (node output . inputs) in funs
-	  collect (cleavir-ir:make-phi-instruction inputs output node)
+	  collect (let ((cleavir-ir:*policy*
+			  (cleavir-ir:policy node)))
+		    (cleavir-ir:make-phi-instruction inputs output node))
 	  finally (incf *ssa2-call-count*)
 		  (incf *ssa2-run-time* (- (get-internal-run-time) time)))))
 

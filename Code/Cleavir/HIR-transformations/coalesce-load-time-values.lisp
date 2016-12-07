@@ -2,7 +2,8 @@
 
 (defun coalesce-load-time-values (initial-instruction)
   (check-type initial-instruction cleavir-ir:top-level-enter-instruction)
-  (let ((table (make-hash-table :test #'equal)))
+  (let ((table (make-hash-table :test #'equal))
+	(cleavir-ir:*policy* (cleavir-ir:policy initial-instruction)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
        (loop for input in (cleavir-ir:inputs instruction)

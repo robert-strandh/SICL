@@ -19,6 +19,7 @@
 	  (loop for predecessor in (cleavir-ir:predecessors instruction)
 		for successors = (cleavir-ir:successors predecessor)
 		for copy = (make-instance (class-of instruction)
+			     :policy (cleavir-ir:policy instruction)
 			     :predecessors (list predecessor)
 			     :successors (cleavir-ir:successors instruction)
 			     :inputs (cleavir-ir:inputs instruction)
