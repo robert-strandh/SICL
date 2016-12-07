@@ -97,14 +97,12 @@
 (defun check-lambda-list-not-circular (lambda-list)
   (when (eq (nth-value 1 (list-structure lambda-list)) :circular)
     (error 'lambda-list-must-not-be-circular
-	   :signaler 
 	   :code lambda-list)))
 
 ;;; Use this function for lambda lists that must be proper lists.
 (defun check-lambda-list-proper (lambda-list signaler)
   (unless (eq (nth-value 1 (list-structure lambda-list)) :proper)
     (error 'lambda-list-must-be-proper-list
-	   :signaler signaler
 	   :code lambda-list)))
 
 ;;; Check for restrictions common to all lambda lists.
@@ -1062,13 +1060,11 @@
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
       (error 'lambda-list-must-not-be-circular
-	     :signaler 'parse-deftype-lambda-list
 	     :code lambda-list))
     (if (eq structure :dotted)
 	(progn
 	  (when (zerop length)
 	    (error 'lambda-list-must-be-list
-		   :signaler 'parse-deftype-lambda-list
 		   :code lambda-list))
 	  (let ((allowed '(&whole &environment &optional)))
 	    (check-lambda-list-keywords lambda-list allowed)
