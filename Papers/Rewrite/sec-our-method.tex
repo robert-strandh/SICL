@@ -151,3 +151,16 @@ The result of applying this rule is shown in \refFig{fig-rewrite-6}.
 \caption{\label{fig-rewrite-6}
 Result after short-circuit \texttt{consp}.}
 \end{figure}
+
+At this point, the \texttt{consp} that we have been processing has no
+predecessor so it is removed from $S$.  Removing all instructions that
+can not be reached from the start instruction gives the situation
+shown in \refFig{fig-rewrite-7}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-7.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-7}
+Result after removing unreachable instructions.}
+\end{figure}
