@@ -194,3 +194,27 @@ matter the complexity of the control graph, as long as the first test
 dominates the second.
 
 \subsection{Proof of correctness and termination}
+
+The correctness of our technique is easy to prove, simply because each
+rewrite rule preserve the semantics of the program.  The last rewrite
+rule preserves the semantics only under certain circumstances which
+are easy to verify:
+
+\begin{itemize}
+\item The predecessor does not write to a lexical variable that is
+  read by the test instruction.  This condition is respected because
+  we have assumed that the variable being tested is not written to
+  in any path between the first and the second occurrences of the
+  test.
+\item The predecessor must not have any other side effect that may
+  alter the outcome of the test.  By restricting the test to lexical
+  variables, this restriction is also respected.
+\end{itemize}
+
+Termination is a bit harder to prove.  One way is to find some
+non-negative \emph{metric} that can be shown to strictly decrease as a
+result of the application of each rewrite rule.  We have not found any
+such metric.  However, this conundrum can be avoided by a simple
+\emph{grouping} of the rewrite rules.  This grouping is not required
+to be present in the implementation of our technique; only in the
+termination proof.
