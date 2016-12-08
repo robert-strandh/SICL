@@ -37,6 +37,10 @@
   ((%origin :initform nil :initarg :origin :accessor origin)
    (%policy :initform *policy* :initarg :policy :accessor policy)))
 
+;;; Policies must be saved
+(cleavir-io:define-save-info ast
+  (:policy policy))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin classes.
@@ -634,7 +638,9 @@
 (defmethod type-specifier-ast :around ((ast typeq-ast))
   (let ((value (call-next-method)))
     (when (null value)
-      (setq value (make-load-time-value-ast `',(type-specifier ast)))
+      (setq value (make-load-time-value-ast
+		   `',(type-specifier ast) t
+		   :policy (cleavir-ast:policy ast)))
       (reinitialize-instance
        ast
        :type-specifier-ast value))
