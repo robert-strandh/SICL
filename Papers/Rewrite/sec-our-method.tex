@@ -1,1 +1,190 @@
 \section{Our technique}
+
+Our technique consists of applying \emph{local graph rewriting} to the
+graph of instructions in intermediate code.  Local graph rewriting has
+the advantage of being simple, both to implement and when it comes to
+proving correctness.
+
+For the purpose of this paper, we assume that some initial phase has
+determined that:
+
+\begin{enumerate}
+\item there are two instructions, $D$ and $I$, in the program that
+  are identical tests,
+\item the variable being tested is the same in $D$ and $I$,
+\item $D$ dominates $I$, and
+\item the variable being tested is not assigned to in any path from
+  $D$ to $I$.
+\end{enumerate}
+
+In a real compiler, such a phase probably does not exist.  Some items
+are simplified if the compiler translates the intermediate code to SSA
+form \cite{Cytron:1989:EMC:75277.75280,
+  Cytron:1991:ECS:115372.115320}, and some items can be tested during
+the execution of our technique.
+
+During the execution of our algorithm, the instruction $I$ will be
+\emph{replicated}, so that it is part of some set $S$ in which every
+replica remains dominated by $D$.
+
+In our technique, we keep track of the outcome of the test in the
+\emph{control arcs} of the graph of intermediate instructions.
+We can think of this information as being represented as three
+different \emph{colors}:
+
+\begin{itemize}
+\item An arc is \emph{black} if we have no information concerning the
+  outcome of the test at that point in the program.
+\item An arc is \emph{green} if the outcome of the test at that point in
+  the program is known to be \emph{true}.
+\item An arc is \emph{red} if the outcome of the test at that point in
+  the program is known to be \emph{false}.
+\end{itemize}
+
+Initially, only the outgoing arcs of $D$ and $I$ have a color
+other than black.
+
+Our technique involves the repeated application of the first
+applicable rewrite rule in the following list to some arbitrary
+element of $S$, say $s$, that does not itself have a predecessor in
+$S$:
+
+\begin{enumerate}
+\item If $s$ has no predecessors, then remove it from $S$.
+\item If $s$ has a \emph{green} incoming arc, then change the head
+  of that arc so that it refers to the successor of $s$ referred to
+  by the \emph{green} outgoing arc of $s$.
+\item If $s$ has a \emph{red} incoming arc, then change the head
+  of that arc so that it refers to the successor of $s$ referred to
+  by the \emph{red} outgoing arc of $s$.
+\item If $s$ has $n>1$ predecessors, then replicate $s$ $n$ times;
+  once for each predecessor.  Every replica is inserted into $S$.
+  Colors of outgoing control arcs are preserved in the replicas.
+\item Let $p$ be the (unique) predecessor of $s$.  Remove $p$ as a
+  predecessor of $s$ so that existing immediate predecessors of $p$
+  instead become immediate predecessors of $s$.  Insert a replica of
+  $p$ in each outgoing control arc of $s$, preserving the color of
+  each arc.
+\end{enumerate}
+
+\noindent
+Rewrite rules are applied until the set $S$ is empty.
+
+Let us see how our technique works on the example in
+\refSec{sec-introduction}.  The initial situation is shown in
+\refFig{fig-rewrite-1}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-1.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-1}
+Initial instruction graph.}
+\end{figure}
+
+As \refFig{fig-rewrite-1} shows, the second \texttt{consp} is
+dominated by the first, so it becomes the only member of the set $S$.
+The last rewrite rule applies to the second \texttt{consp} so that the
+\texttt{setq} is replicated as its successors.  Then the last rewrite
+rule applies again resulting in the replication of the \texttt{call}.
+The result of these two applications is shown in \refFig{fig-rewrite-2}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-2.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-2}
+Result after two rewrites.}
+\end{figure}
+
+As we can see in \refFig{fig-rewrite-2}, the second \texttt{consp}
+now has two predecessors, and both incoming arcs are black.
+Therefore, rewrite rule number $4$ applies and the \texttt{consp} is
+replicated.  As a result, $S$ now has two members.  The result of
+applying this rule is shown in \refFig{fig-rewrite-3}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-3.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-3}
+Result after replicating the test.}
+\end{figure}
+
+We now choose the leftmost replica of the second \texttt{consp} to
+apply our rules to.  It has a single predecessor with a black incoming
+control arc, so the last rewrite rule applies.  We replicate the
+\texttt{setq} in both branches of the test, giving us the result shown
+in \refFig{fig-rewrite-4}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-4.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-4}
+Result after replicating \texttt{setq}.}
+\end{figure}
+
+In \refFig{fig-rewrite-4}, the last rewrite rule applies again, and we
+replicate the \texttt{cons-car}, giving us the situation shown in in
+\refFig{fig-rewrite-5}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-5.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-5}
+Result after replicating \texttt{cons-car}.}
+\end{figure}
+
+As \refFig{fig-rewrite-5} shows, the \texttt{consp} instruction now
+has a single predecessor, but the incoming arc has a known outcome of
+the test, namely \textit{true} (color green).  therefore, rewrite rule
+number $2$ applies.  The left outgoing arc of the first \texttt{consp}
+is redirected to go directly to the \texttt{cons-car} instruction.
+The result of applying this rule is shown in \refFig{fig-rewrite-6}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-6.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-6}
+Result after short-circuit \texttt{consp}.}
+\end{figure}
+
+At this point, the \texttt{consp} that we have been processing has no
+predecessor so it is removed from $S$.  Removing all instructions that
+can not be reached from the start instruction gives the situation
+shown in \refFig{fig-rewrite-7}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-7.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-7}
+Result after removing unreachable instructions.}
+\end{figure}
+
+Analyzing \refFig{fig-rewrite-7}, we can see that if the result of the
+first \texttt{consp} yields \emph{true}, then no second test is
+performed.  Instead, the variable \texttt{a} is set to the result of
+the instruction \texttt{cons-car}, the variable \texttt{b} is set to
+the result of the call, and the variable \texttt{c} is set to the
+result of the instruction \texttt{cons-cdr}.  Applying the same rules
+to the remaining \texttt{consp} instruction in $S$ and then to the
+second \texttt{null} instruction (which is now dominated by the
+first), yields the final result shown in  \refFig{fig-rewrite-8}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-8.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-8}
+Final result.}
+\end{figure}
+
+This example represents a control graph that is particularly simple in
+that there are no loops between the first and the second
+\texttt{consp} instructions.  Our technique must obviously work no
+matter the complexity of the control graph, as long as the first test
+dominates the second.
