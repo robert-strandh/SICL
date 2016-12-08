@@ -159,11 +159,8 @@
 		      input-bag)
 	for n from 0
 	for output in (cleavir-ir:outputs instruction)
-	for type = (find-type output input-bag)
-	for bag = input-bag
-	  then (update output
-		       (binary-meet type (values-nth vtype n))
-		       bag)
+	for bag = (update output (values-nth vtype n) input-bag)
+	  then (update output (values-nth vtype n) bag)
 	finally (return bag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
