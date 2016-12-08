@@ -2,22 +2,17 @@
 
 (defvar *the-value* 1)
 
-(defun make-sbv (n &optional (element-type 'bit))
+(defun make-sbv (n &key (element-type '(unsigned-byte 8)))
   (let ((vector
-	  (make-array n :element-type element-type :adjustable t)))
+	  (make-array n :element-type element-type)))
     (setf (aref vector (1- n)) *the-value*)
     vector))
 
 (defun adjust-sbv (n vector)
-  (let ((len (length vector)))
-    (setf (aref vector (1- len)) 0)
-    (let ((newlen (+ len n)))
-      (adjust-array vector newlen)
-      (setf (aref vector (1- newlen)) *the-value*))
-    vector))
+  (make-sbv (+ (length vector) n) :element-type (array-element-type vector)))
 
 (defun test-call (find-fun vector)
-  (funcall find-fun *the-other-symbol* vector))
+  (funcall find-fun *the-value* vector))
 
 (defun evaluate-test-call (find-fun vector times)
   (evaluate-time (test-call find-fun vector) times))
@@ -29,32 +24,42 @@
 (defun version-symbols (version-numbers)
   (mapcar #'version-symbol version-numbers))
 
-(defun compare-versions-to-stream (stream versions start end &key (step 1) (times 1))
+(defun header (stream versions element-type)
+  (format stream "Element-type: ~A~%" element-type)
+  (format stream "N~15T")
+  (format t "~{~14,A~}~%" versions)
+  )
+  
+(defun compare-versions-to-stream (stream versions element-type start end &key (step 1) (times 1))
+  (header stream versions element-type)
   (loop
     for k from start to end by step
-    for vector = (make-sbv start) then (adjust-sbv step vector)
-    do (format stream "~D~10T" k)
-    do (when *trace* (format t "~D~10T" k))
+    for vector = (make-sbv start :element-type element-type) 
+      then (adjust-sbv step vector)
+    do (format stream "~8D" k)
+    do (when *trace* (format t "~D~14T" k))
     do (loop for version in (mapcar #'symbol-function versions)
 			 do (let ((version-time (evaluate-test-call version vector times)))
-			      (format stream "~10,5F ~10T" version-time)
+			      (format stream "~14,5F" version-time)
 			      (when *trace*
-				(format t "~10,5F ~10T" version-time))
+				(format t "~14,5F" version-time))
 			      )
 	     finally (progn (format stream "~%")
 			    (when *trace* (format t "~%") (finish-output t))
 			    (finish-output stream)))))
 
-(defun compare-version-numbers-to-stream (stream version-numbers start end &key (step 1) (times 1))
+(defun compare-version-numbers-to-stream (stream version-numbers element-type start end &key (step 1) (times 1))
   (compare-versions-to-stream 
    stream (version-symbols version-numbers)
+   element-type
    start end :step step :times times))
 
-(defun compare-version-numbers-to-file (file version-numbers start end &key (step 1) (times 1))
+(defun compare-version-numbers-to-file (file version-numbers element-type start end &key (step 1) (times 1))
   (with-open-file (stream file :direction :output :if-does-not-exist :create :if-exists :supersede)
     (compare-version-numbers-to-stream
      stream
-     version-numbers start end :step step :times times)))
+     version-numbers
+     element-type start end :step step :times times)))
 
 (defvar *local*)
 (setq *local* nil)
@@ -67,7 +72,7 @@
 			  (cl:lisp-implementation-version) 
 			  (machine-version))))
 		  
-(defun compare-version-numbers (version-numbers start end &key (step 1) (times 1))
+(defun compare-version-numbers (version-numbers element-type start end &key (step 1) (times 1))
   (let ((name (format nil "v~A" (first version-numbers))))
 	(loop
 	  for n in (rest version-numbers)
@@ -75,10 +80,10 @@
 	(let ((filename (make-test-filename name)))
 	  (format t "Ouput written to ~A~%" filename)
 	  (finish-output t)
-	  (compare-version-numbers-to-file filename version-numbers start end :step step :times times))))
+	  (compare-version-numbers-to-file filename version-numbers element-type start end :step step :times times))))
 
-(defun test-version-numbers (&rest version-numbers)
-  (compare-version-numbers version-numbers 10000 10000000 :step 100000 :times 2))
+(defun test-version-numbers (element-type &rest version-numbers)
+  (compare-version-numbers version-numbers element-type 10000 10000000 :step 100000 :times 2))
 
 (defun the-test ()
   (test-version-numbers 0 1 7))
