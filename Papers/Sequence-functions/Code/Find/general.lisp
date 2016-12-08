@@ -49,26 +49,3 @@
 
 (defun date-string ()
   (time-string nil))
-
-(defvar *the-symbol* 'a)
-(defvar *the-other-symbol* 'b)
-
-(defun symbols (n)
-  (let ((vector
-	  (make-array n :initial-element *the-symbol* :adjustable t)))
-    (setf (aref vector (1- n)) *the-other-symbol*)
-    vector))
-
-(defun more-symbols (n vector)
-  (let ((len (length vector)))
-    (setf (aref vector (1- len)) *the-symbol*)
-    (let ((newlen (+ len n)))
-      (adjust-array vector newlen :initial-element *the-symbol*)
-      (setf (aref vector (1- newlen)) *the-other-symbol*))
-    vector))
-
-(defun test-call (find-fun vector)
-  (funcall find-fun *the-other-symbol* vector))
-
-(defun evaluate-test-call (find-fun vector times)
-  (evaluate-time (test-call find-fun vector) times))

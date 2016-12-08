@@ -1,3 +1,27 @@
+(in-package :find)
+
+(defvar *the-value* 1)
+
+(defun make-sbv (n &optional (element-type 'bit))
+  (let ((vector
+	  (make-array n :element-type element-type :adjustable t)))
+    (setf (aref vector (1- n)) *the-value*)
+    vector))
+
+(defun adjust-sbv (n vector)
+  (let ((len (length vector)))
+    (setf (aref vector (1- len)) 0)
+    (let ((newlen (+ len n)))
+      (adjust-array vector newlen)
+      (setf (aref vector (1- newlen)) *the-value*))
+    vector))
+
+(defun test-call (find-fun vector)
+  (funcall find-fun *the-other-symbol* vector))
+
+(defun evaluate-test-call (find-fun vector times)
+  (evaluate-time (test-call find-fun vector) times))
+
 (defun version-symbol (version-number)
   (find-symbol (format nil "FIND-VECTOR-~A" version-number)
 	       (find-package :find)))
@@ -8,18 +32,18 @@
 (defun compare-versions-to-stream (stream versions start end &key (step 1) (times 1))
   (loop
     for k from start to end by step
-    for list = (symbols start) then (more-symbols step list)
-	do (format stream "~D~10T" k)
-	do (when *trace* (format t "~D~10T" k))
+    for vector = (make-sbv start) then (adjust-sbv step vector)
+    do (format stream "~D~10T" k)
+    do (when *trace* (format t "~D~10T" k))
     do (loop for version in (mapcar #'symbol-function versions)
-			 do (let ((version-time (evaluate-test-call version list times)))
-				  (format stream "~10,5F ~10T" version-time)
-				  (when *trace*
-					(format t "~10,5F ~10T" version-time))
-				  )
-			 finally (progn (format stream "~%")
-							(when *trace* (format t "~%") (finish-output t))
-							(finish-output stream)))))
+			 do (let ((version-time (evaluate-test-call version vector times)))
+			      (format stream "~10,5F ~10T" version-time)
+			      (when *trace*
+				(format t "~10,5F ~10T" version-time))
+			      )
+	     finally (progn (format stream "~%")
+			    (when *trace* (format t "~%") (finish-output t))
+			    (finish-output stream)))))
 
 (defun compare-version-numbers-to-stream (stream version-numbers start end &key (step 1) (times 1))
   (compare-versions-to-stream 
