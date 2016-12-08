@@ -48,8 +48,8 @@ other than black.
 
 Our technique involves the repeated application of the first
 applicable rewrite rule in the following list to some arbitrary
-element of $S$, say $s$, that does not itself have a predecessor in
-$S$:
+element of $S$, say $s$, that does not itself have an immediate
+predecessor in $S$:
 
 \begin{enumerate}
 \item If $s$ has no predecessors, then remove it from $S$.
@@ -70,7 +70,8 @@ $S$:
 \end{enumerate}
 
 \noindent
-Rewrite rules are applied until the set $S$ is empty.
+Rewrite rules are applied until the set $S$ is empty, or until each
+element of $S$ has an immediate predecessor in $S$.
 
 \subsection{A simple example}
 
