@@ -821,7 +821,7 @@
 ;;; It has two children.  This AST can only appear in the TEST
 ;;; position of an IF-AST.
 
-(defclass eq-ast (ast)
+(defclass eq-ast (ast boolean-ast-mixin)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
