@@ -25,7 +25,8 @@
 ;;  done elsewhere. (Because you're probably change-class-ing it.)
 (defun make-type-error (predecessor datum expected)
   ;; FIXME: programmatic HIR could probably be made nicer.
-  (let* ((fdef (cleavir-ir:new-temporary))
+  (let* ((cleavir-ir:*policy* (cleavir-ir:policy predecessor))
+	 (fdef (cleavir-ir:new-temporary))
 	 (fdefinition-instruction
 	   (cleavir-ir:make-fdefinition-instruction
 	    (cleavir-ir:make-load-time-value-input ''cl:error)
@@ -91,7 +92,8 @@
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (i)
        (when (typep i 'cleavir-ir:the-values-instruction)
-	 (push i thevalueses))))
+	 (push i thevalueses)))
+     initial)
     (dolist (i thevalueses)
       (when (member-if (lambda (type) (subtypep type nil))
 		     (cleavir-ir:required-types i))
