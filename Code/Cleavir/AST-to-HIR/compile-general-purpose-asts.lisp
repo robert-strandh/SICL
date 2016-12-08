@@ -713,7 +713,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;; Compile an EQ-AST
+;;; Compile a VALUES-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:values-ast) context)
+  (with-accessors ((results results)
+		   (successors successors)
+		   (invocation invocation))
+      context
+    (assert (= (length successors) 1))
+    (let ((arguments (cleavir-ast:argument-asts ast)))
+      (cond ((typep results 'cleavir-ir:values-location)
+	     (let ((temps (make-temps arguments)))
+	       (compile-arguments
+		arguments temps
+		(cleavir-ir:make-fixed-to-multiple-instruction
+		 temps results (first successors))
+		invocation)))
+	    (t ;lexical locations
+	     ;; would happen from e.g. (+ (values ...) ...)
+	     ;; Multiple lexical outputs don't seem to happen, but
+	     ;; if they do this will work except when there are
+	     ;; more outputs than values.
+	     (let ((difference
+		     (- (length arguments) (length results))))
+	       (assert (>= difference 0))
+	       (let ((locations (append
+				 results
+				 (loop repeat difference
+				       collect (make-temp)))))
+		 (compile-arguments arguments locations
+				    (first successors)
+				    invocation))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile an EQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:eq-ast) context)
   (check-context-for-boolean-ast context)
