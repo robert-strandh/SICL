@@ -3,6 +3,16 @@
 (deftype simple-byte-vector ()
   '(simple-array (unsigned-byte)))
 
+(defmacro with-vector-type (vector-var &body body)
+  `(macrolet ((vref (array index)
+                `(aref ,array ,index)))
+     (if (typep ,vector-var 'simple-byte-vector)
+         (locally (declare (type simple-byte-vector
+                                 ,vector-var))
+           ,@body)
+         (progn
+           ,@body))))
+
 (defun find-vector-1 (item vector)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (loop for index from 0 below (length vector)
