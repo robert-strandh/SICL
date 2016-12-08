@@ -1,1 +1,23 @@
 \section{Our technique}
+
+Our technique consists of applying \emph{local graph rewriting} to the
+graph of instructions in intermediate code.  Local graph rewriting has
+the advantage of being simple, both to implement and when it comes to
+proving correctness.
+
+For the purpose of this paper, we assume that some initial phase has
+determined that:
+
+\begin{enumerate}
+\item there are two instructions, $I_1$ and $I_2$, in the program that
+  are identical tests,
+\item the variable being tested is the same in $I_1$ and $I_2$,
+\item $I_1$ dominates $I_2$, and
+\item the variable being tested is not assigned to in any path from
+  $I_1$ to $I_2$.
+\end{enumerate}
+
+In a real compiler, such a phase probably does not exist.  Some items
+are simplified if the compiler translates the intermediate code to SSA
+form, and some items can be tested during the execution of our
+technique.
