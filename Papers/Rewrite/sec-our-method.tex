@@ -136,3 +136,18 @@ replicate the \texttt{cons-car}, giving us the situation shown in in
 \caption{\label{fig-rewrite-5}
 Result after replicating \texttt{cons-car}.}
 \end{figure}
+
+As \refFig{fig-rewrite-5} shows, the \texttt{consp} instruction now
+has a single predecessor, but the incoming arc has a known outcome of
+the test, namely \textit{true} (color green).  therefore, rewrite rule
+number $2$ applies.  The left outgoing arc of the first \texttt{consp}
+is redirected to go directly to the \texttt{cons-car} instruction.
+The result of applying this rule is shown in \refFig{fig-rewrite-6}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-6.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-6}
+Result after short-circuit \texttt{consp}.}
+\end{figure}
