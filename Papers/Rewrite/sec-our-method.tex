@@ -182,3 +182,9 @@ first), yields the final result shown in  \refFig{fig-rewrite-8}.
 \caption{\label{fig-rewrite-8}
 Final result.}
 \end{figure}
+
+This example represents a control graph that is particularly simple in
+that there are no loops between the first and the second
+\texttt{consp} instructions.  Our technique must obviously work no
+matter the complexity of the control graph, as long as the first test
+dominates the second.
