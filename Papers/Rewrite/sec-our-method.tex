@@ -9,12 +9,12 @@ For the purpose of this paper, we assume that some initial phase has
 determined that:
 
 \begin{enumerate}
-\item there are two instructions, $I_1$ and $I_2$, in the program that
+\item there are two instructions, $D$ and $I$, in the program that
   are identical tests,
-\item the variable being tested is the same in $I_1$ and $I_2$,
-\item $I_1$ dominates $I_2$, and
+\item the variable being tested is the same in $D$ and $I$,
+\item $D$ dominates $I$, and
 \item the variable being tested is not assigned to in any path from
-  $I_1$ to $I_2$.
+  $D$ to $I$.
 \end{enumerate}
 
 In a real compiler, such a phase probably does not exist.  Some items
@@ -22,3 +22,48 @@ are simplified if the compiler translates the intermediate code to SSA
 form \cite{Cytron:1989:EMC:75277.75280,
   Cytron:1991:ECS:115372.115320}, and some items can be tested during
 the execution of our technique.
+
+During the execution of our algorithm, the instruction $I$ will be
+\emph{replicated}, so that it is part of some set $S$ in which every
+replica remains dominated by $D$.
+
+In our technique, we keep track of the outcome of the test in the
+\emph{control arcs} of the graph of intermediate instructions.
+We can think of this information as being represented as three
+different \emph{colors}:
+
+\begin{itemize}
+\item An arc is \emph{black} if we have no information concerning the
+  outcome of the test at that point in the program.
+\item An arc is \emph{green} if the outcome of the test at that point in
+  the program is known to be \emph{true}.
+\item An arc is \emph{red} if the outcome of the test at that point in
+  the program is known to be \emph{false}.
+\end{itemize}
+
+Initially, only the outgoing arcs of $D$ and $I$ have a color
+other than black.
+
+Our technique involves the repeated application of the first
+applicable rewrite rule in the following list to some arbitrary
+element of $S$, say $s$.
+
+\begin{enumerate}
+\item If $s$ has no predecessors, then remove it from $S$.
+\item If $s$ has a \emph{green} incoming arc, then change the head
+  of that arc so that it refers to the successor of $s$ referred to
+  by the \emph{green} outgoing arc of $s$.
+\item If $s$ has a \emph{red} incoming arc, then change the head
+  of that arc so that it refers to the successor of $s$ referred to
+  by the \emph{red} outgoing arc of $s$.
+\item If $s$ has $n>1$ predecessors, then replicate $s$ $n$ times;
+  once for each predecessor.  Every replica is inserted into $S$.
+  Colors of outgoing control arcs are preserved in the replicas.
+\item Let $p$ be the (unique) predecessor of $s$.  Remove $p$ as a
+  predecessor of $s$ so that existing immediate predecessors of $p$
+  instead become immediate predecessors of $s$.  Insert a replica of
+  $p$ in each outgoing control arc of $s$, preserving the color of
+  each arc.
+\end{enumerate}
+
+Rewrite rules are applied until the set $S$ is empty.
