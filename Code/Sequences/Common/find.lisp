@@ -27,7 +27,7 @@
     (with-from-end from-end
       (with-element-type vector
 	(for-each-relevant-element (e index vector start end from-end)
-	  (let ((element (apply-key-function (car e) key)))
+	  (let ((element (apply-key-function e key)))
 	    (when (satisfies-two-argument-test-p item element test test-not)
 	      (return-from find-vector element))))))))
 
