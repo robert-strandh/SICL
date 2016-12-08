@@ -110,3 +110,17 @@ applying this rule is shown in \refFig{fig-rewrite-3}.
 \caption{\label{fig-rewrite-3}
 Result after replicating the test.}
 \end{figure}
+
+We now choose the leftmost replica of the second \texttt{consp} to
+apply our rules to.  It has a single predecessor with a black incoming
+control arc, so the last rewrite rule applies.  We replicate the
+\texttt{setq} in both branches of the test, giving us the result shown
+in \refFig{fig-rewrite-4}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-4.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-4}
+Result after replicating \texttt{setq}.}
+\end{figure}
