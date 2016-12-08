@@ -218,3 +218,58 @@ such metric.  However, this conundrum can be avoided by a simple
 \emph{grouping} of the rewrite rules.  This grouping is not required
 to be present in the implementation of our technique; only in the
 termination proof.
+
+To see how the rewrite rules can be grouped, consider a general case
+where the test instruction has some arbitrary number of red, green,
+and black incoming control arcs.  Rules number $2$ and $3$ are first
+applied a finite number of times.  What happens next depends on the
+number $n$ of black incoming control arcs:
+
+\begin{itemize}
+\item If $n=0$ the first rewrite
+rule applies, in which case the instruction is removed from the set
+$S$.
+\item If $n=1$, the last rewrite rule is applied.  The crucial
+  characteristic of this rewrite rule is that the total number of
+  black control arcs decreases by one.
+\item If $n>1$, rewrite rule number $4$ is applied.  Notice that the
+  number of black control arcs is not modified by the application of
+  this rule.
+\end{itemize}
+
+For the purpose of this proof, we assume that these steps happen
+immediately after each other, so that for a particular instruction,
+the green and red incoming control arcs are first eliminated, the same
+instruction is then potentially replicated, and finally, the last
+rewrite rule is applied to one of the replicas.  However, the
+implementation does not have to work that way in order for termination
+to be certain.
+
+In other words, we can create groups of rewrite steps, where a group
+can be formed in one of the following ways:
+
+\begin{enumerate}
+\item It has a finite number of applications of rewrite rules number
+  $2$ and $3$, followed by a single application of rewrite rule number
+  $1$.
+\item It has a finite number of applications of rewrite rules number
+  $2$ and $3$, followed by a single application of rewrite rule number
+  $5$.
+\item It has a finite number of applications of rewrite rules number
+  $2$ and $3$, followed by a single application of rewrite rule number
+  $4$, followed by a single application of rewrite rule number $5$.
+\end{enumerate}
+
+With this information, we can create a metric consisting of a pair
+$(B,N)$, where $B$ is the total number of black control arcs of the
+program and $N$ is the number of elements of the set $S$.  For two
+pairs $(B_1,N_1)$ and $(B_2,N_2)$, $(B_1,N_1)$ is \emph{strictly
+  smaller than} $(B_2,N_2)$, written $(B_1,N_1) < (B_2,N_2)$, if and
+only if either $B_1 < B_2$ or $B_1 = B_2$ and $N_1 < N_2$.
+
+Theorem: The rewrite algorithm terminates.
+
+Proof: As a result of a rewrite according to a group of type $1$, $B$
+remains the same, but $N$ decreases by $1$.  As a result of a rewrite
+according to a group of type $2$ or $3$, $B$ decreases by $1$ (but $N$
+may increase).
