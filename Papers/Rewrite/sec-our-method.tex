@@ -96,3 +96,17 @@ The result of these two applications is shown in \refFig{fig-rewrite-2}.
 \caption{\label{fig-rewrite-2}
 Result after two rewrites.}
 \end{figure}
+
+As we can see in \refFig{fig-rewrite-2}, the second \texttt{consp}
+now has two predecessors, and both incoming arcs are black.
+Therefore, rewrite rule number $4$ applies and the \texttt{consp} is
+replicated.  As a result, $S$ now has two members.  The result of
+applying this rule is shown in \refFig{fig-rewrite-3}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-3.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-3}
+Result after replicating the test.}
+\end{figure}
