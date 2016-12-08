@@ -6,12 +6,16 @@
 (defmacro with-vector-type (vector-var &body body)
   `(macrolet ((vref (array index)
                 `(aref ,array ,index)))
-     (if (typep ,vector-var 'simple-byte-vector)
-         (locally (declare (type simple-byte-vector
-                                 ,vector-var))
-           ,@body)
+     (cond
+       ((typep ,vector-var 'simple-byte-vector)
+         (locally (declare (type simple-byte-vector ,vector-var))
+           ,@body))
+       ((typep ,vector-var 'simple-bit-vector)
+	(locally (declare (type simple-bit-vector ,vector-var))
+	  ,@body))
+       (t
          (progn
-           ,@body))))
+           ,@body)))))
 
 (defun find-vector-1 (item vector)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
