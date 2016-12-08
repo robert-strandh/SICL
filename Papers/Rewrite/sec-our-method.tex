@@ -1,5 +1,7 @@
 \section{Our technique}
 
+\subsection{General description}
+
 Our technique consists of applying \emph{local graph rewriting} to the
 graph of instructions in intermediate code.  Local graph rewriting has
 the advantage of being simple, both to implement and when it comes to
@@ -69,6 +71,8 @@ $S$:
 
 \noindent
 Rewrite rules are applied until the set $S$ is empty.
+
+\subsection{A simple example}
 
 Let us see how our technique works on the example in
 \refSec{sec-introduction}.  The initial situation is shown in
@@ -188,3 +192,5 @@ that there are no loops between the first and the second
 \texttt{consp} instructions.  Our technique must obviously work no
 matter the complexity of the control graph, as long as the first test
 dominates the second.
+
+\subsection{Proof of correctness and termination}
