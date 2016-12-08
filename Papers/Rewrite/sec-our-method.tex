@@ -164,3 +164,21 @@ shown in \refFig{fig-rewrite-7}.
 \caption{\label{fig-rewrite-7}
 Result after removing unreachable instructions.}
 \end{figure}
+
+Analyzing \refFig{fig-rewrite-7}, we can see that if the result of the
+first \texttt{consp} yields \emph{true}, then no second test is
+performed.  Instead, the variable \texttt{a} is set to the result of
+the instruction \texttt{cons-car}, the variable \texttt{b} is set to
+the result of the call, and the variable \texttt{c} is set to the
+result of the instruction \texttt{cons-cdr}.  Applying the same rules
+to the remaining \texttt{consp} instruction in $S$ and then to the
+second \texttt{null} instruction (which is now dominated by the
+first), yields the final result shown in  \refFig{fig-rewrite-8}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-8.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-8}
+Final result.}
+\end{figure}
