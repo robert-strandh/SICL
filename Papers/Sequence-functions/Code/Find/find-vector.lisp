@@ -1,0 +1,31 @@
+(in-package :find)
+
+(deftype simple-byte-vector ()
+  '(simple-array (unsigned-byte)))
+
+(defun find-vector-1 (item vector)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (loop for index from 0 below (length vector)
+        for element = (aref vector index)
+        when (eql item element)
+          return element))
+
+(defun find-vector-2 (item vector)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (if (typep vector 'simple-byte-vector)
+      (loop for index from 0 below (length vector)
+            for element = (aref vector index)
+            when (eql item element)
+              return element)
+      (loop for index from 0 below (length vector)
+            for element = (aref vector index)
+            when (eql item element)
+              return element)))
+
+(defun find-vector-4 (item vector)
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (with-vector-type vector
+    (loop for index from 0 below (length vector)
+          for element = (vref vector index)
+          when (eql item element)
+            return element)))
