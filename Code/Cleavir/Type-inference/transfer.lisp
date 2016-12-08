@@ -19,6 +19,10 @@
 	for output in (cleavir-ir:outputs instruction)
 	when (typep output 'cleavir-ir:lexical-location)
 	  do (setf result (update output t result))
+	when (typep output 'cleavir-ir:values-location)
+	  do (setf result (update output
+				  (approximate-values nil nil t)
+				  result))
 	finally (return result)))
 
 (defmethod two-successors-transfer (instruction input-bag)
@@ -26,6 +30,10 @@
 	for output in (cleavir-ir:outputs instruction)
 	when (typep output 'cleavir-ir:lexical-location)
 	  do (setf result (update output t result))
+	when (typep output 'cleavir-ir:values-location)
+	  do (setf result (update output
+				  (approximate-values nil nil t)
+				  result))
 	finally (return (values result result))))
 
 (defmethod two-successors-transfer :around (instruction input-bag)
@@ -118,6 +126,45 @@
     ((instruction cleavir-ir:long-float-box-instruction) input-bag)
   (let ((output (first (cleavir-ir:outputs instruction))))
     (update output 'long-float input-bag)))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:the-values-instruction) input-bag)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+	 (input-type (find-type input input-bag))
+	 (descriptor
+	   (approximate-values
+	    (cleavir-ir:required-types instruction)
+	    (cleavir-ir:optional-types instruction)
+	    (cleavir-ir:rest-type instruction))))
+    (if (values-top-p descriptor)
+	input-bag ; don't bother
+	(update input (values-meet descriptor input-type)
+		input-bag))))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:fixed-to-multiple-instruction)
+     input-bag)
+  (let* ((types (mapcar
+		 (lambda (input) (find-type input input-bag))
+		 (cleavir-ir:inputs instruction)))
+	 (values-type (approximate-values types nil nil))
+	 (output (first (cleavir-ir:outputs instruction))))
+    (update output values-type input-bag)))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:multiple-to-fixed-instruction)
+     input-bag)
+  (loop with vtype = (find-type
+		      (first (cleavir-ir:inputs instruction))
+		      input-bag)
+	for n from 0
+	for output in (cleavir-ir:outputs instruction)
+	for type = (find-type output input-bag)
+	for bag = input-bag
+	  then (update output
+		       (binary-meet type (values-nth vtype n))
+		       bag)
+	finally (return bag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

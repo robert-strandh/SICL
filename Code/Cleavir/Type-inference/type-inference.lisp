@@ -21,6 +21,13 @@
 		      when (typep var 'cleavir-ir:lexical-location)
 			do (push (cons var t)
 				 (arc-bag predecessor instruction
+					  result))
+		      when (typep var 'cleavir-ir:values-location)
+			do (push (cons
+				  var
+				  ;; top type
+				  (approximate-values nil nil t))
+				 (arc-bag predecessor instruction
 					  result)))))
      initial-instruction)
     result))

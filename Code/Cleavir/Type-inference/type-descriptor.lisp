@@ -267,7 +267,6 @@
   '((nil nil)
     (fixnum fixnum)
     (null null)
-    (symbol symbol)
     (cons cons)
     (short-float short-float)
     (single-float single-float)
@@ -275,6 +274,12 @@
     (long-float long-float)
     ((simple-array bit) simple-array-bit)
     ((simple-array base-char) simple-array-base-char)))
+
+;;; TEMPORARY: All current type descriptors
+(deftype type-descriptor ()
+  '(member nil t fixnum null symbol cons
+    short-float single-float double-float long-float
+    simple-array-bit simple-array-base-char))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -321,8 +326,12 @@
 ;;;
 ;;; True if a descriptor is the top (T) or bottom (NIL) type, resp.
 
-(defun top-p (descriptor) (eq descriptor 't))
-(defun bottom-p (descriptor) (eq descriptor 'nil))
+(defun top-p (descriptor)
+  (check-type descriptor type-descriptor)
+  (eq descriptor 't))
+(defun bottom-p (descriptor)
+  (check-type descriptor type-descriptor)
+  (eq descriptor 'nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -331,6 +340,14 @@
 (defgeneric binary-join (descriptor1 descriptor2))
 
 (defgeneric binary-meet (descriptor1 descriptor2))
+
+(defmethod binary-join :before (descriptor1 descriptor2)
+  (check-type descriptor1 type-descriptor)
+  (check-type descriptor2 type-descriptor))
+
+(defmethod binary-meet :before (descriptor1 descriptor2)
+  (check-type descriptor1 type-descriptor)
+  (check-type descriptor2 type-descriptor))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -341,6 +358,10 @@
 ;;;  for typeq.
 
 (defgeneric difference (descriptor1 descriptor2))
+
+(defmethod difference :before (descriptor1 descriptor2)
+  (check-type descriptor1 type-descriptor)
+  (check-type descriptor2 type-descriptor))
 
 ;; we only actually need more methods if we include descriptors
 ;;  that are subtypes of one another.
