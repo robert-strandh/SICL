@@ -5,7 +5,6 @@
 ;;; Compile a SIMPLE-T-AREF-AST
 
 (defmethod compile-ast ((ast cleavir-ast:simple-t-aref-ast) context)
-  (check-context-for-one-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp)))
     (compile-ast
@@ -27,7 +26,6 @@
 ;;; Compile a SIMPLE-T-ASET-AST
 
 (defmethod compile-ast ((ast cleavir-ast:simple-t-aset-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp))
 	(temp3 (make-temp)))
@@ -56,7 +54,6 @@
 ;;; Compile a NON-SIMPLE-T-AREF-AST
 
 (defmethod compile-ast ((ast cleavir-ast:non-simple-t-aref-ast) context)
-  (check-context-for-one-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp)))
     (compile-ast
@@ -78,7 +75,6 @@
 ;;; Compile a NON-SIMPLE-T-ASET-AST
 
 (defmethod compile-ast ((ast cleavir-ast:non-simple-t-aset-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp))
 	(temp3 (make-temp)))
@@ -109,7 +105,6 @@
 (defmacro compile-specialized-aref-ast
     (ast-class aref-instruction-class box-instruction-class)
   `(defmethod compile-ast ((ast ,ast-class) context)
-     (check-context-for-one-value-ast context)
      (let ((temp1 (make-temp))
 	   (temp2 (make-temp))
 	   (temp3 (make-temp)))
@@ -175,7 +170,6 @@
 (defmacro compile-specialized-aset-ast
     (ast-class aset-instruction-class unbox-instruction-class)
   `(defmethod compile-ast ((ast ,ast-class) context)
-     (check-context-for-no-value-ast context)
      (let ((temp1 (make-temp))
 	   (temp2 (make-temp))
 	   (temp3 (make-temp))

@@ -45,23 +45,11 @@
     (call-next-method)))
 
 ;;; When an AST that is meant for a test (as indicated by it being an
-;;; instance of BOOLEAN-AST-MIXIN) is compiled in a context where one
-;;; or more values are needed, we signal an error.
-(defmethod compile-ast :around ((ast cleavir-ast:boolean-ast-mixin) context)
-  (with-accessors ((results results)
-		   (successors successors)
-		   (invocation invocation))
-      context
-    (ecase (length successors)
-      (1
-       ;; FIXME: Use a specific condition
-       (error "Boolean AST in a context requiring a value"))
-      (2
-       (call-next-method)))))
-
-(defun check-context-for-boolean-ast (context)
-  (assert (and (zerop (length (results context)))
-	       (= (length (successors context)) 2))))
+;;; instance of BOOLEAN-AST-MIXIN) is compiled in a context with
+;;; the wrong number of successors, we signal an error.
+;;; Individual ASTs probably also check the number of results.
+(defmethod compile-ast :before ((ast cleavir-ast:boolean-ast-mixin) context)
+  (assert-context ast context nil 2))
 
 ;;; This :AROUND method serves as an adapter for the compilation of
 ;;; ASTs that generate a single value.  If such an AST is compiled in
@@ -75,61 +63,58 @@
 		   (successors successors)
 		   (invocation invocation))
       context
-    (ecase (length successors)
-      (1
-       ;; We have a context with one successor, so RESULTS can be a
-       ;; list of any length, or it can be a values location,
-       ;; indicating that all results are needed.
-       (cond ((typep results 'cleavir-ir:values-location)
-	      ;; The context is such that all multiple values are
-	      ;; required.
-	      (let ((temp (make-temp)))
-		(call-next-method
-		 ast
-		 (context (list temp)
-			  (list (cleavir-ir:make-fixed-to-multiple-instruction
-				 (list temp)
-				 results
-				 (first successors)))
-			  invocation))))
-	     ((null results)
-	      ;; We don't need the result.  This situation typically
-	      ;; happens when we compile a form other than the last of
-	      ;; a PROGN-AST.
-	      (if (cleavir-ast:side-effect-free-p ast)
-		  (progn
-		    ;; For now, we do not emit this warning.  It is a bit
-		    ;; too annoying because there is some automatically
-		    ;; generated code that is getting warned about.
-		    ;; (warn "Form compiled in a context requiring no value.")
-		    (first successors))
-		  ;; We allocate a temporary variable to receive the
-		  ;; result, and that variable will not be used.
-		  (call-next-method ast
-				    (context (list (make-temp))
-					     successors
-					     invocation))))
-	     (t
-	      ;; We have at least one result.  In case there is more
-	      ;; than one, we generate a successor where all but the
-	      ;; first one are filled with NIL.
-	      (let ((successor (nil-fill (rest results) (first successors))))
-		(call-next-method ast
-				  (context (list (first results))
-					   (list successor)
-					   invocation))))))
-      (2
-       ;; We have a context where a test of a Boolean is required.
-       ;; FIXME: Use a specific condition.
-       (error "AST generating value(s) found where a Boolean AST is required")))))
+    (assert-context ast context nil 1)
+    ;; We have a context with one successor, so RESULTS can be a
+    ;; list of any length, or it can be a values location,
+    ;; indicating that all results are needed.
+    (cond ((typep results 'cleavir-ir:values-location)
+	   ;; The context is such that all multiple values are
+	   ;; required.
+	   (let ((temp (make-temp)))
+	     (call-next-method
+	      ast
+	      (context (list temp)
+		       (list (cleavir-ir:make-fixed-to-multiple-instruction
+			      (list temp)
+			      results
+			      (first successors)))
+		       invocation))))
+	  ((null results)
+	   ;; We don't need the result.  This situation typically
+	   ;; happens when we compile a form other than the last of
+	   ;; a PROGN-AST.
+	   (if (cleavir-ast:side-effect-free-p ast)
+	       (progn
+		 ;; For now, we do not emit this warning.  It is a bit
+		 ;; too annoying because there is some automatically
+		 ;; generated code that is getting warned about.
+		 ;; (warn "Form compiled in a context requiring no value.")
+		 (first successors))
+	       ;; We allocate a temporary variable to receive the
+	       ;; result, and that variable will not be used.
+	       (call-next-method ast
+				 (context (list (make-temp))
+					  successors
+					  invocation))))
+	  (t
+	   ;; We have at least one result.  In case there is more
+	   ;; than one, we generate a successor where all but the
+	   ;; first one are filled with NIL.
+	   (let ((successor (nil-fill (rest results) (first successors))))
+	     (call-next-method ast
+			       (context (list (first results))
+					(list successor)
+					invocation)))))))
 
-(defun check-context-for-one-value-ast (context)
-  (assert (and (= (length (results context)) 1)
-	       (= (length (successors context)) 1))))
+;;; If these checks fail, it's an internal bug, since the
+;;; :around method should fix the results and successors.
+(defmethod compile-ast :before
+    ((ast cleavir-ast:one-value-ast-mixin) context)
+  (assert-context ast context 1 1))
 
-(defun check-context-for-no-value-ast (context)
-  (assert (and (null (results context))
-	       (= (length (successors context)) 1))))
+(defmethod compile-ast :before
+    ((ast cleavir-ast:no-value-ast-mixin) context)
+  (assert-context ast context 0 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -331,28 +316,25 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
+    (assert-context ast context nil 1)
     (let* ((all-args (cons (cleavir-ast:callee-ast ast)
 			   (cleavir-ast:argument-asts ast)))
 	   (temps (make-temps all-args)))
       (compile-arguments
        all-args
        temps
-       (ecase (length successors)
-	 (1
-	  (if (typep results 'cleavir-ir:values-location)
-	      (make-instance 'cleavir-ir:funcall-instruction
-		:inputs temps
-		:outputs (list results)
-		:successors successors)
-	      (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
-		(make-instance 'cleavir-ir:funcall-instruction
-		  :inputs temps
-		  :outputs (list values-temp)
-		  :successors
-		  (list (cleavir-ir:make-multiple-to-fixed-instruction
-			 values-temp results (first successors)))))))
-	 (2
-	  (error "CALL-AST appears in a Boolean context.")))
+       (if (typep results 'cleavir-ir:values-location)
+	   (make-instance 'cleavir-ir:funcall-instruction
+	     :inputs temps
+	     :outputs (list results)
+	     :successors successors)
+	   (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
+	     (make-instance 'cleavir-ir:funcall-instruction
+	       :inputs temps
+	       :outputs (list values-temp)
+	       :successors
+	       (list (cleavir-ir:make-multiple-to-fixed-instruction
+		      values-temp results (first successors))))))
        (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -391,7 +373,6 @@
 ;;; REINITIALIZE-INSTANCE on the ENTER-INSTRUCTION to set the slots to
 ;;; their final values.
 (defmethod compile-ast ((ast cleavir-ast:function-ast) context)
-  (check-context-for-one-value-ast context)
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
 	 (enter (cleavir-ir:make-enter-instruction ll))
 	 (values (cleavir-ir:make-values-location))
@@ -409,7 +390,6 @@
 ;;; Compile a SETQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:setq-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((location (find-or-create-location (cleavir-ast:lhs-ast ast))))
     (compile-ast
      (cleavir-ast:value-ast ast)
@@ -423,7 +403,6 @@
 ;;; Compile a MULTIPLE-VALUE-SETQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((locations (mapcar #'find-or-create-location
 			   (cleavir-ast:lhs-asts ast))))
     (compile-ast
@@ -445,7 +424,7 @@
 		   (successors successors)
 		   (invocation invocation))
       context
-    (assert (= (length successors) 1))
+    (assert-context ast context nil 1)
     (let ((form-ast (cleavir-ast:form-ast ast))
 	  (required (cleavir-ast:required-types ast))
 	  (optional (cleavir-ast:optional-types ast))
@@ -477,7 +456,6 @@
 ;;; Compile a SYMBOL-VALUE-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)
-  (check-context-for-one-value-ast context)
   (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:symbol-ast ast)
@@ -492,7 +470,6 @@
 ;;; Compile a SET-SYMBOL-VALUE-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp)))
     (compile-ast
@@ -513,7 +490,6 @@
 ;;; Compile a FDEFINITION-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:fdefinition-ast) context)
-  (check-context-for-one-value-ast context)
   (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:name-ast ast)
@@ -534,6 +510,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
+    (assert-context ast context 0 2)
     (let ((temp (make-temp)))
       (compile-ast
        (cleavir-ast:form-ast ast)
@@ -552,7 +529,6 @@
 ;;; This AST has ONE-VALUE-AST-MIXIN as a superclass.
 
 (defmethod compile-ast ((ast cleavir-ast:lexical-ast) context)
-  (check-context-for-one-value-ast context)
   (cleavir-ir:make-assignment-instruction
    (find-or-create-location ast)
    (first (results context))
@@ -569,7 +545,7 @@
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq))
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
-    (assert (typep ast 'cleavir-ast:top-level-function-ast))
+    (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
 	   (forms (cleavir-ast:forms ast))
 	   (enter (cleavir-ir:make-top-level-enter-instruction ll forms))
@@ -664,26 +640,23 @@
 		   (successors successors)
 		   (invocation invocation))
       context
+    (assert-context ast context nil 1)
     (let ((function-temp (cleavir-ir:new-temporary))
 	  (form-temps (loop repeat (length (cleavir-ast:form-asts ast))
 			    collect (cleavir-ir:make-values-location))))
       (let ((successor
-	      (ecase (length successors)
-		(1
-		 (if (typep results 'cleavir-ir:values-location)
-		     (make-instance 'cleavir-ir:multiple-value-call-instruction
-		       :inputs (cons function-temp form-temps)
-		       :outputs (list results)
-		       :successors successors)
-		     (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
-		       (make-instance 'cleavir-ir:multiple-value-call-instruction
-			 :inputs (cons function-temp form-temps)
-			 :outputs (list values-temp)
-			 :successors
-			 (list (cleavir-ir:make-multiple-to-fixed-instruction
-				values-temp results (first successors)))))))
-		(2
-		 (error "MULTIPLE-VALUE-CALL-AST appears in a Boolean context.")))))
+	      (if (typep results 'cleavir-ir:values-location)
+		  (make-instance 'cleavir-ir:multiple-value-call-instruction
+		    :inputs (cons function-temp form-temps)
+		    :outputs (list results)
+		    :successors successors)
+		  (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
+		    (make-instance 'cleavir-ir:multiple-value-call-instruction
+		      :inputs (cons function-temp form-temps)
+		      :outputs (list values-temp)
+		      :successors
+		      (list (cleavir-ir:make-multiple-to-fixed-instruction
+			     values-temp results (first successors))))))))
 	(loop for form-ast in (reverse (cleavir-ast:form-asts ast))
 	      for form-temp in (reverse form-temps)
 	      do (setf successor
@@ -703,7 +676,7 @@
 		   (successors successors)
 		   (invocation invocation))
       context
-    (assert (= (length successors) 1))
+    (assert-context ast context nil 1)
     (let ((arguments (cleavir-ast:argument-asts ast)))
       (cond ((typep results 'cleavir-ir:values-location)
 	     (let ((temps (make-temps arguments)))
@@ -733,10 +706,10 @@
 ;;; Compile an EQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:eq-ast) context)
-  (check-context-for-boolean-ast context)
   (with-accessors ((successors successors)
 		   (invocation invocation))
       context
+    (assert-context ast context 0 2)
     (let ((arg1-ast (cleavir-ast:arg1-ast ast))
 	  (arg2-ast (cleavir-ast:arg2-ast ast))
 	  (temp1 (cleavir-ir:new-temporary))

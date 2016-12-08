@@ -5,7 +5,6 @@
 ;;; Compile a SLOT-READ-AST
 
 (defmethod compile-ast ((ast cleavir-ast:slot-read-ast) context)
-  (check-context-for-one-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp)))
     (compile-ast
@@ -27,7 +26,6 @@
 ;;; Compile a SLOT-WRITE-AST
 
 (defmethod compile-ast ((ast cleavir-ast:slot-write-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp))
 	(temp3 (make-temp)))

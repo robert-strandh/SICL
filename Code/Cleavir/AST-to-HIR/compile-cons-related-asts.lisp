@@ -5,7 +5,6 @@
 ;;; Compile a CAR-AST
 
 (defmethod compile-ast ((ast cleavir-ast:car-ast) context)
-  (check-context-for-one-value-ast context)
   (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:cons-ast ast)
@@ -21,7 +20,6 @@
 ;;; Compile a CDR-AST
 
 (defmethod compile-ast ((ast cleavir-ast:cdr-ast) context)
-  (check-context-for-one-value-ast context)
   (let ((temp (make-temp)))
     (compile-ast
      (cleavir-ast:cons-ast ast)
@@ -37,7 +35,6 @@
 ;;; Compile a RPLACA-AST
 
 (defmethod compile-ast ((ast cleavir-ast:rplaca-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp)))
     (compile-ast
@@ -59,7 +56,6 @@
 ;;; Compile a RPLACD-AST
 
 (defmethod compile-ast ((ast cleavir-ast:rplacd-ast) context)
-  (check-context-for-no-value-ast context)
   (let ((temp1 (make-temp))
 	(temp2 (make-temp)))
     (compile-ast
