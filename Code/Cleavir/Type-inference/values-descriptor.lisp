@@ -19,13 +19,18 @@
 (defun values-rest-p (values-descriptor)
   (first values-descriptor))
 
-;; does the type not have any information?
+;;; does the type not have any information?
 (defun values-top-p (values-descriptor)
   (and (first values-descriptor) ; rest-p
        (every #'top-p (rest values-descriptor))))
 
+;;; return a values top type
+(defun values-top () '(t))
+
 (defun values-bottom-p (values-descriptor)
   (some #'bottom-p (rest values-descriptor)))
+
+(defun values-bottom () '(nil nil))
 
 (defun values-required-count (values-descriptor)
   (length (rest values-descriptor)))
@@ -36,19 +41,18 @@
 	    nil)
 	(mapcar #'approximate-type required)))
 
-(defun values-meet (v1 v2)
-  (let ((bottom-values '(t nil)) ; (values nil)
-	(nv1 (values-required-count v1))
+(defun values-binary-meet (v1 v2)
+  (let ((nv1 (values-required-count v1))
 	(nv2 (values-required-count v2))
 	max)
     (cond ((< nv1 nv2)
 	   (if (values-rest-p v1)
 	       (setf max nv2)
-	       (return-from values-meet bottom-values)))
+	       (return-from values-meet (values-bottom))))
 	  ((< nv2 nv1)
 	   (if (values-rest-p v2)
 	       (setf max nv1)
-	       (return-from values-meet bottom-values)))
+	       (return-from values-meet (values-bottom))))
 	  (t ; equal
 	   (setf max nv1)))
     (cons (and (values-rest-p v1) (values-rest-p v2))
@@ -56,7 +60,11 @@
 		collect (binary-meet (values-nth v1 n)
 				     (values-nth v2 n))))))
 
-(defun values-join (v1 v2)
+(defun values-meet (&rest descriptors)
+  (reduce #'values-binary-meet descriptors
+	  :initial-value (values-top)))
+
+(defun values-binary-join (v1 v2)
   (let* ((nv1 (values-required-count v1))
 	 (nv2 (values-required-count v2))
 	 (min (min nv1 nv2)))
@@ -64,3 +72,7 @@
 	  (loop for n from 0 below min
 		collect (binary-join (values-nth v1 n)
 				     (values-nth v2 n))))))
+
+(defun values-join (&rest descriptors)
+  (reduce #'values-binary-join descriptors
+	  :initial-value (values-bottom)))

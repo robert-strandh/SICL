@@ -8,7 +8,9 @@
 	   #:join #:meet)
   (:export #:approximate-values #:values-nth #:values-rest-p
 	   #:values-top-p #:values-bottom-p #:values-required-count
-	   #:values-meet #:values-join)
+	   #:values-binary-meet #:values-binary-join
+	   #:values-meet #:values-join
+	   #:values-top #:values-bottom)
   (:export #:infer-types #:arc-bag
 	   #:instruction-input #:find-type)
   (:export #:type-missing
