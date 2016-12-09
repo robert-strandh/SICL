@@ -38,9 +38,7 @@
 	when (typep output 'cleavir-ir:lexical-location)
 	  do (setf result (update output t result))
 	when (typep output 'cleavir-ir:values-location)
-	  do (setf result (update output
-				  (approximate-values nil nil t)
-				  result))
+	  do (setf result (update output (values-top) result))
 	finally (return result)))
 
 (defmethod two-successors-transfer (instruction input-bag)
@@ -49,9 +47,7 @@
 	when (typep output 'cleavir-ir:lexical-location)
 	  do (setf result (update output t result))
 	when (typep output 'cleavir-ir:values-location)
-	  do (setf result (update output
-				  (approximate-values nil nil t)
-				  result))
+	  do (setf result (update output (values-top) result))
 	finally (return (values result result))))
 
 (defmethod two-successors-transfer :around (instruction input-bag)
