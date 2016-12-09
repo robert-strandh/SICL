@@ -32,13 +32,6 @@
      initial-instruction)
     result))
 
-(defun process-instruction (instruction)
-  (let ((input (instruction-input instruction *dictionary*)))
-    (ecase (length (cleavir-ir:successors instruction))
-      (0 nil)
-      (1 (one-successor-transfer instruction input))
-      (2 (two-successors-transfer instruction input)))))
-
 (defun infer-types (initial-instruction)
   (let ((*work-list* (compute-initial-work-list initial-instruction))
 	(*dictionary* (compute-initial-dictionary initial-instruction)))

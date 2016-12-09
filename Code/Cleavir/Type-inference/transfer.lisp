@@ -1,7 +1,25 @@
 (cl:in-package #:cleavir-type-inference)
 
+;;; Called for effect. Update the inference information from the
+;;; instruction.
+(defgeneric process-instruction (instruction))
+
+;; default method. TODO: better dispatch here?
+(defmethod process-instruction (instruction)
+  (let ((input (instruction-input instruction *dictionary*)))
+    (ecase (length (cleavir-ir:successors instruction))
+      (0 nil)
+      (1 (one-successor-transfer instruction input))
+      (2 (two-successors-transfer instruction input)))))
+
+;;; These functions all take an instruction, and the bag of
+;;; descriptors in place as the input of that instruction.
+;;; That is, the bag is a bag-join of all incoming arcs' bags.
+
+;;; Returns one bag.
 (defgeneric one-successor-transfer (instruction input-bag))
 
+;;; Returns two bags, one for each branch.
 (defgeneric two-successors-transfer (instruction input-bag))
 
 (defmethod one-successor-transfer :around (instruction input-bag)
