@@ -17,5 +17,5 @@
 			       (cleavir-ir:lexical-location
 				(binary-join type-descriptor type))
 			       (cleavir-ir:values-location
-				(values-join type-descriptor type))))
+				(values-binary-join type-descriptor type))))
 		    finally (return result)))))

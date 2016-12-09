@@ -156,7 +156,7 @@
 	    (cleavir-ir:rest-type instruction))))
     (if (values-top-p descriptor)
 	input-bag ; don't bother
-	(update input (values-meet descriptor input-type)
+	(update input (values-binary-meet descriptor input-type)
 		input-bag))))
 
 (defmethod one-successor-transfer
