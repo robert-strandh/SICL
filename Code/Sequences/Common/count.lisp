@@ -25,7 +25,7 @@
   (declare (type fixnum start end))
   (with-test-and-test-not (test test-not)
     (with-from-end from-end
-      (with-element-type vector
+      (with-vector-type vector
 	(let ((result 0))
 	  (declare (type fixnum result))
 	  (for-each-relevant-element (e index vector start end from-end)
@@ -73,7 +73,7 @@
   (declare (type fixnum start end))
   (declare (type function predicate))
   (with-from-end from-end
-    (with-element-type vector
+    (with-vector-type vector
       (let ((result 0))
 	(declare (type fixnum result))
 	(for-each-relevant-element (e index vector start end from-end)
@@ -99,7 +99,7 @@
   (declare (type fixnum start end))
   (declare (type function predicate))
   (with-from-end from-end
-    (with-element-type vector
+    (with-vector-type vector
       (let ((result 0))
 	(declare (type fixnum result))
 	(for-each-relevant-element (e index vector start end from-end)
