@@ -252,7 +252,7 @@
 (defmacro with-vector-type (vector-var &body body)
   `(cond ,@(loop for (type . accessor-name) in *special-array-information*
 		 collect (make-situation vector-var type accessor-name body))
-	 ((simple-vector-p vector-var)
+	 ((simple-vector-p ,vector-var)
 	  (macrolet ((vref (vector index) `(aref ,vector ,index)))
 	      ,@body))
 	 (t (macrolet ((vref (vector index) `(aref ,vector ,index)))
