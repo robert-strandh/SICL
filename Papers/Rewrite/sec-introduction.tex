@@ -1,13 +1,13 @@
 \section{Introduction}
 \label{sec-introduction}
 
-In a language such as \commonlisp{}, it is hard to avoid redundant
-tests, even if the programmer goes to great lengths to avoid such
-redundancies.  The reason is that even the lowest-level operators in
-\commonlisp{} require \emph{type checks} to determine the exact way to
-accomplish the operation, so that two or more calls to similar
-operators may introduce redundant tests that are impossible to
-eliminate manually.
+In a language such as \commonlisp{} \cite{ansi:common:lisp}, it is
+hard to avoid redundant tests, even if the programmer goes to great
+lengths to avoid such redundancies.  The reason is that even the
+lowest-level operators in \commonlisp{} require \emph{type checks} to
+determine the exact way to accomplish the operation, so that two or
+more calls to similar operators may introduce redundant tests that are
+impossible to eliminate manually.
 
 As an example of such an introduction of redundant tests, consider the
 basic list operators \texttt{car} and \texttt{cdr}.  We can think of
