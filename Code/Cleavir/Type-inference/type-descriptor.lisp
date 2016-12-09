@@ -275,12 +275,6 @@
     ((simple-array bit) simple-array-bit)
     ((simple-array base-char) simple-array-base-char)))
 
-;;; TEMPORARY: All current type descriptors
-(deftype type-descriptor ()
-  '(member nil t fixnum null symbol cons
-    short-float single-float double-float long-float
-    simple-array-bit simple-array-base-char))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function APPROXIMATE-TYPE.
@@ -327,10 +321,8 @@
 ;;; True if a descriptor is the top (T) or bottom (NIL) type, resp.
 
 (defun top-p (descriptor)
-  (check-type descriptor type-descriptor)
   (eq descriptor 't))
 (defun bottom-p (descriptor)
-  (check-type descriptor type-descriptor)
   (eq descriptor 'nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -341,14 +333,6 @@
 
 (defgeneric binary-meet (descriptor1 descriptor2))
 
-(defmethod binary-join :before (descriptor1 descriptor2)
-  (check-type descriptor1 type-descriptor)
-  (check-type descriptor2 type-descriptor))
-
-(defmethod binary-meet :before (descriptor1 descriptor2)
-  (check-type descriptor1 type-descriptor)
-  (check-type descriptor2 type-descriptor))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function DIFFERENCE.
@@ -358,10 +342,6 @@
 ;;;  for typeq.
 
 (defgeneric difference (descriptor1 descriptor2))
-
-(defmethod difference :before (descriptor1 descriptor2)
-  (check-type descriptor1 type-descriptor)
-  (check-type descriptor2 type-descriptor))
 
 ;; we only actually need more methods if we include descriptors
 ;;  that are subtypes of one another.
