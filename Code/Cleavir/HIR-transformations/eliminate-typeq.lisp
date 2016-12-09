@@ -15,10 +15,14 @@
 		       typep-constant typep-function))
 	 (type (cleavir-ir:value-type instruction))
 	 (type-descriptor-constant (cleavir-ir:make-constant-input type))
+	 (values-location (cleavir-ir:make-values-location))
 	 (boolean-value (cleavir-ir:new-temporary))
 	 (call (cleavir-ir:make-funcall-instruction
 		(list typep-function object type-descriptor-constant)
-		(list boolean-value)))
+		(list values-location)))
+	 (mtf (cleavir-ir:make-multiple-to-fixed-instruction
+	       values-location
+	       (list boolean-value)))
 	 (nil-constant (cleavir-ir:make-constant-input 'nil)))
     (cond ((and (subtypep type 'fixnum) (subtypep 'fixnum type))
 	   (change-class instruction 'cleavir-ir:fixnump-instruction))
@@ -27,6 +31,7 @@
 	  (t
 	   (cleavir-ir:insert-instruction-before fdefinition instruction)
 	   (cleavir-ir:insert-instruction-before call instruction)
+	   (cleavir-ir:insert-instruction-before mtf instruction)
 	   (change-class instruction 'cleavir-ir:eq-instruction
 			 :inputs (list boolean-value nil-constant)
 			 :successors
