@@ -25,7 +25,7 @@
   (declare (type fixnum start end))
   (with-test-and-test-not (test test-not)
     (with-from-end from-end
-      (with-element-type vector
+      (with-vector-type vector
 	(for-each-relevant-element (e index vector start end from-end)
 	  (let ((element (apply-key-function e key)))
 	    (when (satisfies-two-argument-test-p item element test test-not)
