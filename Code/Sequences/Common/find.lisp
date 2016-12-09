@@ -69,7 +69,7 @@
   (with-from-end from-end
     (with-element-type vector
       (for-each-relevant-element (e index vector start end from-end)
-	(let ((element (apply-key-function (car e) key)))
+	(let ((element (apply-key-function e key)))
 	  (when (funcall predicate element)
 	    (return-from find-if-vector element)))))))
 
@@ -89,6 +89,6 @@
   (with-from-end from-end
     (with-element-type vector
       (for-each-relevant-element (e index vector start end from-end)
-	(let ((element (apply-key-function (car e) key)))
+	(let ((element (apply-key-function e key)))
 	  (unless (funcall predicate element)
 	    (return-from find-if-not-vector element)))))))
