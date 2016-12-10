@@ -11,29 +11,32 @@
 ;;; (values a &rest b) => (T A)
 ;;; In other words, we don't care about &optional or weird &rest.
 
-(defun values-nth (values-descriptor n)
-  (if (>= n (values-required-count values-descriptor))
-      (values-rest-p values-descriptor)
-      (nth n (rest values-descriptor))))
-
 (defun values-rest-p (values-descriptor)
   (first values-descriptor))
 
-;;; does the type not have any information?
-(defun values-top-p (values-descriptor)
-  (and (first values-descriptor) ; rest-p
-       (every #'top-p (rest values-descriptor))))
+(defun values-required (values-descriptor)
+  (rest values-descriptor))
 
 ;;; return a values top type
 (defun values-top () '(t))
 
-(defun values-bottom-p (values-descriptor)
-  (some #'bottom-p (rest values-descriptor)))
-
 (defun values-bottom () '(nil nil))
 
+(defun values-nth (values-descriptor n)
+  (if (>= n (values-required-count values-descriptor))
+      (values-rest-p values-descriptor)
+      (nth n (values-required values-descriptor))))
+
+;;; does the type not have any information?
+(defun values-top-p (values-descriptor)
+  (and (values-rest-p values-descriptor)
+       (every #'top-p (values-required values-descriptor))))
+
+(defun values-bottom-p (values-descriptor)
+  (some #'bottom-p (values-required values-descriptor)))
+
 (defun values-required-count (values-descriptor)
-  (length (rest values-descriptor)))
+  (length (values-required values-descriptor)))
 
 (defun approximate-values (required optional rest)
   (cons (if (or optional (not (bottom-p (approximate-type rest))))
@@ -48,11 +51,11 @@
     (cond ((< nv1 nv2)
 	   (if (values-rest-p v1)
 	       (setf max nv2)
-	       (return-from values-meet (values-bottom))))
+	       (return-from values-binary-meet (values-bottom))))
 	  ((< nv2 nv1)
 	   (if (values-rest-p v2)
 	       (setf max nv1)
-	       (return-from values-meet (values-bottom))))
+	       (return-from values-binary-meet (values-bottom))))
 	  (t ; equal
 	   (setf max nv1)))
     (cons (and (values-rest-p v1) (values-rest-p v2))
@@ -76,3 +79,7 @@
 (defun values-join (&rest descriptors)
   (reduce #'values-binary-join descriptors
 	  :initial-value (values-bottom)))
+
+(defun values-descriptor->type (values-descriptor)
+  `(values ,@(values-required values-descriptor)
+	   &rest ,(values-rest-p values-descriptor)))

@@ -7,10 +7,12 @@
 	   #:binary-join #:binary-meet #:difference
 	   #:join #:meet)
   (:export #:approximate-values #:values-nth #:values-rest-p
-	   #:values-top-p #:values-bottom-p #:values-required-count
+	   #:values-top-p #:values-bottom-p
+	   #:values-required #:values-required-count
 	   #:values-binary-meet #:values-binary-join
 	   #:values-meet #:values-join
-	   #:values-top #:values-bottom)
+	   #:values-top #:values-bottom
+	   #:values-descriptor->type)
   (:export #:infer-types #:arc-bag
 	   #:instruction-input #:find-type)
   (:export #:type-missing
