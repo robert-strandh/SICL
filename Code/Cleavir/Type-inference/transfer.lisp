@@ -83,14 +83,6 @@
 	  input-bag))
 
 (defmethod one-successor-transfer
-    ((instruction cleavir-ir:nop-instruction) input-bag)
-  input-bag)
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:use-instruction) input-bag)
-  input-bag)
-
-(defmethod one-successor-transfer
     ((instruction cleavir-ir:the-instruction) input-bag)
   (let* ((input (first (cleavir-ir:inputs instruction)))
 	 (input-type (find-type input input-bag))
