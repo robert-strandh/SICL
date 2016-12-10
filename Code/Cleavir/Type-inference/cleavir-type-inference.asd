@@ -8,6 +8,7 @@
   ((:file "packages")
    (:file "dictionary")
    (:file "type-descriptor")
+   (:file "values-descriptor")
    (:file "sanity-checks")
    (:file "filter")
    (:file "bag-equal")

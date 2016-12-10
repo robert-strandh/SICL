@@ -342,6 +342,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking VALUES.
+
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:values)) form)
+  (cleavir-code-utilities:check-form-proper-list form))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking TYPEQ.
 
 (defmethod check-special-form-syntax

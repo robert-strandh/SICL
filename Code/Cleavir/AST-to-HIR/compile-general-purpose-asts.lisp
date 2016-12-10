@@ -185,10 +185,6 @@
 ;;; *BLOCK-INFO* hash table using the block-ast as a key, so that a
 ;;; RETURN-FROM-AST that refers to this block can be compiled in the
 ;;; same context.
-;;;
-;;; FIXME: we should make sure the context we store is one that has a
-;;; single successor.  If this BLOCK-AST was compiled in a context
-;;; with two successors, we should create a new context for it.
 
 (defparameter *block-info* nil)
 
@@ -687,20 +683,7 @@
 			 (list (cleavir-ir:make-multiple-to-fixed-instruction
 				values-temp results (first successors)))))))
 		(2
-		 (let* ((temp (cleavir-ir:new-temporary))
-			(values-temp (make-instance 'cleavir-ir:values-location))
-			(false (cleavir-ir:make-constant-input nil)))
-		   (make-instance 'cleavir-ir:multiple-value-call-instruction
-		     :inputs (cons function-temp form-temps)
-		     :outputs (list values-temp)
-		     :successors
-		     (list (cleavir-ir:make-multiple-to-fixed-instruction
-			    values-temp
-			    (list temp)
-			    (make-instance 'cleavir-ir:eq-instruction
-			      :inputs (list temp false)
-			      :outputs '()
-			      :successors (reverse successors))))))))))
+		 (error "MULTIPLE-VALUE-CALL-AST appears in a Boolean context.")))))
 	(loop for form-ast in (reverse (cleavir-ast:form-asts ast))
 	      for form-temp in (reverse form-temps)
 	      do (setf successor
@@ -713,7 +696,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;; Compile an EQ-AST
+;;; Compile a VALUES-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:values-ast) context)
+  (with-accessors ((results results)
+		   (successors successors)
+		   (invocation invocation))
+      context
+    (assert (= (length successors) 1))
+    (let ((arguments (cleavir-ast:argument-asts ast)))
+      (cond ((typep results 'cleavir-ir:values-location)
+	     (let ((temps (make-temps arguments)))
+	       (compile-arguments
+		arguments temps
+		(cleavir-ir:make-fixed-to-multiple-instruction
+		 temps results (first successors))
+		invocation)))
+	    (t ;lexical locations
+	     ;; would happen from e.g. (+ (values ...) ...)
+	     ;; Multiple lexical outputs don't seem to happen, but
+	     ;; if they do this will work except when there are
+	     ;; more outputs than values.
+	     (let ((difference
+		     (- (length arguments) (length results))))
+	       (assert (>= difference 0))
+	       (let ((locations (append
+				 results
+				 (loop repeat difference
+				       collect (make-temp)))))
+		 (compile-arguments arguments locations
+				    (first successors)
+				    invocation))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile an EQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:eq-ast) context)
   (check-context-for-boolean-ast context)

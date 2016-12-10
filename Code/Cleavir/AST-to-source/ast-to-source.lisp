@@ -128,3 +128,8 @@
 	      when (typep item 'cleavir-ast:tag-ast)
 		collect (cleavir-ast:name item)
 	      else collect (to-source item dictionary))))
+
+(defmethod to-source ((ast cleavir-ast:values-ast) dictionary)
+  `(cleavir-primop:values ,@(list-to-sources
+			     (cleavir-ast:children ast)
+			     dictionary)))

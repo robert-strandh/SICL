@@ -1,7 +1,25 @@
 (cl:in-package #:cleavir-type-inference)
 
+;;; Called for effect. Update the inference information from the
+;;; instruction.
+(defgeneric process-instruction (instruction))
+
+;; default method. TODO: better dispatch here?
+(defmethod process-instruction (instruction)
+  (let ((input (instruction-input instruction *dictionary*)))
+    (ecase (length (cleavir-ir:successors instruction))
+      (0 nil)
+      (1 (one-successor-transfer instruction input))
+      (2 (two-successors-transfer instruction input)))))
+
+;;; These functions all take an instruction, and the bag of
+;;; descriptors in place as the input of that instruction.
+;;; That is, the bag is a bag-join of all incoming arcs' bags.
+
+;;; Returns one bag.
 (defgeneric one-successor-transfer (instruction input-bag))
 
+;;; Returns two bags, one for each branch.
 (defgeneric two-successors-transfer (instruction input-bag))
 
 (defmethod one-successor-transfer :around (instruction input-bag)
@@ -19,6 +37,8 @@
 	for output in (cleavir-ir:outputs instruction)
 	when (typep output 'cleavir-ir:lexical-location)
 	  do (setf result (update output t result))
+	when (typep output 'cleavir-ir:values-location)
+	  do (setf result (update output (values-top) result))
 	finally (return result)))
 
 (defmethod two-successors-transfer (instruction input-bag)
@@ -26,6 +46,8 @@
 	for output in (cleavir-ir:outputs instruction)
 	when (typep output 'cleavir-ir:lexical-location)
 	  do (setf result (update output t result))
+	when (typep output 'cleavir-ir:values-location)
+	  do (setf result (update output (values-top) result))
 	finally (return (values result result))))
 
 (defmethod two-successors-transfer :around (instruction input-bag)
@@ -59,14 +81,6 @@
   (update (first (cleavir-ir:outputs instruction))
 	  (approximate-type 'function)
 	  input-bag))
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:nop-instruction) input-bag)
-  input-bag)
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:use-instruction) input-bag)
-  input-bag)
 
 (defmethod one-successor-transfer
     ((instruction cleavir-ir:the-instruction) input-bag)
@@ -118,6 +132,42 @@
     ((instruction cleavir-ir:long-float-box-instruction) input-bag)
   (let ((output (first (cleavir-ir:outputs instruction))))
     (update output 'long-float input-bag)))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:the-values-instruction) input-bag)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+	 (input-type (find-type input input-bag))
+	 (descriptor
+	   (approximate-values
+	    (cleavir-ir:required-types instruction)
+	    (cleavir-ir:optional-types instruction)
+	    (cleavir-ir:rest-type instruction))))
+    (if (values-top-p descriptor)
+	input-bag ; don't bother
+	(update input (values-binary-meet descriptor input-type)
+		input-bag))))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:fixed-to-multiple-instruction)
+     input-bag)
+  (let* ((types (mapcar
+		 (lambda (input) (find-type input input-bag))
+		 (cleavir-ir:inputs instruction)))
+	 (values-type (approximate-values types nil nil))
+	 (output (first (cleavir-ir:outputs instruction))))
+    (update output values-type input-bag)))
+
+(defmethod one-successor-transfer
+    ((instruction cleavir-ir:multiple-to-fixed-instruction)
+     input-bag)
+  (loop with vtype = (find-type
+		      (first (cleavir-ir:inputs instruction))
+		      input-bag)
+	for n from 0
+	for output in (cleavir-ir:outputs instruction)
+	for bag = (update output (values-nth vtype n) input-bag)
+	  then (update output (values-nth vtype n) bag)
+	finally (return bag)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
