@@ -249,8 +249,9 @@
 ;;;;    No reason to lose information.
 ;;;; 2) Dictionaries and bags only store descriptors.
 ;;;;    Call approximate- and canonicalize-type a lot.
-;;;; 3) All functions in this file return descriptors.
-;;;;    Other than approximate- and canonicalize-type,
+;;;; 3) All functions in this file return descriptors, not counting
+;;;;     type-equal, top-p, bottom-p.
+;;;;    Other than type-equal, approximate- and canonicalize-type,
 ;;;;     they only accept descriptors.
 
 ;;;; An alternate implementation option for this code is to lean
@@ -258,6 +259,21 @@
 ;;;;  is done, a coarser lattice can still be used by only storing
 ;;;;  canonicalized-types in the dictionary. But it means unboxed
 ;;;;  types are annoying (you could use satisfies, maybe?)
+
+;;; Map of CL types to type descriptors.
+;;; Checked left to right, so put more specific types first.
+;;; Could be fixed at compile time.
+(defparameter *cl-type->descriptors*
+  '((nil nil)
+    (fixnum fixnum)
+    (null null)
+    (cons cons)
+    (short-float short-float)
+    (single-float single-float)
+    (double-float double-float)
+    (long-float long-float)
+    ((simple-array bit) simple-array-bit)
+    ((simple-array base-char) simple-array-base-char)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -269,15 +285,11 @@
 ;;; FIXME: environment junk (typexpand).
 
 (defun approximate-type (type)
-  (cond ((subtypep type 'nil) 'nil)
-	((subtypep type 'fixnum) 'fixnum)
-	((subtypep type 'null) 'null)
-	((subtypep type 'cons) 'cons)
-	((subtypep type 'short-float) 'short-float)
-	((subtypep type 'single-float) 'single-float)
-	((subtypep type 'double-float) 'double-float)
-	((subtypep type 'long-float) 'long-float)
-	(t t)))
+  (loop for (ctype descriptor) in *cl-type->descriptors*
+	when (subtypep type ctype)
+	  do (return-from approximate-type descriptor))
+  ;; default
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -296,18 +308,11 @@
 (defun type-equal (t1 t2)
   (and (subtypep t1 t2) (subtypep t2 t1)))
 
-;; FIXME: duplicates approximate-type too much. Could have a
-;;  macro-time map from types to descriptors.
 (defun canonicalize-type (type)
-  (cond ((subtypep type 'nil) (values 'nil t))
-	((type-equal type 'fixnum) (values 'fixnum t))
-	((type-equal type 'null) (values 'null t))
-	((type-equal type 'cons) (values 'cons t))
-	((type-equal type 'short-float) (values 'short-float t))
-	((type-equal type 'single-float) (values 'single-float t))
-	((type-equal type 'double-float) (values 'double-float t))
-	((type-equal type 'long-float) (values 'long-float t))
-	(t (values nil nil))))
+  (loop for (ctype descriptor) in *cl-type->descriptors*
+	when (type-equal type ctype)
+	  do (return-from canonicalize-type descriptor))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -315,8 +320,10 @@
 ;;;
 ;;; True if a descriptor is the top (T) or bottom (NIL) type, resp.
 
-(defun top-p (descriptor) (eq descriptor 't))
-(defun bottom-p (descriptor) (eq descriptor 'nil))
+(defun top-p (descriptor)
+  (eq descriptor 't))
+(defun bottom-p (descriptor)
+  (eq descriptor 'nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -400,7 +407,8 @@
 			append (loop for d2 in rest
 				     collect `(disjoin ,d1 ,d2))))))
   (pairwise fixnum null cons
-	    short-float single-float double-float long-float))
+	    short-float single-float double-float long-float
+	    simple-array-bit simple-array-base-char))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

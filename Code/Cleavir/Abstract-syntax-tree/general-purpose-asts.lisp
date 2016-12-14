@@ -741,6 +741,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class VALUES-AST.
+;;;
+;;; This corresponds directly to CLEAVIR-PRIMOP:VALUES,
+;;; and CL:VALUES through it.
+
+(defclass values-ast (ast)
+  ((%argument-asts :initarg :argument-asts :reader argument-asts)))
+
+(defun make-values-ast
+    (argument-asts &key origin (policy *policy*))
+  (make-instance 'values-ast
+    :origin origin :policy policy
+    :argument-asts argument-asts))
+
+(cleavir-io:define-save-info values-ast
+  (:argument-asts argument-asts))
+
+(defmethod children ((ast values-ast))
+  (argument-asts ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class MULTIPLE-VALUE-PROG1-AST.
 
 (defclass multiple-value-prog1-ast (ast)
@@ -799,7 +821,7 @@
 ;;; It has two children.  This AST can only appear in the TEST
 ;;; position of an IF-AST.
 
-(defclass eq-ast (ast)
+(defclass eq-ast (ast boolean-ast-mixin)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 

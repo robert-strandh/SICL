@@ -41,6 +41,52 @@
   (cleavir-ir:reinitialize-data initial)
   initial)
 
+(defun make-temps (length)
+  (loop repeat length collecting (cleavir-ir:new-temporary)))
+
+(defun mvc->funcall (mvc types)
+  (let ((caller (first (cleavir-ir:inputs mvc)))
+	(args (rest (cleavir-ir:inputs mvc)))
+	(types (instruction-input mvc types))
+	(cleavir-ir:*policy* (cleavir-ir:policy mvc)))
+    (let ((mtfs
+	    (loop for arg in args
+		  for type = (find-type arg types)
+		  if (values-rest-p type)
+		    ;; found a variable values type: give up.
+		    do (return-from mvc->funcall mvc)
+		  else
+		    collect (cleavir-ir:make-multiple-to-fixed-instruction
+			     arg
+			     (make-temps
+			      (values-required-count type))))))
+      ;; we can convert to funcall: put the mtfs in the graph.
+      ;; (the multiple-to-fixeds can't affect each other, so doing
+      ;;  it backwards like this is no problem.)
+      (loop for mtf in mtfs
+	    with instr = mvc
+	    do (cleavir-ir:insert-instruction-before mtf instr)
+	       (setf instr mtf))
+      ;; now the actual conversion.
+      (change-class mvc 'cleavir-ir:funcall-instruction
+	:inputs (cons caller
+		      ;; collect all the temps from earlier.
+		      (loop for mtf in mtfs
+			    appending (cleavir-ir:outputs mtf)))))))
+
+(defun mvcs->funcalls (initial types)
+  (let (mvcs)
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (i)
+       (when (typep i 'cleavir-ir:multiple-value-call-instruction)
+	 (push i mvcs)))
+     initial)
+    (mapc (lambda (mvc)
+	    (mvc->funcall mvc types))
+	  mvcs))
+  (cleavir-ir:reinitialize-data initial) ; added some temps.
+  initial)
+
 ;;; remove redundant THE instructions. basically just aesthetic.
 (defun prune-the (initial types)
   (let (death-row)

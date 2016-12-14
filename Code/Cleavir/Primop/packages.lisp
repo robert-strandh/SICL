@@ -86,4 +86,5 @@
    #:non-simple-unsigned-byte-16-aset-ast
    #:call-with-variable-bound
    #:let-uninitialized
-   #:funcall))
+   #:funcall
+   #:values))

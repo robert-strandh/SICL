@@ -4,4 +4,5 @@
   (:use #:common-lisp #:cleavir-type-inference)
   (:export #:insert-type-checks)
   (:export #:thes->typeqs #:delete-the)
-  (:export #:prune-typeqs #:prune-the))
+  (:export #:prune-typeqs #:prune-the)
+  (:export #:mvcs->funcalls))

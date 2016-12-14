@@ -29,6 +29,7 @@
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
    #:multiple-value-call-ast #:make-multiple-value-call-ast
    #:function-form-ast
+   #:values-ast #:make-values-ast
    #:multiple-value-prog1-ast #:make-multiple-value-prog1-ast
    #:first-form-ast
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p

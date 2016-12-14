@@ -984,3 +984,22 @@
      :index-ast (convert index env system)
      :element-ast (convert bit env system)
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:VALUES.
+;;;
+;;; This primitive operation can be used to inline CL:VALUES.
+;;; That is, (cl:values ...) and (cleavir-primop:values ...) are
+;;;  equivalent. The difference is that CL:VALUES is a function.
+;;; This will compile down into a FIXED-TO-MULTIPLE-INSTRUCTION.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:values)) form env system)
+  (db origin (op . arguments) form
+    (declare (ignore op))
+    (make-instance 'cleavir-ast:values-ast
+     :argument-asts (mapcar
+		     (lambda (form) (convert form env system))
+		     arguments)
+     :origin origin)))

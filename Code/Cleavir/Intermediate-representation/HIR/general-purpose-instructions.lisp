@@ -198,31 +198,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction THE-VALUES-INSTRUCTION.
-;;;
-;;; This is like THE-INSTRUCTION, but takes a VALUES-LOCATION
-;;; as input instead of a lexical one, and correspondingly, a
-;;; (decomposed) values type instead of a single-value type.
-;;; A separate instruction is useful because values locations can
-;;; have an unknown or varying number of values.
-
-(defclass the-values-instruction (instruction one-successor-mixin)
-  ((%required-types :initarg :required :reader required-types)
-   (%optional-types :initarg :optional :reader optional-types)
-   (%rest-type :initarg :rest :reader rest-type)))
-
-(defun make-the-values-instruction (input successor
-				    required optional rest)
-  (make-instance 'the-values-instruction
-    :inputs (list input)
-    :outputs '()
-    :successors (list successor)
-    :required required
-    :optional optional
-    :rest rest))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction CATCH-INSTRUCTION.
 ;;;
 ;;; This instruction is used to mark the stack to be an exit point.
