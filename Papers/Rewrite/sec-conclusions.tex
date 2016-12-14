@@ -1,0 +1,13 @@
+\section{Conclusions and future work}
+
+We have defined a technique for eliminating redundant tests in
+intermediate code.  The technique relies on replication of code paths
+between two identical tests.  So far, our technique only defines a
+\emph{mechanism} for achieving the result.  It does not yet define a
+\emph{policy} stating when the technique should be applied.
+
+The question of policy is an important one, because with a large
+number of redundant tests in the intermediate code, there is a
+possibility for \emph{exponential blowup} of the code size.
+Future work involves defining a reasonable policy to avoid such
+pathological cases.
