@@ -115,7 +115,7 @@ on the compilation functions that handle these classes.
 \Defgeneric {variable-info} {environment symbol}
 
 This function is called by the compiler whenever a symbol in a
-\emph{variable} position is to be compiled.  It returns an instance of
+\emph{variable} position is to be compiled.  If successful, it returns an instance of
 one of the classes described below.
 
 \Defcondition {no-variable-info}
@@ -245,6 +245,10 @@ declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
 ignorable declaration for this variable is in scope.  If this initarg
 is not supplied, it defaults to \texttt{nil}.
 
+\Definitarg {:global-p}
+
+This initarg is used to supply information on whether the variable is globally or locally special, i.e. whether it is special because of a proclamation. The value of this initarg can be either \texttt{t}, meaning that the variable is globally special, or \texttt{nil}, meaning that it is not.
+
 \Defmethod {name} {(info {\tt special-variable-info})}
 
 Given an instance of the class \texttt{special-variable-info}, this
@@ -264,6 +268,10 @@ Given an instance of the class \texttt{special-variable-info}, this
 method returns the \emph{ignore} information of the special variable as
 supplied by the initarg \texttt{:ignore}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
+
+\Defmethod {global-p} {(info {\tt special-variable-info})}
+
+Given an instance of the class \texttt{special-variable-info}, this method returns the \emph{global-p} information of the special variable as supplised by the initarg \texttt{:global-p}.
 
 \subsubsection{Constant variable information}
 
@@ -412,6 +420,14 @@ declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
 ignorable declaration for this function is in scope.  If this initarg
 is not supplied, it defaults to \texttt{nil}.
 
+\Definitarg {:ast}
+
+This initarg is used to supply an inline expansion for the local 
+function. The value of this initarg can be either a
+\texttt{cleavir-ast:function-ast}, or \texttt{nil}, indicating that
+no inline expansion is available. If this initarg is not supplied,
+it defaults to \texttt{nil}.
+
 \Definitarg {:dynamic-extent}
 
 This initarg is used to supply \emph{dynamic extent} information about
@@ -453,6 +469,10 @@ Given an instance of the class \texttt{local-function-info}, this
 method returns the \emph{ignore} information of the local function as
 supplied by the initarg \texttt{:ignore}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
+
+\Defmethod {inline} {(info {\tt local-function-info})}
+
+Given an instance of the class \texttt{local-function-info}, this method returns the \emph{ast} information of the local function as supplied by the initarg \texttt{:ast}. If that initarg was not supplied, this method returns \texttt{nil}.
 
 \Defmethod {dynamic-extent} {(info {\tt local-function-info})}
 
@@ -506,6 +526,14 @@ declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
 ignorable declaration for this function is in scope.  If this initarg
 is not supplied, it defaults to \texttt{nil}.
 
+\Definitarg {:ast}
+
+This initarg is used to supply an inline expansion for the global
+function. The value of this initarg can be either a
+\texttt{cleavir-ast:function-ast}, or \texttt{nil}, indicating that
+no inline expansion is available. If this initarg is not supplied,
+it defaults to \texttt{nil}.
+
 \Definitarg {:compiler-macro}
 
 This initarg is used to supply a \emph{compiler macro function} when
@@ -539,6 +567,10 @@ Given an instance of the class \texttt{global-function-info}, this
 method returns the \emph{ignore} information of the global function as
 supplied by the initarg \texttt{:ignore}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
+
+\Defmethod {inline} {(info {\tt global-function-info})}
+
+Given an instance of the class \texttt{global-function-info}, this method returns the \emph{ast} information of the global function as supplied by the initarg \texttt{:ast}. If that initarg was not supplied, this method returns \texttt{nil}.
 
 \Defmethod compiler-macro {(info {\tt global-function-info})}
 
@@ -737,71 +769,45 @@ returns the identity of the tag as supplied by the initarg
 \Defgeneric {optimize-info} {environment}
 
 Client-supplied methods on this function must always return a valid
-instance of the class \texttt{optimize-info}.  For qualities that have
-no explicit entries in the environment, the default values should be
-supplied. 
+instance of the class \texttt{optimize-info}. Optimize info includes
+information about optimize declarations as well as policies; more
+information on policies is in \refChap{chap-policy}.
 
 \Defclass {optimize-info}
 
-\Definitarg {:speed}
+\Definitarg {:optimize}
 
-This initarg supplies a value for the \emph{speed} quality.  The
-argument must be an integer between $0$ and $3$ inclusive.  If this
-initarg is omitted, the value defaults to $3$.
+This initarg supplies the information about optimize declarations.
+It should be a proper list where each element is a list (quality
+value) , i.e. a list valid as the \texttt{cdr} of an \texttt{optimize} 
+declaration specifier, with no defaulted values. Such a list can be
+returned by \texttt{cleavir-policy:normalize-optimize}. The list
+must be complete in the sense that every quality valid in
+ the environment (see \texttt{optimize-qualities}) is represented.
 
-\Definitarg {:compilation-speed}
+This initarg must be supplied.
 
-This initarg supplies a value for the \emph{compilation-speed}
-quality.  The argument must be an integer between $0$ and $3$
-inclusive.  If this initarg is omitted, the value defaults to $3$.
+\Definitarg {:policy}
 
-\Definitarg {:safety}
+This initarg supplies the policy for the \texttt{optimize-info}
+object. It should be a value returned by
+\texttt{cleavir-policy:compute-policy} for the \texttt{:optimize} initarg.
 
-This initarg supplies a value for the \emph{safety} quality.  The
-argument must be an integer between $0$ and $3$ inclusive.  If this
-initarg is omitted, the value defaults to $3$.
+Because the policy is referenced widely during AST generation,
+environment query methods should make an effort to cache policies,
+and to compute new policy objects only when necessary.
 
-\Definitarg {:debug}
+This initarg must be supplied.
 
-This initarg supplies a value for the \emph{debug} quality.  The
-argument must be an integer between $0$ and $3$ inclusive.  If this
-initarg is omitted, the value defaults to $3$.
+\Defmethod {optimize} {(info {\tt optimize-info})}
 
-\Definitarg {:space}
+Given an instance of the class \texttt{optimize-info}, this method 
+returns the optimize information as supplied by the initarg
+\texttt{:optimize}.
 
-This initarg supplies a value for the \emph{space} quality.  The
-argument must be an integer between $0$ and $3$ inclusive.  If this
-initarg is omitted, the value defaults to $3$.
+\Defmethod {policy} {(info {\tt optimize-info})}
 
-\Defmethod {speed} {(info {\tt optimize-info})}
-
-This method returns the value of the \emph{speed} quality as supplied
-by the initarg \texttt{:speed}.  If that initarg was not supplied the
-value $3$ is returned. 
-
-\Defmethod {compilation-speed} {(info {\tt optimize-info})}
-
-This method returns the value of the \emph{compilation-speed} quality
-as supplied by the initarg \texttt{:compilation-speed}.  If that
-initarg was not supplied the value $3$ is returned.
-
-\Defmethod {safety} {(info {\tt optimize-info})}
-
-This method returns the value of the \emph{safety} quality as supplied
-by the initarg \texttt{:safety}.  If that initarg was not supplied the
-value $3$ is returned. 
-
-\Defmethod {debug} {(info {\tt optimize-info})}
-
-This method returns the value of the \emph{debug} quality as supplied
-by the initarg \texttt{:debug}.  If that initarg was not supplied the
-value $3$ is returned. 
-
-\Defmethod {space} {(info {\tt optimize-info})}
-
-This method returns the value of the \emph{space} quality as supplied
-by the initarg \texttt{:space}.  If that initarg was not supplied the
-value $3$ is returned. 
+Given an instance of the class \texttt{optimize-info}, this method returns the policy as supplied by the initarg \texttt{:policy}.
 
 \subsection{Type information}
 
@@ -847,7 +853,7 @@ information.  The original environment is not affected.
 
 \subsection{Adding local functions}
 
-\Defgeneric {add-local-function} {environment function-name}
+\Defgeneric {add-local-function} {environment function-name \optional identity}
 
 This generic function is called by the compiler in order to add
 \textit{function-name} as the name of a local function to
@@ -868,7 +874,7 @@ original environment is not affected.
 
 \subsection{Adding blocks}
 
-\Defgeneric {add-block} {environment symbol}
+\Defgeneric {add-block} {environment symbol \optional identity}
 
 This generic function is called by the compiler in order to add
 \textit{symbol} as the name of a block to \textit{environment}.  The
@@ -951,16 +957,17 @@ affected.
 
 \subsection{Adding optimize information}
 
-\Defgeneric {add-optimize} {environment quality value}
+\Defgeneric {add-optimize} {environment optimize policy}
 
 This generic function is called by the compiler in order to add
-optimize information to the environment.  The value of the
-\textit{quality} parameter is one of the symbols \texttt{speed},
-\texttt{compilation-speed}, \texttt{debug}, \texttt{safety}, and
-\texttt{space}.  The value of the \textit{value} parameter is an
-integer between $0$ and $3$ inclusive.  The function returns a new
-environment augmented with the new information.  The original
-environment is not affected.
+optimize information to the environment. The value of the\
+\textit{optimize} parameter should be a complete and normalized
+\texttt{optimize} specification, as returned by
+\texttt{cleavir-policy:normalize-optimize}.
+The value of the \textit{policy} parameter should be the policy
+corresponding to the optimize specification, as computed by
+\texttt{cleavir-policy:compute-policy}.
+The original environment is not affected.
 
 \subsection{Adding inline information}
 
@@ -975,14 +982,25 @@ the symbol \texttt{notinline}.  The function returns a new environment
 augmented with the new information.  The original environment is not
 affected.
 
+\Defgeneric {add-inline-expansion} {environment function-name expansion}
+
+This generic function is called by the compiler in order to add an
+inline expansion for a function. The compiler has already verified
+that there is a local function or a global function named
+\textit{function-name} in scope in \textit{environment}. The value
+of the \textit{expansion} parameter is a \texttt{cleavir-ast:function-ast},
+or \texttt{nil}, indicating that no expansion is available.
+The original environment is not affected.
+
 \section{Compile-time evaluation}
 \label{sec-environment-compile-time-evaluation}
 
-\Defgeneric {eval} {environment form}
+\Defgeneric {eval} {form environment1 environment2}
 
 This function is called by the compiler in order to evaluate forms in
-\textit{environment}.  It is called as a result of top-level forms
-being wrapped in \texttt{eval-when :compile-toplevel}. 
+\textit{environment1}.  It is called as a result of top-level forms
+being wrapped in \texttt{eval-when :compile-toplevel}. The
+\textit{environment2} argument is only used for method dispatch.
 
 \section{Default augmentation classes}
 
@@ -1214,16 +1232,31 @@ value must be a function name.  This initarg must be supplied.
 
 \Defmethod {inline} {(entry {\tt inline})}
 
+\subsection {Inline-expansion}
+
+\Defclass {inline-expansion}
+
+\Definitarg {:name}
+
+This initarg is used to specify the name of the function. The value
+must be a function name. This initarg must be supplied.
+
+\Definitarg {:ast}
+
+\Defmethod {name} {(entry {\tt inline-expansion})}
+
+\Defmethod {ast} {(entry {\tt inline-expansion})}
+
 \subsection {Optimize}
 
 \Defclass {optimize}
 
-\Definitarg {:quality}
+\Definitarg {:optimize}
 
-\Definitarg {:value}
+\Definitarg {:policy}
 
-\Defmethod {quality} {(entry {\tt optimize})}
+\Defmethod {optimize} {(entry {\tt optimize})}
 
-\Defmethod {value} {(entry {\tt optimize})}
+\Defmethod {policy} {(entry {\tt optimize})}
 
 %%  LocalWords:  startup expanders expander subclasses
