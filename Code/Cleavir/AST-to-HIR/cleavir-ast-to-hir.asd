@@ -7,11 +7,14 @@
 ;;;; compilation of the entire AST.
 
 (defsystem :cleavir-ast-to-hir
-  :depends-on (:cleavir-ast :cleavir-hir :cleavir-primop)
+  :depends-on (:acclimation
+	       :cleavir-ast :cleavir-hir :cleavir-primop)
   :serial t
   :components
   ((:file "packages")
    (:file "context")
+   (:file "conditions")
+   (:file "condition-reporters-english")
    (:file "compile-general-purpose-asts")
    (:file "compile-fixnum-related-asts")
    (:file "compile-float-related-asts")

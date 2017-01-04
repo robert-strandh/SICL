@@ -8,8 +8,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (= (length successors) 2)
-      (error "Invalid context for FIXNUM-ADD-AST."))
+    (assert-context ast context 1 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp))
 	  (result (find-or-create-location (cleavir-ast:variable-ast ast))))
@@ -34,8 +33,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (= (length successors) 2)
-      (error "Invalid context for FIXNUM-SUB-AST."))
+    (assert-context ast context 1 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp))
 	  (result (find-or-create-location (cleavir-ast:variable-ast ast))))
@@ -60,9 +58,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (and (null results)
-		 (= (length successors) 2))
-      (error "Invalid context for FIXNUM-LESS-AST."))
+    (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp)))
       (compile-ast
@@ -86,9 +82,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (and (null results)
-		 (= (length successors) 2))
-      (error "Invalid context for FIXNUM-NOT-GREATER-AST."))
+    (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp)))
       (compile-ast
@@ -112,9 +106,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (and (null results)
-		 (= (length successors) 2))
-      (error "Invalid context for FIXNUM-GREATER-AST."))
+    (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp)))
       (compile-ast
@@ -138,9 +130,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (and (null results)
-		 (= (length successors) 2))
-      (error "Invalid context for FIXNUM-NOT-LESS-AST."))
+    (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp)))
       (compile-ast
@@ -164,9 +154,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (and (null results)
-		 (= (length successors) 2))
-      (error "Invalid context for FIXNUM-EQUAL-AST."))
+    (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp)))
       (compile-ast
