@@ -34,3 +34,19 @@ such as \texttt{test}, \texttt{test-not}, and \texttt{end}, each copy
 of the loop will automatically be simplified differently according to
 the particular branch it occurs in.
 
+Our technique has some disadvantages as well.  First of all, the size
+of the code increases, which can have a negative influence on cache
+performance, especially when different invocations of the code result
+in different results of the test.  In fact, if several variables with
+overlapping regions of liveness are processes by our technique, the
+result may be an \emph{exponential blowup} of the size of the code in
+the overlapping region.  It is outside the scope of this paper to
+discuss heuristics that will determine the conditions for applying our
+technique, but such conditions are required to avoid such problematic
+effects.
+
+The increase of the size of the code automatically means longer
+compilation times as well.  Techniques that work on global information
+about the program can avoid some of these disadvantages, at the cost
+of increased complexity compared to our simple local rewrite
+technique.
