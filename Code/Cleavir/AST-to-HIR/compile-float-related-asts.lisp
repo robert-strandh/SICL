@@ -28,7 +28,6 @@
 (defmacro compile-float-arithmetic-ast
     (ast-class instruction-class unbox-instruction-class box-instruction-class)
   `(defmethod compile-ast ((ast ,ast-class) context)
-     (check-context-for-one-value-ast context)
      (let* ((arguments (cleavir-ast:children ast))
 	    (temps (make-temps arguments))
 	    (temp (cleavir-ir:new-temporary))
@@ -192,6 +191,7 @@
 (defmacro compile-float-comparison-ast
     (ast-class instruction-class unbox-instruction-class input-transformer)
   `(defmethod compile-ast ((ast ,ast-class) context)
+     (assert-context ast context 0 2)
      (check-context-for-boolean-ast context)
      (let* ((arguments (cleavir-ast:children ast))
 	    (temps (make-temps arguments)))
