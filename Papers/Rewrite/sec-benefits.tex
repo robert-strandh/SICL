@@ -1,0 +1,36 @@
+\section{Benefits of our technique}
+
+The main benefit of our technique is its simplicity.  This simplicity
+is important both in terms of its implementation and in terms of
+ensuring termination for all possible control graphs.
+
+As the example in refSec{sec-our-technique-example} shows, redundant
+tests can be avoided in cases where it is not possible to express this
+redundancy by the use of any portable lower-level constructs.
+Situations similar to the one in the example occur naturally in many
+programs:
+
+\begin{itemize}
+\item If the same variable is used in more than one consecutive
+  numeric operation, then there will be redundant tests to determine
+  the exact numeric subtype of the contents of that variable.  An
+  important special case is to determine whether a particular value is
+  of type \texttt{fixnum}.
+\item If a variable holding an array is used in more than one
+  consecutive operation to access some element, then there will be
+  redundant tests to determine various aspects of the array that
+  influence the way the indices and the elements are handled, such as
+  the upgraded element type and whether the array is simple or not.
+\end{itemize}
+
+A particularly interesting special case of these situations occurs
+when the dominated tests is part of a loop.  It is particularly
+interesting, because our technique will then eliminate a test that
+would otherwise potentially be executed a large number of times.  This
+feature an be taken advantage of in a highly portable version of some
+of the \commonlisp{} \emph{sequence functions}.  By duplicating a very
+general loop in every branch of a multiway test for keyword arguments
+such as \texttt{test}, \texttt{test-not}, and \texttt{end}, each copy
+of the loop will automatically be simplified differently according to
+the particular branch it occurs in.
+
