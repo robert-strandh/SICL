@@ -11,9 +11,11 @@
    (%ast-successors :initarg :ast-successors :reader ast-successors)))
 
 (defun assert-context (ast context ast-results ast-successors)
-  (when (or (and ast-results (/= ast-results (results context)))
+  (when (or (and ast-results
+		 (/= ast-results (length (results context))))
 	    (and ast-successors
-		 (= ast-successors (length (successors context)))))
+		 (/= ast-successors
+		     (length (successors context)))))
     (error 'miscontext :ast ast :context context
 		       :ast-results ast-results
 		       :ast-successors ast-successors)))
