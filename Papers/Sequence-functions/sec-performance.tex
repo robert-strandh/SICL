@@ -1,1 +1,42 @@
-\section{Performance of our technique}
+\section{Properties of our technique}
+
+\subsection{Performance}
+
+\subsection{Maintainability}
+
+From the point of view of maintainability, there are clear advantages
+to our technique.  With only a small amount of macro code, we are able
+to hide the implementation details of the functions, without
+sacrificing performance.
+
+The small amount of macro code that is needed to make our technique
+work is clearly offset by the considerable decrease in the code size
+that would otherwise have been required in order to obtain similar
+performance.
+
+\subsection{Disadvantages}
+
+There are not only advantages to our technique.
+
+For one thing, compilation times are fairly long, for the simple
+reason that the body of the function is duplicated a large number of
+times.  Ultimately, the compiler eliminates most of the code, but
+initially the code is fairly large.  And the compiler must do a
+significant amount of work to determine what code can be eliminated.
+To give an idea of the orders of magnitude, in order to obtain
+fully-expanded code on SBCL, we had to increase the inline limit from
+$100$ to $10\thinspace000$, resulting in a compilation time of tens of
+seconds for a single function.
+
+Another disadvantage of our technique is that it doesn't lend itself
+to applications using short sequences.  For such applications, it
+would be advantageous to inline the sequence functions, but doing so
+would make each call site suffer the same long compilation times as we
+now observe for the ordinary callable functions.
+
+Not all compilers are able to optimize the main body of a function
+according to some enclosing condition.  For a \commonlisp{}
+implementation with a more basic compiler, no performance improvement
+would be observed.  In addition, the duplication of the main body of
+the function would result in a very large increase of the code size,
+compared to a simpler code with the same performance.
