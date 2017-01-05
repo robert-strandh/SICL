@@ -1,0 +1,29 @@
+\appendix
+
+\section{Protocol}
+
+In this appendix, we describe the macros and functions that are part
+of the protocol of our technique, used for implementing most of the
+sequence functions.
+
+\Defun {apply-key-function} {element key-function}
+
+This function takes an element of the sequence and a function to apply
+in order to obtain the object to use for comparison.  For performance
+reasons, this function should be inlined.
+
+A typical definition of this function might look like this:
+
+{\small\begin{verbatim}
+(defun apply-key-function (element key-function)
+  (declare (optimize (speed 3) (debug 0) (safety 3)))
+  (declare (type function key-function))
+  (cond ((eq key-function #'identity)
+	 element)
+	((eq key-function #'car)
+	 (car element))
+	((eq key-function #'cdr)
+	 (cdr element))
+	(t
+	 (funcall key-function element))))
+\end{verbatim}}
