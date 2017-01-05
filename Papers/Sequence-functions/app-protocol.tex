@@ -62,3 +62,35 @@ name of a variable that contains the index of the particular
 Because of the size of the definition of this macro, due mainly to the
 code for processing \texttt{cons} cells in reverse order
 \cite{Durand:2015:ELS:reverse}, we do not show its definition here.
+
+\Defmacro {with-test-and-test-not}\\
+{(test-var test-not-var) \body body}
+
+The role of this macro is to supply certain special cases for the
+possible values of the keyword parameters \texttt{test} and
+\texttt{test-not} of a typical sequence function.  It is assumed that
+it has already been verified that at most one of the two keyword
+arguments has a value other than \texttt{nil}.  A typical
+implementation might look like this:
+
+{\small\begin{verbatim}
+(defmacro with-test-and-test-not
+    ((test-var test-not-var) &body body)
+  `(cond ((null ,test-not-var)
+	  (locally (declare (type function ,test-var))
+	    (cond ((eq ,test-var #'eq)
+		   ,@body)
+		  ((eq ,test-var #'eql)
+		   ,@body)
+		  (t
+		   ,@body))))
+	 ((null ,test-var)
+	  (locally (declare (type function ,test-not-var))
+	    (cond ((eq ,test-not-var #'eq)
+		   ,@body)
+		  ((eq ,test-not-var #'eql)
+		   ,@body)
+		  (t
+		   ,@body))))
+	 (t nil)))
+\end{verbatim}}
