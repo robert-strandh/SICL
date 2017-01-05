@@ -32,7 +32,7 @@ that remain are special operators and global functions.
 There are no classes that correspond to declarations.  Implementations
 should replace type declarations by the use of instances of the
 \texttt{the-ast} class or the \texttt{typeq-ast} class as indicated by
-the \hs{}
+the \hs{}.
 
 Functions that can not be expressed as simpler functions, and that are
 performance critical, have been given their own abstract syntax trees.
@@ -56,6 +56,14 @@ Then it might be necessary to provide primary methods on some generic
 functions that manipulate the abstract syntax tree.%
 \fixme{At some point, provide a list of generic functions that would
   require overriding, extending, or primary methods.}
+
+\section{Compilation policy}
+
+All AST objects include a compilation policy \seechap{chap-policy},
+specified by the initarg \texttt{:policy} and with accessor
+\texttt{policy}. If many ASTs are being created at once, the
+special variable \texttt{*policy*} can be bound, and will be used
+as an initform.
 
 \section{General types of abstract syntax trees}
 
@@ -283,7 +291,8 @@ The \texttt{if-ast} corresponds directly to the \commonlisp{} special operator
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:form-ast} & \texttt{form-ast} & AST for the form.\\
+\texttt{:form} & \texttt{form} & The form.\\
+\texttt{:read-only-p} & \texttt{read-only-p} & The read-only-p argument.\\
 \hline
 \end{tabular}
 
@@ -375,17 +384,25 @@ Initarg & Reader & Description\\
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:type-specifiers} & \texttt{type-specifiers} & The second argument.\\
-\hline
 \texttt{:form-ast} & \texttt{form-ast} & The first argument.\\
+\hline
+\texttt{:required} & \texttt{required-types} & Required types of the declaration.\\
+\hline
+\texttt{:optional} & \texttt{optional-types} & \optional types of the declaration.\\
+\hline
+\texttt{:rest} & \texttt{rest-type} & \rest type of the declaration.\\
 \hline
 \end{tabular}
 
-This AST should only be used in unsafe code, or in situations where
-the compiler needs to be informed that a variable has a particular
-type.  In safe code, the \texttt{typeq-ast} \seesec{typeq-ast} should
-be used instead.  The effect of this AST is to promise that the value
-of its child has a particular type, without checking this fact.
+This AST informs the compiler of a type declaration, for example
+from \texttt{cl:the} or \texttt{cl:declare}. Its semantics are identical
+to those of \texttt{cl:the}, with the exception that the values
+type is completely explicit (no implicit \rest \texttt{t}).
+
+This AST has no operational effect. Later stages of compilation may
+insert an explicit type check, but this is not required by the AST.
+
+Currently, \key types are not usable. This is a limitation.
 
 \subsection{\texttt{typeq-ast}}
 \label{typeq-ast}
@@ -394,11 +411,22 @@ of its child has a particular type, without checking this fact.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:type-ast} & \texttt{type-ast} & The second argument.\\
+\texttt{:type-specifier} & \texttt{type-specifier} & The type specifier.\\
 \hline
-\texttt{:variable-ast} & \texttt{variable-ast} & The first argument.\\
+\texttt{:type-specifier-ast} & \texttt{type-specifier-ast} & An AST for the type specifier (see below).\\
+\hline
+\texttt{:form-ast} & \texttt{form-ast} & The form with type checked.\\
 \hline
 \end{tabular}
+
+This AST represents a branch based on the type of the primary value
+returned by a form. It can only appear as the first child (the test)
+of an \texttt{if-ast} \seesec{if-ast}.
+
+The \texttt{type-specifier-ast} slot holds a \texttt{load-time-value-ast}\seesec{load-time-value-ast}
+with the constant type specifier. This is used later in compilation in the case that the \texttt{typeq} must be implemented as a call to
+\texttt{cl:typep}, and is computed from the type specifier automatically
+if not provided.
 
 \section{Abstract syntax trees for fixnum arithmetic}
 
@@ -409,11 +437,11 @@ Initarg & Reader & Description\\
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\texttt{:arg1-ast} & \texttt{arg1-ast} & The first argument.\\
 \hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\texttt{:arg2-ast} & \texttt{arg2-ast} & The second argument.\\
 \hline
-\texttt{:result} & \texttt{result} & The result of the operation.\\
+\texttt{:variable-ast} & \texttt{variable-ast} & The variable in which to store the result.\\
 \hline
 \end{tabular}
 
@@ -446,11 +474,11 @@ operands is $r - 2^n$.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\texttt{:arg1-ast} & \texttt{arg1-ast} & The first argument.\\
 \hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\texttt{:arg2-ast} & \texttt{arg2-ast} & The second argument.\\
 \hline
-\texttt{:result} & \texttt{result} & The result of the operation.\\
+\texttt{:variable-ast} & \texttt{variable-ast} & The variable in which to store the result.\\
 \hline
 \end{tabular}
 
@@ -484,9 +512,9 @@ $r$ is the value of the lexical variable.  If the result is
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\texttt{:arg1-ast} & \texttt{arg1-ast} & The first argument.\\
 \hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\texttt{:arg2-ast} & \texttt{arg2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
@@ -511,9 +539,9 @@ Instead this AST translates to a test and a branch.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\texttt{:arg1-ast} & \texttt{arg1-ast} & The first argument.\\
 \hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\texttt{:arg2-ast} & \texttt{arg2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
@@ -538,9 +566,9 @@ Instead this AST translates to a test and a branch.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\texttt{:arg1-ast} & \texttt{arg1-ast} & The first argument.\\
 \hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\texttt{:arg2-ast} & \texttt{arg2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
@@ -565,9 +593,9 @@ Instead this AST translates to a test and a branch.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\texttt{:arg1-ast} & \texttt{arg1-ast} & The first argument.\\
 \hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\texttt{:arg2-ast} & \texttt{arg2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
@@ -592,9 +620,9 @@ Instead this AST translates to a test and a branch.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\texttt{:arg1-ast} & \texttt{arg1-ast} & The first argument.\\
 \hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\texttt{:arg2-ast} & \texttt{arg2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
@@ -1312,29 +1340,66 @@ The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
 
-\subsection{\texttt{scope-ast}}
-\label{sec-ast-scope}
+\section{Abstract syntax trees for operations on conses}
+
+\subsection{\texttt{car-ast}}
+\label{sec-ast-car}
 
 \begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:child-ast} & \texttt{child-ast} & The child.\\
-\hline
-\texttt{:variable-ast} & \texttt{variable-ast} & The variable having the\\
- & &  scope for the duration of the child.\\
-\hline
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:cons-ast} & \texttt{cons-ast} & The cons.\\
+  \hline
 \end{tabular}
 
-This AST is used to indicate the scope of some variable.  The variable
-indicated by \texttt{variable-ast} is in scope for the duration of the
-execution of the \texttt{child-ast}.
+This AST can be used to implement the function \texttt{cl:car}. However,
+it does not correspond exactly to the function \texttt{car}, because
+the value of the single child must be a cons cell. The consequences
+are undefined if this condition is not met.
 
-The \texttt{variable-ast} must be a lexical variable.
+\subsection{\texttt{cdr-ast}}
+\label{sec-ast-cdr}
 
-Whether the compiler uses this AST to determine liveness of the
-variable, depends on the optimization options in effect when this AST
-is compiled.  Typically when the \texttt{debug} optimize quality has a
-high value, then the compiler maintains the variable live for the
-duration of the execution of the child.  Otherwise, liveness is
-determined by the last time the variable is used.
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:cons-ast} & \texttt{cons-ast} & The cons.\\
+  \hline
+\end{tabular}
+
+As \texttt{car-ast}, but with \texttt{cl:cdr}.
+
+\subsection{\texttt{rplaca-ast}}
+\label{sec-ast-rplaca}
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:cons-ast} & \texttt{cons-ast} & The cons.\\
+  \hline
+  \texttt{:object-ast} & \texttt{object-ast} & The object to be put in the \texttt{car}.\\
+  \hline
+\end{tabular}
+
+This AST can be used to implement the function \texttt{cl:rplaca}.
+This AST differs from the function \texttt{rplaca} in that it does
+not generate any value. An attempt to compile this AST in a context
+where a value is needed will result in an error being signaled.
+
+\subsection{\texttt{rplacd-ast}}
+\label{sec-ast-rplacd}
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:cons-ast} & \texttt{cons-ast} & The cons.\\
+  \hline
+  \texttt{:object-ast} & \texttt{object-ast} & The object to be put in the \texttt{cdr}.\\
+  \hline
+\end{tabular}
+
+As \texttt{rplaca-ast}, but with \texttt{cl:rplacd}.

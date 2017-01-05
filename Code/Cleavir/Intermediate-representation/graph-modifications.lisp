@@ -64,6 +64,7 @@
 ;;; the instruction graph (by removing their only predecessor), you
 ;;; usually want to reinitialize-data and set-predecessors after
 ;;; calling it.
+;;; FIXME: what if the successor has other predecessors?
 (defun bypass-instruction (instruction successor)
   (assert (find successor (successors instruction)))
   (setf (inputs instruction) '()
