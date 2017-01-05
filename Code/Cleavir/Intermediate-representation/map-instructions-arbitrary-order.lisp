@@ -41,3 +41,32 @@
 		   ;; processed.
 		   (loop for successor in (successors instruction)
 			 do (register-if-unvisited successor))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FILTER-INSTRUCTIONS
+;;;
+;;; Return, in some arbitrary order, a list of all instructions
+;;; reachable from the root that satisfy a predicate.
+;;; Sort of like REMOVE-IF-NOT.
+
+(defun filter-instructions (initial-instruction predicate)
+  (let (result)
+    (map-instructions-arbitrary-order
+     (lambda (instruction)
+       (when (funcall predicate instruction)
+	 (push instruction result)))
+     initial-instruction)
+    result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function INSTRUCTIONS-OF-TYPE
+;;;
+;;; Return, in some arbitrary order, a list of all instructions
+;;; reachable from the root that are of some type.
+;;; This is useful for many transformations.
+
+(defun instructions-of-type (initial-instruction type)
+  (filter-instructions initial-instruction
+		       (lambda (i) (typep i type))))

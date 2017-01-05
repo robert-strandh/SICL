@@ -155,6 +155,7 @@
    #:make-store-to-static-environment-instruction
    #:hir-to-mir #:specialize
    #:map-instructions-arbitrary-order
+   #:filter-instructions #:instructions-of-type
    #:map-instructions
    #:map-instructions-with-owner
    #:map-instructions-by-owner
