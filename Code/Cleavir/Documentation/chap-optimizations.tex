@@ -29,6 +29,10 @@ is $p$.  We remove $p$ as follows:
   the list of predecessors of $i$.
 \end{itemize}
 
+\Defun {cleavir-ir:set-predecessors} {initial-instruction}
+
+Implements reduction as described above.\fixme{Not sure it handles phi instructions correctly.}
+
 \section{Path replication}
 \label{hir-optimizations-path-replication}
 
