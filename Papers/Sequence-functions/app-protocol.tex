@@ -43,3 +43,17 @@ implementation might look like this:
 	  (setf ,key-var (fdefinition ,key-var)))
 	 (t nil)))
 \end{verbatim}}
+
+\Defmacro {for-each-relevant-cons}\\
+{(cons-var index-var list start end from-end) \body body}
+
+This macro executes \textit{body} for each \emph{relevant cons cell}.
+It takes into account the values of \textit{start} and \textit{end} to
+restrict the execution to a particular sub-sequence, and it takes into
+account the value of \textit{from-end} to determine the order in which
+the relevant cons cells are supplied to the \textit{body} code.  The
+parameter \textit{cons-var} is the name of a variable that contains a
+reference to the relevant cons cell for each execution of
+\textit{body}.  Similarly, the parameter \textit{index-var} is the
+name of a variable that contains the index of the particular cons cell
+to be processed.
