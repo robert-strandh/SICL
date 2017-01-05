@@ -40,3 +40,16 @@ implementation with a more basic compiler, no performance improvement
 would be observed.  In addition, the duplication of the main body of
 the function would result in a very large increase of the code size,
 compared to a simpler code with the same performance.
+
+For the special case of bit vectors, our technique will not be able to
+compete with a good native implementation of the sequence functions.
+The reason is that, despite the optimizations that the compiler can
+perform with out technique, the body of a typical sequence function
+still consists of a loop where each iteration treats a single
+element.  For bit vectors, a good native implementation would not
+treat a single element in an iteration.  Instead, it would take
+advantage of instructions that exist in most processors for handling
+an entire \emph{word} at a time, which on a modern processor
+translates to $64$ bits.  An implementation that uses our technique
+would then typically handle bit vectors as a special case, excluded
+from the general technique.
