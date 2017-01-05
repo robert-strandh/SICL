@@ -27,3 +27,19 @@ A typical definition of this function might look like this:
 	(t
 	 (funcall key-function element))))
 \end{verbatim}}
+
+\Defmacro {canonicalize-key} {key-var}
+
+This macro takes a single argument which must be a variable that holds
+the value of the \texttt{\&key} keyword argument.  Its role is to make
+sure the contents of the variable is a function.  A typical
+implementation might look like this:
+
+{\small\begin{verbatim}
+(defmacro canonicalize-key (key-var)
+  `(cond ((null ,key-var)
+	  (setf ,key-var #'identity))
+	 ((not (functionp ,key-var))
+	  (setf ,key-var (fdefinition ,key-var)))
+	 (t nil)))
+\end{verbatim}}
