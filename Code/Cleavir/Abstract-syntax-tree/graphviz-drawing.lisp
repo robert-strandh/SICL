@@ -125,12 +125,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Labels for unspecialized array ASTs
+;;; Drawing an AREF-AST.
 
-(deflabel simple-t-aref-ast "simple t aref")
-(deflabel simple-t-aset-ast "simple t aset")
-(deflabel non-simple-t-aref-ast "non-simple t aref")
-(deflabel non-simple-t-aset-ast "non-simple t aset")
+(defmethod stream-draw-ast ((ast aref-ast) stream)
+  (format stream "   ~a [label = \"~:[non-simple~;simple~] aref ~s\"];~%"
+	  (id ast)
+	  (cleavir-ast:simple-p ast)
+	  (cleavir-ast:element-type ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Drawing an ASET-AST.
+
+(defmethod stream-draw-ast ((ast aset-ast) stream)
+  (format stream "   ~a [label = \"~:[non-simple~;simple~] aset ~s\"];~%"
+	  (id ast)
+	  (cleavir-ast:simple-p ast)
+	  (cleavir-ast:element-type ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -148,10 +159,6 @@
 (deflabel short-float-sin-ast "shf sin")
 (deflabel short-float-cos-ast "shf cos")
 (deflabel short-float-sqrt-ast "shf sqrt")
-(deflabel simple-short-float-aref-ast "simple shf aref")
-(deflabel simple-short-float-aset-ast "simple shf aset")
-(deflabel non-simple-short-float-aref-ast "non-simple shf aref")
-(deflabel non-simple-short-float-aset-ast "non-simple shf aset")
 
 (deflabel single-float-add-ast "sf +")
 (deflabel single-float-sub-ast "sf -")
@@ -165,10 +172,6 @@
 (deflabel single-float-sin-ast "sf sin")
 (deflabel single-float-cos-ast "sf cos")
 (deflabel single-float-sqrt-ast "sf sqrt")
-(deflabel simple-single-float-aref-ast "simple sf aref")
-(deflabel simple-single-float-aset-ast "simple sf aset")
-(deflabel non-simple-single-float-aref-ast "non-simple sf aref")
-(deflabel non-simple-single-float-aset-ast "non-simple sf aset")
 
 (deflabel double-float-add-ast "df +")
 (deflabel double-float-sub-ast "df -")
@@ -182,10 +185,6 @@
 (deflabel double-float-sin-ast "df sin")
 (deflabel double-float-cos-ast "df cos")
 (deflabel double-float-sqrt-ast "df sqrt")
-(deflabel simple-double-float-aref-ast "simple df aref")
-(deflabel simple-double-float-aset-ast "simple df aset")
-(deflabel non-simple-double-float-aref-ast "non-simple df aref")
-(deflabel non-simple-double-float-aset-ast "non-simple df aset")
 
 (deflabel long-float-add-ast "lf +")
 (deflabel long-float-sub-ast "lf -")
@@ -199,12 +198,3 @@
 (deflabel long-float-sin-ast "lf sin")
 (deflabel long-float-cos-ast "lf cos")
 (deflabel long-float-sqrt-ast "lf sqrt")
-(deflabel simple-long-float-aref-ast "simple lf aref")
-(deflabel simple-long-float-aset-ast "simple lf aset")
-(deflabel non-simple-long-float-aref-ast "non-simple lf aref")
-(deflabel non-simple-long-float-aset-ast "non-simple lf aset")
-
-(deflabel simple-bit-aref-ast "simple bit aref")
-(deflabel simple-bit-aset-ast "simple bit aset")
-(deflabel non-simple-bit-aref-ast "non-simple bit aref")
-(deflabel non-simple-bit-aset-ast "non-simple bit aset")

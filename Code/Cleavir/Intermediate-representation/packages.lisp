@@ -36,8 +36,7 @@
    #:one-successor-mixin
    #:two-successors-mixin
    #:side-effect-mixin
-   #:box-instruction-mixin #:box-instruction-p
-   #:unbox-instruction-mixin #:unbox-instruction-p
+   #:box-instruction #:unbox-instruction
    #:side-effect-free-mixin #:side-effect-free-p
    #:inputs #:outputs
    #:successors #:predecessors
@@ -65,17 +64,13 @@
    #:fixnump-instruction #:make-fixnump-instruction
    #:phi-instruction #:make-phi-instruction
    #:use-instruction #:make-use-instruction
+   #:aref-instruction #:aset-instruction
+   #:element-type #:simple-p
    #:fixnum-add-instruction #:make-fixnum-add-instruction
    #:fixnum-sub-instruction #:make-fixnum-sub-instruction
    #:fixnum-less-instruction #:make-fixnum-less-instruction
    #:fixnum-not-greater-instruction #:make-fixnum-not-greater-instruction
    #:fixnum-equal-instruction #:make-fixnum-equal-instruction
-   #:bit-unbox-instruction #:make-bit-unbox-instruction
-   #:bit-box-instruction #:make-bit-box-instruction
-   #:unsigned-byte-8-unbox-instruction #:make-unsigned-byte-8-unbox-instruction
-   #:unsigned-byte-8-box-instruction #:make-unsigned-byte-8-box-instruction
-   #:short-float-unbox-instruction #:make-short-float-unbox-instruction 
-   #:short-float-box-instruction #:make-short-float-box-instruction 
    #:short-float-add-instruction #:make-short-float-add-instruction 
    #:short-float-sub-instruction #:make-short-float-sub-instruction 
    #:short-float-mul-instruction #:make-short-float-mul-instruction 
@@ -86,8 +81,6 @@
    #:short-float-less-instruction
    #:short-float-not-greater-instruction
    #:short-float-equal-instruction
-   #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
-   #:single-float-box-instruction #:make-single-float-box-instruction 
    #:single-float-add-instruction #:make-single-float-add-instruction 
    #:single-float-sub-instruction #:make-single-float-sub-instruction 
    #:single-float-mul-instruction #:make-single-float-mul-instruction 
@@ -98,8 +91,6 @@
    #:single-float-less-instruction
    #:single-float-not-greater-instruction
    #:single-float-equal-instruction
-   #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
-   #:double-float-box-instruction #:make-double-float-box-instruction 
    #:double-float-add-instruction #:make-double-float-add-instruction 
    #:double-float-sub-instruction #:make-double-float-sub-instruction 
    #:double-float-mul-instruction #:make-double-float-mul-instruction 
@@ -110,8 +101,6 @@
    #:double-float-less-instruction
    #:double-float-not-greater-instruction
    #:double-float-equal-instruction
-   #:long-float-unbox-instruction #:make-long-float-unbox-instruction 
-   #:long-float-box-instruction #:make-long-float-box-instruction 
    #:long-float-add-instruction #:make-long-float-add-instruction 
    #:long-float-sub-instruction #:make-long-float-sub-instruction 
    #:long-float-mul-instruction #:make-long-float-mul-instruction 
@@ -136,54 +125,6 @@
    #:rplacd-instruction #:make-rplacd-instruction
    #:slot-read-instruction #:make-slot-read-instruction
    #:slot-write-instruction #:make-slot-write-instruction
-   #:simple-t-aref-instruction #:make-simple-t-aref-instruction
-   #:simple-t-aset-instruction #:make-simple-t-aset-instruction
-   #:non-simple-t-aref-instruction #:make-non-simple-t-aref-instruction
-   #:non-simple-t-aset-instruction #:make-non-simple-t-aset-instruction
-   #:simple-bit-aref-instruction #:make-simple-bit-aref-instruction
-   #:non-simple-bit-aref-instruction #:make-non-simple-bit-aref-instruction
-   #:simple-unsigned-byte-8-aref-instruction
-   #:make-simple-unsigned-byte-8-aref-instruction
-   #:simple-unsigned-byte-8-aset-instruction
-   #:make-simple-unsigned-byte-8-aset-instruction
-   #:non-simple-unsigned-byte-8-aref-instruction
-   #:make-non-simple-unsigned-byte-8-aref-instruction
-   #:non-simple-unsigned-byte-8-aset-instruction
-   #:make-non-simple-unsigned-byte-8-aset-instruction
-   #:simple-short-float-aref-instruction
-   #:make-simple-short-float-aref-instruction
-   #:simple-short-float-aset-instruction
-   #:make-simple-short-float-aset-instruction
-   #:non-simple-short-float-aref-instruction
-   #:make-non-simple-short-float-aref-instruction
-   #:non-simple-short-float-aset-instruction
-   #:make-non-simple-short-float-aset-instruction
-   #:simple-single-float-aref-instruction
-   #:make-simple-single-float-aref-instruction
-   #:simple-single-float-aset-instruction
-   #:make-simple-single-float-aset-instruction
-   #:non-simple-single-float-aref-instruction
-   #:make-non-simple-single-float-aref-instruction
-   #:non-simple-single-float-aset-instruction
-   #:make-non-simple-single-float-aset-instruction
-   #:simple-double-float-aref-instruction
-   #:make-simple-double-float-aref-instruction
-   #:non-simple-double-float-aref-instruction
-   #:make-non-simple-double-float-aref-instruction
-   #:simple-long-float-aref-instruction
-   #:make-simple-long-float-aref-instruction
-   #:non-simple-long-float-aref-instruction
-   #:make-non-simple-long-float-aref-instruction
-   #:simple-bit-aset-instruction #:make-simple-bit-aset-instruction
-   #:non-simple-bit-aset-instruction #:make-non-simple-bit-aset-instruction
-   #:simple-double-float-aset-instruction
-   #:make-simple-double-float-aset-instruction
-   #:non-simple-double-float-aset-instruction
-   #:make-non-simple-double-float-aset-instruction
-   #:simple-long-float-aset-instruction
-   #:make-simple-long-float-aset-instruction
-   #:non-simple-long-float-aset-instruction
-   #:make-non-simple-double-float-aset-instruction
    #:memref1-instruction #:make-memref1-instruction
    #:memref2-instruction #:make-memref2-instruction
    #:memset1-instruction #:make-memset1-instruction
@@ -214,6 +155,7 @@
    #:make-store-to-static-environment-instruction
    #:hir-to-mir #:specialize
    #:map-instructions-arbitrary-order
+   #:filter-instructions #:instructions-of-type
    #:map-instructions
    #:map-instructions-with-owner
    #:map-instructions-by-owner

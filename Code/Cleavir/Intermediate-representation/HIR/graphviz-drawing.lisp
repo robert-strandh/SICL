@@ -258,23 +258,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Integer instructions.
+;;; Array instructions.
 
-(defmethod label ((instruction bit-unbox-instruction)) "bit unbox")
+(defmethod label ((instruction aref-instruction))
+  (format nil "~:[non-simple~;simple~] ~s aref"
+	  (simple-p instruction)
+	  (element-type instruction)))
 
-(defmethod label ((instruction bit-box-instruction)) "bit box")
+(defmethod label ((instruction aset-instruction))
+  (format nil "~:[non-simple~;simple~] ~s aset"
+	  (simple-p instruction)
+	  (element-type instruction)))
 
-(defmethod label ((instruction unsigned-byte-8-unbox-instruction)) "ub8 unbox")
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Box instructions.
 
-(defmethod label ((instruction unsigned-byte-8-box-instruction)) "ub8 box")
+(defmethod label ((instruction box-instruction))
+  (format nil "~s box" (element-type instruction)))
+
+(defmethod label ((instruction unbox-instruction))
+  (format nil "~s unbox" (element-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Floating-point arithmetic instructions.
-
-(defmethod label ((instruction short-float-unbox-instruction)) "shf unbox")
-
-(defmethod label ((instruction short-float-box-instruction)) "shf box")
 
 (defmethod label ((instruction short-float-add-instruction)) "shf +")
 
@@ -290,10 +298,6 @@
 
 (defmethod label ((instruction short-float-sqrt-instruction)) "shf sqrt")
 
-(defmethod label ((instruction single-float-unbox-instruction)) "sf unbox")
-
-(defmethod label ((instruction single-float-box-instruction)) "sf box")
-
 (defmethod label ((instruction single-float-add-instruction)) "sf +")
 
 (defmethod label ((instruction single-float-sub-instruction)) "sf -")
@@ -308,10 +312,6 @@
 
 (defmethod label ((instruction single-float-sqrt-instruction)) "sf sqrt")
 
-(defmethod label ((instruction double-float-unbox-instruction)) "df unbox")
-
-(defmethod label ((instruction double-float-box-instruction)) "df box")
-
 (defmethod label ((instruction double-float-add-instruction)) "df +")
 
 (defmethod label ((instruction double-float-sub-instruction)) "df -")
@@ -325,10 +325,6 @@
 (defmethod label ((instruction double-float-cos-instruction)) "df cos")
 
 (defmethod label ((instruction double-float-sqrt-instruction)) "df sqrt")
-
-(defmethod label ((instruction long-float-unbox-instruction)) "df unbox")
-
-(defmethod label ((instruction long-float-box-instruction)) "df box")
 
 (defmethod label ((instruction long-float-add-instruction)) "lf +")
 
@@ -359,84 +355,6 @@
 (defmethod label ((instruction slot-read-instruction)) "rplacd")
 
 (defmethod label ((instruction slot-write-instruction)) "rplacd")
-
-(defmethod label ((instruction simple-t-aref-instruction)) "simple t aref")
-
-(defmethod label ((instruction simple-t-aset-instruction)) "simple t aset")
-
-(defmethod label ((instruction non-simple-t-aref-instruction))
-  "non-simple t aref")
-
-(defmethod label ((instruction non-simple-t-aset-instruction))
-  "non-simple t aset")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Integer array accessors.
-
-(defmethod label ((instruction simple-bit-aref-instruction))
-  "simple bit aref")
-
-(defmethod label ((instruction simple-bit-aset-instruction))
-  "simple bit aset")
-
-(defmethod label ((instruction non-simple-bit-aref-instruction))
-  "non-simple bit aref")
-
-(defmethod label ((instruction non-simple-bit-aset-instruction))
-  "non-simple bit aset")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Floating-point array accessors.
-
-(defmethod label ((instruction simple-short-float-aref-instruction))
-  "simple shf aref")
-
-(defmethod label ((instruction simple-short-float-aset-instruction))
-  "simple shf aset")
-
-(defmethod label ((instruction non-simple-short-float-aref-instruction))
-  "non-simple shf aref")
-
-(defmethod label ((instruction non-simple-short-float-aset-instruction))
-  "non-simple shf aset")
-
-(defmethod label ((instruction simple-single-float-aref-instruction))
-  "simple sf aref")
-
-(defmethod label ((instruction simple-single-float-aset-instruction))
-  "simple sf aset")
-
-(defmethod label ((instruction non-simple-single-float-aref-instruction))
-  "non-simple sf aref")
-
-(defmethod label ((instruction non-simple-single-float-aset-instruction))
-  "non-simple sf aset")
-
-(defmethod label ((instruction simple-double-float-aref-instruction))
-  "simple df aref")
-
-(defmethod label ((instruction simple-double-float-aset-instruction))
-  "simple df aset")
-
-(defmethod label ((instruction non-simple-double-float-aref-instruction))
-  "non-simple df aref")
-
-(defmethod label ((instruction non-simple-double-float-aset-instruction))
-  "non-simple df aset")
-
-(defmethod label ((instruction simple-long-float-aref-instruction))
-  "simple lf aref")
-
-(defmethod label ((instruction simple-long-float-aset-instruction))
-  "simple lf aset")
-
-(defmethod label ((instruction non-simple-long-float-aref-instruction))
-  "non-simple lf aref")
-
-(defmethod label ((instruction non-simple-long-float-aset-instruction))
-  "non-simple lf aset")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

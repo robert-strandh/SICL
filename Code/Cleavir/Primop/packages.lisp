@@ -64,26 +64,7 @@
    #:long-float-cos
    #:long-float-sqrt
    #:slot-read #:slot-write
-   #:simple-t-aref #:simple-t-aset
-   #:non-simple-t-aref #:non-simple-t-aset
-   #:simple-bit-aref #:simple-bit-aset
-   #:non-simple-bit-aref #:non-simple-bit-aset
-   #:simple-short-float-aref #:simple-short-float-aset
-   #:non-simple-short-float-aref #:non-simple-short-float-aset
-   #:simple-single-float-aref #:simple-single-float-aset
-   #:non-simple-single-float-aref #:non-simple-single-float-aset
-   #:simple-double-float-aref #:simple-double-float-aset
-   #:non-simple-double-float-aref #:non-simple-double-float-aset
-   #:simple-long-float-aref #:simple-long-float-aset
-   #:non-simple-long-float-aref #:non-simple-long-float-aset
-   #:simple-unsigned-byte-8-aref-ast
-   #:simple-unsigned-byte-8-aset-ast
-   #:non-simple-unsigned-byte-8-aref-ast
-   #:non-simple-unsigned-byte-8-aset-ast
-   #:simple-unsigned-byte-16-aref-ast
-   #:simple-unsigned-byte-16-aset-ast
-   #:non-simple-unsigned-byte-16-aref-ast
-   #:non-simple-unsigned-byte-16-aset-ast
+   #:aref #:aset
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall
