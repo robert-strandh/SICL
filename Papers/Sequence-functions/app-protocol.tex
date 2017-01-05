@@ -94,3 +94,16 @@ implementation might look like this:
 		   ,@body))))
 	 (t nil)))
 \end{verbatim}}
+
+\Defmacro {with-from-end} {from-end-var \body body}
+
+This macro duplicates \textit{body} for the two cases where the value
+of the argument variable \textit{from-end-var} is either \emph{true}
+or \emph{false}.  A typical implementation looks like this:
+
+{\small\begin{verbatim}
+(defmacro with-from-end (from-end-var &body body)
+  `(if ,from-end-var
+       (progn ,@body)
+       (progn ,@body)))
+\end{verbatim}}
