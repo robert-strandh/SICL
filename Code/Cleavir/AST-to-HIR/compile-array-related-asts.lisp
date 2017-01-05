@@ -13,7 +13,7 @@
 ;;; Compile an AREF-AST
 
 (defmethod compile-ast ((ast cleavir-ast:aref-ast) context)
-  ;(assert-context ast context 1 1)
+  (assert-context ast context 1 1)
   (let* ((array-temp (make-temp))
 	 (index-temp (make-temp))
 	 (type (cleavir-ast:element-type ast))
