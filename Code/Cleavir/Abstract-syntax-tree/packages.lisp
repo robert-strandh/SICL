@@ -110,58 +110,8 @@
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:aset-ast
-   #:element-ast
-   #:define-array-asts
-   #:simple-t-aref-ast #:make-simple-t-aref-ast #:array-ast #:index-ast
-   #:simple-t-aset-ast #:make-simple-t-aset-ast
-   #:non-simple-t-aref-ast #:make-non-simple-t-aref-ast #:array-ast
-   #:non-simple-t-aset-ast #:make-non-simple-t-aset-ast
-   #:simple-short-float-aref-ast #:make-simple-short-float-aref-ast
-   #:simple-short-float-aset-ast #:make-simple-short-float-aset-ast
-   #:non-simple-short-float-aref-ast #:make-non-simple-short-float-aref-ast
-   #:non-simple-short-float-aset-ast #:make-non-simple-short-float-aset-ast
-   #:simple-single-float-aref-ast
-   #:make-simple-single-float-aref-ast
-   #:simple-single-float-aset-ast
-   #:make-simple-single-float-aset-ast
-   #:non-simple-single-float-aref-ast
-   #:make-non-simple-single-float-aref-ast
-   #:non-simple-single-float-aset-ast
-   #:make-non-simple-single-float-aset-ast
-   #:simple-double-float-aref-ast #:make-simple-double-float-aref-ast
-   #:simple-double-float-aset-ast #:make-simple-double-float-aset-ast
-   #:non-simple-double-float-aref-ast
-   #:make-non-simple-double-float-aref-ast
-   #:non-simple-double-float-aset-ast
-   #:make-non-simple-double-float-aset-ast
-   #:simple-long-float-aref-ast
-   #:make-simple-long-float-aref-ast
-   #:simple-long-float-aset-ast
-   #:make-simple-long-float-aset-ast
-   #:non-simple-long-float-aref-ast
-   #:make-non-simple-long-float-aref-ast
-   #:non-simple-long-float-aset-ast
-   #:make-non-simple-long-float-aset-ast
-   #:simple-bit-aref-ast #:make-simple-bit-aref-ast
-   #:simple-bit-aset-ast #:make-simple-bit-aset-ast
-   #:non-simple-bit-aref-ast #:make-non-simple-bit-aref-ast
-   #:non-simple-bit-aset-ast #:make-non-simple-bit-aset-ast
-   #:simple-unsigned-byte-8-aref-ast
-   #:make-simple-unsigned-byte-8-aref-ast
-   #:simple-unsigned-byte-8-aset-ast
-   #:make-simple-unsigned-byte-8-aset-ast
-   #:non-simple-unsigned-byte-8-aref-ast
-   #:make-non-simple-unsigned-byte-8-aref-ast
-   #:non-simple-unsigned-byte-8-aset-ast
-   #:make-non-simple-unsigned-byte-8-aset-ast
-   #:simple-unsigned-byte-16-aref-ast
-   #:make-simple-unsigned-byte-16-aref-ast
-   #:simple-unsigned-byte-16-aset-ast
-   #:make-simple-unsigned-byte-16-aset-ast
-   #:non-simple-unsigned-byte-16-aref-ast
-   #:make-non-simple-unsigned-byte-16-aref-ast
-   #:non-simple-unsigned-byte-16-aset-ast
-   #:make-non-simple-unsigned-byte-16-aset-ast
+   #:element-ast #:array-ast #:index-ast
+   #:element-type #:simple-p #:box-p #:unbox-p
    #:child-ast
    #:scope-ast #:make-scope-ast
    #:map-ast-depth-first-preorder

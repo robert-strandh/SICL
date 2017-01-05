@@ -1,239 +1,90 @@
 (cl:in-package #:cleavir-ast-to-hir)
 
+;;; in case boxing semantics change
+(defun box-for-type (type inputs context)
+  (make-instance 'cleavir-ir:box-instruction
+    :element-type type
+    :inputs inputs
+    :outputs (results context)
+    :successors (successors context)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a SIMPLE-T-AREF-AST
+;;; Compile an AREF-AST
 
-(defmethod compile-ast ((ast cleavir-ast:simple-t-aref-ast) context)
-  (let ((temp1 (make-temp))
-	(temp2 (make-temp)))
+(defmethod compile-ast ((ast cleavir-ast:aref-ast) context)
+  ;(assert-context ast context 1 1)
+  (let* ((array-temp (make-temp))
+	 (index-temp (make-temp))
+	 (type (cleavir-ast:element-type ast))
+	 (unboxed (if (cleavir-ast:box-p ast)
+		      (list (make-temp))
+		      (results context)))
+	 (succ (if (cleavir-ast:box-p ast)
+		   (list (box-for-type type unboxed context))
+		   (successors context))))
     (compile-ast
      (cleavir-ast:array-ast ast)
      (context
-      (list temp1)
+      (list array-temp)
       (list (compile-ast
 	     (cleavir-ast:index-ast ast)
-	     (context (list temp2)
-		      (list (make-instance 'cleavir-ir:simple-t-aref-instruction
-			      :inputs (list temp1 temp2)
-			      :outputs (results context)
-			      :successors (successors context)))
+	     (context (list index-temp)
+		      (list (make-instance 'cleavir-ir:aref-instruction
+			      :element-type type
+			      :simple-p (cleavir-ast:simple-p ast)
+			      :inputs (list array-temp index-temp)
+			      :outputs unboxed
+			      :successors succ))
 		      (invocation context))))
       (invocation context)))))
 
+(defun unbox-for-type (type input output successor)
+  (make-instance 'cleavir-ir:unbox-instruction
+    :element-type type
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a SIMPLE-T-ASET-AST
+;;; Compile an ASET-AST
 
-(defmethod compile-ast ((ast cleavir-ast:simple-t-aset-ast) context)
-  (let ((temp1 (make-temp))
-	(temp2 (make-temp))
-	(temp3 (make-temp)))
+(defmethod compile-ast ((ast cleavir-ast:aset-ast) context)
+  (let* ((array-temp (make-temp))
+	 (index-temp (make-temp))
+	 (element-temp (make-temp))
+	 (type (cleavir-ast:element-type ast))
+	 (aset (make-instance 'cleavir-ir:aset-instruction
+		 :element-type type
+		 :simple-p (cleavir-ast:simple-p ast)
+		 :inputs (list array-temp index-temp element-temp)
+		 :outputs (results context)
+		 :successors (successors context))))
     (compile-ast
      (cleavir-ast:array-ast ast)
      (context
-      (list temp1)
-      (list (compile-ast
-	     (cleavir-ast:index-ast ast)
-	     (context
-	      (list temp2)
-	      (compile-ast
-	       (cleavir-ast:element-ast ast)
+      (list array-temp)
+      (compile-ast
+       (cleavir-ast:index-ast ast)
+       (context
+	(list index-temp)
+	(compile-ast
+	 (cleavir-ast:element-ast ast)
+	 (if (cleavir-ast:unbox-p ast)
+	     ;; if we have to unbox the element first, compile
+	     ;; the element-ast in a context where the successor
+	     ;; is an unboxer and the output is a different temp.
+	     (let ((boxed-temp (make-temp)))
 	       (context
-		(list temp3)
-		(list (make-instance 'cleavir-ir:simple-t-aset-instruction
-			:inputs (list temp1 temp2 temp3)
-			:outputs '()
-			:successors (successors context)))
+		(list boxed-temp)
+		(list
+		 (unbox-for-type type boxed-temp
+				 element-temp aset))
 		(invocation context)))
-	      (invocation context))))
-      (invocation context)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a NON-SIMPLE-T-AREF-AST
-
-(defmethod compile-ast ((ast cleavir-ast:non-simple-t-aref-ast) context)
-  (let ((temp1 (make-temp))
-	(temp2 (make-temp)))
-    (compile-ast
-     (cleavir-ast:array-ast ast)
-     (context
-      (list temp1)
-      (list (compile-ast
-	     (cleavir-ast:index-ast ast)
-	     (context (list temp2)
-		      (list (make-instance 'cleavir-ir:non-simple-t-aref-instruction
-			      :inputs (list temp1 temp2)
-			      :outputs (results context)
-			      :successors (successors context)))
+	     ;; otherwise it's simple.
+	     (context (list element-temp)
+		      (list aset)
 		      (invocation context))))
+	(invocation context)))
       (invocation context)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a NON-SIMPLE-T-ASET-AST
-
-(defmethod compile-ast ((ast cleavir-ast:non-simple-t-aset-ast) context)
-  (let ((temp1 (make-temp))
-	(temp2 (make-temp))
-	(temp3 (make-temp)))
-    (compile-ast
-     (cleavir-ast:array-ast ast)
-     (context
-      (list temp1)
-      (list (compile-ast
-	     (cleavir-ast:index-ast ast)
-	     (context
-	      (list temp2)
-	      (compile-ast
-	       (cleavir-ast:element-ast ast)
-	       (context
-		(list temp3)
-		(list (make-instance 'cleavir-ir:non-simple-t-aset-instruction
-			:inputs (list temp1 temp2 temp3)
-			:outputs '()
-			:successors (successors context)))
-		(invocation context)))
-	      (invocation context))))
-      (invocation context)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro for compiling specialized AREF ASTs
-
-(defmacro compile-specialized-aref-ast
-    (ast-class aref-instruction-class box-instruction-class)
-  `(defmethod compile-ast ((ast ,ast-class) context)
-     (let ((temp1 (make-temp))
-	   (temp2 (make-temp))
-	   (temp3 (make-temp)))
-       (compile-ast
-	(cleavir-ast:array-ast ast)
-	(context
-	 (list temp1)
-	 (list (compile-ast
-		(cleavir-ast:index-ast ast)
-		(context
-		 (list temp2)
-		 (list (make-instance ',aref-instruction-class
-			 :inputs (list temp1 temp2)
-			 :outputs (list temp3)
-			 :successors
-			 (list (make-instance ',box-instruction-class
-				 :inputs (list temp3)
-				 :outputs (results context)
-				 :successors (successors context)))))
-		 (invocation context))))
-	 (invocation context))))))
-
-(compile-specialized-aref-ast cleavir-ast:simple-bit-aref-ast
-			      cleavir-ir:simple-bit-aref-instruction
-			      cleavir-ir:bit-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:non-simple-bit-aref-ast
-			      cleavir-ir:non-simple-bit-aref-instruction
-			      cleavir-ir:bit-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:simple-short-float-aref-ast
-			      cleavir-ir:simple-short-float-aref-instruction
-			      cleavir-ir:short-float-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:non-simple-short-float-aref-ast
-			      cleavir-ir:non-simple-short-float-aref-instruction
-			      cleavir-ir:short-float-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:simple-single-float-aref-ast
-			      cleavir-ir:simple-single-float-aref-instruction
-			      cleavir-ir:single-float-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:non-simple-single-float-aref-ast
-			      cleavir-ir:non-simple-single-float-aref-instruction
-			      cleavir-ir:single-float-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:simple-double-float-aref-ast
-			      cleavir-ir:simple-double-float-aref-instruction
-			      cleavir-ir:double-float-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:non-simple-double-float-aref-ast
-			      cleavir-ir:non-simple-double-float-aref-instruction
-			      cleavir-ir:double-float-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:simple-long-float-aref-ast
-			      cleavir-ir:simple-long-float-aref-instruction
-			      cleavir-ir:long-float-box-instruction)
-
-(compile-specialized-aref-ast cleavir-ast:non-simple-long-float-aref-ast
-			      cleavir-ir:non-simple-long-float-aref-instruction
-			      cleavir-ir:long-float-box-instruction)
-
-(defmacro compile-specialized-aset-ast
-    (ast-class aset-instruction-class unbox-instruction-class)
-  `(defmethod compile-ast ((ast ,ast-class) context)
-     (let ((temp1 (make-temp))
-	   (temp2 (make-temp))
-	   (temp3 (make-temp))
-	   (temp4 (make-temp)))
-       (compile-ast
-	(cleavir-ast:array-ast ast)
-	(context
-	 (list temp1)
-	 (list (compile-ast
-		(cleavir-ast:index-ast ast)
-		(context
-		 (list temp2)
-		 (compile-ast
-		  (cleavir-ast:element-ast ast)
-		  (context
-		   (list temp3)
-		   (list (make-instance ',unbox-instruction-class
-			   :inputs (list temp3)
-			   :outputs (list temp4)
-			   :successors
-			   (list (make-instance ',aset-instruction-class
-				   :inputs (list temp1 temp2 temp4)
-				   :outputs '()
-				   :successors (successors context)))))
-		   (invocation context)))
-		 (invocation context))))
-	 (invocation context))))))
-
-(compile-specialized-aset-ast cleavir-ast:simple-bit-aset-ast
-			      cleavir-ir:simple-bit-aset-instruction
-			      cleavir-ir:bit-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:non-simple-bit-aset-ast
-			      cleavir-ir:non-simple-bit-aset-instruction
-			      cleavir-ir:bit-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:simple-short-float-aset-ast
-			      cleavir-ir:simple-short-float-aset-instruction
-			      cleavir-ir:short-float-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:non-simple-short-float-aset-ast
-			      cleavir-ir:non-simple-short-float-aset-instruction
-			      cleavir-ir:short-float-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:simple-single-float-aset-ast
-			      cleavir-ir:simple-single-float-aset-instruction
-			      cleavir-ir:single-float-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:non-simple-single-float-aset-ast
-			      cleavir-ir:non-simple-single-float-aset-instruction
-			      cleavir-ir:single-float-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:simple-double-float-aset-ast
-			      cleavir-ir:simple-double-float-aset-instruction
-			      cleavir-ir:double-float-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:non-simple-double-float-aset-ast
-			      cleavir-ir:non-simple-double-float-aset-instruction
-			      cleavir-ir:double-float-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:simple-long-float-aset-ast
-			      cleavir-ir:simple-long-float-aset-instruction
-			      cleavir-ir:long-float-unbox-instruction)
-
-(compile-specialized-aset-ast cleavir-ast:non-simple-long-float-aset-ast
-			      cleavir-ir:non-simple-long-float-aset-instruction
-			      cleavir-ir:long-float-unbox-instruction)
