@@ -55,14 +55,17 @@
 ;;; maybe convert a THE instruction into a TYPEQ instruction,
 ;;; depending on policy
 (defun the->typeq (the-instruction)
-  (change-class
-   the-instruction 'cleavir-ir:typeq-instruction
-   :successors (list (first
-		      (cleavir-ir:successors the-instruction))
-		     (make-type-error
-		      the-instruction
-		      (first (cleavir-ir:inputs the-instruction))
-		      (cleavir-ir:value-type the-instruction)))))
+  (let ((policy (cleavir-ir:policy the-instruction)))
+    (when (cleavir-policy:policy-value policy 'insert-type-checks)
+      (change-class
+       the-instruction 'cleavir-ir:typeq-instruction
+       :successors (list
+		    (first
+		     (cleavir-ir:successors the-instruction))
+		    (make-type-error
+		     the-instruction
+		     (first (cleavir-ir:inputs the-instruction))
+		     (cleavir-ir:value-type the-instruction)))))))
 
 ;; convert all of them. intended for safe code, before type inference.
 (defun thes->typeqs (initial)
