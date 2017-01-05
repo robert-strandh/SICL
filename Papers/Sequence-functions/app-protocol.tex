@@ -47,13 +47,18 @@ implementation might look like this:
 \Defmacro {for-each-relevant-cons}\\
 {(cons-var index-var list start end from-end) \body body}
 
-This macro executes \textit{body} for each \emph{relevant cons cell}.
-It takes into account the values of \textit{start} and \textit{end} to
-restrict the execution to a particular sub-sequence, and it takes into
-account the value of \textit{from-end} to determine the order in which
-the relevant cons cells are supplied to the \textit{body} code.  The
+This macro executes \textit{body} for each \emph{relevant
+  \texttt{cons} cell}.  It takes into account the values of
+\textit{start} and \textit{end} to restrict the execution to a
+particular sub-sequence, and it takes into account the value of
+\textit{from-end} to determine the order in which the relevant
+\texttt{cons} cells are supplied to the \textit{body} code.  The
 parameter \textit{cons-var} is the name of a variable that contains a
-reference to the relevant cons cell for each execution of
+reference to the relevant \texttt{cons} cell for each execution of
 \textit{body}.  Similarly, the parameter \textit{index-var} is the
-name of a variable that contains the index of the particular cons cell
-to be processed.
+name of a variable that contains the index of the particular
+\texttt{cons} cell to be processed.
+
+Because of the size of the definition of this macro, due mainly to the
+code for processing \texttt{cons} cells in reverse order
+\cite{Durand:2015:ELS:reverse}, we do not show its definition here.
