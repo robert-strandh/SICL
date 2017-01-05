@@ -1198,4 +1198,9 @@ already, and then calls this primitive operation.
 This primitive operation is similar to the function \texttt{cl:values},
 differing only in that it is a primitive operation and not a function.
 It can be used to inline calls to \texttt{cl:values} with a fixed
-number of arguments.
+number of arguments, for example with a compiler macro:
+
+\begin{verbatim}
+(define-compiler-macro (&rest arguments)
+  `(cleavir-primop:values ,@values))
+\end{verbatim}
