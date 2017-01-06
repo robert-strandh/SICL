@@ -736,18 +736,25 @@
 ;;;
 ;;; Generic function OPTIMIZE-QUALITY-VALUES.
 ;;;
-;;; Return an association list containing pairs of the form
-;;; (QUALITY-NAME . VALUE) for all the OPTIMIZE qualities that this
+;;; Return an association list containing lists of the form
+;;; (QUALITY-NAME VALUE) for all the OPTIMIZE qualities that this
 ;;; environement allows.
 
-(defun optimize-quality-values (environment))
+(defgeneric optimize-quality-values (environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function POLICY-VALUES.
+;;; Generic function (SETF OPTIMIZE-QUALITY-VALUES).
 ;;;
-;;; Return an association list containing pairs of the form
-;;; (POLICY-NAME . VALUE) for each policy that this environement
-;;; allows.
+;;; Set the optimize quality values for the environment.
 
-(defun policy-values (environment))
+(defgeneric (setf optimize-quality-values) (values environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function POLICY.
+;;;
+;;; Return a Cleavir compilation policy for the environment,
+;;; corresponding to its OPTIMIZE-QUALITY-VALUES.
+
+(defgeneric policy (environment))

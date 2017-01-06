@@ -87,20 +87,37 @@
    (%property-lists :initform (make-hash-table :test #'eq)
 		    :reader property-lists)
    ;; An association list where each element is of the form
-   ;; (QUALITY-NAME . VALUE) for each OPTIMIZE quality allowed in this
+   ;; (QUALITY-NAME VALUE) for each OPTIMIZE quality allowed in this
    ;; environment.
    (%optimize-quality-values
-    :initform '((speed . 0) (compilation-speed . 0)
-		(space . 0) (debug . 3))
-    :reader sicl-global-environment:optimize-quality-values)
-   ;; An association list where each element is of the form
-   ;; (POLICY-NAME . VALUE) for each policy allowed in this
-   ;; environment.
-   (%policy-values
-    :initform '()
-    :reader sicl-global-environment:policy-values)))
+    :initform '((speed 0) (compilation-speed 0)
+		(space 0) (debug 3) (safety 3))
+    :accessor sicl-global-environment:optimize-quality-values)
+   ;; A compilation policy.
+   (%policy
+    :reader sicl-global-environment:policy)))
 
 (cl:defvar *global-environment*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods to keep the policy consistent with the optimize values.
+
+;;; Not sure this is totally correct.
+(defmethod shared-initialize :after
+    ((instance simple-environment) slot-names &key)
+  (declare (ignore slot-names))
+  (setf (slot-value instance '%policy)
+	(cleavir-policy:compute-policy
+	 (sicl-genv:optimize-quality-values instance)
+	 instance)))
+
+(defmethod (setf sicl-genv:optimize-quality-values) :after
+    (values (environment simple-environment))
+  (setf (slot-value environment '%policy)
+	(cleavir-policy:compute-policy
+	 (sicl-genv:optimize-quality-values environment)
+	 environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
