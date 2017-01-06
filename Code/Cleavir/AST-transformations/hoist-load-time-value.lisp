@@ -15,4 +15,5 @@
     (loop for ast in load-time-value-asts
 	  do (change-class ast 'cleavir-ast:lexical-ast :name (gensym)))
     (cleavir-ast:make-top-level-function-ast
-     ast load-time-value-asts forms)))
+     ast load-time-value-asts forms
+     :policy (cleavir-ast:policy ast))))
