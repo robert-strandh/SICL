@@ -2,4 +2,6 @@
 
 (defmacro declaim (&rest declaration-specifiers)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (proclaim ',declaration-specifiers)))
+     ;; can't use loop for bootstrap reasons
+     ,@(mapcar (lambda (decl) `(proclaim ',decl))
+	       declaration-specifiers)))

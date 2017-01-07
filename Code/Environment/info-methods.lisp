@@ -73,3 +73,8 @@
 	   :ast (function-ast function-name env)))
 	(t
 	 nil)))
+
+(defmethod cleavir-env:optimize-info ((env environment))
+  (make-instance 'cleavir-env:optimize-info
+    :optimize (optimize-quality-values env)
+    :policy (policy env)))
