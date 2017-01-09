@@ -140,3 +140,39 @@ typical implementation might look like this:
 		  (not (funcall test-not item element))))))
 	(t nil)))
 \end{verbatim}}
+
+\Defmacro {for-each-relevant-element}\\
+{element-var index-var vector start end\\
+from-end \body body}
+
+This macro is used to traverse the elements of a vector.  The argument
+\textit{element-var} is a symbol that is bound to each element during
+the execution of \textit{body}.  Similarly, \textit{element-var} is a
+symbol that is bound to the index of the relevant element.  The
+\textit{vector} argument is an expression that must evaluate to a
+vector.  The arguments \textit{start} and \textit{end} are expression
+that evaluate to the two indices of the interval to traverse.
+Finally, \texttt{from-end} is a generalized Boolean that indicates
+whether the traversal is to be done from the end of the relevant
+interval.  A typical implementation of this macro might look like
+this:
+
+{\small\begin{verbatim}
+(defmacro for-each-relevant-element
+    ((element-var index-var vector start end from-end)
+     &body body)
+  (let ((vectorv (gensym))
+	(startv (gensym))
+	(endv (gensym)))
+    `(let ((,vectorv ,vector)
+	   (,startv ,start)
+	   (,endv ,end))
+       (declare (type fixnum ,startv ,endv))
+       (if ,from-end
+	   (loop for ,index-var downfrom (1- ,endv) to ,startv
+		 do (let ((,element-var (aref ,vectorv ,index-var)))
+		      ,@body))
+	   (loop for ,index-var from ,startv below ,endv
+		 do (let ((,element-var (aref ,vectorv ,index-var)))
+		      ,@body))))))
+\end{verbatim}}
