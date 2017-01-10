@@ -176,3 +176,16 @@ this:
 		 do (let ((,element-var (aref ,vectorv ,index-var)))
 		      ,@body))))))
 \end{verbatim}}
+
+\Defmacro {with-simple} {vector \body body}
+
+This macro simply checks whether \textit{vector} is a
+\texttt{simple-array}, and duplicates \textit{body} in each branch of
+the test.  A typical implementation might look like this:
+
+{\small\begin{verbatim}
+(defmacro with-simple (vector &body body)
+  `(if (typep ,vector 'simple-array)
+       (progn ,@body)
+       (progn ,@body)))
+\end{verbatim}}
