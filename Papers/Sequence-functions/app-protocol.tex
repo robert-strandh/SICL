@@ -6,7 +6,7 @@ In this appendix, we describe the macros and functions that are part
 of the protocol of our technique, used for implementing most of the
 sequence functions.
 
-\Defun {apply-key-function} {element key-function}
+\defun {apply-key-function} {element key-function}
 
 This function takes an element of the sequence and a function to apply
 in order to obtain the object to use for comparison.  For performance
@@ -28,7 +28,7 @@ A typical definition of this function might look like this:
 	 (funcall key-function element))))
 \end{verbatim}}
 
-\Defmacro {canonicalize-key} {key-var}
+\defmacro {canonicalize-key} {key-var}
 
 This macro takes a single argument which must be a variable that holds
 the value of the \texttt{\&key} keyword argument.  Its role is to make
@@ -44,7 +44,7 @@ implementation might look like this:
 	 (t nil)))
 \end{verbatim}}
 
-\Defmacro {for-each-relevant-cons}\\
+\defmacro {for-each-relevant-cons}\\
 {(cons-var index-var list start end from-end) \body body}
 
 This macro executes \textit{body} for each \emph{relevant
@@ -63,7 +63,7 @@ Because of the size of the definition of this macro, due mainly to the
 code for processing \texttt{cons} cells in reverse order
 \cite{Durand:2015:ELS:reverse}, we do not show its definition here.
 
-\Defmacro {with-test-and-test-not}\\
+\defmacro {with-test-and-test-not}\\
 {(test-var test-not-var) \body body}
 
 The role of this macro is to supply certain special cases for the
@@ -95,7 +95,7 @@ implementation might look like this:
 	 (t nil)))
 \end{verbatim}}
 
-\Defmacro {with-from-end} {from-end-var \body body}
+\defmacro {with-from-end} {from-end-var \body body}
 
 This macro duplicates \textit{body} for the two cases where the value
 of the argument variable \textit{from-end-var} is either \emph{true}
@@ -108,7 +108,7 @@ or \emph{false}.  A typical implementation looks like this:
        (progn ,@body)))
 \end{verbatim}}
 
-\Defun {satisfies-two-argument-test-p}\\
+\defun {satisfies-two-argument-test-p}\\
 {item element test test-not}
 
 This function is typically inlined.  It provides special cases for
@@ -141,7 +141,7 @@ typical implementation might look like this:
 	(t nil)))
 \end{verbatim}}
 
-\Defmacro {for-each-relevant-element}\\
+\defmacro {for-each-relevant-element}\\
 {element-var index-var vector start end\\
 from-end \body body}
 
@@ -177,7 +177,7 @@ this:
 		      ,@body))))))
 \end{verbatim}}
 
-\Defmacro {with-simple} {vector \body body}
+\defmacro {with-simple} {vector \body body}
 
 This macro simply checks whether \textit{vector} is a
 \texttt{simple-array}, and duplicates \textit{body} in each branch of
@@ -190,7 +190,7 @@ the test.  A typical implementation might look like this:
        (progn ,@body)))
 \end{verbatim}}
 
-\Defmacro {with-vector-type} {vector-var \body body}
+\defmacro {with-vector-type} {vector-var \body body}
 
 This macro duplicates \textit{body} for each possible value of
 \texttt{array-upgraded-element-type} that the implementation provides.
