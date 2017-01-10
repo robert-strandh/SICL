@@ -1,1 +1,37 @@
 \section{Conclusions and future work}
+
+We have presented a technique that allow implementations of most of
+the \commonlisp{} sequence functions that are simultaneously fast,
+maintainable, and portable, provided the compiler supplied by the
+implementation is sufficiently sophisticated to apply certain standard
+optimization techniques.
+
+The main exception for which our technique is generally unable to
+compete with a native implementation is when the sequence is a bit
+vector.  Any implementation that accesses the elements of the bit
+vector one at a time, rather than using native instructions that can
+handle an entire word at a time, is unable to match the native
+performance.  On the other hand, our technique allows the
+\commonlisp{} implementation to treat bit vectors as an exceptional
+case, and use our general technique for the other cases.
+
+We have yet to perfect the exact declarations to include in our
+implementation, and the exact places where these declarations should
+be added.  Different \commonlisp{} implementations have different
+requirements in this respect, so this work may have to be repeated for
+different implementations.
+
+At the moment, we have been working exclusively with \sbcl{}, for the
+simple reason that the \sbcl{} compiler does provide the optimizations
+that are required in order for our technique to yield excellent
+performance.  We intend to experiment with other major implementations
+as well in order to determine which ones are suited for our
+technique.
+
+The \cleavir{} compiler framework of the \sicl{} project5
+\footnote{See https://github.com/robert-strandh/SICL} will ultimately
+include a technique for \emph{path replication} in intermediate code,
+that, while not specifically meant for the kind of optimization
+required for the technique presented in this paper, will have the same
+effect as more direct techniques currently used in advanced
+compilers.
