@@ -189,3 +189,16 @@ the test.  A typical implementation might look like this:
        (progn ,@body)
        (progn ,@body)))
 \end{verbatim}}
+
+\Defmacro {with-vector-type} {vector-var \body body}
+
+This macro duplicates \textit{body} for each possible value of
+\texttt{array-upgraded-element-type} that the implementation provides.
+It also provides a local definition for the macro \texttt{vref} which
+we use instead of \texttt{aref} to access the elements of the vector
+in \textit{body}.  If the compiler of the implementation is unable to
+specialize \texttt{aref} according to the element type, then the
+implementation may provide different definitions of the macro
+\texttt{vref} for different element types.  Since the supported
+element types vary from one implementation to another, we do not
+provide an example of how this macro may be implemented.
