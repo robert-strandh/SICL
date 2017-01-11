@@ -207,7 +207,7 @@ are easy to verify:
 \begin{itemize}
 \item The predecessor does not assign to a lexical variable that is
   read by the test instruction.  This condition is respected because
-  we have assumed that the variable being tested is not written to
+  we have assumed that the variable being tested is not assigned to
   in any path between the first and the second occurrences of the
   test.
 \item The predecessor must not have any other side effect that may
