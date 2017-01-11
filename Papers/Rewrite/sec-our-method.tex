@@ -147,7 +147,7 @@ Result after replicating \texttt{cons-car}.}
 
 As \refFig{fig-rewrite-5} shows, the \texttt{consp} instruction now
 has a single predecessor, but the incoming arc has a known outcome of
-the test, namely \textit{true} (color green).  therefore, rewrite rule
+the test, namely \textit{true} (color green).  Therefore, rewrite rule
 number $2$ applies.  The left outgoing arc of the first \texttt{consp}
 is redirected to go directly to the \texttt{cons-car} instruction.
 The result of applying this rule is shown in \refFig{fig-rewrite-6}.
@@ -205,7 +205,7 @@ rule preserves the semantics only under certain circumstances which
 are easy to verify:
 
 \begin{itemize}
-\item The predecessor does not write to a lexical variable that is
+\item The predecessor does not assign to a lexical variable that is
   read by the test instruction.  This condition is respected because
   we have assumed that the variable being tested is not written to
   in any path between the first and the second occurrences of the
