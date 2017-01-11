@@ -27,14 +27,14 @@
   :version "1.0"
   :author "Irene Durand <irene.durand@u-bordeaux.fr>"
   :licence "General Public Licence"
-  :depends-on ()
+  :depends-on (:paper-sequence)
   :serial t
   :components
   (
    (:file "package") 
    (:file "general") 
-   (:file "find-vector")
-   (:file "find-list")
+;;   (:file "find-vector")
+;;   (:file "find-list")
    (:file "tests")
    )
   :serial t)
