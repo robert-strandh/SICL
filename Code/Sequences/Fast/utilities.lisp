@@ -160,6 +160,16 @@
        (progn ,@body)
        (progn ,@body)))
 
+(defmacro with-key-function (key-function-var &body body)
+  `(cond ((eq key-function-var #'identity)
+	  ,@body)
+	 ((eq key-function-var #'car)
+	  ,@body)
+	 ((eq key-function-var #'cdr)
+	  ,@body)
+	 (t
+	  ,@body)))
+
 (declaim (inline satisfies-two-argument-test-p))
 
 (defun satisfies-two-argument-test-p (item element test test-not)
