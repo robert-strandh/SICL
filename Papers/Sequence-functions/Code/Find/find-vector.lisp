@@ -17,7 +17,11 @@
          (progn
            ,@body)))))
 
+ (defun find-vector-0 (item vector)
+   (find item vector :test #'eq))
+
  (defun find-vector-1 (item vector)
+   (sicl-sequence::find-vector item vector nil #'eq nil 0 (length vector) #'identity))
 
 ;; (defun find-vector-1 (item vector)
 ;;   (declare (optimize (speed 3) (debug 0) (safety 0)))

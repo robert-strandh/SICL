@@ -1,6 +1,9 @@
 (in-package :find)
 
 (defvar *the-value* 1)
+(defvar *the-other-value* 0)
+
+(setq *the-value* 1)
 
 (defun make-sbv (n &key (element-type '(unsigned-byte 8)))
   (let ((vector
