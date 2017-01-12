@@ -3,15 +3,16 @@
 (defun count-list (item list from-end test test-not start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (declare (type list list))
-  (with-test-and-test-not (test test-not)
-    (with-from-end from-end
-      (let ((result 0))
-	(declare (type fixnum result))
-	(for-each-relevant-cons (cons index list start end from-end)
-	  (let ((element (apply-key-function (car cons) key)))
-	    (when (satisfies-two-argument-test-p item element test test-not)
-	      (incf result))))
-	(return-from count-list result)))))
+  (with-bounding-indices-list (start end)
+    (with-test-and-test-not (test test-not)
+      (with-from-end from-end
+	(let ((result 0))
+	  (declare (type fixnum result))
+	  (for-each-relevant-cons (cons index list start end from-end)
+	    (let ((element (apply-key-function (car cons) key)))
+	      (when (satisfies-two-argument-test-p item element test test-not)
+		(incf result))))
+	  (return-from count-list result))))))
 
 ;;; A version of COUNT, specialized to a vector.  ITEM is the item to
 ;;; count.  VECTOR is the vector to search.  FROM-END is a generalized
