@@ -161,11 +161,11 @@
        (progn ,@body)))
 
 (defmacro with-key-function (key-function-var &body body)
-  `(cond ((eq key-function-var #'identity)
+  `(cond ((eq ,key-function-var #'identity)
 	  ,@body)
-	 ((eq key-function-var #'car)
+	 ((eq ,key-function-var #'car)
 	  ,@body)
-	 ((eq key-function-var #'cdr)
+	 ((eq ,key-function-var #'cdr)
 	  ,@body)
 	 (t
 	  ,@body)))
