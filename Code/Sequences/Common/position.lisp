@@ -3,12 +3,13 @@
 (defun position-list (item list from-end test test-not start end key)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (declare (type list list))
-  (with-test-and-test-not (test test-not)
-    (with-from-end from-end
-      (for-each-relevant-cons (cons index list start end from-end)
-	(let ((element (apply-key-function (car cons) key)))
-	  (when (satisfies-two-argument-test-p item element test test-not)
-	    (return-from position-list index)))))))
+  (with-bounding-indices-list (start end)
+    (with-test-and-test-not (test test-not)
+      (with-from-end from-end
+	(for-each-relevant-cons (cons index list start end from-end)
+	  (let ((element (apply-key-function (car cons) key)))
+	    (when (satisfies-two-argument-test-p item element test test-not)
+	      (return-from position-list index))))))))
 
 ;;; A version of POSITION, specialized to a vector.  ITEM is the item
 ;;; for wich a position is searched for. VECTOR is the vector to
