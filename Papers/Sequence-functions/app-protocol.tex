@@ -44,6 +44,30 @@ implementation might look like this:
 	 (t nil)))
 \end{verbatim}}
 
+\defmacro {with-key-function} {key-function-var \body body}
+
+This macro takes a single argument which must be a variable that holds
+the value of the canonicalized \texttt{\&key} keyword argument.  It is
+used to duplicate \textit{body} for different typical values for the
+\textit{key} argument to many sequence functions.  A typical
+implementation of this macro looks like this:
+
+{\small\begin{verbatim}
+(defmacro with-key-function (key-function-var &body body)
+  `(cond ((eq ,key-function-var #'identity)
+	  ,@body)
+	 ((eq ,key-function-var #'car)
+	  ,@body)
+	 ((eq ,key-function-var #'cdr)
+	  ,@body)
+	 (t
+	  ,@body)))
+\end{verbatim}}
+
+In each clause of the \texttt{cond} form in this macro, the inlined
+version of the function \texttt{apply-key-function} will be simplified
+in a different way by the compiler, resulting in a specialized loop.
+
 \defmacro {for-each-relevant-cons}\\
 {(cons-var index-var list start end from-end) \body body}
 
