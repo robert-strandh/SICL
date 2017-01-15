@@ -17,12 +17,13 @@
   (let* ((array-temp (make-temp))
 	 (index-temp (make-temp))
 	 (type (cleavir-ast:element-type ast))
-	 (unboxed (if (cleavir-ast:box-p ast)
-		      (list (make-temp))
-		      (results context)))
-	 (succ (if (cleavir-ast:box-p ast)
-		   (list (box-for-type type unboxed context))
-		   (successors context))))
+	 (unboxed (if (cleavir-ast:boxed-p ast)
+		      (results context)
+		      ;; need an additional boxing step.
+		      (list (make-temp))))
+	 (succ (if (cleavir-ast:boxed-p ast)
+		   (successors context)
+		   (list (box-for-type type unboxed context)))))
     (compile-ast
      (cleavir-ast:array-ast ast)
      (context
@@ -33,6 +34,7 @@
 		      (list (make-instance 'cleavir-ir:aref-instruction
 			      :element-type type
 			      :simple-p (cleavir-ast:simple-p ast)
+			      :boxed-p (cleavir-ast:boxed-p ast)
 			      :inputs (list array-temp index-temp)
 			      :outputs unboxed
 			      :successors succ))
@@ -58,6 +60,7 @@
 	 (aset (make-instance 'cleavir-ir:aset-instruction
 		 :element-type type
 		 :simple-p (cleavir-ast:simple-p ast)
+		 :boxed-p (cleavir-ast:boxed-p ast)
 		 :inputs (list array-temp index-temp element-temp)
 		 :outputs (results context)
 		 :successors (successors context))))
@@ -71,8 +74,12 @@
 	(list index-temp)
 	(compile-ast
 	 (cleavir-ast:element-ast ast)
-	 (if (cleavir-ast:unbox-p ast)
-	     ;; if we have to unbox the element first, compile
+	 (if (cleavir-ast:boxed-p ast)
+	     ;; simple case: no unbox required
+	     (context (list element-temp)
+		      (list aset)
+		      (invocation context))
+	     ;; if we have to unbox the new value first, compile
 	     ;; the element-ast in a context where the successor
 	     ;; is an unboxer and the output is a different temp.
 	     (let ((boxed-temp (make-temp)))
@@ -81,10 +88,6 @@
 		(list
 		 (unbox-for-type type boxed-temp
 				 element-temp aset))
-		(invocation context)))
-	     ;; otherwise it's simple.
-	     (context (list element-temp)
-		      (list aset)
-		      (invocation context))))
+		(invocation context)))))
 	(invocation context)))
       (invocation context)))))
