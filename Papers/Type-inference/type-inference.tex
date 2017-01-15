@@ -1,0 +1,49 @@
+\documentclass{acm_proc_article-sp}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+\def\inputal#1{\input #1}
+\def\inputcode#1{\input #1}
+
+\inputtex{logos.tex}
+\inputtex{refmacros.tex}
+\inputtex{other-macros.tex}
+
+\begin{document}
+\title{}
+\numberofauthors{2}
+\author{\alignauthor
+  Alex Wood\\
+  Robert Strandh\\
+  \affaddr{University of Bordeaux}\\
+  \affaddr{351, Cours de la Libération}\\
+  \affaddr{Talence, France}\\
+  \email{robert.strand@u-bordeaux.fr}}
+
+\maketitle
+
+\begin{abstract}
+  lorem ipsum
+\end{abstract}
+
+\category{D.3.4}{Programming Languages}{Processors}
+
+\terms{Algorithms, Languages, Performance}
+
+\keywords{\commonlisp{}}
+
+\inputtex{spec-macros.tex}
+
+\inputtex{sec-introduction.tex}
+\inputtex{sec-previous.tex}
+\inputtex{sec-type-inference.tex}
+\inputtex{sec-optimizations.tex}
+\inputtex{sec-conclusions.tex}
+\inputtex{sec-acknowledgements.tex}
+\inputtex{app-protocol.tex}
+
+\bibliographystyle{abbrv}
+\bibliography{sequence-functions}
+\end{document}

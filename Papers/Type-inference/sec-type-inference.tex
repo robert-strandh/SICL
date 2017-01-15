@@ -1,0 +1,19 @@
+\section{Type inference method}
+
+Because \commonlisp{} types are arbitrary sets, perfect inference of \commonlisp{} types would be equivalent to the halting problem\footnote{Most obviously, if the type of the input to a function is a singleton set.}; additionally, some type information is more useful than others in an optimizing compiler. Therefore, a small finite lattice is used for type inference.
+
+Elements of the lattice are called \textit{type descriptors}, or just ``descriptors''. Every Common Lisp type can be conservatively approximated by a descriptor. That is, the type will not contain any elements not also contained in the descriptor. There is a descriptor for the top type, bottom type, and any type that is useful for optimization.
+
+Descriptors are collected into \textit{bags}, which are associative maps from variables to descriptors. Bags are equipped with equality and union operations, which are both only defined for bags with the same set of variables, and consist of the equivalent operation on descriptors mapped over the variables.
+
+The program is first reduced to ``high-level intermediate representation'' (HIR) by other steps of compilation. The HIR consists of nodes called \textit{instructions} connected to each other by arcs to form a graph of the program control flow. Each instruction has zero or more variables as inputs, zero or more variables as outputs, and represents some small operation that reads the inputs and writes to the outputs. The instruction does not depend on variables it doesn't have as inputs, and doesn't alter variables it doesn't have as outputs.
+
+Type inference begins by associating each arc with a bag. Initially, every descriptor in every bag is the top type descriptor. As an optimization, only those variables which are \textit{live} (used as inputs in some instruction later in control flow) during the arc are included in each bag.
+
+This map of arcs to bags represents all useful type information, and an altered map is the ultimate result of the type inference procedure. Type inference consists of successively shrinking the descriptors of variables in the bags from the top descriptor.
+
+To proceed with type inference, all instructions with predecessors are iterated over in arbitrary order. For each instruction, a specialized \textit{transfer function} is executed. The transfer function receives as arguments the instruction and a bag. The bag is the union of bags in arcs directly preceding the instruction. The transfer function then computes a bag for each succeeding arc of the instruction based on these arguments.
+
+If the bags so computed are distinct from the bags already associated with those arcs, new information is available. The succeeding instructions are then marked to be iterated over again. This continues until no instructions are left to iterate over, and at this point the current association of arcs with bags is the result of type inference.
+
+For example, a \commonlisp{} programmer may annotate their program with type information by using the \texttt{the} special operator: \textt{(the fixnum foo)} indicates that whenever this form is evaluated, the variable \texttt{foo} is of type \texttt{fixnum}. \texttt{the} is represented in HIR by a \texttt{the-instruction}, which has one predecessor, one successor, and one input, the variable \texttt{foo}. During type inference, the transfer function for the \texttt{the-instruction} returns the information that in the successor arc, \texttt{foo} must fit the type descriptor most closely approximating the \commonlisp{} type \texttt{fixnum}, and transfer functions for instructions farther along in the control flow can propagate this information.
