@@ -111,7 +111,7 @@
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:aset-ast
    #:element-ast #:array-ast #:index-ast
-   #:element-type #:simple-p #:box-p #:unbox-p
+   #:element-type #:simple-p #:boxed-p
    #:child-ast
    #:scope-ast #:make-scope-ast
    #:map-ast-depth-first-preorder

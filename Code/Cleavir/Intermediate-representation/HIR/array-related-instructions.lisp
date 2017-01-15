@@ -8,12 +8,14 @@
 ;;; This instruction takes two inputs: an array and an index.
 ;;; The array must have the actual element-type of the instruction,
 ;;; and have actual simplicity corresponding to simple-p.
+;;; Boxed-p indicates whether elements in the array are boxed.
 ;;; The index is row-major.
 ;;; There is a single output, the read value.
 
 (defclass aref-instruction (instruction one-successor-mixin)
   ((%element-type :initarg :element-type :reader element-type)
-   (%simple-p :initarg :simple-p :reader simple-p)))
+   (%simple-p :initarg :simple-p :reader simple-p)
+   (%boxed-p :initarg :boxed-p :reader boxed-p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -28,4 +30,5 @@
 (defclass aset-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ((%element-type :initarg :element-type :reader element-type)
-   (%simple-p :initarg :simple-p :reader simple-p)))
+   (%simple-p :initarg :simple-p :reader simple-p)
+   (%boxed-p :initarg :boxed-p :reader boxed-p)))

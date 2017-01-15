@@ -466,19 +466,19 @@
 ;;; array and an index into it, as forms. The remainder of the
 ;;; arguments are not evaluated. The third is the actual element
 ;;; type of the array. The fourth is whether the array is actually
-;;; simple. The fifth is whether the value from aref should be
+;;; simple. The fifth is whether the value in the array is already
 ;;; boxed.
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:aref)) form env system)
-  (db origin (array-form index-form type simple-p box-p)
+  (db origin (array-form index-form type simple-p boxed-p)
       (rest form)
     (make-instance 'cleavir-ast:aref-ast
       :array-ast (convert array-form env system)
       :index-ast (convert index-form env system)
       :element-type type
       :simple-p simple-p
-      :box-p box-p
+      :boxed-p boxed-p
       :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -487,8 +487,8 @@
 ;;;
 ;;; This primop takes six arguments. The first two are an array and
 ;;; an index into it. The third is the object to be written in. The
-;;; fourth and fifth are as above. The sixth is whether the object
-;;; has to be unboxed before being written into the array.
+;;; fourth and fifth are as above. The sixth is whether the objects
+;;; in the array are boxed.
 ;;;
 ;;; Forms using this primitive operation must occur in a context
 ;;; that does not require a value, such as in a PROGN other than as
@@ -497,7 +497,7 @@
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:aset)) form env system)
   (db origin (array-form index-form object-form
-			 type simple-p unbox-p)
+			 type simple-p boxed-p)
       (rest form)
     (make-instance 'cleavir-ast:aset-ast
       :array-ast (convert array-form env system)
@@ -505,7 +505,7 @@
       :element-ast (convert object-form env system)
       :element-type type
       :simple-p simple-p
-      :unbox-p unbox-p
+      :boxed-p boxed-p
       :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
