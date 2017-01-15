@@ -68,26 +68,28 @@
      (cleavir-ast:array-ast ast)
      (context
       (list array-temp)
-      (compile-ast
-       (cleavir-ast:index-ast ast)
-       (context
-	(list index-temp)
-	(compile-ast
-	 (cleavir-ast:element-ast ast)
-	 (if (cleavir-ast:boxed-p ast)
-	     ;; simple case: no unbox required
-	     (context (list element-temp)
-		      (list aset)
-		      (invocation context))
-	     ;; if we have to unbox the new value first, compile
-	     ;; the element-ast in a context where the successor
-	     ;; is an unboxer and the output is a different temp.
-	     (let ((boxed-temp (make-temp)))
-	       (context
-		(list boxed-temp)
-		(list
-		 (unbox-for-type type boxed-temp
-				 element-temp aset))
-		(invocation context)))))
-	(invocation context)))
+      (list
+       (compile-ast
+	(cleavir-ast:index-ast ast)
+	(context
+	 (list index-temp)
+	 (list
+	  (compile-ast
+	   (cleavir-ast:element-ast ast)
+	   (if (cleavir-ast:boxed-p ast)
+	       ;; simple case: no unbox required
+	       (context (list element-temp)
+			(list aset)
+			(invocation context))
+	       ;; if we have to unbox the new value first, compile
+	       ;; the element-ast in a context where the successor
+	       ;; is an unboxer and the output is a different temp.
+	       (let ((boxed-temp (make-temp)))
+		 (context
+		  (list boxed-temp)
+		  (list
+		   (unbox-for-type type boxed-temp
+				   element-temp aset))
+		  (invocation context))))))
+	 (invocation context))))
       (invocation context)))))
