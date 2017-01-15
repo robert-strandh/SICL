@@ -1,5 +1,20 @@
 (cl:in-package #:sicl-type-proclamations)
 
+;;; like FUNCTION but returning an exact number of values.
+;;; does not accept values types with lambda list keywords.
+
+;;; CLHS 1.6 says standard functions can't return more values than
+;;; they are specified to. But some types here are arguments, like
+;;; keyfun, and in that case conforming programs can pass a
+;;; function that returns more values if they really want to.
+
+;;; Having (values ... &rest nil) should conformingly mean no more
+;;; values, so we do that here. Works in Cleavir and works in SBCL.
+(deftype sfunction (&optional args result)
+  `(function ,args ,(if (consp result)
+			`(,@result &rest nil)
+			`(values ,result &rest nil))))
+
 (declaim (ftype symbol-predicate name-of-length-1))
 
 (deftype character-designator ()
@@ -28,7 +43,7 @@ Some implementations define their own function names, like SBCL's (SB-PCL:CTOR .
 This type should be restricted to non-side-effectful functions for human-understandability.
 INPUT is an optional restriction of input types to the predicate."
   ;; i'm (Bike) not sure that (function (*)) is a legal type.
-  `(function (,input) generalized-boolean))
+  `(sfunction (,input) generalized-boolean))
 (deftype predicate-designator (&optional input) `(function-designator (predicate ,input)))
 
 (deftype type-predicate (type &optional input)
@@ -137,16 +152,17 @@ See CLHS 9.1.2.1."
   "Glossary definition."
   '(or null readtable))
 
-(declaim (ftype (function (function method) function)
+(declaim (ftype (sfunction (function method) function)
 		add-method))
 
-(declaim (ftype (function (t list
+(declaim (ftype (sfunction (t list
 			     &key (:key keyfun)
 			     (:test testfun2-designator)
-			     (:test-not testfun2-designator)))
+			      (:test-not testfun2-designator))
+			   list)
 		adjoin))
 
-(declaim (ftype (function (array (or array-dimension list) ; "list of valid array dimensions" is complex and inexpressible
+(declaim (ftype (sfunction (array (or array-dimension list) ; "list of valid array dimensions" is complex and inexpressible
 				 &key (:element-type type-specifier)
 				 (:initial-element t)
 				 (:initial-contents t) ; could be more complicated
@@ -157,19 +173,21 @@ See CLHS 9.1.2.1."
 		adjust-array))
 
 ;; kind of a type predicate... but not really.
-(declaim (ftype (function (array) generalized-boolean)
+(declaim (ftype (sfunction (array) generalized-boolean)
 		adjustable-array-p))
 
 ;; note that the list is specifically a plist
-(declaim (ftype (function (class &rest list &key &allow-other-keys) t)
+(declaim (ftype (sfunction (class &rest list &key &allow-other-keys) t)
 		allocate-instance))
 
 ;; again not really type predicates
-(declaim (ftype (function (character) generalized-boolean)
+(declaim (ftype (sfunction (character) generalized-boolean)
 		alpha-char-p
 		alphanumericp))
 
-(declaim (ftype (function (&rest list) t)
+;;; "each must be a proper list except the last, which can be
+;;;  any object"
+(declaim (ftype (sfunction (&rest t) t)
 		append))
 
 (declaim (ftype (function (function-designator &rest args) *)
@@ -177,57 +195,57 @@ See CLHS 9.1.2.1."
 
 (declaim (ftype (function (string-designator
 			   &optional (or package-designator null))
-			  nil)
+			  (values &rest nil)) ; no values
 		apropos))
 
-(declaim (ftype (function (string-designator
+(declaim (ftype (sfunction (string-designator
 			   &optional (or package-designator null))
 			  list) ; a list of symbols
 		apropos-list))
 
-(declaim (ftype (function (array &rest array-index) t)
+(declaim (ftype (sfunction (array &rest array-index) t)
 		aref))
 
-(declaim (ftype (function (array valid-array-rank) array-dimension)
+(declaim (ftype (sfunction (array valid-array-rank) array-dimension)
 		array-dimension))
 
-(declaim (ftype (function (array) list) ; a list of array dimensions
+(declaim (ftype (sfunction (array) list) ; a list of array dimensions
 		array-dimensions))
 
-(declaim (ftype (function (array)
+(declaim (ftype (sfunction (array)
 			  (values (or array nil) non-negative-fixnum))
 		array-displacement))
 
-(declaim (ftype (function (array)
+(declaim (ftype (sfunction (array)
 			  type-specifier)
 		array-element-type))
 
-(declaim (ftype (function (array) generalized-boolean)
+(declaim (ftype (sfunction (array) generalized-boolean)
 		array-has-fill-pointer-p))
 
-(declaim (ftype (function (array &rest integer) generalized-boolean)
+(declaim (ftype (sfunction (array &rest integer) generalized-boolean)
 		array-in-bounds-p))
 
-(declaim (ftype (function (array) valid-array-rank)
+(declaim (ftype (sfunction (array) valid-array-rank)
 		array-rank))
 
-(declaim (ftype (function (array &rest array-index) non-negative-fixnum)
+(declaim (ftype (sfunction (array &rest array-index) non-negative-fixnum)
 		array-row-major-index))
 
-(declaim (ftype (function (array) (integer 0))
+(declaim (ftype (sfunction (array) (integer 0))
 		array-total-size))
 
 (declaim (ftype (type-predicate array)
 		arrayp))
 
-(declaim (ftype (function (t list
+(declaim (ftype (sfunction (t list
 			     &key (:key keyfun-designator)
 			     (:test testfun2-designator)
 			     (:test-not testfun2-designator))
 			  (or cons null))
 		assoc))
 
-(declaim (ftype (function (testfun1-designator
+(declaim (ftype (sfunction (testfun1-designator
 			   list
 			   &key (:key keyfun-designator)
 			  (or cons null))
@@ -237,10 +255,10 @@ See CLHS 9.1.2.1."
 (declaim (ftype (type-predicate atom)
 		atom))
 
-(declaim (ftype (function ((array bit) &rest array-index) bit)
+(declaim (ftype (sfunction ((array bit) &rest array-index) bit)
 		bit))
 
-(declaim (ftype (function ((array bit) (array bit)
+(declaim (ftype (sfunction ((array bit) (array bit)
 			   &optional (or (array bit) (member t nil)))
 			  (array bit))
 		bit-and
@@ -254,7 +272,7 @@ See CLHS 9.1.2.1."
 		bit-orc2
 		bit-xor))
 
-(declaim (ftype (function ((array bit)
+(declaim (ftype (sfunction ((array bit)
 			   &optional (or (array bit) (member t nil)))
 			  (array bit))
 		bit-not))
@@ -263,77 +281,77 @@ See CLHS 9.1.2.1."
 		bit-vector-p))
 
 ;;; This could be done better for any particular implementation.
-(declaim (ftype (function (t integer integer)
+(declaim (ftype (sfunction (t integer integer)
 			  integer)
 		boole))
 
-(declaim (ftype (function (character) generalized-boolean)
+(declaim (ftype (sfunction (character) generalized-boolean)
 		upper-case-p
 		lower-case-p
 		both-case-p))
 
-(declaim (ftype (function (symbol) generalized-boolean)
+(declaim (ftype (sfunction (symbol) generalized-boolean)
 		boundp))
 
-(declaim (ftype (function (&optional format-control &rest t) null)
+(declaim (ftype (sfunction (&optional format-control &rest t) null)
 		break))
 
-(declaim (ftype (function (broadcast-stream) list) ; list of streams
+(declaim (ftype (sfunction (broadcast-stream) list) ; list of streams
 		broadcast-stream-streams))
 
-(declaim (ftype (function ((integer 0) (integer 0)) byte-specifier)
+(declaim (ftype (sfunction ((integer 0) (integer 0)) byte-specifier)
 		byte))
 
-(declaim (ftype (function (byte-specifier) (integer 0))
+(declaim (ftype (sfunction (byte-specifier) (integer 0))
 		byte-size
 		byte-position))
 
-(declaim (ftype (function (number &optional (real 0))
+(declaim (ftype (sfunction (real &optional (real 0))
 			  (values integer real))
 		floor
 		ceiling
 		truncate
 		round))
 
-(declaim (ftype (function (cell-error) t)
+(declaim (ftype (sfunction (cell-error) t)
 		cell-error-name))
 
 ;; note that condition designator arguments have to be a plist
-(declaim (ftype (function (format-control condition-designator-datum &rest t) nil)
+(declaim (ftype (sfunction (format-control condition-designator-datum &rest t) nil)
 		cerror))
 
-(declaim (ftype (function (t class-designator &key &allow-other-keys) t)
+(declaim (ftype (sfunction (t class-designator &key &allow-other-keys) t)
 		change-class))
 
-(declaim (ftype (function (real) complex)
+(declaim (ftype (sfunction (real) complex)
 		cis))
 
-(declaim (ftype (function (class) symbol)
+(declaim (ftype (sfunction (class) symbol)
 		class-name))
 
-(declaim (ftype (function (t) class)
+(declaim (ftype (sfunction (t) class)
 		class-of))
 
-(declaim (ftype (function (stream &key (:abort generalized-boolean)) t)
+(declaim (ftype (sfunction (stream &key (:abort generalized-boolean)) t)
 		close))
 
-(declaim (ftype (function (hash-table) hash-table)
+(declaim (ftype (sfunction (hash-table) hash-table)
 		clrhash))
 
-(declaim (ftype (function (character-code) (or character null))
+(declaim (ftype (sfunction (character-code) (or character null))
 		code-char))
 
-(declaim (ftype (function (t type-specifier) t)
+(declaim (ftype (sfunction (t type-specifier) t)
 		coerce))
 
-(declaim (ftype (function ((or function-name null)
+(declaim (ftype (sfunction ((or function-name null)
 			   &optional (or function lambda-expression))
 			  (values (or function-name compiled-function)
 				  generalized-boolean
 				  generalized-boolean))
 		compile))
 
-(declaim (ftype (function (pathname-designator &key
+(declaim (ftype (sfunction (pathname-designator &key
                              (:output-file pathname-designator)
                              (:verbose generalized-boolean)
                              (:print generalized-boolean)
@@ -343,74 +361,74 @@ See CLHS 9.1.2.1."
 				  generalized-boolean))
 		compile-file))
 
-(declaim (ftype (function (pathname-designator &key (:output-file pathname-designator) &allow-other-keys) pathname)
+(declaim (ftype (sfunction (pathname-designator &key (:output-file pathname-designator) &allow-other-keys) pathname)
 		compile-file-pathname))
 
 (declaim (ftype (type-predicate compiled-function)
 		compiled-function-p))
 
-(declaim (ftype (function (function-name &optional t #|an environment|#) (or function null))
+(declaim (ftype (sfunction (function-name &optional t #|an environment|#) (or function null))
 		compiler-macro-function))
 
-(declaim (ftype (function (function) (function * generalized-boolean))
+(declaim (ftype (sfunction (function) (function * generalized-boolean))
 		complement))
 
-(declaim (ftype (function (real &optional real) (or rational complex))
+(declaim (ftype (sfunction (real &optional real) (or rational complex))
 		complex))
 
 (declaim (ftype (type-predicate complex) complexp))
 
-(declaim (ftype (function (generic-function list) list #|of methods|#)
+(declaim (ftype (sfunction (generic-function list) list #|of methods|#)
 		compute-applicable-methods))
 
 ;; I'm not sure that concatenate is defined on improper sequences.
-(declaim (ftype (function (type-specifier &rest sequence) proper-sequence)
+(declaim (ftype (sfunction (type-specifier &rest sequence) proper-sequence)
 		concatenate))
 
-(declaim (ftype (function (concatenated-stream) list #|of streams|#)
+(declaim (ftype (sfunction (concatenated-stream) list #|of streams|#)
 		concatenated-stream-streams))
 
-(declaim (ftype (function (number) number)
+(declaim (ftype (sfunction (number) number)
 		conjugate))
 
-(declaim (ftype (function (t t) cons)
+(declaim (ftype (sfunction (t t) cons)
 		cons))
 
 (declaim (ftype (type-predicate cons)
 		consp))
 
-(declaim (ftype (function (t) (function * t))
+(declaim (ftype (sfunction (t) (sfunction * t))
 		constantly))
 
-(declaim (ftype (function (t &optional t #|an environment|#) generalized-boolean)
+(declaim (ftype (sfunction (t &optional t #|an environment|#) generalized-boolean)
 		constantp))
 
-(declaim (ftype (function (&optional (or condition null)) null)
+(declaim (ftype (sfunction (&optional (or condition null)) null)
 		continue))
 
-(declaim (ftype (function (list) list)
+(declaim (ftype (sfunction (list) list)
 		copy-alist
 		copy-list))
 
-(declaim (ftype (function (&optional t) t) ; objects are pprint dispatch tables
+(declaim (ftype (sfunction (&optional t) t) ; objects are pprint dispatch tables
 		copy-pprint-dispatch))
 
-(declaim (ftype (function (&optional readtable-designator (or null readtable))
+(declaim (ftype (sfunction (&optional readtable-designator (or null readtable))
 			  readtable)
 		copy-readtable))
 
-(declaim (ftype (function (proper-sequence) proper-sequence)
+(declaim (ftype (sfunction (proper-sequence) proper-sequence)
 		copy-seq))
 
-(declaim (ftype (function (structure-object) structure-object) copy-structure))
+(declaim (ftype (sfunction (structure-object) structure-object) copy-structure))
 
-(declaim (ftype (function (symbol &optional generalized-boolean) symbol)
+(declaim (ftype (sfunction (symbol &optional generalized-boolean) symbol)
 		copy-symbol))
 
-(declaim (ftype (function (t) t)
+(declaim (ftype (sfunction (t) t)
 		copy-tree))
 
-(declaim (ftype (function (t
+(declaim (ftype (sfunction (t
 			   sequence
 			   &key
 			   (:from-end generalized-boolean)
@@ -422,7 +440,7 @@ See CLHS 9.1.2.1."
 			  (integer 0))
 		count))
 
-(declaim (ftype (function (testfun1-designator
+(declaim (ftype (sfunction (testfun1-designator
 			   sequence
 			   &key
 			   (:from-end generalized-boolean)
@@ -433,17 +451,10 @@ See CLHS 9.1.2.1."
 		count-if
 		count-if-not))
 
-(declaim (ftype (or (function (short-float)
-			      (values short-float integer (member 1S0 -1S0)))
-		    (function (single-float)
-			      (values single-float integer (member 1F0 -1F0)))
-		    (function (double-float)
-			      (values double-float integer (member 1D0 -1D0)))
-		    (function (long-float)
-			      (values long-float integer (member 1L0 -1L0))))
+(declaim (ftype (sfunction (float) (values float integer float))
 		decode-float))
 
-(declaim (ftype (function ((integer 0))
+(declaim (ftype (sfunction ((integer 0))
 			  (values (integer 0 59)
 				  (integer 0 59)
 				  (integer 0 23)
@@ -455,7 +466,7 @@ See CLHS 9.1.2.1."
 				  rational))
 		decode-universal-time))
 
-(declaim (ftype (function (t
+(declaim (ftype (sfunction (t
 			   proper-sequence
 			   &key
 			   (:from-end generalized-boolean)
@@ -468,7 +479,7 @@ See CLHS 9.1.2.1."
 		delete
 		remove))
 
-(declaim (ftype (function (testfun1-designator
+(declaim (ftype (sfunction (testfun1-designator
 			   proper-sequence
 			   &key
 			   (:from-end generalized-boolean)
@@ -481,7 +492,7 @@ See CLHS 9.1.2.1."
 		remove-if
 		remove-if-not))
 
-(declaim (ftype (function (proper-sequence
+(declaim (ftype (sfunction (proper-sequence
 			   &key
 			   (:from-end generalized-boolean)
 			   (:test testfun2-designator)
@@ -492,72 +503,71 @@ See CLHS 9.1.2.1."
 		delete-duplicates
 		remove-duplicates))
 
-(declaim (ftype (function (pathname-designator) (eql t))
+(declaim (ftype (sfunction (pathname-designator) (eql t))
 		delete-file))
 
-(declaim (ftype (function (package-designator) generalized-boolean)
+(declaim (ftype (sfunction (package-designator) generalized-boolean)
 		delete-package))
 
-(declaim (ftype (function (rational) integer)
+(declaim (ftype (sfunction (rational) integer)
 		denominator
 		numerator))
 
-(declaim (ftype (function (integer byte-specifier integer) integer)
+(declaim (ftype (sfunction (integer byte-specifier integer) integer)
 		deposit-field))
 
-(declaim (ftype (function (t &optional stream-designator) (values))
+(declaim (ftype (sfunction (t &optional stream-designator) (values))
 		describe))
 
-(declaim (ftype (function (t stream) t)
+(declaim (ftype (function (t stream)
+			  ;; no values
+			  (values &rest nil))
 		describe-object))
 
-(declaim (ftype (function ((integer 0) &optional radix) (or character null))
+(declaim (ftype (sfunction ((integer 0) &optional radix) (or character null))
 		digit-char))
 
-(declaim (ftype (function (character &optional radix) (or (integer 0) null))
+(declaim (ftype (sfunction (character &optional radix) (or (integer 0) null))
 		digit-char-p))
 
-(declaim (ftype (function (pathname-designator) list)
+(declaim (ftype (sfunction (pathname-designator) list)
 		directory))
 
-(declaim (ftype (function (pathname-designator) (or string null))
+(declaim (ftype (sfunction (pathname-designator) (or string null))
 		directory-namestring
 		file-namestring
 		host-namestring
 		namestring))
 
-(declaim (ftype (function ((or extended-function-designator lambda-expression)) null)
+(declaim (ftype (sfunction ((or extended-function-designator lambda-expression)) null)
 		disassemble))
 
-(declaim (ftype (function (integer byte-specifier integer) integer)
+(declaim (ftype (sfunction (integer byte-specifier integer) integer)
 		dpb))
 
-(declaim (ftype (function (&optional pathname-designator) t)
+(declaim (ftype (sfunction (&optional pathname-designator) t)
 		dribble))
 
-(declaim (ftype (function (pathname-designator &optional pathname-designator)
+(declaim (ftype (sfunction (pathname-designator &optional pathname-designator)
 			  (or string null))
 		enough-namestring))
 
-(declaim (ftype (function (simple-string array-index) character)
+(declaim (ftype (sfunction (simple-string array-index) character)
 		schar))
 
-(declaim (ftype (function ((simple-array bit) &rest array-index) bit)
+(declaim (ftype (sfunction ((simple-array bit) &rest array-index) bit)
 		sbit))
 
-(declaim (ftype (or (function (short-float integer) short-float)
-		    (function (single-float integer) single-float)
-		    (function (double-float integer) double-float)
-		    (function (long-float integer) long-float))
+(declaim (ftype (sfunction (float integer) float)
 		scale-float))
 
-(declaim (ftype (function (function function-name) function)
+(declaim (ftype (sfunction (function function-name) function)
 		(setf fdefinition)))
 
-(declaim (ftype (function (symbol &optional generalized-boolean t))
+(declaim (ftype (sfunction (symbol &optional generalized-boolean t))
 		find-class))
 
-(declaim (ftype (function (proper-sequence
+(declaim (ftype (sfunction (proper-sequence
 			   &key (:from-end generalized-boolean)
 			   (:test testfun2)
 			   (:test-not testfun2)
@@ -567,7 +577,7 @@ See CLHS 9.1.2.1."
 			  t)
 		find))
 
-(declaim (ftype (function (predicate-designator
+(declaim (ftype (sfunction (predicate-designator
 			   proper-sequence
 			   &key (:from-end generalized-boolean)
 			   (:start bounding-index-designator)
@@ -577,7 +587,7 @@ See CLHS 9.1.2.1."
 		find-if
 		find-if-not))
 
-(declaim (ftype (function (generic-function
+(declaim (ftype (sfunction (generic-function
 			   list
 			   list
 			   generalized-boolean)
@@ -585,28 +595,27 @@ See CLHS 9.1.2.1."
 		find-method))
 
 ;; CLHS doesn't say "package designator" even though this is the same, why rock the boat
-(declaim (ftype (function (or string-designator package) (or package null))
+(declaim (ftype (sfunction (or string-designator package) (or package null))
 		find-package))
 
-(declaim (ftype (function ((or (and symbol (not null)) restart)
+(declaim (ftype (sfunction ((or (and symbol (not null)) restart)
 			   &optional (or condition null))
 			  (or restart null))
 		find-restart))
 
-(declaim (ftype (function (string ; not a string designator
+(declaim (ftype (sfunction (string ; not a string designator
 			   &optional package-designator)
 			  (values (or symbol null) ; redundant, but human-helpful
 				  (member :inherited :external :internal nil)))
 		find-symbol))
 
-;; one wonders why this doesn't return no values
-(declaim (ftype (function (&optional stream-designator) null)
+(declaim (ftype (sfunction (&optional stream-designator) null)
 		finish-output
 		force-output
 		clear-input
 		clear-output))
 
-(declaim (ftype (function list t)
+(declaim (ftype (sfunction list t)
 		first
 		second
 		third
@@ -618,32 +627,26 @@ See CLHS 9.1.2.1."
 		ninth
 		tenth))
 
-(declaim (ftype (function function-name function-name)
+(declaim (ftype (sfunction function-name function-name)
 		fmakunbound))
 
-(declaim (ftype (function ((or null (eql t) stream string) ; note "string with fill-pointer" specified
+(declaim (ftype (sfunction ((or null (eql t) stream string) ; note "string with fill-pointer" specified
 			   format-control
 			   &rest t)
 			  (or null string))
 		format))
 
-(declaim (ftype (function string formatter)
-		formatter))
-
-(declaim (ftype (function (&optional stream-designator) generalized-boolean)
+(declaim (ftype (sfunction (&optional stream-designator) generalized-boolean)
 		fresh-line))
 
 (declaim (ftype (function (function-designator &rest t) *)
 		funcall))
 
-(declaim (ftype (function (function)
-			  (values lambda-expression generalized-boolean t))
+(declaim (ftype (sfunction (function)
+			  (values (or lambda-expression null) generalized-boolean t))
 		function-lambda-expression))
 
 (declaim (ftype (type-predicate function)
 		functionp))
 
-(declaim (ftype (or
-		   (function (null) (eql t))
-		   (function ((not null)) null))
-	    null))
+(declaim (ftype (type-predicate null) null))
