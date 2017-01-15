@@ -119,26 +119,6 @@
 ;;;;     This type descriptor means that the variable must have the
 ;;;;     type LONG-FLOAT.
 ;;;;
-;;;;   UNBOXED-SHORT-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain an
-;;;;     unboxed SHORT-FLOAT value.
-;;;;
-;;;;   UNBOXED-SINGLE-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain an
-;;;;     unboxed SINGLE-FLOAT value.
-;;;;
-;;;;   UNBOXED-DOUBLE-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain an
-;;;;     unboxed DOUBLE-FLOAT value.
-;;;;
-;;;;   UNBOXED-LONG-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain an
-;;;;     unboxed LONG-FLOAT value.
-;;;;
 ;;;;   COMPLEX-SHORT-FLOAT
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
@@ -158,89 +138,10 @@
 ;;;;
 ;;;;     This type descriptor means that the variable must contain a
 ;;;;     complex number with an upgraded element type of LONG-FLOAT.
+;;;;   (UNBOXED x)
 ;;;;
-;;;;   SIMPLE-ARRAY-BIT
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of BIT.
-;;;;
-;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-8
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
-;;;;     8).
-;;;;
-;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-16
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
-;;;;     16).
-;;;;
-;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-32
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
-;;;;     32).
-;;;;
-;;;;   SIMPLE-ARRAY-UNSIGNED-BYTE-64
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (UNSIGNED-BYTE
-;;;;     64).
-;;;;
-;;;;   SIMPLE-ARRAY-SIGNED-BYTE-8
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (SIGNED-BYTE
-;;;;     8).
-;;;;
-;;;;   SIMPLE-ARRAY-SIGNED-BYTE-16
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (SIGNED-BYTE
-;;;;     16).
-;;;;
-;;;;   SIMPLE-ARRAY-SIGNED-BYTE-32
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (SIGNED-BYTE
-;;;;     32).
-;;;;
-;;;;   SIMPLE-ARRAY-SIGNED-BYTE-64
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of (SIGNED-BYTE
-;;;;     64).
-;;;;
-;;;;   SIMPLE-ARRAY-BASE-CHAR
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of BASE-CHAR.
-;;;;
-;;;;   SIMPLE-ARRAY-CHARACTER
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of CHARACTER.
-;;;;
-;;;;   SIMPLE-ARRAY-SHORT-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of SHORT-FLOAT.
-;;;;
-;;;;   SIMPLE-ARRAY-SINGLE-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of SINGLE-FLOAT.
-;;;;
-;;;;   SIMPLE-ARRAY-DOUBLE-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of DOUBLE-FLOAT.
-;;;;
-;;;;   SIMPLE-ARRAY-LONG-FLOAT
-;;;;
-;;;;     This type descriptor means that the variable must contain a
-;;;;     simple array with an upgraded element type of LONG-FLOAT.
+;;;;     The variable contains an unboxed x, where x is another
+;;;;     type descriptor.
 
 ;;;; Ideally, other code in this system will not worry itself with
 ;;;;  subtypep and so on, and only use the functions here.
@@ -423,5 +324,26 @@
 
 (defun meet (&rest descriptors)
   (reduce #'binary-meet descriptors :initial-value 't))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; DESCRIPTOR-UNBOX and DESCRIPTOR-BOX.
+;;;
+;;; (unboxed [descriptor]) is a descriptor, but not one that will
+;;; ever be returned by approximate- or canonicalize-type.
+;;;
+;;; -UNBOX returns the descriptor for the unboxed version of the
+;;; given descriptor, while -BOX returns the underlying descriptor
+;;; of an (unboxed [x]) descriptor.
+
+(defun descriptor-unbox (descriptor)
+  (assert (not (and (consp descriptor)
+		    (eq (first descriptor) 'unboxed))))
+  `(unboxed ,descriptor))
+
+(defun descriptor-box (descriptor)
+  (assert (and (consp descriptor)
+	       (eq (first descriptor) 'unboxed)))
+  (second descriptor))
 
 ;;  LocalWords:  canonicalize inferencer

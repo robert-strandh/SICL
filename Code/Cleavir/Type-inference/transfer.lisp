@@ -94,44 +94,76 @@
 		input-bag))))
 
 (defmethod one-successor-transfer
-    ((instruction cleavir-ir:short-float-unbox-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'unboxed-short-float input-bag)))
+    ((instruction cleavir-ir:aref-instruction) input-bag)
+  ;; TODO: update array
+  (let ((index (second (cleavir-ir:inputs instruction)))
+	(output (first (cleavir-ir:outputs instruction)))
+	(element-descriptor
+	  (approximate-type
+	   (cleavir-ir:element-type instruction))))
+    (update output
+	    (if (cleavir-ir:boxed-p instruction)
+		element-descriptor
+		(descriptor-unbox element-descriptor))
+	    (update index
+		    (binary-meet (find-type index input-bag)
+				 ;; could use array dimensions,
+				 ;; or a more proper thing with
+				 ;; ARRAY-TOTAL-SIZE
+				 (approximate-type 'fixnum))
+		    input-bag))))
 
 (defmethod one-successor-transfer
-    ((instruction cleavir-ir:short-float-box-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'short-float input-bag)))
+    ((instruction cleavir-ir:aset-instruction) input-bag)
+  ;; TODO: update array
+  (let ((index (second (cleavir-ir:inputs instruction)))
+	(object (third (cleavir-ir:inputs instruction)))
+	(element-descriptor
+	  (approximate-type
+	   (cleavir-ir:element-type instruction))))
+    (update object
+	    (binary-meet
+	     (find-type object input-bag)
+	     (if (cleavir-ir:boxed-p instruction)
+		 element-descriptor
+		 ;; if the array's elements are unboxed, the object
+		 ;; being written must be unboxed.
+		 (descriptor-unbox element-descriptor)))
+	    (update index
+		    (binary-meet (find-type index input-bag)
+				 ;; could use array dimensions,
+				 ;; or a more proper thing with
+				 ;; ARRAY-TOTAL-SIZE
+				 (approximate-type 'fixnum))
+		    input-bag))))
 
 (defmethod one-successor-transfer
-    ((instruction cleavir-ir:single-float-unbox-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'unboxed-single-float input-bag)))
+    ((instruction cleavir-ir:box-instruction) input-bag)
+  (let ((input (first (cleavir-ir:inputs instruction)))
+	(output (first (cleavir-ir:outputs instruction)))
+	(element-descriptor
+	  (approximate-type
+	   (cleavir-ir:element-type instruction))))
+    (update input
+	    (binary-meet (find-type input input-bag)
+			 (descriptor-unbox element-descriptor))
+	    (update output
+		    element-descriptor
+		    input-bag))))
 
 (defmethod one-successor-transfer
-    ((instruction cleavir-ir:single-float-box-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'single-float input-bag)))
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:double-float-unbox-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'unboxed-double-float input-bag)))
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:double-float-box-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'double-float input-bag)))
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:long-float-unbox-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'unboxed-long-float input-bag)))
-
-(defmethod one-successor-transfer
-    ((instruction cleavir-ir:long-float-box-instruction) input-bag)
-  (let ((output (first (cleavir-ir:outputs instruction))))
-    (update output 'long-float input-bag)))
+    ((instruction cleavir-ir:unbox-instruction) input-bag)
+  (let ((input (first (cleavir-ir:inputs instruction)))
+	(output (first (cleavir-ir:outputs instruction)))
+	(element-descriptor
+	  (approximate-type
+	   (cleavir-ir:element-type instruction))))
+    (update input
+	    (binary-meet (find-type input input-bag)
+			 element-descriptor)
+	    (update output
+		    (descriptor-unbox element-descriptor)
+		    input-bag))))
 
 (defmethod one-successor-transfer
     ((instruction cleavir-ir:the-values-instruction) input-bag)

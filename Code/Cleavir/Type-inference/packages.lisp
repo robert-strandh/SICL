@@ -5,7 +5,8 @@
   (:export #:approximate-type #:canonicalize-type
 	   #:top-p #:bottom-p
 	   #:binary-join #:binary-meet #:difference
-	   #:join #:meet)
+	   #:join #:meet
+	   #:descriptor-box #:descriptor-unbox)
   (:export #:approximate-values #:values-nth #:values-rest-p
 	   #:values-top-p #:values-bottom-p
 	   #:values-required #:values-required-count
