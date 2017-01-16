@@ -1,4 +1,4 @@
-\section{Previous work}
+b\section{Previous work}
 
 Most implementations process list elements in reverse order when
 \texttt{:from-end} is true only when the specification requires it,
@@ -8,7 +8,8 @@ We designed a technique \cite{Durand:2015:ELS:reverse} that allows us
 to always process list elements in reverse order very efficiently when
 \texttt{:from-end} is true.  Since that paper contains an in-depth
 description of our technique, and in order to keep the presentation
-simple, in this paper, no example traverses the sequence from the end.
+simple, in this paper, no example traverses the sequence from the
+end.
 
 \subsection{ECL and Clasp}
 
@@ -37,3 +38,26 @@ The essence of the code of the sequence functions of CLISP are written
 in \clanguage{}, which makes them highly dependent on that particular
 implementation.  For that reason, CLISP is outside the scope of this
 paper.
+
+\subsection{SBCL}
+
+The sequence functions of \sbcl{} are implemented using a mixed
+approach.
+
+Macros are used to create special versions for the purpose of better
+performance.  Transformations during compilation can replace a general
+call to a sequence function by a call to a special version when
+additional information is available such as when the sequence is a
+specialized vector, or when some keyword argument has a particular
+explicit value in the call.
+
+Macros are also used to abstract details of combinations of values of
+keyword arguments.
+
+However, when little information is available at the call site, a call
+to the general purpose function is maintained, and no particular
+attempt has been made to optimize such calls.  As a result, in order
+to obtain high performance with the \sbcl{} sequence functions, the
+programmer has to supply additional explicit information about the
+element type (in case of a vector) and explicit keyword arguments to
+such calls.
