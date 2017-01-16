@@ -14,3 +14,36 @@ challenging to implement for several reasons:
   the implementation according to the element type of the vector, and
   according to whether the vector is a \emph{simple array} or not.
 \end{itemize}
+
+For reasons of maintainability, it is advantageous to create a small
+number of versions, each one containing a single loop over the
+relevant elements.  In each iteration of the loop, tests would
+determine the exact action based on current values of keyword
+arguments.  In the case of a vector, the general array accessor
+\texttt{aref} would be used to access the elements.
+
+On the other hand, for reasons of performance, it is preferable to
+create a large number of different versions of each function, each
+version being specialized according to the exact values of keyword
+arguments give.  In the case of a vector, it is also advantageous to
+have versions specialized to the available element types provided by
+the implementation.  However, in this case, maintenance is
+problematic, because each version has to be maintained and tested
+separately.
+
+A compromise used by some implementations is to use the \commonlisp{}
+macro system to abstract some of the specialization parameters as
+macro arguments.  With this technique, a special version is created by
+a call to some general macro, providing different cases for keyword
+parameters, element types, test functions, etc.  We find that this
+technique results in code that is extremely hard to understand, and
+therefore to be perceived as correct by maintainers.
+
+In this paper, we present a different technique.  We use the
+\commonlisp{} macro system, but not in order to create macros that,
+when called, create special versions of a sequence function.  Instead,
+our technique makes it possible to write very few versions of each
+sequence function, thus keeping a high degree of maintainability.
+Most of our macros have no apparent role in our functions, so do not
+require the maintainer to understand them.  Instead, they serve the
+sole purpose of allowing the compiler to generate efficient code.
