@@ -61,3 +61,15 @@ to obtain high performance with the \sbcl{} sequence functions, the
 programmer has to supply additional explicit information about the
 element type (in case of a vector) and explicit keyword arguments to
 such calls.
+
+\subsection{\ccl{}}
+
+The sequence functions of \ccl{} are implemented according to the
+approach where each function has a number of special versions
+according to the type of the sequence and the combination of the
+values of the keyword arguments.
+
+However, the code in \ccl{} contains very few attempts at optimizing
+performance.  For example, while there is an explicit test for whether
+a vector to be used as a sequence is a simple array, there is no
+attempt to specialize according to the element type of the vector.
