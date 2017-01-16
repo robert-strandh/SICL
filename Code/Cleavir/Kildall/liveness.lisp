@@ -10,7 +10,6 @@
     (cleavir-kildall:reverse-spread-traverse) ())
 
 ;;;; Meet is set union. 1 is the empty set (list). 0 doesn't appear
-;;;; the distinguished 1' to ensure everything starts is T.
 ;;;; A <= B is B subset A.
 ;;;; sets (as lists) of locations are "these locations are live"
 
@@ -27,9 +26,7 @@
   nil)
 
 (defmethod cleavir-kildall:pool<= ((s liveness-traverse) p1 p2)
-  (cond ((eq p1 t) )
-	((eq p2 t) t) ; should never happen
-	(t (subsetp p2 p1))))
+  (subsetp p2 p1))
 
 (defmethod cleavir-kildall:pool-meet ((s liveness-traverse) p1 p2)
   (union p1 p2))
