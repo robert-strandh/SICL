@@ -1,10 +1,10 @@
+;;; THIS FILE IS NOT CURRENTLY INCORPORATED INTO ANY CLEAVIR SYSTEM
+
 (defpackage #:cleavir-kildall-liveness
   (:use #:cl)
   (:export #:liveness-after))
 
 (in-package #:cleavir-kildall-liveness)
-
-;;;; Implements liveness-after.
 
 (defclass liveness-traverse
     (cleavir-kildall:reverse-spread-traverse) ())

@@ -1,3 +1,5 @@
+;;; THIS FILE IS NOT CURRENTLY INCORPORATED INTO ANY CLEAVIR SYSTEM
+
 (defpackage #:cleavir-kildall-redundant
   (:use #:cl)
   (:export #:eliminate-superfluous-temporaries))
