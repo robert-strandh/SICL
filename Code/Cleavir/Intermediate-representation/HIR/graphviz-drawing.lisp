@@ -148,7 +148,7 @@
        (lambda (instruction)
 	 (when (null (gethash instruction *instruction-table*))
 	   (setf (gethash instruction *instruction-table*) (gensym))
-	   (loop for datum in (append (inputs instruction) (inputs instruction))
+	   (loop for datum in (append (inputs instruction) (outputs instruction))
 		 when (null (gethash datum *datum-table*))
 		   do (setf (gethash datum *datum-table*) (gensym)))))
        initial-instruction)
