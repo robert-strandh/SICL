@@ -10,6 +10,7 @@ direction of the search, and the interval to search.
 Our version is simplified in the following way:
 
 \begin{itemize}
+\item The only type of sequence handled is \texttt{vector}.
 \item The \texttt{test} function is fixed to be \texttt{eql}.
 \item The interval to search is the entire vector.
 \item The key function to apply to each element is fixed to be
@@ -175,6 +176,8 @@ introducing the following macro:
        (progn ,@body)))
 \end{verbatim}}
 
+The code for \texttt{find-list} can now be written like this:
+
 {\small\begin{verbatim}
 (defun find-list-2 (item list &key end)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
@@ -186,3 +189,14 @@ introducing the following macro:
           when (eql item element)
             return element))
 \end{verbatim}}
+
+We notice that the \texttt{loop} body looks the same as in the
+portable and maintainable version shown before, and the only
+difference is that the loop has been wrapped in a call to the macro
+\texttt{with-end}.  A good compiler will now specialize each of the
+two copies of the loop introduced by the \texttt{with-end} macro
+according to the value (i.e., \texttt{nil} or not) of the variable
+\texttt{end}.  In the first copy, the entire first \texttt{when}
+clause of the loop will be removed.  In the second copy, the test in
+the first \texttt{when} clause of the loop is reduced to the
+comparison between \texttt{index} and \texttt{end}.
