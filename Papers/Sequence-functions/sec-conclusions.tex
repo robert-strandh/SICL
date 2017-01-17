@@ -35,3 +35,13 @@ that, while not specifically meant for the kind of optimization
 required for the technique presented in this paper, will have the same
 effect as more direct techniques currently used in advanced
 compilers.
+
+Our technique is well adapted to processing sequences with a
+relatively large number of elements.  When the sequence contains few
+elements, the overhead of the call and of processing the keyword
+arguments may be significant.  Also, we do not take advantage of any
+declaration of element type, in the case when the sequence is a
+vector.  We plan to investigate the possibility of modifying our
+macros so that definitions of specialized functions are automatically
+generated, leaving a fairly small general function that can then be
+inlined.
