@@ -2,10 +2,16 @@
 
 (defpackage #:cleavir-kildall-liveness
   (:use #:cl)
-  (:export #:liveness-after))
+  (:export #:liveness #:live-before #:live-after))
 
 (in-package #:cleavir-kildall-liveness)
 
+;;; class for holding liveness information.
+(defclass liveness ()
+  ((%before :initarg :before :reader before)
+   (%after :initarg :after :reader after)))
+
+;;; traverse/domain for kildall.
 (defclass liveness-traverse
     (cleavir-kildall:reverse-spread-traverse) ())
 
@@ -36,6 +42,25 @@
   (union (set-difference pool (cleavir-ir:outputs instruction))
 	 (variable-inputs instruction)))
 
-(defun liveness-after (initial-instruction)
+(defun compute-liveness-after (initial-instruction)
   (let ((traverse (make-instance 'liveness-traverse)))
     (cleavir-kildall:kildall traverse initial-instruction)))
+
+(defun liveness (initial-instruction)
+  (let ((after (compute-liveness-after initial-instruction))
+	(before (make-hash-table :test #'eq)))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (i)
+       (setf (gethash i before)
+	     (reduce #'union
+		     (cleavir-ir:predecessors i)
+		     :key (lambda (p) (gethash p after))
+		     :initial-value nil)))
+     initial-instruction)
+    (make-instance 'liveness :before before :after after)))
+
+(defun live-before (liveness node)
+  (gethash node (before liveness)))
+
+(defun live-after (liveness node)
+  (gethash node (after liveness)))
