@@ -102,14 +102,20 @@
 ;;; variable to be bound is special.  Return a second value indicating
 ;;; whether the variable is globally special.
 (defun variable-is-special-p (variable declarations env)
-  (let ((existing-var-info (cleavir-env:variable-info env variable)))
-    (cond ((typep existing-var-info 'cleavir-env:special-variable-info)
-	   ;; It is mentioned in the environment as special.
-	   (values t (cleavir-env:global-p existing-var-info)))
-	  ((member `(special ,variable) declarations :test #'equal)
-	   ;; If it is not mentioned in the environment, then it is
-	   ;; special only if it is declared special.
-	   (values t nil))
+  (let* ((existing-var-info (cleavir-env:variable-info env variable))
+	 (special-var-p
+	   (typep existing-var-info 'cleavir-env:special-variable-info)))
+    (cond ((member `(special ,variable) declarations :test #'equal)
+	   ;; If it is declared special it is.
+	   (values t
+		   (and special-var-p
+			(cleavir-env:global-p existing-var-info))))
+	  ((and special-var-p
+	    (cleavir-env:global-p existing-var-info))
+	   ;; It is mentioned in the environment as globally special.
+	   ;; if it's only special because of a local declaration,
+	   ;; this binding is not special.
+	   (values t t))
 	  (t
 	   (values nil nil)))))
 
