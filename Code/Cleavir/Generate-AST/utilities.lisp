@@ -33,10 +33,12 @@
       (dynamic-extent
        (let ((var-or-function (car rest)))
 	 (if (consp var-or-function)
+	     ;; (dynamic-extent (function foo))
 	     (cleavir-env:add-function-dynamic-extent
 	      environment (cadr var-or-function))
+	     ;; (dynamic-extent foo)
 	     (cleavir-env:add-variable-dynamic-extent
-	      environment (car var-or-function)))))
+	      environment var-or-function))))
       (ftype
        (cleavir-env:add-function-type
 	environment (cadr rest) (car rest)))
