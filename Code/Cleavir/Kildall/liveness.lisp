@@ -53,10 +53,7 @@
     (cleavir-kildall:kildall traverse initial-instruction)))
 
 (defun liveness (initial-instruction)
-  (let* ((s (make-instance 'liveness-traverse
-			   :universe (cleavir-set:data-universe
-				      initial-instruction
-				      #'variable-p)))
+  (let* ((s (make-instance 'liveness-traverse))
 	 (after (cleavir-kildall:kildall s initial-instruction))
 	 (before (make-hash-table :test #'eq)))
     ;; compute the befores in the obvious way
