@@ -16,3 +16,13 @@
 	   #:entry-pool)
   (:export #:transfer #:process-transfer
 	   #:kildall))
+
+(defpackage #:cleavir-set
+  (:use #:cl)
+  (:shadow #:union #:intersection #:subsetp #:adjoin #:remove)
+  (:export #:union #:intersection #:difference #:exclusive-or
+	   #:subsetp #:adjoin #:remove #:in-set-p
+	   #:make-set #:set->list)
+  (:export #:listset #:bitset)
+  (:export #:instruction-universe #:data-universe
+	   #:universe-of-things))

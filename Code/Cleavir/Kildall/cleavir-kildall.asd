@@ -4,6 +4,7 @@
   :depends-on (:cleavir-hir)
   :components
   ((:file "packages")
+   (:file "set" :depends-on ("packages"))
    (:file "dictionary" :depends-on ("packages"))
    (:file "pool" :depends-on ("packages"))
    (:file "specialization" :depends-on ("packages"))
