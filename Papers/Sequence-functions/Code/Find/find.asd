@@ -33,8 +33,9 @@
   (
    (:file "package") 
    (:file "general") 
-   (:file "find-vector")
-   (:file "find-list")
+;;   (:file "find-vector")
+   (:file "find")
+;;   (:file "find-list")
    (:file "tests")
    )
   :serial t)
