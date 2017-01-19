@@ -70,12 +70,10 @@
 ;;; false, then Q fails.  If there are no tokens, then Q also fails.
 (defun singleton (transformer predicate)
   (lambda (tokens)
-    (if (null tokens)
-	(values nil nil tokens)
-	(let ((result (funcall predicate (car tokens))))
-	  (if result
-	      (values t (funcall transformer (car tokens)) (cdr tokens))
-	      (values nil nil tokens))))))
+    (if (and (not (null tokens))
+             (funcall predicate (car tokens)))
+        (values t (funcall transformer (car tokens)) (cdr tokens))
+        (values nil nil tokens))))
 
 ;;; Take a list of parsers P1, P2, ..., Pn and return a parser Q that
 ;;; invokes Pi in order until one of them succeeds.  If some Pi
