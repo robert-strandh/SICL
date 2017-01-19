@@ -727,7 +727,7 @@
 	  do (setf new-env
 		   (cleavir-env:add-local-symbol-macro new-env name expansion)))
     (with-preserved-toplevel-ness
-      (convert `(progn ,@(cddr form)) new-env system))))
+      (convert `(locally ,@(cddr form)) new-env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
