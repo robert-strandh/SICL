@@ -11,7 +11,7 @@ NAME=$1
 
 GP=$NAME.gp
 
-TITLE="Comparison between find functions"
+TITLE="Comparison between two find functions (SBCL/SICL)"
 echo gp=$GP
 OUTPUT=eps
 
@@ -27,8 +27,14 @@ _EOF_
 STRING="'"$NAME"'"
 echo STRING=$STRING
 
-FIELDS=$(IFS='-'; echo $NAME)
+SAVE-IFS=$IFS
 
+IFS='-'
+set
+TYPE=$0
+TEST=$1
+KEY=$2
+IFS=$SAVE-IFS
 
 echo plot '\' >> $GP
 
@@ -39,6 +45,3 @@ do
 	echo "    " $STRING using 1:$N title \'$i\' with lines ',\' >> $GP
 	N=$(expr $N + 1)
 done
-
-
-

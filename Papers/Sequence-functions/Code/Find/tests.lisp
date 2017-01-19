@@ -187,6 +187,8 @@
   ;; (test-versions 'list '= :endp t)
   ;; (test-versions 'list '= :key-symbol 'car)
 
+
+
 (defparameter *test-vector-1*
   (make-vector-test '= '(unsigned-byte 8)))
 
@@ -196,5 +198,15 @@
 (defparameter *test-list-2*
   (make-list-test '= :key-symbol 'car))
 
+(defparameter *tests* (list *test-vector-1* *test-list-1* *test-list-2*))
+
+(defun run-tests (tests)
+  (loop for test in tests
+	do (run-test test)))
+
+(defun the-tests ()
+  (run-tests *tests*))
+
 ;; pour les tableaux tester: test, element-type
 ;; pour les listes tester:  test, endp, key
+

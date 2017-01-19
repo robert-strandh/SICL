@@ -24,6 +24,13 @@ $(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES)
 	pdflatex $<
 	pdflatex $<
 
+%.eps: %
+	echo $<
+	sh curves.sh $<
+	gnuplot $<.gp
+
+.Phony: view clean spotless
+
 view: $(NAME).pdf
 	xpdf $<
 

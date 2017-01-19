@@ -12,7 +12,7 @@
     nil ; test-not
     0 ; start
     (1- (length vector)) ; end
-    #'identity
+    #'identity ;key
     ))
 
  (defun find-list-0 (item list test endp key)
@@ -31,4 +31,3 @@
     0 ; start
     (and endp (1- (length list))) ; end
     (or key #'identity)))
-
