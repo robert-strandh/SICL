@@ -5,6 +5,7 @@ BIBFILES=$(NAME).bib
 PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
 VERBATIM=$(shell ./strip-dependence verbatimtabinput $(TEXFILES))
 CODEFILES=$(shell ./strip-dependence inputcode $(TEXFILES))
+GRAPHICSFILES=$(shell ./strip-dependence inputgraphics $(TEXFILES))
 PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 
 all : $(NAME).pdf
@@ -18,7 +19,7 @@ all : $(NAME).pdf
 %.code: %.lisp 
 	./codify $<
 
-$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES)
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(GRAPHICSFILES)
 	pdflatex $<
 	bibtex $(NAME)
 	pdflatex $<
