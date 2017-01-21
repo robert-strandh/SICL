@@ -5,7 +5,7 @@ BIBFILES=$(NAME).bib
 PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
 VERBATIM=$(shell ./strip-dependence verbatimtabinput $(TEXFILES))
 CODEFILES=$(shell ./strip-dependence inputcode $(TEXFILES))
-GRAPHICSFILES=$(shell ./strip-dependence inputgraphics $(TEXFILES))
+EPSFILES=$(shell ./strip-dependence inputeps $(TEXFILES))
 PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 
 all : $(NAME).pdf
@@ -16,28 +16,29 @@ all : $(NAME).pdf
 %.pdf_t: %.fig %.pdf
 	fig2dev -Lpdftex_t -m 0.75 -p $(basename $<).pdf $< $@
 
-%.code: %.lisp 
+%.code : %.lisp 
 	./codify $<
 
-$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(GRAPHICSFILES)
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(EPSFILES)
 	pdflatex $<
 	bibtex $(NAME)
 	pdflatex $<
 	pdflatex $<
 
-%.eps: %
-	echo $<
+%.eps : %.gp
+	gnuplot $<
+
+%.gp : %.res
 	sh curves.sh $<
-	gnuplot $<.gp
 
-.Phony: view clean spotless
+.PHONY: view clean spotless
 
-view: $(NAME).pdf
-	xpdf $<
+# view: $(NAME).pdf
+# 	xpdf $<
 
 clean:
 	rm -f *.aux *.log *~ *.pdf *.pdf *.pdf_t *.bbl *.blg
 
 spotless: clean
 	rm -f *.ps *.dvi *.pdf *.pdf_t *.toc *.idx *.ilg *.ind *.fig.bak
-	rm -f *.out *.cb *.cb2
+	rm -f *.out *.cb *.cb2 $(EPSFILES)

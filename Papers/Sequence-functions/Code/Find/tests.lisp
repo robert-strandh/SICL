@@ -114,19 +114,26 @@
       (cons v v)
       v))
 
-(defun make-vector-test (test-symbol element-type)
+(defun alpha-test (test-symbol)
+  (if (eq test-symbol '=)
+      'egal
+      test-symbol))
+
+(defun make-vector-test (name test-symbol element-type)
   (make-test
-   (format nil "VECTOR-~A-~A" test-symbol element-type)
+   ;;   (format nil "VECTOR-~A-~A" (alpha-test test-symbol) element-type)
+   name
    (make-vector-funs *version-numbers* test-symbol element-type)
    (lambda (n) (make-the-vector n element-type))
    (lambda (n vector) (adjust-the-vector n vector))))
 
-(defun make-list-test (test-symbol &key endp key-symbol)
+(defun make-list-test (name test-symbol &key endp key-symbol)
   (multiple-value-bind (the-value the-other-value) (the-list-values test-symbol)
     (let ((v (list-value the-value key-symbol))
 	  (ov (list-value the-other-value key-symbol)))
       (make-test
-       (format nil "LIST-~A-~A-~A" test-symbol endp key-symbol)
+       ;;       (format nil "LIST-~A-~A-~A" (alpha-test test-symbol) endp key-symbol)
+       name
        (make-list-funs *version-numbers*  test-symbol endp key-symbol)
        (lambda (n) (make-the-list n v ov))
        (lambda (n list) (adjust-the-list n list ov))))))
@@ -134,7 +141,7 @@
 (defgeneric compare-versions-to-stream (stream test start end &key step times))
 (defmethod compare-versions-to-stream 
     (stream (test test) (start integer) (end integer) &key (step 1) (times 1))
-  (format stream "~A" (test-name test))
+  (format stream "~A~%" (test-name test))
     (loop
       for k from start to end by step
       for data = (funcall (make-fun test) start) then (funcall (adjust-fun test) step data)
@@ -150,10 +157,12 @@
 	       finally (progn (format stream "~%")
 			      (when *trace* (format t "~%") (finish-output t))
 			      (finish-output stream)))))
+(defun filepath (name)
+  (concatenate 'string "../../" name ".res"))
 
 (defgeneric compare-versions-to-file (test start end &key step times))
 (defmethod compare-versions-to-file ((test test) start end &key (step 1) (times 1))
-  (let ((filename (test-name test)))
+  (let ((filename (filepath (test-name test))))
     (format t "Ouput written to ~A~%" filename)
     (finish-output t)
     (with-open-file (stream filename :direction :output :if-does-not-exist :create :if-exists :supersede)
@@ -188,17 +197,16 @@
   ;; (test-versions 'list '= :key-symbol 'car)
 
 
+(defparameter *tests* 
+  (list
+   (make-vector-test "VECTOR-EGAL-BIT" '= 'bit)
+   (make-vector-test "VECTOR-EQL-CHAR" 'eql 'char)
+   (make-vector-test "VECTOR-EGAL-UB8" '=  '(unsigned-byte 8))
+   (make-list-test "LIST-EGAL-BIGNUM" '=)
+   (make-list-test "LIST-EGAL-CAR" '= :key-symbol 'car)
+   (make-list-test "LIST-EGAL-ENDP" '= :endp 'car)))
 
-(defparameter *test-vector-1*
-  (make-vector-test '= '(unsigned-byte 8)))
-
-(defparameter *test-list-1*
-  (make-list-test '=))
-
-(defparameter *test-list-2*
-  (make-list-test '= :key-symbol 'car))
-
-(defparameter *tests* (list *test-vector-1* *test-list-1* *test-list-2*))
+   
 
 (defun run-tests (tests)
   (loop for test in tests
