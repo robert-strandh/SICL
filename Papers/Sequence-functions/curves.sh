@@ -44,7 +44,7 @@ IFS='-'
 set $NAME
 SEQTYPE=$(capitalize $1)
 #TEST=$(test_string $(lower $2))
-TEST=$(test_string $(lower $2))
+TEST=$(test_string $2)
 THIRD=$(lower $3)
 IFS=$SAVE
 
