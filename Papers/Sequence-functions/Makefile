@@ -29,7 +29,7 @@ $(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(
 	gnuplot $<
 
 %.gp : %.res
-	sh curves.sh $<
+	bash curves.sh $<
 
 .PHONY: view clean spotless
 
