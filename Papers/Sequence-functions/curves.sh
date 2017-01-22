@@ -47,7 +47,7 @@ SEQTYPE=$(capitalize $1)
 TEST=$(test_string $2)
 THIRD=$(lower $3)
 IFS=$SAVE
-
+INFO="$TEST $THIRD"
 echo TEST=$TEST SEQTYPE=$SEQTYPE $THIRD
 
 cat << _EOF_ > $GP
@@ -55,7 +55,7 @@ set term $OUTPUT dashed
 set output "$NAME.$OUTPUT"
 set title "$TITLE"
 set key on inside center top
-set xlabel "$SEQTYPE length ($TEST $THIRD)"
+set xlabel "$SEQTYPE length ($INFO)"
 set ylabel "Time in seconds"
 _EOF_
 
