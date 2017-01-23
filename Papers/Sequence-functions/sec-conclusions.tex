@@ -11,9 +11,10 @@ compete with a native implementation is when the sequence is a bit
 vector.  Any implementation that accesses the elements of the bit
 vector one at a time, rather than using native instructions that can
 handle an entire word at a time, is unable to match the native
-performance.  On the other hand, our technique allows the
-\commonlisp{} implementation to treat bit vectors as an exceptional
-case, and use our general technique for the other cases.
+performance \cite{Baker:1990:EIB:121989.121991}.  On the other hand,
+our technique allows the \commonlisp{} implementation to treat bit
+vectors as an exceptional case, and use our general technique for the
+other cases.
 
 We have yet to perfect the exact declarations to include in our
 implementation, and the exact places where these declarations should
