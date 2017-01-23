@@ -52,7 +52,7 @@ diagram below, our function is around twice as fast as that of
 
 The next test shows a vector with the element type being
 \texttt{(unsigned-byte 8)} and the test function being \texttt{=}.  In
-this case, our function is only around $20\%$ as fast as that of
+this case, our function is only around $20\%$ faster than that of
 \sbcl{}.  This modest improvement can be explained by the fact that
 this test function is not one of the functions that we treat in a
 special way.  An implementation that wishes better performance for
@@ -69,9 +69,46 @@ instructions to handle an entire word at a time.
 \inputeps{VECTOR-EGAL-BIT.eps}
 
 \subsubsection{Results on lists}
-\inputeps{LIST-EGAL-BIGNUM.eps}
+
+When the sequence is a list, the concept of element type is not
+applicable.  The \texttt{key} function is important, because the
+sequence functions may be used for association lists.  For that
+reason, we include a test with \texttt{car} as a key function.  Also,
+for lists, the parameter \texttt{end} may influence the performance.
+In our implementation, we specialize the loops according to whether
+this parameter is \texttt{nil} or a number, allowing for two different
+specialized versions of the main traversal loop.
+
+Our first test, like the first one on a vector, traverses a list of
+symbols.  The test function is \texttt{eq}, and no \texttt{end}
+parameter has been given, which is equivalent to giving it the value
+\texttt{nil}.  Again, our implementation is around three times as fast
+as that of \sbcl{}.
+
 \inputeps{LIST-EQ-SYMBOL.eps}
+
+In the next test, the sequence is a list containing only bignums.  The
+\texttt{test} function is \texttt{=}.  As the diagram shows, our
+technique is only moderately faster than that of \sbcl{}.
+
+\inputeps{LIST-EGAL-BIGNUM.eps}
+
+In the next test, the sequence is a list where each element is a list
+where the first element is a bignum, so that we can use \texttt{car}
+as a \texttt{key} function.  The \texttt{test} function is still
+\texttt{=}.  There seems to be no significant difference for this
+case, compared to the previous one, suggesting that the native
+implementation of \texttt{car} is so fast that calling \texttt{=} will
+dominate the computation.
+
 \inputeps{LIST-EGAL-CAR.eps}
+
+Our final test uses a non\texttt{nil} value for the \texttt{end}
+parameter.  Despite the fact that we use a slightly more expensive
+\texttt{test} function (namely \texttt{=}), the performance of our
+implementation is very good; it is around three times as fast as that
+of \texttt{sbcl}.
+
 \inputeps{LIST-EGAL-END.eps}
 
 \subsection{Maintainability}
