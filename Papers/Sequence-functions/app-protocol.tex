@@ -20,13 +20,13 @@ A typical definition of this function might look like this:
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (declare (type function key-function))
   (cond ((eq key-function #'identity)
-	 element)
-	((eq key-function #'car)
-	 (car element))
-	((eq key-function #'cdr)
-	 (cdr element))
-	(t
-	 (funcall key-function element))))
+         element)
+        ((eq key-function #'car)
+         (car element))
+        ((eq key-function #'cdr)
+         (cdr element))
+        (t
+         (funcall key-function element))))
 \end{verbatim}}
 
 \defmacro {canonicalize-key} {key-var}
@@ -39,10 +39,10 @@ implementation might look like this:
 {\small\begin{verbatim}
 (defmacro canonicalize-key (key-var)
   `(cond ((null ,key-var)
-	  (setf ,key-var #'identity))
-	 ((not (functionp ,key-var))
-	  (setf ,key-var (fdefinition ,key-var)))
-	 (t nil)))
+          (setf ,key-var #'identity))
+         ((not (functionp ,key-var))
+          (setf ,key-var (fdefinition ,key-var)))
+         (t nil)))
 \end{verbatim}}
 
 \defmacro {with-key-function} {key-function-var \body body}
@@ -56,13 +56,13 @@ implementation of this macro looks like this:
 {\small\begin{verbatim}
 (defmacro with-key-function (key-function-var &body body)
   `(cond ((eq ,key-function-var #'identity)
-	  ,@body)
-	 ((eq ,key-function-var #'car)
-	  ,@body)
-	 ((eq ,key-function-var #'cdr)
-	  ,@body)
-	 (t
-	  ,@body)))
+          ,@body)
+         ((eq ,key-function-var #'car)
+          ,@body)
+         ((eq ,key-function-var #'cdr)
+          ,@body)
+         (t
+          ,@body)))
 \end{verbatim}}
 
 In each clause of the \texttt{cond} form in this macro, the inlined
@@ -102,22 +102,22 @@ implementation might look like this:
 (defmacro with-test-and-test-not
     ((test-var test-not-var) &body body)
   `(cond ((null ,test-not-var)
-	  (locally (declare (type function ,test-var))
-	    (cond ((eq ,test-var #'eq)
-		   ,@body)
-		  ((eq ,test-var #'eql)
-		   ,@body)
-		  (t
-		   ,@body))))
-	 ((null ,test-var)
-	  (locally (declare (type function ,test-not-var))
-	    (cond ((eq ,test-not-var #'eq)
-		   ,@body)
-		  ((eq ,test-not-var #'eql)
-		   ,@body)
-		  (t
-		   ,@body))))
-	 (t nil)))
+          (locally (declare (type function ,test-var))
+            (cond ((eq ,test-var #'eq)
+                   ,@body)
+                  ((eq ,test-var #'eql)
+                   ,@body)
+                  (t
+                   ,@body))))
+         ((null ,test-var)
+          (locally (declare (type function ,test-not-var))
+            (cond ((eq ,test-not-var #'eq)
+                   ,@body)
+                  ((eq ,test-not-var #'eql)
+                   ,@body)
+                  (t
+                   ,@body))))
+         (t nil)))
 \end{verbatim}}
 
 \defmacro {with-from-end} {from-end-var \body body}
@@ -148,22 +148,22 @@ typical implementation might look like this:
     (item element test test-not)
   (declare (optimize (speed 3) (debug 0) (safety 3)))
   (cond ((null test-not)
-	 (locally (declare (type function test))
-	   (cond ((eq test #'eq)
-		  (eq item element))
-		 ((eq test #'eql)
-		  (eql item element))
-		 (t
-		  (funcall test item element)))))
-	((null test)
-	 (locally (declare (type function test-not))
-	   (cond ((eq test-not #'eq)
-		  (not (eq item element)))
-		 ((eq test-not #'eql)
-		  (not (eql item element)))
-		 (t
-		  (not (funcall test-not item element))))))
-	(t nil)))
+         (locally (declare (type function test))
+           (cond ((eq test #'eq)
+                  (eq item element))
+                 ((eq test #'eql)
+                  (eql item element))
+                 (t
+                  (funcall test item element)))))
+        ((null test)
+         (locally (declare (type function test-not))
+           (cond ((eq test-not #'eq)
+                  (not (eq item element)))
+                 ((eq test-not #'eql)
+                  (not (eql item element)))
+                 (t
+                  (not (funcall test-not item element))))))
+        (t nil)))
 \end{verbatim}}
 
 \defmacro {for-each-relevant-element}\\
@@ -187,19 +187,19 @@ this:
     ((element-var index-var vector start end from-end)
      &body body)
   (let ((vectorv (gensym))
-	(startv (gensym))
-	(endv (gensym)))
+        (startv (gensym))
+        (endv (gensym)))
     `(let ((,vectorv ,vector)
-	   (,startv ,start)
-	   (,endv ,end))
+           (,startv ,start)
+           (,endv ,end))
        (declare (type fixnum ,startv ,endv))
        (if ,from-end
-	   (loop for ,index-var downfrom (1- ,endv) to ,startv
-		 do (let ((,element-var (aref ,vectorv ,index-var)))
-		      ,@body))
-	   (loop for ,index-var from ,startv below ,endv
-		 do (let ((,element-var (aref ,vectorv ,index-var)))
-		      ,@body))))))
+           (loop for ,index-var downfrom (1- ,endv) to ,startv
+                 do (let ((,element-var (aref ,vectorv ,index-var)))
+                      ,@body))
+           (loop for ,index-var from ,startv below ,endv
+                 do (let ((,element-var (aref ,vectorv ,index-var)))
+                      ,@body))))))
 \end{verbatim}}
 
 \defmacro {with-simple} {vector \body body}
