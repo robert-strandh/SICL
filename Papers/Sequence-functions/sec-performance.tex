@@ -2,11 +2,64 @@
 
 \subsection{Performance}
 
+We compared performance of our technique for the \texttt{find}
+function shown in \refApp{app-example-implementation} to the
+performance of the \texttt{find} function shipped with \sbcl{}.
+
+We tested the performance of our technique only on \sbcl{} because it
+is one of the few implementations that has a compiler that implements
+all the optimizations that our technique requires in order to perform
+well.
+
+The results show a significant performance gain compared to the
+\texttt{find} function of \sbcl{}.  In fact, as it turns out, the
+\sbcl{} sequence functions often require the programmer to declare the
+element type (when the sequence is a vector) in order for performance
+to be improved.  We have not attempted to compare our technique to
+this case, for the simple reason one of the advantages of our
+technique is precisely that no additional information is required in
+order for performance to be acceptable.
+
+Most of our tests use relatively fast \texttt{test} functions such as
+\texttt{eq} or \texttt{eql}.  This is a deliberate choice, as we
+want to compare the performance of the traversal of the sequence,
+and a more time-consuming test function would dominate the execution
+time.
+
 \subsubsection{Results on vectors}
-\inputeps{VECTOR-EGAL-BIT.eps}
+
+Our first test shows the performance comparison for an unspecialized
+vector with the \texttt{key} function being \texttt{identity} and the
+\texttt{test} function being \texttt{eq}.  As shown in the diagram
+below, our function is around three times as fast as that of \sbcl{}.
+
 \inputeps{VECTOR-EQ-SYMBOL.eps}
+
+The next test shows a vector with the element type being
+\texttt{character}.  The \texttt{key} function is \texttt{identity},
+and the \texttt{test} function is \texttt{eql}.  As shown in the
+diagram below, our function is around twice as fast as that of
+\sbcl{}.
+
 \inputeps{VECTOR-EQL-CHAR.eps}
+
+The next test shows a vector with the element type being
+\texttt{(unsigned-byte 8)} and the test function being \texttt{=}.  In
+this case, our function is only around $20\%$ as fast as that of
+\sbcl{}.  This modest improvement can be explained by the fact that
+this test function is not one of the functions that we treat in a
+special way.  An implementation that wishes better performance for
+this case, can modify the macros to reflect this desire.
+
 \inputeps{VECTOR-EGAL-UB8.eps}
+
+For completeness, we finally show a test for a vector with the element
+type being \texttt{bit}.  In this case, our technique is slow, because
+it accesses the elements one at a time, whereas a good, native
+implementation of \texttt{find} would use available processor
+instructions to handle an entire word at a time.
+
+\inputeps{VECTOR-EGAL-BIT.eps}
 
 \subsubsection{Results on lists}
 \inputeps{LIST-EGAL-BIGNUM.eps}
