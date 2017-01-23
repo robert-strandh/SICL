@@ -28,6 +28,13 @@ time.
 
 \subsubsection{Results on vectors}
 
+When the sequence is a vector, the main performance consideration has
+to do with the element type of the vector.  The parameters
+\texttt{start}, \texttt{end}, and \texttt{from-end} do not
+significantly alter the way the traversal is implemented.  The
+\texttt{key} function may influence performance, but for the cases
+that we treat specially, only unspecialized vectors are concerned.
+
 Our first test shows the performance comparison for an unspecialized
 vector with the \texttt{key} function being \texttt{identity} and the
 \texttt{test} function being \texttt{eq}.  As shown in the diagram
