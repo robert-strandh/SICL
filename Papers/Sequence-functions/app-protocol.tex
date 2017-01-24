@@ -194,11 +194,14 @@ this:
            (,endv ,end))
        (declare (type fixnum ,startv ,endv))
        (if ,from-end
-           (loop for ,indexv downfrom (1- ,endv) to ,startv
-                 do (let ((,elementv (aref ,vectorv ,indexv)))
+           (loop for ,indexv downfrom (1- ,endv)
+                   to ,startv
+                 do (let ((,elementv
+                            (aref ,vectorv ,indexv)))
                       ,@body))
            (loop for ,indexv from ,startv below ,endv
-                 do (let ((,elementv (aref ,vectorv ,indexv)))
+                 do (let ((,elementv
+                            (aref ,vectorv ,indexv)))
                       ,@body))))))
 \end{verbatim}}
 
