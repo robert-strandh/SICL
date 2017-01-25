@@ -104,7 +104,15 @@ dominate the computation.
 
 \inputeps{LIST-EGAL-CAR.eps}
 
-Our final test uses a non\texttt{nil} value for the \texttt{end}
+In the next test, the sequence is a list of pairs
+of symbols; it uses  \texttt{car} as key function, \texttt{eq} as test function  and a non \texttt{nil} value for the \texttt{end} parameter. Our implementation is at least twice as fast as
+\texttt{sbcl}.
+
+\texttt{verify add description of test}
+
+\inputeps{LIST-EQ-CAR-END.eps}
+
+Our final test uses a non \texttt{nil} value for the \texttt{end}
 parameter.  Despite the fact that we use a slightly more expensive
 \texttt{test} function (namely \texttt{=}), the performance of our
 implementation is very good; it is around three times as fast as that

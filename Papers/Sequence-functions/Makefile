@@ -28,7 +28,7 @@ $(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(VERBATIM) $(CODEFILES) $(BIBFILES) $(
 %.eps : %.gp
 	gnuplot $<
 
-%.gp : %.res
+%.gp : %.res curves.sh
 	bash curves.sh $<
 
 .PHONY: view clean spotless

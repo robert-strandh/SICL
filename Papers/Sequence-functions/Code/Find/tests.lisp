@@ -200,13 +200,14 @@
 (defparameter *tests* 
   (list
    (make-vector-test "VECTOR-EGAL-BIT" '= 'bit)
-   (make-vector-test "VECTOR-EQ-SYMBOL" 'eq)
+   (make-vector-test "VECTOR-EQ-SYMBOL" 'eq 'symbol)
    (make-vector-test "VECTOR-EQL-CHAR" 'eql 'char)
    (make-vector-test "VECTOR-EGAL-UB8" '=  '(unsigned-byte 8))
    
    (make-list-test "LIST-EQ-SYMBOL" 'eq)
    (make-list-test "LIST-EGAL-BIGNUM" '=)
    (make-list-test "LIST-EGAL-CAR" '= :key-symbol 'car)
+   (make-list-test "LIST-EQ-CAR-END" 'eq :endp t :key-symbol 'car)
    (make-list-test "LIST-EGAL-END" '= :endp 'car)))
 
    

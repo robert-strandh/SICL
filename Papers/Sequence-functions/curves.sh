@@ -17,7 +17,7 @@ function test_string {
     then
 	echo '='
     else
-	echo $1
+	echo $(lower $1)
     fi
 }
 
@@ -43,11 +43,11 @@ SAVE=$IFS
 IFS='-'
 set $NAME
 SEQTYPE=$(capitalize $1)
-#TEST=$(test_string $(lower $2))
 TEST=$(test_string $2)
 THIRD=$(lower $3)
+FOURTH=$(lower $4)
 IFS=$SAVE
-INFO="$TEST $THIRD"
+INFO="$TEST $THIRD $FOURTH"
 echo TEST=$TEST SEQTYPE=$SEQTYPE $THIRD
 
 cat << _EOF_ > $GP
