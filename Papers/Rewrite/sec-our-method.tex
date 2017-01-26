@@ -1,6 +1,7 @@
 \section{Our technique}
 
 \subsection{General description}
+\label{sec-our-technique-general-description}
 
 Our technique consists of applying \emph{local graph rewriting} to the
 graph of instructions in intermediate code.  Local graph rewriting has
@@ -180,9 +181,9 @@ Result after short-circuit \texttt{consp}.}
 \end{figure}
 
 At this point, the \texttt{consp} that we have been processing has no
-predecessor so it is removed from $S$.  Removing all instructions that
-can not be reached from the start instruction gives the situation
-shown in \refFig{fig-rewrite-7}.
+predecessor.  Therefore we apply rule number $1$ and removed it from
+$S$.  Removing all instructions that can not be reached from the start
+instruction gives the situation shown in \refFig{fig-rewrite-7}.
 
 \begin{figure}
 \begin{center}
@@ -228,7 +229,8 @@ are easy to verify:
   read by the test instruction.  This condition is respected because
   we have assumed that the variable being tested is not assigned to
   in any path between the first and the second occurrences of the
-  test.
+  test, as condition number $4$ in
+  \refSec{sec-our-technique-general-description} requires.
 \item The predecessor must not have any other side effect that may
   alter the outcome of the test.  By restricting the test to lexical
   variables, this restriction is also respected.
@@ -239,7 +241,7 @@ non-negative \emph{metric} that can be shown to strictly decrease as a
 result of the application of each rewrite rule.  We have not found any
 such metric.  However, this conundrum can be avoided by a simple
 \emph{grouping} of the rewrite rules.  This grouping is not required
-to be present in the implementation of our technique; only in the
+to be present in the implementation of our technique, only in the
 termination proof.
 
 To see how the rewrite rules can be grouped, consider a general case
