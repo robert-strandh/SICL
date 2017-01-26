@@ -100,9 +100,21 @@ Initial instruction graph.}
 As \refFig{fig-rewrite-1} shows, the second \texttt{consp} is
 dominated by the first, so it becomes the only member of the set $S$.
 The last rewrite rule applies to the second \texttt{consp} so that the
-\texttt{setq} is replicated as its successors.  Then the last rewrite
+\texttt{setq} is replicated as its successors.  The result of this
+first rewrite is shown in \refFig{fig-rewrite-one-and-a-half}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rewrite-one-and-a-half.pdf_t}
+\end{center}
+\caption{\label{fig-rewrite-one-and-a-half}
+Result after one rewrite.}
+\end{figure}
+
+As we can see in \refFig{fig-rewrite-one-and-a-half}, the last rewrite
 rule applies again resulting in the replication of the \texttt{call}.
-The result of these two applications is shown in \refFig{fig-rewrite-2}.
+The result after the second rewrite is shown in
+\refFig{fig-rewrite-2}.
 
 \begin{figure}
 \begin{center}
