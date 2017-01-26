@@ -288,8 +288,9 @@ can be formed according to one of the following \emph{group types}:
 
 With this information, we can create a metric consisting of a pair
 $(B,N)$, where $B$ is the total number of black control arcs of the
-program and $N$ is the number of elements of the set $S$.  For two
-pairs $(B_1,N_1)$ and $(B_2,N_2)$, $(B_1,N_1)$ is \emph{strictly
+program and $N$ is the number of elements of the set $S$.  Two pairs
+can now be compared using a \emph{lexicographic order} , so that for
+two pairs $(B_1,N_1)$ and $(B_2,N_2)$, $(B_1,N_1)$ is \emph{strictly
   smaller than} $(B_2,N_2)$, written $(B_1,N_1) < (B_2,N_2)$, if and
 only if either $B_1 < B_2$ or $B_1 = B_2$ and $N_1 < N_2$.
 
