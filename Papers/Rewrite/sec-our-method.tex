@@ -262,13 +262,13 @@ $S$.
   this rule.
 \end{itemize}
 
-For the purpose of this proof, we assume that these steps happen
-immediately after each other, so that for a particular instruction,
-the green and red incoming control arcs are first eliminated, the same
-instruction is then potentially replicated, and finally, the last
-rewrite rule is applied to one of the replicas.  However, the
-implementation does not have to work that way in order for termination
-to be certain.
+For the purpose of this proof, we assume that the individual rewrite
+steps in a group happen immediately after each other, so that for a
+particular instruction, the green and red incoming control arcs are
+first eliminated, the same instruction is then potentially replicated,
+and finally, the last rewrite rule is applied to one of the replicas.
+However, the implementation does not have to work that way in order
+for termination to be certain.
 
 In other words, we can create groups of rewrite steps, where a group
 can be formed in one of the following ways:
