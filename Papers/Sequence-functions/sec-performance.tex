@@ -105,8 +105,9 @@ dominate the computation.
 \inputeps{LIST-EGAL-CAR.eps}
 
 In the next test, the sequence is a list of pairs
-of symbols; it uses  \texttt{car} as key function, \texttt{eq} as test function  and a non \texttt{nil} value for the \texttt{end} parameter. Our implementation is at least twice as fast as
-\texttt{sbcl}.
+of symbols; it uses  \texttt{car} as key function, \texttt{eq} as test
+function  and a non \texttt{nil} value for the \texttt{end}
+parameter. Our implementation is at least twice as fast as \sbcl{}.
 
 \texttt{verify add description of test}
 
@@ -116,7 +117,7 @@ Our final test uses a non \texttt{nil} value for the \texttt{end}
 parameter.  Despite the fact that we use a slightly more expensive
 \texttt{test} function (namely \texttt{=}), the performance of our
 implementation is very good; it is around three times as fast as that
-of \texttt{sbcl}.
+of \sbcl{}.
 
 \inputeps{LIST-EGAL-END.eps}
 
@@ -142,7 +143,7 @@ times.  Ultimately, the compiler eliminates most of the code, but
 initially the code is fairly large.  And the compiler must do a
 significant amount of work to determine what code can be eliminated.
 To give an idea of the orders of magnitude, in order to obtain
-fully-expanded code on SBCL, we had to increase the inline limit from
+fully-expanded code on \sbcl{}, we had to increase the inline limit from
 $100$ to $10\thinspace000$, resulting in a compilation time of tens of
 seconds for a single function.
 
