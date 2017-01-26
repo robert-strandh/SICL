@@ -32,9 +32,8 @@ replica remains dominated by $D$.  Initially, $S$ contains $I$ as its
 only element.
 
 In our technique, we keep track of the outcome of the test in the
-\emph{control arcs} of the graph of intermediate instructions.
-We can think of this information as being represented as three
-different \emph{colors}:
+\emph{control arcs} of the control-flow graph.  We can think of this
+information as being represented as three different \emph{colors}:
 
 \begin{itemize}
 \item An arc is \emph{black} if we have no information concerning the
@@ -51,7 +50,7 @@ other than black.
 Our technique involves the repeated application of the first
 applicable rewrite rule in the following list to some arbitrary
 element of $S$, say $s$, that does not itself have an immediate
-predecessor in $S$:
+predecessor in the control-flow graph that is also an element of $S$:
 
 \begin{enumerate}
 \item If $s$ has no predecessors, then remove it from $S$.
