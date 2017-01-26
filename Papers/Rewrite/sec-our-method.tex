@@ -26,6 +26,10 @@ intermediate code to SSA form \cite{Cytron:1989:EMC:75277.75280,
 during the execution of our technique, avoiding the need to include
 them in a separate phase.
 
+In \refFig{fig-example-naive}, the two test instructions labeled $D$
+and $I$ respectively verify the conditions listed above, and we will
+use these two instructions to illustrate our technique.
+
 During the execution of our algorithm, the instruction $I$ will be
 \emph{replicated}, so that it is part of some set $S$ in which every
 replica remains dominated by $D$.  Initially, $S$ contains $I$ as its
