@@ -271,18 +271,19 @@ However, the implementation does not have to work that way in order
 for termination to be certain.
 
 In other words, we can create groups of rewrite steps, where a group
-can be formed in one of the following ways:
+can be formed according to one of the following \emph{group types}:
 
 \begin{enumerate}
-\item It has a finite number of applications of rewrite rules number
-  $2$ and $3$, followed by a single application of rewrite rule number
-  $1$.
-\item It has a finite number of applications of rewrite rules number
-  $2$ and $3$, followed by a single application of rewrite rule number
-  $5$.
-\item It has a finite number of applications of rewrite rules number
-  $2$ and $3$, followed by a single application of rewrite rule number
-  $4$, followed by a single application of rewrite rule number $5$.
+\item A group in this type has a finite number of applications of
+  rewrite rules number $2$ and $3$, followed by a single application
+  of rewrite rule number $1$.
+\item A group in this type has a finite number of applications of
+  rewrite rules number $2$ and $3$, followed by a single application
+  of rewrite rule number $5$.
+\item A group in this type has a finite number of applications of
+  rewrite rules number $2$ and $3$, followed by a single application
+  of rewrite rule number $4$, followed by a single application of
+  rewrite rule number $5$.
 \end{enumerate}
 
 With this information, we can create a metric consisting of a pair
