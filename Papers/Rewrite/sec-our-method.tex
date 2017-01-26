@@ -8,7 +8,7 @@ the advantage of being simple, both to implement and when it comes to
 proving correctness.
 
 For the purpose of this paper, we assume that some initial phase has
-determined that:
+determined that the following conditions are respected:
 
 \begin{enumerate}
 \item there are two instructions, $D$ and $I$, in the program that
@@ -19,12 +19,12 @@ determined that:
   $D$ to $I$.
 \end{enumerate}
 
-In a real compiler, such a phase probably does not exist.  Some steps
-of the phase are simplified if the compiler translates the
+In a real compiler, such a phase probably does not exist.  Some
+conditions are easier to verify if the compiler translates the
 intermediate code to SSA form \cite{Cytron:1989:EMC:75277.75280,
-  Cytron:1991:ECS:115372.115320}, and the tests in some of the steps
-can be determined during the execution of our technique, avoiding the
-need to include them in a separate phase.
+  Cytron:1991:ECS:115372.115320}, and some conditions can be verified
+during the execution of our technique, avoiding the need to include
+them in a separate phase.
 
 During the execution of our algorithm, the instruction $I$ will be
 \emph{replicated}, so that it is part of some set $S$ in which every
