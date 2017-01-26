@@ -6,7 +6,7 @@
 In this appendix, we describe the macros and functions that are part
 of the protocol of our technique, used for implementing most of the
 sequence functions.
-
+\vskip 0.3cm\noindent
 \defun {apply-key-function} {element key-function}
 
 This function takes an element of the sequence and a function to apply
@@ -28,7 +28,7 @@ A typical definition of this function might look like this:
         (t
          (funcall key-function element))))
 \end{verbatim}}
-
+\noindent
 \defmacro {canonicalize-key} {key-var}
 
 This macro takes a single argument which must be a variable that holds
@@ -44,7 +44,7 @@ implementation might look like this:
           (setf ,key-var (fdefinition ,key-var)))
          (t nil)))
 \end{verbatim}}
-
+\noindent
 \defmacro {with-key-function} {key-function-var \body body}
 
 This macro takes a single argument which must be a variable that holds
@@ -68,7 +68,7 @@ implementation of this macro looks like this:
 In each clause of the \texttt{cond} form in this macro, the inlined
 version of the function \texttt{apply-key-function} will be simplified
 in a different way by the compiler, resulting in a specialized loop.
-
+\vskip 0.3cm\noindent
 \defmacro {for-each-relevant-cons}\\
 {(cons-var index-var list start end from-end) \body body}
 
@@ -87,7 +87,7 @@ name of a variable that contains the index of the particular
 Because of the size of the definition of this macro, due mainly to the
 code for processing \texttt{cons} cells in reverse order
 \cite{Durand:2015:ELS:reverse}, we do not show its definition here.
-
+\vskip 0.3cm\noindent
 \defmacro {with-test-and-test-not}\\
 {(test-var test-not-var) \body body}
 
@@ -119,7 +119,7 @@ implementation might look like this:
                    ,@body))))
          (t nil)))
 \end{verbatim}}
-
+\noindent
 \defmacro {with-from-end} {from-end-var \body body}
 
 This macro duplicates \textit{body} for the two cases where the value
@@ -132,7 +132,7 @@ or \emph{false}.  A typical implementation looks like this:
        (progn ,@body)
        (progn ,@body)))
 \end{verbatim}}
-
+\noindent
 \defun {satisfies-two-argument-test-p}\\
 {item element test test-not}
 
@@ -165,7 +165,7 @@ typical implementation might look like this:
                   (not (funcall test-not item element))))))
         (t nil)))
 \end{verbatim}}
-
+\noindent
 \defmacro {for-each-relevant-element}\\
 {element-var index-var vector start end\\
 from-end \body body}
@@ -204,7 +204,7 @@ this:
                             (aref ,vectorv ,indexv)))
                       ,@body))))))
 \end{verbatim}}
-
+\noindent
 \defmacro {with-simple} {vector \body body}
 
 This macro simply checks whether \textit{vector} is a
@@ -217,7 +217,7 @@ the test.  A typical implementation might look like this:
        (progn ,@body)
        (progn ,@body)))
 \end{verbatim}}
-
+\noindent
 \defmacro {with-vector-type} {vector-var \body body}
 
 This macro duplicates \textit{body} for each possible value of
