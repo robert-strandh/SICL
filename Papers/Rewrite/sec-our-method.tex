@@ -76,13 +76,17 @@ predecessor in the control-flow graph that is also an element of $S$:
 
 \noindent
 Rewrite rules are applied until the set $S$ is empty, or until each
-element of $S$ has an immediate predecessor in $S$.
+element of $S$ has an immediate predecessor in the control-flow graph
+that is also a member of $S$.  An element of $S$ could have an
+immediate predecessor like that if the dominated instruction $I$ were
+part of a loop.  We need to exclude such elements, or else our
+technique might not terminate in all cases.
 
 \subsection{A simple example}
 \label{sec-our-technique-example}
 
 Let us see how our technique works on the example in
-\refSec{sec-introduction}.  The initial situation is shown in
+\refFig{fig-example-naive}.  The initial situation is shown in
 \refFig{fig-rewrite-1}.
 
 \begin{figure}
