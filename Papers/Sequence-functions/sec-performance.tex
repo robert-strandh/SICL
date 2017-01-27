@@ -2,7 +2,7 @@
 
 \subsection{Performance}
 
-We compared performance of our technique for the \texttt{find}
+We compared the performance of our technique for the \texttt{find}
 function shown in \refApp{app-example-implementation} to the
 performance of the \texttt{find} function shipped with \sbcl{}.
 
@@ -16,7 +16,7 @@ The results show a significant performance gain compared to the
 \sbcl{} sequence functions often require the programmer to declare the
 element type (when the sequence is a vector) in order for performance
 to be improved.  We have not attempted to compare our technique to
-this case, for the simple reason one of the advantages of our
+this case, for the simple reason that one of the advantages of our
 technique is precisely that no additional information is required in
 order for performance to be acceptable.
 
@@ -42,7 +42,7 @@ below, our function is around three times as fast as that of \sbcl{}.
 
 \inputeps{VECTOR-EQ-SYMBOL.eps}
 
-The next test shows a vector with the element type being
+The next test uses a vector whose element type is
 \texttt{character}.  The \texttt{key} function is \texttt{identity},
 and the \texttt{test} function is \texttt{eql}.  As shown in the
 diagram below, our function is around twice as fast as that of
@@ -94,7 +94,7 @@ technique is only moderately faster than that of \sbcl{}.
 
 \inputeps{LIST-EGAL-BIGNUM.eps}
 
-In the next test, the sequence is a list where each element is a list
+In the next test, the sequence is a list where each element is a pair
 where the first element is a bignum, so that we can use \texttt{car}
 as a \texttt{key} function.  The \texttt{test} function is still
 \texttt{=}.  There seems to be no significant difference for this

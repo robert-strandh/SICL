@@ -295,9 +295,14 @@ for two pairs $(U_1,N_1)$ and $(U_2,N_2)$, $(U_1,N_1)$ is
 (U_2,N_2)$, if and only if either $U_1 < U_2$ or $U_1 = U_2$ and $N_1
 < N_2$.
 
-Theorem: The rewrite algorithm terminates.
+%Theorem: 
+\begin{theorem}
+The rewrite algorithm terminates.
+\end{theorem}
 
-Proof: As a result of a rewrite according to a group of type $1$, $U$
+\begin{proof}
+As a result of a rewrite according to a group of type $1$, $U$
 remains the same, but $N$ decreases by $1$.  As a result of a rewrite
 according to a group of type $2$ or $3$, $U$ decreases by $1$ (but $N$
 may increase).
+\end{proof}
