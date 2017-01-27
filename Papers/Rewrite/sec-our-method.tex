@@ -38,19 +38,19 @@ only element.
 
 In our technique, we keep track of the outcome of the test in the
 \emph{control arcs} of the control-flow graph.  We can think of this
-information as being represented as three different \emph{colors}:
+information as being represented as \emph{labels} associated with
+control arcs:
 
 \begin{itemize}
-\item An arc is \emph{black} if we have no information concerning the
+\item An arc is unlabeled if we have no information concerning the
   outcome of the test at that point in the program.
-\item An arc is \emph{green} if the outcome of the test at that point in
-  the program is known to be \emph{true}.
-\item An arc is \emph{red} if the outcome of the test at that point in
-  the program is known to be \emph{false}.
+\item An arc is labeled \emph{true} if the outcome of the test at that
+  point in the program is known to be true.
+\item An arc is labeled \emph{false} if the outcome of the test at
+  that point in the program is known to be false.
 \end{itemize}
 
-Initially, only the outgoing arcs of $D$ and $I$ have a color
-other than black.
+Initially, only the outgoing arcs of $D$ and $I$ have a label.
 
 Our technique involves the repeated application of the first
 applicable rewrite rule in the following list to some arbitrary
@@ -59,12 +59,12 @@ predecessor in the control-flow graph that is also an element of $S$:
 
 \begin{enumerate}
 \item If $s$ has no predecessors, then remove it from $S$.
-\item If $s$ has a \emph{green} incoming arc, then change the head
-  of that arc so that it refers to the successor of $s$ referred to
-  by the \emph{green} outgoing arc of $s$.
-\item If $s$ has a \emph{red} incoming arc, then change the head
-  of that arc so that it refers to the successor of $s$ referred to
-  by the \emph{red} outgoing arc of $s$.
+\item If $s$ has an incoming arc labeled \emph{true}, then change the
+  head of that arc so that it refers to the successor of $s$ referred
+  to by the outgoing arc of $s$ labeled \emph{true}.
+\item If $s$ has an incoming arc labeled \emph{false}, then change the
+  head of that arc so that it refers to the successor of $s$ referred
+  to by the outgoing arc of $s$ labeled \emph{false}.
 \item If $s$ has $n>1$ predecessors, then replicate $s$ $n$ times;
   once for each predecessor.  Every replica is inserted into $S$.
   Colors of outgoing control arcs are preserved in the replicas.
@@ -126,7 +126,7 @@ Result after two rewrites.}
 \end{figure}
 
 As we can see in \refFig{fig-rewrite-2}, the second \texttt{consp}
-now has two predecessors, and both incoming arcs are black.
+now has two predecessors, and both incoming arcs are unlabeled.
 Therefore, rewrite rule number $4$ applies and the \texttt{consp} is
 replicated.  As a result, $S$ now has two members.  The result of
 applying this rule is shown in \refFig{fig-rewrite-3}.
@@ -140,10 +140,10 @@ Result after replicating the test.}
 \end{figure}
 
 We now choose the leftmost replica of the second \texttt{consp} to
-apply our rules to.  It has a single predecessor with a black incoming
-control arc, so the last rewrite rule applies.  We replicate the
-\texttt{setq} in both branches of the test, giving us the result shown
-in \refFig{fig-rewrite-4}.
+apply our rules to.  It has a single predecessor with an unlabeled
+incoming control arc, so the last rewrite rule applies.  We replicate
+the \texttt{setq} in both branches of the test, giving us the result
+shown in \refFig{fig-rewrite-4}.
 
 \begin{figure}
 \begin{center}
@@ -167,10 +167,10 @@ Result after replicating \texttt{cons-car}.}
 
 As \refFig{fig-rewrite-5} shows, the \texttt{consp} instruction now
 has a single predecessor, but the incoming arc has a known outcome of
-the test, namely \textit{true} (color green).  Therefore, rewrite rule
-number $2$ applies.  The left outgoing arc of the first \texttt{consp}
-is redirected to go directly to the \texttt{cons-car} instruction.
-The result of applying this rule is shown in \refFig{fig-rewrite-6}.
+the test, namely \textit{true}.  Therefore, rewrite rule number $2$
+applies.  The left outgoing arc of the first \texttt{consp} is
+redirected to go directly to the \texttt{cons-car} instruction.  The
+result of applying this rule is shown in \refFig{fig-rewrite-6}.
 
 \begin{figure}
 \begin{center}
@@ -245,10 +245,10 @@ to be present in the implementation of our technique, only in the
 termination proof.
 
 To see how the rewrite rules can be grouped, consider a general case
-where the test instruction has some arbitrary number of red, green,
-and black incoming control arcs.  Rules number $2$ and $3$ are first
+where the test instruction has some arbitrary number of labeled or
+unlabeled incoming control arcs.  Rules number $2$ and $3$ are first
 applied a finite number of times.  What happens next depends on the
-number $n$ of black incoming control arcs:
+number $n$ of unlabeled incoming control arcs:
 
 \begin{itemize}
 \item If $n=0$ the first rewrite
@@ -256,17 +256,17 @@ rule applies, in which case the instruction is removed from the set
 $S$.
 \item If $n=1$, the last rewrite rule is applied.  The crucial
   characteristic of this rewrite rule is that the total number of
-  black control arcs decreases by one.
+  unlabeled control arcs decreases by one.
 \item If $n>1$, rewrite rule number $4$ is applied.  Notice that the
-  number of black control arcs is not modified by the application of
+  number of unlabeled control arcs is not modified by the application of
   this rule.
 \end{itemize}
 
 For the purpose of this proof, we assume that the individual rewrite
 steps in a group happen immediately after each other, so that for a
-particular instruction, the green and red incoming control arcs are
-first eliminated, the same instruction is then potentially replicated,
-and finally, the last rewrite rule is applied to one of the replicas.
+particular instruction, the labeled incoming control arcs are first
+eliminated, the same instruction is then potentially replicated, and
+finally, the last rewrite rule is applied to one of the replicas.
 However, the implementation does not have to work that way in order
 for termination to be certain.
 
@@ -287,16 +287,17 @@ can be formed according to one of the following \emph{group types}:
 \end{enumerate}
 
 With this information, we can create a metric consisting of a pair
-$(B,N)$, where $B$ is the total number of black control arcs of the
-program and $N$ is the number of elements of the set $S$.  Two pairs
-can now be compared using a \emph{lexicographic order} , so that for
-two pairs $(B_1,N_1)$ and $(B_2,N_2)$, $(B_1,N_1)$ is \emph{strictly
-  smaller than} $(B_2,N_2)$, written $(B_1,N_1) < (B_2,N_2)$, if and
-only if either $B_1 < B_2$ or $B_1 = B_2$ and $N_1 < N_2$.
+$(U,N)$, where $U$ is the total number of unlabeled control arcs of
+the program and $N$ is the number of elements of the set $S$.  Two
+pairs can now be compared using a \emph{lexicographic order} , so that
+for two pairs $(U_1,N_1)$ and $(U_2,N_2)$, $(U_1,N_1)$ is
+\emph{strictly smaller than} $(U_2,N_2)$, written $(U_1,N_1) <
+(U_2,N_2)$, if and only if either $U_1 < U_2$ or $U_1 = U_2$ and $N_1
+< N_2$.
 
 Theorem: The rewrite algorithm terminates.
 
-Proof: As a result of a rewrite according to a group of type $1$, $B$
+Proof: As a result of a rewrite according to a group of type $1$, $U$
 remains the same, but $N$ decreases by $1$.  As a result of a rewrite
-according to a group of type $2$ or $3$, $B$ decreases by $1$ (but $N$
+according to a group of type $2$ or $3$, $U$ decreases by $1$ (but $N$
 may increase).
