@@ -181,7 +181,7 @@ Result after short-circuit \texttt{consp}.}
 \end{figure}
 
 At this point, the \texttt{consp} that we have been processing has no
-predecessor.  Therefore we apply rule number $1$ and removed it from
+predecessor.  Therefore we apply rule number $1$ and remove it from
 $S$.  Removing all instructions that can not be reached from the start
 instruction gives the situation shown in \refFig{fig-rewrite-7}.
 
@@ -211,8 +211,8 @@ first), yields the final result shown in  \refFig{fig-rewrite-8}.
 Final result.}
 \end{figure}
 
-This example represents a control graph that is particularly simple in
-that there are no loops between the first and the second
+This example represents a control graph that is particularly simple,
+in that there are no loops between the first and the second
 \texttt{consp} instructions.  Our technique must obviously work no
 matter the complexity of the control graph, as long as the first test
 dominates the second.
@@ -289,7 +289,7 @@ can be formed according to one of the following \emph{group types}:
 With this information, we can create a metric consisting of a pair
 $(U,N)$, where $U$ is the total number of unlabeled control arcs of
 the program and $N$ is the number of elements of the set $S$.  Two
-pairs can now be compared using a \emph{lexicographic order} , so that
+pairs can now be compared using a \emph{lexicographic order}, so that
 for two pairs $(U_1,N_1)$ and $(U_2,N_2)$, $(U_1,N_1)$ is
 \emph{strictly smaller than} $(U_2,N_2)$, written $(U_1,N_1) <
 (U_2,N_2)$, if and only if either $U_1 < U_2$ or $U_1 = U_2$ and $N_1
