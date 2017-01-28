@@ -273,6 +273,7 @@ for termination to be certain.
 In other words, we can create groups of rewrite steps, where a group
 can be formed according to one of the following \emph{group types}:
 
+\renewcommand\theenumi {\Alph{enumi}}
 \begin{enumerate}
 \item A group in this type has a finite number of applications of
   rewrite rules number $2$ and $3$, followed by a single application
@@ -301,8 +302,8 @@ The rewrite algorithm terminates.
 \end{theorem}
 
 \begin{proof}
-As a result of a rewrite according to a group of type $1$, $U$
+As a result of a rewrite according to a group of type A, $U$
 remains the same, but $N$ decreases by $1$.  As a result of a rewrite
-according to a group of type $2$ or $3$, $U$ decreases by $1$ (but $N$
+according to a group of type $B$ or $C$, $U$ decreases by $1$ (but $N$
 may increase).
 \end{proof}
