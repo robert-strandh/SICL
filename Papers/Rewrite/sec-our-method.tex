@@ -309,3 +309,27 @@ according to a group of type $B$ or $C$, $U$ decreases by $1$ (but $N$
 may increase).  Since $U$ and $N$ are both non-negative integers, we
 must reach a normal form after a finite number of rewrites.
 \end{proof}
+
+The following table illustrates how the grouping technique applies to
+our example:
+\vskip 3mm
+\begin{tabular}{|l|r|r|c|l|r|r|}
+\hline
+Initial & $U$ & $N$ & Group & Final & U & N\\
+\hline
+\refFig{fig-rewrite-1} & 11 & 2 & B &
+\refFig{fig-rewrite-one-and-a-half} & 10 & 2\\
+\refFig{fig-rewrite-one-and-a-half} & 10 & 2 & B &
+\refFig{fig-rewrite-2} & 9 & 2\\
+\refFig{fig-rewrite-2} & 9 & 2 & C & \refFig{fig-rewrite-4} & 8 & 3\\
+\refFig{fig-rewrite-4} & 8 & 3 & B & \refFig{fig-rewrite-5} & 7 & 3\\
+\refFig{fig-rewrite-5} & 7 & 3 & A & \refFig{fig-rewrite-7} & 7 & 2\\
+\hline
+\end{tabular}
+
+\vskip 3mm
+Each row in the table represents a group of rewrites.  For each
+rewrite group, we give the figure representing the initial state with
+the values of $U$ and $N$ for that figure, followed by the figure
+representing the final state with the values of $U$ and $N$ after the
+application of the rewrite steps in the group.
