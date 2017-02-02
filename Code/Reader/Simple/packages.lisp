@@ -31,6 +31,7 @@
    #:*readtable*
    #:read
    #:read-preserving-whitespace
+   #:*preserve-whitespace*
    #:read-common
    #:call-reader-macro
    #:interpret-token
