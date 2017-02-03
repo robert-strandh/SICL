@@ -6,8 +6,6 @@ Elements of the lattice are called \textit{type descriptors}, or just ``descript
 
 Descriptors are collected into \textit{bags}, which are associative maps from variables to descriptors. Bags are equipped with equality and union operations, which are both only defined for bags with the same set of variables, and consist of the equivalent operation on descriptors mapped over the variables.
 
-The program is first reduced to ``high-level intermediate representation'' (HIR) by other steps of compilation. The HIR consists of nodes called \textit{instructions} connected to each other by arcs to form a graph of the program control flow. Each instruction has zero or more variables as inputs, zero or more variables as outputs, and represents some small operation that reads the inputs and writes to the outputs. The instruction does not depend on variables it doesn't have as inputs, and doesn't alter variables it doesn't have as outputs.
-
 Type inference begins by associating each arc with a bag. Initially, every descriptor in every bag is the top type descriptor. As an optimization, only those variables which are \textit{live} (used as inputs in some instruction later in control flow) during the arc are included in each bag.
 
 This map of arcs to bags represents all useful type information, and an altered map is the ultimate result of the type inference procedure. Type inference consists of successively shrinking the descriptors of variables in the bags from the top descriptor.

@@ -1,0 +1,3 @@
+\section{Optimizations}
+
+Inferred type information can be used to remove runtime type discrimination (typeq instructions, as described in Section #) from the code. If the type of an input to typeq is inferred, it could be that only one branch of the typeq is ever taken, and thus the typeq itself can be removed.

@@ -1,0 +1,13 @@
+\section{HIR}
+
+Type inference in Cleavir is done after the problem has been reduced to a ``high-level intermediate representation'', or HIR. The HIR consists of nodes called \textit{instructions} connected to each other by arcs to form a graph of the program control flow. Each instruction has zero or more inputs (constants or variables), zero or more variables as outputs, and represents some small operation that reads only from the inputs and writes only to the outputs.
+
+This representation is called ``high-level'' because almost all values for variables are \commonlisp{} objects, and low-level computations such as address calculations are not involved. Further stages of compilation, including optimizations from type inference, can refine the intermediate representation to a lower-level form.
+
+Most HIR instructions have undefined behavior on values not of certain types. For example, the \texttt{cdr} instruction has one input, which must be a cons. To represent the \commonlisp{} \texttt{cdr} function, which can also be validly called on \texttt{nil}, type descrimination is necessary.
+
+HIR includes type declaration information with the \texttt{the} instruction, which corresponds to the \commonlisp{} special operator of the same name. A \texttt{the} instruction has one input and no outputs, and an associated type. It has no operational effect, but informs the type inferencer that the input is of that type at that control point. After type inference, all \texttt{the} instructions can be removed.
+
+Explicit type checks are represented in HIR by the \texttt{typeq} instruction. Each typeq instruction has a type associated with it when the HIR graph is produced. When run, typeq branches to one instruction if its one input is of the given type, and to the other if it is not.
+
+For example, \texttt{cdr} might be represented as shown in Fig. #. The first typeq's left branch continues to the behavior for cons operands, and the second typeq's left branch continues to the behavior on null operands. The remaining branch is reached only if the operand is neither a cons nor null, and therefore signals a type error.
