@@ -1,1 +1,20 @@
 \section{Previous Work}
+
+\subsection{The Nimble type inferencer}
+
+Henry Baker describes the Nimble type inferencer5
+\footnote{Unpublished technical report.  See for instance
+  http://www.pipeline.com/~hbaker1/TInference.html.}  His technique
+works for the pre-standard \commonlisp{} language, and works by
+annotating source code with type information in the form of
+\emph{type declarations}.
+
+The advantage of Baker's technique is that it can be used with any
+conforming \commonlisp{} implementation, except that it would need some
+minor work in order to be applicable to code in the standardized
+language.
+
+\subsection{\sbcl{}}
+
+The \sbcl{} implementation of \commonlisp{} is known to have excellent
+type-inference capabilities.
