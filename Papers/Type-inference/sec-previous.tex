@@ -17,4 +17,7 @@ language.
 \subsection{\sbcl{}}
 
 The \sbcl{} implementation of \commonlisp{} is known to have excellent
-type-inference capabilities.
+type-inference capabilities. Its ``constraint propagation'' algorithm
+is similar to that described here, but instead operates at control-flow
+level of basic blocks, and can propagate constraints other than types.
+Rather than inlining, \sbcl{} relies on 

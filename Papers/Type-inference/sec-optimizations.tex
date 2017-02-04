@@ -1,7 +1,27 @@
 \section{Optimizations}
 
 Inferred type information can be used to remove runtime type
-discrimination (typeq instructions, as described in \refSec{sec-hir}
+discrimination (typeq instructions, as described in \refSec{sec-hir})
 from the code. If the type of an input to typeq is inferred, it could
 be that only one branch of the typeq is ever taken, and thus the typeq
 itself can be removed.
+
+For example, consider the code:
+
+\begin{verbatim}
+(if (consp item)
+    (let ((key (car item))
+          (value (cdr item)))
+      ...)
+    ...)
+\end{verbatim}
+
+This would initially appear in HIR as Fig. n, with the \texttt{consp}
+being inlined as a \texttt{typeq}. The \texttt{car} and \texttt{cdr}
+calls involve two additional typeqs each.
+
+The inferencer can determine from the earliest typeq that ``item'' must
+be a cons in the first if branch. The other four typeqs can then be
+eliminated, resulting in the HIR in Fig. n. The semantics of the
+original program are preserved, but implemented without redundant
+branching.
