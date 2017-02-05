@@ -1,0 +1,18 @@
+\section{Introduction}
+
+Type inference is an essential technique for implementing high-level
+languages.  In modern statically-typed programming languages such as
+ML \cite{Milner:1997:DSM:549659} or Haskell
+\cite{Hudak:2007:HHL:1238844.1238856}, type inference is a requirement
+for a program to be possible to compile.  The most common technique
+for type inference in such languages is known as ``Hindley-Milner''
+\cite{Damas:1982:PTF:582153.582176}. The Hindley-Milner system is
+efficient and correct, but imposes serious constraints on the form of
+the language and its type system that make it unsuitable for
+\commonlisp{}.
+
+In a dynamically typed language such as \commonlisp{}
+\cite{ansi:common:lisp}, type inference is optional, and is used to
+avoid unnecessary runtime type checks when the compiler can prove the
+outcome of such type checks at compile time, rather than for semantic
+effect.

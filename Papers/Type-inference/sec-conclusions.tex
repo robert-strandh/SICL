@@ -1,0 +1,57 @@
+\section{Conclusions and future work}
+
+We have described a technique for type inference of intermediate code
+resulting from the translation of \commonlisp{} code to an
+intermediate representation that manipulates only objects of the
+source language.  Our technique uses a straightforward dataflow
+algorithm, which is also the most natural way of thinking about the
+evolution of type information in a \commonlisp{} program.
+
+Type inference can be much more effective if the intermediate code is
+first converted to SSA form \cite{Cytron:1989:EMC:75277.75280,
+  Cytron:1991:ECS:115372.115320} or some other notation that preserves
+values of lexical variables across assignments.  Assigning to a
+lexical variable may lose existing type information associated with
+that variable, so that the type of the new value must be tested again
+at some later point in the program.  Our technique works whether the
+intermediate code is transformed this way or not, but we have not yet
+tested the effect of such transformations on the effectiveness of our
+technique.
+
+At present, the type inference only operates within function, and does
+not use any information about other functions that isn't explicitly
+declared. The algorithm can be extended to incorporate type information
+from local functions without much change, but using inferred types of
+global functions will require more work due to the semantics of
+redefinition.
+
+Determining precise dataflow in a \commonlisp{} program is complicated
+when a lexical variable is shared between nested closures, and
+arbitrary dataflow may invalidate essential type information, thereby
+limiting the effectiveness of type inference.  Currently, Cleavir only
+contains a very rudimentary \emph{escape analysis} phase, forcing our
+type-inference technique to be very conservative by treating all shared
+variables as being of unknown type.  We intend to improve the quality
+of the escape analysis so as to improve the effectiveness of our
+type-inference technique.
+
+Currently, the dataflow computation is implemented with an ad hoc
+approach.  However, Kildall \cite{Kildall:1973:UAG:512927.512945}
+designed a general approach for solving a large spectrum of problems,
+and our type-inference technique is a good candidate for using that
+general approach.  We already have a general implementation of this
+approach, and it can be customized by providing a \emph{domain} in the
+form of a standard instance%
+\footnote{Recall that a \emph{standard instance} is an instance of
+  (a subclass of) the class named \texttt{standard-class}.  Some
+  authors use the term ``CLOS class'', but that term does not exist in
+  the \commonlisp{} standard.}
+that provides the details of the required lattice operations.  In
+order to improve maintainability, we intend to adapt our
+type-inference technique so that it uses this implementation of
+Kildall's approach.
+
+Finally, the type lattice used by our technique is currently very
+coarse.  A more populated lattice can greatly improve the
+effectiveness of our technique, though care must be taken to avoid
+excessive processor time in the type inferencer itself.
