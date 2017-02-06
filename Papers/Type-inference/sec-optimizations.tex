@@ -22,11 +22,11 @@ with the \texttt{consp} being inlined as a \texttt{typeq}. The
 each, though they are obviously redundant.
 
 \begin{figure}
-  \begin{center}
-    \inputfig{fig-unoptimized-hir.pdf_t}
-  \end{center}
-  \caption{\label{fig-unoptimized}
-    Unoptimized HIR fragment.}
+\begin{center}
+\inputfig{fig-unoptimized-hir.pdf_t}
+\end{center}
+\caption{\label{fig-unoptimized}
+Unoptimized HIR fragment.}
 \end{figure}
 
 The inferencer can determine from the earliest typeq that ``item'' must
@@ -36,9 +36,9 @@ semantics of the original program are preserved, but it is implemented
 without unnecessary branching.
 
 \begin{figure}
-  \begin{center}
-    \inputfig{fig-optimized-hir.pdf_t}
-  \end{center}
-  \caption{\label{fig-optimized}
-    HIR fragment after removing redundant typeqs.}
+\begin{center}
+\inputfig{fig-optimized-hir.pdf_t}
+\end{center}
+\caption{\label{fig-optimized}
+HIR fragment after removing redundant typeqs.}
 \end{figure}
