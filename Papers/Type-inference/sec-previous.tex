@@ -2,12 +2,19 @@
 
 \subsection{The Nimble type inferencer}
 
-Henry Baker describes the Nimble type inferencer5
+Henry Baker describes the Nimble type inferencer
 \footnote{Unpublished technical report.  See for instance
   http://www.pipeline.com/~hbaker1/TInference.html.}  His technique
 works for the pre-standard \commonlisp{} language, and works by
 annotating source code with type information in the form of
 \emph{type declarations}.
+
+Nimble tracks control flow in both directions and maintains both
+upper and lower bounds on inferred type information, and could take exponential time. This was compensated for by Baker's team by
+reducing type computations to specialized linear bit-vector
+arithmetic, but the algorithm was still noticeably slow (on the
+computers of the time). A comparison of efficiency with our technique
+has not been made.
 
 The advantage of Baker's technique is that it can be used with any
 conforming \commonlisp{} implementation, except that it would need some
@@ -20,4 +27,7 @@ The \sbcl{} implementation of \commonlisp{} is known to have excellent
 type-inference capabilities. Its ``constraint propagation'' algorithm
 is similar to that described here, but instead operates at control-flow
 level of basic blocks, and can propagate constraints other than types.
-Rather than inlining, \sbcl{} relies on 
+Rather than inlining, \sbcl{} relies on type derivation functions
+associated with higher-level built-in operators. These are necessarily
+more complex, but removing the necessity of inlining may decrease
+code size.
