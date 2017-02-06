@@ -16,12 +16,29 @@ For example, consider the code:
     ...)
 \end{verbatim}
 
-This would initially appear in HIR as Fig. n, with the \texttt{consp}
-being inlined as a \texttt{typeq}. The \texttt{car} and \texttt{cdr}
-calls involve two additional typeqs each.
+This would initially appear in HIR as \refFig{fig-unoptimized},
+with the \texttt{consp} being inlined as a \texttt{typeq}. The
+\texttt{car} and \texttt{cdr} calls involve two additional typeqs
+each, though they are obviously redundant.
+
+\begin{figure}
+  \begin{center}
+    \inputfig{fig-unoptimized-hir.pdf_t}
+  \end{center}
+  \caption{\label{fig-unoptimized}
+    Unoptimized HIR fragment.}
+\end{figure}
 
 The inferencer can determine from the earliest typeq that ``item'' must
 be a cons in the first if branch. The other four typeqs can then be
-eliminated, resulting in the HIR in Fig. n. The semantics of the
-original program are preserved, but implemented without redundant
-branching.
+eliminated, resulting in the HIR in \refFig{fig-optimized}. The
+semantics of the original program are preserved, but it is implemented
+without unnecessary branching.
+
+\begin{figure}
+  \begin{center}
+    \inputfig{fig-optimized-hir.pdf_t}
+  \end{center}
+  \caption{\label{fig-optimized}
+    HIR fragment after removing redundant typeqs.}
+\end{figure}
