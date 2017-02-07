@@ -1,12 +1,12 @@
 \section{HIR}
 \label{sec-hir}
 
-Type inference in Cleavir is done after the problem has been reduced
+Type inference in Cleavir is done after the program has been reduced
 to a ``high-level intermediate representation'', or HIR. The HIR
 consists of nodes called \textit{instructions} connected to each other
 by arcs to form a graph of the program control flow. Each instruction
-has zero or more inputs (constants or variables), zero or more
-variables as outputs, and represents some small operation that reads
+has zero or more variable or constant inputs, zero or more
+variable outputs, and represents some small operation that reads
 only from the inputs and writes only to the outputs.
 
 This representation is called ``high-level'' because almost all values
@@ -46,5 +46,5 @@ signals a type error.
 \inputfig{fig-cdr-hir.pdf_t}
 \end{center}
 \caption{\label{fig-cdr}
-Implementation of \texttt{cdr} in HIR.}
+Implementation of \texttt{cdr} in HIR. Rectangles represent instructions, ellipses represent variables, and rounded rectangles represent constants. Solid line arrows represent control flow, while dashed lines are data input and output.}
 \end{figure}
