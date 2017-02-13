@@ -13,17 +13,10 @@
    #:value
    #:lexical-location #:make-lexical-location
    #:new-temporary
-   #:dynamic-lexical-location #:make-dynamic-lexical-location
-   #:new-dynamic-temporary
-   #:simple-location #:make-simple-location
-   #:new-simple-temporary
-   #:static-lexical-location #:make-static-lexical-location
-   #:shared-location #:make-shared-location
    #:name
    #:values-location #:make-values-location
    #:external-input #:make-external-input
    #:register-location
-   #:dynamic-location
    #:layer #:index
    #:insert-instruction-before
    #:insert-instruction-between

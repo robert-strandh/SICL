@@ -35,26 +35,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum SIMPLE-LOCATION.
-
-(defmethod draw-datum ((datum simple-location) stream)
-  (format stream "  ~a [shape = hexagon, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
-	  (datum-id datum) (name datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing datum SHARED-LOCATION.
-
-(defmethod draw-datum ((datum shared-location) stream)
-  (format stream "  ~a [shape = octagon, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
-	  (datum-id datum) (name datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing datum VALUES-LOCATION.
 
 (defmethod draw-datum ((datum values-location) stream)

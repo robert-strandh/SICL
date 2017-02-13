@@ -34,22 +34,9 @@
        (lambda (instruction owner)
 	 (cleavir-meter:increment-size m)
 	 (loop for datum in (data instruction)
-	       do (when (eq (class-of datum)
-			    (find-class 'cleavir-ir:lexical-location))
+	       do (when (typep datum 'cleavir-ir:lexical-location)
 		    (unless (eq owner (gethash datum location-owners))
-		      (change-class
-		       datum
-		       'cleavir-ir:static-lexical-location)
-		      (push datum result)))))
-       initial-instruction)
-      (cleavir-ir:map-instructions
-       (lambda (instruction)
-	 (loop for datum in (data instruction)
-	       do (when (eq (class-of datum)
-			    (find-class 'cleavir-ir:lexical-location))
-		    (change-class
-		     datum
-		     'cleavir-ir:dynamic-lexical-location))))
+                      (pushnew datum result)))))
        initial-instruction)
       result)))
 
@@ -77,7 +64,7 @@
 ;;; location to be eliminated.
 (defun allocate-cell-locations (enter-instructions)
   (loop for enter-instruction in enter-instructions
-	collect (cons enter-instruction (cleavir-ir:new-dynamic-temporary))))
+	collect (cons enter-instruction (cleavir-ir:new-temporary))))
 
 ;;; Given an ENCLOSE-INSTRUCTION and the associated ENTER-INSTRUCTION,
 ;;; as well as the dynamic lexical location holding a cell in the
@@ -178,7 +165,7 @@
 ;;; the contents of CLOC in SLOC, and replace all occurrences of SLOC
 ;;; in the inputs of I by D.
 (defun replace-inputs (sloc cloc instruction)
-  (let ((d (cleavir-ir:new-dynamic-temporary))
+  (let ((d (cleavir-ir:new-temporary))
 	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
     (cleavir-ir:insert-instruction-before
      (cleavir-ir:make-read-cell-instruction cloc d)
@@ -194,7 +181,7 @@
 ;;; insert a new WRITE-CELL instruction after INSTRUCTION that puts
 ;;; the value of D in CLOC.
 (defun replace-outputs (sloc cloc instruction)
-  (let ((d (cleavir-ir:new-dynamic-temporary))
+  (let ((d (cleavir-ir:new-temporary))
 	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
     (setf (cleavir-ir:outputs instruction)
 	  (substitute d sloc (cleavir-ir:outputs instruction)))
