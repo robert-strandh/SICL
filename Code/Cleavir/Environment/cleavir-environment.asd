@@ -10,6 +10,7 @@
    (:file "query")
    (:file "augmentation-functions")
    (:file "default-augmentation-classes")
+   (:file "compile-time")
    (:file "optimize-qualities")
    (:file "default-info-methods")
    (:file "eval")))

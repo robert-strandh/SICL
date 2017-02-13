@@ -597,7 +597,9 @@
 						lambda-list
 						body
 						environment)))
-      (cleavir-env:eval lambda-expression environment environment))))
+      (cleavir-env:eval lambda-expression
+                        (cleavir-env:compile-time environment)
+                        environment))))
 
 (defmethod convert-special
     ((symbol (eql 'macrolet)) form env system)

@@ -84,4 +84,5 @@
    #:inline
    #:optimize
    #:policy
-   #:environment-policy))
+   #:environment-policy
+   #:compile-time))
