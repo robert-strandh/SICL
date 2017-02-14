@@ -50,7 +50,7 @@
 ;;; reachable from the root that satisfy a predicate.
 ;;; Sort of like REMOVE-IF-NOT.
 
-(defun filter-instructions (initial-instruction predicate)
+(defun filter-instructions (predicate initial-instruction)
   (let (result)
     (map-instructions-arbitrary-order
      (lambda (instruction)
@@ -68,5 +68,5 @@
 ;;; This is useful for many transformations.
 
 (defun instructions-of-type (initial-instruction type)
-  (filter-instructions initial-instruction
-		       (lambda (i) (typep i type))))
+  (filter-instructions (lambda (i) (typep i type))
+                       initial-instruction))
