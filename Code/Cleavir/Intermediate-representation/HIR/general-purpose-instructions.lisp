@@ -141,7 +141,8 @@
 ;;;
 ;;; Instruction ENCLOSE-INSTRUCTION.
 
-(defclass enclose-instruction (instruction one-successor-mixin)
+(defclass enclose-instruction (instruction one-successor-mixin
+                               allocation-mixin)
   ((%code :initarg :code :accessor code)))  
 
 (defun make-enclose-instruction (output successor code)

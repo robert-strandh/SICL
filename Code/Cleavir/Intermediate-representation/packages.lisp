@@ -31,6 +31,7 @@
    #:side-effect-mixin
    #:box-instruction #:unbox-instruction
    #:side-effect-free-mixin #:side-effect-free-p
+   #:allocation-mixin #:dynamic-extent-p
    #:inputs #:outputs
    #:successors #:predecessors
    #:policy #:*policy*

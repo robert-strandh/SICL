@@ -8,7 +8,8 @@
 ;;; a lexical location that will hold the cell being created by the
 ;;; instruction.
 
-(defclass create-cell-instruction (instruction one-successor-mixin)
+(defclass create-cell-instruction (instruction one-successor-mixin
+                                   allocation-mixin)
   ())
 
 (defun make-create-cell-instruction (output &optional successor)
