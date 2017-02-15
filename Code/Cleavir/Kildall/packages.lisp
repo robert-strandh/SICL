@@ -16,7 +16,10 @@
 	   #:entry-pool)
   (:export #:transfer #:process-transfer
 	   #:kildall)
-  (:export #:interfunction-mixin #:interfunction-once-mixin
+  (:export #:interfunction-mixin #:interfunction-info-mixin
+           #:interfunction-once-mixin
+           #:map-tree
+           #:enter #:dictionary #:children #:info
            #:transfer-enclose #:dictionary->info))
 
 (defpackage #:cleavir-set

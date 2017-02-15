@@ -13,30 +13,54 @@
 ;;;; Kildall-ing is expected to be very expensive so we'd like to
 ;;;; avoid it as much as possible.
 
+;;; Information is stored and used through the specializations.
+;;; Essentially, each is a tree where a child is an inner function
+;;; (like a function-tree), plus stuff for running optimizations.
+;;; See escape.lisp for an example.
 (defclass interfunction-mixin ()
-  ;; alist of enclose instructions to (dict . info).
-  ;; added to as we traverse.
-  ((%enclose-info :initarg :enclose-info :accessor enclose-info
-                  :initform nil)))
+  ((%enter :initarg :enter :reader enter)
+   (%dictionary :initarg :dictionary :accessor dictionary)
+   (%children :initarg :children :accessor children
+              :initform nil)))
 
-(defclass interfunction-once-mixin (interfunction-mixin) ())
+;;; Traverses that use/have info for functions.
+(defclass interfunction-info-mixin (interfunction-mixin)
+  ((%info :initarg :info :accessor info)))
+
+(defclass interfunction-once-mixin (interfunction-info-mixin) ())
+
+;;; given an already complete (with dictionary/info) specialization
+;;; call something on all the enters/dicts of it and all children.
+(defun map-tree (function specialization)
+  (funcall function (enter specialization)
+           (dictionary specialization))
+  (map nil (lambda (c) (map-tree function c))
+       (children specialization)))
 
 (defmethod transfer
     ((specialization interfunction-once-mixin)
      (instruction cleavir-ir:enclose-instruction)
      pool)
-  (let* ((a (assoc instruction (enclose-info specialization)))
+  (let* ((s (find instruction (children specialization)
+                  :key #'enter)) ; if we've already analyzed, grab
          (info
-           (or (cddr a)
+           (if s
+               (info s)
                ;; haven't seen this enclose before, so take a dive.
+               ;; Make a new specialization for the inner function,
+               ;; run Kildall recursively, edit in the info, bam.
                (let* ((enter (cleavir-ir:code instruction))
                       ;; TODO: this should be given more info
-                      ;; FIXME: and a fresh specialization?
-                      (dict (kildall specialization enter))
+                      ;; ...and maybe a gf for make-instance here?
+                      (child (make-instance
+                              (class-of specialization)
+                              :enter enter))
+                      (dict (kildall child enter))
                       (info (dictionary->info specialization dict)))
                  ;; store the info for the next hit.
-                 (push (cons instruction (cons dict info))
-                       (enclose-info specialization))
+                 (setf (dictionary child) dict
+                       (info child) info)
+                 (push child (children specialization))
                  info))))
     (transfer-enclose specialization instruction info pool)))
 

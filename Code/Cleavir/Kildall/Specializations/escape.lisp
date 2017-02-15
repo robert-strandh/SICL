@@ -1,5 +1,6 @@
 (defpackage #:cleavir-kildall-escape
-  (:use #:cl))
+  (:use #:cl)
+  (:export #:mark-dynamic-extent))
 
 (in-package #:cleavir-kildall-escape)
 
@@ -224,8 +225,31 @@
 
 (defmethod cleavir-kildall:transfer-enclose
     ((s escape) instruction info pool)
-  (cleavir-kildall:pool-meet s
-   (loop for indicator across info
-         for input in (cleavir-ir:inputs instruction)
-         collecting (cons input indicator))
-   pool))
+  ;; a cell can be DXd if it it only input to DX closures that DX
+  ;; their cells.
+  (let* ((closure (first (cleavir-ir:outputs instruction)))
+         (closure-dx (find-in-pool closure pool)))
+    (cleavir-kildall:pool-meet s
+      (loop for indicator across info
+            for input in (cleavir-ir:inputs instruction)
+            collecting (cons input
+                             (indicator-union closure-dx indicator)))
+      pool)))
+
+(defun mark-one-function (enter dict)
+  (cleavir-ir:map-instructions-locally
+   (lambda (inst)
+     (when (typep inst 'cleavir-ir:allocation-mixin)
+       (let ((dxness
+               (find-in-pool (first (cleavir-ir:outputs inst))
+                             (gethash inst dict))))
+         (when (find dxness '(dx called))
+           (setf (cleavir-ir:dynamic-extent-p inst) t)))))
+   enter))
+
+(defun mark-dynamic-extent (initial-instruction)
+  (check-type initial-instruction cleavir-ir:enter-instruction)
+  (let* ((s (make-instance 'escape :enter initial-instruction))
+         (d (cleavir-kildall:kildall s initial-instruction)))
+    (setf (cleavir-kildall:dictionary s) d)
+    (cleavir-kildall:map-tree #'mark-one-function s)))
