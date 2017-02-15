@@ -179,6 +179,9 @@
     (format stream "enter ~a"
 	    (mapcar #'format-item (cleavir-ir:lambda-list instruction)))))
 
+(defmethod label ((instruction dynamic-allocation-instruction))
+  "DX")
+
 (defmethod label ((instruction nop-instruction)) "nop")
 
 (defmethod label ((instruction assignment-instruction)) "<-")

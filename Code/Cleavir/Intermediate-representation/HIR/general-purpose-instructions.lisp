@@ -199,6 +199,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction DYNAMIC-ALLOCATION-INSTRUCTION.
+;;;
+;;; This instruction has no operational effect, like THE. It
+;;; indicates to escape analysis that its no value that is in its
+;;; input when control reaches it escapes the local function.
+;;; In other words, it can be allocated in the local function's
+;;; stack frame.
+
+(defclass dynamic-allocation-instruction
+    (instruction one-successor-mixin)
+  ())
+
+(defun make-dynamic-allocation-instruction (input successor)
+  (make-instance 'dynamic-allocation-instruction
+    :inputs (list input)
+    :outputs nil
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction CATCH-INSTRUCTION.
 ;;;
 ;;; This instruction is used to mark the stack to be an exit point.
