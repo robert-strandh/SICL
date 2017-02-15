@@ -1,6 +1,9 @@
 (in-package #:cleavir-kildall)
 
 ;;;; Iterative implementation of Kildall's algorithm.
+;;;; It operates on single ENTER instructions, i.e. functions, like
+;;;; Kildall's original work. For recursing to inner functions and
+;;;; using information from them, see interfunction.lisp.
 ;;;; TODO: This could probably be done in parallel.
 
 ;;; The work-list is Kildall's "L".
@@ -19,7 +22,7 @@
   ;; because functions don't always reach a return instruction,
   ;; we actually start with all instructions as entries.
   (let (result)
-    (cleavir-ir:map-instructions-arbitrary-order
+    (cleavir-ir:map-instructions-locally
      (lambda (instruction)
        (push (cons instruction
 		   (entry-pool specialization instruction))
@@ -30,15 +33,7 @@
 (defmethod compute-initial-work-list
     ((specialization forward-traverse) initial)
   ;; FIXME: are there no other ways to begin? UNWIND?
-  (let (result)
-    (cleavir-ir:map-instructions-arbitrary-order
-     (lambda (instruction)
-       (when (typep instruction 'cleavir-ir:enter-instruction)
-	 (push (cons instruction
-		     (entry-pool specialization instruction))
-	       result)))
-     initial)
-    result))
+  (list (cons initial (entry-pool specialization initial))))
 
 (defun add-work (instruction pool)
   (push (cons instruction pool) *work-list*))
@@ -49,15 +44,18 @@
 ;;; Methods receive an instruction and an input pool and return
 ;;; values for output pools, as described in specialization.lisp,
 ;;; depending on the traversal.
-(defgeneric transfer (specialization instruction pool))
+(defgeneric transfer (specialization instruction pool)
+  (:argument-precedence-order instruction specialization pool))
 
 ;;; Instruction-level part of the algorithm (A4, A5). Shouldn't
-;;; usually need to be specialized. Could be a normal function?
+;;; usually need to be specialized.
 ;;; new-in is the pool from the worklist, and usually isn't passed
 ;;; directly to TRANSFER.
 ;;; Called for effect.
 (defgeneric process-instruction
-    (specialization instruction new-in))
+    (specialization instruction new-in)
+  ;; see unwind-instruction method.
+  (:argument-precedence-order instruction specialization new-in))
 
 ;;; Step A5 of the algorithm: actually doing a transfer.
 ;;; Mostly specialized just for traversal differences.
@@ -78,6 +76,12 @@
 	  (t ; new information, use it
 	   (process-transfer s instruction
 			     (pool-meet s new-in dict-in))))))
+
+;;; If we hit an UNWIND, do nothing.
+;;; FIXME: this means unwinds will not appear in dictionaries. OK?
+(defmethod process-instruction
+    (s (instruction cleavir-ir:unwind-instruction) new-in)
+  (declare (ignore s new-in)))
 
 ;;; Put the new information into the dictionary before proceeding.
 (defmethod process-transfer :before (s instruction pool)
