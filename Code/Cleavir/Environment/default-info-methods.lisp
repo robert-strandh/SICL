@@ -293,7 +293,7 @@
 		 (variable-type environment defining-info))
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
-      (if (null entry) nil (ignore defining-info)))
+      (if (null entry) nil (ignore entry)))
     :dynamic-extent
     (let ((entry (variable-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))
