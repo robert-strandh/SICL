@@ -13,7 +13,7 @@
   ((%expr :initarg :expr :reader expr)))
 
 (define-condition compilation-style-warning
-    (acclimation:condition style-warning)
+    (style-warning acclimation:condition)
   ((%expr :initarg :expr :reader expr)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -59,6 +59,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Specific conditions.
+
+;;; This condition is signaled when a variable declared IGNORE is
+;;; nonetheless used.
+(define-condition ignored-variable-referenced
+    (compilation-style-warning)
+  ())
 
 ;;; This condition is signaled when the first argument to BLOCK or
 ;;; RETURN-FROM is not a symbol.

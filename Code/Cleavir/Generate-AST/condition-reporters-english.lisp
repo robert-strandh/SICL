@@ -1,6 +1,15 @@
 (cl:in-package #:cleavir-generate-ast)
 
 (defmethod acclimation:report-condition
+    ((condition ignored-variable-referenced)
+     stream
+     (language acclimation:english))
+  (format stream "The variable ~s was referenced,~@
+                  despite being declared ~s."
+          (expr condition)
+          'ignore))
+
+(defmethod acclimation:report-condition
     ((condition block-name-must-be-a-symbol)
      stream
      (language acclimation:english))
