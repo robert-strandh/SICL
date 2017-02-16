@@ -11,6 +11,14 @@
 (defun find-in-pool-permissively (input pool)
   (or (cdr (assoc input pool)) +none+))
 
+;;; pool replacements are necessary for assignments and stuff
+;;; where we explicitly want the old info gone.
+(defun replace-in-pool (new input pool)
+  (let ((a (assoc input pool)))
+    (if a
+        (acons input new (remove a pool))
+        (acons input new pool))))
+
 (defmethod cleavir-kildall:pool-meet ((s escape) p1 p2)
   (let ((result (copy-alist p2)))
     (loop for pair in p1

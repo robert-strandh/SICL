@@ -23,12 +23,10 @@
 (defmethod cleavir-kildall:transfer
     ((s escape) (instruction cleavir-ir:assignment-instruction)
      pool)
-  (let ((input (first (cleavir-ir:inputs instruction))))
+  (let ((input (first (cleavir-ir:inputs instruction)))
+        (output (first (cleavir-ir:outputs instruction))))
     (if (variable-p input)
-        (acons (first (cleavir-ir:inputs instruction))
-               (find-in-pool (first (cleavir-ir:outputs instruction))
-                             pool)
-               pool)
+        (replace-in-pool (find-in-pool output pool) input pool)
         pool)))
 
 
@@ -41,19 +39,19 @@
                           pool)
         for input in (cleavir-ir:inputs instruction)
         when (variable-p input)
-          do (push (cons input output-info) pool))
+          do (setf pool (replace-in-pool output-info input pool)))
   pool)
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
      (instruction cleavir-ir:multiple-to-fixed-instruction)
      pool)
-  (acons (first (cleavir-ir:inputs instruction))
-         ;; merge all the output infos.
-         (reduce #'indicator-union (cleavir-ir:outputs instruction)
-                 :key (lambda (location)
-                        (find-in-pool location pool)))
-         pool))
+  (replace-in-pool
+   (reduce #'indicator-union (cleavir-ir:outputs instruction)
+           :key (lambda (location)
+                  (find-in-pool location pool)))
+   (first (cleavir-ir:inputs instruction))
+   pool))
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
@@ -139,6 +137,45 @@
     (defharmless cleavir-ir:phi-instruction)
     (defharmless cleavir-ir:typeq-instruction)
     (defharmless cleavir-ir:eq-instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Policy TRUST-DYNAMIC-EXTENT
+;;;
+;;; If this is T, then if Cleavir cannot prove the dynamic-extentness
+;;; of a variable, but it is declared DYNAMIC-EXTENT, it will mark
+;;; use that information to mark things as dynamically allocatable.
+;;; This is UNSAFE and improper declarations can cause memory faults.
+;;; If this is NIL, Cleavir will only mark things it can prove are
+;;; dynamically allocatable as such.
+;;; In either case, if Cleavir can prove something is NOT dynamically
+;;; allocatable, but it is declared as DYNAMIC-EXTENT, it will warn.
+
+(cleavir-policy:define-cleavir-policy-quality
+    trust-dynamic-extent (member t nil) t)
+
+(defmethod cleavir-kildall:transfer
+    ((s escape)
+     (instruction cleavir-ir:dynamic-allocation-instruction)
+     pool)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (dx (find-in-pool-permissively input pool))
+         (policy (cleavir-ir:policy instruction)))
+    (cond ((escapes-p dx)
+           ;; The dynamic-extent declaration was wrong, so the
+           ;; code is nonconforming. Full warning.
+           ;; FIXME: Unhelpful without source information, though.
+           (warn 'incorrect-dynamic-extent
+                 :instruction instruction)
+           ;; Ignore the incorrect declaration.
+           pool)
+          ((cleavir-policy:policy-value policy
+                                        'trust-dynamic-extent)
+           ;; We trust DX declarations we can't verify, which means
+           ;; removing the "unknown" bit.
+           (replace-in-pool (without-unknown dx) input pool))
+          (t ; don't trust anything, so
+           pool))))
 
 (defun transfer-call (specialization instruction pool)
   (cleavir-kildall:pool-meet specialization

@@ -17,7 +17,9 @@
 (defconstant +returned+ #b0100)
 (defconstant +stored+ #b1000)
 
-(declaim (inline indicator-union indicator<= dxable-p escapes-p))
+(declaim (inline indicator-union indicator<=
+                 dxable-p escapes-p
+                 without-unknown))
 
 (defun indicator-union (&rest indicators)
   (apply #'logior indicators))
@@ -38,3 +40,8 @@
   ;; It's only true if it DEFINITELY escapes, not just maybe escapes.
   (not (zerop (logand indicator
                       (indicator-union +returned+ +stored+)))))
+
+(defun without-unknown (indicator)
+  (declare (fixnum indicator))
+  ;; This is used for dynamic-extent assertion.
+  (logand indicator (lognot +unknown+)))
