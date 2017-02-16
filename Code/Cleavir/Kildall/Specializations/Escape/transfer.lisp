@@ -1,88 +1,9 @@
-(defpackage #:cleavir-kildall-escape
-  (:use #:cl)
-  (:export #:mark-dynamic-extent))
-
 (in-package #:cleavir-kildall-escape)
-
-;;;; Escape analysis.
-;;;; Pools are alists variable -> escape-indicator.
-;;;; DX, CALLED, RETURNED, CALLED-AND-RETURNED, UNKNOWN symbols are
-;;;; escape indicators.
-;;;; Meet is union of variables and union of indicators.
-;;;; Call union "+", then:
-;;;;  x + x = x
-;;;;  DX + x = x
-;;;;  CALLED + RETURNED = CALLED-AND-RETURNED
-;;;;  CALLED + CALLED-AND-RETURNED = CALLED-AND-RETURNED
-;;;;  RETURNED + CALLED-AND-RETURNED = CALLED-AND-RETURNED
-;;;;  UNKNOWN + x = UNKNOWN
-;;;; DX indicates that nothing really happens to the value.
-;;;; Rest are obvious.
-;;;; For marking purposes we currently have DX = CALLED and the
-;;;; rest = UNKNOWN, but I want this for later.
-;;;; UNKNOWN is meet zero.
 
 ;;; TODO: move this to cleavir-ir.
 (defun variable-p (input)
   (typep input '(or cleavir-ir:lexical-location
                  cleavir-ir:values-location)))
-
-(defclass escape (cleavir-kildall:reverse-spread-traverse
-                  cleavir-kildall:interfunction-once-mixin)
-  ())
-
-(defun indicator-union (i1 i2)
-  (ecase i1
-    ((dx) i2)
-    ((called) (ecase i2
-                ((dx called) i1)
-                ((returned) 'called-and-returned)
-                ((called-and-returned unknown) i2)))
-    ((returned) (ecase i2
-                  ((dx returned) i1)
-                  ((called) 'called-and-returned)
-                  ((called-and-returned unknown) i2)))
-    ((called-and-returned) (if (eq i2 'unknown)
-                               i2
-                               i1))
-    ((unknown) i1)))
-
-(defmethod cleavir-kildall:pool-meet ((s escape) p1 p2)
-  (let ((result (copy-alist p2)))
-    (loop for pair in p1
-          for (location . indicator) = pair
-          for a = (assoc location result)
-          when a
-            do (setf (cdr a) (indicator-union (cdr a) indicator))
-          else do (push pair result))
-    result))
-
-(defun find-in-pool (input pool)
-  (let ((a (assoc input pool)))
-    (if a
-        (cdr a)
-        (error "BUG: missing input in escape analysis pool"))))
-
-;;; <= is backwards again. x <= y if y should not overwrite x.
-(defun indicator<= (i1 i2)
-  (ecase i1
-    ((unknown) nil)
-    ((called-and-returned) (or (eq i2 'called-and-returned)
-                               (eq i2 'unknown)))
-    ((called returned) (or (eq i1 i2)
-                           (eq i2 'called-and-returned)
-                           (eq i2 'unknown)))
-    ((dx) t)))
-
-;;; iff p1 has all variables p2 does, and with <= indicators.
-(defmethod cleavir-kildall:pool<= ((s escape) p1 p2)
-  (every (lambda (pair2)
-           (let ((pair1 (assoc (car pair2) p1)))
-             (and pair1 (indicator<= (cdr pair1) (cdr pair2)))))
-         p2))
-
-(defmethod cleavir-kildall:entry-pool ((s escape) instruction)
-  nil)
 
 ;;; default method: pass it along, marking inputs as unknown.
 (defmethod cleavir-kildall:transfer ((s escape) instruction pool)
@@ -90,13 +11,13 @@
    pool
    (loop for input in (cleavir-ir:inputs instruction)
          when (variable-p input)
-           collect (cons input 'unknown))))
+           collect (cons input +unknown+))))
 
 ;;; return returns.
 (defmethod cleavir-kildall:transfer
     ((s escape) (instruction cleavir-ir:return-instruction) pool)
   (declare (ignore pool)) ; it's empty anyway.
-  (list (cons (first (cleavir-ir:inputs instruction)) 'returned)))
+  (list (cons (first (cleavir-ir:inputs instruction)) +returned+)))
 
 ;;; Assignment methods override, rather than merge.
 (defmethod cleavir-kildall:transfer
@@ -109,6 +30,7 @@
                              pool)
                pool)
         pool)))
+
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
@@ -143,10 +65,10 @@
                ;; writing only side-effects the cell...
                ;; (but we do have to merge it, so that the pool is
                ;;  complete (FIXME: you sure?))
-               'dx)
+               +none+)
          (cons (second (cleavir-ir:inputs instruction))
                ;; ...but has mysterious consequences for the value
-               'unknown))))
+               +unknown+))))
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
@@ -154,7 +76,7 @@
      pool)
   (cleavir-kildall:pool-meet s
    pool
-   (list (cons (first (cleavir-ir:inputs instruction)) 'dx))))
+   (list (cons (first (cleavir-ir:inputs instruction)) +none+))))
 
 (macrolet ((defharmless (inst-class)
              `(defmethod cleavir-kildall:transfer
@@ -165,10 +87,11 @@
             pool
             (loop for i in (cleavir-ir:inputs instruction)
                   when (variable-p i)
-                    collect (cons i 'dx)))))
+                    collect (cons i +none+)))))
     (defharmless cleavir-ir:fdefinition-instruction)
     (defharmless cleavir-ir:the-values-instruction)
     (defharmless cleavir-ir:the-instruction)
+    (defharmless cleavir-ir:typeq-instruction)
     (defharmless cleavir-ir:eq-instruction)))
 
 (defun transfer-call (specialization instruction pool)
@@ -181,11 +104,11 @@
      (if (find callee arguments)
          (loop for input in arguments
                when (variable-p input)
-                 collect (cons input 'unknown))
-         (list* (cons callee 'called)
+                 collect (cons input +unknown+))
+         (list* (cons callee +called+)
                 (loop for input in arguments
                       when (variable-p input)
-                        collect (cons input 'unknown)))))))
+                        collect (cons input +unknown+)))))))
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
@@ -235,21 +158,3 @@
             collecting (cons input
                              (indicator-union closure-dx indicator)))
       pool)))
-
-(defun mark-one-function (enter dict)
-  (cleavir-ir:map-instructions-locally
-   (lambda (inst)
-     (when (typep inst 'cleavir-ir:allocation-mixin)
-       (let ((dxness
-               (find-in-pool (first (cleavir-ir:outputs inst))
-                             (gethash inst dict))))
-         (when (find dxness '(dx called))
-           (setf (cleavir-ir:dynamic-extent-p inst) t)))))
-   enter))
-
-(defun mark-dynamic-extent (initial-instruction)
-  (check-type initial-instruction cleavir-ir:enter-instruction)
-  (let* ((s (make-instance 'escape :enter initial-instruction))
-         (d (cleavir-kildall:kildall s initial-instruction)))
-    (setf (cleavir-kildall:dictionary s) d)
-    (cleavir-kildall:map-tree #'mark-one-function s)))
