@@ -29,7 +29,6 @@
         (replace-in-pool (find-in-pool output pool) input pool)
         pool)))
 
-
 (defmethod cleavir-kildall:transfer
     ((s escape)
      (instruction cleavir-ir:fixed-to-multiple-instruction)
