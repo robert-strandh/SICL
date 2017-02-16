@@ -78,6 +78,47 @@
    pool
    (list (cons (first (cleavir-ir:inputs instruction)) +none+))))
 
+(defmethod cleavir-kildall:transfer
+    ((s escape)
+     (instruction cleavir-ir:set-symbol-value-instruction)
+     pool)
+  (cleavir-kildall:pool-meet s
+   pool
+   ;; FIXME: better way to test variable-pness.
+   (loop for input in (cleavir-ir:inputs instruction)
+         ;; symbol is none (who cares though), object is global
+         for value in (list +none+ +stored+)
+         when (variable-p input)
+           collect (cons input value))))
+
+(defmethod cleavir-kildall:transfer
+    ((s escape)
+     (instruction cleavir-ir:rplaca-instruction)
+     pool)
+  ;; the object is now in the cons, so it has the cons's escaping.
+  ;; the cons is not affected.
+  ;; So copy the first into both. Works if they're eq, even.
+  (cleavir-kildall:pool-meet s
+   pool
+   (loop with cons = (find-in-pool-permissively
+                      (first (cleavir-ir:inputs))
+                      pool)
+         for input in (cleavir-ir:inputs instruction)
+         when (variable-p input)
+           collect (cons input cons))))
+(defmethod cleavir-kildall:transfer
+    ((s escape)
+     (instruction cleavir-ir:rplacd-instruction)
+     pool)
+  (cleavir-kildall:pool-meet s
+   pool
+   (loop with cons = (find-in-pool-permissively
+                      (first (cleavir-ir:inputs))
+                      pool)
+         for input in (cleavir-ir:inputs instruction)
+         when (variable-p input)
+           collect (cons input cons))))
+
 (macrolet ((defharmless (inst-class)
              `(defmethod cleavir-kildall:transfer
                   ((s escape) (instruction ,inst-class) pool)
@@ -88,9 +129,14 @@
             (loop for i in (cleavir-ir:inputs instruction)
                   when (variable-p i)
                     collect (cons i +none+)))))
+    (defharmless cleavir-ir:symbol-value-instruction)
     (defharmless cleavir-ir:fdefinition-instruction)
     (defharmless cleavir-ir:the-values-instruction)
     (defharmless cleavir-ir:the-instruction)
+    ;; CAR and CDR aren't harmless, since conses can contain
+    ;; themselves. But we also can't copy the output to the input,
+    ;; since we don't actually know (car x) = x, it's unknown.
+    (defharmless cleavir-ir:phi-instruction)
     (defharmless cleavir-ir:typeq-instruction)
     (defharmless cleavir-ir:eq-instruction)))
 
