@@ -15,7 +15,12 @@
 	   #:forward-single-traverse
 	   #:entry-pool)
   (:export #:transfer #:process-transfer
-	   #:kildall))
+	   #:kildall)
+  (:export #:interfunction-mixin #:interfunction-info-mixin
+           #:interfunction-once-mixin
+           #:map-tree
+           #:enter #:dictionary #:children #:info
+           #:transfer-enclose #:dictionary->info))
 
 (defpackage #:cleavir-set
   (:use #:cl)

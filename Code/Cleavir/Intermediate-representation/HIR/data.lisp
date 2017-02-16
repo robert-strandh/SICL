@@ -59,18 +59,14 @@
 ;;;
 ;;; Datum class LEXICAL-LOCATION.
 ;;;
-;;; This datum class is used when the initial MIR program is created
+;;; This datum class is used when the initial HIR program is created
 ;;; for any lexical variable.  
-;;; 
-;;; In later compilation stages, this datum is replaced by more
-;;; specific locations as a result of further analyses of the program.
 
 (defclass lexical-location (datum)
   ((%name :initarg :name :reader name)))
 
 (defun make-lexical-location (name)
-  (make-instance 'lexical-location
-    :name name))
+  (make-instance 'lexical-location :name name))
 
 (defmethod print-object ((object lexical-location) stream)
   (print-unreadable-object (object stream :type t)
@@ -79,75 +75,6 @@
 ;;; Generate a new lexical location
 (defun new-temporary ()
   (make-lexical-location (gensym)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class SIMPLE-LOCATION.
-;;;
-;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
-;;; for locations that are only referred to within a single function,
-;;; so that there is no possible capture.  A location of this type can
-;;; be allocated in a register or on the stack.
-
-(defclass simple-location (lexical-location)
-  ())
-
-(defun make-simple-location (name)
-  (make-instance 'simple-location
-    :name name))
-
-;;; Generate a new lexical location
-(defun new-simple-temporary ()
-  (make-simple-location (gensym)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class DYNAMIC-LEXICAL-LOCATION.
-;;;
-;;; This class is deprecated.  Please use the class
-;;; SIMPLE-LOCATION instead.
-
-(defclass dynamic-lexical-location (simple-location)
-  ())
-
-(defun make-dynamic-lexical-location (name)
-  (make-instance 'dynamic-lexical-location
-    :name name))
-
-(defun new-dynamic-temporary ()
-  (make-dynamic-lexical-location (gensym)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class SHARED-LOCATION.
-;;;
-;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
-;;; for locations that are referred to from within several functions.
-;;; Whether a location of this type has dynamic extent (so that it can
-;;; be allocated on the stack, or perhaps even in a register) or
-;;; indefinite extent (so that it must be allocated on the heap)
-;;; depends on further analyses.
-
-(defclass shared-location (lexical-location)
-  ())
-
-(defun make-shared-location (name)
-  (make-instance 'shared-location
-    :name name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class STATIC-LEXICAL-LOCATION.
-;;;
-;;; This class is deprecated.  Please use the class
-;;; SHARED-LOCATION instead.
-
-(defclass static-lexical-location (shared-location)
-  ())
-
-(defun make-static-lexical-location (name)
-  (make-instance 'static-lexical-location
-    :name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

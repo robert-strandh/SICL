@@ -453,6 +453,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a DYNAMIC-ALLOCATION-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:dynamic-allocation-ast)
+                        context)
+  (with-accessors ((results results)
+                   (successors successors)
+                   (invocation invocation))
+      context
+    (assert-context ast context nil 1)
+    ;; It's a ONE-VALUE-AST-MIXIN, so RESULTS is one lexical loc.
+    (compile-ast
+     (cleavir-ast:form-ast ast)
+     (context results
+              (list
+               (cleavir-ir:make-dynamic-allocation-instruction
+                (first results) (first successors)))
+              invocation))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a SYMBOL-VALUE-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)

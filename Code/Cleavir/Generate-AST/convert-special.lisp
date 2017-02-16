@@ -192,17 +192,32 @@
   (cleavir-code-utilities:canonicalize-declaration-specifiers
    (declaration-specifiers declarations)))
 
+;;; Search for (dynamic-extent #'name).
+(defun dx-function-in-decls-p (canonicalized-dspecs name)
+  (loop for spec in canonicalized-dspecs
+        when (and (eq (first spec) 'dynamic-extent)
+                  (equal (second spec) `#',name))
+          do (return t)
+        finally (return nil)))
+
 (defmethod convert-special ((symbol (eql 'flet)) form env system)
   (db s (flet definitions . body) form
     (declare (ignore flet))
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
-      (let* ((defs (loop for def in (raw definitions)
-			 collect (cons (first def)
-				       (convert-local-function
-					def env system))))
-	     (canonicalized-dspecs
-	       (canonicalize-declarations declarations))
+      (let* ((canonicalized-dspecs
+               (canonicalize-declarations declarations))
+             (defs (loop for def in (raw definitions)
+                         for name = (first def)
+                         for fun = (convert-local-function
+                                    def env system)
+                         ;; collect DX info
+                         when (dx-function-in-decls-p canonicalized-dspecs
+                                                      name)
+                           collect (cons name
+                                         (cleavir-ast:make-dynamic-allocation-ast
+                                          fun))
+                         else collect (cons name fun)))
 	     (new-env (augment-environment-from-fdefs env defs))
 	     (new-env (augment-environment-with-asts new-env defs))
 	     (init-asts
@@ -354,9 +369,15 @@
 	     (outer-env (augment-environment-with-declarations
 			 outer-env body-dspecs))
 	     (defs (loop for def in (raw definitions)
-			 collect (cons (first def)
-				       (convert-local-function
-					def outer-env system))))
+                         for name = (first def)
+                         for fun = (convert-local-function
+                                    def outer-env system)
+                         when (dx-function-in-decls-p
+                               canonicalized-dspecs name)
+                           collect (cons name
+                                         (cleavir-ast:make-dynamic-allocation-ast
+                                          fun))
+                         else collect (cons name fun)))
 	     (inner-env (augment-environment-with-asts
 			 outer-env defs))
 	     (init-asts
@@ -453,11 +474,16 @@
 (defun pair-items (list1 list2)
   (mapcar #'cons list1 list2))
 
-(defun make-let-init-asts (bindings temp-asts env system)
+(defun make-let-init-asts (bindings temp-asts idspecs env system)
   (loop for init-form in (binding-init-forms bindings)
+        for idspec in idspecs
 	for converted = (convert init-form env system)
+        for wrapped = (if (member 'dynamic-extent idspec :key #'car)
+                          (cleavir-ast:make-dynamic-allocation-ast
+                           converted)
+                          converted)
 	for temp-ast in temp-asts
-	collect (cleavir-ast:make-setq-ast temp-ast converted)))
+	collect (cleavir-ast:make-setq-ast temp-ast wrapped)))
 
 (defmethod convert-special
     ((symbol (eql 'let)) form env system)
@@ -467,13 +493,14 @@
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let* ((canonical-dspecs (canonicalize-declarations declarations))
 	     (variables (binding-vars bindings))
-	     (temp-asts (temp-asts-from-bindings (raw bindings)))
-	     (init-asts (make-let-init-asts bindings temp-asts env system)))
-	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
-						(listify variables)
-						canonical-dspecs)
+	     (temp-asts (temp-asts-from-bindings (raw bindings))))
+	(multiple-value-bind (idspecs rdspecs)
+            (itemize-declaration-specifiers (listify variables)
+                                            canonical-dspecs)
 	  (process-progn
-	   (append init-asts
+	   (append (make-let-init-asts bindings temp-asts
+                                       idspecs
+                                       env system)
 		   (list (process-remaining-let-bindings
 			  (pair-items variables temp-asts)
 			  idspecs
@@ -508,6 +535,12 @@
 	       ;; AST in the original environment, i.e. the one that
 	       ;; does not have the parameter variable in it.
 	       (value-ast (convert init-form env system))
+               ;; Maybe wrap the value in a dynamic-allocation.
+               (wrapped-ast (if (find 'dynamic-extent (first idspecs)
+                                      :key #'car :test #'eq)
+                                (cleavir-ast:make-dynamic-allocation-ast
+                                 value-ast)
+                                value-ast))
 	       ;; We compute the AST of the remaining computation by
 	       ;; recursively calling this same function with the
 	       ;; remaining bindings (if any) and the environment that
@@ -522,7 +555,7 @@
 	  ;; All that is left to do now, is to construct the AST to
 	  ;; return by using the new variable and the AST of the
 	  ;; remaining computation as components.
-	  (set-or-bind-variable var value-ast next-ast new-env system)))))
+	  (set-or-bind-variable var wrapped-ast next-ast new-env system)))))
 
 (defmethod convert-special
     ((symbol (eql 'let*)) form env system)

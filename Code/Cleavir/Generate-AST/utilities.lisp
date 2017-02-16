@@ -158,9 +158,15 @@
       (unless (equal type '(and))
 	(setf new-env
 	      (cleavir-env:add-variable-type new-env variable type))))
+    (when (member 'ignore declarations :test #'eq :key #'car)
+      (setf new-env
+            (cleavir-env:add-variable-ignore new-env variable 'ignore)))
+    (when (member 'ignorable declarations :test #'eq :key #'car)
+      (setf new-env
+            (cleavir-env:add-variable-ignore new-env variable 'ignorable)))
     (when (member 'dynamic-extent declarations :test #'eq :key #'car)
       (setf new-env
-	    (cleavir-env:add-variable-dynamic-extent new-env 'variable)))
+	    (cleavir-env:add-variable-dynamic-extent new-env variable)))
     new-env))
 
 ;;; Separate a list of canonicalized declaration specifiers into two

@@ -13,17 +13,10 @@
    #:value
    #:lexical-location #:make-lexical-location
    #:new-temporary
-   #:dynamic-lexical-location #:make-dynamic-lexical-location
-   #:new-dynamic-temporary
-   #:simple-location #:make-simple-location
-   #:new-simple-temporary
-   #:static-lexical-location #:make-static-lexical-location
-   #:shared-location #:make-shared-location
    #:name
    #:values-location #:make-values-location
    #:external-input #:make-external-input
    #:register-location
-   #:dynamic-location
    #:layer #:index
    #:insert-instruction-before
    #:insert-instruction-between
@@ -38,6 +31,7 @@
    #:side-effect-mixin
    #:box-instruction #:unbox-instruction
    #:side-effect-free-mixin #:side-effect-free-p
+   #:allocation-mixin #:dynamic-extent-p
    #:inputs #:outputs
    #:successors #:predecessors
    #:policy #:*policy*
@@ -55,6 +49,7 @@
    #:enclose-instruction #:make-enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
+   #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
    #:the-values-instruction #:make-the-values-instruction
    #:required-types #:optional-types #:rest-type
    #:catch-instruction #:make-catch-instruction
@@ -156,6 +151,8 @@
    #:hir-to-mir #:specialize
    #:map-instructions-arbitrary-order
    #:filter-instructions #:instructions-of-type
+   #:map-instructions-locally #:filter-instructions-locally
+   #:local-instructions-of-type
    #:map-instructions
    #:map-instructions-with-owner
    #:map-instructions-by-owner

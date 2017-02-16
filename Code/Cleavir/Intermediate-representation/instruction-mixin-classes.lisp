@@ -20,3 +20,13 @@
 ;;; Mixin class for instructions that have side effects so that they
 ;;; should not be removed.
 (defclass side-effect-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class for instructions that perform allocation.
+;;; (Not all instructions that could allocate, just useful ones)
+
+(defclass allocation-mixin ()
+  ;; whether the allocation can be done on the stack.
+  ((%dynamic-extent-p :initform nil
+     :initarg :dynamic-extent-p :accessor dynamic-extent-p)))

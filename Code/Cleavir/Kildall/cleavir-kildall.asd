@@ -9,4 +9,6 @@
    (:file "pool" :depends-on ("packages"))
    (:file "specialization" :depends-on ("packages"))
    (:file "kildall"
-    :depends-on ("dictionary" "pool" "specialization""packages"))))
+    :depends-on ("dictionary" "pool" "specialization""packages"))
+   (:file "interfunction"
+    :depends-on ("kildall" "packages"))))

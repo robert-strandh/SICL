@@ -786,6 +786,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class DYNAMIC-ALLOCATION-AST
+;;;
+;;; This AST is used to translate DYNAMIC-EXTENT declarations.
+;;; Any allocation done by its form-ast may be done dynamically,
+;;; i.e. with stack discipline. This means that the consequences
+;;; are undefined if any value allocated by the form-ast escapes
+;;; the local function.
+;;; Note that this loses information from DYNAMIC-EXTENT, which
+;;; does not allow escape from the form with the declaration.
+
+(defclass dynamic-allocation-ast (ast one-value-ast-mixin)
+  ((%form-ast :initarg :form-ast :reader form-ast)))
+
+(defun make-dynamic-allocation-ast (form-ast &key origin (policy *policy*))
+  (make-instance 'dynamic-allocation-ast
+    :origin origin :policy policy
+    :form-ast form-ast))
+
+(cleavir-io:define-save-info dynamic-allocation-ast
+  (:form-ast form-ast))
+
+(defmethod children ((ast dynamic-allocation-ast))
+  (list (form-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class BIND-AST.
 ;;;
 ;;; This AST is used to create a dynamic binding for a symbol for the

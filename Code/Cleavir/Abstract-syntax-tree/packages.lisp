@@ -112,6 +112,7 @@
    #:aref-ast #:aset-ast
    #:element-ast #:array-ast #:index-ast
    #:element-type #:simple-p #:boxed-p
+   #:dynamic-allocation-ast #:make-dynamic-allocation-ast
    #:child-ast
    #:scope-ast #:make-scope-ast
    #:map-ast-depth-first-preorder

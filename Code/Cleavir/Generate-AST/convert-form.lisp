@@ -54,7 +54,7 @@ If AST is already a THE-AST, collapses both into one."
     (form (info cleavir-env:lexical-variable-info) env system)
   (declare (ignore system))
   (when (eq (cleavir-env:ignore info) 'ignore)
-    (warn "Reference to a variable declared IGNORE"))
+    (warn 'ignored-variable-referenced :expr form))
   (maybe-wrap-the (cleavir-env:type info)
 		  (cleavir-env:identity info)))
 

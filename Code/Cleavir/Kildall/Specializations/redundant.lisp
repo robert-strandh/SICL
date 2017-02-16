@@ -110,7 +110,7 @@
     (cleavir-kildall:kildall traverse initial-instruction)))
 
 (defun reassign (initial-instruction redundancies)
-  (cleavir-ir:map-instructions-arbitrary-order
+  (cleavir-ir:map-instructions-locally
    (lambda (instruction)
      (loop with classes = (gethash instruction redundancies)
 	   for input-cons on (cleavir-ir:inputs instruction)
@@ -126,7 +126,7 @@
 ;;; situation actually arises.
 (defun remove-assignments (initial-instruction)
   (let (death)
-    (cleavir-ir:map-instructions-arbitrary-order
+    (cleavir-ir:map-instructions-locally
      (lambda (instruction)
        (when (and
 	      (typep instruction 'cleavir-ir:assignment-instruction)
