@@ -35,11 +35,11 @@ versions.
    
 
 ## Documentation
-SICL releases are [here]
+SICL releases are [here].
 
 [Documentation]:https://github.com/robert-strandh/SICL/tree/master/Specification
 
-Check the [Documentation] directory for more information
+Check the [Documentation] directory for more information.
 
 
 
@@ -67,7 +67,7 @@ If you want to contribute SICL, please read [CONTRIBUTING.md].
 
 
 ## License
-SICL is primarily distributed under the terms of the BSD license
+SICL is primarily distributed under the terms of the BSD license.
 
 See [LICENSE-BSD] for more details.
 
