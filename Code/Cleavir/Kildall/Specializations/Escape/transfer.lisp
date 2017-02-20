@@ -88,34 +88,6 @@
          when (variable-p input)
            collect (cons input value))))
 
-(defmethod cleavir-kildall:transfer
-    ((s escape)
-     (instruction cleavir-ir:rplaca-instruction)
-     pool)
-  ;; the object is now in the cons, so it has the cons's escaping.
-  ;; the cons is not affected.
-  ;; So copy the first into both. Works if they're eq, even.
-  (cleavir-kildall:pool-meet s
-   pool
-   (loop with cons = (find-in-pool-permissively
-                      (first (cleavir-ir:inputs))
-                      pool)
-         for input in (cleavir-ir:inputs instruction)
-         when (variable-p input)
-           collect (cons input cons))))
-(defmethod cleavir-kildall:transfer
-    ((s escape)
-     (instruction cleavir-ir:rplacd-instruction)
-     pool)
-  (cleavir-kildall:pool-meet s
-   pool
-   (loop with cons = (find-in-pool-permissively
-                      (first (cleavir-ir:inputs))
-                      pool)
-         for input in (cleavir-ir:inputs instruction)
-         when (variable-p input)
-           collect (cons input cons))))
-
 (macrolet ((defharmless (inst-class)
              `(defmethod cleavir-kildall:transfer
                   ((s escape) (instruction ,inst-class) pool)
