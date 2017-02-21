@@ -14,8 +14,10 @@
 
 ;;; for debug
 (defun analyze (initial-instruction)
-  (let ((s (make-instance 'escape :enter initial-instruction)))
-    (cleavir-kildall:kildall s initial-instruction)))
+  (let* ((s (make-instance 'escape :enter initial-instruction))
+         (d (cleavir-kildall:kildall s initial-instruction)))
+    (setf (cleavir-kildall:dictionary s) d)
+    s))
 
 (defun mark-dynamic-extent (initial-instruction)
   (check-type initial-instruction cleavir-ir:enter-instruction)

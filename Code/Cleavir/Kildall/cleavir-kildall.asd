@@ -10,6 +10,8 @@
    (:file "specialization" :depends-on ("packages"))
    (:file "map-pool" :depends-on ("pool" "packages"))
    (:file "kildall"
-    :depends-on ("dictionary" "pool" "specialization""packages"))
+    :depends-on ("dictionary" "pool" "specialization" "packages"))
    (:file "interfunction"
-    :depends-on ("kildall" "packages"))))
+    :depends-on ("kildall" "packages"))
+   (:file "graphviz-drawing"
+    :depends-on ("interfunction" "map-pool" "packages"))))

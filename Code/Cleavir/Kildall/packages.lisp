@@ -26,6 +26,12 @@
            #:enter #:dictionary #:children #:info
            #:transfer-enclose #:dictionary->info))
 
+(defpackage #:cleavir-kildall-graphviz
+  (:use #:cl #:cleavir-kildall)
+  (:export #:draw-object)
+  (:export #:draw-flowchart-with-outputs
+           #:draw-flowchart-with-inputs))
+
 (defpackage #:cleavir-set
   (:use #:cl)
   (:shadow #:union #:intersection #:subsetp #:adjoin #:remove)
