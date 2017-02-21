@@ -263,24 +263,26 @@
 ;;; e.g. (values integer &optional cons &rest symbol)
 ;;; => (INTEGER), (CONS), SYMBOL, T
 (defun parse-values-type (values-type)
-  (cond
-    ((and (consp values-type) (eq (car values-type) 'values))
-     (setf values-type (rest values-type))
-     (values
-      (loop while (and (consp values-type)
-		       (not (find (car values-type)
-				  '(&optional &rest))))
-	    collect (pop values-type))
-      (when (eq (car values-type) '&optional)
-	(pop values-type)
-	(loop while (and (consp values-type)
-			 (not (eq (car values-type) '&rest)))
-	      collect (pop values-type)))
-      (when (eq (car values-type) '&rest)
-	(assert (null (cddr values-type)))
-	(second values-type))
-      (eq (car values-type) '&rest)))
-    (t (values (list values-type) nil nil nil))))
+  (let ((original-values-type values-type))
+    (cond
+      ((and (consp values-type) (eq (car values-type) 'values))
+       (setf values-type (rest values-type))
+       (values
+        (loop while (and (consp values-type)
+                         (not (find (car values-type)
+                                    '(&optional &rest))))
+              collect (pop values-type))
+        (when (eq (car values-type) '&optional)
+          (pop values-type)
+          (loop while (and (consp values-type)
+                           (not (eq (car values-type) '&rest)))
+                collect (pop values-type)))
+        (when (eq (car values-type) '&rest)
+          (unless (null (cddr values-type))
+            (error 'values-&rest-syntax :expr original-values-type))
+          (second values-type))
+        (eq (car values-type) '&rest)))
+      (t (values (list values-type) nil nil nil)))))
 
 ;;; Given results from parse-values-type, insert "fudginess" for
 ;;;  CL:THE semantics. The fudginess is in the number of values:

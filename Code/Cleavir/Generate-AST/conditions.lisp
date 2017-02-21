@@ -60,6 +60,12 @@
 ;;;
 ;;; Specific conditions.
 
+;;; This condition is signaled when a values type has erroneous
+;;; syntax around &rest.
+(define-condition values-&rest-syntax
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when a variable declared IGNORE is
 ;;; nonetheless used.
 (define-condition ignored-variable-referenced
