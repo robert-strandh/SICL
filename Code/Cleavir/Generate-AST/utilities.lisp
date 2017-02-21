@@ -328,7 +328,11 @@
 	   (cond (req1 (pop req1)) (opt1 (pop opt1)) (t rest1)))
 	 (next-type-2 ()
 	   (cond (req2 (pop req2)) (opt2 (pop opt2)) (t rest2)))
-	 (meet (t1 t2) `(and ,t1 ,t2)))
+	 (meet (t1 t2)
+           ;; FIXME: Good type parser.
+           (cond ((subtypep 't t1) t2)
+                 ((subtypep 't t2) t1)
+                 (t `(and ,t1 ,t2)))))
     (values
      (loop while (or req1 req2)
 	   collect (meet (next-type-1) (next-type-2)))
