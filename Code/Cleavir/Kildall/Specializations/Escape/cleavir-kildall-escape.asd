@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir-kildall-escape
-  :depends-on (:cleavir-kildall :cleavir-hir :acclimation)
+  :depends-on (:cleavir-kildall :cleavir-compilation-policy
+               :cleavir-hir :acclimation)
   :components
   ((:file "packages")
    (:file "conditions" :depends-on ("packages"))
