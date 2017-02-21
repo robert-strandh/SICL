@@ -166,5 +166,7 @@
    #:draw-datum
    #:draw-flowchart
    #:label
+   #:input-label #:output-label
+   #:*input-label-hook* #:*output-label-hook*
    #:name
    #:datum-id))

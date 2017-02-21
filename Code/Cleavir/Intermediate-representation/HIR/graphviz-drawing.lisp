@@ -74,6 +74,32 @@
 
 (defgeneric draw-instruction (instruction stream))
 
+(defgeneric input-label (instruction datum number))
+
+(defmethod input-label (instruction datum number)
+  (declare (ignore instruction datum))
+  (format nil "~d" number))
+
+(defvar *input-label-hook*)
+
+(defmethod input-label :around (instruction datum number)
+  (if (boundp '*input-label-hook*)
+      (funcall *input-label-hook* instruction datum number)
+      (call-next-method)))
+
+(defgeneric output-label (instruction datum number))
+
+(defmethod output-label (instruction datum number)
+  (declare (ignore instruction datum))
+  (format nil "~d" number))
+
+(defvar *output-label-hook*)
+
+(defmethod output-label :around (instruction datum number)
+  (if (boundp '*output-label-hook*)
+      (funcall *output-label-hook* instruction datum number)
+      (call-next-method)))
+
 (defmethod draw-instruction :around (instruction stream)
   (format stream "  ~a [shape = box];~%"
 	  (instruction-id instruction))
@@ -90,10 +116,10 @@
 	for i from 1
 	do (draw-datum datum stream)
 	   (format stream
-		   "  ~a -> ~a [color = red, style = dashed, label = \"~d\"];~%"
+		   "  ~a -> ~a [color = red, style = dashed, label = \"~a\"];~%"
 		   (datum-id datum)
 		   (instruction-id instruction)
-		   i))
+		   (input-label instruction datum i)))
   ;; Draw a numbered blue dashed arrow to each output
   (loop for datum in (outputs instruction)
 	for i from 1
@@ -102,7 +128,7 @@
 		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
 		   (instruction-id instruction)
 		   (datum-id datum)
-		   i))
+		   (output-label instruction datum i)))
   (call-next-method))
 
 (defgeneric label (instruction))
