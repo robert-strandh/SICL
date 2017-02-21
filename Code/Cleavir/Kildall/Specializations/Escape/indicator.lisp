@@ -24,7 +24,10 @@
 (defun indicator-union (&rest indicators)
   (apply #'logior indicators))
 
-(defun indicator<= (i1 i2)
+(defmethod cleavir-kildall:object-meet ((s escape) i1 i2)
+  (logior i1 i2))
+
+(defmethod cleavir-kildall:object<= ((s escape) i1 i2)
   (declare (fixnum i1 i2))
   (= (logand i1 i2) i1))
 

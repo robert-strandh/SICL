@@ -5,8 +5,9 @@
    (lambda (inst)
      (when (typep inst 'cleavir-ir:allocation-mixin)
        (let ((dxness
-               (find-in-pool (first (cleavir-ir:outputs inst))
-                             (gethash inst dict))))
+               (cleavir-kildall:find-in-pool
+                (first (cleavir-ir:outputs inst))
+                (gethash inst dict))))
          (when (dxable-p dxness)
            (setf (cleavir-ir:dynamic-extent-p inst) t)))))
    enter))

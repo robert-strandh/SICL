@@ -16,6 +16,10 @@
 	   #:entry-pool)
   (:export #:transfer #:process-transfer
 	   #:kildall)
+  (:export #:map-pool-mixin
+           #:object-meet #:object<=
+           #:empty-map-pool #:alist->map-pool
+           #:find-in-pool #:replace-in-pool)
   (:export #:interfunction-mixin #:interfunction-info-mixin
            #:interfunction-once-mixin
            #:map-tree
