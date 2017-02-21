@@ -258,12 +258,10 @@
 
 ;;; Given a type in values position (i.e. argument to THE or return
 ;;;  value of a function type), return three values: a list of REQUIRED
-;;;  types, a list of OPTIONAL types, a REST type, and whether REST
-;;;  was present (to find &rest nil). e.g.
-;;; (values integer &optional cons &rest symbol)
+;;;  types, a list of OPTIONAL types, and a REST type, and whether
+;;;  a REST was present.
+;;; e.g. (values integer &optional cons &rest symbol)
 ;;; => (INTEGER), (CONS), SYMBOL, T
-
-;; FIXME: typexpand
 (defun parse-values-type (values-type)
   (cond
     ((and (consp values-type) (eq (car values-type) 'values))
@@ -282,7 +280,42 @@
 	(assert (null (cddr values-type)))
 	(second values-type))
       (eq (car values-type) '&rest)))
-    (t (values (list values-type) nil nil))))
+    (t (values (list values-type) nil nil nil))))
+
+;;; Given results from parse-values-type, insert "fudginess" for
+;;;  CL:THE semantics. The fudginess is in the number of values:
+;;;  the form in a THE can return a different number of values than
+;;;  are specified in the type, but we would like to represent types
+;;;  more exactly for analysis.
+(defun fudge-values-type (req opt rest restp)
+  ;; to allow too many values, just force a &rest iff unspecified
+  (unless restp (setf rest 't))
+  ;; too few values is more difficult
+  ;; any values not returned by the THE form are considered NIL,
+  ;; so if a "required" type includes NIL it could also be no-value
+  ;; and on the flipside, if a type does NOT include NIL the form
+  ;; must actually return a value for it.
+  ;; Therefore, we can just make all types on the end of REQ that
+  ;; do not include NIL optional.
+  (let* ((lastpos (position-if-not (lambda (type) (typep nil type))
+                                   req
+                                   :from-end t))
+         ;; if we found something, we need the next position
+         ;; for the next bit. if we didn't, zero
+         ;; E.g. (values integer list) => lastpos = 1
+         (lastpos (if lastpos (1+ lastpos) 0))
+         ;; and new-opt = (list)
+         (new-opt (nthcdr lastpos req))
+         ;; and new-req = (integer)
+         (new-req (ldiff req new-opt)))
+    (setf req new-req
+          opt (append new-opt opt)))
+  (values req opt rest))
+
+;;; the-values-components: compose the above two functions.
+(defun the-values-components (values-type)
+  (multiple-value-call #'fudge-values-type
+    (parse-values-type values-type)))
 
 ;;; Given two decomposed values types, return something like their
 ;;;  meet/conjunction.
