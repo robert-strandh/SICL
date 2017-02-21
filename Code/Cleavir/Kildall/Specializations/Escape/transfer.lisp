@@ -1,23 +1,20 @@
 (in-package #:cleavir-kildall-escape)
 
-;;; TODO: move this to cleavir-ir.
-(defun variable-p (input)
-  (typep input '(or cleavir-ir:lexical-location
-                 cleavir-ir:values-location)))
-
 ;;; default method: pass it along, marking inputs as unknown.
 (defmethod cleavir-kildall:transfer ((s escape) instruction pool)
   (cleavir-kildall:pool-meet s
    pool
-   (loop for input in (cleavir-ir:inputs instruction)
-         when (variable-p input)
-           collect (cons input +unknown+))))
+   (cleavir-kildall:alist->map-pool
+    (loop for input in (cleavir-ir:inputs instruction)
+          when (cleavir-ir:variable-p input)
+            collect (cons input +unknown+)))))
 
 ;;; return returns.
 (defmethod cleavir-kildall:transfer
     ((s escape) (instruction cleavir-ir:return-instruction) pool)
   (declare (ignore pool)) ; it's empty anyway.
-  (list (cons (first (cleavir-ir:inputs instruction)) +returned+)))
+  (cleavir-kildall:alist->map-pool
+   (list (cons (first (cleavir-ir:inputs instruction)) +returned+))))
 
 ;;; Assignment methods override, rather than merge.
 (defmethod cleavir-kildall:transfer
@@ -25,8 +22,9 @@
      pool)
   (let ((input (first (cleavir-ir:inputs instruction)))
         (output (first (cleavir-ir:outputs instruction))))
-    (if (variable-p input)
-        (replace-in-pool (find-in-pool output pool) input pool)
+    (if (cleavir-ir:variable-p input)
+        (cleavir-kildall:replace-in-pool
+         (cleavir-kildall:find-in-pool output pool) input pool)
         pool)))
 
 (defmethod cleavir-kildall:transfer
@@ -34,21 +32,25 @@
      (instruction cleavir-ir:fixed-to-multiple-instruction)
      pool)
   (loop with output-info
-          = (find-in-pool (first (cleavir-ir:outputs instruction))
-                          pool)
+          = (cleavir-kildall:find-in-pool
+             (first (cleavir-ir:outputs instruction))
+             pool)
         for input in (cleavir-ir:inputs instruction)
-        when (variable-p input)
-          do (setf pool (replace-in-pool output-info input pool)))
+        when (cleavir-ir:variable-p input)
+          do (setf pool (cleavir-kildall:replace-in-pool
+                         output-info input pool)))
   pool)
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
      (instruction cleavir-ir:multiple-to-fixed-instruction)
      pool)
-  (replace-in-pool
-   (reduce #'indicator-union (cleavir-ir:outputs instruction)
+  (cleavir-kildall:replace-in-pool
+   (reduce (lambda (o1 o2)
+             (cleavir-kildall:object-meet s o1 o2))
+           (cleavir-ir:outputs instruction)
            :key (lambda (location)
-                  (find-in-pool location pool)))
+                  (cleavir-kildall:find-in-pool location pool)))
    (first (cleavir-ir:inputs instruction))
    pool))
 
@@ -57,23 +59,25 @@
      (instruction cleavir-ir:write-cell-instruction)
      pool)
   (cleavir-kildall:pool-meet s
-   pool
-   (list (cons (first (cleavir-ir:inputs instruction))
-               ;; writing only side-effects the cell...
-               ;; (but we do have to merge it, so that the pool is
-               ;;  complete (FIXME: you sure?))
-               +none+)
-         (cons (second (cleavir-ir:inputs instruction))
-               ;; ...but has mysterious consequences for the value
-               +unknown+))))
+    pool
+    (cleavir-kildall:alist->map-pool
+     (list (cons (first (cleavir-ir:inputs instruction))
+                 ;; writing only side-effects the cell...
+                 ;; (but we do have to merge it, so that the pool is
+                 ;;  complete (FIXME: you sure?))
+                 +none+)
+           (cons (second (cleavir-ir:inputs instruction))
+                 ;; ...but has mysterious consequences for the value
+                 +unknown+)))))
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
      (instruction cleavir-ir:read-cell-instruction)
      pool)
   (cleavir-kildall:pool-meet s
-   pool
-   (list (cons (first (cleavir-ir:inputs instruction)) +none+))))
+    pool
+    (cleavir-kildall:alist->map-pool                        
+     (list (cons (first (cleavir-ir:inputs instruction)) +none+)))))
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
@@ -81,40 +85,13 @@
      pool)
   (cleavir-kildall:pool-meet s
    pool
-   ;; FIXME: better way to test variable-pness.
-   (loop for input in (cleavir-ir:inputs instruction)
-         ;; symbol is none (who cares though), object is global
-         for value in (list +none+ +stored+)
-         when (variable-p input)
-           collect (cons input value))))
-
-(defmethod cleavir-kildall:transfer
-    ((s escape)
-     (instruction cleavir-ir:rplaca-instruction)
-     pool)
-  ;; the object is now in the cons, so it has the cons's escaping.
-  ;; the cons is not affected.
-  ;; So copy the first into both. Works if they're eq, even.
-  (cleavir-kildall:pool-meet s
-   pool
-   (loop with cons = (find-in-pool-permissively
-                      (first (cleavir-ir:inputs))
-                      pool)
-         for input in (cleavir-ir:inputs instruction)
-         when (variable-p input)
-           collect (cons input cons))))
-(defmethod cleavir-kildall:transfer
-    ((s escape)
-     (instruction cleavir-ir:rplacd-instruction)
-     pool)
-  (cleavir-kildall:pool-meet s
-   pool
-   (loop with cons = (find-in-pool-permissively
-                      (first (cleavir-ir:inputs))
-                      pool)
-         for input in (cleavir-ir:inputs instruction)
-         when (variable-p input)
-           collect (cons input cons))))
+   ;; FIXME: better way to test cleavir-ir:variable-pness.
+   (cleavir-kildall:alist->map-pool
+    (loop for input in (cleavir-ir:inputs instruction)
+          ;; symbol is none (who cares though), object is global
+          for value in (list +none+ +stored+)
+          when (cleavir-ir:variable-p input)
+            collect (cons input value)))))
 
 (macrolet ((defharmless (inst-class)
              `(defmethod cleavir-kildall:transfer
@@ -123,9 +100,10 @@
   (flet ((harmless-pool (s pool instruction)
            (cleavir-kildall:pool-meet s
             pool
-            (loop for i in (cleavir-ir:inputs instruction)
-                  when (variable-p i)
-                    collect (cons i +none+)))))
+            (cleavir-kildall:alist->map-pool
+             (loop for i in (cleavir-ir:inputs instruction)
+                   when (cleavir-ir:variable-p i)
+                     collect (cons i +none+))))))
     (defharmless cleavir-ir:symbol-value-instruction)
     (defharmless cleavir-ir:fdefinition-instruction)
     (defharmless cleavir-ir:the-values-instruction)
@@ -158,7 +136,7 @@
      (instruction cleavir-ir:dynamic-allocation-instruction)
      pool)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-         (dx (find-in-pool-permissively input pool))
+         (dx (cleavir-kildall:find-in-pool input pool +none+))
          (policy (cleavir-ir:policy instruction)))
     (cond ((escapes-p dx)
            ;; The dynamic-extent declaration was wrong, so the
@@ -172,7 +150,8 @@
                                         'trust-dynamic-extent)
            ;; We trust DX declarations we can't verify, which means
            ;; removing the "unknown" bit.
-           (replace-in-pool (without-unknown dx) input pool))
+           (cleavir-kildall:replace-in-pool
+            (without-unknown dx) input pool))
           (t ; don't trust anything, so
            pool))))
 
@@ -183,14 +162,15 @@
    ;; this stupid thing is so that (f #'f) properly dooms.
    (let ((callee (first (cleavir-ir:inputs instruction)))
          (arguments (rest (cleavir-ir:inputs instruction))))
-     (if (find callee arguments)
-         (loop for input in arguments
-               when (variable-p input)
-                 collect (cons input +unknown+))
-         (list* (cons callee +called+)
-                (loop for input in arguments
-                      when (variable-p input)
-                        collect (cons input +unknown+)))))))
+     (cleavir-kildall:alist->map-pool
+      (if (find callee arguments)
+          (loop for input in arguments
+                when (cleavir-ir:variable-p input)
+                  collect (cons input +unknown+))
+          (list* (cons callee +called+)
+                 (loop for input in arguments
+                       when (cleavir-ir:variable-p input)
+                         collect (cons input +unknown+))))))))
 
 (defmethod cleavir-kildall:transfer
     ((s escape)
@@ -225,7 +205,8 @@
       (destructuring-bind (inst . pool) fetch
         (let ((id (cleavir-ir:value (second (cleavir-ir:inputs inst))))
               (out (first (cleavir-ir:outputs inst))))
-          (setf (aref info id) (find-in-pool out pool)))))
+          (setf (aref info id) (cleavir-kildall:find-in-pool
+                                out pool)))))
     info))
 
 (defmethod cleavir-kildall:transfer-enclose
@@ -233,10 +214,11 @@
   ;; a cell can be DXd if it it only input to DX closures that DX
   ;; their cells.
   (let* ((closure (first (cleavir-ir:outputs instruction)))
-         (closure-dx (find-in-pool closure pool)))
+         (closure-dx (cleavir-kildall:find-in-pool closure pool)))
     (cleavir-kildall:pool-meet s
-      (loop for indicator across info
-            for input in (cleavir-ir:inputs instruction)
-            collecting (cons input
-                             (indicator-union closure-dx indicator)))
+      (cleavir-kildall:alist->map-pool
+       (loop for indicator across info
+             for input in (cleavir-ir:inputs instruction)
+             collecting (cons input
+                              (indicator-union closure-dx indicator))))
       pool)))

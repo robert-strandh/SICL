@@ -15,6 +15,7 @@
    #:new-temporary
    #:name
    #:values-location #:make-values-location
+   #:variable-p
    #:external-input #:make-external-input
    #:register-location
    #:layer #:index
@@ -166,5 +167,7 @@
    #:draw-datum
    #:draw-flowchart
    #:label
+   #:input-label #:output-label
+   #:*input-label-hook* #:*output-label-hook*
    #:name
    #:datum-id))

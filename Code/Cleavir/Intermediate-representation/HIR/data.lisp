@@ -88,6 +88,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Helper function VARIABLE-P.
+
+(declaim (inline variable-p))
+(defun variable-p (datum)
+  (typep datum '(or lexical-location
+                    values-location)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Datum class IMMEDIATE-INPUT.
 ;;;
 ;;; The IMMEDIATE-INPUT datum corresponds to a raw machine interger

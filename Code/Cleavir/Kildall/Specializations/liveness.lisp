@@ -22,12 +22,8 @@
 ;;;; A <= B is B subset A.
 ;;;; sets (as lists) of locations are "these locations are live"
 
-(defun variable-p (input)
-  (typep input '(or cleavir-ir:lexical-location
-		 cleavir-ir:values-location)))
-
 (defun variable-inputs (instruction)
-  (remove-if-not #'variable-p (cleavir-ir:inputs instruction)))
+  (remove-if-not #'cleavir-ir:variable-p (cleavir-ir:inputs instruction)))
 
 (defmethod cleavir-kildall:entry-pool
     ((s liveness-traverse) instruction)

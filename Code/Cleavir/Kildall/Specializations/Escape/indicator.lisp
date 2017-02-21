@@ -24,7 +24,10 @@
 (defun indicator-union (&rest indicators)
   (apply #'logior indicators))
 
-(defun indicator<= (i1 i2)
+(defmethod cleavir-kildall:object-meet ((s escape) i1 i2)
+  (logior i1 i2))
+
+(defmethod cleavir-kildall:object<= ((s escape) i1 i2)
   (declare (fixnum i1 i2))
   (= (logand i1 i2) i1))
 
@@ -45,3 +48,14 @@
   (declare (fixnum indicator))
   ;; This is used for dynamic-extent assertion.
   (logand indicator (lognot +unknown+)))
+
+(defmethod cleavir-kildall-graphviz:draw-object ((s escape) o)
+  (with-output-to-string (s)
+    (when (logbitp 3 o) ; store
+      (write-char #\S s))
+    (when (logbitp 2 o) ; return
+      (write-char #\R s))
+    (when (logbitp 1 o) ; call
+      (write-char #\C s))
+    (when (logbitp 0 o) ; unknown
+      (write-char #\? s))))

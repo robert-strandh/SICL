@@ -1,6 +1,14 @@
 (cl:in-package #:cleavir-generate-ast)
 
 (defmethod acclimation:report-condition
+    ((condition values-&rest-syntax)
+     stream
+     (language acclimation:english))
+  (format stream "The values type ~s is syntactically invalid:~@
+                  it has a &rest variable followed by more elements."
+          (expr condition)))
+
+(defmethod acclimation:report-condition
     ((condition ignored-variable-referenced)
      stream
      (language acclimation:english))

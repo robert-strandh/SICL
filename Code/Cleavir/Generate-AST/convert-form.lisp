@@ -30,10 +30,8 @@
 (defun maybe-wrap-the (type ast)
   "Make a THE ast if the type is actually helpful (i.e. not all T)
 If AST is already a THE-AST, collapses both into one."
-  (multiple-value-bind (req opt rest restp)
-      (parse-values-type type)
-    ;; this takes care of the THE fudginess.
-    (unless restp (setf rest t))
+  (multiple-value-bind (req opt rest)
+      (the-values-components type)
     ;; collapse (the ... (the ...))
     (loop while (typep ast 'cleavir-ast:the-ast)
 	  do (setf (values req opt rest)

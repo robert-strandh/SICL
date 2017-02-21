@@ -810,10 +810,8 @@
     ((symbol (eql 'the)) form environment system)
   (db origin (the value-type subform) form
     (declare (ignore the))
-    (multiple-value-bind (req opt rest restp)
-	(parse-values-type value-type)
-      ;; THE fudge
-      (unless restp (setf rest 't))
+    (multiple-value-bind (req opt rest)
+	(the-values-components value-type)
       ;; we don't bother collapsing THE forms for user code.
       (cleavir-ast:make-the-ast
        (convert subform environment system)

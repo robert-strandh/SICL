@@ -74,7 +74,33 @@
 
 (defgeneric draw-instruction (instruction stream))
 
-(defmethod draw-instruction :around (instruction stream)
+(defgeneric input-label (instruction datum number))
+
+(defmethod input-label (instruction datum number)
+  (declare (ignore instruction datum))
+  (format nil "~d" number))
+
+(defvar *input-label-hook*)
+
+(defmethod input-label :around (instruction datum number)
+  (if (boundp '*input-label-hook*)
+      (funcall *input-label-hook* instruction datum number)
+      (call-next-method)))
+
+(defgeneric output-label (instruction datum number))
+
+(defmethod output-label (instruction datum number)
+  (declare (ignore instruction datum))
+  (format nil "~d" number))
+
+(defvar *output-label-hook*)
+
+(defmethod output-label :around (instruction datum number)
+  (if (boundp '*output-label-hook*)
+      (funcall *output-label-hook* instruction datum number)
+      (call-next-method)))
+
+(defmethod draw-instruction :before (instruction stream)
   (format stream "  ~a [shape = box];~%"
 	  (instruction-id instruction))
   ;; Draw a numbered bold arrow to each successor.
@@ -90,10 +116,10 @@
 	for i from 1
 	do (draw-datum datum stream)
 	   (format stream
-		   "  ~a -> ~a [color = red, style = dashed, label = \"~d\"];~%"
+		   "  ~a -> ~a [color = red, style = dashed, label = \"~a\"];~%"
 		   (datum-id datum)
 		   (instruction-id instruction)
-		   i))
+		   (input-label instruction datum i)))
   ;; Draw a numbered blue dashed arrow to each output
   (loop for datum in (outputs instruction)
 	for i from 1
@@ -102,8 +128,7 @@
 		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
 		   (instruction-id instruction)
 		   (datum-id datum)
-		   i))
-  (call-next-method))
+		   (output-label instruction datum i))))
 
 (defgeneric label (instruction))
 
@@ -146,24 +171,6 @@
 ;;;
 ;;; General-purpose instructions.
 
-(defmethod draw-instruction ((instruction the-instruction) stream)
-  (format stream "   ~a [label = \"the ~a\"];~%"
-	  (instruction-id instruction)
-	  (value-type instruction)))
-
-(defmethod draw-instruction ((instruction the-values-instruction)
-			     stream)
-  (format stream "   ~a [label = \"the (values ~@[~{~s~}~]~@[ &optional ~{~s~}~]~@[ &rest ~s~])\"];~%"
-	  (instruction-id instruction)
-	  (required-types instruction)
-	  (optional-types instruction)
-	  (rest-type instruction)))
-
-(defmethod draw-instruction ((instruction typeq-instruction) stream)
-  (format stream "   ~a [label = \"typeq ~a\"];~%"
-	  (instruction-id instruction)
-	  (value-type instruction)))
-
 (defun format-item (item)
   (cond ((symbolp item)
 	 item)
@@ -178,6 +185,18 @@
   (with-output-to-string (stream)
     (format stream "enter ~a"
 	    (mapcar #'format-item (cleavir-ir:lambda-list instruction)))))
+
+(defmethod label ((instruction the-instruction))
+  (format nil "the ~a" (value-type instruction)))
+
+(defmethod label ((instruction typeq-instruction))
+  (format nil "typeq ~a" (value-type instruction)))
+
+(defmethod label ((instruction the-values-instruction))
+  (format nil "the (values ~@[~{~s ~}~]~@[&optional ~{~s ~}~]~@[&rest ~s~])"
+          (required-types instruction)
+          (optional-types instruction)
+          (rest-type instruction)))
 
 (defmethod label ((instruction dynamic-allocation-instruction))
   "DX")
