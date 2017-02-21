@@ -100,7 +100,7 @@
       (funcall *output-label-hook* instruction datum number)
       (call-next-method)))
 
-(defmethod draw-instruction :around (instruction stream)
+(defmethod draw-instruction :before (instruction stream)
   (format stream "  ~a [shape = box];~%"
 	  (instruction-id instruction))
   ;; Draw a numbered bold arrow to each successor.
@@ -128,8 +128,7 @@
 		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
 		   (instruction-id instruction)
 		   (datum-id datum)
-		   (output-label instruction datum i)))
-  (call-next-method))
+		   (output-label instruction datum i))))
 
 (defgeneric label (instruction))
 
@@ -172,24 +171,6 @@
 ;;;
 ;;; General-purpose instructions.
 
-(defmethod draw-instruction ((instruction the-instruction) stream)
-  (format stream "   ~a [label = \"the ~a\"];~%"
-	  (instruction-id instruction)
-	  (value-type instruction)))
-
-(defmethod draw-instruction ((instruction the-values-instruction)
-			     stream)
-  (format stream "   ~a [label = \"the (values ~@[~{~s~}~]~@[ &optional ~{~s~}~]~@[ &rest ~s~])\"];~%"
-	  (instruction-id instruction)
-	  (required-types instruction)
-	  (optional-types instruction)
-	  (rest-type instruction)))
-
-(defmethod draw-instruction ((instruction typeq-instruction) stream)
-  (format stream "   ~a [label = \"typeq ~a\"];~%"
-	  (instruction-id instruction)
-	  (value-type instruction)))
-
 (defun format-item (item)
   (cond ((symbolp item)
 	 item)
@@ -204,6 +185,18 @@
   (with-output-to-string (stream)
     (format stream "enter ~a"
 	    (mapcar #'format-item (cleavir-ir:lambda-list instruction)))))
+
+(defmethod label ((instruction the-instruction))
+  (format nil "the ~a" (value-type instruction)))
+
+(defmethod label ((instruction typeq-instruction))
+  (format nil "typeq ~a" (value-type instruction)))
+
+(defmethod label ((instruction the-values-instruction))
+  (format nil "the (values ~@[~{~s ~}~]~@[&optional ~{~s ~}~]~@[&rest ~s~])"
+          (required-types instruction)
+          (optional-types instruction)
+          (rest-type instruction)))
 
 (defmethod label ((instruction dynamic-allocation-instruction))
   "DX")
