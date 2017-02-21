@@ -1,17 +1,12 @@
 (in-package #:cleavir-kildall-escape)
 
-;;; TODO: move this to cleavir-ir.
-(defun variable-p (input)
-  (typep input '(or cleavir-ir:lexical-location
-                 cleavir-ir:values-location)))
-
 ;;; default method: pass it along, marking inputs as unknown.
 (defmethod cleavir-kildall:transfer ((s escape) instruction pool)
   (cleavir-kildall:pool-meet s
    pool
    (cleavir-kildall:alist->map-pool
     (loop for input in (cleavir-ir:inputs instruction)
-          when (variable-p input)
+          when (cleavir-ir:variable-p input)
             collect (cons input +unknown+)))))
 
 ;;; return returns.
@@ -27,7 +22,7 @@
      pool)
   (let ((input (first (cleavir-ir:inputs instruction)))
         (output (first (cleavir-ir:outputs instruction))))
-    (if (variable-p input)
+    (if (cleavir-ir:variable-p input)
         (cleavir-kildall:replace-in-pool
          (cleavir-kildall:find-in-pool output pool) input pool)
         pool)))
@@ -41,7 +36,7 @@
              (first (cleavir-ir:outputs instruction))
              pool)
         for input in (cleavir-ir:inputs instruction)
-        when (variable-p input)
+        when (cleavir-ir:variable-p input)
           do (setf pool (cleavir-kildall:replace-in-pool
                          output-info input pool)))
   pool)
@@ -90,12 +85,12 @@
      pool)
   (cleavir-kildall:pool-meet s
    pool
-   ;; FIXME: better way to test variable-pness.
+   ;; FIXME: better way to test cleavir-ir:variable-pness.
    (cleavir-kildall:alist->map-pool
     (loop for input in (cleavir-ir:inputs instruction)
           ;; symbol is none (who cares though), object is global
           for value in (list +none+ +stored+)
-          when (variable-p input)
+          when (cleavir-ir:variable-p input)
             collect (cons input value)))))
 
 (macrolet ((defharmless (inst-class)
@@ -107,7 +102,7 @@
             pool
             (cleavir-kildall:alist->map-pool
              (loop for i in (cleavir-ir:inputs instruction)
-                   when (variable-p i)
+                   when (cleavir-ir:variable-p i)
                      collect (cons i +none+))))))
     (defharmless cleavir-ir:symbol-value-instruction)
     (defharmless cleavir-ir:fdefinition-instruction)
@@ -170,11 +165,11 @@
      (cleavir-kildall:alist->map-pool
       (if (find callee arguments)
           (loop for input in arguments
-                when (variable-p input)
+                when (cleavir-ir:variable-p input)
                   collect (cons input +unknown+))
           (list* (cons callee +called+)
                  (loop for input in arguments
-                       when (variable-p input)
+                       when (cleavir-ir:variable-p input)
                          collect (cons input +unknown+))))))))
 
 (defmethod cleavir-kildall:transfer

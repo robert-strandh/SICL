@@ -18,10 +18,6 @@
 ;;;; the graph can be altered. So the equivalence classes are
 ;;;; actually sequences (lists) where the cars are more recent.
 
-(defun variable-p (input)
-  (typep input '(or cleavir-ir:lexical-location
-		 cleavir-ir:values-location)))
-
 (defun make-seq (&rest objects)
   objects)
 
@@ -76,7 +72,7 @@
 (defmethod cleavir-kildall:transfer ((s redundant-traverse) i pool)
   ;; Add any constant inputs that aren't already in a class.
   (dolist (in (cleavir-ir:inputs i))
-    (unless (or (variable-p in)
+    (unless (or (cleavir-ir:variable-p in)
 		(find in pool :test #'in-seq-p))
       (setf pool (cons (make-seq in) pool))))
   ;; For each output: remove the class with that output in it, if

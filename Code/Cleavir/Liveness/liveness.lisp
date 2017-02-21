@@ -48,10 +48,7 @@
   (cleavir-meter:with-meter (m *liveness-meter*)
     (let ((liveness (make-instance 'liveness))
           stack)
-      (flet ((variable-p (input)
-               (or (typep input 'cleavir-ir:lexical-location)
-                   (typep input 'cleavir-ir:values-location)))
-             (successor-btable (successor)
+      (flet ((successor-btable (successor)
                (gethash successor (btable liveness))))
         (cleavir-ir:map-instructions-arbitrary-order
          (lambda (instruction)
@@ -79,7 +76,7 @@
                  live (set-difference live (cleavir-ir:outputs node))
                  ;; Add to the set the items used by NODE that
                  ;; are registers or lexical locations.
-                 live (union live (remove-if-not #'variable-p
+                 live (union live (remove-if-not #'cleavir-ir:variable-p
                                                  (cleavir-ir:inputs node)))
                  (gethash node (btable liveness)) live
                  stack (append stack (cleavir-ir:predecessors node)))))))))))
