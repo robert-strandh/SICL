@@ -1,5 +1,15 @@
 (in-package #:cleavir-kildall-escape)
 
+;;; KLUDGE: Values locations are sometimes shared between functions
+;;; (when there's a nonlocal exit into a values context). This
+;;; analysis relies on knowing all the users of outputs, so we have
+;;; a problem. Might also come up with functions that don't return?
+;;; Anyway, so we patch over this by calling anything we don't know
+;;; users of unknown when the output is a values location.
+;;; When it's lexical we use the normal one.
+(defun find-values-in-pool (location pool)
+  (cleavir-kildall:find-in-pool location pool +unknown+))
+
 ;;; default method: pass it along, marking inputs as unknown.
 (defmethod cleavir-kildall:transfer ((s escape) instruction pool)
   (cleavir-kildall:pool-meet s
@@ -32,7 +42,7 @@
      (instruction cleavir-ir:fixed-to-multiple-instruction)
      pool)
   (loop with output-info
-          = (cleavir-kildall:find-in-pool
+          = (find-values-in-pool
              (first (cleavir-ir:outputs instruction))
              pool)
         for input in (cleavir-ir:inputs instruction)
@@ -50,7 +60,9 @@
              (cleavir-kildall:object-meet s o1 o2))
            (cleavir-ir:outputs instruction)
            :key (lambda (location)
-                  (cleavir-kildall:find-in-pool location pool)))
+                  (cleavir-kildall:find-in-pool location pool))
+           ;; M->F with no outputs are possible.
+           :initial-value +none+)
    (first (cleavir-ir:inputs instruction))
    pool))
 
