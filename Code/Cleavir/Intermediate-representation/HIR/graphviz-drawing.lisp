@@ -217,8 +217,9 @@
 (defmethod label ((instruction fdefinition-instruction)) "fdefinition")
 
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
-  (format stream "   ~a [label = \"enclose\"];~%"
-	  (instruction-id instruction))
+  (format stream "   ~a [label = \"enclose~:[~; DX~]\"];~%"
+	  (instruction-id instruction)
+          (dynamic-extent-p instruction))
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
 	  (gethash (code instruction) *instruction-table*)
 	  (instruction-id instruction)))
@@ -372,7 +373,9 @@
 ;;;
 ;;; Instructions related to the static runtime environment.
 
-(defmethod label ((instruction create-cell-instruction)) "Create cell")
+(defmethod label ((instruction create-cell-instruction))
+  (format nil "Create cell~:[~; DX~]"
+          (dynamic-extent-p instruction)))
 
 (defmethod label ((instruction fetch-instruction)) "Fetch")
 
