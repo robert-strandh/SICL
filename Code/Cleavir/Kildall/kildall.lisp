@@ -64,7 +64,8 @@
 ;;; Step A5 of the algorithm: actually doing a transfer.
 ;;; Mostly specialized just for traversal differences.
 ;;; Called for effect.
-(defgeneric process-transfer (specialization instruction pool))
+(defgeneric process-transfer (specialization instruction pool)
+  (:argument-precedence-order instruction specialization pool))
 
 ;;; Default method just decides whether there's no info.
 (defmethod process-instruction (s instruction new-in)

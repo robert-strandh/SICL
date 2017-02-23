@@ -47,9 +47,11 @@
     (setf (entries specialization) entries)))
 
 ;;; given an ENTER instruction, and a RETURN instruction or null
-;;; as described above, return a pool representing information abt
+;;; as described above, and their pools,
+;;; return a pool representing information about
 ;;; the function represented by ENTER, to be put with its ENCLOSE.
-(defgeneric compute-function-pool (specialization enter return))
+(defgeneric compute-function-pool
+    (specialization enter enter-pool return return-pool))
 
 (defmethod process-transfer
     ((specialization reverse-traverse-interfunction)
@@ -58,7 +60,13 @@
   (let ((entry (find-entry specialization instruction
                            :key #'entry-enter)))
     (when (entry-enclose entry)
-      (add-work (entry-enclose entry)
-                (compute-function-pool specialization
-                                       (entry-enter entry)
-                                       (entry-return entry))))))
+      (let ((enter (entry-enter entry))
+            (ret (entry-return entry)))
+        (add-work (entry-enclose entry)
+                  (compute-function-pool
+                   specialization
+                   ;; FIXME: *dictionary* should be removed somehow
+                   enter (instruction-pool enter *dictionary*)
+                   ret (when ret
+                         ;; if ret = nil just pass garbage
+                         (instruction-pool ret *dictionary*))))))))

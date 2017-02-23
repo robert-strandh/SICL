@@ -32,14 +32,14 @@
 
 (defmethod cleavir-kildall:object-meet ((s escape) i1 i2)
   (cond ((arrayp i1) ; have to worry about function indicators now
-         (assert (and (arrayp i2) (= (length i1 i2))))
+         (assert (and (arrayp i2) (= (length i1) (length i2))))
          (map '(simple-array indicator (*))
               #'indicator-union i1 i2))
         (t (logior i1 i2))))
 
 (defmethod cleavir-kildall:object<= ((s escape) i1 i2)
   (cond ((arrayp i1)
-         (assert (and (arrayp i2) (= (length i1 i2))))
+         (assert (and (arrayp i2) (= (length i1) (length i2))))
          (every #'indicator<= i1 i2))
         (t (indicator<= i1 i2))))
 
