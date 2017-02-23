@@ -203,30 +203,47 @@
 ;;; infos are arrays. the nth element is what happens to the nth
 ;;; closed-over cell. in the future it could track arguments too,
 ;;; but using that information requires a forward analysis.
-(defmethod cleavir-kildall:dictionary->info ((s escape) dictionary)
+(defmethod cleavir-kildall:compute-function-pool
+    ((specialization escape) enter return)
+  (declare (ignore return))
   ;; for the closed over cells, we rely on the segregate-lexicals
   ;; generated code, i.e.: there is exactly one variable for each
   ;; cell, one FETCH for each variable, and each has an
   ;; immediate-input with the position of that cell in the inputs.
-  (let* ((fetches (loop for inst being the hash-keys of dictionary
-                          using (hash-value pool)
-                        when (typep inst 'cleavir-ir:fetch-instruction)
-                          collect (cons inst pool)))
-         (info (make-array (length fetches))))
+  (let ((fetches (loop for inst
+                         = (first (cleavir-ir:successors enter))
+                           then (first (cleavir-ir:successors inst))
+                       while (typep inst 'cleavir-ir:fetch-instruction)
+                       collect (cons
+                                inst
+                                (instruction-pool inst *dictionary*))))
+        (info (make-array (length fetches)
+                          :element-type 'indicator)))
     (dolist (fetch fetches)
       (destructuring-bind (inst . pool) fetch
         (let ((id (cleavir-ir:value (second (cleavir-ir:inputs inst))))
               (out (first (cleavir-ir:outputs inst))))
           (setf (aref info id) (cleavir-kildall:find-in-pool
                                 out pool)))))
-    info))
+    (cleavir-kildall:alist->map-pool
+     (acons enter info nil))))
 
-(defmethod cleavir-kildall:transfer-enclose
-    ((s escape) instruction info pool)
-  ;; a cell can be DXd if it it only input to DX closures that DX
+(defmethod cleavir-kildall:transfer
+    ((s escape) (instruction cleavir-ir:enclose-instruction) pool)
+  ;; a cell can be DXd if it is only input to DX closures that DX
   ;; their cells.
-  (let* ((closure (first (cleavir-ir:outputs instruction)))
+  ;; FIXME: this leads to cells getting the "call" bit.
+  (let* ((info (cleavir-kildall:find-in-pool
+                (cleavir-ir:code instruction)
+                pool
+                ;; default: assume the best, and it will be revised
+                ;; down later.
+                (make-array (length (cleavir-ir:inputs instruction))
+                            :element-type 'indicator
+                            :initial-element +none+)))
+         (closure (first (cleavir-ir:outputs instruction)))
          (closure-dx (cleavir-kildall:find-in-pool closure pool)))
+    (declare (type (simple-array indicator (*)) info))
     (cleavir-kildall:pool-meet s
       (cleavir-kildall:alist->map-pool
        (loop for indicator across info
