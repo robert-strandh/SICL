@@ -21,11 +21,11 @@
                                        (instruction-pool
                                         instruction
                                         dictionary))))
-               (error (e)
+               (error ()
                  ;; this happens because of ENTER instructions'
                  ;; closure env variable, if it's unused.
                  ;; those variables don't matter, so, ignorable.
-                 (warn "Could not draw an object: ~a" e)
+                 ;(warn "Could not draw an object: ~a" e)
                  (format nil "~d" number))))))
     (cleavir-ir-graphviz:draw-flowchart
      initial-instruction filename)))

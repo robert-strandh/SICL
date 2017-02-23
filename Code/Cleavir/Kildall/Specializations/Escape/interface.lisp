@@ -1,6 +1,7 @@
 (in-package #:cleavir-kildall-escape)
 
-(defun mark-dynamic-extent (initial-instruction)
+;;; :draw specifies a file to write out an annotated .dot to.
+(defun mark-dynamic-extent (initial-instruction &key draw)
   (check-type initial-instruction cleavir-ir:enter-instruction)
   (let* ((s (make-instance 'escape))
          (d (cleavir-kildall:kildall s initial-instruction)))
@@ -14,4 +15,7 @@
            (when (dxable-p dxness)
              (setf (cleavir-ir:dynamic-extent-p inst) t)))))
      initial-instruction)
+    (when draw
+      (cleavir-kildall-graphviz:draw-flowchart-with-outputs
+       initial-instruction draw s d))
     (values d s)))
