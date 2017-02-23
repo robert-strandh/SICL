@@ -22,7 +22,7 @@
   ;; because functions don't always reach a return instruction,
   ;; we actually start with all instructions as entries.
   (let (result)
-    (cleavir-ir:map-instructions-locally
+    (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
        (push (cons instruction
 		   (entry-pool specialization instruction))
@@ -31,9 +31,14 @@
     result))
 
 (defmethod compute-initial-work-list
-    ((specialization forward-traverse) initial)
-  ;; FIXME: are there no other ways to begin? UNWIND?
-  (list (cons initial (entry-pool specialization initial))))
+    ((s forward-traverse) initial)
+  (let (result)
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (inst)
+       (when (typep inst 'cleavir-ir:enter-instruction)
+         (push (cons inst (entry-pool s inst)) result)))
+     initial)
+    result))
 
 (defun add-work (instruction pool)
   (push (cons instruction pool) *work-list*))
@@ -54,7 +59,6 @@
 ;;; Called for effect.
 (defgeneric process-instruction
     (specialization instruction new-in)
-  ;; see unwind-instruction method.
   (:argument-precedence-order instruction specialization new-in))
 
 ;;; Step A5 of the algorithm: actually doing a transfer.
@@ -76,12 +80,6 @@
 	  (t ; new information, use it
 	   (process-transfer s instruction
 			     (pool-meet s new-in dict-in))))))
-
-;;; If we hit an UNWIND, do nothing.
-;;; FIXME: this means unwinds will not appear in dictionaries. OK?
-(defmethod process-instruction
-    (s (instruction cleavir-ir:unwind-instruction) new-in)
-  (declare (ignore s new-in)))
 
 ;;; Put the new information into the dictionary before proceeding.
 (defmethod process-transfer :before (s instruction pool)
@@ -123,7 +121,9 @@
       (add-work pred out))))
 
 ;;; Main entry point.
-(defun kildall (specialization initial-instruction)
+(defgeneric kildall (specialization initial-instruction))
+
+(defmethod kildall (specialization initial-instruction)
   (let ((*work-list* (compute-initial-work-list
 		      specialization
 		      initial-instruction))

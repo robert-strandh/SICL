@@ -20,11 +20,7 @@
            #:object-meet #:object<=
            #:empty-map-pool #:alist->map-pool
            #:find-in-pool #:replace-in-pool)
-  (:export #:interfunction-mixin #:interfunction-info-mixin
-           #:interfunction-once-mixin
-           #:map-tree
-           #:enter #:dictionary #:children #:info
-           #:transfer-enclose #:dictionary->info))
+  (:export #:reverse-traverse-interfunction #:compute-function-pool))
 
 (defpackage #:cleavir-kildall-graphviz
   (:use #:cl #:cleavir-kildall)
