@@ -90,6 +90,5 @@
    (:file "instruction-mixin-classes")
    (:file "graphviz-drawing")
    (:file "map-instructions-arbitrary-order")
-   (:file "map-instructions-locally")
    (:file "set-predecessors")
    (:file "map-instructions")))

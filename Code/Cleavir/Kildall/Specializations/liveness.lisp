@@ -53,7 +53,7 @@
 	 (after (cleavir-kildall:kildall s initial-instruction))
 	 (before (make-hash-table :test #'eq)))
     ;; compute the befores in the obvious way
-    (cleavir-ir:map-instructions-locally
+    (cleavir-ir:map-instructions-arbitrary-order
      (lambda (i)
        (setf (gethash i before)
 	     (reduce (lambda (x y) (cleavir-set:union s x y))
@@ -62,7 +62,7 @@
 		     :initial-value (cleavir-set:make-set s))))
      initial-instruction)
     ;; now turn both back into lists
-    (cleavir-ir:map-instructions-locally
+    (cleavir-ir:map-instructions-arbitrary-order
      (lambda (i)
        (setf (gethash i before)
 	     (cleavir-set:set->list s (gethash i before))

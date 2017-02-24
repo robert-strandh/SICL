@@ -152,8 +152,6 @@
    #:hir-to-mir #:specialize
    #:map-instructions-arbitrary-order
    #:filter-instructions #:instructions-of-type
-   #:map-instructions-locally #:filter-instructions-locally
-   #:local-instructions-of-type
    #:map-instructions
    #:map-instructions-with-owner
    #:map-instructions-by-owner

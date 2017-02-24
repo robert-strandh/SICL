@@ -38,7 +38,7 @@
   (let ((a (assoc location pool)))
     (cond (a (cdr a))
           (default-p default)
-          (t (error "BUG: missing location")))))
+          (t (error "BUG: missing location ~a" location)))))
 
 ;;; not a SETF since it makes a new one.
 (defun replace-in-pool (new location pool)

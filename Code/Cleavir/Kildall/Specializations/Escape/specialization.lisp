@@ -2,7 +2,7 @@
 
 (defclass escape (cleavir-kildall:reverse-spread-traverse
                   cleavir-kildall:map-pool-mixin
-                  cleavir-kildall:interfunction-once-mixin)
+                  cleavir-kildall:reverse-traverse-interfunction)
   ())
 
 (defmethod cleavir-kildall:entry-pool ((s escape) i)

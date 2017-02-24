@@ -1,5 +1,11 @@
 (in-package #:cleavir-kildall-escape)
 
+;;; KLUDGE Should be a better mechanism for defaulting (in Kildall)
+;;; ...but this is needed for loops etc. If it's too optimistic
+;;; another successor will push back negativity.
+(defun find-in-pool (location pool)
+  (cleavir-kildall:find-in-pool location pool +none+))
+
 ;;; default method: pass it along, marking inputs as unknown.
 (defmethod cleavir-kildall:transfer ((s escape) instruction pool)
   (cleavir-kildall:pool-meet s
@@ -24,7 +30,7 @@
         (output (first (cleavir-ir:outputs instruction))))
     (if (cleavir-ir:variable-p input)
         (cleavir-kildall:replace-in-pool
-         (cleavir-kildall:find-in-pool output pool) input pool)
+         (find-in-pool output pool) input pool)
         pool)))
 
 (defmethod cleavir-kildall:transfer
@@ -32,7 +38,7 @@
      (instruction cleavir-ir:fixed-to-multiple-instruction)
      pool)
   (loop with output-info
-          = (cleavir-kildall:find-in-pool
+          = (find-in-pool
              (first (cleavir-ir:outputs instruction))
              pool)
         for input in (cleavir-ir:inputs instruction)
@@ -50,7 +56,9 @@
              (cleavir-kildall:object-meet s o1 o2))
            (cleavir-ir:outputs instruction)
            :key (lambda (location)
-                  (cleavir-kildall:find-in-pool location pool)))
+                  (find-in-pool location pool))
+           ;; M->F with no outputs are possible.
+           :initial-value +none+)
    (first (cleavir-ir:inputs instruction))
    pool))
 
@@ -136,7 +144,7 @@
      (instruction cleavir-ir:dynamic-allocation-instruction)
      pool)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-         (dx (cleavir-kildall:find-in-pool input pool +none+))
+         (dx (find-in-pool input pool))
          (policy (cleavir-ir:policy instruction)))
     (cond ((escapes-p dx)
            ;; The dynamic-extent declaration was wrong, so the
@@ -191,30 +199,51 @@
 ;;; infos are arrays. the nth element is what happens to the nth
 ;;; closed-over cell. in the future it could track arguments too,
 ;;; but using that information requires a forward analysis.
-(defmethod cleavir-kildall:dictionary->info ((s escape) dictionary)
+(defmethod cleavir-kildall:compute-function-pool
+    ((specialization escape) enter enter-pool return return-pool)
+  (declare (ignore return return-pool))
   ;; for the closed over cells, we rely on the segregate-lexicals
   ;; generated code, i.e.: there is exactly one variable for each
   ;; cell, one FETCH for each variable, and each has an
   ;; immediate-input with the position of that cell in the inputs.
-  (let* ((fetches (loop for inst being the hash-keys of dictionary
-                          using (hash-value pool)
-                        when (typep inst 'cleavir-ir:fetch-instruction)
-                          collect (cons inst pool)))
-         (info (make-array (length fetches))))
+  (let* ((fetches
+           (loop for inst
+                   = (first (cleavir-ir:successors enter))
+                     then (first (cleavir-ir:successors inst))
+                 while (typep inst 'cleavir-ir:fetch-instruction)
+                 ;; the cell #, and the variable with the cell.
+                 collect (cons (cleavir-ir:value
+                                (second
+                                 (cleavir-ir:inputs inst)))
+                               (first
+                                (cleavir-ir:outputs inst)))))
+         (info (make-array (length fetches)
+                           :element-type 'indicator)))
     (dolist (fetch fetches)
-      (destructuring-bind (inst . pool) fetch
-        (let ((id (cleavir-ir:value (second (cleavir-ir:inputs inst))))
-              (out (first (cleavir-ir:outputs inst))))
-          (setf (aref info id) (cleavir-kildall:find-in-pool
-                                out pool)))))
-    info))
+      (destructuring-bind (id . out) fetch
+        ;; note that the cell outputs are not live at the ENTER,
+        ;; so if dead variables are excluded this will need
+        ;; rewriting.
+        (setf (aref info id) (find-in-pool out enter-pool))))
+    (cleavir-kildall:alist->map-pool
+     (acons enter info nil))))
 
-(defmethod cleavir-kildall:transfer-enclose
-    ((s escape) instruction info pool)
-  ;; a cell can be DXd if it it only input to DX closures that DX
+(defmethod cleavir-kildall:transfer
+    ((s escape) (instruction cleavir-ir:enclose-instruction) pool)
+  ;; a cell can be DXd if it is only input to DX closures that DX
   ;; their cells.
-  (let* ((closure (first (cleavir-ir:outputs instruction)))
-         (closure-dx (cleavir-kildall:find-in-pool closure pool)))
+  ;; FIXME: this leads to cells getting the "call" bit.
+  (let* ((info (cleavir-kildall:find-in-pool
+                (cleavir-ir:code instruction)
+                pool
+                ;; default: assume the best, and it will be revised
+                ;; down later.
+                (make-array (length (cleavir-ir:inputs instruction))
+                            :element-type 'indicator
+                            :initial-element +none+)))
+         (closure (first (cleavir-ir:outputs instruction)))
+         (closure-dx (find-in-pool closure pool)))
+    (declare (type (simple-array indicator (*)) info))
     (cleavir-kildall:pool-meet s
       (cleavir-kildall:alist->map-pool
        (loop for indicator across info

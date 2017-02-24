@@ -1,69 +1,72 @@
 (in-package #:cleavir-kildall)
 
-;;;; Stuff for Kildall-ing nested functions.
-;;;; In some situations we don't need to, like liveness. In this
-;;;; case just use the normal Kildall interface.
-;;;; If we do need to, we call the per-function Kildall when we
-;;;; hit an ENCLOSE instruction. DICTIONARY->INFO then converts the
-;;;; Kildall information into an "info", which is some
-;;;; specialization thing. Infos are passed to TRANSFER-ENCLOSE.
-;;;; We can either call Kildall with the pool of the enclose
-;;;; instruction or not. If we don't, we only need to do one
-;;;; analysis of the inner function, ever, so we store that.
-;;;; Kildall-ing is expected to be very expensive so we'd like to
-;;;; avoid it as much as possible.
+;;;; Stuff for Kildall-ing nested functions. That is, Kildall works
+;;;; otherwise, but with this we can deal with enclose and funcall
+;;;; in a much more detailed way.
 
-;;; Information is stored and used through the specializations.
-;;; Essentially, each is a tree where a child is an inner function
-;;; (like a function-tree), plus stuff for running optimizations.
-;;; See escape.lisp for an example.
-(defclass interfunction-mixin ()
-  ((%enter :initarg :enter :reader enter)
-   (%dictionary :initarg :dictionary :accessor dictionary)
-   (%children :initarg :children :accessor children
-              :initform nil)))
+;;;; We start Kildall with a list where each entry is
+;;;; (ENTER ENCLOSE RETURN)
+;;;; where ENTER is an enter instruction;
+;;;; ENCLOSE is the enclose with ENTER as its CODE, or NIL if
+;;;; there is no such instruction;
+;;;; RETURN is the return owned by ENTER or NIL if there isn't one.
 
-;;; Traverses that use/have info for functions.
-(defclass interfunction-info-mixin (interfunction-mixin)
-  ((%info :initarg :info :accessor info)))
+(defstruct (entry (:type list)
+                  (:constructor make-entry
+                      (enter enclose return)))
+  enter enclose return)
 
-(defclass interfunction-once-mixin (interfunction-info-mixin) ())
+(defclass interfunction () ; abstract
+  ((%entries :initarg :entries :accessor entries)))
+(defclass reverse-traverse-interfunction
+    (reverse-traverse interfunction)
+  ())
 
-;;; given an already complete (with dictionary/info) specialization
-;;; call something on all the enters/dicts of it and all children.
-(defun map-tree (function specialization)
-  (funcall function (enter specialization)
-           (dictionary specialization))
-  (map nil (lambda (c) (map-tree function c))
-       (children specialization)))
+(defun find-entry (specialization object &key (key #'identity))
+  (find object (entries specialization) :key key))
 
-(defmethod transfer
-    ((specialization interfunction-once-mixin)
-     (instruction cleavir-ir:enclose-instruction)
+;;; Compute the entries at the start.
+(defmethod kildall :before ((specialization interfunction)
+                            initial-instruction)
+  (let ((entries (list (make-entry initial-instruction nil nil))))
+    (cleavir-ir:map-instructions-by/with-owner
+     (lambda (instruction owner)
+       (typecase instruction
+         (cleavir-ir:enclose-instruction
+          (push (make-entry (cleavir-ir:code instruction)
+                            instruction
+                            nil)
+                entries))
+         (cleavir-ir:return-instruction
+          ;; should always be after the entry is created, due to
+          ;; the definition of m-i-b/w-o
+          (setf (entry-return
+                 (find owner entries :key #'entry-enter))
+                instruction))))
+     initial-instruction)
+    (setf (entries specialization) entries)))
+
+;;; given an ENTER instruction, and a RETURN instruction or null
+;;; as described above, and their pools,
+;;; return a pool representing information about
+;;; the function represented by ENTER, to be put with its ENCLOSE.
+(defgeneric compute-function-pool
+    (specialization enter enter-pool return return-pool))
+
+(defmethod process-transfer
+    ((specialization reverse-traverse-interfunction)
+     (instruction cleavir-ir:enter-instruction)
      pool)
-  (let* ((s (find instruction (children specialization)
-                  :key #'enter)) ; if we've already analyzed, grab
-         (info
-           (if s
-               (info s)
-               ;; haven't seen this enclose before, so take a dive.
-               ;; Make a new specialization for the inner function,
-               ;; run Kildall recursively, edit in the info, bam.
-               (let* ((enter (cleavir-ir:code instruction))
-                      ;; TODO: this should be given more info
-                      ;; ...and maybe a gf for make-instance here?
-                      (child (make-instance
-                              (class-of specialization)
-                              :enter enter))
-                      (dict (kildall child enter))
-                      (info (dictionary->info specialization dict)))
-                 ;; store the info for the next hit.
-                 (setf (dictionary child) dict
-                       (info child) info)
-                 (push child (children specialization))
-                 info))))
-    (transfer-enclose specialization instruction info pool)))
-
-(defgeneric transfer-enclose (specialization instruction info pool))
-
-(defgeneric dictionary->info (specialization dictionary))
+  (let ((entry (find-entry specialization instruction
+                           :key #'entry-enter)))
+    (when (entry-enclose entry)
+      (let ((enter (entry-enter entry))
+            (ret (entry-return entry)))
+        (add-work (entry-enclose entry)
+                  (compute-function-pool
+                   specialization
+                   ;; FIXME: *dictionary* should be removed somehow
+                   enter (instruction-pool enter *dictionary*)
+                   ret (when ret
+                         ;; if ret = nil just pass garbage
+                         (instruction-pool ret *dictionary*))))))))

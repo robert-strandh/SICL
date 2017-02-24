@@ -17,6 +17,8 @@
 (defconstant +returned+ #b0100)
 (defconstant +stored+ #b1000)
 
+(deftype indicator () '(unsigned-byte 4))
+
 (declaim (inline indicator-union indicator<=
                  dxable-p escapes-p
                  without-unknown))
@@ -24,31 +26,43 @@
 (defun indicator-union (&rest indicators)
   (apply #'logior indicators))
 
+(defun indicator<= (i1 i2)
+  (declare (type indicator i1 i2))
+  (zerop (logandc1 i1 i2)))
+
 (defmethod cleavir-kildall:object-meet ((s escape) i1 i2)
-  (logior i1 i2))
+  (cond ((arrayp i1) ; have to worry about function indicators now
+         (assert (and (arrayp i2) (= (length i1) (length i2))))
+         (map '(simple-array indicator (*))
+              #'indicator-union i1 i2))
+        (t (logior i1 i2))))
 
 (defmethod cleavir-kildall:object<= ((s escape) i1 i2)
-  (declare (fixnum i1 i2))
-  (= (logand i1 i2) i1))
+  (cond ((arrayp i1)
+         (assert (and (arrayp i2) (= (length i1) (length i2))))
+         (every #'indicator<= i1 i2))
+        (t (indicator<= i1 i2))))
 
 (defun dxable-p (indicator)
-  (declare (fixnum indicator))
+  (declare (type indicator indicator))
   ;; only being called is allowed.
   (zerop (logand indicator
                  (indicator-union +unknown+ +returned+ +stored+))))
 
 (defun escapes-p (indicator)
-  (declare (fixnum indicator))
+  (declare (type indicator indicator))
   ;; This is used to verify dynamic-extent declarations.
   ;; It's only true if it DEFINITELY escapes, not just maybe escapes.
   (not (zerop (logand indicator
                       (indicator-union +returned+ +stored+)))))
 
 (defun without-unknown (indicator)
-  (declare (fixnum indicator))
+  (declare (type indicator indicator))
   ;; This is used for dynamic-extent assertion.
   (logand indicator (lognot +unknown+)))
 
+;;; Doesn't need a method for function-indicators since those are
+;;; never on outputs or inputs. But that's FRAGILE.
 (defmethod cleavir-kildall-graphviz:draw-object ((s escape) o)
   (with-output-to-string (s)
     (when (logbitp 3 o) ; store
