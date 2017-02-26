@@ -19,7 +19,7 @@
   (:export #:map-pool-mixin
            #:object-meet #:object<=
            #:empty-map-pool #:alist->map-pool
-           #:find-in-pool #:replace-in-pool)
+           #:find-in-pool #:replace-in-pool #:pool-subst)
   (:export #:reverse-traverse-interfunction #:compute-function-pool))
 
 (defpackage #:cleavir-kildall-graphviz

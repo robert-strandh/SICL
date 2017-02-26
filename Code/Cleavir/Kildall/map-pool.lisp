@@ -46,3 +46,9 @@
     (if a
         (acons location new (remove a pool))
         (acons location new pool))))
+
+;;; convenient way to do the above for some fixed set of locations
+(defun pool-subst (pool &rest locations-and-values)
+  (loop for (location value) on locations-and-values by #'cddr
+        do (setf pool (replace-in-pool value location pool))
+        finally (return pool)))
