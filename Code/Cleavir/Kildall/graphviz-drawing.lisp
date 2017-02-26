@@ -34,13 +34,16 @@
                                    specialization dictionary)
   (let* ((cleavir-ir-graphviz:*input-label-hook*
            (lambda (instruction datum number)
-             (format nil "~d: ~a"
-                     number
-                     (draw-object specialization
-                                  (find-in-pool
-                                   datum
-                                   (instruction-pool
-                                    instruction
-                                    dictionary)))))))
+             ;; conditionalize this?
+             (if (cleavir-ir:variable-p datum)
+                 (format nil "~d: ~a"
+                         number
+                         (draw-object specialization
+                                      (find-in-pool
+                                       datum
+                                       (instruction-pool
+                                        instruction
+                                        dictionary))))
+                 (format nil "~d" number)))))
     (cleavir-ir-graphviz:draw-flowchart
      initial-instruction filename)))
