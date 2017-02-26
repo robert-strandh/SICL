@@ -171,16 +171,21 @@
     ((s type-inference)
      (instruction cleavir-ir:multiple-to-fixed-instruction)
      pool)
-  (loop with vtype = (find-type
-		      (first (cleavir-ir:inputs instruction))
-		      pool)
-	for n from 0
-	for output in (cleavir-ir:outputs instruction)
-	for bag = (cleavir-kildall:replace-in-pool
-                   (values-nth vtype n) output pool)
-	  then (cleavir-kildall:replace-in-pool
-                (values-nth vtype n) output bag)
-	finally (return bag)))
+  (if (null (cleavir-ir:outputs instruction))
+      ;; It seems weird, but this kind of instruction is sometimes
+      ;; generated, and we need to ensure it doesn't just return
+      ;; NIL from that loop.
+      pool
+      (loop with vtype = (find-type
+                          (first (cleavir-ir:inputs instruction))
+                          pool)
+            for n from 0
+            for output in (cleavir-ir:outputs instruction)
+            for bag = (cleavir-kildall:replace-in-pool
+                       (values-nth vtype n) output pool)
+              then (cleavir-kildall:replace-in-pool
+                    (values-nth vtype n) output bag)
+            finally (return bag))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
