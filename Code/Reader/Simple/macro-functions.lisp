@@ -392,7 +392,8 @@
 		      (:multiple-escape
 		       (go even-escapes))))
 		terminate
-		  (let ((char (gethash token *character-names*)))
+		  (let* ((upcase (string-upcase token))
+                         (char (gethash upcase *character-names*)))
 		    (if (null char)
 			(error 'unknown-character-name
 			       :stream stream
