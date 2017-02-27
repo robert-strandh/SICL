@@ -13,9 +13,12 @@
          (approximate-type
           `(eql ,(second (cleavir-ir:form location))))
          (approximate-type 't)))
-    ((or cleavir-ir:lexical-location cleavir-ir:values-location)
+    (cleavir-ir:lexical-location
      (cleavir-kildall:find-in-pool location pool
-                                   (approximate-type 'nil)))))
+                                   (approximate-type 'nil)))
+    (cleavir-ir:values-location
+     (cleavir-kildall:find-in-pool location pool
+                                   (values-bottom)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -47,14 +50,6 @@
   (cleavir-kildall:replace-in-pool
    (find-type (first (cleavir-ir:inputs instruction)) pool)
    (first (cleavir-ir:outputs instruction))
-   pool))
-
-(defmethod cleavir-kildall:transfer
-    ((s type-inference)
-     (instruction cleavir-ir:enclose-instruction) pool)
-  ;; TODO: function types.
-  (cleavir-kildall:replace-in-pool
-   (approximate-type 't) (first (cleavir-ir:outputs instruction))
    pool))
 
 (defmethod cleavir-kildall:transfer
@@ -186,6 +181,42 @@
               then (cleavir-kildall:replace-in-pool
                     (values-nth vtype n) output bag)
             finally (return bag))))
+
+(defmethod cleavir-kildall:compute-function-pool
+    ((specialization type-inference)
+     enter enter-pool return return-pool)
+  (declare (ignore enter-pool)) ; TODO: function lambda lists
+  (let ((rvalue (find-type (first (cleavir-ir:inputs return))
+                           return-pool)))
+    (cleavir-kildall:alist->map-pool
+     (acons enter (make-function-descriptor '* rvalue) nil))))
+
+(defmethod cleavir-kildall:transfer
+    ((s type-inference)
+     (instruction cleavir-ir:enclose-instruction) pool)
+  (cleavir-kildall:replace-in-pool
+   (cleavir-kildall:find-in-pool (cleavir-ir:code instruction)
+                                 pool
+                                 (function-bottom))
+   (first (cleavir-ir:outputs instruction))
+   pool))
+
+(defmethod cleavir-kildall:transfer
+    ((s type-inference)
+     (instruction cleavir-ir:funcall-instruction) pool)
+  (cleavir-kildall:replace-in-pool
+   (return-values
+    (find-type (first (cleavir-ir:inputs instruction)) pool))
+   (first (cleavir-ir:outputs instruction))
+   pool))
+(defmethod cleavir-kildall:transfer
+    ((s type-inference)
+     (instruction cleavir-ir:multiple-value-call-instruction) pool)
+  (cleavir-kildall:replace-in-pool
+   (return-values
+    (find-type (first (cleavir-ir:inputs instruction)) pool))
+   (first (cleavir-ir:outputs instruction))
+   pool))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

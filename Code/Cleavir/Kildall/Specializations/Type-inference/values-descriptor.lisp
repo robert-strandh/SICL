@@ -29,6 +29,9 @@
 (defun make-values (rest-p required)
   (list* 'values rest-p required))
 
+(defun values-descriptor-p (descriptor)
+  (and (consp descriptor) (eq (car descriptor) 'values)))
+
 ;;; return a values top type
 (defun values-top () (make-values t ()))
 
