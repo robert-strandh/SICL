@@ -4,14 +4,22 @@
   :depends-on (:cleavir-kildall :cleavir-hir)
   :components
   ((:file "packages")
-   (:file "type-descriptor" :depends-on ("packages"))
-   (:file "values-descriptor"
-    :depends-on ("type-descriptor" "packages"))
-   (:file "function-descriptor"
-    :depends-on ("values-descriptor" "packages"))
+   (:module "Descriptors"
+    :depends-on ("packages")
+    :components
+    ((:file "lattice-descriptor")
+     (:file "values-descriptor"
+      :depends-on ("lattice-descriptor"))
+     (:file "function-descriptor"
+      :depends-on ("lattice-descriptor"))
+     (:file "unboxed-descriptor")
+     (:file "eql-descriptor")
+     (:file "descriptor"
+      :depends-on ("lattice-descriptor" "values-descriptor"
+                   "function-descriptor" "unboxed-descriptor"
+                   "eql-descriptor"))))
    (:file "specialization"
-    :depends-on ("function-descriptor" "values-descriptor"
-                 "type-descriptor" "packages"))
+    :depends-on ("Descriptors" "packages"))
    (:file "transfer"
-    :depends-on ("values-descriptor" "type-descriptor" "packages"))
+    :depends-on ("Descriptors" "specialization" "packages"))
    (:file "interface" :depends-on ("specialization" "packages"))))

@@ -4,64 +4,98 @@
     (cleavir-kildall:forward-single-traverse
      cleavir-kildall:map-pool-mixin
      cleavir-kildall:forward-traverse-interfunction)
-  ())
+  ((%environment :initarg :env :reader environment)
+   (%typecache :initform (make-hash-table :test #'equal)
+               :reader typecache)))
+
+(declaim (inline approximate-type approximate-values))
+
+(defun approximate-type (specialization specifier)
+  (cleavir-type-descriptors:approximate-type
+   specifier (environment specialization)
+   (typecache specialization)))
+
+(declaim (inline approximate-values))
+(defun approximate-values (specialization required optional rest)
+  (cleavir-type-descriptors:approximate-values
+   required optional rest
+   (environment specialization) (typecache specialization)))
+
+(declaim (inline top-p bottom-p values-top-p))
+(defun top-p (specialization descriptor)
+  (cleavir-type-descriptors:top-p
+   descriptor (environment specialization)))
+(defun bottom-p (specialization descriptor)
+  (cleavir-type-descriptors:bottom-p
+   descriptor (environment specialization)))
+
+(defun bottom (specialization)
+  (cleavir-type-descriptors:bottom (environment specialization)))
+
+(defun values-top () (cleavir-type-descriptors:values-top))
+(defun values-top-p (specialization values-descriptor)
+  (cleavir-type-descriptors:values-top-p
+   values-descriptor (environment specialization)))
+
+(defun values-bottom () (cleavir-type-descriptors:values-bottom))
+
+(defun values-binary-meet (specialization v1 v2)
+  (cleavir-type-descriptors:values-binary-meet
+   v1 v2 (environment specialization)))
+
+(defun binary-meet (s t1 t2)
+  (cleavir-type-descriptors:binary-meet
+   t1 t2 (environment s) (typecache s)))
+(defun binary-join (s t1 t2)
+  (cleavir-type-descriptors:binary-join
+   t1 t2 (environment s) (typecache s)))
+
+(defun values-nth (s values-descriptor n)
+  (cleavir-type-descriptors:values-nth
+   values-descriptor n (environment s)))
+
+(defun make-values (s required optional rest)
+  (cleavir-type-descriptors:make-values-descriptor
+   required optional rest (environment s) (typecache s)))
+
+(defun descriptor-box (descriptor)
+  (cleavir-type-descriptors:descriptor-box descriptor))
+(defun descriptor-unbox (descriptor)
+  (cleavir-type-descriptors:descriptor-unbox descriptor))
+
+(defun make-function-descriptor (lambda-list return-values)
+  (cleavir-type-descriptors:make-function-descriptor
+   lambda-list return-values))
+
+(defun return-values (descriptor)
+  (cleavir-type-descriptors:return-values descriptor))
 
 (defmethod cleavir-kildall:entry-pool ((s type-inference) i)
   (declare (ignore i))
   (cleavir-kildall:empty-map-pool))
 
 (defmethod cleavir-kildall:object-meet ((s type-inference) t1 t2)
-  ;; normal descriptors join with binary-join
-  ;; values descriptors join with values-binary-join
-  ;; function descriptors join with function-binary-join
-  ;; a normal and function descriptor are joined by discarding the
-  ;;  function information (i.e. reducing it to FUNCTION)
-  ;; values V non-values = error
-  ;; unboxed V not-unboxed = error
-  ;; unboxed V unboxed-but-different = error
-  (typecase t1
-    (symbol
-     (etypecase t2
-       (symbol (binary-join t1 t2))
-       (cons (assert (function-descriptor-p t2))
-        (binary-join t1 (approximate-type 'function)))))
-    (cons
-     (ecase (car t1)
-       ((values) (assert (values-descriptor-p t2))
-        (values-binary-join t1 t2))
-       ((unboxed) (assert (equal t1 t2)) t1)
-       ((function)
-        (etypecase t2
-          (symbol (binary-join (approximate-type 'function) t2))
-          (cons (assert (function-descriptor-p t2))
-           (function-binary-join t1 t2))))))))
+  ;; "meet" is a join due to having to use the dual lattice because
+  ;; of how kildall works.
+  (cleavir-type-descriptors:binary-join
+   t1 t2 (environment s) (typecache s)))
 
 (defmethod cleavir-kildall:object<= ((s type-inference) t1 t2)
-  (typecase t1
-    (symbol
-     (etypecase t2
-       (symbol (sub-descriptor-p t2 t1))
-       (cons (assert (function-descriptor-p t2))
-        (sub-descriptor-p (approximate-type 'function) t1))))
-    (cons
-     (ecase (car t1)
-       ((function)
-        (etypecase t2
-          (symbol
-           (sub-descriptor-p t2 (approximate-type 'function)))
-          (cons (assert (function-descriptor-p t2))
-           (sub-function-p t2 t1))))
-       ((values) (assert (values-descriptor-p t2))
-        (sub-values-p t2 t1))
-       ((unboxed) (assert (equal t1 t2)) t)))))
+  ;; similarly backwards.
+  (cleavir-type-descriptors:sub-descriptor-p
+   t2 t1 (environment s) (typecache s)))
 
 ;;; move this?
+#+(or)
 (defmethod cleavir-kildall-graphviz:draw-object
     ((s type-inference) object)
   (let ((desc
-          (cond ((values-descriptor-p object)
-                 (values-descriptor->type object))
-                ((function-descriptor-p object)
-                 (function-descriptor->type object))
-                (t object))))
+          (etypecase object
+            (values-descriptor
+             (values-descriptor->type object))
+            (function-descriptor
+             (function-descriptor->type object))
+            (single-descriptor ;FIXME
+             object)
+            (unboxed-descriptor object))))
     (format nil "~a" desc)))
