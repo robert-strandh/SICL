@@ -4,25 +4,14 @@
 ;;; from values and function descriptors.
 (deftype ltype () 'unsigned-byte)
 
-#+sbcl
-(progn
-(defmethod has-extended-char-p ((env sb-kernel:lexenv)) t)
-(defmethod float-types ((env sb-kernel:lexenv))
-  '(single-float double-float #+long-float long-float))
-(defmethod ucpts ((env sb-kernel:lexenv))
-  '(single-float double-float #+long-float long-float
-    rational real))
-(defmethod uaets ((env sb-kernel:lexenv))
-  sb-kernel::*specialized-array-element-types*))
-
 (declaim (inline ltype-size))
 (defun ltype-size (environment)
   (+ 5 ; null, symbol, cons, function, base-char
-     (if (has-extended-char-p environment) 1 0)
+     (if (cleavir-env:has-extended-char-p environment) 1 0)
      3 ; fixnum, bignum, ratio
-     (length (float-types environment))
-     (length (ucpts environment))
-     (* 2 (length (uaets environment)))
+     (length (cleavir-env:float-types environment))
+     (length (cleavir-env:upgraded-complex-part-types environment))
+     (* 2 (length (cleavir-env:upgraded-array-element-types environment)))
      1)) ; other
 
 (declaim (inline make-ltype))
@@ -70,16 +59,16 @@
       (set-bit 'cons)
       (set-bit 'function)
       (set-bit 'base-char)
-      (when (has-extended-char-p environment)
+      (when (cleavir-env:has-extended-char-p environment)
         (set-bit 'extended-char))
       (set-bit 'fixnum)
       (set-bit 'bignum)
       (set-bit 'ratio)
-      (loop for spec in (float-types environment)
+      (loop for spec in (cleavir-env:float-types environment)
             do (set-bit spec))
-      (loop for ucpt in (ucpts environment)
+      (loop for ucpt in (cleavir-env:upgraded-complex-part-types environment)
             do (set-bit `(complex ,ucpt)))
-      (loop for uaet in (uaets environment)
+      (loop for uaet in (cleavir-env:upgraded-array-element-types environment)
             do (set-bit `(and (array ,uaet) ; messy
                               (not simple-array)))
                (set-bit `(simple-array ,uaet)))
@@ -104,16 +93,18 @@
       (set-bit 'cons)
       (set-bit 'function)
       (set-bit 'base-char)
-      (when (has-extended-char-p environment)
+      (when (cleavir-env:has-extended-char-p environment)
         (set-bit 'extended-char))
       (set-bit 'fixnum)
       (set-bit 'bignum)
       (set-bit 'ratio)
-      (loop for spec in (float-types environment)
+      (loop for spec in (cleavir-env:float-types environment)
             do (set-bit spec))
-      (loop for ucpt in (ucpts environment)
+      (loop for ucpt in (cleavir-env:upgraded-complex-part-types
+                         environment)
             do (set-bit `(complex ,ucpt)))
-      (loop for uaet in (uaets environment)
+      (loop for uaet in (cleavir-env:upgraded-array-element-types
+                         environment)
             do (set-bit `(and (array ,uaet) ; messy
                               (not simple-array)))
                (set-bit `(simple-array ,uaet)))

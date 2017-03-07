@@ -270,8 +270,6 @@
   ((%optimize :initarg :optimize :reader optimize)
    (%policy :initarg :policy :reader policy)))
 
-(defgeneric type-expand (environment type))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function GLOBAL-ENVIRONMENT.
