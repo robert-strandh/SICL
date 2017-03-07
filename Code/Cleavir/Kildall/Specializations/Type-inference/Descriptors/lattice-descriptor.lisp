@@ -120,12 +120,26 @@
      ;;; The basic idea here is we collect a list of types to
      ;;; disjoin. To make it human readable, we start with larger
      ;;; types like NUMBER, and if they're not appropriate move in.
-     (let (sum)
+     ;;; Except that if we have the (not ...) type, we do the
+     ;;; inverse, and collect conjoinees.
+     (let (sum
+           (reverse (subltypep (specifier->ltype
+                                '(not (or symbol cons function
+                                       character number array))
+                                environment)
+                               ltype)))
        (flet ((check (spec)
-                (if (subltypep (specifier->ltype spec environment)
-                               ltype)
-                    (push spec sum)
-                    nil)))
+                (if reverse
+                    (if (subltypep
+                         ltype
+                         (specifier->ltype `(not ,spec)
+                                           environment))
+                        (push `(not ,spec) sum)
+                        nil)
+                    (if (subltypep
+                         (specifier->ltype spec environment) ltype)
+                        (push spec sum)
+                        nil))))
          (if (check 'list)
              ;; list is in, so null is, so there's no possibility
              ;; of having to display just (and symbol (not null)).
@@ -163,9 +177,8 @@
                    do (check `(and (array ,uaet) ; still messy
                                    (not simple-array)))
                       (check `(simple-array ,uaet)))))
-         ;; gross.
-         (check '(not (or symbol cons function
-                       character number array)))
          (if (null (rest sum)) ; only one of the above
              (first sum)
-             `(or ,@sum)))))))
+             (if reverse
+                 `(and ,@sum)
+                 `(or ,@sum))))))))
