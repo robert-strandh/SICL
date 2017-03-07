@@ -22,7 +22,9 @@
            #:find-in-pool #:replace-in-pool #:pool-subst)
   (:export #:reverse-traverse-interfunction
            #:forward-traverse-interfunction
-           #:compute-function-pool))
+           #:compute-function-pool)
+  (:export #:entry-enter #:entry-enclose #:entry-return
+           #:find-entry))
 
 (defpackage #:cleavir-kildall-graphviz
   (:use #:cl #:cleavir-kildall)
