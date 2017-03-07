@@ -22,4 +22,7 @@
     :depends-on ("Descriptors" "packages"))
    (:file "transfer"
     :depends-on ("Descriptors" "specialization" "packages"))
-   (:file "interface" :depends-on ("specialization" "packages"))))
+   (:file "transform"
+    :depends-on ("specialization" "packages"))
+   (:file "interface"
+    :depends-on ("transform" "specialization" "packages"))))
