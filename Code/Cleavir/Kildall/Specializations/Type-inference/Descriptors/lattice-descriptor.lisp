@@ -111,3 +111,61 @@
       (set-bit
        '(not (or symbol cons function character number array))))
     (error "BUG: somehow there are other types?")))
+
+(defun ltype->specifier (ltype environment)
+  (cond
+    ((ltype-top-p ltype environment) t)
+    ((ltype-bottom-p ltype environment) nil)
+    (t
+     ;;; The basic idea here is we collect a list of types to
+     ;;; disjoin. To make it human readable, we start with larger
+     ;;; types like NUMBER, and if they're not appropriate move in.
+     (let (sum)
+       (flet ((check (spec)
+                (if (subltypep (specifier->ltype spec environment)
+                               ltype)
+                    (push spec sum)
+                    nil)))
+         (if (check 'list)
+             ;; list is in, so null is, so there's no possibility
+             ;; of having to display just (and symbol (not null)).
+             (check 'symbol)
+             (progn
+               (check 'cons)
+               (unless (check 'symbol)
+                 (check 'null)
+                 (check '(and symbol (not null))))))
+         (check 'function)
+         (unless (check 'character)
+           (check 'base-char)
+           (when (cleavir-env:has-extended-char-p environment)
+             (check 'extended-char)))
+         (unless (check 'number)
+           (unless (check 'complex)
+             (loop for ucpt
+                     in (cleavir-env:upgraded-complex-part-types
+                         environment)
+                   do (check `(complex ,ucpt))))
+           (unless (check 'float)
+             (loop for spec
+                     in (cleavir-env:float-types environment)
+                   do (check spec)))
+           (unless (check 'rational)
+             (check 'ratio)
+             (unless (check 'integer)
+               (check 'fixnum)
+               (check 'bignum))))
+         (unless (check 'array)
+           (unless (check 'simple-array)
+             (loop for uaet
+                     in (cleavir-env:upgraded-array-element-types
+                         environment)
+                   do (check `(and (array ,uaet) ; still messy
+                                   (not simple-array)))
+                      (check `(simple-array ,uaet)))))
+         ;; gross.
+         (check '(not (or symbol cons function
+                       character number array)))
+         (if (null (rest sum)) ; only one of the above
+             (first sum)
+             `(or ,@sum)))))))

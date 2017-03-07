@@ -111,6 +111,7 @@
                                  (values-nth v2 n env))))))
 
 ;;; FIXME: ltypes are not types
-(defun values-descriptor->type (values-descriptor)
-  `(values ,@(values-required values-descriptor)
+(defun values-descriptor->type (values-descriptor env)
+  `(values ,@(mapcar (lambda (spec) (ltype->specifier spec env))
+                     (values-required values-descriptor))
 	   &rest ,(values-rest-p values-descriptor)))

@@ -85,17 +85,8 @@
   (cleavir-type-descriptors:sub-descriptor-p
    t2 t1 (environment s) (typecache s)))
 
-;;; move this?
-#+(or)
 (defmethod cleavir-kildall-graphviz:draw-object
     ((s type-inference) object)
-  (let ((desc
-          (etypecase object
-            (values-descriptor
-             (values-descriptor->type object))
-            (function-descriptor
-             (function-descriptor->type object))
-            (single-descriptor ;FIXME
-             object)
-            (unboxed-descriptor object))))
-    (format nil "~a" desc)))
+  (let ((spec (cleavir-type-descriptors:descriptor->specifier
+               object (environment s))))
+    (format nil "~a" spec)))

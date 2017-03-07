@@ -30,10 +30,11 @@
 (defun function-top ()
   (make-function-descriptor '* (values-top)))
 
-(defun function-descriptor->type (function-descriptor)
+(defun function-descriptor->type (function-descriptor env)
   `(function ,(function-lambda-list function-descriptor)
              ,(values-descriptor->type
-               (function-return-values function-descriptor))))
+               (function-return-values function-descriptor)
+               env)))
 
 (defun function-binary-meet (f1 f2 env)
   (let ((meet (values-binary-meet (function-return-values f1)

@@ -11,4 +11,5 @@
            #:values-binary-meet
            #:values-bottom #:values-top #:values-top-p)
   (:export #:descriptor-box #:descriptor-unbox)
-  (:export #:make-function-descriptor #:return-values))
+  (:export #:make-function-descriptor #:return-values)
+  (:export #:descriptor->specifier))

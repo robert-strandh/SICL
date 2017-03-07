@@ -246,3 +246,14 @@
 
 (defun bottom (environment)
   (ltype-bottom environment))
+
+;;; Sometimes returns (unboxed whatever), so it's not a CL type
+;;; specifier.
+(defun descriptor->specifier (descriptor env)
+  (etypecase descriptor
+    (ltype (ltype->specifier descriptor env))
+    (values-descriptor (values-descriptor->type descriptor env))
+    (function-descriptor
+     (function-descriptor->type descriptor env))
+    (eql-descriptor descriptor)
+    (unboxed-descriptor descriptor)))
