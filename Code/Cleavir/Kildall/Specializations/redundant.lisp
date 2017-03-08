@@ -57,7 +57,7 @@
 	 (p2-union (reduce #'seq-union p2))
 	 (intersect (seq-intersection p1-union p2-union)))
     (loop for input in intersect
-	  unless (find intersect result :test #'in-seq-p)
+	  unless (find input result :test #'in-seq-p)
 	    ;; but we do need order here
 	    collect (seq-intersection
 		     (find input p1 :test #'in-seq-p)
