@@ -23,7 +23,8 @@
 ;;;; sets (as lists) of locations are "these locations are live"
 
 (defun variable-inputs (instruction)
-  (remove-if-not #'cleavir-ir:variable-p (cleavir-ir:inputs instruction)))
+  (remove-if-not #'cleavir-ir:variable-p
+                 (cleavir-ir:inputs instruction)))
 
 (defmethod cleavir-kildall:entry-pool
     ((s liveness-traverse) instruction)
@@ -52,22 +53,22 @@
   (let* ((s (make-instance 'liveness-traverse))
 	 (after (cleavir-kildall:kildall s initial-instruction))
 	 (before (make-hash-table :test #'eq)))
-    ;; compute the befores in the obvious way
+    ;; could maybe save time by grabbing it from a predecessor if
+    ;; it exists.
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (i)
-       (setf (gethash i before)
-	     (reduce (lambda (x y) (cleavir-set:union s x y))
-		     (cleavir-ir:predecessors i)
-		     :key (lambda (p) (gethash p after))
-		     :initial-value (cleavir-set:make-set s))))
-     initial-instruction)
-    ;; now turn both back into lists
-    (cleavir-ir:map-instructions-arbitrary-order
-     (lambda (i)
-       (setf (gethash i before)
-	     (cleavir-set:set->list s (gethash i before))
-	     (gethash i after)
-	     (cleavir-set:set->list s (gethash i after))))
+       (let* ((after-set (gethash i after))
+              (before-set
+                (cleavir-set:union s
+                 (cleavir-set:difference s
+                  after-set (apply #'cleavir-set:make-set s
+                                   (cleavir-ir:outputs i)))
+                 (apply #'cleavir-set:make-set
+                        s (variable-inputs i)))))
+         (setf (gethash i before)
+               (cleavir-set:set->list s before-set)
+               (gethash i after)
+               (cleavir-set:set->list s after-set))))
      initial-instruction)
     (make-instance 'liveness :before before :after after)))
 
