@@ -7,113 +7,125 @@
 (in-package #:cleavir-kildall-redundant)
 
 (defclass redundant-traverse
-    (cleavir-kildall:forward-spread-traverse)
+    (cleavir-kildall:forward-spread-traverse
+     cleavir-kildall:map-pool-mixin)
   ())
 
-;;;; Pools are sets of equivalence classes for inputs
-;;;; (as in, locations but also constants) that have the same value
-
-;;;; That would be the ideal, but for this to have operational
-;;;; effect we need to track the least recent assignment so that
-;;;; the graph can be altered. So the equivalence classes are
-;;;; actually sequences (lists) where the cars are more recent.
-
-(defun make-seq (&rest objects)
-  objects)
-
-(defun in-seq-p (object seq) (find object seq))
-
-;;; cl:union/intersection don't guarantee order.
-(defun seq-union (seq1 seq2)
-  (dolist (e seq1) (pushnew e seq2))
-  seq2)
-
-(defun seq-intersection (seq1 seq2)
-  (remove-if-not (lambda (e) (in-seq-p e seq2)) seq1))
-
-;;; order not important here.
-(defun subseqp (seq1 seq2)
-  (cl:subsetp seq1 seq2))
-
-;;; doesn't check to see if it's there already
-(defun add-to-seq (object seq)
-  (cons object seq))
-
-;;; fine to call if the seq doesn't contain the element
-(defun remove-from-seq (object seq)
-  (remove object seq))
+;;;; NOTE TO FIXME: Seriously use union find or whatever.
+;;;; Pools are maps from inputs to entries of form
+;;;; (parent &rest children). Parent and children are inputs,
+;;;; or parent can be NIL, if there is no parent.
 
 ;;; kildall methods
 
 (defmethod cleavir-kildall:entry-pool ((s redundant-traverse) instruction)
   (check-type instruction cleavir-ir:enter-instruction)
-  (make-seq))
+  nil)
 
-;;; intersection of sets of equivalence classes... ow.
-;;; This is what Kildall has. It's not efficient.
 (defmethod cleavir-kildall:pool-meet ((s redundant-traverse) p1 p2)
-  ;; actually don't need ordering for the let variables.
-  (let* ((p1-union (reduce #'seq-union p1))
-	 (p2-union (reduce #'seq-union p2))
-	 (intersect (seq-intersection p1-union p2-union)))
-    (loop for input in intersect
-	  unless (find input result :test #'in-seq-p)
-	    ;; but we do need order here
-	    collect (seq-intersection
-		     (find input p1 :test #'in-seq-p)
-		     (find input p2 :test #'in-seq-p))
-	      into result
-	  finally (return result))))
+  ;; like map-pool's meet, but object-meet needs the pools.
+  (loop with result = (copy-alist p2)
+        for pair in p1
+        for (location1 . parent1) = pair
+        for a = (assoc location1 result)
+        when a
+          do (setf (cdr a)
+                   ;; if there's no overlap, it's just NIL.
+                   (loop named outer
+                         for left = (cdr a)
+                           then (cdr (assoc left result))
+                         while left
+                         do (loop for right = parent1
+                                    then (cdr (assoc right p1))
+                                  while right
+                                  when (eq left right)
+                                    do (return-from outer left))))
+        else do (push pair result)
+        finally (return result)))
 
 ;;; also not efficient, but better than kildall, probably.
 (defmethod cleavir-kildall:pool<= ((s redundant-traverse) p1 p2)
-  (every (lambda (class1) (find class1 p2 :test #'subseqp)) p1))
+  (every (lambda (pair2)
+           (let ((pair1 (assoc (car pair2) p1)))
+             (and pair1 ; p1 has every variable p2 does
+                  ;; and each parent is somewhere in p1's parents
+                  (loop with target = (cdr pair2)
+                        for parent = (cdr pair1)
+                          then (cdr (assoc parent p1))
+                        while parent
+                          thereis (eq parent target)))))
+         p2))
+
+(defun new-output (output new-parent pool)
+  (let* ((a (assoc output pool)) ; maybe nil, so parent is nil. OK
+         (parent (cdr a)))
+    (mapcar (lambda (pair)
+              ;; maybe replace parent
+              (if (eq (cdr pair) output)
+                  (cons (car pair) parent)
+                  pair))
+            pool)
+    (if a
+        ;; reassignment
+        (setf (cdr a) new-parent)
+        ;; new output, so add
+        (setf pool (acons output new-parent pool)))
+    pool))
 
 (defmethod cleavir-kildall:transfer ((s redundant-traverse) i pool)
   ;; Add any constant inputs that aren't already in a class.
   (dolist (in (cleavir-ir:inputs i))
     (unless (or (cleavir-ir:variable-p in)
-		(find in pool :test #'in-seq-p))
-      (setf pool (cons (make-seq in) pool))))
-  ;; For each output: remove the class with that output in it, if
-  ;; there is one, because it (probably) has a new value now.
-  ;; Then append a new singleton seq with that output to the pool.
+		(assoc in pool))
+      (setf pool (acons in nil pool))))
+  ;; For each output: Put it newly in with no parents. Any other
+  ;; variable that previously had it as a parent should have its
+  ;; parent as well.
   (dolist (out (cleavir-ir:outputs i))
-    (setf pool
-	  (mapcar (lambda (class) (remove-from-seq out class))
-		  pool)))
-  (dolist (out (cleavir-ir:outputs i))
-    (setf pool (cons (make-seq out) pool)))
+    ;; ignore values locations (which cannot be assigned)
+    (when (typep out 'cleavir-ir:lexical-location)
+      (setf pool (new-output out nil pool))))
   pool)
 
 (defmethod cleavir-kildall:transfer
     ((s redundant-traverse)
      (instruction cleavir-ir:assignment-instruction)
      pool)
-  ;; If the input is in a class, as it will be if it's a variable,
-  ;; put the output in that class.
-  ;; If there is no class (for constants) make one for both.
-  ;; Put the output in that pool.
+  ;; Add any constant inputs that aren't already in a class.
+  (dolist (in (cleavir-ir:inputs instruction))
+    (unless (or (cleavir-ir:variable-p in)
+		(assoc in pool))
+      (setf pool (acons in nil pool))))
+  ;; assign the output.
   (let ((in (first (cleavir-ir:inputs instruction)))
 	(out (first (cleavir-ir:outputs instruction))))
-    (let ((class (find in pool :test #'in-seq-p)))
-      (if class
-	  (cons (add-to-seq out class) (remove class pool))
-	  (cons (make-seq out in) pool)))))
+    (new-output out in pool)))
 
 (defun redundancies (initial-instruction)
   (let ((traverse (make-instance 'redundant-traverse)))
     (cleavir-kildall:kildall traverse initial-instruction)))
 
+;;; find the earliest equivalent thing usable to replace the input.
+(defun rfind (input pool)
+  (let ((a (assoc input pool)))
+    (if a
+        (if (cdr a) ; more ancient input
+            (rfind (cdr a) pool)
+            ;; no parent: we are the oldest
+            input)
+        (error "redundancy fuckup"))))
+
+;;; Change the inputs of all instructions to use the earliest
+;;; equivalent input.
 (defun reassign (initial-instruction redundancies)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
-     (loop with classes = (gethash instruction redundancies)
+     (loop with pool = (gethash instruction redundancies)
 	   for input-cons on (cleavir-ir:inputs instruction)
 	   for input = (car input-cons)
-	   do (let ((class (find input classes :test #'find)))
-		(when class
-		  (setf (car input-cons) (car (last class)))))))
+           ;; again, ignore values locations
+           when (typep input 'cleavir-ir:lexical-location)
+	   do (setf (car input-cons) (rfind input pool))))
    initial-instruction)
   (cleavir-ir:reinitialize-data initial-instruction))
 
