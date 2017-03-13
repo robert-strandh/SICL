@@ -49,11 +49,14 @@
            (let ((pair1 (assoc (car pair2) p1)))
              (and pair1 ; p1 has every variable p2 does
                   ;; and each parent is somewhere in p1's parents
-                  (loop with target = (cdr pair2)
-                        for parent = (cdr pair1)
-                          then (cdr (assoc parent p1))
-                        while parent
-                          thereis (eq parent target)))))
+                  ;; This is the most common case, and handles
+                  ;; cdr = nil as well.
+                  (or (eq (cdr pair1) (cdr pair2))
+                      (loop with target = (cdr pair2)
+                            for parent = (cdr pair1)
+                              then (cdr (assoc parent p1))
+                            while parent
+                              thereis (eq parent target))))))
          p2))
 
 (defun new-output (output new-parent pool)
