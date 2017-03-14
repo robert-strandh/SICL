@@ -19,6 +19,5 @@
    (:file "simplify-box-unbox")
    (:file "function-tree")
    (:file "segregate-lexicals")
-   (:file "insert-type-checks")
    (:file "eliminate-superfluous-temporaries")
    (:file "hir-transformations")))

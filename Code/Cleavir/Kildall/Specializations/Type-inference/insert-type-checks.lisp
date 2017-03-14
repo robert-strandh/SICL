@@ -1,4 +1,11 @@
-(in-package #:cleavir-hir-transformations)
+(in-package #:cleavir-kildall-type-inference)
+
+;;;; This bit is currently very inadequate, in that it will lose a
+;;;; lot of information in the name of safety, and insert unneeded
+;;;; checks. A better strategy for insertion would be to convert
+;;;; all THEs into checks, and then remove every such check that
+;;;; doesn't surround a typeq that was already there that can be
+;;;; removed due to redundancy. But that's quite complicated.
 
 ;;; TODO: SBCL has a middle setting on its insert-type-checks that
 ;;; downgrades types into easily checkable ones like FIXNUM.
@@ -82,10 +89,13 @@
       typespec
     ;; we sort of assume that uaet of a (function ...) won't be a
     ;; (function ...).
-    (let ((uaet (upgraded-array-element-type element-type env)))
-      (if (eql uaet element-type)
-          typespec
-          `(,head ,uaet ,dims)))))
+    (if (eq element-type '*)
+        typespec
+        (let ((uaet
+                (upgraded-array-element-type element-type env)))
+          (if (eql uaet element-type)
+              typespec
+              `(,head ,uaet ,dims))))))
 
 (defmethod discriminator-compound (env (head (eql 'function))
                                    typespec)
@@ -149,7 +159,7 @@
 ;;; FIXME: There should be a halfway point where checks are inserted
 ;;; but the original type information is preserved. This is unsafe
 ;;; (if we can't check all declarations) but only a little.
-(defun insert-type-checks (initial-instruction env)
+(defun thes->typeqs (initial-instruction env)
   (let (thes tvs)
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (i)

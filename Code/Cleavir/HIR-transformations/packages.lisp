@@ -19,6 +19,5 @@
    #:segregate-lexicals
    #:hir-transformations
    #:introduce-intermediate
-   #:insert-type-checks
    #:eliminate-superfluous-temporaries
    #:maybe-eliminate))

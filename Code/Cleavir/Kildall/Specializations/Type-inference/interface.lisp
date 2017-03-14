@@ -2,6 +2,8 @@
 
 (defun infer-types (initial-instruction environment
                     &key prune draw)
+  ;; controlled by policy (see insert-type-checks.lisp)
+  (thes->typeqs initial-instruction environment)
   (let* ((s (make-instance 'type-inference :env environment))
          (d (cleavir-kildall:kildall s initial-instruction)))
     ;; since drawing is just for debugging, it's probably more
