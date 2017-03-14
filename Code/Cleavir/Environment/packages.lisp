@@ -47,6 +47,10 @@
    #:no-block-info
    #:no-tag-info
    #:type-expand
+   #:has-extended-char-p
+   #:float-types
+   #:upgraded-complex-part-types
+   #:upgraded-array-element-types
    #:add-lexical-variable
    #:add-special-variable
    #:add-local-symbol-macro

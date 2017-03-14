@@ -14,13 +14,17 @@
 	   #:forward-spread-traverse #:reverse-spread-traverse
 	   #:forward-single-traverse
 	   #:entry-pool)
-  (:export #:transfer #:process-transfer
+  (:export #:transfer #:process-instruction #:process-transfer
 	   #:kildall)
   (:export #:map-pool-mixin
            #:object-meet #:object<=
            #:empty-map-pool #:alist->map-pool
-           #:find-in-pool #:replace-in-pool)
-  (:export #:reverse-traverse-interfunction #:compute-function-pool))
+           #:find-in-pool #:replace-in-pool #:pool-subst)
+  (:export #:reverse-traverse-interfunction
+           #:forward-traverse-interfunction
+           #:compute-function-pool)
+  (:export #:entry-enter #:entry-enclose #:entry-return
+           #:find-entry))
 
 (defpackage #:cleavir-kildall-graphviz
   (:use #:cl #:cleavir-kildall)

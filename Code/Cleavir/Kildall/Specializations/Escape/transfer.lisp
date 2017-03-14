@@ -1,10 +1,9 @@
 (in-package #:cleavir-kildall-escape)
 
-;;; KLUDGE Should be a better mechanism for defaulting (in Kildall)
-;;; ...but this is needed for loops etc. If it's too optimistic
-;;; another successor will push back negativity.
-(defun find-in-pool (location pool)
-  (cleavir-kildall:find-in-pool location pool +none+))
+(defmethod cleavir-kildall:find-in-pool
+    ((s escape) location pool &key (default nil default-p))
+  (call-next-method s location pool
+                    :default (if default-p default +none+)))
 
 ;;; default method: pass it along, marking inputs as unknown.
 (defmethod cleavir-kildall:transfer ((s escape) instruction pool)
@@ -30,7 +29,8 @@
         (output (first (cleavir-ir:outputs instruction))))
     (if (cleavir-ir:variable-p input)
         (cleavir-kildall:replace-in-pool
-         (find-in-pool output pool) input pool)
+         (cleavir-kildall:find-in-pool s output pool)
+         input pool)
         pool)))
 
 (defmethod cleavir-kildall:transfer
@@ -38,7 +38,7 @@
      (instruction cleavir-ir:fixed-to-multiple-instruction)
      pool)
   (loop with output-info
-          = (find-in-pool
+          = (cleavir-kildall:find-in-pool s
              (first (cleavir-ir:outputs instruction))
              pool)
         for input in (cleavir-ir:inputs instruction)
@@ -56,7 +56,7 @@
              (cleavir-kildall:object-meet s o1 o2))
            (cleavir-ir:outputs instruction)
            :key (lambda (location)
-                  (find-in-pool location pool))
+                  (cleavir-kildall:find-in-pool s location pool))
            ;; M->F with no outputs are possible.
            :initial-value +none+)
    (first (cleavir-ir:inputs instruction))
@@ -144,7 +144,7 @@
      (instruction cleavir-ir:dynamic-allocation-instruction)
      pool)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-         (dx (find-in-pool input pool))
+         (dx (cleavir-kildall:find-in-pool s input pool))
          (policy (cleavir-ir:policy instruction)))
     (cond ((escapes-p dx)
            ;; The dynamic-extent declaration was wrong, so the
@@ -224,7 +224,8 @@
         ;; note that the cell outputs are not live at the ENTER,
         ;; so if dead variables are excluded this will need
         ;; rewriting.
-        (setf (aref info id) (find-in-pool out enter-pool))))
+        (setf (aref info id) (cleavir-kildall:find-in-pool
+                              specialization out enter-pool))))
     (cleavir-kildall:alist->map-pool
      (acons enter info nil))))
 
@@ -234,15 +235,17 @@
   ;; their cells.
   ;; FIXME: this leads to cells getting the "call" bit.
   (let* ((info (cleavir-kildall:find-in-pool
+                s
                 (cleavir-ir:code instruction)
                 pool
                 ;; default: assume the best, and it will be revised
                 ;; down later.
-                (make-array (length (cleavir-ir:inputs instruction))
-                            :element-type 'indicator
-                            :initial-element +none+)))
+                :default (make-array
+                          (length (cleavir-ir:inputs instruction))
+                          :element-type 'indicator
+                          :initial-element +none+)))
          (closure (first (cleavir-ir:outputs instruction)))
-         (closure-dx (find-in-pool closure pool)))
+         (closure-dx (cleavir-kildall:find-in-pool s closure pool)))
     (declare (type (simple-array indicator (*)) info))
     (cleavir-kildall:pool-meet s
       (cleavir-kildall:alist->map-pool

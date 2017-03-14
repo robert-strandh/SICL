@@ -21,6 +21,9 @@
 (defclass reverse-traverse-interfunction
     (reverse-traverse interfunction)
   ())
+(defclass forward-traverse-interfunction
+    (forward-traverse interfunction)
+  ())
 
 (defun find-entry (specialization object &key (key #'identity))
   (find object (entries specialization) :key key))
@@ -70,3 +73,19 @@
                    ret (when ret
                          ;; if ret = nil just pass garbage
                          (instruction-pool ret *dictionary*))))))))
+
+(defmethod process-transfer
+    ((specialization forward-traverse-interfunction)
+     (instruction cleavir-ir:return-instruction)
+     pool)
+  (let ((entry (find-entry specialization instruction
+                           :key #'entry-return)))
+    (when (entry-enclose entry)
+      (let ((enter (entry-enter entry))
+            (ret (entry-return entry)))
+        (add-work (entry-enclose entry)
+                  (compute-function-pool
+                   specialization
+                   ;; FIXME: *dictionary* should be removed somehow
+                   enter (instruction-pool enter *dictionary*)
+                   ret (instruction-pool ret *dictionary*)))))))

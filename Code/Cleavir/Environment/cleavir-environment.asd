@@ -12,5 +12,6 @@
    (:file "default-augmentation-classes")
    (:file "compile-time")
    (:file "optimize-qualities")
+   (:file "type-information")
    (:file "default-info-methods")
    (:file "eval")))
