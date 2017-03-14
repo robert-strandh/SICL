@@ -1,10 +1,14 @@
 (in-package #:cleavir-kildall-type-inference)
 
 (defun infer-types (initial-instruction environment
-                    &key prune draw)
+                    &key prune draw
+                      (liveness
+                       (cleavir-kildall-liveness:liveness
+                        initial-instruction)))
   ;; controlled by policy (see insert-type-checks.lisp)
   (thes->typeqs initial-instruction environment)
-  (let* ((s (make-instance 'type-inference :env environment))
+  (let* ((s (make-instance 'type-inference :env environment
+                                           :liveness liveness))
          (d (cleavir-kildall:kildall s initial-instruction)))
     ;; since drawing is just for debugging, it's probably more
     ;; useful to do before the dangerous pruning step.
@@ -21,7 +25,7 @@
                    specialization enter
                    :key #'cleavir-kildall:entry-enter)))
          (return-descriptor
-           (cleavir-kildall:find-in-pool
+           (cleavir-kildall:find-in-pool specialization
             (first (cleavir-ir:inputs return))
             (cleavir-kildall:instruction-pool return dictionary)))
          (return-type

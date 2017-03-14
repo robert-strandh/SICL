@@ -33,8 +33,12 @@
 (declaim (inline alist->map-pool))
 (defun alist->map-pool (alist) alist)
 
-(defun find-in-pool (location pool
-                     &optional (default nil default-p))
+(defgeneric find-in-pool (specialization location pool
+                          &key default))
+
+(defmethod find-in-pool ((specialization map-pool-mixin)
+                         location pool
+                         &key (default nil default-p))
   (let ((a (assoc location pool)))
     (cond (a (cdr a))
           (default-p default)

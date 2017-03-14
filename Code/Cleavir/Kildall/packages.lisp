@@ -14,7 +14,7 @@
 	   #:forward-spread-traverse #:reverse-spread-traverse
 	   #:forward-single-traverse
 	   #:entry-pool)
-  (:export #:transfer #:process-transfer
+  (:export #:transfer #:process-instruction #:process-transfer
 	   #:kildall)
   (:export #:map-pool-mixin
            #:object-meet #:object<=

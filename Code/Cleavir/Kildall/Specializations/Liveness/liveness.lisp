@@ -1,9 +1,3 @@
-;;; THIS FILE IS NOT CURRENTLY INCORPORATED INTO ANY CLEAVIR SYSTEM
-
-(defpackage #:cleavir-kildall-liveness
-  (:use #:cl)
-  (:export #:liveness #:live-before #:live-after))
-
 (in-package #:cleavir-kildall-liveness)
 
 ;;; class for holding liveness information.

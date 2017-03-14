@@ -16,7 +16,7 @@
                  (format nil "~d: ~a"
                          number
                          (draw-object specialization
-                                      (find-in-pool
+                                      (find-in-pool specialization
                                        datum
                                        (instruction-pool
                                         instruction
@@ -39,7 +39,7 @@
                  (format nil "~d: ~a"
                          number
                          (draw-object specialization
-                                      (find-in-pool
+                                      (find-in-pool specialization
                                        datum
                                        (instruction-pool
                                         instruction

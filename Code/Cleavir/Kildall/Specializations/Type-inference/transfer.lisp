@@ -1,24 +1,55 @@
 (cl:in-package #:cleavir-kildall-type-inference)
 
-(defun find-type (s location pool)
-  (etypecase location
-    ((or cleavir-ir:constant-input cleavir-ir:immediate-input)
-     (approximate-type s `(eql ,(cleavir-ir:value location))))
-    (cleavir-ir:load-time-value-input
-     ;; FIXME: obviously nonideal, but i don't want to think about
-     ;;  non-eql values and so forth.
-     (if (and (cleavir-ir:read-only-p location)
-              (consp (cleavir-ir:form location))
-              (eq (first (cleavir-ir:form location)) 'quote))
-         (approximate-type s
-          `(eql ,(second (cleavir-ir:form location))))
-         (approximate-type s 't)))
-    (cleavir-ir:lexical-location
-     (cleavir-kildall:find-in-pool location pool
-                                   (approximate-type s 'nil)))
-    (cleavir-ir:values-location
-     (cleavir-kildall:find-in-pool location pool
-                                   (values-bottom)))))
+(defmethod cleavir-kildall:find-in-pool
+    ((s type-inference) (location cleavir-ir:constant-input)
+     pool &key default)
+  (declare (ignore pool default))
+  (approximate-type s `(eql ,(cleavir-ir:value location))))
+
+(defmethod cleavir-kildall:find-in-pool
+    ((s type-inference) (location cleavir-ir:immediate-input)
+     pool &key default)
+  (declare (ignore pool default))
+  (approximate-type s `(eql ,(cleavir-ir:value location))))
+
+(defmethod cleavir-kildall:find-in-pool
+    ((s type-inference) (location cleavir-ir:load-time-value-input)
+     pool &key default)
+  (declare (ignore pool default))
+  ;; FIXME: obviously nonideal, but i don't want to think about
+  ;;  non-eql values and so forth.
+  (if (and (cleavir-ir:read-only-p location)
+           (consp (cleavir-ir:form location))
+           (eq (first (cleavir-ir:form location)) 'quote))
+      (approximate-type
+       s `(eql ,(second (cleavir-ir:form location))))
+      (approximate-type s 't)))
+
+(defmethod cleavir-kildall:find-in-pool
+    ((s type-inference) (location cleavir-ir:lexical-location)
+     pool &key (default nil default-p))
+  (call-next-method s location pool
+                    :default (if default-p
+                                 default
+                                 (approximate-type s 'nil))))
+
+(defmethod cleavir-kildall:find-in-pool
+    ((s type-inference) (location cleavir-ir:values-location)
+     pool &key (default nil default-p))
+  (call-next-method s location pool
+                    :default (if default-p
+                                 default
+                                 (values-bottom))))
+
+;;; used for enclose-instruction.
+(defmethod cleavir-kildall:find-in-pool
+  ((s type-inference) (location cleavir-ir:enter-instruction)
+   pool &key (default nil default-p))
+  (call-next-method s location pool
+                    :default (if default-p
+                                 default
+                                 (make-function-descriptor
+                                  '* (values-bottom)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -48,7 +79,7 @@
     ((s type-inference)
      (instruction cleavir-ir:assignment-instruction) pool)
   (cleavir-kildall:replace-in-pool
-   (find-type s (first (cleavir-ir:inputs instruction)) pool)
+   (cleavir-kildall:find-in-pool s (first (cleavir-ir:inputs instruction)) pool)
    (first (cleavir-ir:outputs instruction))
    pool))
 
@@ -56,7 +87,7 @@
     ((s type-inference)
      (instruction cleavir-ir:the-instruction) pool)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-	 (input-type (find-type s input pool))
+	 (input-type (cleavir-kildall:find-in-pool s input pool))
 	 (type (cleavir-ir:value-type instruction))
 	 (type-descriptor (approximate-type s type)))
     (if (top-p s type-descriptor)
@@ -81,7 +112,7 @@
 		element-descriptor
 		(descriptor-unbox element-descriptor))
      index (binary-meet s
-                        (find-type s index pool)
+                        (cleavir-kildall:find-in-pool s index pool)
                         ;; could use array dimensions,
                         ;; or a more proper thing with
                         ;; ARRAY-TOTAL-SIZE
@@ -100,14 +131,14 @@
      pool
      object (binary-meet
              s
-	     (find-type s object pool)
+	     (cleavir-kildall:find-in-pool s object pool)
 	     (if (cleavir-ir:boxed-p instruction)
 		 element-descriptor
 		 ;; if the array's elements are unboxed, the object
 		 ;; being written must be unboxed.
 		 (descriptor-unbox element-descriptor)))
      index (binary-meet s
-                        (find-type s index pool)
+                        (cleavir-kildall:find-in-pool s index pool)
                         ;; could use array dimensions,
                         ;; or a more proper thing with
                         ;; ARRAY-TOTAL-SIZE
@@ -123,7 +154,7 @@
 	   (cleavir-ir:element-type instruction))))
     (cleavir-kildall:pool-subst
      pool
-     input (binary-meet s (find-type s input pool)
+     input (binary-meet s (cleavir-kildall:find-in-pool s input pool)
                             (descriptor-unbox element-descriptor))
      output element-descriptor)))
 
@@ -137,7 +168,7 @@
 	   (cleavir-ir:element-type instruction))))
     (cleavir-kildall:pool-subst
      pool
-     input (binary-meet s (find-type s input pool)
+     input (binary-meet s (cleavir-kildall:find-in-pool s input pool)
                             element-descriptor)
      output (descriptor-unbox element-descriptor))))
 
@@ -145,7 +176,7 @@
     ((s type-inference)
      (instruction cleavir-ir:the-values-instruction) pool)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-	 (input-type (find-type s input pool))
+	 (input-type (cleavir-kildall:find-in-pool s input pool))
 	 (descriptor
 	   (approximate-values s
 	    (cleavir-ir:required-types instruction)
@@ -161,7 +192,7 @@
     ((s type-inference)
      (instruction cleavir-ir:fixed-to-multiple-instruction) pool)
   (let* ((types (mapcar
-		 (lambda (input) (find-type s input pool))
+		 (lambda (input) (cleavir-kildall:find-in-pool s input pool))
 		 (cleavir-ir:inputs instruction)))
 	 (values-type (make-values s types nil (bottom s)))
 	 (output (first (cleavir-ir:outputs instruction))))
@@ -176,7 +207,7 @@
       ;; generated, and we need to ensure it doesn't just return
       ;; NIL from that loop.
       pool
-      (loop with vtype = (find-type s
+      (loop with vtype = (cleavir-kildall:find-in-pool s
                           (first (cleavir-ir:inputs instruction))
                           pool)
             for n from 0
@@ -190,7 +221,7 @@
 (defmethod cleavir-kildall:compute-function-pool
     ((s type-inference) enter enter-pool return return-pool)
   (declare (ignore enter-pool)) ; TODO: function lambda lists
-  (let ((rvalue (find-type s (first (cleavir-ir:inputs return))
+  (let ((rvalue (cleavir-kildall:find-in-pool s (first (cleavir-ir:inputs return))
                            return-pool)))
     (cleavir-kildall:alist->map-pool
      (acons enter (make-function-descriptor '* rvalue)
@@ -200,9 +231,8 @@
     ((s type-inference)
      (instruction cleavir-ir:enclose-instruction) pool)
   (cleavir-kildall:replace-in-pool
-   (cleavir-kildall:find-in-pool
-    (cleavir-ir:code instruction) pool
-    (make-function-descriptor '* (values-bottom)))
+   (cleavir-kildall:find-in-pool s
+    (cleavir-ir:code instruction) pool)
    (first (cleavir-ir:outputs instruction))
    pool))
 
@@ -211,7 +241,7 @@
      (instruction cleavir-ir:funcall-instruction) pool)
   (cleavir-kildall:replace-in-pool
    (return-values
-    (find-type s (first (cleavir-ir:inputs instruction)) pool))
+    (cleavir-kildall:find-in-pool s (first (cleavir-ir:inputs instruction)) pool))
    (first (cleavir-ir:outputs instruction))
    pool))
 (defmethod cleavir-kildall:transfer
@@ -219,7 +249,7 @@
      (instruction cleavir-ir:multiple-value-call-instruction) pool)
   (cleavir-kildall:replace-in-pool
    (return-values
-    (find-type s (first (cleavir-ir:inputs instruction)) pool))
+    (cleavir-kildall:find-in-pool s (first (cleavir-ir:inputs instruction)) pool))
    (first (cleavir-ir:outputs instruction))
    pool))
 
@@ -231,7 +261,7 @@
     ((s type-inference)
      (instruction cleavir-ir:typeq-instruction) pool)
   (let* ((input (first (cleavir-ir:inputs instruction)))
-	 (input-type (find-type s input pool))
+	 (input-type (cleavir-kildall:find-in-pool s input pool))
 	 (type (cleavir-ir:value-type instruction))
          (left-descriptor (approximate-type s type))
          (right-descriptor (approximate-type s `(not ,type))))
@@ -246,9 +276,9 @@
     ((s type-inference)
      (instruction cleavir-ir:eq-instruction) pool)
   (let* ((left (first (cleavir-ir:inputs instruction)))
-	 (left-type (find-type s left pool))
+	 (left-type (cleavir-kildall:find-in-pool s left pool))
 	 (right (second (cleavir-ir:inputs instruction)))
-	 (right-type (find-type s right pool))
+	 (right-type (cleavir-kildall:find-in-pool s right pool))
 	 (meet (binary-meet s left-type right-type)))
     (values
      (cleavir-kildall:pool-subst pool left meet right meet)

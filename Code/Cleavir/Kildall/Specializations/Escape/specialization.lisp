@@ -1,7 +1,7 @@
 (in-package #:cleavir-kildall-escape)
 
 (defclass escape (cleavir-kildall:reverse-spread-traverse
-                  cleavir-kildall:map-pool-mixin
+                  cleavir-kildall-liveness:reverse-filtered-pool-mixin
                   cleavir-kildall:reverse-traverse-interfunction)
   ())
 

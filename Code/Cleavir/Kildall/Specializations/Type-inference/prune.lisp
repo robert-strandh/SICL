@@ -30,7 +30,7 @@
              (ntype (approximate-type
                      specialization
                      `(not ,(cleavir-ir:value-type i))))
-             (vtype (cleavir-kildall:find-in-pool
+             (vtype (cleavir-kildall:find-in-pool specialization
                      (first (cleavir-ir:inputs i))
                      (cleavir-kildall:instruction-pool i types))))
 	 (cond ((bottom-p specialization
