@@ -25,7 +25,20 @@ Most of our tests use relatively fast \texttt{test} functions such as
 \texttt{eq} or \texttt{eql}.  This is a deliberate choice, as we
 want to compare the performance of the traversal of the sequence,
 and a more time-consuming test function would dominate the execution
-time.
+time.  Because of the inherent imprecision in timing results, using
+more time-consuming test functions would require us to subtract two
+large timing results, thereby making the difference even less
+precise.
+
+In this paper, we report only execution time, and no other performance
+parameter such as memory use or amount of allocated memory.  In fact,
+the only situation where memory consumption is more than a small
+constant is when the stack is used as temporary storage when
+\texttt{:from-end} is true and the sequence is a list.  This situation
+is fully covered in our paper dedicated to processing lists in reverse
+order \cite{Durand:2015:ELS:reverse}.  Similarly, there is no
+allocation of memory involved in our technique.  Client-supplied
+functions for tests and key computation may of course allocate memory.
 
 \subsubsection{Results on vectors}
 
