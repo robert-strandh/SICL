@@ -119,7 +119,13 @@ vector in the specialized branch.  Each implementation must determine
 whether such a declaration is necessary.
 
 Using this macro, we can now write our function \texttt{find-vector}
-like this:
+like this:%
+\footnote{In our examples, as in our real code, we frequently use a
+  value of 0 for the \texttt{safety} optimize quality.  However, this
+  is the case only for auxilary functions called from protocol
+  functions that have verified all parameters before calling such an
+  auxiliary function.  Overall, the combination is therefore still
+  safe as seen by the application programmer.}
 
 {\small\begin{verbatim}
 (defun find-vector-4 (item vector)
