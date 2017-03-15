@@ -54,7 +54,8 @@
 
 ;;; Take a single declaration specifier and return a list of
 ;;; canonicalized declaration specifiers.
-(defun canonicalize-declaration-specifier (declaration-specifier)
+(defun canonicalize-declaration-specifier (declaration-specifier
+                                           alien-identifiers)
   (cond ((member (car declaration-specifier)
 		 '(declaration dynamic-extent ignore ignorable
 		   inline notinline special))
@@ -67,15 +68,25 @@
 	 (loop for entity in (cddr declaration-specifier)
 	       collect `(,(car declaration-specifier)
 			 ,(cadr declaration-specifier) ,entity)))
+        ((member (car declaration-specifier) alien-identifiers)
+         ;; This means that the declaration is one specified by
+         ;; (declaim (declaration ...))
+         ;; It has some user- or implementation- specified meaning
+         ;; that we don't care about, so we ignore it.
+         nil)
 	(t
 	 (loop for entity in (cdr declaration-specifier)
 	       collect `(type ,(car declaration-specifier) ,entity)))))
 
-(defun canonicalize-declaration-specifiers (declaration-specifiers)
+(defun canonicalize-declaration-specifiers (declaration-specifiers
+                                            alien-identifiers)
   (unless (proper-list-p declaration-specifiers)
     (error "declaration specifiers must be a proper list"))
-  (reduce #'append (mapcar #'canonicalize-declaration-specifier
-			   declaration-specifiers)))
+  (reduce #'append
+          (mapcar (lambda (spec)
+                    (canonicalize-declaration-specifier
+                     spec alien-identifiers))
+                  declaration-specifiers)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
