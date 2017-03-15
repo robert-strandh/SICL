@@ -144,7 +144,16 @@ significant amount of work to determine what code can be eliminated.
 To give an idea of the orders of magnitude, in order to obtain
 fully-expanded code on \sbcl{}, we had to increase the inline limit from
 $100$ to $10\thinspace000$, resulting in a compilation time of tens of
-seconds for a single function.
+seconds for a single function.  For the case of a vector, the inner
+loop will be replicated for each element type, then each of these
+replicas will again be replicated for each special case of the
+\texttt{test} and \texttt{test-not} functions, and again for each
+special case of a \texttt{key} function, and finally for the two cases
+of processing from the beginning or the end.  The resulting number of
+replicas of the inner loop depends on the number of such special
+cases, but can easily exceed $1000$.  Each replica will ultimately be
+stripped down by the compiler because redundant tests will be
+eliminated for each one.
 
 Another disadvantage of our technique is that it doesn't lend itself
 to applications using short sequences.  For such applications, it
