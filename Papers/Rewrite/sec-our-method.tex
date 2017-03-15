@@ -25,7 +25,10 @@ conditions are easier to verify if the compiler translates the
 intermediate code to SSA form \cite{Cytron:1989:EMC:75277.75280,
   Cytron:1991:ECS:115372.115320}, and some conditions can be verified
 during the execution of our technique, avoiding the need to include
-them in a separate phase.
+them in a separate phase.  The last condition may require an analysis
+for detecting variables that are assigned to in nested functions.
+Such a phase is present in most optimizing compilers in order to
+determine where to allocate space for such variables.
 
 In \refFig{fig-example-naive}, the two test instructions labeled $D$
 and $I$ respectively verify the conditions listed above, and we will
