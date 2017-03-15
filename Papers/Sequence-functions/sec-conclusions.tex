@@ -1,4 +1,5 @@
 \section{Conclusions and future work}
+\label{sec-conclusions}
 
 We have presented a technique that allows implementations of most of
 the \commonlisp{} sequence functions that are simultaneously fast,
@@ -27,7 +28,16 @@ simple reason that the \sbcl{} compiler does provide the optimizations
 that are required in order for our technique to yield excellent
 performance.  We intend to experiment with other major implementations
 as well in order to determine which ones are suited for our
-technique.
+technique.  For our technique to provide fast code, the compiler must
+be able to remove redundant tests.  A test $T_2$ is redundant if it is
+dominated%
+\footnote{Dominance is a graph-theory concept that is frequently used
+  in optimizing compilers to transform intermediate code in the form
+  of an instruction graph.}
+by a test $T_1$ testing the exact same condition, and $T_2$ can be
+reached from only one of the two branches of $T_1$.  In our technique,
+an outer macro provides $T_1$, whereas $T_2$ occurs in the inner loop
+of the function.
 
 The \cleavir{} compiler framework of the \sicl{} project will
 ultimately include a technique for \emph{path replication} in
