@@ -63,7 +63,7 @@
 	     environment
 	     (cleavir-env:add-special-variable environment (car rest)))))
       (type
-       (cleavir-env:add-function-type
+       (cleavir-env:add-variable-type
 	environment (cadr rest) (car rest)))
       (t
        (warn "Unable to handle declarations specifier: ~s"

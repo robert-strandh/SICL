@@ -33,8 +33,12 @@
 (declaim (inline alist->map-pool))
 (defun alist->map-pool (alist) alist)
 
-(defun find-in-pool (location pool
-                     &optional (default nil default-p))
+(defgeneric find-in-pool (specialization location pool
+                          &key default))
+
+(defmethod find-in-pool ((specialization map-pool-mixin)
+                         location pool
+                         &key (default nil default-p))
   (let ((a (assoc location pool)))
     (cond (a (cdr a))
           (default-p default)
@@ -46,3 +50,9 @@
     (if a
         (acons location new (remove a pool))
         (acons location new pool))))
+
+;;; convenient way to do the above for some fixed set of locations
+(defun pool-subst (pool &rest locations-and-values)
+  (loop for (location value) on locations-and-values by #'cddr
+        do (setf pool (replace-in-pool value location pool))
+        finally (return pool)))
