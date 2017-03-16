@@ -35,6 +35,7 @@
    #:read-common
    #:call-reader-macro
    #:interpret-token
+   #:interpret-symbol
    #:make-dispatch-macro-character
    #:set-dispatch-macro-character
    #:get-dispatch-macro-character
