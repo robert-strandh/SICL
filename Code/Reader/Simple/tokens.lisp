@@ -5,6 +5,42 @@
                               position-package-marker-2
                               input-stream))
 
+(defmethod interpret-symbol (token
+                             position-package-marker-1
+                             position-package-marker-2
+                             input-stream)
+  (cond ((null position-package-marker-1)
+         (intern token *package*))
+        ((null position-package-marker-2)
+         (cond ((= position-package-marker-1 (1- (length token)))
+                (error 'symbol-name-must-not-end-with-package-marker
+                       :stream input-stream
+                       :desired-symbol token))
+               ((= position-package-marker-1 0)
+                (intern (subseq token 1) '#:keyword))
+               (t
+                (multiple-value-bind (symbol status)
+                    (find-symbol
+                     (subseq token (1+ position-package-marker-1))
+                     (subseq token 0 position-package-marker-1))
+                  (cond ((null symbol)
+                         (error 'symbol-does-not-exist
+                                :stream input-stream
+                                :desired-symbol token))
+                        ((eq status :internal)
+                         (error 'symbol-is-not-external
+                                :stream input-stream
+                                :desired-symbol token))
+                        (t
+                         symbol))))))
+        (t
+         (if (= position-package-marker-1 (1- (length token)))
+             (error 'symbol-name-must-not-end-with-package-marker
+                    :stream input-stream
+                    :desired-symbol token)
+             (intern (subseq token (1+ position-package-marker-2))
+                     (subseq token 0 position-package-marker-1))))))
+
 (defgeneric interpret-token (token token-escapes input-stream))
 
 (defmethod interpret-token (token token-escapes input-stream)
