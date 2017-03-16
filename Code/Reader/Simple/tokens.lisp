@@ -1,5 +1,10 @@
 (cl:in-package #:sicl-reader)
 
+(defgeneric interpret-symbol (token
+                              position-package-marker-1
+                              position-package-marker-2
+                              input-stream))
+
 (defgeneric interpret-token (token token-escapes input-stream))
 
 (defmethod interpret-token (token token-escapes input-stream)
