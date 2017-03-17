@@ -323,7 +323,7 @@
        (incf index)
        (if (= length index)
 	   (return-from interpret-token 
-	     (intern token *package*))
+             (interpret-symbol token nil nil input-stream))
 	   (let ((char (aref token index)))
 	     (cond ((eq (aref token-escapes index) t)
 		    (go symbol))
