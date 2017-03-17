@@ -154,8 +154,10 @@
        ;; sign decimal-point
        (incf index)
        (if (= length index)
+           ;; All we have is a sign followed by a dot, so it must
+           ;; be a symbol in the current package.
 	   (return-from interpret-token 
-	     (intern token *package*))
+             (interpret-symbol token nil nil input-stream))
 	   (let ((char (aref token index)))
 	     (cond ((eq (aref token-escapes index) t)
 		    (go symbol))
