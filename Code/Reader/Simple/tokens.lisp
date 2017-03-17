@@ -62,8 +62,10 @@
      start
        (incf index)
        (if (= length index)
+           ;; We have a token of length 0.  It must be a symbol
+           ;; in the current package.
 	   (return-from interpret-token
-	     (intern token *package*))
+             (interpret-symbol token nil nil input-stream))
 	   (let ((char (aref token index)))
 	     (cond ((eq (aref token-escapes index) t)
 		    (go symbol))
@@ -93,11 +95,12 @@
 		   (t
 		    (go symbol)))))
      sign
-       ;; sign
+       ;; We have a sign, i.e., #\+ or #\-.
        (incf index)
        (if (= length index)
+           ;; A sign is all we have, so it is a symbol.
 	   (return-from interpret-token
-	     (intern token *package*))
+             (interpret-symbol token nil nil input-stream))
 	   (let ((char (aref token index)))
 	     (cond ((eq (aref token-escapes index) t)
 		    (go symbol))
