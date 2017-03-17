@@ -394,40 +394,11 @@
        ;; that the last character might be a package marker. 
        (incf index)
        (if (= length index)
-	   (cond ((null position-package-marker-1)
-		  (return-from interpret-token
-		    (intern token *package*)))
-		 ((null position-package-marker-2)
-		  (cond ((= position-package-marker-1 (1- length))
-			 (error 'symbol-name-must-not-end-with-package-marker
-				:stream input-stream
-				:desired-symbol token))
-			((= position-package-marker-1 0)
-			 (return-from interpret-token
-			   (intern (subseq token 1) '#:keyword)))
-			(t
-			 (multiple-value-bind (symbol status)
-			     (find-symbol
-			      (subseq token (1+ position-package-marker-1))
-			      (subseq token 0 position-package-marker-1))
-			   (cond ((null symbol)
-				  (error 'symbol-does-not-exist
-					 :stream input-stream
-					 :desired-symbol token))
-				 ((eq status :internal)
-				  (error 'symbol-is-not-external
-					 :stream input-stream
-					 :desired-symbol token))
-				 (t
-				  (return-from interpret-token symbol)))))))
-		 (t
-		  (if (= position-package-marker-1 (1- length))
-		      (error 'symbol-name-must-not-end-with-package-marker
-			     :stream input-stream
-			     :desired-symbol token)
-		      (return-from interpret-token
-			(intern (subseq token (1+ position-package-marker-2))
-				(subseq token 0 position-package-marker-1))))))
+           (return-from interpret-token
+             (interpret-symbol token
+                               position-package-marker-1
+                               position-package-marker-2
+                               input-stream))
 	   (let ((char (aref token index)))
 	     (cond ((eq (aref token-escapes index) t)
 		    (go symbol))
