@@ -215,7 +215,7 @@ the number of atoms in a tree, we should not write it like this:
 (defun count-atoms (tree)
   (if (consp tree)
       (+ (count-atoms (car tree))
-          (count-atoms (cdr tree)))
+         (count-atoms (cdr tree)))
       1))
 \end{verbatim}
 
@@ -226,7 +226,7 @@ but rather
   (if (atom tree)
       1
       (+ (count-atoms (car tree))
-          (count-atoms (cdr tree)))))
+         (count-atoms (cdr tree)))))
 \end{verbatim}
 
 Even when the base case does not return anything useful, it should be
