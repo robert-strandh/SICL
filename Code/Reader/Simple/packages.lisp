@@ -33,6 +33,7 @@
    #:read-preserving-whitespace
    #:*preserve-whitespace*
    #:read-common
+   #:read-token
    #:call-reader-macro
    #:interpret-token
    #:interpret-symbol
