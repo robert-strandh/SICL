@@ -2,10 +2,12 @@
 
 Because \commonlisp{} types are arbitrary sets, perfect inference of
 \commonlisp{} types would be equivalent to the halting
-problem\footnote{Most obviously, if the type of the input to a
-  function is a singleton set.}; additionally, some type information
-is more useful than others in an optimizing compiler. Therefore, a
-small finite lattice is used for type inference.
+problem\footnote{The type of the return value of a pure function
+  could be inferred to be a singleton set (an EQL type) or the
+  empty set (NIL), depending on whether the function halts.};
+additionally, only some type information is useful for an
+optimizing compiler. Therefore, a small finite lattice is used for
+type inference.
 
 Elements of the lattice are called \textit{type descriptors}, or just
 ``descriptors''. Every Common Lisp type can be conservatively
