@@ -175,6 +175,8 @@ that require the argument to be of type \texttt{cons}.
 \frame[containsverbatim]{
 \frametitle{An example}
 
+Now suppose we have the following code to compile:
+
 \begin{verbatim}
   (let ((a (car x))
         (b (some-function)
@@ -187,6 +189,8 @@ that require the argument to be of type \texttt{cons}.
 \frame[containsverbatim]{
 \frametitle{An example}
 
+After inlining \texttt{car} and \texttt{cdr}, we get the following code:
+
 \begin{verbatim}
   (let ((a (cond ((consp x) (cons-car x))
                  ((null x) nil)
@@ -198,6 +202,15 @@ that require the argument to be of type \texttt{cons}.
     ...)
 \end{verbatim}
 
+}
+
+\frame{\frametitle{Resulting intermediate code}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-example-naive.pdf_t}
+\end{center}
+\end{figure}
 }
 
 \frame{\frametitle{Rewrite rules}
