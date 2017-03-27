@@ -128,6 +128,20 @@ In particular, \cleavir{} will contain a large number of standard
 compiler optimization algorithms, and a few or our own.
 }
 
+\frame{\frametitle{Purpose of current work}
+
+When possible, avoid redundant tests.
+
+\vspace{0.5cm}
+
+A test is redundant if a preceding identical test that dominates this
+one exists.
+
+\vspace{0.5cm}
+
+We detect redundant tests in \emph{intermediate code}, and we
+eliminate them using \emph{local graph rewriting}.  }
+
 \frame{
 \frametitle{Previous work}
 
@@ -137,6 +151,9 @@ bla bla
 
 \frame[containsverbatim]{
 \frametitle{An example}
+
+A client implementation might define \texttt{car} and \texttt{cdr}
+like this (Clasp and \sicl{} both do):
 
 \begin{verbatim}
   (defun car (x)
@@ -149,6 +166,9 @@ bla bla
           ((null x) nil)
           (t (error 'type-error ...))))
 \end{verbatim}
+
+Where \texttt{cons-car} and \texttt{cons-car} are primitive operations
+that require the argument to be of type \texttt{cons}.
 
 }
 
