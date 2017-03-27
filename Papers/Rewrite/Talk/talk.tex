@@ -169,6 +169,27 @@ bla bla
 
 }
 
+\frame{\frametitle{Rewrite rules}
+
+\begin{enumerate}
+\item If $s$ has no predecessors, then remove it from $S$.
+\item If $s$ has an incoming arc labeled \emph{true}, then change the
+  head of that arc so that it refers to the successor of $s$ referred
+  to by the outgoing arc of $s$ labeled \emph{true}.
+\item If $s$ has an incoming arc labeled \emph{false}, then change the
+  head of that arc so that it refers to the successor of $s$ referred
+  to by the outgoing arc of $s$ labeled \emph{false}.
+\item If $s$ has $n>1$ predecessors, then replicate $s$ $n$ times;
+  once for each predecessor.  Every replica is inserted into $S$.
+  Labels of outgoing control arcs are preserved in the replicas.
+\item Let $p$ be the (unique) predecessor of $s$.  Remove $p$ as a
+  predecessor of $s$ so that existing immediate predecessors of $p$
+  instead become immediate predecessors of $s$.  Insert a replica of
+  $p$ in each outgoing control arc of $s$, preserving the label of
+  each arc.
+\end{enumerate}
+}
+
 \frame{\frametitle{Initial instruction graph}
 
 \begin{figure}
