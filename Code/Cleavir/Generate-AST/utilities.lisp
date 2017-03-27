@@ -299,9 +299,21 @@
   ;; must actually return a value for it.
   ;; Therefore, we can just make all types on the end of REQ that
   ;; do not include NIL optional.
-  (let* ((lastpos (position-if-not (lambda (type) (typep nil type))
-                                   req
-                                   :from-end t))
+  ;; A further complication is that, since this is compile-time,
+  ;; some types may not be defined enough for TYPEP to work
+  ;; (e.g. SATISFIES with an undefined function) as mentioned in
+  ;; CLHS deftype. Therefore we use SUBTYPEP instead of TYPEP.
+  ;; We have, also according to that page, the opportunity to
+  ;; signal a warning and ignore the declaration instead, but
+  ;; that requires more intimacy with the implementation type
+  ;; system than we presently have.
+  (let* ((lastpos (position-if-not
+                   (lambda (type)
+                     (multiple-value-bind (subtype-p valid-p)
+                         (subtypep 'null type)
+                       (or subtype-p (not valid-p))))
+                   req
+                   :from-end t))
          ;; if we found something, we need the next position
          ;; for the next bit. if we didn't, zero
          ;; E.g. (values integer list) => lastpos = 1
