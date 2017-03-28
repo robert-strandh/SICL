@@ -229,6 +229,29 @@ The macro is defined like this:
 
 }
 
+
+\frame[containsverbatim]{
+\frametitle{Example: handling \texttt{:end}}
+
+The expanded \texttt{find} function looks like this:
+
+\begin{verbatim}
+(defun find (item list end)
+  (if end
+      (progn (loop for element in list
+                   for index from 0
+                   until (and end (>= index end))
+                   when (eql item element)
+                     return element))
+      (progn (loop for element in list
+                   for index from 0
+                   until (and end (>= index end))
+                   when (eql item element)
+                     return element))))
+\end{verbatim}
+
+}
+
 \frame{
 \frametitle{Future work}
 
