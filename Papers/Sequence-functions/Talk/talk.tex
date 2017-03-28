@@ -277,6 +277,24 @@ The resulting code becomes:
 }
 
 \frame{
+\frametitle{Other specializations}
+
+We handle the following specializations in a similar way:
+
+\begin{itemize}
+\item We check for the \texttt{:key} parameter being \texttt{identity}
+  or \texttt{car}, so that the call to the \texttt{key} function can
+  be eliminated, or inlined.
+\item We check for the \texttt{:test} parameter being \texttt{eq} or
+  \texttt{eql}, so that the call to the \texttt{test} function can
+  be inlined in those cases.
+\item We specialize for the element type when the sequence is a
+  vector.
+\end{itemize}
+
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
