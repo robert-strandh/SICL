@@ -176,6 +176,27 @@ Whether \texttt{end} is \texttt{nil} or not is loop invariant, but
 obviously not known at compile time, so a typical compiler can not
 do anything with this information.
 }
+\frame[containsverbatim]{
+\frametitle{Example: handling \texttt{:end}}
+
+To get better performance, we could do this:
+
+\begin{verbatim}
+(defun find (item list end)
+  (if end
+      (loop for element in list
+            for index from 0
+            until (and end (>= index end))
+            when (eql item element)
+              return element)
+      (loop for element in list
+            when (eql item element)
+              return element)))
+\end{verbatim}
+
+But now we have code duplication which makes this version less
+maintainable and harder to test.
+}
 
 \frame{
 \frametitle{Future work}
