@@ -157,6 +157,26 @@ that technique to obtain one special case.
 \end{itemize}
 }
 
+\frame[containsverbatim]{
+\frametitle{Example: handling \texttt{:end}}
+
+To illustrate our technique, we use a simplified version of
+\texttt{find}.
+
+\begin{verbatim}
+(defun find (item list end)
+  (loop for element in list
+        for index from 0
+        until (and end (>= index end))
+        when (eql item element)
+          return element))
+\end{verbatim}
+
+Whether \texttt{end} is \texttt{nil} or not is loop invariant, but
+obviously not known at compile time, so a typical compiler can not
+do anything with this information.
+}
+
 \frame{
 \frametitle{Future work}
 
