@@ -252,6 +252,30 @@ The expanded \texttt{find} function looks like this:
 
 }
 
+
+\frame[containsverbatim]{
+\frametitle{Example: handling \texttt{:end}}
+
+A good compiler now notices that \texttt{end} is \texttt{nil} in the
+\emph{else} branch of the if, so the \texttt{until} clause can be
+removed, and as a consequence, the \texttt{index} variable is unused.
+The resulting code becomes:
+
+\begin{verbatim}
+(defun find (item list end)
+  (if end
+      (progn (loop for element in list
+                   for index from 0
+                   until (and end (>= index end))
+                   when (eql item element)
+                     return element))
+      (progn (loop for element in list
+                   when (eql item element)
+                     return element))))
+\end{verbatim}
+
+}
+
 \frame{
 \frametitle{Future work}
 
