@@ -113,6 +113,21 @@ Several objectives:
 
 
 \frame{
+\frametitle{The challenge}
+
+  \begin{itemize}
+  \item Good performance requires specialization on element type (for
+    vector), test functions, key functions, and values of certain
+    parameters such as \texttt{:end} and \texttt{from-end} (for
+    lists).
+  \item A separate function for each case makes the source code huge
+    and hard to test.
+  \item Using macros to generate separate functions makes the code
+    hard to understand.
+  \end{itemize}
+}
+
+\frame{
 \frametitle{Previous work}
 
 At ELS 2015 in London, we presented a technique for processing lists
