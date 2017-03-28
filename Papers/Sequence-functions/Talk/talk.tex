@@ -215,6 +215,20 @@ Our technique wraps the loop in a macro call like this:
 
 }
 
+\frame[containsverbatim]{
+\frametitle{Example: handling \texttt{:end}}
+
+The macro is defined like this:
+
+\begin{verbatim}
+(defmacro with-end (&body body)
+  `(if end
+       (progn ,@body)
+       (progn ,@body)))
+\end{verbatim}
+
+}
+
 \frame{
 \frametitle{Future work}
 
