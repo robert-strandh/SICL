@@ -198,6 +198,23 @@ But now we have code duplication which makes this version less
 maintainable and harder to test.
 }
 
+\frame[containsverbatim]{
+\frametitle{Example: handling \texttt{:end}}
+
+Our technique wraps the loop in a macro call like this:
+
+\begin{verbatim}
+(defun find (item list end)
+  (with-end
+    (loop for element in list
+          for index from 0
+          until (and end (>= index end))
+          when (eql item element)
+            return element)))
+\end{verbatim}
+
+}
+
 \frame{
 \frametitle{Future work}
 
