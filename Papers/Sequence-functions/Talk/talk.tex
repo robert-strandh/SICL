@@ -304,7 +304,7 @@ We handle the following specializations in a similar way:
   values and element types need to be tested.
 \item The resulting code is very fast.
 \item The code is independent of the implementation.  Only the
-  implementation of the macros are specific to each implementation.
+  definitions of the macros are specific to each implementation.
 \end{itemize}
 
 }
@@ -316,7 +316,7 @@ We handle the following specializations in a similar way:
 \item The resulting code of a single function is very large before the
   compiler can optimize it, resulting in long compilation times, but
   especially requiring huge amounts of memory during compilation.
-\item In any particular branch of an \emph{if} form, there is unused
+\item In any particular branch of an \texttt{if} form, there is unused
   code, resulting in an avalanche of compiler messages.
 \end{itemize}
 
