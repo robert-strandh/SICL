@@ -205,7 +205,7 @@ Our technique wraps the loop in a macro call like this:
 
 \begin{verbatim}
 (defun find (item list end)
-  (with-end
+  (with-end end
     (loop for element in list
           for index from 0
           until (and end (>= index end))
@@ -221,8 +221,8 @@ Our technique wraps the loop in a macro call like this:
 The macro is defined like this:
 
 \begin{verbatim}
-(defmacro with-end (&body body)
-  `(if end
+(defmacro with-end (end-var &body body)
+  `(if ,end-var
        (progn ,@body)
        (progn ,@body)))
 \end{verbatim}
