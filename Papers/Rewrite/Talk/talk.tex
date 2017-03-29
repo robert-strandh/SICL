@@ -318,6 +318,19 @@ After inlining \texttt{car} and \texttt{cdr}, we get the following code:
 }
 
 \frame{
+\frametitle{Advantages to our technique}
+
+\begin{itemize}
+\item It is simple to implement.
+\item Correctness is obvious, because each rewrite step preserves the
+  semantics of the program.
+\item In the paper, we give a proof of termination.  It works even
+  when loops are replicated.
+\end{itemize}
+
+}
+
+\frame{
   \frametitle{Acknowledgments}
 
 We would like to thank Philipp Marek for providing valuable feedback
