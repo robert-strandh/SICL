@@ -331,6 +331,20 @@ After inlining \texttt{car} and \texttt{cdr}, we get the following code:
 }
 
 \frame{
+\frametitle{Disadvantages}
+
+\begin{itemize}
+\item The resulting code is bigger.
+\item If many, overlapping zones of liveness and redundant tests
+  exist, then code size may increase exponentially.  We conjecture
+  that this case is very infrequent.
+\item Local rewriting is probably not the best way in terms of
+  compile time performance.
+\end{itemize}
+
+}
+
+\frame{
   \frametitle{Acknowledgments}
 
 We would like to thank Philipp Marek for providing valuable feedback
