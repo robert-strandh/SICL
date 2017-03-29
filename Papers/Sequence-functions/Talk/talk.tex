@@ -328,12 +328,67 @@ We handle the following specializations in a similar way:
 }
 
 \frame{
+\frametitle{Performance of our technique}
+
+\begin{itemize}
+\item We tested only on \sbcl{} because we know that its compiler is
+  sufficiently good for our needs.
+\item Our test do not have complicated \texttt{:test} or \texttt{:key}
+  functions.  Otherwise, these functions will dominate the execution
+  time.
+\end{itemize}
+
+}
+
+\frame{
+\frametitle{Performance of our technique}
+
+General interpretation of our results:
+
+\begin{itemize}
+\item At its best, our technique improves performance by a factor $3$
+  compared to \sbcl{}.  This result is obtained for an unspecialized
+  vector using \texttt{identity} as the \texttt{key} function, and
+  using \texttt{eq} as the \texttt{test}.
+\item Nearly as big an improvement is obtained for a list, again using
+  \texttt{identity} and \texttt{eq} and with \texttt{end} being
+  \texttt{nil}.
+\item We obtain small improvements in all other cases, except for
+  bitvectors (i.e., vectors with an element type \texttt{bit}) where
+  \sbcl{} is around $30\%$ faster.
+\end{itemize}
+
+}
+
+\frame{
+\frametitle{The case with bitvectors}
+
+\begin{itemize}
+\item A good \commonlisp{} implementation will not process bitvectors
+  one element at a time.
+\item Instead, it will use available processor instructions to process
+  a full processor word in each iteration.
+\item Our general approach is obviously unable to compete in that
+  case.
+\item Clients of our technique will have to define the macros so that
+  an exception is made for bitvectors.
+\end{itemize}
+
+}
+
+\frame{
 \frametitle{Future work}
 
 \begin{itemize}
-\item Determine policy.
+\item Improve on our macros by introducing more type declarations in
+  ways that the compiler can exploit them.
+\item Test our technique on other \commonlisp{} implementations.
+\item Add features to the \texttt{Cleavir} compiler framework so that
+  it can optimize using our technique.
+\item Improve our technique so that the main sequence functions are
+  small, making inlining possible, and thereby improving type
+  inference.
 \end{itemize}
-
 }
 
 \frame{
