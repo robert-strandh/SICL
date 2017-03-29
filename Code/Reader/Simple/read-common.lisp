@@ -9,31 +9,34 @@
 
 (defgeneric read-common (input-stream eof-error-p eof-value))
 
-(defmethod read-common (input-stream eof-error-p eof-value)
+(defmethod read-common :around (input-stream eof-error-p eof-value)
   (let ((*backquote-allowed-p* *backquote-in-subforms-allowed-p*)
 	(*backquote-in-subforms-allowed-p* nil))
-    (tagbody
-     step-1-start
-       (let ((char (read-char input-stream nil nil)))
-	 (when (null char)
-	   (if eof-error-p
-	       (error 'end-of-file :stream input-stream)
-	       (return-from read-common eof-value)))
-	 (case (syntax-type char)
-	   (:whitespace
-	    (go step-1-start))
-	   ((:terminating-macro :non-terminating-macro)
-	    (let ((values (multiple-value-list
-			   (call-reader-macro (get-macro-character char)
-					      input-stream
-					      char))))
-	      (if (null values)
-		  (go step-1-start)
-		  (return-from read-common (car values)))))
-           (t
-            (unread-char char input-stream)
-            (return-from read-common
-              (read-token input-stream eof-error-p eof-value))))))))
+    (call-next-method)))
+
+(defmethod read-common (input-stream eof-error-p eof-value)
+  (tagbody
+   step-1-start
+     (let ((char (read-char input-stream nil nil)))
+       (when (null char)
+         (if eof-error-p
+             (error 'end-of-file :stream input-stream)
+             (return-from read-common eof-value)))
+       (case (syntax-type char)
+         (:whitespace
+          (go step-1-start))
+         ((:terminating-macro :non-terminating-macro)
+          (let ((values (multiple-value-list
+                         (call-reader-macro (get-macro-character char)
+                                            input-stream
+                                            char))))
+            (if (null values)
+                (go step-1-start)
+                (return-from read-common (car values)))))
+         (t
+          (unread-char char input-stream)
+          (return-from read-common
+            (read-token input-stream eof-error-p eof-value)))))))
 
 (defgeneric read-token (input-stream eof-error-p eof-value))
 
