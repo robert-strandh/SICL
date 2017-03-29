@@ -43,6 +43,7 @@
    #:set-macro-character
    #:get-macro-character
    #:set-syntax-from-char
+   #:syntax-type
    #:copy-readtable
    #:readtable-case
    ;; Names of additional conditions.
