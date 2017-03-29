@@ -142,12 +142,21 @@ one exists.
 We detect redundant tests in \emph{intermediate code}, and we
 eliminate them using \emph{local graph rewriting}.  }
 
-\frame{
-\frametitle{Previous work}
+\frame{\frametitle{Previous work}
 
-bla bla
+Frank Mueller and David Whalley presented a paper at PLDI in 1995,
+entitled ``Avoiding Conditional Branches by Code Replication''.  
 
+\vspace{0.5cm}
+
+That paper uses ad-hoc techniques to detect redundant tests and
+transform the code to avoid them.
+
+\vspace{0.5cm}
+
+We are unaware of any other work in this domain.
 }
+
 
 \frame[containsverbatim]{
 \frametitle{An example}
@@ -306,15 +315,6 @@ After inlining \texttt{car} and \texttt{cdr}, we get the following code:
 \inputfig{fig-rewrite-8.pdf_t}
 \end{center}
 \end{figure}
-}
-
-\frame{
-\frametitle{Future work}
-
-\begin{itemize}
-\item Determine policy.
-\end{itemize}
-
 }
 
 \frame{
