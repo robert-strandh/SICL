@@ -167,7 +167,6 @@
     (ast-class instruction-class element-type input-transformer)
   `(defmethod compile-ast ((ast ,ast-class) context)
      (assert-context ast context 0 2)
-     (check-context-for-boolean-ast context)
      (let* ((arguments (cleavir-ast:children ast))
 	    (temps (make-temps arguments)))
        (compile-and-unbox-arguments

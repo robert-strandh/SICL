@@ -1,8 +1,8 @@
 \section{Our method}
 
-Because \commonlisp{} types are arbitrary sets, perfect inference of \commonlisp{} types would be equivalent to the halting problem\footnote{Most obviously, if the type of the input to a function is a singleton set.}; additionally, some type information is more useful than others in an optimizing compiler. Therefore, a small finite lattice is used for type inference.
+Because \commonlisp{} types are arbitrary sets, perfect inference of \commonlisp{} types would be equivalent to the halting problem\footnote{The type of the return value of a pure function could be inferred to be a singleton set or the bottom type NIL, depending on whether the function halts.}; additionally, some type information is more useful than others in an optimizing compiler. Therefore, a small finite lattice is used for type inference.
 
-Elements of the lattice are called \textit{type descriptors}, or just ``descriptors''. Every Common Lisp type can be conservatively approximated by a descriptor. That is, the type will not contain any elements not also contained in the descriptor. There is a descriptor for the top type, bottom type, and any type that is useful for optimization.
+Elements of the lattice are called \textit{type descriptors}, or just ``descriptors''. Every Common Lisp type can be conservatively approximated by a descriptor. That is, the type will not contain any elements not also contained in the descriptor. There is a descriptor for the top type, bottom type, and any type that is useful for optimization. At present this consists of a few basic types like \texttt{array} and \texttt{function}, but it is possible to extend the lattice in the future without altering the core algorithm.
 
 Descriptors are collected into \textit{bags}, which are associative maps from variables to descriptors. Bags are equipped with equality and union operations, which are both only defined for bags with the same set of variables, and consist of the equivalent operation on descriptors mapped over the variables.
 

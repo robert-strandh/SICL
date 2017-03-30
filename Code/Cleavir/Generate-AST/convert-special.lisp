@@ -188,9 +188,10 @@
 
 ;;; Given a list of declarations, return a list of canonicalized
 ;;; declaration specifiers of all the declarations.
-(defun canonicalize-declarations (declarations)
+(defun canonicalize-declarations (declarations env)
   (cleavir-code-utilities:canonicalize-declaration-specifiers
-   (declaration-specifiers declarations)))
+   (declaration-specifiers declarations)
+   (cleavir-env:declarations env)))
 
 ;;; Search for (dynamic-extent #'name).
 (defun dx-function-in-decls-p (canonicalized-dspecs name)
@@ -206,7 +207,7 @@
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let* ((canonicalized-dspecs
-               (canonicalize-declarations declarations))
+               (canonicalize-declarations declarations env))
              (defs (loop for def in (raw definitions)
                          for name = (first def)
                          for fun = (convert-local-function
@@ -360,7 +361,7 @@
       ;;  can inline what and converting in several stages, but
       ;;  that's probably too clever by half.
       (let* ((canonicalized-dspecs
-	       (canonicalize-declarations declarations))
+	       (canonicalize-declarations declarations env))
 	     (outer-env
 	       (augment-environment-from-fdefs env definitions))
 	     (body-dspecs
@@ -491,7 +492,8 @@
     (declare (ignore let))
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
-      (let* ((canonical-dspecs (canonicalize-declarations declarations))
+      (let* ((canonical-dspecs
+               (canonicalize-declarations declarations env))
 	     (variables (binding-vars bindings))
 	     (temp-asts (temp-asts-from-bindings (raw bindings))))
 	(multiple-value-bind (idspecs rdspecs)
@@ -563,7 +565,8 @@
     (declare (ignore let*))
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
-      (let* ((canonical-dspecs (canonicalize-declarations declarations))
+      (let* ((canonical-dspecs
+               (canonicalize-declarations declarations env))
 	     (variables (binding-vars bindings))
 	     (init-forms (binding-init-forms bindings)))
 	(multiple-value-bind (idspecs rdspecs) (itemize-declaration-specifiers
@@ -606,8 +609,7 @@
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
       (let ((canonicalized-dspecs
-	      (cleavir-code-utilities:canonicalize-declaration-specifiers
-	       (declaration-specifiers declarations))))
+              (canonicalize-declarations declarations env)))
 	(let ((new-env (augment-environment-with-declarations
 			env canonicalized-dspecs)))
 	  (with-preserved-toplevel-ness

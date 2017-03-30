@@ -51,6 +51,7 @@
    #:float-types
    #:upgraded-complex-part-types
    #:upgraded-array-element-types
+   #:declarations
    #:add-lexical-variable
    #:add-special-variable
    #:add-local-symbol-macro

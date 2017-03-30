@@ -538,7 +538,8 @@
       (declare (ignore documentation))
       (let ((canonicalized-dspecs
 	      (cleavir-code-utilities:canonicalize-declaration-specifiers
-	       (reduce #'append (mapcar #'cdr declarations)))))
+	       (reduce #'append (mapcar #'cdr declarations))
+               (cleavir-env:declarations env))))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
 	     (itemize-lambda-list parsed-lambda-list)

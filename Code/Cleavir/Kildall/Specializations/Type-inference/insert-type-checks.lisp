@@ -1,5 +1,20 @@
 (in-package #:cleavir-kildall-type-inference)
 
+;;; First this thing that just deletes THE and THE-VALUES to make
+;;; things easier for lower compiler levels. Should be run after
+;;; type inference is complete.
+
+(defun delete-the (initial-instruction)
+  (let (death)
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (i)
+       (when (typep i '(or cleavir-ir:the-instruction
+                        cleavir-ir:the-values-instruction))
+         (push i death)))
+     initial-instruction)
+    (mapc #'cleavir-ir:delete-instruction death))
+  initial-instruction)
+
 ;;;; This bit is currently very inadequate, in that it will lose a
 ;;;; lot of information in the name of safety, and insert unneeded
 ;;;; checks. A better strategy for insertion would be to convert
@@ -155,6 +170,13 @@
 ;;; because the-values is only generated in values contexts, i.e.
 ;;; it never goes the-values to M->F, so typeqing the required
 ;;; values wouldn't help anyway.
+;;; So we just delete THE-VALUES if insert-type-checks is on.
+
+(defun the-values->typeqs (the-values-instruction env)
+  (declare (ignore env))
+  (let ((policy (cleavir-ir:policy the-values-instruction)))
+    (when (cleavir-policy:policy-value policy 'insert-type-checks)
+      (cleavir-ir:delete-instruction the-values-instruction))))
 
 ;;; FIXME: There should be a halfway point where checks are inserted
 ;;; but the original type information is preserved. This is unsafe
@@ -169,5 +191,5 @@
               (push i tvs))))
      initial-instruction)
     (mapc (lambda (i) (the->typeq i env)) thes)
-    (mapc #'cleavir-ir:delete-instruction tvs)
+    (mapc (lambda (i) (the-values->typeqs i env)) tvs)
     (cleavir-ir:reinitialize-data initial-instruction)))

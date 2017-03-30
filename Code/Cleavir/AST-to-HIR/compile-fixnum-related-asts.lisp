@@ -8,7 +8,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (assert-context ast context 1 2)
+    (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp))
 	  (result (find-or-create-location (cleavir-ast:variable-ast ast))))
@@ -33,7 +33,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (assert-context ast context 1 2)
+    (assert-context ast context 0 2)
     (let ((temp1 (make-temp))
 	  (temp2 (make-temp))
 	  (result (find-or-create-location (cleavir-ast:variable-ast ast))))
