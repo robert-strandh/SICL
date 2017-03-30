@@ -23,7 +23,9 @@
 (defun semicolon (stream char)
   (declare (ignore char))
   (loop for char = (read-char stream nil nil t)
-	until (or (null char) (eql char #\Newline)))
+	until (or (null char) (eql char #\Newline))
+        finally (when (eql char #\Newline)
+                  (unread-char char stream )))
   (values))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
