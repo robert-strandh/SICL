@@ -261,17 +261,19 @@ The expanded \texttt{find} function looks like this:
 \frame[containsverbatim]{
 \frametitle{Example: handling \texttt{:end}}
 
-A good compiler now notices that \texttt{end} is \texttt{nil} in the
-`else' branch of the \texttt{if}, so the \texttt{until} clause can be
-removed, and as a consequence, the \texttt{index} variable is unused.
-The resulting code becomes:
+A good compiler now notices that \texttt{end} is \emph{true} in the
+`then' branch and \emph{false} in the `else' branch of the
+\texttt{if}.  Therefor, it can simplify the \texttt{until} in the
+`then' branch.  In the `else' branch, it can be removed entirely, and
+as a consequence the \texttt{index} variable is unused.  The resulting
+code becomes:
 
 \begin{verbatim}
 (defun find (item list end)
   (if end
       (progn (loop for element in list
                    for index from 0
-                   until (and end (>= index end))
+                   until (>= index end)
                    when (eql item element)
                      return element))
       (progn (loop for element in list
