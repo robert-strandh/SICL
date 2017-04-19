@@ -35,8 +35,8 @@
 ;;;
 ;;; Externally visible conditions
 
-;;; This condition is used by functions an macros that require 
-;;; some argument to be a nonnegative integer. 
+;;; This condition is used by functions and macros that require
+;;; some argument to be a nonnegative integer.
 (define-condition must-be-nonnegative-integer
     (type-error acclimation:condition)
   ()
