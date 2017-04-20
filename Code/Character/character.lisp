@@ -1,21 +1,8 @@
 (cl:in-package #:sicl-character)
 
-(defun characterp (object)
-  (sicl-word:==
-   (sicl-word:& object sicl-configuration:+tag-mask+)
-   sicl-configuration:+tag-character+))
-
-(proclaim '(inline characterp))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CHAR=
-
-(defun binary-char= (char1 char2)
-  (declare (type character char1 char2))
-  (sicl-word:== char1 char2))
-
-(proclaim '(inline binary-char=))
 
 (defun char= (&rest characters)
   (when (null characters)
@@ -52,20 +39,9 @@
 ;;;
 ;;; Function CHAR/=
 
-(defun binary-char/= (char1 char2)
-  (declare (type character char1 char2))
-  (not (sicl-word:== char1 char2)))
-
-(proclaim '(inline binary-char/=))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CHAR<
-
-(defun binary-char< (char1 char2)
-  (declare (type character char1 char2))
-  (< (the fixnum (char-code char1))
-     (the fixnum (char-code char2))))
 
 (defun char< (&rest characters)
   (when (null characters)
@@ -102,11 +78,6 @@
 ;;;
 ;;; Function CHAR<=
 
-(defun binary-char<= (char1 char2)
-  (declare (type character char1 char2))
-  (<= (the fixnum (char-code char1))
-      (the fixnum (char-code char2))))
-
 (defun char<= (&rest characters)
   (when (null characters)
     (error 'program-error))
@@ -142,11 +113,6 @@
 ;;;
 ;;; Function CHAR>
 
-(defun binary-char> (char1 char2)
-  (declare (type character char1 char2))
-  (> (the fixnum (char-code char1))
-     (the fixnum (char-code char2))))
-
 (defun char> (&rest characters)
   (when (null characters)
     (error 'program-error))
@@ -181,11 +147,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CHAR>=
-
-(defun binary-char>= (char1 char2)
-  (declare (type character char1 char2))
-  (>= (the fixnum (char-code char1))
-      (the fixnum (char-code char2))))
 
 (defun char>= (&rest characters)
   (when (null characters)
