@@ -62,7 +62,7 @@
                       stream
                       (language acclimation:english))
   (format stream
-      "A property list was required, ~@
+          "A property list was required, ~@
            but the following was given:~@
            ~s"
       (type-error-datum c)))
