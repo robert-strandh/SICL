@@ -16,7 +16,7 @@
 	    unless (binary-char= char1 char2)
 	      return nil
 	    finally (return t))))
-  
+ 
 (proclaim '(notinline char=))
 
 (define-compiler-macro char= (&whole form &rest arguments)
@@ -34,7 +34,7 @@
 			     for var1 = (car vars) then var2
 			     for var2 = (car rest)
 			     collect `(binary-char= ,var1 ,var2))))))))
-  
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CHAR/=
@@ -55,7 +55,7 @@
 	    unless (binary-char< char1 char2)
 	      return nil
 	    finally (return t))))
-  
+ 
 (proclaim '(notinline char<))
 
 (define-compiler-macro char< (&whole form &rest arguments)
@@ -73,7 +73,7 @@
 			     for var1 = (car vars) then var2
 			     for var2 = (car rest)
 			     collect `(binary-char< ,var1 ,var2))))))))
-  
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CHAR<=
@@ -90,7 +90,7 @@
 	    unless (binary-char<= char1 char2)
 	      return nil
 	    finally (return t))))
-  
+ 
 (proclaim '(notinline char<=))
 
 (define-compiler-macro char<= (&whole form &rest arguments)
@@ -108,7 +108,7 @@
 			     for var1 = (car vars) then var2
 			     for var2 = (car rest)
 			     collect `(binary-char<= ,var1 ,var2))))))))
-  
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CHAR>
@@ -125,7 +125,7 @@
 	    unless (binary-char> char1 char2)
 	      return nil
 	    finally (return t))))
-  
+ 
 (proclaim '(notinline char>))
 
 (define-compiler-macro char> (&whole form &rest arguments)
@@ -143,7 +143,7 @@
 			     for var1 = (car vars) then var2
 			     for var2 = (car rest)
 			     collect `(binary-char> ,var1 ,var2))))))))
-  
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function CHAR>=
@@ -160,7 +160,7 @@
 	    unless (binary-char>= char1 char2)
 	      return nil
 	    finally (return t))))
-  
+ 
 (proclaim '(notinline char>=))
 
 (define-compiler-macro char>= (&whole form &rest arguments)
@@ -178,4 +178,3 @@
 			     for var1 = (car vars) then var2
 			     for var2 = (car rest)
 			     collect `(binary-char>= ,var1 ,var2))))))))
-  
