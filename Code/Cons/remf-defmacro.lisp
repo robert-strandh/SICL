@@ -1,6 +1,5 @@
 (cl:in-package #:sicl-cons)
 
-;;; FIXME: Handle errors better.
 (defmacro remf (&environment env place indicator)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
       (get-setf-expansion place env)

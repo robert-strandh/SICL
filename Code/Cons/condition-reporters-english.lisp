@@ -57,3 +57,12 @@
            but the following was given:~@
            ~s"
 	  (type-error-datum c)))
+
+(defmethod acclimation:report-condition ((c must-be-plist)
+                      stream
+                      (language acclimation:english))
+  (format stream
+      "A property list was required, ~@
+           but the following was given:~@
+           ~s"
+      (type-error-datum c)))
