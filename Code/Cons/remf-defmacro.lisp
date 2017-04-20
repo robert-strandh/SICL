@@ -13,10 +13,10 @@
        (cond ((atom ,(first store-vars))
 	      (if (null ,(first store-vars))
 		  nil
-		  (error "Remf must be given a property list.")))
+		  (error 'must-be-plist :expected-type store-vars)))
 	     ((eq (car ,(first store-vars)) ,indicator-var)
 	      (cond ((atom (cdr ,(first store-vars)))
-		     (error "Remf must be given a property list."))
+		     (error 'must-be-plist :expected-type store-vars))
 		    (t
 		     (setq ,(first store-vars)
 			   (cddr ,(first store-vars)))
@@ -26,11 +26,11 @@
 	      (loop for rest = (cdr ,(first store-vars)) then (cddr rest)
 		    until (atom (cdr rest))
 		    do (cond ((atom (cddr rest))
-			      (error "Remf must be given property list."))
+			      (error 'must-be-plist :expected-type store-vars))
 			     ((eq (cadr rest) ,indicator-var)
 			      (setf (cdr rest) (cdddr rest))
 			      (return t))
 			     (t
 			      nil))
 		    finally (unless (null (cdr rest))
-			      (error "Remf must be given a proper list.")))))))))
+			      (error 'must-be-plist :expected-type store-vars)))))))))
