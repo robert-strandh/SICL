@@ -55,3 +55,10 @@
     (type-error acclimation:condition)
   ()
   (:default-initargs :expected-type 'list))
+
+;;; This condition is used by functions and macros that require
+;;; some argument to be a property list.
+(define-condition must-be-plist
+    (type-error acclimation:condition)
+  ()
+  (:default-initargs :expected-type 'plist))
