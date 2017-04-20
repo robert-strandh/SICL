@@ -32,31 +32,31 @@
 ;;;; POSSIBILITY OF SUCH DAMAGE.
 
 (defmethod acclimation:report-condition ((c must-be-nonnegative-integer)
-					  stream
-					  (language acclimation:english))
+                                          stream
+                                          (language acclimation:english))
   (format stream
-	  "A nonnegative integer was required,~@
+          "A nonnegative integer was required,~@
            but the following was given:~@
            ~s"
-	  (type-error-datum c)))
+          (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c must-be-cons)
-					  stream
-					  (language acclimation:english))
+                                          stream
+                                          (language acclimation:english))
   (format stream
-	  "A cons cell was required,~@
+          "A cons cell was required,~@
            but the following was given:~@
            ~s"
-	  (type-error-datum c)))
+          (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c must-be-list)
-					  stream
-					  (language acclimation:english))
+                                          stream
+                                          (language acclimation:english))
   (format stream
-	  "A list (a cons or nil) was required,~@
+          "A list (a cons or nil) was required,~@
            but the following was given:~@
            ~s"
-	  (type-error-datum c)))
+          (type-error-datum c)))
 
 (defmethod acclimation:report-condition ((c must-be-plist)
                       stream
