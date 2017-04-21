@@ -206,19 +206,26 @@
   ;; generated code, i.e.: there is exactly one variable for each
   ;; cell, one FETCH for each variable, and each has an
   ;; immediate-input with the position of that cell in the inputs.
-  (let* ((fetches
-           (loop for inst
-                   = (first (cleavir-ir:successors enter))
-                     then (first (cleavir-ir:successors inst))
-                 while (typep inst 'cleavir-ir:fetch-instruction)
-                 ;; the cell #, and the variable with the cell.
-                 collect (cons (cleavir-ir:value
-                                (second
-                                 (cleavir-ir:inputs inst)))
-                               (first
-                                (cleavir-ir:outputs inst)))))
-         (info (make-array (length fetches)
-                           :element-type 'indicator)))
+  (let* (fetches info)
+    ;; This bizarre loop is required by the fact that
+    ;; segregate-lexicals will for reasons unknown to me sometimes
+    ;; generate ENCLOSE instructions that take N inputs with an
+    ;; ENTER that only fetches N-1 cells, which will result in
+    ;; their being two fetches but a fetch having an ID of 2.
+    ;; Originally we just used the number of fetches for the length
+    ;; of the array.
+    (loop for inst
+            = (first (cleavir-ir:successors enter))
+              then (first (cleavir-ir:successors inst))
+          for id-in = (second (cleavir-ir:inputs inst))
+          for out = (first (cleavir-ir:outputs inst))
+          while (typep inst 'cleavir-ir:fetch-instruction)
+          ;; the cell #, and the variable with the cell.
+          do (push (cons (cleavir-ir:value id-in) out) fetches)
+          maximizing (cleavir-ir:value id-in) into max-id
+          finally (setf info
+                        (make-array (1+ max-id)
+                                    :element-type 'indicator)))
     (dolist (fetch fetches)
       (destructuring-bind (id . out) fetch
         ;; note that the cell outputs are not live at the ENTER,
