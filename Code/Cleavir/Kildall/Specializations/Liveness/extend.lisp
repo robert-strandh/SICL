@@ -1,4 +1,4 @@
-(in-package #:cleavir-kildall-liveness)
+(in-package #:cleavir-liveness)
 
 (defclass filtered-pool-mixin (cleavir-kildall:map-pool-mixin)
   ((%liveness :initarg :liveness :accessor fp-liveness)))
@@ -15,7 +15,7 @@
     ((s forward-filtered-pool-mixin) instruction new-in)
   (let ((filtered
           (cleavir-kildall:alist->map-pool
-           (loop for live in (cleavir-kildall-liveness:live-before
+           (loop for live in (cleavir-liveness:live-before
                               (fp-liveness s) instruction)
                  collect (cons live
                                (cleavir-kildall:find-in-pool
@@ -26,7 +26,7 @@
     ((s reverse-filtered-pool-mixin) instruction new-in)
   (let ((filtered
           (cleavir-kildall:alist->map-pool
-           (loop for live in (cleavir-kildall-liveness:live-after
+           (loop for live in (cleavir-liveness:live-after
                               (fp-liveness s) instruction)
                  collect (cons live
                                (cleavir-kildall:find-in-pool

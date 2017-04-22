@@ -1,4 +1,4 @@
-(in-package #:cleavir-kildall-escape)
+(in-package #:cleavir-escape)
 
 ;;;; Escape indicators are bitfields because meet can be OR.
 ;;;; Bit layout:

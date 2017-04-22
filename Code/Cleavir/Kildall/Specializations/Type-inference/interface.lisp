@@ -3,7 +3,7 @@
 (defun infer-types (initial-instruction environment
                     &key prune draw
                       (liveness
-                       (cleavir-kildall-liveness:liveness
+                       (cleavir-liveness:liveness
                         initial-instruction)))
   ;; controlled by policy (see insert-type-checks.lisp)
   (thes->typeqs initial-instruction environment)

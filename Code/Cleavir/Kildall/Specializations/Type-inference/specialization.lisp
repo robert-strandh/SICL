@@ -2,7 +2,7 @@
 
 (defclass type-inference
     (cleavir-kildall:forward-single-traverse
-     cleavir-kildall-liveness:forward-filtered-pool-mixin
+     cleavir-liveness:forward-filtered-pool-mixin
      cleavir-kildall:forward-traverse-interfunction)
   ((%environment :initarg :env :reader environment)
    (%typecache :initform (make-hash-table :test #'equal)

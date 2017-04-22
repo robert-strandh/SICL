@@ -1,4 +1,4 @@
-(in-package #:cleavir-kildall-escape)
+(in-package #:cleavir-escape)
 
 (defmethod cleavir-kildall:find-in-pool
     ((s escape) location pool &key (default nil default-p))

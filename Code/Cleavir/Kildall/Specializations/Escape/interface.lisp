@@ -1,10 +1,10 @@
-(in-package #:cleavir-kildall-escape)
+(in-package #:cleavir-escape)
 
 ;;; :draw specifies a file to write out an annotated .dot to.
 (defun mark-dynamic-extent (initial-instruction
                             &key draw
                               (liveness
-                               (cleavir-kildall-liveness:liveness
+                               (cleavir-liveness:liveness
                                 initial-instruction)))
   (check-type initial-instruction cleavir-ir:enter-instruction)
   (let* ((s (make-instance 'escape :liveness liveness))
