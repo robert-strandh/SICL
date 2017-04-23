@@ -9,9 +9,8 @@
      initial-instruction)
     result))
 
-(defun compute-initial-dictionary (initial-instruction)
-  (let ((liveness (cleavir-liveness:liveness initial-instruction))
-	(result (make-dictionary)))
+(defun compute-initial-dictionary (initial-instruction liveness)
+  (let ((result (make-dictionary)))
     (cleavir-ir:map-instructions-arbitrary-order
      (lambda (instruction)
        (loop for predecessor in (remove-duplicates
@@ -29,9 +28,11 @@
      initial-instruction)
     result))
 
-(defun infer-types (initial-instruction)
+(defun infer-types (initial-instruction
+                    &key (liveness (cleavir-liveness:liveness
+                                    initial-instruction)))
   (let ((*work-list* (compute-initial-work-list initial-instruction))
-	(*dictionary* (compute-initial-dictionary initial-instruction)))
+	(*dictionary* (compute-initial-dictionary initial-instruction liveness)))
     (loop until (null *work-list*)
 	  do (process-instruction (pop *work-list*)))
     *dictionary*))

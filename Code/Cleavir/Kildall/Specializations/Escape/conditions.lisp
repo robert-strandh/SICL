@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-kildall-escape)
+(cl:in-package #:cleavir-escape)
 
 ;;; Condition signaled for incorrect DYNAMIC-EXTENT declarations.
 ;;; FIXME: Seriously needs source reporting.

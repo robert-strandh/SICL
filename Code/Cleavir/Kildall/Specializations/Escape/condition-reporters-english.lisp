@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-kildall-escape)
+(cl:in-package #:cleavir-escape)
 
 ;;; FIXME FIXME FIXME this message sucks!!
 (defmethod acclimation:report-condition

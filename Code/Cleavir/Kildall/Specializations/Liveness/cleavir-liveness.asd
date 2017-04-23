@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :cleavir-kildall-liveness
+(defsystem :cleavir-liveness
   :depends-on (:cleavir-kildall :cleavir-hir)
   :serial t
   :components

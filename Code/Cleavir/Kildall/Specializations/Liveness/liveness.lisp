@@ -1,4 +1,4 @@
-(in-package #:cleavir-kildall-liveness)
+(in-package #:cleavir-liveness)
 
 ;;; class for holding liveness information.
 (defclass liveness ()
