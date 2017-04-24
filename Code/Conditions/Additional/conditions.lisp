@@ -186,11 +186,6 @@
   ()
   (:default-initargs :type 'list))
 
-(define-condition class-name-must-be-non-nil-symbol
-    (sicl-type-error)
-  ()
-  (:default-initargs :type '(and symbol (not null))))
-
 (define-condition malformed-slots-list (sicl-type-error)
   ()
   (:default-initargs :type 'list))
