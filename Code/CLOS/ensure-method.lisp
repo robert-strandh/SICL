@@ -36,7 +36,7 @@
   ;; it contains only symbols and specializer metaobjects. 
   (let ((specs (loop for s in specializers
 		     collect (if (symbolp s)
-				 (sicl-environment:find-class s environment)
+				 (sicl-genv:find-class s environment)
 				 s)))
 	(remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :specializers))
