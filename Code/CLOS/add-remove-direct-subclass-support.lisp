@@ -13,8 +13,9 @@
 
 (defun add-direct-subclass-default (superclass subclass)
   (when (member subclass (class-direct-subclasses superclass))
-    (error "Attempt to add existing subclass ~s as a subclass of ~s."
-	   subclass superclass))
+    (error 'attempt-to-add-existing-subclass
+           :subclass subclass
+           :superclass superclass))
   (setf (class-direct-subclasses superclass)
 	(cons subclass (class-direct-subclasses superclass))))
 
