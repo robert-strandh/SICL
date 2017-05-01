@@ -9,3 +9,9 @@
     (sicl-additional-conditions:sicl-error)
   ((%subclass :initarg :subclass :reader subclass)
    (%superclass :initarg :superclass :reader superclass)))
+
+(define-condition readers-must-be-proper-list
+    (sicl-additional-conditions:sicl-type-error)
+  ((%slot-definition :initarg :slot-definition :reader slot-definition)
+   (%readers :initarg :readers :reader readers))
+  (:default-initargs :type 'list))
