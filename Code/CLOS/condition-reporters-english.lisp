@@ -17,3 +17,14 @@
           "Attempt to add existing subclass ~s as a subclass of ~s."
 	   (subclass c)
            (superclass c)))
+
+(defmethod acclimation:report-condition
+    ((c readers-must-be-proper-list)
+     stream
+     (language acclimation:english))
+  (format stream
+          "The keyword argument :READERS when supplied as~@
+           initialization of a slot definition, must be~@
+           a proper list, but the following was found instead:~@
+           ~s."
+          (readers c)))
