@@ -360,15 +360,6 @@
            ~s was found."
 	  (type-error-datum c)))
 
-(defmethod acclimation:report-condition ((c malformed-documentation-option)
-			     stream
-			     (language acclimation:english))
-  (format stream
-	  "A documentation option must have the form~@
-           (:documentation <name>), but~@
-           ~s was found."
-	  (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c malformed-metaclass-option)
 			     stream
 			     (language acclimation:english))
