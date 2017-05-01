@@ -105,4 +105,6 @@
    #:general-instance-p
    #:general-instance-access
    ;; SICL-specific macro
-   #:subclassp))
+   #:subclassp
+   ;; Condition types
+   #:malformed-documentation-option))
