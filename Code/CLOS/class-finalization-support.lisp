@@ -4,11 +4,11 @@
 ;;;
 ;;; Computing the class precedence list
 
-;;; For a given class, compute a precedence relation.  
-;;; This relation is represented as a list of cons cells, 
+;;; For a given class, compute a precedence relation.
+;;; This relation is represented as a list of cons cells,
 ;;; where the class in the CAR of the cell takes precedence over
-;;; the class in the CDR of the cell. For a class C with a list of 
-;;; direct superclasses (S1 S2 ... Sn), the relation contains 
+;;; the class in the CDR of the cell. For a class C with a list of
+;;; direct superclasses (S1 S2 ... Sn), the relation contains
 ;;; the elements (C . S1) (S1 . S2) ... (Sn-1 . Sn).
 (defun compute-relation (class)
   (loop for prev = class then super
@@ -42,12 +42,12 @@
 		   ;; Several candidates.  Look for the last class in the
 		   ;; result computed so far (first in the reversed result)
 		   ;; that has one of the candidates as a direct superclass.
-		   ;; Return that candidate.  
+		   ;; Return that candidate.
 		   ;; There can be at most one, because within a list of
 		   ;; superclasses, there is already a dependency, so that
 		   ;; two different classes in a single list of superclasses
 		   ;; can not both be candidates.
-		   ;; There must be at least one, because ... 
+		   ;; There must be at least one, because ...
 		   ;; (FIXME: prove it!)
 		   (loop for element in reverse-result
 		         do (loop for candidate in candidates
@@ -61,7 +61,7 @@
 		 (push candidate reverse-result)
 		 (setf all-supers (remove candidate all-supers))
 		 (setf relation (remove candidate relation :key #'car)))))
-    (reverse reverse-result)))  
+    (reverse reverse-result)))
 
 (defun compute-class-precedence-list-default (class)
   ;; Make sure all the direct superclasses are already finalized so
@@ -78,22 +78,22 @@
 ;;; Implement the behavior of compute-effective-slot-definition for
 ;;; standard-class and funcallable-standard-class.  By passing
 ;;; slot-definition-class as an argument rather than looking it up in
-;;; this function, we can use this function for built-in classes as well. 
+;;; this function, we can use this function for built-in classes as well.
 ;;;
 ;;; In this function, we use alternative readers for slot-definition
 ;;; slots.  Thus, we use INITARGS rather than
 ;;; SLOT-DEFINITION-INITARGS, INITFUNCTION rather than
-;;; SLOT-DEFINITION-INITFUNCTION. 
+;;; SLOT-DEFINITION-INITFUNCTION.
 (defun compute-effective-slot-definition-default
     (name direct-slot-definitions slot-definition-class)
   (let (allocation initargs initform initfunction type location)
     (setf allocation
 	  (slot-definition-allocation (first direct-slot-definitions)))
-    ;; When allocation is :CLASS, we use the CONS cell of the 
+    ;; When allocation is :CLASS, we use the CONS cell of the
     ;; direct slot definition that determined this allocation as
     ;; the location of the final slot.  If not, the location is
     ;; set to NIL and will be assigned by the appropriate :around
-    ;; method. 
+    ;; method.
     (setf location
 	  (if (eq allocation :class)
 	      (slot-definition-storage (first direct-slot-definitions))
@@ -112,13 +112,13 @@
 	(make-instance slot-definition-class
 	  :name name
 	  :allocation allocation
-	  :location location 
+	  :location location
 	  :initargs initargs
 	  :type type)
 	(make-instance slot-definition-class
 	  :name name
 	  :allocation allocation
-	  :location location 
+	  :location location
 	  :initargs initargs
 	  :initform initform
 	  :initfunction initfunction
@@ -149,7 +149,7 @@
 ;;; of the class finalization protocol.  For that reason, we use the
 ;;; alternative reader PRECEDENCE-LIST that works just like the normal
 ;;; CLASS-PRECEDENCE-LIST, except that it just accesses the slot, and
-;;; does not signal an error if the class has not been finalized. 
+;;; does not signal an error if the class has not been finalized.
 ;;;
 ;;; The AMOP does not say what is supposed to happen if this generic
 ;;; function is called if the class precedence list has not first been
@@ -196,7 +196,7 @@
 ;;;    "For a given class, the locations increase consecutively, in
 ;;;     the order that the directly accessible slots appear in the
 ;;;     list of effective slots."
-;;; 
+;;;
 ;;; It is not entirely clear what list of effective slots is meant,
 ;;; but we take this to mean that it is the list of effective slots
 ;;; that is both returned by the primary method and associated with
@@ -291,7 +291,7 @@
 ;;; CLASS-FINALIZED-P, and during bootstrapping, we have full control
 ;;; over class finalization, so we can make sure it is done so that it
 ;;; can be assumed that all the superclasses of some class C are all
-;;; finalized before an attempt is made to finalize C itself. 
+;;; finalized before an attempt is made to finalize C itself.
 (defun finalize-inheritance-assuming-superclasses-finalized (class)
   ;; While we can assume superclasses to be finalized, we can't call
   ;; COMPUTE-CLASS-PRECEDENCE-LIST-ASSUMING-SUPERCLASSES-FINALIZED
@@ -319,7 +319,7 @@
   ;; Make sure all the direct superclasses are already finalized.
   ;; Since FINALIZE-INHERITANCE does not itself test whether the class
   ;; is finalized before finalizing it, we do it in this loop so as to
-  ;; avoid calling FINALIZE-INHERITANCE unnecessarily. 
+  ;; avoid calling FINALIZE-INHERITANCE unnecessarily.
   (loop for super in (class-direct-superclasses class)
 	do (unless (class-finalized-p super)
 	     (finalize-inheritance super)))
