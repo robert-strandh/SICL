@@ -15,3 +15,8 @@
   ((%slot-definition :initarg :slot-definition :reader slot-definition)
    (%readers :initarg :readers :reader readers))
   (:default-initargs :type 'list))
+
+(define-condition malformed-documentation-option
+    (sicl-additional-conditions:sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
