@@ -173,10 +173,6 @@
 ;;;
 ;;; CLOS/MOP-related conditions. 
 
-(define-condition no-such-class-name (sicl-type-error)
-  ()
-  (:default-initargs :type 'symbol))
-
 (define-condition must-be-class-or-nil (sicl-type-error)
   ()
   (:default-initargs :type '(or class null)))
