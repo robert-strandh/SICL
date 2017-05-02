@@ -21,7 +21,7 @@
 ;;; directly.
 ;;;
 ;;; The special case for the discriminating function is introduced by
-;;; COMPUTE-DISCRIMINATING-FUNCTION, so there is no trace of it here. 
+;;; COMPUTE-DISCRIMINATING-FUNCTION, so there is no trace of it here.
 
 (defmethod compute-applicable-methods
     ((generic-function standard-generic-function) arguments)
@@ -34,7 +34,7 @@
 ;;; The applicable methods are found by filtering out methods for
 ;;; which every specializer is a (non-strict) subclass of the
 ;;; corresponding argument class.  Then they are sorted according to
-;;; the order determined by METHOD-MORE-SPECIFIC-P as defined above. 
+;;; the order determined by METHOD-MORE-SPECIFIC-P as defined above.
 ;;;
 ;;; We extract the body of this method into a separate function,
 ;;; because there is a potential metastability problem here, and that
@@ -53,7 +53,7 @@
 ;;; call the extracted method body directly.
 ;;;
 ;;; The special case for the discriminating function is introduced by
-;;; COMPUTE-DISCRIMINATING-FUNCTION, so there is no trace of it here. 
+;;; COMPUTE-DISCRIMINATING-FUNCTION, so there is no trace of it here.
 
 (defmethod compute-applicable-methods-using-classes
     ((generic-function standard-generic-function) classes-of-arguments)
