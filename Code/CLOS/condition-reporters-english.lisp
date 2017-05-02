@@ -46,3 +46,10 @@
           "Attempt to access the precedence list of the class ~s~@
           which has not yet been finalized."
           (offending-class c)))
+
+(defmethod acclimation:report-condition  ((c no-such-class-name)
+			      stream
+			      (language acclimation:english))
+  (format stream
+	  "There is no class with the name ~s."
+	  (type-error-datum c)))
