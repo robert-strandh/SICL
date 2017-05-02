@@ -241,13 +241,6 @@
 ;;;
 ;;; CLOS/MOP-related conditions.
 
-(defmethod acclimation:report-condition  ((c no-such-class-name)
-			      stream
-			      (language acclimation:english))
-  (format stream
-	  "There is no class with the name ~s."
-	  (type-error-datum c)))
-
 (defmethod acclimation:report-condition  ((c must-be-class-or-nil)
 			      stream
 			      (language acclimation:english))
