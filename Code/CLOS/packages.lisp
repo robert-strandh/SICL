@@ -7,7 +7,6 @@
   (:import-from #:cleavir-code-utilities
 		#:parse-ordinary-lambda-list
 		#:parse-specialized-lambda-list)
-  (:import-from #:sicl-additional-conditions #:no-such-class-name)
   (:shadow #:documentation)
   (:export
    ;; MOP classes
