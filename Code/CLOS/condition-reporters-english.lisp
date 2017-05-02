@@ -37,3 +37,12 @@
            (:documentation <name>), but~@
            ~s was found."
 	  (type-error-datum c)))
+
+(defmethod acclimation:report-condition
+    ((c attempt-to-access-precedence-list-of-unfinalized-class)
+     stream
+     (language acclimation:english))
+  (format stream
+          "Attempt to access the precedence list of the class ~s~@
+          which has not yet been finalized."
+          (offending-class c)))
