@@ -40,9 +40,8 @@
 
 (defmethod class-precedence-list :before (class)
   (unless (class-finalized-p class)
-    (error "Attempt to access the precedence list of the class ~s~@
-            which has not yet been finalized."
-	   class)))
+    (error 'attempt-to-access-precedence-list-of-unfinalized-class
+           :offending-class class)))
 
 (defmethod class-default-initargs :before (class)
   (unless (class-finalized-p class)
