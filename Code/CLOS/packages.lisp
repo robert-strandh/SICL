@@ -107,4 +107,5 @@
    ;; SICL-specific macro
    #:subclassp
    ;; Condition types
-   #:malformed-documentation-option))
+   #:malformed-documentation-option
+   #:attempt-to-access-precedence-list-of-unfinalized-class))
