@@ -46,7 +46,6 @@
    #:odd-number-of-keyword-arguments
    #:sicl-unbound-variable
    #:sicl-unbound-function
-   #:no-such-class-name
    #:must-be-class-or-nil
    #:superclass-list-must-be-proper-list
    #:class-name-must-be-non-nil-symbol
