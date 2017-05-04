@@ -29,3 +29,7 @@
     (sicl-additional-conditions:sicl-type-error)
   ()
   (:default-initargs :type 'symbol))
+
+(define-condition slot-definition-argument-must-be-supplied
+    (sicl-additional-conditions:sicl-error)
+  ((%offending-class :initarg :offending-class :reader offending-class)))
