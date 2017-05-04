@@ -108,4 +108,5 @@
    ;; Condition types
    #:no-such-class-name
    #:malformed-documentation-option
-   #:attempt-to-access-precedence-list-of-unfinalized-class))
+   #:attempt-to-access-precedence-list-of-unfinalized-class
+   #:slot-definition-argument-must-be-supplied))
