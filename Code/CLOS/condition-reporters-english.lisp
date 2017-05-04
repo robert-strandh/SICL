@@ -29,9 +29,10 @@
            ~s."
           (readers c)))
 
-(defmethod acclimation:report-condition ((c malformed-documentation-option)
-			     stream
-			     (language acclimation:english))
+(defmethod acclimation:report-condition
+    ((c malformed-documentation-option)
+     stream
+     (language acclimation:english))
   (format stream
 	  "A documentation option must have the form~@
            (:documentation <name>), but~@
@@ -47,9 +48,10 @@
           which has not yet been finalized."
           (offending-class c)))
 
-(defmethod acclimation:report-condition  ((c no-such-class-name)
-			      stream
-			      (language acclimation:english))
+(defmethod acclimation:report-condition
+    ((c no-such-class-name)
+     stream
+     (language acclimation:english))
   (format stream
 	  "There is no class with the name ~s."
 	  (type-error-datum c)))
