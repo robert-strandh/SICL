@@ -5,9 +5,9 @@
      stream
      (language acclimation:english))
   (format stream
-	  "A class name must be a non-nil symbol, but~@
+          "A class name must be a non-nil symbol, but~@
            ~s was found."
-	  (type-error-datum c)))
+          (type-error-datum c)))
 
 (defmethod acclimation:report-condition
     ((c attempt-to-add-existing-subclass)
@@ -15,7 +15,7 @@
      (language acclimation:english))
   (format stream
           "Attempt to add existing subclass ~s as a subclass of ~s."
-	   (subclass c)
+           (subclass c)
            (superclass c)))
 
 (defmethod acclimation:report-condition
@@ -34,10 +34,10 @@
      stream
      (language acclimation:english))
   (format stream
-	  "A documentation option must have the form~@
+          "A documentation option must have the form~@
            (:documentation <name>), but~@
            ~s was found."
-	  (type-error-datum c)))
+          (type-error-datum c)))
 
 (defmethod acclimation:report-condition
     ((c attempt-to-access-precedence-list-of-unfinalized-class)
@@ -53,8 +53,8 @@
      stream
      (language acclimation:english))
   (format stream
-	  "There is no class with the name ~s."
-	  (type-error-datum c)))
+          "There is no class with the name ~s."
+          (type-error-datum c)))
 
 (defmethod acclimation:report-condition
     ((c slot-definition-argument-must-be-supplied)
