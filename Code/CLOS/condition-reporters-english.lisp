@@ -53,3 +53,9 @@
   (format stream
 	  "There is no class with the name ~s."
 	  (type-error-datum c)))
+
+(defmethod acclimation:report-condition
+    ((c slot-definition-argument-must-be-supplied)
+     stream
+     (language acclimation:english))
+  (format stream "The slot-definition argument must be supplied."))
