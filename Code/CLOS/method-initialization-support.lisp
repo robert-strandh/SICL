@@ -83,6 +83,6 @@
      &allow-other-keys)
   (declare (ignore method))
   (unless slot-definition-p
-    (error "the slot-definition argument must be supplied"))
+    (error 'slot-definition-argument-must-be-supplied))
   (unless (direct-slot-definition-p slot-definition)
     (error "the slot-definition argument must be a direct-slot-definition")))
