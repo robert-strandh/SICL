@@ -241,14 +241,6 @@
 ;;;
 ;;; CLOS/MOP-related conditions.
 
-(defmethod acclimation:report-condition  ((c must-be-class-or-nil)
-			      stream
-			      (language acclimation:english))
-  (format stream
-	  "A class object or NIL was expected, but
-           ~s was found."
-	  (type-error-datum c)))
-
 (defmethod acclimation:report-condition ((c superclass-list-must-be-proper-list)
 			     stream
 			     (language acclimation:english))
