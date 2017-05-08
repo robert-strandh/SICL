@@ -173,10 +173,6 @@
 ;;;
 ;;; CLOS/MOP-related conditions. 
 
-(define-condition must-be-class-or-nil (sicl-type-error)
-  ()
-  (:default-initargs :type '(or class null)))
-
 (define-condition superclass-list-must-be-proper-list
     (sicl-type-error)
   ()
