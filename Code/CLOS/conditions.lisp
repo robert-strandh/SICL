@@ -33,3 +33,7 @@
 (define-condition slot-definition-argument-must-be-supplied
     (sicl-additional-conditions:sicl-error)
   ((%offending-class :initarg :offending-class :reader offending-class)))
+
+(define-condition unable-to-compute-class-precedence-list
+    (sicl-additional-conditions:sicl-error)
+  ((%offending-class :initarg :offending-class :reader offending-class)))

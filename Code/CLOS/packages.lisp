@@ -109,4 +109,5 @@
    #:no-such-class-name
    #:malformed-documentation-option
    #:attempt-to-access-precedence-list-of-unfinalized-class
-   #:slot-definition-argument-must-be-supplied))
+   #:slot-definition-argument-must-be-supplied
+   #:unable-to-compute-class-precedence-list))
