@@ -70,6 +70,13 @@
 	     canonicalized-declaration-specifier)
        environment))))
 
+;;; Extract any OPTIMIZE information from a set of canonicalized
+;;; declaration specifiers.
+(defun extract-optimize (canonicalized-dspecs)
+  (loop for spec in canonicalized-dspecs
+        when (eq (first spec) 'optimize)
+          append (rest spec)))
+
 ;;; Augment the environment with an OPTIMIZE specifier.
 (defun augment-environment-with-optimize (optimize environment)
   ;; make sure every environment has a complete optimize & policy.
@@ -89,8 +96,7 @@
 (defun augment-environment-with-declarations (environment canonicalized-dspecs)
   (let ((new-env
 	  ;; handle OPTIMIZE specially.
-	  (let ((optimize (loop for spec in canonicalized-dspecs
-				when (eq (first spec) 'optimize) append (rest spec))))
+	  (let ((optimize (extract-optimize canonicalized-dspecs)))
 	    (if optimize
 		(augment-environment-with-optimize optimize environment)
 		environment))))
@@ -223,15 +229,11 @@
     (variable value-ast next-ast env system))
 
 (defmethod convert-special-binding
-    (variable value-ast next-ast global-env system)
-  (let* ((function-name 'cleavir-primop:call-with-variable-bound)
-	 (info (cleavir-env:function-info global-env function-name)))
-    (assert (not (null info)))
-    (cleavir-ast:make-call-ast
-     (convert-global-function info global-env system)
-     (list (cleavir-ast:make-load-time-value-ast `',variable t)
-	   value-ast
-	   (cleavir-ast:make-function-ast next-ast '())))))
+    (variable value-ast next-ast env system)
+  (convert `(cleavir-primop:call-with-variable-bound
+             ',variable (cleavir-primop:ast ,value-ast)
+             (lambda () (cleavir-primop:ast ,next-ast)))
+           env system))
 
 ;;; ENV is an environment that is known to contain information about
 ;;; the variable VARIABLE, but we don't know whether it is special or
@@ -247,9 +249,8 @@
   (let ((info (cleavir-env:variable-info env variable)))
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)
-	(let ((global-env (cleavir-env:global-environment env)))
-	  (convert-special-binding
-	   variable value-ast next-ast global-env system))
+        (convert-special-binding
+         variable value-ast next-ast env system)
 	(cleavir-ast:make-progn-ast
 	 (list (cleavir-ast:make-setq-ast
 		(cleavir-env:identity info)
