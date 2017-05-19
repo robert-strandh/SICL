@@ -526,3 +526,15 @@
 		     (lambda (form) (convert form env system))
 		     arguments)
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:AST.
+;;;
+;;; This allows ASTs produced by other means to be inserted into
+;;; code which is then converted again.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:ast)) form env system)
+  (declare (ignore env system))
+  (db origin (ast) (rest form) ast))

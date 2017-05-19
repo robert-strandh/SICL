@@ -68,4 +68,5 @@
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall
-   #:values))
+   #:values
+   #:ast))
