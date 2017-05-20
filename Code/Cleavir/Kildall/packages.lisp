@@ -8,36 +8,23 @@
 
 (defpackage #:cleavir-kildall
   (:use #:cl)
-  (:export #:instruction-pool)
-  (:export #:pool-meet #:pool<=)
-  (:export #:specialization #:forward-traverse #:reverse-traverse
-	   #:forward-spread-traverse #:reverse-spread-traverse
-	   #:forward-single-traverse
-	   #:entry-pool)
-  (:export #:transfer #:process-instruction #:process-transfer
-	   #:kildall)
-  (:export #:map-pool-mixin
-           #:object-meet #:object<=
-           #:empty-map-pool #:alist->map-pool
-           #:find-in-pool #:replace-in-pool #:pool-subst)
-  (:export #:reverse-traverse-interfunction
-           #:forward-traverse-interfunction
-           #:compute-function-pool)
-  (:export #:entry-enter #:entry-enclose #:entry-return
-           #:find-entry))
+  (:export #:make-pool)
+  (:export #:instruction-pool
+           #:maybe-instruction-pool #:pool-present-p)
+  (:export #:kildall #:transfer)
+  (:export #:object-meet #:object<= #:object1
+           #:find-in-pool #:map-into-pool #:do-into-pool
+           #:with-pool-reader #:copy)
+  (:export #:add-work)
+  (:export #:iterate-mixin)
+  (:export #:start-everywhere-mixin #:start-enter-mixin)
+  (:export #:alist-pool-mixin #:instruction-variables)
+  (:export #:bitset-pool-mixin)
+  (:export #:interfunction-mixin
+           #:enter-enclose #:return-enclose #:enclose-info))
 
 (defpackage #:cleavir-kildall-graphviz
   (:use #:cl #:cleavir-kildall)
   (:export #:draw-object)
   (:export #:draw-flowchart-with-outputs
            #:draw-flowchart-with-inputs))
-
-(defpackage #:cleavir-set
-  (:use #:cl)
-  (:shadow #:union #:intersection #:subsetp #:adjoin #:remove)
-  (:export #:union #:intersection #:difference #:exclusive-or
-	   #:subsetp #:adjoin #:remove #:in-set-p
-	   #:make-set #:set->list)
-  (:export #:listset #:bitset)
-  (:export #:instruction-universe #:data-universe
-	   #:universe-of-things))

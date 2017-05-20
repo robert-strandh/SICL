@@ -1,58 +1,61 @@
 (in-package #:cleavir-kildall)
 
-;;;; Commonly pools are maps from HIR data to specification-specific
-;;;; things. So we can abstract that.
-;;;; Right now it's just alists, but FIXME, performance could probably
-;;;; be improved by establishing an index number for each input.
-
-(defclass map-pool-mixin () ())
-
 (defgeneric object-meet (specialization object1 object2))
 (defgeneric object<= (specialization object1 object2))
+(defgeneric object1 (specialization variable))
 
-(defmethod pool-meet ((s map-pool-mixin) p1 p2)
-  (let ((result (copy-alist p2)))
-    (loop for pair in p1
-          for (location . indicator) = pair
-          for a = (assoc location result)
-          when a
-            do (setf (cdr a) (object-meet s (cdr a) indicator))
-          else do (push pair result))
-    result))
+(defgeneric find-in-pool (specialization key pool))
 
-;;; iff p1 has all the variables p2 does, and with <= objects.
-(defmethod pool<= ((s map-pool-mixin) p1 p2)
-  (every (lambda (pair2)
-           (let ((pair1 (assoc (car pair2) p1)))
-             (and pair1 (object<= s (cdr pair1) (cdr pair2)))))
-         p2))
+;;; assoc pools
+(defmethod find-in-pool (specialization key pool)
+  (let ((pair (assoc key pool)))
+    (if pair
+        (cdr pair)
+        (object1 s key))))
 
-(declaim (inline empty-map-pool))
-(defun empty-map-pool () nil)
+(defgeneric map-into-pool (specialization function pool))
 
-(declaim (inline alist->map-pool))
-(defun alist->map-pool (alist) alist)
+(defmacro do-into-pool (s pool (var val) &body body)
+  `(map-into-pool ,s (lambda (,var ,val) ,@body) ,pool))
 
-(defgeneric find-in-pool (specialization location pool
-                          &key default))
+(defmacro with-pool-reader (s instruction reader &body body)
+  (let ((ss (gensym "SPECIALIZATION"))
+        (sinstruction (gensym "INSTRUCTION"))
+        (pool (gensym "POOL"))
+        (variable (gensym "VARIABLE")))
+    `(let* ((,ss ,s) (,sinstruction ,instruction)
+            (,pool (maybe-instruction-pool ,ss ,sinstruction)))
+       (flet ((,reader (,variable)
+                (find-in-pool ,ss ,variable ,pool)))
+         (declare (inline ,reader))
+         ,@body))))
 
-(defmethod find-in-pool ((specialization map-pool-mixin)
-                         location pool
-                         &key (default nil default-p))
-  (let ((a (assoc location pool)))
-    (cond (a (cdr a))
-          (default-p default)
-          (t (error "BUG: missing location ~a" location)))))
-
-;;; not a SETF since it makes a new one.
-(defun replace-in-pool (new location pool)
-  (let ((a (assoc location pool)))
-    (if a
-        (acons location new (remove a pool))
-        (acons location new pool))))
-
-;;; convenient way to do the above for some fixed set of locations
-(defun pool-subst (pool &rest locations-and-values)
-  (loop for (location value) on locations-and-values by #'cddr
-        do (setf pool (replace-in-pool value location pool))
-        finally (return pool)))
+(defmacro copy (s instruction var from-reader
+                (&body lists) (&body singles))
+  (let ((ss (gensym "SPECIALIZATION"))
+        (sinstruction (gensym "INSTRUCTION"))
+        (dest (gensym "DESTINATION-POOL"))
+        (update (gensym "UPDATE"))
+        (dest-val (gensym "DEST-VAL")))
+    `(let* ((,ss ,s) (,sinstruction ,instruction)
+            ;; If an instruction doesn't have a pool we need to
+            ;; transfer to it, to ensure that all reachable
+            ;; instructions are transferred to at least once.
+            (,update (if (pool-present-p ,ss ,sinstruction) nil t))
+            (,dest (maybe-instruction-pool ,ss ,sinstruction)))
+       (do-into-pool ,ss ,dest (,var ,dest-val)
+         (let ((new-val
+                 (object-meet
+                  ,ss ,dest-val
+                  (cond ,@(loop for (list . body) in lists
+                                collect `((find ,var ,list)
+                                          ,@body))
+                        ,@(loop for (single . body) in singles
+                                collect `((eq ,var ,single)
+                                          ,@body))
+                        (t (,from-reader ,var))))))
+           (cond ((object<= ,ss ,dest-val new-val) ,dest-val)
+                 (t
+                  (setf ,dest-val new-val ,update t)
+                  new-val))))
+       (when ,update (add-work ,sinstruction)))))

@@ -1,34 +1,28 @@
 (in-package #:cleavir-liveness)
 
-(defclass filtered-pool-mixin (cleavir-kildall:map-pool-mixin)
-  ((%liveness :initarg :liveness :accessor fp-liveness)))
+(defclass liveness-mixin () ())
 
-(defclass forward-filtered-pool-mixin
-    (filtered-pool-mixin cleavir-kildall:forward-traverse)
+(defclass live-before-mixin (liveness-mixin
+                             cleavir-kildall:alist-pool-mixin)
+  ())
+(defclass live-after-mixin (liveness-mixin
+                            cleavir-kildall:alist-pool-mixin)
   ())
 
-(defclass reverse-filtered-pool-mixin
-    (filtered-pool-mixin cleavir-kildall:reverse-traverse)
-  ())
+(defvar *kildall-liveness*)
 
-(defmethod cleavir-kildall:process-instruction :around
-    ((s forward-filtered-pool-mixin) instruction new-in)
-  (let ((filtered
-          (cleavir-kildall:alist->map-pool
-           (loop for live in (cleavir-liveness:live-before
-                              (fp-liveness s) instruction)
-                 collect (cons live
-                               (cleavir-kildall:find-in-pool
-                                s live new-in))))))
-    (call-next-method s instruction filtered)))
+(defmethod cleavir-kildall:kildall :around
+    ((s liveness-mixin) initial-instruction &key liveness)
+  (let ((*kildall-liveness*
+          ;; not a default argument because it's convenient to
+          ;; have :liveness nil do this too, and -p is a hassle.
+          (or liveness (liveness initial-instruction))))
+    (call-next-method)))
 
-(defmethod cleavir-kildall:process-instruction :around
-    ((s reverse-filtered-pool-mixin) instruction new-in)
-  (let ((filtered
-          (cleavir-kildall:alist->map-pool
-           (loop for live in (cleavir-liveness:live-after
-                              (fp-liveness s) instruction)
-                 collect (cons live
-                               (cleavir-kildall:find-in-pool
-                                s live new-in))))))
-    (call-next-method s instruction filtered)))
+(defmethod cleavir-kildall:instruction-variables
+    ((s live-before-mixin) instruction)
+  (live-before *kildall-liveness* instruction))
+
+(defmethod cleavir-kildall:instruction-variables
+    ((s live-after-mixin) instruction)
+  (live-after *kildall-liveness* instruction))
