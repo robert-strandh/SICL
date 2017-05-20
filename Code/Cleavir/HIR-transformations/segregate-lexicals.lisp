@@ -64,7 +64,8 @@
 ;;; location to be eliminated.
 (defun allocate-cell-locations (enter-instructions)
   (loop for enter-instruction in enter-instructions
-	collect (cons enter-instruction (cleavir-ir:new-temporary))))
+	collect (cons enter-instruction
+                      (cleavir-ir:new-temporary "CELL"))))
 
 ;;; Given an ENCLOSE-INSTRUCTION and the associated ENTER-INSTRUCTION,
 ;;; as well as the dynamic lexical location holding a cell in the
