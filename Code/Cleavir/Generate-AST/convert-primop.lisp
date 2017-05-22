@@ -529,6 +529,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:UNREACHABLE.
+;;;
+;;; Indicates that execution of the form should be impossible.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:unreachable)) form env system)
+  (declare (ignore form env system))
+  ;; should have :origin, i guess?
+  (make-instance 'cleavir-ast:unreachable-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:AST.
 ;;;
 ;;; This allows ASTs produced by other means to be inserted into

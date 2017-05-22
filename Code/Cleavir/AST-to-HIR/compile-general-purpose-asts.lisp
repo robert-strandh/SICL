@@ -473,6 +473,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile an UNREACHABLE-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:unreachable-ast) context)
+  ;; Code like (foo (unreachable)) is possible. In this case
+  ;; the context will be expecting a value. But we don't have
+  ;; anything to assign. So the location will be uninitialized.
+  ;; To avoid any possibility of an instruction using an
+  ;; uninitialized location it's better to cut that instruction off
+  ;; entirely, i.e. make it not a successor.
+  (cleavir-ir:make-unreachable-instruction))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a SYMBOL-VALUE-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)

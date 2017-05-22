@@ -68,6 +68,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction UNREACHABLE-INSTRUCTION.
+
+(defclass unreachable-instruction (instruction no-successors-mixin)
+  ())
+
+(defun make-unreachable-instruction ()
+  (make-instance 'unreachable-instruction))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction ASSIGNMENT-INSTRUCTION.
 
 (defclass assignment-instruction (instruction one-successor-mixin)

@@ -203,6 +203,8 @@
 
 (defmethod label ((instruction nop-instruction)) "nop")
 
+(defmethod label ((instruction unreachable-instruction)) "unreachable")
+
 (defmethod label ((instruction assignment-instruction)) "<-")
 
 (defmethod label ((instruction funcall-instruction)) "funcall")
