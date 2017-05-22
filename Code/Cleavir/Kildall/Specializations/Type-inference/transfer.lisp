@@ -47,6 +47,16 @@
               ())))))
 
 (defmethod cleavir-kildall:transfer
+    ((s type-inference)
+     (instruction cleavir-ir:assignment-instruction))
+  (cleavir-kildall:with-pool-reader s instruction from
+    (cleavir-kildall:copy
+     s (first (cleavir-ir:successors instruction)) var from
+     ()
+     (((first (cleavir-ir:outputs instruction))
+       (from (first (cleavir-ir:inputs instruction))))))))
+
+(defmethod cleavir-kildall:transfer
     ((s type-inference) (instruction cleavir-ir:the-instruction))
   (let* ((succ (first (cleavir-ir:successors instruction)))
          (input (first (cleavir-ir:inputs instruction)))
