@@ -404,12 +404,15 @@
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
   (let ((locations (mapcar #'find-or-create-location
-			   (cleavir-ast:lhs-asts ast))))
+			   (cleavir-ast:lhs-asts ast)))
+        (vtemp (cleavir-ir:make-values-location)))
     (compile-ast
      (cleavir-ast:value-ast ast)
      (context
-      locations
-      (successors context)
+      vtemp
+      (list (cleavir-ir:make-multiple-to-fixed-instruction
+             :input vtemp :outputs locations
+             :successor (first (successors context))))
       (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
