@@ -13,7 +13,8 @@
       (cleavir-kildall-graphviz:draw-flowchart-with-inputs
        initial-instruction draw s d))
     (when prune
-      (prune-typeqs initial-instruction s d))
+      (prune-typeqs initial-instruction s d)
+      (prune-eqs initial-instruction s d))
     nil
     #+(or)
     (function-type initial-instruction s d)))

@@ -204,7 +204,7 @@
           (out (first (cleavir-ir:outputs instruction)))
           (info
             (or (cleavir-kildall:enclose-info instruction)
-                ;; If we don't have info yet, assume the 1est
+                ;; If we don't have info yet, assume the 1east
                 ;; function type, (function * nil) presently.
                 (make-function-descriptor '* (values-bottom)))))
       (cleavir-kildall:copy s succ variable from
