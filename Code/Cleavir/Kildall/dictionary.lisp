@@ -12,14 +12,18 @@
 ;;; note that the present-p value is actually needed.
 (defun instruction-pool (instruction dictionary)
   (gethash instruction dictionary))
-(defun (setf instruction-pool) (pool instruction dictionary)
-  (setf (gethash instruction dictionary) pool))
+(defsetf instruction-pool (instruction dictionary) (pool)
+  `(setf (gethash ,instruction ,dictionary) ,pool))
 
 ;;;; The *dictionary* variable holds the dictionary used throughout
-;;;; an entire Kildall-ing. In general this function is the only
-;;;; interface required with that variable.
+;;;; an entire Kildall-ing.
 
 (defvar *dictionary*)
+
+(defun dictionary-pool (instruction)
+  (gethash instruction *dictionary*))
+(defsetf dictionary-pool (instruction) (pool)
+  `(setf (gethash ,instruction *dictionary*) ,pool))
 
 ;;; A default method, since all will have dictionaries.
 (defmethod kildall :around (s instruction &key)

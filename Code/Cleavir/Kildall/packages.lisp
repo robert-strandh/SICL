@@ -9,7 +9,7 @@
 (defpackage #:cleavir-kildall
   (:use #:cl)
   (:export #:make-pool)
-  (:export #:instruction-pool
+  (:export #:instruction-pool #:dictionary-pool
            #:maybe-instruction-pool #:pool-present-p)
   (:export #:kildall #:transfer)
   (:export #:object-meet #:object<= #:object1
