@@ -54,7 +54,7 @@
 ;;; has been attributed an owner already, in which case we do nothing.
 (defun compute-location-owners (initial-instruction)
   (let ((result (make-hash-table :test #'eq)))
-    (cleavir-ir:map-instructions-by/with-owner
+    (cleavir-ir:map-instructions-by/with-owner 
      (lambda (instruction owner)
        (loop for datum in (append (cleavir-ir:inputs instruction)
 				  (cleavir-ir:outputs instruction))
@@ -63,27 +63,3 @@
      initial-instruction)
     result))
 
-;;; Return a hash table from outputs to the first instruction having
-;;; that output. This is where the create-cell instruction goes.
-;;; This of course assumes that such an instruction exists. It
-;;; should for CL code, as far as Bike knows, but you could do
-;;; (cleavir-primop:let-uninitialized (x)
-;;;   (if (condition) (setf x y) (setf x z)))
-;;; in which case exactly one of the two branches would be the
-;;; first definer in any control path. In this situation this
-;;; function will return only one instruction and functions relying
-;;; on it will probably fail mysteriously.
-;;; So don't do that.
-;;; (cleavir-primop:let-uninitialized (x)
-;;;   ((lambda () (setf x y)))
-;;;   x)
-;;; would also be problematic.
-(defun compute-location-definers (initial-instruction)
-  (let ((result (make-hash-table :test #'eq)))
-    (cleavir-ir:map-instructions
-     (lambda (instruction)
-       (loop for datum in (cleavir-ir:outputs instruction)
-             when (null (gethash datum result))
-               do (setf (gethash datum result) instruction)))
-     initial-instruction)
-    result))

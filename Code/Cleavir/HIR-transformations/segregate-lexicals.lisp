@@ -119,14 +119,13 @@
 ;;; CELL-LOCATIONS we add a FETCH instruction after it, and we import
 ;;; the cell location of the parent function into the corresponding
 ;;; ENCLOSE-INSTRUCTION.
-(defun ensure-cell-available
-    (function-tree cell-locations owner definer)
+(defun ensure-cell-available (function-tree cell-locations owner)
   ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
   ;; the static lexical location to be eliminated.
-  (let ((cleavir-ir:*policy* (cleavir-ir:policy definer)))
+  (let ((cleavir-ir:*policy* (cleavir-ir:policy owner)))
     (cleavir-ir:insert-instruction-after
      (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
-     definer))
+     owner))
   ;; Next, for each entry in CELL-LOCATIONS other than OWNER, transmit
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
   ;; ENTER-INSTRUCTION of that entry.
@@ -196,7 +195,7 @@
 ;;; INSTRUCTION-OWNERS is a hash table mapping an instruction to its
 ;;; owner.  OWNER is the owner of LOCATION.
 (defun process-location
-    (location function-tree instruction-owners owner definer)
+    (location function-tree instruction-owners owner)
   (let* (;; Determine all the functions (represented by
 	 ;; ENTER-INSTRUCTIONs) that use (read or write) the location.
 	 (users (functions-using-location location instruction-owners))
@@ -216,25 +215,22 @@
     ;; We do this step last, so that we are sure that the CREATE-CELL
     ;; and FETCH instructions are inserted immediately after the ENTER
     ;; instruction.
-    (ensure-cell-available function-tree cell-locations owner definer)))
+    (ensure-cell-available function-tree cell-locations owner)))
 
 (defun process-captured-variables (initial-instruction)
   ;; Make sure everything is up to date.
   (cleavir-ir:reinitialize-data initial-instruction)
   (let* ((instruction-owners (compute-instruction-owners initial-instruction))
 	 (location-owners (compute-location-owners initial-instruction))
-         (location-definers (compute-location-definers initial-instruction))
 	 (function-tree (build-function-tree initial-instruction))
 	 (static-locations
 	   (segregate-lexicals initial-instruction location-owners)))
     (loop for static-location in static-locations
 	  for owner = (gethash static-location location-owners)
-          for definer = (gethash static-location location-definers)
 	  do (process-location static-location
 			       function-tree
 			       instruction-owners
-			       owner
-                               definer))))
+			       owner))))
 
 (defun segregate-only (initial-instruction)
   ;; Make sure everything is up to date.
