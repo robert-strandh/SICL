@@ -691,6 +691,18 @@
 ;;;
 ;;; Compile a VALUES-AST.
 
+(defun split-lists (list1 list2)
+  ;; Returns maximal prefixes of the same length,
+  ;; and then suffixes. E.g.:
+  ;; (s-l '(1 2) '(3 4 5)) => (1 2), (3 4), nil, (5)
+  ;; (s-l '(1 2 3) '(4 5)) => (1 2), (4 5), (3), nil
+  ;; (s-l '(1 2) '(3 4)) => (1 2), (3 4), nil, nil
+  (let ((min (min (length list1) (length list2))))
+    (values (subseq list1 0 min)
+	    (subseq list2 0 min)
+	    (nthcdr min list1)
+	    (nthcdr min list2))))
+
 (defmethod compile-ast ((ast cleavir-ast:values-ast) context)
   (with-accessors ((results results)
 		   (successors successors)
@@ -706,20 +718,29 @@
 		 temps results (first successors))
 		invocation)))
 	    (t ;lexical locations
-	     ;; would happen from e.g. (+ (values ...) ...)
-	     ;; Multiple lexical outputs don't seem to happen, but
-	     ;; if they do this will work except when there are
-	     ;; more outputs than values.
-	     (let ((difference
-		     (- (length arguments) (length results))))
-	       (assert (>= difference 0))
-	       (let ((locations (append
-				 results
-				 (loop repeat difference
-				       collect (make-temp)))))
-		 (compile-arguments arguments locations
-				    (first successors)
-				    invocation))))))))
+	     ;; this is a bit tricky because there may be more or less
+	     ;; arguments than results, in which case we must compile
+	     ;; for effect or nil-fill.
+	     ;; First we collect those that match.
+	     (multiple-value-bind (args results valueless nils)
+		 (split-lists arguments results)
+	       ;; Now we know which match, so compile those.
+	       ;; Note also we have to preserve left-to-right evaluation order.
+	       (compile-arguments
+		args
+		results
+		;; Obviously at most one of valueless and nils can be non-null.
+		(cond (valueless
+		       (loop with succ = (first successors)
+			     for arg in (reverse valueless)
+			     do (setf succ (compile-ast arg
+							(context '()
+								 (list succ)
+								 invocation)))
+			     finally (return succ)))
+		      (nils (nil-fill nils (first successors)))
+		      (t (first successors)))
+		invocation)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
