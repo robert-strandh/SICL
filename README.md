@@ -33,15 +33,19 @@ versions.
 
 5. Compile the boot system as follows:
 
+   ````
    (asdf:load-system :sicl-boot)
+   ````
 
 6. Do (in-package #:sicl-boot)
 
 7. Create an instance of the BOOT class:
 
+   ````
    (defparameter *b*
      (let ((sicl-extrinsic-environment::*cache-p* t))
         (make-instance 'boot)))
+   ````
 
    Creating the first environment will take a few minutes.  In
    particular, it will seem that it is stuck when loading a few files,
@@ -49,7 +53,9 @@ versions.
 
 8. Start a REPL:
 
+   ````
    (sicl-extrinsic-environment::repl (r4 *b*) (r4 *b*))
+   ````
 
 [source]: https://github.com/robert-strandh/SICL
    
