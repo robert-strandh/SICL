@@ -355,6 +355,10 @@
       (remhash name (declarations env))
       (setf (gethash name (declarations env)) t)))
 
+(defmethod sicl-genv:declarations ((env simple-environment))
+  (loop for key being each hash-key of (declarations env)
+        collect key))
+
 (defmethod sicl-genv:symbol-plist (symbol (env simple-environment))
   (gethash symbol (property-lists env)))
 
