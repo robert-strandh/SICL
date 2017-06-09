@@ -89,6 +89,7 @@
    #:+global-environment+
    #:global-environment
    #:declaration
+   #:declarations
    #:optimize-quality-values
    #:policy
    ))
