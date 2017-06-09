@@ -734,6 +734,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function DECLARATIONS.
+;;;
+;;; Return a list of all names in ENVIRONMENT that are currently
+;;; considered to be declarations, as defined by calls to the generic
+;;; function (SETF DECLARATION).
+
+(defgeneric declarations (environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function OPTIMIZE-QUALITY-VALUES.
 ;;;
 ;;; Return an association list containing lists of the form
