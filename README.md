@@ -37,7 +37,11 @@ versions.
    (asdf:load-system :sicl-boot)
    ````
 
-6. Do (in-package #:sicl-boot)
+6. Change the package for convenience:
+
+   ````
+   (in-package #:sicl-boot)
+   ````
 
 7. Create an instance of the BOOT class:
 
