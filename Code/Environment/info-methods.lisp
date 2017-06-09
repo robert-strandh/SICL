@@ -78,3 +78,6 @@
   (make-instance 'cleavir-env:optimize-info
     :optimize (optimize-quality-values env)
     :policy (policy env)))
+
+(defmethod cleavir-env:declarations ((env environment))
+  (sicl-global-environment:declarations env))
