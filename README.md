@@ -14,6 +14,7 @@ having to maintain their own, perhaps implementation-specific
 versions. 
 
 
+
 ## Quick Start
 
 1. Make sure you have installed the dependencies:
@@ -27,7 +28,7 @@ versions.
 
    ```
    $ git clone https://github.com/robert-strandh/SICL
-   cd SICL 
+   $cd SICL 
    ```
 4. Make sure the top-level directory can be found by ASDF.
 
@@ -63,6 +64,19 @@ versions.
 
 [source]: https://github.com/robert-strandh/SICL
    
+
+# Using SICL
+
+1. Cleavir is an implementation-independent compilation framework for Common Lisp. To use, make sure that you that you are in the SICL directory and load the neccesary packages and file.
+````
+(ql:quickload '(cleavir-generate-ast  cleavir-ast-to-hir cleavir-hir-interpreter)) 
+(load "Code/Cleavir/Environment/Examples/sbcl.lisp")
+````
+Now you can compile Common Lisp expressions like
+
+````
+(cleavir-hir-interpreter:interpret-hir (cleavir-sbcl-environment::compile-cleavir '(lambda ()  (+ 32 10))))
+````
 
 ## Documentation
 SICL releases are [here].
