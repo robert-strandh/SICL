@@ -72,7 +72,7 @@ versions.
 (ql:quickload '(cleavir-generate-ast  cleavir-ast-to-hir cleavir-hir-interpreter)) 
 (load "Code/Cleavir/Environment/Examples/sbcl.lisp")
 ````
-Now you can compile Common Lisp expressions like
+2. Now you can compile Common Lisp expressions like
 
 ````
 (cleavir-hir-interpreter:interpret-hir (cleavir-sbcl-environment::compile-cleavir '(lambda ()  (+ 32 10))))
