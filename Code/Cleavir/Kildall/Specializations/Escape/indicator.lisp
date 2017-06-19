@@ -1,5 +1,9 @@
 (in-package #:cleavir-escape)
 
+(defgeneric object-meet (s o1 o2))
+(defgeneric object<= (s o1 o2))
+(defgeneric object1 (s variable))
+
 ;;;; Escape indicators are bitfields because meet can be OR.
 ;;;; Bit layout:
 ;;;; 0 - unknown operation. Cleavir cannot determine DXness.
@@ -30,18 +34,18 @@
   (declare (type indicator i1 i2))
   (zerop (logandc1 i1 i2)))
 
-(defmethod cleavir-kildall:object-meet ((s escape) i1 i2)
-  (cond ((arrayp i1) ; have to worry about function indicators now
-         (assert (and (arrayp i2) (= (length i1) (length i2))))
-         (map '(simple-array indicator (*))
-              #'indicator-union i1 i2))
-        (t (logior i1 i2))))
+(defmethod object-meet ((s escape) i1 i2)
+  (declare (indicator i1 i2))
+  (logior i1 i2))
 
-(defmethod cleavir-kildall:object<= ((s escape) i1 i2)
-  (cond ((arrayp i1)
-         (assert (and (arrayp i2) (= (length i1) (length i2))))
-         (every #'indicator<= i1 i2))
-        (t (indicator<= i1 i2))))
+(defmethod object<= ((s escape) i1 i2)
+  (declare (indicator i1 i2))
+  (indicator<= i1 i2))
+
+(defmethod object1 ((s escape) (v cleavir-ir:lexical-location))
+  +none+)
+(defmethod object1 ((s escape) (v cleavir-ir:values-location))
+  +none+)
 
 (defun dxable-p (indicator)
   (declare (type indicator indicator))
@@ -61,8 +65,6 @@
   ;; This is used for dynamic-extent assertion.
   (logand indicator (lognot +unknown+)))
 
-;;; Doesn't need a method for function-indicators since those are
-;;; never on outputs or inputs. But that's FRAGILE.
 (defmethod cleavir-kildall-graphviz:draw-object ((s escape) o)
   (with-output-to-string (s)
     (when (logbitp 3 o) ; store

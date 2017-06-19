@@ -73,8 +73,8 @@
     (format stream "~a" (name object))))
 
 ;;; Generate a new lexical location
-(defun new-temporary ()
-  (make-lexical-location (gensym)))
+(defun new-temporary (&optional (thing nil thing-p))
+  (make-lexical-location (if thing-p (gensym thing) (gensym))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

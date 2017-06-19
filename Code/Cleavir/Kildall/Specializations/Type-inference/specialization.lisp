@@ -1,9 +1,10 @@
 (in-package #:cleavir-kildall-type-inference)
 
 (defclass type-inference
-    (cleavir-kildall:forward-single-traverse
-     cleavir-liveness:forward-filtered-pool-mixin
-     cleavir-kildall:forward-traverse-interfunction)
+    (cleavir-kildall:iterate-mixin
+     cleavir-liveness:live-before-mixin
+     cleavir-kildall:start-enter-mixin
+     cleavir-kildall:interfunction-mixin)
   ((%environment :initarg :env :reader environment)
    (%typecache :initform (make-hash-table :test #'equal)
                :reader typecache)))
@@ -69,10 +70,6 @@
 
 (defun return-values (descriptor)
   (cleavir-type-descriptors:return-values descriptor))
-
-(defmethod cleavir-kildall:entry-pool ((s type-inference) i)
-  (declare (ignore i))
-  (cleavir-kildall:empty-map-pool))
 
 (defmethod cleavir-kildall:object-meet ((s type-inference) t1 t2)
   ;; "meet" is a join due to having to use the dual lattice because

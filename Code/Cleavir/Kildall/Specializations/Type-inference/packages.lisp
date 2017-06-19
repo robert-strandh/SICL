@@ -1,6 +1,6 @@
 (defpackage #:cleavir-kildall-type-inference
   (:use #:cl)
-  (:export #:infer-types #:insert-type-checks #:delete-the))
+  (:export #:infer-types #:insert-type-checks #:thes->typeqs #:delete-the))
 
 (defpackage #:cleavir-type-descriptors
   (:use #:cl)

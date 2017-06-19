@@ -306,6 +306,7 @@
 (define-simple-check cleavir-primop:aref 5)
 (define-simple-check cleavir-primop:aset 6)
 (define-simple-check cleavir-primop:short-float-add 2)
+(define-simple-check cleavir-primop:unreachable 0)
 (define-simple-check cleavir-primop:ast 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
