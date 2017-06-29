@@ -812,6 +812,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class UNREACHABLE-AST.
+;;;
+;;; This AST indicates an unreachable control point.
+;;; Control that leads inevitably from or to this AST is
+;;; declared to be impossible.
+
+(defclass unreachable-ast (ast) ())
+
+(defun make-unreachable-ast (&key origin (policy *policy*))
+  (make-instance 'unreachable-ast :origin origin :policy policy))
+
+(defmethod children ((ast unreachable-ast)) nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class BIND-AST.
 ;;;
 ;;; This AST is used to create a dynamic binding for a symbol for the

@@ -1,10 +1,8 @@
 (in-package #:cleavir-escape)
 
-(defclass escape (cleavir-kildall:reverse-spread-traverse
-                  cleavir-liveness:reverse-filtered-pool-mixin
-                  cleavir-kildall:reverse-traverse-interfunction)
+(defclass escape
+    (cleavir-kildall:iterate-mixin
+     cleavir-liveness:live-after-mixin
+     cleavir-kildall:start-everywhere-mixin
+     cleavir-kildall:interfunction-mixin)
   ())
-
-(defmethod cleavir-kildall:entry-pool ((s escape) i)
-  (declare (ignore i))
-  (cleavir-kildall:empty-map-pool))

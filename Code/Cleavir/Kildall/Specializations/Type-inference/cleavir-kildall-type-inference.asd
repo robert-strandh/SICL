@@ -1,8 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :cleavir-kildall-type-inference
-  :depends-on (:cleavir-kildall :cleavir-liveness
-               :cleavir-hir :cleavir-environment)
+  :depends-on (:cleavir-kildall :cleavir-liveness :cleavir-hir
+               :cleavir-compilation-policy :cleavir-environment)
   :components
   ((:file "packages")
    (:module "Descriptors"

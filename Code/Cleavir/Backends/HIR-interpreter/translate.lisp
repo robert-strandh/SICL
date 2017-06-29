@@ -16,13 +16,24 @@
 (defvar *vars*)
 
 (defun translate-datum (datum)
-  (if (typep datum 'cleavir-ir:constant-input)
-      `(quote ,(cleavir-ir:value datum))
-      (let ((var (gethash datum *vars*)))
-	(when (null var)
-	  (setf var (gensym))
-	  (setf (gethash datum *vars*) var))
-	var)))
+  (etypecase datum
+    ((or cleavir-ir:constant-input cleavir-ir:immediate-input)
+     `(quote ,(cleavir-ir:value datum)))
+    (cleavir-ir:load-time-value-input
+     `(load-time-value ,(cleavir-ir:form datum)
+                       ,(cleavir-ir:read-only-p datum)))
+    (cleavir-ir:lexical-location
+     (let ((var (gethash datum *vars*)))
+       (when (null var)
+         (setf var (gensym (symbol-name (cleavir-ir:name datum))))
+         (setf (gethash datum *vars*) var))
+       var))
+    (cleavir-ir:values-location
+     (let ((var (gethash datum *vars*)))
+       (when (null var)
+         (setf var (gensym "V"))
+         (setf (gethash datum *vars*) var))
+       var))))
 
 (defun translate-lambda-list-item (item)
   (cond ((symbolp item)
@@ -79,25 +90,25 @@
     (loop for block in rest
 	  for instruction = (first block)
 	  do (setf (gethash instruction *tags*) (gensym)))
-    `(block nil
-       (let ,(loop for var being each hash-key of *ownerships*
-		     using (hash-value owner)
-		   when (and (typep var '(or
-					  cleavir-ir:lexical-location
-					  cleavir-ir:values-location))
-			     (eq owner initial-instruction)
-			     (not (member var (cleavir-ir:outputs
-					       initial-instruction))))
-		     collect (translate-datum var))
-	 (tagbody
-	    ,@(layout-basic-block first)
-	    ,@(loop for basic-block in rest
-		    collect (gethash (first basic-block) *tags*)
-		    append (layout-basic-block basic-block)))))))
+    `(lambda ,(translate-lambda-list
+               (cleavir-ir:lambda-list initial-instruction))
+       (prog ,(loop for var being each hash-key of *ownerships*
+                      using (hash-value owner)
+                    when (and (typep var '(or
+                                           cleavir-ir:lexical-location
+                                           cleavir-ir:values-location))
+                              (eq owner initial-instruction)
+                              (not (member var (cleavir-ir:outputs
+                                                initial-instruction))))
+                      collect (translate-datum var))
+          ,@(layout-basic-block first)
+          ,@(loop for basic-block in rest
+                  collect (gethash (first basic-block) *tags*)
+                  append (layout-basic-block basic-block))))))
 
 (defun translate (initial-instruction)
   (let* ((ownerships
-          (cleavir-hir-transformations:compute-instruction-owners
+          (cleavir-hir-transformations:compute-location-owners
            initial-instruction))
 	 (*ownerships* ownerships)
 	 (*basic-blocks* (cleavir-basic-blocks:basic-blocks initial-instruction))
@@ -111,12 +122,15 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:enclose-instruction) inputs outputs)
-  (declare (ignore inputs))
   (let ((enter-instruction (cleavir-ir:code instruction)))
     `(setq ,(first outputs)
-	   (lambda ,(translate-lambda-list
-		     (cleavir-ir:lambda-list enter-instruction))
-	     ,(layout-procedure enter-instruction)))))
+           ,(if (null inputs) ; skip the closure.
+                (layout-procedure enter-instruction)
+                `(let ((,(translate-datum
+                          (first
+                           (cleavir-ir:outputs enter-instruction)))
+                         (list ,@inputs)))
+                   ,(layout-procedure enter-instruction))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:enter-instruction) inputs outputs)
@@ -145,12 +159,26 @@
   `(return (funcall ,(first inputs) ,@(rest inputs))))
 
 (defmethod translate-simple-instruction
+    ((instruction cleavir-ir:funcall-no-return-instruction) inputs outputs)
+  `(funcall ,(first inputs) ,@(rest inputs)))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-ir:the-instruction) inputs outputs)
   (declare (ignore outputs))
-  `(unless (typep ,(first inputs) ',(cleavir-ir:value-type instruction))
-     (error 'type-error
-	    :expected-type ',(cleavir-ir:value-type instruction)
-	    :datum ,(first inputs))))
+  (gensym)
+  ;; doesn't work ltv inputs and such
+  #+(or)`(setq ,(first inputs) (the ,(cleavir-ir:value-type instruction)
+                              ,(first inputs))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:the-values-instruction) inputs outputs)
+  ;; FIXME: annoying to do.
+  (gensym))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:dynamic-allocation-instruction) inputs outputs)
+  (declare (ignore inputs outputs))
+  (gensym))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:fdefinition-instruction) inputs outputs)
@@ -178,153 +206,6 @@
   `(rplacd ,(first inputs) ,(second inputs)))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-t-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-t-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-bit-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-bit-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-unsigned-byte-8-aref-instruction)
-     inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-unsigned-byte-8-aref-instruction)
-     inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-short-float-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-single-float-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-single-float-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-double-float-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-double-float-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-long-float-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-long-float-aref-instruction) inputs outputs)
-  `(setq ,(first outputs)
-	 (row-major-aref ,(first inputs) ,(second inputs))))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-t-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-t-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-bit-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-bit-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-unsigned-byte-8-aset-instruction)
-     inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-unsigned-byte-8-aset-instruction)
-     inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-short-float-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-single-float-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-single-float-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-double-float-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-double-float-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:simple-long-float-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:non-simple-long-float-aset-instruction) inputs outputs)
-  (declare (ignore outputs))
-  `(setf (row-major-aref ,(first inputs) ,(second inputs))
-	 ,(third inputs)))
-
-(defmethod translate-simple-instruction
     ((instruction cleavir-ir:fixed-to-multiple-instruction) inputs outputs)
   `(setq ,(first outputs)
 	 (list ,@inputs)))
@@ -341,6 +222,40 @@
     ((instruction cleavir-ir:unwind-instruction) inputs outputs)
   (gensym))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:nop-instruction) inputs outputs)
+  (declare (ignore inputs outputs))
+  (gensym))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:create-cell-instruction) inputs outputs)
+  (declare (ignore inputs))
+  `(setq ,(first outputs) (cons nil nil)))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:read-cell-instruction) inputs outputs)
+  `(setq ,(first outputs) (car ,(first inputs))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:write-cell-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(rplaca ,(first inputs) ,(second inputs)))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:fetch-instruction) inputs outputs)
+  `(setq ,(first outputs)
+         (nth ,(second inputs) ,(first inputs))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:symbol-value-instruction) inputs outputs)
+  `(setq ,(first outputs)
+         (symbol-value ,(first inputs))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:set-symbol-value-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(set ,(first inputs) ,(second inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
@@ -354,8 +269,8 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
   `(if (typep ,(first inputs) ',(cleavir-ir:value-type instruction))
-       (go ,(second successors))
-       (go ,(first successors))))
+       (go ,(first successors))
+       (go ,(second successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:fixnum-add-instruction) inputs outputs successors)
@@ -413,7 +328,7 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:return-instruction) inputs outputs successors)
   (declare (ignore successors))
-  `(return (apply #'values ,(first inputs))))
+  `(return (values-list ,(first inputs))))
 
 ;;; When the FUNCALL-INSTRUCTION is the last instruction of a basic
 ;;; block, it is because there is a call to a function that will never
@@ -432,5 +347,9 @@
 ;;;
 ;;; Main entry point.
 
+(defun compile-hir (initial-instruction)
+  (check-type initial-instruction cleavir-ir:enter-instruction)
+  (compile nil (translate initial-instruction)))
+
 (defun interpret-hir (initial-instruction)
-  (funcall (compile nil `(lambda () ,(translate initial-instruction)))))
+  (funcall (compile-hir initial-instruction)))

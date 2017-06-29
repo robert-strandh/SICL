@@ -69,4 +69,5 @@
    #:let-uninitialized
    #:funcall
    #:values
+   #:unreachable
    #:ast))

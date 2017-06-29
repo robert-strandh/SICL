@@ -48,6 +48,49 @@
   (cleavir-ir:reinitialize-data initial)
   initial)
 
+(defun prune-eqs (initial specialization types)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (i)
+     (when (typep i 'cleavir-ir:eq-instruction)
+       (let* ((pool (cleavir-kildall:instruction-pool i types))
+              (left-type
+                (cleavir-kildall:find-in-pool
+                 specialization
+                 (first (cleavir-ir:inputs i))
+                 pool))
+              (right-type
+                (cleavir-kildall:find-in-pool
+                 specialization
+                 (second (cleavir-ir:inputs i))
+                 pool)))
+         (cond ((bottom-p
+                 specialization
+                 (binary-meet specialization left-type right-type))
+                ;; A cannot eq B, therefore
+                (cleavir-ir:bypass-instruction
+                 i (first (cleavir-ir:successors i))))
+               ;; If both are EQL types, and for the same object,
+               ;; A must eq B (EQ is EQL + undefined behavior)
+               ;; KLUDGE: cleavir-type-descriptors doesn't have an
+               ;; is-eql-type predicate or anything. oops.
+               ;; So here's this... thing... with NULL.
+               ((and (cleavir-type-descriptors:sub-descriptor-p
+                      left-type
+                      (approximate-type specialization 'null)
+                      (environment specialization)
+                      (typecache specialization))
+                     (cleavir-type-descriptors:sub-descriptor-p
+                      right-type
+                      (approximate-type specialization 'null)
+                      (environment specialization)
+                      (typecache specialization)))
+                (cleavir-ir:bypass-instruction
+                 i (second (cleavir-ir:successors i))))))))
+   initial)
+  (cleavir-ir:set-predecessors initial)
+  (cleavir-ir:reinitialize-data initial)
+  initial)
+
 #||
 (defun make-temps (length)
   (loop repeat length collecting (cleavir-ir:new-temporary)))

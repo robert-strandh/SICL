@@ -26,7 +26,7 @@
 ;;; downgrades types into easily checkable ones like FIXNUM.
 ;;; So a sanity check but not wholly correct. Might be nice.
 (cleavir-policy:define-cleavir-policy-quality
-    insert-type-checks (member t nil) t)
+    insert-type-checks boolean t)
 
 ;;; Given a type specifier, return a new
 ;;; specifier suitable for TYPEP, i.e. "for discrimination" in CLHS

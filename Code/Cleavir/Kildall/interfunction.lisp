@@ -4,88 +4,43 @@
 ;;;; otherwise, but with this we can deal with enclose and funcall
 ;;;; in a much more detailed way.
 
-;;;; We start Kildall with a list where each entry is
-;;;; (ENTER ENCLOSE RETURN)
-;;;; where ENTER is an enter instruction;
-;;;; ENCLOSE is the enclose with ENTER as its CODE, or NIL if
-;;;; there is no such instruction;
-;;;; RETURN is the return owned by ENTER or NIL if there isn't one.
+;;;; Specifically, it's made easier to transfer from ENTER/RETURN
+;;;; to ENCLOSE.
 
-(defstruct (entry (:type list)
-                  (:constructor make-entry
-                      (enter enclose return)))
-  enter enclose return)
+(defclass interfunction-mixin () ())
 
-(defclass interfunction () ; abstract
-  ((%entries :initarg :entries :accessor entries)))
-(defclass reverse-traverse-interfunction
-    (reverse-traverse interfunction)
-  ())
-(defclass forward-traverse-interfunction
-    (forward-traverse interfunction)
-  ())
+(defvar *enter-enclose*)
+(defun enter-enclose (instruction)
+  (gethash instruction *enter-enclose*))
 
-(defun find-entry (specialization object &key (key #'identity))
-  (find object (entries specialization) :key key))
+(defvar *return-enclose*)
+(defun return-enclose (instruction)
+  (gethash instruction *return-enclose*))
 
-;;; Compute the entries at the start.
-(defmethod kildall :before ((specialization interfunction)
-                            initial-instruction)
-  (let ((entries (list (make-entry initial-instruction nil nil))))
-    (cleavir-ir:map-instructions-by/with-owner
-     (lambda (instruction owner)
-       (typecase instruction
-         (cleavir-ir:enclose-instruction
-          (push (make-entry (cleavir-ir:code instruction)
-                            instruction
-                            nil)
-                entries))
-         (cleavir-ir:return-instruction
-          ;; should always be after the entry is created, due to
-          ;; the definition of m-i-b/w-o
-          (setf (entry-return
-                 (find owner entries :key #'entry-enter))
-                instruction))))
-     initial-instruction)
-    (setf (entries specialization) entries)))
+(defvar *enclose-info*)
+(defun enclose-info (enclose)
+  (gethash enclose *enclose-info*))
+(defsetf enclose-info (enclose) (new-value)
+  `(setf (gethash ,enclose *enclose-info*) ,new-value))
 
-;;; given an ENTER instruction, and a RETURN instruction or null
-;;; as described above, and their pools,
-;;; return a pool representing information about
-;;; the function represented by ENTER, to be put with its ENCLOSE.
-(defgeneric compute-function-pool
-    (specialization enter enter-pool return return-pool))
+(defun initialize-interfunction (initial-instruction)
+  ;; by/with ensures that returns are only hit after their enclose.
+  (cleavir-ir:map-instructions-by/with-owner
+   (lambda (instruction owner)
+     (typecase instruction
+       (cleavir-ir:enclose-instruction
+        (setf (gethash (cleavir-ir:code instruction)
+                       *enter-enclose*)
+              instruction))
+       (cleavir-ir:return-instruction
+        (setf (gethash instruction *return-enclose*)
+              (gethash owner *enter-enclose*)))))
+   initial-instruction))
 
-(defmethod process-transfer
-    ((specialization reverse-traverse-interfunction)
-     (instruction cleavir-ir:enter-instruction)
-     pool)
-  (let ((entry (find-entry specialization instruction
-                           :key #'entry-enter)))
-    (when (entry-enclose entry)
-      (let ((enter (entry-enter entry))
-            (ret (entry-return entry)))
-        (add-work (entry-enclose entry)
-                  (compute-function-pool
-                   specialization
-                   ;; FIXME: *dictionary* should be removed somehow
-                   enter (instruction-pool enter *dictionary*)
-                   ret (when ret
-                         ;; if ret = nil just pass garbage
-                         (instruction-pool ret *dictionary*))))))))
-
-(defmethod process-transfer
-    ((specialization forward-traverse-interfunction)
-     (instruction cleavir-ir:return-instruction)
-     pool)
-  (let ((entry (find-entry specialization instruction
-                           :key #'entry-return)))
-    (when (entry-enclose entry)
-      (let ((enter (entry-enter entry))
-            (ret (entry-return entry)))
-        (add-work (entry-enclose entry)
-                  (compute-function-pool
-                   specialization
-                   ;; FIXME: *dictionary* should be removed somehow
-                   enter (instruction-pool enter *dictionary*)
-                   ret (instruction-pool ret *dictionary*)))))))
+(defmethod kildall :around ((specialization interfunction-mixin)
+                            initial-instruction &key)
+  (let ((*enter-enclose* (make-hash-table :test #'eq))
+        (*return-enclose* (make-hash-table :test #'eq))
+        (*enclose-info* (make-hash-table :test #'eq)))
+    (initialize-interfunction initial-instruction)
+    (call-next-method)))
