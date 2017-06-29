@@ -1,0 +1,32 @@
+There is a lot to be done in this directory:
+
+ * It needs an ASDF system definition.  It should depend on
+   acclimation for internationalized condition reporters and
+   documentation strings.
+ 
+ * It needs a file named packages.lisp and that contains
+   a package definition in which the symbols corresponding to standard
+   Common Lisp names are (perhaps conditionally) shadowed.  The
+   package should be named SICL-PACKAGE.
+
+ * It needs a file called conditions.lisp in which definitions of
+   conditions specific to this module are located.  It should be
+   modeled after Cons/conditions.lisp.
+
+ * It needs a file called condition-reporters-english.lisp in which
+   definitions of condition reporters specific to this module are
+   located.  It should be modeled after
+   Cons/condition-reporters-english.lisp.
+
+ * It needs a file called documentation-strings-english.lisp in which
+   there should be documentation strings for the functions and classes
+   defined in this module.  It should be modeled after
+   Cons-high/docstrings-en.lisp
+
+ * The current file functions.lisp should be split.  Each function and
+   each macro should be in a separate file.  The files with function
+   definitions should be called <mumble>-defun.lisp or
+   <mumble>-defgeneric.lisp.  Similarly for macros and classes.
+
+ * The class accessors should have explicit associated defgeneric
+   forms.
