@@ -1,5 +1,6 @@
 (cl:in-package #:asdf-user)
-(defsystem  :sicl-package
+
+(defsystem :sicl-package
   :serial t
   :description "SICL-Specific Package System"
   :depends-on (:acclimation)
