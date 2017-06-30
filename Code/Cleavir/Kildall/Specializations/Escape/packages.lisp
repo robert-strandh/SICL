@@ -1,4 +1,3 @@
 (defpackage #:cleavir-escape
-  (:use #:cl)
-  (:export #:mark-dynamic-extent
-           #:trust-dynamic-extent))
+  (:use #:cl #:cleavir-kildall)
+  (:export #:mark-dynamic-extent #:trust-dynamic-extent))

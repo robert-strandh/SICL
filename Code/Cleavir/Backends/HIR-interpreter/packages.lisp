@@ -3,5 +3,6 @@
 (defpackage #:cleavir-hir-interpreter
   (:use #:common-lisp)
   (:export
+   #:compile-hir
    #:interpret-hir
    ))

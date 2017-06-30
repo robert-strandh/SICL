@@ -28,7 +28,8 @@
 ;;; Converting a symbol that has a definition as a lexical variable.
 
 (defun maybe-wrap-the (type ast)
-  "Make a THE ast if the type is actually helpful (i.e. not all T)
+  "Make a THE ast if the type is actually helpful (i.e. not all T),
+or an UNREACHABLE ast if the type contains a NIL.
 If AST is already a THE-AST, collapses both into one."
   (multiple-value-bind (req opt rest)
       (the-values-components type)
@@ -41,12 +42,14 @@ If AST is already a THE-AST, collapses both into one."
 		    (cleavir-ast:optional-types ast)
 		    (cleavir-ast:rest-type ast))
 		   ast (cleavir-ast:form-ast ast)))
-    (if (and (every (lambda (x) (subtypep t x)) req)
-	     (every (lambda (x) (subtypep t x)) opt)
-	     (subtypep t rest))
-	;; useless type, don't bother
-	ast
-	(cleavir-ast:make-the-ast ast req opt rest))))
+    (flet ((nilp (x) (subtypep x 'nil))
+           (tp (x) (subtypep 't x)))
+      (cond ((or (some #'nilp req) (some #'nilp opt) (nilp rest))
+             (cleavir-ast:make-progn-ast
+              (list ast (cleavir-ast:make-unreachable-ast))))
+            ((and (every #'tp req) (every #'tp opt) (tp rest))
+             ast)
+            (t (cleavir-ast:make-the-ast ast req opt rest))))))
 
 (defmethod convert-form
     (form (info cleavir-env:lexical-variable-info) env system)

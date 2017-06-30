@@ -114,14 +114,14 @@ the second test, or to replicas of that test.
 
 While not an optimization in itself, static single assignment (SSA)
 form is a prerequisite for many optimization techniques, which is why
-we describe it here. 
+we describe it here.
 
 In their conference paper from 2013
 \cite{Braun:2013:SEC:2450247.2450258}, Braun et al present an
 algorithm capable of a direct translation of abstract syntax trees to
 SSA form.  We do not use it here, because we have not been able to
 couple it with our compilation context which seems to require
-compilation from the end to the beginning of the program. 
+compilation from the end to the beginning of the program.
 
 Instead, we use the traditional technique based on \emph{iterated
   dominance frontiers}.
@@ -177,11 +177,11 @@ the local function \texttt{f} as follows:
 
 This trick is called \emph{lambda lifting} and it consists of adding
 extra arguments to a function in order that it can be defined in the
-null lexical environment.  
+null lexical environment.
 
 Since lambda lifting alters the signature of the function, it can not
 be used when the function can be called from an external context that
-assumes the original signature. 
+assumes the original signature.
 
 Consider the following program fragment:
 
@@ -227,11 +227,11 @@ function \texttt{f} as follows:
   (flet ((f ()
             (find-if (lambda (y) (incf x) (> y 10)) some-sequence)))
     (f)
-    ...)) 
+    ...))
 \end{verbatim}
 
 Now, lambda-lifting the function \texttt{f} and converting to SSA
-gives the final result. 
+gives the final result.
 
 However, there are some situations where we can not apply SSA
 transformation to variables:%
@@ -267,11 +267,11 @@ In order for this program fragment to respect the semantics of \commonlisp{}
 it can be argued that both closures must update a common variable.  It
 follows that both closures must assign to this common variable, and
 thus that this variable can not be assigned to in a single place as
-required by SSA. 
+required by SSA.
 
 Some optimizations are possible even if not every variable can be
 converted into SSA form, so that some variables are assigned multiple
-times.  
+times.
 
 In order for a variable $V$ to respect the SSA property, a $\phi$
 function for $V$ is required in control flow node $Z$ whenever there
@@ -308,7 +308,7 @@ set of nodes $y$ such that $x$ dominates an immediate predecessor of
 $y$ but $x$ does not strictly dominate $y$.  The dominance frontier of
 a \emph{set} of nodes $S$ is the natural extension of $DF$ to a set,
 namely the union of the vales for each element.  The iterated
-dominance frontier is defined in a way similar to the iterated join. 
+dominance frontier is defined in a way similar to the iterated join.
 $DF^+(S)$ is defined as the limit of the
 increasing sets of nodes $DF_1(S) = DF(S)$, $DF_{i+1}(S) = DF(S \cup
 DF_i(S))$.
@@ -319,7 +319,7 @@ node $F$ which is not a join point for the nodes that assign to $x$.
 This discrepancy is clearly indicated in the the paper by Cytron et
 al.  If we analyze it a bit more, we see that clearly no $\phi$
 function is required in $F$.  The method using iterated dominance
-frontiers thus computes more nodes than required.  
+frontiers thus computes more nodes than required.
 
 However, notice that if \refFig{fig-ssa-join-1} represents a
 \commonlisp{} program, then the node $F$ could not contain a reference
@@ -379,28 +379,28 @@ runs in linear time was discovered by Harel
 Type inference is accomplished by formulating it as a \emph{forward
   data flow} problem.  The best result is obtained for variables that
 respect the \emph{static single assignment} property as described in
-\refSec{mir-optimizations-ssa-form}. 
+\refSec{mir-optimizations-ssa-form}.
 
 Every \emph{arc} of the flow graph is associated with a \empty{type
   map} for each lexical variable that is \emph{live} at that arc.  The
 type map describes all possible types for the variable at that arc.
 In many cases, the type map can not be precise.  If so, then it must
 contain a \emph{superset} of the possible types.  The exact
-representation of the type map is implementation-dependent. 
+representation of the type map is implementation-dependent.
 
 Initially a fictive arc occurring before the initial
 \texttt{enter-instruction} of the program is considered to have no
-type maps associated with it, since no variables are live there.  
+type maps associated with it, since no variables are live there.
 
 The propagation of type maps depends on the type of each instruction.
 In particular, the \texttt{typeq-instruction} propagates the
 \emph{and} of the existing type map for a variable and the type
 specifier of its second input to the first successor arc, and the
-\emph{difference} to the second successor arc.  
+\emph{difference} to the second successor arc.
 
 When a \texttt{typeq-instruction} has an outgoing arc containing the
 type \texttt{nil} for some variable, this means that control can not
-pass through that arc.  We say that such an arc is \emph{dead}. 
+pass through that arc.  We say that such an arc is \emph{dead}.
 The dead arc becomes the outgoing arc of a
 \texttt{nop-instruction} without a predecessor, and the
 \texttt{typeq-instruction} itself is replaced by a
@@ -410,6 +410,33 @@ Notice that dead arcs can not simply be removed, because the result
 would then be an instruction graph that is not \emph{well formed} as
 described in \refChap{chap-ir}.  After this type of transformation,
 the instruction graph should be
-\emph{reduced}. \seesec{mir-optimizations-reduction} 
+\emph{reduced}. \seesec{mir-optimizations-reduction}
+
+\section{Escape analysis}
+
+A top-level function can be seen as a tree of nested functions.  Each
+function $f$ in the tree executes \texttt{enclose} instructions in
+order to create a \emph{closure} out of the code of the functions that
+are immediately contained in $f$.  An \emph{escape analysis}
+determines what happens to those closures.
+
+Each \texttt{enclose} instruction creates a fresh lexical variable
+that is owned by the function executing the instruction.  The question
+is what then happens to the contents of that variable.  By
+construction, the variable is never assigned to.  Some data-flow
+analysis is needed to determine what can happen to that value.  For
+now, let us say that there are only two possibilities:
+
+\begin{enumerate}
+\item It is used only as the function argument in a \texttt{call}
+  instruction.
+\item It is used in some other way as well, such as being passed as
+  the argument to another function, directly or indirectly.
+\end{enumerate}
+
+By traversing the function tree from the top-level to the leaves, and
+doing the data-flow analysis at each level, we obtain a \emph{prefix}
+of the tree, containing functions that are only called.  Let us start
+by examining what can be done with these functions.
 
 %%  LocalWords:  optimizations inlined cdr fixnum destructuring

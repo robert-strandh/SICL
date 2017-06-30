@@ -29,6 +29,3 @@
     :initform '()
     :accessor shadowing-symbols))
   (:metaclass built-in-class))
-
-   
-   

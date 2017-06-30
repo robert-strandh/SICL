@@ -32,6 +32,6 @@
 ;;;; instruction is one of the first processed by the algorithm, it
 ;;;; should have this pool.
 
-(defgeneric pool-meet (specialization pool1 pool2))
+(defgeneric make-pool (specialization instruction))
 
-(defgeneric pool<= (specialization pool1 pool2))
+;;; TODO: pools that aren't maps

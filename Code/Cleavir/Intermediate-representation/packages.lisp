@@ -42,6 +42,7 @@
    #:enter-instruction #:make-enter-instruction #:lambda-list
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction #:make-nop-instruction
+   #:unreachable-instruction #:make-unreachable-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction
    #:funcall-no-return-instruction #:make-funcall-no-return-instruction
