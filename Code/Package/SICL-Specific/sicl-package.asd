@@ -1,4 +1,5 @@
-(asdf:defsystem :sicl-package
+(cl:in-package #:asdf-user)
+(defsystem:sicl-package
   :serial t
   :description "SICL-Specific Package System"
   :depends-on (:acclimation)
@@ -6,6 +7,4 @@
 	       (:file "conditions")
 	       (:file "condition-reporters-english")
 	       (:file "documentation-strings-english")
-	       (:file "functions-temp")
-
-	     ))
+	       (:file "functions-temp")))
