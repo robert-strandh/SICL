@@ -97,7 +97,7 @@
 ;;; CONVERT-CONSTANT-TO-IMMEDIATE with the constant value and the
 ;;; environment.  The function CONVERT-CONSTANT-TO-IMMEDIATE may
 ;;; return NIL, meaning that this constant does not have a
-;;; representation as an immediate value, or it may return an
+;;; representation as an immediate value, or it may return a
 ;;; possibly-negative integer which is taken to be the representation
 ;;; of the constant as an immediate machine word.  A default method is
 ;;; provided that always returns NIL.
