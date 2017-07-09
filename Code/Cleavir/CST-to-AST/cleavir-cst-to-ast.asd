@@ -13,4 +13,5 @@
   :components
   ((:file "packages")
    (:file "generic-functions")
-   (:file "convert-constant")))
+   (:file "convert-constant")
+   (:file "convert-special")))
