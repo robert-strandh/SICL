@@ -38,17 +38,16 @@
             (,dest (maybe-instruction-pool ,ss ,sinstruction)))
        (do-into-pool ,ss ,dest (,var ,dest-val)
          (let ((new-val
-                 (object-meet
-                  ,ss ,dest-val
-                  (cond ,@(loop for (list . body) in lists
-                                collect `((find ,var ,list)
-                                          ,@body))
-                        ,@(loop for (single . body) in singles
-                                collect `((eql ,var ,single)
-                                          ,@body))
-                        (t (,from-reader ,var))))))
+                 (cond ,@(loop for (list . body) in lists
+                               collect `((find ,var ,list)
+                                         ,@body))
+                       ,@(loop for (single . body) in singles
+                               collect `((eql ,var ,single)
+                                         ,@body))
+                       (t (,from-reader ,var)))))
            (cond ((object<= ,ss ,dest-val new-val) ,dest-val)
                  (t
-                  (setf ,dest-val new-val ,update t)
+                  (setf ,dest-val (object-meet ,ss ,dest-val new-val)
+                        ,update t)
                   new-val))))
        (when ,update (add-work ,sinstruction)))))
