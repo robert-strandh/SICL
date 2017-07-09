@@ -2,16 +2,9 @@
 
 (defgeneric object-meet (specialization object1 object2))
 (defgeneric object<= (specialization object1 object2))
-(defgeneric object1 (specialization variable))
+(defgeneric object1 (specialization key))
 
 (defgeneric find-in-pool (specialization key pool))
-
-;;; assoc pools
-(defmethod find-in-pool (specialization key pool)
-  (let ((pair (assoc key pool)))
-    (if pair
-        (cdr pair)
-        (object1 s key))))
 
 (defgeneric map-into-pool (specialization function pool))
 
@@ -51,7 +44,7 @@
                                 collect `((find ,var ,list)
                                           ,@body))
                         ,@(loop for (single . body) in singles
-                                collect `((eq ,var ,single)
+                                collect `((eql ,var ,single)
                                           ,@body))
                         (t (,from-reader ,var))))))
            (cond ((object<= ,ss ,dest-val new-val) ,dest-val)
