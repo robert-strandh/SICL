@@ -2,6 +2,7 @@
 
 (defsystem :cleavir-cst-to-ast
   :depends-on (:concrete-syntax-tree
+               :concrete-syntax-tree-destructuring
                :cleavir-ast
 	       :cleavir-ast-transformations
 	       :cleavir-primop
@@ -11,4 +12,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "generic-functions")))
+   (:file "generic-functions")
+   (:file "convert-constant")))
