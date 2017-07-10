@@ -5,4 +5,4 @@
 (defun convert-sequence (csts environment system)
   (loop for cst = csts then (cst:rest cst)
         until (cst:null cst)
-	collect (convert cst environment system)))
+	collect (convert (cst:first cst) environment system)))
