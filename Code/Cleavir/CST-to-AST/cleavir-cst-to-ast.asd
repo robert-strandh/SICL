@@ -14,5 +14,6 @@
   ((:file "packages")
    (:file "generic-functions")
    (:file "process-progn")
+   (:file "convert-sequence")
    (:file "convert-constant")
    (:file "convert-special")))
