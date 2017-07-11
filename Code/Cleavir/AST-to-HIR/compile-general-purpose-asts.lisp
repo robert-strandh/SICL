@@ -400,6 +400,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a MULTIPLE-VALUE-PROG1-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:multiple-value-prog1-ast) context)
+  (let ((next (loop with successor = (first (successors context))
+		    for form-ast in (reverse (cleavir-ast:form-asts ast))
+		    do (setf successor
+			     (compile-ast form-ast
+					  (context () (list successor) (invocation context))))
+		    finally (return successor))))
+    (compile-ast (cleavir-ast:first-form-ast ast)
+		 (context (results context) (list next) (invocation context)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a MULTIPLE-VALUE-SETQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
@@ -411,8 +425,8 @@
      (context
       vtemp
       (list (cleavir-ir:make-multiple-to-fixed-instruction
-             :input vtemp :outputs locations
-             :successor (first (successors context))))
+             vtemp locations
+	     (first (successors context))))
       (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
