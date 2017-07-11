@@ -106,3 +106,18 @@
                   (t
                    (convert (cst:cst-from-expression nil)
                             environment system))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FLET.
+
+;;; Take an environment and a single function definition, and return a
+;;; new environment which is like the one passed as an argument except
+;;; that it has been augmented by the local function name.
+(defun augment-environment-from-fdef (environment definition)
+  (cst:db origin (name . rest) definition
+    (declare (ignore rest))
+    (let* ((raw-name (cst:raw name))
+           (var-ast (cleavir-ast:make-lexical-ast raw-name
+                                                  :origin origin)))
+      (cleavir-env:add-local-function environment raw-name var-ast))))
