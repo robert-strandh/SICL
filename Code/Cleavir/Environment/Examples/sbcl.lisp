@@ -57,6 +57,9 @@
 (defun cleavir-macroexpand (expander form env)
   (funcall expander form (cleavir->host env)))
 
+(defmethod cleavir-env:eval (form environment1 (environment2 sb-kernel:lexenv))
+  (sb-int:eval-in-lexenv form (cleavir->host environment1)))
+
 ;;; convenience
 (defun compile-cleavir (form)
   (cleavir-ast-to-hir:compile-toplevel-unhoisted
@@ -116,6 +119,10 @@
 	   (ftype (or (cdr (assoc 'ftype decls)) 'function))
 	   ;; sbcl doesn't seem to actually give you this one rn
 	   (ignore (cdr (assoc 'ignore decls))))
+      ;; SBCL defines a few special operators that also have macro definitions,
+      ;; like SB-INT:CALLABLE-CAST. We just want to use the macros.
+      (when (and (eq binding :special-form) (not local-p) (macro-function symbol))
+	(setf binding :macro))
       (ecase binding
 	((nil) nil) ; unbound
 	((:function)
@@ -150,8 +157,65 @@
 			:name symbol))))))
 
 (do-external-symbols (op :cleavir-primop)
-  (defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql op)))
-    (make-instance 'cleavir-env:special-operator-info :name sym)))
+  (unless (eql op 'cleavir-primop:call-with-variable-bound)
+    (defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql op)))
+      (make-instance 'cleavir-env:special-operator-info :name sym))))
+
+(defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql 'cl:unwind-protect)))
+  (make-instance 'cleavir-env:global-macro-info
+    :compiler-macro nil
+    :name 'cl:unwind-protect
+    :expander (lambda (form env)
+		(declare (ignore env))
+		(destructuring-bind (protected &body cleanup)
+		    (rest form)
+		  `(%unwind-protect (lambda () ,protected) (lambda () ,@cleanup))))))
+
+(defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql 'cl:catch)))
+  (make-instance 'cleavir-env:global-macro-info
+    :compiler-macro nil
+    :name 'cl:catch
+    :expander (lambda (form env)
+		(declare (ignore env))
+		(destructuring-bind (tag &body body)
+		    (rest form)
+		  `(%catch ,tag (lambda () ,@body))))))
+
+(defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql 'cl:throw)))
+  (make-instance 'cleavir-env:global-macro-info
+    :compiler-macro nil
+    :name 'cl:throw
+    :expander (lambda (form env)
+		(declare (ignore env))
+		(destructuring-bind (tag result)
+		    (rest form)
+		  `(%throw ,tag ,result)))))
+
+(defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql 'cl:progv)))
+  (make-instance 'cleavir-env:global-macro-info
+    :compiler-macro nil
+    :name 'cl:progv
+    :expander (lambda (form env)
+		(declare (ignore env))
+		(destructuring-bind (vars vals &body body)
+		    (rest form)
+		  `(%progv ,vars ,vals (lambda () ,@body))))))
+
+(defun %unwind-protect (protected-thunk cleanup-thunk)
+  (unwind-protect (funcall protected-thunk) (funcall cleanup-thunk)))
+
+(defun %catch (tag body-thunk)
+  (catch tag (funcall body-thunk)))
+
+(defun %throw (tag result)
+  (throw tag result))
+
+(defun %progv (vars vals body-thunk)
+  (progv vars vals (funcall body-thunk)))
+
+(defun cleavir-primop:call-with-variable-bound (variable value thunk)
+  (progv (list variable) (list value)
+    (funcall thunk)))
 
 (defmethod cleavir-env:function-info ((env sb-kernel:lexenv)
 				      (sym (eql 'sb-ext:truly-the)))
@@ -173,13 +237,11 @@
 	 (policy (cleavir-policy:compute-policy optimize env)))
     (make-instance 'cleavir-env:optimize-info
 		   :optimize optimize
-		   :policy policy)
-    #+(or)    (make-instance 'cleavir-env:optimize-info
-		   :compilation-speed compilation-speed
-		   :safety safety
-		   :space space
-		   :debug debug
-		   :speed speed)))
+		   :policy policy)))
+
+(defmethod cleavir-env:optimize-qualities ((env sb-kernel:lexenv))
+  (loop for (opt) in (sb-cltl2:declaration-information 'optimize env)
+        collect `(,opt (integer 0 3) 3)))
 
 (defmethod cleavir-env:declarations ((env sb-kernel:lexenv))
   ;; CLTL2 only has accessors for information on a given decl, not
