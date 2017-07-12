@@ -2,16 +2,9 @@
 
 (defgeneric object-meet (specialization object1 object2))
 (defgeneric object<= (specialization object1 object2))
-(defgeneric object1 (specialization variable))
+(defgeneric object1 (specialization key))
 
 (defgeneric find-in-pool (specialization key pool))
-
-;;; assoc pools
-(defmethod find-in-pool (specialization key pool)
-  (let ((pair (assoc key pool)))
-    (if pair
-        (cdr pair)
-        (object1 s key))))
 
 (defgeneric map-into-pool (specialization function pool))
 
@@ -45,17 +38,16 @@
             (,dest (maybe-instruction-pool ,ss ,sinstruction)))
        (do-into-pool ,ss ,dest (,var ,dest-val)
          (let ((new-val
-                 (object-meet
-                  ,ss ,dest-val
-                  (cond ,@(loop for (list . body) in lists
-                                collect `((find ,var ,list)
-                                          ,@body))
-                        ,@(loop for (single . body) in singles
-                                collect `((eq ,var ,single)
-                                          ,@body))
-                        (t (,from-reader ,var))))))
+                 (cond ,@(loop for (list . body) in lists
+                               collect `((find ,var ,list)
+                                         ,@body))
+                       ,@(loop for (single . body) in singles
+                               collect `((eql ,var ,single)
+                                         ,@body))
+                       (t (,from-reader ,var)))))
            (cond ((object<= ,ss ,dest-val new-val) ,dest-val)
                  (t
-                  (setf ,dest-val new-val ,update t)
+                  (setf ,dest-val (object-meet ,ss ,dest-val new-val)
+                        ,update t)
                   new-val))))
        (when ,update (add-work ,sinstruction)))))
