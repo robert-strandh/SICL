@@ -174,7 +174,7 @@
     ;; Check for forbidden keywords.
     (unless (null forbidden)
 	(error 'lambda-list-keyword-not-allowed
-	       :form lambda-list
+	       :code lambda-list
 	       :keyword (car forbidden)))
     ;; Check for suspect keywords.
     (unless (null suspect)
@@ -185,11 +185,11 @@
     (loop for keyword in to-process
 	  do (when (> (count keyword to-process) 1)
 	       (error 'multiple-occurrences-of-lambda-list-keyword
-		      :form lambda-list
+		      :code lambda-list
 		      :keyword keyword)))
     (when (> (+ (count '&body to-process) (count '&rest to-process)) 1)
       (error 'both-rest-and-body-occur-in-lambda-list
-	     :form lambda-list))
+	     :code lambda-list))
     ;; Check the order of keywords.
     (loop for rem = to-process then (cdr rem)
 	  until (null (cdr rem))
@@ -198,7 +198,7 @@
 			(> (position (car rem) *lambda-list-keywords* :key #'car)
 			   (position (cadr rem) *lambda-list-keywords* :key #'car)))
 	       (error 'incorrect-keyword-order
-		      :form lambda-list
+		      :code lambda-list
 		      :keyword1 (car rem)
 		      :keyword2 (cadr rem))))
     ;; Check arities.
