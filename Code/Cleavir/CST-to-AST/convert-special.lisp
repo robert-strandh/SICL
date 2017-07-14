@@ -134,3 +134,11 @@
 	do (setf result
 		 (augment-environment-from-fdef result definition-cst))
 	finally (return result)))
+
+;;; Given a function name represented as a CST, return the name of a
+;;; block (also as a CST) that should be associated with the function
+;;; with that name.
+(defun block-name-from-function-name (function-name)
+  (if (cst:atom function-name)
+      function-name
+      (cst:second function-name)))
