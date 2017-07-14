@@ -29,7 +29,7 @@
 
 (defun maybe-wrap-the (type ast)
   "Make a THE ast if the type is actually helpful (i.e. not all T),
-or an UNREACHABLE ast if the type contains a NIL.
+or an UNREACHABLE ast if the type contains a required NIL.
 If AST is already a THE-AST, collapses both into one."
   (multiple-value-bind (req opt rest)
       (the-values-components type)
@@ -44,7 +44,7 @@ If AST is already a THE-AST, collapses both into one."
 		   ast (cleavir-ast:form-ast ast)))
     (flet ((nilp (x) (subtypep x 'nil))
            (tp (x) (subtypep 't x)))
-      (cond ((or (some #'nilp req) (some #'nilp opt) (nilp rest))
+      (cond ((some #'nilp req)
              (cleavir-ast:make-progn-ast
               (list ast (cleavir-ast:make-unreachable-ast))))
             ((and (every #'tp req) (every #'tp opt) (tp rest))
