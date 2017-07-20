@@ -24,3 +24,10 @@
 		 (augment-environment-from-fdef result definition-cst))
 	finally (return result)))
 
+;;; Augment the environment with a single canonicalized declaration
+;;; specifier.
+(defgeneric augment-environment-with-declaration
+    (declaration-identifier
+     declaration-identifier-cst
+     declaration-data-cst
+     environment))
