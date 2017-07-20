@@ -99,3 +99,19 @@
      environment)
   (cleavir-env:add-inline
    environment (cst:first declaration-data-cst) declaration-identifier-cst))
+
+(defmethod augment-environment-with-declaration
+    ((declaration-identifier (eql 'special))
+     declaration-identifier-cst
+     declaration-data-cst
+     environment)
+  ;; This case is a bit tricky, because if the
+  ;; variable is globally special, nothing should
+  ;; be added to the environment.
+  (let ((info (cleavir-env:variable-info environment
+                                         (cst:first declaration-data-cst))))
+    (if (and (typep info 'cleavir-env:special-variable-info)
+             (cleavir-env:global-p info))
+        environment
+        (cleavir-env:add-special-variable environment
+                                          (cst:first declaration-data-cst)))))
