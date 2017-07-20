@@ -45,3 +45,11 @@
         ;; (dynamic-extent foo)
         (cleavir-env:add-variable-dynamic-extent
          environment var-or-function))))
+
+(defmethod augment-environment-with-declaration
+    ((declaration-identifier (eql 'ftype))
+     declaration-identifier-cst
+     declaration-data-cst
+     environment)
+  (cleavir-env:add-function-type
+   environment (second declaration-data-cst) (first declaration-data-cst)))
