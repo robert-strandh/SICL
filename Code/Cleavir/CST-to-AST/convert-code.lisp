@@ -21,3 +21,17 @@
 ;;; The parameter DSPECS that is used in several functions is a list
 ;;; of canonicalized declaration specifiers.  This list is used to
 ;;; determine whether a variable is declared special.
+
+;;; This class is used to describe the body of a function.  It
+;;; contains the declaration specifiers that apply to the body as a
+;;; whole, the forms of the body and information about a possible
+;;; BLOCK that the body code should be wrapped in.  The main reason
+;;; for the existence of this class is to keep the number of arguments
+;;; down of several functions below, not for the purpose of
+;;; performance, but simply to avoid very long lambda lists in the
+;;; source code.
+(defclass body ()
+  ((%dspecs :initarg :dspecs :accessor dspecs)
+   (%forms :initarg :forms :accessor forms)
+   (%block-name :initarg :block-name :reader block-name)
+   (%block-name-p :initarg :block-name-p :reader block-name-p)))
