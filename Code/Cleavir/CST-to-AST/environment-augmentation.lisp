@@ -31,3 +31,17 @@
      declaration-identifier-cst
      declaration-data-cst
      environment))
+
+(defmethod augment-environment-with-declaration
+    ((declaration-identifier (eql 'dynamic-extent))
+     declaration-identifier-cst
+     declaration-data-cst
+     environment)
+  (let ((var-or-function (cst:first declaration-data-cst)))
+    (if (cst:consp var-or-function)
+        ;; (dynamic-extent (function foo))
+        (cleavir-env:add-function-dynamic-extent
+         environment (cst:second var-or-function))
+        ;; (dynamic-extent foo)
+        (cleavir-env:add-variable-dynamic-extent
+         environment var-or-function))))
