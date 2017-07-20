@@ -91,3 +91,11 @@
      environment)
   (cleavir-env:add-inline
    environment (cst:first declaration-data-cst) declaration-identifier-cst))
+
+(defmethod augment-environment-with-declaration
+    ((declaration-identifier (eql 'notinline))
+     declaration-identifier-cst
+     declaration-data-cst
+     environment)
+  (cleavir-env:add-inline
+   environment (cst:first declaration-data-cst) declaration-identifier-cst))
