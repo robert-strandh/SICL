@@ -33,6 +33,15 @@
      environment))
 
 (defmethod augment-environment-with-declaration
+    (declaration-identifier
+     declaration-identifier-cst
+     declaration-data-cst
+     environment)
+  (warn "Unable to handle declarations specifier: ~s"
+        declaration-identifier)
+  environment))))
+
+(defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'dynamic-extent))
      declaration-identifier-cst
      declaration-data-cst
