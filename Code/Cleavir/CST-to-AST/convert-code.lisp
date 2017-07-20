@@ -50,3 +50,10 @@
    (%forms :initarg :forms :accessor forms)
    (%block-name :initarg :block-name :reader block-name)
    (%block-name-p :initarg :block-name-p :reader block-name-p)))
+
+(defun make-body (dspecs forms block-name block-name-p)
+  (make-instance 'body
+    :dspecs dspecs
+    :forms forms
+    :block-name block-name
+    :block-name-p block-name-p))
