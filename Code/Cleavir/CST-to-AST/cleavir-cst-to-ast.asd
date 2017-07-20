@@ -12,6 +12,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment-augmentation")
    (:file "environment-query")
    (:file "variables")
    (:file "generic-functions")
