@@ -115,3 +115,11 @@
         environment
         (cleavir-env:add-special-variable environment
                                           (cst:first declaration-data-cst)))))
+
+(defmethod augment-environment-with-declaration
+    ((declaration-identifier (eql 'type))
+     declaration-identifier-cst
+     declaration-data-cst
+     environment)
+  (cst:db source (type-cst variable-cst) declaration-data-cst
+    (cleavir-env:add-variable-type environment variable-cst type-cst)))
