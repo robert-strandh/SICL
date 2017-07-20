@@ -18,6 +18,7 @@
    (:file "process-progn")
    (:file "convert-sequence")
    (:file "convert")
+   (:file "convert-code")
    (:file "convert-lambda-call")
    (:file "convert-constant")
    (:file "convert-special")
