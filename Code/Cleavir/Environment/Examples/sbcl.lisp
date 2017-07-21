@@ -48,8 +48,8 @@
 (defmethod cleavir->host ((environment cleavir-env:macro))
   (sb-cltl2:augment-environment
    (cleavir->host (cleavir-env::next environment))
-   :macro `(,(cleavir-env:name environment)
-            ,(cleavir-env:expander environment))))
+   :macro `((,(cleavir-env:name environment)
+             ,(cleavir-env:expander environment)))))
 
 (defmethod cleavir->host ((environment cleavir-env::entry))
   (cleavir->host (cleavir-env::next environment)))
@@ -271,11 +271,11 @@
      (environment sb-kernel:lexenv))
   (> (cleavir-policy:optimize-value optimize 'safety) 0))
 
-#+#.(cl:if (cl:find-package "CLEAVIR-KILDALL-ESCAPE")
+#+#.(cl:if (cl:find-package "CLEAVIR-ESCAPE")
            '(:and)
            '(:or))
 (defmethod cleavir-policy:compute-policy-quality
-    ((name (eql 'cleavir-kildall-escape:trust-dynamic-extent))
+    ((name (eql 'cleavir-escape:trust-dynamic-extent))
      optimize
      (environment sb-kernel:lexenv))
   t)
