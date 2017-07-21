@@ -330,6 +330,11 @@
   (declare (ignore successors))
   `(return (values-list ,(first inputs))))
 
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:unreachable-instruction) inputs outputs successors)
+  (declare (ignore inputs outputs successors))
+  `(error "Hit an UNREACHABLE-INSTRUCTION"))
+
 ;;; When the FUNCALL-INSTRUCTION is the last instruction of a basic
 ;;; block, it is because there is a call to a function that will never
 ;;; return, such as ERROR, and the instruction then has no successors
