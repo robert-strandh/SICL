@@ -29,7 +29,7 @@
 
 ;;; Default, for the global environment: just return it.
 (defmethod compile-time (environment &key variable-shadow function-shadow)
-  (declare (ignore variable-shadow function-shadow))
+  (declare (cl:ignore variable-shadow function-shadow))
   environment)
 
 ;;; If we don't specifically preserve an entry, lose it. (e.g. BLOCK)
