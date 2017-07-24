@@ -17,7 +17,7 @@
 (defmethod convert-special
     ((symbol (eql 'block)) cst env system)
   (cst:db origin (block name-cst . body-cst) cst
-    (declare (ignore block))
+          (declare (ignore block))
     (let* ((ast (cleavir-ast:make-block-ast nil :origin origin))
            (name (cst:raw name-cst))
 	   (new-env (cleavir-env:add-block env name ast)))
@@ -175,3 +175,28 @@
       (cleavir-ast:make-go-ast
        (cleavir-env:identity info)
        :origin origin))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting IF.
+
+(defmethod convert-special ((symbol (eql 'if)) form env system)
+  (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
+    (declare (ignore if))
+    (let ((test-ast (convert test-cst env system))
+	  (true-ast (convert then-cst env system))
+	  (false-ast (if (cst:null tail-cst)
+			 (convert-constant nil env system)
+			 (cst:db s (else-cst) tail-cst
+			   (convert else-cst env system)))))
+      (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
+	  (cleavir-ast:make-if-ast
+	   test-ast
+	   true-ast
+	   false-ast
+	   :origin origin)
+	  (cleavir-ast:make-if-ast
+	   (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
+	   false-ast
+	   true-ast
+	   :origin origin)))))
