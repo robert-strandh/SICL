@@ -118,3 +118,46 @@
   (if (cst:atom function-name)
       function-name
       (cst:second function-name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting TAGBODY.
+;;;
+;;; The TAGBODY special form always returns NIL.  We generate a PROGN
+;;; with the TAGBODY-AST and a CONSTANT-AST in it, because the
+;;; TAGBODY-AST (unlike hte TAGBODY special form) does not generate a
+;;; value.
+
+(defun tagp (item)
+  (let ((raw (cst:raw item)))
+    ;; go tags are symbols or integers, per CLHS glossary.
+    (or (symbolp raw)
+        (integerp raw))))
+
+(defmethod convert-special
+    ((symbol (eql 'tagbody)) cst env system)
+  (cst:db origin (tabody-cst . body-cst) cst
+    (declare (ignore tagbody-cst))
+
+    (let ((tag-asts
+	    (loop for rest = body-cst then (cst:rest rest)
+                  until (cst:null rest)
+		  when (tagp (cst:first rest))
+		    collect (let ((tag-cst (cst:first rest)))
+                              (cleavir-ast:make-tag-ast
+                               (cst:raw tag-cst)
+                               :origin (cst:source tag-cst)))))
+	  (new-env env))
+      (loop for ast in tag-asts
+	    do (setf new-env (cleavir-env:add-tag
+			      new-env (cleavir-ast:name ast) ast)))
+      (let ((item-asts (loop for rest = body-cst then (cst:rest rest)
+                             until (cst:null rest)
+			     collect (let ((item-cst (cst:first rest)))
+                                       (if (tagp item-cst)
+                                           (pop tag-asts)
+                                           (convert itemcst new-env system))))))
+	(process-progn
+	 (list (cleavir-ast:make-tagbody-ast item-asts
+					     :origin origin)
+	       (convert-constant nil env system)))))))
