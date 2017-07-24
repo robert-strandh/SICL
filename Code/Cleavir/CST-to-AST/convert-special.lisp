@@ -161,3 +161,17 @@
 	 (list (cleavir-ast:make-tagbody-ast item-asts
 					     :origin origin)
 	       (convert-constant nil env system)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting GO.
+
+(defmethod convert-special
+    ((symbol (eql 'go)) cst env system)
+  (declare (ignore system))
+  (cst:db origin (go-cst tag-cst) cst
+    (declare (ignore go-cst))
+    (let ((info (tag-info env (raw tag-cst))))
+      (cleavir-ast:make-go-ast
+       (cleavir-env:identity info)
+       :origin origin))))
