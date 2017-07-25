@@ -215,3 +215,17 @@
 	 nil
          (cst:raw (cst:first remaining)))
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting PROGN.
+;;;
+;;; According to section 3.2.3.1 of the HyperSpec, PROGN processes
+;;; its subforms the same way as the form itself.
+
+(defmethod convert-special ((symbol (eql 'progn)) cst env system)
+  (with-preserved-toplevel-ness
+    (cst:db origin (progn-cst . form-csts) cst
+      (declare (ignore progn-cst))
+      (process-progn
+       (convert-sequence form-csts env system)))))
