@@ -180,7 +180,7 @@
 ;;;
 ;;; Converting IF.
 
-(defmethod convert-special ((symbol (eql 'if)) form env system)
+(defmethod convert-special ((symbol (eql 'if)) cst env system)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if))
     (let ((test-ast (convert test-cst env system))
@@ -205,7 +205,7 @@
 ;;;
 ;;; Converting LOAD-TIME-VALUE.
 
-(defmethod convert-special ((symbol (eql 'load-time-value)) form env system)
+(defmethod convert-special ((symbol (eql 'load-time-value)) cst env system)
   (declare (ignore system))
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
