@@ -37,6 +37,9 @@
      env
      system))
 
+(defgeneric compute-new-environment
+    (parameter-group idspecs environment system))
+
 ;;; This class is used to describe the body of a function.  It
 ;;; contains the declaration specifiers that apply to the body as a
 ;;; whole, the forms of the body and information about a possible
