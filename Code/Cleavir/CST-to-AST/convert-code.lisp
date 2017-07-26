@@ -57,3 +57,26 @@
     :forms forms
     :block-name block-name
     :block-name-p block-name-p))
+
+(defun process-parameter-groups
+    (parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (if (null parameter-groups)
+      (values (convert-body body environment system) '())
+      (let ((new-environment (compute-new-environment (car parameter-groups)
+                                                      idspecs
+                                                      environment
+                                                      system)))
+        (multiple-value-bind (ast modified-lambda-list)
+            (process-parameter-groups (cdr parameter-groups)
+                                      idspecs
+                                      body
+                                      new-environment
+                                      system)
+          (process-parameter-group (car parameter-groups)
+                                   idspecs
+                                   ast
+                                   system)))))
