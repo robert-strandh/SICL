@@ -87,3 +87,15 @@
                                    idspecs
                                    ast
                                    system)))))
+
+(defun new-environment-from-parameters (parameters idspecs environment system)
+  (if (null parameter)
+      environment
+      (new-environment-from-parameters
+       (cdr parameters)
+       idspecs
+       (new-environment-from-parameter (car parameters)
+                                       idspecs
+                                       environment
+                                       system)
+       system)))
