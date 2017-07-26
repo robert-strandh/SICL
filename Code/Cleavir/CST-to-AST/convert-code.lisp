@@ -37,7 +37,7 @@
      env
      system))
 
-(defgeneric compute-new-environment
+(defgeneric new-environment-from-parameter-group
     (parameter-group idspecs environment system))
 
 ;;; This class is used to describe the body of a function.  It
@@ -69,10 +69,11 @@
      system)
   (if (null parameter-groups)
       (values (convert-body body environment system) '())
-      (let ((new-environment (compute-new-environment (car parameter-groups)
-                                                      idspecs
-                                                      environment
-                                                      system)))
+      (let ((new-environment (new-environment-from-parameter-group
+                              (car parameter-groups)
+                              idspecs
+                              environment
+                              system)))
         (multiple-value-bind (ast modified-lambda-list)
             (process-parameter-groups (cdr parameter-groups)
                                       idspecs
