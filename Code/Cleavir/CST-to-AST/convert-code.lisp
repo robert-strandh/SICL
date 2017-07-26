@@ -99,3 +99,10 @@
                                        environment
                                        system)
        system)))
+
+(defmethod new-environment-from-parameter
+    ((parameter cst:simple-variable) idspecs environment system)
+  (augment-environment-with-variable (raw (cst:name parameter))
+                                     (first idspecs)
+                                     environment
+                                     environment))
