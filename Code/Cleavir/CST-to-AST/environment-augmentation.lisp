@@ -132,3 +132,43 @@
      environment)
   (cst:db source (type-cst variable-cst) declaration-data-cst
     (cleavir-env:add-variable-type environment variable-cst type-cst)))
+
+;;; Given a single variable bound by some binding form like LET or
+;;; LET*, and a list of canonicalized declaration specifiers
+;;; concerning that variable, return a new environment that contains
+;;; information about that variable.
+;;;
+;;; ENV is the environment to be augmented.  If the binding form has
+;;; several bindings, it will contain entries for the variables
+;;; preceding the one that is currently treated.
+;;;
+;;; ORIG-ENV is the environment in which we check whether the variable
+;;; is globally special.  For a LET form, this is the environment in
+;;; which the entire LET form was converted.  For a LET* form, it is
+;;; the same as ENV.
+(defun augment-environment-with-variable
+    (variable declarations env orig-env)
+  (let ((new-env env))
+    (multiple-value-bind (special-p globally-p)
+	(variable-is-special-p variable declarations orig-env)
+      (if special-p
+	  (unless globally-p
+	    (setf new-env
+		  (cleavir-env:add-special-variable new-env variable)))
+	  (let ((var-ast (cleavir-ast:make-lexical-ast variable)))
+	    (setf new-env
+		  (cleavir-env:add-lexical-variable new-env variable var-ast)))))
+    (let ((type (declared-type declarations)))
+      (unless (equal type '(and))
+	(setf new-env
+	      (cleavir-env:add-variable-type new-env variable type))))
+    (when (member 'ignore declarations :test #'eq :key #'car)
+      (setf new-env
+            (cleavir-env:add-variable-ignore new-env variable 'ignore)))
+    (when (member 'ignorable declarations :test #'eq :key #'car)
+      (setf new-env
+            (cleavir-env:add-variable-ignore new-env variable 'ignorable)))
+    (when (member 'dynamic-extent declarations :test #'eq :key #'car)
+      (setf new-env
+	    (cleavir-env:add-variable-dynamic-extent new-env variable)))
+    new-env))
