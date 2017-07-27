@@ -113,3 +113,10 @@
                                       (raw (cst:supplied-p parameter))
                                       (first idspecs)
                                       environment))
+
+(defmethod new-environment-from-parameter
+    ((parameter cst:ordinary-optional-parameter) idspecs environment system)
+  (augment-environment-with-parameter (raw (cst:name parameter))
+                                      (raw (cst:supplied-p parameter))
+                                      (first idspecs)
+                                      environment))
