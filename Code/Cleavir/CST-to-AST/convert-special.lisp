@@ -156,7 +156,7 @@
 			     collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
-                                           (convert itemcst new-env system))))))
+                                           (convert item-cst new-env system))))))
 	(process-progn
 	 (list (cleavir-ast:make-tagbody-ast item-asts
 					     :origin origin)
@@ -213,7 +213,7 @@
      (cst:raw form-cst)
      (if (cst:null remaining-cst)
 	 nil
-         (cst:raw (cst:first remaining)))
+         (cst:raw (cst:first remaining-cst)))
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
