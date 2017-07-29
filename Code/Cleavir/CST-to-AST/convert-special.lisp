@@ -136,7 +136,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'tagbody)) cst env system)
-  (cst:db origin (tabody-cst . body-cst) cst
+  (cst:db origin (tagbody-cst . body-cst) cst
     (declare (ignore tagbody-cst))
 
     (let ((tag-asts
@@ -171,7 +171,7 @@
   (declare (ignore system))
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
-    (let ((info (tag-info env (raw tag-cst))))
+    (let ((info (tag-info env (cst:raw tag-cst))))
       (cleavir-ast:make-go-ast
        (cleavir-env:identity info)
        :origin origin))))
@@ -182,7 +182,7 @@
 
 (defmethod convert-special ((symbol (eql 'if)) cst env system)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
-    (declare (ignore if))
+    (declare (ignore if-cst))
     (let ((test-ast (convert test-cst env system))
 	  (true-ast (convert then-cst env system))
 	  (false-ast (if (cst:null tail-cst)

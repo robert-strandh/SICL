@@ -118,28 +118,28 @@
      environment
      system)
   (augment-environment-with-variable
-   (raw (cst:name (parameter parameter-group)))
+   (cst:raw (cst:name (cst:parameter parameter-group)))
    (first idspecs)
    environment
    environment))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
-  (augment-environment-with-variable (raw (cst:name parameter))
+  (augment-environment-with-variable (cst:raw (cst:name parameter))
                                      (first idspecs)
                                      environment
                                      environment))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:ordinary-key-parameter) idspecs environment system)
-  (augment-environment-with-parameter (raw (cst:name parameter))
-                                      (raw (cst:supplied-p parameter))
+  (augment-environment-with-parameter (cst:raw (cst:name parameter))
+                                      (cst:raw (cst:supplied-p parameter))
                                       (first idspecs)
                                       environment))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:ordinary-optional-parameter) idspecs environment system)
-  (augment-environment-with-parameter (raw (cst:name parameter))
-                                      (raw (cst:supplied-p parameter))
+  (augment-environment-with-parameter (cst:raw (cst:name parameter))
+                                      (cst:raw (cst:supplied-p parameter))
                                       (first idspecs)
                                       environment))
