@@ -100,6 +100,16 @@
                                        system)
        system)))
 
+(defmethod new-environment-from-parameter-group
+    ((parameter-group cst:multi-parameter-group-mixin)
+     idspecs
+     environment
+     system)
+  (new-environment-from-parameters (cst:parameters parameter-group)
+                                   idspecs
+                                   environment
+                                   system))
+
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
   (augment-environment-with-variable (raw (cst:name parameter))
