@@ -40,7 +40,7 @@
 (defgeneric new-environment-from-parameter-group
     (parameter-group idspecs environment system))
 
-(defgeneric new-environment-from-paramter
+(defgeneric new-environment-from-parameter
     (parameter idspecs environment system))
 
 ;;; This class is used to describe the body of a function.  It
