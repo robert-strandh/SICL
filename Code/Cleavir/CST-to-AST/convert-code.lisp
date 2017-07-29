@@ -64,6 +64,8 @@
     :block-name block-name
     :block-name-p block-name-p))
 
+(defgeneric process-parameter-group (parameter-group idspecs ast system))
+
 (defun process-parameter-groups
     (parameter-groups
      idspecs
