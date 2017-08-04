@@ -35,7 +35,7 @@
 	      (let ((info (assoc name all-qualities)))
 		(if info
 		    (destructuring-bind (name type default) info
-		      (declare (ignore default))
+		      (declare (ignore name default))
 		      (if (typep value type)
 			  (collect spec)
 			  ;; TODO: add more restarts? This will
@@ -49,7 +49,7 @@
 	    (let ((info (assoc spec all-qualities)))
 	      (if info
 		  (destructuring-bind (name type default) info
-		    (declare (ignore type))
+		    (declare (ignore name type))
 		    (collect (list spec default)))
 		  (warn 'unknown-optimize-quality
 			:specifier spec))))))))
