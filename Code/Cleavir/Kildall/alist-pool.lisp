@@ -13,7 +13,7 @@
 
 (defmethod find-in-pool ((specialization alist-pool-mixin)
                          variable pool)
-  (let ((pair (assoc variable pool)))
+  (let ((pair (assoc variable pool :test #'eq)))
     (if pair
         (cdr pair)
         (object1 specialization variable))))
