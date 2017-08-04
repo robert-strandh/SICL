@@ -41,6 +41,9 @@
 
 (defun values-bottom () (make-values nil ()))
 
+(defun values-required-count (values-descriptor)
+  (length (values-required values-descriptor)))
+
 (defun values-nth (values-descriptor n env)
   (if (>= n (values-required-count values-descriptor))
       (if (values-rest-p values-descriptor)
@@ -58,9 +61,6 @@
   (flet ((bottom (descriptor)
            (ltype-bottom-p descriptor environment)))
     (some #'bottom (values-required values-descriptor))))
-
-(defun values-required-count (values-descriptor)
-  (length (values-required values-descriptor)))
 
 (defun values->descriptor
     (required optional rest environment)
