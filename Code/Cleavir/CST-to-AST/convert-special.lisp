@@ -229,3 +229,29 @@
       (declare (ignore progn-cst))
       (process-progn
        (convert-sequence form-csts env system)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting MACROLET.
+;;;
+;;; According to section 3.2.3.1 of the HyperSpec, MACROLET processes
+;;; its subforms the same way as the form itself.
+
+(defmethod convert-special
+    ((symbol (eql 'macrolet)) cst env system)
+  (cst:db origin (macrolet-cst definition-csts . body-cst) cst
+    (declare (ignore macrolet-cst))
+    (let ((new-env env))
+      (loop for remaining = definition-csts then (cst:rest remaining)
+            until (cst:null remaining)
+            do (let* ((definition-cst (cst:first remaining))
+                      (name-cst (cst:first definition-cst))
+                      (name (cst:raw name-cst))
+                      (expander (expander definition-cst env)))
+                 (setf new-env
+                       (cleavir-env:add-local-macro new-env name expander))))
+      (with-preserved-toplevel-ness
+        (convert (cst:cons (make-instance 'cst:atom-cst :raw 'locally)
+                           body-cst)
+                 new-env
+                 system)))))
