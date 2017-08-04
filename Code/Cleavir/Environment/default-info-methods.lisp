@@ -817,7 +817,7 @@
 ;;; This method implements the action to take when the argument is a
 ;;; TAG entry.
 (defmethod tag-info ((environment tag) symbol)
-  (if (eq symbol (name environment))
+  (if (eql symbol (name environment))
       ;; We found a TAG entry with the same name, so we are done.
       ;; Create and return a valid TAG-INFO instance for this
       ;; environment.
