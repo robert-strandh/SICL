@@ -237,6 +237,19 @@
 ;;; According to section 3.2.3.1 of the HyperSpec, MACROLET processes
 ;;; its subforms the same way as the form itself.
 
+;;; Given the CST for a MACROLET definition and an environment, return
+;;; a macro expander (or macro function) for the definition.
+(defun expander (definition-cst environment system)
+  (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
+    (let ((lambda-expression (cst:parse-macro system
+                                              name-cst
+                                              lambda-list-cst
+                                              body-cst
+                                              environment)))
+      (cleavir-env:eval lambda-expression
+                        (cleavir-env:compile-time environment)
+                        environment))))
+
 (defmethod convert-special
     ((symbol (eql 'macrolet)) cst env system)
   (cst:db origin (macrolet-cst definition-csts . body-cst) cst
@@ -247,7 +260,7 @@
             do (let* ((definition-cst (cst:first remaining))
                       (name-cst (cst:first definition-cst))
                       (name (cst:raw name-cst))
-                      (expander (expander definition-cst env)))
+                      (expander (expander definition-cst env system)))
                  (setf new-env
                        (cleavir-env:add-local-macro new-env name expander))))
       (with-preserved-toplevel-ness
