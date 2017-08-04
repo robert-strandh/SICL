@@ -88,7 +88,7 @@
 ;;; is incorrect because any declarations present in the environment
 ;;; are lost when CL:EVAL is called.
 
-(defgeneric eval (form environment1 environment2))
+(defgeneric eval (form environment dispatch-environment))
 
 (defmethod eval (form environment1 (environment2 entry))
   (eval form environment1 (next environment2)))
