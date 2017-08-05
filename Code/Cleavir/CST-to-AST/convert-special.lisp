@@ -27,6 +27,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting RETURN-FROM.
+
+(defmethod convert-special
+    ((symbol (eql 'return-from)) cst env system)
+  (cst:db origin (return-from-cst block-name-cst . rest-csts) cst
+    (declare (ignore return-from-cst))
+    (let ((info (block-info env (cst:raw block-name-cst)))
+	  (value-cst (if (cst:null rest-csts)
+                         (make-instance 'cst:atom-cst :raw nil)
+                         (cst:first rest-csts))))
+      (cleavir-ast:make-return-from-ast
+       (cleavir-env:identity info)
+       (convert value-cst env system)
+       :origin origin))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting EVAL-WHEN.
 
 (defmethod convert-special
