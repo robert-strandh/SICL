@@ -33,14 +33,33 @@
     ((symbol (eql 'return-from)) cst env system)
   (cst:db origin (return-from-cst block-name-cst . rest-csts) cst
     (declare (ignore return-from-cst))
-    (let ((info (block-info env (cst:raw block-name-cst)))
-	  (value-cst (if (cst:null rest-csts)
-                         (make-instance 'cst:atom-cst :raw nil)
-                         (cst:first rest-csts))))
-      (cleavir-ast:make-return-from-ast
-       (cleavir-env:identity info)
-       (convert value-cst env system)
-       :origin origin))))
+    (flet ((find-info (block-name)
+             (cleavir-env:block-info env block-name)))
+      (let ((info (find-info (cst:raw block-name-cst)))
+            (value-cst (if (cst:null rest-csts)
+                           (make-instance 'cst:atom-cst :raw nil)
+                           (cst:first rest-csts))))
+        (loop while (null info)
+              do (restart-case (error 'cleavir-env:no-block-info
+                                      :name (cst:raw block-name-cst))
+                   (substitute (new-block-name)
+                     :report (lambda (stream)
+                               (format stream "Substitute a different name."))
+                     :interactive (lambda ()
+                                    (format *query-io* "Enter new name: ")
+                                    (list (read *query-io*)))
+                     (setq info (find-info new-block-name)))
+                   (recover ()
+                     ;; In order to recover from the error, we ignore
+                     ;; the RETURN-FROM form and only compile the return
+                     ;; value form (or NIL if no return value form was
+                     ;; present).
+                     (return-from convert-special
+                       (convert value-cst env system)))))
+        (cleavir-ast:make-return-from-ast
+         (cleavir-env:identity info)
+         (convert value-cst env system)
+         :origin origin)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
