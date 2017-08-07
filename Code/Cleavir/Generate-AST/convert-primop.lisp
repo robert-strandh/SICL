@@ -408,7 +408,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FUNCALL.
 ;;;
 ;;; This primop is similar to the function CL:FUNCALL.  The difference
-;;; is that the primop does not allow function NAMES as its first
+;;; is that the primop does not allow a function NAME as its first
 ;;; argument.  It has to be a form that evaluates to a function.
 ;;;
 ;;; In order to inline CL:FUNCALL, a possible strategy would be to
@@ -423,6 +423,27 @@
      (convert function-form env system)
      (loop for argument-form in argument-forms
 	   collect (convert argument-form env system)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
+;;;
+;;; This primop is similar to the special operator CL:MULTIPLE-VALUE-CALL.
+;;; The difference is that the primop does not allow a function NAME
+;;; as its first argument.  It has to be a form that evaluates to a
+;;; function.
+;;;
+;;; CL:MULTIPLE-VALUE-CALL can be defined as a macro expanding into
+;;; a form that turns the first argument into a function if it is not
+;;; already a function and then calls this primop.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:multiple-value-call)) form env system)
+  (destructuring-bind (function-form . argument-forms) (rest form)
+    (cleavir-ast:make-multiple-value-call-ast
+     (convert function-form env system)
+     (loop for argument-form in argument-forms
+           collect (convert argument-form env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
