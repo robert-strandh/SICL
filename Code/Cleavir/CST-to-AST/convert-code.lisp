@@ -136,6 +136,20 @@
                            environment
                            system))
 
+(defmethod process-parameter-group
+    ((parameter-group cst:multi-parameter-group-mixin)
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (process-parameters-in-group (cst:parameters parameter-group)
+                               remaining-parameter-groups
+                               idspecs
+                               body
+                               environment
+                               system))
+
 (defun new-environment-from-parameters (parameters idspecs environment system)
   (let ((result environment))
     (loop for parameter in parameters
