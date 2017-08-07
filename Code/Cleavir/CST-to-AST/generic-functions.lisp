@@ -9,3 +9,5 @@
 (defgeneric convert-lambda-call (cst env system))
 
 (defgeneric convert-code (lambda-list body-cst env system &optional block-name))
+
+(defgeneric convert-variable (cst environment system))
