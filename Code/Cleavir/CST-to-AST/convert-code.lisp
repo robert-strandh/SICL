@@ -107,6 +107,14 @@
      envrironment
      system))
 
+(defgeneric process-parameter-group
+    (parameter-group
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system))
+
 (defmethod process-parameter-groups
     ((parameter-groups null)
      idspecs
