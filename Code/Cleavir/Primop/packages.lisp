@@ -68,6 +68,7 @@
    #:call-with-variable-bound
    #:let-uninitialized
    #:funcall
+   #:multiple-value-call
    #:values
    #:unreachable
    #:ast))

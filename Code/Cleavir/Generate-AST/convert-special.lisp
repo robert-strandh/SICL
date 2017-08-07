@@ -822,19 +822,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting MULTIPLE-VALUE-CALL.
-
-(defmethod convert-special
-    ((symbol (eql 'multiple-value-call)) form environment system)
-  (db s (multiple-value-call function-form . forms) form
-    (declare (ignore multiple-value-call))
-    (cleavir-ast:make-multiple-value-call-ast
-     (convert function-form environment system)
-     (convert-sequence forms environment system)
-     :origin (location form))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Converting MULTIPLE-VALUE-PROG1.
 
 (defmethod convert-special
@@ -850,6 +837,13 @@
 ;;;
 ;;; Methods specialized to operators for which we do not provide a
 ;;; conversion method.
+
+;;; Implementations should probably convert this in terms of
+;;; CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
+(defmethod convert-special
+    ((symbol (eql 'multiple-value-call)) form environment system)
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
 
 (defmethod convert-special
     ((symbol (eql 'unwind-protect)) form environment system)
