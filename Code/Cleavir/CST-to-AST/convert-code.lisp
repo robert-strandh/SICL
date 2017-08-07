@@ -91,16 +91,14 @@
                                    system)))))
 
 (defun new-environment-from-parameters (parameters idspecs environment system)
-  (if (null parameter)
-      environment
-      (new-environment-from-parameters
-       (cdr parameters)
-       idspecs
-       (new-environment-from-parameter (car parameters)
-                                       idspecs
-                                       environment
-                                       system)
-       system)))
+  (let ((result environment))
+    (loop for parameter in parameters
+          do (setf result
+                   (new-environment-from-parameter (car parameters)
+                                                   idspecs
+                                                   result
+                                                   system)))
+    result))
 
 (defmethod new-environment-from-parameter-group
     ((parameter-group cst:multi-parameter-group-mixin)
