@@ -14,8 +14,7 @@
                   (value-cst (cst:cst-from-expression value)))
              (convert-constant value-cst environment system)))
           ((symbolp form)
-           (let ((info (variable-info environment form)))
-             (convert-cst cst info environment system)))
+           (convert-variable cst environment form))
           ((symbolp (car form))
            ;; Even if we are in COMPILE-TIME-TOO mode, at this point, we
            ;; do not know whether to evaluate the form at compile time,
