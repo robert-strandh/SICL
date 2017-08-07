@@ -18,6 +18,7 @@
    (:file "generic-functions")
    (:file "process-progn")
    (:file "convert-sequence")
+   (:file "convert-variable")
    (:file "convert")
    (:file "convert-code")
    (:file "convert-lambda-call")
