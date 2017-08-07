@@ -37,6 +37,42 @@
      env
      system))
 
+(defgeneric process-parameters-in-group
+    (parameters-in-group
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system))
+
+(defmethod process-parameters-in-group
+    ((parameters-in-group null)
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (process-parameter-groups remaining-parameter-groups
+                            idspecs
+                            body
+                            environment
+                            system))
+
+(defmethod process-parameters-in-group
+    ((parameters-in-group cons)
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (process-parameter (car parameters-in-group)
+                     (cdr parameters-in-group)
+                     remaining-parameter-groups
+                     idspecs
+                     body
+                     environment
+                     system))
+
 (defgeneric new-environment-from-parameter-group
     (parameter-group idspecs environment system))
 
