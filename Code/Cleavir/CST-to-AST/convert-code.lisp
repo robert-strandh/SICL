@@ -22,15 +22,15 @@
 ;;; of canonicalized declaration specifiers.  This list is used to
 ;;; determine whether a variable is declared special.
 
-;;; Process a single parameter.  REMAINING-PARAMETERS contains a list
-;;; of remaining parameters in the same group as PARAMETER to be
-;;; processed after PARAMETER has been processed.
+;;; Process a single parameter.  REMAINING-PARAMETERS-IN-GROUP
+;;; contains a list of remaining parameters in the same group as
+;;; PARAMETER to be processed after PARAMETER has been processed.
 ;;; REMAINING-PARAMETER-GROUPS contains a list of the remaining
 ;;; parameter groups to be processed after all parameters in the
 ;;; current group have been processed.
 (defgeneric process-parameter
     (parameter
-     remaining-parameters
+     remaining-parameters-in-group
      remaining-parameter-groups
      idspecs
      body
