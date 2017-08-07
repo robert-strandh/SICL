@@ -5,4 +5,5 @@
   (:export #:cst-to-ast
            #:convert-constant
            #:convert-constant-to-immediate
-           #:convert-special))
+           #:convert-special
+           #:convert-variable))
