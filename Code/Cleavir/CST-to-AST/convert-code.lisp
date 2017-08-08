@@ -186,8 +186,9 @@
     ;; Bundle up the parameters in the list MIRROR-PARAMETERS-IN-GROUP
     ;; into a parameter group of the same class as that of
     ;; PARAMETER-GROUP.
-    (values (make-instance (class-of parameter-group)
-              :parameters mirror-parameters-in-group)
+    (values (cons (make-instance (class-of parameter-group)
+                    :parameters mirror-parameters-in-group)
+                  mirror-parameter-groups)
             ast)))
 
 (defun new-environment-from-parameters (parameters idspecs environment system)
