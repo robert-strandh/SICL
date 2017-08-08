@@ -76,11 +76,13 @@
      body
      environment
      system)
-  (process-parameter-groups remaining-parameter-groups
-                            idspecs
-                            body
-                            environment
-                            system))
+  (multiple-value-bind (mirror-parameter-groups ast)
+      (process-parameter-groups remaining-parameter-groups
+                                idspecs
+                                body
+                                environment
+                                system)
+    (values '() mirror-parameter-groups ast)))
 
 (defmethod process-parameters-in-group
     ((parameters-in-group cons)
@@ -138,7 +140,7 @@
      body
      environment
      system)
-  (values (convert-body body environment system) '()))
+  (values '() (convert-body body environment system)))
 
 (defmethod process-parameter-groups
     ((parameter-groups cons)
