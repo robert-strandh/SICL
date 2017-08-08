@@ -47,7 +47,7 @@
 ;;; groups that mirror the parameter groups in
 ;;; REMAINING-PARAMETER-GROUPS.  The third value is the AST resulting
 ;;; from the processing of the parameters in PARAMETERS-IN-GROUP and
-;;; REMAINING-PARAMETER-GROUPS.
+;;; REMAINING-PARAMETER-GROUPS and of BODY.
 (defgeneric process-parameters-in-group
     (parameters-in-group
      remaining-parameter-groups
@@ -56,6 +56,12 @@
      environment
      system))
 
+;;; Process all the parameters in the list of parameter groups
+;;; PARAMETER-GROUPS.  This function returns two values.  The first
+;;; return value is a list if parameter gruops that mirror the
+;;; parameter groups in PARMETER-GROUPS.  The second return value is
+;;; the AST resulting from the processing of those parameters and of
+;;; BODY.
 (defgeneric process-parameter-groups
     (parameter-groups
      idspecs
