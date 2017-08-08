@@ -31,8 +31,8 @@
 ;;; PARAMETER and in REMAINING-PARAMETERS-IN-GROUP.  The second value
 ;;; is a list of parameter groups that mirror the parameters in
 ;;; REMAINING-PARAMETER-GROUPS.  The third return value is the AST
-;;; resulting from the recursive processing and from the processing of
-;;; PARAMETER.
+;;; resulting from the recursive processing, from the processing of
+;;; PARAMETER and from BODY.
 (defgeneric process-parameter
     (parameter
      remaining-parameters-in-group
@@ -42,17 +42,17 @@
      environment
      system))
 
-;;; Process all the parameters in the list PARAMETERS-IN-GROUP.  The
-;;; parameters in that list all belong to the same parameter group.
-;;; REMAINING-PARAMETER-GROUPS contains a list of parameter groups to
-;;; be processed after all parameters in PARAMETERS-IN-GROUP have been
-;;; processed.  This function returns three values.  The first value
-;;; is a list parameters that mirror the parameters in
-;;; PARAMETERS-IN-GROUP.  The second value is a list of parameter
-;;; groups that mirror the parameter groups in
-;;; REMAINING-PARAMETER-GROUPS.  The third value is the AST resulting
-;;; from the processing of the parameters in PARAMETERS-IN-GROUP and
-;;; REMAINING-PARAMETER-GROUPS and of BODY.
+;;; Process all the parameters in the list PARAMETERS-IN-GROUP.  This
+;;; function first computes a new environment by augmenting
+;;; ENVIRONMENT with information from the parameters in the list
+;;; PARAMETERS-IN-GROUP.  Then it recursively processes the parameters
+;;; in REMAINING-PARAMETER-GROUPS in the augmented environment.
+;;; Finally, it returns three values.  The first value is a list of
+;;; parameters that mirror the parameters in PARAMETERS-IN-GROUP.  The
+;;; second value is a list of parameter groups that mirror the
+;;; parameters in REMAINING-PARAMETER-GROUPS.  The third return value
+;;; is the AST resulting from the recursive processing and from the
+;;; processing of the parameters in PARAMETERS-IN-GROUP and of BODY.
 (defgeneric process-parameters-in-group
     (parameters-in-group
      remaining-parameter-groups
