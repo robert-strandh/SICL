@@ -61,6 +61,23 @@
      environment
      system))
 
+;;; This function first computes a new environment by augmenting
+;;; ENVIRONMENT with information from the parameters in
+;;; PARAMETER-GROUP.  Then it recursively processes the parameters in
+;;; REMAINING-PARAMETER-GROUPS in the augmented environment.  Finally,
+;;; it returns two values.  The first value is a list of parameter
+;;; groups that mirror the parameters in both PARAMETER-GROUP and
+;;; REMAINING-PARAMETER-GROUPS.  The second return value is the AST
+;;; resulting from the recursive processing and from the processing of
+;;; the parameters in PARAMETER-GROUP and of BODY.
+(defgeneric process-parameter-group
+    (parameter-group
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system))
+
 ;;; Process all the parameters in the list of parameter groups
 ;;; PARAMETER-GROUPS.  This function returns two values.  The first
 ;;; return value is a list if parameter gruops that mirror the
@@ -130,14 +147,6 @@
     :forms forms
     :block-name block-name
     :block-name-p block-name-p))
-
-(defgeneric process-parameter-group
-    (parameter-group
-     remaining-parameter-groups
-     idspecs
-     body
-     environment
-     system))
 
 (defmethod process-parameter-groups
     ((parameter-groups null)
