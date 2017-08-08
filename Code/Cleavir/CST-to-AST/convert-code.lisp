@@ -162,12 +162,19 @@
      body
      environment
      system)
-  (process-parameters-in-group (cst:parameters parameter-group)
-                               remaining-parameter-groups
-                               idspecs
-                               body
-                               environment
-                               system))
+  (multiple-value-bind (mirror-parameters-in-group mirror-parameter-groups ast)
+      (process-parameters-in-group (cst:parameters parameter-group)
+                                   remaining-parameter-groups
+                                   idspecs
+                                   body
+                                   environment
+                                   system)
+    ;; Bundle up the parameters in the list MIRROR-PARAMETERS-IN-GROUP
+    ;; into a parameter group of the same class as that of
+    ;; PARAMETER-GROUP.
+    (values (make-instance (class-of parameter-group)
+              :parameters mirror-parameters-in-group)
+            ast)))
 
 (defun new-environment-from-parameters (parameters idspecs environment system)
   (let ((result environment))
