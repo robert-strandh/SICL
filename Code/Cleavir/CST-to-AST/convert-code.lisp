@@ -37,12 +37,30 @@
      env
      system))
 
+;;; Process all the parameters in the list PARAMETERS-IN-GROUP.  The
+;;; parameters in that list all belong to the same parameter group.
+;;; REMAINING-PARAMETER-GROUPS contains a list of parameter groups to
+;;; be processed after all parameters in PARAMETERS-IN-GROUP have been
+;;; processed.  This function returns three values.  The first value
+;;; is a list parameters that mirror the parameters in
+;;; PARAMETERS-IN-GROUP.  The second value is a list of parameter
+;;; groups that mirror the parameter groups in
+;;; REMAINING-PARAMETER-GROUPS.  The third value is the AST resulting
+;;; from the processing of the parameters in PARAMETERS-IN-GROUP and
+;;; REMAINING-PARAMETER-GROUPS.
 (defgeneric process-parameters-in-group
     (parameters-in-group
      remaining-parameter-groups
      idspecs
      body
      environment
+     system))
+
+(defgeneric process-parameter-groups
+    (parameter-groups
+     idspecs
+     body
+     envrironment
      system))
 
 (defmethod process-parameters-in-group
@@ -99,13 +117,6 @@
     :forms forms
     :block-name block-name
     :block-name-p block-name-p))
-
-(defgeneric process-parameter-groups
-    (parameter-groups
-     idspecs
-     body
-     envrironment
-     system))
 
 (defgeneric process-parameter-group
     (parameter-group
