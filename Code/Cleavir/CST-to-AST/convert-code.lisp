@@ -121,9 +121,6 @@
                      environment
                      system))
 
-(defgeneric new-environment-from-parameter-group
-    (parameter-group idspecs environment system))
-
 (defgeneric new-environment-from-parameter
     (parameter idspecs environment system))
 
@@ -190,37 +187,6 @@
                     :parameters mirror-parameters-in-group)
                   mirror-parameter-groups)
             ast)))
-
-(defun new-environment-from-parameters (parameters idspecs environment system)
-  (let ((result environment))
-    (loop for parameter in parameters
-          do (setf result
-                   (new-environment-from-parameter (car parameters)
-                                                   idspecs
-                                                   result
-                                                   system)))
-    result))
-
-(defmethod new-environment-from-parameter-group
-    ((parameter-group cst:multi-parameter-group-mixin)
-     idspecs
-     environment
-     system)
-  (new-environment-from-parameters (cst:parameters parameter-group)
-                                   idspecs
-                                   environment
-                                   system))
-
-(defmethod new-environment-from-parameter-group
-    ((parameter-group cst:ordinary-rest-parameter-group)
-     idspecs
-     environment
-     system)
-  (augment-environment-with-variable
-   (cst:raw (cst:name (cst:parameter parameter-group)))
-   (first idspecs)
-   environment
-   environment))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
