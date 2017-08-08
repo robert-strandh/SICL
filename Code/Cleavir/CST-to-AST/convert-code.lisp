@@ -22,19 +22,24 @@
 ;;; of canonicalized declaration specifiers.  This list is used to
 ;;; determine whether a variable is declared special.
 
-;;; Process a single parameter.  REMAINING-PARAMETERS-IN-GROUP
-;;; contains a list of remaining parameters in the same group as
-;;; PARAMETER to be processed after PARAMETER has been processed.
-;;; REMAINING-PARAMETER-GROUPS contains a list of the remaining
-;;; parameter groups to be processed after all parameters in the
-;;; current group have been processed.
+;;; Process a single parameter.  This function first computes a new
+;;; environment by augmenting ENVIRONMENT with information from
+;;; PARAMETER.  Then it recursively processes the parameters in
+;;; REMAINING-PARAMETERS-IN-GROUP and in REMAINING-PARAMETER-GROUPS in
+;;; the augmented environment.  Finally, it returns three values.  The
+;;; first value is a list of parameters that mirror the parameters in
+;;; PARAMETER and in REMAINING-PARAMETERS-IN-GROUP.  The second value
+;;; is a list of parameter groups that mirror the parameters in
+;;; REMAINING-PARAMETER-GROUPS.  The third return value is the AST
+;;; resulting from the recursive processing and from the processing of
+;;; PARAMETER.
 (defgeneric process-parameter
     (parameter
      remaining-parameters-in-group
      remaining-parameter-groups
      idspecs
      body
-     env
+     environment
      system))
 
 ;;; Process all the parameters in the list PARAMETERS-IN-GROUP.  The
