@@ -26,13 +26,12 @@
 ;;; environment by augmenting ENVIRONMENT with information from
 ;;; PARAMETER.  Then it recursively processes the parameters in
 ;;; REMAINING-PARAMETERS-IN-GROUP and in REMAINING-PARAMETER-GROUPS in
-;;; the augmented environment.  Finally, it returns three values.  The
-;;; first value is a list of parameters that mirror the parameters in
-;;; PARAMETER and in REMAINING-PARAMETERS-IN-GROUP.  The second value
-;;; is a list of parameter groups that mirror the parameters in
-;;; REMAINING-PARAMETER-GROUPS.  The third return value is the AST
-;;; resulting from the recursive processing, from the processing of
-;;; PARAMETER and from BODY.
+;;; the augmented environment.  Finally, it returns two values.  The
+;;; first return value is the AST resulting from the recursive
+;;; processing, from the processing of PARAMETER and from BODY.  The
+;;; second value is a lexical lambda list resulting from the
+;;; processing of the parameters in PARAMETER, in
+;;; REMAINING-PARAMETERS-IN-GROUP, and in REMAINING-PARAMETER-GROUPS.
 (defgeneric process-parameter
     (parameter
      remaining-parameters-in-group
@@ -226,9 +225,7 @@
                                                   idspecs
                                                   environment
                                                   system)))
-    (multiple-value-bind (mirror-remaining-parameters-in-group
-                          mirror-remaining-parameter-groups
-                          ast)
+    (multiple-value-bind (ast lexical-lambda-list)
         (process-parameters-in-group remaining-parameters-in-group
                                      remaining-parameter-groups
                                      idspecs
@@ -236,5 +233,5 @@
                                      environment
                                      system)
       (values (set-or-bind-variable
-               var lexical-ast next-ast new-env system)
-              (cons lexical-ast next-lexical-parameters)))))
+               var lexical-ast ast new-env system)
+              (cons lexical-ast lexical-lambda-list)))))
