@@ -208,3 +208,33 @@
                                       (cst:raw (cst:supplied-p parameter))
                                       (first idspecs)
                                       environment))
+
+(defmethod process-parameter
+    ((parameter cst:simple-variable)
+     remaining-parameters-in-group
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (let* ((var (cst:name parameter))
+         (raw-var (cst:raw var))
+         (origin (cst:source var))
+         (name (make-symbol (string-downcase raw-var)))
+         (lexical-ast (cleavir-ast:make-lexical-ast name :origin origin))
+         (new-env (new-environment-from-parameter parameter
+                                                  idspecs
+                                                  environment
+                                                  system)))
+    (multiple-value-bind (mirror-remaining-parameters-in-group
+                          mirror-remaining-parameter-groups
+                          ast)
+        (process-parameters-in-group remaining-parameters-in-group
+                                     remaining-parameter-groups
+                                     idspecs
+                                     body
+                                     environment
+                                     system)
+      (values (set-or-bind-variable
+               var lexical-ast next-ast new-env system)
+              (cons lexical-ast next-lexical-parameters)))))
