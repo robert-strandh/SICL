@@ -17,6 +17,7 @@
    (:file "variables")
    (:file "generic-functions")
    (:file "convert-special-binding")
+   (:file "set-or-bind-variable")
    (:file "process-progn")
    (:file "convert-sequence")
    (:file "convert-variable")
