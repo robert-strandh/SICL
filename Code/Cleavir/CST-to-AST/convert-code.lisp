@@ -46,12 +46,12 @@
 ;;; ENVIRONMENT with information from the parameters in the list
 ;;; PARAMETERS-IN-GROUP.  Then it recursively processes the parameters
 ;;; in REMAINING-PARAMETER-GROUPS in the augmented environment.
-;;; Finally, it returns three values.  The first value is a list of
-;;; parameters that mirror the parameters in PARAMETERS-IN-GROUP.  The
-;;; second value is a list of parameter groups that mirror the
-;;; parameters in REMAINING-PARAMETER-GROUPS.  The third return value
-;;; is the AST resulting from the recursive processing and from the
-;;; processing of the parameters in PARAMETERS-IN-GROUP and of BODY.
+;;; Finally, it returns two values.  The first return value is the AST
+;;; resulting from the recursive processing and from the processing of
+;;; the parameters in PARAMETERS-IN-GROUP and of BODY.  The second
+;;; return value is a lexical lambda list corresponding to the
+;;; parameters in PARAMETERS-IN-GROUP and in
+;;; REMAINING-PARAMETER-GROUPS.
 (defgeneric process-parameters-in-group
     (parameters-in-group
      remaining-parameter-groups
@@ -97,13 +97,11 @@
      body
      environment
      system)
-  (multiple-value-bind (mirror-parameter-groups ast)
-      (process-parameter-groups remaining-parameter-groups
-                                idspecs
-                                body
-                                environment
-                                system)
-    (values '() mirror-parameter-groups ast)))
+  (process-parameter-groups remaining-parameter-groups
+                            idspecs
+                            body
+                            environment
+                            system))
 
 (defmethod process-parameters-in-group
     ((parameters-in-group cons)
