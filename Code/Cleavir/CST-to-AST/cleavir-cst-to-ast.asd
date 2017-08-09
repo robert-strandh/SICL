@@ -16,6 +16,7 @@
    (:file "environment-query")
    (:file "variables")
    (:file "generic-functions")
+   (:file "convert-special-binding")
    (:file "process-progn")
    (:file "convert-sequence")
    (:file "convert-variable")
