@@ -64,11 +64,11 @@
 ;;; ENVIRONMENT with information from the parameters in
 ;;; PARAMETER-GROUP.  Then it recursively processes the parameters in
 ;;; REMAINING-PARAMETER-GROUPS in the augmented environment.  Finally,
-;;; it returns two values.  The first value is a list of parameter
-;;; groups that mirror the parameters in both PARAMETER-GROUP and
-;;; REMAINING-PARAMETER-GROUPS.  The second return value is the AST
+;;; it returns two values.  The first return value is the AST
 ;;; resulting from the recursive processing and from the processing of
-;;; the parameters in PARAMETER-GROUP and of BODY.
+;;; the parameters in PARAMETER-GROUP and of BODY.  The second value
+;;; is a lexical lambda list that corresponds to the parameters in
+;;; PARAMETER-GROUP and REMAINING-PARAMETER-GROUPS.
 (defgeneric process-parameter-group
     (parameter-group
      remaining-parameter-groups
@@ -170,20 +170,12 @@
      body
      environment
      system)
-  (multiple-value-bind (mirror-parameters-in-group mirror-parameter-groups ast)
-      (process-parameters-in-group (cst:parameters parameter-group)
-                                   remaining-parameter-groups
-                                   idspecs
-                                   body
-                                   environment
-                                   system)
-    ;; Bundle up the parameters in the list MIRROR-PARAMETERS-IN-GROUP
-    ;; into a parameter group of the same class as that of
-    ;; PARAMETER-GROUP.
-    (values (cons (make-instance (class-of parameter-group)
-                    :parameters mirror-parameters-in-group)
-                  mirror-parameter-groups)
-            ast)))
+  (process-parameters-in-group (cst:parameters parameter-group)
+                               remaining-parameter-groups
+                               idspecs
+                               body
+                               environment
+                               system))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
