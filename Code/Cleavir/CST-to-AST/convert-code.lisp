@@ -177,6 +177,15 @@
                                environment
                                system))
 
+(defmethod process-parameter-group :around
+    ((parameter-group cst:optional-parameter-group)
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (cons '&optional (call-next-method)))
+
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
   (augment-environment-with-variable (cst:raw (cst:name parameter))
