@@ -202,6 +202,22 @@
                                environment
                                system))
 
+(defmethod process-parameter-group
+    ((parameter-group cst:ordinary-rest-parameter-group)
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (cons '&rest
+        (process-parameter (cst:parameter parameter-group)
+                           '()
+                           remaining-parameter-groups
+                           idspecs
+                           body
+                           environment
+                           system)))
+
 (defmethod process-parameter-group :around
     ((parameter-group cst:optional-parameter-group)
      remaining-parameter-groups
