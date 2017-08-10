@@ -211,6 +211,19 @@
      system)
   (cons '&optional (call-next-method)))
 
+(defmethod process-parameter-group :around
+    ((parameter-group cst:key-parameter-group)
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (cons '&key
+        (append (call-next-method)
+                (if (cst:allow-other-keys parameter-group)
+                    '(&allow-other-keys)
+                    '()))))
+
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
   (augment-environment-with-variable (cst:raw (cst:name parameter))
