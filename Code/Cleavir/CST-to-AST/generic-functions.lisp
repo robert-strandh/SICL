@@ -14,3 +14,5 @@
 (defgeneric convert-code (lambda-list body-cst env system &optional block-name))
 
 (defgeneric convert-variable (cst environment system))
+
+(defgeneric items-from-parameter-group (parameter-group))

@@ -1,7 +1,5 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defgeneric items-from-parameter-group (parameter-group))
-
 (defmethod items-from-parameter-group
     ((parameter-group cst:ordinary-required-parameter-group))
   (loop for parameter in (cst:parameters parameter-group)
