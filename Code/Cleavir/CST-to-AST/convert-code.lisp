@@ -321,3 +321,39 @@
                                   system)
         (values final-ast
                 (cons lexical-asts lexical-lambda-list))))))
+
+
+(defmethod process-parameter
+    ((parameter cst:ordinary-key-parameter)
+     remaining-parameters-in-group
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (let* ((var-cst (cst:name parameter))
+         (init-form-cst (cst:form parameter))
+         (supplied-p-cst (cst:supplied-p parameter))
+         (keyword-cst (cst:keyword parameter))
+         (new-env (new-environment-from-parameter parameter
+                                                  idspecs
+                                                  environment
+                                                  system))
+         (init-ast (convert init-form-cst environment system)))
+    (multiple-value-bind (ast lexical-lambda-list)
+        (process-parameters-in-group remaining-parameters-in-group
+                                     remaining-parameter-groups
+                                     idspecs
+                                     body
+                                     new-env
+                                     system)
+      (multiple-value-bind (final-ast lexical-asts)
+          (process-init-parameter var-cst
+                                  supplied-p-cst
+                                  init-ast
+                                  new-env
+                                  ast
+                                  system)
+        (values final-ast
+                (cons (cons keyword-cst lexical-asts)
+                      lexical-lambda-list))))))
