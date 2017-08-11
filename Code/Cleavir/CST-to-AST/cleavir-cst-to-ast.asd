@@ -23,6 +23,7 @@
    (:file "convert-variable")
    (:file "convert")
    (:file "process-init-parameter")
+   (:file "itemize-lambda-list")
    (:file "convert-code")
    (:file "convert-lambda-call")
    (:file "convert-constant")
