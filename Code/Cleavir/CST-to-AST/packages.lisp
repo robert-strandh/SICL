@@ -7,4 +7,5 @@
            #:convert-constant-to-immediate
            #:convert-special
            #:convert-special-binding
-           #:convert-variable))
+           #:convert-variable
+           #:items-from-parameter-group))
