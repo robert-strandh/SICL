@@ -298,17 +298,13 @@
      environment
      system)
   (let* ((var-cst (cst:name parameter))
-         (raw-var (cst:raw var))
          (init-form-cst (cst:form parameter))
-         (supplied-p-cst (cst:supplied-p parameter)
-         (origin (cst:source var))
-         (name (make-symbol (string-downcase raw-var)))
-         (lexical-ast (cleavir-ast:make-lexical-ast name :origin origin))
+         (supplied-p-cst (cst:supplied-p parameter))
          (new-env (new-environment-from-parameter parameter
                                                   idspecs
                                                   environment
                                                   system))
-         (init-ast (convert init-form-cst environment system))))
+         (init-ast (convert init-form-cst environment system)))
     (multiple-value-bind (ast lexical-lambda-list)
         (process-parameters-in-group remaining-parameters-in-group
                                      remaining-parameter-groups
@@ -320,9 +316,8 @@
           (process-init-parameter var-cst
                                   supplied-p-cst
                                   init-ast
-                                  environment
+                                  new-env
                                   ast
                                   system)
-        (values (set-or-bind-variable
-                 var lexical-ast ast new-env system)
+        (values final-ast
                 (cons lexical-asts lexical-lambda-list))))))
