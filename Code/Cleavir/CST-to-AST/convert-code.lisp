@@ -288,3 +288,41 @@
       (values (set-or-bind-variable
                var lexical-ast ast new-env system)
               (cons lexical-ast lexical-lambda-list)))))
+
+(defmethod process-parameter
+    ((parameter cst:ordinary-optional-parameter)
+     remaining-parameters-in-group
+     remaining-parameter-groups
+     idspecs
+     body
+     environment
+     system)
+  (let* ((var-cst (cst:name parameter))
+         (raw-var (cst:raw var))
+         (init-form-cst (cst:form parameter))
+         (supplied-p-cst (cst:supplied-p parameter)
+         (origin (cst:source var))
+         (name (make-symbol (string-downcase raw-var)))
+         (lexical-ast (cleavir-ast:make-lexical-ast name :origin origin))
+         (new-env (new-environment-from-parameter parameter
+                                                  idspecs
+                                                  environment
+                                                  system))
+         (init-ast (convert init-form-cst environment system))))
+    (multiple-value-bind (ast lexical-lambda-list)
+        (process-parameters-in-group remaining-parameters-in-group
+                                     remaining-parameter-groups
+                                     idspecs
+                                     body
+                                     new-env
+                                     system)
+      (multiple-value-bind (final-ast lexical-asts)
+          (process-init-parameter var-cst
+                                  supplied-p-cst
+                                  init-ast
+                                  environment
+                                  ast
+                                  system)
+        (values (set-or-bind-variable
+                 var lexical-ast ast new-env system)
+                (cons lexical-asts lexical-lambda-list))))))
