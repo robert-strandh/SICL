@@ -380,3 +380,31 @@
                                            system)))
     (values (set-or-bind-variable var-cst init-ast ast environment system)
             '())))
+
+(defmethod convert-code (lambda-list-cst body-cst env system
+			 &optional (block-name nil block-name-p))
+  (let ((parsed-lambda-list
+          (cst:parse-ordinary-lambda-list system lambda-list-cst)))
+    (multiple-value-bind (declaration-csts documentation form-csts)
+        (cst:separate-function-body body-cst)
+      ;; FIXME: Handle documentation
+      (declare (ignore documentation))
+      (let* ((declaration-specifiers
+               (loop for declaration-cst in declaration-csts
+                     append (cdr (cst:listify declaration-cst))))
+             (canonicalized-dspecs
+               (cst:canonicalize-declaration-specifiers
+                declaration-specifiers
+                (cleavir-env:declarations env))))
+	(multiple-value-bind (idspecs rdspecs)
+	    (itemize-declaration-specifiers
+	     (itemize-lambda-list parsed-lambda-list)
+	     canonicalized-dspecs)
+	  (multiple-value-bind (ast lexical-lambda-list)
+              (process-parameter-groups
+               (cst:children parsed-lambda-list)
+               idspecs
+               (make-body rdspecs form-csts block-name block-name-p)
+               env
+               system)
+	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
