@@ -156,7 +156,7 @@
 ;;; source code.
 (defclass body ()
   ((%dspecs :initarg :dspecs :accessor dspecs)
-   (%form-csts :initarg :forms-csts :accessor form-csts)
+   (%form-csts :initarg :form-csts :accessor form-csts)
    (%block-name-cst :initform nil
                     :initarg :block-name-cst
                     :reader block-name-cst)))
