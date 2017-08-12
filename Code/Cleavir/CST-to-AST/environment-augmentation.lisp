@@ -133,8 +133,32 @@
   (cst:db source (type-cst variable-cst) declaration-data-cst
     (cleavir-env:add-variable-type environment variable-cst type-cst)))
 
+;;; Augment the environment with a list of canonical declartion
+;;; specifiers.
+(defun augment-environment-with-declarations (environment canonical-dspecs)
+  (let ((new-env
+	  ;; handle OPTIMIZE specially.
+	  (let ((optimize (extract-optimize canonical-dspecs)))
+	    (if optimize
+		(augment-environment-with-optimize optimize environment)
+		environment))))
+    (loop for spec in canonical-dspecs
+          for declaration-identifier-cst = (first spec)
+          for declaration-identifier = (cst:raw declaration-identifier-cst)
+          ;; FIXME: this is probably wrong.  The data may be contained
+          ;; in more than one element.  We need to wrap it in a CST or
+          ;; change the interface to a-e-w-d.
+          for declaration-data-cst = (second spec)
+	  do (setf new-env
+                   (augment-environment-with-declaration
+                    declaration-identifier
+                    declaration-identifier-cst
+                    declaration-data-cst
+                    new-env)))
+    new-env))
+
 ;;; Given a single variable bound by some binding form like LET or
-;;; LET*, and a list of canonicalized declaration specifiers
+;;; LET*, and a list of canonical declaration specifiers
 ;;; concerning that variable, return a new environment that contains
 ;;; information about that variable.
 ;;;
