@@ -156,16 +156,16 @@
 ;;; source code.
 (defclass body ()
   ((%dspecs :initarg :dspecs :accessor dspecs)
-   (%forms :initarg :forms :accessor forms)
-   (%block-name :initarg :block-name :reader block-name)
-   (%block-name-p :initarg :block-name-p :reader block-name-p)))
+   (%form-csts :initarg :forms-csts :accessor form-csts)
+   (%block-name-cst :initform nil
+                    :initarg :block-name-cst
+                    :reader block-name-cst)))
 
-(defun make-body (dspecs forms block-name block-name-p)
+(defun make-body (dspecs form-csts block-name-cst)
   (make-instance 'body
     :dspecs dspecs
-    :forms forms
-    :block-name block-name
-    :block-name-p block-name-p))
+    :form-csts form-csts
+    :block-name-cst block-name-cst))
 
 (defmethod process-parameter-groups
     ((parameter-groups null)
@@ -382,7 +382,7 @@
             '())))
 
 (defmethod convert-code (lambda-list-cst body-cst env system
-			 &optional (block-name nil block-name-p))
+			 &optional (block-name-cst nil))
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list system lambda-list-cst)))
     (multiple-value-bind (declaration-csts documentation form-csts)
@@ -404,7 +404,7 @@
               (process-parameter-groups
                (cst:children parsed-lambda-list)
                idspecs
-               (make-body rdspecs form-csts block-name block-name-p)
+               (make-body rdspecs form-csts block-name-cst)
                env
                system)
 	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
