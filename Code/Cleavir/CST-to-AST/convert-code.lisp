@@ -167,6 +167,18 @@
     :form-csts form-csts
     :block-name-cst block-name-cst))
 
+;;; Convert the body of a function.
+(defun convert-body (body env system)
+  (let ((new-env (augment-environment-with-declarations env (dspecs body)))
+        (block-name-cst (block-name-cst body)))
+    (convert (if block-name-cst
+                 (cst:cons (cst:cst-from-expression 'block)
+                           (cst:cons block-name-cst
+                                     (form-csts body)))
+                 (cst:cons (cst:cst-from-expression 'progn)
+                           (form-csts body)))
+	     new-env system)))
+
 (defmethod process-parameter-groups
     ((parameter-groups null)
      idspecs
