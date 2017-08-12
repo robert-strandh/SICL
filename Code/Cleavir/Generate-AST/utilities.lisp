@@ -198,7 +198,7 @@
 
 ;;; This function takes two arguments.  The first argument, VARIABLES,
 ;;; is a list of items, where each item is a non-empty list of symbols
-;;; that are bound in a single binding.  The second items
+;;; that are bound in a single binding.  The second argument,
 ;;; CANONICAL-DSPECS, is a list of canonicalized declaration
 ;;; specifiers.  This function returns a two values.  The first return
 ;;; value is a list with the same length as VARIABLES.  Each element
