@@ -48,7 +48,10 @@ How is the SICL garbage collector better than that of existing systems?
 Answer:
 A lot of progress has been made on memory management during the past
 decades, and the memory management of most existing systems was
-written several decades ago.
+written several decades ago.  Only the per-thread garbage-collection
+technique to be used in SICL has been determined.  For the global
+collector, the plan is to have an incremental and concurrent collector
+that can then use additional cores of the processor.
 
 Question:
 Will SICL be safer than existing Common Lisp systems?
