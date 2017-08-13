@@ -1,4 +1,18 @@
+Question:
+How can I run SICL?
 
+Answer:
+You can't!  It is not finished.
+
+Question:
+What part of SICL works?
+
+Answer:
+The Cleavir compiler framework can be used to turn Common Lisp into
+high-level intermediate representation (HIR) and some optimizations
+can be performed on HIR.  Also, some modules work, like LOOP and the
+reader.  Most of the remaining code is written, but is not in a shape
+to be used in a meaningful way by other systems.
 
 Question:
 What are first-class global environments?
