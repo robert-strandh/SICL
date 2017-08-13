@@ -1,0 +1,37 @@
+
+
+Question:
+What are first-class global environments?
+
+Answer:
+First class global environments represent a feature whereby the system
+may contain several global environments, allowing the programmer to
+switch between them, for various reasons.
+
+Question:
+Why can't first-class global environments be added to an existing
+Common Lisp system?
+
+Answer:
+Most existing systems access global functions using an indirection
+through the symbol naming them.  This technique makes it impossible to
+have different definitions of a function with a particular name in
+different environments.  In SICL the "function slot" is detached from
+the symbol and attached to the global environment instead.
+
+Question:
+Sandboxing is notoriously difficult in existing Common Lisp systems.
+Will it be easier in SICL?
+
+Answer:
+Yes, first-class global environments allow the creation of restricted
+environments so that one may, for example, disallow the evaluation of
+arbitrary forms.
+
+Question:
+How is the SICL garbage collector better than that of existing systems.
+
+Answer:
+A lot of progress has been made on memory management during the past
+decades, and the memory management of most existing systems was
+written several decades ago.
