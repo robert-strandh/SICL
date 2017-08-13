@@ -47,3 +47,15 @@ unsuspecting user.  With first-class global environments, it is
 possible to isolate sensitive code so that some additional action
 (password maybe) on the part of the programmer is required in order to
 access or modify it.
+
+Question:
+Suppose I write a minimal Lisp system in C.  Can I use the SICL
+modules to load the rest of the functionality of a complete Common
+Lisp system into my minimal system?
+
+Answer:
+No, unfortunately not.  We initially thought that this would be
+possible, but over time we realized that it would require the use of a
+very restricted subset of Common Lisp in order to write the code of
+certain modules, and that would have had a serious negative impact on
+maintainability of those modules.
