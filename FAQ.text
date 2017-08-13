@@ -29,9 +29,21 @@ environments so that one may, for example, disallow the evaluation of
 arbitrary forms.
 
 Question:
-How is the SICL garbage collector better than that of existing systems.
+How is the SICL garbage collector better than that of existing systems?
 
 Answer:
 A lot of progress has been made on memory management during the past
 decades, and the memory management of most existing systems was
 written several decades ago.
+
+Question:
+Will SICL be safer than existing Common Lisp systems?
+
+Answer:
+Yes, with existing systems, the entire code is always available.
+Nothing prevents an external system from modifying the compiler to
+install a virus, or from forking a process in the name of the
+unsuspecting user.  With first-class global environments, it is
+possible to isolate sensitive code so that some additional action
+(password maybe) on the part of the programmer is required in order to
+access or modify it.
