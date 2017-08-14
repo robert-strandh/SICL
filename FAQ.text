@@ -85,3 +85,17 @@ possible, but over time we realized that it would require the use of a
 very restricted subset of Common Lisp in order to write the code of
 certain modules, and that would have had a serious negative impact on
 maintainability of those modules.
+
+Question:
+How is SICL going to be bootstrapped?
+
+Answer:
+The plan is to use an existing Common Lisp implementation that
+has support for the CLOSER-MOP library.  This host implementation is
+used to execute SICL code for creating the MOP hierarchy of classes.
+Then, additional code is executed in order to create a graph of SICL
+objects in the host memory.  Finally, the graph is traversed with the
+purpose of creating an isomorphic graph in an executable file which
+will constitute the initial system.  Additional code is finally loaded
+from FASL files so obtain the complete system.
+
