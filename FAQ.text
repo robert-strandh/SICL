@@ -98,4 +98,16 @@ objects in the host memory.  Finally, the graph is traversed with the
 purpose of creating an isomorphic graph in an executable file which
 will constitute the initial system.  Additional code is finally loaded
 from FASL files so obtain the complete system.
+==================================================
+Cleavir
 
+Question:
+What is Cleavir?
+
+Answer:
+Cleavir is an implementation-independent compiler framework.  As such,
+it can be used to compile Common Lisp code to intermediate
+representation (in the sense of compiler design) and then further to
+machine code or some other desired output.  Currently, Cleavir is part
+of SICL, but we might extract it into a separate repository in the
+future.
