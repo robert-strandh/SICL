@@ -13,12 +13,36 @@ in other Common Lisp implementations, thereby decreasing the global
 maintenance effort spent on free Common Lisp implementations.
 
 Question:
+Why is it important to have a system that is safer, more flexible, and
+easier to maintain?  After all, there are mature implementations that
+are good enough and that are regularly maintained.
+
+Answer:
+We think that SICL will be an excellent base for a modern multi-user
+operating system with a completely different programming interface
+than existing popular operating systems.
+
+Question:
 Is execution speed a goal?
 
 Answer:
 Definitely!  We hope to implement many of the published compiler
 optimization algorithms in order to make the execution speed as fast
 as possible.  Safety will still be higher priority though.
+
+Question:
+Why not just improve an existing implementation?
+
+Answer:
+The kind of improvements we want to see would represent radical
+changes to any existing implementation.  It is highly unlikely that
+the maintainer of an existing implementation would be willing to
+accept such radical changes, because they would often be incompatible
+with the goals of that implementation.  Furthermore, because the
+improvements are so extensive, the amount of work required would be
+comparable to, or even superior to, the creation of a completely new
+implementation.
+
 ==================================================
 Progress of the project.
 
@@ -132,3 +156,14 @@ representation (in the sense of compiler design) and then further to
 machine code or some other desired output.  Currently, Cleavir is part
 of SICL, but we might extract it into a separate repository in the
 future.
+==================================================
+Standalone executable files
+
+Question:
+Will it be possible to produce standalone executable files with SICL?
+
+Answer:
+Yes, that's the plan.  In fact, the plan is to deliver the SICL system
+largely as a shared library, containing all of the system code.  That
+way, only application code needs to be present in the executable file,
+making the size of such executable files reasonably small.
