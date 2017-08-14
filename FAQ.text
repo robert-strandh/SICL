@@ -1,4 +1,25 @@
 ==================================================
+Purpose
+
+Question:
+What is the purpose of SICL?
+
+Answer:
+There are several.  One is to provide a modern, free Common Lisp
+implementation.  Compared to existing implementations, the goal is for
+SICL to be safer, more flexible, and easier to maintain.  It is also
+meant to be more portable, so that large parts of the code can be used
+in other Common Lisp implementations, thereby decreasing the global
+maintenance effort spent on free Common Lisp implementations.
+
+Question:
+Is execution speed a goal?
+
+Answer:
+Definitely!  We hope to implement many of the published compiler
+optimization algorithms in order to make the execution speed as fast
+as possible.  Safety will still be higher priority though.
+==================================================
 Progress of the project.
 
 Question:
