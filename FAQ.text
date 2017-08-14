@@ -1,3 +1,6 @@
+==================================================
+Progress of the project.
+
 Question:
 How can I run SICL?
 
@@ -13,6 +16,8 @@ high-level intermediate representation (HIR) and some optimizations
 can be performed on HIR.  Also, some modules work, like LOOP and the
 reader.  Most of the remaining code is written, but is not in a shape
 to be used in a meaningful way by other systems.
+==================================================
+First-class global environments
 
 Question:
 What are first-class global environments?
@@ -43,17 +48,6 @@ environments so that one may, for example, disallow the evaluation of
 arbitrary forms.
 
 Question:
-How is the SICL garbage collector better than that of existing systems?
-
-Answer:
-A lot of progress has been made on memory management during the past
-decades, and the memory management of most existing systems was
-written several decades ago.  Only the per-thread garbage-collection
-technique to be used in SICL has been determined.  For the global
-collector, the plan is to have an incremental and concurrent collector
-that can then use additional cores of the processor.
-
-Question:
 Will SICL be safer than existing Common Lisp systems?
 
 Answer:
@@ -64,6 +58,21 @@ unsuspecting user.  With first-class global environments, it is
 possible to isolate sensitive code so that some additional action
 (password maybe) on the part of the programmer is required in order to
 access or modify it.
+==================================================
+Garbage collection
+
+Question:
+How is the SICL garbage collector better than that of existing systems?
+
+Answer:
+A lot of progress has been made on memory management during the past
+decades, and the memory management of most existing systems was
+written several decades ago.  Only the per-thread garbage-collection
+technique to be used in SICL has been determined.  For the global
+collector, the plan is to have an incremental and concurrent collector
+that can then use additional cores of the processor.
+==================================================
+Bootstrapping
 
 Question:
 Suppose I write a minimal Lisp system in C.  Can I use the SICL
