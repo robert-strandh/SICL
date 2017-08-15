@@ -167,3 +167,24 @@ Yes, that's the plan.  In fact, the plan is to deliver the SICL system
 largely as a shared library, containing all of the system code.  That
 way, only application code needs to be present in the executable file,
 making the size of such executable files reasonably small.
+==================================================
+Contributing
+
+Question:
+Do you take contributions?
+
+Answer:
+Only in very special cases.  The reason is that it takes a
+considerable level of knowledge to be able to contribute in meaningful
+ways.  Cleavir requires knowledge of compiler optimization techniques,
+data structures, asymptotic complexity, and more.  And even the
+straightforward code in SICL requires knowledge of the goals and the
+guidelines for SICL.  If you want to contribute should get in touch to
+discuss the issue first, and we may come to some agreement.
+
+Question:
+What are your specific style guidelines?
+
+Answer:
+The specification has a long chapter on this issue.  It is recommended
+to read that chapter if you want to contribute.
