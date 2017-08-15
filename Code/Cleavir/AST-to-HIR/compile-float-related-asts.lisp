@@ -43,7 +43,7 @@
 	',element-type
 	(make-instance ',instruction-class
 	  :inputs temps
-	  :outputs (results context)
+	  :outputs (list temp)
 	  :successors (list successor))
 	(invocation context)))))
 
