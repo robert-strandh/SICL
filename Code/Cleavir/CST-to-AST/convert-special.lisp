@@ -306,3 +306,23 @@
                            body-cst)
                  new-env
                  system)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FUNCTION.
+;;;
+
+(defun convert-named-function (name-cst environment system)
+  (let ((info (function-info environment (cst:raw name-cst))))
+    (convert-function info environment system)))
+
+(defun convert-lambda-function (lambda-form-cst env system)
+  (convert-code (cst:second lambda-form-cst)
+                (cst:rest (cst:rest lambda-form-cst)) env system))
+
+(defmethod convert-special ((symbol (eql 'function)) cst env system)
+  (cst:db origin (function-cst name-cst) cst
+    (declare (ignore function))
+    (if (proper-function-name-p name-cst)
+	(convert-named-function name-cst env system)
+	(convert-lambda-function name-cst env system))))
