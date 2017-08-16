@@ -8,4 +8,5 @@
            #:convert-special
            #:convert-special-binding
            #:convert-variable
+           #:convert-code
            #:items-from-parameter-group))
