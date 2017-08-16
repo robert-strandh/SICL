@@ -268,140 +268,130 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting CLEAVIR-PRIMOP:SHORT-FLOAT-ADD.
+;;; Converting floating point 2-argument arithmetic.
 ;;;
-;;; This primitive operation is used in the implementation of the
-;;; Common Lisp function +.  It takes two arguments, both forms that
-;;; must evaluate to short floats.
+;;; These primitive operations are used in the implementation of
+;;; the Common Lisp functions +, -, *, and /. They all take two
+;;; argument, both forms that must evaluate to values of the
+;;; appropriate float type.
 ;;;
-;;; The value of a form with this operator is a short float
-;;; representing the sum of the two arguments.
+;;; The value of a form with this operator is a float of the
+;;; type, representing the results of the operation on the two
+;;; arguments.
 ;;;
-;;; If the result of the operation is greater than the value of the
-;;; constant variable MOST-POSITIVE-SHORT-FLOAT, then an error of type
-;;; FLOATING-POINT-OVERFLOW is signaled.
-;;;
-;;; If the result of the operation is less than the value of the
-;;; constant variable MOST-NEGATIVE-SHORT-FLOAT, then an error of
-;;; type FLOATING-POINT-UNDERFLOW is signaled.
+;;; If the result is greater than the value of the constant
+;;; MOST-POSITIVE-something-FLOAT, where "something" is the
+;;; float type, an error of type FLOATING-POINT-OVERFLOW is
+;;; signaled. Similarly if the result is less than
+;;; MOST-NEGATIVE-something-FLOAT.
 
-(defmethod convert-special
-    ((symbol (eql 'cleavir-primop:short-float-add)) form env system)
-  (db origin (op arg1 arg2) form
-    (declare (ignore op))
-    (make-instance 'cleavir-ast:short-float-add-ast
-      :arg1-ast (convert arg1 env system)
-      :arg2-ast (convert arg2 env system)
-      :origin origin)))
+(defmacro define-float-binop (primop ast)
+  `(defmethod convert-special
+       ((symbol (eql ',primop)) form env system)
+     (db origin (op arg1 arg2) form
+       (declare (ignore op))
+       (make-instance ',ast
+         :arg1-ast (convert arg1 env system)
+         :arg2-ast (convert arg2 env system)
+         :origin origin))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting CLEAVIR-PRIMOP:SHORT-FLOAT-SUB.
-;;;
-;;; This primitive operation is used in the implementation of the
-;;; Common Lisp function -.  It takes two arguments, both forms that
-;;; must evaluate to short floats.
-;;;
-;;; The value of a form with this operator is a short float
-;;; representing the difference between the two arguments.
-;;;
-;;; If the result of the operation is greater than the value of the
-;;; constant variable MOST-POSITIVE-SHORT-FLOAT, then an error of type
-;;; FLOATING-POINT-OVERFLOW is signaled.
-;;;
-;;; If the result of the operation is less than the value of the
-;;; constant variable MOST-NEGATIVE-SHORT-FLOAT, then an error of
-;;; type FLOATING-POINT-UNDERFLOW is signaled.
+(define-float-binop cleavir-primop:short-float-add
+  cleavir-ast:short-float-add-ast)
+(define-float-binop cleavir-primop:short-float-sub
+  cleavir-ast:short-float-sub-ast)
+(define-float-binop cleavir-primop:short-float-mul
+  cleavir-ast:short-float-mul-ast)
+(define-float-binop cleavir-primop:short-float-div
+  cleavir-ast:short-float-div-ast)
 
-(defmethod convert-special
-    ((symbol (eql 'cleavir-primop:short-float-sub)) form env system)
-  (db origin (op arg1 arg2) form
-    (declare (ignore op))
-    (make-instance 'cleavir-ast:short-float-sub-ast
-      :arg1-ast (convert arg1 env system)
-      :arg2-ast (convert arg2 env system)
-      :origin origin)))
+(define-float-binop cleavir-primop:single-float-add
+  cleavir-ast:single-float-add-ast)
+(define-float-binop cleavir-primop:single-float-sub
+  cleavir-ast:single-float-sub-ast)
+(define-float-binop cleavir-primop:single-float-mul
+  cleavir-ast:single-float-mul-ast)
+(define-float-binop cleavir-primop:single-float-div
+  cleavir-ast:single-float-div-ast)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting CLEAVIR-PRIMOP:SHORT-FLOAT-MUL.
-;;;
-;;; This primitive operation is used in the implementation of the
-;;; Common Lisp function *.  It takes two arguments, both forms that
-;;; must evaluate to short floats.
-;;;
-;;; The value of a form with this operator is a short float
-;;; representing the product of the two arguments.
-;;;
-;;; If the result of the operation is greater than the value of the
-;;; constant variable MOST-POSITIVE-SHORT-FLOAT, then an error of type
-;;; FLOATING-POINT-OVERFLOW is signaled.
-;;;
-;;; If the result of the operation is less than the value of the
-;;; constant variable MOST-NEGATIVE-SHORT-FLOAT, then an error of
-;;; type FLOATING-POINT-UNDERFLOW is signaled.
+(define-float-binop cleavir-primop:double-float-add
+  cleavir-ast:double-float-add-ast)
+(define-float-binop cleavir-primop:double-float-sub
+  cleavir-ast:double-float-sub-ast)
+(define-float-binop cleavir-primop:double-float-mul
+  cleavir-ast:double-float-mul-ast)
+(define-float-binop cleavir-primop:double-float-div
+  cleavir-ast:double-float-div-ast)
 
-(defmethod convert-special
-    ((symbol (eql 'cleavir-primop:short-float-mul)) form env system)
-  (db origin (op arg1 arg2) form
-    (declare (ignore op))
-    (make-instance 'cleavir-ast:short-float-mul-ast
-      :arg1-ast (convert arg1 env system)
-      :arg2-ast (convert arg2 env system)
-      :origin origin)))
+(define-float-binop cleavir-primop:long-float-add
+  cleavir-ast:long-float-add-ast)
+(define-float-binop cleavir-primop:long-float-sub
+  cleavir-ast:long-float-sub-ast)
+(define-float-binop cleavir-primop:long-float-mul
+  cleavir-ast:long-float-mul-ast)
+(define-float-binop cleavir-primop:long-float-div
+  cleavir-ast:long-float-div-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting CLEAVIR-PRIMOP:SHORT-FLOAT-DIV.
+;;; Converting floating point comparisons.
 ;;;
-;;; This primitive operation is used in the implementation of the
-;;; Common Lisp function /.  It takes two arguments, both forms that
-;;; must evaluate to short floats.
+;;; These primitive operations are used in the implementation of
+;;; the Common Lisp functions <, <=, =, >=, and >. They take two
+;;; arguments, both forms that must evaluate to floats of the
+;;; appropriate type. They can only appear as the TEST-FORM in
+;;; the special form IF.
 ;;;
-;;; The value of a form with this operator is a short float
-;;; representing the quotient of the two arguments.
+;;; If the comparison is met, the THEN branch of the IF form
+;;; is evaluated. Otherwise, the ELSE branch.
 ;;;
-;;; If the result of the operation is greater than the value of the
-;;; constant variable MOST-POSITIVE-SHORT-FLOAT, then an error of type
-;;; FLOATING-POINT-OVERFLOW is signaled.
-;;;
-;;; If the result of the operation is less than the value of the
-;;; constant variable MOST-NEGATIVE-SHORT-FLOAT, then an error of
-;;; type FLOATING-POINT-UNDERFLOW is signaled.
+;;; For example, with SHORT-FLOAT-LESS, if the value of the
+;;; first form, which is a short float, is strictly less than the
+;;; value of the second form, also a short float, the THEN branch
+;;; is taken, and otherwise the ELSE branch is taken.
 
-(defmethod convert-special
-    ((symbol (eql 'cleavir-primop:short-float-div)) form env system)
-  (db origin (op arg1 arg2) form
-    (declare (ignore op))
-    (make-instance 'cleavir-ast:short-float-div-ast
-      :arg1-ast (convert arg1 env system)
-      :arg2-ast (convert arg2 env system)
-      :origin origin)))
+(define-float-binop cleavir-primop:short-float-less
+  cleavir-ast:short-float-less-ast)
+(define-float-binop cleavir-primop:short-float-not-greater
+  cleavir-ast:short-float-not-greater-ast)
+(define-float-binop cleavir-primop:short-float-equal
+  cleavir-ast:short-float-equal-ast)
+(define-float-binop cleavir-primop:short-float-not-less
+  cleavir-ast:short-float-not-less-ast)
+(define-float-binop cleavir-primop:short-float-greater
+  cleavir-ast:short-float-greater-ast)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting CLEAVIR-PRIMOP:SHORT-FLOAT-LESS.
-;;;
-;;; This primitive operation is used in the implementation of the
-;;; Common Lisp function <.  It takes two arguments, both forms that
-;;; must evaluate to short floats.  It can only appear as the
-;;; TEST-FORM in the special form IF.
-;;;
-;;; The value of a form with this operator is a short float
-;;; representing the quotient of the two arguments.
-;;;
-;;; If the first argument is strictly less than the second argument,
-;;; then the THEN branch of the IF form is evaluated.  Otherwise, the
-;;; ELSE branch of the IF form is evaluated.
+(define-float-binop cleavir-primop:single-float-less
+  cleavir-ast:single-float-less-ast)
+(define-float-binop cleavir-primop:single-float-not-greater
+  cleavir-ast:single-float-not-greater-ast)
+(define-float-binop cleavir-primop:single-float-equal
+  cleavir-ast:single-float-equal-ast)
+(define-float-binop cleavir-primop:single-float-not-less
+  cleavir-ast:single-float-not-less-ast)
+(define-float-binop cleavir-primop:single-float-greater
+  cleavir-ast:single-float-greater-ast)
 
-(defmethod convert-special
-    ((symbol (eql 'cleavir-primop:short-float-less)) form env system)
-  (db origin (op arg1 arg2) form
-    (declare (ignore op))
-    (make-instance 'cleavir-ast:short-float-less-ast
-      :arg1-ast (convert arg1 env system)
-      :arg2-ast (convert arg2 env system)
-      :origin origin)))
+(define-float-binop cleavir-primop:double-float-less
+  cleavir-ast:double-float-less-ast)
+(define-float-binop cleavir-primop:double-float-not-greater
+  cleavir-ast:double-float-not-greater-ast)
+(define-float-binop cleavir-primop:double-float-equal
+  cleavir-ast:double-float-equal-ast)
+(define-float-binop cleavir-primop:double-float-not-less
+  cleavir-ast:double-float-not-less-ast)
+(define-float-binop cleavir-primop:double-float-greater
+  cleavir-ast:double-float-greater-ast)
+
+(define-float-binop cleavir-primop:long-float-less
+  cleavir-ast:long-float-less-ast)
+(define-float-binop cleavir-primop:long-float-not-greater
+  cleavir-ast:long-float-not-greater-ast)
+(define-float-binop cleavir-primop:long-float-equal
+  cleavir-ast:long-float-equal-ast)
+(define-float-binop cleavir-primop:long-float-not-less
+  cleavir-ast:long-float-not-less-ast)
+(define-float-binop cleavir-primop:long-float-greater
+  cleavir-ast:long-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
