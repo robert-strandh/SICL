@@ -137,8 +137,8 @@
 ;;; declaration specifiers.
 (defun extract-optimize (canonicalized-dspecs)
   (loop for spec in canonicalized-dspecs
-        when (eq (cst:raw (first spec)) 'optimize)
-          append (mapcar #'cst:raw (rest spec))))
+        when (eq (cst:raw (cst:first spec)) 'optimize)
+          append (mapcar #'cst:raw (cst:listify (cst:rest spec)))))
 
 ;;; Augment the environment with a list of canonical declartion
 ;;; specifiers.
@@ -150,12 +150,12 @@
 		(augment-environment-with-optimize optimize environment)
 		environment))))
     (loop for spec in canonical-dspecs
-          for declaration-identifier-cst = (first spec)
+          for declaration-identifier-cst = (cst:first spec)
           for declaration-identifier = (cst:raw declaration-identifier-cst)
           ;; FIXME: this is probably wrong.  The data may be contained
           ;; in more than one element.  We need to wrap it in a CST or
           ;; change the interface to a-e-w-d.
-          for declaration-data-cst = (second spec)
+          for declaration-data-cst = (cst:second spec)
 	  do (setf new-env
                    (augment-environment-with-declaration
                     declaration-identifier
