@@ -156,6 +156,8 @@
 ;;; source code.
 (defclass body ()
   ((%dspecs :initarg :dspecs :accessor dspecs)
+   ;; This slot contains an ordinary Common Lisp list of CSTs, each
+   ;; representing a form of the body.
    (%form-csts :initarg :form-csts :accessor form-csts)
    (%block-name-cst :initform nil
                     :initarg :block-name-cst
