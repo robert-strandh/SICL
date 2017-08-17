@@ -188,7 +188,7 @@
      body
      environment
      system)
-  (values '() (convert-body body environment system)))
+  (values (convert-body body environment system) '()))
 
 (defmethod process-parameter-groups
     ((parameter-groups cons)
