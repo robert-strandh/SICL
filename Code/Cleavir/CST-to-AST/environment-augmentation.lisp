@@ -157,6 +157,31 @@
                     new-env)))
     new-env))
 
+;;; Given a single variable bound by some binding form, a list of
+;;; canonicalized declaration specifiers, and an environment in which
+;;; the binding form is compiled, return true if and only if the
+;;; variable to be bound is special.  Return a second value indicating
+;;; whether the variable is globally special.
+(defun variable-is-special-p (variable declarations env)
+  (let* ((existing-var-info (cleavir-env:variable-info env variable))
+	 (special-var-p
+	   (typep existing-var-info 'cleavir-env:special-variable-info)))
+    (cond ((loop for declaration in declarations
+                 thereis (and (eq (cst:raw (first declaration)) 'special)
+                              (eq (cst:raw (second declaration)) variable)))
+	   ;; If it is declared special it is.
+	   (values t
+		   (and special-var-p
+			(cleavir-env:global-p existing-var-info))))
+	  ((and special-var-p
+	    (cleavir-env:global-p existing-var-info))
+	   ;; It is mentioned in the environment as globally special.
+	   ;; if it's only special because of a local declaration,
+	   ;; this binding is not special.
+	   (values t t))
+	  (t
+	   (values nil nil)))))
+
 ;;; Given a single variable bound by some binding form like LET or
 ;;; LET*, and a list of canonical declaration specifiers
 ;;; concerning that variable, return a new environment that contains
