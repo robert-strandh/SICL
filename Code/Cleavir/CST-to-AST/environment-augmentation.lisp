@@ -133,6 +133,13 @@
   (cst:db source (type-cst variable-cst) declaration-data-cst
     (cleavir-env:add-variable-type environment variable-cst type-cst)))
 
+;;; Extract any OPTIMIZE information from a set of canonicalized
+;;; declaration specifiers.
+(defun extract-optimize (canonicalized-dspecs)
+  (loop for spec in canonicalized-dspecs
+        when (eq (cst:raw (first spec)) 'optimize)
+          append (mapcar #'cst:raw (rest spec))))
+
 ;;; Augment the environment with a list of canonical declartion
 ;;; specifiers.
 (defun augment-environment-with-declarations (environment canonical-dspecs)
