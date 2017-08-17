@@ -409,8 +409,8 @@
                      append (cdr (cst:listify declaration-cst))))
              (canonicalized-dspecs
                (cst:canonicalize-declaration-specifiers
-                declaration-specifiers
-                (cleavir-env:declarations env))))
+                system
+                declaration-specifiers)))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
 	     (itemize-lambda-list parsed-lambda-list)
