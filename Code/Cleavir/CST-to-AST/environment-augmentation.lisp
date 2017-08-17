@@ -155,7 +155,7 @@
           ;; FIXME: this is probably wrong.  The data may be contained
           ;; in more than one element.  We need to wrap it in a CST or
           ;; change the interface to a-e-w-d.
-          for declaration-data-cst = (cst:second spec)
+          for declaration-data-cst = (cst:rest spec)
 	  do (setf new-env
                    (augment-environment-with-declaration
                     declaration-identifier
