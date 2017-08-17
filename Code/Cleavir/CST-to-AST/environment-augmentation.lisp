@@ -182,6 +182,14 @@
 	  (t
 	   (values nil nil)))))
 
+;;; Given a list of canonicalized declaration specifiers for a single
+;;; varible.  Return a type specifier resulting from all the type
+;;; declarations present in the list.
+(defun declared-type (declarations)
+  `(and ,@(loop for declaration in declarations
+		when (eq (cst:raw (first declaration)) 'type)
+		  collect (cst:raw (second declaration)))))
+
 ;;; Given a single variable bound by some binding form like LET or
 ;;; LET*, and a list of canonical declaration specifiers
 ;;; concerning that variable, return a new environment that contains
