@@ -12,12 +12,12 @@
 ;;; specifiers.
 (defun separate-declarations (canonical-declaration-specifiers name)
   (loop for spec in canonical-declaration-specifiers
-        for declaration-identifier = (cst:raw (first spec))
+        for declaration-identifier = (cst:raw (cst:first spec))
 	if (or (and (member declaration-identifier
                             '(ignore ignorable dynamic-extent special))
-                    (eq (cst:raw (second spec)) name))
+                    (eq (cst:raw (cst:second spec)) name))
                (and (eq declaration-identifier 'type)
-                    (eq (cst:raw (third spec)) name)))
+                    (eq (cst:raw (cst:third spec)) name)))
 	  collect spec into first
 	else
 	  collect spec into second
