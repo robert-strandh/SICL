@@ -10,8 +10,9 @@
 ;;; the declerations specifiers that concern an ordinary variable
 ;;; named NAME, and the second set the remaining declaration
 ;;; specifiers.
-(defun separate-declarations (canonical-declaration-specifiers name)
-  (loop for spec in canonical-declaration-specifiers
+(defun separate-declarations (canonical-declaration-specifiers name-cst)
+  (loop with name = (cst:raw name-cst)
+        for spec in canonical-declaration-specifiers
         for declaration-identifier = (cst:raw (cst:first spec))
 	if (or (and (member declaration-identifier
                             '(ignore ignorable dynamic-extent special))
