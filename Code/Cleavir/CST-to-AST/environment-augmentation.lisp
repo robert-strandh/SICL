@@ -174,8 +174,8 @@
 	 (special-var-p
 	   (typep existing-var-info 'cleavir-env:special-variable-info)))
     (cond ((loop for declaration in declarations
-                 thereis (and (eq (cst:raw (first declaration)) 'special)
-                              (eq (cst:raw (second declaration)) variable)))
+                 thereis (and (eq (cst:raw (cst:first declaration)) 'special)
+                              (eq (cst:raw (cst:second declaration)) variable)))
 	   ;; If it is declared special it is.
 	   (values t
 		   (and special-var-p
@@ -194,8 +194,8 @@
 ;;; declarations present in the list.
 (defun declared-type (declarations)
   `(and ,@(loop for declaration in declarations
-		when (eq (cst:raw (first declaration)) 'type)
-		  collect (cst:raw (second declaration)))))
+		when (eq (cst:raw (cst:first declaration)) 'type)
+		  collect (cst:raw (cst:second declaration)))))
 
 ;;; Given a single variable bound by some binding form like LET or
 ;;; LET*, and a list of canonical declaration specifiers
@@ -212,7 +212,8 @@
 ;;; the same as ENV.
 (defun augment-environment-with-variable
     (variable declarations env orig-env)
-  (let ((new-env env))
+  (let ((new-env env)
+        (raw-declarations (mapcar #'cst:raw declarations)))
     (multiple-value-bind (special-p globally-p)
 	(variable-is-special-p variable declarations orig-env)
       (if special-p
@@ -226,13 +227,13 @@
       (unless (equal type '(and))
 	(setf new-env
 	      (cleavir-env:add-variable-type new-env variable type))))
-    (when (member 'ignore declarations :test #'eq :key #'car)
+    (when (member 'ignore raw-declarations :test #'eq :key #'car)
       (setf new-env
             (cleavir-env:add-variable-ignore new-env variable 'ignore)))
-    (when (member 'ignorable declarations :test #'eq :key #'car)
+    (when (member 'ignorable raw-declarations :test #'eq :key #'car)
       (setf new-env
             (cleavir-env:add-variable-ignore new-env variable 'ignorable)))
-    (when (member 'dynamic-extent declarations :test #'eq :key #'car)
+    (when (member 'dynamic-extent raw-declarations :test #'eq :key #'car)
       (setf new-env
 	    (cleavir-env:add-variable-dynamic-extent new-env variable)))
     new-env))
