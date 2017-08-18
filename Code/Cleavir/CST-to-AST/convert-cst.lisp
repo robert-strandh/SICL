@@ -4,6 +4,50 @@
     (cst (info cleavir-env:special-operator-info) env system)
   (convert-special (car (cst:raw cst)) cst env system))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a compound form that calls a global macro.
+;;; A global macro can have a compiler macro associated with it.
+
+(defmethod convert-cst
+    (cst (info cleavir-env:global-macro-info) env system)
+  (let ((compiler-macro (cleavir-env:compiler-macro info))
+        (form (cst:raw cst)))
+    (with-preserved-toplevel-ness
+      (if (null compiler-macro)
+	  ;; There is no compiler macro, so we just apply the macro
+	  ;; expander, and then convert the resulting form.
+          (let* ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
+                                         (cleavir-env:expander info)
+                                         form
+                                         env))
+                 (expanded-cst (cst:reconstruct expanded-form cst)))
+
+            (convert expanded-cst env system))
+          ;; There is a compiler macro, so we must see whether it will
+          ;; accept or decline.
+          (let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
+                                        compiler-macro
+                                        form
+                                        env)))
+	    (if (eq form expanded-form)
+		;; If the two are EQ, this means that the compiler macro
+		;; declined.  Then we appply the macro function, and
+		;; then convert the resulting form, just like we did
+		;; when there was no compiler macro present.
+                (let* ((expanded-form (coerce *macroexpand-hook* 'function)
+                                      (cleavir-env:expander info)
+                                      form
+                                      env)
+                       (expanded-cst (cst:reconstruct expanded-form cst)))
+                  (convert expanded-cst env system))
+		;; If the two are not EQ, this means that the compiler
+		;; macro replaced the original form with a new form.
+		;; This new form must then again be converted without
+		;; taking into account the real macro expander.
+                (let ((expanded-cst (cst:reconstruct expanded-form cst)))
+                  (convert expanded-cst env system)))))))))
+
 (defmethod convert-cst
     (cst (info cleavir-env:global-function-info) env system)
   ;; When we compile a call to a global function, it is possible that
