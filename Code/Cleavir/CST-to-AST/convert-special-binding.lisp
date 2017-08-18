@@ -1,10 +1,27 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-;;; FIXME.  This function should take a CST instead of a variable, and
-;;; CONVERT should be called with a CST.
+;;; We need to build a CST corresponding to the following expression:
+;;;
+;;; `(cleavir-primop:call-with-variable-bound
+;;;   ',variable
+;;;   (cleavir-primop:ast ,value-ast)
+;;;   (lambda () (cleavir-primop:ast ,next-ast)))
+;;;
+;;; The problem here is that we don't have VARIABLE, only the
+;;; corresponding CST, and we do not want to lose the source
+;;; information of the variable.  So we construct an ordinary Common
+;;; Lisp list of CSTs, and then we convert that to a CST.
 (defmethod convert-special-binding
-    (variable value-ast next-ast env system)
-  (convert `(cleavir-primop:call-with-variable-bound
-             ',variable (cleavir-primop:ast ,value-ast)
-             (lambda () (cleavir-primop:ast ,next-ast)))
-           env system))
+    (variable-cst value-ast next-ast env system)
+  (let ((call-with-variable-bound-cst
+          (cst:cst-from-expression 'cleavir-primop:call-with-variable-bound))
+        (quoted-variable-cst
+          (cst:cstify `(,(cst:cst-from-expression 'quote)
+                        ,variable-cst))))
+    (convert (cst:cstify `(,call-with-variable-bound-cst
+                           ,quoted-variable-cst
+                           ,(cst:cst-from-expression
+                             `(cleavir-primop:ast ,value-ast))
+                           ,(cst:cst-from-expression
+                             `(lambda () (cleavir-primop:ast ,next-ast)))))
+             env system)))
