@@ -48,6 +48,67 @@
                 (let ((expanded-cst (cst:reconstruct expanded-form cst)))
                   (convert expanded-cst env system))))))))
 
+(defun make-call (cst info env argument-csts system)
+  (let ((argument-asts (convert-sequence argument-csts env system))
+	(ast (cleavir-env:ast info))
+	(ftype (canonicalize-ftype (cleavir-env:type info))))
+    (labels ((violated-type (failure)
+	       (multiple-value-bind (min max)
+		   (expected-arguments (second ftype))
+		 (warn failure
+		       :expr cst
+		       :expected-min min :expected-max max
+		       :callee-ftype ftype))
+	       (return-from make-call (noinline)))
+	     (inline-mismatch (failure)
+	       (multiple-value-bind (min max)
+		   (expected-arguments
+		    (cleavir-ast:lambda-list ast))
+		 (warn failure
+		       :expr cst
+		       :expected-min min :expected-max max))
+	       (return-from make-call (noinline)))
+	     (maybe-wrap-return (ast)
+	       (let ((ret (function-type-return-values ftype)))
+		 (maybe-wrap-the ret ast)))
+	     ;; Basic uninlined call with no type declarations.
+	     (noinline ()
+	       (let ((function-ast
+		       (convert-function info env system)))
+		 (maybe-wrap-return
+		  (cleavir-ast:make-call-ast function-ast
+					     argument-asts)))))
+      (multiple-value-bind (asts failure)
+	  (maybe-type-wrap-arguments
+	   (function-type-lambda-list ftype)
+	   argument-asts)
+	(if failure
+	    ;; return immediately
+	    (violated-type failure)
+	    (setf argument-asts asts)))
+      (if (and (eq (cleavir-env:inline info) 'cl:inline)
+	       (not (null ast)))
+	  ;; We might be able to inline the call.
+	  ;; Try to make the expansion.
+	  ;; We must clone first, because the lambda list lvars
+	  ;;  have to match those in the setqs.
+	  (let ((clone
+		  (cleavir-ast-transformations:clone-ast ast)))
+	    (multiple-value-bind (init failure)
+		(inline-lambda-init env system
+				    (cleavir-ast:lambda-list clone)
+				    argument-asts)
+	      (cond ((eq failure t) (noinline))
+		    (failure (inline-mismatch failure))
+		    (t
+		     (process-progn
+		      (append
+		       init
+		       (list (maybe-wrap-return
+			      (cleavir-ast:body-ast clone)))))))))
+	  ;; Generate an ordinary call.
+	  (noinline)))))
+
 (defmethod convert-cst
     (cst (info cleavir-env:global-function-info) env system)
   ;; When we compile a call to a global function, it is possible that
