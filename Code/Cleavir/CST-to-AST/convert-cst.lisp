@@ -46,7 +46,7 @@
 		;; This new form must then again be converted without
 		;; taking into account the real macro expander.
                 (let ((expanded-cst (cst:reconstruct expanded-form cst)))
-                  (convert expanded-cst env system)))))))))
+                  (convert expanded-cst env system))))))))
 
 (defmethod convert-cst
     (cst (info cleavir-env:global-function-info) env system)
