@@ -64,16 +64,17 @@
 	;; There is a compiler macro.  We must see whether it will
 	;; accept or decline.
 	(let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
-				      compiler-macro
-				      form
-				      env)))
+                                      compiler-macro
+                                      form
+                                      env)))
 	  (if (eq form expanded-form)
 	      ;; If the two are EQ, this means that the compiler macro
 	      ;; declined.  We are left with function-call form.
 	      ;; Create the call, just as if there were no compiler
 	      ;; macro present.
-	      (make-call form info env (cdr form) system)
+	      (make-call cst info env (cdr form) system)
 	      ;; If the two are not EQ, this means that the compiler
 	      ;; macro replaced the original form with a new form.
 	      ;; This new form must then be converted.
-	      (convert expanded-form env system))))))
+              (let ((expanded-cst (cst:reconstruct expanded-form cst)))
+                (convert expanded-cst env system)))))))
