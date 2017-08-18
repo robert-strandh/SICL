@@ -30,5 +30,6 @@
    (:file "convert-lambda-call")
    (:file "convert-constant")
    (:file "convert-special")
+   (:file "convert-primop")
    (:file "convert-cst")
    (:file "cst-to-ast")))
