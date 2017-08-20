@@ -28,9 +28,10 @@
 ;;; Converting a symbol that has a definition as a lexical variable.
 
 (defun maybe-wrap-the (type ast)
-  "Make a THE ast if the type is actually helpful (i.e. not all T),
-or an UNREACHABLE ast if the type contains a required NIL.
-If AST is already a THE-AST, collapses both into one."
+  #.(format nil "Make a THE ast if the type is actually helpful~@
+                 (i.e. not all T), or an UNREACHABLE ast if the~@
+                 type contains a required NIL. If AST is already~@
+                 a THE-AST, collapses both into one.")
   (multiple-value-bind (req opt rest)
       (the-values-components type)
     ;; collapse (the ... (the ...))
