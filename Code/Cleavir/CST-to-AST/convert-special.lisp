@@ -20,9 +20,9 @@
           (declare (ignore block))
     (let* ((ast (cleavir-ast:make-block-ast nil :origin origin))
            (name (cst:raw name-cst))
-	   (new-env (cleavir-env:add-block env name ast)))
+           (new-env (cleavir-env:add-block env name ast)))
       (setf (cleavir-ast:body-ast ast)
-	    (process-progn (convert-sequence body-cst new-env system)))
+            (process-progn (convert-sequence body-cst new-env system)))
       ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,27 +176,27 @@
     (declare (ignore tagbody-cst))
 
     (let ((tag-asts
-	    (loop for rest = body-cst then (cst:rest rest)
+            (loop for rest = body-cst then (cst:rest rest)
                   until (cst:null rest)
-		  when (tagp (cst:first rest))
-		    collect (let ((tag-cst (cst:first rest)))
+                  when (tagp (cst:first rest))
+                    collect (let ((tag-cst (cst:first rest)))
                               (cleavir-ast:make-tag-ast
                                (cst:raw tag-cst)
                                :origin (cst:source tag-cst)))))
-	  (new-env env))
+          (new-env env))
       (loop for ast in tag-asts
-	    do (setf new-env (cleavir-env:add-tag
-			      new-env (cleavir-ast:name ast) ast)))
+            do (setf new-env (cleavir-env:add-tag
+                              new-env (cleavir-ast:name ast) ast)))
       (let ((item-asts (loop for rest = body-cst then (cst:rest rest)
                              until (cst:null rest)
-			     collect (let ((item-cst (cst:first rest)))
+                             collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
                                            (convert item-cst new-env system))))))
-	(process-progn
-	 (list (cleavir-ast:make-tagbody-ast item-asts
-					     :origin origin)
-	       (convert-constant nil env system)))))))
+        (process-progn
+         (list (cleavir-ast:make-tagbody-ast item-asts
+                                             :origin origin)
+               (convert-constant nil env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -220,22 +220,22 @@
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
     (let ((test-ast (convert test-cst env system))
-	  (true-ast (convert then-cst env system))
-	  (false-ast (if (cst:null tail-cst)
-			 (convert-constant nil env system)
-			 (cst:db s (else-cst) tail-cst
-			   (convert else-cst env system)))))
+          (true-ast (convert then-cst env system))
+          (false-ast (if (cst:null tail-cst)
+                         (convert-constant nil env system)
+                         (cst:db s (else-cst) tail-cst
+                           (convert else-cst env system)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
-	  (cleavir-ast:make-if-ast
-	   test-ast
-	   true-ast
-	   false-ast
-	   :origin origin)
-	  (cleavir-ast:make-if-ast
-	   (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
-	   false-ast
-	   true-ast
-	   :origin origin)))))
+          (cleavir-ast:make-if-ast
+           test-ast
+           true-ast
+           false-ast
+           :origin origin)
+          (cleavir-ast:make-if-ast
+           (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
+           false-ast
+           true-ast
+           :origin origin)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -248,7 +248,7 @@
     (cleavir-ast:make-load-time-value-ast 
      (cst:raw form-cst)
      (if (cst:null remaining-cst)
-	 nil
+         nil
          (cst:raw (cst:first remaining-cst)))
      :origin origin)))
 
@@ -324,5 +324,5 @@
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function))
     (if (proper-function-name-p name-cst)
-	(convert-named-function name-cst env system)
-	(convert-lambda-function name-cst env system))))
+        (convert-named-function name-cst env system)
+        (convert-lambda-function name-cst env system))))

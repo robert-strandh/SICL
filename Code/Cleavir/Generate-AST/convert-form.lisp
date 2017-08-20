@@ -28,9 +28,10 @@
 ;;; Converting a symbol that has a definition as a lexical variable.
 
 (defun maybe-wrap-the (type ast)
-  "Make a THE ast if the type is actually helpful (i.e. not all T),
-or an UNREACHABLE ast if the type contains a required NIL.
-If AST is already a THE-AST, collapses both into one."
+  #.(format nil "Make a THE ast if the type is actually helpful~@
+                 (i.e. not all T), or an UNREACHABLE ast if the~@
+                 type contains a required NIL. If AST is already~@
+                 a THE-AST, collapses both into one.")
   (multiple-value-bind (req opt rest)
       (the-values-components type)
     ;; collapse (the ... (the ...))
@@ -196,11 +197,11 @@ If AST is already a THE-AST, collapses both into one."
 	(t '(function (&rest t) (values &rest t))))
       '(function (&rest t) (values &rest t))))
 
-;; ftype must be canonicalized.
+;;; ftype must be canonicalized.
 (defun function-type-lambda-list (ftype) (second ftype))
 (defun function-type-return-values (ftype) (third ftype))
 
-;; assumes ftype is valid!
+;;; assumes ftype is valid!
 (defun maybe-type-wrap-arguments (ftype-ll arg-asts)
   "Given the lambda list of a function's ftype, and a list of ASTs in a call to that function, returns a list of ASTs possibly wrapped in THE-ASTs, based on the ftype.
 If the call is invalid, returns like inline-lambda-init."
@@ -307,10 +308,10 @@ This function should not require an environment or system, but it unfortunately 
 		       nil
 		       'too-many-arguments-style-warning))))))
 
-;; Given a canonical ftype or a converted lambda list, return
-;; (values minimum-expected-arguments maximum).
-;; Maximum can be NIL, indicating no upper limit.
-;; FIXME: Maybe do this earlier and certainly do it more carefully.
+;;; Given a canonical ftype or a converted lambda list, return
+;;; (values minimum-expected-arguments maximum).
+;;; Maximum can be NIL, indicating no upper limit.
+;;; FIXME: Maybe do this earlier and certainly do it more carefully.
 (defun expected-arguments (lambda-list)
   (loop with min = 0
 	with max = 0
