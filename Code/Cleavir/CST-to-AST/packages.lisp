@@ -8,5 +8,6 @@
            #:convert-special
            #:convert-special-binding
            #:convert-variable
+	   #:convert-function-reference
            #:convert-code
            #:items-from-parameter-group))
