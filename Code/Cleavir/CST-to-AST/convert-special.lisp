@@ -314,7 +314,7 @@
 
 (defun convert-named-function (name-cst environment system)
   (let ((info (function-info environment (cst:raw name-cst))))
-    (convert-function info environment system)))
+    (convert-function-reference info environment system)))
 
 (defun convert-lambda-function (lambda-form-cst env system)
   (convert-code (cst:second lambda-form-cst)

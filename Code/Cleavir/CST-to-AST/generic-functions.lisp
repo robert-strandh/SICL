@@ -17,7 +17,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function CONVERT-FUNCTION.
+;;; Generic function CONVERT-FUNCTION-REFERENCE.
 ;;;
 ;;; This generic function converts a reference to a function given by
 ;;; a description in the form of an INFO instance.  That INFO instance
@@ -29,6 +29,6 @@
 ;;; behavior by adding methods to this function, specialized to the
 ;;; particular system defined by that client code.
 
-(defgeneric convert-function (info env system))
+(defgeneric convert-function-reference (info env system))
 
 (defgeneric items-from-parameter-group (parameter-group))
