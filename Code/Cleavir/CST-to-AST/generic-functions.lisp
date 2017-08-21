@@ -15,4 +15,18 @@
 
 (defgeneric convert-variable (cst environment system))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function CONVERT-FUNCTION.
+;;;
+;;; This generic function converts a function given by a description
+;;; in the form of an INFO instance.  That INFO instance was obtained
+;;; by calling FUNCTION-INFO with an environment and a function name.
+;;; The function signals an error if the INFO instance is not a
+;;; GLOBAL-FUNCTION-INFO or a LOCAL-FUNCTION-INFO.  Client code can
+;;; override the default behavior by adding methods to this function,
+;;; specialized to the particular system defined by that client code.
+
+(defgeneric convert-function (info env system))
+
 (defgeneric items-from-parameter-group (parameter-group))
