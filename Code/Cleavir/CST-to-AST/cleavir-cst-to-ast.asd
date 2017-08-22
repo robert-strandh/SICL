@@ -16,6 +16,7 @@
    (:file "environment-query")
    (:file "variables")
    (:file "generic-functions")
+   (:file "convert-function-reference")
    (:file "convert-special-binding")
    (:file "check-special-form-syntax")
    (:file "set-or-bind-variable")
