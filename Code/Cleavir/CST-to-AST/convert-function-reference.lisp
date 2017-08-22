@@ -12,14 +12,14 @@
 (defmethod convert-function-reference
     ((info cleavir-env:global-macro-info) env system)
   (error 'function-name-names-global-macro
-	 :expr (cleavir-env:name info)))
+         :expr (cleavir-env:name info)))
 
 (defmethod convert-function-reference
     ((info cleavir-env:local-macro-info) env system)
   (error 'function-name-names-local-macro
-	 :expr (cleavir-env:name info)))
+         :expr (cleavir-env:name info)))
 
 (defmethod convert-function-reference
     ((info cleavir-env:special-operator-info) env system)
   (error 'function-name-names-special-operator
-	 :expr (cleavir-env:name info)))
+         :expr (cleavir-env:name info)))
