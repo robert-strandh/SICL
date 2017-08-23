@@ -9,5 +9,6 @@
            #:convert-special-binding
            #:convert-variable
 	   #:convert-function-reference
+	   #:convert-global-function-reference
            #:convert-code
            #:items-from-parameter-group))
