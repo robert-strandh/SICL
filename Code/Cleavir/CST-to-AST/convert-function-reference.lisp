@@ -2,7 +2,8 @@
 
 (defmethod convert-function-reference
     ((info cleavir-env:global-function-info) env system)
-  (convert-global-function info (cleavir-env:global-environment env) system))
+  (convert-global-function-reference
+   info (cleavir-env:global-environment env) system))
 
 (defmethod convert-function-reference
     ((info cleavir-env:local-function-info) env system)
