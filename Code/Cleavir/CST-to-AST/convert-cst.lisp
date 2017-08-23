@@ -49,7 +49,8 @@
                   (convert expanded-cst env system))))))))
 
 (defun make-call (cst info env argument-csts system)
-  (let ((function-ast (convert-function-reference info env system)))
+  (let ((function-ast (convert-function-reference info env system))
+	(argument-asts (convert-sequence argument-csts env system)))
     (cleavir-ast:make-call-ast function-ast argument-asts)))
 
 (defmethod convert-cst
