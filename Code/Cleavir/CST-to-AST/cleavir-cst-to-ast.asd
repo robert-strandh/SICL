@@ -33,4 +33,5 @@
    (:file "convert-special")
    (:file "convert-primop")
    (:file "convert-cst")
-   (:file "cst-to-ast")))
+   (:file "cst-to-ast")
+   (:file "conditions")))
