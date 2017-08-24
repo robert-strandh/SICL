@@ -6,15 +6,18 @@
 
 (define-condition compilation-program-error
     (program-error acclimation:condition)
-  ((%expr :initarg :expr :reader expr)))
+  ((%expr :initarg :expr :reader expr)
+   (%origin :initarg :origin :reader origin)))
 
 (define-condition compilation-warning
     (warning acclimation:condition)
-  ((%expr :initarg :expr :reader expr)))
+  ((%expr :initarg :expr :reader expr)
+   (%origin :initarg :origin :reader origin)))
 
 (define-condition compilation-style-warning
     (style-warning acclimation:condition)
-  ((%expr :initarg :expr :reader expr)))
+  ((%expr :initarg :expr :reader expr)
+   (%origin :initarg :origin :reader origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
