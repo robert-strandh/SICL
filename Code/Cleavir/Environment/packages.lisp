@@ -33,6 +33,7 @@
    #:optimize-qualities
    #:global-environment
    #:name
+   #:origin
    #:identity
    #:type
    #:ignore
