@@ -5,7 +5,8 @@
          (info (cleavir-env:variable-info environment symbol)))
     (loop while (null info)
 	  do (restart-case (error 'cleavir-env:no-variable-info
-				  :name symbol)
+				  :name symbol
+				  :origin (cst:source cst))
 	       (recover ()
 		 :report (lambda (stream)
 			   (format stream "Consider the variable as special."))
