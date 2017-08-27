@@ -20,8 +20,20 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:eq)) cst env system)
-  (cst:db origin (eql-cst arg1-cst arg2-cst) cst
-    (declare (ignore eql-cst))
+  (cst:db origin (eq-cst arg1-cst arg2-cst) cst
+    (declare (ignore eq-cst))
     (cleavir-ast:make-eq-ast
      (convert arg1-cst env system)
      (convert arg2-cst env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:TYPEQ.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:typeq)) cst env system)
+  (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
+    (declare (ignore typeq-cst))
+    (cleavir-ast:make-typeq-ast
+     (convert arg1-cst env system)
+     (cst:raw arg2-cst))))
