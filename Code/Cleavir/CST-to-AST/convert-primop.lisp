@@ -24,7 +24,8 @@
     (declare (ignore eq-cst))
     (cleavir-ast:make-eq-ast
      (convert arg1-cst env system)
-     (convert arg2-cst env system))))
+     (convert arg2-cst env system)
+     :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -36,4 +37,5 @@
     (declare (ignore typeq-cst))
     (cleavir-ast:make-typeq-ast
      (convert arg1-cst env system)
-     (cst:raw arg2-cst))))
+     (cst:raw arg2-cst)
+     :origin origin)))
