@@ -39,3 +39,25 @@
      (convert arg1-cst env system)
      (cst:raw arg2-cst)
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CAR.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:car)) cst env system)
+  (cst:db origin (car-cst arg-cst) cst
+    (declare (ignore car-cst))
+    (cleavir-ast:make-car-ast (convert arg-cst env system)
+			      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CDR.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:cdr)) cst env system)
+  (cst:db origin (cdr-cst arg-cst) cst
+    (declare (ignore cdr-cst))
+    (cleavir-ast:make-cdr-ast (convert arg-cst env system)
+			      :origin origin)))
