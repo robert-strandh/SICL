@@ -164,3 +164,33 @@
       :arg1-ast (convert arg1-cst env system)
       :arg2-ast (convert arg2-cst env system)
       :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:LET-UNINITIALIZED.
+;;;
+;;; A form using the operator LET-UNINITIALIZED has the following
+;;; syntax:
+;;;
+;;; (CLEAVIR-PRIMOP:LET-UNINITIALIZED (var*) form*)
+;;;
+;;; It sole purpose is to create a lexical environment for the
+;;; variables in which the forms are evaluated.  An absolute
+;;; requirement is that the variables must be assigned to before they
+;;; are used in the forms, or else things will fail spectacularly.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:let-uninitialized)) cst env system)
+  (cst:db origin (let-cst variables-cst body-csts) cst
+    (declare (ignore let-cst))
+    (let ((new-env env))
+      (loop for rest-cst = variables-cst then (cst:rest rest-cst)
+            until (cst:null rest-cst)
+            do (let* ((variable-cst (cst:first rest-cst))
+                      (variable-ast (cleavir-ast:make-lexical-ast
+                                     (cst:raw variable-cst)
+                                     :origin (cst:source variables-cst))))
+                 (setf new-env
+                       (cleavir-env:add-lexical-variable
+                        new-env (cst:raw variable-cst) variable-ast))))
+      (process-progn (convert-sequence (cst:listify body-csts) new-env system)))))
