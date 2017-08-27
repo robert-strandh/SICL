@@ -327,3 +327,35 @@
     (if (proper-function-name-p name-cst)
         (convert-named-function name-cst env system)
         (convert-lambda-function name-cst env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods specialized to operators for which we do not provide a
+;;; conversion method.
+
+;;; Implementations should probably convert this in terms of
+;;; CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
+(defmethod convert-special
+    ((symbol (eql 'multiple-value-call)) form environment system)
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
+
+(defmethod convert-special
+    ((symbol (eql 'unwind-protect)) form environment system)
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
+
+(defmethod convert-special
+    ((symbol (eql 'catch)) form environment system)
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
+
+(defmethod convert-special
+    ((symbol (eql 'throw)) form environment system)
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
+
+(defmethod convert-special
+    ((symbol (eql 'progv)) form environment system)
+  (declare (ignore environment system))
+  (error 'no-default-method :operator symbol :expr form))
