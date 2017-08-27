@@ -85,3 +85,30 @@
     (cleavir-ast:make-rplacd-ast (convert arg1-cst env system)
 				 (convert arg2-cst env system)
 				 :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-ADD.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-add)) cst env system)
+  (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
+    (declare (ignore add-cst))
+    (cleavir-ast:make-fixnum-add-ast (convert arg1-cst env system)
+				     (convert arg2-cst env system)
+				     (convert variable-cst env system)
+				     :origin origin)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-SUB.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-sub)) cst env system)
+  (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
+    (declare (ignore sub-cst))
+    (cleavir-ast:make-fixnum-sub-ast (convert arg1-cst env system)
+				     (convert arg2-cst env system)
+				     (convert variable-cst env system)
+				     :origin origin)))
