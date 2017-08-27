@@ -61,3 +61,27 @@
     (declare (ignore cdr-cst))
     (cleavir-ast:make-cdr-ast (convert arg-cst env system)
 			      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:RPLACA.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:rplaca)) cst env system)
+  (cst:db origin (rplaca-cst arg1-cst arg2-cst) cst
+    (declare (ignore rplaca-cst))
+    (cleavir-ast:make-rplaca-ast (convert arg1-cst env system)
+				 (convert arg2-cst env system)
+				 :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:RPLACD.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:rplacd)) cst env system)
+  (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
+    (declare (ignore rplacd-cst))
+    (cleavir-ast:make-rplacd-ast (convert arg1-cst env system)
+				 (convert arg2-cst env system)
+				 :origin origin)))
