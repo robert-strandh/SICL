@@ -883,7 +883,7 @@ between the two inputs, the following adjustment has to be made:
 \texttt{fixnum-sub-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{fixnum-<-instruction}}
+\subsection{Instruction \texttt{fixnum-less-instruction}}
 \label{mir-instruction-fixnum-less}
 
 \begin{tabular}{|l|l|}
@@ -906,17 +906,17 @@ The first successor is chosen if and only if the first input is
 strictly less than the second input.
 
 \refFig{fig-fixnum-less-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-<-instruction}
+\texttt{fixnum-less-instruction}
 
 \begin{figure}
 \begin{center}
 \inputfig{fig-fixnum-less-instruction.pdf_t}
 \end{center}
 \caption{\label{fig-fixnum-less-instruction}
-\texttt{fixnum-<-instruction}.}
+\texttt{fixnum-less-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{fixnum-<=-instruction}}
+\subsection{Instruction \texttt{fixnum-not-greater-instruction}}
 \label{mir-instruction-fixnum-le}
 
 \begin{tabular}{|l|l|}
@@ -939,17 +939,17 @@ The first successor is chosen if and only if the first input is
 less than or equal to the second input.
 
 \refFig{fig-fixnum-le-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-<=-instruction}
+\texttt{fixnum-not-greater-instruction}
 
 \begin{figure}
 \begin{center}
 \inputfig{fig-fixnum-le-instruction.pdf_t}
 \end{center}
 \caption{\label{fig-fixnum-le-instruction}
-\texttt{fixnum-<=-instruction}.}
+\texttt{fixnum-not-greater-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{fixnum-=-instruction}}
+\subsection{Instruction \texttt{fixnum-equal-instruction}}
 \label{mir-instruction-fixnum-equal}
 
 \begin{tabular}{|l|l|}
@@ -972,14 +972,14 @@ The first successor is chosen if and only if the first input is equal
 to the second input.
 
 \refFig{fig-fixnum-equal-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-=-instruction}
+\texttt{fixnum-equal-instruction}
 
 \begin{figure}
 \begin{center}
 \inputfig{fig-fixnum-equal-instruction.pdf_t}
 \end{center}
 \caption{\label{fig-fixnum-equal-instruction}
-\texttt{fixnum-=-instruction}.}
+\texttt{fixnum-equal-instruction}.}
 \end{figure}
 
 \subsection{Instruction \texttt{phi-instruction}}
