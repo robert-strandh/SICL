@@ -293,11 +293,6 @@
 (define-simple-check cleavir-primop:cdr 1)
 (define-simple-check cleavir-primop:rplaca 2)
 (define-simple-check cleavir-primop:rplacd 2)
-(define-simple-check cleavir-primop:fixnum-< 2)
-(define-simple-check cleavir-primop:fixnum-<= 2)
-(define-simple-check cleavir-primop:fixnum-> 2)
-(define-simple-check cleavir-primop:fixnum->= 2)
-(define-simple-check cleavir-primop:fixnum-= 2)
 (define-simple-check cleavir-primop:fixnum-less 2)
 (define-simple-check cleavir-primop:fixnum-not-greater 2)
 (define-simple-check cleavir-primop:fixnum-greater 2)
@@ -389,24 +384,6 @@
     ((head (eql 'cleavir-primop:typeq)) form)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 2 2))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Checking FIXNUM-+
-
-(defmethod check-special-form-syntax
-    ((head (eql 'cleavir-primop:fixnum-+)) form)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 3 3))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Checking FIXNUM--
-
-(defmethod check-special-form-syntax
-    ((head (eql 'cleavir-primop:fixnum--)) form)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 3 3))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
