@@ -6,8 +6,7 @@
    #:eq
    #:typeq
    #:car #:cdr #:rplaca #:rplacd
-   #:fixnum-arithmetic #:fixnum-+ #:fixnum--
-   #:fixnum-< #:fixnum-<= #:fixnum-> #:fixnum->= #:fixnum-=
+   #:fixnum-arithmetic
    #:fixnum-add
    #:fixnum-sub
    #:fixnum-less
