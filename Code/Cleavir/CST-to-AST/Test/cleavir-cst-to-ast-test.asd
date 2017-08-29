@@ -6,4 +6,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "environment")))
+   (:file "environment")
+   (:file "ast-from-string")))
