@@ -39,3 +39,6 @@
            :inline nil
            :type t))
         (t nil)))
+
+(defmethod cleavir-environment:variable-info ((environment environment) symbol)
+  nil)
