@@ -3,7 +3,6 @@
 (defun test1 ()
   (let* ((cst (cst:cst-from-expression '(function (lambda (x) x))))
          (env (make-instance 'environment))
-         (ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil))
          (ast2 [cleavir-ast:function-ast
                  :origin (0)
                  :policy nil
@@ -34,4 +33,5 @@
                                  :origin (0 1 1 1)
                                  :policy nil])]))
     (assign-sources cst)
-    (ast-equal-p ast1 ast2)))
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (ast-equal-p ast1 ast2))))
