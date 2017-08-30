@@ -39,6 +39,7 @@
 
 ;;; Policies must be saved
 (cleavir-io:define-save-info ast
+  (:origin origin)
   (:policy policy))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
