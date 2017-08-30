@@ -7,4 +7,9 @@
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "ast-from-string")))
+   (:file "ast-from-string")
+   (:file "test" :around-compile
+          (lambda (thunk)
+            (let ((*readtable* cleavir-io:*io-readtable*)
+                  (cleavir-ast:*policy* nil))
+              (funcall thunk))))))
