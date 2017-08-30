@@ -9,6 +9,7 @@
    (:file "environment")
    (:file "ast-from-string")
    (:file "ast-equal-p")
+   (:file "assign-sources")
    (:file "test" :around-compile
           (lambda (thunk)
             (let ((*readtable* cleavir-io:*io-readtable*)
