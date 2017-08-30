@@ -324,9 +324,10 @@
 (defmethod convert-special ((symbol (eql 'function)) cst env system)
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
-    (if (proper-function-name-p name-cst)
-        (convert-named-function name-cst env system)
-        (convert-lambda-function name-cst env system))))
+    (let ((result (if (proper-function-name-p name-cst)
+                      (convert-named-function name-cst env system)
+                      (convert-lambda-function name-cst env system))))
+      (reinitialize-instance result :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
