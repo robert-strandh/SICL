@@ -22,11 +22,11 @@
 (defparameter *cache-p* nil)
 
 (defun maybe-cache (form function forms)
-  (if (and *cache-p*
-	   (consp form)
-	   (member (car form) '(defun defmacro)))
-      (let ((hash (sxhash form)))
-	(setf (gethash hash *form-cache*) (cons function forms)))))
+  (when (and *cache-p*
+             (consp form)
+             (member (car form) '(defun defmacro)))
+    (let ((hash (sxhash form)))
+      (setf (gethash hash *form-cache*) (cons function forms)))))
 
 (defun compile-form (form environment1 environment2)
   (let* ((hash (sxhash form))
