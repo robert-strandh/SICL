@@ -10,47 +10,14 @@
 ;;; node.  No initialization arguments are passed to MAKE-INSTANCE, so
 ;;; the cloned node is uninitialized except for slots that are
 ;;; initialized by :INITFORM.
-
-;;; "every" must exclude lexical ASTs that are not defined (by a
-;;; function or setq) locally, because they are outer closed-over
-;;; variables.
-
-;;; return a list, in arbitrary order, of all the lexical ASTs
-;;; defined by a given lambda list (from a function-ast).
-(defun lambda-list-lexicals (lambda-list)
-  (loop with result = nil
-        for item in lambda-list
-        do (cond ((member item lambda-list-keywords))
-                 ((atom item) (push item result))
-                 ((= (length item) 3) ; &key
-                  (push (second item) result)
-                  (push (third item) result))
-                 (t ; &optional, we assume
-                  (push (first item) result)
-                  (push (second item) result)))
-        finally (return result)))
-
 (defun clone-create-dictionary (ast)
   (let ((dictionary (make-hash-table :test #'eq)))
-    (flet ((register-ast (node)
-             (setf (gethash node dictionary)
-                   (make-instance (class-of node)))))
-      (cleavir-ast:map-ast-depth-first-preorder
-       (lambda (node)
-         (typecase node
-           (cleavir-ast:setq-ast
-            (register-ast (cleavir-ast:lhs-ast node))
-            (register-ast node))
-           (cleavir-ast:function-ast
-            (mapc #'register-ast
-                  (lambda-list-lexicals
-                   (cleavir-ast:lambda-list node)))
-            (register-ast node))
-           ;; should be registered by the above if local.
-           (cleavir-ast:lexical-ast)
-           (t (register-ast node))))
-       ast)
-      dictionary)))
+    (cleavir-ast:map-ast-depth-first-preorder
+     (lambda (node)
+       (setf (gethash node dictionary)
+	     (make-instance (class-of node))))
+     ast)
+    dictionary))
 
 ;;; This generic function is used to obtain some substructure
 ;;; (typically a slot) for the new AST, given the corresponding
