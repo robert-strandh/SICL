@@ -5,6 +5,8 @@
   (fill-environment object))
 
 (defmethod initialize-instance :around
-    ((object environment) &key cache-p &allow-other-keys)
-  (let ((*cache-p* cache-p))
-    (call-next-method)))
+    ((object environment) &key (cache-p nil cache-p-p) &allow-other-keys)
+  (if cache-p-p
+      (let ((*cache-p* cache-p))
+        (call-next-method))
+      (call-next-method)))
