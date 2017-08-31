@@ -12,8 +12,8 @@
 ;;; initialized by :INITFORM.
 
 ;;; "every" must exclude lexical ASTs that are not defined (by a
-;;; function, setq, etc.) locally, because they are outer
-;;; closed-over variables.
+;;; function or setq) locally, because they are outer closed-over
+;;; variables.
 
 ;;; return a list, in arbitrary order, of all the lexical ASTs
 ;;; defined by a given lambda list (from a function-ast).
@@ -45,10 +45,6 @@
             (mapc #'register-ast
                   (lambda-list-lexicals
                    (cleavir-ast:lambda-list node)))
-            (register-ast node))
-           ((or cleavir-ast:fixnum-add-ast
-                cleavir-ast:fixnum-sub-ast)
-            (register-ast (cleavir-ast:variable-ast node))
             (register-ast node))
            ;; should be registered by the above if local.
            (cleavir-ast:lexical-ast)
