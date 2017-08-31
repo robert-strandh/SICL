@@ -125,26 +125,6 @@
 		 (augment-environment-from-fdef result definition))
 	finally (return result)))
 
-;;; As of now, this unconditionally saves an inline expansion
-;;;  for all local functions. Hypothetically, we could be more
-;;;  thrifty and only safe if there's a bound inline decl or w/e.
-;;; But (a) we need the AST anyway and referencing it isn't a big
-;;;  deal, and (b) we're in the middle of compiling, these local
-;;;  environments are ephemeral.
-(defun augment-environment-with-ast (environment definition)
-  (db origin (name . ast) definition
-    (cleavir-env:add-inline-expansion environment name ast)))
-
-;;; This is done separately from augmenting with fdefs for the sake
-;;;  of recursive bindings, which need just the names and not
-;;;  inline expansions in their bodies.
-(defun augment-environment-with-asts (environment definitions)
-  (loop with result = environment
-	for definition in definitions
-	do (setf result
-		 (augment-environment-with-ast result definition))
-	finally (return result)))
-
 ;;; Given an environment and the name of a function, return the
 ;;; LEXICAL-AST that will have the function with that name as a value.
 ;;; It is known that the environment contains an entry corresponding
@@ -220,7 +200,6 @@
                                           fun))
                          else collect (cons name fun)))
 	     (new-env (augment-environment-from-fdefs env defs))
-	     (new-env (augment-environment-with-asts new-env defs))
 	     (init-asts
 	       (compute-function-init-asts defs new-env))
 	     (new-env (augment-environment-with-declarations
@@ -379,12 +358,10 @@
                                          (cleavir-ast:make-dynamic-allocation-ast
                                           fun))
                          else collect (cons name fun)))
-	     (inner-env (augment-environment-with-asts
-			 outer-env defs))
 	     (init-asts
-	       (compute-function-init-asts defs inner-env))
+	       (compute-function-init-asts defs outer-env))
 	     (inner-env (augment-environment-with-declarations
-			 inner-env canonicalized-dspecs)))
+			 outer-env canonicalized-dspecs)))
 	(process-progn
 	 (append
 	  init-asts
