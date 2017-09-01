@@ -40,10 +40,10 @@
   (let* ((cst (cst:cst-from-expression '*special1*))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:symbol-value-ast
-                 :origin nil
+                 :origin (0)
                  :policy nil
                  :symbol-ast [cleavir-ast:load-time-value-ast
-                               :origin nil
+                               :origin (0)
                                :policy nil
                                :read-only-p nil
                                :form '*special1*]]))
