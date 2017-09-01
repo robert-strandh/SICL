@@ -34,3 +34,5 @@
 (defgeneric items-from-parameter-group (parameter-group))
 
 (defgeneric convert-global-function-reference (info global-env system))
+
+(defgeneric convert-special-variable (info global-env system))
