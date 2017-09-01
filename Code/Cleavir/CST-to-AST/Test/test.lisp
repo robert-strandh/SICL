@@ -35,3 +35,18 @@
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (ast-equal-p ast1 ast2))))
+
+(defun test2 ()
+  (let* ((cst (cst:cst-from-expression '*special1*))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:symbol-value-ast
+                 :origin nil
+                 :policy nil
+                 :symbol-ast [cleavir-ast:load-time-value-ast
+                               :origin nil
+                               :policy nil
+                               :read-only-p nil
+                               :form '*special1*]]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (ast-equal-p ast1 ast2))))
