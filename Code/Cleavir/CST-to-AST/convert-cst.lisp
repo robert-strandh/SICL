@@ -83,3 +83,20 @@
               ;; This new form must then be converted.
               (let ((expanded-cst (cst:reconstruct expanded-form cst)))
                 (convert expanded-cst env system)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a symbol that has a definition as a special variable.
+;;; We do this by generating a call to SYMBOL-VALUE.
+
+(defmethod convert-special-variable (info global-env system)
+  (declare (ignore global-env))
+  (let ((symbol (cleavir-env:name info)))
+    (cleavir-ast:make-symbol-value-ast
+     (cleavir-ast:make-load-time-value-ast `',symbol))))
+
+(defmethod convert-cst
+    (cst (info cleavir-env:special-variable-info) env system)
+  (declare (ignore cst))
+  (let ((global-env (cleavir-env:global-environment env)))
+    (convert-special-variable info global-env system)))
