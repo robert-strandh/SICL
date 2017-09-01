@@ -14,7 +14,7 @@
                                            :policy nil
                                            :lhs-ast [cleavir-ast:lexical-ast
                                                       :name x
-                                                      :origin (0 1 2)
+                                                      :origin (0 1 1 0)
                                                       :policy nil]
                                            :value-ast [cleavir-ast:lexical-ast
                                                         :name #:|x|
