@@ -211,31 +211,35 @@
 ;;; which the entire LET form was converted.  For a LET* form, it is
 ;;; the same as ENV.
 (defun augment-environment-with-variable
-    (variable declarations env orig-env)
+    (variable-cst declarations env orig-env)
   (let ((new-env env)
+        (raw-variable (cst:raw variable-cst))
+        (origin (cst:source variable-cst))
         (raw-declarations (mapcar #'cst:raw declarations)))
     (multiple-value-bind (special-p globally-p)
-	(variable-is-special-p variable declarations orig-env)
+	(variable-is-special-p raw-variable declarations orig-env)
       (if special-p
 	  (unless globally-p
 	    (setf new-env
-		  (cleavir-env:add-special-variable new-env variable)))
-	  (let ((var-ast (cleavir-ast:make-lexical-ast variable)))
+		  (cleavir-env:add-special-variable new-env raw-variable)))
+	  (let ((var-ast (cleavir-ast:make-lexical-ast raw-variable
+                                                       :origin origin)))
 	    (setf new-env
-		  (cleavir-env:add-lexical-variable new-env variable var-ast)))))
+		  (cleavir-env:add-lexical-variable
+                   new-env raw-variable var-ast)))))
     (let ((type (declared-type declarations)))
       (unless (equal type '(and))
 	(setf new-env
-	      (cleavir-env:add-variable-type new-env variable type))))
+	      (cleavir-env:add-variable-type new-env raw-variable type))))
     (when (member 'ignore raw-declarations :test #'eq :key #'car)
       (setf new-env
-            (cleavir-env:add-variable-ignore new-env variable 'ignore)))
+            (cleavir-env:add-variable-ignore new-env raw-variable 'ignore)))
     (when (member 'ignorable raw-declarations :test #'eq :key #'car)
       (setf new-env
-            (cleavir-env:add-variable-ignore new-env variable 'ignorable)))
+            (cleavir-env:add-variable-ignore new-env raw-variable 'ignorable)))
     (when (member 'dynamic-extent raw-declarations :test #'eq :key #'car)
       (setf new-env
-	    (cleavir-env:add-variable-dynamic-extent new-env variable)))
+	    (cleavir-env:add-variable-dynamic-extent new-env raw-variable)))
     new-env))
 
 ;;; The only purpose of this function is to call the function
