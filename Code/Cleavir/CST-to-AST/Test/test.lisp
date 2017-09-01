@@ -10,7 +10,7 @@
                              :origin nil
                              :policy nil
                              :form-asts ([cleavir-ast:setq-ast
-                                           :origin 234
+                                           :origin (0 1 1 0)
                                            :policy nil
                                            :lhs-ast [cleavir-ast:lexical-ast
                                                       :name x
@@ -18,7 +18,7 @@
                                                       :policy nil]
                                            :value-ast [cleavir-ast:lexical-ast
                                                         :name #:|x|
-                                                        :origin (0 1 1 1)
+                                                        :origin (0 1 1 0)
                                                         :policy nil]]
                                          [cleavir-ast:block-ast
                                            :origin nil
@@ -30,7 +30,7 @@
                                                        :read-only-p t]])]
                  :lambda-list ([cleavir-ast:lexical-ast
                                  :name #:|x|
-                                 :origin (0 1 1 1)
+                                 :origin (0 1 1 0)
                                  :policy nil])]))
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
