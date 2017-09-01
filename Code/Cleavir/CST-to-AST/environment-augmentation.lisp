@@ -248,9 +248,10 @@
 ;;; that it also tests whether the supplied-p parameter is NIL,
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
-(defun augment-environment-with-parameter (var supplied-p dspecs env)
+(defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs env)
   (let ((new-env (augment-environment-with-variable
-		  var dspecs env env)))
+		  var-cst dspecs env env)))
     (if (null supplied-p)
 	new-env
-	(augment-environment-with-variable supplied-p dspecs new-env new-env))))
+	(augment-environment-with-variable
+         supplied-p-cst dspecs new-env new-env))))
