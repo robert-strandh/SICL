@@ -41,4 +41,9 @@
         (t nil)))
 
 (defmethod cleavir-environment:variable-info ((environment environment) symbol)
-  nil)
+  (if (member symbol '(*special1* *special2*))
+      (make-instance 'cleavir-environment:special-variable-info
+        :global-p t
+        :ignore nil
+        :name symbol)
+      nil))
