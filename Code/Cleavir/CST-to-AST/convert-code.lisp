@@ -264,15 +264,15 @@
 
 (defmethod new-environment-from-parameter
     ((parameter cst:ordinary-key-parameter) idspecs environment system)
-  (augment-environment-with-parameter (cst:raw (cst:name parameter))
-                                      (cst:raw (cst:supplied-p parameter))
+  (augment-environment-with-parameter (cst:name parameter)
+                                      (cst:supplied-p parameter)
                                       (first idspecs)
                                       environment))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:ordinary-optional-parameter) idspecs environment system)
-  (augment-environment-with-parameter (cst:raw (cst:name parameter))
-                                      (cst:raw (cst:supplied-p parameter))
+  (augment-environment-with-parameter (cst:name parameter)
+                                      (cst:supplied-p parameter)
                                       (first idspecs)
                                       environment))
 
