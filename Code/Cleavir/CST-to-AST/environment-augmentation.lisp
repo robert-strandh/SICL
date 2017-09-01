@@ -251,7 +251,7 @@
 (defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs env)
   (let ((new-env (augment-environment-with-variable
 		  var-cst dspecs env env)))
-    (if (null supplied-p)
+    (if (null supplied-p-cst)
 	new-env
 	(augment-environment-with-variable
          supplied-p-cst dspecs new-env new-env))))
