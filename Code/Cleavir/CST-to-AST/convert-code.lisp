@@ -257,7 +257,7 @@
 
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
-  (augment-environment-with-variable (cst:raw (cst:name parameter))
+  (augment-environment-with-variable (cst:name parameter)
                                      (first idspecs)
                                      environment
                                      environment))
