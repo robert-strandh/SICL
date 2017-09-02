@@ -241,16 +241,12 @@
 
 (defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   (;; This slot contains an AST that produces the function name.
-   (%name-ast :initarg :name-ast :reader name-ast)
-   ;; This slot contains the INFO instance that was returned form
-   ;; the environment query.
-   (%info :initarg :info :reader info)))
+   (%name-ast :initarg :name-ast :reader name-ast)))
 
-(defun make-fdefinition-ast (name-ast info &key origin (policy *policy*))
+(defun make-fdefinition-ast (name-ast &key origin (policy *policy*))
   (make-instance 'fdefinition-ast
     :origin origin :policy policy
-    :name-ast name-ast
-    :info info))
+    :name-ast name-ast))
 
 (cleavir-io:define-save-info fdefinition-ast
   (:name-ast name-ast))
