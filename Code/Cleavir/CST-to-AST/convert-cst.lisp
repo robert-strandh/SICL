@@ -89,7 +89,7 @@
 ;;; Converting a symbol that has a definition as a special variable.
 ;;; We do this by generating a call to SYMBOL-VALUE.
 
-(defmethod convert-special-variable (info global-env system)
+(defmethod convert-special-variable (cst info global-env system)
   (declare (ignore global-env))
   (let ((symbol (cleavir-env:name info)))
     (cleavir-ast:make-symbol-value-ast
@@ -98,7 +98,7 @@
 (defmethod convert-cst
     (cst (info cleavir-env:special-variable-info) env system)
   (let* ((global-env (cleavir-env:global-environment env))
-         (result (convert-special-variable info global-env system))
+         (result (convert-special-variable cst info global-env system))
          (origin (cst:source cst)))
     (reinitialize-instance result :origin origin)
     (reinitialize-instance (cleavir-ast:symbol-ast result) :origin origin)
