@@ -99,9 +99,5 @@
 
 (defmethod convert-cst
     (cst (info cleavir-env:special-variable-info) env system)
-  (let* ((global-env (cleavir-env:global-environment env))
-         (result (convert-special-variable cst info global-env system))
-         (origin (cst:source cst)))
-    (reinitialize-instance result :origin origin)
-    (reinitialize-instance (cleavir-ast:symbol-ast result) :origin origin)
-    result))
+  (let ((global-env (cleavir-env:global-environment env)))
+    (convert-special-variable cst info global-env system)))
