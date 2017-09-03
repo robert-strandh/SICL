@@ -41,6 +41,12 @@ For this reason, we will provide language-specific files containing
 all docstrings of Common Lisp in the form of calls to \texttt{(setf
 documentation)}. 
 
+We also recommend using \texttt{format} (at read time) so that the
+format directive \texttt{\~{}@} can be used at the end of lines,
+allowing the following line to be indented as the rest of the text.
+That way, we avoid the ugliness of having subsequent lines start in
+column 1.
+
 \section{Naming and use of slots}
 
 In order to make the code as safe as possible, we typically do not
