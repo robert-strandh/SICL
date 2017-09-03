@@ -91,9 +91,11 @@
 
 (defmethod convert-special-variable (cst info global-env system)
   (declare (ignore global-env))
-  (let ((symbol (cleavir-env:name info)))
+  (let ((symbol (cleavir-env:name info))
+        (origin (cst:source cst)))
     (cleavir-ast:make-symbol-value-ast
-     (cleavir-ast:make-load-time-value-ast `',symbol))))
+     (cleavir-ast:make-load-time-value-ast `',symbol t :origin origin)
+     :origin origin)))
 
 (defmethod convert-cst
     (cst (info cleavir-env:special-variable-info) env system)
