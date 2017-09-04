@@ -53,6 +53,10 @@
         (argument-asts (convert-sequence argument-csts env system)))
     (cleavir-ast:make-call-ast function-ast argument-asts)))
 
+;;; Convert a form representing a call to a named global function.
+;;; CST is the concrete syntax tree representing the entire
+;;; function-call form.  INFO is the info instance returned form a
+;;; query of the environment with the name of the function.
 (defmethod convert-cst
     (cst (info cleavir-env:global-function-info) env system)
   ;; When we compile a call to a global function, it is possible that
