@@ -55,7 +55,7 @@
   (let* ((cst (cst:cst-from-expression '(car *special1*)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:call-ast
-                 :origin nil
+                 :origin (0)
                  :policy nil
                  :callee-ast
                  [cleavir-ast:fdefinition-ast
