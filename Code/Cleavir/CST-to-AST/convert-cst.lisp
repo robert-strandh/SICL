@@ -48,6 +48,9 @@
                 (let ((expanded-cst (cst:reconstruct expanded-form cst)))
                   (convert expanded-cst env system))))))))
 
+;;; Construct a CALL-AST representing a function-call form.  CST is
+;;; the concrete syntax tree representing the entire function-call
+;;; form.
 (defun make-call (cst info env argument-csts system)
   (let ((function-ast (convert-function-reference info env system))
         (argument-asts (convert-sequence argument-csts env system)))
