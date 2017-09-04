@@ -260,3 +260,23 @@
      (convert instance-cst env system)
      (convert slot-number-cst env system)
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SLOT-WRITE.
+;;;
+;;; This primop takes three arguments.  The first argument is a form
+;;; that must evaluate to a standard instance.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the slot
+;;; number to be written.  The third argument is a form that evaluates
+;;; to the object that will be written to the slot.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:slot-write)) cst env system)
+  (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
+    (declare (ignore slot-write-cst))
+    (cleavir-ast:make-slot-write-ast
+     (convert instance-cst env system)
+     (convert slot-number-cst env system)
+     (convert value-cst env system)
+     :origin origin)))
