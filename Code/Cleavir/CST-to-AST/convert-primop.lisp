@@ -242,3 +242,21 @@
            until (cst:null remaining)
            collect (convert (cst:first remaining) env system))
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:SLOT-READ.
+;;;
+;;; This primop takes two arguments.  The first argument is a form
+;;; that must evaluate to a standard instance.  The second argument is
+;;; a form that must evaluate to a fixnum and that indicates the slot
+;;; number to be read.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:slot-read)) cst env system)
+  (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
+    (declare (ignore slot-read-cst))
+    (cleavir-ast:make-slot-read-ast
+     (convert instance-cst env system)
+     (convert slot-number-cst env system)
+     :origin origin)))
