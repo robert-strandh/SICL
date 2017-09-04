@@ -218,3 +218,27 @@
            until (cst:null remaining)
            collect (convert (cst:first remaining) env system))
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
+;;;
+;;; This primop is similar to the special operator CL:MULTIPLE-VALUE-CALL.
+;;; The difference is that the primop does not allow a function NAME
+;;; as its first argument.  It has to be a form that evaluates to a
+;;; function.
+;;;
+;;; CL:MULTIPLE-VALUE-CALL can be defined as a macro expanding into
+;;; a form that turns the first argument into a function if it is not
+;;; already a function and then calls this primop.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:multiple-value-call)) cst env system)
+  (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
+    (declare (ignore multiple-value-call-cst))
+    (cleavir-ast:make-multiple-value-call-ast
+     (convert function-cst env system)
+     (loop for remaining = arguments-cst then (cst:rest remaining)
+           until (cst:null remaining)
+           collect (convert (cst:first remaining) env system))
+     :origin origin)))
