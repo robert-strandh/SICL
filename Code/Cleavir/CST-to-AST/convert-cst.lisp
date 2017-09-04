@@ -54,7 +54,8 @@
 (defun make-call (cst info env argument-csts system)
   (let ((function-ast (convert-function-reference info env system))
         (argument-asts (convert-sequence argument-csts env system)))
-    (cleavir-ast:make-call-ast function-ast argument-asts)))
+    (cleavir-ast:make-call-ast function-ast argument-asts
+                               :origin (cst:source cst))))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
