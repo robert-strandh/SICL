@@ -341,3 +341,22 @@
          :arg1-ast (convert arg1-cst env system)
          :arg2-ast (convert arg2-cst env system)
          :origin origin))))
+
+(define-float-binop cleavir-primop:float-add
+  cleavir-ast:float-add-ast)
+(define-float-binop cleavir-primop:float-sub
+  cleavir-ast:float-sub-ast)
+(define-float-binop cleavir-primop:float-mul
+  cleavir-ast:float-mul-ast)
+(define-float-binop cleavir-primop:float-div
+  cleavir-ast:float-div-ast)
+(define-float-binop cleavir-primop:float-less
+  cleavir-ast:float-less-ast)
+(define-float-binop cleavir-primop:float-not-greater
+  cleavir-ast:float-not-greater-ast)
+(define-float-binop cleavir-primop:float-equal
+  cleavir-ast:float-equal-ast)
+(define-float-binop cleavir-primop:float-not-less
+  cleavir-ast:float-not-less-ast)
+(define-float-binop cleavir-primop:float-greater
+  cleavir-ast:float-greater-ast)
