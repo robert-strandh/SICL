@@ -328,3 +328,16 @@
       :simple-p simple-p
       :boxed-p boxed-p
       :origin origin)))
+
+;;; The following macro is used to generate a method on
+;;; CONVERT-SPECIAL for binary floating-point primops.
+(defmacro define-float-binop (primop ast)
+  `(defmethod convert-special
+       ((symbol (eql ',primop)) cst env system)
+     (cst:db origin (op-cst type-cst arg1-cst arg2-cst) cst
+       (declare (ignore op-cst))
+       (make-instance ',ast
+         :type (cst:raw type-cst)
+         :arg1-ast (convert arg1-cst env system)
+         :arg2-ast (convert arg2-cst env system)
+         :origin origin))))
