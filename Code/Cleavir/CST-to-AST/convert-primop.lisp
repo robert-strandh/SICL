@@ -302,3 +302,29 @@
       :simple-p simple-p
       :boxed-p boxed-p
       :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:ASET.
+;;;
+;;; This primop takes six arguments. The first two are an array and
+;;; an index into it. The third is the object to be written in. The
+;;; fourth and fifth are as above. The sixth is whether the objects
+;;; in the array are boxed.
+;;;
+;;; Forms using this primitive operation must occur in a context
+;;; that does not require a value, such as in a PROGN other than as
+;;; the last form.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:aset)) cst env system)
+  (cst:db origin (array-cst index-cst object-cst type simple-p boxed-p)
+      cst
+    (make-instance 'cleavir-ast:aset-ast
+      :array-ast (convert array-cst env system)
+      :index-ast (convert index-cst env system)
+      :element-ast (convert object-cst env system)
+      :element-type type
+      :simple-p simple-p
+      :boxed-p boxed-p
+      :origin origin)))
