@@ -337,7 +337,7 @@
      (cst:db origin (op-cst type-cst arg1-cst arg2-cst) cst
        (declare (ignore op-cst))
        (make-instance ',ast
-         :type (cst:raw type-cst)
+         :subtype (cst:raw type-cst)
          :arg1-ast (convert arg1-cst env system)
          :arg2-ast (convert arg2-cst env system)
          :origin origin))))
