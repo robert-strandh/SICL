@@ -14,6 +14,24 @@
    #:fixnum-greater
    #:fixnum-not-less
    #:fixnum-equal
+   ;; Each of these operations takes a type argument in addition to
+   ;; the normal argument(s) of the corresponding Common Lisp
+   ;; function.  That type argument is the first one, and it is not
+   ;; evaluated.
+   #:float-add
+   #:float-sub
+   #:float-mul
+   #:float-div
+   #:float-less
+   #:float-not-greater
+   #:float-greater
+   #:float-not-less
+   #:float-equal
+   #:float-sin
+   #:float-cos
+   #:float-sqrt
+   ;; The following floating-point operations are deprecated in favor
+   ;; of the ones above.
    #:short-float-add
    #:short-float-sub
    #:short-float-mul
