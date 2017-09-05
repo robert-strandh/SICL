@@ -280,3 +280,25 @@
      (convert slot-number-cst env system)
      (convert value-cst env system)
      :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:AREF.
+;;;
+;;; This primop takes five arguments. The first and second are an
+;;; array and an index into it, as forms. The remainder of the
+;;; arguments are not evaluated. The third is the actual element
+;;; type of the array. The fourth is whether the array is actually
+;;; simple. The fifth is whether the value in the array is already
+;;; boxed.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:aref)) cst env system)
+  (cst:db origin (array-cst index-cst type simple-p boxed-p) cst
+    (make-instance 'cleavir-ast:aref-ast
+      :array-ast (convert array-cst env system)
+      :index-ast (convert index-cst env system)
+      :element-type type
+      :simple-p simple-p
+      :boxed-p boxed-p
+      :origin origin)))
