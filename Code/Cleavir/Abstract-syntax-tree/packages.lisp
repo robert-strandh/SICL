@@ -59,6 +59,19 @@
    #:fixnum-greater-ast #:make-fixnum-greater-ast
    #:fixnum-not-less-ast #:make-fixnum-not-less-ast
    #:fixnum-equal-ast #:make-fixnum-equal-ast
+   #:float-add-ast
+   #:float-sub-ast
+   #:float-mul-ast
+   #:float-div-ast
+   #:float-less-ast
+   #:float-not-greater-ast
+   #:float-greater-ast
+   #:float-not-less-ast
+   #:float-equal-ast
+   #:float-sin-ast
+   #:float-cos-ast
+   #:float-sqrt-ast
+   #:subtype
    #:short-float-add-ast
    #:short-float-sub-ast
    #:short-float-mul-ast
