@@ -34,7 +34,7 @@
                                  :policy nil])]))
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
-      (ast-equal-p ast1 ast2))))
+      (assert (ast-equal-p ast1 ast2)))))
 
 (defun test2 ()
   (let* ((cst (cst:cst-from-expression '*special1*))
@@ -49,7 +49,7 @@
                                :form '*special1*]]))
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
-      (ast-equal-p ast1 ast2))))
+      (assert (ast-equal-p ast1 ast2)))))
 
 (defun test3 ()
   (let* ((cst (cst:cst-from-expression '(car *special1*)))
@@ -77,7 +77,7 @@
                                   :form '*special1*]])]))
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
-      (ast-equal-p ast1 ast2))))
+      (assert (ast-equal-p ast1 ast2)))))
 
 (defun test20 ()
   (let* ((cst (cst:cst-from-expression
@@ -107,7 +107,7 @@
                                  :form '*special2*]]]))
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
-      (ast-equal-p ast1 ast2))))
+      (assert (ast-equal-p ast1 ast2)))))
 
 (defun test21 ()
   (let* ((cst (cst:cst-from-expression
@@ -137,4 +137,4 @@
                                  :form '*special2*]]]))
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
-      (ast-equal-p ast1 ast2))))
+      (assert (ast-equal-p ast1 ast2)))))
