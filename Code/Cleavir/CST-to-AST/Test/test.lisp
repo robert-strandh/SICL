@@ -138,3 +138,10 @@
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
+
+(defun test ()
+  (test1)
+  (test2)
+;;  (test3)
+  (test20)
+  (test21))
