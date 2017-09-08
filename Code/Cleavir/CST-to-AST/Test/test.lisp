@@ -199,11 +199,71 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test24 ()
+  (let* ((cst (cst:cst-from-expression
+               '(cleavir-primop:float-less short-float *special1* *special2*)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:float-less-ast
+                 :origin (0)
+                 :policy nil
+                 :subtype short-float
+                 :arg1-ast
+                 [cleavir-ast:symbol-value-ast
+                   :origin (0 2)
+                   :policy nil
+                   :symbol-ast [cleavir-ast:load-time-value-ast
+                                  :origin (0 2)
+                                  :policy nil
+                                  :read-only-p t
+                                  :form '*special1*]]
+                 :arg2-ast
+                 [cleavir-ast:symbol-value-ast
+                   :origin (0 3)
+                   :policy nil
+                   :symbol-ast [cleavir-ast:load-time-value-ast
+                                 :origin (0 3)
+                                 :policy nil
+                                 :read-only-p t
+                                 :form '*special2*]]]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test25 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-not-greater short-float *special1* *special2*)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:float-not-greater-ast
+                 :origin (0)
+                 :policy nil
+                 :subtype short-float
+                 :arg1-ast
+                 [cleavir-ast:symbol-value-ast
+                   :origin (0 2)
+                   :policy nil
+                   :symbol-ast [cleavir-ast:load-time-value-ast
+                                  :origin (0 2)
+                                  :policy nil
+                                  :read-only-p t
+                                  :form '*special1*]]
+                 :arg2-ast
+                 [cleavir-ast:symbol-value-ast
+                   :origin (0 3)
+                   :policy nil
+                   :symbol-ast [cleavir-ast:load-time-value-ast
+                                 :origin (0 3)
+                                 :policy nil
+                                 :read-only-p t
+                                 :form '*special2*]]]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
+(defun test26 ()
+  (let* ((cst (cst:cst-from-expression
+               '(cleavir-primop:float-greater short-float *special1* *special2*)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:float-greater-ast
                  :origin (0)
                  :policy nil
                  :subtype short-float
@@ -238,4 +298,5 @@
   (test22)
   (test23)
   (test24)
-  (test25))
+  (test25)
+  (test26))
