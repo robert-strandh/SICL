@@ -68,6 +68,16 @@
    #:fixnum-less-instruction #:make-fixnum-less-instruction
    #:fixnum-not-greater-instruction #:make-fixnum-not-greater-instruction
    #:fixnum-equal-instruction #:make-fixnum-equal-instruction
+   #:float-add-instruction #:make-float-add-instruction
+   #:float-sub-instruction #:make-float-sub-instruction
+   #:float-mul-instruction #:make-float-mul-instruction
+   #:float-div-instruction #:make-float-div-instruction
+   #:float-less-instruction #:make-float-less-instruction
+   #:float-not-greater-instruction #:make-float-not-greater-instruction
+   #:float-equal-instruction #:make-float-equal-instruction
+   #:float-sin-instruction #:make-float-sin-instruction
+   #:float-cos-instruction #:make-float-cos-instruction
+   #:float-sqrt-instruction #:make-float-sqrt-instruction
    #:short-float-add-instruction #:make-short-float-add-instruction 
    #:short-float-sub-instruction #:make-short-float-sub-instruction 
    #:short-float-mul-instruction #:make-short-float-mul-instruction 
