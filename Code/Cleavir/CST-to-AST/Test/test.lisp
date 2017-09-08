@@ -199,11 +199,11 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test24 ()
+(defun test25 ()
   (let* ((cst (cst:cst-from-expression
-               '(cleavir-primop:float-less short-float *special1* *special2*)))
+               '(cleavir-primop:float-not-greater short-float *special1* *special2*)))
          (env (make-instance 'environment))
-         (ast2 [cleavir-ast:float-less-ast
+         (ast2 [cleavir-ast:float-not-greater-ast
                  :origin (0)
                  :policy nil
                  :subtype short-float
@@ -237,4 +237,5 @@
   (test21)
   (test22)
   (test23)
-  (test24))
+  (test24)
+  (test25))
