@@ -360,3 +360,15 @@
   cleavir-ast:float-not-less-ast)
 (define-float-binop cleavir-primop:float-greater
   cleavir-ast:float-greater-ast)
+
+;;; The following macro is used to generate a method on
+;;; CONVERT-SPECIAL for unatry floating-point primops.
+(defmacro define-float-unop (primop ast)
+  `(defmethod convert-special
+       ((symbol (eql ',primop)) cst env system)
+     (cst:db origin (op-cst type-cst arg-cst) cst
+       (declare (ignore op-cst))
+       (make-instance ',ast
+         :subtype (cst:raw type-cst)
+         :arg-ast (convert arg-cst env system)
+         :origin origin))))
