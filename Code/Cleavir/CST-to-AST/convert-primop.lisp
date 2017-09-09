@@ -372,3 +372,12 @@
          :subtype (cst:raw type-cst)
          :arg-ast (convert arg-cst env system)
          :origin origin))))
+
+(define-float-unop cleavir-primop:float-sin
+  cleavir-ast:float-sin-ast)
+
+(define-float-unop cleavir-primop:float-cos
+  cleavir-ast:float-cos-ast)
+
+(define-float-unop cleavir-primop:float-sqrt
+  cleavir-ast:float-sqrt-ast)
