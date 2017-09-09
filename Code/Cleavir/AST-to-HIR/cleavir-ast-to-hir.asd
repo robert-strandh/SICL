@@ -18,6 +18,7 @@
    (:file "compile-general-purpose-asts")
    (:file "compile-fixnum-related-asts")
    (:file "compile-float-related-asts")
+   (:file "compile-simple-float-related-asts")
    (:file "compile-cons-related-asts")
    (:file "compile-standard-object-related-asts")
    (:file "compile-array-related-asts")))
