@@ -176,3 +176,7 @@ has already been inlined, the CALL instruction is replaced by a NOP
 instruction with the original translated instruction as its target.  I
 have not thought about the situations in which this transformation is
 valid, but it is certainly valid in some situations.
+
+The definition of SIMPLE function needs to be more precise.  For one
+thing, I suggest handling only functions with required parameters that
+are all lexical variables.
