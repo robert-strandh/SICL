@@ -13,3 +13,12 @@
   (declare (ignore var-cst form-cst env system))
   (error 'setq-constant-variable
 	 :expr (cleavir-env:name info)))
+
+(defmethod convert-setq
+    (var-cst form-cst (info cleavir-env:lexical-variable-info) env system)
+  (process-progn 
+   (list (cleavir-ast:make-setq-ast
+	  (cleavir-env:identity info)
+	  (convert form-cst env system)
+	  :origin (cst:source var-cst))
+	 (cleavir-env:identity info))))
