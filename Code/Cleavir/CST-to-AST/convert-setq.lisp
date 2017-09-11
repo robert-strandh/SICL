@@ -22,3 +22,17 @@
 	  (convert form-cst env system)
 	  :origin (cst:source var-cst))
 	 (cleavir-env:identity info))))
+
+(defmethod convert-setq
+    (var-cst form-cst (info cleavir-env:symbol-macro-info) env system)
+  (let* ((expansion (funcall (coerce *macroexpand-hook* 'function)
+                             (lambda (form env)
+                               (declare (ignore form env))
+                               (cleavir-env:expansion info))
+                             (cleavir-env:name info)
+                             env))
+         (expansion-cst (cst:reconstruct expansion var-cst)))
+    (convert (cst:list (cst:cst-from-expression 'setf)
+                       expansion-cst
+                       form-cst)
+             env system)))
