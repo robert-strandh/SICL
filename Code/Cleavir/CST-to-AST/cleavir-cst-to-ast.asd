@@ -27,6 +27,7 @@
    (:file "process-init-parameter")
    (:file "itemize-declaration-specifiers")
    (:file "itemize-lambda-list")
+   (:file "convert-setq")
    (:file "convert-code")
    (:file "convert-lambda-call")
    (:file "convert-constant")
