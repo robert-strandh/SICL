@@ -36,3 +36,5 @@
 (defgeneric convert-global-function-reference (info global-env system))
 
 (defgeneric convert-special-variable (cst info global-env system))
+
+(defgeneric convert-setq (var-cst form-cst info env system))
