@@ -217,7 +217,11 @@
        (eql-descriptor nil)))
     (eql-descriptor
      (etypecase descriptor2
-       ((or ltype function-descriptor) t) ; logic as above
+       (ltype
+        (subltypep (object-ltype (eql-descriptor-object descriptor1)
+                                 environment)
+                   descriptor2))
+       (function-descriptor t) ; can't really be determined
        (eql-descriptor (eql (eql-descriptor-object descriptor1)
                             (eql-descriptor-object descriptor2)))))
     (function-descriptor
