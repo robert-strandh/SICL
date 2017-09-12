@@ -360,3 +360,16 @@
     ((symbol (eql 'progv)) form environment system)
   (declare (ignore environment system))
   (error 'no-default-method :operator symbol :expr form))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting SETQ.
+;;;
+
+(defmethod convert-special
+    ((symbol (eql 'setq)) cst environment system)
+  (let* ((csts (cst:listify (cst:rest cst)))
+         (form-asts (loop for (var-cst form-cst) on csts by #'cddr
+                          collect (convert-elementary-setq
+                                   var-cst form-cst environment system))))
+    (process-progn form-asts)))
