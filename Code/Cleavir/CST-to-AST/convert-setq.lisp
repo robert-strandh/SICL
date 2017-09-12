@@ -48,3 +48,12 @@
 	    temp
 	    :origin (cst:source var-cst))
 	   temp))))
+
+(defmethod convert-setq
+    (var-cst form-cst (info cleavir-env:special-variable-info) env system)
+  (let ((global-env (cleavir-env:global-environment env)))
+    (convert-setq-special-variable var-cst
+                                   info
+				   (convert form-cst env system)
+				   global-env
+				   system)))
