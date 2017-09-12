@@ -130,12 +130,21 @@
 (defun binary-join (descriptor1 descriptor2 environment cache)
   (etypecase descriptor1
     (ltype
-     (ltype-join descriptor1
-                 (coerce-to-ltype descriptor2 environment cache)))
+     (if (ltype-bottom-p descriptor1 environment)
+         descriptor2
+         (ltype-join descriptor1
+                     (coerce-to-ltype descriptor2 environment cache))))
     (values-descriptor (assert (values-descriptor-p descriptor2))
      (values-binary-join descriptor1 descriptor2 environment))
-    (unboxed-descriptor (assert (equal descriptor1 descriptor2))
-     descriptor1)
+    (unboxed-descriptor
+     (etypecase descriptor2
+       (unboxed-descriptor
+        (assert (equal descriptor1 descriptor2))
+        descriptor1)
+       (ltype (if (ltype-bottom-p descriptor2 environment)
+                  descriptor1
+                  (error "BUG: Tried to join an unboxed type and a non-bottom type:
+code generator should have prevented this arrangement")))))
     (eql-descriptor
      (etypecase descriptor2
        (ltype
@@ -168,12 +177,21 @@
 (defun binary-meet (descriptor1 descriptor2 environment cache)
   (etypecase descriptor1
     (ltype
-     (ltype-meet descriptor1
-                 (coerce-to-ltype descriptor2 environment cache)))
+     (if (ltype-bottom-p descriptor1 environment)
+         descriptor1
+         (ltype-meet descriptor1
+                     (coerce-to-ltype descriptor2 environment cache))))
     (values-descriptor (assert (values-descriptor-p descriptor2))
      (values-binary-meet descriptor1 descriptor2 environment))
-    (unboxed-descriptor (assert (equal descriptor1 descriptor2))
-     descriptor1)
+    (unboxed-descriptor
+     (etypecase descriptor2
+       (unboxed-descriptor
+        (assert (equal descriptor1 descriptor2))
+        descriptor1)
+       (ltype (if (ltype-bottom-p descriptor2 environment)
+                  descriptor2
+                  (error "BUG: Tried to meet an unboxed type and a non-bottom type:
+code generator should have prevented this arrangement")))))
     (eql-descriptor
      (etypecase descriptor2
        (ltype
@@ -213,11 +231,16 @@
        ;; will never be inferred, and (b) this function is only
        ;; used for Kildall in which returning NIL here is ok.
        (function-descriptor nil)
-       ;; all ltypes are infinite, therefore
-       (eql-descriptor nil)))
+       (unboxed-descriptor (ltype-bottom-p descriptor1 environment))
+       ;; all ltypes but one are infinite, therefore
+       (eql-descriptor (ltype-bottom-p descriptor1 environment))))
     (eql-descriptor
      (etypecase descriptor2
-       ((or ltype function-descriptor) t) ; logic as above
+       (ltype
+        (subltypep (object-ltype (eql-descriptor-object descriptor1)
+                                 environment)
+                   descriptor2))
+       (function-descriptor t) ; can't really be determined
        (eql-descriptor (eql (eql-descriptor-object descriptor1)
                             (eql-descriptor-object descriptor2)))))
     (function-descriptor
