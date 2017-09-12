@@ -57,3 +57,10 @@
 				   (convert form-cst env system)
 				   global-env
 				   system)))
+
+(defun convert-elementary-setq (var-cst form-cst env system)
+  (convert-setq var-cst
+		form-cst
+                (variable-info env (cst:raw var-cst))
+		env
+		system))
