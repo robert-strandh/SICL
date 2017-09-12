@@ -59,8 +59,23 @@
 				   system)))
 
 (defun convert-elementary-setq (var-cst form-cst env system)
-  (convert-setq var-cst
-		form-cst
-                (variable-info env (cst:raw var-cst))
-		env
-		system))
+  (let* ((symbol (cst:raw var-cst))
+         (info (cleavir-env:variable-info env symbol)))
+    (loop while (null info)
+	  do (restart-case (error 'cleavir-env:no-variable-info
+				  :name symbol
+				  :origin (cst:source var-cst))
+	       (recover ()
+		 :report (lambda (stream)
+			   (format stream "Consider the variable as special."))
+                 (setf info
+                       (make-instance 'cleavir-env:special-variable-info
+                         :name symbol)))
+	       (substitute (new-symbol)
+		 :report (lambda (stream)
+			   (format stream "Substitute a different name."))
+		 :interactive (lambda ()
+				(format *query-io* "Enter new name: ")
+				(list (read *query-io*)))
+		 (setq info (cleavir-env:variable-info env new-symbol)))))
+    (convert-setq var-cst form-cst info env system)))
