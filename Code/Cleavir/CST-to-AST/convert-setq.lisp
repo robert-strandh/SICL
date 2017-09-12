@@ -36,3 +36,15 @@
                        expansion-cst
                        form-cst)
              env system)))
+
+(defmethod convert-setq-special-variable
+    (var-cst form-ast info global-env system)
+  (declare (ignore system))
+  (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
+    (process-progn
+     (list (cleavir-ast:make-setq-ast temp form-ast)
+	   (cleavir-ast:make-set-symbol-value-ast
+	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info))
+	    temp
+	    :origin (cst:source var-cst))
+	   temp))))
