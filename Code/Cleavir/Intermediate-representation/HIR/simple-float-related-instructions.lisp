@@ -1,34 +1,34 @@
 (cl:in-package #:cleavir-ir)
 
 (defmacro define-simple-one-arg-float-instruction (name make-name)
-  (progn
-    (defclass ,name (instruction one-successor-mixin)
-      ((%subtype :initarg :subtype :reader subtype)))
-    (defun ,make-name (input output successor)
-      (make-instance ',name
-        :inputs (list input)
-        :outputs (list output)
-        :successors (list successor)))))
+  `(progn
+     (defclass ,name (instruction one-successor-mixin)
+       ((%subtype :initarg :subtype :reader subtype)))
+     (defun ,make-name (input output successor)
+       (make-instance ',name
+         :inputs (list input)
+         :outputs (list output)
+         :successors (list successor)))))
 
 (defmacro define-simple-two-arg-float-instruction (name make-name)
-  (progn
-    (defclass ,name (instruction one-successor-mixin)
-      ((%subtype :initarg :subtype :reader subtype)))
-    (defun ,make-name (input1 input2 output successor)
-      (make-instance ',name
-        :inputs (list input1 input2)
-        :outputs (list output)
-        :successors (list successor)))))
+  `(progn
+     (defclass ,name (instruction one-successor-mixin)
+       ((%subtype :initarg :subtype :reader subtype)))
+     (defun ,make-name (input1 input2 output successor)
+       (make-instance ',name
+         :inputs (list input1 input2)
+         :outputs (list output)
+         :successors (list successor)))))
 
 (defmacro define-simple-float-comparison-instruction (name make-name)
-  (progn
-    (defclass ,name (instruction two-successors-mixin)
-      ((%subtype :initarg :subtype :reader subtype)))
-    (defun ,make-name (input1 input2 successor1 successor2)
-      (make-instance ',name
-        :inputs (list input1 input2)
-        :outputs '()
-        :successors (list successor1 successor2)))))
+  `(progn
+     (defclass ,name (instruction two-successors-mixin)
+       ((%subtype :initarg :subtype :reader subtype)))
+     (defun ,make-name (input1 input2 successor1 successor2)
+       (make-instance ',name
+         :inputs (list input1 input2)
+         :outputs '()
+         :successors (list successor1 successor2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
