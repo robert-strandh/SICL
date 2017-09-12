@@ -13,7 +13,7 @@
             (temps (make-temps arguments))
             (temp (cleavir-ir:new-temporary))
             (successor (make-instance 'cleavir-ir:box-instruction
-                         :subtype (cleavir-ast:subtype ast)
+                         :element-type (cleavir-ast:subtype ast)
                          :inputs (list temp)
                          :outputs (results context)
                          :successors (successors context))))
@@ -61,7 +61,7 @@
             (temps (make-temps arguments)))
        (compile-and-unbox-arguments
         arguments
-        temp
+        temps
         subtype
         (make-instance ',instruction-class
           :subtype subtype
