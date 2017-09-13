@@ -251,8 +251,14 @@ code generator should have prevented this arrangement")))))
        (eql-descriptor nil) ; logic as above
        (function-descriptor
         (sub-function-p descriptor1 descriptor2 environment))))
-    (unboxed-descriptor (assert (equal descriptor1 descriptor2))
-     t)))
+    (unboxed-descriptor
+     (etypecase descriptor2
+       (ltype (if (ltype-bottom-p descriptor2 environment)
+                  nil
+                  (error "BUG: Tried to compare an unboxed type and a non-bottom type:
+code generator should have prevented this arrangement")))
+       (unboxed-descriptor (assert (equal descriptor1 descriptor2))
+        t)))))
 
 (defun top-p (descriptor environment)
   (etypecase descriptor
