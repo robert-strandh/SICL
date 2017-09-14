@@ -41,3 +41,5 @@
 
 (defgeneric convert-setq-special-variable
     (var-cst form-ast info global-env system))
+
+(defgeneric convert-let (cst environment system))
