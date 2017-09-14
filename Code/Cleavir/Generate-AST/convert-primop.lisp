@@ -208,48 +208,23 @@
 (defmacro define-float-binop (primop ast)
   `(defmethod convert-special
        ((symbol (eql ',primop)) form env system)
-     (db origin (op arg1 arg2) form
+     (db origin (op type arg1 arg2) form
        (declare (ignore op))
        (make-instance ',ast
+         :subtype type
          :arg1-ast (convert arg1 env system)
          :arg2-ast (convert arg2 env system)
          :origin origin))))
 
-(define-float-binop cleavir-primop:short-float-add
-  cleavir-ast:short-float-add-ast)
-(define-float-binop cleavir-primop:short-float-sub
-  cleavir-ast:short-float-sub-ast)
-(define-float-binop cleavir-primop:short-float-mul
-  cleavir-ast:short-float-mul-ast)
-(define-float-binop cleavir-primop:short-float-div
-  cleavir-ast:short-float-div-ast)
 
-(define-float-binop cleavir-primop:single-float-add
-  cleavir-ast:single-float-add-ast)
-(define-float-binop cleavir-primop:single-float-sub
-  cleavir-ast:single-float-sub-ast)
-(define-float-binop cleavir-primop:single-float-mul
-  cleavir-ast:single-float-mul-ast)
-(define-float-binop cleavir-primop:single-float-div
-  cleavir-ast:single-float-div-ast)
-
-(define-float-binop cleavir-primop:double-float-add
-  cleavir-ast:double-float-add-ast)
-(define-float-binop cleavir-primop:double-float-sub
-  cleavir-ast:double-float-sub-ast)
-(define-float-binop cleavir-primop:double-float-mul
-  cleavir-ast:double-float-mul-ast)
-(define-float-binop cleavir-primop:double-float-div
-  cleavir-ast:double-float-div-ast)
-
-(define-float-binop cleavir-primop:long-float-add
-  cleavir-ast:long-float-add-ast)
-(define-float-binop cleavir-primop:long-float-sub
-  cleavir-ast:long-float-sub-ast)
-(define-float-binop cleavir-primop:long-float-mul
-  cleavir-ast:long-float-mul-ast)
-(define-float-binop cleavir-primop:long-float-div
-  cleavir-ast:long-float-div-ast)
+(define-float-binop cleavir-primop:float-add
+  cleavir-ast:float-add-ast)
+(define-float-binop cleavir-primop:float-sub
+  cleavir-ast:float-sub-ast)
+(define-float-binop cleavir-primop:float-mul
+  cleavir-ast:float-mul-ast)
+(define-float-binop cleavir-primop:float-div
+  cleavir-ast:float-div-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -269,49 +244,33 @@
 ;;; value of the second form, also a short float, the THEN branch
 ;;; is taken, and otherwise the ELSE branch is taken.
 
-(define-float-binop cleavir-primop:short-float-less
-  cleavir-ast:short-float-less-ast)
-(define-float-binop cleavir-primop:short-float-not-greater
-  cleavir-ast:short-float-not-greater-ast)
-(define-float-binop cleavir-primop:short-float-equal
-  cleavir-ast:short-float-equal-ast)
-(define-float-binop cleavir-primop:short-float-not-less
-  cleavir-ast:short-float-not-less-ast)
-(define-float-binop cleavir-primop:short-float-greater
-  cleavir-ast:short-float-greater-ast)
+(define-float-binop cleavir-primop:float-less
+  cleavir-ast:float-less-ast)
+(define-float-binop cleavir-primop:float-not-greater
+  cleavir-ast:float-not-greater-ast)
+(define-float-binop cleavir-primop:float-equal
+  cleavir-ast:float-equal-ast)
+(define-float-binop cleavir-primop:float-not-less
+  cleavir-ast:float-not-less-ast)
+(define-float-binop cleavir-primop:float-greater
+  cleavir-ast:float-greater-ast)
 
-(define-float-binop cleavir-primop:single-float-less
-  cleavir-ast:single-float-less-ast)
-(define-float-binop cleavir-primop:single-float-not-greater
-  cleavir-ast:single-float-not-greater-ast)
-(define-float-binop cleavir-primop:single-float-equal
-  cleavir-ast:single-float-equal-ast)
-(define-float-binop cleavir-primop:single-float-not-less
-  cleavir-ast:single-float-not-less-ast)
-(define-float-binop cleavir-primop:single-float-greater
-  cleavir-ast:single-float-greater-ast)
+(defmacro define-float-unop (primop ast)
+  `(defmethod convert-special
+       ((symbol (eql ',primop)) form env system)
+     (db origin (op type arg) form
+       (declare (ignore op))
+       (make-instance ',ast
+         :subtype type
+         :arg-ast (convert arg env system)
+         :origin origin))))
 
-(define-float-binop cleavir-primop:double-float-less
-  cleavir-ast:double-float-less-ast)
-(define-float-binop cleavir-primop:double-float-not-greater
-  cleavir-ast:double-float-not-greater-ast)
-(define-float-binop cleavir-primop:double-float-equal
-  cleavir-ast:double-float-equal-ast)
-(define-float-binop cleavir-primop:double-float-not-less
-  cleavir-ast:double-float-not-less-ast)
-(define-float-binop cleavir-primop:double-float-greater
-  cleavir-ast:double-float-greater-ast)
-
-(define-float-binop cleavir-primop:long-float-less
-  cleavir-ast:long-float-less-ast)
-(define-float-binop cleavir-primop:long-float-not-greater
-  cleavir-ast:long-float-not-greater-ast)
-(define-float-binop cleavir-primop:long-float-equal
-  cleavir-ast:long-float-equal-ast)
-(define-float-binop cleavir-primop:long-float-not-less
-  cleavir-ast:long-float-not-less-ast)
-(define-float-binop cleavir-primop:long-float-greater
-  cleavir-ast:long-float-greater-ast)
+(define-float-unop cleavir-primop:float-sin
+  cleavir-ast:float-sin-ast)
+(define-float-unop cleavir-primop:float-cos
+  cleavir-ast:float-cos-ast)
+(define-float-unop cleavir-primop:float-sqrt
+  cleavir-ast:float-sqrt-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
