@@ -50,6 +50,7 @@
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast
    #:rplacd-ast #:make-rplacd-ast
+   #:coerce-ast #:from-type #:to-type #:arg-ast
    #:variable-ast #:operation-ast #:normal-ast #:overflow-ast
    #:fixnum-add-ast #:make-fixnum-add-ast
    #:fixnum-sub-ast #:make-fixnum-sub-ast

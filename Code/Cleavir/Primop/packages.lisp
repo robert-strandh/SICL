@@ -80,6 +80,7 @@
    #:long-float-sin
    #:long-float-cos
    #:long-float-sqrt
+   #:coerce
    #:slot-read #:slot-write
    #:aref #:aset
    #:call-with-variable-bound

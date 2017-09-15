@@ -141,3 +141,24 @@
 ;;; the square root of the input.
 
 (define-simple-one-arg-float-instruction float-sqrt-instruction make-float-sqrt-instruction)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION COERCE-INSTRUCTION
+;;;
+;;; This instruction takes a single input which must be an unboxed
+;;; value of its FROM-TYPE. It has a single output which is an unboxed
+;;; value of its TO-TYPE with the same mathematical value as the input.
+
+(defclass coerce-instruction
+    (instruction one-successor-mixin)
+  ((%from-type :initarg :from :reader from-type)
+   (%to-type :initarg :to :reader to-type)))
+
+(defun make-coerce-instruction
+    (from to input output successor)
+  (make-instance 'coerce-instruction
+    :from from :to to
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))

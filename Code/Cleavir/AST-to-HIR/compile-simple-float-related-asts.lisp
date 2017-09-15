@@ -89,3 +89,32 @@
 (compile-simple-float-comparison-ast cleavir-ast:float-greater-ast
                                      cleavir-ir:float-less-instruction
                                      reverse)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a COERCE-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:coerce-ast) context)
+  (let ((from (cleavir-ast:from-type ast)) (to (cleavir-ast:to-type ast))
+        (arg (cleavir-ast:arg-ast ast))
+        (input (cleavir-ir:new-temporary))
+        (unboxed-input (cleavir-ir:new-temporary))
+        (unboxed-output (cleavir-ir:new-temporary)))
+    (compile-ast
+     arg
+     (context
+      (list input)
+      (list
+       (make-instance 'cleavir-ir:unbox-instruction
+         :element-type from
+         :inputs (list input)
+         :outputs (list unboxed-input)
+         :successors (list (cleavir-ir:make-coerce-instruction
+                             from to
+                             unboxed-input unboxed-output
+                             (make-instance 'cleavir-ir:box-instruction
+                               :element-type to
+                               :inputs (list unboxed-output)
+                               :outputs (results context)
+                               :successors (successors context))))))
+      (invocation context)))))
