@@ -12,4 +12,7 @@
 	   #:convert-global-function-reference
            #:convert-code
            #:convert-setq-special-variable
+           #:convert-setq
+           #:convert-let
+           #:convert-let*
            #:items-from-parameter-group))

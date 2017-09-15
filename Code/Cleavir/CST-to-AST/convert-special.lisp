@@ -373,3 +373,21 @@
                           collect (convert-elementary-setq
                                    var-cst form-cst environment system))))
     (process-progn form-asts)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LET.
+;;;
+
+(defmethod convert-special
+    ((symbol (eql 'let)) cst environment system)
+  (convert-let cst environment system))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LET*.
+;;;
+
+(defmethod convert-special
+    ((symbol (eql 'let*)) cst environment system)
+  (convert-let* cst environment system))
