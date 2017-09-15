@@ -73,6 +73,7 @@
    #:float-sub-instruction #:make-float-sub-instruction
    #:float-mul-instruction #:make-float-mul-instruction
    #:float-div-instruction #:make-float-div-instruction
+   #:subtype
    #:float-less-instruction #:make-float-less-instruction
    #:float-not-greater-instruction #:make-float-not-greater-instruction
    #:float-equal-instruction #:make-float-equal-instruction
