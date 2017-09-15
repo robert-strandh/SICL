@@ -42,6 +42,7 @@
         temps
         (cleavir-ast:subtype ast)
         (make-instance ',instruction-class
+          :subtype (cleavir-ast:subtype ast)
           :inputs temps
           :outputs (list temp)
           :successors (list successor))
