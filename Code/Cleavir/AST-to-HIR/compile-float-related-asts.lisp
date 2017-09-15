@@ -2,28 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Utility function for compiling a list of ASTs that are arguments
-;;; to some operation, and that need to be unboxed.  They will all be
-;;; compiled in a context with a single successor and a single result.
-
-(defun compile-and-unbox-arguments
-    (arguments temps element-type successor invocation)
-  (loop with succ = successor
-	for arg in (reverse arguments)
-	for temp in (reverse temps)
-	for inter = (make-temp)
-	do (setf succ
-		 (make-instance 'cleavir-ir:unbox-instruction
-		   :element-type element-type
-		   :inputs (list inter)
-		   :outputs (list temp)
-		   :successors (list succ)))
-	   (setf succ
-		 (compile-ast arg (context `(,inter) `(,succ) invocation)))
-	finally (return succ)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Method on COMPILE-AST for all floating-point arithmetic ASTs. 
 
 (defmacro compile-float-arithmetic-ast
