@@ -381,3 +381,15 @@
 
 (define-float-unop cleavir-primop:float-sqrt
   cleavir-ast:float-sqrt-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:UNREACHABLE.
+;;;
+;;; Recall that this primop indicates that execution of the form
+;;; should be impossible.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:unreachable)) cst env system)
+  (declare (ignore cst env system))
+  (make-instance 'cleavir-ast:unreachable-ast :origin (cst:source cst)))
