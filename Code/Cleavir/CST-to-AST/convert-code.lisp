@@ -178,7 +178,7 @@
                                     block-name-cst
                                     (form-csts body)))
 
-                 (cst:cstify (cons (cst:cst-from-expression 'block)
+                 (cst:cstify (cons (cst:cst-from-expression 'progn)
                                    (form-csts body))))
              new-env system)))
 
