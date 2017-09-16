@@ -298,7 +298,7 @@
                                      remaining-parameter-groups
                                      idspecs
                                      body
-                                     environment
+                                     new-env
                                      system)
       (values (set-or-bind-variable
                var lexical-ast ast new-env system)
