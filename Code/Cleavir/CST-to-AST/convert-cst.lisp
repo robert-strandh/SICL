@@ -109,3 +109,16 @@
     (cst (info cleavir-env:special-variable-info) env system)
   (let ((global-env (cleavir-env:global-environment env)))
     (convert-special-variable cst info global-env system)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a symbol that has a definition as a lexical variable.
+
+;;; FIXME: Add the code for wrapping the result in a THE-AST.
+
+(defmethod convert-cst
+    (cst (info cleavir-env:lexical-variable-info) env system)
+  (declare (ignore system))
+  (when (eq (cleavir-env:ignore info) 'ignore)
+    (warn 'ignored-variable-referenced :expr (cst:raw cst)))
+  (cleavir-env:identity info))
