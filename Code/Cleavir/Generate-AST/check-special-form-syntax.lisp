@@ -293,6 +293,7 @@
 (define-simple-check cleavir-primop:cdr 1)
 (define-simple-check cleavir-primop:rplaca 2)
 (define-simple-check cleavir-primop:rplacd 2)
+(define-simple-check cleavir-primop:coerce 3)
 (define-simple-check cleavir-primop:fixnum-less 2)
 (define-simple-check cleavir-primop:fixnum-not-greater 2)
 (define-simple-check cleavir-primop:fixnum-greater 2)

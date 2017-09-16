@@ -198,3 +198,28 @@
 ;;; evaluated.
 
 (define-simple-one-arg-float-ast float-sqrt-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class COERCE-AST.
+;;;
+;;; This AST can be used to convert a number of one type into another
+;;; type. Both types are compile-time constants.
+
+(defclass coerce-ast (ast one-value-ast-mixin)
+  ((%from-type :initarg :from :reader from-type)
+   (%to-type :initarg :to :reader to-type)
+   (%arg-ast :initarg :arg-ast :reader arg-ast)))
+
+(defun make-coerce-ast (from to arg-ast &key origin (policy *policy*))
+  (make-instance 'coerce-ast
+    :origin origin :policy policy
+    :from from :to to :arg-ast arg-ast))
+
+(cleavir-io:define-save-info coerce-ast
+  (:from from-type)
+  (:to to-type)
+  (:arg-ast arg-ast))
+
+(defmethod children ((ast coerce-ast))
+  (list (arg-ast ast)))

@@ -63,6 +63,7 @@
    #:use-instruction #:make-use-instruction
    #:aref-instruction #:aset-instruction
    #:element-type #:simple-p #:boxed-p
+   #:coerce-instruction #:from-type #:to-type #:make-coerce-instruction
    #:fixnum-add-instruction #:make-fixnum-add-instruction
    #:fixnum-sub-instruction #:make-fixnum-sub-instruction
    #:fixnum-less-instruction #:make-fixnum-less-instruction
@@ -72,60 +73,13 @@
    #:float-sub-instruction #:make-float-sub-instruction
    #:float-mul-instruction #:make-float-mul-instruction
    #:float-div-instruction #:make-float-div-instruction
+   #:subtype
    #:float-less-instruction #:make-float-less-instruction
    #:float-not-greater-instruction #:make-float-not-greater-instruction
    #:float-equal-instruction #:make-float-equal-instruction
    #:float-sin-instruction #:make-float-sin-instruction
    #:float-cos-instruction #:make-float-cos-instruction
    #:float-sqrt-instruction #:make-float-sqrt-instruction
-   #:short-float-add-instruction #:make-short-float-add-instruction 
-   #:short-float-sub-instruction #:make-short-float-sub-instruction 
-   #:short-float-mul-instruction #:make-short-float-mul-instruction 
-   #:short-float-div-instruction #:make-short-float-div-instruction 
-   #:short-float-sin-instruction #:make-short-float-sin-instruction 
-   #:short-float-cos-instruction #:make-short-float-cos-instruction 
-   #:short-float-sqrt-instruction #:make-short-float-sqrt-instruction 
-   #:short-float-less-instruction
-   #:short-float-not-greater-instruction
-   #:short-float-equal-instruction
-   #:single-float-add-instruction #:make-single-float-add-instruction 
-   #:single-float-sub-instruction #:make-single-float-sub-instruction 
-   #:single-float-mul-instruction #:make-single-float-mul-instruction 
-   #:single-float-div-instruction #:make-single-float-div-instruction 
-   #:single-float-sin-instruction #:make-single-float-sin-instruction 
-   #:single-float-cos-instruction #:make-single-float-cos-instruction 
-   #:single-float-sqrt-instruction #:make-single-float-sqrt-instruction 
-   #:single-float-less-instruction
-   #:single-float-not-greater-instruction
-   #:single-float-equal-instruction
-   #:double-float-add-instruction #:make-double-float-add-instruction 
-   #:double-float-sub-instruction #:make-double-float-sub-instruction 
-   #:double-float-mul-instruction #:make-double-float-mul-instruction 
-   #:double-float-div-instruction #:make-double-float-div-instruction 
-   #:double-float-sin-instruction #:make-double-float-sin-instruction 
-   #:double-float-cos-instruction #:make-double-float-cos-instruction 
-   #:double-float-sqrt-instruction #:make-double-float-sqrt-instruction 
-   #:double-float-less-instruction
-   #:double-float-not-greater-instruction
-   #:double-float-equal-instruction
-   #:long-float-add-instruction #:make-long-float-add-instruction 
-   #:long-float-sub-instruction #:make-long-float-sub-instruction 
-   #:long-float-mul-instruction #:make-long-float-mul-instruction 
-   #:long-float-div-instruction #:make-long-float-div-instruction 
-   #:long-float-sin-instruction #:make-long-float-sin-instruction 
-   #:long-float-cos-instruction #:make-long-float-cos-instruction 
-   #:long-float-sqrt-instruction #:make-long-float-sqrt-instruction 
-   #:long-float-less-instruction
-   #:long-float-not-greater-instruction
-   #:long-float-equal-instruction
-   #:unboxed-integer-to-unboxed-short-float-instruction
-   #:make-unboxed-integer-to-unboxed-short-float-instruction
-   #:unboxed-integer-to-unboxed-single-float-instruction
-   #:make-unboxed-integer-to-unboxed-single-float-instruction
-   #:unboxed-integer-to-unboxed-double-float-instruction
-   #:make-unboxed-integer-to-unboxed-double-float-instruction
-   #:unboxed-integer-to-unboxed-long-float-instruction
-   #:make-unboxed-integer-to-unboxed-long-float-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction

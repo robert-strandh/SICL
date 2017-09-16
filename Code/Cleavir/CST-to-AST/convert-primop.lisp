@@ -384,6 +384,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:COERCE.
+;;;
+;;; This primop is used to convert between number types. It takes
+;;; three arguments. The first two are number types, and the last
+;;; is a form, the only argument that is evaluated.
+;;;
+;;; The value of the form must be of the number type. It is
+;;; converted into a new value of the second type.
+;;;
+;;; This primop can be used for implementing CL:COERCE and CL:FLOAT,
+;;; as well as for arithmetic contagion.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:coerce)) form env system)
+  (cst:db origin (op type1-cst type2-cst form-cst) form
+    (make-instance 'cleavir-ast:coerce-ast
+     :from (cst:raw type1-cst) :to (cst:raw type2-cst)
+     :arg-ast (convert form-cst env system)
+     :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:UNREACHABLE.
 ;;;
 ;;; Recall that this primop indicates that execution of the form

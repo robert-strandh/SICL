@@ -9,7 +9,6 @@
    (:file "general-purpose-instructions")
    (:file "box-related-instructions")
    (:file "fixnum-related-instructions")
-   (:file "float-related-instructions")
    (:file "simple-float-related-instructions")
    (:file "cons-related-instructions")
    (:file "standard-object-related-instructions")

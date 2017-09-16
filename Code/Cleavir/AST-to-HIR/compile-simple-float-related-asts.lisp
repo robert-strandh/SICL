@@ -1,6 +1,26 @@
 (in-package #:cleavir-ast-to-hir)
 
-;;; The compile-and-unbox-arguments function is in compile-float-related-asts.lisp.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Utility function for compiling a list of ASTs that are arguments
+;;; to some operation, and that need to be unboxed.  They will all be
+;;; compiled in a context with a single successor and a single result.
+
+(defun compile-and-unbox-arguments
+    (arguments temps element-type successor invocation)
+  (loop with succ = successor
+	for arg in (reverse arguments)
+	for temp in (reverse temps)
+	for inter = (make-temp)
+	do (setf succ
+		 (make-instance 'cleavir-ir:unbox-instruction
+		   :element-type element-type
+		   :inputs (list inter)
+		   :outputs (list temp)
+		   :successors (list succ)))
+	   (setf succ
+		 (compile-ast arg (context `(,inter) `(,succ) invocation)))
+	finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -22,6 +42,7 @@
         temps
         (cleavir-ast:subtype ast)
         (make-instance ',instruction-class
+          :subtype (cleavir-ast:subtype ast)
           :inputs temps
           :outputs (list temp)
           :successors (list successor))
@@ -89,3 +110,32 @@
 (compile-simple-float-comparison-ast cleavir-ast:float-greater-ast
                                      cleavir-ir:float-less-instruction
                                      reverse)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a COERCE-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:coerce-ast) context)
+  (let ((from (cleavir-ast:from-type ast)) (to (cleavir-ast:to-type ast))
+        (arg (cleavir-ast:arg-ast ast))
+        (input (cleavir-ir:new-temporary))
+        (unboxed-input (cleavir-ir:new-temporary))
+        (unboxed-output (cleavir-ir:new-temporary)))
+    (compile-ast
+     arg
+     (context
+      (list input)
+      (list
+       (make-instance 'cleavir-ir:unbox-instruction
+         :element-type from
+         :inputs (list input)
+         :outputs (list unboxed-input)
+         :successors (list (cleavir-ir:make-coerce-instruction
+                             from to
+                             unboxed-input unboxed-output
+                             (make-instance 'cleavir-ir:box-instruction
+                               :element-type to
+                               :inputs (list unboxed-output)
+                               :outputs (results context)
+                               :successors (successors context))))))
+      (invocation context)))))

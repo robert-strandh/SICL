@@ -50,6 +50,7 @@
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast
    #:rplacd-ast #:make-rplacd-ast
+   #:coerce-ast #:from-type #:to-type #:arg-ast
    #:variable-ast #:operation-ast #:normal-ast #:overflow-ast
    #:fixnum-add-ast #:make-fixnum-add-ast
    #:fixnum-sub-ast #:make-fixnum-sub-ast
@@ -72,54 +73,6 @@
    #:float-cos-ast
    #:float-sqrt-ast
    #:subtype
-   #:short-float-add-ast
-   #:short-float-sub-ast
-   #:short-float-mul-ast
-   #:short-float-div-ast
-   #:short-float-less-ast
-   #:short-float-not-greater-ast
-   #:short-float-greater-ast
-   #:short-float-not-less-ast
-   #:short-float-equal-ast
-   #:short-float-sin-ast
-   #:short-float-cos-ast
-   #:short-float-sqrt-ast
-   #:single-float-add-ast
-   #:single-float-sub-ast
-   #:single-float-mul-ast
-   #:single-float-div-ast
-   #:single-float-less-ast
-   #:single-float-not-greater-ast
-   #:single-float-greater-ast
-   #:single-float-not-less-ast
-   #:single-float-equal-ast
-   #:single-float-sin-ast
-   #:single-float-cos-ast
-   #:single-float-sqrt-ast
-   #:double-float-add-ast
-   #:double-float-sub-ast
-   #:double-float-mul-ast
-   #:double-float-div-ast
-   #:double-float-less-ast
-   #:double-float-not-greater-ast
-   #:double-float-greater-ast
-   #:double-float-not-less-ast
-   #:double-float-equal-ast
-   #:double-float-sin-ast
-   #:double-float-cos-ast
-   #:double-float-sqrt-ast
-   #:long-float-add-ast
-   #:long-float-sub-ast
-   #:long-float-mul-ast
-   #:long-float-div-ast
-   #:long-float-less-ast
-   #:long-float-not-greater-ast
-   #:long-float-greater-ast
-   #:long-float-not-less-ast
-   #:long-float-equal-ast
-   #:long-float-sin-ast
-   #:long-float-cos-ast
-   #:long-float-sqrt-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:aset-ast

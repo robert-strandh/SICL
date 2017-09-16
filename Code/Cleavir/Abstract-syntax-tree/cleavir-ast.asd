@@ -9,7 +9,6 @@
    (:file "general-purpose-asts")
    (:file "fixnum-related-asts")
    (:file "simple-float-related-asts")
-   (:file "float-related-asts")
    (:file "cons-related-asts")
    (:file "standard-object-related-asts")
    (:file "array-related-asts")
