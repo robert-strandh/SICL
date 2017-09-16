@@ -9,10 +9,10 @@
 ;;;
 ;;; FIXME: do some more error checking.
 
-(defmethod convert-lambda-call (form env system)
-  (destructuring-bind ((lambda lambda-list &rest body) &rest args) form
-    (assert (eql lambda 'cl:lambda) nil
-            'lambda-call-first-symbol-not-lambda :expr lambda)
+(defmethod convert-lambda-call (cst env system)
+  (cst:db origin ((lambda-cst lambda-list-cst . body-cst) . args-cst) cst
+    (assert (eql (cst:raw lambda-cst) 'cl:lambda) nil
+            'lambda-call-first-symbol-not-lambda :expr (cst:raw lambda-cst))
     (cleavir-ast:make-call-ast
-     (convert-code lambda-list body env system)
-     (convert-sequence args env system))))
+     (convert-code lambda-list-cst body-cst env system)
+     (convert-sequence args-cst env system))))
