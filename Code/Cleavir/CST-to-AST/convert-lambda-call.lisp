@@ -15,4 +15,5 @@
             'lambda-call-first-symbol-not-lambda :expr (cst:raw lambda-cst))
     (cleavir-ast:make-call-ast
      (convert-code lambda-list-cst body-cst env system)
-     (convert-sequence args-cst env system))))
+     (convert-sequence args-cst env system)
+     :origin origin)))
