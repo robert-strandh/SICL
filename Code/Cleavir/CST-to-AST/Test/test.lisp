@@ -79,6 +79,51 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test4 ()
+  (let* ((cst (cst:cst-from-expression '(car *special1*)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:call-ast
+                  :argument-asts
+                  ([cleavir-ast:load-time-value-ast
+                      :read-only-p t
+                      :form '234
+                      :policy nil
+                      :origin (0 1)])
+                  :callee-ast
+                  [cleavir-ast:function-ast
+                     :body-ast
+                     [cleavir-ast:progn-ast
+                        :form-asts
+                        ([cleavir-ast:setq-ast
+                            :value-ast
+                            #1=[cleavir-ast:lexical-ast
+                                  :name #:|x|
+                                  :policy nil
+                                  :origin #2=(0 0 1 0)]
+                            :lhs-ast
+                            #3=[cleavir-ast:lexical-ast
+                                  :name cleavir-cst-to-ast-test::x
+                                  :policy nil
+                                  :origin #2#]
+                            :policy nil
+                            :origin #2#]
+                         [cleavir-ast:progn-ast
+                            :form-asts
+                            (#3#)
+                            :policy nil
+                            :origin nil])
+                        :policy nil
+                        :origin nil]
+                     :lambda-list
+                     (#1#)
+                     :policy nil
+                     :origin nil]
+                  :policy nil
+                  :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test20 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-add short-float *special1* *special2*)))
@@ -416,6 +461,7 @@
   (test1)
   (test2)
 ;;  (test3)
+  (test4)
   (test20)
   (test21)
   (test22)
