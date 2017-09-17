@@ -413,5 +413,5 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:unreachable)) cst env system)
-  (declare (ignore cst env system))
+  (declare (ignore env system))
   (make-instance 'cleavir-ast:unreachable-ast :origin (cst:source cst)))
