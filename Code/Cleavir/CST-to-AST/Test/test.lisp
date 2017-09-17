@@ -20,14 +20,14 @@
                                                         :name #:|x|
                                                         :origin (0 1 1 0)
                                                         :policy nil]]
-                                         [cleavir-ast:block-ast
+                                         [cleavir-ast:progn-ast
                                            :origin nil
                                            :policy nil
-                                           :body-ast [cleavir-ast:load-time-value-ast
-                                                       :form nil
-                                                       :origin nil
-                                                       :policy nil
-                                                       :read-only-p t]])]
+                                           :form-asts
+                                           ([cleavir-ast:lexical-ast
+                                              :name x
+                                              :origin (0 1 1 0)
+                                              :policy nil])])]
                  :lambda-list ([cleavir-ast:lexical-ast
                                  :name #:|x|
                                  :origin (0 1 1 0)
