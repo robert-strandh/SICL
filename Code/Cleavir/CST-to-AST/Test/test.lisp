@@ -80,7 +80,7 @@
       (assert (ast-equal-p ast1 ast2)))))
 
 (defun test4 ()
-  (let* ((cst (cst:cst-from-expression '(car *special1*)))
+  (let* ((cst (cst:cst-from-expression '((lambda (x) x) 234)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:call-ast
                   :argument-asts
