@@ -398,7 +398,8 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:coerce)) form env system)
-  (cst:db origin (op type1-cst type2-cst form-cst) form
+  (cst:db origin (op-cst type1-cst type2-cst form-cst) form
+    (declare (ignore op-cst))
     (make-instance 'cleavir-ast:coerce-ast
      :from (cst:raw type1-cst) :to (cst:raw type2-cst)
      :arg-ast (convert form-cst env system)
