@@ -3,7 +3,9 @@
 (defmethod convert-global-function-reference (cst info global-env system)
   (declare (ignore global-env))
   (cleavir-ast:make-fdefinition-ast
-   (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info) t)))
+   (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info)
+                                         t
+                                         :origin (cst:source cst))))
 
 (defmethod convert-function-reference
     (cst (info cleavir-env:global-function-info) env system)
