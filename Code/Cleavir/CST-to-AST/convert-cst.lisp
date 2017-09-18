@@ -52,8 +52,9 @@
 ;;; the concrete syntax tree representing the entire function-call
 ;;; form.
 (defun make-call (cst info env argument-csts system)
-  (let ((function-ast (convert-function-reference info env system))
-        (argument-asts (convert-sequence argument-csts env system)))
+  (let* ((name-cst (cst:first cst))
+         (function-ast (convert-function-reference name-cst info env system))
+         (argument-asts (convert-sequence argument-csts env system)))
     (cleavir-ast:make-call-ast function-ast argument-asts
                                :origin (cst:source cst))))
 

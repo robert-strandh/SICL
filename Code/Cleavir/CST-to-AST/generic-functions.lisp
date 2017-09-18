@@ -29,7 +29,7 @@
 ;;; behavior by adding methods to this function, specialized to the
 ;;; particular system defined by that client code.
 
-(defgeneric convert-function-reference (info env system))
+(defgeneric convert-function-reference (cst info env system))
 
 (defgeneric items-from-parameter-group (parameter-group))
 
