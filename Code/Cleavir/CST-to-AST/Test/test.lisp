@@ -64,16 +64,16 @@
                    :name-ast [cleavir-ast:load-time-value-ast
                                :origin (0 0)
                                :policy nil
-                               :read-only-p nil
+                               :read-only-p t
                                :form 'car]]
                  :argument-asts
                  ([cleavir-ast:symbol-value-ast
                     :origin (0 1)
                     :policy nil
                     :symbol-ast [cleavir-ast:load-time-value-ast
-                                  :origin (0)
+                                  :origin (0 1)
                                   :policy nil
-                                  :read-only-p nil
+                                  :read-only-p t
                                   :form '*special1*]])]))
     (assign-sources cst)
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
