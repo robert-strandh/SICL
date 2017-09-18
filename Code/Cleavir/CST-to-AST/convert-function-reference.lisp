@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-global-function-reference (info global-env system)
+(defmethod convert-global-function-reference (cst info global-env system)
   (declare (ignore global-env))
   (cleavir-ast:make-fdefinition-ast
    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info) t)))
@@ -8,7 +8,7 @@
 (defmethod convert-function-reference
     (cst (info cleavir-env:global-function-info) env system)
   (convert-global-function-reference
-   info (cleavir-env:global-environment env) system))
+   cst info (cleavir-env:global-environment env) system))
 
 (defmethod convert-function-reference
     (cst (info cleavir-env:local-function-info) env system)

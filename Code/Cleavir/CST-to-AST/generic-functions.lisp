@@ -33,7 +33,7 @@
 
 (defgeneric items-from-parameter-group (parameter-group))
 
-(defgeneric convert-global-function-reference (info global-env system))
+(defgeneric convert-global-function-reference (cst info global-env system))
 
 (defgeneric convert-special-variable (cst info global-env system))
 
