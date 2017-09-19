@@ -507,6 +507,7 @@
   (test2)
   (test3)
   (test4)
+  (test5)
   (test20)
   (test21)
   (test22)
