@@ -17,6 +17,9 @@
                                             (cst:second binding-cst))))
            (lambda-form-cst
              (make-instance 'cst:cons-cst
+               :raw `((lambda ,(mapcar #'cst:raw variable-csts)
+                        ,@(cst:raw body-forms-cst))
+                      ,(mapcar #'cst:raw initform-csts))
                :source origin
                :first (cst:cons (cst:cst-from-expression 'lambda)
                                 (cst:cons (cst:cstify variable-csts)
