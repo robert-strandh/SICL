@@ -167,6 +167,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-EQUAL.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:fixnum-equal)) cst env system)
+  (cst:db origin (equal-cst arg1-cst arg2-cst) cst
+    (declare (ignore equal-cst))
+    (make-instance 'cleavir-ast:fixnum-equal-ast
+      :arg1-ast (convert arg1-cst env system)
+      :arg2-ast (convert arg2-cst env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:LET-UNINITIALIZED.
 ;;;
 ;;; A form using the operator LET-UNINITIALIZED has the following
