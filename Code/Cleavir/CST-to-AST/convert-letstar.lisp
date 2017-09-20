@@ -28,7 +28,7 @@
                 for declaration-cst in (reverse item-specific-dspecs)
                 do (setf result
                          (cst:cons (cst:cst-from-expression 'let)
-                                   (cst:cons binding-cst
+                                   (cst:cons (cst:list binding-cst)
                                              (if (null declaration-cst)
                                                  result
                                                  (cst:cons (car declaration-cst)
