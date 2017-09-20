@@ -175,7 +175,8 @@
     (declare (ignore equal-cst))
     (make-instance 'cleavir-ast:fixnum-equal-ast
       :arg1-ast (convert arg1-cst env system)
-      :arg2-ast (convert arg2-cst env system))))
+      :arg2-ast (convert arg2-cst env system)
+      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
