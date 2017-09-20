@@ -29,6 +29,8 @@
                 do (setf result
                          (cst:cons (cst:cst-from-expression 'let)
                                    (cst:cons binding-cst
-                                             (cst:cons declaration-cst
-                                                       result))))
+                                             (if (null declaration-cst)
+                                                 result
+                                                 (cst:cons (car declaration-cst)
+                                                           result)))))
                 finally (return (convert result environment system))))))))
