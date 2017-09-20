@@ -22,8 +22,10 @@
             (itemize-declaration-specifiers (mapcar #'list variable-csts)
                                             canonical-declaration-specifiers)
           (loop with remaining-dspecs-cst = (cst:cstify remaining-dspecs)
-                with result = (cst:cstify (cons remaining-dspecs-cst
-                                                body-csts))
+                with result = (cst:cstify (if (null remaining-dspecs)
+                                              body-csts
+                                              (cons remaining-dspecs-cst
+                                                    body-csts)))
                 for binding-cst in (reverse binding-csts)
                 for declaration-cst in (reverse item-specific-dspecs)
                 do (setf result
