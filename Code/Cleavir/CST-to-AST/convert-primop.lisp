@@ -202,7 +202,7 @@
             do (let* ((variable-cst (cst:first rest-cst))
                       (variable-ast (cleavir-ast:make-lexical-ast
                                      (cst:raw variable-cst)
-                                     :origin (cst:source variables-cst))))
+                                     :origin (cst:source variable-cst))))
                  (setf new-env
                        (cleavir-env:add-lexical-variable
                         new-env (cst:raw variable-cst) variable-ast))))
