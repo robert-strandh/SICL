@@ -197,7 +197,7 @@
         (process-progn
          (list (cleavir-ast:make-tagbody-ast item-asts
                                              :origin origin)
-               (convert-constant nil env system)))))))
+               (convert-constant (cst:cst-from-expression nil) env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
