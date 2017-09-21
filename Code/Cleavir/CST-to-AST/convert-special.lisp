@@ -233,7 +233,9 @@
            false-ast
            :origin origin)
           (cleavir-ast:make-if-ast
-           (cleavir-ast:make-eq-ast test-ast (convert-constant nil env system))
+           (cleavir-ast:make-eq-ast
+            test-ast
+            (convert-constant (cst:cst-from-expression nil) env system))
            false-ast
            true-ast
            :origin origin)))))
