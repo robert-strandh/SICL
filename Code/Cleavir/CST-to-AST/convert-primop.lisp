@@ -194,7 +194,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:let-uninitialized)) cst env system)
-  (cst:db origin (let-cst variables-cst body-csts) cst
+  (cst:db origin (let-cst variables-cst . body-cst) cst
     (declare (ignore let-cst))
     (let ((new-env env))
       (loop for rest-cst = variables-cst then (cst:rest rest-cst)
@@ -206,7 +206,7 @@
                  (setf new-env
                        (cleavir-env:add-lexical-variable
                         new-env (cst:raw variable-cst) variable-ast))))
-      (process-progn (convert-sequence (cst:listify body-csts) new-env system)))))
+      (process-progn (convert-sequence body-cst new-env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
