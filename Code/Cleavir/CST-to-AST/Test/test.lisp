@@ -312,6 +312,33 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test12 ()
+  (let* ((cst (cst:cst-from-expression '(tagbody a (go a))))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:progn-ast
+                  :form-asts
+                  ([cleavir-ast:tagbody-ast
+                      :item-asts
+                      (#1=[cleavir-ast:tag-ast
+                             :name a
+                             :policy nil
+                             :origin (0 1)]
+                       [cleavir-ast:go-ast
+                          :tag-ast #1#
+                          :policy nil
+                          :origin (0 2)])
+                      :policy nil
+                      :origin (0)]
+                   [cleavir-ast:load-time-value-ast
+                      :read-only-p t
+                      :form 'nil
+                      :policy nil
+                      :origin nil])
+                  :policy nil
+                  :origin nil]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
 
 (defun test20 ()
   (let* ((cst (cst:cst-from-expression
@@ -911,6 +938,7 @@
   (test9)
   (test10)
   (test11)
+  (test12)
   (test20)
   (test21)
   (test22)
