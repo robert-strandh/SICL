@@ -266,8 +266,7 @@
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
-      (process-progn
-       (convert-sequence form-csts env system)))))
+      (process-progn (convert-sequence form-csts env system) origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
