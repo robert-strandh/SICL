@@ -304,7 +304,7 @@
       (with-preserved-toplevel-ness
         (convert (cst:cons (make-instance 'cst:atom-cst
                              :raw 'locally
-                             :origin origin)
+                             :source origin)
                            body-cst)
                  new-env
                  system)))))
