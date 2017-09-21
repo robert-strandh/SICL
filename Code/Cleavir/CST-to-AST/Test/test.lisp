@@ -702,6 +702,22 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test50 ()
+  (let* ((cst (cst:cst-from-expression
+               '(cleavir-primop:let-uninitialized (x) x)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:progn-ast
+                  :form-asts
+                  ([cleavir-ast:lexical-ast
+                      :name cleavir-cst-to-ast-test::x
+                      :policy nil
+                      :origin (0 1 0)])
+                  :policy nil
+                  :origin nil]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test ()
   (test1)
   (test2)
@@ -725,4 +741,5 @@
   (test41)
   (test42)
   (test43)
-  (test44))
+  (test44)
+  (test50))
