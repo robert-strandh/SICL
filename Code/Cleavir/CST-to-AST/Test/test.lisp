@@ -340,6 +340,48 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test13 ()
+  (let* ((cst (cst:cst-from-expression '(if *special1* 234 345)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:if-ast
+                  :else-ast
+                  [cleavir-ast:load-time-value-ast
+                     :read-only-p t
+                     :form '234
+                     :policy nil
+                     :origin (0 2)]
+                  :then-ast
+                  [cleavir-ast:load-time-value-ast
+                     :read-only-p t
+                     :form '345
+                     :policy nil
+                     :origin (0 3)]
+                  :test-ast
+                  [cleavir-ast:eq-ast
+                     :arg2-ast
+                     [cleavir-ast:load-time-value-ast
+                        :read-only-p t
+                        :form 'nil
+                        :policy nil
+                        :origin nil]
+                     :arg1-ast
+                     [cleavir-ast:symbol-value-ast
+                        :symbol-ast
+                        [cleavir-ast:load-time-value-ast
+                           :read-only-p t
+                           :form '*special1*
+                           :policy nil
+                           :origin #1=(0 1)]
+                        :policy nil
+                        :origin #1#]
+                     :policy nil
+                     :origin nil]
+                  :policy nil
+                  :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test20 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-add short-float *special1* *special2*)))
@@ -939,6 +981,7 @@
   (test10)
   (test11)
   (test12)
+  (test13)
   (test20)
   (test21)
   (test22)
