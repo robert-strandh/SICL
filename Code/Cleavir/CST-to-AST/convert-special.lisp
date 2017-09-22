@@ -392,3 +392,23 @@
 (defmethod convert-special
     ((symbol (eql 'let*)) cst environment system)
   (convert-let* cst environment system))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LOCALLY.
+;;;
+
+(defmethod convert-special
+    ((symbol (eql 'locally)) cst environment system)
+  (cst:db origin (locally-cst . body-forms-cst) cst
+    (declare (ignore locally-cst))
+    (multiple-value-bind (declaration-csts body-csts)
+        (cst:separate-ordinary-body body-forms-cst)
+      (let* ((canonical-declaration-specifiers
+               (cst:canonicalize-declarations system declaration-csts))
+             (new-env (augment-environment-with-declarations
+                       environment canonical-declaration-specifiers))
+             (body-cst (cst:cstify body-csts)))
+        (with-preserved-toplevel-ness
+          (process-progn (convert-sequence body-cst new-env system)))))))
