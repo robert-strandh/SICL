@@ -50,11 +50,12 @@
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
-;;; form.
-(defun make-call (cst info env argument-csts system)
+;;; form.  ARGUMENTS-CST is a CST representing the sequence of
+;;; arguments to the call.
+(defun make-call (cst info env arguments-cst system)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-function-reference name-cst info env system))
-         (argument-asts (convert-sequence argument-csts env system)))
+         (argument-asts (convert-sequence arguments-cst env system)))
     (cleavir-ast:make-call-ast function-ast argument-asts
                                :origin (cst:source cst))))
 
