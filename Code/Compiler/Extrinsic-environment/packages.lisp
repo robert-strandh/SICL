@@ -11,5 +11,6 @@
 	   #:symbol-value)
   (:export #:environment
 	   #:symbol-value
+           #:cst-eval
 	   #:load
 	   #:load-source-with-environments))
