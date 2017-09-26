@@ -132,6 +132,7 @@
    (:file "translate-hir")
    (:file "environment-defclass")
    (:file "customization")
+   (:file "cst-customization")
    (:file "eval")
    (:file "cst-eval")
    (:file "repl")
