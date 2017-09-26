@@ -107,6 +107,7 @@
 	       :sicl-conditions
 	       :closer-mop
 	       :cleavir-generate-ast
+	       :cleavir-cst-to-ast
 	       :cleavir-ast-transformations
 	       :cleavir-ast-to-hir
 	       :cleavir-hir
@@ -132,6 +133,7 @@
    (:file "environment-defclass")
    (:file "customization")
    (:file "eval")
+   (:file "cst-eval")
    (:file "repl")
    (:file "load")
    (:file "load-file-defun")
