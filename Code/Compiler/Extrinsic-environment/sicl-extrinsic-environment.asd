@@ -135,6 +135,7 @@
    (:file "eval")
    (:file "cst-eval")
    (:file "repl")
+   (:file "cst-repl")
    (:file "load")
    (:file "load-file-defun")
    (:file "import-from-host")
