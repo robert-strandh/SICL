@@ -8,6 +8,7 @@
            #:convert-constant-to-immediate
            #:convert-special
            #:convert-special-binding
+           #:convert-special-variable
            #:convert-variable
 	   #:convert-function-reference
 	   #:convert-global-function-reference
