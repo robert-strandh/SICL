@@ -57,23 +57,31 @@
 ;;; that.  Instead we want it to generate a call to (SETF
 ;;; SICL-EXTRINSIC-ENVIRONMENT:SYMBOL-VALUE), passing it the new
 ;;; value, the symbol naming the variable, and the environment.
-(defmethod cleavir-generate-ast:convert-setq-special-variable
-    ((info cleavir-env:special-variable-info) var form-ast (env environment) system)
-  (declare (ignore var))
+(defmethod cleavir-cst-to-ast:convert-setq-special-variable
+    (var-cst
+     form-ast
+     (info cleavir-env:special-variable-info)
+     (env environment)
+     system)
   (declare (ignore system))
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
     (cleavir-ast:make-load-time-value-ast
      '(sicl-genv:function-cell
        '(setf sicl-extrinsic-environment:symbol-value)
-       sicl-genv:*global-environment*)))
+       sicl-genv:*global-environment*)
+     nil
+     :origin (cst:source var-cst))
+    :origin (cst:source var-cst))
    (list form-ast
 	 (cleavir-ast:make-load-time-value-ast
 	  `',(cleavir-env:name info)
-	  t)
+	  t
+          :origin (cst:source var-cst))
 	 (cleavir-ast:make-load-time-value-ast
 	  'sicl-genv:*global-environment*
-	  nil))))
+	  nil))
+   :origin (cst:source var-cst)))
 
 ;;; The default method on CLEAVIR-GENERATE-AST:CONVERT-SPECIAL-BINDING
 ;;; generates a call to CLEAVIR-PRIMOP:CALL-WITH-VARIABLE-BOUND, but
