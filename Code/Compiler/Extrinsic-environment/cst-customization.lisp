@@ -30,21 +30,26 @@
 ;;; representing UNBOUND in that environment, and to retrieve the
 ;;; global value cell in case the variable is not bound in the dynamic
 ;;; run-time environment.
-(defmethod cleavir-generate-ast:convert-special-variable
-    ((info cleavir-env:special-variable-info) (env environment) system)
+(defmethod cleavir-cst-to-ast:convert-special-variable
+    (cst (info cleavir-env:special-variable-info) (env environment) system)
   (declare (ignore system))
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
     (cleavir-ast:make-load-time-value-ast
      '(sicl-genv:function-cell
        'sicl-extrinsic-environment:symbol-value
-       (sicl-genv:global-environment))))
+       (sicl-genv:global-environment))
+     nil
+     :origin (cst:source cst))
+    :origin (cst:source cst))
    (list (cleavir-ast:make-load-time-value-ast
 	  `',(cleavir-env:name info)
-	  t)
+	  t
+          :origin (cst:source cst))
 	 (cleavir-ast:make-load-time-value-ast
 	  'sicl-genv:*global-environment*
-	  t))))
+	  t))
+   :origin (cst:source cst)))
 
 ;;; When we are asked to compile an assignment to a special variable,
 ;;; by default Cleavir generates a SET-SYMBOL-VALUE-AST taking the
