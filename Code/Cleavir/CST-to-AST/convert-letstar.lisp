@@ -22,17 +22,19 @@
             (itemize-declaration-specifiers (mapcar #'list variable-csts)
                                             canonical-declaration-specifiers)
           (loop with remaining-dspecs-cst = (cst:cstify remaining-dspecs)
-                with result = (cst:cstify (if (null remaining-dspecs)
-                                              body-csts
-                                              (cons remaining-dspecs-cst
-                                                    body-csts)))
+                with result = (cst:cstify
+                               (cons (cst:cst-from-expression 'locally)
+                                     (if (null remaining-dspecs)
+                                         body-csts
+                                         (cons remaining-dspecs-cst
+                                               body-csts))))
                 for binding-cst in (reverse binding-csts)
                 for declaration-cst in (reverse item-specific-dspecs)
                 do (setf result
-                         (cst:cons (cst:cst-from-expression 'let)
-                                   (cst:cons (cst:list binding-cst)
-                                             (if (null declaration-cst)
-                                                 result
-                                                 (cst:cons (car declaration-cst)
-                                                           result)))))
+                         (cst:list (cst:cst-from-expression 'let)
+                                   (cst:list binding-cst)
+                                   (if (null declaration-cst)
+                                       result
+                                       (cst:cons (car declaration-cst)
+                                                 result))))
                 finally (return (convert result environment system))))))))
