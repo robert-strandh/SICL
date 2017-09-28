@@ -10,9 +10,9 @@
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:ast)) cst env system)
   (declare (ignore env system))
-  (cst:db origin (primop ast) cst
-    (declare (ignore primop))
-    ast))
+  (cst:db origin (primop-cst ast-cst) cst
+    (declare (ignore primop-cst))
+    (cst:raw ast-cst)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
