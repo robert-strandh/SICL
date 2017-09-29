@@ -199,7 +199,11 @@
                             :origin #2#]
                          [cleavir-ast:progn-ast
                             :form-asts
-                            (#3#)
+                            ([cleavir-ast:progn-ast
+                                :form-asts
+                                (#3#)
+                                :policy nil
+                                :origin nil])
                             :policy nil
                             :origin nil])
                         :policy nil
