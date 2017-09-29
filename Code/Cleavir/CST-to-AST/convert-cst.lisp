@@ -57,10 +57,11 @@
                 ;; declined.  Then we appply the macro function, and
                 ;; then convert the resulting form, just like we did
                 ;; when there was no compiler macro present.
-                (let* ((expanded-form (coerce *macroexpand-hook* 'function)
-                                      (cleavir-env:expander info)
-                                      form
-                                      env)
+                (let* ((expanded-form
+                         (funcall (coerce *macroexpand-hook* 'function)
+                                  (cleavir-env:expander info)
+                                  form
+                                  env))
                        (expanded-cst (cst:reconstruct expanded-form cst)))
                   (convert expanded-cst env system))
                 ;; If the two are not EQ, this means that the compiler
