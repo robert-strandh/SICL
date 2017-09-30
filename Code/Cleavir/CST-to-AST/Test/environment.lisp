@@ -47,3 +47,6 @@
         :ignore nil
         :name symbol)
       nil))
+
+(defmethod cleavir-environment:eval (form (env1 environment) (env2 environment))
+  (eval form))
