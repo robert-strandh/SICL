@@ -1085,6 +1085,22 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test50 ()
+  (let* ((cst (cst:cst-from-expression '(cleavir-primop:car 1)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:car-ast
+                  :cons-ast
+                  [cleavir-ast:load-time-value-ast
+                     :read-only-p t
+                     :form '1
+                     :policy nil
+                     :origin (0 1)]
+                  :policy nil
+                  :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test ()
   (test1)
   (test2)
@@ -1124,4 +1140,5 @@
   (test46)
   (test47)
   (test48)
-  (test49))
+  (test49)
+  (test50))
