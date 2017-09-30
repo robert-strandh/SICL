@@ -440,7 +440,7 @@
       (assert (ast-equal-p ast1 ast2)))))
 
 (defun test17 ()
-  (let* ((cst (cst:cst-from-expression '(macrolet ((m (x) `(car x))) (m 234))))
+  (let* ((cst (cst:cst-from-expression '(macrolet ((m (x) `(car ,x))) (m 234))))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:progn-ast
                   :form-asts
