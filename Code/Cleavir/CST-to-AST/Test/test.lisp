@@ -1063,6 +1063,28 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test49 ()
+  (let* ((cst (cst:cst-from-expression '(cleavir-primop:eq 1 2)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:eq-ast
+                  :arg2-ast
+                  [cleavir-ast:load-time-value-ast
+                     :read-only-p t
+                     :form '2
+                     :policy nil
+                     :origin (0 2)]
+                  :arg1-ast
+                  [cleavir-ast:load-time-value-ast
+                     :read-only-p t
+                     :form '1
+                     :policy nil
+                     :origin (0 1)]
+                  :policy nil
+                  :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test ()
   (test1)
   (test2)
@@ -1101,4 +1123,5 @@
   (test45)
   (test46)
   (test47)
-  (test48))
+  (test48)
+  (test49))
