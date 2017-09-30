@@ -307,13 +307,13 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:aref)) cst env system)
-  (cst:db origin (array-cst index-cst type simple-p boxed-p) cst
+  (cst:db origin (array-cst index-cst type-cst simple-p-cst boxed-p-cst) cst
     (make-instance 'cleavir-ast:aref-ast
       :array-ast (convert array-cst env system)
       :index-ast (convert index-cst env system)
-      :element-type type
-      :simple-p simple-p
-      :boxed-p boxed-p
+      :element-type (cst:raw type-cst)
+      :simple-p (cst:raw simple-p-cst)
+      :boxed-p (cst:raw boxed-p-cst)
       :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
