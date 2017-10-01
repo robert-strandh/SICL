@@ -16,7 +16,7 @@
 
 (defmethod items-from-parameter-group
     ((parameter-group cst:ordinary-rest-parameter-group))
-  (list (cst:name (cst:parameter parameter-group))))
+  (list (list (cst:name (cst:parameter parameter-group)))))
 
 (defmethod items-from-parameter-group
     ((parameter-group cst:ordinary-key-parameter-group))
