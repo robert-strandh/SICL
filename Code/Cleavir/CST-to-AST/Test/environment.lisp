@@ -50,3 +50,7 @@
 
 (defmethod cleavir-environment:eval (form (env1 environment) (env2 environment))
   (eval form))
+
+(defmethod cleavir-cst-to-ast:convert-constant-to-immediate
+    (constant (env environment) system)
+  (if (eql constant 42) 42 nil))
