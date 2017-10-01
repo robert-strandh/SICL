@@ -469,6 +469,17 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test18 ()
+  (let* ((cst (cst:cst-from-expression 42))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:immediate-ast
+                  :value 42
+                  :policy nil
+                  :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test20 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-add short-float *special1* *special2*)))
@@ -1407,6 +1418,7 @@
   (test15)
   (test16)
   (test17)
+  (test18)
   (test20)
   (test21)
   (test22)
