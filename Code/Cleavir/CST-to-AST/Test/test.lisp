@@ -1380,6 +1380,15 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test62 ()
+  (let* ((cst (cst:cst-from-expression
+               '(cleavir-primop:unreachable)))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:unreachable-ast :policy nil :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test ()
   (test1)
   (test2)
@@ -1431,4 +1440,5 @@
   (test58)
   (test59)
   (test60)
-  (test61))
+  (test61)
+  (test62))
