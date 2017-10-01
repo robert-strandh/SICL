@@ -332,8 +332,9 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:aset)) cst env system)
-  (cst:db origin (array-cst index-cst object-cst type-cst simple-p-cst boxed-p-cst)
+  (cst:db origin (aset-cst array-cst index-cst object-cst type-cst simple-p-cst boxed-p-cst)
       cst
+    (declare (ignore aset-cst))
     (make-instance 'cleavir-ast:aset-ast
       :array-ast (convert array-cst env system)
       :index-ast (convert index-cst env system)
