@@ -412,8 +412,8 @@
 ;;; as well as for arithmetic contagion.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:coerce)) form env system)
-  (cst:db origin (op-cst type1-cst type2-cst form-cst) form
+    ((symbol (eql 'cleavir-primop:coerce)) cst env system)
+  (cst:db origin (op-cst type1-cst type2-cst form-cst) cst
     (declare (ignore op-cst))
     (make-instance 'cleavir-ast:coerce-ast
      :from (cst:raw type1-cst) :to (cst:raw type2-cst)
