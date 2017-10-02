@@ -223,14 +223,15 @@
      body
      environment
      system)
-  (cons '&rest
-        (process-parameter (cst:parameter parameter-group)
-                           '()
-                           remaining-parameter-groups
-                           idspecs
-                           body
-                           environment
-                           system)))
+  (multiple-value-bind (ast lexical-lambda-list)
+      (process-parameter (cst:parameter parameter-group)
+                         '()
+                         remaining-parameter-groups
+                         idspecs
+                         body
+                         environment
+                         system)
+    (values ast (cons '&rest lexical-lambda-list))))
 
 (defmethod process-parameter-group :around
     ((parameter-group cst:optional-parameter-group)
