@@ -251,11 +251,14 @@
      body
      environment
      system)
-  (cons '&key
-        (append (call-next-method)
-                (if (cst:allow-other-keys parameter-group)
-                    '(&allow-other-keys)
-                    '()))))
+  (multiple-value-bind (ast lexical-lambda-list)
+      (call-next-method)
+    (values ast
+            (cons '&key
+                  (append lexical-lambda-list
+                          (if (cst:allow-other-keys parameter-group)
+                              '(&allow-other-keys)
+                              '()))))))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
