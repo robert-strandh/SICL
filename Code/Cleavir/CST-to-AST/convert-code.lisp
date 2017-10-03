@@ -276,6 +276,13 @@
                                       (first idspecs)
                                       environment))
 
+(defmethod new-environment-from-parameter
+    ((parameter cst:aux-parameter) idspecs environment system)
+  (augment-environment-with-variable (cst:name parameter)
+                                     (first idspecs)
+                                     environment
+                                     environment))
+
 (defmethod process-parameter
     ((parameter cst:simple-variable)
      remaining-parameters-in-group
