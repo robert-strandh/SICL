@@ -240,7 +240,9 @@
      body
      environment
      system)
-  (cons '&optional (call-next-method)))
+  (multiple-value-bind (ast lexical-lambda-list)
+      (call-next-method)
+    (values ast (cons '&optional lexical-lambda-list))))
 
 (defmethod process-parameter-group :around
     ((parameter-group cst:key-parameter-group)
