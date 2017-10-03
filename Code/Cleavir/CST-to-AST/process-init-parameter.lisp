@@ -43,12 +43,17 @@
          (name1 (make-symbol (string-downcase var)))
 	 (lexical-var-ast (cleavir-ast:make-lexical-ast
                            name1 :origin (cst:source var-cst)))
-         (supplied-p (cst:raw supplied-p-cst))
+         (supplied-p (if (null supplied-p-cst)
+                         nil
+                         (cst:raw supplied-p-cst)))
 	 (name2 (if (null supplied-p)
 		    (gensym)
 		    (make-symbol (string-downcase supplied-p))))
 	 (lexical-supplied-p-ast (cleavir-ast:make-lexical-ast
-                                  name2 :origin (cst:source supplied-p-cst))))
+                                  name2
+                                  :origin (if (null supplied-p)
+                                              nil
+                                              (cst:source supplied-p-cst)))))
     (values (process-progn
 	     (list (make-initialization-ast lexical-var-ast
 					    lexical-supplied-p-ast
