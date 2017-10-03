@@ -35,7 +35,9 @@
                                     always (aux element1 element2))))
                        ((and (symbolp x)
                              (symbolp y))
-                        (if (string= (symbol-name x) (symbol-name y))
+                        (if (or (and (null (symbol-package x))
+                                     (null (symbol-package y)))
+                                (string= (symbol-name x) (symbol-name y)))
                             t
                             (progn (report-difference x y) nil)))
                        ((not (equal x y))
