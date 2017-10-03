@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst-to-ast-test)
 
-(defun test1 ()
+(defun test01 ()
   (let* ((cst (cst:cst-from-expression '(function (lambda (x) x))))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:function-ast
@@ -36,7 +36,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test2 ()
+(defun test02 ()
   (let* ((cst (cst:cst-from-expression '*special1*))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:symbol-value-ast
@@ -51,7 +51,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test3 ()
+(defun test03 ()
   (let* ((cst (cst:cst-from-expression '(car *special1*)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:call-ast
@@ -79,7 +79,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test4 ()
+(defun test04 ()
   (let* ((cst (cst:cst-from-expression '((lambda (x) x) 234)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:call-ast
@@ -124,7 +124,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test5 ()
+(defun test05 ()
   (let* ((cst (cst:cst-from-expression '(let ((x 234)) x)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:call-ast
@@ -169,7 +169,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test6 ()
+(defun test06 ()
   (let* ((cst (cst:cst-from-expression '(let* ((x 234)) x)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:call-ast
@@ -218,7 +218,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test7 ()
+(defun test07 ()
   (let* ((cst (cst:cst-from-expression '(quote a)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:load-time-value-ast
@@ -230,7 +230,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test8 ()
+(defun test08 ()
   (let* ((cst (cst:cst-from-expression '(block a 234)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:block-ast
@@ -250,7 +250,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test9 ()
+(defun test09 ()
   (let* ((cst (cst:cst-from-expression '(block a (return-from a 234))))
          (env (make-instance 'environment))
          (ast2 #1=[cleavir-ast:block-ast
@@ -525,7 +525,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test20 ()
+(defun test40 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-add short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -555,7 +555,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test21 ()
+(defun test41 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-sub short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -585,7 +585,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test22 ()
+(defun test42 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-mul short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -615,7 +615,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test23 ()
+(defun test43 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-div short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -645,7 +645,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test24 ()
+(defun test44 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-less short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -675,7 +675,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test25 ()
+(defun test45 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-not-greater short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -705,7 +705,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test26 ()
+(defun test46 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-greater short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -735,7 +735,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test27 ()
+(defun test47 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-not-less short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -765,7 +765,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test28 ()
+(defun test48 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-equal short-float *special1* *special2*)))
          (env (make-instance 'environment))
@@ -795,7 +795,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test30 ()
+(defun test50 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-sin short-float *special1*)))
          (env (make-instance 'environment))
@@ -816,7 +816,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test31 ()
+(defun test51 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-cos short-float *special1*)))
          (env (make-instance 'environment))
@@ -837,7 +837,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test32 ()
+(defun test52 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-sqrt short-float *special1*)))
          (env (make-instance 'environment))
@@ -858,7 +858,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test40 ()
+(defun test60 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:fixnum-equal *special1* *special2*)))
          (env (make-instance 'environment))
@@ -889,7 +889,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test41 ()
+(defun test61 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:fixnum-less *special1* *special2*)))
          (env (make-instance 'environment))
@@ -920,7 +920,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test42 ()
+(defun test62 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:fixnum-not-greater *special1* *special2*)))
          (env (make-instance 'environment))
@@ -951,7 +951,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test43 ()
+(defun test63 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:fixnum-greater *special1* *special2*)))
          (env (make-instance 'environment))
@@ -982,7 +982,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test44 ()
+(defun test64 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:fixnum-not-less *special1* *special2*)))
          (env (make-instance 'environment))
@@ -1013,7 +1013,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test45 ()
+(defun test65 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:let-uninitialized (x) x)))
          (env (make-instance 'environment))
@@ -1029,7 +1029,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test46 ()
+(defun test66 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:let-uninitialized (x)
                  (cleavir-primop:fixnum-add *special1* *special2* x))))
@@ -1070,7 +1070,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test47 ()
+(defun test67 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:let-uninitialized (x)
                  (cleavir-primop:fixnum-sub *special1* *special2* x))))
@@ -1111,7 +1111,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test48 ()
+(defun test68 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:ast 234)))
          (env (make-instance 'environment))
          (ast2 234))
@@ -1119,7 +1119,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test49 ()
+(defun test69 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:eq 1 2)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:eq-ast
@@ -1141,7 +1141,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test50 ()
+(defun test70 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:car 1)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:car-ast
@@ -1157,7 +1157,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test51 ()
+(defun test71 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:cdr 1)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:cdr-ast
@@ -1173,7 +1173,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test52 ()
+(defun test72 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:rplaca 1 2)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:rplaca-ast
@@ -1195,7 +1195,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test53 ()
+(defun test73 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:rplacd 1 2)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:rplacd-ast
@@ -1217,7 +1217,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test54 ()
+(defun test74 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:typeq *special1* t)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:typeq-ast
@@ -1238,7 +1238,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test55 ()
+(defun test75 ()
   (let* ((cst (cst:cst-from-expression '(cleavir-primop:funcall *special1* 1)))
          (env (make-instance 'environment))
          (ast2 [cleavir-ast:call-ast
@@ -1264,7 +1264,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test56 ()
+(defun test76 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:multiple-value-call *special1* 1)))
          (env (make-instance 'environment))
@@ -1291,7 +1291,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test57 ()
+(defun test77 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:slot-read *special1* 1)))
          (env (make-instance 'environment))
@@ -1318,7 +1318,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test58 ()
+(defun test78 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:slot-write *special1* 1 2)))
          (env (make-instance 'environment))
@@ -1351,7 +1351,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test59 ()
+(defun test79 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:aref *special1* 1 t t t)))
          (env (make-instance 'environment))
@@ -1381,7 +1381,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test60 ()
+(defun test80 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:aset *special1* 1 2 t t t)))
          (env (make-instance 'environment))
@@ -1417,7 +1417,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test61 ()
+(defun test81 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:coerce integer double-float 1)))
          (env (make-instance 'environment))
@@ -1436,7 +1436,7 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
-(defun test62 ()
+(defun test82 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:unreachable)))
          (env (make-instance 'environment))
@@ -1446,15 +1446,15 @@
       (assert (ast-equal-p ast1 ast2)))))
 
 (defun test ()
-  (test1)
-  (test2)
-  (test3)
-  (test4)
-  (test5)
-  (test6)
-  (test7)
-  (test8)
-  (test9)
+  (test01)
+  (test02)
+  (test03)
+  (test04)
+  (test05)
+  (test06)
+  (test07)
+  (test08)
+  (test09)
   (test10)
   (test11)
   (test12)
@@ -1465,18 +1465,6 @@
   (test17)
   (test18)
   (test19)
-  (test20)
-  (test21)
-  (test22)
-  (test23)
-  (test24)
-  (test25)
-  (test26)
-  (test27)
-  (test28)
-  (test30)
-  (test31)
-  (test32)
   (test40)
   (test41)
   (test42)
@@ -1486,17 +1474,29 @@
   (test46)
   (test47)
   (test48)
-  (test49)
   (test50)
   (test51)
   (test52)
-  (test53)
-  (test54)
-  (test55)
-  (test56)
-  (test57)
-  (test58)
-  (test59)
   (test60)
   (test61)
-  (test62))
+  (test62)
+  (test63)
+  (test64)
+  (test65)
+  (test66)
+  (test67)
+  (test68)
+  (test69)
+  (test70)
+  (test71)
+  (test72)
+  (test73)
+  (test74)
+  (test75)
+  (test76)
+  (test77)
+  (test78)
+  (test79)
+  (test80)
+  (test81)
+  (test82))
