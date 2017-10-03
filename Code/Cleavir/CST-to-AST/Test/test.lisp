@@ -558,6 +558,41 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test21 ()
+  (let* ((cst (cst:cst-from-expression '(function (lambda (&aux (x 1)) x))))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:function-ast
+                  :body-ast
+                  [cleavir-ast:progn-ast
+                     :form-asts
+                     ([cleavir-ast:setq-ast
+                         :value-ast
+                         [cleavir-ast:load-time-value-ast
+                            :read-only-p t
+                            :form '1
+                            :policy nil
+                            :origin (0 1 1 1 1)]
+                         :lhs-ast
+                         #1=[cleavir-ast:lexical-ast
+                               :name x
+                               :policy nil
+                               :origin #2=(0 1 1 1 0)]
+                         :policy nil
+                         :origin #2#]
+                      [cleavir-ast:progn-ast
+                         :form-asts (#1#)
+                         :policy nil
+                         :origin nil])
+                     :policy nil
+                     :origin nil]
+                  :lambda-list nil
+                  :policy nil
+                  :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
+
 (defun test40 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-add short-float *special1* *special2*)))
@@ -1499,6 +1534,7 @@
   (test18)
   (test19)
   (test20)
+  (test21)
   (test40)
   (test41)
   (test42)
