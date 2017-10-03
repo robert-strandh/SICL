@@ -400,7 +400,7 @@
                                            body
                                            new-env
                                            system)))
-    (values (set-or-bind-variable var-cst init-ast ast environment system)
+    (values (set-or-bind-variable var-cst init-ast ast new-env system)
             '())))
 
 (defmethod convert-code (lambda-list-cst body-cst env system
