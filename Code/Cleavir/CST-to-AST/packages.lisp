@@ -18,4 +18,8 @@
            #:convert-setq
            #:convert-let
            #:convert-let*
+           #:process-parameter-groups
+           #:process-parameter-group
+           #:process-parameters-in-group
+           #:process-parameter
            #:items-from-parameter-group))
