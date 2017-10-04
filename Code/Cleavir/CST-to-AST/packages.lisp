@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export #:cst-to-ast
            #:*compiler*
+           #:convert
            #:convert-constant
            #:convert-constant-to-immediate
            #:convert-special
