@@ -381,7 +381,7 @@
                                   ast
                                   system)
         (values final-ast
-                (cons (cons keyword-cst lexical-asts)
+                (cons (cons (cst:raw keyword-cst) lexical-asts)
                       lexical-lambda-list))))))
 
 (defmethod process-parameter
