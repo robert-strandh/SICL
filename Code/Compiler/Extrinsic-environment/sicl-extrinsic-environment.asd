@@ -97,7 +97,8 @@
 ;;;; functionality must provide it.
 
 (defsystem :sicl-extrinsic-environment
-  :depends-on (:sicl-simple-environment
+  :depends-on (:concrete-syntax-tree
+               :sicl-simple-environment
 	       :sicl-environment
 	       :sicl-loop-support
 	       :sicl-arithmetic
