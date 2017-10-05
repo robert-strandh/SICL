@@ -663,6 +663,78 @@
     (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
       (assert (ast-equal-p ast1 ast2)))))
 
+(defun test23 ()
+  (let* ((cst (cst:cst-from-expression '(function (lambda (&key (x 1)) x))))
+         (env (make-instance 'environment))
+         (ast2 [cleavir-ast:function-ast
+                  :body-ast
+                  [cleavir-ast:progn-ast
+                     :form-asts
+                     ([cleavir-ast:if-ast
+                         :else-ast
+                         [cleavir-ast:load-time-value-ast
+                            :read-only-p t
+                            :form 'nil
+                            :policy nil
+                            :origin nil]
+                         :then-ast
+                         [cleavir-ast:setq-ast
+                            :value-ast
+                            [cleavir-ast:load-time-value-ast
+                               :read-only-p t
+                               :form '1
+                               :policy nil
+                               :origin (0 1 1 1 1)]
+                            :lhs-ast
+                            #1=[cleavir-ast:lexical-ast
+                                  :name #:|x|
+                                  :policy nil
+                                  :origin #2=(0 1 1 1 0)]
+                            :policy nil
+                            :origin nil]
+                         :test-ast
+                         [cleavir-ast:eq-ast
+                            :arg2-ast
+                            [cleavir-ast:load-time-value-ast
+                               :read-only-p t
+                               :form 'nil
+                               :policy nil
+                               :origin nil]
+                            :arg1-ast
+                            #3=[cleavir-ast:lexical-ast
+                                  :name #:g317068
+                                  :policy nil
+                                  :origin nil]
+                            :policy nil
+                            :origin nil]
+                         :policy nil
+                         :origin nil]
+                      [cleavir-ast:progn-ast
+                         :form-asts
+                         ([cleavir-ast:setq-ast
+                             :value-ast #1#
+                             :lhs-ast
+                             #4=[cleavir-ast:lexical-ast
+                                   :name x
+                                   :policy nil
+                                   :origin #2#]
+                             :policy nil
+                             :origin #2#]
+                          [cleavir-ast:progn-ast
+                             :form-asts (#4#)
+                             :policy nil
+                             :origin nil])
+                         :policy nil
+                         :origin nil])
+                     :policy nil
+                     :origin nil]
+                  :lambda-list (&key (:x #1# #3#))
+                  :policy nil
+                  :origin (0)]))
+    (assign-sources cst)
+    (let ((ast1 (cleavir-cst-to-ast:cst-to-ast cst env nil)))
+      (assert (ast-equal-p ast1 ast2)))))
+
 (defun test40 ()
   (let* ((cst (cst:cst-from-expression
                '(cleavir-primop:float-add short-float *special1* *special2*)))
@@ -1606,6 +1678,7 @@
   (test20)
   (test21)
   (test22)
+  (test23)
   (test40)
   (test41)
   (test42)
