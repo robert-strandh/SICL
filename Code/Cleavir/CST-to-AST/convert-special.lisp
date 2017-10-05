@@ -171,6 +171,13 @@
                     name-cst result)))
 	finally (return result)))
 
+;;; Given an environment and the name of a function, return the
+;;; LEXICAL-AST that will have the function with that name as a value.
+;;; It is known that the environment contains an entry corresponding
+;;; to the name given as an argument.
+(defun function-lexical (environment name)
+  (cleavir-env:identity (cleavir-env:function-info environment name)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting TAGBODY.
