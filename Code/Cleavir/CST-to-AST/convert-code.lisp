@@ -325,7 +325,9 @@
      environment
      system)
   (let* ((var-cst (cst:name parameter))
-         (init-form-cst (cst:form parameter))
+         (init-form-cst (if (null (cst:form parameter))
+                            (cst:cst-from-expression nil)
+                            (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
          (new-env (new-environment-from-parameter parameter
                                                   idspecs
@@ -358,7 +360,9 @@
      environment
      system)
   (let* ((var-cst (cst:name parameter))
-         (init-form-cst (cst:form parameter))
+         (init-form-cst (if (null (cst:form parameter))
+                            (cst:cst-from-expression nil)
+                            (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
          (keyword-cst (cst:keyword parameter))
          (new-env (new-environment-from-parameter parameter
