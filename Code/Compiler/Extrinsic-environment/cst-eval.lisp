@@ -13,7 +13,7 @@
       (declare (ignore ignore))
       (cons fun (cleavir-ir:forms hir)))))
 
-(defmethod cst-eval (cst environment1 (environment2 environment))
+(defmethod cleavir-env:cst-eval (cst environment1 (environment2 environment))
   (let ((form (cst:raw cst)))
     (cond ((and (consp form)
                 (consp (cdr form))
