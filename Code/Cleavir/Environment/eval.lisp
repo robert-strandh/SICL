@@ -93,6 +93,13 @@
 (defmethod eval (form environment1 (environment2 entry))
   (eval form environment1 (next environment2)))
 
+;;; This version of EVAL takes a concrete syntax tree rather than a
+;;; Common Lisp form.
+(defgeneric cst-eval (cst environment dispatch-environment))
+
+(defmethod cst-eval (cst environment1 (environment2 entry))
+  (cst-eval cst environment1 (next environment2)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function MACRO-FUNCTION.
