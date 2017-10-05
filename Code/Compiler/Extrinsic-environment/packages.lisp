@@ -14,4 +14,5 @@
            #:cst-eval
            #:cst-repl
 	   #:load
-	   #:load-source-with-environments))
+	   #:load-source-with-environments
+	   #:cst-load-source-with-environments))
