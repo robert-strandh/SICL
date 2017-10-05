@@ -31,10 +31,14 @@
                 for binding-cst in (reverse binding-csts)
                 for declaration-cst in (reverse item-specific-dspecs)
                 do (setf result
-                         (cst:list (cst:cst-from-expression 'let)
-                                   (cst:list binding-cst)
-                                   (if (null declaration-cst)
-                                       result
-                                       (cst:cons (car declaration-cst)
-                                                 result))))
+                         (cst:cstify
+                          (cons (cst:cst-from-expression 'let)
+                                (cons (cst:list binding-cst)
+                                      (if (null declaration-cst)
+                                          (list result)
+                                          (list (cst:cstify
+                                                 (cons
+                                                  (cst:cst-from-expression 'declare)
+                                                  declaration-cst))
+                                                result))))))
                 finally (return (convert result environment system))))))))
