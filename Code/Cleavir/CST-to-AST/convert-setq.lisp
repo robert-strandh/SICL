@@ -53,8 +53,8 @@
     (var-cst form-cst (info cleavir-env:special-variable-info) env system)
   (let ((global-env (cleavir-env:global-environment env)))
     (convert-setq-special-variable var-cst
-                                   info
-				   (convert form-cst env system)
+                                   (convert form-cst env system)
+				   info
 				   global-env
 				   system)))
 
