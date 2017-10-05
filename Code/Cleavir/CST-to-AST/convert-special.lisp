@@ -72,8 +72,8 @@
     (cst:db s (eval-when situations . body) form
       (declare (ignore eval-when))
       (let ((raw-situations (cst:raw situations)))
-        (if (or (eq *compiler* 'cl:compile)
-                (eq *compiler* 'cl:eval)
+        (if (or (eq cleavir-generate-ast:*compiler* 'cl:compile)
+                (eq cleavir-generate-ast:*compiler* 'cl:eval)
                 (not *current-form-is-top-level-p*))
             (if (or (member :execute raw-situations)
                     (member 'cl:eval raw-situations))
