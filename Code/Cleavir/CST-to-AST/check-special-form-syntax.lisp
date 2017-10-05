@@ -1,5 +1,7 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+(defgeneric check-special-form-syntax (head-symbol cst))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking FUNCTION.
