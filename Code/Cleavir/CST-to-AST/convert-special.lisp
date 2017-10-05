@@ -223,7 +223,8 @@
     (let ((test-ast (convert test-cst env system))
           (true-ast (convert then-cst env system))
           (false-ast (if (cst:null tail-cst)
-                         (convert-constant nil env system)
+                         (convert-constant (cst:cst-from-expression nil)
+                                           env system)
                          (cst:db s (else-cst) tail-cst
                            (convert else-cst env system)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
