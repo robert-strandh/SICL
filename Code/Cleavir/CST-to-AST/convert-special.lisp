@@ -156,6 +156,21 @@
       function-name
       (cst:second function-name)))
 
+;;; Take an environment, a CST representing a list of function
+;;; definitions, and return a new environment which is like the one
+;;; passed as an argument, except that is has been augmented by the
+;;; local function names in the list.
+(defun augment-environment-from-fdefs (environment definitions-cst)
+  (loop with result = environment
+        for remaining = definitions-cst then (cst:rest remaining)
+        until (cst:null remaining)
+        do (let* ((definition-cst (cst:first remaining))
+                  (name-cst (cst:first definition-cst)))
+             (setf result
+                   (augment-environment-with-local-function-name
+                    name-cst result)))
+	finally (return result)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting TAGBODY.
