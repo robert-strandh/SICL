@@ -9,7 +9,7 @@
 	 (when (equal form '(quit))
 	   (loop-finish))
 	 (let ((values (multiple-value-list
-			(cst-eval (cst:cst-from-expression form) env1 env2))))
+			(cleavir-env:cst-eval (cst:cst-from-expression form) env1 env2))))
 	   (loop for value in values
 		 do (print value))
 	   (terpri)))))
