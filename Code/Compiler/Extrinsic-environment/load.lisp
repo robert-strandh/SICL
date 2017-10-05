@@ -43,3 +43,27 @@
 	       (setf *package*
 		     (sicl-env:special-variable '*package*
 						linkage-environment))))))
+
+;;; This function is like LOAD-SOURCE-WITH-ENVIRONMENTS, except that
+;;; it converts the form to a concrete-syntax-tree and then calls
+;;; CLEAVIR-ENV:CST-EVAL instead of CLEAVIR-ENV:EVAL.
+(defun cst-load-source-with-environments
+    (file compilation-environment linkage-environment)
+  (with-open-file (stream file :direction :input)
+    (let ((*package* (sicl-env:special-variable '*package*
+						compilation-environment)))
+      (loop with eof = (list nil)
+	    for form = (sicl-reader:read stream nil eof)
+            for cst = (cst:cst-from-expression form)
+	    until (eq form eof)
+	    do (cleavir-env:cst-eval
+		cst compilation-environment linkage-environment)
+	       ;; The evaluation of the form might have change the
+	       ;; value of the variable *PACKAGE* in the target
+	       ;; environment.  But this function is executed as a
+	       ;; host function, so the next time we call READ, we
+	       ;; need to make sure the host variable *PACKAGE* also
+	       ;; changes.
+	       (setf *package*
+		     (sicl-env:special-variable '*package*
+						linkage-environment))))))
