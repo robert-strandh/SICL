@@ -1,7 +1,5 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-(defgeneric cst-eval (cst environment1 environment2))
-
 (defun compile-cst (cst environment1 environment2)
   (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
 	 (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 nil)))
