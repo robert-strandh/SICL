@@ -255,3 +255,9 @@
 	new-env
 	(augment-environment-with-variable
          supplied-p-cst dspecs new-env new-env))))
+
+(defun augment-environment-with-local-function-name (name-cst environment)
+  (let* ((name (cst:raw name-cst))
+         (origin (cst:source name-cst))
+         (var-ast (cleavir-ast:make-lexical-ast name :origin origin)))
+    (cleavir-env:add-local-function environment name var-ast)))
