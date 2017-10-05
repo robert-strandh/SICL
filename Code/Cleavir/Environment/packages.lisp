@@ -70,6 +70,7 @@
    #:add-inline
    #:add-inline-expansion
    #:eval
+   #:cst-eval
    #:macro-function
    #:compiler-macro-function
    #:symbol-macro-expansion
