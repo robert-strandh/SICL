@@ -204,6 +204,37 @@
 		 (function-lexical env name)
 		 fun-ast)))
 
+;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
+(defmethod convert-special ((symbol (eql 'flet)) cst env system)
+  (cst:db origin (flet-cst definitions-cst . body-cst) cst
+    (declare (ignore flet-cst))
+    (multiple-value-bind (declaration-csts body-csts)
+        (cst:separate-ordinary-body body-cst)
+      (let* ((canonical-declaration-specifiers
+               (cst:canonicalize-declarations system declaration-csts))
+             (defs (loop for remaining = definitions-cst
+                           then (cst:rest remaining)
+                         until (cst:null remaining)
+                         collect (let* ((def-cst (cst:first remaining))
+                                        (name-cst (cst:first def-cst))
+                                        (name (cst:raw name-cst))
+                                        (fun (convert-local-function
+                                              def-cst env system)))
+                                   (cons name fun))))
+             (new-env (augment-environment-from-fdefs env defs))
+             (init-asts
+               (compute-function-init-asts defs new-env))
+             (final-env (augment-environment-with-declarations
+                         new-env canonical-declaration-specifiers)))
+        (process-progn
+         (append init-asts
+		 ;; So that flet with empty body works.
+		 (list
+		  (process-progn
+		   (convert-sequence (cst:cstify body-csts)
+                                     final-env
+                                     system)))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting TAGBODY.
