@@ -81,6 +81,12 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a form that must be a proper list
+;;; in fact is not.
+(define-condition form-must-be-proper-list
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when the first argument to EVAL-WHEN is
 ;;; not a proper list.
 (define-condition situations-must-be-proper-list
