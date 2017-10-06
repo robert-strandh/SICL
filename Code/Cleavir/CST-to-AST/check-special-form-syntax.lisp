@@ -2,6 +2,12 @@
 
 (defgeneric check-special-form-syntax (head-symbol cst))
 
+(defun check-form-proper-list (cst)
+  (unless (cst:proper-list-p cst)
+    (error 'form-must-be-proper-list
+           :expr (cst:raw cst)
+           :origin (cst:source cst))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking FUNCTION.
