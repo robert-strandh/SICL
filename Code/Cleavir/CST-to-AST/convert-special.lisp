@@ -156,6 +156,14 @@
       function-name
       (cst:second function-name)))
 
+;;; Take an environment and a CST representing a single local function
+;;; definition.  Return a new environment which is like the one passed
+;;; as an argument, except the it has been augmented by the name of
+;;; the local function.
+(defun augment-environment-from-fdef (environment definition-cst)
+  (let ((name-cst (cst:first definition-cst)))
+    (augment-environment-with-local-function-name name-cst environment)))
+
 ;;; Take an environment, a CST representing a list of function
 ;;; definitions, and return a new environment which is like the one
 ;;; passed as an argument, except that is has been augmented by the
