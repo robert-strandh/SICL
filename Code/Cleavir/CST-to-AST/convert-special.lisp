@@ -184,6 +184,16 @@
 (defun function-lexical (environment name)
   (cleavir-env:identity (cleavir-env:function-info environment name)))
 
+;;; Convert a local function definition.
+(defun convert-local-function (definition-cst environment system)
+  (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
+    (let ((block-name-cst (block-name-from-function-name name-cst)))
+      (convert-code lambda-list-cst
+                    body-cst
+                    environment
+                    system
+                    block-name-cst))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting TAGBODY.
