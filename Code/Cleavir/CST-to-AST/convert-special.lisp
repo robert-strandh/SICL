@@ -172,11 +172,9 @@
   (loop with result = environment
         for remaining = definitions-cst then (cst:rest remaining)
         until (cst:null remaining)
-        do (let* ((definition-cst (cst:first remaining))
-                  (name-cst (cst:first definition-cst)))
+        do (let ((definition-cst (cst:first remaining)))
              (setf result
-                   (augment-environment-with-local-function-name
-                    name-cst result)))
+                   (augment-environment-from-fdef result definition-cst)))
 	finally (return result)))
 
 ;;; Given an environment and the name of a function, return the
