@@ -221,7 +221,41 @@
                                         (fun (convert-local-function
                                               def-cst env system)))
                                    (cons name fun))))
-             (new-env (augment-environment-from-fdefs env defs))
+             (new-env (augment-environment-from-fdefs env definitions-cst))
+             (init-asts
+               (compute-function-init-asts defs new-env))
+             (final-env (augment-environment-with-declarations
+                         new-env canonical-declaration-specifiers)))
+        (process-progn
+         (append init-asts
+		 ;; So that flet with empty body works.
+		 (list
+		  (process-progn
+		   (convert-sequence (cst:cstify body-csts)
+                                     final-env
+                                     system)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LABELS.
+
+(defmethod convert-special ((symbol (eql 'labels)) cst env system)
+  (cst:db origin (labels-cst definitions-cst . body-cst) cst
+    (declare (ignore labels-cst))
+    (multiple-value-bind (declaration-csts body-csts)
+        (cst:separate-ordinary-body body-cst)
+      (let* ((canonical-declaration-specifiers
+               (cst:canonicalize-declarations system declaration-csts))
+             (new-env (augment-environment-from-fdefs env definitions-cst))
+             (defs (loop for remaining = definitions-cst
+                           then (cst:rest remaining)
+                         until (cst:null remaining)
+                         collect (let* ((def-cst (cst:first remaining))
+                                        (name-cst (cst:first def-cst))
+                                        (name (cst:raw name-cst))
+                                        (fun (convert-local-function
+                                              def-cst new-env system)))
+                                   (cons name fun))))
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
