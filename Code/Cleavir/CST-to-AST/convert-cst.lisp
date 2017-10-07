@@ -119,6 +119,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting a CST representing a compound form that calls a local
+;;; function.  A local function can not have a compiler macro
+;;; associated with it.
+
+(defmethod convert-cst
+    (cst (info cleavir-env:local-function-info) env system)
+  (make-call cst info env (cst:rest cst) system))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting a symbol that has a definition as a special variable.
 ;;; We do this by generating a call to SYMBOL-VALUE.
 
