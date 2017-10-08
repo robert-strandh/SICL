@@ -413,7 +413,7 @@
             '())))
 
 (defmethod convert-code (lambda-list-cst body-cst env system
-			 &optional (block-name-cst nil))
+                         &optional (block-name-cst nil))
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list system lambda-list-cst)))
     (multiple-value-bind (declaration-csts documentation form-csts)
@@ -427,15 +427,15 @@
                (cst:canonicalize-declaration-specifiers
                 system
                 declaration-specifiers)))
-	(multiple-value-bind (idspecs rdspecs)
-	    (itemize-declaration-specifiers
-	     (itemize-lambda-list parsed-lambda-list)
-	     canonicalized-dspecs)
-	  (multiple-value-bind (ast lexical-lambda-list)
+        (multiple-value-bind (idspecs rdspecs)
+            (itemize-declaration-specifiers
+             (itemize-lambda-list parsed-lambda-list)
+             canonicalized-dspecs)
+          (multiple-value-bind (ast lexical-lambda-list)
               (process-parameter-groups
                (cst:children parsed-lambda-list)
                idspecs
                (make-body rdspecs form-csts block-name-cst)
                env
                system)
-	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
+            (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
