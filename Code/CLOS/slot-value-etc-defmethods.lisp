@@ -17,7 +17,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; SLOT-VALUE, (SETF SLOT-VALUE), 
+;;; SLOT-VALUE, (SETF SLOT-VALUE),
 ;;; SLOT-VALUE-USING-CLASS (SETF SLOT-VALUE-USING-CLASS)
 
 (defmethod slot-value-using-class ((class standard-class)
