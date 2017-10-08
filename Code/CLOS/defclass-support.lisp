@@ -206,7 +206,7 @@
 			 :datum option))
 		(setf result
 		      (append result `(:metaclass ',(cadr option)))))
-	       (t 
+	       (t
 		(setf result
 		      (append result `(,(car option) ,(cdr option)))))))
     result))
