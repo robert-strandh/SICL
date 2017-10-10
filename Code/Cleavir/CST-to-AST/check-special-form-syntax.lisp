@@ -56,13 +56,13 @@
   (let ((proper-cst (check-form-proper-list cst)))
     (if (check-argument-count cst 1 1)
         proper-cst
-        (let ((count (1- (length (cst:raw cst)))))
+        (let ((count (1- (length (cst:raw proper-cst)))))
           (restart-case (error 'incorrect-number-of-arguments
-                               :expr (cst:raw cst)
+                               :expr (cst:raw proper-cst)
                                :expected-min 1
                                :expected-max 1
                                :observed count
-                               :origin (cst:source cst))
+                               :origin (cst:source proper-cst))
             (recover ()
               :report (lambda (stream)
                         (format stream "Correct the argument count."))
@@ -71,24 +71,24 @@
                     (let ((raw '(quote nil)))
                       (make-instance 'cst:cons-cst
                         :raw raw
-                        :source (cst:source cst)
-                        :first (cst:first cst)
+                        :source (cst:source proper-cst)
+                        :first (cst:first proper-cst)
                         :rest (make-instance 'cons-cst
                                 :raw (cdr raw)
                                 :source nil
                                 :first (make-instance 'cst:atom-cst
                                          :raw nil
                                          :source nil)
-                                :rest (cst:rest cst))))
-                    (let ((raw (subseq (cst:raw cst) 0 2)))
+                                :rest (cst:rest proper-cst))))
+                    (let ((raw (subseq (cst:raw proper-cst) 0 2)))
                       (make-instance 'cst:cons-cst
                         :raw raw
-                        :source (cst:source cst)
-                        :first (cst:first cst)
+                        :source (cst:source proper-cst)
+                        :first (cst:first proper-cst)
                         :rest (make-instance 'cons-cst
                                 :raw (cdr raw)
                                 :source nil
-                                :first (cst:second cst)
+                                :first (cst:second proper-cst)
                                 :rest (make-instance 'cst:atom-cst
                                         :raw nil
                                         :source nil))))))))))))
