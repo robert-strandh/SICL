@@ -97,7 +97,7 @@
 ;;;
 ;;; Checking BLOCK.
 
-(defmethod check-special-form-syntax ((head (eql 'quote)) cst)
+(defmethod check-special-form-syntax ((head (eql 'block)) cst)
   (let ((proper-cst (check-form-proper-list cst)))
     (if (check-argument-count cst 1 nil)
         proper-cst
