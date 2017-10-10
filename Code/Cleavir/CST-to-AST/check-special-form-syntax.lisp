@@ -1,5 +1,16 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+;;; Return true if and only if the number of arguments greater than or
+;;; equal to MIN and less than or equal to MAX.  When MAX is NIL, then
+;;; there is no upper bound on the number of arguments.  It is assumed
+;;; that CST represents a proper list, so this must be checked first
+;;; by the caller.
+(defun check-argument-count (cst min max)
+  (let ((count (1- (length (cst:raw cst)))))
+    (and (>= count min)
+         (or (null max)
+             (<= count max)))))
+
 (defgeneric check-special-form-syntax (head-symbol cst))
 
 ;;; The argument of this function is a CONS-CST, but it either
