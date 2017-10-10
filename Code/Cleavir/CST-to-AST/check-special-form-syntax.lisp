@@ -50,6 +50,51 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking QUOTE.
+
+(defmethod check-special-form-syntax ((head (eql 'quote)) cst)
+  (let ((proper-cst (check-form-proper-list cst)))
+    (if (check-argument-count cst 1 1)
+        proper-cst
+        (let ((count (1- (length (cst:raw cst)))))
+          (restart-case (error 'incorrect-number-of-arguments
+                               :expr (cst:raw cst)
+                               :expected-min 1
+                               :expected-max 1
+                               :observed count
+                               :origin (cst:source cst))
+            (recover ()
+              :report (lambda (stream)
+                        (format stream "Correct the argument count."))
+              (return-from check-special-form-syntax
+                (if (zerop count)
+                    (let ((raw '(quote nil)))
+                      (make-instance 'cst:cons-cst
+                        :raw raw
+                        :source (cst:source cst)
+                        :first (cst:first cst)
+                        :rest (make-instance 'cons-cst
+                                :raw (cdr raw)
+                                :source nil
+                                :first (make-instance 'cst:atom-cst
+                                         :raw nil
+                                         :source nil)
+                                :rest (cst:rest cst))))
+                    (let ((raw (subseq (cst:raw cst) 0 2)))
+                      (make-instance 'cst:cons-cst
+                        :raw raw
+                        :source (cst:source cst)
+                        :first (cst:first cst)
+                        :rest (make-instance 'cons-cst
+                                :raw (cdr raw)
+                                :source nil
+                                :first (cst:second cst)
+                                :rest (make-instance 'cst:atom-cst
+                                        :raw nil
+                                        :source nil))))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking FUNCTION.
 
 (defun proper-function-name-p (name-cst)
