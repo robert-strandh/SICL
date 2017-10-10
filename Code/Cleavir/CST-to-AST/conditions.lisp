@@ -23,11 +23,6 @@
 ;;;
 ;;; More specific but still general conditions.
 
-;;; The class of conditions for function calls that can be
-;;; determined to be invalid.
-;;; These can be either style- or full warnings, so there's one
-;;; class for each. Bulky...
-;;; In the future there could be more for unknown keywords, etc.
 (define-condition argument-mismatch
     (acclimation:condition)
   ((%expected-min :initarg :expected-min :reader expected-min)
@@ -62,6 +57,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Specific conditions.
+
+;;; This condition is signaled when the number of arguments can be
+;;; determined to be incorrect at compile time, i.e. for special
+;;; operators, primitive operators, and calls to standard functions.
+;;;
+;;; EXPECTED-MIN is the minimum number of arguments allowed for the
+;;; operator and it is a non-negative integer.  EXPECTED-MAX is the
+;;; maximum number of arguments allowed for this operator, and is
+;;; either a non-negative integer, or NIL, meaning that the operator
+;;; can take an arbitrary number of arguments.  OBSERVED is the number
+;;; of arguments actually supplied.
+(define-condition incorrect-number-of-arguments
+    (compilation-program-error)
+  ((%expected-min :initarg :expected-min :reader expected-min)
+   (%expected-max :initarg :expected-max :reader expected-max)
+   (%observed :initarg :observed :reader observed)))
 
 ;;; This condition is signaled when a values type has erroneous
 ;;; syntax around &rest.
