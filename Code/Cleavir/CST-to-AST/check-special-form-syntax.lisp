@@ -95,6 +95,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking BLOCK.
+
+(defmethod check-special-form-syntax ((head (eql 'quote)) cst)
+  (let ((proper-cst (check-form-proper-list cst)))
+    (if (check-argument-count cst 1 nil)
+        proper-cst
+        (restart-case (error 'incorrect-number-of-arguments
+                             :expr (cst:raw proper-cst)
+                             :expected-min 1
+                             :expected-max nil
+                             :observed 0
+                             :origin (cst:source proper-cst))
+            (recover ()
+              :report (lambda (stream)
+                        (format stream "Correct the argument count."))
+              (return-from check-special-form-syntax
+                (let ((raw '(block nil)))
+                  (make-instance 'cst:cons-cst
+                    :raw raw
+                    :source (cst:source proper-cst)
+                    :first (cst:first proper-cst)
+                    :rest (make-instance 'cons-cst
+                            :raw (cdr raw)
+                            :source nil
+                            :first (cst:second proper-cst)
+                            :rest (make-instance 'cst:atom-cst
+                                    :raw nil
+                                    :source nil))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking FUNCTION.
 
 (defun proper-function-name-p (name-cst)
