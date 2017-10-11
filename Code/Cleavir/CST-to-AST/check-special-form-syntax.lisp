@@ -11,6 +11,21 @@
          (or (null max)
              (<= count max)))))
 
+;;; CST is known to represent a proper list, and it is known that the
+;;; length of that proper list is strictly greater than LENGTH.
+;;; Return a CST that has the same first LENGTH elements as CST,
+;;; preserving the origin of component CSTs as much as possible.
+(defun shorten-cst (cst length)
+  (labels ((aux (cst length raw)
+             (if (zerop length)
+                 (cst:cst-from-expression nil)
+                 (make-instance 'cst:cons-cst
+                   :raw raw
+                   :source (cst:source cst)
+                   :first (cst:first cst)
+                   :rest (aux (cst:rest cst) (1- length) (rest raw))))))
+    (aux cst length (subseq (cst:raw cst) 0 length))))
+
 (defgeneric check-special-form-syntax (head-symbol cst))
 
 ;;; The argument of this function is a CONS-CST, but it either
