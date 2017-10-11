@@ -26,6 +26,20 @@
                    :rest (aux (cst:rest cst) (1- length) (rest raw))))))
     (aux cst length (subseq (cst:raw cst) 0 length))))
 
+;;; Extend a CST, i.e. create a new CST that has the elements of CST
+;;; as its first elements, but that has CST-versions of
+;;; ADDITIONAL-ELEMENTS as its remaining elements.
+(defun extend-cst (cst &rest additional-elements)
+  (labels ((aux (cst raw)
+             (if (cst:null cst)
+                 (cst:cst-from-expression raw)
+                 (make-instance 'cst:cons-cst
+                   :raw raw
+                   :source (cst:source cst)
+                   :first (cst:first cst)
+                   :rest (aux (cst:rest cst) (rest raw))))))
+    (aux cst (append (cst:raw cst) additional-elements))))
+
 (defgeneric check-special-form-syntax (head-symbol cst))
 
 ;;; The argument of this function is a CONS-CST, but it either
