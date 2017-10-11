@@ -2,7 +2,8 @@
 
 (defun define-default-setf-expander (environment)
   (setf (sicl-env:default-setf-expander environment)
-	(lambda (form)
+	(lambda (form environment)
+          (declare (ignore environment))
 	  (if (symbolp form)
 	      (let ((new (gensym)))
 		(values '()

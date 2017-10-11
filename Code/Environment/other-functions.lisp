@@ -4,7 +4,7 @@
 ;;;
 ;;; Function SICL-ENV:GET-SETF-EXPANSION.
 ;;;
-;;; This function differs fro CL:GET-SETF-EXPANSION in that both its
+;;; This function differs from CL:GET-SETF-EXPANSION in that both its
 ;;; parameters are required.
 
 (defun expand-place (place environment)
@@ -30,4 +30,4 @@
 		       (or (setf-expander (first expanded-place)
 					  global-environment)
 			   (default-setf-expander global-environment)))))
-    (funcall expander expanded-place)))
+    (funcall expander expanded-place environment)))
