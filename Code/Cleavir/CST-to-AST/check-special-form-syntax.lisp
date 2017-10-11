@@ -77,9 +77,13 @@
                      (cst:first cst)
                      ;; Otherwise, generate a symbol
                      (cst:cst-from-expression (gensym)))
-                 ;; FIXME: do this better so that the origin is
-                 ;; preserved.
-                 (cst:list (cst:first cst) (cst:second cst))))))
+                 (let ((first (cst:first cst))
+                       (second (cst:second cst)))
+                   (cst:cons first
+                             (cst:cons second
+                                       (cst:list)
+                                       :source (cst:source second))
+                             :source (cst:source first)))))))
         (t
          (restart-case (error 'variable-must-be-a-symbol
                               :expr (cst:raw (cst:first cst))
