@@ -102,13 +102,9 @@
                        (gethash cst table))
                    (cst:cst-from-expression nil)
                    (progn (setf (gethash cst table) t)
-                          (let ((next (aux (cst:rest cst))))
-                            (make-instance 'cst:cons-cst
-                              :source (cst:source cst)
-                              :rest next
-                              :first (cst:first cst)
-                              :raw (cons (car (cst:raw cst))
-                                         (cst:raw next))))))))
+                          (cst:cons (cst:first cst)
+                                    (aux (cst:rest cst))
+                                    :source (cst:source cst))))))
       (aux cst))))
 
 ;;; Take a CST, check whether it represents a proper list.  If it
