@@ -118,18 +118,7 @@
               :report (lambda (stream)
                         (format stream "Correct the argument count."))
               (return-from check-special-form-syntax
-                (let ((raw '(block nil)))
-                  (make-instance 'cst:cons-cst
-                    :raw raw
-                    :source (cst:source cst)
-                    :first (cst:first cst)
-                    :rest (make-instance 'cons-cst
-                            :raw (cdr raw)
-                            :source nil
-                            :first (cst:second cst)
-                            :rest (make-instance 'cst:atom-cst
-                                    :raw nil
-                                    :source nil))))))))))
+                (extend-cst nil)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
