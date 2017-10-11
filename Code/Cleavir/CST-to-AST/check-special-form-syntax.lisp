@@ -108,6 +108,23 @@
           (return-from check-cst-proper-list (make-cst-proper cst))))
       cst))
 
+;;; Check the syntax of the bindings of a LET or a LET* form.  If the
+;;; syntax is incorrect, signal an error and propose a restart for
+;;; fixing it up.
+(defun check-bindings (cst)
+  (let ((cst (check-cst-proper-list cst 'bindings-must-be-proper-list)))
+    (labels ((aux (cst)
+               (if (cst:null cst)
+                   cst
+                   (let ((rest (aux (cst:rest cst)))
+                         (binding (check-binding (cst:first cst))))
+                     (if (and (eq rest (cst:rest cst))
+                              (eq binding (cst:first cst)))
+                         cst
+                         (cst:cons binding rest
+                                   :source (cst:source (cst:first cst))))))))
+      (aux cst))))
+
 (defgeneric check-special-form-syntax (head-symbol cst))
 
 ;;; The argument of this function is a CONS-CST, but it either
