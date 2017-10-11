@@ -95,18 +95,7 @@
                                          :raw nil
                                          :source nil)
                                 :rest (cst:rest cst))))
-                    (let ((raw (subseq (cst:raw cst) 0 2)))
-                      (make-instance 'cst:cons-cst
-                        :raw raw
-                        :source (cst:source cst)
-                        :first (cst:first cst)
-                        :rest (make-instance 'cons-cst
-                                :raw (cdr raw)
-                                :source nil
-                                :first (cst:second cst)
-                                :rest (make-instance 'cst:atom-cst
-                                        :raw nil
-                                        :source nil))))))))))))
+                    (shorten-cst cst 1)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
