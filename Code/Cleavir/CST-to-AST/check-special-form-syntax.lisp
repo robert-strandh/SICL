@@ -40,6 +40,55 @@
                    :rest (aux (cst:rest cst) (rest raw))))))
     (aux cst (append (cst:raw cst) additional-elements))))
 
+;;; Check the syntax of a single LET or LET* binding.  If the syntax
+;;; is incorrect, signal an error and propose a restart for fixing it
+;;; up.
+(defun check-binding (cst)
+  (cond ((or (and (cst:atom cst)
+                  (symbolp (cst:raw cst)))
+             (and (cst:consp cst)
+                  (cst:atom (cst:first cst))
+                  (symbolp (cst:raw (cst:first cst)))
+                  (or (cst:null (cst:rest cst))
+                      (and (cst:consp (cst:rest cst))
+                           (cst:null (cst:rest (cst:rest cst)))))))
+         cst)
+        ((cst:atom cst)
+         (restart-case (error 'binding-must-be-symbol-or-list
+                              :expr (cst:raw cst)
+                              :origin (cst:source cst))
+           (recover ()
+             :report (lambda (stream)
+                       (format stream "Replace with a symbol."))
+             (cst:cst-from-expression (gensym)))))
+        ((or (and (cst:atom (cst:rest cst))
+                  (not (cst:null (cst:rest cst))))
+             (not (cst:null (cst:rest (cst:rest cst)))))
+         (restart-case (error 'binding-must-have-length-one-or-two
+                              :expr (cst:raw cst)
+                              :origin (cst:source cst))
+           (recover ()
+             :report (lambda (stream)
+                       (format stream "Replace with a correct binding."))
+             (if (and (cst:atom (cst:rest cst))
+                      (not (cst:null (cst:rest cst))))
+                 (if (symbolp (cst:raw (cst:first cst)))
+                     ;; Replace the binding with the variable.
+                     (cst:first cst)
+                     ;; Otherwise, generate a symbol
+                     (cst:cst-from-expression (gensym)))
+                 ;; FIXME: do this better so that the origin is
+                 ;; preserved.
+                 (cst:list (cst:first cst) (cst:second cst))))))
+        (t
+         (restart-case (error 'variable-must-be-a-symbol
+                              :expr (cst:raw (cst:first cst))
+                              :origin (cst:source (cst:first cst)))
+           (recover ()
+             :report (lambda (stream)
+                       (format stream "Replace with a symbol."))
+             (cst:cst-from-expression (gensym)))))))
+
 (defgeneric check-special-form-syntax (head-symbol cst))
 
 ;;; The argument of this function is a CONS-CST, but it either
