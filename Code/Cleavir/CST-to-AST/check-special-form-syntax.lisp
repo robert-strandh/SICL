@@ -93,6 +93,21 @@
                        (format stream "Replace with a symbol."))
              (cst:cst-from-expression (gensym)))))))
 
+;;; Take a CST, check whether it represents a proper list.  If it
+;;; does, then return it.  If not signal an error that allows a
+;;; restart that creates a patched version of CST that represents a
+;;; proper list.  Error type is a symbol that is passed to ERROR.
+(defun check-cst-proper-list (cst error-type)
+  (if (cst:proper-list-p cst)
+      (restart-case (error error-type
+                           :expr (cst:raw cst)
+                           :origin (cst:source cst))
+        (recover ()
+          :report (lambda (stream)
+                    (format stream "Turn it into a proper list."))
+          (return-from check-cst-proper-list (make-cst-proper cst))))
+      cst))
+
 (defgeneric check-special-form-syntax (head-symbol cst))
 
 ;;; The argument of this function is a CONS-CST, but it either
@@ -110,21 +125,6 @@
                                     (aux (cst:rest cst))
                                     :source (cst:source cst))))))
       (aux cst))))
-
-;;; Take a CST, check whether it represents a proper list.  If it
-;;; does, then return it.  If not signal an error that allows a
-;;; restart that creates a patched version of CST that represents a
-;;; proper list.  Error type is a symbol that is passed to ERROR.
-(defun check-cst-proper-list (cst error-type)
-  (if (cst:proper-list-p cst)
-      (restart-case (error error-type
-                           :expr (cst:raw cst)
-                           :origin (cst:source cst))
-        (recover ()
-          :report (lambda (stream)
-                    (format stream "Turn it into a proper list."))
-          (return-from check-cst-proper-list (make-cst-proper cst))))
-      cst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
