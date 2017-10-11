@@ -97,18 +97,7 @@
                         (format stream "Correct the argument count."))
               (return-from check-special-form-syntax
                 (if (zerop count)
-                    (let ((raw '(quote nil)))
-                      (make-instance 'cst:cons-cst
-                        :raw raw
-                        :source (cst:source cst)
-                        :first (cst:first cst)
-                        :rest (make-instance 'cons-cst
-                                :raw (cdr raw)
-                                :source nil
-                                :first (make-instance 'cst:atom-cst
-                                         :raw nil
-                                         :source nil)
-                                :rest (cst:rest cst))))
+                    (extend-cst cst nil)
                     (shorten-cst cst 1)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
