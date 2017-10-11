@@ -115,7 +115,7 @@
 ;;; does, then return it.  If not signal an error that allows a
 ;;; restart that creates a patched version of CST that represents a
 ;;; proper list.  Error type is a symbol that is passed to ERROR.
-(defun check-form-proper-list (cst error-type)
+(defun check-cst-proper-list (cst error-type)
   (if (cst:proper-list-p cst)
       (restart-case (error error-type
                            :expr (cst:raw cst)
@@ -123,7 +123,7 @@
         (recover ()
           :report (lambda (stream)
                     (format stream "Turn it into a proper list."))
-          (return-from check-form-proper-list (make-cst-proper cst))))
+          (return-from check-cst-proper-list (make-cst-proper cst))))
       cst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -131,7 +131,7 @@
 ;;; Checking QUOTE.
 
 (defmethod check-special-form-syntax ((head (eql 'quote)) cst)
-  (let ((cst (check-form-proper-list cst 'form-must-be-proper-list)))
+  (let ((cst (check-cst-proper-list cst 'form-must-be-proper-list)))
     (if (check-argument-count cst 1 1)
         cst
         (let ((count (1- (length (cst:raw cst)))))
@@ -154,7 +154,7 @@
 ;;; Checking BLOCK.
 
 (defmethod check-special-form-syntax ((head (eql 'block)) cst)
-  (let ((cst (check-form-proper-list cst 'form-must-be-proper-list)))
+  (let ((cst (check-cst-proper-list cst 'form-must-be-proper-list)))
     (if (check-argument-count cst 1 nil)
         cst
         (restart-case (error 'incorrect-number-of-arguments
