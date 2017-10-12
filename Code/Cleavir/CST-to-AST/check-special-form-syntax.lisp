@@ -330,3 +330,11 @@
 
 (defmethod check-special-form-syntax ((head (eql 'tagbody)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking THE.
+
+(defmethod check-special-form-syntax ((head (eql 'the)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 2))
