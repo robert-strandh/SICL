@@ -265,3 +265,10 @@
 (defmethod check-special-form-syntax ((operator (eql 'multiple-value-prog1)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking PROGN.
+
+(defmethod check-special-form-syntax ((operator (eql 'progn)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list))
