@@ -64,22 +64,6 @@
 
 (defgeneric check-special-form-syntax (head-symbol cst))
 
-;;; The argument of this function is a CONS-CST, but it either
-;;; terminates with an ATOM-CST that is not NULL, or else, it is a
-;;; circular CST.  It makes a copy of CST except that the copy
-;;; is terminated by a NULL CST.
-(defun make-cst-proper (cst)
-  (let ((table (make-hash-table :test #'eq)))
-    (labels ((aux (cst)
-               (if (or (cst:atom cst)
-                       (gethash cst table))
-                   (cst:cst-from-expression nil)
-                   (progn (setf (gethash cst table) t)
-                          (cst:cons (cst:first cst)
-                                    (aux (cst:rest cst))
-                                    :source (cst:source cst))))))
-      (aux cst))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking QUOTE.
