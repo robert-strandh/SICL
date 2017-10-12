@@ -78,7 +78,13 @@
 
 (defmethod check-special-form-syntax ((head (eql 'block)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil))
+  (check-argument-count cst 1 nil)
+  (let* ((name-cst (cst:second cst))
+         (name (cst:raw name-cst)))
+    (unless (symbolp name)
+      (error 'block-name-must-be-a-symbol
+             :expr name
+             :origin (cst:source name-cst)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
