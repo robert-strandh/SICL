@@ -362,3 +362,43 @@
 (defmethod check-special-form-syntax ((head (eql 'catch)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Syntax checks for the PRIMOPs.
+
+;;; This macro can be used to define a simple syntax-check method,
+;;; where the form must be a proper list and it has a fixed number of
+;;; arguments.
+(defmacro define-simple-check (operation argcount)
+  `(defmethod check-special-form-syntax ((operator (eql ',operation)) cst)
+     (check-cst-proper-list cst 'form-must-be-proper-list)
+     (check-argument-count cst ,argcount ,argcount)))
+
+(define-simple-check cleavir-primop:eq 2)
+(define-simple-check cleavir-primop:car 1)
+(define-simple-check cleavir-primop:cdr 1)
+(define-simple-check cleavir-primop:rplaca 2)
+(define-simple-check cleavir-primop:rplacd 2)
+(define-simple-check cleavir-primop:coerce 3)
+(define-simple-check cleavir-primop:fixnum-less 2)
+(define-simple-check cleavir-primop:fixnum-not-greater 2)
+(define-simple-check cleavir-primop:fixnum-greater 2)
+(define-simple-check cleavir-primop:fixnum-not-less 2)
+(define-simple-check cleavir-primop:fixnum-equal 2)
+(define-simple-check cleavir-primop:aref 5)
+(define-simple-check cleavir-primop:aset 6)
+(define-simple-check cleavir-primop:float-add 3)
+(define-simple-check cleavir-primop:float-sub 3)
+(define-simple-check cleavir-primop:float-mul 3)
+(define-simple-check cleavir-primop:float-div 3)
+(define-simple-check cleavir-primop:float-less 3)
+(define-simple-check cleavir-primop:float-not-greater 3)
+(define-simple-check cleavir-primop:float-equal 3)
+(define-simple-check cleavir-primop:float-not-less 3)
+(define-simple-check cleavir-primop:float-greater 3)
+(define-simple-check cleavir-primop:float-sin 2)
+(define-simple-check cleavir-primop:float-cos 2)
+(define-simple-check cleavir-primop:float-sqrt 2)
+(define-simple-check cleavir-primop:unreachable 0)
+(define-simple-check cleavir-primop:ast 1)
