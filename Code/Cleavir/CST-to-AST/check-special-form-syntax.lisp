@@ -354,3 +354,11 @@
 (defmethod check-special-form-syntax ((head (eql 'unwind-protect)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking CATCH.
+
+(defmethod check-special-form-syntax ((head (eql 'catch)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
