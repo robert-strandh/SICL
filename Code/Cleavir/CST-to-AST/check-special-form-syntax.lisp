@@ -152,7 +152,7 @@
 ;;;
 ;;; Checking GO.
 
-(defmethod check-special-cst-syntax ((operator (eql 'go)) cst)
+(defmethod check-special-form-syntax ((operator (eql 'go)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1))
 
@@ -160,7 +160,7 @@
 ;;;
 ;;; Checking IF.
 
-(defmethod check-special-cst-syntax ((operator (eql 'if)) cst)
+(defmethod check-special-form-syntax ((operator (eql 'if)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 3))
 
@@ -204,12 +204,12 @@
         until (cst:null cst)
         do (check-binding (cst:first remaining))))
 
-(defmethod check-special-cst-syntax ((operator (eql 'let)) cst)
+(defmethod check-special-form-syntax ((operator (eql 'let)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (check-bindings (cst:second cst)))
 
-(defmethod check-special-cst-syntax ((operator (eql 'let*)) cst)
+(defmethod check-special-form-syntax ((operator (eql 'let*)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (check-bindings (cst:second cst)))
