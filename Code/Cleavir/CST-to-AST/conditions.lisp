@@ -58,6 +58,13 @@
 ;;;
 ;;; Specific conditions.
 
+;;; This condition is signaled by a call to ERROR that was introduced
+;;; as a replacement of a form that triggered a compilation error.
+(define-condition run-time-program-error
+    (program-error acclimation:condition)
+  ((%expr :initarg :expr :reader expr)
+   (%origin :initarg :origin :reader origin)))
+
 ;;; This condition is signaled when the number of arguments can be
 ;;; determined to be incorrect at compile time, i.e. for special
 ;;; operators, primitive operators, and calls to standard functions.
