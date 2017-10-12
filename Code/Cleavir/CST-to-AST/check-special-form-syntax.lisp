@@ -1,5 +1,14 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+;;; Take a CST, check whether it represents a proper list.  If it does
+;;; not represent ERROR-TYPE is a symbol that is passed to ERROR.
+(defun check-cst-proper-list (cst error-type)
+  (unless  (cst:proper-list-p cst)
+    (error error-type
+           :expr (cst:raw cst)
+           :origin (cst:source cst))))
+
+
 ;;; Check that the number of arguments greater than or equal to MIN
 ;;; and less than or equal to MAX.  When MAX is NIL, then there is no
 ;;; upper bound on the number of arguments.  If the argument count is
@@ -43,21 +52,6 @@
          (error 'variable-must-be-a-symbol
                 :expr (cst:raw (cst:first cst))
                 :origin (cst:source (cst:first cst))))))
-
-;;; Take a CST, check whether it represents a proper list.  If it
-;;; does, then return it.  If not signal an error that allows a
-;;; restart that creates a patched version of CST that represents a
-;;; proper list.  Error type is a symbol that is passed to ERROR.
-(defun check-cst-proper-list (cst error-type)
-  (if (cst:proper-list-p cst)
-      (restart-case (error error-type
-                           :expr (cst:raw cst)
-                           :origin (cst:source cst))
-        (recover ()
-          :report (lambda (stream)
-                    (format stream "Turn it into a proper list."))
-          (return-from check-cst-proper-list (make-cst-proper cst))))
-      cst))
 
 ;;; Check the syntax of the bindings of a LET or a LET* form.  If the
 ;;; syntax is incorrect, signal an error and propose a restart for
