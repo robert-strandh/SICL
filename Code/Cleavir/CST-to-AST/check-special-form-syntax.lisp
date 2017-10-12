@@ -402,3 +402,67 @@
 (define-simple-check cleavir-primop:float-sqrt 2)
 (define-simple-check cleavir-primop:unreachable 0)
 (define-simple-check cleavir-primop:ast 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking LET-UNINITIALIZED.
+
+(defmethod check-special-form-syntax
+    ((operator (eql 'cleavir-primop:let-uninitialized)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (assert (cst:proper-list-p (cst:second cst)))
+  (assert (every #'symbolp (cst:raw (cst:second cst)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FUNCALL.
+
+(defmethod check-special-form-syntax
+    ((operator (eql 'cleavir-primop:funcall)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking MULTIPLE-VALUE-CALL (primop).
+
+(defmethod check-special-form-syntax
+    ((operator (eql 'cleavir-primop:multiple-value-call)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking VALUES.
+
+(defmethod check-special-form-syntax
+    ((operator (eql 'cleavir-primop:values)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking TYPEQ.
+
+(defmethod check-special-form-syntax
+    ((operator (eql 'cleavir-primop:typeq)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-ADD
+
+(defmethod check-special-form-syntax
+    ((operator (eql 'cleavir-primop:fixnum-add)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 3 3))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking FIXNUM-SUB
+
+(defmethod check-special-form-syntax
+    ((operator (eql 'cleavir-primop:fixnum-sub)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 3 3))
