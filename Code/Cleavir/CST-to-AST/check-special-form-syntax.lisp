@@ -18,8 +18,7 @@
              :origin (cst:source cst)))))
 
 ;;; Check the syntax of a single LET or LET* binding.  If the syntax
-;;; is incorrect, signal an error and propose a restart for fixing it
-;;; up.
+;;; is incorrect, signal an error.
 (defun check-binding (cst)
   (cond ((or (and (cst:atom cst)
                   (symbolp (cst:raw cst)))
@@ -29,46 +28,21 @@
                   (or (cst:null (cst:rest cst))
                       (and (cst:consp (cst:rest cst))
                            (cst:null (cst:rest (cst:rest cst)))))))
-         cst)
+         nil)
         ((cst:atom cst)
-         (restart-case (error 'binding-must-be-symbol-or-list
-                              :expr (cst:raw cst)
-                              :origin (cst:source cst))
-           (recover ()
-             :report (lambda (stream)
-                       (format stream "Replace with a symbol."))
-             (cst:cst-from-expression (gensym)))))
+         (error 'binding-must-be-symbol-or-list
+                :expr (cst:raw cst)
+                :origin (cst:source cst)))
         ((or (and (cst:atom (cst:rest cst))
                   (not (cst:null (cst:rest cst))))
              (not (cst:null (cst:rest (cst:rest cst)))))
-         (restart-case (error 'binding-must-have-length-one-or-two
-                              :expr (cst:raw cst)
-                              :origin (cst:source cst))
-           (recover ()
-             :report (lambda (stream)
-                       (format stream "Replace with a correct binding."))
-             (if (and (cst:atom (cst:rest cst))
-                      (not (cst:null (cst:rest cst))))
-                 (if (symbolp (cst:raw (cst:first cst)))
-                     ;; Replace the binding with the variable.
-                     (cst:first cst)
-                     ;; Otherwise, generate a symbol
-                     (cst:cst-from-expression (gensym)))
-                 (let ((first (cst:first cst))
-                       (second (cst:second cst)))
-                   (cst:cons first
-                             (cst:cons second
-                                       (cst:list)
-                                       :source (cst:source second))
-                             :source (cst:source first)))))))
+         (error 'binding-must-have-length-one-or-two
+                :expr (cst:raw cst)
+                :origin (cst:source cst)))
         (t
-         (restart-case (error 'variable-must-be-a-symbol
-                              :expr (cst:raw (cst:first cst))
-                              :origin (cst:source (cst:first cst)))
-           (recover ()
-             :report (lambda (stream)
-                       (format stream "Replace with a symbol."))
-             (cst:cst-from-expression (gensym)))))))
+         (error 'variable-must-be-a-symbol
+                :expr (cst:raw (cst:first cst))
+                :origin (cst:source (cst:first cst))))))
 
 ;;; Take a CST, check whether it represents a proper list.  If it
 ;;; does, then return it.  If not signal an error that allows a
