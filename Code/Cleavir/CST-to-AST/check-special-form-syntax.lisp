@@ -236,3 +236,16 @@
 
 (defmethod check-special-form-syntax ((operator (eql 'locally)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking MACROLET.
+
+(defmethod check-special-form-syntax ((operator (eql 'macrolet)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (let ((definitions-cst (cst:second cst)))
+    (unless (cst:proper-list-p definitions-cst)
+      (error 'macrolet-definitions-must-be-proper-list
+             :expr (cst:raw definitions-cst)
+             :origin (cst:source definitions-cst)))))
