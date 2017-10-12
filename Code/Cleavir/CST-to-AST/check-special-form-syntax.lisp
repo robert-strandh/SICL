@@ -83,7 +83,7 @@
 ;;;
 ;;; Checking QUOTE.
 
-(defmethod check-special-form-syntax ((head (eql 'quote)) cst)
+(defmethod check-special-form-syntax ((operator (eql 'quote)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1))
 
@@ -91,7 +91,7 @@
 ;;;
 ;;; Checking BLOCK.
 
-(defmethod check-special-form-syntax ((head (eql 'block)) cst)
+(defmethod check-special-form-syntax ((operator (eql 'block)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (let* ((name-cst (cst:second cst))
