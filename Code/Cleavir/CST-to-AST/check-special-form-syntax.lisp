@@ -280,3 +280,17 @@
 (defmethod check-special-form-syntax ((operator (eql 'progv)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking RETURN-FROM.
+
+(defmethod check-special-form-syntax ((operator (eql 'return-from)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 2)
+  (let* ((block-name-cst (cst:second cst))
+         (block-name (cst:raw block-name-cst)))
+    (unless (symbolp block-name)
+      (error 'block-name-must-be-a-symbol
+             :expr block-name
+             :origin (cst:source block-name-cst)))))
