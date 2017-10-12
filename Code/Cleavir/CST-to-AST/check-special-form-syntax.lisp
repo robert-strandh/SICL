@@ -201,7 +201,7 @@
 (defun check-bindings (cst)
   (check-cst-proper-list cst 'bindings-must-be-proper-list)
   (loop for remaining = cst then (cst:rest remaining)
-        until (cst:null cst)
+        until (cst:null remaining)
         do (check-binding (cst:first remaining))))
 
 (defmethod check-special-form-syntax ((operator (eql 'let)) cst)
