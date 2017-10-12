@@ -1,5 +1,15 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+(defmethod convert-special :around (operator cst environment system)
+  (declare (ignore system))
+  (check-special-form-syntax operator cst)
+  (when (and *compile-time-too*
+	     *current-form-is-top-level-p*
+	     (not (member operator
+			  '(progn locally macrolet symbol-macrolet eval-when))))
+    (cleavir-env:eval (cst:raw cst) environment environment))
+  (call-next-method))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting QUOTE.
