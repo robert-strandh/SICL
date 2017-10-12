@@ -183,3 +183,19 @@
            (error 'function-argument-must-be-function-name-or-lambda-expression
                   :expr (cst:raw function-name-cst)
                   :origin (cst:source function-name-cst))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking GO.
+
+(defmethod check-special-cst-syntax ((operator (eql 'go)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking IF.
+
+(defmethod check-special-cst-syntax ((operator (eql 'if)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 3))
