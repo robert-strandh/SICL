@@ -249,3 +249,11 @@
       (error 'macrolet-definitions-must-be-proper-list
              :expr (cst:raw definitions-cst)
              :origin (cst:source definitions-cst)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking MULTIPLE-VALUE-CALL.
+
+(defmethod check-special-form-syntax ((operator (eql 'multiple-value-call)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
