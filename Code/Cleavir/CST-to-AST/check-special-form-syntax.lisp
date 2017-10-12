@@ -69,43 +69,16 @@
 ;;; Checking QUOTE.
 
 (defmethod check-special-form-syntax ((head (eql 'quote)) cst)
-  (let ((cst (check-cst-proper-list cst 'form-must-be-proper-list)))
-    (if (check-argument-count cst 1 1)
-        cst
-        (let ((count (1- (length (cst:raw cst)))))
-          (restart-case (error 'incorrect-number-of-arguments
-                               :expr (cst:raw cst)
-                               :expected-min 1
-                               :expected-max 1
-                               :observed count
-                               :origin (cst:source cst))
-            (recover ()
-              :report (lambda (stream)
-                        (format stream "Correct the argument count."))
-              (return-from check-special-form-syntax
-                (if (zerop count)
-                    (extend-cst cst nil)
-                    (shorten-cst cst 1)))))))))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking BLOCK.
 
 (defmethod check-special-form-syntax ((head (eql 'block)) cst)
-  (let ((cst (check-cst-proper-list cst 'form-must-be-proper-list)))
-    (if (check-argument-count cst 1 nil)
-        cst
-        (restart-case (error 'incorrect-number-of-arguments
-                             :expr (cst:raw cst)
-                             :expected-min 1
-                             :expected-max nil
-                             :observed 0
-                             :origin (cst:source cst))
-            (recover ()
-              :report (lambda (stream)
-                        (format stream "Correct the argument count."))
-              (return-from check-special-form-syntax
-                (extend-cst nil)))))))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
