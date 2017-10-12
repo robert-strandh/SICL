@@ -57,18 +57,10 @@
 ;;; syntax is incorrect, signal an error and propose a restart for
 ;;; fixing it up.
 (defun check-bindings (cst)
-  (let ((cst (check-cst-proper-list cst 'bindings-must-be-proper-list)))
-    (labels ((aux (cst)
-               (if (cst:null cst)
-                   cst
-                   (let ((rest (aux (cst:rest cst)))
-                         (binding (check-binding (cst:first cst))))
-                     (if (and (eq rest (cst:rest cst))
-                              (eq binding (cst:first cst)))
-                         cst
-                         (cst:cons binding rest
-                                   :source (cst:source (cst:first cst))))))))
-      (aux cst))))
+  (check-cst-proper-list cst 'bindings-must-be-proper-list)
+  (loop for remaining = cst then (cst:rest remaining)
+        until (cst:null cst)
+        do (check-binding (cst:first remaining))))
 
 (defgeneric check-special-form-syntax (head-symbol cst))
 
