@@ -313,3 +313,13 @@
                (error 'setq-var-must-be-symbol
                       :expr variable
                       :origin (cst:source variable-cst))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking SYMBOL-MACROLET.
+;;;
+;;; FIXME: syntax check bindings
+
+(defmethod check-special-form-syntax ((head (eql 'symbol-macrolet)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
