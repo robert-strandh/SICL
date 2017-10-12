@@ -213,3 +213,19 @@
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (check-bindings (cst:second cst)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking LOAD-TIME-VALUE.
+
+(defmethod check-special-form-syntax ((operator (eql 'load-time-value)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 2)
+  (let ((tail-cst (cst:rest (cst:rest cst))))
+    (unless (cst:null tail-cst)
+      ;; The HyperSpec specifically requires a "boolean"
+      ;; and not a "generalized boolean".
+      (unless (member (cst:raw (cst:first tail-cst)) '(nil t))
+        (error 'read-only-p-must-be-boolean
+               :expr (cst:first tail-cst)
+               :origin (cst:source (cst:first tail-cst)))))))
