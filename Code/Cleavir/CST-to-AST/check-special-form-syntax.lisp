@@ -17,35 +17,6 @@
              :observed count
              :origin (cst:source cst)))))
 
-;;; CST is known to represent a proper list, and it is known that the
-;;; length of that proper list is strictly greater than LENGTH.
-;;; Return a CST that has the same first LENGTH elements as CST,
-;;; preserving the origin of component CSTs as much as possible.
-(defun shorten-cst (cst length)
-  (labels ((aux (cst length raw)
-             (if (zerop length)
-                 (cst:cst-from-expression nil)
-                 (make-instance 'cst:cons-cst
-                   :raw raw
-                   :source (cst:source cst)
-                   :first (cst:first cst)
-                   :rest (aux (cst:rest cst) (1- length) (rest raw))))))
-    (aux cst length (subseq (cst:raw cst) 0 length))))
-
-;;; Extend a CST, i.e. create a new CST that has the elements of CST
-;;; as its first elements, but that has CST-versions of
-;;; ADDITIONAL-ELEMENTS as its remaining elements.
-(defun extend-cst (cst &rest additional-elements)
-  (labels ((aux (cst raw)
-             (if (cst:null cst)
-                 (cst:cst-from-expression raw)
-                 (make-instance 'cst:cons-cst
-                   :raw raw
-                   :source (cst:source cst)
-                   :first (cst:first cst)
-                   :rest (aux (cst:rest cst) (rest raw))))))
-    (aux cst (append (cst:raw cst) additional-elements))))
-
 ;;; Check the syntax of a single LET or LET* binding.  If the syntax
 ;;; is incorrect, signal an error and propose a restart for fixing it
 ;;; up.
