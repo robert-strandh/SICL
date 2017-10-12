@@ -1,15 +1,21 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-;;; Return true if and only if the number of arguments greater than or
-;;; equal to MIN and less than or equal to MAX.  When MAX is NIL, then
-;;; there is no upper bound on the number of arguments.  It is assumed
-;;; that CST represents a proper list, so this must be checked first
-;;; by the caller.
+;;; Check that the number of arguments greater than or equal to MIN
+;;; and less than or equal to MAX.  When MAX is NIL, then there is no
+;;; upper bound on the number of arguments.  If the argument count is
+;;; wrong, then signal an error.  It is assumed that CST represents a
+;;; proper list, so this must be checked first by the caller.
 (defun check-argument-count (cst min max)
   (let ((count (1- (length (cst:raw cst)))))
-    (and (>= count min)
-         (or (null max)
-             (<= count max)))))
+    (unless (and (>= count min)
+                 (or (null max)
+                     (<= count max)))
+      (error 'incorrect-number-of-arguments
+             :expr (cst:raw cst)
+             :expected-min min
+             :expected-max max
+             :observed count
+             :origin (cst:source cst)))))
 
 ;;; CST is known to represent a proper list, and it is known that the
 ;;; length of that proper list is strictly greater than LENGTH.
