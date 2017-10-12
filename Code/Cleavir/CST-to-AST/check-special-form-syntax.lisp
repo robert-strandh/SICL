@@ -294,3 +294,22 @@
       (error 'block-name-must-be-a-symbol
              :expr block-name
              :origin (cst:source block-name-cst)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking SETQ.
+
+(defmethod check-special-form-syntax ((operator (eql 'setq)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (unless (oddp (length (cst:raw cst)))
+    (error 'setq-must-have-even-number-of-arguments
+	   :expr cst
+           :origin (cst:source cst)))
+  (loop for remaining = (cst:rest cst) then (cst:rest (cst:rest remaining))
+        until (cst:null remaining)
+        do (let* ((variable-cst (cst:first remaining))
+                  (variable (cst:raw cst)))
+             (unless (symbolp variable)
+               (error 'setq-var-must-be-symbol
+                      :expr variable
+                      :origin (cst:source variable-cst))))))
