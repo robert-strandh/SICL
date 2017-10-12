@@ -128,6 +128,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking FLET.
+
+(defmethod check-special-form-syntax ((operator (eql 'flet)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (let ((definitions (cst:second cst)))
+    (unless (cst:proper-list-p definitions)
+      (error 'flet-functions-must-be-proper-list
+             :expr (cst:raw definitions)
+             :origin (cst:source definitions)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking FUNCTION.
 
 (defun proper-function-name-p (name-cst)
