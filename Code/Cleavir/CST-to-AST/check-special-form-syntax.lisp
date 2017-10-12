@@ -346,3 +346,11 @@
 (defmethod check-special-form-syntax ((head (eql 'throw)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking UNWIND-PROTECT
+
+(defmethod check-special-form-syntax ((head (eql 'unwind-protect)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
