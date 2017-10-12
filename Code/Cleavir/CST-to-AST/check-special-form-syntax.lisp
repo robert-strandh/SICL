@@ -323,3 +323,10 @@
 (defmethod check-special-form-syntax ((head (eql 'symbol-macrolet)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking TAGBODY.
+
+(defmethod check-special-form-syntax ((head (eql 'tagbody)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list))
