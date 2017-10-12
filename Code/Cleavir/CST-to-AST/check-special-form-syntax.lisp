@@ -141,6 +141,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking LABELS.
+
+(defmethod check-special-form-syntax ((operator (eql 'labels)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (let ((definitions (cst:second cst)))
+    (unless (cst:proper-list-p definitions)
+      (error 'labels-functions-must-be-proper-list
+             :expr (cst:raw definitions)
+             :origin (cst:source definitions)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking FUNCTION.
 
 (defun proper-function-name-p (name-cst)
