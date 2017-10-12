@@ -229,3 +229,10 @@
         (error 'read-only-p-must-be-boolean
                :expr (cst:first tail-cst)
                :origin (cst:source (cst:first tail-cst)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking LOCALLY.
+
+(defmethod check-special-form-syntax ((operator (eql 'locally)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list))
