@@ -257,3 +257,11 @@
 (defmethod check-special-form-syntax ((operator (eql 'multiple-value-call)) cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking MULTIPLE-VALUE-PROG1.
+
+(defmethod check-special-form-syntax ((operator (eql 'multiple-value-prog1)) cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil))
