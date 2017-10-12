@@ -1,5 +1,23 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+;;; Check that the syntax of a special form is correct.  The special
+;;; form is represented as a CST.  OPERATOR is the name of the special
+;;; operator of the special form.  Primary methods on this generic
+;;; function signal an error when an incorrect syntax is detected.  An
+;;; :AROUND method proposes restarts that replace the CST by one that
+;;; signals an error at run time.  The replacement CST is returned by
+;;; the :AROUND method.
+(defgeneric check-special-form-syntax (operator cst))
+
+(defmethod check-special-form-syntax :around (operator cst)
+  (restart-case (progn (call-next-method) cst)
+    (recover ()
+      :report "Recover by replacing form by a call to ERROR."
+      (cst:cst-from-expression
+       '(error 'run-time-program-error
+         :expr (cst:raw cst)
+         :origin (cst:source cst))))))
+
 ;;; Take a CST, check whether it represents a proper list.  If it does
 ;;; not represent ERROR-TYPE is a symbol that is passed to ERROR.
 (defun check-cst-proper-list (cst error-type)
@@ -7,7 +25,6 @@
     (error error-type
            :expr (cst:raw cst)
            :origin (cst:source cst))))
-
 
 ;;; Check that the number of arguments greater than or equal to MIN
 ;;; and less than or equal to MAX.  When MAX is NIL, then there is no
@@ -61,8 +78,6 @@
   (loop for remaining = cst then (cst:rest remaining)
         until (cst:null cst)
         do (check-binding (cst:first remaining))))
-
-(defgeneric check-special-form-syntax (head-symbol cst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
