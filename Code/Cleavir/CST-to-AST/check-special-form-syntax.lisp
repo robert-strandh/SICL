@@ -308,7 +308,7 @@
   (loop for remaining = (cst:rest cst) then (cst:rest (cst:rest remaining))
         until (cst:null remaining)
         do (let* ((variable-cst (cst:first remaining))
-                  (variable (cst:raw cst)))
+                  (variable (cst:raw variable-cst)))
              (unless (symbolp variable)
                (error 'setq-var-must-be-symbol
                       :expr variable
