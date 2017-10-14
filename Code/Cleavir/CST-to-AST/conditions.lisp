@@ -249,6 +249,10 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a lambda list is malformed.
+(define-condition malformed-lambda-list (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when a function of known type is
 ;;; called with too many arguments.
 (define-condition too-many-arguments-warning
