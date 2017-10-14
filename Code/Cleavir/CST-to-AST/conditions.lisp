@@ -123,6 +123,12 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a local function definition is not
+;;; a proper list.
+(define-condition local-function-definition-must-be-proper-list
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when a LAMBDA expression is
 ;;; encountered, but it is not a proper list.
 (define-condition lambda-must-be-proper-list
