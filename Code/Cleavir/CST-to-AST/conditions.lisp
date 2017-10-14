@@ -142,6 +142,13 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when the name of a local function
+;;; definition is not a proper function name (i.e., neither a symbol,
+;;; nor a list of the form (SETF symbol))
+(define-condition function-name-must-be-proper-function-name
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when the first argument of a LET or a
 ;;; LET* form (i.e., the bindings) is not a proper list.
 (define-condition bindings-must-be-proper-list
