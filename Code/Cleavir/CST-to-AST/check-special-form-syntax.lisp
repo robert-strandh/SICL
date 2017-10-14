@@ -92,9 +92,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Checking FLET.
+;;; Checking FLET and LABELS.
 
-(defmethod check-special-form-syntax ((operator (eql 'flet)) cst)
+(defun check-flet-or-labels (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (let ((definitions (cst:second cst)))
@@ -103,18 +103,11 @@
              :expr (cst:raw definitions)
              :origin (cst:source definitions)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Checking LABELS.
+(defmethod check-special-form-syntax ((operator (eql 'flet)) cst)
+  (check-flet-or-labels cst))
 
 (defmethod check-special-form-syntax ((operator (eql 'labels)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (let ((definitions (cst:second cst)))
-    (unless (cst:proper-list-p definitions)
-      (error 'labels-functions-must-be-proper-list
-             :expr (cst:raw definitions)
-             :origin (cst:source definitions)))))
+  (check-flet-or-labels cst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
