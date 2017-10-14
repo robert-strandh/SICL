@@ -94,6 +94,20 @@
 ;;;
 ;;; Checking FLET and LABELS.
 
+(defun check-local-function-definition (cst)
+  (check-cst-proper-list cst 'local-function-definition-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (cst:db origin (name-cst lambda-list-cst . body-cst) cst
+    (declare (ignore body-cst))
+    (unless (proper-function-name-p name-cst)
+      (error 'function-name-must-be-proper-function-name
+             :expr (cst:raw name-cst)
+             :origin (cst:source name-cst)))
+    (when (null (cst:parse-ordinary-lambda-list nil lambda-list-cst :error-p nil))
+      (error 'malformed-lambda-list
+             :expr (cst:raw lambda-list-cst)
+             :origin (cst:source lambda-list-cst)))))
+
 (defun check-flet-or-labels (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
