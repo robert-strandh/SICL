@@ -3,17 +3,23 @@
 (defun compile-cst (cst environment1 environment2)
   (let* ((form (cst:raw cst))
          (hash (sxhash form))
-	 (cached-value (gethash hash *form-cache*)))
+         (cached-value (gethash hash *form-cache*))
+         (cleavir-generate-ast:*compiler* 'cl:eval)
+         (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 nil)))
     (if (null cached-value)
-        (let* ((cleavir-generate-ast:*compiler* 'cl:eval)
-               (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 nil))
-               (ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
+        (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
                (hir (cleavir-ast-to-hir:compile-toplevel ast-bis))
                (ignore (cleavir-hir-transformations:eliminate-typeq hir))
                (lambda-expr (translate hir environment2))
                (fun (compile nil lambda-expr)))
           (declare (ignore ignore))
-	  (maybe-cache form fun (cleavir-ir:forms hir))
+          ;; Run this just for test and to check performance.
+          (cleavir-hir-transformations:segregate-only hir)
+          ;; Run this just for test and to check performance.
+          (cleavir-simple-value-numbering:simple-value-numbering hir)
+          ;; Run this for test.  It may do some good too.
+          (cleavir-remove-useless-instructions:remove-useless-instructions hir)
+          (maybe-cache form fun (cleavir-ir:forms hir))
           (cons fun (cleavir-ir:forms hir)))
         cached-value)))
 
