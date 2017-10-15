@@ -59,14 +59,11 @@
 ;;; Checking BLOCK.
 
 (defmethod check-special-form-syntax ((operator (eql 'block)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (let* ((name-cst (cst:second cst))
-         (name (cst:raw name-cst)))
-    (unless (symbolp name)
-      (error 'block-name-must-be-a-symbol
-             :expr name
-             :origin (cst:source name-cst)))))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -28,14 +28,20 @@
 
 (defmethod convert-special
     ((symbol (eql 'block)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (block name-cst . body-cst) cst
           (declare (ignore block))
-    (let* ((ast (cleavir-ast:make-block-ast nil :origin origin))
-           (name (cst:raw name-cst))
-           (new-env (cleavir-env:add-block env name ast)))
-      (setf (cleavir-ast:body-ast ast)
-            (process-progn (convert-sequence body-cst new-env system)))
-      ast)))
+    (let ((name (cst:raw name-cst)))
+      (unless (symbolp name)
+        (error 'block-name-must-be-a-symbol
+               :expr name
+               :origin (cst:source name-cst)))
+      (let* ((ast (cleavir-ast:make-block-ast nil :origin origin))
+             (new-env (cleavir-env:add-block env name ast)))
+        (setf (cleavir-ast:body-ast ast)
+              (process-progn (convert-sequence body-cst new-env system)))
+        ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
