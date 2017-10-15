@@ -5,6 +5,9 @@
          (hash (sxhash form))
          (cached-value (gethash hash *form-cache*))
          (cleavir-generate-ast:*compiler* 'cl:eval)
+         ;; We just create the AST even when there is a cached value,
+         ;; because there might be compile-time side effects that
+         ;; occur during the AST generation.
          (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 nil)))
     (if (null cached-value)
         (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
