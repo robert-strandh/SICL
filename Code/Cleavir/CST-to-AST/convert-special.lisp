@@ -535,6 +535,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'locally)) cst environment system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (locally-cst . body-forms-cst) cst
     (declare (ignore locally-cst))
     (multiple-value-bind (declaration-csts body-csts)
