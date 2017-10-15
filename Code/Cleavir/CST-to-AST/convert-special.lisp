@@ -337,6 +337,8 @@
 (defmethod convert-special
     ((symbol (eql 'go)) cst env system)
   (declare (ignore system))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 1)
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
     (let ((info (tag-info env (cst:raw tag-cst))))

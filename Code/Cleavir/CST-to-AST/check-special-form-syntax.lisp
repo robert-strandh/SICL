@@ -164,8 +164,11 @@
 ;;; Checking GO.
 
 (defmethod check-special-form-syntax ((operator (eql 'go)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 1))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
