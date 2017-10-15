@@ -16,9 +16,11 @@
 
 (defmethod convert-special
     ((symbol (eql 'quote)) cst env system)
-  (cst:db s (quote const) cst
-    (declare (ignore quote))
-    (convert-constant const env system)))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 1)
+  (cst:db s (quote-cst const-cst) cst
+    (declare (ignore quote-cst))
+    (convert-constant const-cst env system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
