@@ -472,29 +472,29 @@
 ;;; Implementations should probably convert this in terms of
 ;;; CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
 (defmethod convert-special
-    ((symbol (eql 'multiple-value-call)) form environment system)
+    ((symbol (eql 'multiple-value-call)) cst environment system)
   (declare (ignore environment system))
-  (error 'no-default-method :operator symbol :expr form))
+  (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
-    ((symbol (eql 'unwind-protect)) form environment system)
+    ((symbol (eql 'unwind-protect)) cst environment system)
   (declare (ignore environment system))
-  (error 'no-default-method :operator symbol :expr form))
+  (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
-    ((symbol (eql 'catch)) form environment system)
+    ((symbol (eql 'catch)) cst environment system)
   (declare (ignore environment system))
-  (error 'no-default-method :operator symbol :expr form))
+  (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
-    ((symbol (eql 'throw)) form environment system)
+    ((symbol (eql 'throw)) cst environment system)
   (declare (ignore environment system))
-  (error 'no-default-method :operator symbol :expr form))
+  (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
-    ((symbol (eql 'progv)) form environment system)
+    ((symbol (eql 'progv)) cst environment system)
   (declare (ignore environment system))
-  (error 'no-default-method :operator symbol :expr form))
+  (error 'no-default-method :operator symbol :expr cst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
