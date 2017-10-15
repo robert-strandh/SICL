@@ -4,9 +4,9 @@
   (declare (ignore system))
   (check-special-form-syntax operator cst)
   (when (and *compile-time-too*
-	     *current-form-is-top-level-p*
-	     (not (member operator
-			  '(progn locally macrolet symbol-macrolet eval-when))))
+             *current-form-is-top-level-p*
+             (not (member operator
+                          '(progn locally macrolet symbol-macrolet eval-when))))
     (cleavir-env:eval (cst:raw cst) environment environment))
   (call-next-method))
 
@@ -193,7 +193,7 @@
         do (let ((definition-cst (cst:first remaining)))
              (setf result
                    (augment-environment-from-fdef result definition-cst)))
-	finally (return result)))
+        finally (return result)))
 
 ;;; Given an environment and the name of a function, return the
 ;;; LEXICAL-AST that will have the function with that name as a value.
@@ -218,9 +218,9 @@
 ;;; has a function name in its CAR and an AST in its CDR.
 (defun compute-function-init-asts (functions env)
   (loop for (name . fun-ast) in functions
-	collect (cleavir-ast:make-setq-ast
-		 (function-lexical env name)
-		 fun-ast)))
+        collect (cleavir-ast:make-setq-ast
+                 (function-lexical env name)
+                 fun-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special ((symbol (eql 'flet)) cst env system)
@@ -246,10 +246,10 @@
                          new-env canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
-		 ;; So that flet with empty body works.
-		 (list
-		  (process-progn
-		   (convert-sequence (cst:cstify body-csts)
+                 ;; So that flet with empty body works.
+                 (list
+                  (process-progn
+                   (convert-sequence (cst:cstify body-csts)
                                      final-env
                                      system)))))))))
 
@@ -280,10 +280,10 @@
                          new-env canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
-		 ;; So that flet with empty body works.
-		 (list
-		  (process-progn
-		   (convert-sequence (cst:cstify body-csts)
+                 ;; So that flet with empty body works.
+                 (list
+                  (process-progn
+                   (convert-sequence (cst:cstify body-csts)
                                      final-env
                                      system)))))))))
 
