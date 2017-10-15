@@ -85,76 +85,76 @@
 ;;; Converting EVAL-WHEN.
 
 (defmethod convert-special
-    ((symbol (eql 'eval-when)) form environment system)
+    ((symbol (eql 'eval-when)) cst environment system)
   (with-preserved-toplevel-ness
-    (cst:db s (eval-when situations . body) form
-      (declare (ignore eval-when))
-      (let ((raw-situations (cst:raw situations)))
+    (cst:db s (eval-when-cst situations-cst . body-cst) cst
+      (declare (ignore eval-when-cst))
+      (let ((situations (cst:raw situations-cst)))
         (if (or (eq cleavir-generate-ast:*compiler* 'cl:compile)
                 (eq cleavir-generate-ast:*compiler* 'cl:eval)
                 (not *current-form-is-top-level-p*))
-            (if (or (member :execute raw-situations)
-                    (member 'cl:eval raw-situations))
+            (if (or (member :execute situations)
+                    (member 'cl:eval situations))
                 (process-progn
-                 (convert-sequence body environment system))
+                 (convert-sequence body-cst environment system))
                 (convert (cst:cst-from-expression nil) environment system))
             (cond ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  Yes  ---  ---
-                    (and (or (member :compile-toplevel raw-situations)
-                             (member 'cl:compile raw-situations))
-                         (or (member :load-toplevel raw-situations)
-                             (member 'cl:load raw-situations)))
+                    (and (or (member :compile-toplevel situations)
+                             (member 'cl:compile situations))
+                         (or (member :load-toplevel situations)
+                             (member 'cl:load situations)))
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  CTT
-                    (and (not (or (member :compile-toplevel raw-situations)
-                                  (member 'compile raw-situations)))
-                         (or (member :load-toplevel raw-situations)
-                             (member 'load raw-situations))
-                         (or (member :execute raw-situations)
-                             (member 'eval raw-situations))
+                    (and (not (or (member :compile-toplevel situations)
+                                  (member 'compile situations)))
+                         (or (member :load-toplevel situations)
+                             (member 'load situations))
+                         (or (member :execute situations)
+                             (member 'eval situations))
                          *compile-time-too*))
                    (let ((*compile-time-too* t))
                      (process-progn
-                      (convert-sequence body environment system))))
+                      (convert-sequence body-cst environment system))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  NCT
-                    (and (not (or (member :compile-toplevel raw-situations)
-                                  (member 'compile raw-situations)))
-                         (or (member :load-toplevel raw-situations)
-                             (member 'load raw-situations))
-                         (or (member :execute raw-situations)
-                             (member 'eval raw-situations))
+                    (and (not (or (member :compile-toplevel situations)
+                                  (member 'compile situations)))
+                         (or (member :load-toplevel situations)
+                             (member 'load situations))
+                         (or (member :execute situations)
+                             (member 'eval situations))
                          (not *compile-time-too*))
                     ;; CT   LT   E    Mode
                     ;; No   Yes  No   ---
-                    (and (not (or (member :compile-toplevel raw-situations)
-                                  (member 'compile raw-situations)))
-                         (or (member :load-toplevel raw-situations)
-                             (member 'load raw-situations))
-                         (not (or (member :execute raw-situations)
-                                  (member 'eval raw-situations)))))
+                    (and (not (or (member :compile-toplevel situations)
+                                  (member 'compile situations)))
+                         (or (member :load-toplevel situations)
+                             (member 'load situations))
+                         (not (or (member :execute situations)
+                                  (member 'eval situations)))))
                    (let ((*compile-time-too* nil))
                      (process-progn
-                      (convert-sequence body environment system))))
+                      (convert-sequence body-cst environment system))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  No   ---  ---
-                    (and (or (member :compile-toplevel raw-situations)
-                             (member 'compile raw-situations))
-                         (not (or (member :load-toplevel raw-situations)
-                                  (member 'load raw-situations))))
+                    (and (or (member :compile-toplevel situations)
+                             (member 'compile situations))
+                         (not (or (member :load-toplevel situations)
+                                  (member 'load situations))))
                     ;; CT   LT   E    Mode
                     ;; No   No   Yes  CTT
-                    (and (not (or (member :compile-toplevel raw-situations)
-                                  (member 'compile raw-situations)))
-                         (not (or (member :load-toplevel raw-situations)
-                                  (member 'load raw-situations)))
-                         (or (member :execute raw-situations)
-                             (member 'eval raw-situations))
+                    (and (not (or (member :compile-toplevel situations)
+                                  (member 'compile situations)))
+                         (not (or (member :load-toplevel situations)
+                                  (member 'load situations)))
+                         (or (member :execute situations)
+                             (member 'eval situations))
                          *compile-time-too*))
-                   (cleavir-env:eval `(progn ,@(cst:raw body))
+                   (cleavir-env:eval `(progn ,@(cst:raw body-cst))
                                      environment environment)
                    (convert (cst:cst-from-expression nil)
                             environment system))
