@@ -285,14 +285,11 @@
 ;;; Checking RETURN-FROM.
 
 (defmethod check-special-form-syntax ((operator (eql 'return-from)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 2)
-  (let* ((block-name-cst (cst:second cst))
-         (block-name (cst:raw block-name-cst)))
-    (unless (symbolp block-name)
-      (error 'block-name-must-be-a-symbol
-             :expr block-name
-             :origin (cst:source block-name-cst)))))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
