@@ -94,15 +94,19 @@
 ;;;
 ;;; Checking FLET and LABELS.
 
-(defun check-flet-or-labels (cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil))
-
 (defmethod check-special-form-syntax ((operator (eql 'flet)) cst)
-  (check-flet-or-labels cst))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 (defmethod check-special-form-syntax ((operator (eql 'labels)) cst)
-  (check-flet-or-labels cst))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
