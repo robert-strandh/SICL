@@ -212,6 +212,18 @@
                     system
                     block-name-cst))))
 
+;;; Convert a CST representing a list of local function definitions.
+(defun convert-local-functions (definitions-cst environment system)
+  (loop for remaining = definitions-cst
+          then (cst:rest remaining)
+        until (cst:null remaining)
+        collect (let* ((def-cst (cst:first remaining))
+                       (name-cst (cst:first def-cst))
+                       (name (cst:raw name-cst))
+                       (fun (convert-local-function
+                             def-cst environment system)))
+                  (cons name fun))))
+
 ;;; Compute and return a list of SETQ-ASTs that will assign the AST of
 ;;; each function in a list of function ASTs to its associated
 ;;; LEXICAL-AST.  FUNCTIONS is a list of CONS cells.  Each CONS cell
@@ -230,15 +242,7 @@
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations system declaration-csts))
-             (defs (loop for remaining = definitions-cst
-                           then (cst:rest remaining)
-                         until (cst:null remaining)
-                         collect (let* ((def-cst (cst:first remaining))
-                                        (name-cst (cst:first def-cst))
-                                        (name (cst:raw name-cst))
-                                        (fun (convert-local-function
-                                              def-cst env system)))
-                                   (cons name fun))))
+             (defs (convert-local-functions definitions-cst env system))
              (new-env (augment-environment-from-fdefs env definitions-cst))
              (init-asts
                (compute-function-init-asts defs new-env))
