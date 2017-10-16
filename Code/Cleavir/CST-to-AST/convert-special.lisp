@@ -244,6 +244,8 @@
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special ((symbol (eql 'flet)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
     (declare (ignore flet-cst))
     (multiple-value-bind (declaration-csts body-csts)
@@ -270,6 +272,8 @@
 ;;; Converting LABELS.
 
 (defmethod convert-special ((symbol (eql 'labels)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
     (declare (ignore labels-cst))
     (multiple-value-bind (declaration-csts body-csts)
