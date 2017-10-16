@@ -204,6 +204,8 @@
 
 ;;; Convert a local function definition.
 (defun convert-local-function (definition-cst environment system)
+  (check-cst-proper-list definition-cst
+                         'local-function-definition-must-be-proper-list)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (let ((block-name-cst (block-name-from-function-name name-cst)))
       (convert-code lambda-list-cst
