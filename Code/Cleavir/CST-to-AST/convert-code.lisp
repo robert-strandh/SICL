@@ -415,7 +415,11 @@
 (defmethod convert-code (lambda-list-cst body-cst env system
                          &optional (block-name-cst nil))
   (let ((parsed-lambda-list
-          (cst:parse-ordinary-lambda-list system lambda-list-cst)))
+          (cst:parse-ordinary-lambda-list system lambda-list-cst :error-p nil)))
+    (when (null parsed-lambda-list)
+      (error 'malformed-lambda-list
+             :expr (cst:raw lambda-list-cst)
+             :origin (cst:source lambda-list-cst)))
     (multiple-value-bind (declaration-csts documentation form-csts)
         (cst:separate-function-body body-cst)
       ;; FIXME: Handle documentation
