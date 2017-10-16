@@ -206,8 +206,12 @@
 (defun convert-local-function (definition-cst environment system)
   (check-cst-proper-list definition-cst
                          'local-function-definition-must-be-proper-list)
-  (check-argument-count cst 1 nil)
+  (check-argument-count definition-cst 1 nil)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
+    (unless (proper-function-name-p name-cst)
+      (error 'function-name-must-be-proper-function-name
+             :expr (cst:raw name-cst)
+             :origin (cst:source name-cst)))
     (let ((block-name-cst (block-name-from-function-name name-cst)))
       (convert-code lambda-list-cst
                     body-cst
