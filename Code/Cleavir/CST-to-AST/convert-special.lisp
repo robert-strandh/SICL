@@ -269,15 +269,7 @@
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations system declaration-csts))
              (new-env (augment-environment-from-fdefs env definitions-cst))
-             (defs (loop for remaining = definitions-cst
-                           then (cst:rest remaining)
-                         until (cst:null remaining)
-                         collect (let* ((def-cst (cst:first remaining))
-                                        (name-cst (cst:first def-cst))
-                                        (name (cst:raw name-cst))
-                                        (fun (convert-local-function
-                                              def-cst new-env system)))
-                                   (cons name fun))))
+             (defs (convert-local-functions definitions-cst new-env system))
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
