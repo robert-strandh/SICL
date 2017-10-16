@@ -214,8 +214,7 @@
 
 ;;; Convert a CST representing a list of local function definitions.
 (defun convert-local-functions (definitions-cst environment system)
-  (check-cst-proper-list definitions-cst
-                         'local-function-definition-must-be-proper-list)
+  (check-cst-proper-list definitions-cst 'flet-functions-must-be-proper-list)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
         until (cst:null remaining)
