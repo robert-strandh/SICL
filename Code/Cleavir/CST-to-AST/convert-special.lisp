@@ -389,7 +389,7 @@
 
 (defmethod convert-special ((symbol (eql 'if)) cst env system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 2 3))
+  (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
     (let ((test-ast (convert test-cst env system))
@@ -419,13 +419,22 @@
 
 (defmethod convert-special ((symbol (eql 'load-time-value)) cst env system)
   (declare (ignore system))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
     (cleavir-ast:make-load-time-value-ast 
      (cst:raw form-cst)
      (if (cst:null remaining-cst)
          nil
-         (cst:raw (cst:first remaining-cst)))
+         (let ((read-only-p (cst:raw (cst:first remaining-cst))))
+           (if (member read-only-p '(nil t))
+               read-only-p
+               ;; The HyperSpec specifically requires a "boolean"
+               ;; and not a "generalized boolean".
+               (error 'read-only-p-must-be-boolean
+                      :expr read-only-p
+                      :origin (cst:source (cst:first remaining-cst))))))
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
