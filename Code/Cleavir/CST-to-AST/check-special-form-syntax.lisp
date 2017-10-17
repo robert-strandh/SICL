@@ -107,24 +107,11 @@
              (symbolp (cadr name))))))
 
 (defmethod check-special-form-syntax ((operator (eql 'function)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 1)
-  (let ((function-name-cst (cst:second cst)))
-    (cond ((proper-function-name-p function-name-cst)
-           nil)
-          ((cst:consp function-name-cst)
-           (unless (eq (cst:raw (cst:first function-name-cst)) 'lambda)
-             (error 'function-argument-must-be-function-name-or-lambda-expression
-                    :expr (cst:raw function-name-cst)
-                    :origin (cst:source function-name-cst)))
-           (unless (cst:proper-list-p function-name-cst)
-             (error 'lambda-must-be-proper-list
-                    :expr (cst:raw function-name-cst)
-                    :origin (cst:source function-name-cst))))
-          (t
-           (error 'function-argument-must-be-function-name-or-lambda-expression
-                  :expr (cst:raw function-name-cst)
-                  :origin (cst:source function-name-cst))))))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
