@@ -493,7 +493,28 @@
   (convert-code (cst:second lambda-form-cst)
                 (cst:rest (cst:rest lambda-form-cst)) env system))
 
+(defun check-function-syntax (cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 1)
+  (let ((function-name-cst (cst:second cst)))
+    (cond ((proper-function-name-p function-name-cst)
+           nil)
+          ((cst:consp function-name-cst)
+           (unless (eq (cst:raw (cst:first function-name-cst)) 'lambda)
+             (error 'function-argument-must-be-function-name-or-lambda-expression
+                    :expr (cst:raw function-name-cst)
+                    :origin (cst:source function-name-cst)))
+           (unless (cst:proper-list-p function-name-cst)
+             (error 'lambda-must-be-proper-list
+                    :expr (cst:raw function-name-cst)
+                    :origin (cst:source function-name-cst))))
+          (t
+           (error 'function-argument-must-be-function-name-or-lambda-expression
+                  :expr (cst:raw function-name-cst)
+                  :origin (cst:source function-name-cst))))))
+
 (defmethod convert-special ((symbol (eql 'function)) cst env system)
+  (check-function-syntax cst)
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
     (let ((result (if (proper-function-name-p name-cst)
