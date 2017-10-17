@@ -341,6 +341,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'tagbody)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (tagbody-cst . body-cst) cst
     (declare (ignore tagbody-cst))
 
