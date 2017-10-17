@@ -91,8 +91,30 @@
 ;;;
 ;;; Converting EVAL-WHEN.
 
+(defun check-eval-when-syntax (cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (let ((situations-cst (cst:second cst)))
+    (unless (cst:proper-list-p situations-cst)
+      (error 'situations-must-be-proper-list
+             :expr (cst:raw situations-cst)
+             :origin (cst:source situations-cst)))
+    ;; Check each situation
+    (loop for remaining = situations-cst then (cst:rest remaining)
+          until (cst:null remaining)
+          do (let* ((situation-cst (cst:first remaining))
+                    (situation (cst:raw situation-cst)))
+               (unless (and (symbolp situation)
+                            (member situation
+                                    '(:compile-toplevel :load-toplevel :execute
+                                      compile load eval)))
+                 (error 'invalid-eval-when-situation
+                        :expr situation
+                        :origin (cst:source situation-cst)))))))
+
 (defmethod convert-special
     ((symbol (eql 'eval-when)) cst environment system)
+  (check-eval-when-syntax cst)
   (with-preserved-toplevel-ness
     (cst:db s (eval-when-cst situations-cst . body-cst) cst
       (declare (ignore eval-when-cst))
