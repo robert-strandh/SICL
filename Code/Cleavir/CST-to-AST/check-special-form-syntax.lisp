@@ -129,8 +129,11 @@
 ;;; Checking IF.
 
 (defmethod check-special-form-syntax ((operator (eql 'if)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 2 3))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
