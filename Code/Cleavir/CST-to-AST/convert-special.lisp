@@ -445,6 +445,7 @@
 ;;; its subforms the same way as the form itself.
 
 (defmethod convert-special ((symbol (eql 'progn)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
