@@ -594,6 +594,8 @@
 (defmethod convert-special
     ((symbol (eql 'progv)) cst environment system)
   (declare (ignore environment system))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
