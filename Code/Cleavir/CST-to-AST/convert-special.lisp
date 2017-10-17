@@ -602,10 +602,20 @@
 
 (defmethod convert-special
     ((symbol (eql 'setq)) cst environment system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (unless (oddp (length (cst:raw cst)))
+    (error 'setq-must-have-even-number-of-arguments
+	   :expr cst
+           :origin (cst:source cst)))
   (let* ((csts (cst:listify (cst:rest cst)))
-         (form-asts (loop for (var-cst form-cst) on csts by #'cddr
+         (form-asts (loop for (variable-cst form-cst) on csts by #'cddr
+                          for variable = (cst:raw variable-cst)
+                          unless (symbolp variable)
+                            do (error 'setq-var-must-be-symbol
+                                      :expr variable
+                                      :origin (cst:source variable-cst))
                           collect (convert-elementary-setq
-                                   var-cst form-cst environment system))))
+                                   variable-cst form-cst environment system))))
     (process-progn form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

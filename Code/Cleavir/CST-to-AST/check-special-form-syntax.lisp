@@ -239,19 +239,11 @@
 ;;; Checking SETQ.
 
 (defmethod check-special-form-syntax ((operator (eql 'setq)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (unless (oddp (length (cst:raw cst)))
-    (error 'setq-must-have-even-number-of-arguments
-	   :expr cst
-           :origin (cst:source cst)))
-  (loop for remaining = (cst:rest cst) then (cst:rest (cst:rest remaining))
-        until (cst:null remaining)
-        do (let* ((variable-cst (cst:first remaining))
-                  (variable (cst:raw variable-cst)))
-             (unless (symbolp variable)
-               (error 'setq-var-must-be-symbol
-                      :expr variable
-                      :origin (cst:source variable-cst))))))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
