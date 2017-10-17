@@ -139,51 +139,19 @@
 ;;;
 ;;; Checking LET and LET*
 
-;;; Check the syntax of a single LET or LET* binding.  If the syntax
-;;; is incorrect, signal an error.
-(defun check-binding (cst)
-  (cond ((or (and (cst:atom cst)
-                  (symbolp (cst:raw cst)))
-             (and (cst:consp cst)
-                  (cst:atom (cst:first cst))
-                  (symbolp (cst:raw (cst:first cst)))
-                  (or (cst:null (cst:rest cst))
-                      (and (cst:consp (cst:rest cst))
-                           (cst:null (cst:rest (cst:rest cst)))))))
-         nil)
-        ((cst:atom cst)
-         (error 'binding-must-be-symbol-or-list
-                :expr (cst:raw cst)
-                :origin (cst:source cst)))
-        ((or (and (cst:atom (cst:rest cst))
-                  (not (cst:null (cst:rest cst))))
-             (not (cst:null (cst:rest (cst:rest cst)))))
-         (error 'binding-must-have-length-one-or-two
-                :expr (cst:raw cst)
-                :origin (cst:source cst)))
-        (t
-         (error 'variable-must-be-a-symbol
-                :expr (cst:raw (cst:first cst))
-                :origin (cst:source (cst:first cst))))))
-
-;;; Check the syntax of the bindings of a LET or a LET* form.  If the
-;;; syntax is incorrect, signal an error and propose a restart for
-;;; fixing it up.
-(defun check-bindings (cst)
-  (check-cst-proper-list cst 'bindings-must-be-proper-list)
-  (loop for remaining = cst then (cst:rest remaining)
-        until (cst:null remaining)
-        do (check-binding (cst:first remaining))))
-
 (defmethod check-special-form-syntax ((operator (eql 'let)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (check-bindings (cst:second cst)))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 (defmethod check-special-form-syntax ((operator (eql 'let*)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (check-bindings (cst:second cst)))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
