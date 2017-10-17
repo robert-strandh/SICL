@@ -70,25 +70,11 @@
 ;;; Checking EVAL-WHEN.
 
 (defmethod check-special-form-syntax ((operator (eql 'eval-when)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (let ((situations-cst (cst:second cst)))
-    (unless (cst:proper-list-p situations-cst)
-      (error 'situations-must-be-proper-list
-             :expr (cst:raw situations-cst)
-             :origin (cst:source situations-cst)))
-    ;; Check each situation
-    (loop for remaining = situations-cst then (cst:rest remaining)
-          until (cst:null remaining)
-          do (let* ((situation-cst (cst:first remaining))
-                    (situation (cst:raw situation-cst)))
-               (unless (and (symbolp situation)
-                            (member situation
-                                    '(:compile-toplevel :load-toplevel :execute
-                                      compile load eval)))
-                 (error 'invalid-eval-when-situation
-                        :expr situation
-                        :origin (cst:source situation-cst)))))))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
