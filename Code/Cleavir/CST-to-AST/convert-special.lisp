@@ -543,21 +543,29 @@
 (defmethod convert-special
     ((symbol (eql 'multiple-value-call)) cst environment system)
   (declare (ignore environment system))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
     ((symbol (eql 'unwind-protect)) cst environment system)
   (declare (ignore environment system))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
     ((symbol (eql 'catch)) cst environment system)
   (declare (ignore environment system))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
     ((symbol (eql 'throw)) cst environment system)
   (declare (ignore environment system))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 2)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
