@@ -311,9 +311,13 @@
 ;;; where the form must be a proper list and it has a fixed number of
 ;;; arguments.
 (defmacro define-simple-check (operation argcount)
+  (declare (ignore argcount))
   `(defmethod check-special-form-syntax ((operator (eql ',operation)) cst)
-     (check-cst-proper-list cst 'form-must-be-proper-list)
-     (check-argument-count cst ,argcount ,argcount)))
+     ;; The code in this method has been moved to the corresponding
+     ;; method of convert-special.  Ultimately, the code of every method
+     ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+     (declare (ignore cst))
+     nil))
 
 (define-simple-check cleavir-primop:eq 2)
 (define-simple-check cleavir-primop:car 1)
@@ -351,10 +355,11 @@
 
 (defmethod check-special-form-syntax
     ((operator (eql 'cleavir-primop:let-uninitialized)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (assert (cst:proper-list-p (cst:second cst)))
-  (assert (every #'symbolp (cst:raw (cst:second cst)))))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -362,8 +367,11 @@
 
 (defmethod check-special-form-syntax
     ((operator (eql 'cleavir-primop:funcall)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -391,8 +399,11 @@
 
 (defmethod check-special-form-syntax
     ((operator (eql 'cleavir-primop:typeq)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 2 2))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -400,8 +411,11 @@
 
 (defmethod check-special-form-syntax
     ((operator (eql 'cleavir-primop:fixnum-add)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 3 3))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -409,5 +423,8 @@
 
 (defmethod check-special-form-syntax
     ((operator (eql 'cleavir-primop:fixnum-sub)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 3 3))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
