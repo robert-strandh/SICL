@@ -388,6 +388,8 @@
 ;;; Converting IF.
 
 (defmethod convert-special ((symbol (eql 'if)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 3))
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
     (let ((test-ast (convert test-cst env system))
