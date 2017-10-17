@@ -247,6 +247,8 @@
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:multiple-value-call)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
     (declare (ignore multiple-value-call-cst))
     (cleavir-ast:make-multiple-value-call-ast
