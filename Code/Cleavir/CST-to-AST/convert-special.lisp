@@ -501,6 +501,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting SYMBOL-MACROLET.
+
+(defmethod convert-special
+    ((head (eql 'symbol-macrolet)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (cst:db origin (symbol-macrolet-cst definitions-cst body-cst) cst
+    (declare (ignore symbol-macrolet-cst))
+    (let ((new-env env))
+      (loop for remaining = definitions-cst then (cst:rest remaining)
+            until (cst:null remaining)
+            do (cst:db definition-origin (name-cst expansion-cst)
+                   (cst:first remaining)
+                 (let ((name (cst:raw name-cst))
+                       (expansion (cst:raw expansion-cst)))
+                   (setf new-env
+                         (cleavir-env:add-local-symbol-macro
+                          new-env name expansion)))))
+      (with-preserved-toplevel-ness
+        (convert (cst:cons (cst:cst-from-expression 'locally)
+                           body-cst
+                           :source origin)
+                 new-env system)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting FUNCTION.
 ;;;
 
