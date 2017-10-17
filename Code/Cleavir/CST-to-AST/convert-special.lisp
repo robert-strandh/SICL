@@ -542,6 +542,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting MULTIPLE-VALUE-PROG1.
+
+(defmethod convert-special
+    ((symbol (eql 'multiple-value-prog1)) cst environment system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
+    (declare (ignore multiple-value-prog1-cst))
+    (cleavir-ast:make-multiple-value-prog1-ast
+     (convert first-cst environment system)
+     (convert-sequence rest-cst environment system)
+     :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Methods specialized to operators for which we do not provide a
 ;;; conversion method.
 
