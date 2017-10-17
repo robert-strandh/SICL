@@ -180,13 +180,11 @@
 ;;; Checking MACROLET.
 
 (defmethod check-special-form-syntax ((operator (eql 'macrolet)) cst)
-  (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-argument-count cst 1 nil)
-  (let ((definitions-cst (cst:second cst)))
-    (unless (cst:proper-list-p definitions-cst)
-      (error 'macrolet-definitions-must-be-proper-list
-             :expr (cst:raw definitions-cst)
-             :origin (cst:source definitions-cst)))))
+  ;; The code in this method has been moved to the corresponding
+  ;; method of convert-special.  Ultimately, the code of every method
+  ;; on CHECK-SPECIAL-FORM-SYNTAX will be moved.
+  (declare (ignore cst))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

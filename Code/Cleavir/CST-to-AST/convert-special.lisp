@@ -459,6 +459,7 @@
 
 ;;; Given the CST for a MACROLET definition and an environment, return
 ;;; a macro expander (or macro function) for the definition.
+;;; FIXME: check syntax.
 (defun expander (definition-cst environment system)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (let ((lambda-expression (cst:parse-macro system
@@ -472,10 +473,16 @@
 
 (defmethod convert-special
     ((symbol (eql 'macrolet)) cst env system)
-  (cst:db origin (macrolet-cst definition-csts . body-cst) cst
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
+  (cst:db origin (macrolet-cst definitions-cst . body-cst) cst
     (declare (ignore macrolet-cst))
+    (unless (cst:proper-list-p definitions-cst)
+      (error 'macrolet-definitions-must-be-proper-list
+             :expr (cst:raw definitions-cst)
+             :origin (cst:source definitions-cst)))
     (let ((new-env env))
-      (loop for remaining = definition-csts then (cst:rest remaining)
+      (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
             do (let* ((definition-cst (cst:first remaining))
                       (name-cst (cst:first definition-cst))
