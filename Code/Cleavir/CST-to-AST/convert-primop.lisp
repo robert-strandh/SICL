@@ -49,6 +49,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:VALUES.
+;;;
+;;; This primitive operation can be used to inline CL:VALUES.  That
+;;; is, (cl:values ...) and (cleavir-primop:values ...) are
+;;; equivalent. The difference is that CL:VALUES is a function.  In
+;;; the resulting HIR code, the use of this operation will appear as a
+;;; FIXED-TO-MULTIPLE-INSTRUCTION.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:values)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (cst:db origin (values-cst . arguments-cst) cst
+    (declare (ignore values-cst))
+    (make-instance 'cleavir-ast:values-ast
+     :argument-asts (mapcar
+		     (lambda (cst) (convert cst env system))
+		     (cst:listify arguments-cst))
+     :origin origin)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:CAR.
 
 (defmethod convert-special
