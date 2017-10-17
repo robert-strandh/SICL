@@ -570,6 +570,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting THE.
+;;;
+;;; FIXME: either export THE-VALUES-COMPONENTS from
+;;; CLEAVIR-GENERATE-AST, or move it somewhere else.  Perhaps adapt it
+;;; to use CSTs.
+
+(defmethod convert-special
+    ((symbol (eql 'the)) cst environment system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 2)
+  (cst:db origin (the-cst value-type-cst form-cst) cst
+    (declare (ignore the-cst))
+    (multiple-value-bind (req opt rest)
+	(cleavir-generate-ast::the-values-components (cst:raw value-type-cst))
+      ;; We don't bother collapsing THE forms for user code.
+      (cleavir-ast:make-the-ast
+       (convert form-cst environment system)
+       req opt rest
+       :origin origin))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting MULTIPLE-VALUE-PROG1.
 
 (defmethod convert-special
