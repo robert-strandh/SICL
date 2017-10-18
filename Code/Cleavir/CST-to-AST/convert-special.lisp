@@ -583,7 +583,7 @@
   (cst:db origin (the-cst value-type-cst form-cst) cst
     (declare (ignore the-cst))
     (multiple-value-bind (req opt rest)
-	(cleavir-generate-ast::the-values-components (cst:raw value-type-cst))
+        (cleavir-generate-ast::the-values-components (cst:raw value-type-cst))
       ;; We don't bother collapsing THE forms for user code.
       (cleavir-ast:make-the-ast
        (convert form-cst environment system)
@@ -657,7 +657,7 @@
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (unless (oddp (length (cst:raw cst)))
     (error 'setq-must-have-even-number-of-arguments
-	   :expr cst
+           :expr cst
            :origin (cst:source cst)))
   (let* ((csts (cst:listify (cst:rest cst)))
          (form-asts (loop for (variable-cst form-cst) on csts by #'cddr
