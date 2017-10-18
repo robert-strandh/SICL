@@ -424,7 +424,7 @@
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
-    (cleavir-ast:make-load-time-value-ast 
+    (cleavir-ast:make-load-time-value-ast
      (cst:raw form-cst)
      (if (cst:null remaining-cst)
          nil
