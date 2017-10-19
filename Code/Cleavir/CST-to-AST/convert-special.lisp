@@ -8,7 +8,13 @@
              (not (member operator
                           '(progn locally macrolet symbol-macrolet eval-when))))
     (cleavir-env:eval (cst:raw cst) environment environment))
-  (call-next-method))
+  (restart-case (call-next-method)
+    (recover ()
+      :report "Recover by replacing form by a call to ERROR."
+      (cst:cst-from-expression
+       '(error 'run-time-program-error
+         :expr (cst:raw cst)
+         :origin (cst:source cst))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
