@@ -8,6 +8,10 @@
     :initarg :nicknames
     :initform '()
     :accessor nicknames)
+   (%local-nicknames
+    :initarg :nicknames
+    :initform '()
+    :accessor local-nicknames)
    (%use-list
     :initarg :use-list
     :initform '()
