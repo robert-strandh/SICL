@@ -2,4 +2,4 @@
 
 (defpackage #:cleavir-partial-inlining
   (:use #:common-lisp)
-  (:export))
+  (:export #:inline-one-instruction))
