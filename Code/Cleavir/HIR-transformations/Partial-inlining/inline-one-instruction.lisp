@@ -21,3 +21,25 @@
   (loop for input in inputs
         for new = (find-in-mapping mapping input)
         collect (if (null new) input new)))
+
+;;; An output can either be in the mapping, be a reference to a
+;;; location owned by an ancestor function, or a local lexical
+;;; location not yet in the mapping.  In the last case, a new location
+;;; must be created, and it must be added to the mapping, to
+;;; CALL-INSTRUCTION as an input, and to ENTER-INSTRUCTION as an
+;;; output.
+(defun translate-output (output call-instruction enter-instruction mapping)
+  (let ((new (find-in-mapping mapping output)))
+    (cond ((not (null new)) new)
+          ((not (local-location-p output)) output)
+          (t (setf new (cleavir-ir:new-temporary))
+             (setf (cleavir-ir:inputs call-instruction)
+                   (append
+                    (cleavir-ir:inputs call-instruction)
+                    (list new)))
+             (setf (cleavir-ir:outputs enter-instruction)
+                   (append
+                    (cleavir-ir:outputs enter-instruction)
+                    (list new)))
+             (add-to-mapping mapping output new)
+             new))))
