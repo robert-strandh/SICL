@@ -11,8 +11,7 @@
 ;;;
 ;;; The first input to CALL-INSTRUCTION is a temporary that is the
 ;;; output of ENCLOSE-INSTRUCTION, and ENCLOSE-INSTRUCTION has
-;;; ENTER-INSTRUCTION as its input.  Furthermore, ENCLOSE-INSTRUCTION
-;;; is the immediate predecessor of CALL-INSTRUCTION.
+;;; ENTER-INSTRUCTION as its input.
 ;;;
 ;;; We know that no other call-instruction has the same first input as
 ;;; CALL-INSTRUCTION, so we are free to mutate CALL-INSTRUCTION and
@@ -24,7 +23,8 @@
 ;;; callee and maps it to an instruction or a datum in the caller,
 ;;; provided such a correspondence has been added to the mapping.
 ;;;
-;;; Let A be the instruction immediately following ENTER-INSTRUCTION.
+;;; SUCCESSOR-INSTRUCTION is the instruction immediately following
+;;; ENTER-INSTRUCTION.  Let us call it A for short.
 ;;;
 ;;; If A maps to some instruction B in MAPPING, no copy of it is made,
 ;;; and the empty list is returned from the call to
@@ -78,8 +78,11 @@
 ;;; ENTER-INSTRUCTION has the corresponding successor of A as its
 ;;; successor.
 
-(defgeneric inline-one-instruction
-  (enclose-instruction call-instruction enter-instruction mapping))
+(defgeneric inline-one-instruction (enclose-instruction
+                                    call-instruction
+                                    enter-instruction
+                                    successor-instruction
+                                    mapping))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
