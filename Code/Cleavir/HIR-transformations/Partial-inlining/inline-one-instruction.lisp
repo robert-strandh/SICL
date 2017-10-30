@@ -10,3 +10,7 @@
     (if (null copy)
         '()
         (call-next-method))))
+
+(defun local-location-p (location)
+  (eq (gethash location *location-ownerships*)
+      *original-enter-instruction*))
