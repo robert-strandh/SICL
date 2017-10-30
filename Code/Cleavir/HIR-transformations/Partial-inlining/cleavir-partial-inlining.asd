@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "variables")
    (:file "generic-functions")
    (:file "mapping")
    (:file "worklist-item")
