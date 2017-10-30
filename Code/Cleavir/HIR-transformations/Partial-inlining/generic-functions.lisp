@@ -115,7 +115,7 @@
 ;;; the data stored in the WORKLIST-ITEM.  The loop ends when the
 ;;; worklist is empty.
 
-(defgeneric inline-function (call-instruction enter-instruction mapping)
+(defgeneric inline-function (call-instruction enter-instruction mapping))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
