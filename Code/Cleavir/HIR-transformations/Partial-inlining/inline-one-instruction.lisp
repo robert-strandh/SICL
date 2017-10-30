@@ -22,3 +22,7 @@
       (setf new (cleavir-ir:new-temporary))
       (add-to-mapping mapping location new))
     new))
+
+(defun translate-loations (locations mapping)
+  (loop for location in locations
+        collect (translate-location location mapping)))
