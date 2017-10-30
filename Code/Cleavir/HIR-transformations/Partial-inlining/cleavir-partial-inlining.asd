@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "generic-functions")
    (:file "mapping")
-   (:file "worklist-item")))
+   (:file "worklist-item")
+   (:file "inline-one-instruction")))
