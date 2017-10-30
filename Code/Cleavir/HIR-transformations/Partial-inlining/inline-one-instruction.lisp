@@ -15,14 +15,9 @@
   (eq (gethash location *location-ownerships*)
       *original-enter-instruction*))
 
-(defun translate-location (location mapping)
-  (let ((new (find-in-mapping mapping location)))
-    (when (and (null new)
-               (local-location-p location))
-      (setf new (cleavir-ir:new-temporary))
-      (add-to-mapping mapping location new))
-    new))
-
-(defun translate-loations (locations mapping)
-  (loop for location in locations
-        collect (translate-location location mapping)))
+(defun translate-inputs (inputs mapping)
+  ;; An input is either already in the mapping, or else it is
+  ;; is a location that is owned by some ancestor function.
+  (loop for input in inputs
+        for new = (find-in-mapping mapping input)
+        collect (if (null new) input new)))
