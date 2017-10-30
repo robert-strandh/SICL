@@ -43,3 +43,10 @@
                     (list new)))
              (add-to-mapping mapping output new)
              new))))
+    
+(defun translate-outputs (outputs call-instruction enter-instruction mapping)
+  (loop for output in outputs
+        collect (translate-output output
+                                  call-instruction
+                                  enter-instruction
+                                  mapping)))
