@@ -80,3 +80,18 @@
 
 (defgeneric inline-one-instruction
   (enclose-instruction call-instruction enter-instruction mapping))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions for managing mappings.
+
+;;; Return the object that FROM is mapped to in MAPPING.  If FROM does
+;;; not appear in MAPPING, then NIL is returned.
+(defgeneric find-in-mapping (mapping from))
+
+;;; Destructively add a new item to MAPPING that makes FROM correspond
+;;; to TO.  If FROM already appears in MAPPING, an error is signaled.
+(defgeneric add-to-mapping (mapping from to))
+
+;;; Return a fresh copy of MAPPING.
+(defgeneric copy-mapping (mapping))
