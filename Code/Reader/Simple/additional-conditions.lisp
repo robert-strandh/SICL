@@ -89,6 +89,9 @@
 (define-condition invalid-radix (reader-error)
   ((%radix :initarg :radix :reader radix)))
 
+(define-condition invalid-default-float-format (reader-error)
+  ((%float-format :initarg :float-format :reader float-format)))
+
 (define-condition too-many-elements (reader-error)
   ((%exptected-number :initarg :expected-number :reader expected-number)
    (%number-found :initarg :number-found :reader number-found)))

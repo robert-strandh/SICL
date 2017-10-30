@@ -41,6 +41,27 @@
              (intern (subseq token (1+ position-package-marker-2))
                      (subseq token 0 position-package-marker-1))))))
 
+(declaim (inline reader-float-format))
+(defun reader-float-format (&optional (exponent-marker #\E))
+  (ecase exponent-marker
+    ((#\e #\E)
+     (case *read-default-float-format*
+       (single-float 'single-float)
+       (short-float 'short-float)
+       (double-float 'double-float)
+       (long-float 'long-float)
+       (t
+        ;; *read-default-float-format* may be some other type
+        ;; *specifier which the implementation chooses to allow
+        (if (subtypep *read-default-float-format* 'float)
+            *read-default-float-format*
+            (error 'invalid-default-float-format
+                   :float-format *read-default-float-format*)))))
+    ((#\f #\F)'single-float)
+    ((#\s #\S) 'short-float)
+    ((#\d #\D) 'double-float)
+    ((#\l #\L) 'long-float)))
+
 (defgeneric interpret-token (token token-escapes input-stream))
 
 (defmethod interpret-token (token token-escapes input-stream)
@@ -296,8 +317,9 @@
        (incf index)
        (if (= length index)
 	   (return-from interpret-token 
-	     (float (+ mantissa/numerator
-		       (/ fraction-numerator fraction-denominator))))
+	     (coerce (+ mantissa/numerator
+                        (/ fraction-numerator fraction-denominator))
+                     (reader-float-format)))
 	   (let ((char (aref token index)))
 	     (cond ((eq (aref token-escapes index) t)
 		    (go symbol))
@@ -375,12 +397,7 @@
 			   (/ fraction-numerator
 			      fraction-denominator))
 			(expt 10 (* exponent-sign exponent)))
-		     (ecase exponent-marker
-		       ((#\e #\E) 'float)
-		       ((#\f #\F)'single-float)
-		       ((#\s #\S) 'short-float)
-		       ((#\d #\D) 'double-float)
-		       ((#\l #\L) 'long-float))))
+                     (reader-float-format exponent-marker)))
 	   (let ((char (aref token index)))
 	     (cond ((eq (aref token-escapes index) t)
 		    (go symbol))
