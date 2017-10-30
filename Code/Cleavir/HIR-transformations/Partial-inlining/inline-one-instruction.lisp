@@ -14,3 +14,11 @@
 (defun local-location-p (location)
   (eq (gethash location *location-ownerships*)
       *original-enter-instruction*))
+
+(defun translate-location (location mapping)
+  (let ((new (find-in-mapping mapping location)))
+    (when (and (null new)
+               (local-location-p location))
+      (setf new (cleavir-ir:new-temporary))
+      (add-to-mapping mapping location new))
+    new))
