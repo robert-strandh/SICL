@@ -83,6 +83,39 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function INLINE-FUNCTION.
+;;;
+;;; Inline the function that starts with ENTER-INSTRUCTION, so that
+;;; the body of that function replaces CALL-INSTRUCTION.
+;;;
+;;; This function starts by creating an enclose-instruction that
+;;; precedes CALL-INSTRUCTION, and temporary lexical location that
+;;; connects the output of that enclose-instruction to the first input
+;;; of CALL-INSTRUCTION.  It also creates a copy of
+;;; ENCLOSE-INSTRUCTION to be used exclusively during the inlining
+;;; procedure.
+;;;
+;;; Furthermore, it creates temporary lexical locations to hold the
+;;; inputs to CALL-INSTRUCTION corresponding to the outputs of
+;;; ENTER-INSTRUCTION.  These temporary lexical locations represent
+;;; the initial environment of the function to be inlined, so for each
+;;; such location, a correspondence from the output of
+;;; ENTER-INSTRUCTION to the new input of CALL-INSTRUCTION is entered
+;;; into MAPPING.
+;;;
+;;; Then an initial WORK-LIST-ITEM is created that contains the newly
+;;; created enclose-instruction, CALL-INSTRUCTION, the newly created
+;;; enter-instruction, CALL-INSTRUCTION, and MAPPING.
+;;;
+;;; Finally, this function enters into a loop, in each iteration
+;;; processing a WORKLIST-ITEM by calling INLINE-ONE-INSTRUCTION on
+;;; the data stored in the WORKLIST-ITEM.  The loop ends when the
+;;; worklist is empty.
+
+(defgeneric inline-function (call-instruction enter-instruction mapping)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Functions for managing mappings.
 
 ;;; Return the object that FROM is mapped to in MAPPING.  If FROM does
