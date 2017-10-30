@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "generic-functions")
+   (:file "mapping")
    (:file "worklist-item")))
