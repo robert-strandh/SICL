@@ -50,3 +50,29 @@
                                   call-instruction
                                   enter-instruction
                                   mapping)))
+
+(defmethod inline-one-instruction
+    (enclose-instruction
+     call-instruction
+     enter-instruction
+     (successor-instruction cleavir-ir:one-successor-mixin)
+     mapping)
+  (let* ((inputs (cleavir-ir:inputs successor-instruction))
+         (new-inputs (translate-inputs inputs mapping))
+         (outputs (cleavir-ir:outputs successor-instruction))
+         (new-outputs (translate-outputs outputs
+                                         call-instruction
+                                         enter-instruction
+                                         mapping))
+         (new-instruction (make-instance (class-of successor-instruction)
+                            :inputs new-inputs
+                            :outputs new-outputs)))
+    (add-to-mapping mapping successor-instruction new-instruction)
+    (cleavir-ir:insert-instruction-before new-instruction call-instruction)
+    (setf (cleavir-ir:successors enter-instruction)
+          (list (cleavir-ir:successors successor-instruction)))
+    (list (make-instance 'worklist-item
+            :enclose-instruction enclose-instruction
+            :call-instruction call-instruction
+            :enter-instruction enter-instruction
+            :mapping mapping))))
