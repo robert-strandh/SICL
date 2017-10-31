@@ -76,3 +76,36 @@
             :call-instruction call-instruction
             :enter-instruction enter-instruction
             :mapping mapping))))
+
+(defun add-two-successor-instruction-before-instruction
+    (instruction-to-add
+     before-instruction
+     new-first-successor
+     new-second-successor)
+  ;; Start by setting the predecessors of the instruction to add to be
+  ;; the current predecessors of the instruction before which the
+  ;; new instruction is to be added.
+  (setf (cleavir-ir:predecessors instruction-to-add)
+        (cleavir-ir:predecessors before-instruction))
+  ;; It is possible that BEFORE-INSTRUCTION has more than one
+  ;; predecessor.  And it is possible that each one of those
+  ;; predecessors has more than one successor. So for each such
+  ;; predecessor, replace BEFORE-INSTRUCTION by INSTRUCTION-TO-ADD in
+  ;; its list of successors.
+  (loop for predecessor in (cleavir-ir:predecessors before-instruction)
+        do (setf (cleavir-ir:successors predecessor)
+                 (substitute instruction-to-add
+                             before-instruction
+                             (cleavir-ir:successors predecessor))))
+  ;; Set the successors of the instruction to add to be the list of
+  ;; the two successors we were given as arguments.
+  (setf (cleavir-ir:successors instruction-to-add)
+        (list new-first-successor new-second-successor))
+  ;; Each of the two successors we were given as arguments will now
+  ;; have a single predecessor, namely INSTRUCTION-TO-ADD, so we set
+  ;; the list of predecessors of each one to a singleton list of
+  ;; INSTRUCTION-TO-ADD.
+  (setf (cleavir-ir:predecessors new-first-successor)
+        (list instruction-to-add))
+  (setf (cleavir-ir:predecessors new-second-successor)
+        (list instruction-to-add)))
