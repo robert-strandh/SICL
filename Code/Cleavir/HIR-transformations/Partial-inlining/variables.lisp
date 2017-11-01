@@ -7,3 +7,10 @@
 ;;; reference to a lexical location in some ancestor function.
 
 (defvar *original-enter-instruction*)
+
+;;; This variable contains an EQ hash table mapping locations to
+;;; owners.  Recall that the owner of a location is the
+;;; ENTER-INSTRUCTION of the outermost function that refers to the
+;;; location.
+
+(defvar *location-ownerships*)
