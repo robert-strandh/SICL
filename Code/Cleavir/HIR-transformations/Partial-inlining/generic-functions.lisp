@@ -91,6 +91,10 @@
 ;;; Inline the function that starts with ENTER-INSTRUCTION, so that
 ;;; the body of that function replaces CALL-INSTRUCTION.
 ;;;
+;;; Initial-instruction is the initial instruction of the top-level
+;;; HIR program.  It is used in order to compute ownership of lexical
+;;; locations in the program.
+;;;
 ;;; This function starts by creating an enclose-instruction that
 ;;; precedes CALL-INSTRUCTION, and temporary lexical location that
 ;;; connects the output of that enclose-instruction to the first input
@@ -115,7 +119,10 @@
 ;;; the data stored in the WORKLIST-ITEM.  The loop ends when the
 ;;; worklist is empty.
 
-(defgeneric inline-function (call-instruction enter-instruction mapping))
+(defgeneric inline-function (initial-instruction
+                             call-instruction
+                             enter-instruction
+                             mapping))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
