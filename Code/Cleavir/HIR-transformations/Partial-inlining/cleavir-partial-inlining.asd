@@ -9,4 +9,6 @@
    (:file "generic-functions")
    (:file "mapping")
    (:file "worklist-item")
-   (:file "inline-one-instruction")))
+   (:file "inline-one-instruction")
+   (:file "inline-function")))
+
