@@ -65,6 +65,7 @@
    #:symbol-can-have-at-most-two-package-markers
    #:unknown-character-name
    #:digit-expected
+   #:invalid-default-float-format
    ;; Names of macros related to backquote.
    ;; We export them so that the pretty printer
    ;; can use them properly.
