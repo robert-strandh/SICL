@@ -1,7 +1,9 @@
 (cl:in-package #:cleavir-partial-inlining)
 
-(defmethod inline-function (call enter mapping)
+(defmethod inline-function (initial call enter mapping)
   (let* ((*original-enter-instruction* enter)
+         (*location-ownerships*
+           (cleavir-hir-transformations:compute-location-owners initial))
          (initial-environment (cleavir-ir:outputs enter))
          (call-arguments
            (loop for location in initial-environment
