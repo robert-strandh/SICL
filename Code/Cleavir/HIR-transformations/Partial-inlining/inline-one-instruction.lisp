@@ -109,3 +109,52 @@
         (list instruction-to-add))
   (setf (cleavir-ir:predecessors new-second-successor)
         (list instruction-to-add)))
+
+(defmethod inline-one-instruction
+    (enclose-instruction
+     call-instruction
+     enter-instruction
+     (successor-instruction cleavir-ir:two-successors-mixin)
+     mapping)
+  (let* ((inputs (cleavir-ir:inputs successor-instruction))
+         (new-inputs (translate-inputs inputs mapping))
+         (outputs (cleavir-ir:outputs successor-instruction))
+         (new-outputs (translate-outputs outputs
+                                         call-instruction
+                                         enter-instruction
+                                         mapping))
+         (new-instruction (make-instance (class-of successor-instruction)
+                            :inputs new-inputs
+                            :outputs new-outputs))
+         ;; Create a temporary to hold the closure to be called by the
+         ;; call-instruction in the second branch of the new
+         ;; instruction.
+         (new-temp (cleavir-ir:new-temporary))
+         ;; The new CALL-INSTRUCTION is like the previous one, except that
+         ;; the first input is the new closure to be called.
+         (new-call (cleavir-ir:make-funcall-instruction
+                    (cons new-temp (rest (cleavir-ir:inputs call-instruction)))
+                    (cleavir-ir:outputs call-instruction)
+                    (first (cleavir-ir:successors call-instruction))))
+         (new-enter (cleavir-ir:make-enter-instruction
+                     (cleavir-ir:lambda-list enter-instruction)
+                     (second (cleavir-ir:successors successor-instruction))))
+         (new-enclose (cleavir-ir:make-enclose-instruction
+                       new-temp new-call new-enter)))
+    (add-to-mapping mapping successor-instruction new-instruction)
+    (add-two-successor-instruction-before-instruction
+     new-instruction enclose-instruction enclose-instruction new-enclose)
+    (setf (cleavir-ir:successors enter-instruction)
+          (list (first (cleavir-ir:successors successor-instruction))))
+    (setf (cleavir-ir:successors new-enter)
+          (list (second (cleavir-ir:successors successor-instruction))))
+    (list (make-instance 'worklist-item
+            :enclose-instruction enclose-instruction
+            :call-instruction call-instruction
+            :enter-instruction enter-instruction
+            :mapping mapping)
+          (make-instance 'worklist-item
+            :enclose-instruction new-enclose
+            :call-instruction new-call
+            :enter-instruction new-enter
+            :mapping (copy-mapping mapping)))))
