@@ -70,7 +70,7 @@
     (add-to-mapping mapping successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
     (setf (cleavir-ir:successors enter-instruction)
-          (list (cleavir-ir:successors successor-instruction)))
+          (cleavir-ir:successors successor-instruction))
     (list (make-instance 'worklist-item
             :enclose-instruction enclose-instruction
             :call-instruction call-instruction
