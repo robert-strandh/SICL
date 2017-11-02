@@ -94,11 +94,13 @@
   (eval form environment1 (next environment2)))
 
 ;;; This version of EVAL takes a concrete syntax tree rather than a
-;;; Common Lisp form.
-(defgeneric cst-eval (cst environment dispatch-environment))
+;;; Common Lisp form.  Also, this version of eval has an additional
+;;; parameter SYSTEM, so that we can evaluate CSTs differently
+;;; according to the particular implementation we have.
+(defgeneric cst-eval (cst environment dispatch-environment system))
 
-(defmethod cst-eval (cst environment1 (environment2 entry))
-  (cst-eval cst environment1 (next environment2)))
+(defmethod cst-eval (cst environment1 (environment2 entry) system)
+  (cst-eval cst environment1 (next environment2) system))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
