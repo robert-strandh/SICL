@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-(defun compile-cst (cst environment1 environment2)
+(defun compile-cst (cst environment1 environment2 system)
   (let* ((form (cst:raw cst))
          (hash (sxhash form))
          (cached-value (gethash hash *form-cache*))
@@ -26,7 +26,7 @@
           (cons fun (cleavir-ir:forms hir)))
         cached-value)))
 
-(defmethod cleavir-env:cst-eval (cst environment1 (environment2 environment))
+(defmethod cleavir-env:cst-eval (cst environment1 (environment2 environment) system)
   (let ((form (cst:raw cst)))
     (cond ((and (consp form)
                 (consp (cdr form))
@@ -91,6 +91,6 @@
           ((eq form 'sicl-global-environment:*global-environment*)
            environment2)
           (t
-           (let ((fun-and-forms (compile-cst cst environment1 environment2)))
+           (let ((fun-and-forms (compile-cst cst environment1 environment2 system)))
              (tie (car fun-and-forms) (cdr fun-and-forms)
                   environment1 environment2))))))
