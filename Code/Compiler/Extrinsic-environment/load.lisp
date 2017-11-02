@@ -48,7 +48,7 @@
 ;;; it converts the form to a concrete-syntax-tree and then calls
 ;;; CLEAVIR-ENV:CST-EVAL instead of CLEAVIR-ENV:EVAL.
 (defun cst-load-source-with-environments
-    (file compilation-environment linkage-environment)
+    (file compilation-environment linkage-environment system)
   (with-open-file (stream file :direction :input)
     (let ((*package* (sicl-env:special-variable '*package*
 						compilation-environment)))
@@ -57,7 +57,7 @@
             for cst = (cst:cst-from-expression form)
 	    until (eq form eof)
 	    do (cleavir-env:cst-eval
-		cst compilation-environment linkage-environment)
+		cst compilation-environment linkage-environment system)
 	       ;; The evaluation of the form might have change the
 	       ;; value of the variable *PACKAGE* in the target
 	       ;; environment.  But this function is executed as a
