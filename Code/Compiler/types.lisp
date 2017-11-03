@@ -7,10 +7,10 @@
 (defmacro deftype (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (setf (type-function ',name)
-	   ,(cleavir-code-utilities:parse-deftype
-	     name
-	     lambda-list
-	     body))))
+           ,(cleavir-code-utilities:parse-deftype
+             name
+             lambda-list
+             body))))
 
 ;;; The next form requires some explanation.  In the native compiler,
 ;;; the symbols defmacro and cl:defmacro are the same, so then this
@@ -23,10 +23,10 @@
   (cl:defmacro deftype (name lambda-list &body body)
     `(eval-when (:compile-toplevel :load-toplevel :execute)
        (setf (type-function ',name)
-	     ,(cleavir-code-utilities:parse-deftype
-	       name
-	       lambda-list
-	       body)))))
+             ,(cleavir-code-utilities:parse-deftype
+               name
+               lambda-list
+               body)))))
 
 (deftype mod (n)
   `(integer 0 (,n)))
@@ -64,5 +64,3 @@
 
 (deftype simple-bit-vector (&optional size)
   `(simple-array bit (,size)))
-
-
