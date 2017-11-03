@@ -45,59 +45,6 @@
    #:+heap-start+
    ))
 
-(defpackage #:sicl-ast
-  (:use #:common-lisp)
-  (:export
-   #:ast
-   #:immediate-ast #:make-immediate-ast
-   #:constant-ast #:make-constant-ast #:value
-   #:global-ast #:make-global-ast #:storage #:function-type
-   #:special-ast #:make-special-ast
-   #:lexical-ast #:make-lexical-ast
-   #:call-ast #:make-call-ast #:callee-ast #:argument-asts
-   #:block-ast #:make-block-ast #:body
-   #:function-ast #:make-function-ast
-   #:required-only-p #:required #:argparse-ast #:body-ast
-   #:go-ast #:make-go-ast #:tag-ast
-   #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
-   #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
-   #:body-asts
-   #:progn-ast #:make-progn-ast #:form-asts
-   #:return-from-ast #:make-return-from-ast #:form-ast
-   #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
-   #:tagbody-ast #:make-tagbody-ast #:items
-   #:tag-ast #:make-tag-ast #:name
-   #:the-ast #:make-the-ast #:type-specifiers
-   #:draw-ast
-   #:children
-   #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
-   #:load-constant-ast #:make-load-constant-ast
-   #:load-global-ast #:make-load-global-ast #:offset
-   #:word-ast #:make-word-ast
-   #:memref-ast #:make-memref-ast #:displacement
-   #:memset-ast #:make-memset-ast
-   #:u+-ast #:make-u+-ast
-   #:u--ast #:make-u--ast
-   #:s+-ast #:make-s+-ast
-   #:s--ast #:make-s--ast
-   #:neg-ast #:make-neg-ast
-   #:u*-ast #:make-u*-ast
-   #:s*-ast #:make-s*-ast
-   #:lshift-ast #:make-lshift-ast
-   #:ashift-ast #:make-ashift-ast
-   #:&-ast #:make-&-ast
-   #:ior-ast #:make-ior-ast
-   #:xor-ast #:make-xor-ast
-   #:~-ast #:make-~-ast
-   #:==-ast #:make-==-ast
-   #:s<-ast #:make-s<-ast
-   #:s<=-ast #:make-s<=-ast
-   #:u<-ast #:make-u<-ast
-   #:u<=-ast #:make-u<=-ast
-   #:argcount-ast #:make-argcount-ast
-   #:arg-ast #:make-arg-ast #:index-ast
-   #:halt-ast #:make-halt-ast))
-
 (defpackage #:sicl-compiler-phase-1
   (:nicknames #:p1)
   (:use #:common-lisp)
