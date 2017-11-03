@@ -13,64 +13,6 @@
    #:convert #:convert-compound
    ))
 
-(defpackage #:sicl-mir
-  (:use #:common-lisp)
-  (:export
-   #:datum #:defining-instructions #:using-instructions
-   #:immediate-input #:make-immediate-input
-   #:word-input #:make-word-input
-   #:constant-input #:make-constant-input
-   #:lexical-location #:make-lexical-location #:name
-   #:new-temporary
-   #:special-location #:make-special-location #:storage
-   #:global-input #:make-global-input
-   #:load-time-input #:make-load-time-input #:initial-instruction
-   #:external-input #:make-external-input #:value
-   #:register-location #:make-register-location
-   #:dynamic-location #:make-dynamic-location
-   #:linkage-location #:make-linkage-location
-   #:instruction #:predecessors #:successors #:inputs #:outputs
-   #:insert-instruction-before #:insert-instruction-after
-   #:insert-instruction-between #:delete-instruction
-   #:reinitialize-data
-   #:unique-id
-   #:clone-instruction
-   #:enter-instruction #:make-enter-instruction
-   #:nop-instruction #:make-nop-instruction
-   #:assignment-instruction #:make-assignment-instruction
-   #:funcall-instruction #:make-funcall-instruction #:fun
-   #:tailcall-instruction #:make-tailcall-instruction
-   #:get-values-instruction #:make-get-values-instruction
-   #:return-instruction #:make-return-instruction
-   #:enclose-instruction #:make-enclose-instruction #:code
-   #:get-argcount-instruction #:make-get-argcount-instruction
-   #:get-arg-instruction #:make-get-arg-instruction
-   #:load-constant-instruction #:make-load-constant-instruction 
-   #:load-global-instruction #:make-load-global-instruction 
-   #:linkage-vector-index
-   #:load-static-env-instruction #:make-load-static-env-instruction 
-   #:load-linkage-vector-instruction #:make-load-linkage-vector-instruction 
-   #:memref-instruction #:make-memref-instruction #:cacheable #:displacement
-   #:memset-instruction #:make-memset-instruction
-   #:typeq-instruction #:make-typeq-instruction #:value-type
-   #:u+-instruction #:make-u+-instruction
-   #:u--instruction #:make-u--instruction
-   #:s+-instruction #:make-s+-instruction
-   #:s--instruction #:make-s--instruction
-   #:neg-instruction #:make-neg-instruction
-   #:&-instruction #:make-&-instruction
-   #:ior-instruction #:make-ior-instruction
-   #:xor-instruction #:make-xor-instruction
-   #:~-instruction #:make-~-instruction
-   #:==-instruction #:make-==-instruction
-   #:s<-instruction #:make-s<-instruction
-   #:s<=-instruction #:make-s<=-instruction
-   #:u<-instruction #:make-u<-instruction
-   #:u<=-instruction #:make-u<=-instruction
-   #:catch-instruction #:make-catch-instruction
-   #:unwind-instruction #:make-unwind-instruction
-   #:draw-flowchart))
-
 (defpackage #:sicl-compiler-phase-2
   (:nicknames #:p2)
   (:use #:common-lisp)
