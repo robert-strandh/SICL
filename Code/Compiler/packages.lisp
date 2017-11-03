@@ -1,28 +1,3 @@
-(defpackage #:sicl-compiler-phase-1
-  (:nicknames #:p1)
-  (:use #:common-lisp)
-  (:shadow #:type
-   )
-  (:export
-   #:ast
-   #:*compile-file*
-   #:convert-initial
-   #:convert-top-level-form
-   #:convert-top-level-lamda-expression
-   #:convert-for-inlining
-   #:convert #:convert-compound
-   ))
-
-(defpackage #:sicl-compiler-phase-2
-  (:nicknames #:p2)
-  (:use #:common-lisp)
-  (:export
-   #:context #:results #:false-required-p
-   #:nil-fill
-   #:compile-ast
-   #:compile-toplevel
-   ))
-
 (defpackage #:sicl-word
   (:use #:common-lisp)
   (:export
