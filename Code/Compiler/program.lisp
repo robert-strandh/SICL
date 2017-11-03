@@ -54,18 +54,18 @@
 (defparameter *program* nil)
 
 (defgeneric predecessors (object)
-  (:method ((object sicl-mir:instruction))
-    (sicl-mir:predecessors object)))
+  (:method ((object cleavir-ir:instruction))
+    (cleavir-ir:predecessors object)))
 
 (defgeneric (setf predecessors) (new-predecessors object)
-  (:method (new-predecessors (object sicl-mir:instruction))
-    (setf (sicl-mir:predecessors object) new-predecessors)))
+  (:method (new-predecessors (object cleavir-ir:instruction))
+    (setf (cleavir-ir:predecessors object) new-predecessors)))
 
 (defun successors (instruction)
-  (sicl-mir:successors instruction))
+  (cleavir-ir:successors instruction))
 
 (defun (setf successors) (new-successors instruction)
-  (setf (sicl-mir:successors instruction) new-successors))
+  (setf (cleavir-ir:successors instruction) new-successors))
 
 ;;; FIXME: we need to deal with non-local transfers one day.
 ;;; 
@@ -76,22 +76,22 @@
   (successors instruction))
 
 (defun inputs (instruction)
-  (sicl-mir:inputs instruction))
+  (cleavir-ir:inputs instruction))
 
 (defun (setf inputs) (new-inputs instruction)
-  (setf (sicl-mir:inputs instruction) new-inputs))
+  (setf (cleavir-ir:inputs instruction) new-inputs))
 
 (defun outputs (instruction)
-  (sicl-mir:outputs instruction))
+  (cleavir-ir:outputs instruction))
 
 (defun (setf outputs) (new-outputs instruction)
-  (setf (sicl-mir:outputs instruction) new-outputs))
+  (setf (cleavir-ir:outputs instruction) new-outputs))
 
 (defun defining-instructions (datum)
-  (sicl-mir:defining-instructions datum))
+  (cleavir-ir:defining-instructions datum))
 
 (defun using-instructions (datum)
-  (sicl-mir:using-instructions datum))
+  (cleavir-ir:using-instructions datum))
 
 ;;; Apply a function to every datum of the program.
 (defun map-data (function)
@@ -109,7 +109,7 @@
   (assert (not (null *program*)))
   (map-data
    (lambda (datum)
-     (when (typep datum 'sicl-mir:lexical-location)
+     (when (typep datum 'cleavir-ir:lexical-location)
        (funcall function datum)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -141,17 +141,17 @@
       (error "no instruction-info for instruction ~s" instruction))
     info))
 
-(defmethod owner ((instruction sicl-mir:instruction))
+(defmethod owner ((instruction cleavir-ir:instruction))
   (owner (find-instruction-info instruction)))
 
-(defmethod (setf owner) (new (instruction sicl-mir:instruction))
+(defmethod (setf owner) (new (instruction cleavir-ir:instruction))
   (setf (owner (find-instruction-info instruction))
 	new))
 
-(defmethod basic-block ((instruction sicl-mir:instruction))
+(defmethod basic-block ((instruction cleavir-ir:instruction))
   (basic-block (find-instruction-info instruction)))
 
-(defmethod (setf basic-block) (new (instruction sicl-mir:instruction))
+(defmethod (setf basic-block) (new (instruction cleavir-ir:instruction))
   (setf (basic-block (find-instruction-info instruction))
 	new))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -168,8 +168,8 @@
 		 (when (null (gethash instruction instruction-info))
 		   (setf (gethash instruction instruction-info)
 			 (make-instance 'instruction-info))
-		   (when (typep instruction 'sicl-mir:enclose-instruction)
-		     (aux (sicl-mir:code instruction)))
+		   (when (typep instruction 'cleavir-ir:enclose-instruction)
+		     (aux (cleavir-ir:code instruction)))
 		   (mapc #'aux (successors instruction)))))
 	(aux (initial-instruction program))))))
 
@@ -229,37 +229,37 @@
    ;; spill cost should never be altered.
    (%spill-cost :initform nil :accessor spill-cost)))
 
-(defmethod make-datum-info ((datum sicl-mir:lexical-location))
+(defmethod make-datum-info ((datum cleavir-ir:lexical-location))
   (make-instance 'lexical-location-info))
 
 (defclass constant-input-info (datum-info)
   ())
 
-(defmethod make-datum-info ((datum sicl-mir:constant-input))
+(defmethod make-datum-info ((datum cleavir-ir:constant-input))
   (make-instance 'constant-input-info))
 
 (defclass global-input-info (datum-info)
   ())
 
-(defmethod make-datum-info ((datum sicl-mir:global-input))
+(defmethod make-datum-info ((datum cleavir-ir:global-input))
   (make-instance 'global-input-info))
 
 (defclass word-input-info (datum-info)
   ())
 
-(defmethod make-datum-info ((datum sicl-mir:word-input))
+(defmethod make-datum-info ((datum cleavir-ir:word-input))
   (make-instance 'word-input-info))
 
 (defclass immediate-input-info (datum-info)
   ())
 
-(defmethod make-datum-info ((datum sicl-mir:immediate-input))
+(defmethod make-datum-info ((datum cleavir-ir:immediate-input))
   (make-instance 'immediate-input-info))
 
 (defclass register-location-info (datum-info)
   ())
 
-(defmethod make-datum-info ((datum sicl-mir:register-location))
+(defmethod make-datum-info ((datum cleavir-ir:register-location))
   (make-instance 'register-location-info))
 
 (defun find-datum-info (datum)
@@ -268,31 +268,31 @@
       (setf (gethash datum (datum-info *program*))
 	    (make-datum-info datum))))
 
-(defmethod owner ((datum sicl-mir:lexical-location))
+(defmethod owner ((datum cleavir-ir:lexical-location))
   (owner (find-datum-info datum)))
 
-(defmethod (setf owner) (new (datum sicl-mir:lexical-location))
+(defmethod (setf owner) (new (datum cleavir-ir:lexical-location))
   (setf (owner (find-datum-info datum))
 	new))
 
-(defmethod spill-cost ((datum sicl-mir:datum))
+(defmethod spill-cost ((datum cleavir-ir:datum))
   (spill-cost (find-datum-info datum)))
 
-(defmethod (setf spill-cost) (new (datum sicl-mir:datum))
+(defmethod (setf spill-cost) (new (datum cleavir-ir:datum))
   (setf (spill-cost (find-datum-info datum))
 	new))
 
-(defmethod required-register ((datum sicl-mir:datum))
+(defmethod required-register ((datum cleavir-ir:datum))
   (required-register (find-datum-info datum)))
 
-(defmethod (setf required-register) (new (datum sicl-mir:datum))
+(defmethod (setf required-register) (new (datum cleavir-ir:datum))
   (setf (required-register (find-datum-info datum))
 	new))
 
-(defmethod preferred-register ((datum sicl-mir:datum))
+(defmethod preferred-register ((datum cleavir-ir:datum))
   (preferred-register (find-datum-info datum)))
 
-(defmethod (setf preferred-register) (new (datum sicl-mir:datum))
+(defmethod (setf preferred-register) (new (datum cleavir-ir:datum))
   (setf (preferred-register (find-datum-info datum))
 	new))
 
@@ -336,15 +336,15 @@
   (let ((*program* program)
 	(constants '()))
     (flet ((canonicalize (constant)
-	     (or (find (sicl-mir:value constant) constants
-		       :key #'sicl-mir:value :test #'equal)
+	     (or (find (cleavir-ir:value constant) constants
+		       :key #'cleavir-ir:value :test #'equal)
 		 (progn (push constant constants)
 			constant))))
       (map-instructions
        (lambda (instruction)
 	 (let ((new-inputs
 		 (loop for input in (inputs instruction)
-		       collect (if (typep input 'sicl-mir:constant-input)
+		       collect (if (typep input 'cleavir-ir:constant-input)
 				   (canonicalize input)
 				   input))))
 	   (unless (every #'eq (inputs instruction) new-inputs)
@@ -365,11 +365,11 @@
 	(nop-instructions '()))
     (map-instructions
      (lambda (instruction)
-       (when (typep instruction 'sicl-mir:nop-instruction)
+       (when (typep instruction 'cleavir-ir:nop-instruction)
 	 (push instruction nop-instructions))))
     (unless (null nop-instructions)
       (setf modify-p t)
-      (mapc #'sicl-mir:delete-instruction nop-instructions))
+      (mapc #'cleavir-ir:delete-instruction nop-instructions))
     (when modify-p
       (touch program 'instruction-graph))))
 
@@ -489,28 +489,28 @@
  
 (defun spill-lexical-location (lexical-location)
   (loop for inst in (using-instructions lexical-location)
-       do (unless (typep inst 'sicl-mir:assignment-instruction)
-            (let* ((new (sicl-mir:new-temporary))
-                   (assignment (sicl-mir:make-assignment-instruction
+       do (unless (typep inst 'cleavir-ir:assignment-instruction)
+            (let* ((new (cleavir-ir:new-temporary))
+                   (assignment (cleavir-ir:make-assignment-instruction
                                 lexical-location new)))
               ;; We don't want to spill this one again.
               (setf (spill-cost new) t)
-              (sicl-mir:insert-instruction-before assignment inst)
+              (cleavir-ir:insert-instruction-before assignment inst)
               (setf (inputs inst)
                     (substitute new lexical-location (inputs inst)
                                 :test #'eq)))))
   (loop for inst in (defining-instructions lexical-location)
-       do (unless (typep inst 'sicl-mir:assignment-instruction)
-            (let* ((new (sicl-mir:new-temporary))
-                   (assignment (sicl-mir:make-assignment-instruction
+       do (unless (typep inst 'cleavir-ir:assignment-instruction)
+            (let* ((new (cleavir-ir:new-temporary))
+                   (assignment (cleavir-ir:make-assignment-instruction
                                 new lexical-location)))
               ;; We don't want to spill this one again.
               (setf (spill-cost new) t)
-              (sicl-mir:insert-instruction-after assignment inst)
+              (cleavir-ir:insert-instruction-after assignment inst)
               (setf (outputs inst)
                     (substitute new lexical-location (outputs inst)
                                 :test #'eq)))))
-  (change-class lexical-location 'sicl-mir:dynamic-location)
+  (change-class lexical-location 'cleavir-ir:dynamic-location)
   (touch *program* 'instruction-graph))
 
 
@@ -577,16 +577,16 @@
   (let ((result t))
     (map-instructions
      (lambda (instruction)
-       (when (and (typep instruction 'sicl-mir:assignment-instruction)
-		  (typep (car (inputs instruction)) 'sicl-mir:dynamic-location)
-		  (typep (car (outputs instruction)) 'sicl-mir:dynamic-location))
+       (when (and (typep instruction 'cleavir-ir:assignment-instruction)
+		  (typep (car (inputs instruction)) 'cleavir-ir:dynamic-location)
+		  (typep (car (outputs instruction)) 'cleavir-ir:dynamic-location))
 	 ;; We have an illegal assignment.
-	 (let* ((new-temp (sicl-mir:new-temporary))
-		(new-inst (sicl-mir:make-assignment-instruction
+	 (let* ((new-temp (cleavir-ir:new-temporary))
+		(new-inst (cleavir-ir:make-assignment-instruction
 			   (car (inputs instruction)) new-temp)))
 	   (setf (spill-cost new-temp) t)
-	   (sicl-mir:insert-instruction-before new-inst instruction)
-	   (setf (sicl-mir:inputs instruction) (list new-temp))
+	   (cleavir-ir:insert-instruction-before new-inst instruction)
+	   (setf (cleavir-ir:inputs instruction) (list new-temp))
 	   (setf result nil)))))
     (when (null result)
       (touch program 'instruction-graph))
@@ -627,11 +627,11 @@
   (let ((redundant-instructions '()))
     (map-instructions
      (lambda (instruction)
-       (when (and (typep instruction 'sicl-mir:assignment-instruction)
+       (when (and (typep instruction 'cleavir-ir:assignment-instruction)
 		  (eq (car (inputs instruction))
 		      (car (outputs instruction))))
 	 (push instruction redundant-instructions))))
-    (mapc #'sicl-mir:delete-instruction redundant-instructions)))
+    (mapc #'cleavir-ir:delete-instruction redundant-instructions)))
 
 (set-processor 'no-redundant-assignments
 	       'remove-redundant-assignment-instructions)
@@ -650,10 +650,10 @@
   (let ((dynamic-locations '()))
     (map-instructions
      (lambda (instruction)
-       (let ((data (append (sicl-mir:inputs instruction)
-			   (sicl-mir:outputs instruction))))
+       (let ((data (append (cleavir-ir:inputs instruction)
+			   (cleavir-ir:outputs instruction))))
 	 (loop for datum in data
-	       do (when (typep datum 'sicl-mir:dynamic-location)
+	       do (when (typep datum 'cleavir-ir:dynamic-location)
 		    (pushnew datum dynamic-locations :test #'eq))))))
     dynamic-locations))
 
@@ -695,19 +695,19 @@
 	(modified-p nil))
     (map-lexical-locations
      (lambda (lexical-location)
-       (when (null (sicl-mir:using-instructions lexical-location))
+       (when (null (cleavir-ir:using-instructions lexical-location))
 	 (pushnew lexical-location worklist :test #'eq))))
     (loop until (null worklist)
 	  do (loop with location = (pop worklist)
-		   for instruction in (sicl-mir:defining-instructions location)
-		   do (when (typep instruction 'sicl-mir:assignment-instruction)
+		   for instruction in (cleavir-ir:defining-instructions location)
+		   do (when (typep instruction 'cleavir-ir:assignment-instruction)
 			(setf modified-p t)
-			(let ((input (car (sicl-mir:inputs instruction))))
-			  (sicl-mir:delete-instruction instruction)
+			(let ((input (car (cleavir-ir:inputs instruction))))
+			  (cleavir-ir:delete-instruction instruction)
 			  ;; Deleting the instruction will remove it from
 			  ;; the using instructions of its inputs.
-			  (when (and (typep input 'sicl-mir:lexical-location)
-				     (null (sicl-mir:using-instructions input)))
+			  (when (and (typep input 'cleavir-ir:lexical-location)
+				     (null (cleavir-ir:using-instructions input)))
 			    (push input worklist))))))
     (when modified-p
       (touch program 'instruction-graph))))
