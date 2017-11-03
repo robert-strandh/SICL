@@ -1,17 +1,3 @@
-(defpackage #:sicl-word
-  (:use #:common-lisp)
-  (:export
-   #:word
-   #:memalloc #:memref #:memset
-   #:u+ #:u- #:s+ #:s- #:neg
-   #:u* #:s*
-   #:lshift #:ashift
-   #:& #:ior #:xor #:~
-   #:== #:s< #:s<= #:u< #:u<=
-   #:<< #:>>
-   #:halt
-   ))
-
 (defpackage #:sicl-program
   (:use #:common-lisp)
   (:export
