@@ -8,4 +8,5 @@
                :cleavir-hir-transformations)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "class")))
