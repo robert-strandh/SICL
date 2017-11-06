@@ -11,4 +11,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "class")))
+   (:file "class")
+   (:file "cst-customization")))
