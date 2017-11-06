@@ -15,4 +15,5 @@
            #:cst-repl
 	   #:load
 	   #:load-source-with-environments
-	   #:cst-load-source-with-environments))
+	   #:cst-load-source-with-environments
+           #:*dynamic-environment*))
