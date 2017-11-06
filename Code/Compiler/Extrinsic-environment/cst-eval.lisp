@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
 (defun compile-cst (cst environment1 environment2 system)
+  (declare (ignore system))
   (let* ((form (cst:raw cst))
          (hash (sxhash form))
          (cached-value (gethash hash *form-cache*))
