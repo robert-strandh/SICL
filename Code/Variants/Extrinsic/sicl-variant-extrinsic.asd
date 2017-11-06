@@ -6,7 +6,8 @@
                :cleavir-cst-to-ast
                :cleavir-ast-to-hir
                :cleavir-hir-transformations
-               :sicl-simple-environment)
+               :sicl-simple-environment
+               :sicl-extrinsic-environment)
   :serial t
   :components
   ((:file "packages")
