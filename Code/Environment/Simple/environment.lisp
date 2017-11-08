@@ -189,8 +189,16 @@
    (%type :initform t :accessor type)))
 
 (defun find-variable-entry (environment name)
-  (find name (variable-entries environment)
-	:test #'eq :key #'name))
+  (let ((entry (find name (variable-entries environment)
+                     :test #'eq :key #'name)))
+    (cond (entry entry)
+          ((keywordp name)
+           (setf entry (make-instance 'variable-entry :name name)
+                 (constantp entry) t
+                 (car (value-cell entry)) name)
+           (push entry (variable-entries environment))
+           entry)
+          (t nil))))
 
 (defun ensure-variable-entry (environment name)
   (let ((entry (find-variable-entry environment name)))
@@ -250,11 +258,10 @@
 ;;; newly created function.
 (defmethod initialize-instance :after ((entry function-entry)
 				       &key &allow-other-keys)
-  (let* ((expr `(lambda (&rest args)
-		  (declare (ignore args))
-		  (error 'undefined-function
-			 :name ',(name entry))))
-	 (fun (compile nil expr)))
+  (let* ((name (name entry))
+         (fun (lambda (&rest args)
+                (declare (ignore args))
+                (error 'undefined-function :name name))))
     (reinitialize-instance entry :unbound fun)
     (setf (car (function-cell entry)) fun)))
 
