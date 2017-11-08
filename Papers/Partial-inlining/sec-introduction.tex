@@ -10,3 +10,13 @@ size of the code, with a possible negative impact on processor cache
 performance.  It also increases pressure on register allocation,
 possibly making it necessary to spill registers to the stack more
 often.
+
+Some sources distinguish between \emph{procedure integration} and
+\emph{inline expansion} \cite{Muchnick:1998:ACD:286076}.  Both
+techniques are often referred to with the abbreviated form
+\emph{inlining}.  Our use of the term then corresponds to
+\emph{procedure integration}.
+
+Most literature sources define inlining as something similar to
+``replacing a call to a function with a copy of the body of the called
+function''.
