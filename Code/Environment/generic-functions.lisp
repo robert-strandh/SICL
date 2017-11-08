@@ -627,7 +627,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function (TYPE TYPE-EXPANDER).
+;;; Generic function (SETF TYPE-EXPANDER).
 ;;;
 ;;; This generic function is used to set the type expander associated
 ;;; with SYMBOL in ENVIRONMENT.
