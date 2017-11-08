@@ -1,1 +1,12 @@
 \section{Introduction}
+
+Inlining represents an important optimization technique in any modern
+compiler.  It avoids the overhead of a full function call, and it
+allows further optimization in the calling function, such as type
+inference.
+
+However, inlining does not have only advantages.  It increases the
+size of the code, with a possible negative impact on processor cache
+performance.  It also increases pressure on register allocation,
+possibly making it necessary to spill registers to the stack more
+often.
