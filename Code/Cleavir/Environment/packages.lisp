@@ -89,6 +89,7 @@
    #:variable-dynamic-extent
    #:function-dynamic-extent
    #:inline
+   #:inline-expansion
    #:optimize
    #:policy
    #:environment-policy
