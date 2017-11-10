@@ -6,3 +6,8 @@ function names have been converted to unique objects.  When a globally
 defined function $F$ is inlined into another function $G$, we simply
 incorporate the abstract syntax tree of $F$ as if it were a local
 function in $G$.  No alpha renaming is required.
+
+In the second phase, the abstract syntax tree is translated to
+intermediate code in the form of a flow graph of instructions.  Our
+inlining technique is designed to work on this intermediate
+representation.
