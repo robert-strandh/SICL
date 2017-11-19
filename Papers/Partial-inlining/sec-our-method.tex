@@ -11,3 +11,36 @@ In the second phase, the abstract syntax tree is translated to
 intermediate code in the form of a flow graph of instructions.  Our
 inlining technique is designed to work on this intermediate
 representation.
+
+\subsection{Intermediate code}
+
+The intermediate code on which our technique is designed to work is
+called \emph{High-level Intermediate Representation}, or \emph{HIR}
+for short.  This representation takes the form of a \emph{flow graph}
+of \emph{instructions} as used by many traditional compiler
+optimization techniques.  The main difference between HIR and the
+intermediate representation used in compilers for lower-level
+languages is that in HIR, the only data objects that the instructions
+manipulate are \commonlisp{} objects.  Arbitrary computations on
+addresses are exposed in a later stage called \emph{Medium-level
+  Intermediate Representation}, or \emph{MIR}.
+
+A HIR instruction falls into one of the following categories:
+
+\begin{itemize}
+\item Low-level accessors such as \texttt{car}, \texttt{cdr},
+  \texttt{rplaca}, \texttt{rplacd}, \texttt{aref}, \texttt{aset},
+  \texttt{slot-read}, and \texttt{slot-write}.
+\item Instructions for low-level arithmetic on, and comparison of,
+  floating-point numbers and fixnums.
+\item Instructions for testing the type of an object.
+\item Instructions such as \texttt{funcall}, \texttt{return}, and
+  \texttt{unwind} for handling function calls and returns.
+\end{itemize}
+
+Notice that, although the names of these instructions often resemble
+the names of \commonlisp{} operations, the instruction typically
+requires more precise objects than the corresponding \commonlisp{}
+operation does.  Thus, the \texttt{car} instruction requires the
+argument to be a \emph{cons} object, and the \texttt{funcall}
+instruction requires it first argument to be a function.
