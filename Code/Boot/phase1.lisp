@@ -68,11 +68,11 @@
 ;;; bit differently from its usual definition.  It is defined in the
 ;;; environment ENV.  The expansion defines a generic function in the
 ;;; environment in which the form is executed.  However, before
-;;; definining it, we remove the existing generic function if it
-;;; exists.  This way, we are sure to get a fresh generic function, as
-;;; opposed to one that happened to have been imported from the host.
-;;; We must, of course, make sure that we execute a DEFGENERIC form
-;;; for a particular generic function exactly once, but we can do that
+;;; defining it, we remove the existing generic function if it exists.
+;;; This way, we are sure to get a fresh generic function, as opposed
+;;; to one that happened to have been imported from the host.  We
+;;; must, of course, make sure that we execute a DEFGENERIC form for a
+;;; particular generic function exactly once, but we can do that
 ;;; because we completely master the boot process.
 (defun define-defgeneric-phase1 (env1 env2)
   (setf (sicl-genv:macro-function 'defgeneric env1)
