@@ -38,7 +38,7 @@
 ;;; form of other generic functions.  So to keep things simple, we
 ;;; supply a special bootstrapping version of it.
 ;;;
-;;; We can rely entirely on the host executing the generic-function
+;;; We can rely entirely on the host to execute the generic-function
 ;;; initialization protocol.  There is a little question about the
 ;;; initialization argument :METHOD-COMBINATION, but it appears that
 ;;; it defaults to the standard method combination, so we do not have
