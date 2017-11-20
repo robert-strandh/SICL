@@ -66,7 +66,7 @@
 
 ;;; Define the macro DEFGENERIC for use in phase 1.  We define it a
 ;;; bit differently from its usual definition.  It is defined in the
-;;; environment ENV.  The expansion defines a generic function in the
+;;; environment ENV1.  The expansion defines a generic function in the
 ;;; environment in which the form is executed.  However, before
 ;;; defining it, we remove the existing generic function if it exists.
 ;;; This way, we are sure to get a fresh generic function, as opposed
