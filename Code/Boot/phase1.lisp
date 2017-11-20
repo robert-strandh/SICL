@@ -23,20 +23,20 @@
 ;;;
 ;;; The way we have chosen to do it is to provide both a specific
 ;;; definition of DEFGENERIC and a specific definition of
-;;; ENSURE-GENERIC-FUNCTION.  The difference between the standard
-;;; version of DEFGENERIC is that it deletes any existing function
-;;; associated with the name before creating a new one.  This way, we
-;;; are sure that each time we run the bootstrapping process, we have
-;;; a fresh generic function.  We do NOT delete any existing function
-;;; in the special version of ENSURE-GENERIC-FUNCTION, because we want
-;;; to use that special version to find the existing generic function
-;;; when the class-initialization protocol needs to add a reader or a
-;;; writer method on the generic function.  On the other hand, we do
-;;; not want to use the ordinary SICL version of
-;;; ENSURE-GENERIC-FUNCTION because it requires a battery of
-;;; additional functionality in the form of other generic functions.
-;;; So to keep things simple, we supply a special bootstrapping
-;;; version of it.
+;;; ENSURE-GENERIC-FUNCTION.  The difference between this version of
+;;; DEFGENERIC and the standard version of it is that this version
+;;; deletes any existing function associated with the name before
+;;; creating a new one.  This way, we are sure that each time we run
+;;; the bootstrapping process, we have a fresh generic function.  We
+;;; do NOT delete any existing function in the special version of
+;;; ENSURE-GENERIC-FUNCTION, because we want to use that special
+;;; version to find the existing generic function when the
+;;; class-initialization protocol needs to add a reader or a writer
+;;; method on the generic function.  On the other hand, we do not want
+;;; to use the ordinary SICL version of ENSURE-GENERIC-FUNCTION
+;;; because it requires a battery of additional functionality in the
+;;; form of other generic functions.  So to keep things simple, we
+;;; supply a special bootstrapping version of it.
 ;;;
 ;;; We can rely entirely on the host executing the generic-function
 ;;; initialization protocol.  There is a little question about the
