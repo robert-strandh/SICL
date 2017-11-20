@@ -364,4 +364,4 @@
   (create-mop-classes-phase1)
   (message "End of phase 1~%"))
 
-;;  LocalWords:  accessor metaobject canonicalized
+;;  LocalWords:  accessor metaobject canonicalized metaobjects
