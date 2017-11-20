@@ -48,3 +48,39 @@ requires more precise objects than the corresponding \commonlisp{}
 operation does.  Thus, the \texttt{car} instruction requires the
 argument to be a \emph{cons} object, and the \texttt{funcall}
 instruction requires it first argument to be a function.
+
+\subsection{Algorithm}
+
+Our technique maintains the following information:
+
+\begin{itemize}
+\item A mapping from instructions in the called function that have
+  already been inlined to the corresponding instructions in the
+  calling function.
+\item A mapping from lexical variables in the called function that
+  have already been duplicated in the calling function.
+\item Information about the ownership of lexical variables referred to
+  by the called function.
+\end{itemize}
+
+\begin{itemize}
+\item If the next instruction has already been inlined, then replace
+  the \texttt{funcall} instruction by the inlined version of the next
+  instruction.
+\item If the next instruction is a \texttt{return} instruction, then
+  replace the \texttt{funcall} instruction by one or more assignment
+  instructions mapping inputs of the \texttt{funcall} instruction to
+  outputs of that same instruction.
+\item If the next instruction has a single successor, insert a copy of
+  the next instruction before the \texttt{funcall} instruction, and
+  make the \texttt{enter} instruction refer to that successor.  Update
+  the inputs of the \texttt{call} instruction and the \texttt{enter}
+  instruction as described below.
+\item If the next instruction has two successors, insert a copy of the
+  next instruction before the \texttt{funcall} instruction, and
+  replicate the \texttt{call} instruction in each branch.  Also
+  replicate the \texttt{enter} instruction so that each replica refers
+  to a different successor of the original instruction.  Update the
+  inputs of the \texttt{call} instruction and the \texttt{enter}
+  instruction as described below.
+\end{itemize}
