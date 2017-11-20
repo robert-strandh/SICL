@@ -78,6 +78,13 @@
   (setf (sicl-genv:macro-function 'defgeneric env1)
 	(lambda (form environment)
 	  (declare (ignore environment))
+          ;; The DEFGENERIC form must be evaluated in ENV1, so that
+          ;; the following expansion is also evaluated in ENV1.  The
+          ;; reason for that is that we call ENSURE-GENERIC-FUNCTION,
+          ;; and that has to be the function defined in ENV1 above.
+          ;; It is thus crucial that ENV1 and ENV2 be the same in both
+          ;; cases.  FIXME: merge these two functions into one so that
+          ;; we can be sure that env1 and env2 are the same.
 	  `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
 		  (setf (sicl-genv:fdefinition ',(second form) ,env2)
 			(ensure-generic-function
