@@ -1,9 +1,10 @@
 (cl:in-package #:sicl-boot)
 
 (defun ld (filename environment1 environment2)
-  (format *trace-output* "Loading file ~a~%" filename)
+  (format *trace-output* "CST Loading file ~a~%" filename)
   (finish-output *trace-output*)
-  (sicl-extrinsic-environment:load-source-with-environments
+  (sicl-extrinsic-environment:cst-load-source-with-environments
    (asdf:system-relative-pathname :sicl-boot filename)
    environment1
-   environment2))
+   environment2
+   nil))
