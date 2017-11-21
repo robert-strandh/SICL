@@ -162,7 +162,7 @@
       ((cleavir-env:no-function-info
 	 (lambda (condition)
 	   (declare (ignore condition))
-	   (invoke-restart 'cleavir-generate-ast:consider-global))))
+	   (invoke-restart 'cleavir-cst-to-ast:consider-global))))
     (ld file env1 env2)))
 
 (defun set-specializer-profiles-phase3 (env1 env2 env3)
