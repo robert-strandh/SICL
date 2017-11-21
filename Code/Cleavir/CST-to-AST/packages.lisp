@@ -22,4 +22,5 @@
            #:process-parameter-group
            #:process-parameters-in-group
            #:process-parameter
-           #:items-from-parameter-group))
+           #:items-from-parameter-group
+           #:consider-global))
