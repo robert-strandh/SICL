@@ -1,5 +1,9 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a special form represented as a CST.
+
 (defmethod convert-cst
     (cst (info cleavir-env:special-operator-info) env system)
   (convert-special (car (cst:raw cst)) cst env system))
