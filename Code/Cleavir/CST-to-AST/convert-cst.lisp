@@ -19,6 +19,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting a symbol that has a definition as a constant variable.
+
+(defmethod convert-cst
+    (cst (info cleavir-env:constant-variable-info) env system)
+  (let ((cst (cst:cst-from-expression (cleavir-env:value info))))
+    (convert-constant cst env system)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting a special form represented as a CST.
 
 (defmethod convert-cst
