@@ -2,6 +2,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting a symbol that has a definition as a symbol macro.
+
+(defmethod convert-cst
+    (cst (info cleavir-env:symbol-macro-info) env system)
+  (let* ((form (cst:raw cst))
+         (expanded-form (funcall (coerce *macroexpand-hook* 'function)
+                                 (lambda (form env)
+                                   (declare (ignore form env))
+                                   (cleavir-env:expansion info))
+                                 form
+                                 env))
+         (expanded-cst (cst:cst-from-expression expanded-form)))
+    (with-preserved-toplevel-ness
+      (convert expanded-cst env system))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting a special form represented as a CST.
 
 (defmethod convert-cst
