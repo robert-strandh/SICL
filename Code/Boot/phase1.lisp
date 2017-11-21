@@ -44,15 +44,15 @@
 ;;; it defaults to the standard method combination, so we do not have
 ;;; to pass a method-combination metaobject here.
 
-;;; We define a special version of ENSURE-GENERIC-FUNCTION in the
-;;; run-time environment to be used in phase 1.  This version of
-;;; ENSURE-GENERIC-FUNCTION is defined in ENV1 and operates in ENV2.
-;;; It checks whether there is already a function named FUNCTION-NAME
-;;; in ENV2.  If so that function is returned, and it is assumed to be
-;;; a generic function.  If not, an instance of the host class
-;;; STANDARD-GENERIC-FUNCTION is created and associated with
-;;; FUNCTION-NAME in ENV2.
-(defun define-ensure-generic-function-phase1 (env1 env2)
+(defun define-generic-function-definers-phase1 (env1 env2)
+  ;; We define a special version of ENSURE-GENERIC-FUNCTION in the
+  ;; run-time environment to be used in phase 1.  This version of
+  ;; ENSURE-GENERIC-FUNCTION is defined in ENV1 and operates in ENV2.
+  ;; It checks whether there is already a function named FUNCTION-NAME
+  ;; in ENV2.  If so that function is returned, and it is assumed to
+  ;; be a generic function.  If not, an instance of the host class
+  ;; STANDARD-GENERIC-FUNCTION is created and associated with
+  ;; FUNCTION-NAME in ENV2.
   (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
 	(lambda (function-name &rest arguments)
 	  (let ((args (copy-list arguments)))
@@ -62,29 +62,24 @@
 		(setf (sicl-genv:fdefinition function-name env2)
 		      (apply #'make-instance 'standard-generic-function
 			     :name function-name
-			     args)))))))
-
-;;; Define the macro DEFGENERIC for use in phase 1.  We define it a
-;;; bit differently from its usual definition.  It is defined in the
-;;; environment ENV1.  The expansion defines a generic function in the
-;;; environment in which the form is executed.  However, before
-;;; defining it, we remove the existing generic function if it exists.
-;;; This way, we are sure to get a fresh generic function, as opposed
-;;; to one that happened to have been imported from the host.  We
-;;; must, of course, make sure that we execute a DEFGENERIC form for a
-;;; particular generic function exactly once, but we can do that
-;;; because we completely master the boot process.
-(defun define-defgeneric-phase1 (env1 env2)
+			     args))))))
+  ;; Define the macro DEFGENERIC for use in phase 1.  We define it a
+  ;; bit differently from its usual definition.  It is defined in the
+  ;; environment ENV1.  The expansion defines a generic function in
+  ;; the environment in which the form is executed.  However, before
+  ;; defining it, we remove the existing generic function if it
+  ;; exists.  This way, we are sure to get a fresh generic function,
+  ;; as opposed to one that happened to have been imported from the
+  ;; host.  We must, of course, make sure that we execute a DEFGENERIC
+  ;; form for a particular generic function exactly once, but we can
+  ;; do that because we completely master the boot process.
   (setf (sicl-genv:macro-function 'defgeneric env1)
 	(lambda (form environment)
 	  (declare (ignore environment))
           ;; The DEFGENERIC form must be evaluated in ENV1, so that
-          ;; the following expansion is also evaluated in ENV1.  The
-          ;; reason for that is that we call ENSURE-GENERIC-FUNCTION,
-          ;; and that has to be the function defined in ENV1 above.
-          ;; It is thus crucial that ENV1 and ENV2 be the same in both
-          ;; cases.  FIXME: merge these two functions into one so that
-          ;; we can be sure that env1 and env2 are the same.
+          ;; the expansion is also evaluated in ENV1.  The reason for
+          ;; that is that we call ENSURE-GENERIC-FUNCTION, and that
+          ;; has to be the function defined in ENV1 above.
 	  `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
 		  (setf (sicl-genv:fdefinition ',(second form) ,env2)
 			(ensure-generic-function
@@ -95,8 +90,7 @@
 (defun create-class-accessor-generic-functions-phase1 ()
   (let ((env1 *phase1-mop-class-env*)
 	(env2 *phase1-mop-accessor-env*))
-    (define-ensure-generic-function-phase1 env1 env2)
-    (define-defgeneric-phase1 env1 env2)
+    (define-generic-function-definers-phase1 env1 env2)
     (ld "../CLOS/accessor-defgenerics.lisp" env1 env1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
