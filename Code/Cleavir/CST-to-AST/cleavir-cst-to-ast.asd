@@ -36,4 +36,5 @@
    (:file "convert-primop")
    (:file "convert-cst")
    (:file "cst-to-ast")
-   (:file "conditions")))
+   (:file "conditions")
+   (:file "condition-reporters-english")))
