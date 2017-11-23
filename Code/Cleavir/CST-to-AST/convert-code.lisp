@@ -263,7 +263,7 @@
 (defmethod new-environment-from-parameter
     ((parameter cst:simple-variable) idspecs environment system)
   (augment-environment-with-variable (cst:name parameter)
-                                     (first idspecs)
+                                     idspecs
                                      environment
                                      environment))
 
@@ -271,20 +271,20 @@
     ((parameter cst:ordinary-key-parameter) idspecs environment system)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
-                                      (first idspecs)
+                                      idspecs
                                       environment))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:ordinary-optional-parameter) idspecs environment system)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
-                                      (first idspecs)
+                                      idspecs
                                       environment))
 
 (defmethod new-environment-from-parameter
     ((parameter cst:aux-parameter) idspecs environment system)
   (augment-environment-with-variable (cst:name parameter)
-                                     (first idspecs)
+                                     idspecs
                                      environment
                                      environment))
 
@@ -302,7 +302,7 @@
          (name (make-symbol (string-downcase raw-var)))
          (lexical-ast (cleavir-ast:make-lexical-ast name :origin origin))
          (new-env (new-environment-from-parameter parameter
-                                                  idspecs
+                                                  (first idspecs)
                                                   environment
                                                   system)))
     (multiple-value-bind (ast lexical-lambda-list)
@@ -330,7 +330,7 @@
                             (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
          (new-env (new-environment-from-parameter parameter
-                                                  idspecs
+                                                  (first idspecs)
                                                   environment
                                                   system))
          (init-ast (convert init-form-cst environment system)))
@@ -366,7 +366,7 @@
          (supplied-p-cst (cst:supplied-p parameter))
          (keyword-cst (cst:keyword parameter))
          (new-env (new-environment-from-parameter parameter
-                                                  idspecs
+                                                  (first idspecs)
                                                   environment
                                                   system))
          (init-ast (convert init-form-cst environment system)))
@@ -399,7 +399,7 @@
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (cst:form parameter))
          (new-env (new-environment-from-parameter parameter
-                                                  idspecs
+                                                  (first idspecs)
                                                   environment
                                                   system))
          (init-ast (convert init-form-cst environment system))
