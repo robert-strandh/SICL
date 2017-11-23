@@ -4,4 +4,3 @@
     (method-combination methods)
   (declare (ignore method-combination))
   (compute-effective-method-default methods))
-
