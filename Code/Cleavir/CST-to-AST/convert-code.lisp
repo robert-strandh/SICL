@@ -446,13 +446,13 @@
                 system
                 declaration-specifiers)))
         (multiple-value-bind (idspecs rdspecs)
-            (itemize-declaration-specifiers
-             (reduce #'append (itemize-lambda-list parsed-lambda-list))
+            (itemize-declaration-specifiers-by-parameter-group
+             (itemize-lambda-list parsed-lambda-list)
              canonicalized-dspecs)
           (multiple-value-bind (ast lexical-lambda-list)
               (process-parameter-groups
                (cst:children parsed-lambda-list)
-               idspecs
+               (reduce #'append idspecs)
                (make-body rdspecs form-csts block-name-cst)
                env
                system)
