@@ -433,7 +433,7 @@
                 declaration-specifiers)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers
-             (itemize-lambda-list parsed-lambda-list)
+             (reduce #'append (itemize-lambda-list parsed-lambda-list))
              canonicalized-dspecs)
           (multiple-value-bind (ast lexical-lambda-list)
               (process-parameter-groups

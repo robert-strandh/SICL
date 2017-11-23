@@ -41,4 +41,4 @@
 ;;; item contains just the CST for the parameter.
 (defun itemize-lambda-list (parsed-lambda-list)
   (loop for parameter-group in (cst:children parsed-lambda-list)
-        append (items-from-parameter-group parameter-group)))
+        collect (items-from-parameter-group parameter-group)))
