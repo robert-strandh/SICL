@@ -412,6 +412,20 @@
     (values (set-or-bind-variable var-cst init-ast ast new-env system)
             '())))
 
+(defun itemize-declaration-specifiers-by-parameter-group
+    (items-by-parameter-group canonical-dspecs)
+  (if (null items-by-parameter-group)
+      (values '() canonical-dspecs)
+      (multiple-value-bind (itemized-dspecs remaining-dspecs)
+           (itemize-declaration-specifiers (first items-by-parameter-group)
+                                           canonical-dspecs)
+        (multiple-value-bind (more-itemized-dspecs more-remaining-dspecs)
+            (itemize-declaration-specifiers-by-parameter-group
+             (rest items-by-parameter-group)
+             remaining-dspecs)
+          (values (cons itemized-dspecs more-itemized-dspecs)
+                  more-remaining-dspecs)))))
+
 (defmethod convert-code (lambda-list-cst body-cst env system
                          &optional (block-name-cst nil))
   (let ((parsed-lambda-list
