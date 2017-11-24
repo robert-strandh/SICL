@@ -14,15 +14,30 @@
   (setf (sicl-genv:fdefinition function-name environment)
         (fdefinition function-name)))
 
-(defun import-functions-from-host (environment)
-  (do-all-symbols (symbol)
-    (when (package-relevant-p (symbol-package symbol))
+(defun import-functions-from-package-symbols (package environment)
+  (do-symbols (symbol package)
+    (when (eq (symbol-package symbol) (find-package package))
       (when (and (fboundp symbol)
-		 (not (special-operator-p symbol))
-		 (null (macro-function symbol)))
+                 (not (special-operator-p symbol))
+                 (null (macro-function symbol)))
         (import-function-from-host symbol environment))
       (when (fboundp `(setf ,symbol))
         (import-function-from-host `(setf ,symbol) environment)))))
+
+(defun import-functions-from-host (environment)
+  (loop for package in '(sicl-genv
+                         cleavir-environment
+                         sicl-loop
+                         sicl-conditionals
+                         cleavir-code-utilities
+                         sicl-cons
+                         sicl-iteration
+                         sicl-clos
+                         sicl-environment)
+        do (import-functions-from-package-symbols package environment))
+  (loop for name in '(symbol-value
+                      (setf symbol-value))
+        do (import-function-from-host name environment)))
 
 (defun import-from-host (environment)
   ;; Import available packages in the host to ENVIRONMENT.
