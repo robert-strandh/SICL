@@ -10,6 +10,10 @@
 	    (and (>= name-length 5)
 		 (string-equal (subseq name 0 5) "sicl-"))))))
 
+(defun import-function-from-host (function-name environment)
+  (setf (sicl-genv:fdefinition function-name environment)
+        (fdefinition function-name)))
+
 (defun import-from-host (environment)
   ;; Import available packages in the host to ENVIRONMENT.
   (setf (sicl-genv:packages environment)
@@ -20,11 +24,9 @@
       (when (and (fboundp symbol)
 		 (not (special-operator-p symbol))
 		 (null (macro-function symbol)))
-	(setf (sicl-genv:fdefinition symbol environment)
-	      (fdefinition symbol)))
+        (import-function-from-host symbol environment))
       (when (fboundp `(setf ,symbol))
-	(setf (sicl-genv:fdefinition `(setf ,symbol) environment)
-	      (fdefinition `(setf ,symbol))))
+        (import-function-from-host `(setf ,symbol) environment))
       ;; Import all constant variables in the host to ENVIRONMENT.
       (when (constantp symbol)
 	(setf (sicl-genv:constant-variable symbol environment)
