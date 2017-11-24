@@ -14,19 +14,23 @@
   (setf (sicl-genv:fdefinition function-name environment)
         (fdefinition function-name)))
 
-(defun import-from-host (environment)
-  ;; Import available packages in the host to ENVIRONMENT.
-  (setf (sicl-genv:packages environment)
-	(remove-if-not #'package-relevant-p (list-all-packages)))
+(defun import-functions-from-host (environment)
   (do-all-symbols (symbol)
     (when (package-relevant-p (symbol-package symbol))
-      ;; Import available functions in the host to ENVIRONMENT.
       (when (and (fboundp symbol)
 		 (not (special-operator-p symbol))
 		 (null (macro-function symbol)))
         (import-function-from-host symbol environment))
       (when (fboundp `(setf ,symbol))
-        (import-function-from-host `(setf ,symbol) environment))
+        (import-function-from-host `(setf ,symbol) environment)))))
+
+(defun import-from-host (environment)
+  ;; Import available packages in the host to ENVIRONMENT.
+  (setf (sicl-genv:packages environment)
+	(remove-if-not #'package-relevant-p (list-all-packages)))
+  (import-functions-from-host environment)
+  (do-all-symbols (symbol)
+    (when (package-relevant-p (symbol-package symbol))
       ;; Import all constant variables in the host to ENVIRONMENT.
       (when (constantp symbol)
 	(setf (sicl-genv:constant-variable symbol environment)
