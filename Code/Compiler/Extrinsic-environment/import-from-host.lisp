@@ -39,40 +39,7 @@
                       (setf symbol-value))
         do (import-function-from-host name environment)))
 
-(defun import-from-host (environment)
-  ;; Import available packages in the host to ENVIRONMENT.
-  (setf (sicl-genv:packages environment)
-        (remove-if-not #'package-relevant-p (list-all-packages)))
-  (import-functions-from-host environment)
-  (do-all-symbols (symbol)
-    (when (package-relevant-p (symbol-package symbol))
-      ;; Import all constant variables in the host to ENVIRONMENT.
-      (when (constantp symbol)
-        (setf (sicl-genv:constant-variable symbol environment)
-              (cl:symbol-value symbol)))
-      ;; Import all special operators in the host to ENVIRONMENT
-      (when (special-operator-p symbol)
-        (setf (sicl-genv:special-operator symbol environment) t))
-      ;; Import all classes in the host to ENVIRONMENT
-      (let ((class (find-class symbol nil)))
-        (unless (null class)
-          (setf (sicl-genv:find-class symbol environment)
-                class)))
-      ;; Import special variables.  There is no predicate for special
-      ;; variables in Common Lisp, so we must settle for an
-      ;; approximation.  We consider all symbols with earmuffs to be
-      ;; special, and if they are bound, we initialize them with that
-      ;; value.  We also exclude constant variables that happen to have
-      ;; earmuffs.
-      (let* ((name (symbol-name symbol))
-             (length (length name))
-             (boundp (boundp symbol)))
-        (when (and (>= length 3)
-                   (eql (char name 0) #\*)
-                   (eql (char name (1- length)) #\*)
-                   (not (constantp symbol)))
-          (setf (sicl-genv:special-variable symbol environment boundp)
-                (if boundp (cl:symbol-value symbol) nil))))))
+(defun import-from-closer-mop (environment)
   ;; We look at symbols in the package CLOSER-MOP.  If they have some
   ;; interesting definition, we import that definition associated with
   ;; a symbol with the same name but interned in the package
@@ -113,3 +80,39 @@
                    (not (sicl-genv:boundp new environment)))
           (setf (sicl-genv:special-variable new environment boundp)
                 (if boundp (cl:symbol-value symbol) nil)))))))
+
+(defun import-from-host (environment)
+  ;; Import available packages in the host to ENVIRONMENT.
+  (setf (sicl-genv:packages environment)
+        (remove-if-not #'package-relevant-p (list-all-packages)))
+  (import-functions-from-host environment)
+  (do-all-symbols (symbol)
+    (when (package-relevant-p (symbol-package symbol))
+      ;; Import all constant variables in the host to ENVIRONMENT.
+      (when (constantp symbol)
+        (setf (sicl-genv:constant-variable symbol environment)
+              (cl:symbol-value symbol)))
+      ;; Import all special operators in the host to ENVIRONMENT
+      (when (special-operator-p symbol)
+        (setf (sicl-genv:special-operator symbol environment) t))
+      ;; Import all classes in the host to ENVIRONMENT
+      (let ((class (find-class symbol nil)))
+        (unless (null class)
+          (setf (sicl-genv:find-class symbol environment)
+                class)))
+      ;; Import special variables.  There is no predicate for special
+      ;; variables in Common Lisp, so we must settle for an
+      ;; approximation.  We consider all symbols with earmuffs to be
+      ;; special, and if they are bound, we initialize them with that
+      ;; value.  We also exclude constant variables that happen to have
+      ;; earmuffs.
+      (let* ((name (symbol-name symbol))
+             (length (length name))
+             (boundp (boundp symbol)))
+        (when (and (>= length 3)
+                   (eql (char name 0) #\*)
+                   (eql (char name (1- length)) #\*)
+                   (not (constantp symbol)))
+          (setf (sicl-genv:special-variable symbol environment boundp)
+                (if boundp (cl:symbol-value symbol) nil))))))
+  (import-from-closer-mop environment))
