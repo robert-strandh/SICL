@@ -82,6 +82,10 @@
             (setf (sicl-genv:special-variable new environment boundp)
                   (if boundp (cl:symbol-value symbol) nil))))))))
 
+(defun import-from-common-lisp (environment)
+  (loop for name in '(find-package)
+        do (import-function-from-host name environment)))
+
 (defun import-from-host (environment)
   ;; Import available packages in the host to ENVIRONMENT.
   (setf (sicl-genv:packages environment)
