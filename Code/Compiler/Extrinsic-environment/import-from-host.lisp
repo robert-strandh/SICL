@@ -84,7 +84,7 @@
 
 (defun import-from-common-lisp (environment)
   (loop for name in '(find-package funcall append list car cdr consp
-                      not null coerce symbolp second gensym
+                      not null coerce symbolp first second rest gensym
                       apply vector eq values mapcar nth keywordp)
         do (import-function-from-host name environment)))
 
