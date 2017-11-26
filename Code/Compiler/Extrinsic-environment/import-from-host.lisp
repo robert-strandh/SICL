@@ -90,6 +90,7 @@
   ;; Import available packages in the host to ENVIRONMENT.
   (setf (sicl-genv:packages environment)
         (remove-if-not #'package-relevant-p (list-all-packages)))
+  (import-from-common-lisp environment)
   (import-functions-from-host environment)
   (do-all-symbols (symbol)
     (when (package-relevant-p (symbol-package symbol))
