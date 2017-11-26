@@ -136,10 +136,4 @@
     (load-file "../../CLOS/with-accessors-defmacro.lisp")
     ;; Load a file containing the definition of the macro REMF.
     (load-file "../../Cons/remf-defmacro.lisp")
-    ;; Load a file containing the definition of the macro DEFGENERIC.
-    (load-file "../../CLOS/defgeneric-defmacro.lisp")
-    (load-file "../../Conditions/assert-defmacro.lisp")
-    ;; Load a file containing the definition of the macro DEFMETHOD.
-    (load-file "../../CLOS/defmethod-defmacro.lisp")
-    (load-file "../../CLOS/defclass-support.lisp")
-    (load-file "../../CLOS/defclass-defmacro.lisp")))
+    (load-file "../../Conditions/assert-defmacro.lisp")))
