@@ -86,7 +86,7 @@
   (loop for name in '(find-package funcall append list car cdr consp
                       not null coerce symbolp
                       first second third fourth
-                      rest gensym
+                      rest last butlast gensym
                       apply vector eq values mapcar nth keywordp
                       endp cddr rplacd reverse)
         do (import-function-from-host name environment)))
