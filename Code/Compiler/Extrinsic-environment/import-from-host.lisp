@@ -89,9 +89,11 @@
                       rest last butlast gensym
                       apply vector eq values mapcar nth keywordp
                       endp cadr cddr rplacd reverse length
+                      member
                       getf
-                      =
-                      print warn)
+                      = evenp
+                      print warn
+                      ensure-generic-function)
         do (import-function-from-host name environment)))
 
 (defun import-from-host (environment)
