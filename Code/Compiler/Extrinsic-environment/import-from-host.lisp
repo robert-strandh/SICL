@@ -88,7 +88,9 @@
                       first second third fourth
                       rest last butlast gensym
                       apply vector eq values mapcar nth keywordp
-                      endp cddr rplacd reverse)
+                      endp cddr rplacd reverse length
+                      =
+                      print)
         do (import-function-from-host name environment)))
 
 (defun import-from-host (environment)
