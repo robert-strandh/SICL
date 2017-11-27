@@ -109,7 +109,7 @@
   (import-sequence-related-functions environment)
   (loop for name in '(find-package funcall gensym
                       not null coerce symbolp atom stringp
-                      apply vector eq values mapcar keywordp
+                      apply vector eq eql equal values mapcar keywordp
                       endp length
                       member
                       getf
