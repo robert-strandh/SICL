@@ -82,18 +82,25 @@
             (setf (sicl-genv:special-variable new environment boundp)
                   (if boundp (cl:symbol-value symbol) nil))))))))
 
-(defun import-from-common-lisp (environment)
-  (loop for name in '(find-package funcall append list cons car cdr consp
-                      not null coerce symbolp atom
+(defun import-cons-related-functions (environment)
+  (loop for name in '(cons car cdr
+                      consp list append
                       first second third fourth fifth
-                      rest last butlast gensym
-                      apply vector eq values mapcar nth keywordp
-                      endp cadr cddr rplacd reverse length
+                      rest last butlast nth
+                      rplaca rplacd cadr cddr reverse)
+        do (import-function-from-host name environment)))
+
+(defun import-from-common-lisp (environment)
+  (import-cons-related-functions environment)
+  (loop for name in '(find-package funcall gensym
+                      not null coerce symbolp atom
+                      apply vector eq values mapcar keywordp
+                      endp length
                       member
                       getf
                       = evenp
                       print warn proclaim
-                      gethash (setf gethash)
+                      gethash (setf gethash) remhash
                       ensure-generic-function)
         do (import-function-from-host name environment)))
 
