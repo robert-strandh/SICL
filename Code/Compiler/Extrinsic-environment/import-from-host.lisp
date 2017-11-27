@@ -98,10 +98,15 @@
   (loop for name in '(+ - * / = < <= > >= evenp)
         do (import-function-from-host name environment)))
 
+(defun import-sequence-related-functions (environment)
+  (loop for name in '(count remove-duplicates)
+        do (import-function-from-host name environment)))
+
 (defun import-from-common-lisp (environment)
   (import-cons-related-functions environment)
   (import-hash-table-related-functions environment)
   (import-number-related-functions environment)
+  (import-sequence-related-functions environment)
   (loop for name in '(find-package funcall gensym
                       not null coerce symbolp atom stringp
                       apply vector eq values mapcar keywordp
