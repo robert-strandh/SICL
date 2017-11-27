@@ -93,7 +93,7 @@
 (defun import-from-common-lisp (environment)
   (import-cons-related-functions environment)
   (loop for name in '(find-package funcall gensym
-                      not null coerce symbolp atom
+                      not null coerce symbolp atom stringp
                       apply vector eq values mapcar keywordp
                       endp length
                       member
