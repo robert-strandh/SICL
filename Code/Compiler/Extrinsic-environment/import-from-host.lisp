@@ -83,7 +83,7 @@
                   (if boundp (cl:symbol-value symbol) nil))))))))
 
 (defun import-from-common-lisp (environment)
-  (loop for name in '(find-package funcall append list car cdr consp
+  (loop for name in '(find-package funcall append list cons car cdr consp
                       not null coerce symbolp atom
                       first second third fourth fifth
                       rest last butlast gensym
