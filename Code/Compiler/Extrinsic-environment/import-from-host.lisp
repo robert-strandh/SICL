@@ -84,7 +84,7 @@
 
 (defun import-from-common-lisp (environment)
   (loop for name in '(find-package funcall append list car cdr consp
-                      not null coerce symbolp
+                      not null coerce symbolp atom
                       first second third fourth fifth
                       rest last butlast gensym
                       apply vector eq values mapcar nth keywordp
@@ -92,7 +92,8 @@
                       member
                       getf
                       = evenp
-                      print warn
+                      print warn proclaim
+                      gethash (setf gethash)
                       ensure-generic-function)
         do (import-function-from-host name environment)))
 
