@@ -261,9 +261,14 @@
 	  ;; and we make sure that we always pass the name of a
 	  ;; metaclass, and never a class metaobject.
 	  (assert (symbolp metaclass-name))
-	  (let ((metaclass (find-class metaclass-name))
+	  (let (;; In phase 1, the metaclass is a host class, so we
+                ;; look for it in the host environment.
+                (metaclass (find-class metaclass-name))
 		(slot-copies
 		  (remove-readers-and-writers-from-slot-specs direct-slots))
+                ;; The direct superclasses, on the other hand, are to
+                ;; be found in the same environment as the one in
+                ;; which this class wil. be defined.
 		(direct-superclasses
 		  (loop for name in direct-superclass-names
 			collect (sicl-genv:find-class name env2))))
