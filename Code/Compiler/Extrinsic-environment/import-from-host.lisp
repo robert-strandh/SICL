@@ -114,7 +114,7 @@
                       endp length
                       member
                       getf
-                      print warn proclaim
+                      print warn proclaim compile
                       ensure-generic-function)
         do (import-function-from-host name environment)))
 
