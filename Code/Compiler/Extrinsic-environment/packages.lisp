@@ -16,4 +16,5 @@
 	   #:load
 	   #:load-source-with-environments
 	   #:cst-load-source-with-environments
+           #:import-function-from-host
            #:*dynamic-environment*))
