@@ -323,6 +323,8 @@
 (defun create-mop-classes-phase1 ()
   (let ((env1 *phase1-mop-class-env*)
 	(env2 *phase1-mop-accessor-env*))
+    (ld "../CLOS/defclass-support.lisp" env1 env1)
+    (ld "../CLOS/defclass-defmacro.lisp" env1 env1)
     (create-exceptional-mop-classes-phase1 env1)
     (define-ensure-class env1 env1 env2)
     (define-funcallable-standard-class)
