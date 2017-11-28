@@ -100,7 +100,7 @@
         do (import-function-from-host name environment)))
 
 (defun import-sequence-related-functions (environment)
-  (loop for name in '(count remove-duplicates)
+  (loop for name in '(count remove-duplicates remove-if-not)
         do (import-function-from-host name environment)))
 
 (defun import-from-common-lisp (environment)
