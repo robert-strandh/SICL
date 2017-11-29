@@ -244,6 +244,8 @@
   ;; sure that the generic-function initialization protocol is
   ;; enabled.
   (ld "../CLOS/generic-function-initialization-support.lisp" env2 env2)
+  (setf (sicl-genv:fdefinition 'sicl-clos::compute-discriminating-function env2)
+        (lambda (generic-function) (declare (ignore generic-function)) nil))
   (ld "../CLOS/invalidate-discriminating-function.lisp" env2 env2)
   (ld "../CLOS/generic-function-initialization-defmethods.lisp" env2 env2)
   ;; We must also make sure that DEFGENERIC is handled properly for
