@@ -247,6 +247,7 @@
   (setf (sicl-genv:fdefinition 'sicl-clos::compute-discriminating-function env2)
         (lambda (generic-function) (declare (ignore generic-function)) nil))
   (ld "../CLOS/invalidate-discriminating-function.lisp" env2 env2)
+  (sicl-extrinsic-environment:import-function-from-host 'shared-initialize env2)
   (ld "../CLOS/generic-function-initialization-defmethods.lisp" env2 env2)
   ;; We must also make sure that DEFGENERIC is handled properly for
   ;; phase 2.
