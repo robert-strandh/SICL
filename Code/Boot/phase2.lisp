@@ -356,6 +356,9 @@
     ;; SHARED-INITIALIZE.  For that purpose, we define appropriate
     ;; versions of ENSURE-METHOD and DEFMETHOD.
     (define-ensure-method-phase2 r2 r2 r1)
+    (setf (sicl-genv:fdefinition 'sicl-clos:method-function
+                                 r1)
+          (fdefinition 'closer-mop:method-function))
     (define-defmethod-phase2 r2 r1)
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function
                                  r2)
