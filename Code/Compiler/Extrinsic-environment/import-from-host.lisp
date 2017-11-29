@@ -39,49 +39,6 @@
                       (setf symbol-value))
         do (import-function-from-host name environment)))
 
-(defun import-from-closer-mop (environment)
-  ;; We look at symbols in the package CLOSER-MOP.  If they have some
-  ;; interesting definition, we import that definition associated with
-  ;; a symbol with the same name but interned in the package
-  ;; SICL-CLOS.  But we only do that if it doesn't already have a
-  ;; definition associated with the symbol in the SICL-CLOS package.
-  (do-symbols (symbol (find-package '#:closer-mop))
-    (when (eq (symbol-package symbol) (find-package '#:closer-mop))
-      (let ((new (intern (symbol-name symbol) (find-package '#:sicl-clos))))
-        ;; Import available functions.
-        (when (and (fboundp symbol)
-                   (not (special-operator-p symbol))
-                   (null (macro-function symbol))
-                   (not (sicl-genv:fboundp new environment)))
-          (setf (sicl-genv:fdefinition new environment)
-                (fdefinition symbol)))
-        (when (and (fboundp `(setf ,symbol))
-                   (not (sicl-genv:fboundp `(setf ,new) environment)))
-          (setf (sicl-genv:fdefinition `(setf ,new) environment)
-                (fdefinition `(setf ,symbol))))
-        ;; Import constant variables.
-        (when (and (constantp symbol)
-                   (not (sicl-genv:boundp new environment)))
-          (setf (sicl-genv:constant-variable new environment)
-                (cl:symbol-value symbol)))
-        ;; Import classes.
-        (let ((class (find-class symbol nil)))
-          (unless (or (null class)
-                      (sicl-genv:find-class new environment))
-            (setf (sicl-genv:find-class new environment)
-                  class)))
-        ;; Import special variables.
-        (let* ((name (symbol-name symbol))
-               (length (length name))
-               (boundp (boundp symbol)))
-          (when (and (>= length 3)
-                     (eql (char name 0) #\*)
-                     (eql (char name (1- length)) #\*)
-                     (not (constantp symbol))
-                     (not (sicl-genv:boundp new environment)))
-            (setf (sicl-genv:special-variable new environment boundp)
-                  (if boundp (cl:symbol-value symbol) nil))))))))
-
 (defun import-cons-related-functions (environment)
   (loop for name in '(cons car cdr
                       consp list list* append make-list
@@ -152,5 +109,4 @@
                    (eql (char name (1- length)) #\*)
                    (not (constantp symbol)))
           (setf (sicl-genv:special-variable symbol environment boundp)
-                (if boundp (cl:symbol-value symbol) nil))))))
-  (import-from-closer-mop environment))
+                (if boundp (cl:symbol-value symbol) nil)))))))
