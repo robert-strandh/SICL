@@ -84,7 +84,7 @@
 
 (defun import-cons-related-functions (environment)
   (loop for name in '(cons car cdr
-                      consp list append
+                      consp list list* append make-list
                       first second third fourth fifth
                       rest last butlast nth
                       rplaca rplacd cadr cddr reverse member-if-not
