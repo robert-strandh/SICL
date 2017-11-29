@@ -357,12 +357,6 @@
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function
                                  r2)
           (fdefinition 'closer-mop:set-funcallable-instance-function))
-    (ld "../CLOS/compute-effective-method-support.lisp" r2 r2)
-    (ld "../CLOS/compute-effective-method-support-a.lisp" r2 r2)
-    (ld "../CLOS/method-combination-compute-effective-method-support.lisp" r2 r2)
-    (ld "../CLOS/compute-effective-method-defuns.lisp" r2 r2)
-    (ld "../CLOS/compute-discriminating-function-support-a.lisp" r2 r2)
-    (ld "../CLOS/compute-discriminating-function-defuns.lisp" r2 r2)
     ;; Do everything necessary to define all the MOP accessor generic
     ;; functions.
     (define-accessor-generic-functions-phase2 r1 r2 r3)
