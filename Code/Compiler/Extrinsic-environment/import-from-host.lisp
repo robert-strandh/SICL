@@ -73,7 +73,7 @@
                       not null coerce symbolp atom stringp
                       apply vector eq eql equal values mapcar keywordp
                       endp length every find-if-not remove find find-if
-                      position
+                      position subseq
                       member sort
                       getf typep class-of format
                       print warn proclaim compile
