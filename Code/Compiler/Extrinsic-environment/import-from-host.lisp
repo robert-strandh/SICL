@@ -46,7 +46,7 @@
                       rest last butlast nth
                       rplaca rplacd cadr cddr reverse member-if-not
                       cdddr
-                      set-difference)
+                      copy-list set-difference)
         do (import-function-from-host name environment)))
 
 (defun import-hash-table-related-functions (environment)
