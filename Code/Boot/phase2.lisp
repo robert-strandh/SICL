@@ -367,9 +367,10 @@
     ;; functions.
     (define-accessor-generic-functions-phase2 r1 r2 r3)
     (define-direct-slot-definition-class-phase2 r2 r1)
+    (sicl-extrinsic-environment:import-function-from-host 'initialize-instance r2)
     (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r2 r2)
     (ld "../CLOS/add-remove-direct-subclass-support.lisp" r2 r2)
-    (ld "../CLOS/add-remove-direct-subclass-defmethods.lisp" r2 r2)
+    (ld "../CLOS/add-remove-direct-subclass-defuns.lisp" r2 r2)
     (ld "../CLOS/add-accessor-method.lisp" r2 r2)
     (ld "../CLOS/class-initialization-support.lisp" r2 r2)
     (ld "../CLOS/class-initialization-defmethods.lisp" r2 r2)
