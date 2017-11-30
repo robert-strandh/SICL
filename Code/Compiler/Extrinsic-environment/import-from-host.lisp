@@ -68,7 +68,7 @@
   (loop for name in '(find-package funcall gensym
                       not null coerce symbolp atom stringp
                       apply vector eq eql equal values mapcar keywordp
-                      endp length
+                      endp length every
                       member
                       getf
                       print warn proclaim compile
