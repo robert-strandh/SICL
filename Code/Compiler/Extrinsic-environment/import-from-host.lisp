@@ -46,7 +46,7 @@
                       rest last butlast nth
                       rplaca rplacd cadr cddr reverse member-if-not
                       (setf cadr) (setf cddr)
-                      cdddr reduce union assoc
+                      cdddr reduce union assoc mapc
                       copy-list set-difference)
         do (import-function-from-host name environment)))
 
@@ -71,7 +71,7 @@
                       not null coerce symbolp atom stringp
                       apply vector eq eql equal values mapcar keywordp
                       endp length every find-if-not remove find
-                      member
+                      member sort
                       getf typep class-of format
                       print warn proclaim compile
                       ensure-generic-function)
