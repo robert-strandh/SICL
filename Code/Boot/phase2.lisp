@@ -380,6 +380,7 @@
     (ld "../CLOS/class-initialization-support.lisp" r2 r2)
     (ld "../CLOS/class-initialization-defmethods.lisp" r2 r2)
     (sicl-extrinsic-environment:import-function-from-host 'reinitialize-instance r2)
+    (sicl-extrinsic-environment:import-function-from-host 'change-class r2)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r2 r2)
     (define-ensure-class-phase2 r2 r1 r2)
     (define-default-superclasses-phase2 r2 r2 r2)
