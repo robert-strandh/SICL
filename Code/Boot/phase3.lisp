@@ -210,9 +210,17 @@
 	(r2 *phase2-mop-class-env*)
 	(r3 *phase2-mop-accessor-env*))
     (message "Start of phase 3~%")
-    ;; Define a temporary version of FINALIZE-INHERITANCE to break
-    ;; the mutual dependency between the next two files to be loaded.
+    ;; Define a temporary version of several functions to break the
+    ;; mutual dependency between the next two files to be loaded.
     (setf (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance r2)
+          #'identity)
+    (setf (sicl-genv:fdefinition 'sicl-clos:compute-effective-slot-definition r2)
+          #'identity)
+    (setf (sicl-genv:fdefinition 'sicl-clos::compute-class-precedence-list r2)
+          #'identity)
+    (setf (sicl-genv:fdefinition 'sicl-clos::compute-slots r2)
+          #'identity)
+    (setf (sicl-genv:fdefinition 'sicl-clos::compute-default-initargs r2)
           #'identity)
     (ld "../CLOS/class-finalization-support.lisp" r2 r2)
     (ld "../CLOS/class-finalization-defuns.lisp" r2 r2)
