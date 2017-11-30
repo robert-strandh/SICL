@@ -40,7 +40,7 @@
         do (import-function-from-host name environment)))
 
 (defun import-cons-related-functions (environment)
-  (loop for name in '(cons car cdr
+  (loop for name in '(cons car cdr (setf car) (setf cdr)
                       consp list list* append make-list
                       first second third fourth fifth
                       rest last butlast nth
