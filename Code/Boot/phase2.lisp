@@ -372,6 +372,7 @@
     (ld "../CLOS/add-remove-direct-subclass-support.lisp" r2 r2)
     (ld "../CLOS/add-remove-direct-subclass-defuns.lisp" r2 r2)
     (sicl-extrinsic-environment:import-function-from-host 'add-method r2)
+    (sicl-extrinsic-environment:import-function-from-host 'make-instance r2)
     (ld "../CLOS/add-accessor-method.lisp" r2 r2)
     (ld "../CLOS/class-initialization-support.lisp" r2 r2)
     (ld "../CLOS/class-initialization-defmethods.lisp" r2 r2)
