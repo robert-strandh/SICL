@@ -392,6 +392,8 @@
     (define-writer-method-class-phase2 r2 r1)
     (define-add-method-phase2 r2 r2)
     (ld "../CLOS/class-unique-number-defparameter.lisp" r2 r2)
+    (ld "../CLOS/defclass-support.lisp" r2 r2)
+    (ld "../CLOS/defclass-defmacro.lisp" r2 r2)
     (create-bridge-classes r2 r2)
     (ld "print-object-defmethods-phase2.lisp" r2 r2)
     (message "End of phase 2~%")))
