@@ -46,7 +46,7 @@
                       rest last butlast nth
                       rplaca rplacd cadr cddr reverse member-if-not
                       (setf cadr) (setf cddr)
-                      cdddr reduce union assoc mapc
+                      cdddr reduce union assoc mapc intersection
                       copy-list set-difference)
         do (import-function-from-host name environment)))
 
@@ -70,7 +70,7 @@
   (loop for name in '(find-package funcall gensym
                       not null coerce symbolp atom stringp
                       apply vector eq eql equal values mapcar keywordp
-                      endp length every find-if-not remove find
+                      endp length every find-if-not remove find position
                       member sort
                       getf typep class-of format
                       print warn proclaim compile
