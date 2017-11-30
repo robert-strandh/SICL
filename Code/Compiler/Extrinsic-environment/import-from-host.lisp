@@ -45,7 +45,7 @@
                       first second third fourth fifth
                       rest last butlast nth
                       rplaca rplacd cadr cddr reverse member-if-not
-                      cdddr
+                      cdddr reduce
                       copy-list set-difference)
         do (import-function-from-host name environment)))
 
@@ -69,9 +69,9 @@
   (loop for name in '(find-package funcall gensym
                       not null coerce symbolp atom stringp
                       apply vector eq eql equal values mapcar keywordp
-                      endp length every find-if-not remove
+                      endp length every find-if-not remove find
                       member
-                      getf typep
+                      getf typep class-of format
                       print warn proclaim compile
                       ensure-generic-function)
         do (import-function-from-host name environment)))
