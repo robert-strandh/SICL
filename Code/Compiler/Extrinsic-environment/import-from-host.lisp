@@ -48,7 +48,7 @@
                       (setf cadr) (setf cddr)
                       cdddr reduce union assoc mapc intersection
                       get-properties
-                      copy-list set-difference)
+                      copy-list set-difference set-exclusive-or)
         do (import-function-from-host name environment)))
 
 (defun import-hash-table-related-functions (environment)
