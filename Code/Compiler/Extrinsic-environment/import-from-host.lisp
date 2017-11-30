@@ -70,7 +70,7 @@
                       apply vector eq eql equal values mapcar keywordp
                       endp length every find-if-not remove
                       member
-                      getf
+                      getf typep
                       print warn proclaim compile
                       ensure-generic-function)
         do (import-function-from-host name environment)))
