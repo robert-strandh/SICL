@@ -56,7 +56,7 @@
         do (import-function-from-host name environment)))
 
 (defun import-number-related-functions (environment)
-  (loop for name in '(+ - * / = < <= > >= evenp zerop)
+  (loop for name in '(+ - * / = < <= > >= evenp zerop 1+ 1-)
         do (import-function-from-host name environment)))
 
 (defun import-sequence-related-functions (environment)
