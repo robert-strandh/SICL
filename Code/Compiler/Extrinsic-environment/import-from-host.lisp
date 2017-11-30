@@ -56,7 +56,8 @@
         do (import-function-from-host name environment)))
 
 (defun import-number-related-functions (environment)
-  (loop for name in '(+ - * / = < <= > >= evenp zerop 1+ 1-)
+  (loop for name in '(+ - * / = < <= > >= evenp zerop 1+ 1-
+                      floor ceiling)
         do (import-function-from-host name environment)))
 
 (defun import-sequence-related-functions (environment)
