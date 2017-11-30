@@ -374,6 +374,9 @@
     (sicl-extrinsic-environment:import-function-from-host 'add-method r2)
     (sicl-extrinsic-environment:import-function-from-host 'make-instance r2)
     (ld "../CLOS/add-accessor-method.lisp" r2 r2)
+    (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass
+                                 r2)
+          (lambda (class1 class2) (declare (ignore class1 class2)) t))
     (ld "../CLOS/class-initialization-support.lisp" r2 r2)
     (ld "../CLOS/class-initialization-defmethods.lisp" r2 r2)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r2 r2)
