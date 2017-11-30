@@ -45,6 +45,7 @@
                       first second third fourth fifth
                       rest last butlast nth
                       rplaca rplacd cadr cddr reverse member-if-not
+                      (setf cadr) (setf cddr)
                       cdddr reduce union
                       copy-list set-difference)
         do (import-function-from-host name environment)))
