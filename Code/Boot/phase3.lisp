@@ -304,6 +304,8 @@
     (define-class-of-phase3 r3)
     (define-unbound-slot-value-phase3 r3)
     (ld "../CLOS/slot-bound-using-index.lisp" r3 r3)
+    (define-error-function 'reinitialize-instance r3)
+    (define-error-function 'change-class r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
