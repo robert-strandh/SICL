@@ -205,6 +205,16 @@
 		env3)
 	       (sicl-genv:fdefinition `(setf ,symbol) env1)))))
 
+;;; Define a function that, when called, signals an error with the
+;;; name of the function in the error message.  We use this to break
+;;; dependencies between loaded files.
+(defun define-error-function (function-name environment)
+  (setf (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance environment)
+        (lambda (&rest arguments)
+          (error "Undefined function ~s called with arguments ~s."
+                 function-name
+                 arguments))))
+
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
@@ -277,9 +287,21 @@
     (setf (sicl-genv:fdefinition 'add-method r2)
           (lambda (&rest arguments)
             (error "add-method ~s" arguments)))
+    (setf (sicl-genv:fdefinition 'sicl-clos::add-direct-method r2)
+          (lambda (&rest arguments)
+            (error "add-direct-method ~s" arguments)))
     (setf (sicl-genv:fdefinition 'remove-method r2)
           (lambda (&rest arguments)
             (error "remove-method ~s" arguments)))
+    (setf (sicl-genv:fdefinition 'sicl-clos::remove-direct-method r2)
+          (lambda (&rest arguments)
+            (error "remove-direct-method ~s" arguments)))
+    (setf (sicl-genv:fdefinition 'sicl-clos::map-dependents r2)
+          (lambda (&rest arguments)
+            (error "map-dependents ~s" arguments)))
+    (setf (sicl-genv:fdefinition 'sicl-clos::update-dependent r2)
+          (lambda (&rest arguments)
+            (error "update-dependent ~s" arguments)))
     (ld "../CLOS/add-remove-method-support.lisp" r2 r2)
     (set-specializer-profiles-phase3 r3 r1 r2)
     (ld "../CLOS/compute-effective-method-support.lisp" r2 r2)
