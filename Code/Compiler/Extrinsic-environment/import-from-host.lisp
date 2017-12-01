@@ -95,18 +95,8 @@
       ;; Import all special operators in the host to ENVIRONMENT
       (when (special-operator-p symbol)
         (setf (sicl-genv:special-operator symbol environment) t))
-      ;; Import special variables.  There is no predicate for special
-      ;; variables in Common Lisp, so we must settle for an
-      ;; approximation.  We consider all symbols with earmuffs to be
-      ;; special, and if they are bound, we initialize them with that
-      ;; value.  We also exclude constant variables that happen to have
-      ;; earmuffs.
-      (let* ((name (symbol-name symbol))
-             (length (length name))
-             (boundp (boundp symbol)))
-        (when (and (>= length 3)
-                   (eql (char name 0) #\*)
-                   (eql (char name (1- length)) #\*)
-                   (not (constantp symbol)))
-          (setf (sicl-genv:special-variable symbol environment boundp)
-                (if boundp (cl:symbol-value symbol) nil)))))))
+      ;; Import special variables.
+      (loop for symbol in '(*package* *macroexpand-hook*)
+            for boundp = (boundp symbol)
+            do (setf (sicl-genv:special-variable symbol environment boundp)
+                     (if boundp (cl:symbol-value symbol) nil))))))
