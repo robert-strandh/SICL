@@ -95,11 +95,6 @@
       ;; Import all special operators in the host to ENVIRONMENT
       (when (special-operator-p symbol)
         (setf (sicl-genv:special-operator symbol environment) t))
-      ;; Import all classes in the host to ENVIRONMENT
-      (let ((class (find-class symbol nil)))
-        (unless (null class)
-          (setf (sicl-genv:find-class symbol environment)
-                class)))
       ;; Import special variables.  There is no predicate for special
       ;; variables in Common Lisp, so we must settle for an
       ;; approximation.  We consider all symbols with earmuffs to be
