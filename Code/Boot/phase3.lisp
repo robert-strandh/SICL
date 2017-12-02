@@ -150,6 +150,17 @@
 			  :function function)))
 	    (funcall add-method fun method)))))
 
+(defun define-ensure-generic-function-phase3 (env)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function env)
+        (lambda (name
+                 &key lambda-list
+                 &allow-other-keys)
+          (setf (sicl-genv:fdefinition name env)
+                (funcall (sicl-genv:fdefinition 'make-instance env)
+                         'standard-generic-function
+                         :name name
+                         :lambda-list lambda-list)))))
+
 ;;; Function LDP (protected loading).  It wraps the loading of a file
 ;;; in a handler that invokes a restart that tells the compiler to
 ;;; treat all undefined functions as if they were global.  This
