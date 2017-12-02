@@ -43,7 +43,6 @@
 ;;; This cell is not counted among the slots, because it is accessed
 ;;; directly, using offsets.  For that reason, we must allocate more
 ;;; slot storage than there are slots with :INSTANCE allocation.
-
 (defun allocate-instance-built-in-class (class &rest initargs)
   (declare (ignore initargs))
   (let* ((size (instance-size class))
