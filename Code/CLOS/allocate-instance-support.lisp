@@ -31,10 +31,10 @@
 (defun allocate-instance-regular-class (class &rest initargs)
   (declare (ignore initargs))
   (let* ((size (instance-size class))
-	 (instance (allocate-general-instance class (+ size 2))))
+         (instance (allocate-general-instance class (+ size 2))))
     ;; Store the unique number of the class in the instance.
     (setf (general-instance-access instance +class-unique-number-offset+)
-	  (unique-number class))
+          (unique-number class))
     instance))
 
 ;;; This function implements the action of method on
@@ -47,8 +47,8 @@
 (defun allocate-instance-built-in-class (class &rest initargs)
   (declare (ignore initargs))
   (let* ((size (instance-size class))
-	 (instance (allocate-general-instance class (+ size 1))))
+         (instance (allocate-general-instance class (+ size 1))))
     ;; Store the unique number of the class in the instance.
     (setf (general-instance-access instance +class-unique-number-offset+)
-	  (unique-number class))
+          (unique-number class))
     instance))
