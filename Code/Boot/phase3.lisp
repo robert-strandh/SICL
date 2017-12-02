@@ -22,9 +22,10 @@
 ;;; instances ERSATZ INSTANCES.  Here, we represent an ersatz instance
 ;;; as an instance of the host class HEADER containing the class of
 ;;; the instance and a RACK in the form of a host simple vector.
-(defclass header ()
+(defclass header (closer-mop:funcallable-standard-object)
   ((%class :initarg :class :accessor class)
-   (%rack :initarg :rack :reader rack)))
+   (%rack :initarg :rack :reader rack))
+  (:metaclass closer-mop:funcallable-standard-class))
 
 (defun define-class-of-phase3 (env)
   (setf (sicl-genv:fdefinition 'class-of env) #'class))
