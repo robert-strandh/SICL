@@ -54,15 +54,15 @@
   ;; STANDARD-GENERIC-FUNCTION is created and associated with
   ;; FUNCTION-NAME in ENV2.
   (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
-	(lambda (function-name &rest arguments)
-	  (let ((args (copy-list arguments)))
-	    (loop while (remf args :environment))
-	    (if (sicl-genv:fboundp function-name env2)
-		(sicl-genv:fdefinition function-name env2)
-		(setf (sicl-genv:fdefinition function-name env2)
-		      (apply #'make-instance 'standard-generic-function
-			     :name function-name
-			     args))))))
+        (lambda (function-name &rest arguments)
+          (let ((args (copy-list arguments)))
+            (loop while (remf args :environment))
+            (if (sicl-genv:fboundp function-name env2)
+                (sicl-genv:fdefinition function-name env2)
+                (setf (sicl-genv:fdefinition function-name env2)
+                      (apply #'make-instance 'standard-generic-function
+                             :name function-name
+                             args))))))
   ;; Define the macro DEFGENERIC for use in phase 1.  We define it a
   ;; bit differently from its usual definition.  It is defined in the
   ;; environment ENV1.  The expansion defines a generic function in
@@ -74,22 +74,22 @@
   ;; form for a particular generic function exactly once, but we can
   ;; do that because we completely master the boot process.
   (setf (sicl-genv:macro-function 'defgeneric env1)
-	(lambda (form environment)
-	  (declare (ignore environment))
+        (lambda (form environment)
+          (declare (ignore environment))
           ;; The DEFGENERIC form must be evaluated in ENV1, so that
           ;; the expansion is also evaluated in ENV1.  The reason for
           ;; that is that we call ENSURE-GENERIC-FUNCTION, and that
           ;; has to be the function defined in ENV1 above.
-	  `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
-		  (setf (sicl-genv:fdefinition ',(second form) ,env2)
-			(ensure-generic-function
-			 ',(second form)
-			 :name ',(second form)
-			 :lambda-list ',(third form)))))))
+          `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
+                  (setf (sicl-genv:fdefinition ',(second form) ,env2)
+                        (ensure-generic-function
+                         ',(second form)
+                         :name ',(second form)
+                         :lambda-list ',(third form)))))))
 
 (defun create-class-accessor-generic-functions-phase1 ()
   (let ((env1 *phase1-mop-class-env*)
-	(env2 *phase1-mop-accessor-env*))
+        (env2 *phase1-mop-accessor-env*))
     (define-generic-function-definers-phase1 env1 env2)
     (ld "../CLOS/accessor-defgenerics.lisp" env1 env1)))
 
@@ -128,9 +128,9 @@
 ;;; accomplish its task.
 (defun make-reader-function (slot-name)
   (compile nil
-	   `(lambda (args next-methods)
-	      (declare (ignore next-methods))
-	      (slot-value (car args) ',slot-name))))
+           `(lambda (args next-methods)
+              (declare (ignore next-methods))
+              (slot-value (car args) ',slot-name))))
 
 ;;; Create a reader method.  SLOT-NAME is the name of a slot for which
 ;;; a reader method should be created.  CLASS is a class metaobject
@@ -159,8 +159,8 @@
 ;;; is the specializer to be used in the new methods.
 (defun add-reader-methods (generic-function-names env slot-name class)
   (loop for name in generic-function-names
-	for generic-function = (sicl-genv:fdefinition name env)
-	do (add-reader-method generic-function slot-name class)))
+        for generic-function = (sicl-genv:fdefinition name env)
+        do (add-reader-method generic-function slot-name class)))
 
 ;;; Take the name of a slot and define a writer function to be used in
 ;;; a method.  This writer function sets the value of the slot.  The
@@ -168,10 +168,10 @@
 ;;; accomplish its task.
 (defun make-writer-function (slot-name)
   (compile nil
-	   `(lambda (args next-methods)
-	      (declare (ignore next-methods))
-	      (setf (slot-value (cadr args) ',slot-name)
-		    (car args)))))
+           `(lambda (args next-methods)
+              (declare (ignore next-methods))
+              (setf (slot-value (cadr args) ',slot-name)
+                    (car args)))))
 
 ;;; Create a writer method.  SLOT-NAME is the name of a slot for which
 ;;; a writer method should be created.  CLASS is a class metaobject
@@ -200,8 +200,8 @@
 ;;; and it is the specializer to be used in the new methods.
 (defun add-writer-methods (generic-function-names env slot-name class)
   (loop for name in generic-function-names
-	for generic-function = (sicl-genv:fdefinition name env)
-	do (add-writer-method generic-function slot-name class)))
+        for generic-function = (sicl-genv:fdefinition name env)
+        do (add-writer-method generic-function slot-name class)))
 
 ;;; Add accessor methods according to a canonicalized slot
 ;;; specification.  Recall that a canonicalized slot specification is
@@ -232,9 +232,9 @@
 ;;; been removed.
 (defun remove-readers-and-writers-from-slot-spec (slot-spec)
   (loop for (name value) on slot-spec by #'cddr
-	unless (member name '(:readers :writers))
-	  collect name
-	  and collect value))
+        unless (member name '(:readers :writers))
+          collect name
+          and collect value))
 
 ;;; Remove keyword arguments :READERS and :WRITERS fro each canonical
 ;;; slot specification in a list of such canonical slot
@@ -250,35 +250,35 @@
 ;;; and slot writer methods are to be added.
 (defun define-ensure-class (env1 env2 env3)
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class env1)
-	(lambda (class-name
-		 &key
-		   direct-slots
-		   ((:direct-superclasses direct-superclass-names))
-		   name
-		   ((:metaclass metaclass-name) 'standard-class)
-		 &allow-other-keys)
-	  ;; We should be called only for the expansion of DEFCLASS,
-	  ;; and we make sure that we always pass the name of a
-	  ;; metaclass, and never a class metaobject.
-	  (assert (symbolp metaclass-name))
-	  (let (;; In phase 1, the metaclass is a host class, so we
+        (lambda (class-name
+                 &key
+                   direct-slots
+                   ((:direct-superclasses direct-superclass-names))
+                   name
+                   ((:metaclass metaclass-name) 'standard-class)
+                 &allow-other-keys)
+          ;; We should be called only for the expansion of DEFCLASS,
+          ;; and we make sure that we always pass the name of a
+          ;; metaclass, and never a class metaobject.
+          (assert (symbolp metaclass-name))
+          (let (;; In phase 1, the metaclass is a host class, so we
                 ;; look for it in the host environment.
                 (metaclass (find-class metaclass-name))
-		(slot-copies
-		  (remove-readers-and-writers-from-slot-specs direct-slots))
+                (slot-copies
+                  (remove-readers-and-writers-from-slot-specs direct-slots))
                 ;; The direct superclasses, on the other hand, are to
                 ;; be found in the same environment as the one in
                 ;; which this class wil. be defined.
-		(direct-superclasses
-		  (loop for name in direct-superclass-names
-			collect (sicl-genv:find-class name env2))))
-	    (let ((class (make-instance metaclass
-			   :name (make-symbol (symbol-name name))
-			   :direct-slots slot-copies
-			   :direct-superclasses direct-superclasses)))
-	      (setf (sicl-genv:find-class class-name env2) class)
-	      (loop for slot-spec in direct-slots
-		    do (add-accessor-methods slot-spec class env3)))))))
+                (direct-superclasses
+                  (loop for name in direct-superclass-names
+                        collect (sicl-genv:find-class name env2))))
+            (let ((class (make-instance metaclass
+                           :name (make-symbol (symbol-name name))
+                           :direct-slots slot-copies
+                           :direct-superclasses direct-superclasses)))
+              (setf (sicl-genv:find-class class-name env2) class)
+              (loop for slot-spec in direct-slots
+                    do (add-accessor-methods slot-spec class env3)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -296,7 +296,7 @@
 ;;; STANDARD-OBJECT.
 (defun define-class-t-phase1 (env)
   (setf (sicl-genv:find-class 't env)
-	(find-class 'standard-object)))
+        (find-class 'standard-object)))
 
 ;;; We need a special definition of the class named FUNCTION in phase
 ;;; 1, because we want instances of this class to be funcallable in
@@ -304,8 +304,8 @@
 ;;; the host class FUNCALLABLE-STANDARD-CLASS.
 (defun define-class-function-phase1 (env)
   (setf (sicl-genv:find-class 'function env)
-	(make-instance 'closer-mop:funcallable-standard-class
-	  :name (make-symbol (symbol-name '#:function)))))
+        (make-instance 'closer-mop:funcallable-standard-class
+          :name (make-symbol (symbol-name '#:function)))))
 
 (defun create-exceptional-mop-classes-phase1 (env)
   (define-class-t-phase1 env)
@@ -316,11 +316,11 @@
 ;;; class.
 (defun define-funcallable-standard-class ()
   (setf (find-class 'sicl-clos:funcallable-standard-class)
-	(find-class 'closer-mop:funcallable-standard-class)))
+        (find-class 'closer-mop:funcallable-standard-class)))
 
 (defun create-mop-classes-phase1 ()
   (let ((env1 *phase1-mop-class-env*)
-	(env2 *phase1-mop-accessor-env*))
+        (env2 *phase1-mop-accessor-env*))
     (ld "../CLOS/defclass-support.lisp" env1 env1)
     (ld "../CLOS/defclass-defmacro.lisp" env1 env1)
     (create-exceptional-mop-classes-phase1 env1)
