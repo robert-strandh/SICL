@@ -150,13 +150,19 @@
 			  :function function)))
 	    (funcall add-method fun method)))))
 
-(defun define-ensure-generic-function-phase3 (env)
-  (setf (sicl-genv:fdefinition 'ensure-generic-function env)
+;;; This function is used to define the function
+;;; ENSURE-GENERIC-FUNCTION in phase 3.  ENV1 is the environment in
+;;; which the definition of ENSURE-GENERIC-FUNCTION is made.  ENV2 is
+;;; the environment in which the new generic function is to be
+;;; defined.  ENV3 is used to look up the definition of MAKE-INSTANCE
+;;; used to instantiate the class named STANDARD-GENERIC-FUNCTION.
+(defun define-ensure-generic-function-phase3 (env1 env2 env3)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function env1)
         (lambda (name
                  &key lambda-list
                  &allow-other-keys)
-          (setf (sicl-genv:fdefinition name env)
-                (funcall (sicl-genv:fdefinition 'make-instance env)
+          (setf (sicl-genv:fdefinition name env2)
+                (funcall (sicl-genv:fdefinition 'make-instance env3)
                          'standard-generic-function
                          :name name
                          :lambda-list lambda-list)))))
@@ -230,7 +236,8 @@
 (defun phase3 ()
   (let ((r1 *phase1-mop-class-env*)
 	(r2 *phase2-mop-class-env*)
-	(r3 *phase2-mop-accessor-env*))
+	(r3 *phase2-mop-accessor-env*)
+	(r4 *phase3-mop-accessor-env*))
     (message "Start of phase 3~%")
     ;; Define a temporary version of several functions to break the
     ;; mutual dependency between the next two files to be loaded.
@@ -310,7 +317,7 @@
     (ld "../CLOS/slot-bound-using-index.lisp" r3 r3)
     (define-error-function 'reinitialize-instance r3)
     (define-error-function 'change-class r3)
-    (define-ensure-generic-function-phase3 r3)
+    (define-ensure-generic-function-phase3 r3 r4 r3)
     (ld "../CLOS/defgeneric-defmacro.lisp" r3 r3)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
     (message "End of phase 3~%")))
