@@ -10,5 +10,6 @@
 	(*phase1-mop-accessor-env* (r2 boot))
 	(*phase1-mop-class-env* (r1 boot))
 	(*phase2-mop-accessor-env* (r3 boot))
-	(*phase2-mop-class-env* (r2 boot)))
+	(*phase2-mop-class-env* (r2 boot))
+	(*phase3-mop-accessor-env* (r4 boot)))
     (fill-boot)))
