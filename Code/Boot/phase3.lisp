@@ -171,7 +171,8 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class-using-class env)
         (lambda (class name &rest keys)
           (declare (ignore class))
-          (apply (sicl-genv:fdefinition 'ensure-class-using-class-null env)
+          (apply (sicl-genv:fdefinition
+                  'sicl-clos::ensure-class-using-class-null env)
                  name keys))))
 
 ;;; Function LDP (protected loading).  It wraps the loading of a file
@@ -331,6 +332,7 @@
     (define-ensure-class-using-class-phase3 r3)
     (ld "../CLOS/ensure-class.lisp" r3 r3)
     (ld "../CLOS/defclass-support.lisp" r3 r3)
+    (ld "../CLOS/defclass-defmacro.lisp" r3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
