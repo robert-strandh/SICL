@@ -167,6 +167,13 @@
                          :name name
                          :lambda-list lambda-list)))))
 
+(defun define-ensure-class-using-class-phase3 (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class-using-class env)
+        (lambda (class name &rest keys)
+          (declare (ignore class))
+          (apply (sicl-genv:fdefinition 'ensure-class-using-class-null env)
+                 name keys))))
+
 ;;; Function LDP (protected loading).  It wraps the loading of a file
 ;;; in a handler that invokes a restart that tells the compiler to
 ;;; treat all undefined functions as if they were global.  This
