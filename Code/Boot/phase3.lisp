@@ -308,6 +308,8 @@
     (define-error-function 'sicl-clos::remove-direct-method r2)
     (define-error-function 'sicl-clos::map-dependents r2)
     (define-error-function 'sicl-clos::update-dependent r2)
+    (ld "../CLOS/add-remove-direct-method-support.lisp" r2 r2)
+    (ld "../CLOS/add-remove-direct-method-defuns.lisp" r2 r2)
     (ld "../CLOS/add-remove-method-support.lisp" r2 r2)
     (ld "../CLOS/add-remove-method-defuns.lisp" r2 r2)
     (set-specializer-profiles-phase3 r3 r1 r2)
