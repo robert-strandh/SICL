@@ -84,7 +84,6 @@
                   (setf (sicl-genv:fdefinition ',(second form) ,env2)
                         (ensure-generic-function
                          ',(second form)
-                         :name ',(second form)
                          :lambda-list ',(third form)))))))
 
 (defun create-class-accessor-generic-functions-phase1 ()
