@@ -336,8 +336,6 @@
     (ld "../CLOS/ensure-class.lisp" r3 r3)
     (ld "../CLOS/defclass-support.lisp" r3 r3)
     (ld "../CLOS/defclass-defmacro.lisp" r3 r3)
-    (define-error-function 'slot-value r2)
-    (define-error-function '(setf slot-value) r2)
     (ld "../CLOS/class-unique-number-defparameter.lisp" r3 r3)
     (create-bridge-classes r3 r3)
     (message "End of phase 3~%")))
