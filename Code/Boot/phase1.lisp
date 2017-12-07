@@ -81,10 +81,9 @@
           ;; that is that we call ENSURE-GENERIC-FUNCTION, and that
           ;; has to be the function defined in ENV1 above.
           `(progn (sicl-genv:fmakunbound ',(second form) ,env2)
-                  (setf (sicl-genv:fdefinition ',(second form) ,env2)
-                        (ensure-generic-function
-                         ',(second form)
-                         :lambda-list ',(third form)))))))
+                  (ensure-generic-function
+                   ',(second form)
+                   :lambda-list ',(third form))))))
 
 (defun create-class-accessor-generic-functions-phase1 ()
   (let ((env1 *phase1-mop-class-env*)
