@@ -337,6 +337,7 @@
     (ld "../CLOS/defclass-support.lisp" r3 r3)
     (ld "../CLOS/defclass-defmacro.lisp" r3 r3)
     (define-error-function 'slot-value r2)
+    (define-error-function '(setf slot-value) r2)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject
