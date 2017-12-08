@@ -5,7 +5,10 @@
 ;;; DEFGENERIC.
 
 ;;; FIXME: Add options and methods
-(defmacro defgeneric (&environment env name lambda-list)
+(defmacro defgeneric (&environment env
+                        name lambda-list
+                      &rest options-and-methods)
+  (declare (ignore options-and-methods))
   (let* ((arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
 	 (function-type `(function ,arg-type t)))
   `(progn (eval-when (:compile-toplevel)
