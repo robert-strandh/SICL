@@ -14,4 +14,5 @@
        method-class
        method-combination
        name
+       environment
      &allow-other-keys))
