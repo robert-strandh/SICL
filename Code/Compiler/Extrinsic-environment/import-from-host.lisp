@@ -47,7 +47,7 @@
                       rplaca rplacd cadr cddr reverse member-if-not
                       (setf cadr) (setf cddr)
                       cdddr reduce union assoc mapc intersection
-                      get-properties
+                      get-properties adjoin
                       copy-list set-difference set-exclusive-or)
         do (import-function-from-host name environment)))
 
