@@ -37,3 +37,7 @@
 (define-condition unable-to-compute-class-precedence-list
     (sicl-additional-conditions:sicl-error)
   ((%offending-class :initarg :offending-class :reader offending-class)))
+
+(define-condition option-or-method-must-be-non-empty-list
+    (sicl-additional-conditions:sicl-error)
+  ((%expression :initarg :expression :reader expressions)))
