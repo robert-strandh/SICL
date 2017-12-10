@@ -97,7 +97,16 @@ following contents:
   of the function to inline.
 \item The successor instruction of the initial \texttt{enter}
   instruction.
+\item The initial mapping described previously, as well as
+  information about ownership lexical variables.
 \end{itemize}
+
+In each iteration of the algorithm, a worklist item is removed from
+the worklist, and a generic function is called with four arguments,
+representing the contents of the worklist item.  Each iteration may
+result in zero, one, or two new worklist items, according to the
+mapping and ownership information, and according to the number of
+successors of the successor instruction in this contents.
 
 \begin{itemize}
 \item If the next instruction has already been inlined, then replace
