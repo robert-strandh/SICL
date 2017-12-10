@@ -36,6 +36,10 @@ A HIR instruction falls into one of the following categories:
 \item Instructions for testing the type of an object.
 \item Instructions such as \texttt{funcall}, \texttt{return}, and
   \texttt{unwind} for handling function calls and returns.
+\item The \texttt{enclose} instruction.  This instruction takes the
+  \emph{code} of a nested function (represented by its \texttt{enter}
+  instruction) and creates a \emph{callable function} that may be a
+  \emph{closure}.
 \item The \texttt{enter} instruction.  This instruction is the first
   one to be executed in a function, and it is responsible for creating
   the local lexical environment of the function from the arguments
