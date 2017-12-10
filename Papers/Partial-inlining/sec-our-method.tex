@@ -79,6 +79,26 @@ The algorithm that implements out technique maintains a
 \item The mapping and ownership information described previously.
 \end{itemize}
 
+Before the algorithm starts, assignment instructions are inserted
+before the \texttt{funcall} instruction, copying each argument to a
+temporary lexical variable.  These lexical variables represent a copy
+of the initial environment of the called function, but allocated in
+the calling function.  The pair consisting of the \texttt{funcall} and
+the \texttt{enter} instruction can be seen as transferring this
+environment from the calling function to the called function.
+
+Initially, the worklist contains a single worklist item with the
+following contents:
+
+\begin{itemize}
+\item The \texttt{funcall} instruction representing the call that
+  should be in lined.
+\item A \emph{private copy} of the initial \texttt{enter} instruction
+  of the function to inline.
+\item The successor instruction of the initial \texttt{enter}
+  instruction.
+\end{itemize}
+
 \begin{itemize}
 \item If the next instruction has already been inlined, then replace
   the \texttt{funcall} instruction by the inlined version of the next
@@ -101,4 +121,4 @@ The algorithm that implements out technique maintains a
   instruction as described below.
 \end{itemize}
 
-%%  LocalWords:  worklist
+%%  LocalWords:  worklist funcall
