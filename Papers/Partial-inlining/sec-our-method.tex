@@ -67,6 +67,18 @@ Our technique maintains the following information:
   by the called function.
 \end{itemize}
 
+The algorithm that implements out technique maintains a
+\emph{worklist}.  An item of the worklist contains:
+
+\begin{itemize}
+\item A \texttt{funcall} instruction, representing the call site in the
+  calling function.
+\item An \texttt{enter} instruction, representing the called function.
+\item The successor instruction of the \texttt{enter} instruction.
+  This instruction is used for generic dispatch.
+\item The mapping and ownership information described previously.
+\end{itemize}
+
 \begin{itemize}
 \item If the next instruction has already been inlined, then replace
   the \texttt{funcall} instruction by the inlined version of the next
@@ -88,3 +100,5 @@ Our technique maintains the following information:
   inputs of the \texttt{call} instruction and the \texttt{enter}
   instruction as described below.
 \end{itemize}
+
+%%  LocalWords:  worklist
