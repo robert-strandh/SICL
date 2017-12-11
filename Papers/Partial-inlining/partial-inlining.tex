@@ -48,7 +48,21 @@ Robert Strandh\\
 \maketitle
 
 \begin{abstract}
-Stuff.
+Inlining is an important optimization technique in any modern
+compiler, though the description of this technique in the literature
+is informal and vague.  We describe a technique for inlining designed
+to work on a \emph{flow graph} of instructions of intermediate code.
+
+Our technique uses \emph{local graph rewriting}, making the semantic
+correctness of this technique obvious.  In addition, we prove
+that the algorithm terminates.
+
+As a direct result of the preservation of the semantics of the program
+after each local rewriting step, the algorithm can stop after any
+iteration, resulting in the \emph{partial inlining} of the called
+function.  Such partial inlining can be advantageous in order to avoid
+the inlining of code that is not performance critical, in particular
+for creating arguments and calls to error-signaling functions.
 \end{abstract}
 
  \begin{CCSXML}
@@ -90,3 +104,5 @@ Stuff.
 \bibliographystyle{abbrv}
 \bibliography{partial-inlining}
 \end{document}
+
+%%  LocalWords:  Inlining inlining
