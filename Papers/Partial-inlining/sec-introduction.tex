@@ -23,14 +23,15 @@ techniques are often referred to with the abbreviated form
 
 Most literature sources define inlining as something similar to
 ``replacing a call to a function with a copy of the body of the called
-function''.  That definition suggests that inlining is an
-all-or-nothing transformation.  In this paper, we present a technique
-that allows for \emph{partial} inlining.  More precisely, it allows
-for a \emph{prefix} of the callee to be copied into the caller.  We
-obtain this property by using \emph{local graph rewriting} on the
-level of instructions in intermediate code.  A single instruction is
-inlined in each step, preserving the overall semantics of the program,
-and thereby allowing us to stop the process at any time.
+function'' (see e.g., \cite{Scheifler:1977:AIS:359810.359830}) That
+definition suggests that inlining is an all-or-nothing transformation.
+In this paper, we present a technique that allows for \emph{partial}
+inlining.  More precisely, it allows for a \emph{prefix} of the callee
+to be copied into the caller.  We obtain this property by using
+\emph{local graph rewriting} on the level of instructions in
+intermediate code.  A single instruction is inlined in each step,
+preserving the overall semantics of the program, and thereby allowing
+us to stop the process at any time.
 
 As it turns out, the definition of inlining is too vague for our
 purpose.  It suggests that the sole purpose of inlining is to avoid
