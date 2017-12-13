@@ -52,6 +52,16 @@
    (%methods 
     :initform '() 
     :accessor generic-function-methods)
+   ;; This slot contains only the methods that were defined as part of
+   ;; the DEFGENERIC form.  We need it, because the Common Lisp
+   ;; HyperSpec says that when a DEFGENERIC form is evaluated and the
+   ;; generic function exists already, then the methods that were
+   ;; added as a result of the evaluation of the DEFGENERIC form are
+   ;; first removed.  That is not the case for methods defined by
+   ;; separate DEFMETHOD forms.
+   (%initial-methods
+    :initform '()
+    :accessor initial-methods)
    ;; We maintain a CALL HISTORY of the generic function.  This call
    ;; history is a list of call records.  Whenever a call is made to
    ;; the generic function with some call profile that has not yet
