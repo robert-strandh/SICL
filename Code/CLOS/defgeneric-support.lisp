@@ -15,3 +15,9 @@
              ;; FIXME: Define signal type.
              (error 'unknown-defgeneric-option
                     :option option-or-method))))
+
+(defun separate-options-and-methods (options-and-methods)
+  (values (remove :method options-and-methods
+                  :key #'car :test-not #'eq)
+          (remove :method options-and-methods
+                  :key #'car :test #'eq)))
