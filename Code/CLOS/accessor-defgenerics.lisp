@@ -158,6 +158,17 @@
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf generic-function-methods) (new-methods generic-function))
 
+;;; This generic function returns a list of the initial methods of the
+;;; generic function.  Recall that the initial methods of a generic
+;;; function are those that are defined as part of the evaluation of
+;;; the DEFGENERIC form.
+(defgeneric initial-methods (generic-function))
+
+;;; This function sets the initial methods of the generic function.
+;;; Recall that the initial methods of a generic function are those
+;;; that are defined as part of the evaluation of the DEFGENERIC form.
+(defgeneric (setf initial-methods) (new-methods generic-function))
+
 ;;; This function returns the call history of the generic function.
 ;;; FIXME: say more.
 (defgeneric call-history (generic-function))
@@ -248,3 +259,5 @@
 (defgeneric (setf slot-definition-location) (new-location slot-definition))
 
 (defgeneric operation (simple-method-combination))
+
+;;  LocalWords:  DEFGENERIC
