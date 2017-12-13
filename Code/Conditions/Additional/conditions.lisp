@@ -4,17 +4,17 @@
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
-;;;; all rights reserved. 
+;;;; all rights reserved.
 ;;;;
-;;;; Permission is hereby granted to use this software for any 
+;;;; Permission is hereby granted to use this software for any
 ;;;; purpose, including using, modifying, and redistributing it.
 ;;;;
 ;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
+;;;; this software assumes any responsibility of the consequences.
 
 (define-condition sicl-warning (acclimation:condition warning) ())
 (define-condition sicl-style-warning (acclimation:condition style-warning) ())
-(define-condition sicl-error (acclimation:condition  error) ())
+(define-condition sicl-error (acclimation:condition error) ())
 (define-condition sicl-type-error (acclimation:condition type-error) ())
 (define-condition sicl-cell-error (acclimation:condition cell-error) ())
 (define-condition sicl-unbound-variable (acclimation:condition unbound-variable) ())
@@ -22,7 +22,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Runtime conditions. 
+;;; Runtime conditions.
 
 ;;; This condition is used by functions that take :test and :test-not
 ;;; keyword arguments, and is signaled when both of those are given.
@@ -40,7 +40,7 @@
 (define-condition at-least-one-argument-required (sicl-error)
   ())
 
-;;; This condition is used by the pairlis function when 
+;;; This condition is used by the pairlis function when
 ;;; the two lists are not of the same length.
 (define-condition lists-must-have-the-same-length (sicl-error)
   ((%list1 :initarg :list1 :reader list1)
@@ -48,7 +48,7 @@
 
 ;;; This condition is used by macros that detect that there
 ;;; is both a :test and a :test-not, and that detection is
-;;; done at macro-expansion time. 
+;;; done at macro-expansion time.
 (define-condition warn-both-test-and-test-not-given (sicl-warning)
   ())
 
@@ -84,7 +84,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile time conditions. 
+;;; Compile time conditions.
 
 (define-condition sicl-program-error (acclimation:condition program-error)
   ())
@@ -171,7 +171,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CLOS/MOP-related conditions. 
+;;; CLOS/MOP-related conditions.
 
 (define-condition superclass-list-must-be-proper-list
     (sicl-type-error)
@@ -271,4 +271,3 @@
 (define-condition load-time-value-read-only-p-not-evaluated
     (sicl-style-warning)
   ())
-
