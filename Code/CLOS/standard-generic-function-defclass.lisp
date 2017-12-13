@@ -46,6 +46,9 @@
     ;; FIXME: remove this later.
     :initform nil
     :reader generic-function-method-combination)
+   ;; This slot contains all the methods of the generic function,
+   ;; including those that were defined as part of the DEFGENERIC
+   ;; form.
    (%methods 
     :initform '() 
     :accessor generic-function-methods)
@@ -67,3 +70,5 @@
     :initarg :specializer-profile
     :accessor specializer-profile))
   (:metaclass funcallable-standard-class))
+
+;;  LocalWords:  DEFGENERIC defgeneric
