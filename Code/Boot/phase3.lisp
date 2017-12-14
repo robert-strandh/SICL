@@ -329,6 +329,7 @@
     (define-error-function 'reinitialize-instance r3)
     (define-error-function 'change-class r3)
     (define-ensure-generic-function-phase3 r3 r4 r3)
+    (ld "../CLOS/defgeneric-support.lisp" r3 r3)
     (ld "../CLOS/defgeneric-defmacro.lisp" r3 r3)
     (ld "../CLOS/accessor-defgenerics.lisp" r3 r3)
     (ld "../CLOS/ensure-class-using-class-support.lisp" r3 r3)
