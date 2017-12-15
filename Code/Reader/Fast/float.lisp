@@ -21,7 +21,6 @@
         (loop for name in *most-positive-float-names*
               maximize (symbol-value name))))
 
-
 ;;; This variable contains a positive integer such that all positive
 ;;; integers that are less than or equal to this one have exact
 ;;; representations as integer floating-point numbers.  Calling
