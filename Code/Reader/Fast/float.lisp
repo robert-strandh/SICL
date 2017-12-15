@@ -3,9 +3,9 @@
 ;;; We need to discover at loadtime what the best floating-point
 ;;; type we are going to use for conversions from decimal to
 ;;; internal representation.  Implementations may want to alter the
-;;; value of this variable if other floating-point types are 
+;;; value of this variable if other floating-point types are
 ;;; supplied.  We use the names of those variables, as opposed to
-;;; their values, which would be determined at compile time. 
+;;; their values, which would be determined at compile time.
 (defparameter *most-positive-float-names*
   '(most-positive-short-float
     most-positive-single-float
@@ -26,7 +26,7 @@
 ;;; integers that are less than or equal to this one have exact
 ;;; representations as integer floating-point numbers.  Calling
 ;;; the FLOAT function on any such integer, is quaranteed to yield
-;;; an exact floating-point representation of the integer. 
+;;; an exact floating-point representation of the integer.
 (defvar *upper-integer-float-bound*)
 
 (makunbound '*upper-integer-float-bound*)
@@ -37,7 +37,7 @@
 
 ;;; This variable contains the largest integer n such that for all
 ;;; values k such that 0 <= k <= n, 10^k has an exact representation
-;;; as a floating-point number. 
+;;; as a floating-point number.
 (defvar *upper-decimal-exponent-bound*)
 
 (makunbound '*upper-decimal-exponent-bound*)
@@ -96,11 +96,11 @@
 ;;; adjusted accordingly.
 
 ;;; Convert a decimal to a float.
-;;; The sign is a floating-point number that is either 
-;;; numerically equivalent to 1 or to -1. 
-;;; The mantissa is a nonnegative integer. 
+;;; The sign is a floating-point number that is either
+;;; numerically equivalent to 1 or to -1.
+;;; The mantissa is a nonnegative integer.
 ;;; The exponent is an integer that may be positive, zero, or
-;;; negative.  
+;;; negative.
 
 ;;; This function is called as a last resort.  We construct
 ;;; a rational number and call.  Implement this better.
@@ -114,7 +114,7 @@
 ;;; representation as a floating-point integer.  But perhaps the
 ;;; mantissa is *so* small that there is an integer k > 0 so that
 ;;; 10^(e-k) *does* have an exact representation as a floating-point
-;;; integer, and m * 10^k is still small enough.  
+;;; integer, and m * 10^k is still small enough.
 (defun large-exponent-decimal-to-float (sign mantissa exponent)
   (declare (type (integer 0) mantissa)
            (type fixnum sign exponent))
@@ -133,18 +133,18 @@
       ;; The mantissa has an exact representation as a
       ;; floating-point integer.
       (if (minusp exponent)
-          (if (<= (- exponent) *upper-decimal-exponent-bound*) 
+          (if (<= (- exponent) *upper-decimal-exponent-bound*)
               ;; The exponent e has a sufficiently small absolute
               ;; value that we have the value of 10^|e| in a table
               ;; as a floating-point integer.  Since the exponent
               ;; is negative, divide the mantissa (converted to a
               ;; float) by the float that is represented by the
-              ;; exponent. 
+              ;; exponent.
               (* sign
                  (/ (float mantissa *most-positive-float*)
                     (aref *float-powers-of-ten* (- exponent))))
               (fallback-decimal-to-float sign mantissa exponent))
-          (if (<= exponent *upper-decimal-exponent-bound*) 
+          (if (<= exponent *upper-decimal-exponent-bound*)
               ;; The exponent e has a sufficiently small absolute
               ;; value that we have the value of 10^|e| in a table
               ;; as a floating-point integer.  Since the exponent
