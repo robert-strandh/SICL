@@ -18,8 +18,8 @@
 
 (eval-when (:load-toplevel)
   (setf *most-positive-float*
-	(loop for name in *most-positive-float-names*
-	      maximize (symbol-value name))))
+        (loop for name in *most-positive-float-names*
+              maximize (symbol-value name))))
 
 
 ;;; This variable contains a positive integer such that all positive
@@ -33,7 +33,7 @@
 
 (eval-when (:load-toplevel)
   (setf *upper-integer-float-bound*
-	(1- (expt 2 (float-precision *most-positive-float*)))))
+        (1- (expt 2 (float-precision *most-positive-float*)))))
 
 ;;; This variable contains the largest integer n such that for all
 ;;; values k such that 0 <= k <= n, 10^k has an exact representation
@@ -44,10 +44,10 @@
 
 (eval-when (:load-toplevel)
   (setf *upper-decimal-exponent-bound*
-	(loop for i from 0
-	      while (= (rational (float (expt 10 i) *most-positive-float*))
-		       (expt 10 i))
-	      finally (return (1- i)))))
+        (loop for i from 0
+              while (= (rational (float (expt 10 i) *most-positive-float*))
+                       (expt 10 i))
+              finally (return (1- i)))))
 
 (defvar *float-powers-of-ten*)
 
@@ -59,13 +59,13 @@
 
 (eval-when (:load-toplevel)
   (let ((float-table (make-array (1+ *upper-decimal-exponent-bound*)
-				 :element-type (type-of *most-positive-float*)))
-	(int-table (make-array (1+ *upper-decimal-exponent-bound*)
-			       :element-type '(integer 0))))
+                                 :element-type (type-of *most-positive-float*)))
+        (int-table (make-array (1+ *upper-decimal-exponent-bound*)
+                               :element-type '(integer 0))))
     (loop for i from 0 to *upper-decimal-exponent-bound*
-	  do (let ((value (expt 10 i)))
-	       (setf (aref int-table i) value)
-	       (setf (aref float-table i) (float value *most-positive-float*))))
+          do (let ((value (expt 10 i)))
+               (setf (aref int-table i) value)
+               (setf (aref float-table i) (float value *most-positive-float*))))
     (setf *integer-powers-of-ten* int-table)
     (setf *float-powers-of-ten* float-table)))
 
@@ -117,42 +117,42 @@
 ;;; integer, and m * 10^k is still small enough.  
 (defun large-exponent-decimal-to-float (sign mantissa exponent)
   (declare (type (integer 0) mantissa)
-	   (type fixnum sign exponent))
+           (type fixnum sign exponent))
   (if (< exponent (* 2 *upper-decimal-exponent-bound*))
       (let* ((diff (- exponent *upper-decimal-exponent-bound*))
-	     (new-mantissa (* mantissa (aref *integer-powers-of-ten* diff))))
-	(* sign
-	   (float new-mantissa *most-positive-float*)
-	   (aref *float-powers-of-ten* *upper-decimal-exponent-bound*)))
+             (new-mantissa (* mantissa (aref *integer-powers-of-ten* diff))))
+        (* sign
+           (float new-mantissa *most-positive-float*)
+           (aref *float-powers-of-ten* *upper-decimal-exponent-bound*)))
       (fallback-decimal-to-float sign mantissa exponent)))
 
 (defun decimal-to-float (sign mantissa exponent)
   (declare (type (integer 0) mantissa)
-	   (type fixnum sign exponent))
+           (type fixnum sign exponent))
   (if (<= mantissa *upper-integer-float-bound*)
       ;; The mantissa has an exact representation as a
       ;; floating-point integer.
       (if (minusp exponent)
-	  (if (<= (- exponent) *upper-decimal-exponent-bound*) 
-	      ;; The exponent e has a sufficiently small absolute
-	      ;; value that we have the value of 10^|e| in a table
-	      ;; as a floating-point integer.  Since the exponent
-	      ;; is negative, divide the mantissa (converted to a
-	      ;; float) by the float that is represented by the
-	      ;; exponent. 
-	      (* sign
-		 (/ (float mantissa *most-positive-float*)
-		    (aref *float-powers-of-ten* (- exponent))))
-	      (fallback-decimal-to-float sign mantissa exponent))
-	  (if (<= exponent *upper-decimal-exponent-bound*) 
-	      ;; The exponent e has a sufficiently small absolute
-	      ;; value that we have the value of 10^|e| in a table
-	      ;; as a floating-point integer.  Since the exponent
-	      ;; is positive, multiply the mantissa (converted to a
-	      ;; float) by the float that is represented by the
-	      ;; exponent.
-	      (* sign
-		 (float mantissa *most-positive-float*)
-		 (aref *float-powers-of-ten* exponent))
-	      (large-exponent-decimal-to-float sign mantissa exponent)))
+          (if (<= (- exponent) *upper-decimal-exponent-bound*) 
+              ;; The exponent e has a sufficiently small absolute
+              ;; value that we have the value of 10^|e| in a table
+              ;; as a floating-point integer.  Since the exponent
+              ;; is negative, divide the mantissa (converted to a
+              ;; float) by the float that is represented by the
+              ;; exponent. 
+              (* sign
+                 (/ (float mantissa *most-positive-float*)
+                    (aref *float-powers-of-ten* (- exponent))))
+              (fallback-decimal-to-float sign mantissa exponent))
+          (if (<= exponent *upper-decimal-exponent-bound*) 
+              ;; The exponent e has a sufficiently small absolute
+              ;; value that we have the value of 10^|e| in a table
+              ;; as a floating-point integer.  Since the exponent
+              ;; is positive, multiply the mantissa (converted to a
+              ;; float) by the float that is represented by the
+              ;; exponent.
+              (* sign
+                 (float mantissa *most-positive-float*)
+                 (aref *float-powers-of-ten* exponent))
+              (large-exponent-decimal-to-float sign mantissa exponent)))
       (fallback-decimal-to-float sign mantissa exponent)))
