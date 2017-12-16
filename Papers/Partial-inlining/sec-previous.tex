@@ -7,4 +7,12 @@ benefit as the opportunity for more optimizing code transformations
 when the code of the called function is exposed in the context of the
 calling function.
 
-%%  LocalWords:  inlining
+In their paper, they also mention \emph{cloning} as an alternative to
+inlining, i.e., the duplication and specialization of the called
+function according to the context of the calling function.  However,
+they consider inlining to be strictly superior to cloning in terms of
+the possible additional optimizations made possible, so they recommend
+cloning only as a means to avoid a too large increase in the code
+size, which could slow down subsequent non-linear optimizations.
+
+%%  LocalWords:  inlining optimizations
