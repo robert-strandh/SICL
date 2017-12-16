@@ -1,5 +1,14 @@
 \section{Previous work}
 
+Before inlining was applied to so-called ``structured programming
+languages'', the technique was applied to languages such as Fortran,
+that do not allow recursion, so do not need for subroutines to
+allocate their own environments upon entry.  And it was then referred
+to as ``open-coding of subroutines''.  Scheifler
+\cite{Scheifler:1977:AIS:359810.359830} is probably one of the first
+to apply inlining to more modern programming languages, in this case
+CLU \cite{Liskov:1977:AMC:359763.359789}.
+
 Ayers et al \cite{Ayers:1997:AI:258915.258928} consider the benefit of
 inlining consisting of the elimination of the overhead of a procedure
 call to be a ``side benefit'', and we agree.  They cite the main
