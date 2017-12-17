@@ -24,4 +24,12 @@ the possible additional optimizations made possible, so they recommend
 cloning only as a means to avoid a too large increase in the code
 size, which could slow down subsequent non-linear optimizations.
 
+Most existing work is concerned with determining when inlining is to
+be performed, based on some analysis of the benefits as compared to
+the penalties in terms of increased compilation time in subsequent
+optimization passes.  The inlining technique itself is considered
+trivial, or in the words of Chang and Hwy
+(\cite{Chang:1989:IFE:73141.74840.1, Chang:1989:IFE:74818.74840.2}) ``The
+work required to duplicate the callee is trivial''.
+
 %%  LocalWords:  inlining optimizations
