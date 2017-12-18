@@ -108,7 +108,7 @@ result in zero, one, or two new worklist items, according to the
 mapping and ownership information, and according to the number of
 successors of the successor instruction in this contents.
 
-\begin{itemize}
+\begin{enumerate}
 \item If the next instruction has already been inlined, then replace
   the \texttt{funcall} instruction by the inlined version of the next
   instruction.
@@ -128,6 +128,6 @@ successors of the successor instruction in this contents.
   to a different successor of the original instruction.  Update the
   inputs of the \texttt{call} instruction and the \texttt{enter}
   instruction as described below.
-\end{itemize}
+\end{enumerate}
 
 %%  LocalWords:  worklist funcall
