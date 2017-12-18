@@ -31,6 +31,11 @@
       :outputs (cons (new-temporary) outputs)
       :successors (if successor-p (list successor) '()))))
 
+(defmethod clone-instruction :around ((instruction enter-instruction))
+  (let ((result (call-next-method)))
+    (setf (lambda-list result) (lambda-list instruction))
+    result))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TOP-LEVEL-ENTER-INSTRUCTION.
@@ -54,6 +59,11 @@
   (let ((enter (make-enter-instruction lambda-list)))
     (change-class enter 'top-level-enter-instruction
 		  :forms forms)))
+
+(defmethod clone-instruction :around ((instruction top-level-enter-instruction))
+  (let ((result (call-next-method)))
+    (setf (forms result) (forms instruction))
+    result))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -188,6 +198,11 @@
     :successors successors
     :value-type value-type))
 
+(defmethod clone-instruction :around ((instruction typeq-instruction))
+  (let ((new (call-next-method)))
+    (setf (value-type new) (value-type instruction))
+    new))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction THE-INSTRUCTION.
@@ -206,6 +221,11 @@
     :outputs '()
     :successors (list successor)
     :value-type value-type))
+
+(defmethod clone-instruction :around ((instruction the-instruction))
+  (let ((new (call-next-method)))
+    (setf (value-type new) (value-type instruction))
+    new))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -285,6 +305,11 @@
     :outputs '()
     :successors (list successor)
     :invocation invocation))
+
+(defmethod clone-instruction :around ((instruction unwind-instruction))
+  (let ((result (call-next-method)))
+    (setf (invocation result) (invocation instruction))
+    result))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

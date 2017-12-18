@@ -11,6 +11,11 @@
 (defclass box-instruction (instruction one-successor-mixin)
   ((%element-type :initarg :element-type :accessor element-type)))
 
+(defmethod clone-instruction :around ((instruction box-instruction))
+  (let ((result (call-next-method)))
+    (setf (element-type result) (element-type instruction))
+    result))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; INSTRUCTION UNBOX-INSTRUCTION.
@@ -20,3 +25,8 @@
 
 (defclass unbox-instruction (instruction one-successor-mixin)
   ((%element-type :initarg :element-type :accessor element-type)))
+
+(defmethod clone-instruction :around ((instruction unbox-instruction))
+  (let ((result (call-next-method)))
+    (setf (element-type result) (element-type instruction))
+    result))
