@@ -64,9 +64,9 @@
                                          call-instruction
                                          enter-instruction
                                          mapping))
-         (new-instruction (make-instance (class-of successor-instruction)
-                            :inputs new-inputs
-                            :outputs new-outputs)))
+         (new-instruction (reinitialize-instance (cleavir-ir:clone-instruction successor-instruction)
+                            :inputs new-inputs :outputs new-outputs
+                            :predecessors nil :successors nil)))
     (add-to-mapping mapping successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
     (setf (cleavir-ir:successors enter-instruction)
@@ -123,24 +123,28 @@
                                          call-instruction
                                          enter-instruction
                                          mapping))
-         (new-instruction (make-instance (class-of successor-instruction)
+         (new-instruction (reinitialize-instance (cleavir-ir:clone-instruction successor-instruction)
                             :inputs new-inputs
-                            :outputs new-outputs))
+                            :outputs new-outputs
+                            :predecessors nil :successors nil))
          ;; Create a temporary to hold the closure to be called by the
          ;; call-instruction in the second branch of the new
          ;; instruction.
          (new-temp (cleavir-ir:new-temporary))
          ;; The new CALL-INSTRUCTION is like the previous one, except that
          ;; the first input is the new closure to be called.
-         (new-call (cleavir-ir:make-funcall-instruction
-                    (cons new-temp (rest (cleavir-ir:inputs call-instruction)))
-                    (cleavir-ir:outputs call-instruction)
-                    (first (cleavir-ir:successors call-instruction))))
-         (new-enter (cleavir-ir:make-enter-instruction
-                     (cleavir-ir:lambda-list enter-instruction)
-                     (second (cleavir-ir:successors successor-instruction))))
-         (new-enclose (cleavir-ir:make-enclose-instruction
-                       new-temp new-call new-enter)))
+         (new-call (let ((cleavir-ir:*policy* (cleavir-ir:policy call-instruction)))
+                     (cleavir-ir:make-funcall-instruction
+                      (cons new-temp (rest (cleavir-ir:inputs call-instruction)))
+                      (cleavir-ir:outputs call-instruction)
+                      (first (cleavir-ir:successors call-instruction)))))
+         (new-enter (let ((cleavir-ir:*policy* (cleavir-ir:policy enter-instruction)))
+                      (cleavir-ir:make-enter-instruction
+                       (cleavir-ir:lambda-list enter-instruction)
+                       (second (cleavir-ir:successors successor-instruction)))))
+         (new-enclose (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose-instruction)))
+                        (cleavir-ir:make-enclose-instruction
+                         new-temp new-call new-enter))))
     (add-to-mapping mapping successor-instruction new-instruction)
     (add-two-successor-instruction-before-instruction
      new-instruction enclose-instruction enclose-instruction new-enclose)
