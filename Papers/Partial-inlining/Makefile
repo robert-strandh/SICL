@@ -11,10 +11,10 @@ PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 all : $(NAME).pdf
 
 %.pdf: %.fig
-	fig2dev -Lpdftex -m 0.75  $< $@
+	fig2dev -Lpdftex -m 0.35  $< $@
 
 %.pdf_t: %.fig %.pdf
-	fig2dev -Lpdftex_t -m 0.75 -p $(basename $<).pdf $< $@
+	fig2dev -Lpdftex_t -m 0.35 -p $(basename $<).pdf $< $@
 
 %.code : %.lisp 
 	./codify $<
