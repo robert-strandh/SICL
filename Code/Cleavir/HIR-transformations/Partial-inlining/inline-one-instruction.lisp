@@ -8,8 +8,8 @@
      mapping)
   (let ((copy (find-in-mapping mapping successor-instruction)))
     (if (null copy)
-        '()
-        (call-next-method))))
+        (call-next-method)
+        '())))
 
 (defun local-location-p (location)
   (eq (gethash location *location-ownerships*)
@@ -162,3 +162,23 @@
             :call-instruction new-call
             :enter-instruction new-enter
             :mapping (copy-mapping mapping)))))
+
+(defmethod inline-one-instruction
+    (enclose-instruction
+     call-instruction
+     enter-instruction
+     (successor-instruction cleavir-ir:return-instruction)
+     mapping)
+  ;; If we get as far as the return, we are fully inlining.
+  ;; As such, we don't need to keep the call or enclose, and just go around them.
+  ;; set-predecessors can disconnect them later.
+  (let ((new-instruction (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
+                           (cleavir-ir:make-nop-instruction nil)))
+        (call-successor (first (cleavir-ir:successors call-instruction))))
+    (add-to-mapping mapping successor-instruction new-instruction)
+    (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+    ;; manual hookup
+    (setf (cleavir-ir:successors new-instruction) (list call-successor))
+    (setf (cleavir-ir:predecessors call-successor)
+          (substitute new-instruction call-instruction (cleavir-ir:predecessors call-successor)))
+    '()))
