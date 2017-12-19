@@ -134,7 +134,7 @@ successors of the successor instruction in this contents.
 
 As an example of our technique, consider the initial instruction graph
 in \refFig{fig31}.  On the left is the calling function.  It has three
-lexical variables, namely x, a, and z.  The variable a is refrenced by
+lexical variables, namely x, a, and z.  The variable a is referenced by
 the called function, but it is owned by the calling function.  The
 called function has a single variable named y in its initial lexical
 environment.  A temporary variable t2 is created as a result of the
@@ -179,8 +179,8 @@ applies, so we insert a copy of that instruction before the
 original instruction is the lexical variable y, and that variable is
 mapped to xx in the calling function, the inlined instruction receives
 xx as its input.  The output of the original instruction is temporary
-variable t2 that is not in our mapping.  Therefore a temprary variable
-tt2 is creted in the calling function, and an entry is created in the
+variable t2 that is not in our mapping.  Therefore a temporary variable
+tt2 is created in the calling function, and an entry is created in the
 mapping that translates t2 to tt2.  The private \texttt{enter}
 instruction is modified so that it now refers to the next instruction
 to be considered.  The result of this step is shown in \refFig{fig33}.
@@ -218,4 +218,4 @@ Instruction graph after four inlining steps.}
 \end{figure}
 
 
-%%  LocalWords:  worklist funcall
+%%  LocalWords:  worklist funcall inlining inlined
