@@ -193,6 +193,12 @@ to be considered.  The result of this step is shown in \refFig{fig33}.
 Instruction graph after one inlining step.}
 \end{figure}
 
+In step two of the inlining procedure, we are considering inlining an
+instruction with two successors.  It has not yet been inlined, so rule
+number 4 applies.  As rule number 4 stipulates, we must replicate both
+the \texttt{enter} instruction and the \texttt{funcall} instruction.
+The result is shown in \refFig{fig34}.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig34.pdf_t}
@@ -200,6 +206,17 @@ Instruction graph after one inlining step.}
 \caption{\label{fig34}
 Instruction graph after two inlining steps.}
 \end{figure}
+
+Notice that in \refFig{fig34}, the leftmost \texttt{funcall}
+instruction goes with the rightmost \texttt{enter} instruction.
+
+In step three of the inlining procedure, we consider the rightmost
+\texttt{funcall} instruction.  The corresponding \texttt{enter}
+instruction has a \texttt{return} instruction as its successor, so
+rule number 2 applies.  we must therefore replace the \texttt{funcall}
+instruction by an assignment instruction, assigning the value of the
+variable tt2 to the variable z.  The result of this operation is shown
+in \refFig{fig35}.
 
 \begin{figure}
 \begin{center}
