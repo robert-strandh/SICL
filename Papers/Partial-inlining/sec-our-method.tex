@@ -214,7 +214,7 @@ instruction goes with the rightmost \texttt{enter} instruction.
 In step three of the inlining procedure, we consider the rightmost
 \texttt{funcall} instruction.  The corresponding \texttt{enter}
 instruction has a \texttt{return} instruction as its successor, so
-rule number 2 applies.  we must therefore replace the \texttt{funcall}
+rule number 2 applies.  We must therefore replace the \texttt{funcall}
 instruction by an assignment instruction, assigning the value of the
 variable tt2 to the variable z.  The result of this operation is shown
 in \refFig{fig35}.
