@@ -178,12 +178,13 @@ applies, so we insert a copy of that instruction before the
 \texttt{funcall} instruction.  Furthermore, since the input to the
 original instruction is the lexical variable y, and that variable is
 mapped to xx in the calling function, the inlined instruction receives
-xx as its input.  The output of the original instruction is temporary
-variable t2 that is not in our mapping.  Therefore a temporary variable
-tt2 is created in the calling function, and an entry is created in the
-mapping that translates t2 to tt2.  The private \texttt{enter}
-instruction is modified so that it now refers to the next instruction
-to be considered.  The result of this step is shown in \refFig{fig33}.
+xx as its input.  The output of the original instruction is the
+temporary variable t2 that is not in our mapping.  Therefore a
+temporary variable tt2 is created in the calling function, and an
+entry is created in the mapping that translates t2 to tt2.  The
+private \texttt{enter} instruction is modified so that it now refers
+to the next instruction to be considered.  The result of this step is
+shown in \refFig{fig33}.
 
 \begin{figure}
 \begin{center}
