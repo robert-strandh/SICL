@@ -170,7 +170,7 @@ instructions.  The one labeled \texttt{enter1} is the private copy.
 
 Step one of the inlining procedure consists of inlining the successor
 of our private \texttt{enter} instruction, i.e. the instruction
-labeled \texttt{1} in \reffig{42}.  That instruction has a single
+labeled \texttt{1} in \refFig{42}.  That instruction has a single
 successor, and it has not yet been inlined.  Therefore, rule 3
 applies, so we insert a copy of that instruction before the
 \texttt{funcall} instruction.  Furthermore, since the input to the
@@ -193,10 +193,11 @@ Instruction graph after one inlining step.}
 \end{figure}
 
 In step two of the inlining procedure, we are considering inlining an
-instruction with two successors.  It has not yet been inlined, so rule
-number 4 applies.  As rule number 4 stipulates, we must replicate both
-the \texttt{enter} instruction and the \texttt{funcall} instruction.
-The result is shown in \refFig{fig44}.
+instruction with two successors, i.e. the one labeled \texttt{2} in
+\refFig{fig43}.  It has not yet been inlined, so rule number 4
+applies.  As rule number 4 stipulates, we must replicate both the
+\texttt{enter} instruction and the \texttt{funcall} instruction.  The
+result is shown in \refFig{fig44}.
 
 \begin{figure}
 \begin{center}
@@ -206,16 +207,19 @@ The result is shown in \refFig{fig44}.
 Instruction graph after two inlining steps.}
 \end{figure}
 
-Notice that in \refFig{fig44}, the leftmost \texttt{funcall}
-instruction goes with the rightmost \texttt{enter} instruction.
+In \refFig{fig44}, the \texttt{funcall} instruction labeled
+\texttt{funcall1} is paired with the \texttt{enter} instruction
+labeled \texttt{enter1} and the \texttt{funcall} instruction labeled
+\texttt{funcall2} is paired with the \texttt{enter} instruction
+labeled \texttt{enter2}.
 
-In step three of the inlining procedure, we consider the rightmost
-\texttt{funcall} instruction.  The corresponding \texttt{enter}
-instruction has a \texttt{return} instruction as its successor, so
-rule number 2 applies.  We must therefore replace the \texttt{funcall}
-instruction by an assignment instruction, assigning the value of the
-variable tt to the variable z.  The result of this operation is shown
-in \refFig{fig45}.
+In step three of the inlining procedure, we consider the
+\texttt{funcall} instruction labeled \texttt{funcall2}.  The
+corresponding \texttt{enter} instruction has a \texttt{return}
+instruction as its successor, so rule number 2 applies.  We must
+therefore replace the \texttt{funcall} instruction by an assignment
+instruction, assigning the value of the variable tt to the variable y.
+The result of this operation is shown in \refFig{fig45}.
 
 \begin{figure}
 \begin{center}
