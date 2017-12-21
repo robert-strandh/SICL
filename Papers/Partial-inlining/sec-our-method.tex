@@ -133,7 +133,7 @@ successors of the successor instruction in this contents.
 \subsection{Example}
 
 As an example of our technique, consider the initial instruction graph
-in \refFig{fig31}.  On the left is the calling function.  It has three
+in \refFig{fig41}.  On the left is the calling function.  It has three
 lexical variables, namely x, a, and z.  The variable a is referenced by
 the called function, but it is owned by the calling function.  The
 called function has a single variable named y in its initial lexical
@@ -142,9 +142,9 @@ execution of one of the instructions in the called function.
 
 \begin{figure}
 \begin{center}
-\inputfig{fig31.pdf_t}
+\inputfig{fig41.pdf_t}
 \end{center}
-\caption{\label{fig31}
+\caption{\label{fig41}
 Initial instruction graph.}
 \end{figure}
 
@@ -152,20 +152,20 @@ Before the inlining procedure is started, we create temporary
 variables in the calling function for the variables in the initial
 environment of the called function.  We also create a private copy of
 the \texttt{enter} instruction so that we can mutate it during the
-inlining procedure.  The result is shown in \refFig{fig32}.  Not shown
+inlining procedure.  The result is shown in \refFig{fig42}.  Not shown
 in the figure is that our mapping now contains an entry for the
 lexical variable y of the called function, mapping it to the lexical
 variable xx in the calling function.
 
 \begin{figure}
 \begin{center}
-\inputfig{fig32.pdf_t}
+\inputfig{fig42.pdf_t}
 \end{center}
-\caption{\label{fig32}
+\caption{\label{fig42}
 Instruction graph after initialization.}
 \end{figure}
 
-As we can see in \refFig{fig32}, An assignment instruction has been
+As we can see in \refFig{fig42}, An assignment instruction has been
 created that copies the value of the lexical variable into a variable
 xx that mirrors the initial lexical variable y in the called
 function.  We also see that there are now two identical \texttt{enter}
@@ -184,13 +184,13 @@ temporary variable tt2 is created in the calling function, and an
 entry is created in the mapping that translates t2 to tt2.  The
 private \texttt{enter} instruction is modified so that it now refers
 to the next instruction to be considered.  The result of this step is
-shown in \refFig{fig33}.
+shown in \refFig{fig43}.
 
 \begin{figure}
 \begin{center}
-\inputfig{fig33.pdf_t}
+\inputfig{fig43.pdf_t}
 \end{center}
-\caption{\label{fig33}
+\caption{\label{fig43}
 Instruction graph after one inlining step.}
 \end{figure}
 
@@ -198,17 +198,17 @@ In step two of the inlining procedure, we are considering inlining an
 instruction with two successors.  It has not yet been inlined, so rule
 number 4 applies.  As rule number 4 stipulates, we must replicate both
 the \texttt{enter} instruction and the \texttt{funcall} instruction.
-The result is shown in \refFig{fig34}.
+The result is shown in \refFig{fig44}.
 
 \begin{figure}
 \begin{center}
-\inputfig{fig34.pdf_t}
+\inputfig{fig44.pdf_t}
 \end{center}
-\caption{\label{fig34}
+\caption{\label{fig44}
 Instruction graph after two inlining steps.}
 \end{figure}
 
-Notice that in \refFig{fig34}, the leftmost \texttt{funcall}
+Notice that in \refFig{fig44}, the leftmost \texttt{funcall}
 instruction goes with the rightmost \texttt{enter} instruction.
 
 In step three of the inlining procedure, we consider the rightmost
@@ -217,23 +217,22 @@ instruction has a \texttt{return} instruction as its successor, so
 rule number 2 applies.  We must therefore replace the \texttt{funcall}
 instruction by an assignment instruction, assigning the value of the
 variable tt2 to the variable z.  The result of this operation is shown
-in \refFig{fig35}.
+in \refFig{fig45}.
 
 \begin{figure}
 \begin{center}
-\inputfig{fig35.pdf_t}
+\inputfig{fig45.pdf_t}
 \end{center}
-\caption{\label{fig35}
+\caption{\label{fig45}
 Instruction graph after three inlining steps.}
 \end{figure}
 
 \begin{figure}
 \begin{center}
-\inputfig{fig36.pdf_t}
+\inputfig{fig46.pdf_t}
 \end{center}
-\caption{\label{fig36}
+\caption{\label{fig46}
 Instruction graph after four inlining steps.}
 \end{figure}
-
 
 %%  LocalWords:  worklist funcall inlining inlined
