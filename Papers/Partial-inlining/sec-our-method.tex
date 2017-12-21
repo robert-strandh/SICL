@@ -134,11 +134,12 @@ successors of the successor instruction in this contents.
 
 As an example of our technique, consider the initial instruction graph
 in \refFig{fig41}.  On the left is the calling function.  It has three
-lexical variables, namely x, a, and y.  The variable a is referenced by
-the called function, but it is owned by the calling function.  The
-called function has a single variable named z in its initial lexical
-environment.  A temporary variable t is created as a result of the
-execution of one of the instructions in the called function.
+lexical variables, namely \texttt{x}, \texttt{a}, and \texttt{y}.  The
+variable \texttt{a} is referenced by the called function, but it is
+owned by the calling function.  The called function has a single
+variable named \texttt{z} in its initial lexical environment.  A
+temporary variable \texttt{t} is created as a result of the execution
+of one of the instructions in the called function.
 
 \begin{figure}
 \begin{center}
@@ -164,9 +165,10 @@ Instruction graph after initialization.}
 
 As we can see in \refFig{fig42}, An assignment instruction has been
 created that copies the value of the lexical variable into a variable
-zz that mirrors the initial lexical variable z in the called
-function.  We also see that there are now two identical \texttt{enter}
-instructions.  The one labeled \texttt{enter1} is the private copy.
+\texttt{zz} that mirrors the initial lexical variable \texttt{z} in
+the called function.  We also see that there are now two identical
+\texttt{enter} instructions.  The one labeled \texttt{enter1} is the
+private copy.
 
 Step one of the inlining procedure consists of inlining the successor
 of our private \texttt{enter} instruction, i.e. the instruction
@@ -174,15 +176,15 @@ labeled \texttt{1} in \refFig{42}.  That instruction has a single
 successor, and it has not yet been inlined.  Therefore, rule 3
 applies, so we insert a copy of that instruction before the
 \texttt{funcall} instruction.  Furthermore, since the input to the
-original instruction is the lexical variable z, and that variable is
-mapped to zz in the calling function, the inlined instruction receives
-zz as its input.  The output of the original instruction is the
-temporary variable t that is not in our mapping.  Therefore a
-temporary variable tt is created in the calling function, and an entry
-is created in the mapping that translates t to tt.  The private
-\texttt{enter} instruction is modified so that it now refers to the
-next instruction to be considered.  The result of this step is shown
-in \refFig{fig43}.
+original instruction is the lexical variable \texttt{z}, and that
+variable is mapped to \texttt{zz} in the calling function, the inlined
+instruction receives \texttt{zz} as its input.  The output of the
+original instruction is the temporary variable \texttt{t} that is not
+in our mapping.  Therefore a temporary variable \texttt{tt} is created
+in the calling function, and an entry is created in the mapping that
+translates \texttt{t} to \texttt{tt}.  The private \texttt{enter}
+instruction is modified so that it now refers to the next instruction
+to be considered.  The result of this step is shown in \refFig{fig43}.
 
 \begin{figure}
 \begin{center}
@@ -218,8 +220,9 @@ In step three of the inlining procedure, we consider the
 corresponding \texttt{enter} instruction has a \texttt{return}
 instruction as its successor, so rule number 2 applies.  We must
 therefore replace the \texttt{funcall} instruction by an assignment
-instruction, assigning the value of the variable tt to the variable y.
-The result of this operation is shown in \refFig{fig45}.
+instruction, assigning the value of the variable \texttt{tt} to the
+variable \texttt{y}.  The result of this operation is shown in
+\refFig{fig45}.
 
 \begin{figure}
 \begin{center}
@@ -229,6 +232,16 @@ The result of this operation is shown in \refFig{fig45}.
 Instruction graph after three inlining steps.}
 \end{figure}
 
+In step four of the inlining procedure, we consider the
+\texttt{funcall} instruction labeled \texttt{funcall1} in
+\refFig{fig45} and the corresponding \texttt{enter} instruction. The
+successor of the \texttt{enter} instruction is the instruction labeled
+\texttt{1}, and that instruction has already been inlined, so rule
+number 1 applies.  We therefore remove the \texttt{funcall} and
+redirect its predecessors to the inlined version of the instruction
+labeled \texttt{1}.  The result is shown in \refFig{fig46}, and that
+completes the inlining procedure.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig46.pdf_t}
@@ -236,6 +249,11 @@ Instruction graph after three inlining steps.}
 \caption{\label{fig46}
 Instruction graph after four inlining steps.}
 \end{figure}
+
+After some minor reorganization of the instructions in \refFig{fig46},
+we obtain the final result shown in \refFig{fig47}.  Clearly we have an
+inlined version of the called function now replicated in the calling
+function.
 
 \begin{figure}
 \begin{center}
