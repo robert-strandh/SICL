@@ -17,6 +17,13 @@
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
 
+(defmethod clone-instruction :around ((instruction aref-instruction))
+  (reinitialize-instance
+   (call-next-method)
+   :element-type (element-type instruction)
+   :simple-p (simple-p instruction)
+   :boxed-p (boxed-p instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction ASET-INSTRUCTION.
@@ -32,3 +39,10 @@
   ((%element-type :initarg :element-type :reader element-type)
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
+
+(defmethod clone-instruction :around ((instruction aset-instruction))
+  (reinitialize-instance
+   (call-next-method)
+   :element-type (element-type instruction)
+   :simple-p (simple-p instruction)
+   :boxed-p (boxed-p instruction)))

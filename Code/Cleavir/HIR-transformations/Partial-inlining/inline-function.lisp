@@ -5,8 +5,12 @@
          (*location-ownerships*
            (cleavir-hir-transformations:compute-location-owners initial))
          (initial-environment (cleavir-ir:outputs enter))
+         ;; *policy* is bound closely for these bindings to make especially sure
+         ;; that inlined instructions have the policy of the source function,
+         ;; rather than the call.
          (call-arguments
-           (loop for location in initial-environment
+           (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
+                 for location in initial-environment
                  for arg in (rest (cleavir-ir:inputs call))
                  for temp = (cleavir-ir:new-temporary)
                  for assign = (cleavir-ir:make-assignment-instruction arg temp)
@@ -14,9 +18,13 @@
                     (add-to-mapping mapping location temp)
                  collect temp))
          (function-temp (cleavir-ir:new-temporary))
-         (enter-successor (first (cleavir-ir:successors enter)))
-         (new-enter (cleavir-ir:make-enter-instruction '() enter-successor))
-         (enc (cleavir-ir:make-enclose-instruction function-temp call new-enter)))
+         (new-enter (cleavir-ir:clone-instruction enter))
+         (enc (let ((cleavir-ir:*policy* (cleavir-ir:policy call)))
+                (cleavir-ir:make-enclose-instruction function-temp call new-enter))))
+    ;; the new ENTER shares policy and successor, but has no parameters.
+    (setf (cleavir-ir:lambda-list new-enter) '()
+          ;; the temporary is the closure variable.
+          (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary)))
     (cleavir-ir:insert-instruction-before enc call)
     (setf (cleavir-ir:inputs call)
           (cons function-temp call-arguments))

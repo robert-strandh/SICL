@@ -90,3 +90,9 @@
     :required required
     :optional optional
     :rest rest))
+
+(defmethod clone-instruction :around ((instruction the-values-instruction))
+  (reinitialize-instance (call-next-method)
+    :required (required-types instruction)
+    :optional (optional-types instruction)
+    :rest (rest-type instruction)))
