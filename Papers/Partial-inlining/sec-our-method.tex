@@ -263,4 +263,25 @@ function.
 Final instruction graph.}
 \end{figure}
 
+\subsection{Correctness of our method}
+
+To be convinced of the correctness of our technique, we need to show
+two aspects to hold true:
+
+\begin{enumerate}
+\item We need to show that it preserves the semantics of the program.
+\item We need to show that it terminates.
+\end{enumerate}
+
+\subsubsection{Preserving semantics}
+
+Aspect number 1 trivially holds, because the calling function contains
+a copy of the lexical environment of the called function, and the
+\texttt{funcall} instruction simply transfers the values in the
+copy of the calling function to the corresponding values in the
+lexical environment of the called function, and then continues
+execution in the corresponding instruction in the called function.
+
+\subsubsection{Termination}
+
 %%  LocalWords:  worklist funcall inlining inlined
