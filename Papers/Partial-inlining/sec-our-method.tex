@@ -134,10 +134,10 @@ successors of the successor instruction in this contents.
 
 As an example of our technique, consider the initial instruction graph
 in \refFig{fig41}.  On the left is the calling function.  It has three
-lexical variables, namely x, a, and z.  The variable a is referenced by
+lexical variables, namely x, a, and y.  The variable a is referenced by
 the called function, but it is owned by the calling function.  The
-called function has a single variable named y in its initial lexical
-environment.  A temporary variable t2 is created as a result of the
+called function has a single variable named z in its initial lexical
+environment.  A temporary variable t is created as a result of the
 execution of one of the instructions in the called function.
 
 \begin{figure}
@@ -152,10 +152,7 @@ Before the inlining procedure is started, we create temporary
 variables in the calling function for the variables in the initial
 environment of the called function.  We also create a private copy of
 the \texttt{enter} instruction so that we can mutate it during the
-inlining procedure.  The result is shown in \refFig{fig42}.  Not shown
-in the figure is that our mapping now contains an entry for the
-lexical variable y of the called function, mapping it to the lexical
-variable xx in the calling function.
+inlining procedure.  The result is shown in \refFig{fig42}.
 
 \begin{figure}
 \begin{center}
@@ -167,24 +164,25 @@ Instruction graph after initialization.}
 
 As we can see in \refFig{fig42}, An assignment instruction has been
 created that copies the value of the lexical variable into a variable
-xx that mirrors the initial lexical variable y in the called
+zz that mirrors the initial lexical variable z in the called
 function.  We also see that there are now two identical \texttt{enter}
-instructions.  The left one of those is the private copy.
+instructions.  The one labeled \texttt{enter1} is the private copy.
 
 Step one of the inlining procedure consists of inlining the successor
-of our private \texttt{enter} instruction.  That instruction has a
-single successor, and it has not yet been inlined.  Therefore, rule 3
+of our private \texttt{enter} instruction, i.e. the instruction
+labeled \texttt{1} in \reffig{42}.  That instruction has a single
+successor, and it has not yet been inlined.  Therefore, rule 3
 applies, so we insert a copy of that instruction before the
 \texttt{funcall} instruction.  Furthermore, since the input to the
-original instruction is the lexical variable y, and that variable is
-mapped to xx in the calling function, the inlined instruction receives
-xx as its input.  The output of the original instruction is the
-temporary variable t2 that is not in our mapping.  Therefore a
-temporary variable tt2 is created in the calling function, and an
-entry is created in the mapping that translates t2 to tt2.  The
-private \texttt{enter} instruction is modified so that it now refers
-to the next instruction to be considered.  The result of this step is
-shown in \refFig{fig43}.
+original instruction is the lexical variable z, and that variable is
+mapped to zz in the calling function, the inlined instruction receives
+zz as its input.  The output of the original instruction is the
+temporary variable t that is not in our mapping.  Therefore a
+temporary variable tt is created in the calling function, and an entry
+is created in the mapping that translates t to tt.  The private
+\texttt{enter} instruction is modified so that it now refers to the
+next instruction to be considered.  The result of this step is shown
+in \refFig{fig43}.
 
 \begin{figure}
 \begin{center}
@@ -216,7 +214,7 @@ In step three of the inlining procedure, we consider the rightmost
 instruction has a \texttt{return} instruction as its successor, so
 rule number 2 applies.  We must therefore replace the \texttt{funcall}
 instruction by an assignment instruction, assigning the value of the
-variable tt2 to the variable z.  The result of this operation is shown
+variable tt to the variable z.  The result of this operation is shown
 in \refFig{fig45}.
 
 \begin{figure}
