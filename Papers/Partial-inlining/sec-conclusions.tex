@@ -1,2 +1,33 @@
 \section{Conclusions and future work}
 \label{sec-conclusions}
+
+We have defined a technique for inlining local functions that uses
+local graph rewriting techniques.  We have proved our technique to be
+correct in that it preserves the semantics of the original program,
+and it is guaranteed to terminate.
+
+Although our iterative technique can be stopped at any point, thus
+giving us \emph{partial inlining}, there are some practical aspects of
+such partial inlining that still need to be investigated:
+
+\begin{itemize}
+\item When the inlining is not complete, the called function has
+  multiple entry points.  Many optimization techniques described in
+  the literature assume that a function has a single entry point.  We
+  plan to investigate the consequences of such multiple entry points
+  on the optimization techniques that we have already implemented, as
+  well as on any optimization techniques described in the literature
+  and that we plan to incorporate.
+\item In our intermediate code, we treat multiple values with an
+  unknown number of values as a special type of datum.  During the
+  execution of our inlining procedure, such a datum may become part of
+  the mapping between variables of the called function and the calling
+  function.  When the inlining procedure continues until termination,
+  such a datum will be handled in the calling function in the same way
+  that it is handled in the called function.  However, if the inlining
+  procedure is stopped with such a datum in the mapping, we would
+  somehow need to transmit it as an argument to the called function.
+  Doing so may require costly allocation of temporary memory and
+  costly tests for the number of values that would not be required
+  when the procedure continues until termination.
+\end{itemize}
