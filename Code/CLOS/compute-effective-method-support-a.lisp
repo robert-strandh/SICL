@@ -4,7 +4,7 @@
 ;;;; COMPUTE-EFFECTIVE-METHOD.
 ;;;;
 ;;;; In this file, there are no definitions of generic functions, nor
-;;;; of any methods.  
+;;;; of any methods.
 
 ;;;; This file contains an ordinary function that, given a list of
 ;;;; methods, computes an effective method using the standard method
@@ -17,7 +17,7 @@
 ;;; The specification includes a single method, specialized only for
 ;;; STANDARD-GENERIC-FUNCTION, independently of the method
 ;;; combination.  The default actions below is valid for
-;;; STANDARD-GENERIC-FUNCTION and the STANDARD method combination. 
+;;; STANDARD-GENERIC-FUNCTION and the STANDARD method combination.
 
 ;;; In this version of the default action, we use the compiler to
 ;;; produce the effective method so that the effective method
