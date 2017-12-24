@@ -51,44 +51,44 @@
 
 (defun compute-effective-method-default (methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
-	(before-methods (remove-if-not #'before-method-p methods))
-	(after-methods (remove-if-not  #'after-method-p methods))
-	(around-methods (remove-if-not  #'around-method-p methods)))
+        (before-methods (remove-if-not #'before-method-p methods))
+        (after-methods (remove-if-not  #'after-method-p methods))
+        (around-methods (remove-if-not  #'around-method-p methods)))
     (if (null primary-methods)
-	(compile nil '(lambda (&rest args)
-		       (declare (ignore args))
-		       (error "no primary method")))
-	(let ((primary-chain
-		`(funcall ,(method-function (car primary-methods))
-			  args
-			  '(,@(loop for method in (cdr primary-methods)
-				    collect (method-function method)))))
-	      (before-chain
-		(loop for method in before-methods
-		      collect `(funcall ,(method-function method)
-					args
-					'())))
-	      (after-chain
-		(loop for method in (reverse after-methods)
-		      collect `(funcall ,(method-function method)
-					args
-					'()))))
-	  (compile
-	   nil
-	   (if (null around-methods)
-	       `(lambda (&rest args)
-		  ,@before-chain
-		  (multiple-value-prog1
-		      ,primary-chain
-		    ,@after-chain))
-	       `(lambda (&rest args)
-		  (funcall ,(method-function (car around-methods))
-			   args
-			   (list ,@(loop for method in (cdr around-methods)
-					 collect (method-function method))
-				 (lambda (args next-methods)
-				   (declare (ignore next-methods))
-				   ,@before-chain
-				   (multiple-value-prog1
-				       ,primary-chain
-				     ,@after-chain)))))))))))
+        (compile nil '(lambda (&rest args)
+                       (declare (ignore args))
+                       (error "no primary method")))
+        (let ((primary-chain
+                `(funcall ,(method-function (car primary-methods))
+                          args
+                          '(,@(loop for method in (cdr primary-methods)
+                                    collect (method-function method)))))
+              (before-chain
+                (loop for method in before-methods
+                      collect `(funcall ,(method-function method)
+                                        args
+                                        '())))
+              (after-chain
+                (loop for method in (reverse after-methods)
+                      collect `(funcall ,(method-function method)
+                                        args
+                                        '()))))
+          (compile
+           nil
+           (if (null around-methods)
+               `(lambda (&rest args)
+                  ,@before-chain
+                  (multiple-value-prog1
+                      ,primary-chain
+                    ,@after-chain))
+               `(lambda (&rest args)
+                  (funcall ,(method-function (car around-methods))
+                           args
+                           (list ,@(loop for method in (cdr around-methods)
+                                         collect (method-function method))
+                                 (lambda (args next-methods)
+                                   (declare (ignore next-methods))
+                                   ,@before-chain
+                                   (multiple-value-prog1
+                                       ,primary-chain
+                                     ,@after-chain)))))))))))
