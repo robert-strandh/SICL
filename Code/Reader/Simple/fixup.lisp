@@ -30,3 +30,12 @@
              (if found-p
                  (setf (row-major-aref object i) value)
                  (fixup (row-major-aref object i) seen-objects mapping)))))
+
+(defmethod fixup ((object standard-object) seen-objects mapping)
+  (loop for slot-definition in (closer-mop:class-slots (class-of object))
+        for name = (closer-mop:slot-definition-name slot-definition)
+        do (multiple-value-bind (value found-p)
+               (gethash (slot-value object name) mapping)
+             (if found-p
+                 (setf (slot-value object name) value)
+                 (fixup (slot-value object name) seen-objects mapping)))))
