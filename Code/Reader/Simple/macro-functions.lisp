@@ -829,9 +829,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Reader macros for sharpsign sharpsign.
+;;; Reader macros for sharpsign equals.
 
-(defun sharpsign-sharpsign (stream char parameter)
+(defun sharpsign-equals (stream char parameter)
   (declare (ignore char))
   (cond ((null parameter)
          ;; FIXME: define this error condition
@@ -846,3 +846,25 @@
            ;; macros?
            (setf (cdr contents) (read stream t nil t))
            (setf (car contents) t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macros for sharpsign sharpsign.
+
+(defun sharpsign-sharpsign (stream char parameter)
+  (declare (ignore char stream))
+  (cond ((null parameter)
+         ;; FIXME: define this error condition
+         (error 'sharpsign-equals-must-have-parameter))
+        ((not (nth-value 1 (gethash parameter *labels*)))
+         ;; FIXME: define this error condition
+         (error 'sharpsign-equals-undefined-label))
+        (t
+         (let ((contents (gethash parameter *labels*)))
+           (if (caar contents)
+               ;; Then the object in the CDR is the final one, so use
+               ;; it.
+               (cdr contents)
+               ;; Else, the CAR is a temporary object that we must
+               ;; use.
+               (car contents))))))
