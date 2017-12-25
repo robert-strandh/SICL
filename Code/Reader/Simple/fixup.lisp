@@ -16,9 +16,9 @@
       (gethash (car object) mapping)
     (if found-p
         (setf (car object) value)
-        (fixup (car object))))
+        (fixup (car object) seen-objects mapping)))
   (multiple-value-bind (value found-p)
       (gethash (cdr object) mapping)
     (if found-p
         (setf (cdr object) value)
-        (fixup (cdr object)))))
+        (fixup (cdr object) seen-objects mapping))))
