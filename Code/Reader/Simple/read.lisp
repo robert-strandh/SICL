@@ -2,15 +2,12 @@
 
 (defvar *labels*)
 
-(defun read (&optional
-	       (input-stream *standard-input*)
-	       (eof-error-p t)
-	       (eof-value nil)
-	       (recursive-p nil))
+(defun read-aux
+    (input-stream eof-error-p eof-value recursive-p preserve-whitespace-p)
   (if recursive-p
-      (let ((*preserve-whitespace* recursive-p))
+      (let ((*preserve-whitespace* preserve-whitespace-p))
         (read-common input-stream eof-error-p eof-value))
-      (let* ((*preserve-whitespace* recursive-p)
+      (let* ((*preserve-whitespace* preserve-whitespace-p)
              (*labels* (make-hash-table))
              (result (read-common input-stream eof-error-p eof-value)))
         (unless (zerop (hash-table-count *labels*))
@@ -22,14 +19,16 @@
             (fixup result (make-hash-table :test #'eq) mapping)))
         result)))
 
+(defun read (&optional
+	       (input-stream *standard-input*)
+	       (eof-error-p t)
+	       (eof-value nil)
+	       (recursive-p nil))
+  (read-aux input-stream eof-error-p eof-value recursive-p recursive-p))
+
 (defun read-preserving-whitespace (&optional
                                      (input-stream *standard-input*)
                                      (eof-error-p t)
                                      (eof-value nil)
                                      (recursive-p nil))
-  (if recursive-p
-      (let ((*preserve-whitespace* t))
-        (read-common input-stream eof-error-p eof-value))
-      (let ((*preserve-whitespace* t)
-            (*labels* (make-hash-table)))
-        (read-common input-stream eof-error-p eof-value))))
+  (read-aux input-stream eof-error-p eof-value recursive-p t))
