@@ -71,6 +71,12 @@
  #\# #\- 'sharpsign-minus *standard-readtable*)
 
 (set-dispatch-macro-character
+ #\# #\= 'sharpsign-equals *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\# 'sharpsign-sharpsign *standard-readtable*)
+
+(set-dispatch-macro-character
  #\# #\< 'sharpsign-invalid *standard-readtable*)
 
 (set-dispatch-macro-character
