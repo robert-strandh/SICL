@@ -826,3 +826,23 @@
   (error 'sharpsign-invalid
 	 :stream stream
 	 :character-found char))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macros for sharpsign sharpsign.
+
+(defun sharpsign-sharpsign (stream char parameter)
+  (declare (ignore char))
+  (cond ((null parameter)
+         ;; FIXME: define this error condition
+         (error 'sharpsign-sharpsign-must-have-parameter))
+        ((nth-value 1 (gethash parameter *labels*))
+         ;; FIXME: define this error condition
+         (error 'sharpsign-sharpsign-label-defined-more-than-once))
+        (t
+         (let ((contents (cons (list nil) nil)))
+           (setf (gethash parameter *labels*) contents)
+           ;; Hmm, do we need to transmit EOF-ERROR-P through reader
+           ;; macros?
+           (setf (cdr contents) (read stream t nil t))
+           (setf (car contents) t)))))
