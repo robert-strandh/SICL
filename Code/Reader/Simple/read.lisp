@@ -10,9 +10,17 @@
   (if recursive-p
       (let ((*preserve-whitespace* recursive-p))
         (read-common input-stream eof-error-p eof-value))
-      (let ((*preserve-whitespace* recursive-p)
-            (*labels* (make-hash-table)))
-        (read-common input-stream eof-error-p eof-value))))
+      (let* ((*preserve-whitespace* recursive-p)
+             (*labels* (make-hash-table))
+             (result (read-common input-stream eof-error-p eof-value)))
+        (unless (zerop (hash-table-count *labels*))
+          (let ((mapping (make-hash-table :test #'equal)))
+            (maphash (lambda (key value)
+                       (declare (ignore key))
+                       (setf (gethash (car value) (cdr value)) mapping))
+                     *labels*)
+            (fixup result (make-hash-table :test #'eq) mapping)))
+        result)))
 
 (defun read-preserving-whitespace (&optional
                                      (input-stream *standard-input*)
