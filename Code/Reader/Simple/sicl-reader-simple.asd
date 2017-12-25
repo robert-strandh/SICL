@@ -14,4 +14,5 @@
    (:file "read")
    (:file "macro-functions")
    (:file "init")
-   (:file "quasiquote-macro")))
+   (:file "quasiquote-macro")
+   (:file "fixup")))
