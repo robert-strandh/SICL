@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-reader-simple
-  :depends-on (:cleavir-code-utilities)
+  :depends-on (:cleavir-code-utilities
+               :closer-mop)
   :serial t
   :components
   ((:file "packages")
