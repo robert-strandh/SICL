@@ -844,8 +844,10 @@
            (setf (gethash parameter *labels*) contents)
            ;; Hmm, do we need to transmit EOF-ERROR-P through reader
            ;; macros?
-           (setf (cdr contents) (read stream t nil t))
-           (setf (caar contents) t)))))
+           (let ((result (read stream t nil t)))
+             (setf (cdr contents) result)
+             (setf (caar contents) t)
+             result)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
