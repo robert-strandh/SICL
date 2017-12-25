@@ -10,3 +10,15 @@
 (defmethod fixup (object seen-objects mapping)
   (declare (ignore seen-objects mapping))
   nil)
+
+(defmethod fixup ((object cons) seen-objects mapping)
+  (multiple-value-bind (value found-p)
+      (gethash (car object) mapping)
+    (if found-p
+        (setf (car object) value)
+        (fixup (car object))))
+  (multiple-value-bind (value found-p)
+      (gethash (cdr object) mapping)
+    (if found-p
+        (setf (cdr object) value)
+        (fixup (cdr object)))))
