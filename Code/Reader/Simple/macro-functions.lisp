@@ -845,7 +845,7 @@
            ;; Hmm, do we need to transmit EOF-ERROR-P through reader
            ;; macros?
            (setf (cdr contents) (read stream t nil t))
-           (setf (car contents) t)))))
+           (setf (caar contents) t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
