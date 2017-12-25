@@ -17,7 +17,7 @@
           (let ((mapping (make-hash-table :test #'equal)))
             (maphash (lambda (key value)
                        (declare (ignore key))
-                       (setf (gethash (car value) (cdr value)) mapping))
+                       (setf (gethash (car value) mapping) (cdr value)))
                      *labels*)
             (fixup result (make-hash-table :test #'eq) mapping)))
         result)))
