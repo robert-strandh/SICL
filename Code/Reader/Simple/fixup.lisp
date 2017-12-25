@@ -22,3 +22,11 @@
     (if found-p
         (setf (cdr object) value)
         (fixup (cdr object) seen-objects mapping))))
+
+(defmethod fixup ((object array) seen-objects mapping)
+  (loop for i from 0 below (array-total-size object)
+        do (multiple-value-bind (value found-p)
+               (gethash (row-major-aref object i) mapping)
+             (if found-p
+                 (setf (row-major-aref object i) value)
+                 (fixup (row-major-aref object i) seen-objects mapping)))))
