@@ -37,7 +37,7 @@
      (eq (gethash char (syntax-types readtable)) :non-terminating-macro))))
 
 (defmethod sicl-readtable:set-macro-character
-    (function (readtable readtable) char &optional non-terminating-p)
+    ((readtable readtable) char function &optional non-terminating-p)
   (setf (gethash char (syntax-types readtable))
 	(if non-terminating-p
 	    :non-terminating-macro
@@ -58,7 +58,7 @@
     (nth-value 0 (gethash sub-char subtable))))
 
 (defmethod sicl-readtable:set-dispatch-macro-character
-    (function (readtable readtable) disp-char sub-char)
+    ((readtable readtable) disp-char sub-char function)
   (when (digit-char-p sub-char)
     (error 'sub-char-must-not-be-a-decimal-digit
 	   :disp-char disp-char

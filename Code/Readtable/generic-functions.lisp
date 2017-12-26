@@ -34,7 +34,7 @@
 ;;; This function is the generic version of the standard Common Lisp
 ;;; function with the same name.
 (defgeneric set-macro-character
-    (function readtable char &optional non-terminating-p))
+    (readtable char function &optional non-terminating-p))
 
 ;;; This function is the generic version of the standard Common Lisp
 ;;; function with the same name.
@@ -43,7 +43,7 @@
 ;;; This function is the generic version of the standard Common Lisp
 ;;; function with the same name.
 (defgeneric set-dispatch-macro-character
-    (function readtable disp-char sub-char))
+    (readtable disp-char sub-char function))
 
 ;;; This function is the generic version of the standard Common Lisp
 ;;; function with the same name.
