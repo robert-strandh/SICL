@@ -57,6 +57,19 @@
 	     :disp-char disp-char))
     (nth-value 0 (gethash sub-char subtable))))
 
+(defmethod sicl-readtable:set-dispatch-macro-character
+    (function (readtable readtable) disp-char sub-char)
+  (when (digit-char-p sub-char)
+    (error 'sub-char-must-not-be-a-decimal-digit
+	   :disp-char disp-char
+	   :sub-char sub-char))
+  (setf sub-char (char-upcase sub-char))
+  (let ((subtable (gethash disp-char (dispatch-macro-characters readtable))))
+    (when (null subtable)
+      (error 'char-must-be-a-dispatching-character
+	     :disp-char disp-char))
+    (setf (gethash sub-char subtable) function)))
+
 (defmethod sicl-readtable:syntax-type ((readtable readtable) char)
   (let ((type (gethash char (syntax-types readtable))))
     (if (null type) :constituent type)))
