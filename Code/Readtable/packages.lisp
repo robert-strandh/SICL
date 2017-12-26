@@ -20,4 +20,5 @@
            #:set-macro-character
            #:get-dispatch-macro-character
            #:set-dispatch-macro-character
+           #:syntax-type
            #:set-syntax-from-char))
