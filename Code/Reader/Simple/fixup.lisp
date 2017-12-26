@@ -39,3 +39,12 @@
              (if found-p
                  (setf (slot-value object name) value)
                  (fixup (slot-value object name) seen-objects mapping)))))
+
+(defmethod fixup ((object hash-table) seen-objects mapping)
+  (maphash (lambda (key val)
+             (multiple-value-bind (value found-p)
+                 (gethash val mapping)
+               (if found-p
+                   (setf (gethash key object) value)
+                   (fixup value seen-objects mapping))))
+           object))
