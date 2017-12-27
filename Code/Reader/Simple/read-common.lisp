@@ -9,10 +9,36 @@
 
 (defgeneric read-common (input-stream eof-error-p eof-value))
 
+(defvar *stack*)
+
+(defun create-cst (expression children source)
+  (if (atom expression)
+      (make-instance 'cst:atom-cst
+        :raw expression
+        :source source)
+      (make-instance 'cst:cons-cst
+        :raw expression
+        :first (first children)
+        :rest (create-cst (rest expression) (rest children) nil)
+        :source source)))
+
 (defmethod read-common :around (input-stream eof-error-p eof-value)
   (let ((*backquote-allowed-p* *backquote-in-subforms-allowed-p*)
 	(*backquote-in-subforms-allowed-p* nil))
-    (call-next-method)))
+    (if (boundp '*stack*)
+        (let ((*stack* (cons '() *stack*)))
+          (loop for char = (read-char input-stream nil nil)
+                while (eq (sicl-readtable:syntax-type *readtable* char)
+                          :whitespace)
+                finally (unread-char  char input-stream))
+          (let* ((start (file-position input-stream))
+                 (result (call-next-method))
+                 (end (file-position input-stream))
+                 (source (cons start end))
+                 (cst (create-cst result (reverse (first *stack*)) source)))
+            (push cst (second *stack*))
+            result))
+        (call-next-method))))
 
 (defmethod read-common (input-stream eof-error-p eof-value)
   (tagbody
