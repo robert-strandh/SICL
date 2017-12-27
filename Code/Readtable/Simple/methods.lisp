@@ -103,8 +103,8 @@
 	       (setf (gethash char (dispatch-macro-characters to-readtable))
 		     table)))
 	   (dispatch-macro-characters from-readtable))
-  (setf (readtable-case to-readtable)
-	(readtable-case from-readtable))
+  (setf (sicl-readtable:readtable-case to-readtable)
+	(sicl-readtable:readtable-case from-readtable))
   to-readtable)
 
 (defmethod sicl-readtable:copy-readtable ((readtable readtable))
