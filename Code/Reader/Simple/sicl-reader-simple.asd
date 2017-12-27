@@ -9,7 +9,6 @@
   ((:file "packages")
    (:file "more-variables")
    (:file "additional-conditions")
-   (:file "readtable")
    (:file "utilities")
    (:file "tokens")
    (:file "read-common")

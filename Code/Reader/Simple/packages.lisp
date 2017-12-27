@@ -7,7 +7,6 @@
   ;; clash with the corresponding symbols in the host package
   ;; COMMON-LISP.
   (:shadow
-   #:readtable
    ;; Contrary to other variables affecting the reader, we cannot use
    ;; the host version of *READTABLE* because we do not necessarily
    ;; use the same representation of readtables as the host does, and
@@ -17,14 +16,6 @@
    #:*readtable*
    #:read
    #:read-preserving-whitespace
-   #:make-dispatch-macro-character
-   #:set-dispatch-macro-character
-   #:get-dispatch-macro-character
-   #:set-macro-character
-   #:get-macro-character
-   #:set-syntax-from-char
-   #:copy-readtable
-   #:readtable-case
    )
   (:export
    #:readtable
@@ -37,15 +28,6 @@
    #:call-reader-macro
    #:interpret-token
    #:interpret-symbol
-   #:make-dispatch-macro-character
-   #:set-dispatch-macro-character
-   #:get-dispatch-macro-character
-   #:set-macro-character
-   #:get-macro-character
-   #:set-syntax-from-char
-   #:syntax-type
-   #:copy-readtable
-   #:readtable-case
    ;; Names of additional conditions.
    #:backquote-condition
    #:invalid-context-for-backquote

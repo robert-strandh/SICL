@@ -1,85 +1,100 @@
 (cl:in-package #:sicl-reader)
 
-(defparameter *standard-readtable* (make-instance 'readtable))
+(defparameter *standard-readtable*
+  (make-instance 'sicl-simple-readtable:readtable))
 
 (loop for char in '(#\Space #\Tab #\Linefeed #\Return #\Page)
-      do (setf (gethash char (syntax-types *standard-readtable*))
+      do (setf (sicl-readtable:syntax-type *standard-readtable* char)
 	       :whitespace))
 
-(setf (gethash #\\ (syntax-types *standard-readtable*))
+(setf (sicl-readtable:syntax-type *standard-readtable* #\\)
       :single-escape)
 
-(setf (gethash #\| (syntax-types *standard-readtable*))
+(setf (sicl-readtable:syntax-type *standard-readtable* #\|)
       :multiple-escape)
 
-(set-macro-character #\( 'left-parenthesis nil *standard-readtable*)
-(set-macro-character #\) 'right-parenthesis nil *standard-readtable*)
-(set-macro-character #\' 'single-quote nil *standard-readtable*)
-(set-macro-character #\" 'double-quote nil *standard-readtable*)
-(set-macro-character #\; 'semicolon nil *standard-readtable*)
-(set-macro-character #\` 'backquote nil *standard-readtable*)
-(set-macro-character #\, 'comma nil *standard-readtable*)
+(sicl-readtable:set-macro-character
+ *standard-readtable* #\( 'left-parenthesis)
 
-(make-dispatch-macro-character #\# t *standard-readtable*)
+(sicl-readtable:set-macro-character
+ *standard-readtable* #\) 'right-parenthesis nil)
 
-(set-dispatch-macro-character
- #\# #\' 'sharpsign-single-quote *standard-readtable*)
+(sicl-readtable:set-macro-character
+ *standard-readtable* #\' 'single-quote nil)
 
-(set-dispatch-macro-character
- #\# #\( 'sharpsign-left-parenthesis *standard-readtable*)
+(sicl-readtable:set-macro-character
+ *standard-readtable* #\" 'double-quote nil)
 
-(set-dispatch-macro-character
- #\# #\. 'sharpsign-dot *standard-readtable*)
+(sicl-readtable:set-macro-character
+ *standard-readtable* #\; 'semicolon nil)
 
-(set-dispatch-macro-character
- #\# #\\ 'sharpsign-backslash *standard-readtable*)
+(sicl-readtable:set-macro-character
+ *standard-readtable* #\` 'backquote nil)
 
-(set-dispatch-macro-character
- #\# #\b 'sharpsign-b *standard-readtable*)
+(sicl-readtable:set-macro-character
+ *standard-readtable* #\, 'comma nil)
 
-(set-dispatch-macro-character
- #\# #\x 'sharpsign-x *standard-readtable*)
+(sicl-readtable:make-dispatch-macro-character
+ *standard-readtable* #\# t)
 
-(set-dispatch-macro-character
- #\# #\o 'sharpsign-o *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\' 'sharpsign-single-quote)
 
-(set-dispatch-macro-character
- #\# #\r 'sharpsign-r *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\( 'sharpsign-left-parenthesis)
 
-(set-dispatch-macro-character
- #\# #\* 'sharpsign-asterisk *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\. 'sharpsign-dot)
 
-(set-dispatch-macro-character
- #\# #\| 'sharpsign-vertical-bar *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\\ 'sharpsign-backslash)
 
-(set-dispatch-macro-character
- #\# #\a 'sharpsign-a *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\b 'sharpsign-b)
 
-(set-dispatch-macro-character
- #\# #\: 'sharpsign-colon *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\x 'sharpsign-x)
 
-(set-dispatch-macro-character
- #\# #\c 'sharpsign-c *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\o 'sharpsign-o)
 
-(set-dispatch-macro-character
- #\# #\p 'sharpsign-p *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\r 'sharpsign-r)
 
-(set-dispatch-macro-character
- #\# #\+ 'sharpsign-plus *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\* 'sharpsign-asterisk)
 
-(set-dispatch-macro-character
- #\# #\- 'sharpsign-minus *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\| 'sharpsign-vertical-bar)
 
-(set-dispatch-macro-character
- #\# #\= 'sharpsign-equals *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\a 'sharpsign-a)
 
-(set-dispatch-macro-character
- #\# #\# 'sharpsign-sharpsign *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\: 'sharpsign-colon)
 
-(set-dispatch-macro-character
- #\# #\< 'sharpsign-invalid *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\c 'sharpsign-c)
 
-(set-dispatch-macro-character
- #\# #\) 'sharpsign-invalid *standard-readtable*)
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\p 'sharpsign-p)
 
-(setf *readtable* (copy-readtable *standard-readtable*))
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\+ 'sharpsign-plus)
+
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\- 'sharpsign-minus)
+
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\= 'sharpsign-equals)
+
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\# 'sharpsign-sharpsign)
+
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\< 'sharpsign-invalid)
+
+(sicl-readtable:set-dispatch-macro-character
+ *standard-readtable* #\# #\) 'sharpsign-invalid)
+
+(setf *readtable* (sicl-readtable:copy-readtable *standard-readtable*))

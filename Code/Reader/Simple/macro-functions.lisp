@@ -68,7 +68,7 @@
 			    :fill-pointer 0)))
     (loop for char2 = (read-char stream t nil t)
 	  until (eql char2 char)
-	  do (when (eq (syntax-type char2) :single-escape)
+	  do (when (eq (sicl-readtable:syntax-type *readtable* char2) :single-escape)
 	       (setf char2 (read-char stream t nil t)))
 	     (vector-push-extend char2 result))
     (copy-seq result)))
@@ -342,7 +342,7 @@
     (let ((char2 (read-char stream nil nil t)))
       (cond ((null char2)
 	     char1)
-	    ((not (eq (syntax-type char2) :constituent))
+	    ((not (eq (sicl-readtable:syntax-type *readtable* char2) :constituent))
 	     (unread-char char2 stream)
 	     char1)
 	    (t
@@ -357,7 +357,7 @@
 		  (let ((char (read-char stream nil nil t)))
 		    (when (null char)
 		      (go terminate))
-		    (ecase (syntax-type char)
+		    (ecase (sicl-readtable:syntax-type *readtable* char)
 		      ((:constituent :non-terminating-macro)
 		       (vector-push-extend char token)
 		       (go even-escapes))
@@ -380,7 +380,7 @@
 		  (let ((char (read-char stream nil nil t)))
 		    (when (null char)
 		      (error 'end-of-file :stream stream))
-		    (ecase (syntax-type char)
+		    (ecase (sicl-readtable:syntax-type *readtable* char)
 		      ((:constituent :terminating-macro
 			:non-terminating-macro :whitespace)
 		       (vector-push-extend char token)
@@ -412,7 +412,7 @@
     (tagbody
      start
        (let ((char (read-char stream t nil t)))
-	 (ecase (syntax-type char)
+	 (ecase (sicl-readtable:syntax-type *readtable* char)
 	   ((:whitespace :terminating-macro
 	     :non-terminating-macro :single-escape :multiple-escape)
 	    (error 'digit-expected
@@ -430,7 +430,7 @@
        (let ((char (read-char stream nil nil t)))
 	 (when (null char)
 	   (return-from read-rational numerator))
-	 (ecase (syntax-type char)
+	 (ecase (sicl-readtable:syntax-type *readtable* char)
 	   (:whitespace
 	    (when *preserve-whitespace*
 	      (unread-char char stream))
@@ -454,7 +454,7 @@
 	    (go numerator))))
      denominator-start
        (let ((char (read-char stream t nil t)))
-	 (ecase (syntax-type char)
+	 (ecase (sicl-readtable:syntax-type *readtable* char)
 	   ((:whitespace :terminating-macro
 	     :non-terminating-macro :single-escape :multiple-escape)
 	    (error 'digit-expected
@@ -472,7 +472,7 @@
        (let ((char (read-char stream nil nil t)))
 	 (when (null char)
 	   (return-from read-rational (/ numerator denominator)))
-	 (ecase (syntax-type char)
+	 (ecase (sicl-readtable:syntax-type *readtable* char)
 	   (:whitespace
 	    (when *preserve-whitespace*
 	      (unread-char char stream))
@@ -531,7 +531,7 @@
       (let ((v (make-array 10 :element-type 'bit :adjustable t :fill-pointer 0))
 	    (illegal-character-p nil))
 	(loop for char = (read-char stream nil nil t)
-	      for syntax-type = (syntax-type char)
+	      for syntax-type = (sicl-readtable:syntax-type *readtable* char)
 	      for value = (digit-char-p char)
 	      until (or (null char)
 			(eq syntax-type :terminating-macro)
@@ -553,7 +553,7 @@
 	    (illegal-character-p nil)
 	    (too-many-bits-p nil))
 	(loop for char = (read-char stream nil nil t)
-	      for syntax-type = (syntax-type char)
+	      for syntax-type = (sicl-readtable:syntax-type *readtable* char)
 	      for value = (digit-char-p char)
 	      until (or (null char)
 			(eq syntax-type :terminating-macro)
@@ -685,7 +685,7 @@
 	 (if (null char)
 	     (return-from sharpsign-colon
 	       (symbol-from-token token token-escapes))
-	     (ecase (syntax-type char)
+	     (ecase (sicl-readtable:syntax-type *readtable* char)
 	       (:whitespace
 		(when *preserve-whitespace*
 		  (unread-char char stream))
@@ -708,7 +708,7 @@
 		(go even-escapes)))))
      odd-escapes
        (let ((char (read-char stream t nil t)))
-	 (case (syntax-type char)
+	 (case (sicl-readtable:syntax-type *readtable* char)
 	   (:single-escape
 	    (let ((char2 (read-char stream t nil t)))
 	      (vector-push-extend char2 token)
