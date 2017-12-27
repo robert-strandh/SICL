@@ -32,3 +32,8 @@
                                      (eof-value nil)
                                      (recursive-p nil))
   (read-aux input-stream eof-error-p eof-value recursive-p t))
+
+(defun cst-read (&rest arguments)
+  (let ((*stack* (list '())))
+    (apply #'read arguments)
+    (first (first *stack*))))
