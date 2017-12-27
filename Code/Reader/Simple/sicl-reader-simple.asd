@@ -2,6 +2,7 @@
 
 (defsystem :sicl-reader-simple
   :depends-on (:cleavir-code-utilities
+               :concrete-syntax-tree
                :sicl-simple-readtable
                :closer-mop)
   :serial t
