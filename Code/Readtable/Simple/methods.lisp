@@ -25,7 +25,7 @@
 	    :non-terminating-macro
 	    :terminating-macro))
   (sicl-readtable:set-macro-character
-   (make-dispatch-invoker readtable char) readtable char non-terminating-p)
+   readtable char (make-dispatch-invoker readtable char) non-terminating-p)
   (setf (gethash char (dispatch-macro-characters readtable))
 	(make-hash-table))
   t)
