@@ -17,10 +17,6 @@
 (deftype string-designator ()
   '(or character string symbol))
 
-(define-condition not-a-package-designator (type-error)
-  ()
-  (:default-initargs :expected-type '(or package character string symbol)))
-
 (defun package-designator-to-package (package-designator)
   (cond ((packagep package-designator)
 	 package-designator)
