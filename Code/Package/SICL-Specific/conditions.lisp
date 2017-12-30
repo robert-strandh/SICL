@@ -1,4 +1,5 @@
 (in-package #:sicl-package)
 
-;;placeholder
-(+ 2 3)
+(define-condition package-error
+    (error acclimation:condition)
+  ())
