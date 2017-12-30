@@ -2,4 +2,9 @@
 
 (defpackage sicl-package
   (:use #:common-lisp)
-  (:shadow . #-sicl (#:package #:make-package #:intern)))
+  (:shadow
+   .
+   #-sicl (#:package
+           #:package-error
+           #:make-package
+           #:intern)))
