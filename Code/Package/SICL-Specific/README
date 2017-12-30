@@ -15,9 +15,6 @@ There is a lot to be done in this directory:
    definitions should be called <mumble>-defun.lisp or
    <mumble>-defgeneric.lisp.  Similarly for macros and classes.
 
- * The class accessors should have explicit associated defgeneric
-   forms.
-
  * There are several FIXME comments in functions.lisp.  They should be
    taken care of accordingly.
 
