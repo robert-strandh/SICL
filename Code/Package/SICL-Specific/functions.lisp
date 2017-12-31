@@ -194,6 +194,9 @@
                   ;; without a home package.
                   (package-name (symbol-package symbol)))))))
 
+(defun proper-list-p (list)
+  (integerp (ignore-errors (list-length list))))
+
 ;;; Recall that a designator for a list of symbols is either a non-nil
 ;;; symbol (denoting a singleton list whose element is is that non-nil
 ;;; symbol, or a proper list of symbols, denoting itself.  Thus the
