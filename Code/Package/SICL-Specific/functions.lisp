@@ -119,7 +119,7 @@
 	(package-var (gensym))
 	(remaining-body body)
 	(declarations '()))
-    (loop while (eq (caar remaining-body 'declare))
+    (loop while (eq (caar remaining-body) 'declare)
 	  do (push (pop remaining-body) declarations))
     `(block nil
        (let ((,function-name (lambda (,symbol-variable)
