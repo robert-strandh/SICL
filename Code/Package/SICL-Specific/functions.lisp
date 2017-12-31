@@ -175,10 +175,10 @@
 	   (setf (external-symbols package)
 		 (cons sym (external-symbols package)))))
     (flet ((aux (symbol)
-	     (cond ((symbol-in-list-p symbol (external-symbols package))
+	     (cond ((member symbol (external-symbols package))
 		    ;; do nothing
 		    (return-from export cl:t))
-		   ((symbol-in-list-p symbol (internal-symbols package))
+		   ((member symbol (internal-symbols package))
 		    ;; change it to be external
 		    (setf (internal-symbols package)
 			  (remove symbol (internal-symbols package)
