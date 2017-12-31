@@ -104,7 +104,7 @@
     (if (null symbol-or-nil)
 	(let ((new-symbol (make-symbol symbol-name))
 	      (package (package-designator-to-package package-designator)))
-	  (setf (sicl-symbol-low:package new-symbol) package)
+	  (setf (sicl-symbol:package new-symbol) package)
 	  (push new-symbol (internal-symbols package))
 	  (values new-symbol nil))
 	(values symbol-or-nil status))))
