@@ -4,15 +4,13 @@
 ;;;
 ;;; Generic function PACKAGEP.
 
-(defgeneric packagep (object))
-
-(defmethod packagep (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod packagep ((object package))
-  (declare (ignorable object))
-  t)
+(defgeneric packagep (object)
+  (:method (object)
+    (declare (ignore object))
+    nil)
+  (:method ((object package))
+    (declare (ignorable object))
+    t))
 
 (deftype string-designator ()
   '(or character string symbol))
