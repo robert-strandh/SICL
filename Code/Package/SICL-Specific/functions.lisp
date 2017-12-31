@@ -181,8 +181,8 @@
 		   ((symbol-in-list-p symbol (internal-symbols package))
 		    ;; change it to be external
 		    (setf (internal-symbols package)
-			  (remove-symbol-from-list
-			   symbol (internal-symbols package)))
+			  (remove symbol (internal-symbols package)
+                                  :test #'eq))
 		    (make-external symbol))
 		   (t
 		    (loop for used = (package-use-list package)
