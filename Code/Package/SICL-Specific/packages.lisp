@@ -37,3 +37,21 @@
            #:package-use-list
            #:package-used-by-list
            #:packagep))
+
+(defpackage #:sicl-symbol
+  (:use #:common-lisp)
+  (:shadow
+   .
+   #-sicl (#:symbol))
+  (:export #:symbol
+           #:symbolp
+           #:keyword
+           #:keywordp
+           #:symbol-name
+           #:package
+           #:symbol-package
+           #:make-symbol
+           #:copy-symbol
+           #:gensym
+           #:*gensym-counter*
+           #:gentemp))
