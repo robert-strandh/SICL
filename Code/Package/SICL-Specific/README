@@ -1,10 +1,5 @@
 There is a lot to be done in this directory:
 
- * It needs a file called condition-reporters-english.lisp in which
-   definitions of condition reporters specific to this module are
-   located.  It should be modeled after
-   Cons/condition-reporters-english.lisp.
-
  * It needs a file called documentation-strings-english.lisp in which
    there should be documentation strings for the functions and classes
    defined in this module.  It should be modeled after
