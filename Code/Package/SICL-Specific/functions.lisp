@@ -125,7 +125,7 @@
        (let ((,function-name (lambda (,symbol-variable)
 			       (locally ,@(reverse declarations)
 				 (tagbody
-				    ,@body))))
+				    ,@remaining-body))))
 	     (,package-var (package-designator-to-package ,package-form)))
 	 (mapc ,function-name
 	       (external-symbols ,package-var)))
@@ -141,11 +141,13 @@
 	(package-var (gensym))
 	(remaining-body body)
 	(declarations '()))
+    (loop while (eq (caar remaining-body) 'declare)
+	  do (push (pop remaining-body) declarations))
     `(block nil
        (let ((,function-name (lambda (,symbol-variable)
 			       (locally ,@(reverse declarations)
 				 (tagbody
-				    ,@body))))
+				    ,@remaining-body))))
 	     (,package-var ,package-form))
 	 (mapc ,function-name
 	       (external-symbols ,package-var))
