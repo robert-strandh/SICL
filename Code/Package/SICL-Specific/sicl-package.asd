@@ -7,6 +7,7 @@
   :components ((:file "packages")
                (:file "accessor-defgenerics")
                (:file "package-class")
+               (:file "symbol-defclass")
                (:file "functions")
 	       (:file "conditions")
 	       (:file "condition-reporters-english")
