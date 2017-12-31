@@ -32,7 +32,7 @@
     (loop until (null existing-package)
           do (restart-case (error 'package-already-exists
                                   :name existing-package)
-               (force ()
+               (force (stuff)
                  :report (lambda (stream)
                            (format stream
                                    "Replace the existing package."))
@@ -50,7 +50,7 @@
 	do (assert (null (find-package (car rest)))))
   (let ((package (make-in-instance 'package)))
     (setf (name package) (string name))
-    (setf (nicknames package (copy-list nicknames)))
+    (setf (nicknames package) (copy-list nicknames))
     (use-package use package)
     package))
 
@@ -176,11 +176,11 @@
 	     (cond ((symbol-in-list-p symbol (package-external-symbols package))
 		    ;; do nothing
 		    (return-from export cl:t))
-		   ((symbol-in-list-p symbol (package-internal-symbols package))
+		   ((symbol-in-list-p symbol (internal-symbols package))
 		    ;; change it to be external
-		    (setf (package-internal-symbols package)
+		    (setf (internal-symbols package)
 			  (remove-symbol-from-list
-			   symbol (package-internal-symbols package)))
+			   symbol (internal-symbols package)))
 		    (make-external symbol))
 		   (t
 		    (loop for used = (package-use-list package)
