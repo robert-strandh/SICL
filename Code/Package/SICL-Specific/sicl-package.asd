@@ -5,6 +5,7 @@
   :description "SICL-Specific Package System"
   :depends-on (:acclimation)
   :components ((:file "packages")
+               (:file "accessor-defgenerics")
 	       (:file "conditions")
 	       (:file "condition-reporters-english")
 	       (:file "documentation-strings-english")
