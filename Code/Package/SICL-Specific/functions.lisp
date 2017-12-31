@@ -194,6 +194,21 @@
                   ;; without a home package.
                   (package-name (symbol-package symbol)))))))
 
+;;; Recall that a designator for a list of symbols is either a non-nil
+;;; symbol (denoting a singleton list whose element is is that non-nil
+;;; symbol, or a proper list of symbols, denoting itself.  Thus the
+;;; symbol NIL denotes the empty list of symbols.
+(defun designator-for-list-of-symbols-to-list-of-symbols (designator)
+  (cond ((null designator) '())
+        ((symbolp designator) (list designator))
+        (t
+         (let ((length (ignore-errors (list-length designator))))
+           (if (integerp length)
+               designator
+               (error 'not-a-valid-designator-for-list-of-symbols
+                      :exptected-type 'designator-for-list-of-symbols
+                      :datum designator))))))
+
 ;;; FIXME: check for conflicts
 ;;; FIXME: return T
 ;;; FIXME: check definition of a designator for a list of symbols
