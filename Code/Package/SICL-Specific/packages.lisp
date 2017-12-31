@@ -5,6 +5,7 @@
   (:shadow
    .
    #-sicl (#:package
+           #:packagep
            #:*package*
            #:package-name
            #:package-shadowing-symbols
@@ -13,7 +14,10 @@
            #:package-error
            #:make-package
            #:intern
-           #:find-symbol))
+           #:find-symbol
+           #:export
+           #:do-symbols
+           #:do-external-symbols))
   (:export #:package
            #:export
            #:find-symbol
