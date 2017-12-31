@@ -215,10 +215,10 @@
 			       (aux (find-symbol (string sym))))
 			      (t
 			       (error "~s is not a symbol designator"
-				      (host-object-from-object sym)))))))
+				      sym))))))
 	    (t 
 	     (error "~s is not a designator for a list of symbols"
-		    (host-object-from-object symbols)))))))
+		    symbols))))))
 
 
 
