@@ -198,44 +198,23 @@
 ;;; symbol (denoting a singleton list whose element is is that non-nil
 ;;; symbol, or a proper list of symbols, denoting itself.  Thus the
 ;;; symbol NIL denotes the empty list of symbols.
+;;; FIXME: check for conflicts
 (defun designator-for-list-of-symbols-to-list-of-symbols (designator)
   (cond ((null designator) '())
         ((symbolp designator) (list designator))
         (t
          (let ((length (ignore-errors (list-length designator))))
-           (if (integerp length)
+           (if (and (integerp length)
+                    (every #'symbolp designator))
                designator
                (error 'not-a-valid-designator-for-list-of-symbols
                       :exptected-type 'designator-for-list-of-symbols
                       :datum designator))))))
 
-;;; FIXME: check for conflicts
-;;; FIXME: return T
-;;; FIXME: check definition of a designator for a list of symbols
-;;;        with respect to NIL.
-(defun export (symbols &optional package *package*)
-  (unless (packagep package)
-    (setf package (find-package (string package))))
-  (cond ((symbolp symbols)
-         (export-one-symbol symbols package))
-        ((or (stringp symbols) (characterp symbols))
-         (export-one-symbol (find-symbol (string symbols)) package))
-        ((consp symbols)
-         (loop for rest = symbols
-                 then (cdr rest)
-               while (consp rest)
-               do (let ((sym (car rest)))
-                    (cond ((symbolp sym)
-                           (export-one-symbol sym package))
-                          ((or (stringp sym) (characterp sym))
-                           (export-one-symbol (find-symbol (string sym))
-                                              package))
-                          (t
-                           (error "~s is not a symbol designator"
-                                  sym))))))
-        (t
-         (error "~s is not a designator for a list of symbols"
-                symbols))))
-
-
-
+(defun export (symbols-designator &optional package-designator *package*)
+  (let ((package (package-designator-to-package package-designator))
+        (symbols (designator-for-list-of-symbols-to-list-of-symbols
+                  symbols-designator)))
+    (loop for symbol in symbols
+          do (export-one-symbol symbol package)))
+  t)
