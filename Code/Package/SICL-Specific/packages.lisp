@@ -41,6 +41,7 @@
 (defpackage #:sicl-symbol
   (:use #:common-lisp)
   (:shadow
+   #:package
    .
    #-sicl (#:symbol))
   (:export #:symbol
