@@ -165,6 +165,35 @@
 	       (use-list ,package-var)))
        ,result-form)))
 
+(defun export-one-symbol (symbol package)
+  (flet ((make-external (sym)
+	   (setf (external-symbols package)
+		 (cons sym (external-symbols package)))))
+    (cond ((member symbol (external-symbols package))
+           ;; do nothing
+           (return-from export-one-symbol cl:t))
+          ((member symbol (internal-symbols package))
+           ;; change it to be external
+           (setf (internal-symbols package)
+                 (remove symbol (internal-symbols package)
+                         :test #'eq))
+           (make-external symbol))
+          (t
+           (loop for used = (package-use-list package)
+                   then (cdr used)
+                 while (consp used)
+                 do (loop for syms = (package-use-list (car used))
+                            then (cdr syms)
+                          do (when (eq (car syms) symbol)
+                               (make-external symbol)
+                               (return-from export-one-symbol t))))
+           ;; come here if the symbol is not accessible
+           (error "symbol ~s not accessible in package ~s"
+                  (symbol-name symbol)
+                  ;; FIXME: This won't work for symbols
+                  ;; without a home package.
+                  (package-name (symbol-package symbol)))))))
+
 ;;; FIXME: check for conflicts
 ;;; FIXME: return T
 ;;; FIXME: check definition of a designator for a list of symbols
@@ -172,53 +201,26 @@
 (defun export (symbols &optional package *package*)
   (unless (packagep package)
     (setf package (find-package (string package))))
-  (flet ((make-external (sym)
-	   (setf (external-symbols package)
-		 (cons sym (external-symbols package)))))
-    (flet ((aux (symbol)
-	     (cond ((member symbol (external-symbols package))
-		    ;; do nothing
-		    (return-from export cl:t))
-		   ((member symbol (internal-symbols package))
-		    ;; change it to be external
-		    (setf (internal-symbols package)
-			  (remove symbol (internal-symbols package)
-                                  :test #'eq))
-		    (make-external symbol))
-		   (t
-		    (loop for used = (package-use-list package)
-			    then (cdr used)
-			  while (consp used)
-			  do (loop for syms = (package-use-list (car used))
-				     then (cdr syms)
-				   do (when (eq (car syms) symbol)
-					(make-external symbol)
-					(return-from export t))))
-		    ;; come here if the symbol is not accessible
-		    (error "symbol ~s not accessible in package ~s"
-			   (symbol-name symbol)
-			   ;; FIXME: This won't work for symbols
-			   ;; without a home package.
-			   (package-name (symbol-package symbol)))))))
-      (cond ((symbolp symbols)
-	     (aux symbols))
-	    ((or (stringp symbols) (characterp symbols))
-	     (aux (find-symbol (string symbols))))
-	    ((consp symbols)
-	     (loop for rest = symbols
-		     then (cdr rest)
-		   while (consp rest)
-		   do (let ((sym (car rest)))
-			(cond ((symbolp sym)
-			       (aux sym))
-			      ((or (stringp sym) (characterp sym))
-			       (aux (find-symbol (string sym))))
-			      (t
-			       (error "~s is not a symbol designator"
-				      sym))))))
-	    (t 
-	     (error "~s is not a designator for a list of symbols"
-		    symbols))))))
+  (cond ((symbolp symbols)
+         (export-one-symbol symbols package))
+        ((or (stringp symbols) (characterp symbols))
+         (export-one-symbol (find-symbol (string symbols)) package))
+        ((consp symbols)
+         (loop for rest = symbols
+                 then (cdr rest)
+               while (consp rest)
+               do (let ((sym (car rest)))
+                    (cond ((symbolp sym)
+                           (export-one-symbol sym package))
+                          ((or (stringp sym) (characterp sym))
+                           (export-one-symbol (find-symbol (string sym))
+                                              package))
+                          (t
+                           (error "~s is not a symbol designator"
+                                  sym))))))
+        (t
+         (error "~s is not a designator for a list of symbols"
+                symbols))))
 
 
 
