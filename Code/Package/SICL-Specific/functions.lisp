@@ -172,10 +172,10 @@
   (unless (packagep package)
     (setf package (find-package (string package))))
   (flet ((make-external (sym)
-	   (setf (package-external-symbols package)
-		 (cons sym (package-external-symbols package)))))
+	   (setf (external-symbols package)
+		 (cons sym (external-symbols package)))))
     (flet ((aux (symbol)
-	     (cond ((symbol-in-list-p symbol (package-external-symbols package))
+	     (cond ((symbol-in-list-p symbol (external-symbols package))
 		    ;; do nothing
 		    (return-from export cl:t))
 		   ((symbol-in-list-p symbol (internal-symbols package))
