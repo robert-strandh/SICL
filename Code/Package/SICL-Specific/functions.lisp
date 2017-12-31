@@ -205,14 +205,13 @@
 (defun designator-for-list-of-symbols-to-list-of-symbols (designator)
   (cond ((null designator) '())
         ((symbolp designator) (list designator))
+        ((and (proper-list-p designator)
+              (every #'symbolp designator))
+         designator)
         (t
-         (let ((length (ignore-errors (list-length designator))))
-           (if (and (integerp length)
-                    (every #'symbolp designator))
-               designator
-               (error 'not-a-valid-designator-for-list-of-symbols
-                      :exptected-type 'designator-for-list-of-symbols
-                      :datum designator))))))
+         (error 'not-a-valid-designator-for-list-of-symbols
+                :exptected-type 'designator-for-list-of-symbols
+                :datum designator))))
 
 (defun export (symbols-designator &optional package-designator *package*)
   (let ((package (package-designator-to-package package-designator))
