@@ -202,7 +202,7 @@
 ;;; symbol, or a proper list of symbols, denoting itself.  Thus the
 ;;; symbol NIL denotes the empty list of symbols.
 ;;; FIXME: check for conflicts
-(defun designator-for-list-of-symbols-to-list-of-symbols (designator)
+(defun designated-list-of-symbols (designator)
   (cond ((null designator) '())
         ((symbolp designator) (list designator))
         ((and (proper-list-p designator)
@@ -215,8 +215,7 @@
 
 (defun export (symbols-designator &optional package-designator *package*)
   (let ((package (package-designator-to-package package-designator))
-        (symbols (designator-for-list-of-symbols-to-list-of-symbols
-                  symbols-designator)))
+        (symbols (designated-list-of-symbols symbols-designator)))
     (loop for symbol in symbols
           do (export-one-symbol symbol package)))
   t)
