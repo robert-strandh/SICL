@@ -6,6 +6,7 @@
   :depends-on (:acclimation)
   :components ((:file "packages")
                (:file "accessor-defgenerics")
+               (:file "package-class")
                (:file "functions")
 	       (:file "conditions")
 	       (:file "condition-reporters-english")
