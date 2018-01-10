@@ -297,4 +297,25 @@ execution in the corresponding instruction in the called function.
 
 \subsubsection{Termination}
 
+Consider a pair $(I,F)$ where $I$ is the number of instructions that
+have yet to be inlined, and $F$ is the number of \texttt{funcall}
+instructions that have yet to be processed as part of the worklist
+items.  Initially, the pair has the value $(N,1)$ where $N$ is the
+number of instructions in the called function.  We consider values as
+being lexical, i.e. $(I_1, F_1) < (I_2, F_2)$ if and only if either
+$I_1 < I_2$ or $I_1 = I_2$ and $F_1 < F_2$.  We show that each step
+yields a pair that is strictly smaller than before the step:
+
+\begin{itemize}
+\item If the pair was $(I,F)$ before a step in which rule number 1
+  applies, then after the step, the pair is $(I, F-1)$.
+\item If the pair was $(I,F)$ before a step in which rule number 2
+  applies, then after the step, the pair is $(I, F-1)$.
+\item If the pair was $(I,F)$ before a step in which rule number 3
+  applies, then after the step, the pair is $(I-1, F)$.
+\item If the pair was $(I,F)$ before a step in which rule number 4
+  applies, then after the step, the pair is $(I-1, F+1)$.
+
+\end{itemize}
+
 %%  LocalWords:  worklist funcall inlining inlined
