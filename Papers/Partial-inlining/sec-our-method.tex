@@ -77,7 +77,11 @@ Our technique maintains the following information:
 \end{itemize}
 
 The algorithm that implements our technique maintains a
-\emph{worklist}.  An item of the worklist contains:
+\emph{worklist}.  An item%
+\footnote{In the code, an item also contains an \texttt{enclose}
+  instruction, but we omit this instruction from our description, in
+  order to simplify it.}
+of the worklist contains:
 
 \begin{itemize}
 \item A \texttt{funcall} instruction, representing the call site in the
