@@ -47,8 +47,12 @@ A HIR instruction falls into one of the following categories:
   \emph{closure}.
 \item The \texttt{enter} instruction.  This instruction is the first
   one to be executed in a function, and it is responsible for creating
-  the local lexical environment of the function from the arguments
-  given by the calling function.
+  the initial local lexical environment of the function from the
+  arguments given by the calling function.  This initial environment
+  is typically augmented by temporary lexical variables during the
+  execution of the function.  Variables may also be eliminated from
+  the local environment when they are no longer accessible by any
+  execution path.
 \end{itemize}
 
 Notice that, although the names of these instructions often resemble
