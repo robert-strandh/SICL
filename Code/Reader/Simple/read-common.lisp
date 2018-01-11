@@ -30,7 +30,7 @@
           (loop for char = (read-char input-stream nil nil)
                 while (eq (sicl-readtable:syntax-type *readtable* char)
                           :whitespace)
-                finally (unread-char  char input-stream))
+                finally (when (characterp char) (unread-char  char input-stream)))
           (let* ((start (file-position input-stream))
                  (result (call-next-method))
                  (end (file-position input-stream))
