@@ -318,18 +318,25 @@ the number of instructions in the called function.  We consider the
 metric to be lexicographically ordered by its components, i.e. $(I_1,
 F_1) < (I_2, F_2)$ if and only if either $I_1 < I_2$ or $I_1 = I_2$
 and $F_1 < F_2$.  We show that each step yields a value that is
-strictly smaller than before the step:
+strictly smaller than before the step.
+
+Consider some iteration $k$ of our inlining procedure, so that $r_k =
+(I_k,F_k)$ is the remaining work before the iteration, and $r_{k+1} =
+(I_{k+1},F_{k+1})$ is the remaining work after the iteration.
 
 \begin{itemize}
-\item If the pair was $(I,F)$ before a step in which rule number 1
-  applies, then after the step, the pair is $(I, F-1)$.
-\item If the pair was $(I,F)$ before a step in which rule number 2
-  applies, then after the step, the pair is $(I, F-1)$.
-\item If the pair was $(I,F)$ before a step in which rule number 3
-  applies, then after the step, the pair is $(I-1, F)$.
-\item If the pair was $(I,F)$ before a step in which rule number 4
-  applies, then after the step, the pair is $(I-1, F+1)$.
-
+\item If rule number 1 applies, then one \texttt{funcall} instruction
+  is eliminated in the iteration, so that $I_{k+1} = I_k$ and $F_{k+1}
+  = F_k-1$.  Clearly, $r_{k+1} < r_k$ in this case.
+\item If rule number 2 applies, then again one \texttt{funcall}
+  instruction is eliminated in the iteration, so that $I_{k+1} = I_k$
+  and $F_{k+1} = F_k-1$.  Again, $r_{k+1} < r_k$.
+\item If rule number 3 applies, then another instruction is inlined,
+  but the number of \texttt{funcall} instructions remains the same, so
+  that $I_{k+1} = I_k-1$ and $F_{k+1} = F_k$.  Again $r_{k+1} < r_k$.
+\item Finally, if rule number 4 applies, then another instruction is inlined,
+  but the number of \texttt{funcall} instructions increases by $1$, so
+  that $I_{k+1} = I_k-1$ and $F_{k+1} = F_k+1$.  Again $r_{k+1} < r_k$.
 \end{itemize}
 
 %%  LocalWords:  worklist funcall inlining inlined lexicographically
