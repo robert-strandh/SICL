@@ -132,16 +132,42 @@ successors of the successor instruction in this contents.
 \item If the next instruction has a single successor, insert a copy of
   the next instruction before the \texttt{funcall} instruction, and
   make the \texttt{enter} instruction refer to that successor.  Update
-  the inputs of the \texttt{funcall} instruction and the outputs of
-  the \texttt{enter} instruction as described below.
+  the mapping, the inputs of the \texttt{funcall} instruction, and the
+  outputs of the \texttt{enter} instruction as described below.
 \item If the next instruction has two successors, insert a copy of the
   next instruction before the \texttt{funcall} instruction, and
   replicate the \texttt{funcall} instruction in each branch.  Also
   replicate the \texttt{enter} instruction so that each replica refers
   to a different successor of the original instruction.  Update the
-  inputs of the \texttt{funcall} instruction and the outputs of the
-  \texttt{enter} instruction as described below.
+  mapping, the inputs of the \texttt{funcall} instruction, and the
+  outputs of the \texttt{enter} instruction as described below.
 \end{enumerate}
+
+In steps $3$ and $4$, when a new instruction is inlined, the mapping,
+the inputs to the \texttt{funcall} instruction, and the outputs of the
+\texttt{enter} instruction are updated as follows:
+
+\begin{itemize}
+\item If some input \texttt{i} to the inlined instruction is present
+  in the mapping (mapping to (say) \texttt{ii} in the calling
+  function) and in the outputs of the \texttt{enter} instruction, but
+  \texttt{i} is no longer live after the inlined instruction, then the
+  entry \texttt{ii - i} is eliminated from the mapping, \texttt{i} is
+  eliminated from the outputs of the \texttt{enter} instruction, and
+  \texttt{ii} is eliminated from the inputs to the \texttt{funcall}
+  instruction.  It would be semantically harmless to leave it intact,
+  but it might harm performance if the inlining procedure is stopped
+  when it is still partial.
+\item If some output \texttt{o} of the inlined instruction is a new
+  variable that is created by that instruction, then we proceed as
+  follows.  Let \texttt{I} be the instruction in the called function
+  that has been inlined, and let \texttt{II} be the copy of \texttt{I}
+  in the calling function.  We create a new variable \texttt{oo} in
+  the calling function that takes the place of \texttt{o} in
+  \texttt{II}.  We add \texttt{oo} as in input to the \texttt{funcall}
+  instruction, \texttt{o} as an output of the \texttt{enter}
+  instruction, and we add \texttt{oo - o} to the mapping.
+\end{itemize}
 
 \subsection{Example}
 
