@@ -297,12 +297,24 @@ execution in the corresponding instruction in the called function.
 
 \subsubsection{Termination}
 
-Consider a pair $(I,F)$ where $I$ is the number of instructions that
-have yet to be inlined, and $F$ is the number of \texttt{funcall}
-instructions that have yet to be processed as part of the worklist
-items.  Initially, the pair has the value $(N,1)$ where $N$ is the
-number of instructions in the called function.  We consider values as
-being lexical, i.e. $(I_1, F_1) < (I_2, F_2)$ if and only if either
+In order to prove termination, we invent a metric with the following
+properties:
+
+\begin{itemize}
+\item It has a lower bound on its value.
+\item Its value decreases with each iteration of our inlining
+  procedure.
+\end{itemize}
+
+The metric we have chosen for this purpose is called \emph{remaining
+  work}, and it is represented as a pair $r = (I,F)$ where $I$ is the
+number of instructions that have yet to be inlined, and $F$ is the
+number of \texttt{funcall} instructions that have yet to be processed
+as part of the worklist items.
+
+Initially, the remaining work has the value $r_0 = (N,1)$ where $N$ is
+the number of instructions in the called function.  We consider values
+as being lexical, i.e. $(I_1, F_1) < (I_2, F_2)$ if and only if either
 $I_1 < I_2$ or $I_1 = I_2$ and $F_1 < F_2$.  We show that each step
 yields a pair that is strictly smaller than before the step:
 
