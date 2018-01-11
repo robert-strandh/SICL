@@ -313,10 +313,11 @@ number of \texttt{funcall} instructions that have yet to be processed
 as part of the worklist items.
 
 Initially, the remaining work has the value $r_0 = (N,1)$ where $N$ is
-the number of instructions in the called function.  We consider values
-as being lexical, i.e. $(I_1, F_1) < (I_2, F_2)$ if and only if either
-$I_1 < I_2$ or $I_1 = I_2$ and $F_1 < F_2$.  We show that each step
-yields a pair that is strictly smaller than before the step:
+the number of instructions in the called function.  We consider the
+metric to be lexicographically ordered by its components, i.e. $(I_1,
+F_1) < (I_2, F_2)$ if and only if either $I_1 < I_2$ or $I_1 = I_2$
+and $F_1 < F_2$.  We show that each step yields a value that is
+strictly smaller than before the step:
 
 \begin{itemize}
 \item If the pair was $(I,F)$ before a step in which rule number 1
@@ -330,4 +331,4 @@ yields a pair that is strictly smaller than before the step:
 
 \end{itemize}
 
-%%  LocalWords:  worklist funcall inlining inlined
+%%  LocalWords:  worklist funcall inlining inlined lexicographically
