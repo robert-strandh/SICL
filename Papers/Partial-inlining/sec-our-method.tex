@@ -132,15 +132,15 @@ successors of the successor instruction in this contents.
 \item If the next instruction has a single successor, insert a copy of
   the next instruction before the \texttt{funcall} instruction, and
   make the \texttt{enter} instruction refer to that successor.  Update
-  the inputs of the \texttt{funcall} instruction and the \texttt{enter}
-  instruction as described below.
+  the inputs of the \texttt{funcall} instruction and the outputs of
+  the \texttt{enter} instruction as described below.
 \item If the next instruction has two successors, insert a copy of the
   next instruction before the \texttt{funcall} instruction, and
   replicate the \texttt{funcall} instruction in each branch.  Also
   replicate the \texttt{enter} instruction so that each replica refers
   to a different successor of the original instruction.  Update the
-  inputs of the \texttt{funcall} instruction and the \texttt{enter}
-  instruction as described below.
+  inputs of the \texttt{funcall} instruction and the outputs of the
+  \texttt{enter} instruction as described below.
 \end{enumerate}
 
 \subsection{Example}
