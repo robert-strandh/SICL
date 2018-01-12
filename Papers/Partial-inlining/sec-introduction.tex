@@ -2,14 +2,15 @@
 
 Inlining represents an important optimization technique in any modern
 compiler.  It avoids the overhead of a full function call, and it
-allows further optimization in the calling function, such as type
-inference, certain loop optimizations, etc.
+allows further optimization in the calling function in the form of
+type inference, loop optimizations, and more.
 
-However, inlining does not have only advantages.  It increases the
-size of the code, with a possible negative impact on processor cache
+While the advantages of inlining are well known and well documented,
+inlining also entails some disadvantages.  It increases the size of
+the code, with a possible negative impact on processor cache
 performance.  It also increases pressure on register allocation,
 possibly making it necessary to spill registers to the stack more
-often.  Most importanly, though, as Ayers et al. point out
+often.  Most importantly, though, as Ayers et al. point out
 \cite{Ayers:1997:AI:258915.258928, Ayers:1997:AI:258916.258928}, since
 many optimization algorithms do not have linear-time complexity in the
 size of the code, inlining can have a serious impact on the execution
@@ -18,14 +19,14 @@ time of the compiler.
 Some sources distinguish between \emph{procedure integration} and
 \emph{inline expansion} \cite{Muchnick:1998:ACD:286076}.  Both
 techniques are often referred to with the abbreviated form
-\emph{inlining}.  Our use of the term then corresponds to
+\emph{inlining}.  Our use of the term corresponds to
 \emph{procedure integration}.
 
-Most literature sources define inlining as something similar to
+Most literature sources define inlining as
 ``replacing a call to a function with a copy of the body of the called
 function'' (see e.g.,
 \cite{Chang:1989:IFE:74818.74840,Chang:1989:IFE:73141.74840,
-  Scheifler:1977:AIS:359810.359830}) That definition suggests that
+  Scheifler:1977:AIS:359810.359830}) This definition suggests that
 inlining is an all-or-nothing transformation.  In this paper, we
 present a technique that allows for \emph{partial} inlining.  More
 precisely, it allows for a \emph{prefix} of the callee to be copied
@@ -35,10 +36,10 @@ single instruction is inlined in each step, preserving the overall
 semantics of the program, and thereby allowing us to stop the process
 at any time.
 
-As it turns out, the definition of inlining is too vague for our
+The traditional definition of inlining is too vague for our
 purpose.  It suggests that the sole purpose of inlining is to avoid
-the overhead of the function-call protocol.  However, on modern
-processors, this overhead is very small.  For the purpose of this
+overhead in the function-call protocol.  However, on modern
+processors, this overhead is insignificant.  For the purpose of this
 paper, we would also like to avoid the creation of a local
 \emph{environment} that would normally be necessary for each
 invocation of the callee.  This additional requirement poses
