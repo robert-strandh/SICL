@@ -8,7 +8,7 @@ into an independent project in the future.
 In our compiler, source code is first converted to an \emph{abstract
   syntax tree}.  In such a tree, lexical variables and lexical
 function names have been converted to unique objects.  When a globally
-defined function $F$ is inlined into another function $G$, we simply
+defined function $F$ is inlined into another function $G$, we
 incorporate the abstract syntax tree of $F$ as if it were a local
 function in $G$.  No alpha renaming is required.  Notice that this
 step in itself does not count as inlining.  The function $F$ is still
@@ -62,7 +62,7 @@ the names of \commonlisp{} operations, the instruction typically
 requires more precise objects than the corresponding \commonlisp{}
 operation does.  Thus, the \texttt{car} instruction requires the
 argument to be a \emph{cons} object, and the \texttt{funcall}
-instruction requires it first argument to be a function.
+instruction requires its first argument to be a function.
 
 \subsection{Algorithm}
 
@@ -94,7 +94,7 @@ of the worklist contains:
 \item The mapping and ownership information described previously.
 \end{itemize}
 
-Before the algorithm starts, assignment instructions are inserted
+Prior to algorithm execution, assignment instructions are inserted
 before the \texttt{funcall} instruction, copying each argument to a
 temporary lexical variable.  These lexical variables represent a copy
 of the initial environment of the called function, but allocated in
@@ -178,7 +178,7 @@ the inputs to the \texttt{funcall} instruction, and the outputs of the
   that has been inlined, and let \texttt{II} be the copy of \texttt{I}
   in the calling function.  We create a new variable \texttt{oo} in
   the calling function that takes the place of \texttt{o} in
-  \texttt{II}.  We add \texttt{oo} as in input to the \texttt{funcall}
+  \texttt{II}.  We add \texttt{oo} as an input to the \texttt{funcall}
   instruction, \texttt{o} as an output of the \texttt{enter}
   instruction, and we add \texttt{oo - o} to the mapping.  Again, if
   the inlined instruction has two successors, the mapping may have to
@@ -235,7 +235,7 @@ original instruction is the lexical variable \texttt{z}, and that
 variable is mapped to \texttt{zz} in the calling function, the inlined
 instruction receives \texttt{zz} as its input.  The output of the
 original instruction is the temporary variable \texttt{t} that is not
-in our mapping.  Therefore a temporary variable \texttt{tt} is created
+in our mapping.  Therefore, a temporary variable \texttt{tt} is created
 in the calling function, and an entry is created in the mapping that
 translates \texttt{t} to \texttt{tt}.  The private \texttt{enter}
 instruction is modified so that it now refers to the next instruction
@@ -324,13 +324,13 @@ To be convinced of the correctness of our technique, we need to show
 two aspects to hold true:
 
 \begin{enumerate}
-\item We need to show that it preserves the semantics of the program.
-\item We need to show that it terminates.
+\item The technique preserves the semantics of the program.
+\item The technique terminates.
 \end{enumerate}
 
 \subsubsection{Preserving semantics}
 
-Aspect number 1 trivially holds, because the calling function contains
+The first aspect trivially holds, because the calling function contains
 a copy of the lexical environment of the called function, and the
 \texttt{funcall} instruction simply transfers the values in the
 copy of the calling function to the corresponding values in the
