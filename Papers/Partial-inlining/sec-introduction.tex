@@ -31,7 +31,7 @@ inlining is an all-or-nothing transformation.  In this paper, we
 present a technique that allows for \emph{partial} inlining.  More
 precisely, it allows for a \emph{prefix} of the callee to be copied
 into the caller.  We obtain this property by using \emph{local graph
-  rewriting} on the level of instructions in intermediate code.  A
+  rewriting} at the level of instructions in intermediate code.  A
 single instruction is inlined in each step, preserving the overall
 semantics of the program, and thereby allowing us to stop the process
 at any time.
