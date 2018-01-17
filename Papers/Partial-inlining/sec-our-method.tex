@@ -123,6 +123,9 @@ result in zero, one, or two new worklist items, according to the
 mapping and ownership information, and according to the number of
 successors of the successor instruction in this contents.
 
+When the generic function is called in each iteration, one of the
+following four rules applies:
+
 \begin{enumerate}
 \item If the next instruction has already been inlined, then replace
   the \texttt{funcall} instruction by the inlined version of the next
