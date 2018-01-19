@@ -89,8 +89,10 @@ of the worklist contains:
 \item A \texttt{funcall} instruction, representing the call site in the
   calling function.
 \item An \texttt{enter} instruction, representing the called function.
-\item The successor instruction of the \texttt{enter} instruction.
-  This instruction is used for generic dispatch.
+\item The successor instruction of the \texttt{enter} instruction,
+  called the \emph{victim instruction}, or \emph{victim} for short.
+  This instruction is the one that is a candidate for inlining, and it
+  is used for generic dispatch.
 \item The mapping and ownership information described previously.
 \end{itemize}
 
@@ -111,7 +113,7 @@ following contents:
 \item A \emph{private copy} of the initial \texttt{enter} instruction
   of the function to inline.
 \item The successor instruction of the initial \texttt{enter}
-  instruction.
+  instruction, which is the initial victim.
 \item The initial mapping described previously, as well as
   information about ownership of lexical variables.
 \end{itemize}
@@ -121,21 +123,21 @@ the worklist, and a generic function is called with four arguments,
 representing the contents of the worklist item.  Each iteration may
 result in zero, one, or two new worklist items, according to the
 mapping and ownership information, and according to the number of
-successors of the successor instruction in this contents.
+successors of the victim instruction in this contents.
 
 When the generic function is called in each iteration, one of the
 following four rules applies:
 
 \begin{enumerate}
-\item If the next instruction has already been inlined, then replace
-  the \texttt{funcall} instruction by the inlined version of the next
-  instruction.  In this case, no new item is added to the worklist.
-\item If the next instruction is a \texttt{return} instruction, then
+\item If the victim instruction has already been inlined, then replace
+  the \texttt{funcall} instruction by the inlined version of the
+  victim.  In this case, no new item is added to the worklist.
+\item If the victim instruction is a \texttt{return} instruction, then
   replace the \texttt{funcall} instruction by one or more assignment
   instructions mapping inputs of the \texttt{funcall} instruction to
   outputs of that same instruction.  Again, in this case, no new item
   is added to the worklist.
-\item If the next instruction has a single successor, insert a copy of
+\item If the victim instruction has a single successor, insert a copy of
   the next instruction before the \texttt{funcall} instruction, and
   make the \texttt{enter} instruction refer to that successor.  Update
   the mapping, the inputs of the \texttt{funcall} instruction, and the
@@ -144,8 +146,8 @@ following four rules applies:
   instruction, the new successor of the \texttt{enter} instruction,
   and the updated mapping are inserted as a new item on the worklist
   for later processing.
-\item If the next instruction has two successors, insert a copy of the
-  next instruction before the \texttt{funcall} instruction, and
+\item If the victim instruction has two successors, insert a copy of
+  the victim instruction before the \texttt{funcall} instruction, and
   replicate the \texttt{funcall} instruction in each branch.  Also
   replicate the \texttt{enter} instruction so that each replica refers
   to a different successor of the original instruction.  Update the
@@ -238,11 +240,12 @@ original instruction is the lexical variable \texttt{z}, and that
 variable is mapped to \texttt{zz} in the calling function, the inlined
 instruction receives \texttt{zz} as its input.  The output of the
 original instruction is the temporary variable \texttt{t} that is not
-in our mapping.  Therefore, a temporary variable \texttt{tt} is created
-in the calling function, and an entry is created in the mapping that
-translates \texttt{t} to \texttt{tt}.  The private \texttt{enter}
-instruction is modified so that it now refers to the next instruction
-to be considered.  The result of this step is shown in \refFig{fig43}.
+in our mapping.  Therefore, a temporary variable \texttt{tt} is
+created in the calling function, and an entry is created in the
+mapping that translates \texttt{t} to \texttt{tt}.  The private
+\texttt{enter} instruction is modified so that it now refers to the
+next instruction to be considered as a victim.  The result of this
+step is shown in \refFig{fig43}.
 
 \begin{figure}
 \begin{center}
