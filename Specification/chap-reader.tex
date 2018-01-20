@@ -53,9 +53,7 @@ read.
 
 The directory \texttt{Code/Reader/Simple} contains the code for a
 simple, straightforward reader.  It is currently fairly complete.
-Only the macros \texttt{\#\#} and \texttt{\#=} (see
-\refSec{sec-reader-portability-problems}) and the \texttt{\#S} macro
-are missing.  
+Only the \texttt{\#S} macro is missing.
 
 We have made no attempt to make this reader fast.  Its main virtue is
 its simplicity.
@@ -72,7 +70,8 @@ reference to it is being encountered (thus creating a circular
 structure), some temporary value must be put in until the object has
 been constructed.  Then the object must be scanned for that temporary
 value.  However scanning arbitrary objects for some substructure
-cannot be done portably.
+cannot be done portably.  We use the system \texttt{closer-mop} to
+scan standard objects, but we have no way of scanning structs yet.
 
 Another (minor) problem with respect to portability has to do with the
 \emph{backquote} facility.  The \hs{} explicitly encourages
