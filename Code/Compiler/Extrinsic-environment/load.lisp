@@ -53,9 +53,8 @@
     (let ((*package* (sicl-env:special-variable '*package*
 						compilation-environment)))
       (loop with eof = (list nil)
-	    for form = (sicl-reader:read stream nil eof)
-            for cst = (cst:cst-from-expression form)
-	    until (eq form eof)
+	    for cst = (sicl-reader:cst-read stream nil eof)
+	    until (eq cst eof)
 	    do (cleavir-env:cst-eval
 		cst compilation-environment linkage-environment system)
 	       ;; The evaluation of the form might have change the
