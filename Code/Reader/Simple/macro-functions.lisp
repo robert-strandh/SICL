@@ -142,7 +142,7 @@
 	   :stream stream))
   (let ((*backquote-depth* (1+ *backquote-depth*)))
     (with-preserved-backquote-context
-      `(quasiquote ,(read stream t nil t)))))
+      (wrap-in-quasiquote (read stream t nil t) *client*))))
 
 (defun comma (stream char)
   (declare (ignore char))
@@ -157,8 +157,8 @@
     (with-preserved-backquote-context
       (let ((form (read stream t nil t)))
 	(if at-sign-p
-	    `(unquote-splicing ,form)
-	    `(unquote ,form))))))
+            (wrap-in-unquote-splicing form *client*)
+            (wrap-in-unquote form *client*))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
