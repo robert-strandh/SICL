@@ -16,11 +16,21 @@
       (make-instance 'cst:atom-cst
         :raw expression
         :source source)
-      (make-instance 'cst:cons-cst
-        :raw expression
-        :first (first children)
-        :rest (create-cst (rest expression) (rest children) nil)
-        :source source)))
+      (labels ((aux (expression)
+                 (let ((cst (find expression children :key #'cst:raw)))
+                   (if (null cst)
+                       (if (atom expression)
+                           (cst:cst-from-expression expression)
+                           (make-instance 'cst:cons-cst
+                             :raw expression
+                             :first (aux (car expression))
+                             :rest (aux (cdr expression))))
+                       cst))))
+        (make-instance 'cst:cons-cst
+          :raw expression
+          :first (aux (car expression))
+          :rest (aux (cdr expression))
+          :source source))))
 
 (defmethod read-common :around (input-stream eof-error-p eof-value)
   (let ((*backquote-allowed-p* *backquote-in-subforms-allowed-p*)
