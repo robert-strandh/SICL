@@ -32,6 +32,11 @@
           :rest (aux (cdr expression))
           :source source))))
 
+(defgeneric source-position (stream client)
+  (:method (stream client)
+    (declare (ignore client))
+    (file-position stream)))
+
 (defmethod read-common :around (input-stream eof-error-p eof-value)
   (let ((*backquote-allowed-p* *backquote-in-subforms-allowed-p*)
 	(*backquote-in-subforms-allowed-p* nil))

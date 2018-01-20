@@ -30,6 +30,7 @@
    #:call-reader-macro
    #:interpret-token
    #:interpret-symbol
+   #:source-position
    ;; Names of additional conditions.
    #:backquote-condition
    #:invalid-context-for-backquote
