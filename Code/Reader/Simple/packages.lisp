@@ -20,6 +20,7 @@
   (:export
    #:readtable
    #:*readtable*
+   #:*client*
    #:read
    #:read-preserving-whitespace
    #:cst-read
