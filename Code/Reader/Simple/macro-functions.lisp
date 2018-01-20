@@ -120,6 +120,21 @@
 ;;; macro that expands to a CL form that will build the final data
 ;;; structure.
 
+(defgeneric wrap-in-quasiquote (form client)
+  (:method (form client)
+    (declare (ignore client))
+    `(quasiquote form)))
+
+(defgeneric wrap-in-unquote (form client)
+  (:method (form client)
+    (declare (ignore client))
+    `(unquote form)))
+
+(defgeneric wrap-in-unquote-splicing (form client)
+  (:method (form client)
+    (declare (ignore client))
+    `(unquote-splicing form)))
+
 (defun backquote (stream char)
   (declare (ignore char))
   (unless *backquote-allowed-p*

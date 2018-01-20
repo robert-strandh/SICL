@@ -31,6 +31,10 @@
    #:interpret-token
    #:interpret-symbol
    #:source-position
+   ;; Backquote customization.
+   #:wrap-in-quasiquote
+   #:wrap-in-unquote
+   #:wrap-in-unquote-splicing
    ;; Names of additional conditions.
    #:backquote-condition
    #:invalid-context-for-backquote
