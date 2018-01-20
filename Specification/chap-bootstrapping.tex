@@ -32,9 +32,9 @@ to their target counterparts as follows:
 \item A target \texttt{character} is represented as a host character.
 \item A target \texttt{cons} cell is represented as a host
   \texttt{cons} cell.
-\item A target heap-allocated object other than a \texttt{cons} cell
-  is represented as a host \texttt{struct} for the \emph{header} and a
-  host \texttt{simple-vector} for the \emph{rack}.
+\item A target general instance is represented as a host
+  \texttt{standard-object} for the \emph{header} and a host
+  \texttt{simple-vector} for the \emph{rack}.
 \item Target objects such as bignums or floats are not needed at this
   stage of bootstrapping, so they do not have any representation as
   host objects.
