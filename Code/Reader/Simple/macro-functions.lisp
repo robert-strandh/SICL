@@ -817,11 +817,12 @@
   (let* ((*package* (find-package '#:keyword))
 	 (feature-expression (read stream t nil t)))
     (check-feature-expression feature-expression)
-    (if (evaluate-feature-expression feature-expression)
-	(read stream t nil t)
-	(let ((*read-suppress* t))
-	  (read stream t nil t)
-	  (values)))))
+    (with-preserved-backquote-context
+      (if (evaluate-feature-expression feature-expression)
+          (read stream t nil t)
+          (let ((*read-suppress* t))
+            (read stream t nil t)
+            (values))))))
 
 (defun sharpsign-minus (stream char parameter)
   (declare (ignore char))
@@ -832,11 +833,12 @@
   (let* ((*package* (find-package '#:keyword))
 	 (feature-expression (read stream t nil t)))
     (check-feature-expression feature-expression)
-    (if (evaluate-feature-expression feature-expression)
-	(let ((*read-suppress* t))
-	  (read stream t nil t)
-	  (values))
-	(read stream t nil t))))
+    (with-preserved-backquote-context
+      (if (evaluate-feature-expression feature-expression)
+          (let ((*read-suppress* t))
+            (read stream t nil t)
+            (values))
+          (read stream t nil t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
