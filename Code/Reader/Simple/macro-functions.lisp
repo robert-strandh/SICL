@@ -435,17 +435,16 @@
 		   :character-found char
 		   :base base))
 	   (:constituent
-            (cond
-              ((digit-char-p char base)
-               (setf numerator
-                     (+ (* base numerator) (digit-char-p char base)))
-               (go numerator))
-              ((char= #\-)
-               (setf sign -1))
-              (t
-               (error 'digit-expected
-                      :character-found char
-                      :base base))))))
+            (cond ((digit-char-p char base)
+                   (setf numerator
+                         (+ (* base numerator) (digit-char-p char base)))
+                   (go numerator))
+                  ((char= #\-)
+                   (setf sign -1))
+                  (t
+                   (error 'digit-expected
+                          :character-found char
+                          :base base))))))
      numerator
        (let ((char (read-char stream nil nil t)))
 	 (when (null char)
