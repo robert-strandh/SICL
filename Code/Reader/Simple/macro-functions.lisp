@@ -458,7 +458,6 @@
 	    (unread-char char stream)
 	    (return-from read-rational (* sign numerator)))
 	   ((:non-terminating-macro :single-escape :multiple-escape)
-            (format t "Hit numerator :non-terminating-macro :single-escape :multiple-escape character ~s~%" char)
 	    (error 'digit-expected
 		   :character-found char
 		   :base base))
@@ -466,7 +465,6 @@
 	    (when (eql char #\/)
 	      (go denominator-start))
 	    (unless (digit-char-p char base)
-              (format t "Hit numerator constituent character ~s~%" char)
 	      (error 'digit-expected
 		     :character-found char
 		     :base base))
