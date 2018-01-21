@@ -39,77 +39,18 @@ related to cross compilation are discussed in
 
 \section{Compilation phases}
 
-\subsection{Read (file compiler)}
-
-If the file compiler is used, then the first thing that happens is
-that a top-level form is \emph{read} from a file stream.  The result
-of this phase is a data structure representing the form in the usual
-way. 
-
-In addition to the internal data structure, the reader also supplies
-information about \emph{source location} of each form.  
-
-\subsection{Convert to abstract syntax tree}
-
-\subsubsection{Processing of top-level forms}
-
-The \hs{} requires the file compiler to process top-level forms in a
-special way.%
-\footnote{See section 3.2.3.1 in the \hs{}.}
-As part of this processing, the compiler might call \texttt{eval} to
-evaluate forms in the \emph{evaluation environment} of the
-compilation. 
-
-\subsubsection{Conversion}
-
-A top-level form that is required to be compiled is then converted
-into an abstract syntax tree.  This is done in the usual way, by
-traversing the form while accessing a \emph{syntactic environment}
-which determines what different types of expressions mean,
-i.e. whether a variable is really a symbol-macro, and whether a
-compound expression is a function call, a macro call, or a special
-form.  In this step, macros and symbol macros are expanded, and nodes
-the abstract syntax tree are created as
-appropriate. \seechap{chap-abstract-syntax-tree} References to
-variables are replaced by nodes so that the name of a variable no
-longer influences its scope.
-
-\subsubsection{Inlining}
-
-As part of this phase, a \emph{function call form} might be replaced
-by the body of the function that is called.  Whether this
-transformation happens or not depends on several factors:
-
-\begin{itemize}
-\item The abstract syntax tree of the called function must be
-  available.  In general, this will be the case when an
-  \texttt{inline} declaration was in effect when the function was
-  defined.  But it could also be the case that the abstract syntax
-  tree was explicitly removed, for instance as part of the delivery of
-  commercial code. 
-\item As required by the \hs{}, there must not be a \texttt{notinline}
-  declaration of the function in effect when the function call form is
-  encountered.
-\item In \sysname{} we also require that there be an \texttt{inline}
-  declaration in effect when function call form is encountered.
-\end{itemize}
-
-The reason inlining is done this early is that the code that is
-generated may depend on the \emph{context} in which a form is
-evaluated, and in particular how many \emph{values} are required.  
+The Cleavir compiler framework converts source code to High-level
+Intermediate Representation (HIR) and performs various optimizations
+on this representation.
 
 \subsection{Convert to medium-level intermediate representation}
 
-In the next phase, the abstract syntax tree is converted into a
-\emph{flowchart}, which is a particular kind of \emph{graph} with two
-kinds of nodes (\emph{instruction nodes} and \emph{data nodes}) and
-two kinds of edges (\emph{control-flow edges} and \emph{data-flow
-  edges}).  For details on this representation, see
-\refChap{chap-mir}.
+The HIR representation is then converted to Medium-level Intermediate
+Representation (MIR), which is lower level than HIR in that address
+computations are explicit.
 
-\subsection{Convert to SSA form}
-
-\subsection{Optimization}
+Exposing these computations opens the possibility of further
+optimizations such as loop invariants, etc.
 
 \subsection{Register allocation}
 
@@ -146,35 +87,6 @@ up in eventually, such as a register for a particular argument.5
   call.}
 
 \subsection{Code generation} 
-
-\section{Optimization}
-
-\subsection{Type inference}
-
-Type inference in the \sysname{} compiler is implemented as a
-\emph{forward data-flow problem} on the flowchart.  Each \emph{arc} in
-the flowchart contains a \emph{type descriptor} for each variable in
-the program.  A type descriptor is a canonical representation of the
-disjunction of a large number of mutually disjoint types.  
-
-Each instruction type influences the possible types of its output as a
-function of the types of its inputs.  In particular, the
-\texttt{typeq} instruction takes the type of its input and a constant
-type and computes the \emph{set intersection}
-between the two in one successor arc and the \emph{set difference} in
-the other successor arc.  
-
-Initially, every type descriptor for every variable represents the
-type T.  Then, the influence of each instruction is applied until
-a fixpoint is obtained.  If any variable has the type \texttt{NIL} on
-some arc, then that arc represents an impossible transition and it can
-be removed. 
-
-Type descriptors represent not only \commonlisp{} types, but also types such
-as \emph{raw pointer}, \emph{unboxed floats}, etc.  The type
-information computed by the type inference phase is stored in the
-\emph{code object} for use by the garbage collector, but also by tools
-such as debuggers and inspectors. 
 
 \subsection{Access to special variables and global functions}
 
@@ -251,10 +163,5 @@ and how values are represented in live registers, for all values of
 the program counter.  This information is used by the garbage
 collector to determine what registers should be scanned, and how.   It
 is also used by the debugger.  
-
-The compiler should do some extensive type inferencing.  It should be
-able to eliminate code for which the result of executing it is known
-as a result of the contents of the compilation environment.  
-
 
 %%  LocalWords:  disjunction
