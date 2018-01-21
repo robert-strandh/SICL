@@ -97,11 +97,17 @@ some restrictions on the code in it.
 One such restriction is that creating the discriminating function of a
 generic function is not allowed to invoke the compiler.  Since doing
 so is typical in any CLOS implementation, we must find a different
-way.
+way.  We solve this problem by using a general-purpose discriminating
+function that traverses the call history and invokes the effictive
+method that corresponds to the arguments of the call, and if no
+effective method can be found, calls the machinery to compute the
+effective method and adds the new effective method to the call history.
 
 Another such restriction concerns the creation of classes.  Typically,
 when a class is created, the reader and writer methods are created by
-invoking the compiler.  Again, a different way must be found.
+invoking the compiler.  Again, a different way must be found.  To solve
+this problem, the method function of an accessor method is created
+as a closure that closes over the index of the slot in the rack.
 
 In order to create an instance of a class, the following functions
 are called, so they must exist and be executable:
