@@ -439,7 +439,7 @@
                    (setf numerator
                          (+ (* base numerator) (digit-char-p char base)))
                    (go numerator))
-                  ((char= #\-)
+                  ((char= char #\-)
                    (setf sign -1))
                   (t
                    (error 'digit-expected
