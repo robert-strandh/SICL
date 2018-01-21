@@ -130,7 +130,11 @@ that implements generic function dispatch must also be in place,
 including:
 
 \begin{itemize}
-\item \texttt{compute-discriminating-function}.
+\item \texttt{compute-discriminating-function}.  In the initial
+  imagine, this function will be a general function that scans the
+  call history and invokes the corresponding effective method.  If no
+  effective method corresponding to the arguments exists, then a new
+  one is computed from the applicable methods.
 \item \texttt{compute-applicable-methods}.
 \item \texttt{compute-applicable-methods-using-classes}.
 \item \texttt{compute-effective-method}.  This function returns a form
