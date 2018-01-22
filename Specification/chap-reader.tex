@@ -14,28 +14,7 @@ However, at the moment, the code for the fast reader is very
 incomplete and quite difficult to understand, mainly because it is
 over-engineered.  
 
-For one thing, we imagined an reader that would not only give
-expressions as a result of parsing text, but also abstract syntax
-trees.  The main difference between the two is that we imagined the
-abstract syntax tree to contain information about source location as
-well as an expression.  Most of the time, the same effect can be
-obtained by creating a hash table mapping expressions to source
-locations, but this method breaks down for symbols, numbers, and
-characters, because those objects typically occur in several different
-locations.  An abstract syntax tree would distinguish between the
-different occurrences and give the source location for each one.
-However, dealing with abstract syntax trees is complicated, especially
-when it comes to macros.  Common Lisp macros transform expressions to
-other expressions, and it is very hard to recreate an abstract syntax
-tree from an expression that was created by a macro.  Furthermore, we
-are now convinced that the traditional method works sufficiently well,
-as long as the hash table contains \emph{all} occurrences of a
-particular expression, and in particular all occurrences of each
-symbol, number, and character.  Notice that other objects can occur
-several times as well, because of the possible use of the reader
-macros \#\# and \#=.
-
-The second reason for the reader to be over-engineered is that we
+The main reason for the reader to be over-engineered is that we
 wanted to create a very fast implementation (and we still do).  The
 way we imagined doing this was to create special versions of the
 reader according to important parameters such as the input base and
@@ -56,9 +35,8 @@ simple, straightforward reader.  It is currently fairly complete.
 Only the \texttt{\#S} macro is missing.
 
 We have made no attempt to make this reader fast.  Its main virtue is
-its simplicity.
-
-\section{Reading floating-point numbers}
+its simplicity.  We are in the process of extracting the simple reader
+into a separate repository.  Its name is \textbf{Eclector}.
 
 \section{Portability problems}
 \label{sec-reader-portability-problems}
@@ -84,5 +62,7 @@ comma characters).  However, the result is often an
 implementation-specific encoding that would have to be translated into
 standard \commonlisp{} constructs by the compiler, for instance by
 writing macros for this encoding.  Such macros would then necessarily
-be implementation specific, which is a problem for bootstrapping
-\sysname{}.
+be implementation specific.  The simple reader calls a generic
+function that can be customized by client code whenever it needs to
+wrap some code to represent the characters defined by the backquote
+reader macro.
