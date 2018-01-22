@@ -790,10 +790,7 @@
 	(error 'single-feature-expected
 	       :features (cdr feature-expression))))
     (loop for feature in (cdr feature-expression)
-	  do (unless (symbolp feature)
-	       (error 'type-error
-		      :datum feature
-		      :expected-type 'symbol)))))
+	  do (check-feature-expression feature))))
 
 (defun evaluate-feature-expression (feature-expression)
   (if (symbolp feature-expression)
