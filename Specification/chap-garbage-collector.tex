@@ -20,40 +20,60 @@ this chapter, we describe the consequences of this suggested
 representation to the garbage collector.
 
 \section{Global collector}
-No work has been done yet on the global collector.  
+No implementation work has been done yet on the global collector.
 
 The global collector is a concurrent collector, i.e., it runs in
 parallel with the mutator threads.  With modern processors, it is
 probably practical to assign at least one core more or less
 permanently to the global collector.  According to current thinking,
 the global collector will be a combination of a mark-and-sweep
-collector and a mark-and-compact collector as follows.  
+collector and a  traditional memory allocator as implemented by
+\texttt{malloc()/free()} in a \clanguage{} environment.
 
-We define a global heap where \texttt{cons} cells and the
-\emph{headers} of general instances are allocated from the
-\emph{beginning} of the heap and \emph{racks} are allocated from the
-\emph{end}.  Since all general instances have a two-word header and
-\texttt{cons} cells consist of two words as well, we can use a
-mark-and-sweep collector for these objects without suffering any
-fragmentation.  The advantage of a mark-and-sweep collector is that
-objects will never move, which is an advantage when they are used as
-keys in hash tables and when they are used to communicate with
-code in foreign languages that assume that an address of an object is
-fixed once and for all.
+We define a global heap divided into two parts.  The first part is a
+single vector consisting of two-word blocks.  This is where
+\texttt{cons} cells and the \emph{headers} of general instances are
+allocated.  The second part of the global heap is organized as the
+space managed by an ordinary memory allocator, for example the one
+created by Doug Lea.
 
-For the racks, we plan to use the sliding collector created by Kermany
-et all \cite{Kermany:2006:CCI:1133981.1134023}.  Their collector uses
-very little additional memory because, although it define two semi
-spaces, nearly half of the pages will always be \emph{virtual}, i.e.,
-without any backing store.  Furthermore, their collector is
-\emph{parallel}, meaning that several threads can collect
-simultaneously and \emph{concurrent}, i.e., it can work in parallel
-with mutator threads.  We do not plan to use this collector for the
-nurseries, because it uses memory-mapping techniques which incur
-additional cost.
+Since all general instances have a two-word header and \texttt{cons}
+cells consist of two words as well, we can use a mark-and-sweep
+collector for these objects without suffering any fragmentation.  The
+advantage of a mark-and-sweep collector is that objects will never
+move, which is an advantage when they are used as keys in hash tables
+and when they are used to communicate with code in foreign languages
+that assume that an address of an object is fixed once and for all.
 
-Even though racks more around, objects do not, simply because the
-objects \emph{is} the header, and headers do not move.  
+The racks are allocated in the second part of the global heap.  As a
+consequence, the racks also do not move once allocated.  This
+fixed position is advantageous for code on some architectures.  For
+example, the correspondence between source code location and values of
+the program counter does not have to be updated as a result of code
+being moved by the garbage collector.
+
+Another great advantage of racks being in a permanent position is that
+mutator threads can cache a pointer without the necessity of this
+pointer having to be updated as a result of a garbage collection in
+the global heap.  Garbage collection in the global heap can therefore
+be done in parallel with the execution of the mutator threads.
+
+The global collector is subject to a write barrier, so that if an
+attempt is made to store a reference to an object in a nursery in an
+object in the global heap, then the object being referred to and all
+the objects in its transitive closure are first moved to the global
+heap.  As a result, there are no references from the global heap to
+objects in any nursery.
+
+Objects in the global heap are \emph{allocated black}, i.e. it is
+assumed that they are referenced.  When the global heap is about to be
+collected, threads are first asked to garbage collect their nurseries
+and then to report any references to objects in the global heap.  Once
+every thread has finished this task, collection in the global heap can
+start.  The first part of the heap is scanned and a free list of
+objects that are no longer references is established.  Then, this free
+list is traversed, effectively executing a \texttt{free()} of the rack
+in the second part of the heap.
 
 \section{Nursery collector}
 The directory \texttt{Code/Garbage-collector} contains some code that
@@ -127,8 +147,8 @@ might also be allocated directly in the global collector.
 \section{Implementation}
 
 In most systems, the garbage collector is implemented in some language
-other than \commonlisp{}.  However, we imagine using \commonlisp{} together with the
-primitives described in \refChap{chap-low-level-primitives} to
-implement it.
+other than \commonlisp{}.  However, we imagine using \commonlisp{}
+together with the primitives described in
+\refChap{chap-low-level-primitives} to implement it.
 
 %%  LocalWords:  mutator
