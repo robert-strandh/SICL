@@ -232,11 +232,11 @@ Instruction graph after initialization.}
 \end{figure}
 
 As we can see in \refFig{fig42}, an assignment instruction has been
-created that copies the value of the lexical variable into a variable
-\texttt{zz} that mirrors the initial lexical variable \texttt{z} in
-the called function.  We also see that there are now two identical
-\texttt{enter} instructions.  The one labeled \texttt{enter1} is the
-private copy.
+created that copies the value of the lexical variable \texttt{x} into
+a variable \texttt{zz} that mirrors the initial lexical variable
+\texttt{z} in the called function.  We also see that there are now two
+identical \texttt{enter} instructions.  The one labeled
+\texttt{enter1} is the private copy.
 
 Step one of the inlining procedure consists of inlining the successor
 of our private \texttt{enter} instruction, i.e. the instruction
