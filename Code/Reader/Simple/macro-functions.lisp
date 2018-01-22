@@ -810,7 +810,9 @@
 	  :parameter parameter
 	  :macro-name 'sharpsign-p))
   (let* ((*package* (find-package '#:keyword))
-	 (feature-expression (read stream t nil t)))
+	 (feature-expression
+           (let ((*read-suppress* nil))
+             (read stream t nil t))))
     (check-feature-expression feature-expression)
     (with-preserved-backquote-context
       (if (evaluate-feature-expression feature-expression)
@@ -826,7 +828,9 @@
 	  :parameter parameter
 	  :macro-name 'sharpsign-p))
   (let* ((*package* (find-package '#:keyword))
-	 (feature-expression (read stream t nil t)))
+	 (feature-expression
+           (let ((*read-suppress* nil))
+             (read stream t nil t))))
     (check-feature-expression feature-expression)
     (with-preserved-backquote-context
       (if (evaluate-feature-expression feature-expression)
