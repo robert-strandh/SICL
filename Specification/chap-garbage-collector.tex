@@ -8,9 +8,7 @@ also recommend Paul Wilson's excellent survey paper
 \cite{Wilson:1992:UGC:645648.664824}.
 
 We think it would be good to use a per-thread nursery combined with a
-global allocator for older objects.  This technique has been published
-by Doligez and Leroy (see \cite{Doligez:1993:CGG:158511.158611}) and
-perhaps in other papers as well.
+global allocator for older objects.
 
 In \refChap{chap-data-representation} we suggest a data representation
 where every heap allocated object has a two-word header object.  If it
