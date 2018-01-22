@@ -132,7 +132,14 @@ following four rules applies:
 \item If the target instruction has already been inlined, i.e. it is
   in the mapping containing this information as described previously,
   then replace the \texttt{funcall} instruction by the inlined version
-  of the target.  In this case, no new item is added to the worklist.
+  of the target.  There are two ways of doing this replacement.
+  Either the predecessors of the \texttt{funcall} instruction are
+  redirected to the inlined version of the target instruction,
+  effectively making the \texttt{funcall} instruction unreachable, or
+  else, the funcall instruction is replaced by a \texttt{no-operation}
+  instruction with the inlined version of the target instruction as
+  its successor.  When this rule applies, no new item is added to the
+  worklist.
 \item If the target instruction is a \texttt{return} instruction, then
   replace the \texttt{funcall} instruction by one or more assignment
   instructions mapping inputs of the \texttt{funcall} instruction to
