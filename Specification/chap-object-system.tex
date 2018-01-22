@@ -163,15 +163,15 @@ as standard classes.
 
 Even for system classes where instances do not all have the same size,
 notably the \texttt{array} class and its subclasses, we plan to take
-advantage of the metaobject protocol by creating a function named
-\texttt{make-built-in-instance} that takes a \emph{size} argument in
-addition to ordinary initialization arguments.  We also plan to create
-a macro named \texttt{define-built-in-class} similar to
-\texttt{defclass}, and with the main difference that the default
+advantage of the metaobject protocol by allowing
+\texttt{make-instance} to take a \emph{size} argument in addition to
+ordinary initialization arguments.  We also plan to allow the
+\texttt{defclass}, to define built-in classes by passing it
+\texttt{built-in-class} as a metaclass.  In that case, the default
 superclass is \texttt{t} instead of \texttt{standard-object}.  This
-method allows us to concentrate all important features of a built-in
-class and its instances in one place, which will simplify
-maintenance. 
+technique allows us to concentrate all important features of a
+built-in class and its instances in one place, which will simplify
+maintenance.
 
 \subsection{Condition classes}
 \label{object-system-condition-classes}
