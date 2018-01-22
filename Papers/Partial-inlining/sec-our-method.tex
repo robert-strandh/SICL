@@ -129,9 +129,10 @@ When the generic function is called in each iteration, one of the
 following four rules applies:
 
 \begin{enumerate}
-\item If the target instruction has already been inlined, then replace
-  the \texttt{funcall} instruction by the inlined version of the
-  target.  In this case, no new item is added to the worklist.
+\item If the target instruction has already been inlined, i.e. it is
+  in the mapping containing this information as described previously,
+  then replace the \texttt{funcall} instruction by the inlined version
+  of the target.  In this case, no new item is added to the worklist.
 \item If the target instruction is a \texttt{return} instruction, then
   replace the \texttt{funcall} instruction by one or more assignment
   instructions mapping inputs of the \texttt{funcall} instruction to
