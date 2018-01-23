@@ -29,5 +29,10 @@ such partial inlining that still need to be investigated:
   somehow need to transmit it as an argument to the called function.
   Doing so may require costly allocation of temporary memory and
   costly tests for the number of values that would not be required
-  when the procedure continues until termination.
+  when the procedure continues until termination.  However, it is rare
+  that code needs to store intermediate multiple values.  It only
+  happens in a few cases such as when \texttt{multiple-value-prog1} is
+  used.  Therefore, one solution to this problem is to avoid inlining
+  in this case.  Another possible solution is to let the inlining
+  procedure continue until termination for these cases.
 \end{itemize}
