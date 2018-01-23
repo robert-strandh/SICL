@@ -335,7 +335,7 @@ Final instruction graph.}
 \subsection{Correctness of our method}
 
 To be convinced of the correctness of our technique, we need to show
-two aspects to hold true:
+two conditions to be verified:
 
 \begin{enumerate}
 \item The technique preserves the semantics of the program.
@@ -344,11 +344,11 @@ two aspects to hold true:
 
 \subsubsection{Preserving semantics}
 
-The first aspect trivially holds, because the calling function contains
-a copy of the lexical environment of the called function, and the
-\texttt{funcall} instruction simply transfers the values in the
-copy of the calling function to the corresponding values in the
-lexical environment of the called function, and then continues
+The first condition is trivially verified, because the calling
+function contains a copy of the lexical environment of the called
+function, and the \texttt{funcall} instruction simply transfers the
+values in the copy of the calling function to the corresponding values
+in the lexical environment of the called function, and then continues
 execution in the corresponding instruction in the called function.
 
 \subsubsection{Termination}
