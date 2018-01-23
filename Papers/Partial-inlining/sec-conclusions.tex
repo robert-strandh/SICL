@@ -19,20 +19,22 @@ such partial inlining that still need to be investigated:
   well as on any optimization techniques described in the literature
   that we plan to incorporate.
 \item In our intermediate code, we treat multiple values with an
-  unknown number of values as a special type of datum.  During the
-  execution of our inlining procedure, such a datum may become part of
-  the mapping between variables of the called function and the calling
-  function.  When the inlining procedure continues until termination,
-  such a datum will be handled in the calling function in the same way
-  that it is handled in the called function.  However, if the inlining
-  procedure is stopped with such a datum in the mapping, we would
-  somehow need to transmit it as an argument to the called function.
-  Doing so may require costly allocation of temporary memory and
-  costly tests for the number of values that would not be required
-  when the procedure continues until termination.  However, it is rare
-  that code needs to store intermediate multiple values.  It only
-  happens in a few cases such as when \texttt{multiple-value-prog1} is
-  used.  Therefore, one solution to this problem is to avoid inlining
-  in this case.  Another possible solution is to let the inlining
-  procedure continue until termination for these cases.
+  unknown number of values as a special type of datum.  It is special
+  in that it must store an arbitrary number (unknown at compile time)
+  of values.  During the execution of our inlining procedure, such a
+  datum may become part of the mapping between variables of the called
+  function and the calling function.  When the inlining procedure
+  continues until termination, such a datum will be handled in the
+  calling function in the same way that it is handled in the called
+  function.  However, if the inlining procedure is stopped with such a
+  datum in the mapping, we would somehow need to transmit it as an
+  argument to the called function.  Doing so may require costly
+  allocation of temporary memory and costly tests for the number of
+  values that would not be required when the procedure continues until
+  termination.  However, it is rare that code needs to store
+  intermediate multiple values.  It only happens in a few cases such
+  as when \texttt{multiple-value-prog1} is used.  Therefore, one
+  solution to this problem is to avoid inlining in this case.  Another
+  possible solution is to let the inlining procedure continue until
+  termination for these cases.
 \end{itemize}
