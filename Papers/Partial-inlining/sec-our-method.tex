@@ -93,7 +93,7 @@ of the worklist contains:
   called the \emph{target instruction}, or \emph{target} for short.
   This instruction is the one that is a candidate for inlining, and it
   is used for generic dispatch.
-\item The mapping and ownership information described previously.
+\item The mappings and ownership information described previously.
 \end{itemize}
 
 Prior to algorithm execution, assignment instructions are inserted
@@ -102,7 +102,9 @@ temporary lexical variable.  These lexical variables represent a copy
 of the initial environment of the called function, but allocated in
 the calling function.  The pair consisting of the \texttt{funcall} and
 the \texttt{enter} instruction can be seen as transferring this
-environment from the calling function to the called function.
+environment from the calling function to the called function.  The
+variable correspondences form the initial lexical variable mapping to
+be used in the algorithm.
 
 Initially, the worklist contains a single worklist item with the
 following contents:
@@ -114,8 +116,7 @@ following contents:
   of the function to inline.
 \item The successor instruction of the initial \texttt{enter}
   instruction, which is the initial target.
-\item The initial mapping described previously, as well as
-  information about ownership of lexical variables.
+\item The initial lexical variable mapping described previously.
 \end{itemize}
 
 In each iteration of the algorithm, a worklist item is removed from
