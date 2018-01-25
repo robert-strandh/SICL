@@ -211,6 +211,24 @@ auxiliary methods on \texttt{shared-initialize}.
 
 \subsection{Class finalization}
 
+The class finalization protocol involves calling the following
+functions:
+
+\begin{itemize}
+\item \texttt{finalize-inheritance}, the main entry point.
+\item \texttt{compute-class-precedence-list} to compute the
+  precedence list.  The value computed by this function is associated
+  with the class metaobject using some unknown mechanism.  We can
+  either use \texttt{reinitialize-instance} or a slot writer.
+\item \texttt{compute-slots} to compute a list of effective
+  slot definition metaobjects.
+\item \texttt{effective-slot-definition-class}.  This function is
+  called by \texttt{compute-slots} to determine what class to use in
+  order to instantiate the effective slot definition metaobjects.
+\item \texttt{compute-effective-slot-definition}.  This function is
+  also called by \texttt{compute-slots}.
+\end{itemize}
+
 \subsection{Creating generic-function metaobjects}
 
 \subsection{Creating method metaobjects}
