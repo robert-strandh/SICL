@@ -50,6 +50,15 @@
 ;;; not have a primary method, so we delay the error signaling until
 ;;; this invocation actually happens.
 
+;;; FIXME: The AMOP says that an effective method is a form, rather
+;;; than a function.  This function should therefore be renamed to
+;;; (say) COMPUTE-EFFECTIVE-METHOD-FUNCTION-DEFAULT, so that it is
+;;; clear that it does not return an effective method.  But we do need
+;;; this function in the initial image of the system, because the
+;;; initial image does not have an evaluator, so we can not call
+;;; COMPUTE-EFFECTIVE-METHOD to get a form and then convert that form
+;;; to a function.
+
 (defun compute-effective-method-default (methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
 	(before-methods (remove-if-not #'before-method-p methods))
