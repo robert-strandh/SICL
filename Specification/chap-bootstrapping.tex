@@ -111,6 +111,8 @@ invoking the compiler.  Again, a different way must be found.  To solve
 this problem, the method function of an accessor method is created
 as a closure that closes over the index of the slot in the rack.
 
+\subsection{Arguments passed to \texttt{fasl} function}
+
 Recall that the top-level function in a compiled file is passed a
 certain number of arguments that are functions that can be called as
 part of the loading process:
@@ -139,6 +141,8 @@ The next thing to determine is exactly what functions must exist in
 the minimal viable image in order for it to be possible to create a
 complete \commonlisp{} system.
 
+\subsection{Creating class instances}
+
 In order to create an instance of a class, the following functions
 are called, so they must exist and be executable:
 
@@ -150,9 +154,15 @@ are called, so they must exist and be executable:
   to initialize the slots of the instance.
 \item \texttt{shared-initialize}.  Called by
   \texttt{initialize-instance}.
-\item \texttt{slot-boundp-using-class}.  Called by \texttt{shared-initialize}.
+\item \texttt{slot-boundp-using-class}.  Called by
+  \texttt{shared-initialize}.  This function works by taking the slot
+  index from the effective-slot object and then using the function
+  \texttt{standard-instance-access} to check the value of the slot.
+  Thus, it does not use any complex generic-function machinery.
 \item \texttt{(setf slot-value-using-class)}.  Called by
-  \texttt{shared-initialize}.
+  \texttt{shared-initialize}.  Like the previous function, this one
+  also uses the slot index directly to set the slot value, so no
+  complicated machinery is required.
 \end{itemize}
 
 Most of these functions are generic functions, so the functionality
