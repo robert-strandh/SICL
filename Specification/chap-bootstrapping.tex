@@ -141,7 +141,35 @@ The next thing to determine is exactly what functions must exist in
 the minimal viable image in order for it to be possible to create a
 complete \commonlisp{} system.
 
-\subsection{Creating class instances}
+\subsection{Executing generic functions}
+\label{sec-bootstrapping-executing-generic-functions}
+
+The functionality that implements generic function dispatch must also
+be in place in the minimal viable image, including:
+
+\begin{itemize}
+\item \texttt{compute-discriminating-function}.  In the initial
+  imagine, this function will be a general function that scans the
+  call history and invokes the corresponding effective method.  If no
+  effective method corresponding to the arguments exists, then a new
+  one is computed from the applicable methods.
+\item \texttt{compute-applicable-methods}.
+\item \texttt{compute-applicable-methods-using-classes}.
+\item \texttt{compute-effective-method}.  This function returns a form
+  to be compiled, but since we do not have the compiler, we instead
+  use some more direct method.  We suggest calling a
+  \sysname{}-specific function called (say)
+  \texttt{compute-effective-method-function} instead.  This call
+  returns a closure that can be added to the call history of the
+  generic function.  This function does not call the compiler, so it
+  can be part of the initial image.  However, this new function can be
+  a generic function, so it can take different method combinations
+  into account, making it possible to support all the method
+  combinations used by the compiler.
+\end{itemize}
+
+\subsection{Creating general instances}
+\label{sec-bootstrapping-creating-general-instances}
 
 In order to create an instance of a class, the following functions
 are called, so they must exist and be executable:
@@ -165,30 +193,29 @@ are called, so they must exist and be executable:
   complicated machinery is required.
 \end{itemize}
 
-Most of these functions are generic functions, so the functionality
-that implements generic function dispatch must also be in place,
-including:
+Most of these functions are generic functions, so it will use the
+functionality described in
+\refSec{sec-bootstrapping-executing-generic-functions}.
 
-\begin{itemize}
-\item \texttt{compute-discriminating-function}.  In the initial
-  imagine, this function will be a general function that scans the
-  call history and invokes the corresponding effective method.  If no
-  effective method corresponding to the arguments exists, then a new
-  one is computed from the applicable methods.
-\item \texttt{compute-applicable-methods}.
-\item \texttt{compute-applicable-methods-using-classes}.
-\item \texttt{compute-effective-method}.  This function returns a form
-  to be compiled, but since we do not have the compiler, we instead
-  use some more direct method.  We suggest calling a
-  \sysname{}-specific function called (say)
-  \texttt{compute-effective-method-function} instead.  This call
-  returns a closure that can be added to the call history of the
-  generic function.  This function does not call the compiler, so it
-  can be part of the initial image.  However, this new function can be
-  a generic function, so it can take different method combinations
-  into account, making it possible to support all the method
-  combinations used by the compiler.
-\end{itemize}
+
+\subsection{Creating class metaobjects}
+
+A class metaobject is itself a general instance, so the machinery
+described in \refSec{sec-bootstrapping-creating-general-instances} is
+required.  In addition, all the functionality for initializing class
+metaobjects is necessary.  This functionality is fairly simple,
+because the complex part is accomplished during class finalization.
+Some error checking is typically done, but it does not have to be
+present in the initial viable image.  It can be loaded later as
+auxiliary methods on \texttt{shared-initialize}.
+
+\subsection{Class finalization}
+
+\subsection{Creating generic-function metaobjects}
+
+\subsection{Creating method metaobjects}
+
+\subsection{Creating slot definition metaobjects}
 
 \section{Bootstrapping stages}
 
