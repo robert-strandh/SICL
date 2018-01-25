@@ -231,6 +231,19 @@ functions:
 
 \subsection{Creating generic-function metaobjects}
 
+A generic-function metaobject is itself a general instance, so the
+machinery described in
+\refSec{sec-bootstrapping-creating-general-instances} is required.  In
+addition, all the functionality for initializing generic-function
+metaobjects is necessary.
+
+Initializing a generic function metaobject is mainly a matter of
+checking certain argument combinations for validity, and of supplying
+defaults for certain keyword arguments if not supplied.  This
+functionality is provided by auxiliary methods on
+\texttt{initialize-instance} and \texttt{shared-initialize}, so those
+auxiliary methods must be present in the image.
+
 \subsection{Creating method metaobjects}
 
 \subsection{Creating slot definition metaobjects}
