@@ -88,8 +88,9 @@ sequence of ordinary compiled files.
 
 There are many ways of making a viable image.  We are interested in
 making a \emph{small} viable image.  In particular, we want the
-initial image \emph{not to contain the compiler}, because we want to
-be able to load the compiler as a bunch of compiled files. 
+initial image \emph{not to contain any evaluator} (no compiler, no
+interpreter), because we want to be able to load the compiler as a
+bunch of compiled files.
 
 By requiring the viable image not to contain the compiler, we place
 some restrictions on the code in it.  
@@ -99,9 +100,10 @@ generic function is not allowed to invoke the compiler.  Since doing
 so is typical in any CLOS implementation, we must find a different
 way.  We solve this problem by using a general-purpose discriminating
 function that traverses the call history and invokes the effictive
-method that corresponds to the arguments of the call, and if no
-effective method can be found, calls the machinery to compute the
-effective method and adds the new effective method to the call history.
+method functions that corresponds to the arguments of the call, and if
+no effective method function can be found, calls the machinery to
+compute the effective method function and adds the new effective
+method function to the call history.
 
 Another such restriction concerns the creation of classes.  Typically,
 when a class is created, the reader and writer methods are created by
