@@ -111,6 +111,34 @@ invoking the compiler.  Again, a different way must be found.  To solve
 this problem, the method function of an accessor method is created
 as a closure that closes over the index of the slot in the rack.
 
+Recall that the top-level function in a compiled file is passed a
+certain number of arguments that are functions that can be called as
+part of the loading process:
+
+\begin{itemize}
+\item A function for allocating a string of a certain length.  This
+  allocation can not be accomplished with any more general function
+  that requires arguments other than fixnums.
+\item The function \texttt{(setf aref)} to fill a string with
+  characters.
+\item The function \texttt{find-package} to obtain a package from its
+  name, which is a string.
+\item The function \texttt{intern} to obtain a symbol from its name
+  and a package.
+\item The function \texttt{cons} to create function names that are
+  lists.
+\item The function \texttt{fdefinition} to obtain a globally defined
+  function, given its name.
+\end{itemize}
+
+Other operations, such as obtaining a class metaobject or finding the
+value of a special variable, are accomplished by calling functions
+obtained using the steps above.
+
+The next thing to determine is exactly what functions must exist in
+the minimal viable image in order for it to be possible to create a
+complete \commonlisp{} system.
+
 In order to create an instance of a class, the following functions
 are called, so they must exist and be executable:
 
