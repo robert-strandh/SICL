@@ -139,11 +139,15 @@ including:
 \item \texttt{compute-applicable-methods-using-classes}.
 \item \texttt{compute-effective-method}.  This function returns a form
   to be compiled, but since we do not have the compiler, we instead
-  use some more direct method similar to what is shown in chapter 1 of
-  the AMOP.  Furthermore, in order to take into account different
-  method combinations, we also need the compiler, so only the method
-  combinations used by the compiler will be considered at
-  bootstrapping.
+  use some more direct method.  We suggest calling a
+  \sysname{}-specific function called (say)
+  \texttt{compute-effective-method-function} instead.  This call
+  returns a closure that can be added to the call history of the
+  generic function.  This function does not call the compiler, so it
+  can be part of the initial image.  However, this new function can be
+  a generic function, so it can take different method combinations
+  into account, making it possible to support all the method
+  combinations used by the compiler.
 \end{itemize}
 
 \section{Bootstrapping stages}
