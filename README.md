@@ -28,7 +28,7 @@ versions.
 
    ```
    $ git clone https://github.com/robert-strandh/SICL
-   $cd SICL 
+   $ cd SICL 
    ```
 4. Make sure the top-level directory can be found by ASDF.
 
