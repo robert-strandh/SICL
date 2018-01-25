@@ -49,6 +49,11 @@
 ;;; not have a primary method, so we delay the error signaling until
 ;;; this invocation actually happens.
 
+;;; FIXME: The AMOP says that an effective method is a form, rather
+;;; than a function.  This function should therefore be redefined to
+;;; return a form, and that form should be compiled by the caller of
+;;; COMPUTE-EFFECTIVE-METHOD.
+
 (defun compute-effective-method-default (methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
         (before-methods (remove-if-not #'before-method-p methods))
