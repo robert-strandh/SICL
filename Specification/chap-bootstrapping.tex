@@ -264,6 +264,18 @@ checking the validity of supplied arguments.
 
 \subsection{Creating slot definition metaobjects}
 
+A slot definition metaobject is itself a general instance, so the
+machinery described in
+\refSec{sec-bootstrapping-creating-general-instances} is required.  In
+addition, all the functionality for initializing slot definition
+metaobjects is necessary.
+
+The only potential complication here is the keyword argument
+\texttt{:initfunction}.  However, the code for this function has
+already been created and compiled by the cross compiler by the time
+the compiled file is being loaded.  For the remaining keyword
+arguments, it is just a matter of checking their validity.
+
 \section{Bootstrapping stages}
 
 \subsection{Stage 1, bootstrapping CLOS}
