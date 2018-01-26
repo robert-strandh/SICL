@@ -112,6 +112,7 @@ this problem, the method function of an accessor method is created
 as a closure that closes over the index of the slot in the rack.
 
 \subsection{Arguments passed to \texttt{fasl} function}
+\label{sec-bootstrapping-arguments-to-fasl-function}
 
 Recall that the top-level function in a compiled file is passed a
 certain number of arguments that are functions that can be called as
@@ -140,6 +141,47 @@ obtained using the steps above.
 The next thing to determine is exactly what functions must exist in
 the minimal viable image in order for it to be possible to create a
 complete \commonlisp{} system.
+
+\subsection{Creating a string}
+\label{sec-bootstrapping-creating-a-string}
+
+The code in a compiled file for creating a string looks like this:
+
+\begin{verbatim}
+(let ((string (funcall make-string <length>)))
+  (funcall setf-aref <char-0> string 0)
+  (funcall setf-aref <char-1> string 1)
+  ...
+\end{verbatim}
+
+where \texttt{<length>} is the length of the string, given as a
+fixnum.
+
+Here \texttt{funcall} is not a call to the \commonlisp{} function of
+that name, but rather a built-in mechanism for calling a function that
+is the value of a lexical variable.  The variable \texttt{make-string}
+is the first argument to the top-level function of the compiled file
+as mentioned in \ref{sec-bootstrapping-arguments-to-fasl-function}.
+Similarly, the variable \texttt{setf-aref} contains the function in
+the second argument to the top-level function of the compiled file.
+
+\subsection{Finding a package}
+\label{sec-bootstrapping-finding-a-package}
+
+To find a package when a compiled file is loaded, the following code
+is executed:
+
+\begin{verbatim}
+(let* ((name <make-name-as-string>)
+       (package (funcall find-package name)))
+  ...
+\end{verbatim}
+
+where \texttt{<make-name-as-string>} is the code that is shown in
+\ref{sec-bootstrapping-creating-a-string}.
+
+The variable \texttt{find-package} is the third argument to the
+top-level function of the compiled file.
 
 \subsection{Executing generic functions}
 \label{sec-bootstrapping-executing-generic-functions}
