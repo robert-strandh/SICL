@@ -246,6 +246,22 @@ auxiliary methods must be present in the image.
 
 \subsection{Creating method metaobjects}
 
+A method metaobject is itself a general instance, so the machinery
+described in \refSec{sec-bootstrapping-creating-general-instances} is
+required.  In addition, all the functionality for initializing method
+metaobjects is necessary.
+
+Notice that methods will be created when compiled files are being
+loaded, so the code in the method will already exist in the compiled
+file.  In particular, the function given as the \texttt{:function}
+keyword argument to \texttt{make-instance} has already been processed
+by \texttt{make-method-lambda} and then compiled by the cross
+compiler.  Therefore, none of this machinery needs to exist in the
+minimal viable image.
+
+In other words, initializing a method metaobject is mainly a matter of
+checking the validity of supplied arguments.
+
 \subsection{Creating slot definition metaobjects}
 
 \section{Bootstrapping stages}
