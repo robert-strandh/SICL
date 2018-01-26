@@ -244,6 +244,24 @@ indicated by \texttt{<find-the-function-cons>} is the code shown in
 The variable \texttt{fdefinition} is the fifth argument to the
 top-level function of the compiled file.
 
+\subsection{Finding an existing class}
+\label{sec-bootstrapping-finding-an-existing-class}
+
+To find an existing class when a compiled file is loaded, the
+following code is executed:
+
+\begin{verbatim}
+(let* ((name <find-the-symbol>)
+       (find-class <find-the-function-find-class>)
+       (class (funcall find-class name)))
+  ...
+\end{verbatim}
+
+Here, \texttt{<find-the-symbol>} contain the code shown in
+\ref{sec-bootstrapping-finding-an-existing-interned-symbol}, and
+\texttt{<find-the-function-find-class>} contain the code shown in
+\ref{sec-bootstrapping-finding-an-existing-function-named-by-a-symbol}.
+
 \subsection{Executing generic functions}
 \label{sec-bootstrapping-executing-generic-functions}
 
