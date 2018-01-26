@@ -219,6 +219,31 @@ where \texttt{<find-the-symbol>} is the code that is shown in
 The variable \texttt{fdefinition} is the fifth argument to the
 top-level function of the compiled file.
 
+\subsection{Finding an existing function named by a list}
+\label{sec-bootstrapping-finding-an-existing-function-named-by-a-list}
+
+To find an existing function named by a list when a compiled file is
+loaded, the following code is executed:
+
+\begin{verbatim}
+(let* ((symbol <find-the-symbol>)
+       (setf <find-the-symbol-setf>)
+       (nil <find-the symbol-nil)
+       (cons <find-the-function-cons>)
+       (name (funcall cons setf (funcall cons symbol nil)))
+       (function (funcall fdefinition name)))
+  ...
+\end{verbatim}
+
+Here, \texttt{<find-the-symbol>}, \texttt{<find-the-symbol-setf>}, and
+\texttt{<find-the-symbol-nil>} contain the code shown in
+\ref{sec-bootstrapping-finding-an-existing-interned-symbol}.  The code
+indicated by \texttt{<find-the-function-cons>} is the code shown in
+\ref{sec-bootstrapping-finding-an-existing-function-named-by-a-symbol}.
+
+The variable \texttt{fdefinition} is the fifth argument to the
+top-level function of the compiled file.
+
 \subsection{Executing generic functions}
 \label{sec-bootstrapping-executing-generic-functions}
 
