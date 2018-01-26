@@ -183,6 +183,26 @@ where \texttt{<make-name-as-string>} is the code that is shown in
 The variable \texttt{find-package} is the third argument to the
 top-level function of the compiled file.
 
+\subsection{Finding an existing interned symbol}
+\label{sec-bootstrapping-finding-an-existing-interned-symbol}
+
+To find an existing interned symbol when a compiled file is loaded,
+the following code is executed:
+
+\begin{verbatim}
+(let* ((package <find-the-package>)
+       (name <make-name-as-string>)
+       (symbol (funcall intern name package)))
+\end{verbatim}
+
+where \texttt{<find-the-package>} is the code that is shown in
+\ref{sec-bootstrapping-finding-a-package} and
+\texttt{<make-name-as-string>} is the code that is shown in
+\ref{sec-bootstrapping-creating-a-string}.
+
+The variable \texttt{intern} is the fourth argument argument to the
+top-level function of the compiled file.
+
 \subsection{Executing generic functions}
 \label{sec-bootstrapping-executing-generic-functions}
 
