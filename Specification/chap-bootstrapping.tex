@@ -128,8 +128,6 @@ part of the loading process:
   name, which is a string.
 \item The function \texttt{intern} to obtain a symbol from its name
   and a package.
-\item The function \texttt{cons} to create function names that are
-  lists.
 \item The function \texttt{fdefinition} to obtain a globally defined
   function, given its name.
 \end{itemize}
@@ -200,7 +198,25 @@ where \texttt{<find-the-package>} is the code that is shown in
 \texttt{<make-name-as-string>} is the code that is shown in
 \ref{sec-bootstrapping-creating-a-string}.
 
-The variable \texttt{intern} is the fourth argument argument to the
+The variable \texttt{intern} is the fourth argument to the
+top-level function of the compiled file.
+
+\subsection{Finding an existing function named by a symbol}
+\label{sec-bootstrapping-finding-an-existing-function-named-by-a-symbol}
+
+To find an existing function named by a symbol when a compiled file is
+loaded, the following code is executed:
+
+\begin{verbatim}
+(let* ((name <find-the-symbol>)
+       (function (funcall fdefinition name)))
+  ...
+\end{verbatim}
+
+where \texttt{<find-the-symbol>} is the code that is shown in
+\ref{sec-bootstrapping-finding-an-existing-interned-symbol}.
+
+The variable \texttt{fdefinition} is the fifth argument to the
 top-level function of the compiled file.
 
 \subsection{Executing generic functions}
