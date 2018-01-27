@@ -40,8 +40,13 @@
 ;;; LAMBDA form CST.
 
 (defmethod convert-let (cst environment system)
+  (when (cst:null (cst:rest cst))
+    (error 'let-or-let*-must-have-at-least-one-argument
+           :expr (cst:raw cst)
+           :origin (cst:source cst)))
   (cst:db origin (let-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let-cst))
+    (check-bindings bindings-cst)
     (let* ((binding-csts (cst:listify bindings-cst))
            (variable-csts (loop for binding-cst in binding-csts
                                 collect (if (cst:atom binding-cst)
@@ -69,8 +74,13 @@
 ;;; corresponding LET form CST.
 
 (defmethod convert-let* (cst environment system)
+  (when (cst:null (cst:rest cst))
+    (error 'let-or-let*-must-have-at-least-one-argument
+           :expr (cst:raw cst)
+           :origin (cst:source cst)))
   (cst:db origin (let*-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let*-cst))
+    (check-bindings bindings-cst)
     (multiple-value-bind (declaration-csts body-csts)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
