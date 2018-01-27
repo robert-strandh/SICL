@@ -53,7 +53,8 @@
                                             binding-cst
                                             (cst:first binding-cst))))
            (initform-csts (loop for binding-cst in binding-csts
-                                collect (if (cst:atom binding-cst)
+                                collect (if (or (cst:atom binding-cst)
+                                                (cst:null (cst:rest binding-cst)))
                                             (cst:cst-from-expression 'nil)
                                             (cst:second binding-cst))))
            (lambda-form-cst
