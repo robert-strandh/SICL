@@ -149,6 +149,12 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a LET or LET* form has no
+;;; arguments.
+(define-condition let-or-let*-must-have-at-least-one-argument
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when the first argument of a LET or a
 ;;; LET* form (i.e., the bindings) is not a proper list.
 (define-condition bindings-must-be-proper-list
