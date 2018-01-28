@@ -68,7 +68,7 @@
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (if (cst:consp (first declaration-data-cst))
+  (if (cst:consp (cst:first declaration-data-cst))
       (cleavir-env:add-function-ignore
        environment
        (cst:second (cst:first declaration-data-cst))
@@ -83,7 +83,7 @@
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (if (cst:consp (first declaration-data-cst))
+  (if (cst:consp (cst:first declaration-data-cst))
       (cleavir-env:add-function-ignore
        environment
        (cst:second (cst:first declaration-data-cst))
