@@ -1,0 +1,31 @@
+Possible Cleavir-related projects.
+
+Source information is currently propagated from CSTs to ASTs, but not
+yet from ASTs to HIR.  This needs to be the case for efficient source
+tracking at run time.
+
+Currently, the compiler considers a lexical variable live from the
+first creation until it is no longer referenced.  For reasons of
+debugging, it might be valuable to keep a variable live for the
+duration of its scope.  We need to introduce ASTs and HIR constructs
+to allow for this feature.
+
+I would like to experiment with doing certain transformations at
+different times.  For example, right now, non-trivial constants are
+turned into LOAD-TIME-VALUE forms when the AST is created.  I would
+like to have the option of leaving constants in the AST and process
+them at the HIR level, so that type inference, constant propagation,
+value numbering, etc., can use the information in constants.  There
+must then be a HIR transformation that takes remaining constants and
+turn them into LOAD-TIME-VALUE calls. 
+
+Research project.  Read up on published optimization techniques that
+claim to require SSA.  Check whether they really do, i.e. if they
+really need for each variable to be assigned at exactly one place in
+the code.  Some algorithms use other features of SSA, and in
+particular the property that every possible static version of a
+variable is kept.  But SSA is not the only possible notation with this
+property.  I know of only one published paper that requires SSA (for
+value numbering), because they treat the PHI function as an operator.
+By doing that, they miss many optimization opportunities.
+
