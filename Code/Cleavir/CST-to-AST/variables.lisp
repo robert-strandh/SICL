@@ -43,7 +43,6 @@
 ;;; form are top-level forms.
 (defvar *subforms-are-top-level-p*)
 
-
 (defmacro with-preserved-toplevel-ness (&body body)
   `(progn (setf *subforms-are-top-level-p* *current-form-is-top-level-p*)
 	  ,@body))
