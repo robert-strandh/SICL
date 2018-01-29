@@ -207,7 +207,7 @@ lexical variables, namely \texttt{x}, \texttt{a}, and \texttt{y}.  The
 variable \texttt{a} is referenced by the called function, but it is
 owned by the calling function.  The called function has a single
 variable named \texttt{z} in its initial lexical environment.  A
-temporary variable \texttt{t} is created as a result of the execution
+temporary variable \texttt{w} is created as a result of the execution
 of one of the instructions in the called function.
 
 \begin{figure}
@@ -248,10 +248,10 @@ applies, so we insert a copy of that instruction before the
 original instruction is the lexical variable \texttt{z}, and that
 variable is mapped to \texttt{zz} in the calling function, the inlined
 instruction receives \texttt{zz} as its input.  The output of the
-original instruction is the temporary variable \texttt{t} that is not
-in our mapping.  Therefore, a temporary variable \texttt{tt} is
+original instruction is the temporary variable \texttt{w} that is not
+in our mapping.  Therefore, a temporary variable \texttt{ww} is
 created in the calling function, and an entry is created in the
-mapping that translates \texttt{t} to \texttt{tt}.  The private
+mapping that translates \texttt{w} to \texttt{ww}.  The private
 \texttt{enter} instruction is modified so that it now refers to the
 next instruction to be considered as a target.  The result of this
 step is shown in \refFig{fig43}.
@@ -290,7 +290,7 @@ In step three of the inlining procedure, we consider the
 corresponding \texttt{enter} instruction has a \texttt{return}
 instruction as its successor, so rule number 2 applies.  We must
 therefore replace the \texttt{funcall} instruction by an assignment
-instruction, assigning the value of the variable \texttt{tt} to the
+instruction, assigning the value of the variable \texttt{ww} to the
 variable \texttt{y}.  The result of this operation is shown in
 \refFig{fig45}.
 
