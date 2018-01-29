@@ -66,18 +66,6 @@ instruction requires its first argument to be a function.
 
 \subsection{Algorithm}
 
-Our technique maintains the following information:
-
-\begin{itemize}
-\item A mapping from instructions in the called function that have
-  already been inlined to the corresponding instructions in the
-  calling function.
-\item A mapping from lexical variables in the called function that
-  have already been duplicated in the calling function.
-\item Information about the ownership of lexical variables referred to
-  by the called function.
-\end{itemize}
-
 The algorithm that implements our technique maintains a
 \emph{worklist}.  An item%
 \footnote{In the code, an item also contains an \texttt{enclose}
@@ -93,7 +81,22 @@ of the worklist contains:
   called the \emph{target instruction}, or \emph{target} for short.
   This instruction is the one that is a candidate for inlining, and it
   is used for generic dispatch.
-\item The mappings and ownership information described previously.
+\item A mapping from lexical variables in the called function that
+  have already been duplicated in the calling function.
+\end{itemize}
+
+In addition to the contents of the worklist items, our algorithm
+maintains the following global information, independent of any
+worklist item:
+
+\begin{itemize}
+\item A mapping from instructions in the called function that have
+  already been inlined, to the corresponding instructions in the
+  calling function.
+\item Information about the ownership of lexical variables referred to
+  by the called function.  This ownership information indicates
+  whether a lexical variable is created by the called function itself,
+  or by some enclosing function.
 \end{itemize}
 
 Prior to algorithm execution, assignment instructions are inserted
@@ -123,7 +126,7 @@ In each iteration of the algorithm, a worklist item is removed from
 the worklist, and a generic function is called with four arguments,
 representing the contents of the worklist item.  Each iteration may
 result in zero, one, or two new worklist items, according to the
-mapping and ownership information, and according to the number of
+mappings and ownership information, and according to the number of
 successors of the target instruction in this contents.
 
 When the generic function is called in each iteration, one of the
@@ -146,46 +149,50 @@ following four rules applies:
   instructions mapping inputs of the \texttt{funcall} instruction to
   outputs of that same instruction.  Again, in this case, no new item
   is added to the worklist.
-\item If the target instruction has a single successor, insert a copy of
-  the next instruction before the \texttt{funcall} instruction, and
+\item If the target instruction has a single successor, insert a copy
+  of the next instruction before the \texttt{funcall} instruction, and
   make the \texttt{enter} instruction refer to that successor.  Update
-  the mapping, the inputs of the \texttt{funcall} instruction, and the
-  outputs of the \texttt{enter} instruction as described below.  In
-  this case, the \texttt{funcall} instruction, the \texttt{enter}
+  the mappings, the inputs of the \texttt{funcall} instruction, and
+  the outputs of the \texttt{enter} instruction as described below.
+  In this case, the \texttt{funcall} instruction, the \texttt{enter}
   instruction, the new successor of the \texttt{enter} instruction,
-  and the updated mapping are inserted as a new item on the worklist
-  for later processing.
+  and the updated lexical variable mapping are inserted as a new item
+  on the worklist for later processing.
 \item If the target instruction has two successors, insert a copy of
   the target instruction before the \texttt{funcall} instruction, and
   replicate the \texttt{funcall} instruction in each branch.  Also
   replicate the \texttt{enter} instruction so that each replica refers
   to a different successor of the original instruction.  Update the
-  mapping, the inputs of the \texttt{funcall} instruction, and the
+  mappings, the inputs of the \texttt{funcall} instruction, and the
   outputs of the \texttt{enter} instruction as described below.  In
   this case, two new items are inserted on the worklist for later
   processing.  Each item contains a \texttt{funcall} instruction, an
   \texttt{enter} instruction, the successor of the \texttt{enter}
-  instruction, and a mapping, corresponding to each successor branch
-  of the inlined instruction.
+  instruction, and a lexical variable mapping, corresponding to each
+  successor branch of the inlined instruction.
 \end{enumerate}
 
-For rules $3$ and $4$, when a new instruction is inlined, the mapping,
+For rules $3$ and $4$, when a new instruction is inlined, the mappings,
 the inputs to the \texttt{funcall} instruction, and the outputs of the
 \texttt{enter} instruction are updated as follows:
 
 \begin{itemize}
+\item An entry is created in the mapping from instructions in the
+  called function to instructions in the calling function, containing
+  the inlined instruction and its copy in the calling function.
 \item If some input \texttt{i} to the inlined instruction is present
-  in the mapping (mapping to (say) \texttt{ii} in the calling
-  function) and in the outputs of the \texttt{enter} instruction, but
-  \texttt{i} is no longer live after the inlined instruction, then the
-  entry \texttt{ii - i} is eliminated from the mapping, \texttt{i} is
-  eliminated from the outputs of the \texttt{enter} instruction, and
-  \texttt{ii} is eliminated from the inputs to the \texttt{funcall}
-  instruction.  It would be semantically harmless to leave it intact,
-  but it might harm performance if the inlining procedure is stopped
-  when it is still partial.  Notice that, when an instruction with two
-  successors is inlined, variable liveness may be different in the two
-  successor branches.
+  in the lexical variable mapping (mapping to (say) \texttt{ii} in the
+  calling function) and in the outputs of the \texttt{enter}
+  instruction, but \texttt{i} is no longer live after the inlined
+  instruction, then the entry \texttt{ii - i} is eliminated from the
+  mapping, \texttt{i} is eliminated from the outputs of the
+  \texttt{enter} instruction, and \texttt{ii} is eliminated from the
+  inputs to the \texttt{funcall} instruction.  It would be
+  semantically harmless to leave it intact, but it might harm
+  performance if the inlining procedure is stopped when it is still
+  partial.  Notice that, when an instruction with two successors is
+  inlined, variable liveness may be different in the two successor
+  branches.
 \item If some output \texttt{o} of the inlined instruction is a new
   variable that is created by that instruction, then we proceed as
   follows.  Let \texttt{I} be the instruction in the called function
@@ -194,9 +201,10 @@ the inputs to the \texttt{funcall} instruction, and the outputs of the
   the calling function that takes the place of \texttt{o} in
   \texttt{II}.  We add \texttt{oo} as an input to the \texttt{funcall}
   instruction, \texttt{o} as an output of the \texttt{enter}
-  instruction, and we add \texttt{oo - o} to the mapping.  Again, if
-  the inlined instruction has two successors, the mapping may have to
-  be updated for one or the other or both of the successors.
+  instruction, and we add \texttt{oo - o} to the lexical variable
+  mapping.  Again, if the inlined instruction has two successors, the
+  lexical variable mapping may have to be updated for one or the other
+  or both of the successors.
 \end{itemize}
 
 \subsection{Example}
@@ -249,12 +257,12 @@ original instruction is the lexical variable \texttt{z}, and that
 variable is mapped to \texttt{zz} in the calling function, the inlined
 instruction receives \texttt{zz} as its input.  The output of the
 original instruction is the temporary variable \texttt{w} that is not
-in our mapping.  Therefore, a temporary variable \texttt{ww} is
-created in the calling function, and an entry is created in the
-mapping that translates \texttt{w} to \texttt{ww}.  The private
-\texttt{enter} instruction is modified so that it now refers to the
-next instruction to be considered as a target.  The result of this
-step is shown in \refFig{fig43}.
+in our lexical variable mapping.  Therefore, a temporary variable
+\texttt{ww} is created in the calling function, and an entry is
+created in the mapping that translates \texttt{w} to \texttt{ww}.  The
+private \texttt{enter} instruction is modified so that it now refers
+to the next instruction to be considered as a target.  The result of
+this step is shown in \refFig{fig43}.
 
 \begin{figure}
 \begin{center}
