@@ -199,9 +199,7 @@
     :value-type value-type))
 
 (defmethod clone-instruction :around ((instruction typeq-instruction))
-  (let ((new (call-next-method)))
-    (setf (value-type new) (value-type instruction))
-    new))
+  (reinitialize-instance (call-next-method) :value-type (value-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -223,9 +221,7 @@
     :value-type value-type))
 
 (defmethod clone-instruction :around ((instruction the-instruction))
-  (let ((new (call-next-method)))
-    (setf (value-type new) (value-type instruction))
-    new))
+  (reinitialize-instance (call-next-method) :value-type (value-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -307,9 +303,7 @@
     :invocation invocation))
 
 (defmethod clone-instruction :around ((instruction unwind-instruction))
-  (let ((result (call-next-method)))
-    (setf (invocation result) (invocation instruction))
-    result))
+  (reinitialize-instance (call-next-method) :invocation (invocation instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
