@@ -4,6 +4,39 @@ Source information is currently propagated from CSTs to ASTs, but not
 yet from ASTs to HIR.  This needs to be the case for efficient source
 tracking at run time.
 
+Many optimizations require a precise data-flow analysis.  A
+prerequisite for such an analysis is a precise control-flow analysis.
+Unfortunately, a precise control-flow analysis requires a precise
+data-flow analysis, at least of the function objects that are called.
+We think the solution to this problem is a matter of successive
+refinement.  We already have a very course control-flow analysis that
+reveals that some functions can only be invoked by certain FUNCALL
+instructions.  This analysis can then be used to obtain a more precise
+one.  We need a way to represent the result of the control flow
+analysis that shows from where a function can be called, and whether
+it might be called from arbitrary threads.
+
+Once we have a representation of the control flow, we need a
+representation of the data flow as well.  This representation must
+take into account the fact that some variables may be assigned to in a
+different thread at some arbitrary point in time.
+
+The translation from AST to HIR involves the generation of a large
+number of temporary variables, many of which contain the same values,
+or the same value as some non-temporary variable.  For some
+optimizations such as type inference and path replication to work
+well, we need information about variables that contain the same value.
+To determine the equivalence classes between variables at various
+program points, we need an implementation of value numbering that uses
+Kildall's algorithm.  To start with, we only need to consider
+assignment instructions, i.e. we can assume that all other instruction
+types generate some random output.
+
+We need to implement path replication, at least for some special cases
+such as multiple tests for CONSP or NULL, and also for FIXNUM-ADD
+which is also a test instruction because it has two output branches
+according to whether the result is a fixnum or not.
+
 Currently, the compiler considers a lexical variable live from the
 first creation until it is no longer referenced.  For reasons of
 debugging, it might be valuable to keep a variable live for the
