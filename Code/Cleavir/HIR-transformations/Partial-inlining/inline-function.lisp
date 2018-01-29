@@ -4,7 +4,7 @@
   (let* ((*original-enter-instruction* enter)
          (*location-ownerships*
            (cleavir-hir-transformations:compute-location-owners initial))
-         (initial-environment (cleavir-ir:outputs enter))
+         (initial-environment (rest (cleavir-ir:outputs enter))) ; CAR is the closure vector - unneeded.
          ;; *policy* is bound closely for these bindings to make especially sure
          ;; that inlined instructions have the policy of the source function,
          ;; rather than the call.

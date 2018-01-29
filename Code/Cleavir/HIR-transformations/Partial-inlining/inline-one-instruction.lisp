@@ -32,6 +32,13 @@
   (let ((new (find-in-mapping mapping output)))
     (cond ((not (null new)) new)
           ((not (local-location-p output)) output)
+          ;; NOTE/FIXME?: Values locations are not made into parameters.
+          ;; Therefore if inlining is stopped while a values location is live,
+          ;; the HIR will not be consistent.
+          ((typep output 'cleavir-ir:values-location)
+           (setf new (cleavir-ir:make-values-location))
+           (add-to-mapping mapping output new)
+           new)
           (t (setf new (cleavir-ir:new-temporary))
              (setf (cleavir-ir:inputs call-instruction)
                    (append
@@ -177,6 +184,13 @@
         (call-successor (first (cleavir-ir:successors call-instruction))))
     (add-to-mapping mapping successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+    ;; Rearrange things so that instructions that use the call results as an input
+    ;; use the mapped version.
+    (let ((external-values (first (cleavir-ir:outputs call-instruction)))
+          (new-values (find-in-mapping mapping (first (cleavir-ir:inputs successor-instruction)))))
+      (loop for user in (cleavir-ir:using-instructions external-values)
+            do (setf (cleavir-ir:inputs user)
+                     (substitute new-values external-values (cleavir-ir:inputs user)))))
     ;; manual hookup
     (setf (cleavir-ir:successors new-instruction) (list call-successor))
     (setf (cleavir-ir:predecessors call-successor)
