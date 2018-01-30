@@ -62,3 +62,16 @@ property.  I know of only one published paper that requires SSA (for
 value numbering), because they treat the PHI function as an operator.
 By doing that, they miss many optimization opportunities.
 
+SSA form has some good properties, but also some bad ones.  One good
+property is that old values of variables are preserved, so that they
+are available for other optimizations such as value numbering.  One
+very bad property is that PHI instruction make the order of the
+predecessors important, which is normally not the case in a flow
+graph.  We would like to use a similar form, say SFA for Static Few
+Assignments instead of SSA.  It is very similar to SSA.  The only
+difference is that, instead of PHI instructions, there are explicit
+assignment instructions preceding a block that would otherwise start
+with a PHI instruction.  Notice that whether it is possible to apply
+this transformation depends on how the variable in question is used.
+If it is used or assigned to in some arbitrary independent thread,
+this transformation is not applicable.
