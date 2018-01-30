@@ -75,3 +75,16 @@ with a PHI instruction.  Notice that whether it is possible to apply
 this transformation depends on how the variable in question is used.
 If it is used or assigned to in some arbitrary independent thread,
 this transformation is not applicable.
+
+Some of the optimizations on intermediate code require that the data
+to be only Common Lisp objects, which is the case with HIR.  In
+particular, type inference crucially depends on this property.  Once
+these optimizations have been applied, the HIR code should be
+translated to MIR.  In MIR, address calculations are exposed and some
+such calculations are subject to subsequent optimizations such as
+loop-invariant code motion.  However, since Clasp is the only Cleavir
+client and Clasp goes directly from HIR to LLVM, we have not worked on
+MIR for some time.  What we have is outdated and insufficient.  We
+need to design MIR instructions that resemble instructions in existing
+processors, both CISC and RISC, so that client code can choose what
+instructions to use for different backends.
