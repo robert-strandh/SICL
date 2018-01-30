@@ -24,6 +24,7 @@
            #:process-parameter
            #:items-from-parameter-group
            #:consider-global
+           #:consider-special
            ;; Names of conditions.
            #:run-time-program-error
            #:incorrect-number-of-arguments
