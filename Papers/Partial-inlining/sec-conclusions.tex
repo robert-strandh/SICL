@@ -39,6 +39,12 @@ such partial inlining that still need to be investigated:
   termination for these cases.
 \end{itemize}
 
+As presented in this paper, our technique handles only functions with
+very simple lambda lists.  It is probably not worth the effort to
+attempt to inline functions with lambda lists containing keyword
+arguments, but it might be useful to be able to handle optional
+arguments.  We intend to generalize our technique to such lambda lists.
+
 We have implemented the technique described in this paper, but have
 yet to implement a decision procedure for determining whether this
 technique could and should be applied.  The details of this decision
