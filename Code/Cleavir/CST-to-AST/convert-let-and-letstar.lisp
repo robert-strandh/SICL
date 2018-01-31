@@ -103,7 +103,7 @@
                                          (cons
                                           (cst:cons (cst:cst-from-expression 'declare)
                                                     remaining-dspecs-cst
-                                                    :source (source remaining-dspecs-cst))
+                                                    :source (cst:source remaining-dspecs-cst))
                                           body-csts))))
                 for binding-cst in (reverse binding-csts)
                 for declaration-cst in (reverse item-specific-dspecs)
