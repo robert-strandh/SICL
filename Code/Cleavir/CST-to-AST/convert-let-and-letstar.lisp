@@ -100,8 +100,12 @@
                                (cons (cst:cst-from-expression 'locally)
                                      (if (null remaining-dspecs)
                                          body-csts
-                                         (cons remaining-dspecs-cst
-                                               body-csts))))
+                                         (cons
+                                          (make-instance 'cst:cons-cst
+                                                         :first (cst:cst-from-expression 'declare)
+                                                         :rest remaining-dspecs-cst
+                                                         :raw (cl:cons 'declare (cst:raw remaining-dspecs-cst)))
+                                          body-csts))))
                 for binding-cst in (reverse binding-csts)
                 for declaration-cst in (reverse item-specific-dspecs)
                 do (setf result
