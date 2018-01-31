@@ -140,7 +140,7 @@
               ;; declined.  We are left with function-call form.
               ;; Create the call, just as if there were no compiler
               ;; macro present.
-              (make-call cst info env (cdr form) system)
+              (make-call cst info env (cst:rest cst) system)
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
