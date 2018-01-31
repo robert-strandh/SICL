@@ -101,10 +101,9 @@
                                      (if (null remaining-dspecs)
                                          body-csts
                                          (cons
-                                          (make-instance 'cst:cons-cst
-                                                         :first (cst:cst-from-expression 'declare)
-                                                         :rest remaining-dspecs-cst
-                                                         :raw (cl:cons 'declare (cst:raw remaining-dspecs-cst)))
+                                          (cst:cons (cst:cst-from-expression 'declare)
+                                                    remaining-dspecs-cst
+                                                    :source (source remaining-dspecs-cst))
                                           body-csts))))
                 for binding-cst in (reverse binding-csts)
                 for declaration-cst in (reverse item-specific-dspecs)
