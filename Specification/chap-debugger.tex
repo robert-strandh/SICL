@@ -2,103 +2,44 @@
 \label{chap-debugger}
 
 Part of the reason for SICL is to have a system that provides
-excellent debugging facilities for the programmer.  In this chapter,
-we describe how we imagine such facilities would be accomplished.
+excellent debugging facilities for the programmer.  The kind of
+debugger we plan to support is described in a separate repository.%
+\footnote{See https://github.com/robert-strandh/Clordane}  In this
+chapter, we describe only the support that \sysname{} contains in
+order to make such a debugger possible.
 
-Under normal circumstances, when a function is compiled, no matter
-what the \texttt{debug} settings are, the compiler will generate two
-versions of the body of the function:
+When a function is compiled with a high value of the \texttt{debug}
+quality, the execution of that function starts by loading a
+\emph{flag} from the thread instance into a lexical variable.  During
+compilation, that lexical variable is subject to register allocation
+just like any other lexical variable.  This flag indicates whether the
+current thread is being debugged.
 
-\begin{itemize}
-\item The \emph{normal} version of the body will be fully optimized.
-  The compiler might not preserve the values of variables present in
-  the source code because of various transformations such as
-  \emph{liveness analysis} and \emph{strength reduction}.  Boolean
-  values may never be created if they are part the \emph{test} in a
-  conditional form.
-\item The \emph{debugging} version of the body will have a very direct
-  correspondence with the source code.  All variables present in the
-  source will have places allocated for them as long as they are in
-  scope in the source code.  Furthermore, before and after each source
-  form, a call is inserted to an \emph{auxiliary function} which takes
-  the current value of the program counter as an argument.  The role
-  of the auxiliary function is describe below.
-\end{itemize}
+The compiler inserts a call to a small subroutine before and after
+every form to be evaluated.  The subroutine does not use the full
+\commonlisp{} function-call protocol.  Instead, it is just a very fast
+call that can be done with a \texttt{jsr} instruction (or equivalent)
+on must architectures.
 
-The \emph{function object} will contain two entry points that can be
-swapped.  The \emph{normal entry point} executes the normal version of
-the body described above.
+The subroutine starts by testing the flag to see whether the thread is
+being debugged.  Under normal circumstances, the value of the flag is
+\emph{false}, so the subroutine returns, and normal execution of the
+function code is resumed.  If the flag should turn out to be
+\texttt{true}, a second test is performed to see whether there is an
+action to be taken for this particular value of the program counter.
 
-The \emph{debugging entry point} works as follows: The first action of
-the entry point is to access the \emph{current thread}, which is
-located at the bottom of the dynamic environment, as the value of a
-special variable.  The thread contains a slot that indicates whether
-this thread is being debugged.  If the value of the slot is
-\emph{false}, then the normal version of the body is executed as with
-the normal entry point.  Thus, the only overhead of using the
-debugging entry point in a thread that is not being debugged is the
-test to determine whether the current thread is being debugged.  If
-the value of the slot is \emph{true}, another test is made to see
-whether \emph{the current function} is being debugged.  This test is a
-bit slower, because it consists of searching a list contained in
-another slot in the thread object.  That list contains the functions
-that are currently being debugged.  If this function is not currently
-being debugged, again the normal version of the body is executed.
-Thus, the overhead of a function that is not being debugged in a
-thread that is being debugged is searching a list, probably containing
-a few dozen entries at most.
+This test is also done in two steps.  In the first step, the value of
+the program counter is taken modulo some reasonably large value such
+as 256, and a bit-table in the thread instance is queried to see
+whether the corresponding entry is a 1.  If it is 0, again, the
+subroutine again returns.  This first step will slow down every
+debugged thread a little bit, but most of the time, the value will be
+0, so again, normal function execution is resumed.
 
-The two entry points are swapped so that the debugging entry point is
-used if there exists a thread that has flagged the function as being
-debugged.  When no thread has flagged the function as being debugged,
-the normal entry point is used.
-
-The \emph{auxiliary function} that is called before and after the
-evaluation of each form in the debugging version of the function body
-searches the thread object for some \emph{action} to be taken at this
-particular point in the execution.  That action can be to suspend the
-thread and give control to the debugging thread (as in the case of a
-breakpoint), display some information (as in the case of the function
-being traced), test the value of a local variable (as in the case of a
-watch point), or anything else that the debugger interface allows.
-
-Clearly, a function being flagged by some thread as being debugged is
-going to be significantly slower \emph{when executing in one of the
-  threads having flagged it}.  However a thread would flag a function
-as being debugged only if it expects to set breakpoints in it, or
-extract some other information, so the slower execution will probably
-be dwarfed by the time it takes to process the desired information.
-
-%% Part of the reason for SICL is to have a system that provides
-%% excellent debugging facilities for the programmer.  We imagine that a
-%% thread will be debugged by a debugger running in a different thread.
-%% The debugger should be able to set breakpoints before and after
-%% expressions, and at the beginning or the end of a function.
-%% We imagine this being done by a conditional branch at strategic points
-%% in the code, perhaps implemented as a ``skip the next instruction if
-%% condition is false'' instruction, if that should turn out to be faster
-%% than a normal conditional branch.  The condition tests a flag in the
-%% current thread.  If the flag is set, then a call is made to determine
-%% whether there is a breakpoint at this place.  If not, it returns and
-%% execution continues as usual.  If there is a breakpoint, then
-%% execution stops and the debugger thread is given the possibility to
-%% inspect the state of the debugged thread.
-
-%% For the highest debug level, the conditional branch should be
-%% generated before and after each expression, including each variable
-%% reference.  This can be a bit costly for local variables because it
-%% would slow down execution significantly.  Lower debug levels may
-%% generate the conditional branch only when the cost of the branch is
-%% negligible compared to the cost of evaluating the expression.
-
-%% In order not to slow down the execution too much, there should be a
-%% quick test to determine that there is no breakpoint at a particular
-%% place in the code.  We still have to think of ways of doing that.  One
-%% might imagine a conservative test that is quick but possibly not
-%% entirely accurate, perhaps based on intervals of values of the program
-%% counter (say, take PC, shift it right by some number of bits, check a
-%% bitvector to see if the corresponding bit is set, if not, there is no
-%% breakpoint here).
+If the entry in the bit table turns out to be 1, then the final test
+is made.  The program counter is checked against a hash table in the
+thread instance to see whether some action must be taken.  If so, the
+thread gives up control to the debugger.
 
 %% For each possible breakpoint, the system must keep a description of
 %% the lexical environment.  This includes mappings from variable names
