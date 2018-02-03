@@ -323,10 +323,12 @@
   (declare (ignore char))
   (unless (null parameter)
     (warn 'numeric-parameter-supplied-but-ignored
-	  :parameter parameter
-	  :macro-name 'sharpsign-dot))
-  (with-preserved-backquote-context
-    (eval (read stream t nil t))))
+          :parameter parameter
+          :macro-name 'sharpsign-dot))
+  (if *read-suppress*
+      (values)
+      (with-preserved-backquote-context
+          (eval (read stream t nil t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
