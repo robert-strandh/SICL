@@ -93,69 +93,31 @@ integers, floating-point numbers, and characters.
 
 Argument parsing is not exposed, and is instead hidden in a single
 \texttt{enter-instruction}.  Similarly, the details of how functions
-are called and how values are returned is hidden.  A single
-instruction is used to access the fields of a \texttt{cons} cell, the
-element of an array, and the slot of a standard instance. 
+are called and how values are returned is hidden.  Instructions exist
+for accessing the slots of a \texttt{cons} cell, the elements of an
+array, and the slots of a standard instance.
 
-\subsection{Level 1}
+The main purpose of restricting the contents variables to
+\commonlisp{} objects is that it makes \emph{type inference}
+possible.
 
-The transformation from the previous level to this level consists of a
-\emph{closure analysis}.  Lexical locations are divided into two
-sub-categories, namely \emph{simple locations} and \emph{shared
-  locations}.  
+\subsection{Medium-level Intermediate Representation}
 
-A simple location is a lexical location that is assigned and used
-within a single \emph{function}, which makes it possible to allocate
-it in a register or in the stack frame belonging to that function.
-
-A shared location, on the other hand, is a location that is assigned
-and/or used in more than one function.  Such a variable can not be
-allocated in a register or in the stack frame, and must instead be
-allocated in the \emph{static runtime environment}. 
-
-At this level, we also introduce explicit instructions for
-\emph{non-local control transfers}, resulting from a
-\texttt{return-from} or \texttt{go} special form where the origin is
-in one function and the destination is in a different function.
-
-\subsection{Level 2}
-
-The distinction between simple locations and shared locations is
-necessary because only simple locations are subject to conversion to
-\emph{static single assignment} (SSA) form, which is what this level is
-about.  
-
-A priori, every simple location is translated this way, but
-implementations can leave out some or all simple locations from this
-conversion.  However, some optimizations apply only to simple
-locations. 
-
-The representation at this level is used for \emph{type inference}.
-The result of this operation is that some parts of the instruction
-graph may be removed.
-
-Since parts of the instruction graph may be removed, it could be the
-case that variables that were previously considered shared no longer
-are.  Therefore, additional variables may be converted to SSA form
-here. 
-
-\subsection{Level 3}
-
-This is the first level where real implementation-specific and
-backend-specific details is introduced.  The instructions to access
-fields of a \texttt{cons} cell, elements of an array, or slots of a
-standard object, are expanded to expose tagging and address
+MIR differs from HIR in that real implementation-specific and
+backend-specific details are introduced.  The instructions for
+accessing slots of a \texttt{cons} cell, elements of an array, or
+slots of a standard object, are expanded to expose tagging and address
 calculations.
 
 This is the level where most traditional optimizations are
 accomplished, such as \emph{value numbering}, \emph{redundancy
   elimination}, \emph{common subexpression elimination}, etc.
 
-\subsection{Level 4}
+\subsection{Low-level Intermediate Representation}
 
 At this level, \emph{registers} and \emph{stack locations} are
 introduced according to the conventions for the implementation and the
-backend. 
+backend.
 
 This is the level where \emph{register allocation} is accomplished.
 
