@@ -625,11 +625,11 @@ Number of successors & 1\\
 \end{tabular}
 
 The first input to this instruction must be a \emph{standard object}.
-The consequences are undefined if this is not the case; \emph{safe}
-code should have additional instructions inserted to ensure it.
-The second input is a non-negative fixnum indicating the \emph{index}
-of the slot in the instance.  The output is the contents of the
-corresponding slot.
+The consequences are undefined if this is not the case.  For that
+reason, \emph{safe} code should have additional instructions inserted
+to ensure that this condition is respected.  The second input is a
+non-negative fixnum indicating the \emph{index} of the slot in the
+instance.  The output is the contents of the corresponding slot.
 
 \refFig{fig-slot-read-instruction} shows the Graphviz illustration of the
 \texttt{slot-read-instruction}
@@ -658,12 +658,12 @@ Number of successors & 1\\
 \end{tabular}
 
 The first input to this instruction must be a \emph{standard object}.
-The consequences are undefined if this is not the case; \emph{safe}
-code should have additional instructions inserted to ensure it.
-The second input is a fixnum indicating the \emph{index} of the slot
-in the instance.  The third input can be any object.  The effect of
-the instruction is to replace the contents of the corresponding
-slot by the third input.
+The consequences are undefined if this is not the case.  For that
+reason, \emph{safe} code should have additional instructions inserted
+to ensure that this condition is respected.  The second input is a
+fixnum indicating the \emph{index} of the slot in the instance.  The
+third input can be any object.  The effect of the instruction is to
+replace the contents of the corresponding slot by the third input.
 
 \refFig{fig-slot-write-instruction} shows the Graphviz illustration of the
 \texttt{slot-write-instruction}
@@ -704,12 +704,13 @@ This instruction has two additional slots, accessible as follows:
 \end{tabular}
 
 The first input to this instruction must be an array with actual
-element type and actual simplicity corresponding to that specified
-in the instruction slots. The consequences are undefined if this is
-not the case; safe code should insert additional instructions to
-ensure it. The second input is a non-negative fixnum indicating the
-\emph{row-major index} of an element of the array.  The output is
-the contents of the corresponding element of the array.
+element type and actual simplicity corresponding to that specified in
+the instruction slots. The consequences are undefined if this is not
+the case.  For that reason, \emph{safe} code should have additional
+instructions inserted to ensure that this condition is respected.  The
+second input is a non-negative fixnum indicating the \emph{row-major
+  index} of an element of the array.  The output is the contents of
+the corresponding element of the array.
 
 The output may be \emph{unboxed}, depending on the implementation
 and element-type.
@@ -755,7 +756,10 @@ This instruction has two additional slots, accessible as follows:
 The first input to this instruction must be an array with actual
 element type and actual simplicity corresponding to that specified
 in the instruction slots. The consequences are undefined if this is
-not the case; safe code should insert additional instructions to
+not the case.  For that reason,
+\emph{safe} code should have additional instructions inserted to
+ensure that this condition is respected.
+ safe code should insert additional instructions to
 ensure it. The second input is a non-negative fixnum indicating the
 \emph{row-major index} of an element of the array. The third input
 is the object to be written into the array. There are no outputs.
