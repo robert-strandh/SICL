@@ -1037,10 +1037,11 @@ Number of successors & 1\\
 
 This instruction is similar to the \texttt{nop-instruction} in that it
 does nothing.  The difference is that this instruction takes a single
-input, is a lexical variable.  The purpose is to create an artificial
-use for the input so that it will be kept alive until after this
-instruction is encountered.  An instance of this instruction class
-will typically be emitted when the \texttt{debug} optimization quality has a high value.
+input, which is a lexical variable.  The purpose is to create an
+artificial use for the input so that it will be kept alive until after
+this instruction is encountered.  An instance of this instruction
+class will typically be emitted when the \texttt{debug} optimization
+quality has a high value.
 
 \subsection{Instruction \texttt{typeq-instruction}}
 \label{mir-instruction-typeq}
