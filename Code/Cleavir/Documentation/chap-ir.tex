@@ -233,7 +233,7 @@ ordinary lambda list in the following way:
 \end{itemize}
 
 Notice that the outputs are lexical locations independently of whether
-the parameters to the function are special variables.  The MIR
+the parameters to the function are special variables.  The
 instructions following the \texttt{enter-instruction} are responsible
 for binding special variables and assigning default values to
 unsupplied \texttt{\&optional} and \texttt{\&key} parameters.
@@ -810,10 +810,10 @@ Number of successors & 2\\
 \hline
 \end{tabular}
 
-The inputs to this instruction must be of type \texttt{fixnum}.  If the
-MIR program is \emph{safe}, then control must reach this instruction
+The inputs to this instruction must be of type \texttt{fixnum}.  If
+the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The output is a
-\texttt{fixnum}.  
+\texttt{fixnum}.
 
 The output is the sum of the two inputs.
 
@@ -854,10 +854,10 @@ Number of successors & 2\\
 \hline
 \end{tabular}
 
-The inputs to this instruction must be of type \texttt{fixnum}.  If the
-MIR program is \emph{safe}, then control must reach this instruction
+The inputs to this instruction must be of type \texttt{fixnum}.  If
+the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The output is a
-\texttt{fixnum}.  
+\texttt{fixnum}.
 
 The output is the difference between the two inputs.
 
@@ -898,8 +898,8 @@ Number of successors & 2\\
 \hline
 \end{tabular}
 
-The inputs to this instruction must be of type \texttt{fixnum}.  If the
-MIR program is \emph{safe}, then control must reach this instruction
+The inputs to this instruction must be of type \texttt{fixnum}.  If
+the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.
 
 The first successor is chosen if and only if the first input is
@@ -931,8 +931,8 @@ Number of successors & 2\\
 \hline
 \end{tabular}
 
-The inputs to this instruction must be of type \texttt{fixnum}.  If the
-MIR program is \emph{safe}, then control must reach this instruction
+The inputs to this instruction must be of type \texttt{fixnum}.  If
+the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.
 
 The first successor is chosen if and only if the first input is
@@ -964,8 +964,8 @@ Number of successors & 2\\
 \hline
 \end{tabular}
 
-The inputs to this instruction must be of type \texttt{fixnum}.  If the
-MIR program is \emph{safe}, then control must reach this instruction
+The inputs to this instruction must be of type \texttt{fixnum}.  If
+the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.
 
 The first successor is chosen if and only if the first input is equal
@@ -1374,9 +1374,9 @@ Number of successors & 1\\
 \end{tabular}
 
 The inputs to this instruction must be of type \emph{unboxed short
-  float}.  If the MIR program is \emph{safe}, then control must reach
-this instruction only if this restriction is verified.  The output is
-also of type unboxed short float.
+  float}.  If the program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The output is also
+of type unboxed short float.
 
 The output is the sum of the two inputs.
 
