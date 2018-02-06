@@ -790,10 +790,12 @@ the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The output is a
 \texttt{fixnum}.
 
-The output is the sum of the two inputs.
+If the first successor is chosen, then the output is the sum of the
+two inputs.
 
-If the second successor is chosen, then in order to obtain the sum of the
-two inputs, the following adjustment has to be made:
+If the second successor is chosen, then the sum of the inputs is not
+possible to represent as a fixnum, so in order to obtain the sum of
+the two inputs, the following adjustment has to be made:
 
 \begin{itemize}
 \item If the output is negative, then $2^n$ must be added to the
@@ -802,6 +804,9 @@ two inputs, the following adjustment has to be made:
   the output, where $n$ is the number of bits used to represent a
   fixnum.
 \end{itemize}
+
+The second successor is typically a \texttt{funcall-instruction} to
+some function that accomplishes this adjustment and returns a bignum.
 
 \refFig{fig-fixnum-add-instruction} shows the Graphviz illustration of the
 \texttt{fixnum-add-instruction}
@@ -834,10 +839,13 @@ the program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The output is a
 \texttt{fixnum}.
 
-The output is the difference between the two inputs.
+If the first successor is chosen, then the output is the difference
+between the two inputs.
 
-If the second successor is chosen, then in order to obtain the difference
-between the two inputs, the following adjustment has to be made:
+If the second successor is chosen, then the difference between the
+inputs is not possible to represent as a fixnum, so in order to obtain
+the difference between the two inputs, the following adjustment has to
+be made:
 
 \begin{itemize}
 \item If the output is negative, then $2^n$ must be added to the
@@ -846,6 +854,9 @@ between the two inputs, the following adjustment has to be made:
   the output, where $n$ is the number of bits used to represent a
   fixnum.
 \end{itemize}
+
+The second successor is typically a \texttt{funcall-instruction} to
+some function that accomplishes this adjustment and returns a bignum.
 
 \refFig{fig-fixnum-sub-instruction} shows the Graphviz illustration of the
 \texttt{fixnum-sub-instruction}
