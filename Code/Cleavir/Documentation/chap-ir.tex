@@ -715,7 +715,8 @@ second input is a non-negative fixnum indicating the \emph{row-major
 the corresponding element of the array.
 
 The output may be \emph{unboxed}, depending on the implementation
-and element-type.
+and element-type.  If the output is unboxed, it must be used only in
+contexts where values of this type are permitted.
 
 \refFig{fig-aref-instruction} shows the Graphviz illustration of the
 \texttt{aref-instruction}
