@@ -349,6 +349,11 @@ The first input of this instruction corresponds to the function being
 called.  The remaining inputs correspond to the arguments to be passed
 to the callee.
 
+This instruction can be used instead of a \texttt{funcall-instruction}
+immediately followed by a \texttt{return-instruction} such that the
+output of the \texttt{funcall-instruction} is the input of the
+\texttt{return-instruction}.
+
 \refFig{fig-tailcall-instruction} shows the Graphviz illustration of the
 \texttt{tailcall-instruction}
 
