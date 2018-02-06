@@ -464,9 +464,9 @@ Number of successors & 2\\
 \hline
 \end{tabular}
 
-The input of this instruction is a generalized Boolean.  The first
-successor is chosen if the value of the input is \emph{true} and the
-second successor is chosen of the value of the input is \emph{false}.
+The inputs to this instruction are two arbitrary \commonlisp{}
+objects.  The first successor is chosen if the values of the inputs
+are identical.  Otherwise, the second successor is chosen.
 
 \refFig{fig-eq-instruction} shows the Graphviz illustration of the
 \texttt{eq-instruction}
