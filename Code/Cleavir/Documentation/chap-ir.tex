@@ -558,12 +558,12 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-The first input to this instruction must be a \texttt{cons} cell.
-The consequences are undefined if this is not the case; \emph{safe}
-code should have additional instructions inserted to ensure it.
-The second input can be any object.  The effect of the instruction
-is to replace the contents of the \texttt{car} of the \texttt{cons}
-cell by the second input.
+The first input to this instruction must be a \texttt{cons} cell.  The
+consequences are undefined if this is not the case.  For that reason,
+\emph{safe} code should have additional instructions inserted to
+ensure that this condition is respected.  The second input can be any
+object.  The effect of the instruction is to replace the contents of
+the \texttt{car} of the \texttt{cons} cell by the second input.
 
 \refFig{fig-rplaca-instruction} shows the Graphviz illustration of the
 \texttt{rplaca-instruction}
@@ -591,12 +591,12 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-The first input to this instruction must be a \texttt{cons} cell.
-The consequences are undefined if this is not the case; \emph{safe}
-code should have additional instructions inserted to ensure it.
-The second input can be any object.  The effect of the instruction
-is to replace the contents of the \texttt{cdr} of the \texttt{cons}
-cell by the second input.
+The first input to this instruction must be a \texttt{cons} cell.  The
+consequences are undefined if this is not the case.  For that reason,
+\emph{safe} code should have additional instructions inserted to
+ensure that this condition is respected.  The second input can be any
+object.  The effect of the instruction is to replace the contents of
+the \texttt{cdr} of the \texttt{cons} cell by the second input.
 
 \refFig{fig-rplacd-instruction} shows the Graphviz illustration of the
 \texttt{rplacd-instruction}
