@@ -185,10 +185,10 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-An instruction of this type is either the initial instruction of an
-instruction graph, or an input to an \texttt{enclose-instruction}.
-The outputs of this instruction corresponds to the parameters the
-function as follows:
+An instruction of this type is the initial instruction of an
+instruction graph.  It is also an input to an
+\texttt{enclose-instruction}.  The outputs of this instruction
+corresponds to the parameters the function as follows:
 
 \begin{itemize}
 \item There is an output for every required parameter.
@@ -200,12 +200,12 @@ function as follows:
 The execution of this instruction involves parsing the arguments given
 to the function, and setting the outputs accordingly.  
 
-This instruction has an accessor named \texttt{lambda-list}.  The
-lambda list of the \texttt{enter-instruction} resembles an ordinary
-lambda list in that it has a number of required parameters, possibly a
-\texttt{\&rest} parameter and some \texttt{\&optional} and
-\texttt{\&key} parameters.  It differs from an ordinary lambda list in
-the following way:
+The \texttt{enter-instruction} has an accessor named
+\texttt{lambda-list}.  The lambda list of this instruction resembles
+an ordinary lambda list in that it has a number of required
+parameters, possibly a \texttt{\&rest} parameter and some
+\texttt{\&optional} and \texttt{\&key} parameters.  It differs from an
+ordinary lambda list in the following way:
 
 \begin{itemize}
 \item Each required parameter is a \texttt{lexical-location} which is
