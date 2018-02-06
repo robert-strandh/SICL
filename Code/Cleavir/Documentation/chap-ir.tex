@@ -495,10 +495,10 @@ Number of successors & 1\\
 \end{tabular}
 
 The input to this instruction must be a \texttt{cons} cell. The
-consequences are undefined if this is not the case; \emph{safe}
-code should have additional instructions inserted to ensure it.
-The output is the contents of the \texttt{car} of the \texttt{cons}
-cell.
+consequences are undefined if this is not the case.  For that reason,
+\emph{safe} code should have additional instructions inserted to
+ensure that this condition is respected.  The output is the contents
+of the \texttt{car} of the \texttt{cons} cell.
 
 \refFig{fig-car-instruction} shows the Graphviz illustration of the
 \texttt{car-instruction}
@@ -527,10 +527,10 @@ Number of successors & 1\\
 \end{tabular}
 
 The input to this instruction must be a \texttt{cons} cell. The
-consequences are undefined if this is not the case; \emph{safe}
-code should have additional instructions inserted to ensure it.
-The output is the contents of the \texttt{cdr} of the \texttt{cons}
-cell.
+consequences are undefined if this is not the case.  For that reason,
+\emph{safe} code should have additional instructions inserted to
+ensure that this condition is respected.  The output is the contents
+of the \texttt{cdr} of the \texttt{cons} cell.
 
 \refFig{fig-cdr-instruction} shows the Graphviz illustration of the
 \texttt{cdr-instruction}
