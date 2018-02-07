@@ -171,6 +171,15 @@
       ;; and each has an immediate-input with the position of that
       ;; cell in the inputs.
       (let* (fetches info)
+        ;; THIS bizarre loop, added after the subsequent one,
+        ;; is another kludge on top of that.
+        ;; FIXME: Find a good way to determine size of the closure
+        ;; from the enter instruction.
+        (loop for inst = (first (cleavir-ir:successors instruction))
+                then (first (cleavir-ir:successors inst))
+              when (typep inst 'cleavir-ir:create-cell-instruction)
+                do (setf instruction inst)
+              else do (loop-finish))
         ;; This bizarre loop is required by the fact that
         ;; segregate-lexicals will for reasons unknown to me
         ;; sometimes generate ENCLOSE instructions that take N

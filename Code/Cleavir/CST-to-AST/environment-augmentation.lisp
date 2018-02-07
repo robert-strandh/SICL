@@ -131,7 +131,18 @@
      declaration-data-cst
      environment)
   (cst:db source (type-cst variable-cst) declaration-data-cst
-    (cleavir-env:add-variable-type environment variable-cst type-cst)))
+          (cleavir-env:add-variable-type environment variable-cst type-cst)))
+
+(defmethod augment-environment-with-declaration
+    ((declaration-identifier (eql 'optimize))
+     declaration-identifier-cst
+     declaration-data-cst
+     environment)
+  (declare (ignore declaration-identifier-cst declaration-data-cst))
+  ;; OPTIMIZE is handled specially, so we do nothing here.
+  ;; This method is just for ensuring that the default method,
+  ;; which signals a warning, isn't called.
+  environment)
 
 ;;; Augment the environment with an OPTIMIZE specifier.
 (defun augment-environment-with-optimize (optimize environment)
