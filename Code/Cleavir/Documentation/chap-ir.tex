@@ -1394,6 +1394,44 @@ specified by the \texttt{element-type} of the instruction.
 
 The output is an unboxed value corresponding to the input.
 
+\subsection{Instruction \texttt{unwind-instruction}}
+\label{mir-instruction-unwind}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 0\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction has one extra slot, usable with initarg
+\texttt{:invocation} and accessor \texttt{invocation}.
+
+The result is executing this instruction is to \emph{unwind} the stack
+so that the function corresponding the owner of the successor of the
+\texttt{unwind-instruction} is now at the top of the stack.  Any
+intervening \texttt{unwind-protect} forms are executed as a result.
+
+This instruction is emitted as a result of non-local control
+transfers.  As an example, consider the following code:
+
+\begin{verbatim}
+(block f
+  (funcall (lambda (x) (return-from f x)) 10))
+\end{verbatim}
+
+In that code, the \texttt{return-from} form results in an
+\texttt{unwind-instruction}, effectively removing the invocation of
+the anonymous function from the top of the stack.
+
+The accessor \texttt{invocation} returns the owner of the successor of
+this \texttt{unwind-instruction}
+
 \subsection{Instruction \texttt{float-add-instruction}}
 \label{mir-instruction-float-add}
 
