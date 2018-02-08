@@ -67,6 +67,75 @@ needed.
 An instruction graph program is said to be \emph{reduced} if and only
 if it is \emph{well formed} and every instruction is \emph{reachable}.
 
+\section{Instruction and data ownership}
+
+Recall that an \texttt{enter-instruction} is the successor of no other
+instruction.
+
+The \texttt{enter-instruction}s of a program constitute a directed
+tree.  An \texttt{enter-instruction} $I$ closer to the root of the
+tree than some other \texttt{enter-instruction} $J$ is said to be
+located \emph{further out} than J.
+
+The \texttt{enter-instruction}s of the tree correspond directly to the
+functions in the source code.  Some of these functions are introduced
+by \texttt{flet} or \texttt{labels}, and some are anonymous and
+introduced by \texttt{lambda}.
+
+Each instruction is generated as a result of compiling a particular
+function.  The \texttt{enter-instruction} corresponding to that
+function is called the \emph{owner} of the instruction.
+
+Most of the time, the successor $J$ of some instruction $I$ has the
+same owner as $I$, but this is not always the case.  The following
+code:
+
+\begin{verbatim}
+(defun f (...)
+  (flet ((g (x) (return-from b x)))
+    ...))
+\end{verbatim}
+
+shows an example where this is not the case.  The compilation of the
+\texttt{return-from} form will result in an
+\texttt{unwind-instruction}, owned by the \texttt{enter-instruction}
+corresponding to the function \texttt{g}, but its successor will be an
+instruction owned by the \texttt{enter-instruction} corresponding to
+the function \texttt{f}.
+
+While it might seem reasonable to think that a particular instruction
+$I$ is always reachable from its owner following successor, this is
+not the case.  The following code:
+
+\begin{verbatim}
+(defun f (...)
+  (let (g)
+    (tagbody
+        (setf g (lambda () (go a)))
+        (funcall g)
+        (go b)
+      a
+        (print "hello")
+      b)))
+\end{verbatim}
+
+shows an example of this situation.  The instructions generated from
+the \texttt{print} form are owned by the \texttt{enter-instruction}
+corresponding to the function \texttt{f}, but those instructions are
+not reachable by following successors from that
+\texttt{enter-instruction}.  The only way to reach those instructions
+are by following the \texttt{unwind-instruction} generated as a result
+of compiling the form \texttt{(go a)}.
+
+The owner of a datum $D$ is the outermost \texttt{enter-instruction}
+of all the owners of all the instructions using $D$.
+
+Each \texttt{enter-instruction} $E$ defines a \emph{procedure} which
+is a the set of all the instructions owned by $E$.  We extend the
+definition of ownership so that a procedure $P$ is the owner of some
+instruction or datum $X$ if an only if the unique
+\texttt{enter-instruction} of $P$ is the owner of $X$.
+
 \section{Levels of detail}
 
 From its initial creation, the instruction graph is transformed in
