@@ -599,6 +599,15 @@ The input to this instruction can be any object.  The instruction
 tests whether the input is a \texttt{cons} cell.  If it is, then the
 first successor is chosen.  Otherwise, the second successor is chosen.
 
+Normally, this instruction would not be present at the HIR level.
+Instead, the more general \texttt{typeq-instruction}
+\seesec{mir-instruction-typeq} would be used.  But when HIR is
+translated to MIR, then the \texttt{typeq-instruction} is eliminated
+in an implementation-specific way.  Implementations that have a simple
+way of testing whether an object is a \texttt{cons} cell can then turn
+a \texttt{typeq-instruction} with a type of \texttt{cons} into a
+\texttt{consp-instruction}.
+
 \refFig{fig-consp-instruction} shows the Graphviz illustration of the
 \texttt{consp-instruction}
 
