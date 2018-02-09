@@ -133,7 +133,7 @@
 (defgeneric wrap-in-unquote-splicing (form client)
   (:method (form client)
     (declare (ignore client))
-    `(unquote-splicing ,form)))
+    (list 'unquote-splicing form)))
 
 (defun backquote (stream char)
   (declare (ignore char))

@@ -11,7 +11,7 @@
              (*labels* (make-hash-table))
              (result (read-common input-stream eof-error-p eof-value)))
         (unless (zerop (hash-table-count *labels*))
-          (let ((mapping (make-hash-table :test #'equal)))
+          (let ((mapping (make-hash-table :test #'eq)))  ; <-- changed test from #'equal
             (maphash (lambda (key value)
                        (declare (ignore key))
                        (setf (gethash (car value) mapping) (cdr value)))
