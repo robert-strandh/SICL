@@ -580,6 +580,36 @@ of the \texttt{car} of the \texttt{cons} cell.
 \texttt{car-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{consp-instruction}}
+\label{mir-instruction-car}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The input to this instruction can be any object.  The instruction
+tests whether the input is a \texttt{cons} cell.  If it is, then the
+first successor is chosen.  Otherwise, the second successor is chosen.
+
+\refFig{fig-consp-instruction} shows the Graphviz illustration of the
+\texttt{consp-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-consp-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-consp-instruction}
+\texttt{consp-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{cdr-instruction}}
 \label{mir-instruction-cdr}
 
