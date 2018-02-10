@@ -60,6 +60,7 @@
    #:eq-instruction #:make-eq-instruction
    #:consp-instruction #:make-consp-instruction
    #:fixnump-instruction #:make-fixnump-instruction
+   #:characterp-instruction #:make-characterp-instruction
    #:phi-instruction #:make-phi-instruction
    #:use-instruction #:make-use-instruction
    #:aref-instruction #:aset-instruction
