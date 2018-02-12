@@ -227,11 +227,11 @@
 ;;;
 ;;; Instruction DYNAMIC-ALLOCATION-INSTRUCTION.
 ;;;
-;;; This instruction has no operational effect, like THE. It
-;;; indicates to escape analysis that its no value that is in its
-;;; input when control reaches it escapes the local function.
-;;; In other words, it can be allocated in the local function's
-;;; stack frame.
+;;; This instruction has no operational effect, like THE.
+;;; It informs the escape analysis machinery that values in its
+;;; input will not escape the function that owns the instruction.
+;;; In other words, values input to this instruction
+;;; can be allocated in the local function's stack frame.
 
 (defclass dynamic-allocation-instruction
     (instruction one-successor-mixin)
