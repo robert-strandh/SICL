@@ -351,6 +351,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction CHARACTERP-INSTRUCTION.
+;;;
+;;; This instruction is used to test whether its input is a CHARACTER.
+;;; If that is the case, then the first output is chosen.  Otherwise,
+;;; the second output is chosen.
+
+(defclass characterp-instruction (instruction two-successors-mixin)
+  ())
+
+(defun make-characterp-instruction (input successors)
+  (make-instance 'characterp-instruction
+    :inputs (list input)
+    :successors successors))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SYMBOL-VALUE-INSTRUCTION.
 
 (defclass symbol-value-instruction (instruction one-successor-mixin)

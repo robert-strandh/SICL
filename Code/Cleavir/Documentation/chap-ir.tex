@@ -67,6 +67,75 @@ needed.
 An instruction graph program is said to be \emph{reduced} if and only
 if it is \emph{well formed} and every instruction is \emph{reachable}.
 
+\section{Instruction and data ownership}
+
+Recall that an \texttt{enter-instruction} is the successor of no other
+instruction.
+
+The \texttt{enter-instruction}s of a program constitute a directed
+tree.  An \texttt{enter-instruction} $I$ closer to the root of the
+tree than some other \texttt{enter-instruction} $J$ is said to be
+located \emph{further out} than J.
+
+The \texttt{enter-instruction}s of the tree correspond directly to the
+functions in the source code.  Some of these functions are introduced
+by \texttt{flet} or \texttt{labels}, and some are anonymous and
+introduced by \texttt{lambda}.
+
+Each instruction is generated as a result of compiling a particular
+function.  The \texttt{enter-instruction} corresponding to that
+function is called the \emph{owner} of the instruction.
+
+Most of the time, the successor $J$ of some instruction $I$ has the
+same owner as $I$, but this is not always the case.  The following
+code:
+
+\begin{verbatim}
+(defun f (...)
+  (flet ((g (x) (return-from b x)))
+    ...))
+\end{verbatim}
+
+shows an example where this is not the case.  The compilation of the
+\texttt{return-from} form will result in an
+\texttt{unwind-instruction}, owned by the \texttt{enter-instruction}
+corresponding to the function \texttt{g}, but its successor will be an
+instruction owned by the \texttt{enter-instruction} corresponding to
+the function \texttt{f}.
+
+While it might seem reasonable to think that a particular instruction
+$I$ is always reachable from its owner following successor, this is
+not the case.  The following code:
+
+\begin{verbatim}
+(defun f (...)
+  (let (g)
+    (tagbody
+        (setf g (lambda () (go a)))
+        (funcall g)
+        (go b)
+      a
+        (print "hello")
+      b)))
+\end{verbatim}
+
+shows an example of this situation.  The instructions generated from
+the \texttt{print} form are owned by the \texttt{enter-instruction}
+corresponding to the function \texttt{f}, but those instructions are
+not reachable by following successors from that
+\texttt{enter-instruction}.  The only way to reach those instructions
+are by following the \texttt{unwind-instruction} generated as a result
+of compiling the form \texttt{(go a)}.
+
+The owner of a datum $D$ is the outermost \texttt{enter-instruction}
+of all the owners of all the instructions using $D$.
+
+Each \texttt{enter-instruction} $E$ defines a \emph{procedure} which
+is a the set of all the instructions owned by $E$.  We extend the
+definition of ownership so that a procedure $P$ is the owner of some
+instruction or datum $X$ if an only if the unique
+\texttt{enter-instruction} of $P$ is the owner of $X$.
+
 \section{Levels of detail}
 
 From its initial creation, the instruction graph is transformed in
@@ -511,6 +580,45 @@ of the \texttt{car} of the \texttt{cons} cell.
 \texttt{car-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{consp-instruction}}
+\label{mir-instruction-car}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The input to this instruction can be any object.  The instruction
+tests whether the input is a \texttt{cons} cell.  If it is, then the
+first successor is chosen.  Otherwise, the second successor is chosen.
+
+Normally, this instruction would not be present at the HIR level.
+Instead, the more general \texttt{typeq-instruction}
+\seesec{mir-instruction-typeq} would be used.  But when HIR is
+translated to MIR, then the \texttt{typeq-instruction} is eliminated
+in an implementation-specific way.  Implementations that have a simple
+way of testing whether an object is a \texttt{cons} cell can then turn
+a \texttt{typeq-instruction} with a type of \texttt{cons} into a
+\texttt{consp-instruction}.
+
+\refFig{fig-consp-instruction} shows the Graphviz illustration of the
+\texttt{consp-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-consp-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-consp-instruction}
+\texttt{consp-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{cdr-instruction}}
 \label{mir-instruction-cdr}
 
@@ -770,6 +878,45 @@ is the object to be written into the array. There are no outputs.
 The object to be written into the array may be \emph{unboxed}, depending
 on the implementation and element-type.
 
+\subsection{Instruction \texttt{fixnump-instruction}}
+\label{mir-instruction-car}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The input to this instruction can be any object.  The instruction
+tests whether the input is a \texttt{fixnum}.  If it is, then the
+first successor is chosen.  Otherwise, the second successor is chosen.
+
+Normally, this instruction would not be present at the HIR level.
+Instead, the more general \texttt{typeq-instruction}
+\seesec{mir-instruction-typeq} would be used.  But when HIR is
+translated to MIR, then the \texttt{typeq-instruction} is eliminated
+in an implementation-specific way.  Implementations that have a simple
+way of testing whether an object is a \texttt{fixnum} cell can then turn
+a \texttt{typeq-instruction} with a type of \texttt{fixnum} into a
+\texttt{fixnump-instruction}.
+
+\refFig{fig-fixnump-instruction} shows the Graphviz illustration of the
+\texttt{fixnump-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-fixnump-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-fixnump-instruction}
+\texttt{fixnump-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{fixnum-add-instruction}}
 \label{mir-instruction-fixnum-add}
 
@@ -966,6 +1113,45 @@ to the second input.
 \end{center}
 \caption{\label{fig-fixnum-equal-instruction}
 \texttt{fixnum-equal-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{characterp-instruction}}
+\label{mir-instruction-car}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The input to this instruction can be any object.  The instruction
+tests whether the input is a \texttt{character}.  If it is, then the
+first successor is chosen.  Otherwise, the second successor is chosen.
+
+Normally, this instruction would not be present at the HIR level.
+Instead, the more general \texttt{typeq-instruction}
+\seesec{mir-instruction-typeq} would be used.  But when HIR is
+translated to MIR, then the \texttt{typeq-instruction} is eliminated
+in an implementation-specific way.  Implementations that have a simple
+way of testing whether an object is a \texttt{character} can then turn
+a \texttt{typeq-instruction} with a type of \texttt{character} into a
+\texttt{characterp-instruction}.
+
+\refFig{fig-characterp-instruction} shows the Graphviz illustration of the
+\texttt{characterp-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-characterp-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-characterp-instruction}
+\texttt{characterp-instruction}.}
 \end{figure}
 
 \subsection{Instruction \texttt{phi-instruction}}
@@ -1325,6 +1511,44 @@ specified by the \texttt{element-type} of the instruction.
 
 The output is an unboxed value corresponding to the input.
 
+\subsection{Instruction \texttt{unwind-instruction}}
+\label{mir-instruction-unwind}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 0\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction has one extra slot, usable with initarg
+\texttt{:invocation} and accessor \texttt{invocation}.
+
+The result is executing this instruction is to \emph{unwind} the stack
+so that the function corresponding the owner of the successor of the
+\texttt{unwind-instruction} is now at the top of the stack.  Any
+intervening \texttt{unwind-protect} forms are executed as a result.
+
+This instruction is emitted as a result of non-local control
+transfers.  As an example, consider the following code:
+
+\begin{verbatim}
+(block f
+  (funcall (lambda (x) (return-from f x)) 10))
+\end{verbatim}
+
+In that code, the \texttt{return-from} form results in an
+\texttt{unwind-instruction}, effectively removing the invocation of
+the anonymous function from the top of the stack.
+
+The accessor \texttt{invocation} returns the owner of the successor of
+this \texttt{unwind-instruction}
+
 \subsection{Instruction \texttt{float-add-instruction}}
 \label{mir-instruction-float-add}
 
@@ -1338,6 +1562,16 @@ Number of predecessors & any\\
 \hline
 Number of successors & 1\\
 \hline
+\end{tabular}
+
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
 \end{tabular}
 
 The inputs to this instruction must be of type \emph{unboxed
@@ -1373,6 +1607,16 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
+\end{tabular}
+
 The inputs to this instruction must be of type \emph{unboxed
   float}. The output is also of type unboxed float.
 
@@ -1402,6 +1646,16 @@ Number of predecessors & any\\
 \hline
 Number of successors & 1\\
 \hline
+\end{tabular}
+
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
 \end{tabular}
 
 The inputs to this instruction must be of type \emph{unboxed
@@ -1435,6 +1689,16 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
+\end{tabular}
+
 The inputs to this instruction must be of type \emph{unboxed
   float}. The output is also of type unboxed float.
 
@@ -1464,6 +1728,16 @@ Number of predecessors & any\\
 \hline
 Number of successors & 2\\
 \hline
+\end{tabular}
+
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
 \end{tabular}
 
 The inputs to this instruction must be of type \emph{unboxed
@@ -1498,6 +1772,16 @@ Number of successors & 2\\
 \hline
 \end{tabular}
 
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
+\end{tabular}
+
 The inputs to this instruction must be of type \emph{unboxed
   float}.
 
@@ -1528,6 +1812,16 @@ Number of predecessors & any\\
 \hline
 Number of successors & 1\\
 \hline
+\end{tabular}
+
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
 \end{tabular}
 
 The input to this instruction must be of type \emph{unboxed
@@ -1561,6 +1855,16 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
+\end{tabular}
+
 The input to this instruction must be of type \emph{unboxed
   float}. The output is also of type unboxed float.
 
@@ -1590,6 +1894,16 @@ Number of predecessors & any\\
 \hline
 Number of successors & 1\\
 \hline
+\end{tabular}
+
+This instruction has an additional slot, accessible as follows:
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  Initarg & Reader & Description\\
+  \hline\hline
+  \texttt{:subtype} & \texttt{subtype} & The exact subtype of float.\\
+  \hline
 \end{tabular}
 
 The input to this instruction must be of type \emph{unboxed
@@ -1759,7 +2073,16 @@ output them, and they cannot be assigned.
 Because values locations are usually very temporary, there is no
 need for them to have names.
 
-% Probably could use a figure for this one, at least!
+\refFig{fig-values-location} shows the Graphviz illustration of the
+\texttt{values-location}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-values-location.pdf_t}
+\end{center}
+\caption{\label{fig-values-location}
+\texttt{values-location}.}
+\end{figure}
 
 \subsection{Location \texttt{simple-location}}
 
