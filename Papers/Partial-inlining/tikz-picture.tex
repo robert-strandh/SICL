@@ -1,0 +1,78 @@
+\tikzstyle{instr}=[rectangle, draw=yellow!85!black, text centered, text width=3.5em, minimum height=1.5em]
+\tikzstyle{dinstr}=[rectangle, dashed, draw=yellow!85!black, text centered, text width=3.5em, minimum height=1.5em]
+
+\begin{tikzpicture}
+ [
+% instr/.style={rectangle, draw=yellow!85!black, text centered, text width=2em, minimum height=1.5em}
+ ]
+  \matrix (m) [row sep=1em,column sep=3em,minimum width=2em]
+  { 
+    \node (m-1-1) [instr]{};  & \node (m-1-2) {}; \\
+    \node (m-2-1) {};               & \node (m-2-2) {}; \\
+    \node (m-3-1) {};              & \node (m-3-2) [instr]{$i_1$}; \\
+    \node (m-4-1) {};               & \node (m-4-2) {}; \\
+    \node (m-5-1) {};  & \node (m-5-2) [instr] {$i_2$}; \\
+    \node (m-6-1) {};  & \node (m-6-2) {}; \\
+    \node (m-7-1) [instr]{};  & \node (m-7-2) {}; \\
+};
+\draw (m-1-1) |- (m-2-2);
+\draw (m-2-1) -| (m-3-2);
+\draw (m-5-2) |- (m-6-1);
+\draw (m-6-2) -| (m-7-1);
+  \path[-stealth]
+    (m-2-1) --  node [above] {$\sigma$} (m-2-2)
+    (m-2-2) edge (m-3-2)
+    (m-3-2) edge (m-5-2)
+    (m-6-2) --  node [above] {$\sigma^{-1}$} (m-6-1)
+    (m-6-1) edge (m-7-1);
+\end{tikzpicture}
+
+\vspace{1em}
+
+\begin{tikzpicture}
+ [
+% instr/.style={rectangle, draw=yellow!85!black, text centered,  minimum width=3em, minimum height=1.6em}
+ ]
+  \matrix (m) [row sep=1em,column sep=3em, minimum width=2em]
+  { 
+    \node (m-1-1) [instr]{};  & \node (m-1-2) {}; \\
+    \node (m-2-1) {};               & \node (m-2-2) {}; \\
+    \node (m-3-1)  [instr]{$\sigma^{-1}(i_1)$};              & \node (m-3-2) [dinstr]{$i_1$}; \\
+    \node (m-4-1) {};               & \node (m-4-2) {}; \\
+    \node (m-5-1) {};  & \node (m-5-2) [instr] {$i_2$}; \\
+    \node (m-6-1) {};  & \node (m-6-2) {}; \\
+    \node (m-7-1) [instr]{};  & \node (m-7-2) {}; \\
+};
+\draw (m-3-1) |- (m-4-2);
+\draw (m-4-1) -| (m-5-2);
+\draw (m-5-2) |- (m-6-1);
+\draw (m-6-2) -| (m-7-1);
+  \path[-stealth]
+    (m-1-1) edge (m-3-1)
+    (m-4-1) --  node [above] {$\sigma$} (m-4-2)
+    (m-4-2) edge (m-5-2)
+    (m-6-2) --  node [above] {$\sigma^{-1}$} (m-6-1)
+    (m-6-1) edge (m-7-1);
+\end{tikzpicture}
+
+\vspace{1em}
+
+\begin{tikzpicture}
+ [
+% instr/.style={rectangle, draw=yellow!85!black, text centered,  minimum width=3em, minimum height=1.6em}
+ ]
+  \matrix (m) [row sep=1em,column sep=3em, minimum width=2em]
+  { 
+    \node (m-1-1) [instr]{};  & \node (m-1-2) {}; \\
+    \node (m-2-1) {};               & \node (m-2-2) {}; \\
+    \node (m-3-1)  [instr]{$\sigma^{-1}(i_1)$};              & \node (m-3-2) [dinstr]{$i_1$}; \\
+    \node (m-4-1) {};               & \node (m-4-2) {}; \\
+    \node (m-5-1) [instr] {$\sigma^{-1}(i_2)$};  & \node (m-5-2) [dinstr] {$i_2$}; \\
+    \node (m-6-1) {};  & \node (m-6-2) {}; \\
+    \node (m-7-1) [instr]{};  & \node (m-7-2) {}; \\
+};
+  \path[-stealth]
+    (m-1-1) edge (m-3-1)
+    (m-3-1) edge (m-5-1)
+    (m-5-1) edge (m-7-1);
+\end{tikzpicture}
