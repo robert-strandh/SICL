@@ -355,13 +355,52 @@ that two conditions hold:
 
 \subsubsection{Partial correctness}
 
-The first condition is trivially verified, because the calling
-function contains a copy of the lexical environment of the called
-function, and the \texttt{funcall} instruction simply transfers the
-values in the environment copy in the calling function to the
-corresponding values in the lexical environment of the called
-function, and then continues execution in the corresponding
-instruction in the called function.
+Our technique preserves a very strong version of the semantics of the
+program, namely the \emph{operational} semantics.  This fact makes
+it unnecessary to create a precise definition of the program
+semantics, as might have been the case for some weaker type of
+semantics.  Instead, we only need to show that the exact same
+operations are performed before and after each inlining step.
+
+After a copy of the initial environment of the called function has
+been made in the environment of the calling function, we can see a
+pair of \texttt{funcall/enter} instructions as defining a morphism
+$\sigma$, mapping the copy of this environment in the calling function
+to its original version in the called function.  The inputs of the
+\texttt{funcall} instruction are mapped to the outputs of the
+\texttt{enter} instruction.  The lexical variable mapping used in our
+technique is simply the inverse, i.e $\sigma^{-1}$ of this morphism.
+Similarly, a pair of \texttt{return/funcall} instructions can be seen
+as defining a morphism $\tau$, mapping the environment in the called
+function to the environment in the calling function.  The inputs of
+the \texttt{return} instruction are mapped to the outputs of the
+\texttt{funcall} instruction.  These morphisms are illustrated in an
+example of an initial situation in \refFig{f-semantics1}.
+
+Applying rule $3$ or rule $4$ copies one instruction from the called
+function to the calling function, applying the morphism $\sigma^{-1}$
+to its inputs and outputs.  Two applications of rule $3$ from the
+initial situation are illustrated in \refFig{f-semantics2} and
+\refFig{f-semantics3}.  Applying rule $4$ is a bit more involved, but
+the same mechanism is used.  As we can see from these figures, thanks
+to the morphism, the instructions operate the same way whether inlined
+or not.  The semantics are thus the same in both cases.
+
+When rule $2$ is applied, the \texttt{return} instruction is not
+copied.  Instead, a number of assignment instructions are created in
+the calling function.  Together, these assignment instructions define
+the composition of the two morphisms $\tau$ and $\sigma$, i.e. $\tau
+\circ \sigma$.  Applying this rule therefore does not alter the
+semantics of the program.  It merely maps the returned values to their
+copies in the calling function.  Applying this rule is illustrated in
+\refFig{f-semantics4}.
+
+Finally, applying rule $1$ merely avoids the control transfer from the
+calling function to the called function, by replacing the
+\texttt{funcall} instruction by an existing copy of the instruction
+that would have been inlined by rule $3$ or rule $4$.  The existing
+copy obviously already operates in the environment of the calling
+function.
 
 \subsubsection{Termination}
 
@@ -440,3 +479,4 @@ Situation after an applications of rule 2.}
 \end{figure}
 
 %%  LocalWords:  worklist funcall inlining inlined lexicographically
+%%  LocalWords:  morphism morphisms
