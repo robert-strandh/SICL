@@ -6,5 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "conditions")
+   (:file "condition-reporters-english")
    (:file "environment")
    (:file "methods")))

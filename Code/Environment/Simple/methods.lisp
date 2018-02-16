@@ -50,10 +50,13 @@
 	  ((null entry)
 	   (setf entry (ensure-function-entry env function-name))
 	   (setf (special-operator entry) new-definition))
-	  ((or (not (eq (car (function-cell entry))
-			(unbound entry)))
-	       (not (null (macro-function entry))))
-	   (error "The name ~s already has a definition." function-name))
+          ((not (eq (car (function-cell entry))
+                    (unbound entry)))
+           (error 'redefinition :name function-name
+                                :oldtype :function :newtype :special-operator))
+          ((not (null (macro-function entry)))
+           (error 'redefinition :name function-name
+                                :oldtype :macro :newtype :special-operator))
 	  (t
 	   (setf (special-operator entry) new-definition)))))
 
@@ -75,17 +78,17 @@
     (new-definition function-name (env simple-environment))
   (assert (functionp new-definition))
   (let ((entry (ensure-function-entry env function-name)))
-    (if (not (null (special-operator entry)))
-	(error "The name ~s has a definition as a special operator"
-	       function-name)
-	(progn
-	  (remove-function-name (car (function-cell entry)) function-name env)
-	  (setf (car (function-cell entry)) new-definition)
-	  (add-function-name new-definition function-name env)
-	  (setf (macro-function entry) nil)
-	  (setf (type entry) t)
-	  (setf (inline entry) nil)
-	  new-definition))))
+    (cond ((not (null (special-operator entry)))
+           (error 'redefinition :name function-name
+                                :oldtype :special-operator :newtype :function))
+          (t
+           (remove-function-name (car (function-cell entry)) function-name env)
+           (setf (car (function-cell entry)) new-definition)
+           (add-function-name new-definition function-name env)
+           (setf (macro-function entry) nil)
+           (setf (type entry) t)
+           (setf (inline entry) nil)
+           new-definition))))
 
 (defmethod sicl-genv:macro-function (symbol (env simple-environment))
   (let ((entry (find-function-entry env symbol)))
@@ -213,12 +216,19 @@
 (defmethod (setf sicl-genv:constant-variable)
     (value symbol (env simple-environment))
   (let ((entry (ensure-variable-entry env symbol)))
-    (cond ((or (not (null (macro-function entry)))
-	       (specialp entry))
-	   (error "Attempt to turn a symbol macro or a special variable into a constant variable"))
+    (cond ((not (null (macro-function entry)))
+           (error 'redefinition
+                  :name symbol
+                  :oldtype :symbol-macro :newtype :constant))
+          ((specialp entry)
+           (error 'redefinition
+                  :name symbol
+                  :oldtype :special-variable :newtype :constant))
 	  ((and (constantp entry)
 		(not (eql (car (value-cell entry)) value)))
-	   (error "Attempt to change the value of a constant variable"))
+           (error 'constant-redefinition
+                  :name symbol
+                  :old (car (value-cell entry)) :new value))
 	  (t
 	   (setf (constantp entry) t)
 	   (setf (car (value-cell entry)) value)))))
@@ -235,9 +245,13 @@
 (defmethod (setf sicl-genv:special-variable)
     (value symbol (env simple-environment) initialize-p)
   (let ((entry (ensure-variable-entry env symbol)))
-    (cond ((or (not (null (macro-function entry)))
-	       (constantp entry))
-	   (error "Attempt to turn a symbol macro or a constant variable into a special variable"))
+    (cond ((constantp entry)
+           (error 'redefinition :name symbol
+                  :oldtype :constant :newtype :special-variable))
+          ((not (null (macro-function entry)))
+           (error 'redefinition
+                  :name symbol
+                  :oldtype :symbol-macro :newtype :special-variable))
 	  (t
 	   (setf (specialp entry) t)
 	   (when initialize-p
@@ -252,8 +266,14 @@
 (defmethod (setf sicl-genv:symbol-macro)
     (expansion symbol (env simple-environment))
   (let ((entry (ensure-variable-entry env symbol)))
-    (cond ((or (specialp entry) (constantp entry))
-	   (error 'program-error))
+    (cond ((specialp entry)
+           (error 'redefinition
+                  :name symbol
+                  :oldtype :special-variable :newtype :symbol-macro))
+          ((constantp entry)
+           (error 'redefinition
+                  :name symbol
+                  :oldtype :constant :newtype :symbol-macro))
 	  (t
 	   (setf (expansion entry) expansion)
 	   (setf (macro-function entry)
@@ -271,7 +291,7 @@
     (new-type symbol (env simple-environment))
   (let ((entry (ensure-variable-entry env symbol)))
     (if (constantp entry)
-	(error "Attempt to set the type of a constant variable.")
+        (error 'attempt-to-proclaim-type-of-constant :name symbol)
 	(setf (type entry) new-type))))
 
 (defmethod sicl-genv:variable-cell (symbol (env simple-environment))
@@ -365,3 +385,19 @@
 (defmethod (setf sicl-genv:symbol-plist)
     (new-plist symbol (env simple-environment))
   (setf (gethash symbol (property-lists env)) new-plist))
+
+(defmethod sicl-genv:structure-type (name (env simple-environment))
+  (let ((entry (find-structure-entry env name)))
+    (if entry (type entry) nil)))
+
+(defmethod (setf sicl-genv:structure-type) (type name (env simple-environment))
+  (let ((entry (ensure-structure-entry env name)))
+    (setf (type entry) type)))
+
+(defmethod sicl-genv:structure-size (name (env simple-environment))
+  (let ((entry (find-structure-entry env name)))
+    (if entry (size entry) nil)))
+
+(defmethod (setf sicl-genv:structure-size) (size name (env simple-environment))
+  (let ((entry (ensure-structure-entry env name)))
+    (setf (size entry) size)))

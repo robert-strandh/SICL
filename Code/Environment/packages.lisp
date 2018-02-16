@@ -92,6 +92,8 @@
    #:declarations
    #:optimize-quality-values
    #:policy
+   #:structure-type
+   #:structure-size
    ))
 
 (defpackage #:sicl-standard-environment-functions
