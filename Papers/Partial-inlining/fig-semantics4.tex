@@ -1,0 +1,19 @@
+\begin{tikzpicture}
+  \matrix (m) [minst]
+  { 
+    \node (m-1-1) [instr]{};        & \node (m-1-2) {}; \\
+    \node (m-2-1) {};               & \node (m-2-2) {}; \\
+    \node (m-3-1)  [instr]{$\sigma^{-1}(i_1)$};              & \node (m-3-2) [dinstr]{$i_1$}; \\
+    \node (m-4-1) {};               & \node (m-4-2) {}; \\
+    \node (m-5-1) [instr] {$\sigma^{-1}(i_2)$};  & \node (m-5-2) [dinstr] {$i_2$}; \\
+    \node (m-6-1) {};  & \node (m-6-2) {}; \\
+    \node (m-7-1) [instr] {$\tau \circ \sigma$};  & \node (m-7-2) [dinstr] {$Return$}; \\
+    \node (m-8-1) {};  & \node (m-8-2) {}; \\
+    \node (m-9-1) [instr]{};  & \node (m-9-2) {}; \\
+};
+  \path[-stealth]
+    (m-1-1) edge (m-3-1)
+    (m-3-1) edge (m-5-1)
+    (m-5-1) edge (m-7-1)
+    (m-7-1) edge (m-9-1);
+\end{tikzpicture}
