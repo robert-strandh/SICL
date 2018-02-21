@@ -41,7 +41,8 @@
 ;;; Instructions inherit policies from the AST that birthed them.
 (defmethod compile-ast :around ((ast cleavir-ast:ast) context)
   (declare (ignore context))
-  (let ((cleavir-ir:*policy* (cleavir-ast:policy ast)))
+  (let ((cleavir-ir:*policy* (cleavir-ast:policy ast))
+        (cleavir-ir:*origin* (cleavir-ast:origin ast)))
     (call-next-method)))
 
 ;;; When an AST that is meant for a test (as indicated by it being an
