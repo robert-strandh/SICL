@@ -123,17 +123,17 @@
 (defgeneric wrap-in-quasiquote (form client)
   (:method (form client)
     (declare (ignore client))
-    `(quasiquote ,form)))
+    (list 'quasiquote form)))
 
 (defgeneric wrap-in-unquote (form client)
   (:method (form client)
     (declare (ignore client))
-    `(unquote ,form)))
+    (list 'unquote form)))
 
 (defgeneric wrap-in-unquote-splicing (form client)
   (:method (form client)
     (declare (ignore client))
-    `(unquote-splicing ,form)))
+    (list 'unquote-splicing form)))
 
 (defun backquote (stream char)
   (declare (ignore char))
@@ -815,7 +815,7 @@
            (let ((*package* (find-package '#:keyword))
 		 (*read-suppress* nil))
              (read stream t nil t))))
-    (check-feature-expression feature-expression)
+    #+(or)(check-feature-expression feature-expression)
     (with-preserved-backquote-context
       (if (evaluate-feature-expression feature-expression)
           (read stream t nil t)
@@ -833,7 +833,7 @@
            (let ((*package* (find-package '#:keyword))
 		 (*read-suppress* nil))
              (read stream t nil t))))
-    (check-feature-expression feature-expression)
+    #+(or)(check-feature-expression feature-expression)
     (with-preserved-backquote-context
       (if (evaluate-feature-expression feature-expression)
           (let ((*read-suppress* t))

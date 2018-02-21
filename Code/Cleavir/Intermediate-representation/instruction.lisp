@@ -48,12 +48,22 @@
 ;;; during generation, similar to the AST case.
 (defvar *policy*)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Variable *ORIGIN*. Default for :origin initarg.
+;;; This is useful because almost every instruction needs an origin, but they're
+;;; shared very heavily and generated all over the place.
+
+(defvar *origin*)
+
+
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
    (%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)
-   (%policy :initform *policy* :initarg :policy :accessor policy)))
+   (%policy :initform *policy* :initarg :policy :accessor policy)
+   (%origin :initform (if (boundp '*origin*) *origin* nil) :accessor origin)))
 
 (defmethod initialize-instance :after ((obj instruction) &key)
   (unless (and (listp (successors obj))
