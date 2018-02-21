@@ -815,7 +815,7 @@
            (let ((*package* (find-package '#:keyword))
 		 (*read-suppress* nil))
              (read stream t nil t))))
-    (check-feature-expression feature-expression)
+    #+(or)(check-feature-expression feature-expression)
     (with-preserved-backquote-context
       (if (evaluate-feature-expression feature-expression)
           (read stream t nil t)
@@ -833,7 +833,7 @@
            (let ((*package* (find-package '#:keyword))
 		 (*read-suppress* nil))
              (read stream t nil t))))
-    (check-feature-expression feature-expression)
+    #+(or)(check-feature-expression feature-expression)
     (with-preserved-backquote-context
       (if (evaluate-feature-expression feature-expression)
           (let ((*read-suppress* t))
