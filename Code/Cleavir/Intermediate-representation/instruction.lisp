@@ -56,7 +56,6 @@
 
 (defvar *origin*)
 
-
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
    (%successors :initform '() :initarg :successors :accessor successors)
