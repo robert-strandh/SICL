@@ -9,6 +9,10 @@
 
 (defmethod convert-function-reference
     (cst (info cleavir-env:global-function-info) env system)
+  (when (not (eq (cleavir-env:inline info) 'cl:notinline))
+    (let ((ast (cleavir-env:ast info)))
+      (when ast
+        (return-from convert-function-reference ast))))
   (convert-global-function-reference
    cst info (cleavir-env:global-environment env) system))
 
