@@ -5,7 +5,6 @@
   :serial t
   :components
   ((:file "data")
-   (:file "side-effect-mixins")
    (:file "general-purpose-instructions")
    (:file "box-related-instructions")
    (:file "fixnum-related-instructions")

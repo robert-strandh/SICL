@@ -30,9 +30,8 @@
    #:no-successors-mixin
    #:one-successor-mixin
    #:two-successors-mixin
-   #:side-effect-mixin
+   #:side-effect-mixin #:side-effect-free-p
    #:box-instruction #:unbox-instruction
-   #:side-effect-free-mixin #:side-effect-free-p
    #:allocation-mixin #:dynamic-extent-p
    #:inputs #:outputs
    #:successors #:predecessors
