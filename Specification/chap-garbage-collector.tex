@@ -75,6 +75,19 @@ objects that are no longer references is established.  Then, this free
 list is traversed, effectively executing a \texttt{free()} of the rack
 in the second part of the heap.
 
+In order for marking by the global collector to be done in parallel
+with mutator activity, we use a standard three-color marking
+algorithm.  Again, we use a write barrier, so that when a reference to
+a white object is about to be stored in a black object, we either one
+of the two gray.  The choice can be based on the type of objects in
+question, or it can be a global choice.  The write barrier is
+implemented as additional instructions emitted by the compiler.  These
+additional instructions can be avoided in many cases, and in
+particular when the object being stored is known to be an immediate
+object (fixnum, character, etc) or when it an unboxed object to be
+stored in a specialized array.  The type inferencer can thus be used
+to determine whether the write barrier can be elided.
+
 \section{Nursery collector}
 The directory \texttt{Code/Garbage-collector} contains some code that
 uses a different data representation from what we now suggest.  
