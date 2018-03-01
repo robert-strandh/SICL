@@ -20,4 +20,15 @@
    #:hir-transformations
    #:introduce-intermediate
    #:eliminate-superfluous-temporaries
-   #:maybe-eliminate))
+   #:maybe-eliminate)
+  (:export
+   #:compute-destinies
+   #:discern-trappers
+   #:discern-sharing)
+  (:export
+   #:build-function-tree
+   #:enter-instruction
+   #:enclose-instruction
+   #:tree-nodes
+   #:parent
+   #:children))
