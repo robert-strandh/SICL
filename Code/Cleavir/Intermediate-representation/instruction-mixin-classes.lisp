@@ -21,6 +21,12 @@
 ;;; should not be removed.
 (defclass side-effect-mixin () ())
 
+;;; Helper function.
+
+(defgeneric side-effect-free-p (instruction))
+(defmethod side-effect-free-p (instruction) t)
+(defmethod side-effect-free-p ((instruction side-effect-mixin)) nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Mixin class for instructions that perform allocation.

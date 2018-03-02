@@ -185,7 +185,7 @@
     (add-to-mapping mapping successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
     ;; Rearrange things so that instructions that use the call results as an input
-    ;; use the mapped version.
+    ;; use the mapped version instead.
     (let ((external-values (first (cleavir-ir:outputs call-instruction)))
           (new-values (find-in-mapping mapping (first (cleavir-ir:inputs successor-instruction)))))
       (loop for user in (cleavir-ir:using-instructions external-values)

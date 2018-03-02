@@ -11,5 +11,5 @@
    (:file "mapping")
    (:file "worklist-item")
    (:file "inline-one-instruction")
-   (:file "inline-function")))
-
+   (:file "inline-function")
+   (:file "full-inlining-pass")))

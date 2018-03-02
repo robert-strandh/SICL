@@ -5,7 +5,7 @@
   '(or cleavir-ir:funcall-instruction
     cleavir-ir:multiple-value-call-instruction))
 
-;;; Return a list of (e1 . e2). Each cons indicates that e1 may call e2.
+;;; Return a list of (e1 . e2), e1 and e2 being enter instructions. Each cons indicates that e1 may call e2.
 ;;; If a function can escape, it could be called by anything. The graph doesn't include this fact.
 ;;; ORIGINS is the result of compute-origins below.
 (defun generate-call-graph (initial-instruction origins)
