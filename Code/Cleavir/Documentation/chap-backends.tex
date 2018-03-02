@@ -1,21 +1,21 @@
 \chapter{Backends}
 
-\section{HIR interpreter}
+\section{HIR compiler}
 
 \sysname{} provides a backend that can run in a \commonlisp{} system,
 either intrinsically or extrinsically.  This backend is mainly used
-in order to test that generated HIR code yields the expected result. 
+in order to test that generated HIR code yields the expected result.
 
-The HIR interpreter works as follows:
+The HIR compiler works as follows:
 
 \begin{itemize}
 \item The HIR code is translated to a \commonlisp{} program.  This
   program contains a lambda expression for each nested function.  The
   outermost lambda expression has no parameters.
 \item The lambda expression is converted to a function using
-  \texttt{compile}. 
+  \texttt{compile}.
 \item The resulting function is executed by passing it to
-  \texttt{funcall}. 
+  \texttt{funcall}.
 \end{itemize}
 
 Each nested function has the following shape:
@@ -27,22 +27,22 @@ Each nested function has the following shape:
   form.  The variables of the \texttt{let} form are all the lexical
   variables used by the function, but not used by an enclosing
   function.  The \texttt{let} variables are all initialized to
-  \texttt{nil}. 
+  \texttt{nil}.
 \item The body of the \texttt{let} is a \texttt{block} special form.
   The name of the block is \texttt{nil}.  This block is used in the
-  translation of the \texttt{return} instruction.  
+  translation of the \texttt{return} instruction.
 \item The body of the block is a \texttt{tagbody} special form.  Each
   instruction generates a statement of the tagbody.  A statement may
   be preceded by a \texttt{tag} if there is a \texttt{go} to that
-  statement. 
+  statement.
 \end{itemize}
 
 The lambda list of the function has no initialization forms.  Here are
-the details of what it contains. 
+the details of what it contains.
 
 \begin{itemize}
 \item It has zero or more required parameters.  Each required
-  parameter is a symbol naming a variable.  
+  parameter is a symbol naming a variable.
 \item It may have \texttt{\&optional} parameters.  Each such parameter
   is a list of two symbols.  The first symbol names the main parameter.
   The second symbol names a \emph{supplied-p} parameter.  The latter
@@ -50,7 +50,7 @@ the details of what it contains.
   The body of the function tests the value of the \emph{supplied-p}
   parameter in order to determine whether to execute some
   initialization code that assigns a default value to the main
-  parameter. 
+  parameter.
 \item It may have a \texttt{\&rest} parameter.  This parameter is just
   a symbol.
 \item It may have \texttt{\&key} parameters.  Each such parameter is a
@@ -64,7 +64,7 @@ the details of what it contains.
   whether to execute some initialization code that assigns a default
   value to the main parameter.
 \item It may contain the lambda-list keyword
-  \texttt{\&allow-other-keys}. 
+  \texttt{\&allow-other-keys}.
 \end{itemize}
 
 %%  LocalWords:  Backends backend
