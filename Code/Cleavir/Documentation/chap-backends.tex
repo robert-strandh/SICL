@@ -1,15 +1,15 @@
 \chapter{Backends}
 
-\section{MIR interpreter}
+\section{HIR interpreter}
 
 \sysname{} provides a backend that can run in a \commonlisp{} system,
 either intrinsically or extrinsically.  This backend is mainly used
-in order to test that generated MIR code yields the expected result. 
+in order to test that generated HIR code yields the expected result. 
 
-The MIR interpreter works as follows:
+The HIR interpreter works as follows:
 
 \begin{itemize}
-\item The MIR code is translated to a \commonlisp{} program.  This
+\item The HIR code is translated to a \commonlisp{} program.  This
   program contains a lambda expression for each nested function.  The
   outermost lambda expression has no parameters.
 \item The lambda expression is converted to a function using
