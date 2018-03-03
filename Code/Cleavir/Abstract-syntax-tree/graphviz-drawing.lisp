@@ -23,13 +23,13 @@
   (when (null (gethash ast *table*))
     (setf (gethash ast *table*) (gensym))
     (format stream "  ~a [shape = box];~%"
-	    (id ast))
+            (id ast))
     (call-next-method)
     (loop for child in (children ast)
-	  for i from 1
-	  do (stream-draw-ast child stream)
-	     (format stream "   ~a -> ~a [label = \"~d\"];~%"
-		     (id ast) (id child) i))))
+          for i from 1
+          do (stream-draw-ast child stream)
+             (format stream "   ~a -> ~a [label = \"~d\"];~%"
+                     (id ast) (id child) i))))
 
 (defgeneric label (ast))
 
@@ -48,7 +48,7 @@
 ;;; generic function LABEL in order to draw a label for the box.
 (defmethod stream-draw-ast (ast stream)
   (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast) (label ast)))
+          (id ast) (label ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
