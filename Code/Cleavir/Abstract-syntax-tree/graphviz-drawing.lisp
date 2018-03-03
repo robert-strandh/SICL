@@ -117,7 +117,6 @@
 ;;; Drawing a BIND-AST.
 
 (defmethod stream-draw-ast ((ast bind-ast) stream)
-;;; It's not clear which label should be replaced here with a call to label
   (format stream "   ~a [shape = box, label = \"~a\"];~%"
           (label ast))
   (let ((symbol-id (gensym)))
