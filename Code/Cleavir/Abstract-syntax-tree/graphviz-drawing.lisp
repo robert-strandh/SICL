@@ -57,8 +57,11 @@
 (defmethod stream-draw-ast ((ast constant-ast) stream)
   (format stream "   ~a [style = filled, fillcolor = green];~%" (id ast))
   (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (value ast)))
+          (id ast)
+          (label ast)))
+
+(defmethod label ((ast constant-ast))
+  (format nil "~a" (value ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -67,27 +70,34 @@
 (defmethod stream-draw-ast ((ast lexical-ast) stream)
   (format stream "   ~a [style = filled, fillcolor = yellow];~%" (id ast))
   (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (name ast)))
+          (id ast)
+          (label ast)))
 
+(defmethod label ((ast lexical-ast))
+  (format nil "~a" (name ast)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing a TAG-AST.
 
 (defmethod stream-draw-ast ((ast tag-ast) stream)
   (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (name ast)))
+          (id ast)
+          (label ast)))
+
+(defmethod label ((ast tag-ast))
+  (format nil "~a" (name ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing a TOP-LEVEL-FUNCTION-AST.
 
 (defmethod stream-draw-ast ((ast top-level-function-ast) stream)
-  (format stream "   ~a [label = \"~a ~a\"];~%"
-	  (id ast)
-	  (label ast)
-	  (forms ast)))
+  (format stream "   ~a [label = \"~a\"];~%"
+          (id ast)
+          (label ast)))
+
+(defmethod label ((ast top-level-function-ast))
+  (format nil "~a ~a" (call-next-method) (forms ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -95,53 +105,72 @@
 
 (defmethod stream-draw-ast ((ast load-time-value-ast) stream)
   (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast) (form ast))
+          (id ast) (label ast))
   (format stream "   ~a [style = filled, fillcolor = pink];~%"
-	  (id ast)))
+          (id ast)))
+
+(defmethod label ((ast load-time-value-ast))
+  (format nil "~a" (form ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing a BIND-AST.
 
 (defmethod stream-draw-ast ((ast bind-ast) stream)
-  (format stream "   ~a [shape = box, label = \"bind\"];~%"
-	  (id ast))
+;;; It's not clear which label should be replaced here with a call to label
+  (format stream "   ~a [shape = box, label = \"\"];~%"
+          (label ast))
   (let ((symbol-id (gensym)))
     (format stream "   ~a [shape = ellipse, label = \"~a\"];~%"
-	    symbol-id (symbol ast))
+            symbol-id (symbol ast))
     (format stream "   ~a -> ~a [label = \"0\"];~%"
-	    (id ast) symbol-id)))
+            (id ast) symbol-id)))
+
+(defmethod label ((ast bind-ast))
+  "bind")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing a THE-AST.
 
 (defmethod stream-draw-ast ((ast the-ast) stream)
-  (format stream "   ~a [label = \"the (values ~{~s ~}~@[&optional ~{~s ~}~]&rest ~s)\"];~%"
-	  (id ast)
-	  (cleavir-ast:required-types ast)
-	  (cleavir-ast:optional-types ast)
-	  (cleavir-ast:rest-type ast)))
+  (format stream "   ~a [label = \"~a\"];~%"
+          (id ast)
+          (label ast)))
+
+(defmethod label ((ast the-ast))
+  (format nil "the (values ~{~s ~}~@[&optional ~{~s ~}~]&rest ~s)"
+          (cleavir-ast:required-types ast)
+          (cleavir-ast:optional-types ast)
+          (cleavir-ast:rest-type ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing an AREF-AST.
 
 (defmethod stream-draw-ast ((ast aref-ast) stream)
-  (format stream "   ~a [label = \"~:[non-simple~;simple~] aref ~s\"];~%"
-	  (id ast)
-	  (cleavir-ast:simple-p ast)
-	  (cleavir-ast:element-type ast)))
+  (format stream "   ~a [label = \"~a\"];~%"
+          (id ast)
+          (label ast)))
+
+(defmethod label ((ast aref-ast))
+  (format nil "~:[non-simple~;simple~] aref ~s"
+          (cleavir-ast:simple-p ast)
+          (cleavir-ast:element-type ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing an ASET-AST.
 
 (defmethod stream-draw-ast ((ast aset-ast) stream)
-  (format stream "   ~a [label = \"~:[non-simple~;simple~] aset ~s\"];~%"
-	  (id ast)
-	  (cleavir-ast:simple-p ast)
-	  (cleavir-ast:element-type ast)))
+  (format stream "   ~a [label = \"~a\"];~%"
+          (id ast)
+          (label ast)))
+
+(defmethod label ((ast aset-ast))
+  (format stream "~:[non-simple~;simple~] aset ~s"
+          (cleavir-ast:simple-p ast)
+          (cleavir-ast:element-type ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
