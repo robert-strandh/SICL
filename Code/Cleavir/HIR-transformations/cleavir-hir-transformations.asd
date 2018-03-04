@@ -10,7 +10,6 @@
    (:file "convert-constant-to-immediate")
    (:file "hoist-load-time-values")
    (:file "compute-ownership")
-   (:file "inline-calls")
    (:file "static-few-assignments")
    (:file "type-inference")
    (:file "eliminate-load-time-value-inputs")
