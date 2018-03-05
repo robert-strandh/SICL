@@ -484,4 +484,4 @@
                (make-body rdspecs form-csts block-name-cst)
                env
                system)
-            (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
+            (cleavir-ast:make-function-ast ast lexical-lambda-list :origin origin)))))))
