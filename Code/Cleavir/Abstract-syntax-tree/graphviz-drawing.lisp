@@ -167,7 +167,7 @@
           (label ast)))
 
 (defmethod label ((ast aset-ast))
-  (format stream "~:[non-simple~;simple~] aset ~s"
+  (format nil "~:[non-simple~;simple~] aset ~s"
           (cleavir-ast:simple-p ast)
           (cleavir-ast:element-type ast)))
 
