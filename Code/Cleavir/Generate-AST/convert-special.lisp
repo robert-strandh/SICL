@@ -143,7 +143,7 @@
 (defun convert-local-function (definition environment system)
   (db s (name lambda-list . body) definition
     (let ((block-name (block-name-from-function-name name)))
-      (convert-code lambda-list body environment system block-name))))
+      (convert-code lambda-list body environment system :block-name block-name))))
 
 ;;; Compute and return a list of SETQ-ASTs that will assign the
 ;;; definition of each function in a list of function definitions to
