@@ -455,7 +455,7 @@
                   more-remaining-dspecs)))))
 
 (defmethod convert-code (lambda-list-cst body-cst env system
-                         &optional (block-name-cst nil))
+                         &key (block-name-cst nil) origin)
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list system lambda-list-cst :error-p nil)))
     (when (null parsed-lambda-list)

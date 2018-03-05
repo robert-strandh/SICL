@@ -251,7 +251,8 @@
                     body-cst
                     environment
                     system
-                    block-name-cst))))
+                    :block-name-cst block-name-cst
+                    :origin origin))))
 
 ;;; Convert a CST representing a list of local function definitions.
 (defun convert-local-functions (definitions-cst environment system)
@@ -542,7 +543,8 @@
 
 (defun convert-lambda-function (lambda-form-cst env system)
   (convert-code (cst:second lambda-form-cst)
-                (cst:rest (cst:rest lambda-form-cst)) env system))
+                (cst:rest (cst:rest lambda-form-cst)) env system
+                :origin (cst:source lambda-form-cst)))
 
 (defun check-function-syntax (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
