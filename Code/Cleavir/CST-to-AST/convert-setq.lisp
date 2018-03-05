@@ -31,7 +31,7 @@
                                (cleavir-env:expansion info))
                              (cleavir-env:name info)
                              env))
-         (expansion-cst (cst:reconstruct expansion var-cst)))
+         (expansion-cst (cst:reconstruct expansion var-cst system)))
     (convert (cst:list (cst:cst-from-expression 'setf)
                        expansion-cst
                        form-cst)
