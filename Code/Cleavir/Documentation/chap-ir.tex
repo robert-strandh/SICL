@@ -202,7 +202,7 @@ as an initform.
 \label{sec-ir-instructions}
 
 \subsection{Instruction \texttt{enter-instruction}}
-\label{mir-instruction-enter}
+\label{hir-instruction-enter}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -282,7 +282,7 @@ unsupplied \texttt{\&optional} and \texttt{\&key} parameters.
 \end{figure}
 
 \subsection{Instruction \texttt{nop-instruction}}
-\label{mir-instruction-nop}
+\label{hir-instruction-nop}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -314,7 +314,7 @@ transformation for removing all \texttt{nop-instruction}s is provided.
 \end{figure}
 
 \subsection{Instruction \texttt{assignment-instruction}}
-\label{mir-instruction-assignment}
+\label{hir-instruction-assignment}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -343,7 +343,7 @@ the output without any modification.
 \end{figure}
 
 \subsection{Instruction \texttt{funcall-instruction}}
-\label{mir-instruction-funcall}
+\label{hir-instruction-funcall}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -376,7 +376,7 @@ corresponding to the values returned by the callee.
 \end{figure}
 
 \subsection{Instruction \texttt{funcall-no-return-instruction}}
-\label{mir-instruction-funcall-no-return}
+\label{hir-instruction-funcall-no-return}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -400,7 +400,7 @@ simplifies analysis of programs, as impossible control paths need not
 be analyzed.
 
 \subsection{Instruction \texttt{tailcall-instruction}}
-\label{mir-instruction-tailcall}
+\label{hir-instruction-tailcall}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -435,7 +435,7 @@ output of the \texttt{funcall-instruction} is the input of the
 \end{figure}
 
 \subsection{Instruction \texttt{return-instruction}}
-\label{mir-instruction-return}
+\label{hir-instruction-return}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -467,7 +467,7 @@ caller.
 \end{figure}
 
 \subsection{Instruction \texttt{enclose-instruction}}
-\label{mir-instruction-enclose}
+\label{hir-instruction-enclose}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -501,7 +501,7 @@ environment and the code resulting from the input instruction graph.
 \end{figure}
 
 \subsection{Instruction \texttt{fdefinition-instruction}}
-\label{mir-instruction-fdefinition}
+\label{hir-instruction-fdefinition}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -519,7 +519,7 @@ The input is a lexical location holding a function name. The output
 is the function with that name in the global environment.
 
 \subsection{Instruction \texttt{eq-instruction}}
-\label{mir-instruction-eq}
+\label{hir-instruction-eq}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -549,7 +549,7 @@ are identical.  Otherwise, the second successor is chosen.
 \end{figure}
 
 \subsection{Instruction \texttt{car-instruction}}
-\label{mir-instruction-car}
+\label{hir-instruction-car}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -581,7 +581,7 @@ of the \texttt{car} of the \texttt{cons} cell.
 \end{figure}
 
 \subsection{Instruction \texttt{consp-instruction}}
-\label{mir-instruction-car}
+\label{hir-instruction-car}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -601,7 +601,7 @@ first successor is chosen.  Otherwise, the second successor is chosen.
 
 Normally, this instruction would not be present at the HIR level.
 Instead, the more general \texttt{typeq-instruction}
-\seesec{mir-instruction-typeq} would be used.  But when HIR is
+\seesec{hir-instruction-typeq} would be used.  But when HIR is
 translated to MIR, then the \texttt{typeq-instruction} is eliminated
 in an implementation-specific way.  Implementations that have a simple
 way of testing whether an object is a \texttt{cons} cell can then turn
@@ -620,7 +620,7 @@ a \texttt{typeq-instruction} with a type of \texttt{cons} into a
 \end{figure}
 
 \subsection{Instruction \texttt{cdr-instruction}}
-\label{mir-instruction-cdr}
+\label{hir-instruction-cdr}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -652,7 +652,7 @@ of the \texttt{cdr} of the \texttt{cons} cell.
 \end{figure}
 
 \subsection{Instruction \texttt{rplaca-instruction}}
-\label{mir-instruction-rplaca}
+\label{hir-instruction-rplaca}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -685,7 +685,7 @@ the \texttt{car} of the \texttt{cons} cell by the second input.
 \end{figure}
 
 \subsection{Instruction \texttt{rplacd-instruction}}
-\label{mir-instruction-rplacd}
+\label{hir-instruction-rplacd}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -718,7 +718,7 @@ the \texttt{cdr} of the \texttt{cons} cell by the second input.
 \end{figure}
 
 \subsection{Instruction \texttt{slot-read-instruction}}
-\label{mir-instruction-slot-read}
+\label{hir-instruction-slot-read}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -752,7 +752,7 @@ instance.  The output is the contents of the corresponding slot.
 \end{figure}
 
 \subsection{Instruction \texttt{slot-write-instruction}}
-\label{mir-instruction-slot-write}
+\label{hir-instruction-slot-write}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -787,7 +787,7 @@ replace the contents of the corresponding slot by the third input.
 \end{figure}
 
 \subsection{Instruction \texttt{aref-instruction}}
-\label{mir-instruction-aref}
+\label{hir-instruction-aref}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -838,7 +838,7 @@ contexts where values of this type are permitted.
 \end{figure}
 
 \subsection{Instruction \texttt{aset-instruction}}
-\label{mir-instruction-aset}
+\label{hir-instruction-aset}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -879,7 +879,7 @@ The object to be written into the array may be \emph{unboxed}, depending
 on the implementation and element-type.
 
 \subsection{Instruction \texttt{fixnump-instruction}}
-\label{mir-instruction-car}
+\label{hir-instruction-car}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -899,7 +899,7 @@ first successor is chosen.  Otherwise, the second successor is chosen.
 
 Normally, this instruction would not be present at the HIR level.
 Instead, the more general \texttt{typeq-instruction}
-\seesec{mir-instruction-typeq} would be used.  But when HIR is
+\seesec{hir-instruction-typeq} would be used.  But when HIR is
 translated to MIR, then the \texttt{typeq-instruction} is eliminated
 in an implementation-specific way.  Implementations that have a simple
 way of testing whether an object is a \texttt{fixnum} cell can then turn
@@ -918,7 +918,7 @@ a \texttt{typeq-instruction} with a type of \texttt{fixnum} into a
 \end{figure}
 
 \subsection{Instruction \texttt{fixnum-add-instruction}}
-\label{mir-instruction-fixnum-add}
+\label{hir-instruction-fixnum-add}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -967,7 +967,7 @@ some function that accomplishes this adjustment and returns a bignum.
 \end{figure}
 
 \subsection{Instruction \texttt{fixnum-sub-instruction}}
-\label{mir-instruction-fixnum-sub}
+\label{hir-instruction-fixnum-sub}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1017,7 +1017,7 @@ some function that accomplishes this adjustment and returns a bignum.
 \end{figure}
 
 \subsection{Instruction \texttt{fixnum-less-instruction}}
-\label{mir-instruction-fixnum-less}
+\label{hir-instruction-fixnum-less}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1050,7 +1050,7 @@ strictly less than the second input.
 \end{figure}
 
 \subsection{Instruction \texttt{fixnum-not-greater-instruction}}
-\label{mir-instruction-fixnum-le}
+\label{hir-instruction-fixnum-le}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1083,7 +1083,7 @@ less than or equal to the second input.
 \end{figure}
 
 \subsection{Instruction \texttt{fixnum-equal-instruction}}
-\label{mir-instruction-fixnum-equal}
+\label{hir-instruction-fixnum-equal}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1116,7 +1116,7 @@ to the second input.
 \end{figure}
 
 \subsection{Instruction \texttt{characterp-instruction}}
-\label{mir-instruction-car}
+\label{hir-instruction-car}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1136,7 +1136,7 @@ first successor is chosen.  Otherwise, the second successor is chosen.
 
 Normally, this instruction would not be present at the HIR level.
 Instead, the more general \texttt{typeq-instruction}
-\seesec{mir-instruction-typeq} would be used.  But when HIR is
+\seesec{hir-instruction-typeq} would be used.  But when HIR is
 translated to MIR, then the \texttt{typeq-instruction} is eliminated
 in an implementation-specific way.  Implementations that have a simple
 way of testing whether an object is a \texttt{character} can then turn
@@ -1155,7 +1155,7 @@ a \texttt{typeq-instruction} with a type of \texttt{character} into a
 \end{figure}
 
 \subsection{Instruction \texttt{phi-instruction}}
-\label{mir-instruction-phi}
+\label{hir-instruction-phi}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1207,7 +1207,7 @@ transformation on the entire program so that both representations are
 accessible. 
 
 \subsection{Instruction \texttt{use-instruction}}
-\label{mir-instruction-use}
+\label{hir-instruction-use}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1230,7 +1230,7 @@ class will typically be emitted when the \texttt{debug} optimization
 quality has a high value.
 
 \subsection{Instruction \texttt{typeq-instruction}}
-\label{mir-instruction-typeq}
+\label{hir-instruction-typeq}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1282,7 +1282,7 @@ This instruction is used in a variety of situations:
 \end{figure}
 
 \subsection{Instruction \texttt{the-instruction}}
-\label{mir-instruction-the}
+\label{hir-instruction-the}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -1313,7 +1313,7 @@ instruction from the instruction graph after type inference has been
 completed (or at any time, if there is no type inference).
 
 \subsection{Instruction \texttt{the-values-instruction}}
-\label{mir-instruction-the-values}
+\label{hir-instruction-the-values}
 \begin{tabular}{|l|l|}
   \hline
   Number of inputs & 1\\
@@ -1349,7 +1349,7 @@ Like \texttt{cleavir-ast:the-ast}, the type specified does not have
 the implicit \rest behavior of \texttt{cl:the}.
 
 \subsection{Instruction \texttt{multiple-to-fixed-instruction}}
-\label{mir-instruction-multiple-to-fixed}
+\label{hir-instruction-multiple-to-fixed}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -1378,7 +1378,7 @@ ordinary lexical locations are assigned the value \texttt{nil}.
 This instruction's name is sometimes abbreviated ``M->F''.
 
 \subsection{Instruction \texttt{fixed-to-multiple-instruction}}
-\label{mir-instruction-fixed-to-multiple}
+\label{hir-instruction-fixed-to-multiple}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -1401,7 +1401,7 @@ function (unknown values).
 This instruction's name is sometimes abbreviated ``F->M''.
 
 \subsection{Instruction \texttt{multiple-value-call-instruction}}
-\label{mir-instruction-multiple-value-call}
+\label{hir-instruction-multiple-value-call}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -1428,7 +1428,7 @@ avoid its use where possible, and convert
 instead.
 
 \subsection{Instruction \texttt{symbol-value-instruction}}
-\label{mir-instruction-symbol-value}
+\label{hir-instruction-symbol-value}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1446,7 +1446,7 @@ The input to this instruction must be a symbol naming a special
 variable.  The output is the value of that special variable.
 
 \subsection{Instruction \texttt{set-symbol-value-instruction}}
-\label{mir-instruction-set-symbol-value}
+\label{hir-instruction-set-symbol-value}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1466,7 +1466,7 @@ the instruction is to replace the current value of the special
 variable the second input.
 
 \subsection{Instruction \texttt{box-instruction}}
-\label{mir-instruction-box}
+\label{hir-instruction-box}
 
 \begin{tabular}{|l|l|}
   \hline
@@ -1489,7 +1489,7 @@ specified by the \texttt{element-type} of the instruction.
 The output is a boxed value corresponding to the input.
 
 \subsection{Instruction \texttt{unbox-instruction}}
-\label{mir-instruction-unbox}
+\label{hir-instruction-unbox}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1512,7 +1512,7 @@ specified by the \texttt{element-type} of the instruction.
 The output is an unboxed value corresponding to the input.
 
 \subsection{Instruction \texttt{unwind-instruction}}
-\label{mir-instruction-unwind}
+\label{hir-instruction-unwind}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1550,7 +1550,7 @@ The accessor \texttt{invocation} returns the owner of the successor of
 this \texttt{unwind-instruction}
 
 \subsection{Instruction \texttt{float-add-instruction}}
-\label{mir-instruction-float-add}
+\label{hir-instruction-float-add}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1593,7 +1593,7 @@ The output is the sum of the two inputs.
 \end{figure}
 
 \subsection{Instruction \texttt{float-sub-instruction}}
-\label{mir-instruction-float-sub}
+\label{hir-instruction-float-sub}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1634,7 +1634,7 @@ The output is the difference between the two inputs.
 \end{figure}
 
 \subsection{Instruction \texttt{float-mul-instruction}}
-\label{mir-instruction-float-mul}
+\label{hir-instruction-float-mul}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1675,7 +1675,7 @@ The output is the product of the two inputs.
 \end{figure}
 
 \subsection{Instruction \texttt{float-div-instruction}}
-\label{mir-instruction-float-div}
+\label{hir-instruction-float-div}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1716,7 +1716,7 @@ The output is the quotient of the two inputs.
 \end{figure}
 
 \subsection{Instruction \texttt{float-less-instruction}}
-\label{mir-instruction-float-less}
+\label{hir-instruction-float-less}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1758,7 +1758,7 @@ the second one; otherwise the second successor is chosen.
 \end{figure}
 
 \subsection{Instruction \texttt{float-not-greater-instruction}}
-\label{mir-instruction-float-not-greater}
+\label{hir-instruction-float-not-greater}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1800,7 +1800,7 @@ to the second one; otherwise the second successor is chosen.
 \end{figure}
 
 \subsection{Instruction \texttt{float-sin-instruction}}
-\label{mir-instruction-float-div}
+\label{hir-instruction-float-div}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1841,7 +1841,7 @@ The output is the sine of the input.
 \end{figure}
 
 \subsection{Instruction \texttt{float-cos-instruction}}
-\label{mir-instruction-float-div}
+\label{hir-instruction-float-div}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1882,7 +1882,7 @@ The output is the cosine of the input.
 \end{figure}
 
 \subsection{Instruction \texttt{float-sqrt-instruction}}
-\label{mir-instruction-float-div}
+\label{hir-instruction-float-div}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1923,7 +1923,7 @@ The output is the square root of the input.
 \end{figure}
 
 \subsection{Instruction \texttt{create-cell-instruction}}
-\label{mir-instruction-create-cell}
+\label{hir-instruction-create-cell}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1944,7 +1944,7 @@ probably just return a \texttt{cons} cell since \texttt{cons} cells
 already exist.
 
 \subsection{Instruction \texttt{fetch-instruction}}
-\label{mir-instruction-fetch}
+\label{hir-instruction-fetch}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1971,7 +1971,7 @@ serves as an index into the static environment.  This instruction has
 a single output, which is a dynamic lexical location.
 
 \subsection{Instruction \texttt{read-cell-instruction}}
-\label{mir-instruction-read-cell}
+\label{hir-instruction-read-cell}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -1995,7 +1995,7 @@ single output, namely a dynamic lexical location to hold the value of
 the variable.
 
 \subsection{Instruction \texttt{write-cell-instruction}}
-\label{mir-instruction-write-cell}
+\label{hir-instruction-write-cell}
 
 \begin{tabular}{|l|l|}
 \hline
