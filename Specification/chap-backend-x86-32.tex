@@ -207,7 +207,7 @@ environments.
 The first return value is passed in \texttt{EAX}, and the number of
 return values is passed in \texttt{EBX} as a \texttt{fixnum}.  If the
 number of return values is $0$, then the callee must make sure
-\texttt{EAX} contains \texttt{NIL} when it returns.  This convention
+\texttt{EAX} contains \texttt{nil} when it returns.  This convention
 makes it unnecessary for the caller that expects a single return value
 to check the count.  Furthermore, this situation is probably the most
 common one, so that in almost all cases, checking the number of return
@@ -223,33 +223,33 @@ types exist:
   \item An entry representing the binding of a special variable.  This
     entry contains two fields; the symbol to be bound and the value.
 
-  \item An entry representing a \texttt{CATCH} tag.  The entry
-    contains two fields; the \texttt{CATCH} tag and the value of
+  \item An entry representing a \texttt{catch} tag.  The entry
+    contains two fields; the \texttt{catch} tag and the value of
     \texttt{EBP} in the stack frame to return from.
 
-  \item An entry representing a \texttt{BLOCK} or a \texttt{TAGBODY}.
-    It is similar to the entry representing a \texttt{CATCH} tag.  The
+  \item An entry representing a \texttt{block} or a \texttt{tagbody}.
+    It is similar to the entry representing a \texttt{catch} tag.  The
     entry contains three fields; two fields representing a 64-bit time
     stamp and one field containing the value of ebp in the stack frame
     to return from.
 
-  \item An entry representing an \texttt{UNWIND-PROTECT} form.  This
+  \item An entry representing an \texttt{unwind-protect} form.  This
     entry contains a thunk containing the cleanup forms of the
-    \texttt{UNWIND-PROTECT} form.
+    \texttt{unwind-protect} form.
 \end{itemize}
 
 In addition to their own fields, each entry contains a pointer to the
 next entry in the sequence, and a field indicating what type of entry
 it is.
 
-Of the three types of entries above, the \texttt{CATCH} and the
-\texttt{BLOCK}/\texttt{TAGBODY} entries represent exit points.  An
+Of the three types of entries above, the \texttt{catch} and the
+\texttt{block}/\texttt{tagbody} entries represent exit points.  An
 exit point can be marked as "expired" or "invalid" by storing 0 as the
 ebp value in the entry.
 
-\texttt{CATCH} is implemented as a call to a function.  This function
-establishes a \texttt{CATCH} tag and calls a thunk containing the body
-of the \texttt{CATCH} form.  The \texttt{CATCH} tag is established by
+\texttt{catch} is implemented as a call to a function.  This function
+establishes a \texttt{catch} tag and calls a thunk containing the body
+of the \texttt{catch} form.  The \texttt{catch} tag is established by
 allocating (as dynamic local data on the stack) an entry of the second
 type and making \texttt{[EBP$-4 \cdot 4$]} point to it as shown in
 \refFig{fig-x86-32-catch}
@@ -259,22 +259,22 @@ type and making \texttt{[EBP$-4 \cdot 4$]} point to it as shown in
 \inputfig{fig-x86-32-catch.pdf_t}
 \end{center}
 \caption{\label{fig-x86-32-catch}
-\texttt{CATCH} tag for the x86-32 backend.}
+\texttt{catch} tag for the x86-32 backend.}
 \end{figure}
 
 THROW searches the dynamic environment for an entry with the right
-\texttt{CATCH} tag.  If one is found and it is valid (as indicated by
+\texttt{catch} tag.  If one is found and it is valid (as indicated by
 the stored ebp different from 0), then the target to which control is
 tranfered is the return address in the stack frame indicated by the
 stored ebp.
 
-A \texttt{BLOCK} form may establish an exit point.  In the most
+A \texttt{block} form may establish an exit point.  In the most
 general case, a RETURN-FROM is executed from a function
-lexically-enclosed inside the \texttt{BLOCK} with an arbitrary number
-of intervening stack frames.  When this is the case, \texttt{BLOCK} is
+lexically-enclosed inside the \texttt{block} with an arbitrary number
+of intervening stack frames.  When this is the case, \texttt{block} is
 implemented as a call to a function, in a way similar to the way
-\texttt{CATCH} is implemented.  The function establishes a
-\texttt{BLOCK}/\texttt{TAGBODY} entry with a fresh time stamp.  The
+\texttt{catch} is implemented.  The function establishes a
+\texttt{block}/\texttt{tagbody} entry with a fresh time stamp.  The
 time stamp is also stored in a lexical varible in the static
 environment.  \refFig{fig-x86-32-block-tag} shows this situation.
 
@@ -283,31 +283,31 @@ environment.  \refFig{fig-x86-32-block-tag} shows this situation.
 \inputfig{fig-x86-32-block-tag.pdf_t}
 \end{center}
 \caption{\label{fig-x86-32-block-tag}
-\texttt{BLOCK} tag for the x86-32 backend.}
+\texttt{block} tag for the x86-32 backend.}
 \end{figure}
 
 RETURN-FROM consults the time stamp in the lexical variable and
 searches the dynamic environment for a corresponding time stamp in a
-\texttt{BLOCK}/\texttt{TAGBODY} entry.  If one is found and it is
+\texttt{block}/\texttt{tagbody} entry.  If one is found and it is
 valid (as indicated by the stored ebp different from 0), then the
 target to which control is tranfered is the return address in the
 stack frame indicated by the stored ebp.
 
-A \texttt{TAGBODY} may establish several exit points.  In the most
-general case, a \texttt{GO} is executed from a function
-lexically-enclosed inside the \texttt{TAGBODY} with an arbitrary
+A \texttt{tagbody} may establish several exit points.  In the most
+general case, a \texttt{go} is executed from a function
+lexically-enclosed inside the \texttt{tagbody} with an arbitrary
 number of intervening stack frames.  When this is the case,
-\texttt{TAGBODY} is implemented as a call to a function, in a way
-similar to the way \texttt{BLOCK} is implemented.  The function
-establishes a \texttt{BLOCK}/\texttt{TAGBODY} entry with a fresh time
+\texttt{tagbody} is implemented as a call to a function, in a way
+similar to the way \texttt{block} is implemented.  The function
+establishes a \texttt{block}/\texttt{tagbody} entry with a fresh time
 stamp.  The time stamp is also stored in a lexical varible in the
-static environment.  For each tag that is the target of a \texttt{GO},
+static environment.  For each tag that is the target of a \texttt{go},
 an address to wich control is transfered is also stored in a lexical
 environment.
 
-\texttt{GO} consults the time stamp in the lexical variable and
+\texttt{go} consults the time stamp in the lexical variable and
 searches the dynamic environment for a corresponding time stamp in a
-\texttt{BLOCK}/\texttt{TAGBODY} entry.  If one is found and it is
+\texttt{block}/\texttt{tagbody} entry.  If one is found and it is
 valid (as indicated by the stored ebp different from 0), then the
 target to which control is tranfered is defined by the lexically
 stored ebp/address pair.  The code to which control is transfered is
@@ -331,7 +331,7 @@ valid exit point is reached.
 \inputfig{fig-x86-32-unwind-protect.pdf_t}
 \end{center}
 \caption{\label{fig-x86-32-unwind-protect}
-\texttt{UNWIND-PROTECT} tag for the x86-32 backend.}
+\texttt{unwind-protect} tag for the x86-32 backend.}
 \end{figure}
 
 \begin{figure}
