@@ -52,7 +52,7 @@
                                  (cleavir-env:expander info)
                                  form
                                  env))
-         (expanded-cst (cst:reconstruct expanded-form cst)))
+         (expanded-cst (cst:reconstruct expanded-form cst system)))
     (with-preserved-toplevel-ness
       (convert expanded-cst env system))))
 
@@ -73,7 +73,7 @@
                                          (cleavir-env:expander info)
                                          form
                                          env))
-                 (expanded-cst (cst:reconstruct expanded-form cst)))
+                 (expanded-cst (cst:reconstruct expanded-form cst system)))
 
             (convert expanded-cst env system))
           ;; There is a compiler macro, so we must see whether it will
@@ -92,13 +92,13 @@
                                   (cleavir-env:expander info)
                                   form
                                   env))
-                       (expanded-cst (cst:reconstruct expanded-form cst)))
+                       (expanded-cst (cst:reconstruct expanded-form cst system)))
                   (convert expanded-cst env system))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
                 ;; taking into account the real macro expander.
-                (let ((expanded-cst (cst:reconstruct expanded-form cst)))
+                (let ((expanded-cst (cst:reconstruct expanded-form cst system)))
                   (convert expanded-cst env system))))))))
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
@@ -144,7 +144,7 @@
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
-              (let ((expanded-cst (cst:reconstruct expanded-form cst)))
+              (let ((expanded-cst (cst:reconstruct expanded-form cst system)))
                 (convert expanded-cst env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

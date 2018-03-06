@@ -525,10 +525,10 @@
 		     result)))
     (append (mapcar #'list required) result)))
 
-(defgeneric convert-code (lambda-list body env system &optional block-name))
+(defgeneric convert-code (lambda-list body env system &key block-name))
 
 (defmethod convert-code (lambda-list body env system
-			 &optional (block-name nil block-name-p))
+			 &key (block-name nil block-name-p))
   (let* ((parsed-lambda-list
 	   (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list))
 	 (required (cleavir-code-utilities:required parsed-lambda-list)))

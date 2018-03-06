@@ -16,20 +16,21 @@
   ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
 (defun make-enter-instruction
-    (lambda-list &optional (successor nil successor-p))
+    (lambda-list &key (successor nil successor-p) origin)
   (let* ((outputs (loop for item in lambda-list
-			append (cond ((member item lambda-list-keywords) '())
-				     ((consp item)
-				      (if (= (length item) 3)
-					  (cdr item)
-					  item))
-				     (t (list item))))))
+                        append (cond ((member item lambda-list-keywords) '())
+                                     ((consp item)
+                                      (if (= (length item) 3)
+                                          (cdr item)
+                                          item))
+                                     (t (list item))))))
     (make-instance 'enter-instruction
       :lambda-list lambda-list
       ;; We add an additional output that will hold the static
       ;; environment.
       :outputs (cons (new-temporary) outputs)
-      :successors (if successor-p (list successor) '()))))
+      :successors (if successor-p (list successor) '())
+      :origin origin)))
 
 (defmethod clone-instruction :around ((instruction enter-instruction))
   (let ((result (call-next-method)))
@@ -55,8 +56,8 @@
 (defclass top-level-enter-instruction (enter-instruction)
   ((%forms :initarg :forms :accessor forms)))
 
-(defun make-top-level-enter-instruction (lambda-list forms)
-  (let ((enter (make-enter-instruction lambda-list)))
+(defun make-top-level-enter-instruction (lambda-list forms &key origin)
+  (let ((enter (make-enter-instruction lambda-list :origin origin)))
     (change-class enter 'top-level-enter-instruction
 		  :forms forms)))
 
