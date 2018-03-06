@@ -62,7 +62,7 @@
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)
    (%policy :initform *policy* :initarg :policy :accessor policy)
-   (%origin :initform (if (boundp '*origin*) *origin* nil) :accessor origin)))
+   (%origin :initform (if (boundp '*origin*) *origin* nil) :initarg :origin :accessor origin)))
 
 (defmethod initialize-instance :after ((obj instruction) &key)
   (unless (and (listp (successors obj))

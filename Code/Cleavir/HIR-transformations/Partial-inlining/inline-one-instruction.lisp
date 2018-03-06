@@ -148,7 +148,8 @@
          (new-enter (let ((cleavir-ir:*policy* (cleavir-ir:policy enter-instruction)))
                       (cleavir-ir:make-enter-instruction
                        (cleavir-ir:lambda-list enter-instruction)
-                       (second (cleavir-ir:successors successor-instruction)))))
+                       :successor (second (cleavir-ir:successors successor-instruction))
+                       :origin (cleavir-ir:origin enter-instruction))))
          (new-enclose (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose-instruction)))
                         (cleavir-ir:make-enclose-instruction
                          new-temp new-call new-enter))))
