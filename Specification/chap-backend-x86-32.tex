@@ -213,20 +213,6 @@ to check the count.  Furthermore, this situation is probably the most
 common one, so that in almost all cases, checking the number of return
 values becomes unnecessary.
 
-\section{Use of the static environment}
-\label{backends-x86-32-static-environment}
-
-Variables that are captured by a closure with indefinite extent can
-not be allocated in the stack frame.  Such variables are allocated in
-the static environment.  The static environment is a list of levels,
-where each level is a simple vector.  This list is stored in the stack
-at \texttt{[EBP$-4 \cdot 2$]}.  A function that accesses local
-variables of a containing function has the captured environment stored
-as part of the object representing the function.  To use captured
-variables, the code for the function copies the environment to the
-stack at \texttt{[EBP$-4 \cdot 2$]}.  If the environment needs to be
-extended, then it is done by pushing another level onto the list.
-
 \section{Use of the dynamic environment}
 
 The dynamic environment is a simply linked sequence of entries
