@@ -269,7 +269,7 @@ tranfered is the return address in the stack frame indicated by the
 stored ebp.
 
 A \texttt{block} form may establish an exit point.  In the most
-general case, a RETURN-FROM is executed from a function
+general case, a \texttt{return-from} is executed from a function
 lexically-enclosed inside the \texttt{block} with an arbitrary number
 of intervening stack frames.  When this is the case, \texttt{block} is
 implemented as a call to a function, in a way similar to the way
@@ -286,9 +286,9 @@ environment.  \refFig{fig-x86-32-block-tag} shows this situation.
 \texttt{block} tag for the x86-32 backend.}
 \end{figure}
 
-RETURN-FROM consults the time stamp in the lexical variable and
-searches the dynamic environment for a corresponding time stamp in a
-\texttt{block}/\texttt{tagbody} entry.  If one is found and it is
+\texttt{return-from} consults the time stamp in the lexical variable
+and searches the dynamic environment for a corresponding time stamp in
+a \texttt{block}/\texttt{tagbody} entry.  If one is found and it is
 valid (as indicated by the stored ebp different from 0), then the
 target to which control is tranfered is the return address in the
 stack frame indicated by the stored ebp.
