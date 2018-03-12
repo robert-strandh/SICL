@@ -82,7 +82,7 @@
 ;;; input is a constant input or a dynamic lexical input holding the
 ;;; value to write to the cell.  This instruction has no outputs.
 
-(defclass write-cell-instruction (instruction one-successor-mixin)
+(defclass write-cell-instruction (instruction one-successor-mixin side-effect-mixin)
   ())
 
 (defun make-write-cell-instruction (cell-input value-input &optional successor)
