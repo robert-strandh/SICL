@@ -219,19 +219,25 @@
 (defmethod label ((instruction fdefinition-instruction)) "fdefinition")
 
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
-  (format stream "   ~a [label = \"enclose~:[~; DX~]\"];~%"
-	  (instruction-id instruction)
-          (dynamic-extent-p instruction))
+  (format stream "   ~a [label = \"~a\"];~%"
+          (instruction-id instruction)
+          (label instruction))
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
-	  (gethash (code instruction) *instruction-table*)
-	  (instruction-id instruction)))
+          (gethash (code instruction) *instruction-table*)
+          (instruction-id instruction)))
+
+(defmethod label ((instruction enclose-instruction))
+  (format nil "enclose~:[~; DX~]" (dynamic-extent-p instruction)))
 
 (defmethod draw-instruction ((instruction unwind-instruction) stream)
-  (format stream "   ~a [label = \"unwind\"];~%"
-	  (instruction-id instruction))
+  (format stream "   ~a [label = \"~a\"];~%"
+          (instruction-id instruction)
+          (label instruction))
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
-	  (instruction-id instruction)
-	  (gethash (invocation instruction) *instruction-table*)))
+          (instruction-id instruction)
+          (gethash (invocation instruction) *instruction-table*)))
+
+(defmethod label ((instruction unwind-instruction)) "unwind")
 
 (defmethod label ((instruction catch-instruction)) "catch")
 
