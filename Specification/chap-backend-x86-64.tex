@@ -1,6 +1,8 @@
 \chapter{x86-64}
 \label{chapter-backend-x86-64}
 
+\section{Register usage}
+
 The standard calling conventions defined by the vendors, and used by
 languages such as \clanguage{} use the registers as follows:
 
@@ -57,21 +59,11 @@ R15 & Register variable & Callee\\
 
 \section{Representation of function objects}
 
-For this backend, a function object contains its static environment as
-usual.  In addition, every function object has $8$ entry points:
-
 \begin{itemize}
-\item Six entry points used for calls (ordinary calls or tail calls)
-  with $0 - 5$ arguments.
-\item One entry point used for ordinary calls with more than $5$
-  arguments.
-\item One entry point used for tail calls with more than $5$
-  arguments.
+\item A static environment.
+\item The entry point of the function as a raw machine address.  Since
+  entry points are word aligned, this value looks like a fixnum.
 \end{itemize}
-
-By using this many entry points, we can avoid checking the argument
-count in the vast majority of cases.%
-\footnote{This method was inspired by Movitz}
 
 \section{Calling conventions}
 
