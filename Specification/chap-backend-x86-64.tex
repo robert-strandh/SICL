@@ -122,6 +122,12 @@ Normal call to external function, passing at more than $5$ arguments:
   the callee.
 \end{enumerate}
 
+By using a \texttt{CALL}/\texttt{RET} pair instead of (say) the caller
+storing the return address in its final place using some other method,
+we make sure that the predictor for the return address of the
+processor makes the right guess about the eventual address to be
+used.
+
 \refFig{fig-x86-64-stack-frame-at-entry} shows the layout of the stack
 upon entry to a function when more than $5$ arguments are passed.
 Notice that the return address is not in its final place, and the
