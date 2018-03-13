@@ -83,14 +83,14 @@ Normal call to external function, passing at most $5$ arguments:
 \item Compute the callee function object and the arguments into
   temporary locations.
 \item Store the arguments in RDI, RSI, RDX, RCX, and R8.
+\item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Push the value of RBP on the stack.
 \item Copy the value of RSP into RBP, establishing the
   (empty) stack frame for the callee.
-\item Load the appropriate entry point address (according to the
-  number of arguments) of the callee from the callee function object
-  into an available scratch register, typically RAX.
+\item Load the entry point address of the callee from the callee
+  function object into an available scratch register, typically RAX.
 \item Use the CALL instruction with that register as an argument,
   pushing the return address on the stack and transferring control to
   the callee.
@@ -115,10 +115,8 @@ Normal call to external function, passing at more than $5$ arguments:
 \item Copy the value of RSP$ + 8(N - 4)$ into RBP, establishing the
   stack frame for the callee.  The instruction LEA can be used for
   this purpose.
-\item Load the entry point address (i.e. the entry point to be used
-  for ordinary calls with more than $5$ arguments) of the callee from
-  the callee function object into an available scratch register,
-  typically RAX.
+\item Load the entry point address of the callee from the callee
+  function object into an available scratch register, typically RAX.
 \item Use the CALL instruction with that register as an argument,
   pushing the return address on the stack and transferring control to
   the callee.
@@ -144,14 +142,14 @@ Tail call to external function, passing at most $5$ arguments:
 \item Compute the callee function object and the arguments into
   temporary locations.
 \item Store the arguments in RDI, RSI, RDX, RCX, and R8.
+\item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
 \item Copy the value of RBP$ - 8$ to RSP, establishing the stack frame
   for the callee, containing only the return address.  The LEA
   instruction can be used for this purpose.
-\item Load the appropriate entry point address (according to the
-  number of arguments) of the callee from the callee function object
-  into an available scratch register, typically RAX.
+\item Load the entry point address of the callee from the callee
+  function object into an available scratch register, typically RAX.
 \item Use the JMP instruction with that register as an argument,
   transferring control to the callee.
 \end{enumerate}
