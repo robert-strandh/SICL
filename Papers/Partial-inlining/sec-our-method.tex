@@ -19,6 +19,31 @@ intermediate code in the form of a flow graph of instructions.  Our
 inlining technique is designed to work on this intermediate
 representation.
 
+There are several advantages of using this intermediate representation
+over higher-level representations such as source code or abstract
+syntax trees, as we will show in greater detail below, namely:
+
+\begin{itemize}
+\item Each iteration of the algorithm defined by our technique is very
+  simple, and we can be shown to preserve the semantics of the
+  program.
+\item Because each iteration preserves the semantics, the process can
+  be interrupted at any point in time, resulting in a \emph{partial}
+  inlining of the called function.
+\end{itemize}
+
+Furthermore, this intermediate code representation is similar to the
+one used in many traditional compiler optimization techniques, making
+it possible to reuse code for similar transformations.
+
+One potential drawback if this representation is that operations on
+programs represented this way are inherently imperative, i.e. they
+modify the structure of the flow graph.  The use of techniques from
+functional programming is therefore difficult or impractical with this
+representation.  Moreover, the flow graph resulting from some
+arbitrary number of iterations of our technique does not necessarily
+have any correspondence as \commonlisp{} source code.
+
 \subsection{Intermediate code}
 
 The intermediate code on which our technique is designed to work is
