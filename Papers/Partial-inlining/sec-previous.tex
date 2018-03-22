@@ -23,6 +23,12 @@ they consider inlining to be strictly superior to cloning in terms of
 the possible additional optimizations made possible, so they recommend
 cloning only as a means to avoid too large an increase in the code
 size, which could slow down subsequent non-linear optimizations.
+Cloning, and especially the specialization of the cloned code in the
+context of the caller, is one technique used in \emph{partial
+  evaluation} \cite{Jones:1993:PEA:153676}.  Inlining, however,
+whether total or partial, is not a technique of partial evaluation.
+Inlining may of course enable such techniques by exposing the code of
+the called function in the context of the caller.
 
 Most existing work is concerned with determining when inlining is to
 be performed, based on some analysis of the benefits as compared to
