@@ -58,6 +58,16 @@ not preserve the semantics of the original code:
 \end{verbatim}
 
 \noindent
+The use of continuation-passing style for compiling \commonlisp{}
+programs often requires a priori elimination of side effects by
+confiding these side effects to updates on \emph{cells}.  Such a
+conversion transform the program so that it respects a purely
+functional style, making inlining trivial as indicated above.
+However, such a conversion has a significant impact on program
+performance, especially in the context of modern processors, where
+memory access are orders of magnitude more expensive than register
+operations.
+
 Because of issues such as this one, this paper discusses only a
 technique for inlining in the context of arbitrary \commonlisp{} code
 that might contain such side effects.  It does not discuss the more
