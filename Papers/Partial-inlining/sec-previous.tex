@@ -36,7 +36,33 @@ the penalties in terms of increased compilation time in subsequent
 optimization passes.  The inlining technique itself is considered
 trivial, or in the words of Chang and Hwu
 (\cite{Chang:1989:IFE:73141.74840, Chang:1989:IFE:74818.74840}) ``The
-work required to duplicate the callee is trivial''.
+work required to duplicate the callee is trivial''.  Inlining might be
+trivial in the context of purely function programming, in that it
+suffices to replace occurrences of local variables in the called
+function by the argument expressions in the function call.  However,
+for a language such as \commonlisp{} that allows for assignments to
+lexical variables, inlining can be non-trivial.  Consider the
+following example:
+
+\begin{verbatim}
+(defun f (x y) (setq x y))
+
+(defun g (a) (f a 3))
+\end{verbatim}
+
+If simple renaming is applied, we obtain the following code which does
+not preserve the semantics of the original code:
+
+\begin{verbatim}
+(defun g (a) (setq a 3))
+\end{verbatim}
+
+\noindent
+Because of issues such as this one, this paper discusses only a
+technique for inlining in the context of arbitrary \commonlisp{} code
+that might contain such side effects.  It does not discuss the more
+complex issue of determining a strategy for when inlining should or
+should not be applied.
 
 Although the paper by Ayers et al explains that their technique is
 applied to intermediate code, just like the technique that we present
