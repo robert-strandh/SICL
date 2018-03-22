@@ -465,10 +465,10 @@ Consider some iteration $k$ of our inlining procedure, so that $r_k =
   and $F_{k+1} = F_k-1$.  Again, $r_{k+1} < r_k$.
 \item If rule number 3 applies, then another instruction is inlined,
   but the number of \texttt{funcall} instructions remains the same, so
-  that $I_{k+1} = I_k-1$ and $F_{k+1} = F_k$.  Again $r_{k+1} < r_k$.
+  that $I_{k+1} = I_k-1$ and $F_{k+1} = F_k$.  Again, $r_{k+1} < r_k$.
 \item Finally, if rule number 4 applies, then another instruction is inlined,
   but the number of \texttt{funcall} instructions increases by $1$, so
-  that $I_{k+1} = I_k-1$ and $F_{k+1} = F_k+1$.  Again $r_{k+1} < r_k$.
+  that $I_{k+1} = I_k-1$ and $F_{k+1} = F_k+1$.  Again, $r_{k+1} < r_k$.
 \end{itemize}
 
 \begin{figure}
