@@ -124,11 +124,19 @@ worklist item:
 \begin{itemize}
 \item A mapping from instructions in the called function that have
   already been inlined, to the corresponding instructions in the
-  calling function.
+  calling function.  This information prevents an instruction from
+  being inlined more than once.  Without this information, and in the
+  presence of loops in the called function, our inlining algorithm
+  would go into an infinite computation.
 \item Information about the ownership of lexical variables referred to
   by the called function.  This ownership information indicates
   whether a lexical variable is created by the called function itself,
-  or by some enclosing function.
+  or by some enclosing function.  When an instruction to be inlined
+  refers to a variable that is created by some enclosing function, the
+  reference is maintained without modification.  When the reference is
+  to a variable created by the function itself, the inlined
+  instruction must refer to the corresponding variable in the calling
+  function instead.
 \end{itemize}
 
 Prior to algorithm execution, assignment instructions are inserted
@@ -162,7 +170,9 @@ mappings and ownership information, and according to the number of
 successors of the target instruction in this contents.
 
 When the generic function is called in each iteration, one of the
-following four rules applies:
+following four rules applies.  As we show in \refSec{sec-correctness},
+each of the following rules preserves the overall operational
+semantics of the code:
 
 \begin{enumerate}
 \item If the target instruction has already been inlined, i.e. it is
@@ -375,6 +385,7 @@ Final instruction graph.}
 \end{figure}
 
 \subsection{Correctness of our technique}
+\label{sec-correctness}
 
 In order to prove total correctness of our technique, we must show
 that two conditions hold:
