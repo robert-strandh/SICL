@@ -57,7 +57,14 @@ manipulate are \commonlisp{} objects.  Arbitrary computations on
 addresses are exposed in a later stage called \emph{Medium-level
   Intermediate Representation}, or \emph{MIR}.
 
-A HIR instruction falls into one of the following categories:
+Most HIR instructions correspond directly to \commonlisp{} operators
+such as the ones in the categories described below.  Notice that,
+although the names of the instructions often resemble the names of
+\commonlisp{} operators, the instruction typically requires more
+precise objects than the corresponding \commonlisp{} operator does.
+Thus, the \texttt{car} instruction requires the argument to be a
+\texttt{cons} object, and the \texttt{funcall} instruction requires its
+first argument to be a function.  The following such categories exist:
 
 \begin{itemize}
 \item Low-level accessors such as \texttt{car}, \texttt{cdr},
@@ -68,10 +75,13 @@ A HIR instruction falls into one of the following categories:
 \item Instructions for testing the type of an object.
 \item Instructions such as \texttt{funcall}, \texttt{return}, and
   \texttt{unwind} for handling function calls and returns.
-\item The \texttt{enclose} instruction.  This instruction takes the
-  \emph{code} of a nested function (represented by its \texttt{enter}
-  instruction) and creates a \emph{callable function} that may be a
-  \emph{closure}.
+\end{itemize}
+
+Two HIR instructions are different in that they do not have direct
+corresponding \commonlisp{} operators, and in that they are essential
+to the inlining machinery described in this paper:
+
+\begin{itemize}
 \item The \texttt{enter} instruction.  This instruction is the first
   one to be executed in a function, and it is responsible for creating
   the initial local lexical environment of the function from the
@@ -80,14 +90,11 @@ A HIR instruction falls into one of the following categories:
   execution of the function.  Variables may also be eliminated from
   the local environment when they are no longer accessible by any
   execution path.
+\item The \texttt{enclose} instruction.  This instruction takes the
+  \emph{code} of a nested function (represented by its \texttt{enter}
+  instruction) and creates a \emph{callable function} that may be a
+  \emph{closure}.
 \end{itemize}
-
-Notice that, although the names of these instructions often resemble
-the names of \commonlisp{} operations, the instruction typically
-requires more precise objects than the corresponding \commonlisp{}
-operation does.  Thus, the \texttt{car} instruction requires the
-argument to be a \emph{cons} object, and the \texttt{funcall}
-instruction requires its first argument to be a function.
 
 \subsection{Algorithm}
 
