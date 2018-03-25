@@ -47,14 +47,14 @@ following example:
 \begin{verbatim}
 (defun f (x y) (setq x y))
 
-(defun g (a) (f a 3))
+(defun g (a) (f a 3) a)
 \end{verbatim}
 
 If simple renaming is applied, we obtain the following code which does
 not preserve the semantics of the original code:
 
 \begin{verbatim}
-(defun g (a) (setq a 3))
+(defun g (a) (setq a 3) a)
 \end{verbatim}
 
 \noindent
