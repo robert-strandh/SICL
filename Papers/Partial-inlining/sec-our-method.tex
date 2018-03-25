@@ -20,7 +20,7 @@ inlining technique is designed to work on this intermediate
 representation.
 
 There are several advantages of using this intermediate representation
-over higher-level representations such as source code or abstract
+over higher-level ones such as source code or abstract
 syntax trees, as we will show in greater detail below, namely:
 
 \begin{itemize}
@@ -36,7 +36,7 @@ Furthermore, this intermediate code representation is similar to the
 one used in many traditional compiler optimization techniques, making
 it possible to reuse code for similar transformations.
 
-One potential drawback if this representation is that operations on
+One potential drawback of this representation is that operations on
 programs represented this way are inherently imperative, i.e. they
 modify the structure of the flow graph.  The use of techniques from
 functional programming is therefore difficult or impractical with this
@@ -77,7 +77,7 @@ first argument to be a function.  The following such categories exist:
   \texttt{unwind} for handling function calls and returns.
 \end{itemize}
 
-Two HIR instructions are different in that they do not have direct
+Two of the HIR instructions are special in that they do not have direct
 corresponding \commonlisp{} operators, and in that they are essential
 to the inlining machinery described in this paper:
 

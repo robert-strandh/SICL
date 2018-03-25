@@ -18,7 +18,10 @@
 \conferenceinfo{11th ELS}{April 16--17, 2018, Marbella, Spain}
 \setcopyright{rightsretained}
 
-\title{Partial Inlining Using Local Graph Rewriting}
+\title{Partial Inlining Using Local Graph Rewriting
+\titlenote{
+This work was supported by the French National Research Agency (ANR project GraphEn / ANR-15-CE40-0009).
+}}
 
 \numberofauthors{2}
 \author{\alignauthor
@@ -61,7 +64,7 @@ that the algorithm terminates.
 
 As a direct result of the preservation of the semantics of the program
 after each local rewriting step, the algorithm can stop after any
-iteration, resulting in the \emph{partial inlining} of the called
+iteration, resulting in a \emph{partial inlining} of the called
 function.  Such partial inlining can be advantageous in order to avoid
 the inlining of code that is not performance critical, in particular
 for creating arguments and calls to error-signaling functions.
