@@ -91,7 +91,7 @@ type and making \texttt{[EBP$-4 \cdot 4$]} point to it as shown in
 THROW searches the dynamic environment for an entry with the right
 \texttt{catch} tag.  If one is found and it is valid (as indicated by
 the stored ebp different from 0), then the target to which control is
-tranfered is the return address in the stack frame indicated by the
+transferred is the return address in the stack frame indicated by the
 stored ebp.
 
 A \texttt{block} form may establish an exit point.  In the most
@@ -101,7 +101,7 @@ of intervening stack frames.  When this is the case, \texttt{block} is
 implemented as a call to a function, in a way similar to the way
 \texttt{catch} is implemented.  The function establishes a
 \texttt{block}/\texttt{tagbody} entry with a fresh time stamp.  The
-time stamp is also stored in a lexical varible in the static
+time stamp is also stored in a lexical variable in the static
 environment.  \refFig{fig-x86-32-block-tag} shows this situation.
 
 \begin{figure}
@@ -116,7 +116,7 @@ environment.  \refFig{fig-x86-32-block-tag} shows this situation.
 and searches the dynamic environment for a corresponding time stamp in
 a \texttt{block}/\texttt{tagbody} entry.  If one is found and it is
 valid (as indicated by the stored ebp different from 0), then the
-target to which control is tranfered is the return address in the
+target to which control is transferred is the return address in the
 stack frame indicated by the stored ebp.
 
 A \texttt{tagbody} may establish several exit points.  In the most
@@ -126,17 +126,17 @@ number of intervening stack frames.  When this is the case,
 \texttt{tagbody} is implemented as a call to a function, in a way
 similar to the way \texttt{block} is implemented.  The function
 establishes a \texttt{block}/\texttt{tagbody} entry with a fresh time
-stamp.  The time stamp is also stored in a lexical varible in the
+stamp.  The time stamp is also stored in a lexical variable in the
 static environment.  For each tag that is the target of a \texttt{go},
-an address to wich control is transfered is also stored in a lexical
+an address to which control is transferred is also stored in a lexical
 environment.
 
 \texttt{go} consults the time stamp in the lexical variable and
 searches the dynamic environment for a corresponding time stamp in a
 \texttt{block}/\texttt{tagbody} entry.  If one is found and it is
 valid (as indicated by the stored ebp different from 0), then the
-target to which control is tranfered is defined by the lexically
-stored ebp/address pair.  The code to which control is transfered is
+target to which control is transferred is defined by the lexically
+stored ebp/address pair.  The code to which control is transferred is
 responsible for adjusting esp to a particular value relative to ebp.
 
 \section{Transfer of control to an exit point}
