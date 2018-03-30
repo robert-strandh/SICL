@@ -330,7 +330,7 @@
 ;;;
 ;;; Since we might replace the EQUAL test by something more
 ;;; sophisticated, we are not using a hash table, and instead just a
-;;; set of constantes represented as a list.
+;;; set of constants represented as a list.
 
 (defun merge-similar-constants (program)
   (let ((*program* program)

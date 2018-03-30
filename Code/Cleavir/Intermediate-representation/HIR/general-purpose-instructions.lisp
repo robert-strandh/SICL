@@ -286,7 +286,7 @@
 ;;; Instruction UNWIND-INSTRUCTION.
 ;;;
 ;;; This instruction is used to indicate a lexical non-local transfer
-;;; of control resulting form a GO or a RETURN-FROM form.
+;;; of control resulting from a GO or a RETURN-FROM form.
 
 (defclass unwind-instruction
     (instruction one-successor-mixin side-effect-mixin)
