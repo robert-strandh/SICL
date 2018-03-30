@@ -204,7 +204,7 @@
 ;;; If we have a non-local control transfer, we must compile the
 ;;; FORM-AST with the same results as the ones in the context in which
 ;;; the BLOCK-AST was compiled, but in the current invocation.  We
-;;; then insert and UNWIND-INSTRUCTION that serves as the successor of
+;;; then insert an UNWIND-INSTRUCTION that serves as the successor of
 ;;; the compilation of the FORM-AST.  The successor of that
 ;;; UNWIND-INSTRUCTION is the successor of the context in which the
 ;;; BLOCK-AST was compiled.

@@ -7,7 +7,7 @@
 	    for form = (sicl-reader:read stream nil eof)
 	    until (eq form eof)
 	    do (cleavir-env:eval form environment environment)
-	       ;; The evaluation of the form might have change the
+	       ;; The evaluation of the form might have changed the
 	       ;; value of the variable *PACKAGE* in the target
 	       ;; environment.  But this function is executed as a
 	       ;; host function, so the next time we call READ, we
@@ -34,7 +34,7 @@
 	    until (eq form eof)
 	    do (cleavir-env:eval
 		form compilation-environment linkage-environment)
-	       ;; The evaluation of the form might have change the
+	       ;; The evaluation of the form might have changed the
 	       ;; value of the variable *PACKAGE* in the target
 	       ;; environment.  But this function is executed as a
 	       ;; host function, so the next time we call READ, we
@@ -57,7 +57,7 @@
 	    until (eq cst eof)
 	    do (cleavir-env:cst-eval
 		cst compilation-environment linkage-environment system)
-	       ;; The evaluation of the form might have change the
+	       ;; The evaluation of the form might have changed the
 	       ;; value of the variable *PACKAGE* in the target
 	       ;; environment.  But this function is executed as a
 	       ;; host function, so the next time we call READ, we
