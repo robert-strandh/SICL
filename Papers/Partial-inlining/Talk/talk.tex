@@ -139,6 +139,26 @@ becomes
 \end{verbatim}
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Not trivial in the presence of side effects}
+
+The mechanism of inlining is not trivial in the context of a language
+that allows side effects.
+\vskip 0.5cm
+
+\begin{verbatim}
+(defun f (x y) (setq x y))
+
+(defun g (a) (f a 3) a)
+\end{verbatim}
+
+becomes
+
+\begin{verbatim}
+(defun g (a) (setq a 3) a)
+\end{verbatim}
+\end{frame}
+
 
 \frame{
 \frametitle{Future work}
