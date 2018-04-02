@@ -113,6 +113,32 @@ Most work focuses on \emph{when} to inline.
 put it:  ``The work required to duplicate the callee is trivial''
 }
 
+\begin{frame}[fragile]
+\frametitle{Trivial in functional programming}
+
+The mechanism of inlining is trivial in the context of functional
+programming.
+\vskip 0.5cm
+Simply replace the call by a copy of the body of the called function,
+with each occurrence of a parameter replaced by the corresponding
+argument.
+\vskip 0.5cm
+
+\begin{verbatim}
+(defun f (x y) (+ x (* x y)))
+\end{verbatim}
+
+\begin{verbatim}
+(defun g (a) (f (+ a 2) 234))
+\end{verbatim}
+
+becomes
+
+\begin{verbatim}
+(defun g (a) (+ (+ a 2) (* (+ a 2) 234)))
+\end{verbatim}
+\end{frame}
+
 
 \frame{
 \frametitle{Future work}
