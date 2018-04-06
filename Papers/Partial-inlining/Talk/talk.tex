@@ -93,25 +93,53 @@ LaBRI, University of Bordeaux
 \hspace*{1ex}{~} \GRAY{\insertframenumber/\inserttotalframenumber}
 }
 
-\frame{
-\frametitle{Context}
+\begin{frame}
+\frametitle{Context: The \sicl{} project}
 
-}
+https://github.com/robert-strandh/SICL
+\vskip 0.5cm
+In particular, the \cleavir{} implementation-independent compiler
+framework that is currently part of \sicl{}
+\end{frame}
+
+\begin{frame}
+\frametitle{High-level Intermediate Representation}
+
+\cleavir{} uses (at least) two intermediate representations:
+\vskip 0.5cm
+\begin{itemize}
+\item Abstract Syntax Trees (ASTs) created from source code and a
+  global environment.
+\item High-level Intermediate Representation (HIR) created from ASTs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{High-level Intermediate Representation}
 
 
-\frame{
+HIR is similar to the kind of flow graphs used in traditional
+compiler design.
+\vskip 0.5cm
+Main difference: In HIR, only \commonlisp{} objects are manipulated.
+\vskip 0.5cm
+By restricting HIR data this way, we can apply most of our
+optimization techniques to this representation, including type
+inference.
+\end{frame}
+\begin{frame}
 \frametitle{The challenge}
 
-}
+\end{frame}
 
-\frame{
+\begin{frame}
 \frametitle{Previous work}
 
 Most work focuses on \emph{when} to inline.
 \vskip 1cm
 \emph{How} to inline is not discussed much, because as Chang and Hwu
 put it:  ``The work required to duplicate the callee is trivial''
-}
+\end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Trivial in functional programming}
@@ -160,22 +188,22 @@ becomes
 \end{frame}
 
 
-\frame{
+\begin{frame}
 \frametitle{Future work}
-}
+\end{frame}
 
-\frame{
+\begin{frame}
   \frametitle{Acknowledgments}
 
 We would like to thank Bart Botta, Jan Moringen, John Mercouris, and
 Alastair Bridgewater for providing valuable feedback on early versions
 of this paper.
-}
+\end{frame}
 
-\frame{
+\begin{frame}
 \frametitle{Thank you}
 
 Questions?
-}
+\end{frame}
 
 \end{document}
