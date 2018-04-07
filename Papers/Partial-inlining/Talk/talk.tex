@@ -129,6 +129,22 @@ inference.
 \end{frame}
 
 \begin{frame}
+\frametitle{HIR instruction categories}
+The following categories exist:
+
+\begin{itemize}
+\item Low-level accessors such as \texttt{car}, \texttt{cdr},
+  \texttt{rplaca}, \texttt{rplacd}, \texttt{aref}, \texttt{aset},
+  \texttt{slot-read}, and \texttt{slot-write}.
+\item Instructions for low-level arithmetic on, and comparison of,
+  floating-point numbers and fixnums.
+\item Instructions for testing the type of an object.
+\item Instructions such as \texttt{funcall}, \texttt{return}, and
+  \texttt{unwind} for handling function calls and returns.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Previous work}
 
 Most work focuses on \emph{when} to inline.
