@@ -145,6 +145,19 @@ The following categories exist:
 \end{frame}
 
 \begin{frame}
+  \frametitle{Two particular HIR instruction}
+
+Two HIR instruction types have no correspondence in \commonlisp{}
+source code:
+\begin{itemize}
+\item The \texttt{enter} instruction is the first instruction of a
+  sub-graph corresponding to a function.
+\item The \texttt{enclose} instruction creates a callable function
+  from an \texttt{enter} instruction and the current environment.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Previous work}
 
 Most work focuses on \emph{when} to inline.
