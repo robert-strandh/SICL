@@ -17,10 +17,10 @@ $(NAME).pdf: $(TEXFILES) $(PSTEX_T) $(EPS) $(CODE) $(VERBATIM) Makefile
 	$(LATEX) $<
 
 %.pdf: %.fig
-	fig2dev -Lpdftex -m 0.75  $< $@
+	fig2dev -Lpdftex -m 0.3  $< $@
 
 %.pdf_t: %.fig %.pdf
-	fig2dev -Lpdftex_t -m 0.75 -p $(basename $<).pdf $< $@
+	fig2dev -Lpdftex_t -m 0.3 -p $(basename $<).pdf $< $@
 
 .PHONY: clean spotless install init
 
