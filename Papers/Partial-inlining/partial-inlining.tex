@@ -1,4 +1,5 @@
-\documentclass{sig-alternate-05-2015}
+\documentclass[format=sigconf]{acmart}
+%\documentclass{sig-alternate-05-2015}
 \usepackage[utf8]{inputenc}
 \usepackage{color}
 
@@ -11,27 +12,44 @@
 \inputtex{logos.tex}
 \inputtex{refmacros.tex}
 \inputtex{other-macros.tex}
-\inputtex{other-macros.tex}
 \inputtex{tikz-macros.tex}
 
+\acmConference[ELS'18]{the 11th European Lisp Symposium}{April 16--17 2018}{%
+  Marbella, Spain}
+\acmISBN{978-2-9557474-2-1}
+\acmDOI{}
+
 \begin{document}
-\conferenceinfo{11th ELS}{April 16--17, 2018, Marbella, Spain}
+%\conferenceinfo{11th ELS}{April 16--17, 2018, Marbella, Spain}
 \setcopyright{rightsretained}
 
 \title{Partial Inlining Using Local Graph Rewriting
-\titlenote{
-This work was supported by the French National Research Agency (ANR project GraphEn / ANR-15-CE40-0009).
-}}
+}
 
-\numberofauthors{2}
-\author{\alignauthor
-Irène Durand\\
-Robert Strandh\\
-\affaddr{University of Bordeaux}\\
-\affaddr{351, Cours de la Libération}\\
-\affaddr{Talence, France}\\
+\author{Irène Durand
+}
+\authornote{
+This author was supported by the French National Research Agency (ANR project GraphEn / ANR-15-CE40-0009).}
 \email{irene.durand@u-bordeaux.fr}
-\email{robert.strandh@u-bordeaux.fr}}
+
+\author{Robert Strandh}
+\email{robert.strandh@u-bordeaux.fr}
+
+\affiliation{
+  \institution{LaBRI, University of Bordeaux}
+  \streetaddress{351 cours de la libération}
+  \city{Talence}
+  \country{France}}
+
+%\numberofauthors{2}
+%% \author{\alignauthor
+%% Irène Durand\\
+%% Robert Strandh\\
+%% \affaddr{University of Bordeaux}\\
+%% \affaddr{351, Cours de la Libération}\\
+%% \affaddr{Talence, France}\\
+%% \email{irene.durand@u-bordeaux.fr}
+%% \email{robert.strandh@u-bordeaux.fr}}
 
 %% \toappear{Permission to make digital or hard copies of all or part of
 %%   this work for personal or classroom use is granted without fee
@@ -94,7 +112,7 @@ for creating arguments and calls to error-signaling functions.
 \ccsdesc[500]{Software and its engineering~Software performance}
 \ccsdesc[500]{Software and its engineering~Compilers}
 
-\printccsdesc
+%\printccsdesc
 
 \keywords{\commonlisp{}, Compiler optimization, Portability, Maintainability, Graph rewriting}
 
@@ -106,7 +124,8 @@ for creating arguments and calls to error-signaling functions.
 \inputtex{sec-conclusions.tex}
 \inputtex{sec-acknowledgements.tex}
 
-\bibliographystyle{abbrv}
+%\bibliographystyle{abbrv}
+\bibliographystyle{plainnat}
 \bibliography{partial-inlining}
 \end{document}
 
