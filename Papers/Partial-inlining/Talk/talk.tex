@@ -172,7 +172,7 @@ put it:  ``The work required to duplicate the callee is trivial''
 The mechanism of inlining is trivial in the context of functional
 programming.
 \vskip 0.5cm
-Simply replace the call by a copy of the body of the called function,
+Simply replace the call by a copy of the body of the callee,
 with each occurrence of a parameter replaced by the corresponding
 argument.
 \vskip 0.5cm
@@ -253,11 +253,11 @@ We maintain a worklist containing:
 \vskip 0.5cm
 \begin{itemize}
 \item A \texttt{funcall} instruction (caller).
-\item An \texttt{enter} instruction, (callee).
+\item An \texttt{enter} instruction (callee).
 \item The successor instruction of the \texttt{enter} instruction,
   called the \emph{target instruction}.
-\item A mapping from lexical variables in the called function that
-  have already been duplicated in the calling function.
+\item A mapping from lexical variables in the callee that
+  have already been duplicated in the caller.
 \end{itemize}
 \end{frame}
 
@@ -266,11 +266,11 @@ We maintain a worklist containing:
 We also maintain the following global information:
 \vskip 0.5cm
 \begin{itemize}
-\item A mapping from instructions in the called function that have
+\item A mapping from instructions in the callee that have
   already been inlined, to the corresponding instructions in the
-  calling function.
+  caller.
 \item Information about the ownership of lexical variables referred to
-  by the called function.
+  by the callee.
 \end{itemize}
 \end{frame}
 
@@ -278,7 +278,7 @@ We also maintain the following global information:
 \frametitle{Our technique: initialization}
 \begin{itemize}
 \item Create a copy of the initial callee environment in the caller.
-\item Create an initial worklist:
+\item Create an initial worklist containing:
 \begin{itemize}
 \item The \texttt{funcall} instruction representing the call that
   should be inlined.
@@ -299,6 +299,33 @@ We also maintain the following global information:
 \end{center}
 \end{figure}
 \end{frame}
+
+\begin{frame}
+\frametitle{Instruction graph after initialization}
+\begin{figure}
+\begin{center}
+\inputfig{fig42.pdf_t}
+\end{center}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Our technique: one of four rules}
+In each iteration of our technique, one of the following rules is
+applied:
+\begin{enumerate}
+\item If the target instruction has already been inlined, then use the
+  existing inlined copy.  No new worklist item is created.
+\item If the target instruction is a \texttt{return} instruction, then
+  remove call and fix up.  No new worklist item is created.
+\item If the target instruction has a single successor, then inline
+  it, mapping lexical variables.  Create one new worklist item.
+\item If the target instruction has a single successor, then inline
+  it, mapping lexical variables.  Also replicate the \texttt{funcall}
+  and \texttt{enter} instructions.  Create two new worklist item.
+\end{enumerate}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Instruction graph after initialization}
