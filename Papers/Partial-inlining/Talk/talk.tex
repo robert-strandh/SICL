@@ -223,6 +223,22 @@ Basic idea:
 \end{frame}
 
 \begin{frame}
+\frametitle{Our technique: restrictions}
+Only avoiding call/return is no longer important.
+\vskip 0.5cm
+We also want to allocate the environment of the callee in the caller.
+\vskip 0.5cm
+This restriction excludes some situations:
+\vskip 0.5cm
+\begin{itemize}
+\item Some cases when the environment of the callee is captured.
+\item When the callee is directly or indirectly recursive.
+\end{itemize}
+\vskip 0.5cm
+We have yet to work out necessary and sufficient conditions.
+\end{frame}
+
+\begin{frame}
 \begin{figure}
 \begin{center}
 \inputfig{fig41.pdf_t}
