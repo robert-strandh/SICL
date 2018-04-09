@@ -239,8 +239,9 @@ We have yet to work out necessary and sufficient conditions.
 \end{frame}
 
 \begin{frame}
-\frametitle{Our technique: algorithm}
+\frametitle{Our technique: worklist}
 We maintain a worklist containing:
+\vskip 0.5cm
 \begin{itemize}
 \item A \texttt{funcall} instruction (caller).
 \item An \texttt{enter} instruction, (callee).
@@ -248,6 +249,19 @@ We maintain a worklist containing:
   called the \emph{target instruction}.
 \item A mapping from lexical variables in the called function that
   have already been duplicated in the calling function.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Our technique: global information}
+We also maintain the following global information:
+\vskip 0.5cm
+\begin{itemize}
+\item A mapping from instructions in the called function that have
+  already been inlined, to the corresponding instructions in the
+  calling function.
+\item Information about the ownership of lexical variables referred to
+  by the called function.
 \end{itemize}
 \end{frame}
 
