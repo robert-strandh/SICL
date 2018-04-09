@@ -239,6 +239,15 @@ We have yet to work out necessary and sufficient conditions.
 \end{frame}
 
 \begin{frame}
+\frametitle{Running example}
+\begin{figure}
+\begin{center}
+\inputfig{fig41.pdf_t}
+\end{center}
+\end{figure}
+\end{frame}
+
+\begin{frame}
 \frametitle{Our technique: worklist}
 We maintain a worklist containing:
 \vskip 0.5cm
@@ -262,6 +271,23 @@ We also maintain the following global information:
   calling function.
 \item Information about the ownership of lexical variables referred to
   by the called function.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Our technique: initialization}
+\begin{itemize}
+\item Create a copy of the initial callee environment in the caller.
+\item Create an initial worklist:
+\begin{itemize}
+\item The \texttt{funcall} instruction representing the call that
+  should be inlined.
+\item A \emph{private copy} of the initial \texttt{enter} instruction
+  of the function to inline.
+\item The successor instruction of the initial \texttt{enter}
+  instruction, which is the initial target.
+\item The initial lexical variable mapping.
+\end{itemize}
 \end{itemize}
 \end{frame}
 
