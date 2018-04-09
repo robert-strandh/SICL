@@ -239,6 +239,19 @@ We have yet to work out necessary and sufficient conditions.
 \end{frame}
 
 \begin{frame}
+\frametitle{Our technique: algorithm}
+We maintain a worklist containing:
+\begin{itemize}
+\item A \texttt{funcall} instruction (caller).
+\item An \texttt{enter} instruction, (callee).
+\item The successor instruction of the \texttt{enter} instruction,
+  called the \emph{target instruction}.
+\item A mapping from lexical variables in the called function that
+  have already been duplicated in the calling function.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \begin{figure}
 \begin{center}
 \inputfig{fig41.pdf_t}
