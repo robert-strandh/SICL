@@ -747,7 +747,7 @@
     (environment (defining-info global-macro-info))
   (make-instance 'global-macro-info
     :name (name defining-info)
-    ;; FIXME: add compiler-macro
+    :compiler-macro (compiler-macro defining-info)
     :expander (expander defining-info)))
 
 (defmethod make-info
