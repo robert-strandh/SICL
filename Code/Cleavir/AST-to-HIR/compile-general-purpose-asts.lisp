@@ -422,7 +422,7 @@
 			   (cleavir-ast:lhs-asts ast)))
         (vtemp (cleavir-ir:make-values-location)))
     (compile-ast
-     (cleavir-ast:value-ast ast)
+     (cleavir-ast:form-ast ast)
      (context
       vtemp
       (list (cleavir-ir:make-multiple-to-fixed-instruction
