@@ -37,6 +37,7 @@
    #:let-uninitialized
    #:funcall
    #:multiple-value-call
+   #:multiple-value-setq
    #:values
    #:unreachable
    #:ast))
