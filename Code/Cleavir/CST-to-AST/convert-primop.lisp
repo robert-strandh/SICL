@@ -70,6 +70,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:MULTIPLE-VALUE-SETQ
+;;;
+;;; This primitive operation can be used to compile
+;;; CL:MULTIPLE-VALUE-SETQ. Unlike that operator, it requires all
+;;; the variables to be lexical, and can only be used in a no-values
+;;; context. In the result HIR code, the use of this operation will
+;;; appear as a MULTIPLE-TO-FIXED-INSTRUCTION.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:multiple-value-setq)) cst env system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 2 2)
+  (cst:db origin (mvs-cst variables-cst form-cst) cst
+    (declare (ignore mvs-cst))
+    (assert (cst:proper-list-p variables-cst))
+    (let ((lexes
+            (loop for var in (cst:raw variables-cst)
+                  do (assert (symbolp var))
+                  collect (let ((info (cleavir-env:variable-info env var)))
+                            (assert (typep info 'cleavir-env:lexical-variable-info))
+                            info))))
+      (cleavir-ast:make-multiple-value-setq-ast
+       (mapcar #'cleavir-env:identity lexes) ; get actual lexical ASTs
+       (convert form-cst env system)
+       :origin origin))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:CAR.
 
 (defmethod convert-special
