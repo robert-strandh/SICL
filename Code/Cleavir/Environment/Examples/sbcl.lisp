@@ -60,13 +60,6 @@
 (defmethod cleavir-env:eval (form environment1 (environment2 sb-kernel:lexenv))
   (sb-int:eval-in-lexenv form (cleavir->host environment1)))
 
-;;; convenience
-(defun compile-cleavir (form)
-  (cleavir-ast-to-hir:compile-toplevel-unhoisted
-   (let ((*macroexpand-hook* #'cleavir-macroexpand))
-     (cleavir-generate-ast:generate-ast
-      form (sb-kernel:make-null-lexenv) nil))))
-
 (defmethod cleavir-env:variable-info
     ((env sb-kernel:lexenv) symbol)
   (multiple-value-bind (binding local-p decls)
