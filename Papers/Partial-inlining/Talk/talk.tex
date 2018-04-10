@@ -320,7 +320,7 @@ applied:
   remove call and fix up.  No new worklist item is created.
 \item If the target instruction has a single successor, then inline
   it, mapping lexical variables.  Create one new worklist item.
-\item If the target instruction has a single successor, then inline
+\item If the target instruction has two successors, then inline
   it, mapping lexical variables.  Also replicate the \texttt{funcall}
   and \texttt{enter} instructions.  Create two new worklist items.
 \end{enumerate}
