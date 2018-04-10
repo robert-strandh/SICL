@@ -174,7 +174,7 @@ programming.
 \vskip 0.5cm
 Simply replace the call by a copy of the body of the callee,
 with each occurrence of a parameter replaced by the corresponding
-argument.
+argument ($\beta$-reduction).
 \vskip 0.5cm
 
 \begin{verbatim}
@@ -196,7 +196,7 @@ becomes
 \frametitle{Not trivial in the presence of side effects}
 
 The mechanism of inlining is not trivial in the context of a language
-that allows side effects.
+that allows side effects.  We can not use simple $\beta$-reduction.
 \vskip 0.5cm
 
 \begin{verbatim}
