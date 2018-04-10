@@ -329,6 +329,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking MULTIPLE-VALUE-SETQ.
+(defmethod check-special-form-syntax
+    ((head (eql 'cleavir-primop:multiple-value-setq)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2)
+  (assert (cleavir-code-utilities:proper-list-p (second form)))
+  (assert (every #'symbolp (second form))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking FUNCALL.
 
 (defmethod check-special-form-syntax

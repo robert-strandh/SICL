@@ -289,7 +289,6 @@
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:coerce)) form env system)
   (db origin (op type1 type2 form) form
-    (declare (ignore op))
     (make-instance 'cleavir-ast:coerce-ast
      :from type1 :to type2
      :arg-ast (convert form env system)
@@ -463,3 +462,23 @@
     ((symbol (eql 'cleavir-primop:ast)) form env system)
   (declare (ignore env system))
   (db origin (ast) (rest form) ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:MULTIPLE-VALUE-SETQ.
+;;;
+;;; Assigns the given variables to the values of the form.
+;;; Does not return values. The variables must be lexical.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:multiple-value-setq)) form env system)
+  (db origin (op variables form) form
+    (declare (ignore op))
+    (let ((lexes (mapcar (lambda (var) (variable-info env var)) variables)))
+      (assert (every (lambda (l)
+                       (typep l 'cleavir-env:lexical-variable-info))
+                     lexes))
+      (cleavir-ast:make-multiple-value-setq-ast
+       (mapcar #'cleavir-env:identity lexes) ; get actual lexical ASTs
+       (convert form env system)
+       :origin origin))))
