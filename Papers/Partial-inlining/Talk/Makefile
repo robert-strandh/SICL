@@ -1,9 +1,9 @@
 NAME=talk
 LATEX=pdflatex
 TEXFILES=$(NAME).tex $(shell ./tex-dependencies $(NAME).tex)
-PSTEX_T=$(shell ./strip-dependence inputfig $(TEXFILES))
-PSTEX=$(subst .pstex_t,.pstex,$(PSTEX_T))
 EPS=$(shell ./strip-dependence inputeps $(TEXFILES))
+PDF_T=$(shell ./strip-dependence inputfig $(TEXFILES))
+PDF=$(subst .pdf_t,.pdf,$(PDF_T))
 
 FIG = $(wildcard *.fig) $(wildcard *.pstex_t)
 
@@ -12,7 +12,7 @@ FIG = $(wildcard *.fig) $(wildcard *.pstex_t)
 
 all: $(NAME).pdf
 
-$(NAME).pdf: $(TEXFILES) $(PSTEX_T) $(EPS) $(CODE) $(VERBATIM) Makefile
+$(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(EPS) $(CODE) $(VERBATIM) Makefile
 	$(LATEX) $(NAME).tex
 	$(LATEX) $<
 
