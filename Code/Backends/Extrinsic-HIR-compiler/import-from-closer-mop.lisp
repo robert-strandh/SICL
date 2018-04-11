@@ -6,7 +6,7 @@
 		    (find-symbol (symbol-name symbol) '#:sicl-clos)
 		    (fboundp symbol)
 		    (null (macro-function symbol)))
-	   (setf (sicl-env:fdefinition
+	   (setf (sicl-genv:fdefinition
 		  (find-symbol (symbol-name symbol) '#:sicl-clos)
 		  *environment*)
 		 (fdefinition symbol))))

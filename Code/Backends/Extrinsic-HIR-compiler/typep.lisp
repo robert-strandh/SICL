@@ -3,7 +3,7 @@
 ;;; This is a temporary definition of CL:TYPEP.
 (defun typep (object type-specifier &optional environment)
   (let ((env (if (null environment)
-		 sicl-env:*global-environment*
+		 sicl-genv:*global-environment*
 		 (cleavir-env:global-environment environment))))
     (labels ((aux (type-specifier)
 	       (cond ((consp type-specifier)
@@ -17,7 +17,7 @@
 				 'not)
 			     (not (aux (second type-specifier))))
 			    (t
-			     (let ((expander (sicl-env:type-expander
+			     (let ((expander (sicl-genv:type-expander
 					      (cleavir-primop:car type-specifier)
 					      env)))
 			       (if (null expander)
@@ -26,7 +26,7 @@
 						 type-specifier
 						 env)))))))
 		     ((symbolp type-specifier)
-		      (let ((expander (sicl-env:type-expander
+		      (let ((expander (sicl-genv:type-expander
 				       type-specifier
 				       env)))
 			(if (null expander)
