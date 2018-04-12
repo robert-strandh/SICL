@@ -28,7 +28,7 @@
     (file compilation-environment linkage-environment)
   (with-open-file (stream file :direction :input)
     (let ((*package* (sicl-genv:special-variable '*package*
-						compilation-environment)))
+                                                 compilation-environment)))
       (loop with eof = (list nil)
 	    for form = (sicl-reader:read stream nil eof)
 	    until (eq form eof)
@@ -42,7 +42,7 @@
 	       ;; changes.
 	       (setf *package*
 		     (sicl-genv:special-variable '*package*
-						linkage-environment))))))
+                                                 linkage-environment))))))
 
 ;;; This function is like LOAD-SOURCE-WITH-ENVIRONMENTS, except that
 ;;; it converts the form to a concrete-syntax-tree and then calls
@@ -51,7 +51,7 @@
     (file compilation-environment linkage-environment system)
   (with-open-file (stream file :direction :input)
     (let ((*package* (sicl-genv:special-variable '*package*
-						compilation-environment)))
+                                                 compilation-environment)))
       (loop with eof = (list nil)
 	    for cst = (sicl-reader:cst-read stream nil eof)
 	    until (eq cst eof)
@@ -65,4 +65,4 @@
 	       ;; changes.
 	       (setf *package*
 		     (sicl-genv:special-variable '*package*
-						linkage-environment))))))
+                                                 linkage-environment))))))

@@ -345,7 +345,7 @@
   `(setf ,(first outputs)
 	 (car (load-time-value
 	       (sicl-genv:function-cell ,(first inputs)
-				       ,*linkage-environment*)
+                                        ,*linkage-environment*)
 	       nil))))
 
 (defmethod translate-simple-instruction
