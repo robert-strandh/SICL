@@ -41,7 +41,7 @@
 			   (traced-funcall
 			    ,*linkage-environment*
 			    (car (load-time-value
-				  (sicl-env:function-cell
+				  (sicl-genv:function-cell
 				   'error
 				   ,*linkage-environment*)
 				  nil))
@@ -62,7 +62,7 @@
 			       (traced-funcall
 				,*linkage-environment*
 				(car (load-time-value
-				      (sicl-env:function-cell
+				      (sicl-genv:function-cell
 				       'error
 				       ,*linkage-environment*)
 				      nil))
@@ -78,7 +78,7 @@
 			   (traced-funcall
 			    ,*linkage-environment*
 			    (car (load-time-value
-				  (sicl-env:function-cell
+				  (sicl-genv:function-cell
 				   'error
 				   ,*linkage-environment*)
 				  nil))
@@ -116,7 +116,7 @@
 			   (traced-funcall
 			    ,*linkage-environment*
 			    (car (load-time-value
-				  (sicl-env:function-cell
+				  (sicl-genv:function-cell
 				   'error
 				   ,*linkage-environment*)
 				  nil))

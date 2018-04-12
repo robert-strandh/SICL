@@ -9,7 +9,7 @@
 ;;;; extrinsic environment to be updated.
 
 (defun define-in-package (environment)
-  (setf (sicl-env:macro-function 'in-package environment)
+  (setf (sicl-genv:macro-function 'in-package environment)
 	(lambda (form environment)
 	  (declare (ignore environment))
 	  (setq *package* (find-package (cadr form)))

@@ -19,8 +19,8 @@
 (setf (sicl-genv:fdefinition 'values *environment*)
       #'values)
 
-;;; Set the variable SICL-ENV:*ENVIRONMENT* in the environment.
-(setf (sicl-genv:special-variable 'sicl-env:*global-environment* *environment* t)
+;;; Set the variable SICL-GENV:*ENVIRONMENT* in the environment.
+(setf (sicl-genv:special-variable 'sicl-genv:*global-environment* *environment* t)
       *environment*)
 
 ;;; This definition allows us to find the definition of any host function.

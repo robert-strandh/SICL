@@ -2,10 +2,10 @@
 
 (defun import-from-sicl-global-environment (environment)
   ;; This variable is deprecated.  Uses of it should be replaced by
-  ;; uses of the constant sicl-env:+global-environment+
-  (setf (sicl-env:special-variable 'sicl-env:*global-environment* environment t)
+  ;; uses of the constant sicl-genv:+global-environment+
+  (setf (sicl-genv:special-variable 'sicl-env:*global-environment* environment t)
 	environment)
-  (setf (sicl-env:constant-variable 'sicl-env:+global-environment+ environment)
+  (setf (sicl-genv:constant-variable 'sicl-env:+global-environment+ environment)
 	environment)
-  (setf (sicl-env:fdefinition 'sicl-env:global-environment environment)
+  (setf (sicl-genv:fdefinition 'sicl-env:global-environment environment)
 	(lambda () environment)))

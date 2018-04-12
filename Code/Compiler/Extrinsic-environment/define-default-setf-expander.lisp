@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
 (defun define-default-setf-expander (environment)
-  (setf (sicl-env:default-setf-expander environment)
+  (setf (sicl-genv:default-setf-expander environment)
 	(lambda (form environment)
           (declare (ignore environment))
 	  (if (symbolp form)

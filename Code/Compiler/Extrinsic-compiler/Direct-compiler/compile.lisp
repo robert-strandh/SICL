@@ -26,7 +26,7 @@
 
 (defun compile-function-form (form processor os system)
   (let* ((environment sicl-extrinsic-hir-compiler:*environment*)
-	 (sicl-env:*global-environment* environment)
+	 (sicl-genv:*global-environment* environment)
 	 (sicl (make-instance 'sicl-target-sicl:sicl))
 	 (ast (cleavir-generate-ast:generate-ast form environment system))
 	 (hir (cleavir-ast-to-hir:compile-toplevel ast))

@@ -11,13 +11,13 @@
 ;;; need to define with this version of DEFMACRO until we can replace
 ;;; it with a native version.
 (defun define-defmacro (environment)
-  (setf (sicl-env:macro-function 'defmacro environment)
+  (setf (sicl-genv:macro-function 'defmacro environment)
 	(compile nil
 		 (cleavir-code-utilities:parse-macro
 		  'defmacro
 		  '(name lambda-list &body body)
 		  `((eval-when (:compile-toplevel :load-toplevel :execute)
-		      (setf (sicl-env:macro-function name ,environment)
+		      (setf (sicl-genv:macro-function name ,environment)
 			    (compile nil
 				     (cleavir-code-utilities:parse-macro
 				      name

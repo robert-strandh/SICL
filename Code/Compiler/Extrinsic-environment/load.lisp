@@ -2,7 +2,7 @@
 
 (defun load (file environment)
   (with-open-file (stream file :direction :input)
-    (let ((*package* (sicl-env:special-variable '*package* environment)))
+    (let ((*package* (sicl-genv:special-variable '*package* environment)))
       (loop with eof = (list nil)
 	    for form = (sicl-reader:read stream nil eof)
 	    until (eq form eof)
@@ -14,7 +14,7 @@
 	       ;; need to make sure the host variable *PACKAGE* also
 	       ;; changes.
 	       (setf *package*
-		     (sicl-env:special-variable '*package* environment))))))
+		     (sicl-genv:special-variable '*package* environment))))))
 
 ;;; This version of the function LOAD takes two environment objects.
 ;;; See section 3.2.1 in the HyperSpec for a description of the role
@@ -27,7 +27,7 @@
 (defun load-source-with-environments
     (file compilation-environment linkage-environment)
   (with-open-file (stream file :direction :input)
-    (let ((*package* (sicl-env:special-variable '*package*
+    (let ((*package* (sicl-genv:special-variable '*package*
 						compilation-environment)))
       (loop with eof = (list nil)
 	    for form = (sicl-reader:read stream nil eof)
@@ -41,7 +41,7 @@
 	       ;; need to make sure the host variable *PACKAGE* also
 	       ;; changes.
 	       (setf *package*
-		     (sicl-env:special-variable '*package*
+		     (sicl-genv:special-variable '*package*
 						linkage-environment))))))
 
 ;;; This function is like LOAD-SOURCE-WITH-ENVIRONMENTS, except that
@@ -50,7 +50,7 @@
 (defun cst-load-source-with-environments
     (file compilation-environment linkage-environment system)
   (with-open-file (stream file :direction :input)
-    (let ((*package* (sicl-env:special-variable '*package*
+    (let ((*package* (sicl-genv:special-variable '*package*
 						compilation-environment)))
       (loop with eof = (list nil)
 	    for cst = (sicl-reader:cst-read stream nil eof)
@@ -64,5 +64,5 @@
 	       ;; need to make sure the host variable *PACKAGE* also
 	       ;; changes.
 	       (setf *package*
-		     (sicl-env:special-variable '*package*
+		     (sicl-genv:special-variable '*package*
 						linkage-environment))))))

@@ -267,7 +267,7 @@
   `(unless (traced-funcall
 	    ,*linkage-environment*
 	    (car (load-time-value
-		  (sicl-env:function-cell
+		  (sicl-genv:function-cell
 		   'typep
 		   ,*linkage-environment*)
 		  nil))
@@ -276,7 +276,7 @@
      (traced-funcall
       ,*linkage-environment*
       (car (load-time-value
-	    (sicl-env:function-cell
+	    (sicl-genv:function-cell
 	     'error
 	     ,*linkage-environment*)
 	    nil))
@@ -344,7 +344,7 @@
   (declare (ignore static-environment))
   `(setf ,(first outputs)
 	 (car (load-time-value
-	       (sicl-env:function-cell ,(first inputs)
+	       (sicl-genv:function-cell ,(first inputs)
 				       ,*linkage-environment*)
 	       nil))))
 
@@ -450,7 +450,7 @@
   `(if (traced-funcall
 	,*linkage-environment*
 	(car (load-time-value
-	      (sicl-env:function-cell
+	      (sicl-genv:function-cell
 	       'typep
 	       ,*linkage-environment*)
 	      nil))
