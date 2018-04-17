@@ -17,10 +17,10 @@ $(NAME).pdf: $(TEXFILES) $(PDF) $(PDF_T) $(EPS) $(CODE) $(VERBATIM) Makefile
 	$(LATEX) $<
 
 %.pdf: %.fig
-	fig2dev -Lpdftex -m 0.3  $< $@
+	fig2dev -Lpdftex -m 0.4  $< $@
 
 %.pdf_t: %.fig %.pdf
-	fig2dev -Lpdftex_t -m 0.3 -p $(basename $<).pdf $< $@
+	fig2dev -Lpdftex_t -m 0.4 -p $(basename $<).pdf $< $@
 
 .PHONY: clean spotless install init
 
@@ -32,7 +32,7 @@ clean:
 
 spotless:
 	make clean
-	rm -f  $(NAME).pdf $(PSTEX) $(PSTEX_T)
+	rm -f  $(NAME).pdf fig*.pdf*
 
 install: $(NAME).pdf
 	cp $(NAME).pdf /usr/labri/idurand/public_html/ELS2015/.
