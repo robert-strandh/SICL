@@ -21,7 +21,6 @@
   (list location))
 
 (defmethod cleavir-kildall:object<= ((s value-numbering) o1 o2)
-  (declare (type (or null (integer 0)) o1 o2))
   (subsetp o2 o1 :test #'equal))
 
 (defmethod cleavir-kildall:object-meet ((s value-numbering) o1 o2)
