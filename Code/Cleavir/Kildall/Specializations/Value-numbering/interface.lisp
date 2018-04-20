@@ -4,8 +4,25 @@
   (princ-to-string object))
 
 (defclass numbering ()
+  ;; Both hash tables instruction->alist, where alist is datum->number.
   ((input :initarg :input :accessor input)
    (output :initarg :output :accessor output)))
+
+(defun numbering.input-number (numbering instruction input)
+  (or (cdr (assoc input (gethash instruction (input numbering))))
+      (error "BUG: No number for input ~a of instruction ~a, in numbering ~a."
+             input instruction numbering)))
+
+(defun numbering.output-number (numbering instruction output)
+  (or (cdr (assoc output (gethash instruction (output numbering))))
+      (error "BUG: No number for input ~a of instruction ~a, in numbering ~a."
+             output instruction numbering)))
+
+(defun numbering.all-input-numbers (numbering instruction)
+  (remove-duplicates
+   (mapcar #'cdr (or (gethash instruction (input numbering))
+                     (error "BUG: Instruction ~a not in numbering ~a."
+                            instruction numbering)))))
 
 ;;; Replace everything in the actual returned map, which uses sets, with numbers.
 ;;; NOTE: This way we lose information about where the value comes from.

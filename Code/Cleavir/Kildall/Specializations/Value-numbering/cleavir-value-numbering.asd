@@ -4,4 +4,5 @@
   ((:file "packages")
    (:file "specialization" :depends-on ("packages"))
    (:file "transfer" :depends-on ("specialization" "packages"))
-   (:file "interface" :depends-on ("specialization" "packages"))))
+   (:file "interface" :depends-on ("specialization" "packages"))
+   (:file "extend" :depends-on ("interface" "packages"))))
