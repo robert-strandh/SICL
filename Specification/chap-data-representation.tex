@@ -169,7 +169,7 @@ information about the slots) of the instance.  It is undesirable to
 make all instances directly accessible from the class, because
 such a solution would waste space and would have to make sure that
 memory leaks are avoided.  We must thus take into account the presence
-of \emph{obsolete instance} in the system, i.e., instances that must
+of \emph{obsolete instance} in the system, i.e. instances that must
 be \emph{updated} at some later point in time.
 
 The solution is to store some kind of \emph{version} information in
@@ -194,7 +194,7 @@ system to determine which slots have been added and which slots have
 been removed since the instance was created.  As indicated in
 \refSec{sec-data-representation-general-instances}, in order to detect
 whether an object is obsolete, the contents of the first word of the
-rack (i.e,, the \emph{stamp}) is compared to the
+rack (i.e. the \emph{stamp}) is compared to the
 \emph{class unique number} of the class of the object.  However, this
 test is performed automatically in most cases, because when an
 obsolete object is passed as an argument to a generic function, the
@@ -326,7 +326,7 @@ We suggest providing specialized arrays for the following data types:
 \item \texttt{(signed-byte 32)}.
 \item \texttt{(unsigned-byte 8)}, used for code, interface with the
   operating system, etc.
-\item \texttt{character} (i.e., strings) as required by the \hs{}.
+\item \texttt{character} (i.e. strings) as required by the \hs{}.
 \item \texttt{bit}, as required by the \hs{}.
 \end{itemize}
 
