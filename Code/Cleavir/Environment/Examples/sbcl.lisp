@@ -99,9 +99,7 @@
 	   ;; only works for global functions, oh well.
 	   (ast (when (eq inline 'inline)
 		  (let ((expansion
-			  (sb-int:info :function
-				       :inline-expansion-designator
-				       symbol)))
+			  (sb-int:fun-name-inline-expansion symbol)))
 		    (when expansion
                       ;; maybe cache somehow?
 		      (cleavir-generate-ast:generate-ast
