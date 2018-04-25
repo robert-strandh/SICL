@@ -79,32 +79,35 @@
 ;;; We add the import to the end of the import list in order to
 ;;; preserve the index of cells in the static environment.
 (defun transmit-cell (enclose import enter export)
-  (let ((imports (cleavir-ir:inputs enclose))
-	;; The dynamic lexical variable that holds the static
-	;; environment is the first output of the enter instruction.
-	(env-location (first (cleavir-ir:outputs enter)))
-	(cleavir-ir:*policy* (cleavir-ir:policy enter)))
+  (let ((imports (cleavir-ir:inputs enclose)))
     ;; Start by adding the new import to the end of the existing
     ;; imports of the ENCLOSE-INSTRUCTION.
-    (setf (cleavir-ir:inputs enclose) (append imports (list import)))
-    ;; Finally, add a new FETCH-INSTRUCTION after ENTER.
+    (setf (cleavir-ir:inputs enclose) (append imports (list import)))))
+
+(defun add-fetch (enter dloc)
+  ;; Finally, add a new FETCH-INSTRUCTION after ENTER.
+  (let ((env-location (first (cleavir-ir:outputs enter)))
+        ;; The dynamic lexical variable that holds the static
+	;; environment is the first output of the enter instruction.
+	(cleavir-ir:*policy* (cleavir-ir:policy enter))
+        ;; the index of the new cell in the closure will just be the
+        ;; size of the existing closure vector.
+        (new-index (cleavir-ir:closure-size enter)))
     (cleavir-ir:insert-instruction-after
      (cleavir-ir:make-fetch-instruction
       env-location
-      ;; The index of the cell in the static environment is the
-      ;; position of the import in the ENCLOSE-INSTRUCTION which is
-      ;; the same as the length of the imports before we add the new
-      ;; one.
-      (cleavir-ir:make-immediate-input (length imports))
-      export)
-     enter)))
+      (cleavir-ir:make-immediate-input new-index)
+      dloc)
+     enter)
+    ;; Make sure we keep track of the closure vector expansion.
+    (setf (cleavir-ir:closure-size enter) (1+ new-index))))
 
 ;;; For a single static lexical location to be eliminated, make sure
 ;;; that the corresponding cell is available in all functions in which
 ;;; the static location is either read or written, as well as in the
 ;;; intermediate functions that neither read nor write the static
 ;;; location, but that occur between such a function and the owner of
-;;; the static lexical location.  FUNCTION-TREE is a function tree
+;;; the static lexical location.  FUNCTION-DAG is a function dag
 ;;; defining the nesting of functions.  CELL-LOCATIONS is an alist
 ;;; mapping an ENTER-INSTRUCTION to the dynamic lexical location that
 ;;; holds the cell for the static lexical location in the function
@@ -120,7 +123,7 @@
 ;;; CELL-LOCATIONS we add a FETCH instruction after it, and we import
 ;;; the cell location of the parent function into the corresponding
 ;;; ENCLOSE-INSTRUCTION.
-(defun ensure-cell-available (function-tree cell-locations owner)
+(defun ensure-cell-available (function-dag cell-locations owner)
   ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
   ;; the static lexical location to be eliminated.
   (let ((cleavir-ir:*policy* (cleavir-ir:policy owner)))
@@ -130,14 +133,17 @@
   ;; Next, for each entry in CELL-LOCATIONS other than OWNER, transmit
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
   ;; ENTER-INSTRUCTION of that entry.
-  (loop with tree-nodes = (tree-nodes function-tree)
+  (loop with dag-nodes = (dag-nodes function-dag)
 	for (enter . cell-location) in cell-locations
 	unless (eq enter owner)
-	  do (let* ((node (gethash enter tree-nodes))
-		    (enclose (enclose-instruction node))
-		    (parent-enter (parent-enter function-tree enter))
-		    (import (cdr (assoc parent-enter cell-locations))))
-	       (transmit-cell enclose import enter cell-location))))
+	  do (loop for node in (gethash enter dag-nodes)
+                   for enclose = (enclose-instruction node)
+                   for parents = (parents node)
+                   do (loop for parent in parents
+                            for parent-enter = (enter-instruction parent)
+                            for import = (cdr (assoc parent-enter cell-locations))
+                            do (transmit-cell enclose import enter cell-location)))
+             (add-fetch enter cell-location)))
 
 ;;; Given a list of ENTER-INSTRUCTIONs representing the functions that
 ;;; read or write some particular static lexical location to
@@ -146,17 +152,23 @@
 ;;; representing intermediate functions have been added.  An
 ;;; intermediate function is one that neither reads nor writes the
 ;;; location, but that has an ancestor and a descendant that both do.
-;;; FUNCTION-TREE is a function tree representing all the functions of
+;;; FUNCTION-DAG is a function dag representing all the functions of
 ;;; the program.  OWNER is the ENTER-INSTRUCTION of the outermost
 ;;; function in the program that reads or writes the location.
-(defun add-intermediate-functions (enter-instructions function-tree owner)
-  (let ((result enter-instructions))
-    (loop for enter-instruction in enter-instructions
-	  do (loop with enter = enter-instruction
-		   until (eq enter owner)
-		   do (pushnew enter result :test #'eq)
-		      (setf enter (parent-enter function-tree enter))))
-    result))
+(defun add-intermediate-functions (enter-instructions function-dag owner)
+  (loop with todo = (loop for enter in enter-instructions
+                          appending (gethash enter (dag-nodes function-dag)))
+        with result = nil
+        until (null todo)
+        do (let* ((node (pop todo))
+                  (enter (enter-instruction node)))
+             (pushnew enter result :test #'eq)
+             #+(or)
+             (format t "Node: ~a~% Parents: ~a~%"
+                     node (parents node))
+             (unless (eq enter owner)
+               (setf todo (append todo (parents node)))))
+        finally (return result)))
 
 ;;; Given a single static lexical location SLOC, a dynamic lexical
 ;;; location CLOC holding the cell that replaces SLOC, and a single
@@ -192,16 +204,16 @@
 
 ;;; Given a single static lexical location LOCATION, eliminate it by
 ;;; replacing all accesses to it by accesses to a corresponding CELL.
-;;; FUNCTION-TREE is the function tree of the entire program.
+;;; FUNCTION-DAG is the function dag of the entire program.
 ;;; INSTRUCTION-OWNERS is a hash table mapping an instruction to its
 ;;; owner.  OWNER is the owner of LOCATION.
 (defun process-location
-    (location function-tree instruction-owners owner)
+    (location function-dag instruction-owners owner)
   (let* (;; Determine all the functions (represented by
 	 ;; ENTER-INSTRUCTIONs) that use (read or write) the location.
 	 (users (functions-using-location location instruction-owners))
 	 ;; To that set, add the intermediate functions.
-	 (enters (add-intermediate-functions users function-tree owner))
+	 (enters (add-intermediate-functions users function-dag owner))
 	 ;; Compute a dictionary that associates each
 	 ;; ENTER-INSTRUCTION with a cell location.
 	 (cell-locations (allocate-cell-locations enters)))
@@ -216,20 +228,20 @@
     ;; We do this step last, so that we are sure that the CREATE-CELL
     ;; and FETCH instructions are inserted immediately after the ENTER
     ;; instruction.
-    (ensure-cell-available function-tree cell-locations owner)))
+    (ensure-cell-available function-dag cell-locations owner)))
 
 (defun process-captured-variables (initial-instruction)
   ;; Make sure everything is up to date.
   (cleavir-ir:reinitialize-data initial-instruction)
   (let* ((instruction-owners (compute-instruction-owners initial-instruction))
 	 (location-owners (compute-location-owners initial-instruction))
-	 (function-tree (build-function-tree initial-instruction))
+	 (function-dag (build-function-dag initial-instruction))
 	 (static-locations
 	   (segregate-lexicals initial-instruction location-owners)))
     (loop for static-location in static-locations
 	  for owner = (gethash static-location location-owners)
 	  do (process-location static-location
-			       function-tree
+			       function-dag
 			       instruction-owners
 			       owner))))
 

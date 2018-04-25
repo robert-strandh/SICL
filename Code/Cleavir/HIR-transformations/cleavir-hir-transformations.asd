@@ -16,7 +16,7 @@
    (:file "coalesce-load-time-values")
    (:file "eliminate-typeq")
    (:file "simplify-box-unbox")
-   (:file "function-tree")
+   (:file "function-dag")
    (:file "segregate-lexicals")
    (:file "escape")
    (:file "eliminate-superfluous-temporaries")

@@ -24,19 +24,21 @@
 ;;; simple function highest up will be analyzed.
 ;;; So e.g. if L1 includes L2 and L3, and L2 includes L4, and other than L1 they're all simple,
 ;;; analyze-simples of L1 will call analyzer on only L2 and L3.
+;;; FIXME: May analyze an insruction more than once if there are multiple encloses of one ENTER.
+;;; But this function isn't used at the moment anyway.
 (defun analyze-simples (analyzer initial-instruction)
-  (let ((tree (build-function-tree initial-instruction))
+  (let ((dag (build-function-dag initial-instruction))
         (location-owners (compute-location-owners initial-instruction))
         (destinies (compute-destinies initial-instruction)))
-    (let ((trappers (discern-trappers tree destinies))
-          (sharing (discern-sharing tree location-owners)))
+    (let ((trappers (discern-trappers dag destinies))
+          (sharing (discern-sharing dag location-owners)))
       (labels ((aux (node)
                  (let ((enter (enter-instruction node)))
                    (if (and (null (cdr (gethash enter sharing))) ; toplevel
                             (gethash enter trappers)) ; trapper
                        (funcall analyzer enter)
                        (mapc #'aux (children node))))))
-          (aux tree))))
+          (aux dag))))
   (values))
 
 ;;; Return a hash from ENTERs (representing functions) to booleans.
@@ -44,9 +46,10 @@
 ;;; (It may, itself, escape, but that's irrelevant here.)
 ;;; Obvious future refinement: If a function escapes, but not to outside a function,
 ;;; that function can still be a trapper.
-(defun discern-trappers (function-tree destinies)
+(defun discern-trappers (function-dag destinies)
   (let ((result (make-hash-table :test #'eq)))
     (labels ((aux (node)
+               ;; FIXME: recurses into children multiple times. Efficiency concern
                (let* ((enclose (enclose-instruction node))
                       (enter (cleavir-ir:code enclose))
                       ;; if there no children, recursion stops here.
@@ -57,8 +60,8 @@
                  (not (member :escape (gethash enclose destinies))))))
       ;; We have to do the recursion funny since the initial instruction
       ;; has no enclose/cannot escape.
-      (setf (gethash (initial-instruction function-tree) result)
-            (every #'aux (children function-tree))))
+      (setf (gethash (initial-instruction function-dag) result)
+            (every #'aux (children function-dag))))
     result))
 
 (defun data (instruction)
@@ -70,28 +73,29 @@
 ;;; The car of the cons is a list of lexical locations owned by the function
 ;;; that are referred to in other functions, and the cdr is a list of locations
 ;;; referred to by the function that are owned by other functions.
-(defun discern-sharing (function-tree location-owners)
+(defun discern-sharing (function-dag location-owners)
   (let ((result (make-hash-table :test #'eq)))
     (labels ((init-enter (enter)
-               ;; I don't think this condition is necessary, but I'm not sure, so,
-               ;; let's check.
-               (when (nth-value 1 (gethash enter result))
-                 (error "BUG: see comment in find-toplevels"))
+               ;; Note we may initialize some enters more than once if there are
+               ;; multiple encloses of the same ENTER.
                (setf (gethash enter result) (cons nil nil)))
              (mark-binder (enter location)
                (pushnew location (car (gethash enter result))))
              (mark-user (enter location)
                (pushnew location (cdr (gethash enter result))))
              (mark-up (this owner location)
-               ;; THIS is a function tree node, OWNER is an enter instruction
-               ;; Mark sub functions as closing over location, and owner as binding it.
-               (loop for node = this then (parent node)
-                     do (if (typep node 'function-tree) ; no ENCLOSE-INSTRUCTION, and we're on top
-                            (return (mark-binder owner location)) ; done
+               ;; THIS is an enter instruction node, OWNER is LOCATION's owner (which is not THIS).
+               ;; Mark THIS and intermediate functions as closing over location.
+               (loop with nodes = (gethash this (dag-nodes function-dag))
+                     until (null nodes)
+                     do (let ((node (pop nodes)))
+                          (unless (typep node 'function-dag) ; no ENCLOSE, and we're on top: do nothing
                             (let ((enter (enter-instruction node)))
-                              (if (eq owner enter) ; we're done
-                                  (return (mark-binder owner location))
-                                  (mark-user enter location)))))))
+                              (unless (eq owner enter) ; also do nothing
+                                ;; mark the function as a user,
+                                (mark-user enter location)
+                                ;; and continue up.
+                                (setf nodes (append nodes (parents node))))))))))
       #+(or)(declare (inline init-enter mark-binder mark-user))
       (cleavir-ir:map-instructions-with-owner
        (lambda (instruction instruction-owner)
@@ -101,9 +105,9 @@
                do (when (typep datum 'cleavir-ir:lexical-location)
                     (let ((location-owner (gethash datum location-owners)))
                       (unless (eq instruction-owner location-owner)
-                        (mark-up (gethash instruction-owner (tree-nodes function-tree))
-                                 location-owner datum))))))
-       (initial-instruction function-tree)))
+                        (mark-binder location-owner datum)
+                        (mark-up instruction-owner location-owner datum))))))
+       (initial-instruction function-dag)))
     result))
 
 ;;; Compute a hash table from enclose instructions to "destinies".
