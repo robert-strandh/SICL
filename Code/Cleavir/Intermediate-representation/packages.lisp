@@ -40,7 +40,8 @@
    #:symbol-value-instruction #:make-symbol-value-instruction
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
-   #:enter-instruction #:make-enter-instruction #:lambda-list
+   #:enter-instruction #:make-enter-instruction
+   #:lambda-list #:closure-size
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction #:make-nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction

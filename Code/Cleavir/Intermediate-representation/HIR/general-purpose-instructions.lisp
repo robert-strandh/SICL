@@ -13,7 +13,11 @@
 ;;; arguments.  It has a single successor.
 
 (defclass enter-instruction (instruction one-successor-mixin)
-  ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
+  ((%lambda-list :initarg :lambda-list :accessor lambda-list)
+   ;; The number of closure cells this function has.
+   ;; Used internally, but shouldn't matter to code generation.
+   (%closure-size :initarg :closure-size :accessor closure-size
+                  :initform 0 :type (integer 0))))
 
 (defun make-enter-instruction
     (lambda-list &key (successor nil successor-p) origin)
@@ -286,7 +290,7 @@
 ;;; Instruction UNWIND-INSTRUCTION.
 ;;;
 ;;; This instruction is used to indicate a lexical non-local transfer
-;;; of control resulting from a GO or a RETURN-FROM form.
+;;; of control resulting form a GO or a RETURN-FROM form.
 
 (defclass unwind-instruction
     (instruction one-successor-mixin side-effect-mixin)
