@@ -613,48 +613,7 @@ to trust this, because the function might be redefined later.%
 
 When the compiler must assume that some variable has indefinite
 extent, then code must be generated to store that variable in a
-heap-allocated environment.  We represent this environment as a proper
-\commonlisp{} list of simple vectors.  
-
-This representation might seem wasteful, because a simple vector is
-represented as a header object and a rack containing the
-\emph{length} of the vector, though that information is implicit in
-the value of the program counter, so it could be elided.  The
-representation is wasteful in two ways:
-
-\begin{itemize}
-\item Allocation is a bit slower because two chunks of memory must be
-  allocated and linked, and length information must be stored. 
-\item Looking up the value of a variable requires another
-  indirection. 
-\end{itemize}
-
-However, we think this apparent waste is going to be insignificant.
-Take for instance the example of a sequence function.  The capture
-itself (and the allocation of the environment) is going to be
-insignificant compared to the processing done by the sequence
-function.  Furthermore, the access to the captured variable is going
-to be insignificant compared to the overhead of calling the closure
-from the sequence function because of all the checks that have to be
-made such as argument count, etc.  
-
-The main reason for choosing this representation is that it has
-some advantages:
-
-\begin{itemize}
-\item Currently, every general instance has a header object and a
-  rack.  If we were to use a different representation for
-  environments, then they would have to be allocated in a dedicated
-  part of the heap, and that would make the memory-management system
-  significantly more complicated.
-\item By using existing standard object types, we simplify their
-  manipulation, and we can use standard accessor functions on them.
-\item Introspection becomes simpler, because no special code is
-  required in order to inspect the static runtime environment.  If a
-  special representation were chosen, specific code would be required
-  for its introspection.  In particular we can then simplify the
-  debugger. 
-\end{itemize}
+heap-allocated environment.
 
 \section{Runtime information}
 
