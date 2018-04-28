@@ -284,12 +284,12 @@ discriminating function then first calls
 \texttt{compute-applicable-methods-using-classes}, passing it the
 classes of the required arguments.  If the second value returned by
 that call is \textit{true}, then the effective method is computed by
-calling \texttt{compute-effective-method}.  The resulting effective
-method is combined with the classes of the arguments, and the list of
-applicable methods into a call history entry which is added to the
-call history, and the effective method is invoked on the arguments
-received.  If the second value returned by the call is \textit{false},
-then the discriminating function calls
+calling the generic function named \texttt{compute-effective-method}.
+The resulting effective method is combined with the classes of the
+arguments, and the list of applicable methods into a call history
+entry which is added to the call history, and the effective method is
+invoked on the arguments received.  If the second value returned by
+the call is \textit{false}, then the discriminating function calls
 \texttt{compute-applicable-methods} with the list of the arguments
 received, and then the effective method is computed by calling
 \texttt{compute-effective-method} and finally invoked.
