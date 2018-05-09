@@ -42,6 +42,7 @@
    #:fdefinition-instruction #:make-fdefinition-instruction
    #:enter-instruction #:make-enter-instruction
    #:lambda-list #:closure-size
+   #:static-environment #:parameters
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction #:make-nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction

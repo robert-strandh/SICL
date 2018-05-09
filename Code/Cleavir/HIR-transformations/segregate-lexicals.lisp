@@ -86,7 +86,7 @@
 
 (defun add-fetch (enter dloc)
   ;; Finally, add a new FETCH-INSTRUCTION after ENTER.
-  (let ((env-location (first (cleavir-ir:outputs enter)))
+  (let ((env-location (cleavir-ir:static-environment enter))
         ;; The dynamic lexical variable that holds the static
 	;; environment is the first output of the enter instruction.
 	(cleavir-ir:*policy* (cleavir-ir:policy enter))

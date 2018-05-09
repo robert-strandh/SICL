@@ -19,6 +19,14 @@
    (%closure-size :initarg :closure-size :accessor closure-size
                   :initform 0 :type (integer 0))))
 
+(defgeneric static-environment (instruction))
+(defmethod static-environment ((instruction enter-instruction))
+  (first (outputs instruction)))
+
+(defgeneric parameters (instruction))
+(defmethod parameters ((instruction enter-instruction))
+  (rest (outputs instruction)))
+
 (defun make-enter-instruction
     (lambda-list &key (successor nil successor-p) origin)
   (let* ((outputs (loop for item in lambda-list
@@ -38,7 +46,8 @@
 
 (defmethod clone-instruction :around ((instruction enter-instruction))
   (let ((result (call-next-method)))
-    (setf (lambda-list result) (lambda-list instruction))
+    (setf (lambda-list result) (lambda-list instruction)
+          (closure-size result) (closure-size instruction))
     result))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
