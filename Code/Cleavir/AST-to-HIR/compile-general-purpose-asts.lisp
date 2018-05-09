@@ -300,10 +300,14 @@
             for item-ast in (reverse (cleavir-ast:item-asts ast))
             ;; if an item is a tag, we set the relevant catch's NOP to succeed
             ;; to the right place (the current NEXT).
+            ;; We also include the NOP in the normal sequence (i.e. make it NEXT).
+            ;; This isn't strictly necessary, but if we don't it makes a pointless
+            ;; basic block.
             if (typep item-ast 'cleavir-ast:tag-ast)
               do (let* ((catch (car (go-info item-ast)))
                         (nop (second (cleavir-ir:successors catch))))
-                   (setf (cleavir-ir:successors nop) (list next)))
+                   (setf (cleavir-ir:successors nop) (list next)
+                         next nop))
             ;; if it's not a tag, we compile it, expecting no values.
             else do (setf next
                           (compile-ast item-ast
