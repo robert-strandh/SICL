@@ -235,7 +235,7 @@
           (label instruction))
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
           (instruction-id instruction)
-          (gethash (invocation instruction) *instruction-table*)))
+          (gethash (destination instruction) *instruction-table*)))
 
 (defmethod label ((instruction unwind-instruction)) "unwind")
 

@@ -252,63 +252,61 @@
 ;;;
 ;;; Instruction CATCH-INSTRUCTION.
 ;;;
-;;; This instruction is used to mark the stack to be an exit point.
-;;; It takes a single input and it has a single successor.  It has no
-;;; outputs.  The effect of the instruction is to push an entry onto
-;;; the dynamic environment that contains the value of the input to
-;;; the instruction and the current stack.
+;;; This instruction is used to mark a control point and stack frame
+;;; as an exit point. It has no inputs, one output, and two successors.
+;;; When reached normally, the instruction outputs a "continuation",
+;;; pushes it onto the (implicit) dynamic environment in whatever
+;;; client-defined way, and then proceeds to its first successor.
+;;; If the continuation is used as input to an UNWIND-INSTRUCTION,
+;;; control proceeds to the CATCH's second successor.
 ;;;
-;;; To implement the Common Lisp CATCH special operator, the entire
-;;; CATCH form would be placed in a thunk that can not be inlined
-;;; (because the return address must be explicit).  Inside that thunk,
-;;; the CATCH-INSTRUCTION would be used to mark capture the stack at
-;;; that point.  The THROW special operator would search the dynamic
-;;; environment for the frame, and use the return address stored in it. 
+;;; The continuation can only be used, and cannot be used after the
+;;; function containing the CATCH has returned or been unwound from.
+;;; In Scheme terms, it is a one-shot escape continuation.
 ;;;
-;;; The CATCH-INSTRUCTION can also be used to implement lexical
-;;; non-local control transfers such as RETURN-FROM and GO.  It would
-;;; be used when the successor of an instruction I at some lexical
-;;; depth is an instruction J at a lesser lexical depth.  The
-;;; procedure at the lesser lexical depth would contain a lexical
-;;; location L into which some unique object (say the result of (LIST
-;;; NIL)) is placed.  This instruction would then be used with L as an
-;;; input.  An UNIWIND-INSTRUCTION would be inserted into the arc from
-;;; I to J.  That instruction would use L as an input.  The effect
-;;; would be that before J is reached, the stack would be unwound to
-;;; the state it had when the CATCH-INSTRUCTION was executed. 
+;;; This instruction can be used to implement the Common Lisp BLOCK
+;;; and/or TAGBODY special operators, among other possible nonlocal
+;;; exit constructors. A BLOCK would be compiled into a CATCH with
+;;; the block body as first successor, and return point as second.
+;;; Functions returning to the BLOCK would UNWIND to the CATCH, using
+;;; a closed-over continuation.
 
-(defclass catch-instruction (instruction one-successor-mixin)
+(defclass catch-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-catch-instruction (input &optional (successor nil successor-p))
+(defun make-catch-instruction (output successors)
   (make-instance 'catch-instruction
-    :inputs (list input)
-    :successors (if successor-p (list successor) '())))
+    :outputs (list output)
+    :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction UNWIND-INSTRUCTION.
 ;;;
 ;;; This instruction is used to indicate a lexical non-local transfer
-;;; of control resulting form a GO or a RETURN-FROM form.
+;;; of control resulting from a GO or a RETURN-FROM form.
+;;;
+;;; The process of unwinding may involve dynamically determined side
+;;; effects due to UNWIND-PROTECT.
+;;;
+;;; The instruction has one input, which is the continuation output by a
+;;; CATCH-INSTRUCTION. See its comment for details.
 
 (defclass unwind-instruction
-    (instruction one-successor-mixin side-effect-mixin)
-  (;; The invocation of the UNWIND-INSTRUCTION is the
-   ;; ENTER-INSTRUCTION that represents the function invocation at
-   ;; which execution should continue after the stack has been
-   ;; unwound.
-   (%invocation :initarg :invocation :reader invocation)))
+    (instruction no-successors-mixin side-effect-mixin)
+  (;; The destination of the UNWIND-INSTRUCTION is the
+   ;; CATCH-INSTRUCTION to which it will eventually transfer control.
+   ;; It is not a normal successor because the exit is non-local.
+   (%destination :initarg :destination :reader destination)))
 
-(defun make-unwind-instruction (successor invocation)
+(defun make-unwind-instruction (input destination)
   (make-instance 'unwind-instruction
-    :inputs '()
-    :outputs '()
-    :successors (list successor)
-    :invocation invocation))
+    :inputs (list input)
+    :destination destination))
 
 (defmethod clone-instruction :around ((instruction unwind-instruction))
-  (reinitialize-instance (call-next-method) :invocation (invocation instruction)))
+  (reinitialize-instance (call-next-method)
+    :destination (destination instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

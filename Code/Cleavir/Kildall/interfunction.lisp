@@ -24,8 +24,8 @@
   `(setf (gethash ,enclose *enclose-info*) ,new-value))
 
 (defun initialize-interfunction (initial-instruction)
-  ;; by/with ensures that returns are only hit after their enclose.
-  (cleavir-ir:map-instructions-by/with-owner
+  ;; we rely on the fact that returns are only hit after their enclose.
+  (cleavir-ir:map-instructions-with-owner
    (lambda (instruction owner)
      (typecase instruction
        (cleavir-ir:enclose-instruction

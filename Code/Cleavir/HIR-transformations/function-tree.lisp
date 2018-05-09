@@ -49,7 +49,7 @@
 		 :initial-instruction initial-instruction)))
     ;; Enter the root into the table.
     (setf (gethash initial-instruction table) root)
-    (cleavir-ir:map-instructions-by/with-owner
+    (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (when (typep instruction 'cleavir-ir:enclose-instruction)
 	 (let* ((parent (gethash owner table))

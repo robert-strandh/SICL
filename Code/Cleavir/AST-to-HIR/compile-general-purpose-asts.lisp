@@ -166,11 +166,15 @@
 ;;;
 ;;; Compile a BLOCK-AST.
 ;;;
-;;; A BLOCK-AST is compiled by compiling its body in the same context
-;;; as the block-ast itself.  However, we store that context in the
+;;; A BLOCK-AST is compiled by inserting a CATCH-INSTRUCTION,
+;;; which has as first successor the compilation of the body
+;;; in the same context as the block-ast itself, and as second
+;;; successor the successor of the block-ast context.
+;;; The context and the catch instruction are stored in the
 ;;; *BLOCK-INFO* hash table using the block-ast as a key, so that a
-;;; RETURN-FROM-AST that refers to this block can be compiled in the
-;;; same context.
+;;; RETURN-FROM-AST that refers to this block can be compiled
+;;; either in the block's context if it's local, and to unwind
+;;; using the correct continuation otherwise.
 
 (defparameter *block-info* nil)
 
@@ -181,8 +185,17 @@
   (setf (gethash block-ast *block-info*) new-info))
 
 (defmethod compile-ast ((ast cleavir-ast:block-ast) context)
-  (setf (gethash ast *block-info*) context)
-  (compile-ast (cleavir-ast:body-ast ast) context))
+  (with-accessors ((results results)
+                   (successors successors)
+                   (invocation invocation))
+      context
+    (let ((catch (cleavir-ir:make-catch-instruction
+                  (make-temp)
+                  (list
+                   (compile-ast (cleavir-ast:body-ast ast) context)
+                   (first successors)))))
+      (setf (block-info ast) (cons context catch))
+      catch)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -205,25 +218,30 @@
 ;;; FORM-AST with the same results as the ones in the context in which
 ;;; the BLOCK-AST was compiled, but in the current invocation.  We
 ;;; then insert an UNWIND-INSTRUCTION that serves as the successor of
-;;; the compilation of the FORM-AST.  The successor of that
+;;; the compilation of the FORM-AST.  The destination of that
 ;;; UNWIND-INSTRUCTION is the successor of the context in which the
 ;;; BLOCK-AST was compiled.
 
 (defmethod compile-ast ((ast cleavir-ast:return-from-ast) context)
-  (let ((block-context (block-info (cleavir-ast:block-ast ast))))
+  (let* ((block-info (block-info (cleavir-ast:block-ast ast)))
+         (block-context (car block-info)) (catch (cdr block-info)))
     (with-accessors ((results results)
-		     (successors successors)
-		     (invocation invocation))
-	block-context
+                     (successors successors)
+                     (invocation invocation))
+        block-context
       (if (eq (invocation context) invocation)
+          ;; simple case: we are returning locally.
 	  (compile-ast (cleavir-ast:form-ast ast) block-context)
+          ;; harder case: unwind.
 	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
-				 (first successors) invocation))
+                                 ;; the continuation
+				 (first (cleavir-ir:outputs catch))
+                                 catch))
 		 (new-context (context results
 				       (list new-successor)
 				       (invocation context))))
 	    (compile-ast (cleavir-ast:form-ast ast) new-context))))))
-	
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a TAGBODY-AST.
@@ -249,65 +267,69 @@
 (defun (setf go-info) (new-info tag-ast)
   (setf (gethash tag-ast *go-info*) new-info))
 
-;;; For each TAG-AST in the tagbody, a NOP instruction is created.  A
-;;; list containing this instruction and the INVOCATION of the current
-;;; context is created.  That list is entered into the hash table
-;;; *GO-INFO* using the TAG-AST as a key.  Then the items are compiled
-;;; in the reverse order, stacking new instructions before the
-;;; successor computed previously.  Compiling a TAG-AST results in the
-;;; successor of the corresponding NOP instruction being modified to
-;;; point to the remining instructions already computed.  Compiling
-;;; something else is done in a context with an empty list of results,
-;;; using the remaining instructions already computed as a single
-;;; successor.
+;;; What we end up with is 0 or more CATCH instructions (one for each tag),
+;;; followed by a NOP, followed by the non-tag items compiled in order like
+;;; a PROGN, but in a special context that includes info about the tags.
+;;; The CATCH instruction abnormal successors are NOPs that have the appropriate
+;;; items as successors.
+;;; To accomplish this, we make the main NOP, then loop over the body twice.
 (defmethod compile-ast ((ast cleavir-ast:tagbody-ast) context)
-  (loop for item-ast in (cleavir-ast:item-asts ast)
-	do (when (typep item-ast 'cleavir-ast:tag-ast)
-	     (setf (go-info item-ast)
-		   (list (cleavir-ir:make-nop-instruction nil)
-			 (invocation context)))))
-  (with-accessors ((successors successors))
+  (with-accessors ((results results)
+                   (successors successors)
+                   (invocation invocation))
       context
-    (let ((next (first successors)))
-      (loop for item-ast in (reverse (cleavir-ast:item-asts ast))
-	    do (setf next
-		     (if (typep item-ast 'cleavir-ast:tag-ast)
-			 (let ((instruction (first (go-info item-ast))))
-			   (setf (cleavir-ir:successors instruction)
-				 (list next))
-			   instruction)
-			 (compile-ast item-ast
-				      (context '()
-					       (list next)
-					       (invocation context))))))
-      next)))
+    (let* ((dummy (cleavir-ir:make-nop-instruction nil))
+           (result dummy))
+      ;; In the first loop, we make a CATCH for each tag. The CATCH's normal successor
+      ;; is the previously made catch if there was one, or if not the main NOP. The
+      ;; abnormal successor is set to be a fresh NOP, which is used as the successor
+      ;; of local GOs.
+      (loop for item-ast in (cleavir-ast:item-asts ast)
+            do (when (typep item-ast 'cleavir-ast:tag-ast)
+                 (setf result
+                       (cleavir-ir:make-catch-instruction
+                        (make-temp) result (cleavir-ir:make-nop-instruction nil))
+                       (go-info item-ast)
+                       (cons result invocation))))
+      ;; Now we actually compile the items, in reverse order (like PROGN).
+      (loop with next = (first successors)
+            for item-ast in (reverse (cleavir-ast:item-asts ast))
+            ;; if an item is a tag, we set the relevant catch's NOP to succeed
+            ;; to the right place (the current NEXT).
+            if (typep item-ast 'cleavir-ast:tag-ast)
+              do (let* ((catch (car (go-info item-ast)))
+                        (nop (second (cleavir-ir:successors catch))))
+                   (setf (cleavir-ir:successors nop) (list next)))
+            ;; if it's not a tag, we compile it, expecting no values.
+            else do (setf next
+                          (compile-ast item-ast
+                                       (context '() (list next) invocation)))
+            ;; lastly we hook up the main NOP to go to the item code.
+            finally (setf (cleavir-ir:successors dummy) (list next)))
+      result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a GO-AST.
 ;;;
 ;;; We obtain the GO-INFO that was stored when the TAG-AST of this
-;;; GO-AST was compiled.  This info is a list of two elements.  The
-;;; first element is the NOP instruction that resulted from the
-;;; compilation of the TAG-AST.  The second element is the INVOCATION
-;;; of the compilation context when the TAG-AST was compiled.
+;;; GO-AST was compiled.  This info is a cons. The CAR is the CATCH
+;;; instruction for the tag. The CDR is the INVOCATION of the tagbody.
 ;;;
 ;;; The INVOCATION of the parameter CONTEXT is compared to the
-;;; invocation in which the target TAG-AST of this GO-AST was
-;;; compiled, which is the second element of the GO-INFO list.  If
-;;; they are the same, we have a local transfer of control, so we just
-;;; return the NOP instruction that resulted from the compilation of
-;;; the TAG-AST.  If they are not the same, we generate an
-;;; UNWIND-INSTRUCTION with that NOP instruction as its successor, and
-;;; we store the INVOCATION of the compilation context when the
-;;; TAG-AST was compiled in the UNWIND-INSTRUCTION so that we know how
-;;; far to unwind.
+;;; tagbody invocation. If they are the same, we have a local transfer
+;;; of control, so we just return the NOP instruction that the CATCH
+;;; has as its abnormal successor. If they are not the same, we generate
+;;; an UNWIND-INSTRUCTION with the CATCH as its destination and using its
+;;; continuation.
 
 (defmethod compile-ast ((ast cleavir-ast:go-ast) context)
-  (let ((info (go-info (cleavir-ast:tag-ast ast))))
-    (if (eq (second info) (invocation context))
-	(first info)
-	(cleavir-ir:make-unwind-instruction (first info) (second info)))))
+  (let* ((info (go-info (cleavir-ast:tag-ast ast)))
+         (catch (car info)) (invocation (cdr info)))
+    (if (eq invocation (invocation context))
+	(second (cleavir-ir:successors catch))
+	(cleavir-ir:make-unwind-instruction
+         (first (cleavir-ir:outputs catch)) catch))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
