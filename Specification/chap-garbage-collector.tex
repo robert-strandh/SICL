@@ -77,6 +77,13 @@ In many cases, this test can be omitted as a result of \emph{type
   inference}, for instance if the datum being written can be
 determined at compile time to be an immediate object.
 
+The write barrier is tripped whether the reference to be stored is to
+an object in the global heap or to an object in the local heap.  In
+the first case, the write barrier is used to make sure there is not a
+reference to a white object stored in a black object.  In the second
+case, the write barrier is used to trigger a migration of local
+objects to the global heap.
+
 Objects in the global heap are \emph{allocated black}, i.e. it is
 assumed that they are referenced.  When the global heap is about to be
 collected, threads are first asked to garbage collect their nurseries
