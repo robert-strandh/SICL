@@ -63,7 +63,19 @@ attempt is made to store a reference to an object in a nursery in an
 object in the global heap, then the object being referred to and all
 the objects in its transitive closure are first moved to the global
 heap.  As a result, there are no references from the global heap to
-objects in any nursery.
+objects in any nursery.  The write barrier is implemented as a test,
+emitted by the compiler, to determine:
+
+\begin{enumerate}
+\item whether the object written to is indeed an object in the global
+  heap, and
+\item whether the datum being written is reference to a heap-allocated
+  object (as opposed to an immediate object).
+\end{enumerate}
+
+In many cases, this test can be omitted as a result of \emph{type
+  inference}, for instance if the datum being written can be
+determined at compile time to be an immediate object.
 
 Objects in the global heap are \emph{allocated black}, i.e. it is
 assumed that they are referenced.  When the global heap is about to be
