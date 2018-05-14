@@ -111,6 +111,19 @@ to determine whether the write barrier can be elided.
 
 \subsection{Protocol}
 
+\Defun {allocate-rack} {size}
+
+Allocate a rack containing \textit{size} words and return an untagged
+pointer to it.  Because the pointer is untagged, it will look like a
+fixnum.
+
+\Defun {allocate-header} {class rack}
+
+This function allocates a new two-word header and returns a tagged
+pointer to it.  The argument \textit{class} is the class of the object
+to be constructred.  The argument \textit{rack} is the rack that holds
+the data contained in the object to be constructed.
+
 \section{Nursery collector}
 The directory \texttt{Code/Garbage-collector} contains some code that
 uses a different data representation from what we now suggest.  
