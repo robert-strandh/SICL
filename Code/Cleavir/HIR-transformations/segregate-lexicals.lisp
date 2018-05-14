@@ -186,9 +186,17 @@
 	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
     (setf (cleavir-ir:outputs instruction)
 	  (substitute d sloc (cleavir-ir:outputs instruction)))
-    (cleavir-ir:insert-instruction-after
-     (cleavir-ir:make-write-cell-instruction cloc d)
-     instruction)))
+    ;; CATCH has two successors and one output. There are other instructions
+    ;; like that, but CATCH is the only one whose output is closed over in
+    ;; normal code. Due to its unusual control flow, we special case it here.
+    (if (typep instruction 'cleavir-ir:catch-instruction)
+        (cleavir-ir:insert-instruction-between
+         (cleavir-ir:make-write-cell-instruction cloc d)
+         instruction
+         (first (cleavir-ir:successors instruction)))
+        (cleavir-ir:insert-instruction-after
+         (cleavir-ir:make-write-cell-instruction cloc d)
+         instruction))))
 
 ;;; Given a single static lexical location LOCATION, eliminate it by
 ;;; replacing all accesses to it by accesses to a corresponding CELL.
