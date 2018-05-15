@@ -127,6 +127,12 @@ pointer to it.  The argument \textit{class} is the class of the object
 to be constructred.  The argument \textit{rack} is the rack that holds
 the data contained in the object to be constructed.
 
+\Defun {cons} {car cdr}
+
+This function allocates a new two-word \texttt{cons} cell and returns
+a tagged pointer to it.  The arguments have the same meaning as for
+the standard \commonlisp{} function \texttt{cons}.
+
 \section{Nursery collector}
 The directory \texttt{Code/Garbage-collector} contains some code that
 uses a different data representation from what we now suggest.  
