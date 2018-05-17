@@ -114,6 +114,14 @@ to determine whether the write barrier can be elided.
 The names of these functions are exported by the package named
 \texttt{sicl-global-allocator}.
 
+\Defun {copy-object} {object}
+
+This function takes an object that is allocated in some thread-local
+heap, copies it, and returns a copy that is allocated in the global
+heap.  All the objects referred to by \textit{object}, including the
+class of a general instance, must either be immediate objects, or
+objects located in the global heap,
+
 \Defun {allocate-rack} {size}
 
 Allocate a rack containing \textit{size} words and return an untagged
