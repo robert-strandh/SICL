@@ -17,26 +17,26 @@
 
 (defgeneric enter-instruction (node))
 
-(defclass tree-node ()
+(defclass dag-node ()
   ((%children :initform '() :accessor children)))
 
-(defclass function-tree (tree-node)
+(defclass function-dag (dag-node)
   ((%initial-instruction :initarg :initial-instruction
 			 :reader initial-instruction)
-   (%tree-nodes :initarg :tree-nodes :reader tree-nodes)))
+   (%dag-nodes :initarg :dag-nodes :reader dag-nodes)))
 
-(defmethod enter-instruction ((node function-tree))
+(defmethod enter-instruction ((node function-dag))
   (initial-instruction node))
 
-(defclass interior-node (tree-node)
-  ((%parent :initarg :parent :reader parent)
+(defclass interior-node (dag-node)
+  ((%parents :initarg :parents :reader parents)
    (%enclose-instruction :initarg :enclose-instruction
 			 :reader enclose-instruction)))
 
 (defmethod enter-instruction ((node interior-node))
   (cleavir-ir:code (enclose-instruction node)))
 
-(defun build-function-tree (initial-instruction)
+(defun build-function-dag (initial-instruction)
   (let* (;; Create an EQ hash table that maps ENTER-INSTRUCTIONs to
 	 ;; tree nodes such that the tree node is either the root, or
 	 ;; it contains the ENCLOSE-INSTRUCTION that the
@@ -44,26 +44,20 @@
 	 (table (make-hash-table :test #'eq))
 	 ;; Create the root of the tree that is ultimately going to be
 	 ;; returned as the value of this function.
-	 (root (make-instance 'function-tree
-		 :tree-nodes table
+	 (root (make-instance 'function-dag
+		 :dag-nodes table
 		 :initial-instruction initial-instruction)))
     ;; Enter the root into the table.
-    (setf (gethash initial-instruction table) root)
+    (setf (gethash initial-instruction table) (list root))
     (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (when (typep instruction 'cleavir-ir:enclose-instruction)
-	 (let* ((parent (gethash owner table))
+	 (let* ((parents (gethash owner table))
 		(node (make-instance 'interior-node
-			:parent parent
+			:parents parents
 			:enclose-instruction instruction)))
-	   (push node (children parent))
-	   (setf (gethash (cleavir-ir:code instruction) table) node))))
+	   (loop for parent in parents
+                 do (push node (children parent)))
+	   (push node (gethash (cleavir-ir:code instruction) table nil)))))
      initial-instruction)
     root))
-
-;;; Given a function tree and an ENTER-INSTRUCTION, find the parent
-;;; ENTER-INSTRUCTION of the ENTER-INSTRUCTION passed as an argument.
-(defun parent-enter (function-tree enter-instruction)
-  (let ((node (gethash enter-instruction (tree-nodes function-tree))))
-    (assert (typep node 'interior-node))
-    (enter-instruction (parent node))))

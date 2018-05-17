@@ -84,6 +84,35 @@
             :enter-instruction enter-instruction
             :mapping mapping))))
 
+(defmethod inline-one-instruction 
+    (enclose-instruction
+     call-instruction
+     enter-instruction
+     (successor-instruction cleavir-ir:enclose-instruction)
+     mapping)
+  ;; FIXME: Just like the above, but we have to copy the CODE too.
+  (let* ((inputs (cleavir-ir:inputs successor-instruction))
+         (new-inputs (translate-inputs inputs mapping))
+         (outputs (cleavir-ir:outputs successor-instruction))
+         (new-outputs (translate-outputs outputs
+                                         call-instruction
+                                         enter-instruction
+                                         mapping))
+         (code (copy-function (cleavir-ir:code successor-instruction) mapping))
+         (new-instruction (reinitialize-instance (cleavir-ir:clone-instruction successor-instruction)
+                            :inputs new-inputs :outputs new-outputs
+                            :predecessors nil :successors nil
+                            :code code)))
+    (add-to-mapping mapping successor-instruction new-instruction)
+    (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+    (setf (cleavir-ir:successors enter-instruction)
+          (cleavir-ir:successors successor-instruction))
+    (list (make-instance 'worklist-item
+            :enclose-instruction enclose-instruction
+            :call-instruction call-instruction
+            :enter-instruction enter-instruction
+            :mapping mapping))))
+
 (defun add-two-successor-instruction-before-instruction
     (instruction-to-add
      before-instruction
@@ -189,6 +218,7 @@
     ;; use the mapped version instead.
     (let ((external-values (first (cleavir-ir:outputs call-instruction)))
           (new-values (find-in-mapping mapping (first (cleavir-ir:inputs successor-instruction)))))
+      (assert (not (null new-values)))
       (loop for user in (cleavir-ir:using-instructions external-values)
             do (setf (cleavir-ir:inputs user)
                      (substitute new-values external-values (cleavir-ir:inputs user)))))

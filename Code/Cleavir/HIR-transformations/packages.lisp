@@ -26,9 +26,9 @@
    #:discern-trappers
    #:discern-sharing)
   (:export
-   #:build-function-tree
+   #:build-function-dag
    #:enter-instruction
    #:enclose-instruction
-   #:tree-nodes
-   #:parent
+   #:dag-nodes
+   #:parents
    #:children))
