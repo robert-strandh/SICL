@@ -372,16 +372,6 @@
   (declare (ignore inputs outputs))
   '(progn))
 
-(defmethod translate-simple-instruction
-    ((instruction cleavir-ir:unwind-instruction)
-     inputs outputs static-environment)
-  (declare (ignore static-environment))
-  (declare (ignore inputs outputs))
-  (let ((dynamic-environment-variable
-	  (gethash (cleavir-ir:invocation instruction)
-		   *dynamic-environment-variables*)))
-    `(unwind ,dynamic-environment-variable)))
-
 ;;; Recall that the FETCH-INSTRUCTION fetches a CELL from the static
 ;;; environment.  The instruction has two inputs and one output.  The
 ;;; first input is a lexical variable holding the static environment
@@ -516,6 +506,28 @@
     ((instruction cleavir-ir:return-instruction) inputs outputs successors)
   (declare (ignore successors))
   `(return (apply #'values ,(first inputs))))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:catch-instruction) inputs outputs successors)
+  (declare (ignore inputs outputs))
+  `(go ,(first successors)))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-ir:unwind-instruction) inputs outputs successors)
+  ;; The host lisp handles the dynamic extent of returns, so we don't need the input.
+  (declare (ignore inputs outputs))
+  (let* ((destination (cleavir-ir:destination instruction))
+         (dynamic-environment-variable
+	  (gethash (gethash destination *instruction-ownerships*)
+		   *dynamic-environment-variables*)))
+    `(progn (unwind ,dynamic-environment-variable)
+            (go ,(gethash (second (cleavir-ir:successors destination)) *tags*)))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-ir:unwind-instruction)
+     inputs outputs static-environment)
+  (declare (ignore static-environment))
+  (declare (ignore inputs outputs)))
 
 ;;; When the FUNCALL-INSTRUCTION is the last instruction of a basic
 ;;; block, it is because there is a call to a function that will never

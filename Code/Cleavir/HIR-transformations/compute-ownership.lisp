@@ -36,7 +36,7 @@
 ;;; hash table mapping an instruction to its owner
 (defun compute-instruction-owners (initial-instruction)
   (let ((result (make-hash-table :test #'eq)))
-    (cleavir-ir:map-instructions-by/with-owner
+    (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (setf (gethash instruction result) owner))
      initial-instruction)
@@ -54,7 +54,7 @@
 ;;; has been attributed an owner already, in which case we do nothing.
 (defun compute-location-owners (initial-instruction)
   (let ((result (make-hash-table :test #'eq)))
-    (cleavir-ir:map-instructions-by/with-owner 
+    (cleavir-ir:map-instructions-with-owner 
      (lambda (instruction owner)
        (loop for datum in (append (cleavir-ir:inputs instruction)
 				  (cleavir-ir:outputs instruction))
