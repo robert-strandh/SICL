@@ -122,6 +122,16 @@ heap.  All the objects referred to by \textit{object}, including the
 class of a general instance, must either be immediate objects, or
 objects located in the global heap,
 
+\Defun {make-array} {dimensions \key element-type initial-element
+  initial-contents adjustable fill-pointer}
+
+This function is similar to the \commonlisp{} function with the same
+name.  The difference is that this function can not be used to
+allocate displaced arrays.  This function can be used by client code
+to allocate arrays that are too big to be allocated in the
+thread-local heap.  All arguments must either be immidiate objects, or
+objects located in the global heap.
+
 \Defun {allocate-rack} {size}
 
 Allocate a rack containing \textit{size} words and return an untagged
