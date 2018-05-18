@@ -376,6 +376,14 @@
 ;;; compiling its LAMBDA-LIST and BODY-AST into some code, represented
 ;;; by the first instruction in the body.  We then generate an
 ;;; ENCLOSE-INSTRUCTION that takes this code as input.
+;;;
+;;; With inlining, it is possible for the same FUNCTION-AST to be
+;;; encountered more than once. This represents a separate enclosure
+;;; of the same function. We maintain a table of encountered FUNCTION-ASTs
+;;; to avoid recompiling any.
+;;; (If we don't, it causes numerous inconsistencies. Most especially,
+;;;  LEXICAL-ASTs will compile to the same datum, resulting in data with
+;;;  no one owner.)
 
 (defun translate-lambda-list (lambda-list)
   (loop for item in lambda-list
@@ -391,6 +399,15 @@
 		      (t
 		       (find-or-create-location item)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function COMPILE-FUNCTION
+;;;
+;;; Returns a new enter instruction and so on for a
+;;; FUNCTION-AST. Users that subclass FUNCTION-AST
+;;; can define methods on it.
+
+(defgeneric compile-function (ast))
 
 ;;; The logic of this method is a bit twisted.  The reason is that we
 ;;; must create the ENTER-INSTRUCTION before we compile the body of
@@ -403,14 +420,23 @@
 ;;; dummy successor.  Once the body has been compiled, we call
 ;;; REINITIALIZE-INSTANCE on the ENTER-INSTRUCTION to set the slots to
 ;;; their final values.
-(defmethod compile-ast ((ast cleavir-ast:function-ast) context)
+(defmethod compile-function ((ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-	 (enter (cleavir-ir:make-enter-instruction ll :origin (cleavir-ast:origin ast)))
-	 (values (cleavir-ir:make-values-location))
-	 (return (cleavir-ir:make-return-instruction (list values)))
-	 (body-context (context values (list return) enter))
-	 (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
+         (enter (cleavir-ir:make-enter-instruction ll :origin (cleavir-ast:origin ast)))
+         (values (cleavir-ir:make-values-location))
+         (return (cleavir-ir:make-return-instruction (list values)))
+         (body-context (context values (list return) enter))
+         (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
+    enter))
+
+(defvar *function-info*)
+
+(defmethod compile-ast ((ast cleavir-ast:function-ast) context)
+  ;; As per above comment concerning inlining, we memoize here.
+  (let ((enter (or (gethash ast *function-info*)
+                   (setf (gethash ast *function-info*)
+                         (compile-function ast)))))
     (cleavir-ir:make-enclose-instruction
      (first (results context))
      (first (successors context))
@@ -625,6 +651,7 @@
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq))
+        (*function-info* (make-hash-table :test #'eq))
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
@@ -646,6 +673,7 @@
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq))
+        (*function-info* (make-hash-table :test #'eq))
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
 	   (enter (cleavir-ir:make-enter-instruction ll :origin (cleavir-ast:origin ast)))

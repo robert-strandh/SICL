@@ -9,6 +9,7 @@
    #:make-temps
    #:compile-ast
    #:translate-lambda-list
+   #:compile-function
    #:context
    #:compile-arguments
    #:invocation))
