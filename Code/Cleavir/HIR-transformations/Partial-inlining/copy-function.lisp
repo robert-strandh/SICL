@@ -22,24 +22,13 @@
         (copies nil))
     ;; First loop: Copy everything, but don't hook up predecessors and successors.
     (loop with worklist = (list to-copy)
-          with enters-seen = nil ; used to avoid copying upward through an unwind.
           until (null worklist)
           do (block next-loop
                (let ((instruction (pop worklist)))
                  (unless (find-in-mapping mapping instruction)
                    (typecase instruction
-                     (cleavir-ir:enter-instruction
-                      (push instruction enters-seen))
                      (cleavir-ir:enclose-instruction
-                      (push (cleavir-ir:code instruction) worklist))
-                     (cleavir-ir:unwind-instruction
-                      ;; If we haven't seen the invocation yet, this unwind
-                      ;; is to outside what we're copying. (We're basically
-                      ;; continually moving "down".) So don't copy, and don't
-                      ;; add to the worklist.
-                      (unless (find (cleavir-ir:invocation instruction)
-                                    enters-seen)
-                        (return-from next-loop))))
+                      (push (cleavir-ir:code instruction) worklist)))
                    (setf worklist
                          (append (cleavir-ir:successors instruction) worklist))
                    ;; now actually copy.
