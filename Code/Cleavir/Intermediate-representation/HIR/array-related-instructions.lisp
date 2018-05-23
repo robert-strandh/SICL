@@ -17,7 +17,7 @@
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
 
-(defmethod clone-initargs ((instruction aref-instruction))
+(defmethod clone-initargs append ((instruction aref-instruction))
   (list :element-type (element-type instruction)
         :simple-p (simple-p instruction)
         :boxed-p (boxed-p instruction)))
@@ -38,7 +38,7 @@
    (%simple-p :initarg :simple-p :reader simple-p)
    (%boxed-p :initarg :boxed-p :reader boxed-p)))
 
-(defmethod clone-initargs ((instruction aset-instruction))
+(defmethod clone-initargs append ((instruction aset-instruction))
   (list :element-type (element-type instruction)
         :simple-p (simple-p instruction)
         :boxed-p (boxed-p instruction)))

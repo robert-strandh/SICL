@@ -11,7 +11,7 @@
 (defclass box-instruction (instruction one-successor-mixin)
   ((%element-type :initarg :element-type :accessor element-type)))
 
-(defmethod clone-initargs ((instruction box-instruction))
+(defmethod clone-initargs append ((instruction box-instruction))
   (list :element-type (element-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -24,5 +24,5 @@
 (defclass unbox-instruction (instruction one-successor-mixin)
   ((%element-type :initarg :element-type :accessor element-type)))
 
-(defmethod clone-initargs ((instruction unbox-instruction))
+(defmethod clone-initargs append ((instruction unbox-instruction))
   (list :element-type (element-type instruction)))

@@ -89,7 +89,7 @@
 (defgeneric clone-initargs (instruction)
   (:method-combination append))
 
-(defmethod clone-initargs ((instruction instruction))
+(defmethod clone-initargs append ((instruction instruction))
   (list :inputs (inputs instruction)
         :outputs (outputs instruction)
         :predecessors (predecessors instruction)

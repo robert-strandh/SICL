@@ -91,7 +91,7 @@
     :optional optional
     :rest rest))
 
-(defmethod clone-initargs ((instruction the-values-instruction))
+(defmethod clone-initargs append ((instruction the-values-instruction))
   (list :required (required-types instruction)
         :optional (optional-types instruction)
         :rest (rest-type instruction)))

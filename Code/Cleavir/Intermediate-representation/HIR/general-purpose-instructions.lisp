@@ -44,7 +44,7 @@
       :successors (if successor-p (list successor) '())
       :origin origin)))
 
-(defmethod clone-initargs ((instruction enter-instruction))
+(defmethod clone-initargs append ((instruction enter-instruction))
   (list :lambda-list (lambda-list instruction)
         :closure-size (closure-size instruction)))
 
@@ -72,7 +72,7 @@
     (change-class enter 'top-level-enter-instruction
 		  :forms forms)))
 
-(defmethod clone-initargs ((instruction top-level-enter-instruction))
+(defmethod clone-initargs append ((instruction top-level-enter-instruction))
   (list :forms (forms instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -181,7 +181,7 @@
     :successors (list successor)
     :code code))
 
-(defmethod clone-initargs ((instruction enclose-instruction))
+(defmethod clone-initargs append ((instruction enclose-instruction))
   (list :code (code instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -206,7 +206,7 @@
     :successors successors
     :value-type value-type))
 
-(defmethod clone-initargs ((instruction typeq-instruction))
+(defmethod clone-initargs append ((instruction typeq-instruction))
   (list :value-type (value-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -228,7 +228,7 @@
     :successors (list successor)
     :value-type value-type))
 
-(defmethod clone-initargs ((instruction the-instruction))
+(defmethod clone-initargs append ((instruction the-instruction))
   (list :value-type (value-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -307,7 +307,7 @@
     :inputs (list input)
     :destination destination))
 
-(defmethod clone-initargs ((instruction unwind-instruction))
+(defmethod clone-initargs append ((instruction unwind-instruction))
   (list :destination (destination instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

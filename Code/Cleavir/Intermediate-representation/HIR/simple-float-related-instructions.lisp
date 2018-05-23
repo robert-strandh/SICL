@@ -9,7 +9,7 @@
          :inputs (list input)
          :outputs (list output)
          :successors (list successor)))
-     (defmethod clone-initargs ((instruction ,name))
+     (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
 (defmacro define-simple-two-arg-float-instruction (name make-name)
@@ -21,7 +21,7 @@
          :inputs (list input1 input2)
          :outputs (list output)
          :successors (list successor)))
-     (defmethod clone-initargs ((instruction ,name))
+     (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
 (defmacro define-simple-float-comparison-instruction (name make-name)
@@ -33,7 +33,7 @@
          :inputs (list input1 input2)
          :outputs '()
          :successors (list successor1 successor2)))
-     (defmethod clone-initargs ((instruction ,name))
+     (defmethod clone-initargs append ((instruction ,name))
        (list :subtype (subtype instruction)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -169,5 +169,5 @@
     :outputs (list output)
     :successors (list successor)))
 
-(defmethod clone-initargs ((instruction coerce-instruction))
+(defmethod clone-initargs append ((instruction coerce-instruction))
   (list :from-type (from-type instruction) :to-type (to-type instruction)))
