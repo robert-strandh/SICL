@@ -84,14 +84,17 @@
   (loop for successor in (successors obj)
 	do (push obj (predecessors successor))))
 
-;;; This is kind of awkward to define methods for. Perhaps a special method combo is called for?
-;;; Or a list of slots to copy?
-(defgeneric clone-instruction (instruction))
+;;; Returns an initialization args list suitable for MAKE-INSTANCE to reproduce
+;;; the given instruction. Sssssort of like CLEAVIR-IO:SAVE-INFO.
+(defgeneric clone-initargs (instruction)
+  (:method-combination append))
 
-(defmethod clone-instruction ((instruction instruction))
-  (make-instance (class-of instruction)
-    :inputs (inputs instruction)
-    :outputs (outputs instruction)
-    :predecessors (predecessors instruction)
-    :successors (successors instruction)
-    :policy (policy instruction)))
+(defmethod clone-initargs ((instruction instruction))
+  (list :inputs (inputs instruction)
+        :outputs (outputs instruction)
+        :predecessors (predecessors instruction)
+        :successors (successors instruction)
+        :policy (policy instruction)))
+
+(defun clone-instruction (instruction &rest initargs &key &allow-other-keys)
+  (apply #'make-instance (class-of instruction) (append initargs (clone-initargs instruction))))

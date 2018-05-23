@@ -9,8 +9,8 @@
          :inputs (list input)
          :outputs (list output)
          :successors (list successor)))
-     (defmethod clone-instruction :around ((instruction ,name))
-       (reinitialize-instance (call-next-method) :subtype (subtype instruction)))))
+     (defmethod clone-initargs ((instruction ,name))
+       (list :subtype (subtype instruction)))))
 
 (defmacro define-simple-two-arg-float-instruction (name make-name)
   `(progn
@@ -21,8 +21,8 @@
          :inputs (list input1 input2)
          :outputs (list output)
          :successors (list successor)))
-     (defmethod clone-instruction :around ((instruction ,name))
-       (reinitialize-instance (call-next-method) :subtype (subtype instruction)))))
+     (defmethod clone-initargs ((instruction ,name))
+       (list :subtype (subtype instruction)))))
 
 (defmacro define-simple-float-comparison-instruction (name make-name)
   `(progn
@@ -33,8 +33,8 @@
          :inputs (list input1 input2)
          :outputs '()
          :successors (list successor1 successor2)))
-     (defmethod clone-instruction :around ((instruction ,name))
-       (reinitialize-instance (call-next-method) :subtype (subtype instruction)))))
+     (defmethod clone-initargs ((instruction ,name))
+       (list :subtype (subtype instruction)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -169,6 +169,5 @@
     :outputs (list output)
     :successors (list successor)))
 
-(defmethod clone-instruction :around ((instruction coerce-instruction))
-  (reinitialize-instance (call-next-method)
-    :from-type (from-type instruction) :to-type (to-type instruction)))
+(defmethod clone-initargs ((instruction coerce-instruction))
+  (list :from-type (from-type instruction) :to-type (to-type instruction)))

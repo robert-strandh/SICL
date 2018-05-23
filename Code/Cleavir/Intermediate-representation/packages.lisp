@@ -26,7 +26,7 @@
    #:reinitialize-data
    #:defining-instructions #:using-instructions
    #:instruction
-   #:clone-instruction
+   #:clone-instruction #:clone-initargs
    #:no-successors-mixin
    #:one-successor-mixin
    #:two-successors-mixin

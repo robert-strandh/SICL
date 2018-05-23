@@ -44,11 +44,9 @@
       :successors (if successor-p (list successor) '())
       :origin origin)))
 
-(defmethod clone-instruction :around ((instruction enter-instruction))
-  (let ((result (call-next-method)))
-    (setf (lambda-list result) (lambda-list instruction)
-          (closure-size result) (closure-size instruction))
-    result))
+(defmethod clone-initargs ((instruction enter-instruction))
+  (list :lambda-list (lambda-list instruction)
+        :closure-size (closure-size instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -74,10 +72,8 @@
     (change-class enter 'top-level-enter-instruction
 		  :forms forms)))
 
-(defmethod clone-instruction :around ((instruction top-level-enter-instruction))
-  (let ((result (call-next-method)))
-    (setf (forms result) (forms instruction))
-    result))
+(defmethod clone-initargs ((instruction top-level-enter-instruction))
+  (list :forms (forms instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -185,10 +181,8 @@
     :successors (list successor)
     :code code))
 
-(defmethod clone-instruction :around ((instruction enclose-instruction))
-  (let ((new (call-next-method)))
-    (setf (code new) (code instruction))
-    new))
+(defmethod clone-initargs ((instruction enclose-instruction))
+  (list :code (code instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -212,8 +206,8 @@
     :successors successors
     :value-type value-type))
 
-(defmethod clone-instruction :around ((instruction typeq-instruction))
-  (reinitialize-instance (call-next-method) :value-type (value-type instruction)))
+(defmethod clone-initargs ((instruction typeq-instruction))
+  (list :value-type (value-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -234,8 +228,8 @@
     :successors (list successor)
     :value-type value-type))
 
-(defmethod clone-instruction :around ((instruction the-instruction))
-  (reinitialize-instance (call-next-method) :value-type (value-type instruction)))
+(defmethod clone-initargs ((instruction the-instruction))
+  (list :value-type (value-type instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -313,9 +307,8 @@
     :inputs (list input)
     :destination destination))
 
-(defmethod clone-instruction :around ((instruction unwind-instruction))
-  (reinitialize-instance (call-next-method)
-    :destination (destination instruction)))
+(defmethod clone-initargs ((instruction unwind-instruction))
+  (list :destination (destination instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
