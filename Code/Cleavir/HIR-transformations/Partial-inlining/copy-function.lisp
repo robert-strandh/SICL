@@ -37,9 +37,8 @@
                           (new-inputs (translate-inputs inputs mapping))
                           (new-outputs
                             (translate-outputs-for-copy outputs mapping))
-                          (copy (reinitialize-instance
-                                 (cleavir-ir:clone-instruction instruction)
-                                 :inputs new-inputs :outputs new-outputs)))
+                          (copy (cleavir-ir:clone-instruction instruction
+                                   :inputs new-inputs :outputs new-outputs)))
                      (push copy copies)
                      (add-to-mapping mapping instruction copy))))))
     ;; Second loop: hook up the predecessors and successors.
@@ -55,4 +54,5 @@
                      (mapcar #'maybe-replace (cleavir-ir:predecessors copy))
                      (cleavir-ir:successors copy)
                      (mapcar #'maybe-replace (cleavir-ir:successors copy))))))
+  ;; Finally, return the actual ENTER instruction.
   (find-in-mapping mapping to-copy))

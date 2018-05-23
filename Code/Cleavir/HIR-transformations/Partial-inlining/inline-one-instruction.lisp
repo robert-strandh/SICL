@@ -11,6 +11,8 @@
         (call-next-method)
         '())))
 
+(defun local-catch-p (instruction) nil) ; FIXME
+
 (defun local-location-p (location)
   (eq (gethash location *location-ownerships*)
       *original-enter-instruction*))
@@ -71,7 +73,7 @@
                                          call-instruction
                                          enter-instruction
                                          mapping))
-         (new-instruction (reinitialize-instance (cleavir-ir:clone-instruction successor-instruction)
+         (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs :outputs new-outputs
                             :predecessors nil :successors nil)))
     (add-to-mapping mapping successor-instruction new-instruction)
@@ -99,7 +101,7 @@
                                          enter-instruction
                                          mapping))
          (code (copy-function (cleavir-ir:code successor-instruction) mapping))
-         (new-instruction (reinitialize-instance (cleavir-ir:clone-instruction successor-instruction)
+         (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs :outputs new-outputs
                             :predecessors nil :successors nil
                             :code code)))
@@ -112,6 +114,46 @@
             :call-instruction call-instruction
             :enter-instruction enter-instruction
             :mapping mapping))))
+
+(defmethod inline-one-instruction
+    (enclose-instruction
+     call-instruction
+     enter-instruction
+     (successor-instruction cleavir-ir:unwind-instruction)
+     mapping)
+  (let ((destination (cleavir-ir:destination successor-instruction)))
+    (if (local-catch-p destination)
+        ;; We are unwinding to the function being inlined into,
+        ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
+        (let ((new-instruction (cleavir-ir:make-nop-instruction nil)))
+          (add-to-mapping mapping successor-instruction new-instruction)
+          (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+          (setf (cleavir-ir:successors enter-instruction)
+                (list (second (cleavir-ir:successors destination))))
+          (list (make-instance 'worklist-item
+                  :enclose-instruction enclose-instruction
+                  :call-instruction call-instruction
+                  :enter-instruction enter-instruction
+                  :mapping mapping)))
+        ;; We are still actually unwinding, but need to ensure the
+        ;; DESTINATION is hooked up correctly.
+        (let* ((inputs (cleavir-ir:inputs successor-instruction))
+               (new-inputs (translate-inputs inputs mapping))
+               (outputs (cleavir-ir:outputs successor-instruction))
+               (new-outputs (translate-outputs outputs
+                                               call-instruction
+                                               enter-instruction
+                                               mapping))
+               (code (copy-function (cleavir-ir:code successor-instruction) mapping))
+               (new-instruction (cleavir-ir:clone-instruction successor-instruction
+                                  :inputs new-inputs :outputs new-outputs
+                                  :predecessors nil :successors nil
+                                  :code code)))
+          (add-to-mapping mapping successor-instruction new-instruction)
+          (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+          (setf (cleavir-ir:successors enter-instruction)
+                (cleavir-ir:successors successor-instruction))
+          '()))))
 
 (defun add-two-successor-instruction-before-instruction
     (instruction-to-add
@@ -159,7 +201,7 @@
                                          call-instruction
                                          enter-instruction
                                          mapping))
-         (new-instruction (reinitialize-instance (cleavir-ir:clone-instruction successor-instruction)
+         (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs
                             :outputs new-outputs
                             :predecessors nil :successors nil))
