@@ -11,7 +11,9 @@
         (call-next-method)
         '())))
 
-(defun local-catch-p (instruction) nil) ; FIXME
+(defun local-catch-p (instruction)
+  (eq (gethash instruction *instruction-ownerships*)
+      *target-enter-instruction*))
 
 (defun local-location-p (location)
   (eq (gethash location *location-ownerships*)

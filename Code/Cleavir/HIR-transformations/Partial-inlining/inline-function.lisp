@@ -2,6 +2,11 @@
 
 (defmethod inline-function (initial call enter mapping)
   (let* ((*original-enter-instruction* enter)
+         ;; The following two variables are used for catch/unwind.
+         (*instruction-ownerships*
+           (cleavir-hir-transformations:compute-instruction-owners initial))
+         (*target-enter-instruction*
+           (gethash call *instruction-ownerships*))
          (*location-ownerships*
            (cleavir-hir-transformations:compute-location-owners initial))
          (initial-environment (rest (cleavir-ir:outputs enter))) ; CAR is the closure vector - unneeded.

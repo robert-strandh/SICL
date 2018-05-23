@@ -14,3 +14,13 @@
 ;;; location.
 
 (defvar *location-ownerships*)
+
+;;; This variable contains an EQ hash table mapping instructions to
+;;; owners.
+
+(defvar *instruction-ownerships*)
+
+;;; This variable contains the ENTER instruction of the function
+;;; being inlined into.
+
+(defvar *target-enter-instruction*)
