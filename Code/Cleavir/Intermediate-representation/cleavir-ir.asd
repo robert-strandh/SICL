@@ -91,4 +91,5 @@
    (:file "graphviz-drawing")
    (:file "map-instructions-arbitrary-order")
    (:file "set-predecessors")
-   (:file "map-instructions")))
+   (:file "map-instructions")
+   (:file "map-local-instructions")))
