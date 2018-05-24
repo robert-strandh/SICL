@@ -147,11 +147,12 @@
                                                call-instruction
                                                enter-instruction
                                                mapping))
-               (code (copy-function (cleavir-ir:code successor-instruction) mapping))
+               (destination (or (find-in-mapping *instruction-mapping* destination)
+                                destination))
                (new-instruction (cleavir-ir:clone-instruction successor-instruction
                                   :inputs new-inputs :outputs new-outputs
                                   :predecessors nil :successors nil
-                                  :code code)))
+                                  :destination destination)))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
           (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
           (setf (cleavir-ir:successors enter-instruction)

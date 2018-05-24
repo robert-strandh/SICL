@@ -300,7 +300,7 @@
   (;; The destination of the UNWIND-INSTRUCTION is the
    ;; CATCH-INSTRUCTION to which it will eventually transfer control.
    ;; It is not a normal successor because the exit is non-local.
-   (%destination :initarg :destination :reader destination)))
+   (%destination :initarg :destination :accessor destination)))
 
 (defun make-unwind-instruction (input destination)
   (make-instance 'unwind-instruction

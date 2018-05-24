@@ -47,9 +47,13 @@
                (or copy instruction))))
       (loop for copy in copies
             ;; hook up CODEs first.
-            when (typep copy 'cleavir-ir:enclose-instruction)
-              do (setf (cleavir-ir:code copy)
-                       (maybe-replace (cleavir-ir:code copy)))
+            do (typecase copy
+                 (cleavir-ir:enclose-instruction
+                  (setf (cleavir-ir:code copy)
+                        (maybe-replace (cleavir-ir:code copy))))
+                 (cleavir-ir:unwind-instruction
+                  (setf (cleavir-ir:destination copy)
+                        (maybe-replace (cleavir-ir:destination copy)))))
             do (setf (cleavir-ir:predecessors copy)
                      (mapcar #'maybe-replace (cleavir-ir:predecessors copy))
                      (cleavir-ir:successors copy)
