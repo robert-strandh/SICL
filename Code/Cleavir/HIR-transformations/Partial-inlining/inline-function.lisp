@@ -34,6 +34,15 @@
     (cleavir-ir:insert-instruction-before enc call)
     (setf (cleavir-ir:inputs call)
           (cons function-temp call-arguments))
+    ;; If we're fully inlining a function, we want to use the call instruction's
+    ;; output instead of the callee's return values.
+    ;; FIXME: Not sure what to do if we're not fully inlining.
+    (loop with caller-values = (first (cleavir-ir:outputs call))
+          for return in (cleavir-ir:local-instructions-of-type
+                         enter 'cleavir-ir:return-instruction)
+          for input = (first (cleavir-ir:inputs return))
+          do (add-to-mapping mapping input caller-values))
+    ;; Do the actual inlining.
     (let ((worklist (list (make-instance 'worklist-item
                             :enclose-instruction enc
                             :call-instruction call

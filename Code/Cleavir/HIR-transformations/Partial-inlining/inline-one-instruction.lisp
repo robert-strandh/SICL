@@ -259,14 +259,6 @@
         (call-successor (first (cleavir-ir:successors call-instruction))))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
-    ;; Rearrange things so that instructions that use the call results as an input
-    ;; use the mapped version instead.
-    (let ((external-values (first (cleavir-ir:outputs call-instruction)))
-          (new-values (find-in-mapping mapping (first (cleavir-ir:inputs successor-instruction)))))
-      (assert (not (null new-values)))
-      (loop for user in (cleavir-ir:using-instructions external-values)
-            do (setf (cleavir-ir:inputs user)
-                     (substitute new-values external-values (cleavir-ir:inputs user)))))
     ;; manual hookup
     (setf (cleavir-ir:successors new-instruction) (list call-successor))
     (setf (cleavir-ir:predecessors call-successor)
