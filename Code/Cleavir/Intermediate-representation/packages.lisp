@@ -122,6 +122,8 @@
    #:map-instructions-arbitrary-order
    #:filter-instructions #:instructions-of-type
    #:map-instructions #:map-instructions-with-owner
+   #:map-local-instructions #:filter-local-instructions
+   #:local-instructions-of-type
    #:set-predecessors))
 
 (defpackage #:cleavir-ir-graphviz
