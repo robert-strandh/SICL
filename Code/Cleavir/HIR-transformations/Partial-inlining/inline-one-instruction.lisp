@@ -6,7 +6,8 @@
      enter-instruction
      successor-instruction
      mapping)
-  (let ((copy (find-in-mapping mapping successor-instruction)))
+  (declare (ignore enclose-instruction call-instruction enter-instruction mapping))
+  (let ((copy (find-in-mapping *instruction-mapping* successor-instruction)))
     (if (null copy)
         (call-next-method)
         '())))
@@ -78,7 +79,7 @@
          (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs :outputs new-outputs
                             :predecessors nil :successors nil)))
-    (add-to-mapping mapping successor-instruction new-instruction)
+    (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
     (setf (cleavir-ir:successors enter-instruction)
           (cleavir-ir:successors successor-instruction))
@@ -107,7 +108,7 @@
                             :inputs new-inputs :outputs new-outputs
                             :predecessors nil :successors nil
                             :code code)))
-    (add-to-mapping mapping successor-instruction new-instruction)
+    (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
     (setf (cleavir-ir:successors enter-instruction)
           (cleavir-ir:successors successor-instruction))
@@ -128,7 +129,7 @@
         ;; We are unwinding to the function being inlined into,
         ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
         (let ((new-instruction (cleavir-ir:make-nop-instruction nil)))
-          (add-to-mapping mapping successor-instruction new-instruction)
+          (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
           (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
           (setf (cleavir-ir:successors enter-instruction)
                 (list (second (cleavir-ir:successors destination))))
@@ -151,7 +152,7 @@
                                   :inputs new-inputs :outputs new-outputs
                                   :predecessors nil :successors nil
                                   :code code)))
-          (add-to-mapping mapping successor-instruction new-instruction)
+          (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
           (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
           (setf (cleavir-ir:successors enter-instruction)
                 (cleavir-ir:successors successor-instruction))
@@ -226,7 +227,7 @@
          (new-enclose (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose-instruction)))
                         (cleavir-ir:make-enclose-instruction
                          new-temp new-call new-enter))))
-    (add-to-mapping mapping successor-instruction new-instruction)
+    (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (add-two-successor-instruction-before-instruction
      new-instruction enclose-instruction enclose-instruction new-enclose)
     (setf (cleavir-ir:successors enter-instruction)
@@ -256,7 +257,7 @@
   (let ((new-instruction (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
                            (cleavir-ir:make-nop-instruction nil)))
         (call-successor (first (cleavir-ir:successors call-instruction))))
-    (add-to-mapping mapping successor-instruction new-instruction)
+    (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
     ;; Rearrange things so that instructions that use the call results as an input
     ;; use the mapped version instead.

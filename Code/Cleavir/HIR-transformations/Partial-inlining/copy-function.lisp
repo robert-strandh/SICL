@@ -25,7 +25,7 @@
           until (null worklist)
           do (block next-loop
                (let ((instruction (pop worklist)))
-                 (unless (find-in-mapping mapping instruction)
+                 (unless (find-in-mapping *instruction-mapping* instruction)
                    (typecase instruction
                      (cleavir-ir:enclose-instruction
                       (push (cleavir-ir:code instruction) worklist)))
@@ -40,10 +40,10 @@
                           (copy (cleavir-ir:clone-instruction instruction
                                    :inputs new-inputs :outputs new-outputs)))
                      (push copy copies)
-                     (add-to-mapping mapping instruction copy))))))
+                     (add-to-mapping *instruction-mapping* instruction copy))))))
     ;; Second loop: hook up the predecessors and successors.
     (flet ((maybe-replace (instruction)
-             (let ((copy (find-in-mapping mapping instruction)))
+             (let ((copy (find-in-mapping *instruction-mapping* instruction)))
                (or copy instruction))))
       (loop for copy in copies
             ;; hook up CODEs first.
@@ -55,4 +55,4 @@
                      (cleavir-ir:successors copy)
                      (mapcar #'maybe-replace (cleavir-ir:successors copy))))))
   ;; Finally, return the actual ENTER instruction.
-  (find-in-mapping mapping to-copy))
+  (find-in-mapping *instruction-mapping* to-copy))

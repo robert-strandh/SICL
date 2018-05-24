@@ -2,6 +2,7 @@
 
 (defmethod inline-function (initial call enter mapping)
   (let* ((*original-enter-instruction* enter)
+         (*instruction-mapping* (make-hash-table :test #'eq))
          ;; The following two variables are used for catch/unwind.
          (*instruction-ownerships*
            (cleavir-hir-transformations:compute-instruction-owners initial))

@@ -15,6 +15,12 @@
 
 (defvar *location-ownerships*)
 
+;;; This variable contains a mapping from instructions in the
+;;; original callee to copies previously created during this inlining.
+;;; Unlike the lexical variable mappings, it is global.
+
+(defvar *instruction-mapping*)
+
 ;;; This variable contains an EQ hash table mapping instructions to
 ;;; owners.
 
