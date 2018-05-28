@@ -118,7 +118,7 @@
 
 (defmethod stream-draw-ast ((ast bind-ast) stream)
   (format stream "   ~a [shape = box, label = \"~a\"];~%"
-          (label ast))
+          (id ast) (label ast))
   (let ((symbol-id (gensym)))
     (format stream "   ~a [shape = ellipse, label = \"~a\"];~%"
             symbol-id (symbol ast))
