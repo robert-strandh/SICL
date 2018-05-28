@@ -289,6 +289,7 @@
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:coerce)) form env system)
   (db origin (op type1 type2 form) form
+    (declare (ignore op))
     (make-instance 'cleavir-ast:coerce-ast
      :from type1 :to type2
      :arg-ast (convert form env system)
