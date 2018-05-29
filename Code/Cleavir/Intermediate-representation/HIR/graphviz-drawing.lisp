@@ -1,11 +1,5 @@
 (cl:in-package #:cleavir-ir-graphviz)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a datum on a stream.
-
-(defgeneric draw-datum (datum stream))
-
 ;;; During the drawing process, the value of this variable is a hash
 ;;; table that contains data that have already been drawn.
 (defparameter *datum-table* nil)
