@@ -122,7 +122,6 @@
 	       :sicl-iteration-support
                :eclector
                :eclector-concrete-syntax-tree
-	       :sicl-reader-simple
 	       :cleavir-equivalent-lexical-locations
 	       :cleavir-simple-value-numbering)
   :serial t
