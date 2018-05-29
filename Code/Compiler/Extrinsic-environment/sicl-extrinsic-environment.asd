@@ -99,31 +99,31 @@
 (defsystem :sicl-extrinsic-environment
   :depends-on (:concrete-syntax-tree
                :sicl-simple-environment
-	       :sicl-environment
-	       :sicl-loop-support
-	       :sicl-arithmetic
-	       :sicl-cons-support
-	       :sicl-clos-support
-	       :sicl-type-support
-	       :sicl-conditions
-	       :closer-mop
-	       :cleavir-generate-ast
-	       :cleavir-cst-to-ast
-	       :cleavir-ast-transformations
-	       :cleavir-ast-to-hir
-	       :cleavir-hir
-	       :cleavir-hir-transformations
-	       :cleavir-remove-useless-instructions
-	       :cleavir-basic-blocks
-	       :cleavir-meter
-	       :sicl-evaluation-and-compilation
-	       :sicl-data-and-control-flow-support
-	       :sicl-conditionals-support
-	       :sicl-iteration-support
+               :sicl-environment
+               :sicl-loop-support
+               :sicl-arithmetic
+               :sicl-cons-support
+               :sicl-clos-support
+               :sicl-type-support
+               :sicl-conditions
+               :closer-mop
+               :cleavir-generate-ast
+               :cleavir-cst-to-ast
+               :cleavir-ast-transformations
+               :cleavir-ast-to-hir
+               :cleavir-hir
+               :cleavir-hir-transformations
+               :cleavir-remove-useless-instructions
+               :cleavir-basic-blocks
+               :cleavir-meter
+               :sicl-evaluation-and-compilation
+               :sicl-data-and-control-flow-support
+               :sicl-conditionals-support
+               :sicl-iteration-support
                :eclector
                :eclector-concrete-syntax-tree
-	       :cleavir-equivalent-lexical-locations
-	       :cleavir-simple-value-numbering)
+               :cleavir-equivalent-lexical-locations
+               :cleavir-simple-value-numbering)
   :serial t
   :components
   ((:file "packages")
