@@ -120,6 +120,8 @@
 	       :sicl-data-and-control-flow-support
 	       :sicl-conditionals-support
 	       :sicl-iteration-support
+               :eclector
+               :eclector-concrete-syntax-tree
 	       :sicl-reader-simple
 	       :cleavir-equivalent-lexical-locations
 	       :cleavir-simple-value-numbering)

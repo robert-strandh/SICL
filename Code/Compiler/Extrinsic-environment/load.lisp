@@ -4,7 +4,7 @@
   (with-open-file (stream file :direction :input)
     (let ((*package* (sicl-genv:special-variable '*package* environment)))
       (loop with eof = (list nil)
-	    for form = (sicl-reader:read stream nil eof)
+	    for form = (eclector.reader:read stream nil eof)
 	    until (eq form eof)
 	    do (cleavir-env:eval form environment environment)
 	       ;; The evaluation of the form might have changed the
@@ -30,7 +30,7 @@
     (let ((*package* (sicl-genv:special-variable '*package*
                                                  compilation-environment)))
       (loop with eof = (list nil)
-	    for form = (sicl-reader:read stream nil eof)
+	    for form = (eclector.reader:read stream nil eof)
 	    until (eq form eof)
 	    do (cleavir-env:eval
 		form compilation-environment linkage-environment)
@@ -53,7 +53,7 @@
     (let ((*package* (sicl-genv:special-variable '*package*
                                                  compilation-environment)))
       (loop with eof = (list nil)
-	    for cst = (sicl-reader:cst-read stream nil eof)
+	    for cst = (eclector.concrete-syntax-tree:cst-read stream nil eof)
 	    until (eq cst eof)
 	    do (cleavir-env:cst-eval
 		cst compilation-environment linkage-environment system)

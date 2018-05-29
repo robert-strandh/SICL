@@ -5,7 +5,7 @@
     do (princ "SICL: ")
        (finish-output)
        (setf *dynamic-environment* '())
-       (let ((form (sicl-reader:read)))
+       (let ((form (eclector.reader:read)))
 	 (when (equal form '(quit))
 	   (loop-finish))
 	 (let ((values (multiple-value-list

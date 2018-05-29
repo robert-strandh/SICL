@@ -5,7 +5,7 @@
 ;;; so that they can be expanded by the compiler.
 
 (defun define-backquote-macros (environment)
-  (setf (sicl-genv:fdefinition 'sicl-reader::expand environment)
-	(fdefinition 'sicl-reader::transform))
-  (setf (sicl-genv:macro-function 'sicl-reader::quasiquote environment)
-	(macro-function 'sicl-reader::quasiquote)))
+  (setf (sicl-genv:fdefinition 'eclector.reader::expand environment)
+	(fdefinition 'eclector.reader::transform))
+  (setf (sicl-genv:macro-function 'eclector.reader::quasiquote environment)
+	(macro-function 'eclector.reader::quasiquote)))
