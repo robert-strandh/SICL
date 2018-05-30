@@ -93,16 +93,19 @@
         until (null inline)
         do (let ((enter (car inline)) (call (cdr inline)))
              (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+           (cleavir-ir:set-predecessors initial-instruction)
            (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction))
   #+(or)
-  (loop for inlines = (potential-inlines initial-instruction)
+  (loop for inline = (one-potential-inline initial-instruction)
         for n from 0
-        until (null inlines)
+        until (null inline)
         do (format t "Inline ~d~%" n)
            (finish-output)
            (cleavir-ir-graphviz:draw-flowchart
             initial-instruction (format nil "/tmp/inline~d.dot" n))
-           (loop for (enter . call) in inlines
-                 do (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+           (let ((enter (car inline)) (call (cdr inline)))
+             (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+           (cleavir-ir-graphviz:draw-flowchart
+            initial-instruction (format nil "/tmp/before-rui~d.dot" n))
            (format t "RUI~%")
            (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)))
