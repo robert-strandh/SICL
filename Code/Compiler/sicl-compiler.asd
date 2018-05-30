@@ -3,7 +3,7 @@
 (defsystem :sicl-compiler
   :depends-on (:cleavir-code-utilities
 	       :sicl-global-environment
-	       :sicl-reader-simple
+	       :eclector
 	       :cleavir-generate-ast
 	       :cleavir-ast
 	       :cleavir-primop)
