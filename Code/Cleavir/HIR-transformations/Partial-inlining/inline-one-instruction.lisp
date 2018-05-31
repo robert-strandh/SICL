@@ -138,22 +138,22 @@
      enter-instruction
      (successor-instruction cleavir-ir:unwind-instruction)
      mapping)
+  ;; UNWIND ends a block, so we're done with inlining this block after setup.
+  ;; This means that similar to a RETURN, we consign the residual function (ENCLOSE/FUNCALL)
+  ;; to oblivion.
   (let ((destination (cleavir-ir:destination successor-instruction)))
     (if (local-catch-p destination)
         ;; We are unwinding to the function being inlined into,
         ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
         (let ((new-instruction
                 (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
-                  (cleavir-ir:make-nop-instruction nil))))
+                  (cleavir-ir:make-nop-instruction nil)))
+              (target (second (cleavir-ir:successors destination))))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
-          (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
-          (setf (cleavir-ir:successors enter-instruction)
-                (list (second (cleavir-ir:successors destination))))
-          (list (make-instance 'worklist-item
-                  :enclose-instruction enclose-instruction
-                  :call-instruction call-instruction
-                  :enter-instruction enter-instruction
-                  :mapping mapping)))
+          (setf (cleavir-ir:predecessors new-instruction) (cleavir-ir:predecessors enclose-instruction)
+                (cleavir-ir:successors new-instruction) (list target))
+          (pushnew new-instruction (cleavir-ir:predecessors target))
+          '())
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
         (let* ((inputs (cleavir-ir:inputs successor-instruction))
