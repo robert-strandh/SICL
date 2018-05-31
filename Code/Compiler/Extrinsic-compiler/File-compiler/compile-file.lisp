@@ -9,13 +9,13 @@
 (defun ast-from-stream (stream environment system)
   (cleavir-ast:make-progn-ast
    (loop with eof = (list nil)
-	 for form = (eclector.reader:read stream nil eof)
-	 until (eq form eof)
-	 collect (cleavir-generate-ast:generate-ast form environment system))))
+	 for cst = (eclector.concrete-syntax-tree:cst-read stream nil eof)
+	 until (eq cst eof)
+	 collect (cleavir-cst-to-ast:cst-to-ast cst environment system))))
 
 (defun compile-stream (stream environment)
   (let* ((cleavir-generate-ast:*compiler* 'cl:compile-file)
-	 (ast (ast-from-stream stream environment)))
+	 (ast (ast-from-stream stream environment *sicl*)))
     (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
 	   (hir (cleavir-ast-to-hir:compile-toplevel ast-bis)))
       (cleavir-hir-transformations:hir-transformations
