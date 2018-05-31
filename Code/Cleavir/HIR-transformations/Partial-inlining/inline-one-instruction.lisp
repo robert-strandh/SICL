@@ -142,7 +142,9 @@
     (if (local-catch-p destination)
         ;; We are unwinding to the function being inlined into,
         ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
-        (let ((new-instruction (cleavir-ir:make-nop-instruction nil)))
+        (let ((new-instruction
+                (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
+                  (cleavir-ir:make-nop-instruction nil))))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
           (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
           (setf (cleavir-ir:successors enter-instruction)
@@ -168,9 +170,13 @@
                                   :predecessors nil :successors nil
                                   :destination destination)))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
-          (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
-          (setf (cleavir-ir:successors enter-instruction)
-                (cleavir-ir:successors successor-instruction))
+          ;; Like insert-instruction-before, but the enclose instruction
+          ;; and the call, and the enter, if not otherwise referred to, are gone.
+          (setf (cleavir-ir:predecessors new-instruction)
+                (cleavir-ir:predecessors enclose-instruction))
+          (loop for pred in (cleavir-ir:predecessors new-instruction)
+                do (nsubstitute new-instruction enclose-instruction
+                                (cleavir-ir:successors pred)))
           '()))))
 
 (defun add-two-successor-instruction-before-instruction
