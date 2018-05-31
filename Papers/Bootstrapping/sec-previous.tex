@@ -16,9 +16,7 @@ cater to applications written in that other language and that need
 some scripting capabilities that are supplied by the \commonlisp{}
 implementation.  Whether it is advantageous or not for these
 implementations to be written mainly in that other language is outside
-the scope of this paper.  Other implementations in the first category
-are written that other language for other reasons that are also
-unimportant to this paper.
+the scope of this paper.
 
 Of the implementations in the second category that are currently
 actively used, Rhodes claims%
@@ -39,6 +37,31 @@ $8\thinspace000$ is for the garbage collector.  The remaining lines
 can be summarized as around $2\thinspace000$ lines per operating
 system supported.  This amount of code written in other languages is
 very modest.
+
+\subsection{\commonlisp{} systems in other languages}
+
+When a language such as \clanguage{} or \cplusplus{} is used to
+implement a \commonlisp{} system, typically a small subset of the
+\commonlisp{} language is implemented this way.  We call that subset
+the \emph{base} language.  The result of the initial bootstrapping
+process is typically an executable file containing the base system.
+Additional modules are then added to the base system to obtain a
+complete \commonlisp{} system.  These additional modules must be
+implemented in a subset of \commonlisp{} defined by the base system
+and previously added modules.
+
+There are several issues with this technique.  For one thing, some
+major components that would be more easily expressed in \commonlisp{}
+must be written using the base language, in particular a reader and an
+evaluator, so that new modules can be added to the system.
+
+Another major issue has to do with maintenance.  When one of the
+additional modules is modified, it is easy to forget exactly what
+subset of the \commonlisp{} language is allowed at that point in the
+bootstrapping process.  The code for a particular module must often be
+expressed in some unidiomatic way and it is tempting to make the
+modified code more idiomatic, but doing so will then break the
+bootstrapping procedure.
 
 \subsection{Specific \commonlisp{} issues}
 
