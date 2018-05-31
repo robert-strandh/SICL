@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :sicl-extrinsic-file-compiler
-  :depends-on (:sicl-reader-simple
+  :depends-on (:eclector
 	       :cleavir-generate-ast
 	       :cleavir-ast-to-hir
 	       :cleavir-ast-transformations

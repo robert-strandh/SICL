@@ -9,7 +9,7 @@
 (defun ast-from-stream (stream environment system)
   (cleavir-ast:make-progn-ast
    (loop with eof = (list nil)
-	 for form = (sicl-reader:read stream nil eof)
+	 for form = (eclector.reader:read stream nil eof)
 	 until (eq form eof)
 	 collect (cleavir-generate-ast:generate-ast form environment system))))
 
