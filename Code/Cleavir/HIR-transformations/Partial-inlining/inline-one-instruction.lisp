@@ -145,17 +145,13 @@
     (if (local-catch-p destination)
         ;; We are unwinding to the function being inlined into,
         ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
-        (let ((new-instruction
-                (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
-                  (cleavir-ir:make-nop-instruction nil)))
-              (target (second (cleavir-ir:successors destination))))
+        (let* ((target (second (cleavir-ir:successors destination)))
+               (new-instruction
+                 (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
+                   (cleavir-ir:make-nop-instruction (list target)))))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
-          (setf (cleavir-ir:predecessors new-instruction) (cleavir-ir:predecessors enclose-instruction)
-                (cleavir-ir:successors new-instruction) (list target))
+          (cleavir-ir:bypass-instruction new-instruction enclose-instruction)
           (pushnew new-instruction (cleavir-ir:predecessors target))
-          (loop for pred in (cleavir-ir:predecessors new-instruction)
-                do (nsubstitute new-instruction enclose-instruction
-                                (cleavir-ir:successors pred)))
           '())
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
@@ -173,13 +169,7 @@
                                   :predecessors nil :successors nil
                                   :destination destination)))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
-          ;; Like insert-instruction-before, but the enclose instruction
-          ;; and the call, and the enter, if not otherwise referred to, are gone.
-          (setf (cleavir-ir:predecessors new-instruction)
-                (cleavir-ir:predecessors enclose-instruction))
-          (loop for pred in (cleavir-ir:predecessors new-instruction)
-                do (nsubstitute new-instruction enclose-instruction
-                                (cleavir-ir:successors pred)))
+          (cleavir-ir:bypass-instruction new-instruction enclose-instruction)
           '()))))
 
 (defun add-two-successor-instruction-before-instruction
