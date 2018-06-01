@@ -58,7 +58,8 @@
            (setf new (cleavir-ir:make-values-location))
            (add-to-mapping mapping output new)
            new)
-          (t (setf new (cleavir-ir:new-temporary))
+          (t (setf new (cleavir-ir:make-lexical-location
+                        (cleavir-ir:name output)))
              (setf (cleavir-ir:inputs call-instruction)
                    (append
                     (cleavir-ir:inputs call-instruction)

@@ -17,7 +17,8 @@
       (if (member (gethash output *location-ownerships*) stack)
           (let ((new (if (typep output 'cleavir-ir:values-location)
                          (cleavir-ir:make-values-location)
-                         (cleavir-ir:new-temporary))))
+                         (cleavir-ir:make-lexical-location
+                          (cleavir-ir:name output)))))
             (add-to-mapping external-map output new)
             new)
           output)))
