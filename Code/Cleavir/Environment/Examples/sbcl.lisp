@@ -180,7 +180,7 @@
 		(declare (ignore env))
 		(destructuring-bind (tag result)
 		    (rest form)
-		  `(%throw ,tag ,result)))))
+		  `(multiple-value-call #'%throw ,tag ,result)))))
 
 (defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql 'cl:progv)))
   (make-instance 'cleavir-env:global-macro-info
@@ -192,14 +192,30 @@
 		    (rest form)
 		  `(%progv ,vars ,vals (lambda () ,@body))))))
 
+(defmethod cleavir-env:function-info ((env sb-kernel:lexenv) (sym (eql 'cl:multiple-value-call)))
+  (make-instance 'cleavir-env:global-macro-info
+    :compiler-macro nil
+    :name 'cl:multiple-value-call
+    :expander (lambda (form env)
+                (declare (ignore env))
+                (destructuring-bind (function-form &rest forms)
+                    (rest form)
+                  (let ((fsym (gensym "FUNCTION")))
+                    `(let ((,fsym ,function-form))
+                       (cleavir-primop:multiple-value-call
+                           (etypecase ,fsym
+                             (function ,fsym)
+                             (symbol (fdefinition ,fsym)))
+                         ,@forms)))))))
+
 (defun %unwind-protect (protected-thunk cleanup-thunk)
   (unwind-protect (funcall protected-thunk) (funcall cleanup-thunk)))
 
 (defun %catch (tag body-thunk)
   (catch tag (funcall body-thunk)))
 
-(defun %throw (tag result)
-  (throw tag result))
+(defun %throw (tag &rest values)
+  (throw tag (values-list values)))
 
 (defun %progv (vars vals body-thunk)
   (progv vars vals (funcall body-thunk)))
