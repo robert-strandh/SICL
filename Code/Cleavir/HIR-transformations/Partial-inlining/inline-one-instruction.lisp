@@ -140,7 +140,7 @@
      mapping)
   ;; UNWIND ends a block, so we're done with inlining this block after setup.
   ;; This means that similar to a RETURN, we consign the residual function (ENCLOSE/FUNCALL)
-  ;; to oblivion.
+  ;; to oblivion by routing around it.
   (let ((destination (cleavir-ir:destination successor-instruction)))
     (if (local-catch-p destination)
         ;; We are unwinding to the function being inlined into,
@@ -153,6 +153,9 @@
           (setf (cleavir-ir:predecessors new-instruction) (cleavir-ir:predecessors enclose-instruction)
                 (cleavir-ir:successors new-instruction) (list target))
           (pushnew new-instruction (cleavir-ir:predecessors target))
+          (loop for pred in (cleavir-ir:predecessors new-instruction)
+                do (nsubstitute new-instruction enclose-instruction
+                                (cleavir-ir:successors pred)))
           '())
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
