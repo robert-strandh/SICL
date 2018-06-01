@@ -51,14 +51,12 @@
         (location-owners (cleavir-hir-transformations:compute-location-owners initial-instruction))
         (instruction-owners (cleavir-hir-transformations:compute-instruction-owners initial-instruction))
         (destinies (cleavir-hir-transformations:compute-destinies initial-instruction)))
-    (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies))
-          (sharing (cleavir-hir-transformations:discern-sharing dag location-owners)))
+    (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies)))
       (labels ((maybe-return-inline (node)
                  (let ((enter (cleavir-hir-transformations:enter-instruction node)))
                    (when (and (all-parameters-required-p enter)
-                              (null (cdr (gethash enter sharing)))
                               (gethash enter trappers))
-                     ;; function is simple.
+                     ;; function's environment does not escape.
                      ;; Now we just need to pick off any recursive uses, direct or indirect.
                      (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
                            with result
@@ -93,16 +91,19 @@
         until (null inline)
         do (let ((enter (car inline)) (call (cdr inline)))
              (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+           (cleavir-ir:set-predecessors initial-instruction)
            (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction))
   #+(or)
-  (loop for inlines = (potential-inlines initial-instruction)
+  (loop for inline = (one-potential-inline initial-instruction)
         for n from 0
-        until (null inlines)
+        until (null inline)
         do (format t "Inline ~d~%" n)
            (finish-output)
            (cleavir-ir-graphviz:draw-flowchart
             initial-instruction (format nil "/tmp/inline~d.dot" n))
-           (loop for (enter . call) in inlines
-                 do (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+           (let ((enter (car inline)) (call (cdr inline)))
+             (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+           (cleavir-ir-graphviz:draw-flowchart
+            initial-instruction (format nil "/tmp/before-rui~d.dot" n))
            (format t "RUI~%")
            (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)))

@@ -60,8 +60,3 @@
                                 successor
                                 (mapping item))
                                worklist)))))))
-
-        
-        
-    
-    

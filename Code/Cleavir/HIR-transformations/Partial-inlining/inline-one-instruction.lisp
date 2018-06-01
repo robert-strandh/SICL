@@ -8,9 +8,23 @@
      mapping)
   (declare (ignore enclose-instruction call-instruction enter-instruction mapping))
   (let ((copy (find-in-mapping *instruction-mapping* successor-instruction)))
-    (if (null copy)
-        (call-next-method)
-        '())))
+    (cond ((null copy)
+           (call-next-method))
+          (t
+           ;; In this case, we have reached an instruction that has already
+           ;; been copied. Most likely, we branched earlier and have now
+           ;; hit the join. As such, we can eliminate our residual function.
+           ;; We do so by bypassing the enclose and funcall; we do the same
+           ;; thing when we hit a RETURN-INSTRUCTION (below)
+           (loop for pred in (cleavir-ir:predecessors enclose-instruction)
+                 do (setf (cleavir-ir:successors pred)
+                          (substitute copy enclose-instruction
+                                      (cleavir-ir:successors pred))
+                          (cleavir-ir:predecessors copy)
+                          (substitute pred call-instruction
+                                      (cleavir-ir:predecessors copy))))
+           ;; Our work here is done: return no worklist items.
+           '()))))
 
 (defun local-catch-p (instruction)
   (eq (gethash instruction *instruction-ownerships*)
@@ -124,20 +138,22 @@
      enter-instruction
      (successor-instruction cleavir-ir:unwind-instruction)
      mapping)
+  ;; UNWIND ends a block, so we're done with inlining this block after setup.
+  ;; This means that similar to a RETURN, we consign the residual function (ENCLOSE/FUNCALL)
+  ;; to oblivion.
   (let ((destination (cleavir-ir:destination successor-instruction)))
     (if (local-catch-p destination)
         ;; We are unwinding to the function being inlined into,
         ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
-        (let ((new-instruction (cleavir-ir:make-nop-instruction nil)))
+        (let ((new-instruction
+                (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
+                  (cleavir-ir:make-nop-instruction nil)))
+              (target (second (cleavir-ir:successors destination))))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
-          (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
-          (setf (cleavir-ir:successors enter-instruction)
-                (list (second (cleavir-ir:successors destination))))
-          (list (make-instance 'worklist-item
-                  :enclose-instruction enclose-instruction
-                  :call-instruction call-instruction
-                  :enter-instruction enter-instruction
-                  :mapping mapping)))
+          (setf (cleavir-ir:predecessors new-instruction) (cleavir-ir:predecessors enclose-instruction)
+                (cleavir-ir:successors new-instruction) (list target))
+          (pushnew new-instruction (cleavir-ir:predecessors target))
+          '())
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
         (let* ((inputs (cleavir-ir:inputs successor-instruction))
@@ -154,9 +170,13 @@
                                   :predecessors nil :successors nil
                                   :destination destination)))
           (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
-          (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
-          (setf (cleavir-ir:successors enter-instruction)
-                (cleavir-ir:successors successor-instruction))
+          ;; Like insert-instruction-before, but the enclose instruction
+          ;; and the call, and the enter, if not otherwise referred to, are gone.
+          (setf (cleavir-ir:predecessors new-instruction)
+                (cleavir-ir:predecessors enclose-instruction))
+          (loop for pred in (cleavir-ir:predecessors new-instruction)
+                do (nsubstitute new-instruction enclose-instruction
+                                (cleavir-ir:successors pred)))
           '()))))
 
 (defun add-two-successor-instruction-before-instruction
@@ -254,14 +274,17 @@
      mapping)
   ;; If we get as far as the return, we are fully inlining.
   ;; As such, we don't need to keep the call or enclose, and just go around them.
-  ;; set-predecessors can disconnect them later.
   (let ((new-instruction (let ((cleavir-ir:*policy* (cleavir-ir:policy successor-instruction)))
                            (cleavir-ir:make-nop-instruction nil)))
         (call-successor (first (cleavir-ir:successors call-instruction))))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
     ;; manual hookup
-    (setf (cleavir-ir:successors new-instruction) (list call-successor))
-    (setf (cleavir-ir:predecessors call-successor)
-          (substitute new-instruction call-instruction (cleavir-ir:predecessors call-successor)))
+    (setf (cleavir-ir:predecessors new-instruction)
+          (cleavir-ir:predecessors enclose-instruction)
+          (cleavir-ir:successors new-instruction)
+          (list call-successor)
+          (cleavir-ir:predecessors call-successor)
+          (substitute new-instruction call-instruction
+                      (cleavir-ir:predecessors call-successor)))
     '()))
