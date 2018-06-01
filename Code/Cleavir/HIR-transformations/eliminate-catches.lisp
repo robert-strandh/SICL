@@ -14,5 +14,5 @@
              (push instruction death)))))
      initial-instruction)
     (dolist (catch death)
-      (cleavir-ir:bypass-instruction catch (first (cleavir-ir:successors catch))))
+      (cleavir-ir:bypass-instruction (first (cleavir-ir:successors catch)) catch))
     death))
