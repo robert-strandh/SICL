@@ -142,7 +142,7 @@ Then, additional code is executed in order to create a graph of SICL
 objects in the host memory.  Finally, the graph is traversed with the
 purpose of creating an isomorphic graph in an executable file which
 will constitute the initial system.  Additional code is finally loaded
-from FASL files so obtain the complete system.
+from FASL files to obtain the complete system.
 ==================================================
 Cleavir
 
@@ -179,8 +179,8 @@ considerable level of knowledge to be able to contribute in meaningful
 ways.  Cleavir requires knowledge of compiler optimization techniques,
 data structures, asymptotic complexity, and more.  And even the
 straightforward code in SICL requires knowledge of the goals and the
-guidelines for SICL.  If you want to contribute should get in touch to
-discuss the issue first, and we may come to some agreement.
+guidelines for SICL.  If you want to contribute, you should get in
+touch to discuss the issue first, and we may come to some agreement.
 
 Question:
 What are your specific style guidelines?
