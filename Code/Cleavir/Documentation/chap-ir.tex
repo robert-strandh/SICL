@@ -2178,15 +2178,14 @@ successor.  The sole successor of \textit{instruction} replaces
 \textit{instruction}.  The predecessors of \textit{instruction} become
 the predecessors of the sole successor of \textit{instruction}.
 
-\Defun {bypass-instruction} {instruction successor}
+\Defun {bypass-instruction} {new existing}
 
-This function is used to delete unnecessary branches.
-\textit{instruction} is an instruction with at least one successor,
-and \textit{successor} is one of those successors. \textit{instruction}
-is deleted, and all predecessors to \textit{instruction} replace
-\textit{instruction} in their successors with \textit{successor}.
-\textit{successor} likewise has the predecessors of \textit{instruction}
-added to its predecessors.
+This function is used to delete unnecessary branches, among other things.
+\textit{new} replaces \textit{existing} as a successor of every
+predecessor of \textit{existing}. \textit{new} gains all of
+\textit{existing}'s predecessors as predecessors.
+Instructions dominated by \textit{existing} and not \textit{new} become
+unreachable.
 
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
 %%  LocalWords:  subtype backend unboxed

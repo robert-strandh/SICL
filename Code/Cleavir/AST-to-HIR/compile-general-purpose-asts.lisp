@@ -193,6 +193,8 @@
     ;; the catch instruction can exist while compiling the body.
     (let* ((dummy (cleavir-ir:make-nop-instruction nil))
            (catch (cleavir-ir:make-catch-instruction
+                   ;; The name is gone by now, so unlike TAGBODY
+                   ;; we can't name the catch output.
                    (make-temp)
                    (list dummy (first successors)))))
       (setf (block-info ast) (cons context catch))
@@ -271,6 +273,12 @@
 (defun (setf go-info) (new-info tag-ast)
   (setf (gethash tag-ast *go-info*) new-info))
 
+(defun make-continuation-location (name)
+  (cleavir-ir:make-lexical-location
+   (etypecase name
+     (symbol name)
+     (integer (make-symbol (write-to-string name))))))
+
 ;;; What we end up with is 0 or more CATCH instructions (one for each tag),
 ;;; followed by a NOP, followed by the non-tag items compiled in order like
 ;;; a PROGN, but in a special context that includes info about the tags.
@@ -292,7 +300,8 @@
             do (when (typep item-ast 'cleavir-ast:tag-ast)
                  (setf result
                        (cleavir-ir:make-catch-instruction
-                        (make-temp) (list result (cleavir-ir:make-nop-instruction nil)))
+                        (make-continuation-location (cleavir-ast:name item-ast))
+                        (list result (cleavir-ir:make-nop-instruction nil)))
                        (go-info item-ast)
                        (cons result invocation))))
       ;; Now we actually compile the items, in reverse order (like PROGN).

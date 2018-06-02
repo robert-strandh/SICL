@@ -55,31 +55,20 @@
 	  do (pushnew predecessor (predecessors successor)
 		      :test #'eq))))
 
-;;; Delete an instruction I. I must have at least two successors,
-;;; one of which is the provided S. S replaces I as the successor
-;;; of every predecessor P of I. The predecessors of I become the
-;;; predecessors of S.
-;;; All other successors of I lose I from their predecessors.
-;;; Because this function often disconnects successors of S from
-;;; the instruction graph (by removing their only predecessor), you
-;;; usually want to reinitialize-data and set-predecessors after
-;;; calling it.
-;;; FIXME: what if the successor has other predecessors?
-(defun bypass-instruction (instruction successor)
-  (assert (find successor (successors instruction)))
-  (setf (inputs instruction) '()
-	(outputs instruction) '())
-  (loop for predecessor in (predecessors instruction)
+;;; Replace an instruction I with an instruction S, with respect to
+;;; forward control flow.
+;;; S replaces I as a successor of every predecessor of I.
+;;; S gains all of I's predecessors as predecessors.
+;;; This function orphans I and anything it dominates that is not
+;;; dominated by S, so you'll probably have to set-predecessors etc.
+(defun bypass-instruction (new existing)
+  (setf (inputs existing) '()
+	(outputs existing) '())
+  (loop for predecessor in (predecessors existing)
 	;; hook up the successors of P
-	do (setf (successors predecessor)
-		 (substitute successor instruction
-			     (successors predecessor)))
+	do (nsubstitute new existing (successors predecessor))
 	;; and the predecessors of S
-	do (pushnew predecessor (predecessors successor)))
-  ;; finally remove I from the predecessors of all successors of I
-  (loop for successor in (successors instruction)
-	do (setf (predecessors successor)
-		 (remove instruction (predecessors successor)))))
+	do (pushnew predecessor (predecessors new))))
 
 ;;; When there has been some significant modifications to an
 ;;; instruction graph, it is possible that some instructions that are

@@ -36,11 +36,11 @@
 	 (cond ((bottom-p specialization
                           (binary-meet specialization vtype ttype))
 		(cleavir-ir:bypass-instruction
-		 i (second (cleavir-ir:successors i))))
+		 (second (cleavir-ir:successors i)) i))
 	       ((bottom-p specialization
                           (binary-meet specialization vtype ntype))
 		(cleavir-ir:bypass-instruction
-		 i (first (cleavir-ir:successors i))))))))
+		 (first (cleavir-ir:successors i)) i))))))
    initial)
   ;; we've possibly excised huge portions of this function, so do
   ;;  some cleanup
@@ -68,7 +68,7 @@
                  (binary-meet specialization left-type right-type))
                 ;; A cannot eq B, therefore
                 (cleavir-ir:bypass-instruction
-                 i (first (cleavir-ir:successors i))))
+                 (first (cleavir-ir:successors i)) i))
                ;; If both are EQL types, and for the same object,
                ;; A must eq B (EQ is EQL + undefined behavior)
                ;; KLUDGE: cleavir-type-descriptors doesn't have an
@@ -85,7 +85,7 @@
                       (environment specialization)
                       (typecache specialization)))
                 (cleavir-ir:bypass-instruction
-                 i (second (cleavir-ir:successors i))))))))
+                 (second (cleavir-ir:successors i)) i))))))
    initial)
   (cleavir-ir:set-predecessors initial)
   (cleavir-ir:reinitialize-data initial)
