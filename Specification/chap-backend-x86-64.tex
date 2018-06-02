@@ -326,9 +326,9 @@ then be unwound.  First, the dynamic environment is traversed for any
 intervening exit points, and they are marked as invalid by storing 0
 as the stored \texttt{RBP} value.  The traversal stops when the stack
 frame of the valid exit point is reached.  Unwinding now begins.  The
-dynamic environment is traversed again and thunks in UNWIND-PROTECT
-entries are executed.  The traversal again stops when the stack frame
-of the valid exit point is reached.
+dynamic environment is traversed again and thunks in
+\texttt{unwind-protect} entries are executed.  The traversal again
+stops when the stack frame of the valid exit point is reached.
 
 \begin{figure}
 \begin{center}
