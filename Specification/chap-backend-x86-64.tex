@@ -86,8 +86,8 @@ Normal call to external function, passing at most $5$ arguments:
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
-\item Push the value of RBP on the stack.
-\item Copy the value of RSP into RBP, establishing the
+\item Push the value of \texttt{RBP} on the stack.
+\item Copy the value of RSP into \texttt{RBP}, establishing the
   (empty) stack frame for the callee.
 \item Load the entry point address of the callee from the callee
   function object into an available scratch register, typically RAX.
@@ -103,7 +103,7 @@ Normal call to external function, passing at more than $5$ arguments:
   temporary locations.
 \item Subtract $8(N - 3)$ from RSP, where $N$ is the number of
   arguments to pass, thus leaving room in the callee stack frame for
-  the $N - 5$ arguments, the return address, and the caller RBP.
+  the $N - 5$ arguments, the return address, and the caller \texttt{RBP}.
 \item Store the first $5$ arguments in RDI, RSI, RDX, RCX, and R8.
 \item Store the remaining arguments in [RSP$ + 0$], [RSP$ + 8$],
   $\ldots$, [RSP$ + 8(N - 6)$] in that order, so that the sixth
@@ -111,8 +111,8 @@ Normal call to external function, passing at more than $5$ arguments:
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
-\item Store the value of RBP into [RSP + 8(N - 4)]
-\item Copy the value of RSP$ + 8(N - 4)$ into RBP, establishing the
+\item Store the value of \texttt{RBP} into [RSP + 8(N - 4)]
+\item Copy the value of RSP$ + 8(N - 4)$ into \texttt{RBP}, establishing the
   stack frame for the callee.  The instruction LEA can be used for
   this purpose.
 \item Load the entry point address of the callee from the callee
@@ -125,8 +125,7 @@ Normal call to external function, passing at more than $5$ arguments:
 By using a \texttt{CALL}/\texttt{RET} pair instead of (say) the caller
 storing the return address in its final place using some other method,
 we make sure that the predictor for the return address of the
-processor makes the right guess about the eventual address to be
-used.
+processor makes the right guess about the eventual address to be used.
 
 \refFig{fig-x86-64-stack-frame-at-entry} shows the layout of the stack
 upon entry to a function when more than $5$ arguments are passed.
@@ -151,7 +150,7 @@ Tail call to external function, passing at most $5$ arguments:
 \item Store the argument count in R9 as a fixnum.
 \item Load the static environment of the callee from the callee
   function object into R10.
-\item Copy the value of RBP$ - 8$ to RSP, establishing the stack frame
+\item Copy the value of \texttt{RBP}$ - 8$ to RSP, establishing the stack frame
   for the callee, containing only the return address.  The LEA
   instruction can be used for this purpose.
 \item Load the entry point address of the callee from the callee
@@ -177,16 +176,16 @@ that the callee uses the same static environment as the caller.
 Upon function entry after an ordinary call, when more than $5$
 arguments are passed, the callee must pop the return address off the
 top of the stack and store it in its final location.  This can be done
-with a single POP instruction, using [RBP$ - 8$] as the destination.
-When fewer than $5$ arguments are passed, the return address is
-already in the right place.
+with a single POP instruction, using [\texttt{RBP}$ - 8$] as the
+destination.  When fewer than $5$ arguments are passed, the return
+address is already in the right place.
 
 Return from callee to caller with no values:
 
 \begin{enumerate}
 \item Store NIL in RAX.
 \item Store $0$ in RDI, represented as a fixnum.
-\item Store the value of RBP$ - 8$ in RSP so that the stack frame
+\item Store the value of \texttt{RBP}$ - 8$ in RSP so that the stack frame
   contains only the return address.  To accomplish this effect, the
   callee can use the LEA instruction.
 \item Return to the caller by executing the RET instruction.
@@ -197,7 +196,7 @@ Return from callee to caller with a $1 - 4$ values:
 \begin{enumerate}
 \item Store the values to return in RAX, RDX, RCX, RSI.
 \item Store the number of values in RDI, represented as a fixnum.
-\item Store the value of RBP$ - 8$ in RSP so that the stack frame
+\item Store the value of \texttt{RBP}$ - 8$ in RSP so that the stack frame
   contains only the return address.  To accomplish this effect, the
   callee can use the LEA instruction.
 \item Return to the caller by executing the RET instruction.
@@ -211,7 +210,7 @@ Return from callee to caller with more than $4$ values:
   order to obtain an address to be used for the remaining return
   values and put that address in R8.
 \item Store the number of values in RDI, represented as a fixnum.
-\item Store the value of RBP$ - 8$ in RSP so that the stack frame
+\item Store the value of \texttt{RBP}$ - 8$ in RSP so that the stack frame
   contains only the return address.  To accomplish this effect, the
   callee can use the LEA instruction.
 \item Return to the caller by executing the RET instruction.
@@ -234,8 +233,8 @@ types exist:
   \item An entry representing a \texttt{block} or a \texttt{tagbody}.
     It is similar to the entry representing a \texttt{catch} tag.  The
     entry contains three fields; two fields representing a 64-bit time
-    stamp and one field containing the value of ebp in the stack frame
-    to return from.
+    stamp and one field containing the value of \texttt{RBP} in the
+    stack frame to return from.
 
   \item An entry representing an \texttt{unwind-protect} form.  This
     entry contains a thunk containing the cleanup forms of the
@@ -249,13 +248,13 @@ it is.
 Of the three types of entries above, the \texttt{catch} and the
 \texttt{block}/\texttt{tagbody} entries represent exit points.  An
 exit point can be marked as "expired" or "invalid" by storing 0 as the
-ebp value in the entry.
+\texttt{RBP} value in the entry.
 
 \texttt{catch} is implemented as a call to a function.  This function
 establishes a \texttt{catch} tag and calls a thunk containing the body
 of the \texttt{catch} form.  The \texttt{catch} tag is established by
 allocating (as dynamic local data on the stack) an entry of the second
-type and making \texttt{[EBP$-4 \cdot 4$]} point to it as shown in
+type and making \texttt{[RBP$-4 \cdot 4$]} point to it as shown in
 \refFig{fig-x86-64-catch}
 
 \begin{figure}
@@ -266,11 +265,11 @@ type and making \texttt{[EBP$-4 \cdot 4$]} point to it as shown in
 \texttt{catch} tag for the x86-64 backend.}
 \end{figure}
 
-THROW searches the dynamic environment for an entry with the right
-\texttt{catch} tag.  If one is found and it is valid (as indicated by
-the stored ebp different from 0), then the target to which control is
-transferred is the return address in the stack frame indicated by the
-stored ebp.
+\texttt{throw} searches the dynamic environment for an entry with the
+right \texttt{catch} tag.  If one is found and it is valid (as
+indicated by the stored \texttt{RBP} different from 0), then the
+target to which control is transferred is the return address in the
+stack frame indicated by the stored \texttt{RBP}.
 
 A \texttt{block} form may establish an exit point.  In the most
 general case, a \texttt{return-from} is executed from a function
@@ -293,9 +292,9 @@ environment.  \refFig{fig-x86-64-block-tag} shows this situation.
 \texttt{return-from} consults the time stamp in the lexical variable
 and searches the dynamic environment for a corresponding time stamp in
 a \texttt{block}/\texttt{tagbody} entry.  If one is found and it is
-valid (as indicated by the stored ebp different from 0), then the
-target to which control is transferred is the return address in the
-stack frame indicated by the stored ebp.
+valid (as indicated by the stored \texttt{RBP} different from 0), then
+the target to which control is transferred is the return address in
+the stack frame indicated by the stored \texttt{RBP}.
 
 A \texttt{tagbody} may establish several exit points.  In the most
 general case, a \texttt{go} is executed from a function
@@ -312,10 +311,11 @@ environment.
 \texttt{go} consults the time stamp in the lexical variable and
 searches the dynamic environment for a corresponding time stamp in a
 \texttt{block}/\texttt{tagbody} entry.  If one is found and it is
-valid (as indicated by the stored ebp different from 0), then the
-target to which control is transferred is defined by the lexically
-stored ebp/address pair.  The code to which control is transferred is
-responsible for adjusting esp to a particular value relative to ebp.
+valid (as indicated by the stored \texttt{RBP} different from 0), then
+the target to which control is transferred is defined by the lexically
+stored \texttt{RBP}/address pair.  The code to which control is
+transferred is responsible for adjusting esp to a particular value
+relative to \texttt{RBP}.
 
 \section{Transfer of control to an exit point}
 
@@ -324,11 +324,11 @@ point is first searched for.  If no valid exit point can be found, an
 error is signaled.  If a valid exit point is found, the stack must
 then be unwound.  First, the dynamic environment is traversed for any
 intervening exit points, and they are marked as invalid by storing 0
-as the stored ebp value.  The traversal stops when the stack frame of
-the valid exit point is reached.  Unwinding now begins.  The dynamic
-environment is traversed again and thunks in UNWIND-PROTECT entries
-are executed.  The traversal again stops when the stack frame of the
-valid exit point is reached.
+as the stored \texttt{RBP} value.  The traversal stops when the stack
+frame of the valid exit point is reached.  Unwinding now begins.  The
+dynamic environment is traversed again and thunks in UNWIND-PROTECT
+entries are executed.  The traversal again stops when the stack frame
+of the valid exit point is reached.
 
 \begin{figure}
 \begin{center}
