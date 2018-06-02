@@ -228,7 +228,7 @@ types exist:
 
   \item An entry representing a \texttt{catch} tag.  The entry
     contains two fields; the \texttt{catch} tag and the value of
-    \texttt{EBP} in the stack frame to return from.
+    \texttt{RBP} in the stack frame to return from.
 
   \item An entry representing a \texttt{block} or a \texttt{tagbody}.
     It is similar to the entry representing a \texttt{catch} tag.  The
@@ -314,8 +314,8 @@ searches the dynamic environment for a corresponding time stamp in a
 valid (as indicated by the stored \texttt{RBP} different from 0), then
 the target to which control is transferred is defined by the lexically
 stored \texttt{RBP}/address pair.  The code to which control is
-transferred is responsible for adjusting esp to a particular value
-relative to \texttt{RBP}.
+transferred is responsible for adjusting \texttt{RSP} to a particular
+value relative to \texttt{RBP}.
 
 \section{Transfer of control to an exit point}
 
