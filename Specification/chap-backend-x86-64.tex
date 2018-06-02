@@ -227,14 +227,15 @@ types exist:
     entry contains two fields; the symbol to be bound and the value.
 
   \item An entry representing a \texttt{catch} tag.  The entry
-    contains two fields; the \texttt{catch} tag and the value of
-    \texttt{RBP} in the stack frame to return from.
+    contains a single field containing the \texttt{catch} tag.
 
   \item An entry representing a \texttt{block} or a \texttt{tagbody}.
     It is similar to the entry representing a \texttt{catch} tag.  The
-    entry contains two fields; one field representing a 64-bit time
-    stamp and one field containing the value of \texttt{RBP} in the
-    stack frame to return from.
+    entry contains a single field containing a time stamp represented
+    as a fixnum.  This time stamp becomes part of the static
+    environment of any function nested inside the \texttt{block} or
+    \texttt{tagbody} form that contains a \texttt{return-from} or a
+    \texttt{go} to this form.
 
   \item An entry representing an \texttt{unwind-protect} form.  This
     entry contains a thunk containing the cleanup forms of the
@@ -246,16 +247,19 @@ next entry in the sequence, and a field indicating what type of entry
 it is.
 
 Of the three types of entries above, the \texttt{catch} and the
-\texttt{block}/\texttt{tagbody} entries represent exit points.  An
-exit point can be marked as "expired" or "invalid" by storing 0 as the
-\texttt{RBP} value in the entry.
+\texttt{block}/\texttt{tagbody} entries represent exit points.  When
+an exit point expires, the entry must be invalidated.  An entry
+representing a \texttt{block} or \texttt{tagbody} is invalidated by
+storing 0 as the value of the time stamp.  An entry repesenting a
+\texttt{catch} tag is invalidated by changing its type field so that
+it is a an entry representing a \texttt{block} or \texttt{tagbody} and
+storing 0 in the field for the \texttt{catch} tag.
 
 \texttt{catch} is implemented as a call to a function.  This function
 establishes a \texttt{catch} tag and calls a thunk containing the body
 of the \texttt{catch} form.  The \texttt{catch} tag is established by
 allocating (as dynamic local data on the stack) an entry of the second
-type and making \texttt{[RBP$-4 \cdot 4$]} point to it as shown in
-\refFig{fig-x86-64-catch}
+type as shown in \refFig{fig-x86-64-catch}
 
 \begin{figure}
 \begin{center}
@@ -266,20 +270,22 @@ type and making \texttt{[RBP$-4 \cdot 4$]} point to it as shown in
 \end{figure}
 
 \texttt{throw} searches the dynamic environment for an entry with the
-right \texttt{catch} tag.  If one is found and it is valid (as
-indicated by the stored \texttt{RBP} different from 0), then the
-target to which control is transferred is the return address in the
-stack frame indicated by the stored \texttt{RBP}.
+right \texttt{catch} tag.  If one is found, then it must also be
+valid.  The point to which control is to be transferred is stored as
+the return value of the stack frame containing the \texttt{catch} tag.
 
 A \texttt{block} form may establish an exit point.  In the most
 general case, a \texttt{return-from} is executed from a function
 lexically-enclosed inside the \texttt{block} with an arbitrary number
-of intervening stack frames.  When this is the case, \texttt{block} is
-implemented as a call to a function, in a way similar to the way
-\texttt{catch} is implemented.  The function establishes a
-\texttt{block}/\texttt{tagbody} entry with a fresh time stamp.  The
-time stamp is also stored in a lexical variable in the static
-environment.  \refFig{fig-x86-64-block-tag} shows this situation.
+of intervening stack frames.  When this is the case, upon entry to the
+\texttt{block} form, a \texttt{block}/\texttt{tagbody} entry with a
+fresh time stamp is established.  When a \texttt{return-from} is
+executed, the point to which control is to be transferred is known
+statically.  The time stamp is also stored in a lexical variable in
+the static environment of closures established inside the
+\texttt{block} form that may execute a corresponding
+\texttt{return-from} form.  \refFig{fig-x86-64-block-tag} shows this
+situation.
 
 \begin{figure}
 \begin{center}
@@ -289,33 +295,29 @@ environment.  \refFig{fig-x86-64-block-tag} shows this situation.
 \texttt{block} tag for the x86-64 backend.}
 \end{figure}
 
-\texttt{return-from} consults the time stamp in the lexical variable
-and searches the dynamic environment for a corresponding time stamp in
-a \texttt{block}/\texttt{tagbody} entry.  If one is found and it is
-valid (as indicated by the stored \texttt{RBP} different from 0), then
-the target to which control is transferred is the return address in
-the stack frame indicated by the stored \texttt{RBP}.
+\texttt{return-from} accesses the time stamp from the static
+environment and then searches the dynamic environment for a
+corresponding time stamp in a \texttt{block}/\texttt{tagbody} entry.
+If one with the right time stamp is found, the lexical environment is
+restored, and control is transferred to the statically known address.
 
 A \texttt{tagbody} may establish several exit points.  In the most
 general case, a \texttt{go} is executed from a function
 lexically-enclosed inside the \texttt{tagbody} with an arbitrary
-number of intervening stack frames.  When this is the case,
-\texttt{tagbody} is implemented as a call to a function, in a way
-similar to the way \texttt{block} is implemented.  The function
-establishes a \texttt{block}/\texttt{tagbody} entry with a fresh time
-stamp.  The time stamp is also stored in a lexical variable in the
-static environment.  For each tag that is the target of a \texttt{go},
-an address to which control is transferred is also stored in a lexical
-environment.
+number of intervening stack frames.  When this is the case, upon entry
+to the \texttt{tagbody} form, a \texttt{block}/\texttt{tagbody} entry
+with a fresh time stamp is established.  When a \texttt{go} is
+executed, the point to which control is to be transferred is known
+statically.  The time stamp is also stored in a lexical variable in
+the static environment of closures established inside the
+\texttt{tagbody} form that may execute a corresponding \texttt{go}
+form.  \refFig{fig-x86-64-block-tag} shows this situation.
 
-\texttt{go} consults the time stamp in the lexical variable and
-searches the dynamic environment for a corresponding time stamp in a
-\texttt{block}/\texttt{tagbody} entry.  If one is found and it is
-valid (as indicated by the stored \texttt{RBP} different from 0), then
-the target to which control is transferred is defined by the lexically
-stored \texttt{RBP}/address pair.  The code to which control is
-transferred is responsible for adjusting \texttt{RSP} to a particular
-value relative to \texttt{RBP}.
+\texttt{go} accesses the time stamp from the static environment and
+then searches the dynamic environment for a corresponding time stamp
+in a \texttt{block}/\texttt{tagbody} entry.  If one with the right
+time stamp is found, the lexical environment is restored, and control
+is transferred to the statically known address.
 
 \section{Transfer of control to an exit point}
 
@@ -323,12 +325,12 @@ Whenever transfer of control to an exit point is initiated, the exit
 point is first searched for.  If no valid exit point can be found, an
 error is signaled.  If a valid exit point is found, the stack must
 then be unwound.  First, the dynamic environment is traversed for any
-intervening exit points, and they are marked as invalid by storing 0
-as the stored \texttt{RBP} value.  The traversal stops when the stack
-frame of the valid exit point is reached.  Unwinding now begins.  The
-dynamic environment is traversed again and thunks in
-\texttt{unwind-protect} entries are executed.  The traversal again
-stops when the stack frame of the valid exit point is reached.
+intervening exit points, and they are marked as invalid as indicated
+above.  Traversal stops when the stack frame of the valid exit point
+is reached.  Unwinding now begins.  The dynamic environment is
+traversed again and thunks in \texttt{unwind-protect} entries are
+executed.  The traversal again stops when the stack frame of the valid
+exit point is reached.
 
 \begin{figure}
 \begin{center}
