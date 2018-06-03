@@ -225,9 +225,11 @@ types exist:
 \begin{itemize}
   \item An entry representing the binding of a special variable.  This
     entry contains two fields; the symbol to be bound and the value.
+    The type code for this entry is $1$.
 
   \item An entry representing a \texttt{catch} tag.  The entry
     contains a single field containing the \texttt{catch} tag.
+    The type code for this entry is $2$.
 
   \item An entry representing a \texttt{block} or a \texttt{tagbody}.
     It is similar to the entry representing a \texttt{catch} tag.  The
@@ -235,18 +237,18 @@ types exist:
     as a fixnum.  This time stamp becomes part of the static
     environment of any function nested inside the \texttt{block} or
     \texttt{tagbody} form that contains a \texttt{return-from} or a
-    \texttt{go} to this form.
+    \texttt{go} to this form. The type code for this entry is $3$.
 
   \item An entry representing an \texttt{unwind-protect} form.  This
     entry contains a thunk containing the cleanup forms of the
-    \texttt{unwind-protect} form.
+    \texttt{unwind-protect} form. The type code for this entry is $4$.
 \end{itemize}
 
 In addition to their own fields, each entry contains a pointer to the
 next entry in the sequence, and a field indicating what type of entry
 it is.
 
-Of the three types of entries above, the \texttt{catch} and the
+Of the four types of entries above, the \texttt{catch} and the
 \texttt{block}/\texttt{tagbody} entries represent exit points.  When
 an exit point expires, the entry must be invalidated.  An entry
 representing a \texttt{block} or \texttt{tagbody} is invalidated by
