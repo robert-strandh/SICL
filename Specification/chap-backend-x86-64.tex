@@ -2,6 +2,7 @@
 \label{chapter-backend-x86-64}
 
 \section{Register usage}
+\label{sec-backend-x86-84-register-use}
 
 The standard calling conventions defined by the vendors, and used by
 languages such as \clanguage{} use the registers as follows:
@@ -219,8 +220,10 @@ Return from callee to caller with more than $4$ values:
 \section{Use of the dynamic environment}
 
 The dynamic environment is a simply linked sequence of entries
-allocated in the stack rather than on the heap.  The following entry
-types exist:
+allocated in the stack rather than on the heap.  The first entry is
+pointed to by the register \texttt{RBX}.
+\seesec{sec-backend-x86-84-register-use} The following entry types
+exist:
 
 \begin{itemize}
   \item An entry representing the binding of a special variable.  This
