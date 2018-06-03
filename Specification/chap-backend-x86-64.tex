@@ -290,7 +290,9 @@ statically.  The time stamp is also stored in a lexical variable in
 the static environment of closures established inside the
 \texttt{block} form that may execute a corresponding
 \texttt{return-from} form.  \refFig{fig-x86-64-block-tag} shows this
-situation.
+situation.  When the \texttt{block} form is exited normally, the
+\texttt{block}/\texttt{tagbody} entry is popped off the stack and off
+the dynamic environment.
 
 \begin{figure}
 \begin{center}
@@ -316,7 +318,10 @@ executed, the point to which control is to be transferred is known
 statically.  The time stamp is also stored in a lexical variable in
 the static environment of closures established inside the
 \texttt{tagbody} form that may execute a corresponding \texttt{go}
-form.  \refFig{fig-x86-64-block-tag} shows this situation.
+form.  \refFig{fig-x86-64-block-tag} shows this situation.  When the
+\texttt{tagbody} form is exited normally, the
+\texttt{block}/\texttt{tagbody} entry is popped off the stack and off
+the dynamic environment.
 
 \texttt{go} accesses the time stamp from the static environment and
 then searches the dynamic environment for a corresponding time stamp
