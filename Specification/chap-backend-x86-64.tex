@@ -276,8 +276,10 @@ type as shown in \refFig{fig-x86-64-catch}
 
 \texttt{throw} searches the dynamic environment for an entry with the
 right \texttt{catch} tag.  If one is found, then it must also be
-valid.  The point to which control is to be transferred is stored as
-the return value of the stack frame containing the \texttt{catch} tag.
+valid, simply because if it had been invalidated, it would no longer
+have the type for \texttt{catch} tag.  The point to which control is
+to be transferred is stored as the return value of the stack frame
+containing the \texttt{catch} tag.
 
 A \texttt{block} form may establish an exit point.  In the most
 general case, a \texttt{return-from} is executed from a function
