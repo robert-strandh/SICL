@@ -226,7 +226,7 @@
             :enclose-instruction new-enclose
             :call-instruction new-call
             :enter-instruction new-enter
-            :mapping (copy-mapping mapping)))))
+            :mapping mapping))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
