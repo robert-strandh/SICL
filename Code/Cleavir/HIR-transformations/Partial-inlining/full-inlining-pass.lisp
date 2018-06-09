@@ -5,46 +5,6 @@
   (every (lambda (param) (typep param 'cleavir-ir:lexical-location))
          (cleavir-ir:lambda-list enter)))
 
-#+(or)
-(defun potential-inlines (initial-instruction)
-  (let ((dag (cleavir-hir-transformations:build-function-dag initial-instruction))
-        (location-owners (cleavir-hir-transformations:compute-location-owners initial-instruction))
-        (instruction-owners (cleavir-hir-transformations:compute-instruction-owners initial-instruction))
-        (destinies (cleavir-hir-transformations:compute-destinies initial-instruction)))
-    (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies))
-          (sharing (cleavir-hir-transformations:discern-sharing dag location-owners)))
-      (labels ((inlines (node)
-                 (let ((enter (cleavir-hir-transformations:enter-instruction node)))
-                   (when (and (all-parameters-required-p enter)
-                              (null (cdr (gethash enter sharing)))
-                              (gethash enter trappers))
-                     ;; function is simple.
-                     ;; Now we just need to pick off any recursive uses, direct or indirect.
-                     (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
-                           for caller in (gethash enclose destinies)
-                           when (eq caller :escape)
-                             return nil
-                           when (parent-node-p node caller)
-                             ;; recursive
-                             return nil
-                           collect (cons enter caller)))))
-               (all-inlines (node)
-                 (append (inlines node) (mapcan #'all-inlines (cleavir-hir-transformations:children node))))
-               (parent-node-p (parent enter)
-                 ;; parent is a node (i.e. enclose), enter is an enter instruction
-                 ;; we return T iff the enter is enclosed by a node that has parent
-                 ;; as an ancestor.
-                 (let ((todo (gethash enter (cleavir-hir-transformations:dag-nodes dag))))
-                   (loop until (null todo)
-                         do (let ((test (pop todo)))
-                              (cond ((eq test dag) (return nil)) ; recursed all the way up
-                                    ((eq test parent) (return t))
-                                    (t (setf todo
-                                             (append todo
-                                                     (cleavir-hir-transformations:parents test))))))))))
-        (reduce #'append
-                (mapcar #'all-inlines (cleavir-hir-transformations:children dag)))))))
-
 ;; get one potential inline that can be done.
 (defun one-potential-inline (initial-instruction)
   (let ((dag (cleavir-hir-transformations:build-function-dag initial-instruction))
@@ -61,9 +21,10 @@
                      (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
                            with result
                            for caller in (gethash enclose destinies)
+                           for call-owner = (gethash caller instruction-owners)
                            when (eq caller :escape)
                              return nil
-                           when (parent-node-p node caller)
+                           when (parent-node-p node call-owner)
                              ;; recursive
                              return nil
                            ;; we're all good, but keep looking through for escapes

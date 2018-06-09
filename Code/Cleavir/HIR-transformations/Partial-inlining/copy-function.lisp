@@ -1,38 +1,49 @@
 (cl:in-package #:cleavir-partial-inlining)
 
+(defun ensure-copy (mapping datum)
+  (or (find-in-mapping mapping datum)
+      (let ((new (typecase datum
+                   (cleavir-ir:values-location
+                    (cleavir-ir:make-values-location))
+                   (cleavir-ir:lexical-location
+                    (cleavir-ir:make-lexical-location
+                     (cleavir-ir:name datum)))
+                   (t datum))))
+        (add-to-mapping mapping datum new)
+        new)))
+
 (defun translate-input-for-copy (input external-map internal-map stack)
-  (declare (ignore stack))
-  (or (find-in-mapping internal-map input)
-      (find-in-mapping external-map input)
-      input))
+  (let ((owner (gethash input *location-ownerships*)))
+    (cond ((member owner stack)
+           ;; Originally I expected that the input would always be in the map,
+           ;; but this does not seem to be the case, for reasons I'm not sure of.
+           ;; I think the ownership test should make it be correct anyway though.
+           ;; FIXME: Maybe remove input-output distinction here then.
+           (ensure-copy internal-map input))
+          ((eq owner *original-enter-instruction*)
+           (ensure-copy external-map input))
+          (t input))))
 (defun translate-inputs-for-copy (inputs external-map internal-map stack)
   (loop for input in inputs
         collect (translate-input-for-copy input external-map internal-map stack)))
 
 (defun translate-output-for-copy (output external-map internal-map stack)
-  ;; We assume that if a variable is closed over it will be in the external map
-  ;; during this copy. I think this is true with normally generated HIR.
-  (or (find-in-mapping internal-map output)
-      (find-in-mapping external-map output)
-      (if (member (gethash output *location-ownerships*) stack)
-          (let ((new (if (typep output 'cleavir-ir:values-location)
-                         (cleavir-ir:make-values-location)
-                         (cleavir-ir:make-lexical-location
-                          (cleavir-ir:name output)))))
-            (add-to-mapping external-map output new)
-            new)
-          output)))
+  (let ((owner (gethash output *location-ownerships*)))
+    (cond ((member owner stack)
+           (ensure-copy internal-map output))
+          ((eq owner *original-enter-instruction*)
+           (ensure-copy external-map output))
+          (t output))))
 (defun translate-outputs-for-copy (outputs external-map internal-map stack)
   (loop for output in outputs
         collect (translate-output-for-copy output external-map internal-map stack)))
 
-;;; EXTERNAL-MAP is the mapping from inline, and is only read.
-;;; INTERNAL-MAP is a fresh mapping which is used only for internal
-;;; locations, and is written to.
-;;; STACK is a list of ENTER-INSTRUCTIONS that we're in the middle
-;;; of copying. If an output is owned by something in the stack, it
-;;; ought to be copied, but if not, it's something closed over and
-;;; must not be copied.
+;;; EXTERNAL-MAP is the mapping from inline.
+;;; INTERNAL-MAP is a fresh mapping which is used only for internal locations.
+;;; STACK is a list of ENTER-INSTRUCTIONS that we're in the middle of copying.
+;;; If an output is owned by something in the stack, it ought to be copied,
+;;; but if not, it's something closed over and must not be copied, unless it's
+;;; owned by the function being inlined.
 (defun copy-function-recur (enter external-map internal-map stack)
   (let ((copies nil)
         (stack (cons enter stack)))

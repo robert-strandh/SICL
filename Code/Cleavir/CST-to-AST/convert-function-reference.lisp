@@ -12,7 +12,9 @@
   (when (not (eq (cleavir-env:inline info) 'cl:notinline))
     (let ((ast (cleavir-env:ast info)))
       (when ast
-        (return-from convert-function-reference ast))))
+        (return-from convert-function-reference
+          ;; The AST must be cloned because hoisting is destructive.
+          (cleavir-ast-transformations:clone-ast ast)))))
   (convert-global-function-reference
    cst info (cleavir-env:global-environment env) system))
 

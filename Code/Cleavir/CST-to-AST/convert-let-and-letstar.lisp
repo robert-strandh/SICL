@@ -82,7 +82,7 @@
   (cst:db origin (let*-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let*-cst))
     (check-bindings bindings-cst)
-    (multiple-value-bind (declaration-csts body-csts)
+    (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
               (cst:canonicalize-declarations system declaration-csts))
@@ -99,12 +99,12 @@
                 with result = (cst:cstify
                                (cons (cst:cst-from-expression 'locally)
                                      (if (null remaining-dspecs)
-                                         body-csts
+                                         (cst:listify forms-cst)
                                          (cons
                                           (cst:cons (cst:cst-from-expression 'declare)
                                                     remaining-dspecs-cst
                                                     :source (cst:source remaining-dspecs-cst))
-                                          body-csts))))
+                                          (cst:listify forms-cst)))))
                 for binding-cst in (reverse binding-csts)
                 for declaration-cst in (reverse item-specific-dspecs)
                 do (setf result

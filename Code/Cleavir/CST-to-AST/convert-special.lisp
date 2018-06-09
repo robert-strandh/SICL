@@ -283,7 +283,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
     (declare (ignore flet-cst))
-    (multiple-value-bind (declaration-csts body-csts)
+    (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations system declaration-csts))
@@ -298,9 +298,7 @@
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence (cst:cstify body-csts)
-                                     final-env
-                                     system)))))))))
+                   (convert-sequence forms-cst final-env system)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -311,7 +309,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
     (declare (ignore labels-cst))
-    (multiple-value-bind (declaration-csts body-csts)
+    (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations system declaration-csts))
@@ -326,9 +324,7 @@
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence (cst:cstify body-csts)
-                                     final-env
-                                     system)))))))))
+                   (convert-sequence forms-cst final-env system)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -705,12 +701,11 @@
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (locally-cst . body-forms-cst) cst
     (declare (ignore locally-cst))
-    (multiple-value-bind (declaration-csts body-csts)
+    (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations system declaration-csts))
              (new-env (augment-environment-with-declarations
-                       environment canonical-declaration-specifiers))
-             (body-cst (cst:cstify body-csts)))
+                       environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
-          (process-progn (convert-sequence body-cst new-env system)))))))
+          (process-progn (convert-sequence forms-cst new-env system)))))))

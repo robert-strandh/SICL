@@ -462,7 +462,7 @@
       (error 'malformed-lambda-list
              :expr (cst:raw lambda-list-cst)
              :origin (cst:source lambda-list-cst)))
-    (multiple-value-bind (declaration-csts documentation form-csts)
+    (multiple-value-bind (declaration-csts documentation forms-cst)
         (cst:separate-function-body body-cst)
       ;; FIXME: Handle documentation
       (declare (ignore documentation))
@@ -481,7 +481,7 @@
               (process-parameter-groups
                (cst:children parsed-lambda-list)
                idspecs
-               (make-body rdspecs form-csts block-name-cst)
+               (make-body rdspecs (cst:listify forms-cst) block-name-cst)
                env
                system)
             (cleavir-ast:make-function-ast ast lexical-lambda-list :origin origin)))))))
