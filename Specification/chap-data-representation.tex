@@ -250,6 +250,46 @@ the \emph{entry point} and the \emph{static environment} are copied
 from the discriminating function to the corresponding slots of the
 generic function itself.
 
+\section{Code objects}
+
+A \emph{code object} is a standard object that represents the
+\emph{code} of a function.  Recall that a function consists of some
+code and an environment.  The code object is common to all functions
+that share the same code.
+
+A code object contains the following information:
+
+\begin{itemize}
+\item The executable native instructions in the form of a vector of
+  unsigned bytes.
+\item A table mapping a value $P$ of the program counter to another
+  value $N$ of the program counter.  Both values correspond either to
+  the beginning or to the end of a form to be evaluated.  The table is
+  used by the \emph{next} command of the \emph{stepping function} of a
+  debugger to find the next place to stop, given the current stopping
+  point.  If $P$ corresponds to the beginning of a form, then $N$
+  corresponds to the end of the same form.  If $P$ corresponds to the
+  end of a form, then $N$ corresponds either to the beginning of the
+  next form to be evaluated, or to the end of that form, depending on
+  the relationship between those two forms.
+\item A table mapping a value of the program counter to a
+  \emph{register map}.  This information is used by the garbage
+  collector to determine which registers contain \commonlisp{} object
+  that should be traced.
+\item A vector of strings representing the source code of the
+  compilation unit of which this code object is part.  Each string
+  corresponds to a line of code.
+\item Information about the file that contains the source code of the
+  compilation unit of which this code object is part.
+\item A table mapping values of the program counter to \emph{source
+  locations}, i.e. line and column information corresponding to the
+  location in the source code of the expression being evaluated.
+\item A table mapping values of the program counter to \emph{variable
+  liveness information}.
+\item The \emph{concrete syntax tree} corresponding to the source code
+  of the compilation unit of which this code object is part.
+\end{itemize}
+
 \section{Rigid instances}
 \label{sec-data-representation-rigid-instances}
 
