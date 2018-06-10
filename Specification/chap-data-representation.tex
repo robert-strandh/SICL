@@ -262,19 +262,27 @@ A code object contains the following information:
 \begin{itemize}
 \item The executable native instructions in the form of a vector of
   unsigned bytes.
+\item A table mapping a value $P$ of the program counter to either
+  another value $N$ of the program counter, or to a list of such
+  values.  Both values correspond either to the beginning or to the
+  end of a form to be evaluated.  This table is used to support the
+  \texttt{step in} command of the debugger.  A list of values is
+  needed when a branch in the code exists before the next forms to be
+  evaluated.
 \item A table mapping a value $P$ of the program counter to another
   value $N$ of the program counter.  Both values correspond either to
-  the beginning or to the end of a form to be evaluated.  The table is
-  used by the \emph{next} command of the \emph{stepping function} of a
-  debugger to find the next place to stop, given the current stopping
-  point.  If $P$ corresponds to the beginning of a form, then $N$
-  corresponds to the end of the same form.  If $P$ corresponds to the
-  end of a form, then $N$ corresponds either to the beginning of the
-  next form to be evaluated, or to the end of that form, depending on
-  the relationship between those two forms.
+  the beginning or to the end of a form to be evaluated.  This table
+  is used to support the \texttt{step out} command of the debugger.
+\item A table mapping a value $P$ of the program counter to either
+  another value $N$ of the program counter, or to a list of such
+  values.  Both values correspond either to the beginning or to the
+  end of a form to be evaluated.  This table is used to support the
+  \texttt{step over} command of the debugger.  A list of values is
+  needed when a branch in the code exists before the next forms to be
+  evaluated.
 \item A table mapping a value of the program counter to a
   \emph{register map}.  This information is used by the garbage
-  collector to determine which registers contain \commonlisp{} object
+  collector to determine which registers contain \commonlisp{} objects
   that should be traced.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
