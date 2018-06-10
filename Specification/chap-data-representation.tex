@@ -283,7 +283,11 @@ A code object contains the following information:
 \item A table mapping a value of the program counter to a
   \emph{register map}.  This information is used by the garbage
   collector to determine which registers contain \commonlisp{} objects
-  that should be traced.
+  that should be traced.  Only values of the program counter
+  corresponding to \emph{safe points} are present in the table.  A
+  safe point is either the value of the program counter immediately
+  after a \texttt{call} instruction, or immediately before a branch
+  instruction jumping to a lower address.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
