@@ -71,7 +71,9 @@
     (dolist (basic-block basic-blocks)
       (map-basic-block-instructions
        (lambda (instruction)
-         (setf (gethash instruction map) basic-block))))))
+         (setf (gethash instruction map) basic-block))
+       basic-block))
+    map))
 
 (defun map-basic-block-instructions (function basic-block)
   (let ((first (first-instruction basic-block))
