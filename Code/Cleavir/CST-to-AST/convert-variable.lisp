@@ -12,6 +12,13 @@
 			   (format stream "Consider the variable as special."))
                  (setf info 
                        (make-instance 'cleavir-env:special-variable-info
+                                      :name symbol)))
+               ;; This is identical to RECOVER, but more specifically named.
+	       (consider-special ()
+		 :report (lambda (stream)
+			   (format stream "Consider the variable as special."))
+                 (setf info
+                       (make-instance 'cleavir-env:special-variable-info
                          :name symbol)))
 	       (substitute (new-symbol)
 		 :report (lambda (stream)
