@@ -44,10 +44,8 @@
 ;;; An output can either be in the mapping, be a reference to a
 ;;; location owned by an ancestor function, or a local lexical
 ;;; location not yet in the mapping.  In the last case, a new location
-;;; must be created, and it must be added to the mapping, to
-;;; CALL-INSTRUCTION as an input, and to ENTER-INSTRUCTION as an
-;;; output.
-(defun translate-output (output call-instruction enter-instruction mapping)
+;;; must be created, and it must be added to the mapping.
+(defun translate-output (output mapping)
   (let ((new (find-in-mapping mapping output)))
     (cond ((not (null new)) new)
           ((not (local-location-p output)) output)
@@ -60,23 +58,12 @@
            new)
           (t (setf new (cleavir-ir:make-lexical-location
                         (cleavir-ir:name output)))
-             (setf (cleavir-ir:inputs call-instruction)
-                   (append
-                    (cleavir-ir:inputs call-instruction)
-                    (list new)))
-             (setf (cleavir-ir:outputs enter-instruction)
-                   (append
-                    (cleavir-ir:outputs enter-instruction)
-                    (list new)))
              (add-to-mapping mapping output new)
              new))))
     
-(defun translate-outputs (outputs call-instruction enter-instruction mapping)
+(defun translate-outputs (outputs mapping)
   (loop for output in outputs
-        collect (translate-output output
-                                  call-instruction
-                                  enter-instruction
-                                  mapping)))
+        collect (translate-output output mapping)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -91,10 +78,7 @@
   (let* ((inputs (cleavir-ir:inputs successor-instruction))
          (new-inputs (translate-inputs inputs mapping))
          (outputs (cleavir-ir:outputs successor-instruction))
-         (new-outputs (translate-outputs outputs
-                                         call-instruction
-                                         enter-instruction
-                                         mapping))
+         (new-outputs (translate-outputs outputs mapping))
          (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs :outputs new-outputs
                             :predecessors nil :successors nil)))
@@ -118,10 +102,7 @@
   (let* ((inputs (cleavir-ir:inputs successor-instruction))
          (new-inputs (translate-inputs inputs mapping))
          (outputs (cleavir-ir:outputs successor-instruction))
-         (new-outputs (translate-outputs outputs
-                                         call-instruction
-                                         enter-instruction
-                                         mapping))
+         (new-outputs (translate-outputs outputs mapping))
          (code (copy-function (cleavir-ir:code successor-instruction) mapping))
          (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs :outputs new-outputs
@@ -183,10 +164,7 @@
   (let* ((inputs (cleavir-ir:inputs successor-instruction))
          (new-inputs (translate-inputs inputs mapping))
          (outputs (cleavir-ir:outputs successor-instruction))
-         (new-outputs (translate-outputs outputs
-                                         call-instruction
-                                         enter-instruction
-                                         mapping))
+         (new-outputs (translate-outputs outputs mapping))
          (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs
                             :outputs new-outputs
@@ -244,7 +222,7 @@
   (let* ((inputs (cleavir-ir:inputs successor-instruction))
          (new-inputs (translate-inputs inputs mapping))
          (outputs (cleavir-ir:outputs successor-instruction))
-         (new-outputs (translate-outputs outputs call-instruction enter-instruction mapping))
+         (new-outputs (translate-outputs outputs mapping))
          (new-instruction (cleavir-ir:clone-instruction successor-instruction
                             :inputs new-inputs :outputs new-outputs
                             :predecessors nil :successors nil)))

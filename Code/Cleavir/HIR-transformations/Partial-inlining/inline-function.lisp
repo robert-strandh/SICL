@@ -43,6 +43,8 @@
           for input = (first (cleavir-ir:inputs return))
           do (add-to-mapping mapping input caller-values))
     ;; Do the actual inlining.
+    ;; FIXME: Once an inlining stops, all remaining residual functions should have
+    ;; any variables live at that point added as inputs, etc.
     (let ((worklist (list (make-instance 'worklist-item
                             :enclose-instruction enc
                             :call-instruction call
