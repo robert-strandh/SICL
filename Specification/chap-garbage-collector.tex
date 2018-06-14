@@ -220,6 +220,20 @@ is about to be used as key in an \texttt{eq} hash table.  Objects that
 can be expected to have a significant life span (such as symbols)
 might also be allocated directly in the global collector. 
 
+\section{Dealing with stopped threads}
+
+Since each thread is responsible for collecting its own heap and since
+the global collector can not run until every application thread has
+run its own collector, we need to find a way of dealing with threads
+that are stopped for any reason, for instance waiting for
+input/output.
+
+We think that in cases like that, one of the threads of the global
+collector would run the garbage collector on behalf of the stopped
+thread.  During the execution of the garbage collector, if the stopped
+thread becomes unstopped, it must then be prevented from running
+application code until the collection has run to completion.
+
 \section{Implementation}
 
 In most systems, the garbage collector is implemented in some language
