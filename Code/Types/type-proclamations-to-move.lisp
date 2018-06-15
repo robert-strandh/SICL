@@ -102,10 +102,12 @@ In the future, more information could possibly be stored here."
   ;; but you'd basically need SATISFIES for verification.
   '(or string formatter))
 
+;;; In fact, this type is entirely correct only for the END bounding
+;;; index.  The START boudning index is more restricted, because NIL
+;;; is not allowed as a START boudning index.
 (deftype bounding-index-designator ()
   "Glossary definition."
-  ;; not sure i (Bike) totally understand this type.
-  '(or integer nil))
+  '(or (integer 0) null))
 
 (deftype proper-sequence ()
   "Glossary definition.
