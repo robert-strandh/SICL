@@ -9,7 +9,7 @@
   ((:file "packages")
    (:file "conditions")
    (:file "condition-reporters-english")
-   (:file "utilities")
+   (:file "with-memoization")
    (:file "constructors")
    (:file "scan")
    (:file "reconstruct")
