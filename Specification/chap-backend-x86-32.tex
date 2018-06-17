@@ -5,40 +5,6 @@ We are in the process of removing this chapter.  Some of the
 information here will be transferred to
 \refChap{chapter-backend-x86-64}, perhaps with modifications.
 
-\section{Calling conventions}
-
-The calling conventions above are optimized for functions with no
-\&rest and no \&key parameters, and with parameters having dynamic
-extent.  That case is very common, and the use of compiler macros
-makes it even more common that what is apparent from reading source
-code, because many calls to functions with \&rest and \&key parameters
-can be replaced by calls to specialized functions with only required
-parameters.  For this special case, the arguments supplied by a caller
-are already in their ``home'' position on the stack.  When \&rest and
-\&key parameters are present, a possibly fairly complex process must
-traverse the arguments and establish a local environment.  Parameters
-with dynamic extent can be allocated on the stack, whereas parameters
-with indefinite extent must be placed in heap-allocated objects.
-\seesec{backends-x86-32-static-environment}  The presence of
-\&optional parameters represents an intermediate case.  In most cases
-the default values of \&optional parameters are simple constants.  In
-that case, the callee can simply push additional values on the stack
-(provided the corresponding parameter has dynamic extent).  But
-default values may require the evaluation of arbitrary expressions,
-and those expressions might refer to the values of required parameters
-or of \&optional arguments further left in the lambda list.  Such
-expression can also refer to local variables in enclosing
-environments.
-
-The first return value is passed in \texttt{EAX}, and the number of
-return values is passed in \texttt{EBX} as a \texttt{fixnum}.  If the
-number of return values is $0$, then the callee must make sure
-\texttt{EAX} contains \texttt{nil} when it returns.  This convention
-makes it unnecessary for the caller that expects a single return value
-to check the count.  Furthermore, this situation is probably the most
-common one, so that in almost all cases, checking the number of return
-values becomes unnecessary.
-
 \section{Argument parsing}
 
 By \emph{argument parsing}, we mean the process of analyzing the
