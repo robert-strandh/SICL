@@ -97,8 +97,9 @@
 		       (translate-datum item)))))
 
 (defun layout-basic-block (basic-block static-environment)
-  (destructuring-bind (first last owner) basic-block
-    (declare (ignore owner))
+  (with-accessors ((first cleavir-basic-blocks:first-instruction)
+                   (last cleavir-basic-blocks:last-instruction))
+      basic-block
     (append (loop for instruction = first
 		    then (first (cleavir-ir:successors instruction))
 		  for inputs = (cleavir-ir:inputs instruction)
@@ -134,21 +135,23 @@
 	 (dynamic-environment-variable (gensym))
 	 (basic-blocks (remove initial-instruction
 			       *basic-blocks*
-			       :test-not #'eq :key #'third))
+			       :test-not #'eq
+                               :key #'cleavir-basic-blocks:owner))
 	 (first (find initial-instruction basic-blocks
-		      :test #'eq :key #'first))
+		      :test #'eq :key #'cleavir-basic-blocks:first-instruction))
 	 (rest (remove first basic-blocks :test #'eq)))
     (setf (gethash initial-instruction *dynamic-environment-variables*)
 	  dynamic-environment-variable)
     ;; Assign tags to all basic block except the first one
     (loop for block in rest
-	  for instruction = (first block)
+	  for instruction = (cleavir-basic-blocks:first-instruction block)
 	  do (setf (gethash instruction *tags*) (gensym)))
     (let ((tagbody
 	     `(tagbody
 		 ,@(layout-basic-block first static-environment)
 		 ,@(loop for basic-block in rest
-			 collect (gethash (first basic-block) *tags*)
+			 collect (gethash (cleavir-basic-blocks:first-instruction basic-block)
+                                          *tags*)
 			 append (layout-basic-block
 				 basic-block static-environment))))
 	  (owned-vars (compute-owned-variables initial-instruction)))
