@@ -251,6 +251,7 @@ from the discriminating function to the corresponding slots of the
 generic function itself.
 
 \section{Code objects}
+\label{data-representation-code-objects}
 
 A \emph{code object} is a standard object that represents the
 \emph{code} of a function.  Recall that a function consists of some
@@ -483,22 +484,16 @@ Representation of functions.}
 
 \refFig{fig-function-representation} shows two functions.  The two
 functions were created from the same compilation unit, because they
-share the last \texttt{cons} cell of the static environment.
+share the same code object. \seesec{data-representation-code-objects}
 
 A function is represented as a two-word header (as usual) and a
 rack with three slots:
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
-\item An \emph{environment}, which is the local environment in which
-  the function was defined.  The local environment is represented as a
-  proper list of simple vectors, one for each \emph{level} of the
-  environment according to the nesting depth of the function.  The
-  last element of the list contains the \emph{linkage vector} which
-  contains \emph{constants} and \emph{storage cells of global
-    functions} that are referenced by the function.  The first element
-  of the linkage vector is the \emph{code object} of the function (see
-  below).  Several functions may share the same linkage vector.
+\item An \emph{environment}, which is the lexical environment in which
+  the function was defined.  We are not giving the details of how the
+  static environment is represented here.
 \item The \emph{entry point}.  The each entry
   point is a \emph{raw address} of an aligned word in the vector
   containing the instructions of the function.  The garbage collector
@@ -506,41 +501,12 @@ rack with three slots:
   rack of the code vector.
 \end{enumerate}
 
-As indicated above, the \emph{linkage vector} of a function is a
-simple vector, and it is the last element of the proper list that
-makes up the \emph{static environment} of the function.  The most
-important purpose of the linkage vector is to contain \emph{constants}
-and \emph{storage cells} for global functions that are referenced by
-the function.
+The static environment contains the \emph{code object} as one of its
+elements.
 
 Since raw addresses are word aligned, they show up as \texttt{fixnum}s
 when inspected by tools that are unaware of their special
 signification.
-
-A \emph{code object} is represented as a two-word header (as usual)
-and a rack containing (in addition to inherited slots):
-
-\begin{enumerate}
-\item The \emph{linkage vector} which is an ordinary \commonlisp{} simple
-  vector.
-\item The \emph{code vector} which is an ordinary \commonlisp{} vector with
-  elements of type \texttt{(unsigned-byte 8)} containing the machine
-  instructions for one or more functions.
-\item Correspondence between values of the program counter
-  (represented as offsets into the byte vector of instructions) and
-  source code locations.
-\item Correspondence between values of the program counter and the
-  contents of the local environment.  This information is used by the
-  garbage collector and by the debugger.
-\end{enumerate}
-
-By having several functions share the same linkage vector, we can
-simplify calls between top-level functions in the same compilation
-unit, because the caller and the callee would then share the
-same static environment.  In contrast, a call from a function in one
-compilation unit to a function in a different compilation unit
-involves accessing the static environment of the callee and storing it
-in a register.
 
 For a \emph{generic function}, the description of the slots above
 applies both to the generic function object itself and to the
@@ -565,36 +531,19 @@ can occur:
   contents of the \emph{static environment} slot to the predetermined
   place specific to the backend, and then to issue a \emph{call}
   instruction (or equivalent) to the address indicated by the
-  \emph{entry point} slot of the function object.  When the
-  call is to a \emph{global function}, then the linkage vector contains
-  a \texttt{cons} cell whose \texttt{car} is guaranteed to contain a
-  function object, so this situation is applicable in this case.
-\item When it can not only be determined statically that the object
-  being called is a function, but also that the number of arguments
-  that will be passed to it is acceptable, then the alternative entry
-  point can be used.  This is often the case when the function being
-  called is a \emph{global system function}.  Then the alternative
-  entry point is computed as a constant offset from the normal entry
-  point.
+  \emph{entry point} slot of the function object.  When a function is
+  called using a name known at compile time, then the object is known
+  to be a function, though it may be a function that signals an error
+  because the intended function is undefined.
 \item When it can be determined statically that the object being
   called is a function object in the \emph{same compilation unit} as
   the caller, then we can make an \emph{internal call}.  If both the
   caller and the callee are \emph{global functions} (so that the
-  static environment contain only the linkage vector for both), then
+  static environment contains only a pointer to the code object, then
   it suffices to issue a \texttt{call} instruction (or equivalent) to
-  a relative address that can be determined statically.  The static
-  environment does not need to be passed because it is shared between
-  the caller and the callee.  The relative address can be chosen so as
-  to avoid type checking of arguments with known types.
-\item Even when it can not be determined statically that the object
-  being called is a function, there are some situations that can be
-  optimized.  For instance, when it is likely that the object is going
-  to be called multiple times with the same number of arguments, then
-  it may pay off to start by checking that the object is a function,
-  then accessing its \emph{lambda list} to determine that the number
-  of arguments is acceptable, and then cache the static environment
-  and the alternative entry point in \emph{local registers}.  A
-  typical use for this situation is in the \emph{sequence functions}
-  for the keyword arguments \texttt{:test}, \texttt{:test-not}, and
-  \texttt{:key}.
+  a relative address that can be determined statically. The relative
+  address can be chosen so as to avoid type checking of arguments with
+  known types.  However, we may not take advantage of this possibility
+  unless the \texttt{speed} optimize quality is high, because it makes
+  it impossible to redefine a single function in a compilation unit.
 \end{itemize}
