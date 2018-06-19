@@ -234,6 +234,26 @@ thread.  During the execution of the garbage collector, if the stopped
 thread becomes unstopped, it must then be prevented from running
 application code until the collection has run to completion.
 
+We do this by introducing a variable for each application thread that
+is shared between that thread and the global collector threads.  Such
+a variable has 4 bit positions with the following meaning:
+
+\begin{itemize}
+\item \texttt{blocked} meaning that the application thread is blocked
+  when the bit is set.  This bit is both set and cleared by the
+  application thread.
+\item \texttt{gc-requested} meaning that the global collector has
+  requested that the application thread run the garbage collector.
+  This bit is set by the global collector and cleared by the
+  application thread.
+\item \texttt{gc-terminated} meaning that the application has finished
+  running the nursery garbage collector.  This bit is set by the
+  application thread and cleared by the global collector.
+\item \texttt{gc-in-progress} meaning that the global collector is
+  running the nursery garbage collector on behalf of the thread.  This
+  bit is both set and cleared by the global collector.
+\end{itemize}
+
 \section{Implementation}
 
 In most systems, the garbage collector is implemented in some language
