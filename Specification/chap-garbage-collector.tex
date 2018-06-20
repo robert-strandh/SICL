@@ -254,6 +254,16 @@ a variable has 4 bit positions with the following meaning:
   bit is both set and cleared by the global collector.
 \end{itemize}
 
+At every safe point (function call, function return, and a branch to
+an inferior address), the application thread consults the shared
+variable.  If the \texttt{gc-requested} bit is set, then it clears
+that bit and runs the nursery garbage collector.  At the end of the
+collection, it sets the \texttt{gc-terminated} bit, signals to the
+global collector that it has finished, and finally continues the
+application thread.  Not synchronization is required, because once the
+\texttt{gc-request} bit is set, no other bit is going to move as the
+result of any action on the part of the global collector.
+
 \section{Implementation}
 
 In most systems, the garbage collector is implemented in some language
