@@ -174,13 +174,16 @@ and racks from the end.  A garbage collection is triggered
 when the two free pointers meet.  We preserve the relative order both
 of header objects and of racks. 
 
-In the \emph{mark phase}, a single mark bit per header object is
-used.  Header objects and racks are scanned, but only
-header objects are marked.  A flag determines whether a reference to
-an object allocated in the global heap should be marked or not.  This
-flag is set when the local garbage collection was requested by the
-global garbage collector, and cleared when the local garbage
-collection was performed as a result of the local heap being full.
+In the \emph{mark phase}, a single mark bit per header object is used.
+Header objects and racks are scanned, but only header objects are
+marked.  A flag determines whether a reference to an object allocated
+in the global heap should be marked or not.  This flag is set when the
+local garbage collection was requested by the global garbage
+collector, and cleared when the local garbage collection was performed
+as a result of the local heap being full.  At the end of the mark
+phase, if the flag is set, a \emph{signal} operation is performed on a
+semaphore used for synchronization between the local and the global
+garbage collector.
 
 In the \emph{header compaction phase}, live header objects are compacted
 toward the beginning of the heap.  A \emph{source} and a \emph{target}
@@ -238,24 +241,41 @@ thread.  During the execution of the garbage collector, if the stopped
 thread becomes unstopped, it must then be prevented from running
 application code until the collection has run to completion.
 
-We do this by introducing a variable for each application thread that
-is shared between that thread and the global collector threads.  Such
-a variable has 4 bit positions with the following meaning:
+We do this by introducing a variable and two semaphores for each
+application thread that are shared between that thread and the global
+collector threads.  The variable has 3 bit positions with the
+following meaning:
 
 \begin{itemize}
-\item \texttt{blocked} meaning that the application thread is blocked
-  when the bit is set.  This bit is both set and cleared by the
-  application thread.
+\item \texttt{application-blocked} meaning that the application thread
+  might be blocked when the bit is set, and is therefore not capable
+  of executing the local garbage collector.  This bit is both set and
+  cleared by the application thread.
 \item \texttt{gc-requested} meaning that the global collector has
   requested that the application thread run the garbage collector.
   This bit is set by the global collector and cleared by the
   application thread.
-\item \texttt{gc-terminated} meaning that the application has finished
-  running the nursery garbage collector.  This bit is set by the
-  application thread and cleared by the global collector.
 \item \texttt{gc-in-progress} meaning that the global collector is
   running the nursery garbage collector on behalf of the thread.  This
   bit is both set and cleared by the global collector.
+\end{itemize}
+
+The two semaphores work as follows:
+
+\begin{itemize}
+\item \texttt{local-gc-terminated}.  This semaphore is initialized to
+  $0$.  When the global collector requests that an application thread
+  run the local garbage collector it waits on this semaphore.  The
+  application thread signals this semaphore, indicating that all
+  objects in the global heap reachable from the local heap have been
+  marked.
+\item \texttt{application-waiting}.  This semaphore is initialized to
+  $0$.  When an application thread awakes after having been blocked,
+  it checks whether the global collector is currently executing on
+  behalf of this application thread.  If so, the application thread
+  waits on this semaphore.  When the global collector has finished
+  executing on behalf of this thread, it signals this semaphore,
+  allowing the application thread to continue its execution.
 \end{itemize}
 
 At every safe point (function call, function return, and a branch to
