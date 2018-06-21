@@ -45,13 +45,6 @@
         (cleavir-ir:*origin* (cleavir-ast:origin ast)))
     (call-next-method)))
 
-;;; When an AST that is meant for a test (as indicated by it being an
-;;; instance of BOOLEAN-AST-MIXIN) is compiled in a context with
-;;; the wrong number of successors, we signal an error.
-;;; Individual ASTs probably also check the number of results.
-(defmethod compile-ast :before ((ast cleavir-ast:boolean-ast-mixin) context)
-  (assert-context ast context nil 2))
-
 ;;; This :AROUND method serves as an adapter for the compilation of
 ;;; ASTs that generate a single value.  If such an AST is compiled in
 ;;; a unfit context (i.e, a context other than one that has a single
@@ -848,24 +841,33 @@
   (with-accessors ((successors successors)
 		   (invocation invocation))
       context
-    (assert-context ast context 0 2)
-    (let ((arg1-ast (cleavir-ast:arg1-ast ast))
-	  (arg2-ast (cleavir-ast:arg2-ast ast))
-	  (temp1 (cleavir-ir:new-temporary))
-	  (temp2 (cleavir-ir:new-temporary)))
-      (compile-ast
-       arg1-ast
-       (context
-	(list temp1)
-	(list (compile-ast
-	       arg2-ast
-	       (context
-		(list temp2)
-		(list (cleavir-ir:make-eq-instruction
-		       (list temp1 temp2)
-		       successors))
-		invocation)))
-	invocation)))))
+    (ecase (length successors)
+      (1
+       (let ((cleavir-ast:*policy* (cleavir-ast:policy ast)))
+         (compile-ast (cleavir-ast:make-if-ast
+                       ast
+                       (cleavir-ast:make-load-time-value-ast (list 'quote t))
+                       (cleavir-ast:make-load-time-value-ast (list 'quote nil)))
+                      context)))
+      (2
+       (assert-context ast context 0 2)
+       (let ((arg1-ast (cleavir-ast:arg1-ast ast))
+	     (arg2-ast (cleavir-ast:arg2-ast ast))
+	     (temp1 (cleavir-ir:new-temporary))
+	     (temp2 (cleavir-ir:new-temporary)))
+         (compile-ast
+          arg1-ast
+          (context
+	   (list temp1)
+	   (list (compile-ast
+	          arg2-ast
+	          (context
+		   (list temp2)
+		   (list (cleavir-ir:make-eq-instruction
+		          (list temp1 temp2)
+		          successors))
+		   invocation)))
+	   invocation)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
