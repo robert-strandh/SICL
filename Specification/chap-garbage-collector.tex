@@ -19,6 +19,12 @@ of the two words is a raw pointer to the \emph{rack}.  In
 this chapter, we describe the consequences of this suggested
 representation to the garbage collector.
 
+We begin this chapter by describing the algorithms used in the global
+collector and the nursery collector.  We then describe how promotion
+takes place.  Finally, we describe the synchronization procedure
+required for the nursery collectors to collaborate with the global
+collector.
+
 \section{Global collector}
 \subsection{General description}
 
