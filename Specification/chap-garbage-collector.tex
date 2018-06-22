@@ -227,7 +227,7 @@ is about to be used as key in an \texttt{eq} hash table.  Objects that
 can be expected to have a significant life span (such as symbols)
 might also be allocated directly in the global collector. 
 
-\section{Dealing with stopped threads}
+\section{Synchronization between nursery and global collectors}
 
 Since each thread is responsible for collecting its own heap and since
 the global collector can not run until every application thread has
