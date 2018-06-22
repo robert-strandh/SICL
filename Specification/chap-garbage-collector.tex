@@ -355,6 +355,77 @@ that the global collector has been informed that, when the nursery
 collection is finished, it should signal the
 \texttt{application-waiting} semaphore.
 
+\subsection{Preparing for a global collection}
+
+Before a global collection can take place, each nursery must first be
+collected, and references from the nurseries to the global heap must
+be marked so that the global collector will keep the referenced
+objects.
+
+For each application thread, the following actions are performed:
+
+The contents of the shared variable is read into an ordinary lexical
+variable, and a second copy of it is made.  The
+\texttt{application-blocked} bit is examined
+
+\begin{enumerate}
+\item If it is cleared, then the \texttt{gc-request} bit is set in the
+  second copy, and a CAS operation is attempted.
+  \begin{enumerate}
+  \item If the operation succeeds, then that means that the
+    application thread is still not blocked and it has been properly
+    informed that it is expected to run a nursery collection.  The
+    \texttt{local-gc-terminated} semaphore for this application thread
+    is added to a set of such semaphores.
+  \item If the operation fails, then that means that the application
+    has been blocked in the meantime.  The entire operation is then
+    restarted by reading the shared variable again.
+  \end{enumerate}
+\item If it is set, then the application is blocked.  Then the
+  \texttt{gc-in-progress} is set bit of the second copy, and a CAS
+  operation is attempted.
+  \begin{enumerate}
+  \item If the operation succeeds, then that means that the
+    application thread is still blocked, and that it has been properly
+    informed that a nursery collection on its behalf it pending.  A
+    new thread (or an existing one from a pool) is assigned to do a
+    nursery collection on behalf of the application thread, and the
+    thread is added to a set of such threads.
+    \item If the operation fails, then that means that the application
+      is no longer blocked.  The entire operation is then restarted by
+      reading the shared variable again.
+  \end{enumerate}
+\end{enumerate}
+
+When all the application threads have been processed this way, the
+global garbage collector executes a \emph{wait} operation sequentially
+on each semaphore in the saved set.
+
+Then the global collector waits for each the threads in the set of
+threads doing a nursery collection on behalf of an application thread
+to finish.  When such a thread finishes, the shared variable is read
+into an ordinary lexical variable and a second copy is made.  The
+\texttt{application-waiting} bit is examined.
+
+\begin{enumerate}
+\item If it is set, the global collector clears the bit, clears the
+  \texttt{gc-in-progress} bit, and executes a \emph{signal} operation
+  on the \texttt{application-waiting} semaphore.  No further
+  synchronization is required.
+\item  If it is cleared, then that means that the application is still
+  blocked.  Then the global collector clears the
+  \texttt{gc-in-progress} bit in the second copy and attempts a CAS
+  operation.
+  \begin{enumerate}
+  \item If the CAS operation succeeds, then it means that the
+    operation is still blocked, and it has been informed that it can
+    safely execute application code when it wakes up.
+  \item If the CAS operation fails, then application may no longer be
+    blocked.  The entire operation is then restarted by reading the
+    shared variable again.
+  \end{enumerate}
+\end{enumerate}
+
 \section{Implementation}
 
 In most systems, the garbage collector is implemented in some language
