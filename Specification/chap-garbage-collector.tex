@@ -266,19 +266,20 @@ following meaning:
 The two semaphores work as follows:
 
 \begin{itemize}
-\item \texttt{local-gc-terminated}.  This semaphore is initialized to
+\item \texttt{global-gc-may-proceed}.  This semaphore is initialized to
   $0$.  When the global collector requests that an application thread
   run the local garbage collector it waits on this semaphore.  The
   application thread signals this semaphore, indicating that all
   objects in the global heap reachable from the local heap have been
   marked.
-\item \texttt{application-waiting}.  This semaphore is initialized to
-  $0$.  When an application thread awakes after having been blocked,
-  it checks whether the global collector is currently executing on
-  behalf of this application thread.  If so, the application thread
-  waits on this semaphore.  When the global collector has finished
-  executing on behalf of this thread, it signals this semaphore,
-  allowing the application thread to continue its execution.
+\item \texttt{application-may-execute}.  This semaphore is initialized
+  to $0$.  When an application thread awakes after having been
+  blocked, it checks whether the global collector is currently
+  executing on behalf of this application thread.  If so, the
+  application thread waits on this semaphore.  When the global
+  collector has finished executing on behalf of this thread, it
+  signals this semaphore, allowing the application thread to continue
+  its execution.
 \end{itemize}
 
 \subsection{Running application thread}
@@ -287,7 +288,7 @@ At every safe point (function call, function return, and a branch to
 an inferior address), the application thread consults the shared
 variable.  If the \texttt{gc-requested} bit is set, then it clears
 that bit and runs the nursery garbage collector.  At the end of the
-collection, it signals the \texttt{local-gc-terminated} semaphore
+collection, it signals the \texttt{global-gc-may-proceed} semaphore
 indicating to the global collector that it has finished, and finally
 continues the application thread.  Not synchronization is required to
 read the shared variable, because once the \texttt{gc-request} bit is
@@ -305,7 +306,7 @@ collector may have to run it on behalf of the application thread.
 The application starts by reading the shared variable into an ordinary
 lexical variable.  If the \texttt{gc-request} bit is set, it clears
 the bit and runs the nursery garbage collector.  At the end of the
-collection, it signals the \texttt{local-gc-terminated} semaphore
+collection, it signals the \texttt{global-gc-may-proceed} semaphore
 indicating to the global collector that it has finished, and then
 starts over by reading the variable again.  This action is repeated
 until the \texttt{gc-request} bit is cleared.
@@ -353,7 +354,7 @@ operation succeeds, it means that the global collector is still
 running the nursery collector on behalf of the application thread, and
 that the global collector has been informed that, when the nursery
 collection is finished, it should signal the
-\texttt{application-waiting} semaphore.
+\texttt{application-may-execute} semaphore.
 
 \subsection{Preparing for a global collection}
 
@@ -375,8 +376,8 @@ variable, and a second copy of it is made.  The
   \item If the operation succeeds, then that means that the
     application thread is still not blocked and it has been properly
     informed that it is expected to run a nursery collection.  The
-    \texttt{local-gc-terminated} semaphore for this application thread
-    is added to a set of such semaphores.
+    \texttt{global-gc-may-proceed} semaphore for this application
+    thread is added to a set of such semaphores.
   \item If the operation fails, then that means that the application
     has been blocked in the meantime.  The entire operation is then
     restarted by reading the shared variable again.
@@ -410,7 +411,7 @@ into an ordinary lexical variable and a second copy is made.  The
 \begin{enumerate}
 \item If it is set, the global collector clears the bit, clears the
   \texttt{gc-in-progress} bit, and executes a \emph{signal} operation
-  on the \texttt{application-waiting} semaphore.  No further
+  on the \texttt{application-may-execute} semaphore.  No further
   synchronization is required.
 \item  If it is cleared, then that means that the application is still
   blocked.  Then the global collector clears the
