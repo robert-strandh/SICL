@@ -98,7 +98,7 @@ collected, threads are first asked to garbage collect their nurseries
 and then to report any references to objects in the global heap.  Once
 every thread has finished this task, collection in the global heap can
 start.  The first part of the heap is scanned and a free list of
-objects that are no longer references is established.  Then, this free
+objects that are no longer referenced is established.  Then, this free
 list is traversed, effectively executing a \texttt{free()} of the rack
 in the second part of the heap.
 
