@@ -66,13 +66,14 @@ pointer having to be updated as a result of a garbage collection in
 the global heap.  Garbage collection in the global heap can therefore
 be done in parallel with the execution of the mutator threads.
 
-The global collector is subject to a write barrier, so that if an
-attempt is made to store a reference to an object in a nursery in an
-object in the global heap, then the object being referred to and all
-the objects in its transitive closure are first moved to the global
-heap.  As a result, there are no references from the global heap to
-objects in any nursery.  The write barrier is implemented as a test,
-emitted by the compiler, to determine:
+The global collector is subject to a write barrier.  Let G be some
+object in the global heap, and let N be some object in a nursery.  The
+write barrier must prevent the existence of a reference from G to N.
+Therefore, when attempt is made to create such a reference, N and its
+transitive closure is first moved to the global heap.  As a result,
+there are no references from the global heap to objects in any
+nursery.  The write barrier is implemented as a test, emitted by the
+compiler, to determine:
 
 \begin{enumerate}
 \item whether the object written to is indeed an object in the global
