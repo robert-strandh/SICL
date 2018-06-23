@@ -107,8 +107,8 @@ In order for marking by the global collector to be done in parallel
 with mutator activity, we use a standard three-color marking
 algorithm.  As mentioned before, we use a write barrier, so that when
 a reference to a white object is about to be stored in a black object,
-we change the color of either one of the two gray.  The choice can be
-based on the type of objects in question, or it can be a global
+we change the color of either one of the two to gray.  The choice can
+be based on the type of objects in question, or it can be a global
 choice.  The write barrier is implemented as additional instructions
 emitted by the compiler.  These additional instructions can be avoided
 in many cases, and in particular when the object being stored is known
