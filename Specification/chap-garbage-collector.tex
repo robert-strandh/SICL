@@ -13,7 +13,7 @@ global allocator for older objects.
 In \refChap{chap-data-representation} we suggest a data representation
 where every heap allocated object has a two-word header object.  If it
 is a \texttt{cons} cell, then that is the entire object.  For other
-heap-allocated objects (called \emph{genral instances}, the first of
+heap-allocated objects (called \emph{general instances}, the first of
 the two words is a tagged pointer to the class object, and the second
 of the two words is a raw pointer to the \emph{rack}.  In
 this chapter, we describe the consequences of this suggested
@@ -149,7 +149,7 @@ fixnum.
 
 This function allocates a new two-word header and returns a tagged
 pointer to it.  The argument \textit{class} is the class of the object
-to be constructred.  The argument \textit{rack} is the rack that holds
+to be constructed.  The argument \textit{rack} is the rack that holds
 the data contained in the object to be constructed.
 
 \Defun {cons} {car cdr}
