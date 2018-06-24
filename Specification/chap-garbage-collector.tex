@@ -293,7 +293,10 @@ The two semaphores work as follows:
 \subsection{Running application thread}
 
 At every safe point (function call, function return, and a branch to
-an inferior address), the application thread consults the shared
+an inferior address%
+\footnote{To minimize the overhead in case of a very tight loop, we
+  will use loop unrolling so that a branch to an inferior address will
+  be less frequent}), the application thread consults the shared
 variable.  If the \texttt{gc-requested} bit is set, then it clears
 that bit and runs the nursery garbage collector.  At the end of the
 collection, it signals the \texttt{global-gc-may-proceed} semaphore
