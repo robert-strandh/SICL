@@ -391,7 +391,7 @@ variable, and a second copy of it is made.  The
     restarted by reading the shared variable again.
   \end{enumerate}
 \item If it is set, then the application is blocked.  Then the
-  \texttt{gc-in-progress} is set bit of the second copy, and a CAS
+  \texttt{gc-in-progress} bit of the second copy is set, and a CAS
   operation is attempted.
   \begin{enumerate}
   \item If the operation succeeds, then that means that the
