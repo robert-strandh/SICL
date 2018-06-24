@@ -137,7 +137,7 @@ This function is similar to the \commonlisp{} function with the same
 name.  The difference is that this function can not be used to
 allocate displaced arrays.  This function can be used by client code
 to allocate arrays that are too big to be allocated in the
-thread-local heap.  All arguments must either be immidiate objects, or
+thread-local heap.  All arguments must either be immediate objects, or
 objects located in the global heap.
 
 \Defun {allocate-rack} {size}
@@ -235,7 +235,7 @@ is about to be used as key in an \texttt{eq} hash table.  Objects that
 can be expected to have a significant life span (such as symbols)
 might also be allocated directly in the global collector. 
 
-\section{Synchronization between nursery and global collectors}
+\section{Synchronization between collectors}
 
 Since each thread is responsible for collecting its own heap and since
 the global collector can not run until every application thread has
