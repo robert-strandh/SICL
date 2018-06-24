@@ -298,7 +298,7 @@ variable.  If the \texttt{gc-requested} bit is set, then it clears
 that bit and runs the nursery garbage collector.  At the end of the
 collection, it signals the \texttt{global-gc-may-proceed} semaphore
 indicating to the global collector that it has finished, and finally
-continues the application thread.  Not synchronization is required to
+continues the application thread.  No synchronization is required to
 read the shared variable, because once the \texttt{gc-request} bit is
 set, no other bit is going to move as the result of any action on the
 part of the global collector.
