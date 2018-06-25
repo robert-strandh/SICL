@@ -43,7 +43,11 @@ single vector consisting of two-word blocks.  This is where
 \texttt{cons} cells and the \emph{headers} of general instances are
 allocated.  The second part of the global heap is organized as the
 space managed by an ordinary memory allocator, for example the one
-created by Doug Lea.
+created by Doug Lea.%
+\footnote{A few simplifications compared to Doug Lea's allocator are
+  likely possible, given the difference in allocation patters of a
+  typical \clanguage{} program and the requests from the nursery
+  collectors of \sysname{}.}
 
 Since all general instances have a two-word header and \texttt{cons}
 cells consist of two words as well, we can use a mark-and-sweep
