@@ -164,6 +164,9 @@ a tagged pointer to it.  The arguments have the same meaning as for
 the standard \commonlisp{} function \texttt{cons}.
 
 \section{Nursery collector}
+
+\subsection{General description}
+
 The directory \texttt{Code/Garbage-collector} contains some code that
 uses a different data representation from what we now suggest.  
 
@@ -181,10 +184,37 @@ in the nursery, at which point only the number of objects required to
 free up enough memory would be promoted, and in the strict order of
 oldest to youngest.
 
-We suggest allocating header objects from the beginning of the nursery
-and racks from the end.  A garbage collection is triggered
-when the two free pointers meet.  We preserve the relative order both
-of header objects and of racks. 
+\subsection{Allocation}
+
+The nursery allocator maintains two pointers into the nursery, namely
+the \emph{header free pointer} and the \emph{rack free pointer}.  The
+header free pointer always has a smaller value than the rack free
+pointer.  These pointers are illustrated in
+\refFig{fig-nursery-pointers}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-nursery-pointers.pdf_t}
+\end{center}
+\caption{\label{fig-nursery-pointers}
+Allocation pointers in the nursery.}
+\end{figure}
+
+To allocate a \texttt{cons} cell or a header, the value returned is
+the existing value of the header free pointer with appropriate tag
+bits added.  Before this value is returned, the header free pointer is
+incremented by a value corresponding to two full words.
+
+To allocate a rack, the rack free pointer is first decremented by a
+value corresponding to the number of words in the rack.  The new value
+of the rack free pointer is then returned.  No tag bits are added.
+
+When a request for allocation would result in less than one free word
+left in the nursery, a collection is first triggered before the
+request is granted.  The reason we need one spare word is explained in
+\refSec{sec-garbage-collection-break-table-build-phase}.
+
+\subsection{Mark phase}
 
 In the \emph{mark phase}, a single mark bit per header object is used.
 Header objects and racks are scanned, but only header objects are
@@ -197,9 +227,16 @@ phase, if the flag is set, a \emph{signal} operation is performed on a
 semaphore used for synchronization between the local and the global
 garbage collector.
 
+\subsection{Promotion phase}
+
+\subsection{Header compaction phase}
+
 In the \emph{header compaction phase}, live header objects are compacted
 toward the beginning of the heap.  A \emph{source} and a \emph{target}
 pointer follow blocks in the bitmap and live words are moved. 
+
+\subsection{Break table build phase}
+\label{sec-garbage-collection-break-table-build-phase}
 
 In the \emph{table build phase}, the bitmap is used to construct an
 \emph{offset table} at the end of the lower part of the heap.  The
@@ -209,17 +246,22 @@ the corresponding field of the previous pair) should be adjusted by
 offset $o$.  There is always enough room for this table, because it
 can contain at most as many entries as there are dead header objects.  
 
+\subsection{Pointer adjustment phase}
+
 In the \emph{adjust phase}, header objects and racks are
 scanned, and fields containing pointers are adjusted according to the
 offset table.  The offset table is searched using binary search,
 except that a simple caching scheme is used to avoid a full binary
 search in nearly all cases. 
 
+\subsection{Rack compaction phase}
+
 In the \emph{rack compaction phase}, header objects are scanned in
 order of increasing addresses, and the corresponding racks
 are compacted towards the end of the heap.
 
 \section{Promotion}
+\label{sec-garbage-collection-promotion}
 
 Objects are typically promoted when the space recovered in the nursery
 as a result of a thread-local garbage collection is deemed too small.%
