@@ -200,10 +200,23 @@ pointer.  These pointers are illustrated in
 Allocation pointers in the nursery.}
 \end{figure}
 
+The nursery allocator also contains a bitmap called the \emph{general
+  instance bitmap} with half the number of bits in compared to the
+number of words in the nursery, or one bit for every possible header
+in the nursery.  If a bit in the bitmap is set, that means that the
+corresponding header object is a general instance.  If it is cleared,
+it means that the header object is a \texttt{cons} cell.  This
+information is necessary so that the garbage collector can determine
+whether the header object points to a rack or not in the rack
+compaction phase as explained in
+\refSec{sec-garbage-collection-rack-compaction-phase}.
+
 To allocate a \texttt{cons} cell or a header, the value returned is
 the existing value of the header free pointer with appropriate tag
 bits added.  Before this value is returned, the header free pointer is
-incremented by a value corresponding to two full words.
+incremented by a value corresponding to two full words.  If a
+\texttt{cons} cell is allocated, no further action is required.  If
+not, the corresponding bit is set in the general instance bitmap.
 
 To allocate a rack, the rack free pointer is first decremented by a
 value corresponding to the number of words in the rack.  The new value
@@ -255,6 +268,7 @@ except that a simple caching scheme is used to avoid a full binary
 search in nearly all cases. 
 
 \subsection{Rack compaction phase}
+\label{sec-garbage-collection-rack-compaction-phase}
 
 In the \emph{rack compaction phase}, header objects are scanned in
 order of increasing addresses, and the corresponding racks
