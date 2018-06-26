@@ -229,16 +229,35 @@ request is granted.  The reason we need one spare word is explained in
 
 \subsection{Mark phase}
 
-In the \emph{mark phase}, a single mark bit per header object is used.
-Header objects and racks are scanned, but only header objects are
-marked.  A flag determines whether a reference to an object allocated
-in the global heap should be marked or not.  This flag is set when the
-local garbage collection was requested by the global garbage
-collector, and cleared when the local garbage collection was performed
-as a result of the local heap being full.  At the end of the mark
-phase, if the flag is set, a \emph{signal} operation is performed on a
-semaphore used for synchronization between the local and the global
-garbage collector.
+The mark phase uses a separate bitmap called the \emph{live object
+  bitmap}.  It has a bit for every two words in the nursery.  After
+the mark phase has finished, if a bit is set in the bitmap, it means
+that the corresponding object (as represented by the header or a
+\texttt{cons} cell) is live.  The live object bitmap is initialized so
+that all bits are cleared before the mark phase begins.
+
+The mark phase starts by determining the place in the code where an
+allocation was requested.  It uses this information to consult the
+\emph{code object} of the function in which is stored information
+about register contents and stack-frame layout. Every register or
+stack location containing a heap-allocated object is visited.  A flag
+determines whether a reference to an object allocated in the global
+heap should be marked or not.  This flag is set when the local garbage
+collection was requested by the global garbage collector, and cleared
+when the local garbage collection was performed as a result of the
+local heap being full.  If a traced object is located in the heap and
+the flag is set, then the global collector is informed that it is
+live.  If the object is located in the nursery, the corresponding bit
+in the live object bitmap is set, and the object is traced according
+to its class.  For a \emph{cons} cell, the \texttt{car} and the
+\texttt{cdr} are recursively visited.  For a general instance, the
+class is visited, and also consulted to determine what words of the
+rack may contain pointers to heap-allocated objects.  Tracing stops
+when an object is reached that has already been traced.
+
+At the end of the mark phase, if the flag is set, a \emph{signal}
+operation is performed on a semaphore used for synchronization between
+the local and the global garbage collector.
 
 \subsection{Promotion phase}
 
