@@ -225,10 +225,12 @@ Objects are typically promoted when the space recovered in the nursery
 as a result of a thread-local garbage collection is deemed too small.%
 \footnote{Here ``too small'' means that another garbage collection
   would be triggered very soon again, which is not desirable.}  When
-this happens, a \emph{prefix} of the nursery (and the associated
-racks in the suffix) is moved to the space managed by the
-global collector.  Then, pointers are adjusted according to the size
-of the prefix and the suffix. 
+this happens, The objects in a \emph{prefix} of the nursery (and the
+associated racks in the suffix), as well as the transitive closure of
+those objects are moved to the space managed by the global collector.
+The remaining objects in the nursery are then compacted, and the
+pointers are adjusted according to the size of the prefix and the
+suffix.
 
 Promotion could happen for reasons other than age.  Objects that are
 too large for the nursery would be allocated directly in the global
