@@ -227,6 +227,34 @@ left in the nursery, a collection is first triggered before the
 request is granted.  The reason we need one spare word is explained in
 \refSec{sec-garbage-collection-break-table-build-phase}.
 
+\subsection{Finding roots}
+
+Several of the phases of the nursery collector involve finding every
+\emph{root}, i.e., every \commonlisp{} object that is currently in a
+processor register or on the stack.  What is done to the object once
+it is found, depends on the phase.
+
+Finding the roots is a fairly complicated procedure, which is probably
+why some implementations prefer traversing the stack
+\emph{conservatively}, i.e., considering every word on the stack that
+\emph{might} be a root to actually \emph{be} one.  But such tricks
+complicate other aspects of the garbage collector.
+
+In \sysname{} we use \emph{precise} stack traversal, meaning that we
+know exactly when a location contains a root and when it does not.
+
+This precise traversal is complicated by the fact that some registers
+are so called \emph{callee saves} registers, meaning that a particular
+function invocation does not save the register to the stack before
+making a function call, and instead it relies on a the first function
+on the call chain that needs to use the register to save it and
+restore it after use.  A direct consequence of this scheme is that a
+register or a stack location close to the top of the stack may contain
+a datum that belongs to a function invocation arbitrarily further down
+the stack, and whether that register or stack location is a root can
+only be determined by knowing the current value of the program counter
+in that function invocation.
+
 \subsection{Mark phase}
 
 The mark phase uses a separate bitmap called the \emph{live object
