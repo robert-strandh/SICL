@@ -271,6 +271,31 @@ the local and the global garbage collector.
 
 \subsection{Promotion phase}
 
+After the mark phase has finished, the value of the variable
+\emph{live object size} is used to determine whether some of the
+objects in the nursery should be \emph{promoted}.  Good threshold
+values are yet to be determined, but we think that if more than half
+the nursery contains live objects, then some objects should be
+promoted.  The higher the threshold, the more likely it is that a
+collection will be triggered soon after the current one.  The lower
+the threshold, the more likely it is for young objects to be promoted
+even though they are likely to die soon.
+
+The other threshold value to be determined is how many objects should
+be promoted.  We think that, after promotion, around one fourth of the
+nursery should contain live objects.  The higher the threshold, the
+more likely it is for another promotion to be triggered during the
+next invocation of the collector.  The lower the threshold, the more
+likely it is for young objects to be promoted even though they are
+likely to die soon.
+
+The promotion phase uses a bitmap called the \emph{promotion bitmap}
+again containing one bit per possible header in the nursery.  This
+bitmap is initialized so that all its bits are cleared.  When a bit is
+set, it indicates that the corresponding object has been moved to the
+global heap, and that the first word of the corresponding header in
+the nursery contains a reference to the promoted copy of the object.
+
 \subsection{Header compaction phase}
 
 In the \emph{header compaction phase}, live header objects are compacted
