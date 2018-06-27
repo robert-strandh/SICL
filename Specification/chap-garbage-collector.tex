@@ -255,6 +255,16 @@ class is visited, and also consulted to determine what words of the
 rack may contain pointers to heap-allocated objects.  Tracing stops
 when an object is reached that has already been traced.
 
+The mark phase maintains an integer variable named \emph{live object
+  space}.  It is initialized to $0$ at the beginning of the mark
+phase.  For every unmarked object in the nursery that is encountered,
+the value of the variable is incremented by the size of that object.
+If the object is a general instance, as indicated by the corresponding
+bit being set in the general instance bitmap, then not only is the
+rack traced, but the size of the rack is added to the value of the
+variable as well.  When the mark phase is finished, this variable
+contains the total amount of live space in the nursery.
+
 At the end of the mark phase, if the flag is set, a \emph{signal}
 operation is performed on a semaphore used for synchronization between
 the local and the global garbage collector.
