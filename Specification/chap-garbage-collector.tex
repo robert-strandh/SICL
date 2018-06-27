@@ -296,6 +296,59 @@ set, it indicates that the corresponding object has been moved to the
 global heap, and that the first word of the corresponding header in
 the nursery contains a reference to the promoted copy of the object.
 
+The promotion phase executes a loop over the live objects that have
+not yet been promoted in the nursery, starting from the one with the
+smallest address.  An object is skipped if it not live, as indicated
+by the bit in the live object bitmap, and an object is skipped if it
+has already been promoted, as indicated by the bit in the promotion
+bitmap.  If the object is not to be skipped, it is promoted.  This
+means that a \emph{copy} of the object is allocated in the global
+heap.  A forward reference is stored in the first word of the header
+of the original object, and a bit is set in the promotion bitmap.
+Notice that, during this phase, there will be references from the
+global heap to the nursery, but these references will never be
+followed by the global collector, and they will disappear at the end
+of the promotion phase.
+
+The newly promoted \emph{copy} is then traced in much the same way as
+objects are traced during the mark phase.  An object is traced by
+recursively visiting its contained objects.  When a visited object
+reference indicates that it has already been promoted, as indicated by
+the corresponding bit being set in the promotion bitmap, the reference
+is replaced by the forward reference stored in the first word of the
+header in the nursery, and tracing stops.  If the visited object has
+not yet been promoted, then a copy is allocated in the global heap as
+described above.  The corresponding bit in the promotion bitmap is set
+and a forward reference is stored, again as above, and the copy is
+recursively traced.  Notice that if a functional programming style is
+used, all objects referred to by the initial copy will have already
+been promoted.  Only side effects can result in an object containing a
+reference to an object that was allocated later on in the nursery.
+Therefore, if a functional style is used, the recursion will be very
+shallow.  For every object that is being promoted, we keep a tally of
+the amount of total space that has been promoted this way.  When the
+total amount of space is greater than or equal to the threshold that
+has been determined, the outer loop stops.  We can not, however, stop
+the tracing in each iteration, because stopping it prematurely means
+that there will be references from the global heap to the nursery
+remaining after this phase.
+
+When a sufficient number of objects have been promoted, the registers
+and the stack are traversed again, much in the same way as during the
+mark phase in order to find every object reference referring to an
+object in the nursery that has been promoted, as determined by the
+promotion bitmap.  Such a reference is replaced by the forward
+reference stored in the first word of the header in the nursery.
+
+Finally, every object in the nursery that has not been promoted is
+scanned to determine any reference to a promoted object.  Such a
+reference is replaced by the forward reference as before.
+
+When every relevant reference to a promoted object has been updated
+this way, the promotion bitmap is subtracted from the live object
+bitmap.  This way, the live object bitmap has a bit set only for live
+objects that are still in the nursery.
+
 \subsection{Header compaction phase}
 
 In the \emph{header compaction phase}, live header objects are compacted
