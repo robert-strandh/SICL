@@ -255,6 +255,38 @@ the stack, and whether that register or stack location is a root can
 only be determined by knowing the current value of the program counter
 in that function invocation.
 
+To find the roots owned by each stack frame, we use the \emph{return
+  address} stored in the stack frame immediately above the one we are
+interested in.  That return address is used to access the
+\emph{register map}, the \emph{stack frame map}, and the
+\emph{callee-saves map} as described in
+\refSec{data-representation-code-objects}.
+
+When the stack traversal starts, the top stack frame belongs to the
+garbage collector itself.  That frame does not contain any roots.  We
+maintain a table called \emph{register contents table} of contents of
+callee-saves registers.  The table is initially filled with the
+current contents of those real registers.
+
+The stack is then traversed, frame by frame, starting with the second
+one from the top, and using the return address in the top frame.
+Initially, the register contents table contains the current value of
+those registers when the root-finding function was called.
+
+When a stack frame is visited, the \emph{register map} and the
+\emph{stack frame map} are used to determine location of roots.  When
+those roots have been processed, the \emph{callee-saves map} for the
+current stack frame is consulted.  Recall that this map is indexed by
+a callee-saves register and contains a stack location in the current
+frame.  The values of the register entry in the register contents
+table and the corresponding stack frame are swapped, so that the
+register contents table now contains the callee-saves registers for
+the next frame, and the next frame is then visited.
+
+When the bottom frame of the stack has been processed, be back up by
+applying the information in the callee-saves map again, thereby
+swapping back to the correct contents of the stack frame.
+
 \subsection{Mark phase}
 
 The mark phase uses a separate bitmap called the \emph{live object
