@@ -268,12 +268,23 @@ A code object contains the following information:
   tables.
 \item A table mapping a value of the program counter to a
   \emph{register map}.  This information is used by the garbage
-  collector to determine which registers contain \commonlisp{} objects
+  collector to determine which registers may contain \commonlisp{}
+  objects that should be traced.  Only values of the program counter
+  corresponding to program points immediately after a \texttt{call}
+  instruction are present in this table.  Only \emph{callee-saved}
+  registers are represented.  Other registers will have been saved to
+  the stack when this information is required by the garbage
+  collector.  The compiler may omit registers that are known to
+  contain immediate \commonlisp{} objects that the garbage collector
+  does not have to trace.
+\item A table mapping a value of the program counter to a \emph{stack
+  frame map}.  This information is used by the garbage collector to
+  determine which stack locations may contain \commonlisp{} objects
   that should be traced.  Only values of the program counter
-  corresponding to \emph{safe points} are present in the table.  A
-  safe point is either the value of the program counter immediately
-  after a \texttt{call} instruction, or immediately before a branch
-  instruction jumping to a lower address.
+  corresponding to program points immediately after a \texttt{call}
+  instruction are present in this table.  The compiler may omit
+  registers that are known to contain immediate \commonlisp{} objects
+  that the garbage collector does not have to trace.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
