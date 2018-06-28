@@ -267,24 +267,34 @@ A code object contains the following information:
   the debugger.  See below for more detailed information about these
   tables.
 \item A table mapping a value of the program counter to a
-  \emph{register map}.  This information is used by the garbage
-  collector to determine which registers may contain \commonlisp{}
-  objects that should be traced.  Only values of the program counter
-  corresponding to program points immediately after a \texttt{call}
-  instruction are present in this table.  Only \emph{callee-saved}
-  registers are represented.  Other registers will have been saved to
-  the stack when this information is required by the garbage
-  collector.  The compiler may omit registers that are known to
-  contain immediate \commonlisp{} objects that the garbage collector
-  does not have to trace.
+  \emph{register map}.  This is a bitmap containing information that
+  is used by the garbage collector to determine which registers may
+  contain \commonlisp{} objects that should be traced.  Only values of
+  the program counter corresponding to program points immediately
+  after a \texttt{call} instruction are present in this table.  Only
+  \emph{callee-saved} registers are represented.  Other registers will
+  have been saved to the stack when this information is required by
+  the garbage collector.  The compiler may omit registers that are
+  known to contain immediate \commonlisp{} objects that the garbage
+  collector does not have to trace.
 \item A table mapping a value of the program counter to a \emph{stack
-  frame map}.  This information is used by the garbage collector to
-  determine which stack locations may contain \commonlisp{} objects
-  that should be traced.  Only values of the program counter
-  corresponding to program points immediately after a \texttt{call}
-  instruction are present in this table.  The compiler may omit
-  registers that are known to contain immediate \commonlisp{} objects
-  that the garbage collector does not have to trace.
+  frame map}.  This is a bitmap containing information that is used by
+  the garbage collector to determine which stack locations may contain
+  \commonlisp{} objects that should be traced.  Only values of the
+  program counter corresponding to program points immediately after a
+  \texttt{call} instruction are present in this table.  Only stack
+  locations containing data owned by the current function invocation
+  are present in the table.  Stack location containing saved
+  callee-saves register values are not present.  The compiler may omit
+  stack locations that are known to contain immediate \commonlisp{}
+  objects that the garbage collector does not have to trace.
+\item a table mapping a value of the program counter to a
+  \emph{callee-saves map}.  This table is indexed by a callee-saved
+  register and contains a stack location in which the contents of the
+  saved register was stored before the current function could use the
+  register.  If the current function did not save the register, the
+  corresponding entry contains some default value indicating this
+  fact.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
   corresponds to a line of code.
