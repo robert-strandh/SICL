@@ -276,9 +276,11 @@ A code object contains the following information:
   have been saved to the stack when this information is required by
   the garbage collector.  The compiler may omit registers that are
   known to contain immediate \commonlisp{} objects that the garbage
-  collector does not have to trace.  For a typical backend, index $i$
-  of the bitmap represents the stack location at address $b-i$ where
-  $b$ is the value of the base pointer.
+  collector does not have to trace.  For a typical backend such as
+  x86-64, the entries in the table represent the registers
+  \texttt{RBX}, \texttt{R12}, \texttt{R13}, \texttt{R14}, and
+  \texttt{R15} as describe in
+  \refSec{sec-backend-x86-84-register-use}.
 \item A table mapping a value of the program counter to a \emph{stack
   frame map}.  This is a bitmap containing information that is used by
   the garbage collector to determine which stack locations may contain
