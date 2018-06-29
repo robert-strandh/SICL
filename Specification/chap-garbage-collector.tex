@@ -200,27 +200,15 @@ pointer.  These pointers are illustrated in
 Allocation pointers in the nursery.}
 \end{figure}
 
-The nursery allocator also contains a bitmap called the \emph{general
-  instance bitmap} with half the number of bits in compared to the
-number of words in the nursery, or one bit for every possible header
-in the nursery.  If a bit in the bitmap is set, that means that the
-corresponding header object is a general instance.  If it is cleared,
-it means that the header object is a \texttt{cons} cell.  This
-information is necessary so that the garbage collector can determine
-whether the header object points to a rack or not in the rack
-compaction phase as explained in
-\refSec{sec-garbage-collection-rack-compaction-phase}.
-
 To allocate a \texttt{cons} cell or a header, the value returned is
 the existing value of the header free pointer with appropriate tag
 bits added.  Before this value is returned, the header free pointer is
-incremented by a value corresponding to two full words.  If a
-\texttt{cons} cell is allocated, no further action is required.  If
-not, the corresponding bit is set in the general instance bitmap.
+incremented by a value corresponding to two full words.
 
 To allocate a rack, the rack free pointer is first decremented by a
 value corresponding to the number of words in the rack.  The new value
-of the rack free pointer is then returned.  No tag bits are added.
+of the rack free pointer is then returned.  The tag bits ($111$) for a
+rack are added.
 
 When a request for allocation would result in less than one free word
 left in the nursery, a collection is first triggered before the
@@ -366,11 +354,10 @@ The mark phase maintains an integer variable named \emph{live object
   space}.  It is initialized to $0$ at the beginning of the mark
 phase.  For every unmarked object in the nursery that is encountered,
 the value of the variable is incremented by the size of that object.
-If the object is a general instance, as indicated by the corresponding
-bit being set in the general instance bitmap, then not only is the
-rack traced, but the size of the rack is added to the value of the
-variable as well.  When the mark phase is finished, this variable
-contains the total amount of live space in the nursery.
+If the object is a general instance, then not only is the rack traced,
+but the size of the rack is added to the value of the variable as
+well.  When the mark phase is finished, this variable contains the
+total amount of live space in the nursery.
 
 At the end of the mark phase, if the flag is set, a \emph{signal}
 operation is performed on a semaphore used for synchronization between

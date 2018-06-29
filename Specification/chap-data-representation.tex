@@ -9,24 +9,31 @@ represent four different \emph{tags} as follows:
 \begin{itemize}
 \item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
   tags are used for fixnums.  The bits except the last one represent
-  integer in two's complement representation.  On a 32-bit machine, a
-  fixnum is thus in the interval $[2^{-30}, 2^{30} - 1]$.  On a 64-bit
-  machine the corresponding interval is $[2^{-62}, 2^{62} - 1]$.
+  integer in two's complement representation.  On a 64-bit machine, a
+  fixnum is thus in the interval $[2^{-62}, 2^{62} - 1]$.
 \item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
   pointer to a \texttt{cons} cell is thus a pointer aligned to a
-  double word to which the machine integer $1$ has been added.
+  double word to which the machine integer $1$ has been added.  See
+  \refSec{sec-data-representation-cons-cells} for more information
+  about the representation of \texttt{cons} cells.
 \item \texttt{011}.  This tag is used for various \emph{immediate}
   objects, and in particular for \emph{characters}.
-\item \texttt{101}.  This tag is used for all heap-allocated objects
-  other than \texttt{cons} cells.  A heap allocated object like this
-  is called a \emph{general instance}.
-\item \texttt{111}.  This tag is unused.
+\item \texttt{101}.  This tag is used for all heap-allocated
+  \commonlisp{} objects other than \texttt{cons} cells.  A heap
+  allocated object like this is called a \emph{general instance}.  It
+  is represented by a two-word header object with one word containing
+  a tagged pointer to the \emph{class object} and the other word
+  containing a tagged pointer to the \emph{rack}.  See
+  \refSec{sec-data-representation-general-instances} for more
+  information about the representation of general instances.
+\item \texttt{111}.  This tag is used to tag a pointer to a
+  \emph{rack}.  Notice that a rack is not a first-class \commonlisp{}
+  object, so it can not be the value of any variable, slot, or
+  argument.
 \end{itemize}
 
-On a 32-bit machine, floats of type \texttt{short-float} are
-represented as immediate values.  On a 64-bit machine, floats of type
-\texttt{short-float} and \texttt{single-float} are represented as
-immediate values.
+On a 64-bit machine, floats of type \texttt{short-float} and
+\texttt{single-float} are represented as immediate values.
 
 \section{Immediate objects}
 
@@ -73,6 +80,7 @@ IEEE floating-point value, with the difference that five fewer bits
 are used for the mantissa.
 
 \section{Representation of \texttt{cons} cells}
+\label{sec-data-representation-cons-cells}
 
 A \texttt{cons} cell is represented as two consecutive machine
 words aligned on a double-word boundary.
@@ -81,30 +89,13 @@ words aligned on a double-word boundary.
 \label{sec-data-representation-general-instances}
 
 Recall that a \emph{general instance} is a heap allocated object that
-is not a \texttt{cons} cell.
-All general instances are represented in (at
-least) two parts, a \emph{header object} and a \emph{rack}.
-The header object always consists of two consecutive words aligned on
-a double-word boundary (just like \texttt{cons} cells).  The first
-word always contains a tagged pointer to a \emph{class} object (which
-is another general instance).  The second word contains a \emph{raw
-  pointer} to the first word of the rack.  In most cases,
-the only place that can contain a raw pointer to a rack is
-the second word of a header object.  However, in some cases (for
-performance reasons) a raw pointer to a rack can be the
-value of some slot.  In this case, we say that we have a
-\emph{disembodied} pointer to a rack.  An object containing
-such a disembodied pointer must be known to the garbage collector, and
-the object must also contain (directly or indirectly) an ordinary
-tagged \commonlisp{} pointer to a header object containing that rack..%
-\footnote{The reason for this restriction is that it must always be possible
-  to find the header object of a rack so as to determine
-  the class of which the object is an instance.  If we could have
-  an object X that contained only the disembodied raw pointer to the
-  rack, then it may be the case that the pointer to the
-  header object is no longer referenced by any other object, whereas
-  the disembodied pointer in X is still reachable.  Then it would be
-  impossible to determine the class of the object.}
+is not a \texttt{cons} cell.  All general instances are represented in
+(at least) two parts, a \emph{header object} and a \emph{rack}.  The
+header object always consists of two consecutive words aligned on a
+double-word boundary (just like \texttt{cons} cells).  The first word
+always contains a tagged pointer to a \emph{class} object (which is
+another general instance).  The second word contains a tagged pointer
+(with tag $111$) to the first word of the rack.
 
 The first entry of the rack of every general instance is a
 small fixnum called the \emph{stamp} of the general instance.  The
@@ -529,9 +520,9 @@ rack with three slots:
   static environment is represented here.
 \item The \emph{entry point}.  The each entry
   point is a \emph{raw address} of an aligned word in the vector
-  containing the instructions of the function.  The garbage collector
-  must update the value of this slot if it decides to move the
-  rack of the code vector.
+  containing the instructions of the function.  Functions are always
+  allocated in the global heap, so the code vector never moves.
+  Therefore, this address will never need to be updated.
 \end{enumerate}
 
 The static environment contains the \emph{code object} as one of its
