@@ -287,6 +287,53 @@ When the bottom frame of the stack has been processed, be back up by
 applying the information in the callee-saves map again, thereby
 swapping back to the correct contents of the stack frame.
 
+As an example of finding the roots, consider a situation where we have
+three callee-saves registers ($0$, $1$, and $2$), and three stack
+frames plus the one running the root-finding function.  Let us call
+these stack frames $A$, $B$, and $C$, in that order of invocation.
+Each stack frame has three \commonlisp{} objects that may be heap
+allocated.  Let us call them $a_1$, $a_2$, $a_3$, $b_1$, $b_2$, $b_3$,
+$c_1$, $c_2$, and $c_3$.  The objects are kept by each stack frame as
+follows:
+
+\begin{itemize}
+\item Stack frame $A$ keeps $a_1$ and $a_2$ in callee-saves registers
+  $0$ and $2$ respectively, so it has saved the callers values of
+  those registers in stack locations $-2$ and $-3$ respectively, but
+  this is the bottom frame, so those saved values contain random data.
+  It keeps $a_3$ in a caller-saves register, so it has been saved to
+  stack location $-4$ before the call that created the stack frame
+  $B$.
+\item Stack frame $B$ keeps $b_1$ and $b_2$ in callee-saves registers
+  $1$ and $2$ respectively, so it has saved the callers values of
+  those registers in stack locations $-2$ and $-3$ respectively.
+  Saved location $-3$ contains $a_2$, but saved location $-2$ contains
+  random data, because no previous invocation has used it for any
+  \commonlisp{} object.  It keeps $b_3$ in a caller-saves register, so
+  it has been saved to stack location $-4$ before that call created
+  the stack frame $C$.
+\item Stack frame $C$ keeps $c_1$ and $c_2$ in callee-saves registers
+  $0$ and $2$, respectively, so it has saved the callers values of
+  those registers in stack locations $-2$ and $-3$ respectively.  But
+  only $c_1$ is a \commonlisp{} value, whereas $c_2$ is some immediate
+  machine value.  Saved location $-2$ contains $a_1$, and saved
+  location $-3$ contains $b_2$.  It keeps $c_3$ in a caller-saves
+  register, so it has been saved to stack location $-4$ before the
+  root-finding function is invoked.
+\end{itemize}
+
+This initial situation is illustrated in
+\refFig{fig-root-finding-example-1}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-root-finding-example-1.pdf_t}
+\end{center}
+\caption{\label{fig-root-finding-example-1}
+Finding roots, initial situation.}
+\end{figure}
+
+
 \subsection{Mark phase}
 
 The mark phase uses a separate bitmap called the \emph{live object
