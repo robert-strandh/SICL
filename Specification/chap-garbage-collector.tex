@@ -244,9 +244,8 @@ in that function invocation.
 
 To find the roots owned by each stack frame, we use the \emph{return
   address} stored in the stack frame immediately above the one we are
-interested in.  That return address is used to access the
-\emph{register map}, the \emph{stack frame map}, and the
-\emph{callee-saves map} as described in
+interested in.  That return address is used to access the \emph{frame
+  map} and the \emph{callee-saves map} as described in
 \refSec{data-representation-code-objects}.
 
 When the stack traversal starts, the top stack frame belongs to the
@@ -260,17 +259,20 @@ one from the top, and using the return address in the top frame.
 Initially, the register contents table contains the current value of
 those registers when the root-finding function was called.
 
-When a stack frame is visited, the \emph{register map} and the
-\emph{stack frame map} are used to determine location of roots.  When
-those roots have been processed, the \emph{callee-saves map} for the
+When a stack frame is visited, the \emph{callee-saves map} for the
 current stack frame is consulted.  Recall that this map is indexed by
 a callee-saves register and contains a stack location in the current
 frame.  The values of the register entry in the register contents
-table and the corresponding stack frame are swapped, so that the
-register contents table now contains the callee-saves registers for
-the next frame, and the next frame is then visited.
+table and the corresponding stack frame are swapped.  After these
+swaps, the register contents table contains the callee-saves
+registers for the next frame, and the frame locations contain the
+value of the callee-saved registers owned by the invocation of this
+frame.
 
-When the bottom frame of the stack has been processed, be back up by
+Next, the \emph{frame map} is used to determine location of roots.
+When those roots have been processed, the next frame is visited.
+
+When the bottom frame of the stack has been processed, we back up by
 applying the information in the callee-saves map again, thereby
 swapping back to the correct contents of the stack frame.
 
@@ -278,31 +280,32 @@ As an example of finding the roots, consider a situation where we have
 three callee-saves registers ($0$, $1$, and $2$), and three stack
 frames plus the one running the root-finding function.  Let us call
 these stack frames $A$, $B$, and $C$, in that order of invocation.
-Each stack frame has three \commonlisp{} objects that may be heap
-allocated.  Let us call them $a_1$, $a_2$, $a_3$, $b_1$, $b_2$, $b_3$,
-$c_1$, $c_2$, and $c_3$.  The objects are kept by each stack frame as
-follows:
+Each stack frame has three local variables.  Let us call them $a_1$,
+$a_2$, $a_3$, $b_1$, $b_2$, $b_3$, $c_1$, $c_2$, and $c_3$.  The
+variables are kept by each stack frame as follows:
 
 \begin{itemize}
-\item Stack frame $A$ keeps $a_1$ and $a_2$ in callee-saves registers
-  $0$ and $2$ respectively, so it has saved the callers values of
-  those registers in stack locations $-2$ and $-3$ respectively, but
-  this is the bottom frame, so those saved values contain random data.
-  It keeps $a_3$ in a caller-saves register, so it has been saved to
-  stack location $-4$ before the call that created the stack frame
-  $B$.
-\item Stack frame $B$ keeps $b_1$ and $b_2$ in callee-saves registers
-  $1$ and $2$ respectively, so it has saved the callers values of
-  those registers in stack locations $-2$ and $-3$ respectively.
-  Saved location $-3$ contains $a_2$, but saved location $-2$ contains
-  random data, because no previous invocation has used it for any
-  \commonlisp{} object.  It keeps $b_3$ in a caller-saves register, so
-  it has been saved to stack location $-4$ before that call created
-  the stack frame $C$.
+\item For stack frame $A$, every variable contains a \commonlisp{}
+  object.  The variables $a_1$ and $a_2$ are kept in callee-saves
+  registers $0$ and $2$ respectively, so the callers values of those
+  registers have been saved in stack locations $-2$ and $-3$
+  respectively, but this is the bottom frame, so those saved values
+  contain random data.  The variable $a_3$ is kept in a caller-saves
+  register, so it has been saved to stack location $-4$ before the
+  call that created the stack frame $B$.
+\item For stack frame $B$, every variable contains a \commonlisp{}
+  object.  The variables $b_1$ and $b_2$ are kept in callee-saves
+  registers $1$ and $2$ respectively, so the callers values of those
+  registers have been saved in stack locations $-2$ and $-3$
+  respectively.  Saved location $-3$ contains $a_2$, but saved
+  location $-2$ contains random data, because no previous invocation
+  has used it for any \commonlisp{} object.  The variable $b_3$ is
+  kept in a caller-saves register, so it has been saved to stack
+  location $-4$ before that call created the stack frame $C$.
 \item Stack frame $C$ keeps $c_1$ and $c_2$ in callee-saves registers
   $0$ and $2$, respectively, so it has saved the callers values of
   those registers in stack locations $-2$ and $-3$ respectively.  But
-  only $c_1$ is a \commonlisp{} value, whereas $c_2$ is some immediate
+  only $c_1$ is a \commonlisp{} object, whereas $c_2$ is some immediate
   machine value.  Saved location $-2$ contains $a_1$, and saved
   location $-3$ contains $b_2$.  It keeps $c_3$ in a caller-saves
   register, so it has been saved to stack location $-4$ before the
@@ -317,94 +320,95 @@ This initial situation is illustrated in
 \inputfig{fig-root-finding-example-1.pdf_t}
 \end{center}
 \caption{\label{fig-root-finding-example-1}
-Finding roots, initial situation.}
+Finding roots, situation before first iteration.}
 \end{figure}
 
-In the first iteration, the register contents table is filled with the
-contents of the callee-saves registers, and stack frame $C$ is
-processed using the current contents of the register contents table.
-This situation is shown in \refFig{fig-root-finding-example-2}.
+In the first iteration, we start by consulting the callee-saves map.
+Entries that are not $0$ are used to determine a stack location.  The
+contents of that stack location is swapped with the corresponding
+element in the register contents table.  The result of this operation
+is shown in \refFig{fig-root-finding-example-1b}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-root-finding-example-1b.pdf_t}
+\end{center}
+\caption{\label{fig-root-finding-example-1b}
+Finding roots, first iteration.}
+\end{figure}
+
+As \refFig{fig-root-finding-example-1b} shows, stack frame $C$ now
+contains only data belonging to this invocation.  The \texttt{frame
+  map} is now consulted.  It indicates that stack locations $-2$ and
+$-4$ contain \commonlisp{} objects, so $c_1$ and $c_3$ are identified
+as roots.
+
+The initial situation of the second iteration is shown in
+\refFig{fig-root-finding-example-2}.
 
 \begin{figure}
 \begin{center}
 \inputfig{fig-root-finding-example-2.pdf_t}
 \end{center}
 \caption{\label{fig-root-finding-example-2}
-Finding roots, first iteration.}
+Finding roots, situation before second iteration.}
 \end{figure}
 
-As \refFig{fig-root-finding-example-2} shows, the register map for
-stack frame $C$ indicates that the first callee-saves register
-contains a \commonlisp{} object.  We therefore identify $c_1$ in the
-register contents table as a root.  Furthermore, the stack frame map
-indicates that position $-4$ in the stack frame also contains a
-\commonlisp{} object.  We can therefore identify $c_3$ as a root as
-well.
+In the second iteration, we start by consulting the callee-saves map.
+Entries that are not $0$ are used to determine a stack location.  The
+contents of that stack location is swapped with the corresponding
+element in the register contents table.  The result of this operation
+is shown in \refFig{fig-root-finding-example-2b}.
 
-To prepare for processing the next stack frame, we now use the the
-callee-saves map to swap the contents of the relevant elements of the
-register contents table and the stack frame.  In this case, there are
-two callee-saves register to consider, namely the first one and the
-third one, as the callee-saves map shows.  Consulting the callee-saves
-map for the first register, we find that the old value has been stored
-in stack position $-2$.  We therefore swap the contents of stack
-position $-2$ and the first element of the register contents table.
-Consulting the callee-saves map for the third register, we find that
-the old value has been stored in stack position $-3$.  We therefore
-swap the contents of stack position $-3$ and the third element of the
-register contents table.
+\begin{figure}
+\begin{center}
+\inputfig{fig-root-finding-example-2b.pdf_t}
+\end{center}
+\caption{\label{fig-root-finding-example-2b}
+Finding roots, second iteration.}
+\end{figure}
 
-The new situation is shown in \refFig{fig-root-finding-example-3}.
+As \refFig{fig-root-finding-example-2b} shows, stack frame $B$ now
+contains only data belonging to this invocation.  The \texttt{frame
+  map} is now consulted.  It indicates that stack locations $-2$,
+$-3$, and $-4$ contain \commonlisp{} objects, so $b_1$, $b_2$, and
+$b_3$ are identified as roots.
+
+The initial situation of the third iteration is shown in
+\refFig{fig-root-finding-example-3}.
 
 \begin{figure}
 \begin{center}
 \inputfig{fig-root-finding-example-3.pdf_t}
 \end{center}
 \caption{\label{fig-root-finding-example-3}
-Finding roots, second iteration.}
+Finding roots, situation before third iteration.}
 \end{figure}
 
-As \refFig{fig-root-finding-example-3} shows, the register map for
-stack frame $B$ indicates that the second and third callee-saves
-registers contain \commonlisp{} objects.  We therefore identify $b_1$
-and $b_2$ in the register contents table as roots.  Furthermore, the
-stack frame map indicates that position $-4$ in the stack frame also
-contains a \commonlisp{} object.  We can therefore identify $b_3$ as a
-root as well.
-
-To prepare for processing the next stack frame, we now use the the
-callee-saves map to swap the contents of the relevant elements of the
-register contents table and the stack frame.  In this case, there are
-two callee-saves register to consider, namely the second one and the
-third one, as the callee-saves map shows.  Consulting the callee-saves
-map for the second register, we find that the old value has been stored
-in stack position $-2$.  We therefore swap the contents of stack
-position $-2$ with the second element of the register contents table.
-Consulting the callee-saves map for the third register, we find that
-the old value has been stored in stack position $-3$.  We therefore
-swap the contents of stack position $-3$ and the third element of the
-register contents table.
-
-The new situation is shown in \refFig{fig-root-finding-example-4}.
+In the third iteration, we start by consulting the callee-saves map.
+Entries that are not $0$ are used to determine a stack location.  The
+contents of that stack location is swapped with the corresponding
+element in the register contents table.  The result of this operation
+is shown in \refFig{fig-root-finding-example-3b}.
 
 \begin{figure}
 \begin{center}
-\inputfig{fig-root-finding-example-4.pdf_t}
+\inputfig{fig-root-finding-example-3b.pdf_t}
 \end{center}
-\caption{\label{fig-root-finding-example-4}
+\caption{\label{fig-root-finding-example-3b}
 Finding roots, third iteration.}
 \end{figure}
 
-As \refFig{fig-root-finding-example-4} shows, the register map for
-stack frame $A$ indicates that the first and third callee-saves
-registers contain \commonlisp{} objects.  We therefore identify $a_1$
-and $a_2$ in the register contents table as roots.  Furthermore, the
-stack frame map indicates that position $-4$ in the stack frame also
-contains a \commonlisp{} object.  We can therefore identify $a_3$ as a
-root as well.
+As \refFig{fig-root-finding-example-3b} shows, stack frame $C$ now
+contains only data belonging to this invocation.  The \texttt{frame
+  map} is now consulted.  It indicates that stack locations $-2$,
+$-3$, and $-4$ contain \commonlisp{} objects, so $a_1$, $a_2$, and
+$a_3$ are identified as roots.
 
 We have now reached the bottom stack frame, so we have correctly
-identified all the roots.
+identified all the roots.  To restore the stack to its initial state,
+this procedure must be executed in reverse order.  However, the stack
+can be kept in this state until roots need to be found a second time.
 
 \subsection{Mark phase}
 
@@ -440,7 +444,7 @@ class object is recursively visited, and also consulted to determine
 the number of words in the rack and what words of the rack may contain
 pointers to heap-allocated objects.  The bits in the live bitmap
 corresponding to the words of the rack are marked, and the words that
-may contain live object of the rack are recursively visited, the
+may contain live object of the rack are recursively visited.  If the
 object is a \texttt{cons} cell, the \texttt{car} and the \texttt{cdr}
 are recursively visited.  Tracing stops when an object is reached that
 has already been traced, or when an object is reached that is located
