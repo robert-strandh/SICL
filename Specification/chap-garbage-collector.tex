@@ -490,7 +490,7 @@ promoted, the first word of the header contains a \emph{forwarding
   pointer} pointing to the promoted object in the global heap, and the
 bit in the promotion bitmap corresponding to the first word of the
 header is set.  Similarly, when a general instance has been promoted,
-\emph{every word} of the rack contains a forwarding pointer pointing
+\emph{every word} of the rack contains a forwarding pointer, pointing
 to the new word in the global heap, and the bit in the promotion
 bitmap corresponding to that word is set.  The reason for treating the
 rack this way is that a stack frame may contain local variables that
@@ -547,10 +547,10 @@ need to consult the frame map of each frame to determine the roots.
 Whether the root contains a pointer to a header or to some element of
 a rack, the promotion bitmap for that pointer is consulted.  If it
 is set, then the root is replaced by the forwarding pointer stored in
-the object or the rack.
+the header or the rack.
 
-Finally, every object in the nursery that has not been promoted is
-scanned to determine any reference to a promoted object.  Such a
+Finally, every live object in the nursery that has not been promoted
+is scanned to determine any reference to a promoted object.  Such a
 reference is replaced by the forward reference as before.
 
 When every relevant reference to a promoted object has been updated
