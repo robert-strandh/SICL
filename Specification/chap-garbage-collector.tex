@@ -321,6 +321,91 @@ This initial situation is illustrated in
 Finding roots, initial situation.}
 \end{figure}
 
+In the first iteration, the register contents table is filled with the
+contents of the callee-saves registers, and stack frame $C$ is
+processed using the current contents of the register contents table.
+This situation is shown in \refFig{fig-root-finding-example-2}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-root-finding-example-2.pdf_t}
+\end{center}
+\caption{\label{fig-root-finding-example-2}
+Finding roots, first iteration.}
+\end{figure}
+
+As \refFig{fig-root-finding-example-2} shows, the register map for
+stack frame $C$ indicates that the first callee-saves register
+contains a \commonlisp{} object.  We therefore identify $c_1$ in the
+register contents table as a root.  Furthermore, the stack frame map
+indicates that position $-4$ in the stack frame also contains a
+\commonlisp{} object.  We can therefore identify $c_3$ as a root as
+well.
+
+To prepare for processing the next stack frame, we now use the the
+callee-saves map to swap the contents of the relevant elements of the
+register contents table and the stack frame.  In this case, there are
+two callee-saves register to consider, namely the first one and the
+third one, as the callee-saves map shows.  Consulting the callee-saves
+map for the first register, we find that the old value has been stored
+in stack position $-2$.  We therefore swap the contents of stack
+position $-2$ and the first element of the register contents table.
+Consulting the callee-saves map for the third register, we find that
+the old value has been stored in stack position $-3$.  We therefore
+swap the contents of stack position $-3$ and the third element of the
+register contents table.
+
+The new situation is shown in \refFig{fig-root-finding-example-3}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-root-finding-example-3.pdf_t}
+\end{center}
+\caption{\label{fig-root-finding-example-3}
+Finding roots, second iteration.}
+\end{figure}
+
+As \refFig{fig-root-finding-example-3} shows, the register map for
+stack frame $B$ indicates that the second and third callee-saves
+registers contain \commonlisp{} objects.  We therefore identify $b_1$
+and $b_2$ in the register contents table as roots.  Furthermore, the
+stack frame map indicates that position $-4$ in the stack frame also
+contains a \commonlisp{} object.  We can therefore identify $b_3$ as a
+root as well.
+
+To prepare for processing the next stack frame, we now use the the
+callee-saves map to swap the contents of the relevant elements of the
+register contents table and the stack frame.  In this case, there are
+two callee-saves register to consider, namely the second one and the
+third one, as the callee-saves map shows.  Consulting the callee-saves
+map for the second register, we find that the old value has been stored
+in stack position $-2$.  We therefore swap the contents of stack
+position $-2$ with the second element of the register contents table.
+Consulting the callee-saves map for the third register, we find that
+the old value has been stored in stack position $-3$.  We therefore
+swap the contents of stack position $-3$ and the third element of the
+register contents table.
+
+The new situation is shown in \refFig{fig-root-finding-example-4}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-root-finding-example-4.pdf_t}
+\end{center}
+\caption{\label{fig-root-finding-example-4}
+Finding roots, third iteration.}
+\end{figure}
+
+As \refFig{fig-root-finding-example-4} shows, the register map for
+stack frame $A$ indicates that the first and third callee-saves
+registers contain \commonlisp{} objects.  We therefore identify $a_1$
+and $a_2$ in the register contents table as roots.  Furthermore, the
+stack frame map indicates that position $-4$ in the stack frame also
+contains a \commonlisp{} object.  We can therefore identify $a_3$ as a
+root as well.
+
+We have now reached the bottom stack frame, so we have correctly
+identified all the roots.
 
 \subsection{Mark phase}
 
