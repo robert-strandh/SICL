@@ -214,6 +214,7 @@ request is granted.  The reason we need these six spare words is
 explained in \refSec{sec-garbage-collection-break-table-build-phase}.
 
 \subsection{Finding roots}
+\label{sec-garbage-collection-finding-roots}
 
 Several of the phases of the nursery collector involve finding every
 \emph{root}, i.e., every \commonlisp{} object that is currently in a
@@ -407,40 +408,52 @@ identified all the roots.
 
 \subsection{Mark phase}
 
-The mark phase uses a separate bitmap called the \emph{live object
-  bitmap}.  It has a bit for every two words in the nursery.  After
-the mark phase has finished, if a bit is set in the bitmap, it means
-that the corresponding object (as represented by the header or a
-\texttt{cons} cell) is live.  The live object bitmap is initialized so
-that all bits are cleared before the mark phase begins.
+The mark phase uses a separate bitmap called the \emph{live bitmap}.
+It has a bit for every word in the nursery.  After the mark phase has
+finished, if a bit is set in the bitmap, it means that the
+corresponding word is part of a live object.  The live bitmap is
+initialized so that all bits are cleared before the mark phase begins.
 
-The mark phase starts by determining the place in the code where an
-allocation was requested.  It uses this information to consult the
-\emph{code object} of the function in which is stored information
-about register contents and stack-frame layout. Every register or
-stack location containing a heap-allocated object is visited.  A flag
-determines whether a reference to an object allocated in the global
-heap should be marked or not.  This flag is set when the local garbage
-collection was requested by the global garbage collector, and cleared
-when the local garbage collection was performed as a result of the
-local heap being full.  If a traced object is located in the heap and
-the flag is set, then the global collector is informed that it is
-live.  If the object is located in the nursery, the corresponding bit
-in the live object bitmap is set, and the object is traced according
-to its class.  For a \emph{cons} cell, the \texttt{car} and the
-\texttt{cdr} are recursively visited.  For a general instance, the
-class is visited, and also consulted to determine what words of the
-rack may contain pointers to heap-allocated objects.  Tracing stops
-when an object is reached that has already been traced.
+The mark phase starts by finding the roots as described in
+\refSec{sec-garbage-collection-finding-roots}.  Only pointers to
+\texttt{cons} cells and header objects are reported in this phase.
+For every \texttt{cons} cell and header found, the two bits in the
+live bitmap corresponding to the two words in the \texttt{cons} cell
+or header are set to $1$.  The stack is scanned from top to bottom and
+then left in that state.
 
-The mark phase maintains an integer variable named \emph{live object
-  space}.  It is initialized to $0$ at the beginning of the mark
-phase.  For every unmarked object in the nursery that is encountered,
-the value of the variable is incremented by the size of that object.
-If the object is a general instance, then not only is the rack traced,
-but the size of the rack is added to the value of the variable as
-well.  When the mark phase is finished, this variable contains the
-total amount of live space in the nursery.
+A flag determines whether a reference to an object allocated in the
+global heap should be marked or not.  This flag is set when the local
+garbage collection was requested by the global garbage collector, and
+cleared when the local garbage collection was performed as a result of
+the local heap being full.  If a traced object is located in the heap
+and the flag is set, then the global collector is informed that it is
+live.  If the object is located in the nursery, the corresponding bits
+in the live bitmap are set.
+
+Once the roots are found, the \texttt{cons} cells and headers marked
+as live in the nursery are traced according to the class of the
+object.  If the object is a general instance (as indicated by the fact
+that the second word contains a rack with the tag reserved for racks
+($111$), then the class is found in the first word of the header.  The
+class object is recursively visited, and also consulted to determine
+the number of words in the rack and what words of the rack may contain
+pointers to heap-allocated objects.  The bits in the live bitmap
+corresponding to the words of the rack are marked, and the words that
+may contain live object of the rack are recursively visited, the
+object is a \texttt{cons} cell, the \texttt{car} and the \texttt{cdr}
+are recursively visited.  Tracing stops when an object is reached that
+has already been traced, or when an object is reached that is located
+in the global heap.
+
+The mark phase maintains an integer variable named \emph{live space}.
+It is initialized to $0$ at the beginning of the mark phase.  For
+every unmarked object in the nursery that is encountered, the value of
+the variable is incremented by the size of that object.  If the object
+is a general instance, then not only is the rack traced, but the size
+of the rack is added to the value of the variable as well.  When the
+mark phase is finished, this variable contains the total amount of
+live space in the nursery.
 
 At the end of the mark phase, if the flag is set, a \emph{signal}
 operation is performed on a semaphore used for synchronization between
@@ -449,7 +462,7 @@ the local and the global garbage collector.
 \subsection{Promotion phase}
 
 After the mark phase has finished, the value of the variable
-\emph{live object size} is used to determine whether some of the
+\emph{live space} is used to determine whether some of the
 objects in the nursery should be \emph{promoted}.  Good threshold
 values are yet to be determined, but we think that if more than half
 the nursery contains live objects, then some objects should be
@@ -476,7 +489,7 @@ the nursery contains a reference to the promoted copy of the object.
 The promotion phase executes a loop over the live objects that have
 not yet been promoted in the nursery, starting from the one with the
 smallest address.  An object is skipped if it not live, as indicated
-by the bit in the live object bitmap, and an object is skipped if it
+by the bit in the live bitmap, and an object is skipped if it
 has already been promoted, as indicated by the bit in the promotion
 bitmap.  If the object is not to be skipped, it is promoted.  This
 means that a \emph{copy} of the object is allocated in the global
@@ -522,8 +535,8 @@ scanned to determine any reference to a promoted object.  Such a
 reference is replaced by the forward reference as before.
 
 When every relevant reference to a promoted object has been updated
-this way, the promotion bitmap is subtracted from the live object
-bitmap.  This way, the live object bitmap has a bit set only for live
+this way, the promotion bitmap is subtracted from the live
+bitmap.  This way, the live bitmap has a bit set only for live
 objects that are still in the nursery.
 
 \subsection{Header compaction phase}
