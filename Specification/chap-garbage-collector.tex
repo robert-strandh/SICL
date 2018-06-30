@@ -167,15 +167,13 @@ the standard \commonlisp{} function \texttt{cons}.
 
 \subsection{General description}
 
-The directory \texttt{Code/Garbage-collector} contains some code that
-uses a different data representation from what we now suggest.  
-
-For the nursery, we suggest using a copying collector to manage small
-(a few megabytes) linear space.  Instead of promoting objects that
-survive a collection, we suggest using a \emph{sliding collector} in
-the nursery.  Such a collector gives a very precise idea of the age of
-different objects, so objects would always be promoted in the order of
-the oldest to the youngest.  This technique avoids the problem where
+The nursery should be fairly small so as to guarantee short delays, a
+few megabytes at most.  Instead of a traditional copying collector in
+which objects that survive a collection are promoted, we use a
+\emph{sliding collector} for the nursery.  Such a collector gives a
+very precise idea of the age of different objects, so objects would
+always be promoted in the order of the oldest to the youngest.  This
+technique avoids the problem in traditional copying collector where
 the allocation of some intermediate objects is immediately followed by
 a collection, so these objects are promoted even though they are
 likely to die soon after the collection.  In a sliding collector,
@@ -186,10 +184,10 @@ oldest to youngest.
 
 \subsection{Allocation}
 
-The nursery allocator maintains two pointers into the nursery, namely
-the \emph{header free pointer} and the \emph{rack free pointer}.  The
-header free pointer always has a smaller value than the rack free
-pointer.  These pointers are illustrated in
+The nursery allocator maintains two pointers into the nursery heap,
+namely the \emph{header free pointer} and the \emph{rack free
+  pointer}.  The header free pointer always has a smaller value than
+the rack free pointer.  These pointers are illustrated in
 \refFig{fig-nursery-pointers}.
 
 \begin{figure}
@@ -210,10 +208,10 @@ value corresponding to the number of words in the rack.  The new value
 of the rack free pointer is then returned.  The tag bits ($111$) for a
 rack are added.
 
-When a request for allocation would result in less than one free word
+When a request for allocation would result in less than six free words
 left in the nursery, a collection is first triggered before the
-request is granted.  The reason we need one spare word is explained in
-\refSec{sec-garbage-collection-break-table-build-phase}.
+request is granted.  The reason we need these six spare words is
+explained in \refSec{sec-garbage-collection-break-table-build-phase}.
 
 \subsection{Finding roots}
 
