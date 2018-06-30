@@ -484,25 +484,36 @@ likely it is for young objects to be promoted even though they are
 likely to die soon.
 
 The promotion phase uses a bitmap called the \emph{promotion bitmap}
-again containing one bit per possible header in the nursery.  This
-bitmap is initialized so that all its bits are cleared.  When a bit is
-set, it indicates that the corresponding object has been moved to the
-global heap, and that the first word of the corresponding header in
-the nursery contains a reference to the promoted copy of the object.
+again containing one bit per word in the nursery.  This bitmap is
+initialized so that all its bits are cleared.  When an object has been
+promoted, the first word of the header contains a \emph{forwarding
+  pointer} pointing to the promoted object in the global heap, and the
+bit in the promotion bitmap corresponding to the first word of the
+header is set.  Similarly, when a general instance has been promoted,
+\emph{every word} of the rack contains a forwarding pointer pointing
+to the new word in the global heap, and the bit in the promotion
+bitmap corresponding to that word is set.  The reason for treating the
+rack this way is that a stack frame may contain local variables that
+are rack pointers, and those variables must be updated when the object
+owning the rack has been promoted.  We do this by replacing the
+contents of the variable with the forwarding pointer when the
+corresponding bit in the promotion bitmap is set.
 
 The promotion phase executes a loop over the live objects that have
 not yet been promoted in the nursery, starting from the one with the
 smallest address.  An object is skipped if it not live, as indicated
-by the bit in the live bitmap, and an object is skipped if it
-has already been promoted, as indicated by the bit in the promotion
+by the bit in the live bitmap, and an object is skipped if it has
+already been promoted, as indicated by the bit in the promotion
 bitmap.  If the object is not to be skipped, it is promoted.  This
 means that a \emph{copy} of the object is allocated in the global
 heap.  A forward reference is stored in the first word of the header
 of the original object, and a bit is set in the promotion bitmap.
-Notice that, during this phase, there will be references from the
-global heap to the nursery, but these references will never be
-followed by the global collector, and they will disappear at the end
-of the promotion phase.
+Similarly, the contents of every word of the rack is replaced by a
+forwarding pointer, and the bit in the promotion bitmap corresponding
+to each such word is set.  Notice that, during this phase, there will
+be references from the global heap to the nursery, but these
+references will never be followed by the global collector, and they
+will disappear at the end of the promotion phase.
 
 The newly promoted \emph{copy} is then traced in much the same way as
 objects are traced during the mark phase.  An object is traced by
@@ -512,8 +523,8 @@ the corresponding bit being set in the promotion bitmap, the reference
 is replaced by the forward reference stored in the first word of the
 header in the nursery, and tracing stops.  If the visited object has
 not yet been promoted, then a copy is allocated in the global heap as
-described above.  The corresponding bit in the promotion bitmap is set
-and a forward reference is stored, again as above, and the copy is
+described above.  The corresponding bits in the promotion bitmap are set
+and forwarding pointers are stored, again as above, and the copy is
 recursively traced.  Notice that if a functional programming style is
 used, all objects referred to by the initial copy will have already
 been promoted.  Only side effects can result in an object containing a
@@ -527,12 +538,16 @@ the tracing in each iteration, because stopping it prematurely means
 that there will be references from the global heap to the nursery
 remaining after this phase.
 
-When a sufficient number of objects have been promoted, the registers
-and the stack are traversed again, much in the same way as during the
-mark phase in order to find every object reference referring to an
-object in the nursery that has been promoted, as determined by the
-promotion bitmap.  Such a reference is replaced by the forward
-reference stored in the first word of the header in the nursery.
+When a sufficient number of objects have been promoted, the stack is
+traversed to find roots that need to be modified as a result of object
+having been promoted.  However, since the stack is now in a state
+where every local variable is stored in the stack frame that owns it
+as \refSec{sec-garbage-collection-finding-roots} explains, we only
+need to consult the frame map of each frame to determine the roots.
+Whether the root contains a pointer to a header or to some element of
+a rack, the promotion bitmap for that pointer is consulted.  If it
+is set, then the root is replaced by the forwarding pointer stored in
+the object or the rack.
 
 Finally, every object in the nursery that has not been promoted is
 scanned to determine any reference to a promoted object.  Such a
