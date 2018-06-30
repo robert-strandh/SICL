@@ -246,7 +246,16 @@ To find the roots owned by each stack frame, we use the \emph{return
   address} stored in the stack frame immediately above the one we are
 interested in.  That return address is used to access the \emph{frame
   map} and the \emph{callee-saves map} as described in
-\refSec{data-representation-code-objects}.
+\refSec{data-representation-code-objects}.  Recall that the
+\emph{frame map} is a bitmap that contains an element for each stack
+location containing a \commonlisp{} object that might be heap
+allocated.  For a callee-saves register that might contain a
+heap-allocated \commonlisp{} object, the frame map indicates the frame
+location where the previous value of the register was stored.  Also
+recall that the callee-saves map contains an entry for each
+callee-saves register.  The value of an entry is the stack location
+where the previous value of the register was stored, or $0$ of the
+register is not used by the current invocation.
 
 When the stack traversal starts, the top stack frame belongs to the
 garbage collector itself.  That frame does not contain any roots.  We
@@ -558,60 +567,59 @@ this way, the promotion bitmap is subtracted from the live
 bitmap.  This way, the live bitmap has a bit set only for live
 objects that are still in the nursery.
 
-\subsection{Header compaction phase}
+\subsection{Compaction phase}
 
-In the \emph{header compaction phase}, live header objects are compacted
-toward the beginning of the heap.  A \emph{source} and a \emph{target}
-pointer follow blocks in the bitmap and live words are moved. 
+In the \emph{compaction phase}, the live bitmaps is used to slide
+headers to the beginning of the nursery heap and to slide rack so the
+end of the nursery heap.  A \emph{source} pointer follows live words
+to be copied, and a \emph{target} pointer follows available words.
 
 \subsection{Break table build phase}
 \label{sec-garbage-collection-break-table-build-phase}
 
-In the \emph{table build phase}, the bitmap is used to construct an
-\emph{offset table} at the end of the lower part of the heap.  The
-offset table contains a sequence of pairs $<a,o>$ meaning that a
-pointer with an address less than or equal to $a$ (and greater than
-the corresponding field of the previous pair) should be adjusted by
-offset $o$.  There is always enough room for this table, because it
-can contain at most as many entries as there are dead header objects.  
+In the \emph{table build phase}, the live bitmap is used to construct
+two \emph{break tables} between the new locations of the header free
+pointer and the rack free pointer after compaction.  Each table has
+the format $a_0, d_0, a_1, d_1, \ldots, a_n, d_n, a_{n+1}$ where $a_i$
+is an address and $d_i$ is a \emph{delta} or an \emph{offset}.  The
+meaning of the elements of a table is that an address that was
+originally between $a_i$ and $a_{i+1}$ should be updated by having
+$d_i$ added to it.  One break table is built for headers and another
+break table is built for racks.  In the worst case, each of these
+tables may contain three more words than there are free words
+available for it.  This is the reason why a collection is triggered
+when granting a request for allocation would result in fewer than six
+words left in the nursery heap.
+
+We use \emph{binary search} to find an entry in a break table.
 
 \subsection{Pointer adjustment phase}
+
+Once break table are built, the stack is scanned to find roots, and it
+is also restored to its initial state as describe in
+\refSec{sec-garbage-collection-finding-roots}.  For each root that
+contains a pointer to the nursery, we determine whether it is pointer
+to a header or to a rack, and consult the corresponding break table to
+determine a value to be added to the current one.
+
+Next, headers in the nursery are traversed.  For a \texttt{cons} cell,
+the first break table is consulted in order to adjust both the
+\texttt{car} and the \texttt{cdr}.  For a general instance, the first
+break table is consulted in order to adjust the \texttt{class} slot
+and the second break table is consulted in order to adjust the
+\texttt{rack} slot.  Once the rack slot has been adjusted, the rack is
+traversed according to the class in order to determine what words of
+the rack contain \commonlisp{} objects.  For each such word, if it is
+a heap-allocated object, the first break table is consulted in order
+to adjust its value.
+
+
 
 In the \emph{adjust phase}, header objects and racks are
 scanned, and fields containing pointers are adjusted according to the
 offset table.  The offset table is searched using binary search,
 except that a simple caching scheme is used to avoid a full binary
 search in nearly all cases. 
-
-\subsection{Rack compaction phase}
-\label{sec-garbage-collection-rack-compaction-phase}
-
-In the \emph{rack compaction phase}, header objects are scanned in
-order of increasing addresses, and the corresponding racks
-are compacted towards the end of the heap.
-
-\section{Promotion}
-\label{sec-garbage-collection-promotion}
-
-Objects are typically promoted when the space recovered in the nursery
-as a result of a thread-local garbage collection is deemed too small.%
-\footnote{Here ``too small'' means that another garbage collection
-  would be triggered very soon again, which is not desirable.}  When
-this happens, The objects in a \emph{prefix} of the nursery (and the
-associated racks in the suffix), as well as the transitive closure of
-those objects are moved to the space managed by the global collector.
-The remaining objects in the nursery are then compacted, and the
-pointers are adjusted according to the size of the prefix and the
-suffix.
-
-Promotion could happen for reasons other than age.  Objects that are
-too large for the nursery would be allocated directly in the global
-allocator.  Objects to which references from foreign code are
-about to be created would first be promoted to the global collector
-where they would no longer move.  The same is true for an object that
-is about to be used as key in an \texttt{eq} hash table.  Objects that
-can be expected to have a significant life span (such as symbols)
-might also be allocated directly in the global collector. 
 
 \section{Synchronization between collectors}
 
