@@ -146,7 +146,9 @@ objects located in the global heap.
 
 Allocate a rack containing \textit{size} words and return an untagged
 pointer to it.  Because the pointer is untagged, it will look like a
-fixnum.
+fixnum.  If the reference returned by this function is dropped and not
+passed to \texttt{allocate-header} then the corresponding memory is
+lost forever.
 
 \Defun {allocate-header} {class rack}
 
