@@ -7,28 +7,26 @@ collection.  We recommend ``The Garbage Collection Handbook''
 also recommend Paul Wilson's excellent survey paper
 \cite{Wilson:1992:UGC:645648.664824}.
 
-We think it would be good to use a per-thread nursery combined with a
-global allocator for older objects.
+We use a per-thread nursery combined with a global allocator for older
+objects.
 
-In \refChap{chap-data-representation} we suggest a data representation
-where every heap allocated object has a two-word header object.  If it
-is a \texttt{cons} cell, then that is the entire object.  For other
-heap-allocated objects (called \emph{general instances}, the first of
-the two words is a tagged pointer to the class object, and the second
-of the two words is a raw pointer to the \emph{rack}.  In
-this chapter, we describe the consequences of this suggested
-representation to the garbage collector.
+In \refChap{chap-data-representation} we describe the data
+representation where every heap allocated object has a two-word header
+object.  If it is a \texttt{cons} cell, then that is the entire
+object.  For other heap-allocated objects (called \emph{general
+  instances}, the first of the two words is a tagged pointer to the
+class object, and the second of the two words is a pointer to the
+\emph{rack} using a special tag for racks.  In this chapter, we
+describe the consequences of this representation to the garbage
+collector.
 
 We begin this chapter by describing the algorithms used in the global
-collector and the nursery collector.  We then describe how promotion
-takes place.  Finally, we describe the synchronization procedure
-required for the nursery collectors to collaborate with the global
-collector.
+collector and the nursery collector.  Finally, we describe the
+synchronization procedure required for the nursery collectors to
+collaborate with the global collector.
 
 \section{Global collector}
 \subsection{General description}
-
-No implementation work has been done yet on the global collector.
 
 The global collector is a concurrent collector, i.e., it runs in
 parallel with the mutator threads.  With modern processors, it is
@@ -73,11 +71,11 @@ be done in parallel with the execution of the mutator threads.
 The global collector is subject to a write barrier.  Let G be some
 object in the global heap, and let N be some object in a nursery.  The
 write barrier must prevent the existence of a reference from G to N.
-Therefore, when attempt is made to create such a reference, N and its
-transitive closure is first moved to the global heap.  As a result,
-there are no references from the global heap to objects in any
-nursery.  The write barrier is implemented as a test, emitted by the
-compiler, to determine:
+Therefore, when attempt is made to create such a reference, N and the
+objects in its transitive closure are first moved to the global heap.
+As a result, there are no references from the global heap to objects
+in any nursery.  The write barrier is implemented as a test, emitted
+by the compiler, to determine:
 
 \begin{enumerate}
 \item whether the object written to is indeed an object in the global
@@ -116,7 +114,7 @@ be based on the type of objects in question, or it can be a global
 choice.  The write barrier is implemented as additional instructions
 emitted by the compiler.  These additional instructions can be avoided
 in many cases, and in particular when the object being stored is known
-to be an immediate object (fixnum, character, etc) or when it an
+to be an immediate object (fixnum, character, etc) or when it is an
 unboxed object to be stored in a specialized array.  The type
 inferencer can thus be used to determine whether the write barrier can
 be elided.
