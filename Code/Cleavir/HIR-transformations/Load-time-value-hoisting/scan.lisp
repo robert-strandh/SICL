@@ -6,35 +6,32 @@
 
 (defvar *compilation-environment*)
 
-(defvar *data-constructors*)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Similarity Tables
 ;;;
 ;;; Each of these tables maps from some key to the corresponding
-;;; constructor.  The EQ table is used to ensure that each object is only
-;;; scanned once.  The other tables are used for objects where the rules of
-;;; similarity are less restrictive.
-
-(defvar *eq-table*)
+;;; constructor.  The EQL table is used to ensure that each object is only
+;;; scanned once.  This works because if two objects are EQL, they are also
+;;; similar in the sense of CLHS 3.2.4.2.2.  The EQUALP table is used to
+;;; coalesce literal objects where the rules of similarity are less
+;;; restrictive.  Finally
 
 (defvar *eql-table*)
 
-(defvar *equal-table*)
-
 (defvar *equalp-table*)
 
-(defmacro with-fresh-constructor-tables (&body body)
-  `(let ((*eq-table* (make-hash-table :test #'eq))
-         (*eql-table* (make-hash-table :test #'eql))
-         (*equal-table* (make-hash-table :test #'equal))
+(defmacro with-fresh-tables (&body body)
+  `(let ((*eql-table* (make-hash-table :test #'eql))
          (*equalp-table* (make-hash-table :test #'equalp)))
      ,@body))
 
 (defmacro constructor (key)
-  `(gethash ,key *eq-table*))
+  `(gethash ,key *eql-table*))
 
+;;; The function COALESCE ensures that for any two calls (coalesce o1 k1)
+;;; and (coalesce o2 k2), where o1 and o2 are objects of the same type,
+;;; (equalp k1 k2) implies (eq (constructor o1) (constructor o2)).
 (defun coalesce (object equalp-key)
   (let* ((equalp-key
            (list* (class-of object) equalp-key))
@@ -50,154 +47,131 @@
 ;;;
 ;;; Scanning
 
-(defgeneric scan-hir (hir))
+;;; Scan all data in HIR with SCAN-DATUM.
+(defgeneric scan-hir (hir client))
 
-(defgeneric scan-datum (datum))
+;;; Scan all literal objects in DATUM with SCAN-LITERAL-OBJECT.
+(defgeneric scan-datum (datum client))
 
-(defgeneric scan-constant (constant))
-
-(defgeneric scan-load-time-value-form (form read-only-p))
+;;; Ensure that the literal object has a suitable constructor.  Return that
+;;; constructor.
+(defgeneric scan-literal-object (constant client))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Scan HIR
 
+(defmethod scan-hir ((hir cleavir-ir:instruction) client)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (loop for input in (cleavir-ir:inputs instruction) do
+       (scan-datum input client)))
+   hir))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Scan Datum
 
-(defmethod scan-datum ((load-time-value-input cleavir-ir:load-time-value-input))
-  (scan-load-time-value-form
-   (cleavir-ir:form load-time-value-input)
-   (cleavir-ir:read-only-p load-time-value-input)))
-
-(defmethod scan-datum ((constant-input cleavir-ir:constant-input))
-  (let ((value (cleavir-ir:value constant-input)))
-    (scan-constant value)))
-
-(defmethod scan-datum ((constant-input cleavir-ir:immediate-input))
+(defmethod scan-datum (datum client)
   (values))
+
+(defmethod scan-datum ((load-time-value-input cleavir-ir:load-time-value-input) client)
+  (unless (constructor load-time-value-input)
+    (let ((constructor
+            (make-load-time-value-constructor
+             (cleavir-ir:form load-time-value-input)
+             (cleavir-ir:read-only-p load-time-value-input))))
+      (setf (constructor load-time-value-input) constructor)
+      (scan-hir (creation-thunk constructor) client))))
+
+(defmethod scan-datum ((constant-input cleavir-ir:constant-input) client)
+  (unless (constructor constant-input)
+    (setf (constructor constant-input)
+          (scan-literal-object
+           (cleavir-ir:value constant-input)
+           client))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Scan Constant
 
-(defmethod scan-constant :around (datum)
-  (call-next-method)
-  (values))
+(defmethod scan-literal-object :around (object client)
+  (multiple-value-bind (constructor present-p) (constructor object)
+    (cond ((not present-p)
+           (call-next-method)
+           (constructor object))
+          ((scanning-creation-form-p constructor)
+           (error 'circular-dependencies-in-creation-form
+                  :prototype object
+                  :creation-form (creation-form constructor)))
+          (t constructor))))
 
-(defmethod scan-constant (constant)
-  (let ((constructor (constructor constant)))
-    (cond
-      ;; First visit - create a suitable constructor.
-      ((not constructor)
-       (multiple-value-bind (creation-form initialization-form)
-           (make-load-form constant *compilation-environment*)
-         (let* ((creation-thunk
-                  (compile-hir creation-form))
-                (initialization-thunk
-                  (compile-hir initialization-thunk))
-                (constructor
-                  (make-instance 'user-defined-constructor
-                    :creation-form creation-form
-                    :creation-thunk creation-thunk
-                    :initialization-form initialization-form
-                    :initialization-thunk initialization-thunk)))
-           (setf (constructor constant) constructor)
-           (scan-hir creation-thunk)
-           (setf (creation-form-finalized-p constructor) t)
-           (scan-hir initialization-thunk))))
-      ;; Recurring visit - check for creation form circularity.
-      ((not (creation-form-finalized-p constructor))
-       (error 'circular-dependencies-in-creation-form
-              :prototype constant
-              :creation-form (creation-form constructor))))))
+(defmethod scan-literal-object (object client)
+  (let ((constructor (make-user-defined-constructor object)))
+    (setf (constructor object) constructor)
+    (scan-hir (creation-thunk constructor) client)
+    (setf (scanning-creation-form-p constructor) nil)
+    (scan-hir (initialization-thunk constructor) client)))
 
-(defmethod scan-constant ((number number))
-  (with-memoization (number *eq-table*)
-      (with-memoization (number *eql-table*)
-          (make-instance 'number-constructor
-            :prototype number))))
+(defmethod scan-literal-object ((number number) client)
+  (setf (constructor number)
+        (make-standard-constructor number)))
 
-(defmethod scan-constant ((character character))
-  (with-memoization (character *eq-table*)
-      (with-memoization (character *eql-table*)
-          (make-instance 'character-constructor
-            :prototype character))))
+(defmethod scan-literal-object ((character character) client)
+  (setf (constructor character)
+        (make-standard-constructor character)))
 
-(defmethod scan-constant ((symbol symbol))
-  (with-memoization (symbol *eq-table*)
-      (make-instance 'symbol-constructor
-        :prototype symbol)
-    (let ((symbol-name (symbol-name symbol))
-          (symbol-package (symbol-package symbol))
-          (current-package *package*))
-      (scan-constant symbol-name)
-      (scan-constant symbol-package)
-      (scan-constant current-package)
-      (coalesce symbol (list (constructor symbol-name)
-                             (constructor symbol-package)))
-      (unless (null symbol-package)
-        (coalesce symbol (list (constructor symbol-name)
-                               (constructor current-package)))))))
+(defmethod scan-literal-object ((symbol symbol) client)
+  (setf (constructor symbol)
+        (make-standard-constructor symbol))
+  (let ((symbol-name-constructor (scan-literal-object (symbol-name symbol) client))
+        (symbol-package (symbol-package symbol)))
+    (coalesce symbol (list symbol-name-constructor
+                           (scan-literal-object symbol-package client)))
+    (unless (null symbol-package)
+      (coalesce symbol (list symbol-name-constructor
+                             (scan-literal-object *package* client))))))
 
-(defmethod scan-constant ((package package))
-  (with-memoization (package *eq-table*)
-      (make-instance 'package-constructor
-        :prototype package)
-    (let ((name (package-name package)))
-      (scan-constant name)
-      (coalesce package (constructor name)))))
+(defmethod scan-literal-object ((package package) client)
+  (setf (constructor package)
+        (make-standard-constructor package))
+  (coalesce package (scan-literal-object (package-name package) client)))
 
-(defmethod scan-constant ((random-state random-state))
-  (with-memoization (random-state *eq-table*)
-      (make-instance 'random-state-constructor
-        :prototype random-state)))
+(defmethod scan-literal-object ((random-state random-state) client)
+  (setf (constructor random-state)
+        (make-standard-constructor random-state)))
 
-(defmethod scan-constant ((cons cons))
-  (with-memoization (cons *eq-table*)
-      (make-instance 'cons-constructor
-        :prototype cons)
-    (scan-constant (car cons))
-    (scan-constant (cdr cons))
-    (coalesce cons (list (constructor (car cons))
-                         (constructor (cdr cons))))))
+(defmethod scan-literal-object ((cons cons) client)
+  (setf (constructor cons)
+        (make-standard-constructor cons))
+  (coalesce cons (list (scan-literal-object (car cons) client)
+                       (scan-literal-object (cdr cons) client))))
 
-(defmethod scan-constant ((array array))
-  (with-memoization (array *eq-table*)
-      (make-instance 'array-constructor
-        :prototype array)
+(defmethod scan-literal-object ((array array) client)
+  (setf (constructor array)
+        (make-standard-constructor array))
+  (let ((constructor-array (make-array (array-total-size array))))
     (loop for index below (array-total-size array) do
-      (scan-constant (row-major-aref array index)))
-    (let ((key-array (make-array (array-total-size array))))
-      (loop for index below (array-total-size array) do
-        (setf (row-major-aref key-array index)
-              (constructor (row-major-aref array index))))
-      (coalesce array (list (array-rank array)
-                            (array-dimensions array)
-                            (array-element-type array)
-                            key-array)))))
+      (setf (aref constructor-array index)
+            (scan-literal-object (row-major-aref array index) client)))
+    (coalesce array (list (array-rank array)
+                          (array-dimensions array)
+                          (array-element-type array)
+                          constructor-array))))
 
-(defmethod scan-constant ((hash-table hash-table))
-  (with-memoization (hash-table *eq-table*)
-      (make-instance 'hash-table-constructor
-        :prototype hash-table)
-    (maphash (lambda (key value)
-               (scan-constant key)
-               (scan-constant value))
-             hash-table)))
+(defmethod scan-literal-object ((hash-table hash-table) client)
+  (setf (constructor hash-table)
+        (make-standard-constructor hash-table))
+  (let ((constructor-table (make-hash-table)))
+    (maphash
+     (lambda (key value)
+       (setf (gethash (scan-literal-object key client) constructor-table)
+             (scan-literal-object value client)))
+     hash-table)
+    (coalesce hash-table (list (hash-table-test hash-table)
+                               constructor-table))))
 
-(defmethod scan-constant ((pathname pathname))
-  (with-memoization (pathname *eq-table*)
-      (with-memoization (pathname *equal-table*)
-          (make-instance 'pathname-constructor
-            :prototype pathname))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Load-Time-Value Scanning
-
-(defmethod scan-load-time-value-form (form read-only-p)
-  (with-memoization (form *eq-table*)
-      (make-instance 'load-time-value-constructor
-        :form form)))
+(defmethod scan-literal-object ((pathname pathname) client)
+  (setf (constructor pathname)
+        (make-standard-constructor pathname))
+  (coalesce pathname pathname))
