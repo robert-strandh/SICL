@@ -1,4 +1,11 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:cleavir-load-time-value-hoisting
-  (:use #:common-lisp))
+  (:use #:common-lisp)
+  (:export
+   #:hoist-load-time-values
+   #:scan-hir
+   #:scan-datum
+   #:scan-literal-object
+   #:hoist-hir
+   #:hoist-datum))

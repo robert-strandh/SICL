@@ -4,8 +4,6 @@
 ;;; a suitable constructor.  Constructors of similar objects are coalesced
 ;;; in the process.
 
-(defvar *compilation-environment*)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Similarity Tables
@@ -45,20 +43,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Scanning
-
-;;; Scan all data in HIR with SCAN-DATUM.
-(defgeneric scan-hir (hir client))
-
-;;; Scan all literal objects in DATUM with SCAN-LITERAL-OBJECT.
-(defgeneric scan-datum (datum client))
-
-;;; Ensure that the literal object has a suitable constructor.  Return that
-;;; constructor.
-(defgeneric scan-literal-object (constant client))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Scan HIR
 
 (defmethod scan-hir ((hir cleavir-ir:instruction) client)
@@ -77,10 +61,14 @@
 
 (defmethod scan-datum ((load-time-value-input cleavir-ir:load-time-value-input) client)
   (unless (constructor load-time-value-input)
-    (let ((constructor
-            (make-load-time-value-constructor
-             (cleavir-ir:form load-time-value-input)
-             (cleavir-ir:read-only-p load-time-value-input))))
+    (let* ((form (cleavir-ir:form load-time-value-input))
+           (read-only-p (cleavir-ir:read-only-p load-time-value-input))
+           (creation-thunk (compile-form form client))
+           (constructor
+             (make-instance 'load-time-value-constructor
+               :form form
+               :creation-thunk creation-thunk
+               :read-only-p read-only-p)))
       (setf (constructor load-time-value-input) constructor)
       (scan-hir (creation-thunk constructor) client))))
 
@@ -107,11 +95,20 @@
           (t constructor))))
 
 (defmethod scan-literal-object (object client)
-  (let ((constructor (make-user-defined-constructor object)))
-    (setf (constructor object) constructor)
-    (scan-hir (creation-thunk constructor) client)
-    (setf (scanning-creation-form-p constructor) nil)
-    (scan-hir (initialization-thunk constructor) client)))
+  (multiple-value-bind (creation-form initialization-form)
+      (make-load-form object *compilation-environment*)
+    (let* ((creation-thunk (compile-form creation-form client))
+           (initialization-thunk (compile-form initialization-form client))
+           (constructor
+             (make-instance 'user-defined-constructor
+               :creation-form creation-form
+               :creation-thunk creation-thunk
+               :initialization-form initialization-form
+               :initialization-thunk initialization-thunk)))
+      (setf (constructor object) constructor)
+      (scan-hir creation-thunk client)
+      (setf (scanning-creation-form-p constructor) nil)
+      (scan-hir initialization-thunk client))))
 
 (defmethod scan-literal-object ((number number) client)
   (setf (constructor number)

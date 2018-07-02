@@ -1,12 +1,10 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
-;;; Given a HIR flowchart, return two values.  The first value is the HIR
-;;; graph of a thunk that returns a simple vector of objects.  The second
-;;; value is a hash table mapping from each root object to the
-;;; corresponding index in the vector of objects.
-
+(defmethod compile-form (form client)
+  (cleavir-ast-to-hir:ast-to-hir
+   (cleavir-generate-ast:generate-ast form *compilation-environment* client)))
 
 (defun hoist-load-time-values (hir client &key compilation-environment)
   (let ((*compilation-environment* compilation-environment))
     (with-fresh-tables (scan-hir hir client)
-      (hoist-data hir client))))
+      (hoist-hir hir client))))
