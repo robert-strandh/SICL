@@ -37,8 +37,7 @@ collector and a  traditional memory allocator as implemented by
 \texttt{malloc()/free()} in a \clanguage{} environment.
 
 We define a global heap divided into two parts.  The first part is a
-single vector consisting of two-word blocks.  This is where
-\texttt{cons} cells and the \emph{headers} of general instances are
+single vector consisting of two-word blocks.  This is where dyads are
 allocated.  The second part of the global heap is organized as the
 space managed by an ordinary memory allocator, for example the one
 created by Doug Lea.%
@@ -47,8 +46,7 @@ created by Doug Lea.%
   typical \clanguage{} program and the requests from the nursery
   collectors of \sysname{}.}
 
-Since all general instances have a two-word header and \texttt{cons}
-cells consist of two words as well, we can use a mark-and-sweep
+Since all dyads consist of two words, we can use a mark-and-sweep
 collector for these objects without suffering any fragmentation.  The
 advantage of a mark-and-sweep collector is that objects will never
 move, which is an advantage when they are used as keys in hash tables
@@ -187,8 +185,8 @@ oldest to youngest.
 \subsection{Allocation}
 
 The nursery allocator maintains two pointers into the nursery heap,
-namely the \emph{header free pointer} and the \emph{rack free
-  pointer}.  The header free pointer always has a smaller value than
+namely the \emph{dyad free pointer} and the \emph{rack free
+  pointer}.  The dyad free pointer always has a smaller value than
 the rack free pointer.  These pointers are illustrated in
 \refFig{fig-nursery-pointers}.
 
@@ -200,10 +198,10 @@ the rack free pointer.  These pointers are illustrated in
 Allocation pointers in the nursery.}
 \end{figure}
 
-To allocate a \texttt{cons} cell or a header, the value returned is
-the existing value of the header free pointer with appropriate tag
-bits added.  Before this value is returned, the header free pointer is
-incremented by a value corresponding to two full words.
+To allocate a dyad, the value returned is the existing value of the
+dyad free pointer with appropriate tag bits added.  Before this value
+is returned, the dyad free pointer is incremented by a value
+corresponding to two full words.
 
 To allocate a rack, the rack free pointer is first decremented by a
 value corresponding to the number of words in the rack.  The new value
@@ -430,12 +428,10 @@ corresponding word is part of a live object.  The live bitmap is
 initialized so that all bits are cleared before the mark phase begins.
 
 The mark phase starts by finding the roots as described in
-\refSec{sec-garbage-collection-finding-roots}.  Only pointers to
-\texttt{cons} cells and header objects are reported in this phase.
-For every \texttt{cons} cell and header found, the two bits in the
-live bitmap corresponding to the two words in the \texttt{cons} cell
-or header are set to $1$.  The stack is scanned from top to bottom and
-then left in that state.
+\refSec{sec-garbage-collection-finding-roots}.  Only pointers to dyads
+are reported in this phase.  For every dyad found, the two bits in the
+live bitmap corresponding to the two words in the dyad are set to $1$.
+The stack is scanned from top to bottom and then left in that state.
 
 A flag determines whether a reference to an object allocated in the
 global heap should be marked or not.  This flag is set when the local
@@ -446,20 +442,20 @@ and the flag is set, then the global collector is informed that it is
 live.  If the object is located in the nursery, the corresponding bits
 in the live bitmap are set.
 
-Once the roots are found, the \texttt{cons} cells and headers marked
-as live in the nursery are traced according to the class of the
-object.  If the object is a general instance (as indicated by the fact
-that the second word contains a rack with the tag reserved for racks
-($111$), then the class is found in the first word of the header.  The
-class object is recursively visited, and also consulted to determine
-the number of words in the rack and what words of the rack may contain
-pointers to heap-allocated objects.  The bits in the live bitmap
-corresponding to the words of the rack are marked, and the words that
-may contain live object of the rack are recursively visited.  If the
-object is a \texttt{cons} cell, the \texttt{car} and the \texttt{cdr}
-are recursively visited.  Tracing stops when an object is reached that
-has already been traced, or when an object is reached that is located
-in the global heap.
+Once the roots are found, the dyads marked as live in the nursery are
+traced according to the class of the object.  If the object is a
+general instance (as indicated by the fact that the second word
+contains a rack with the tag reserved for racks ($111$), then the
+class is found in the first word of the header.  The class object is
+recursively visited, and also consulted to determine the number of
+words in the rack and what words of the rack may contain pointers to
+heap-allocated objects.  The bits in the live bitmap corresponding to
+the words of the rack are marked, and the words that may contain live
+object of the rack are recursively visited.  If the object is a
+\texttt{cons} cell, the \texttt{car} and the \texttt{cdr} are
+recursively visited.  Tracing stops when an object is reached that has
+already been traced, or when an object is reached that is located in
+the global heap.
 
 The mark phase maintains an integer variable named \emph{live space}.
 It is initialized to $0$ at the beginning of the mark phase.  For
@@ -497,10 +493,10 @@ likely to die soon.
 The promotion phase uses a bitmap called the \emph{promotion bitmap}
 again containing one bit per word in the nursery.  This bitmap is
 initialized so that all its bits are cleared.  When an object has been
-promoted, the first word of the header contains a \emph{forwarding
+promoted, the first word of the dyad contains a \emph{forwarding
   pointer} pointing to the promoted object in the global heap, and the
 bit in the promotion bitmap corresponding to the first word of the
-header is set.  Similarly, when a general instance has been promoted,
+dyad is set.  Similarly, when a general instance has been promoted,
 \emph{every word} of the rack contains a forwarding pointer, pointing
 to the new word in the global heap, and the bit in the promotion
 bitmap corresponding to that word is set.  The reason for treating the
@@ -517,7 +513,7 @@ by the bit in the live bitmap, and an object is skipped if it has
 already been promoted, as indicated by the bit in the promotion
 bitmap.  If the object is not to be skipped, it is promoted.  This
 means that a \emph{copy} of the object is allocated in the global
-heap.  A forward reference is stored in the first word of the header
+heap.  A forward reference is stored in the first word of the dyad
 of the original object, and a bit is set in the promotion bitmap.
 Similarly, the contents of every word of the rack is replaced by a
 forwarding pointer, and the bit in the promotion bitmap corresponding
@@ -532,7 +528,7 @@ recursively visiting its contained objects.  When a visited object
 reference indicates that it has already been promoted, as indicated by
 the corresponding bit being set in the promotion bitmap, the reference
 is replaced by the forward reference stored in the first word of the
-header in the nursery, and tracing stops.  If the visited object has
+dyad in the nursery, and tracing stops.  If the visited object has
 not yet been promoted, then a copy is allocated in the global heap as
 described above.  The corresponding bits in the promotion bitmap are set
 and forwarding pointers are stored, again as above, and the copy is
@@ -555,10 +551,10 @@ having been promoted.  However, since the stack is now in a state
 where every local variable is stored in the stack frame that owns it
 as \refSec{sec-garbage-collection-finding-roots} explains, we only
 need to consult the frame map of each frame to determine the roots.
-Whether the root contains a pointer to a header or to some element of
+Whether the root contains a pointer to a dyad or to some element of
 a rack, the promotion bitmap for that pointer is consulted.  If it
 is set, then the root is replaced by the forwarding pointer stored in
-the header or the rack.
+the dyad or the rack.
 
 Finally, every live object in the nursery that has not been promoted
 is scanned to determine any reference to a promoted object.  Such a
@@ -572,7 +568,7 @@ objects that are still in the nursery.
 \subsection{Compaction phase}
 
 In the \emph{compaction phase}, the live bitmaps is used to slide
-headers to the beginning of the nursery heap and to slide rack so the
+dyads to the beginning of the nursery heap and to slide racks so the
 end of the nursery heap.  A \emph{source} pointer follows live words
 to be copied, and a \emph{target} pointer follows available words.
 
@@ -580,13 +576,13 @@ to be copied, and a \emph{target} pointer follows available words.
 \label{sec-garbage-collection-break-table-build-phase}
 
 In the \emph{table build phase}, the live bitmap is used to construct
-two \emph{break tables} between the new locations of the header free
+two \emph{break tables} between the new locations of the dyad free
 pointer and the rack free pointer after compaction.  Each table has
 the format $a_0, d_0, a_1, d_1, \ldots, a_n, d_n, a_{n+1}$ where $a_i$
 is an address and $d_i$ is a \emph{delta} or an \emph{offset}.  The
 meaning of the elements of a table is that an address that was
 originally between $a_i$ and $a_{i+1}$ should be updated by having
-$d_i$ added to it.  One break table is built for headers and another
+$d_i$ added to it.  One break table is built for dyads and another
 break table is built for racks.  In the worst case, each of these
 tables may contain three more words than there are free words
 available for it.  This is the reason why a collection is triggered
@@ -601,10 +597,10 @@ Once break table are built, the stack is scanned to find roots, and it
 is also restored to its initial state as describe in
 \refSec{sec-garbage-collection-finding-roots}.  For each root that
 contains a pointer to the nursery, we determine whether it is pointer
-to a header or to a rack, and consult the corresponding break table to
+to a dyad or to a rack, and consult the corresponding break table to
 determine a value to be added to the current one.
 
-Next, headers in the nursery are traversed.  For a \texttt{cons} cell,
+Next, dyads in the nursery are traversed.  For a \texttt{cons} cell,
 the first break table is consulted in order to adjust both the
 \texttt{car} and the \texttt{cdr}.  For a general instance, the first
 break table is consulted in order to adjust the \texttt{class} slot
@@ -617,11 +613,11 @@ to adjust its value.
 
 
 
-In the \emph{adjust phase}, header objects and racks are
-scanned, and fields containing pointers are adjusted according to the
-offset table.  The offset table is searched using binary search,
-except that a simple caching scheme is used to avoid a full binary
-search in nearly all cases. 
+In the \emph{adjust phase}, dyads and racks are scanned, and fields
+containing pointers are adjusted according to the offset table.  The
+offset table is searched using binary search, except that a simple
+caching scheme is used to avoid a full binary search in nearly all
+cases.
 
 \section{Synchronization between collectors}
 
@@ -833,4 +829,4 @@ other than \commonlisp{}.  However, we imagine using \commonlisp{}
 together with some additional low-level primitives for accessing
 memory by address instead.
 
-%%  LocalWords:  mutator dyad
+%%  LocalWords:  mutator dyad dyads
