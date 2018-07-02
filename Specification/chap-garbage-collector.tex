@@ -11,14 +11,14 @@ We use a per-thread nursery combined with a global allocator for older
 objects.
 
 In \refChap{chap-data-representation} we describe the data
-representation where every heap allocated object has a two-word header
-object.  If it is a \texttt{cons} cell, then that is the entire
-object.  For other heap-allocated objects (called \emph{general
-  instances}, the first of the two words is a tagged pointer to the
-class object, and the second of the two words is a pointer to the
-\emph{rack} using a special tag for racks.  In this chapter, we
-describe the consequences of this representation to the garbage
-collector.
+representation where every heap allocated object is either a two-word
+\texttt{cons} cell or a \emph{general instances} represented as a
+two-word \emph{header} where the first of the two words is a tagged
+pointer to the class object, and the second of the two words is a
+pointer to the \emph{rack} using a special tag for racks.  For the
+purpose of garbage collection, in many ways, \texttt{cons} cells and
+two-word headers are treated the same way.  For that reason, we refer
+either one as a \emph{dyad}.
 
 We begin this chapter by describing the algorithms used in the global
 collector and the nursery collector.  Finally, we describe the
@@ -833,4 +833,4 @@ other than \commonlisp{}.  However, we imagine using \commonlisp{}
 together with some additional low-level primitives for accessing
 memory by address instead.
 
-%%  LocalWords:  mutator
+%%  LocalWords:  mutator dyad
