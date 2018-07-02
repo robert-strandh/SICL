@@ -66,6 +66,27 @@ pointer having to be updated as a result of a garbage collection in
 the global heap.  Garbage collection in the global heap can therefore
 be done in parallel with the execution of the mutator threads.
 
+The global collector uses the traditional tri-color marking
+technique.  Recall that the tri-color technique works as follows:
+
+\begin{itemize}
+\item An object belongs to one of three sets, usually called
+  \emph{black}, \emph{white}, and \emph{gray}.
+\item Black objects are known to be live.  White objects have not yet
+  been traced.  Remaining white objects at the end of a full
+  collection are dead.
+\item Gray objects represent a frontier between black and white
+  objects.  No black object may refer to a white object.
+\item Initially, the root objects are colored gray and all remaining
+  objects are colored white.
+\item In each iteration, a gray object is selected.  The white objects
+  it refers to are colored gray, and the object itself is then colored
+  black.
+\item Collection ends when there are no more gray objects.
+\end{itemize}
+
+The root set is determined by requesting that each application thread
+
 The global collector is subject to a write barrier.  Let G be some
 object in the global heap, and let N be some object in a nursery.  The
 write barrier must prevent the existence of a reference from G to N.
@@ -610,8 +631,6 @@ traversed according to the class in order to determine what words of
 the rack contain \commonlisp{} objects.  For each such word, if it is
 a heap-allocated object, the first break table is consulted in order
 to adjust its value.
-
-
 
 In the \emph{adjust phase}, dyads and racks are scanned, and fields
 containing pointers are adjusted according to the offset table.  The
