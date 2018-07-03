@@ -6,5 +6,6 @@
 
 (defun hoist-load-time-values (hir client &key compilation-environment)
   (let ((*compilation-environment* compilation-environment))
-    (with-fresh-tables (scan-hir hir client)
-      (hoist-hir hir client))))
+    (with-constructor-tables
+      (scan-hir hir client)
+      (hoist-toplevel-hir hir client))))

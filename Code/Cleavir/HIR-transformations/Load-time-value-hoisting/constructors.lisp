@@ -1,18 +1,10 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Classes
+;;; A constructor is an object that describes how a load-time-value form or
+;;; a literal object can be evaluated or reconstructed at load time.
 
-;;; A constructor is an object that describes how the result of a
-;;; load-time-value form or a literal object can be evaluated or
-;;; reconstructed at load time.
 (defclass constructor ()
-  (;; A boolean indicating whether the constructor has been dumped
-   (%dumpedp :initarg nil :accessor dumpedp)))
-
-(defmethod scanning-creation-form-p ((constructor constructor))
-  nil)
+  ())
 
 (defclass load-time-value-constructor (constructor)
   ((%form :initarg :form :reader form)
@@ -35,3 +27,6 @@
 
 (defun make-standard-constructor (object)
   (make-instance 'standard-constructor :prototype object))
+
+(defmethod scanning-creation-form-p ((constructor constructor))
+  nil)

@@ -15,6 +15,10 @@
 ;;; constructor.
 (defgeneric scan-literal-object (constant client))
 
+;;; Return a modified version of HIR, where all occurring data have been
+;;; suitably processed by HOIST-DATUM.
+(defgeneric hoist-toplevel-hir (hir client))
+
 ;;; Hoist all data in HIR with HOIST-DATUM.
 (defgeneric hoist-hir (hir client))
 

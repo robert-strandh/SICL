@@ -13,13 +13,13 @@
 ;;; scanned once.  This works because if two objects are EQL, they are also
 ;;; similar in the sense of CLHS 3.2.4.2.2.  The EQUALP table is used to
 ;;; coalesce literal objects where the rules of similarity are less
-;;; restrictive.  Finally
+;;; restrictive.
 
 (defvar *eql-table*)
 
 (defvar *equalp-table*)
 
-(defmacro with-fresh-tables (&body body)
+(defmacro with-constructor-tables (&body body)
   `(let ((*eql-table* (make-hash-table :test #'eql))
          (*equalp-table* (make-hash-table :test #'equalp)))
      ,@body))
