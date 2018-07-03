@@ -86,6 +86,35 @@ technique.  Recall that the tri-color technique works as follows:
 \end{itemize}
 
 The root set is determined by requesting that each application thread
+trace live objects from their respective roots, and informing the
+global collector when this procedure reaches an object allocated in
+the global heap. For application threads that are blocked, for example
+waiting for input or output, the global collector spawns a thread to
+run the garbage collector on behalf of the application thread.
+
+The global collector maintains two bitmaps, one for black objects and
+one for gray objects.  Each bitmap contains a bit for every dyad.  In
+addition, the gray bitmap have a multi-level \emph{index}, making it
+possible to find an arbitrary gray object in only a few cycles.  For
+each 64-bit word in the primary bitmap, a bit in a secondary bitmap is
+maintained.  The bit in the secondary bitmap is set if there is at
+least one bit set in the 64-bit word in the primary bitmap.
+Additional levels of index exist until the last level fits in a single
+64-bit word.
+
+To include an object in the set of gray objects, the address is used
+to determine a bit position in the primary bitmap.  Before the
+corresponding bit is set, the 64-bit word that this bit is contained
+in is tested to see whether it has all bits cleared.  If that is the
+case, the bit position in the secondary bitmap is determined, and
+recursively set in the same way.  Finally the bit is set.
+
+To exclude an object from the set of gray objects, the address is used
+to determine a bit position in the primary bitmap. The bit is then
+cleared.  If this operation results in the 64-bit word that this bit
+is contained in having all bits cleared, then bit position in the
+secondary bitmap is determined, and recursively cleared in the same
+way.
 
 The global collector is subject to a write barrier.  Let G be some
 object in the global heap, and let N be some object in a nursery.  The
