@@ -116,6 +116,19 @@ is contained in having all bits cleared, then bit position in the
 secondary bitmap is determined, and recursively cleared in the same
 way.
 
+To find a gray object, start at the top-level index and find an
+arbitrary position contining a bit that is set.  This position
+corresponds to an index in the next-level index.  Repeat the procedure
+until the primary bitmap is reached.
+
+Since the operation of finding a gray object might be somewhat costly,
+we also keep a fixed-size cache of gray objects, organized as a stack
+represented as a vector.  Gray objects are initially taken from the
+cache.  Only when the cache is empty is the more costly technique
+used.  Whenever the objects referred to by a gray object are colored
+gray, they are also included in the cache (provided there is room in
+th cache).
+
 The global collector is subject to a write barrier.  Let G be some
 object in the global heap, and let N be some object in a nursery.  The
 write barrier must prevent the existence of a reference from G to N.
