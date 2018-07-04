@@ -127,7 +127,9 @@ represented as a vector.  Gray objects are initially taken from the
 cache.  Only when the cache is empty is the more costly technique
 used.  Whenever the objects referred to by a gray object are colored
 gray, they are also included in the cache (provided there is room in
-th cache).
+th cache).  The cache could for instance be a vector with around a
+million elements.  Such a vector would occupy only 8 megabytes of
+memory which is comparable to the space taken up by the gray bitmaps.
 
 The global collector is subject to a write barrier.  Let G be some
 object in the global heap, and let N be some object in a nursery.  The
