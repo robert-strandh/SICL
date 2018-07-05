@@ -66,6 +66,31 @@ pointer having to be updated as a result of a garbage collection in
 the global heap.  Garbage collection in the global heap can therefore
 be done in parallel with the execution of the mutator threads.
 
+The global collector cycles through the following phases:
+
+\begin{enumerate}
+\item Idle.  In this phase, the global collector is not doing any
+  work.
+\item Requesting roots.  In this phase, the global collector indicates
+  to each running application thread that it needs to transmit its
+  part of the global root set to the global collector.  For each
+  blocked application thread, a thread is spawned to do the work on
+  its behalf.
+\item Waiting for roots.  In this phase, the global collector waits
+  for each application thread or each spawned thread to finish
+  indicating its part of the global root set.
+\item Mark.  In this phase, the global collector traces and marks the
+  live objects.
+\item Collecting unmarked dyads.  In this phase, the global collector
+  scans the dyads and collects the unmarked ones into a linked list.
+\item Freeing racks.  In this phase, the global collector iterates
+  through the collected list of unmarked dyads and frees the rack
+  belonging to each of the general instance headers in the list.
+\item Merging free lists.  In this phase, the global collector merges
+  the newly created linked list of unmarked dyads with the existing
+  free list.
+\end{enumerate}
+
 The global collector uses the traditional tri-color marking
 technique.  Recall that the tri-color technique works as follows:
 
