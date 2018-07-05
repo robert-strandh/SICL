@@ -91,6 +91,22 @@ The global collector cycles through the following phases:
   free list.
 \end{enumerate}
 
+\subsection{Idle phase}
+
+In this phase the global collector is not doing any work.  Whether it
+has a allocated threads that are blocked or no threads allocated
+remains to be decided.
+
+\subsection{Requesting roots}
+
+
+See \refSec{sec-garbage-collection-synchronization-between-collectors}
+for more details on this phase.
+
+\subsection{Waiting for roots}
+
+\subsection{Mark}
+
 The global collector uses the traditional tri-color marking
 technique.  Recall that the tri-color technique works as follows:
 
@@ -155,6 +171,14 @@ gray, they are also included in the cache (provided there is room in
 th cache).  The cache could for instance be a vector with around a
 million elements.  Such a vector would occupy only 8 megabytes of
 memory which is comparable to the space taken up by the gray bitmaps.
+
+\subsection{Collecting unmarked dyads}
+
+\subsection{Freeing racks}
+
+\subsection{Merging free lists}
+
+\subsection{Write barrier}
 
 The global collector is subject to a write barrier.  Let G be some
 object in the global heap, and let N be some object in a nursery.  The
@@ -708,6 +732,7 @@ caching scheme is used to avoid a full binary search in nearly all
 cases.
 
 \section{Synchronization between collectors}
+\label{sec-garbage-collection-synchronization-between-collectors}
 
 Since each thread is responsible for collecting its own heap and since
 the global collector can not run until every application thread has
