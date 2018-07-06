@@ -9,10 +9,27 @@
    ;; processing the dependencies of the current creation form and T once
    ;; all creation form dependencies have been processed.
    (%creation-form-finalized-p :initform nil :accessor creation-form-finalized-p)
-   (%creation-form :initform nil :initarg :creation-form :reader creation-form)
-   (%initialization-form :initform nil :initarg :initialization-form :reader initialization-form)
-   (%creation-thunk :accessor creation-thunk)
-   (%initialization-thunk :accessor initialization-thunk)))
+   (%creation-form :initarg :creation-form :reader creation-form)
+   (%initialization-form :initarg :initialization-form :reader initialization-form)
+   (%creation-thunk :initarg :creation-thunk :accessor creation-thunk)
+   (%initialization-thunk :initarg :initialization-thunk :accessor initialization-thunk))
+  (:default-initargs :creation-form nil
+                     :initialization-form nil
+                     :creation-thunk nil
+                     :initialization-thunk nil))
+
+(defmethod make-constructor :around (object system)
+  (with-accessors ((creation-form creation-form)
+                   (creation-thunk creation-thunk)
+                   (initialization-form initialization-form)
+                   (initialization-thunk initialization-thunk))
+      (call-next-method)
+    (when (and creation-form (not creation-thunk))
+      (setf creation-thunk
+            (compile-form creation-form system)))
+    (when (and initialization-form (not initialization-thunk))
+      (setf initialization-thunk
+            (compile-form initialization-form system)))))
 
 (defmethod make-constructor (object system)
   (multiple-value-bind (creation-form initialization-form)
@@ -20,14 +37,6 @@
     (make-instance 'constructor
       :creation-form creation-form
       :initialization-form initialization-form)))
-
-(defmethod make-constructor ((input cleavir-ir:load-time-value-input) system)
-  (break)
-  (make-instance 'constructor
-    :creation-form (cleavir-ir:form input)))
-
-(defmethod make-constructor ((input cleavir-ir:constant-input) system)
-  (ensure-constructor (cleavir-ir:value input) system))
 
 (defmethod make-constructor ((ratio ratio) system)
   (make-instance 'constructor

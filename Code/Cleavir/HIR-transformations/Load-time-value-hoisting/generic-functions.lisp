@@ -23,9 +23,12 @@
 ;;; Scan all data in HIR with SCAN-DATUM.
 (defgeneric scan-hir (hir system))
 
-;;; Ensure that OBJECT has a suitable constructor.  Return that
+;;; Ensure that DATUM is either an immediate or has a suitable constructor.
+(defgeneric scan-datum (datum system))
+
+;;; Ensure that OBJECT is either an immediate or has a suitable
 ;;; constructor.
-(defgeneric ensure-constructor (object system))
+(defgeneric scan-literal-object (object system))
 
 ;;; Whether the creation form of CONSTRUCTOR is currently being scanned.
 (defgeneric creation-form-finalized-p (constructor))

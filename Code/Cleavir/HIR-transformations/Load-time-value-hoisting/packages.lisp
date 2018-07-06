@@ -7,7 +7,8 @@
    #:make-constructor
    #:compile-form
    #:scan-hir
-   #:ensure-constructor
+   #:scan-datum
+   #:scan-literal-object
    #:equalp-keys
    #:hoist-toplevel-hir
    #:hoist-hir

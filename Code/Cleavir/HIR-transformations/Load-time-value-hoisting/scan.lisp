@@ -27,9 +27,9 @@
 (defmacro constructor (key)
   `(gethash ,key *eql-table*))
 
-;;; The function COALESCE ensures that for any two calls (coalesce o1 k1)
-;;; and (coalesce o2 k2), where o1 and o2 are objects of the same type,
-;;; (equalp k1 k2) implies (eq (constructor o1) (constructor o2)).
+;;; The function COALESCE ensures that after any two calls (coalesce o1 k1)
+;;; and (coalesce o2 k2), (equalp k1 k2) implies (eq (constructor o1)
+;;; (constructor o2)).
 (defun coalesce (object equalp-key)
   (let ((similar-constructor (gethash equalp-key *equalp-table*)))
     (if similar-constructor
@@ -42,46 +42,64 @@
 ;;;
 ;;; Scanning
 
+(defmethod scan-hir ((hir null) system)
+  (values))
+
 (defmethod scan-hir ((hir cleavir-ir:instruction) system)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
-     (loop for datum in (cleavir-ir:inputs instruction)
-           unless (immediate-p datum system) do
-             (ensure-constructor datum system)))
+     (loop for datum in (cleavir-ir:inputs instruction) do
+       (scan-datum datum system)))
    hir))
 
-(defmethod ensure-constructor (object system)
+;;; One thing to keep in mind is that it is entirely permissible for a
+;;; Cleavir datum to appear as a literal object in a file.  So it is
+;;; important to clearly distinguish between the constructor of a datum and
+;;; the constructor of a literal object.  I am writing this down here
+;;; because I already forgot this issue twice.
+
+(defmethod scan-datum ((immediate-input cleavir-ir:immediate-input) system)
+  (values))
+
+(defmethod scan-datum ((constant-input cleavir-ir:constant-input) system)
+  (let ((value (value constant-input)))
+    (unless (immedate-p value)
+      (scan-literal-object value system))))
+
+(defmethod scan-datum ((load-time-value-input cleavir-ir:load-time-value-input) system)
+  (multiple-value-bind (constructor present-p) (constructor object)
+    (cond ((not present-p)
+           (let* ((creation-form (cleavir-ir:form load-time-value-input))
+                  (creation-thunk (compile-form creation-form system))
+                  (constructor (make-instance 'constructor
+                                 :creation-form creation-form
+                                 :creation-thunk creation-thunk)))
+             (setf (constructor load-time-value-input) constructor)
+             (scan-hir creation-thunk system)
+             (setf (creation-form-finalized-p constructor) t)))
+          ((not (creation-form-finalized-p constructor))
+           (error 'circular-dependencies-in-creation-form
+                  :object object
+                  :creation-form (creation-form constructor))))))
+
+(defmethod scan-literal-object (object system)
   (multiple-value-bind (constructor present-p) (constructor object)
     (cond ((not present-p)
            (let* ((constructor (make-constructor object system))
                   (creation-form (creation-form constructor))
                   (initialization-form (initialization-form constructor)))
              (setf (constructor object) constructor)
-             ;; Compile and scan the constructor's creation form.
-             (when creation-form
-               (let ((creation-thunk
-                       (compile-form creation-form system)))
-                 (setf (creation-thunk constructor)
-                       creation-thunk)
-                 (scan-hir creation-thunk system)))
+             (scan-hir (creation-thunk constructor) system)
              (setf (creation-form-finalized-p constructor) t)
-             ;; Compile and scan the constructor's initialization form.
-             (when initialization-form
-               (let  ((initialization-thunk
-                        (compile-form initialization-form system)))
-                 (setf (initialization-thunk constructor)
-                       initialization-thunk)
-                 (scan-hir initialization-thunk system)))
+             (scan-hir (initialization-thunk constructor) system)
              ;; Attempt to coalesce this constructor, i.e., replace it with
              ;; an existing constructor of a similar object.
              (loop for equalp-key in (equalp-keys object system) do
-               (coalesce object equalp-key))
-             (constructor object)))
+               (coalesce object equalp-key))))
           ((not (creation-form-finalized-p constructor))
            (error 'circular-dependencies-in-creation-form
                   :object object
-                  :creation-form (creation-form constructor)))
-          (t constructor))))
+                  :creation-form (creation-form constructor))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
