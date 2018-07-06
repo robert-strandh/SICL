@@ -67,6 +67,18 @@ pointer having to be updated as a result of a garbage collection in
 the global heap.  Garbage collection in the global heap can therefore
 be done in parallel with the execution of the mutator threads.
 
+Doug Lea's allocator is adapted to our specific situation in a few
+ways.  \refFig{fig-chunks} show how available address space is divided
+into \emph{chunks}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-chunks.pdf_t}
+\end{center}
+\caption{\label{fig-chunks}
+Chunks in memory.}
+\end{figure}
+
 The global collector cycles through the following phases:
 
 \begin{enumerate}
