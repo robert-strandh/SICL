@@ -4,31 +4,33 @@
 ;;; data are processed by HOIST-DATUM.  The default methods replace all
 ;;; constant inputs and load time value inputs by lexical locations, and
 ;;; arrange that each of these lexical locations is properly initialized by
-;;; the suitable creation and initialization thunk.
+;;; the suitable creation and initialization thunk.  This sequence of
+;;; thunks is placed right after the enter instruction that is passed as a
+;;; first argument to HOIST-TOPLEVEL-HIR.
 
-(defvar *data-table*)
-
-(defvar *prologue*)
+(defvar *initial-instruction*)
 
 (defmacro lexical-location (key)
   `(gethash ,key *data-table*))
 
-(defmethod hoist-toplevel-hir ((hir cleavir-ir:instruction) client)
-  (let ((*data-table (make-hash-table :test #'eq))
-        (*prologue* nil))
-    (hoist-hir hir client)))
+(defmethod hoist-toplevel-hir ((hir cleavir-ir:enter-instruction) system)
+  (let ((*initial-instruction* hir))
+    (hoist-hir hir system)))
 
-(defmethod hoist-hir ((hir cleavir-ir:instruction) client)
-  (cleavir-ir:map-instructions-arbitrary-order
+(defmethod hoist-hir ((hir cleavir-ir:instruction) system)
+  (cleavir-ir:map-instructions
    (lambda (instruction)
-     (loop for datum in (cleavir-ir:inputs instruction) do
-       (hoist-datum datum client))
+     (loop for datum in (cleavir-ir:inputs instruction)
+           unless (immediate-p datum system) do
+       (hoist-datum datum system))
      instruction)
    hir))
 
-(defmethod hoist-datum ((constant-input cleavir-ir:constant-input) client)
+(defmethod hoist-datum ((constant-input cleavir-ir:constant-input) system)
   (let ((constructor
           (constructor (cleavir-ir:value constant-input)))
         (lexical-location
-          (change-class datum 'lexical-location :name (gensym))))
+          (change-class constant-input 'lexical-location :name (gensym)))
+        (values-location
+          (cleavir-ir:make-values-location)))
     ))

@@ -10,6 +10,7 @@
    (:file "conditions")
    (:file "condition-reporters-english")
    (:file "generic-functions")
+   (:file "immediate-p")
    (:file "constructors")
    (:file "scan")
    (:file "hoist")

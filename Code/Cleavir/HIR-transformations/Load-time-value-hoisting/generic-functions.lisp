@@ -2,31 +2,8 @@
 
 (defvar *compilation-environment*)
 
-;;; Return the HIR flowchart corresponding to FORM.
-(defgeneric compile-form (form client))
-
-;;; Scan all data in HIR with SCAN-DATUM.
-(defgeneric scan-hir (hir client))
-
-;;; Scan all literal objects in DATUM with SCAN-LITERAL-OBJECT.
-(defgeneric scan-datum (datum client))
-
-;;; Ensure that the literal object has a suitable constructor.  Return that
-;;; constructor.
-(defgeneric scan-literal-object (constant client))
-
-;;; Return a modified version of HIR, where all occurring data have been
-;;; suitably processed by HOIST-DATUM.
-(defgeneric hoist-toplevel-hir (hir client))
-
-;;; Hoist all data in HIR with HOIST-DATUM.
-(defgeneric hoist-hir (hir client))
-
-;;; Modify DATUM in a client dependent way.
-(defgeneric hoist-datum (datum client))
-
-;;; Whether the creation form of CONSTRUCTOR is currently being scanned.
-(defgeneric scanning-creation-form-p (constructor))
+;;; Create a new constructor and scan its creation and initialization form.
+(defgeneric make-constructor (object system))
 
 ;;; The first argument of a MAKE-LOAD-FORM call.
 (defgeneric creation-form (constructor))
@@ -40,5 +17,29 @@
 ;;; The HIR flowchart of a thunk that returns no values.
 (defgeneric initialization-thunk (constructor))
 
-;;; An object serving as a reference of what to construct.
-(defgeneric prototype (constructor))
+;;; Return the HIR flowchart corresponding to FORM.
+(defgeneric compile-form (form system))
+
+;;; Scan all data in HIR with SCAN-DATUM.
+(defgeneric scan-hir (hir system))
+
+;;; Ensure that OBJECT has a suitable constructor.  Return that
+;;; constructor.
+(defgeneric ensure-constructor (object system))
+
+;;; Whether the creation form of CONSTRUCTOR is currently being scanned.
+(defgeneric creation-form-finalized-p (constructor))
+
+;;; Return a list of keys.  Two objects with at least one EQUALP key are
+;;; assumed to be similar.
+(defgeneric equalp-keys (object system))
+
+;;; Return a modified version of HIR, where all occurring data have been
+;;; suitably processed by HOIST-DATUM.
+(defgeneric hoist-toplevel-hir (hir system))
+
+;;; Hoist all data in HIR with HOIST-DATUM.
+(defgeneric hoist-hir (hir system))
+
+;;; Modify DATUM in a system dependent way.
+(defgeneric hoist-datum (datum system))
