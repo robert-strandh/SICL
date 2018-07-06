@@ -36,11 +36,12 @@ the global collector will be a combination of a mark-and-sweep
 collector and a  traditional memory allocator as implemented by
 \texttt{malloc()/free()} in a \clanguage{} environment.
 
-We define a global heap divided into two parts.  The first part is a
-single vector consisting of two-word blocks.  This is where dyads are
-allocated.  The second part of the global heap is organized as the
-space managed by an ordinary memory allocator, for example the one
-created by Doug Lea.%
+We define a global heap divided into two parts called the \emph{dyad
+  part} and the \emph{rack part}.  The dyad part is a single vector
+consisting of two-word blocks.  This is where dyads are allocated.
+The rack part of the global heap is organized as the space managed by
+an ordinary memory allocator, for example the one created by Doug
+Lea.%
 \footnote{A few simplifications compared to Doug Lea's allocator are
   likely possible, given the difference in allocation patters of a
   typical \clanguage{} program and the requests from the nursery
@@ -53,8 +54,8 @@ move, which is an advantage when they are used as keys in hash tables
 and when they are used to communicate with code in foreign languages
 that assume that an address of an object is fixed once and for all.
 
-The racks are allocated in the second part of the global heap.  As a
-consequence, the racks also do not move once allocated.  This
+Since the rack part of the global heap is managed by an ordinary
+memory allocator, the racks also do not move once allocated.  This
 fixed position is advantageous for code on some architectures.  For
 example, the correspondence between source code location and values of
 the program counter does not have to be updated as a result of code
