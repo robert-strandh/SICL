@@ -38,6 +38,23 @@
       :creation-form creation-form
       :initialization-form initialization-form)))
 
+(defmethod make-constructor ((bignum bignum) system)
+  (let* ((size (load-time-value
+                (loop for size = 1 then (* size 2)
+                      while (and (typep (+ (expt 2 size)) 'fixnum)
+                                 (typep (- (expt 2 size)) 'fixnum))
+                      maximize size)))
+         (sign (if (minusp bignum) -1 1))
+         (blocks (ceiling (integer-length bignum) size)))
+    (make-instance 'constructor
+      :creation-form
+      (loop for block from blocks downto 0
+            for offset = (* block size)
+            for form = sign then
+            `(dpb ,(ldb (byte size offset) bignum)
+                  (byte ,size ,offset) ,form)
+            finally (return form)))))
+
 (defmethod make-constructor ((ratio ratio) system)
   (make-instance 'constructor
     :creation-form
