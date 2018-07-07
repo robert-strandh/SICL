@@ -40,12 +40,8 @@ We define a global heap divided into two parts called the \emph{dyad
   part} and the \emph{rack part}.  The dyad part is a single vector
 consisting of two-word blocks.  This is where dyads are allocated.
 The rack part of the global heap is organized as the space managed by
-an ordinary memory allocator, for example the one created by Doug
-Lea.%
-\footnote{A few simplifications compared to Doug Lea's allocator are
-  likely possible, given the difference in allocation patters of a
-  typical \clanguage{} program and the requests from the nursery
-  collectors of \sysname{}.}
+an ordinary memory allocator,  Our adaptation of Doug Lea's memory
+allocator can be found in \refApp{app-memory-allocator}.
 
 Since all dyads consist of two words, we can use a mark-and-sweep
 collector for these objects without suffering any fragmentation.  The
@@ -66,18 +62,6 @@ mutator threads can cache a pointer without the necessity of this
 pointer having to be updated as a result of a garbage collection in
 the global heap.  Garbage collection in the global heap can therefore
 be done in parallel with the execution of the mutator threads.
-
-Doug Lea's allocator is adapted to our specific situation in a few
-ways.  \refFig{fig-chunks} show how available address space is divided
-into \emph{chunks}.%
-\footnote{This figure is adapted from http://g.oswego.edu/dl/html/malloc.html}
-\begin{figure}
-\begin{center}
-\inputfig{fig-chunks.pdf_t}
-\end{center}
-\caption{\label{fig-chunks}
-Chunks in memory.}
-\end{figure}
 
 The global collector cycles through the following phases:
 
