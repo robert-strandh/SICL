@@ -1,6 +1,55 @@
 \chapter{Memory allocator}
 \label{app-memory-allocator}
 
+\section{Memory is divided into chunks}
+\label{sec-memory-allocator-memory-divided-into-chunks}
+
+Available memory is divided into \emph{chunks}.  A chunk can either be
+\emph{in use} or \emph{free}.  When a chunk is freed, and either the
+previous chunk is free, the following chunk is free, or both the
+previous and the following chunks are free, then the free chunks are
+coalesced into a single free chunk.  As a consequence, there are never
+two consecutive free chunks in memory.
+
+Every chunk has an initial 64-bit word containing the \emph{size} of
+the chunk in 8-bit bytes.  Since this value is always even, the last
+bit is always $0$.  We use the last bit to indicate whether the
+\emph{previous chunk} is in use or free.  If the bit is $1$, the
+previous chunk is in use.  If the bit is $0$, the previous chunk is
+free.  To obtain the size of the chunk in bytes, the last bit of the
+word must first be masked out, using the \texttt{and} operation with
+a mask containing a $1$ in every position except the least significant
+one.
+
+To determine whether a chunk is in use or free, the address of the
+chunk is added to the size of the chunk, thereby obtaining the address
+of the following chunk in memory.  Then the last bit of the word at
+that address is tested.  If it is $1$, then the chunk is in use.  If
+it is $0$, then the chunk is free.
+
+A free chunk is linked into a doubly linked list of chunks in the same
+bin.  See \refSec{sec-memory-allocator-bins-of-chunks} for more
+details about the available bins.  The second 64-bit word of a free
+chunk is a pointer to the previous chunk in the bin.  The third 64-bit
+word of a free chunk is a pointer to the next chunk in the bin.  These
+words do not point to the beginning of the previous or the next chunk.
+Instead, the second word contains the address of the third word of the
+previous chunk in the bin, and the third word contains the address of
+the second word of the next chunk in the bin.  If there is no previous
+chunk in the bin, then the second word contains the address of a
+\emph{sentinel} that is the beginning of the bin.  Similarly, if there
+is no next chunk in the bin, then the third word contains the address
+of a sentinel that is the end of the bin.  By using these sentinels,
+the algorithms for linking and unlinking a chunk are simplified.  The
+last word of a free chunk contains the size of the chunk, just like
+the first word.
+
+Since a free chunk has at least four words in it, this is also the
+minimum size allowed for any chunk.
+
+\refFig{fig-chunks2} shows the constellation of two chunks where the
+first chunk is in use and the second chunk is free.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-chunks2.pdf_t}
@@ -8,6 +57,16 @@
 \caption{\label{fig-chunks2}
 Chunk in use followed by free chunk.}
 \end{figure}
+
+As \refFig{fig-chunks2} shows, the last bit of the first word of the
+second chunk is $1$, indicating that the first chunk is in use.  The
+first chunk contains the size word followed by user data.  The second
+chunk contains the size in the first and the last word, and the second
+and third words of the second chunk contain links to the previous and
+the next chunk in the bin.
+
+\refFig{fig-chunks3} shows the constellation of two chunks where the
+first chunk is free and the second chunk is in use.
 
 \begin{figure}
 \begin{center}
@@ -17,6 +76,16 @@ Chunk in use followed by free chunk.}
 Free chunk followed by chunk in use.}
 \end{figure}
 
+As \refFig{fig-chunks3} shows, the last bit of the first word of the
+second chunk is $0$, indicating that the first chunk is free.  The
+first chunk contains the size in the first and the last word, and the
+second and third words of the first chunk contain links to the
+previous and the next chunk in the bin.  The second chunk contains the
+size word followed by user data.
+
+\refFig{fig-chunks4} shows the constellation of two chunks where both
+chunks are in use.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-chunks4.pdf_t}
@@ -24,3 +93,94 @@ Free chunk followed by chunk in use.}
 \caption{\label{fig-chunks4}
 Two chunks in use.}
 \end{figure}
+
+As \refFig{fig-chunks4} shows, the last bit of the first word of the
+second chunk is $1$, indicating that the first chunk is in use.  Each
+of the chunks contains the size in the first word and the remaining
+words of the chunk contains user data.
+
+\section{Bins of chunks of similar size}
+\label{sec-memory-allocator-bins-of-chunks}
+
+As indicated in
+\refSec{sec-memory-allocator-memory-divided-into-chunks}, we maintain
+a number of \emph{bins} containing chunks of similar size.  There are
+$512$ bins in total, numbered from $0$ to $511$.  Each of the bins
+from $0$ to $63$ contains chunks of of a single size.  Bin $0$
+contains chunks with $4$ words (the minimum size) and bin $63$
+contains chunks with $67$ words.  Bins starting at $64$ contain chunks
+with a size greater than the maximum size of chunks in the previous
+bin and less than or equal to some maximum size that is indicated
+explicitly.  The maximum size of chunks in bins $64$ to $511$ grows by
+roughly $8.8$\% compared to the previous one.  Thus the maximum size
+of chunks in bin $64$ is $73$, that of chunks in bin $65$ is $79$,
+etc.  The maximum chunk size of bin $511$ is $2^{61}$ words, or
+$2^{64}$ bytes.  In bins $0$ to $63$, cunks are sorted by address.  In
+bins $64$ to $511$ chunks are sorted first by size and then (if
+several chunks have the same size) by address.
+
+Three vectors of $512$ elements each are used to manage the bins.  One
+vector contains the maximum size of chunks in the bin that corresponds
+to the index.  The second vector contains the first sentinel of each
+bin.  The third vector contains the last sentinel of each bin.  When
+the bin is empty, the element in the second vector contains the
+address of the element in the third vector and vice versa.  In
+addition to these three vector, we also maintain a bitmap consisting
+of $8$ $64$-bit words, containing a $1$ if the corresponding bin has
+at least one chunk in it and $0$ if the corresponding bin contains no
+chunks.  \refFig{fig-bins} illustrates the organization of the bins.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bins.pdf_t}
+\end{center}
+\caption{\label{fig-bins}
+Organization of bins.}
+\end{figure}
+
+In the example in \refFig{fig-bins}, bin $0$ contains two chunks, bin
+$63$ a single chunk, and bin $66$ contains three chunks.  Bins $64$,
+$65$, and $511$ contain no chunks.
+
+\section{Linking a chunk into a bin}
+
+To link an arbitrary chunk of $n$ words into a bin, we first determine
+which bin it should be linked into.  If $n \le 67$ then the chunk goes
+into bin $n-4$.  If not, we do a binary search to find the bin with
+the smallest maximum chunk size that is greater than or equal to $n$.
+We then do a linear search of the chunks in the bin, ending either
+when we find the last sentinel, or when we find the first chunk that
+should be located after the one to be inserted.  Finally, the chunk to
+be inserted is linked in using the normal insertion procedure for
+doubly linked lists.
+
+\section{Allocating a chunk}
+
+To allocate a chunk with at least $n$ words in it, we first determine
+the bin $b$ with the smallest possible maximum chunk size that is
+greater than or equal to $n$.  If $n \le 67$ then the $b$ is computed
+as $n-4$.  If not, we do a binary search to find $b$.
+
+It is possible that $b$ is empty.  We must therefore find the smallest
+bin $b'$ such that $b' \ge b$ and $b'$ is not empty.  We first compute
+$q = b div 64$ and $r = b mod 64$ indicating that $b$ corresponds to
+position $r$ in bitmap $q$.  We then compute a mask $m$ consisting of
+$r$ leading $0$s and $64-r$ trailing $1$s.  This masked is and-ed with
+the bitmap.  We then find the first $1$ in the resulting value.  If
+such a position exists, then we have found $b'$.  If not, we search
+bitmaps $q+1$, $q+2$ etc., without any mask, until a set bit is
+found.  The first such bit found corresponds to $b'$.  If no such bit
+is found, we request more memory from the operating system.
+
+Once we find a chunk $c$ that is greater than or equal to $n$ words,
+there are two cases:
+
+\begin{enumerate}
+\item If the size of $c$ is less than or equal to $n-4$, then we
+  unlink the chunk from the bin and we are done.  The reason for the
+  $4$ is that we can not use a residue less than $4$ words.
+\item If the size $s$ of $c$ is strictly greater than $n$, then we
+  unlink $c$ from its bin.  We then split $c$ into a chunk $c1$ of
+  size $n$ and a chunk $c2$ of size $s-n$.  The chunk $c2$ is then
+  linked into the bin that corresponds to its size.
+\end{enumerate}
