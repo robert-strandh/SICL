@@ -115,7 +115,7 @@ explicitly.  The maximum size of chunks in bins $64$ to $511$ grows by
 roughly $8.8$\% compared to the previous one.  Thus the maximum size
 of chunks in bin $64$ is $73$, that of chunks in bin $65$ is $79$,
 etc.  The maximum chunk size of bin $511$ is $2^{61}$ words, or
-$2^{64}$ bytes.  In bins $0$ to $63$, cunks are sorted by address.  In
+$2^{64}$ bytes.  In bins $0$ to $63$, chunks are sorted by address.  In
 bins $64$ to $511$ chunks are sorted first by size and then (if
 several chunks have the same size) by address.
 
@@ -184,3 +184,56 @@ there are two cases:
   size $n$ and a chunk $c2$ of size $s-n$.  The chunk $c2$ is then
   linked into the bin that corresponds to its size.
 \end{enumerate}
+
+\section{Freeing a chunk}
+
+When a chunk $C$ is freed, there are four possible situations:
+
+\begin{enumerate}
+\item The chunk $P$ preceding $C$ and the chunk $F$ following $C$
+  are both in use.  Then, we just link $C$ into an appropriate
+  bin.
+\item The chunk $P$ preceding $C$ is in use but the chunk $F$
+  following $C$ is free.  Then we first coalesce $C$ with $F$, and
+  then we link the resulting chunk into an appropriate bin.
+\item The chunk $P$ preceding $C$ is free but the chunk $F$ following
+  $C$ is in use.  Then we first coalesce $C$ with the $P$, and then we
+  link the resulting chunk into an appropriate bin.
+\item The chunk $P$ preceding $C$ and the chunk $F$ following $C$ are
+  both free.  Then we first coalesce $C$ both with $P$ and $F$, and
+  then we link the resulting chunk into an appropriate bin.
+\end{enumerate}
+
+To determine whether the chunk $P$ preceding $C$ is in use or free, we
+consult the last bit of the first word $C$.  If it is $1$, then the
+$P$ in use.  If it is $0$, $P$ is free.  Only when this bit is $0$ is
+it possible to find the beginning of $P$, because only then does the
+last word of $P$ contain the size of $P$.  And that size is needed to
+find the beginning of $P$.  This is the main reason for storing the
+in-use bit in the chunk following the one that is concerned.
+
+To determine whether the chunk $F$ following $C$ is in use or free,
+use the size of $C$ to find the beginning of $F$.  Then we use the
+size of $F$ to find the chunk $G$ following $F$.  The last bit of the
+first word of $G$ indicates whether $F$ is in use or free.
+
+To coalesce the chunk $P$ preceding $C$ (case 2 above) with $C$, $P$
+must first be unlinked from its bin.  Then the size contained in the
+first word of $P$ is modified to contain the sum of the initial sizes
+of $P$ and $C$.  This new size is then stored in the last word of $C$
+as well.  Finally, the resulting chunk is linked into the bin
+corresponding to the new size.
+
+To coalesce the chunk $C$ with the chunk $F$ following $C$ (case 3
+above), $F$ must first be unlinked from its bin.  Then the size
+contained in the first word of $C$ is modified to contain the sum of
+the initial sizes of $C$ and $F$.  This new size is then stored in the
+last word of $F$ as well.  Finally, the resulting chunk is linked into
+the bin corresponding to the new size.
+
+To coalesce the chunk $P$ preceding $C$, $C$ itself, and the chunk $F$
+following $C$ (case 4 above), both $P$ and $F$ must first be unlinked
+from their respective bins.  The the size contained in the first word
+of $P$ is modified to contain the sum of the tree sizes.  This new
+size is then stored in the last word of $F$ as well.  Finally, the
+resulting chunk is linked into the bin corresponding to the new size.
