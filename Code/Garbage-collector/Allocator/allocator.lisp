@@ -50,10 +50,13 @@
   (assert (zerop (mod chunk 8)))
   (preceding-chunk-free-p (following-chunk chunk)))
 
+;;; When a chunk is not linked, for reasons of debugging, we set the
+;;; PREV and NEXT slots to 1.  Since this number is not a multiple of
+;;; 8, it is an illegal pointer.
 (defun chunk-linked-p (chunk)
   (assert (zerop (mod chunk 8)))
-  (and (not (zerop (sicl-gc-memory:memory-64 (chunk-prev-slot-address chunk))))
-       (not (zerop (sicl-gc-memory:memory-64 (chunk-next-slot-address chunk))))))
+  (and (not (= (sicl-gc-memory:memory-64 (chunk-prev-slot-address chunk)) 1))
+       (not (= (sicl-gc-memory:memory-64 (chunk-next-slot-address chunk)) 1))))
 
 (defun unlink-chunk (chunk)
   (assert (zerop (mod chunk 8)))
@@ -64,8 +67,8 @@
          (n (sicl-gc-memory:memory-64 na)))
     (setf (sicl-gc-memory:memory-64 p) n)
     (setf (sicl-gc-memory:memory-64 n) p)
-    (setf (sicl-gc-memory:memory-64 pa) 0)
-    (setf (sicl-gc-memory:memory-64 na) 0)))
+    (setf (sicl-gc-memory:memory-64 pa) 1)
+    (setf (sicl-gc-memory:memory-64 na) 1)))
 
 ;;; Link CHUNK into the doubly linked list of a bin.  PNA is the
 ;;; address of the NEXT slot of the chunk that will become the
