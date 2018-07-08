@@ -54,3 +54,27 @@
                  end-sentinel-address)
            (setf (sicl-gc-memory:memory-64 end-sentinel-address)
                  start-sentinel-address)))
+
+(defun find-ideal-bin-offset (size)
+  (if (<= size (* 67 8))
+      (- size (* 4 8))
+      (loop with left-address = (+ *bin-sizes-start* (* 64 8))
+            with right-address = (+ *bin-sizes-start* (* 512 8))
+            until (= right-address (+ left-address 8))
+            do (let* ((middle-address (ash (+ left-address right-address) -1))
+                      ;; We really want the entry immediately to the
+                      ;; left of the middle so as to decide whether it
+                      ;; is too small or not.
+                      (address (- middle-address 8))
+                      (value (sicl-gc-memory:memory-64 address)))
+                 (if (< value size)
+                     ;; The bin to the left of the middle is too
+                     ;; small, so we exclude it by setting the left
+                     ;; address to the middle one.
+                     (setf left-address middle-address)
+                     ;; The bin to the left of the middle is big
+                     ;; enough, so we exclude the middle and
+                     ;; everything to the right of it by setting the
+                     ;; right address to the middle one.
+                     (setf right-address middle-address)))
+            finally (return (- left-address *bin-sizes-start*)))))
