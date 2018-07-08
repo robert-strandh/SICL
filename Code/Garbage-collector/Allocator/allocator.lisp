@@ -88,3 +88,34 @@
                      ;; right address to the middle one.
                      (setf right-address middle-address)))
             finally (return (- left-address *bin-sizes-start*)))))
+
+(defun link-chunk-by-address (chunk start-sentinel-address end-sentinel-address)
+  (loop for pna = start-sentinel-address then (+ npa 8)
+        for npa = (sicl-gc-memory:memory-64 start-sentinel-address)
+          then (sicl-gc-memory:memory-64 (+ npa 8))
+        until (or (= npa end-sentinel-address)
+                  (> npa chunk))
+        finally (link-chunk-between chunk pna npa)))
+
+(defun link-chunk-by-size-and-address
+    (chunk start-sentinel-address end-sentinel-address)
+  (loop with size = (chunk-size chunk)
+        for pna = start-sentinel-address then (+ npa 8)
+        for npa = (sicl-gc-memory:memory-64 start-sentinel-address)
+          then (sicl-gc-memory:memory-64 (+ npa 8))
+        until (or (= npa end-sentinel-address)
+                  (> (chunk-size (- npa 8)) size)
+                  (and (= (chunk-size (- npa 8)) size)
+                       (> npa chunk)))
+        finally (link-chunk-between chunk pna npa)))
+
+(defun link-chunk (chunk)
+  (let* ((size (chunk-size chunk))
+         (offset (find-ideal-bin-offset size))
+         (start-sentinel-address (+ *start-sentinels-start* offset))
+         (end-sentinel-address (+ *end-sentinels-start* offset)))
+    (if (<= size (* 67 8))
+        (link-chunk-by-address
+         chunk start-sentinel-address end-sentinel-address)
+        (link-chunk-by-size-and-address
+         chunk start-sentinel-address end-sentinel-address))))
