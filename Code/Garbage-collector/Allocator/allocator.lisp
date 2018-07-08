@@ -55,9 +55,19 @@
            (setf (sicl-gc-memory:memory-64 end-sentinel-address)
                  start-sentinel-address)))
 
+;;; Given a chunk size in bytes, find the bin offset in bytes from the
+;;; beginning of the bin vector that is the smallest one big enough to
+;;; hold a chunk of size SIZE.
 (defun find-ideal-bin-offset (size)
   (if (<= size (* 67 8))
+      ;; The size fits exactly in one of the first 64 bins.  So we
+      ;; subtract 4 words or 4*8 bytes from the size to get to the
+      ;; correct bin offset.
       (- size (* 4 8))
+      ;; The size is too big for our exact bins.  So we do a binary
+      ;; search for the right bin.  The convention here is that the
+      ;; right address is the one immediately after the last element
+      ;; to be considered.
       (loop with left-address = (+ *bin-sizes-start* (* 64 8))
             with right-address = (+ *bin-sizes-start* (* 512 8))
             until (= right-address (+ left-address 8))
