@@ -32,18 +32,18 @@
   (exp (/ (log (/ (expt 2d0 61d0) 67d0)) (- 511d0 63d0))))
 
 (defun init-bin-sizes ()
-  (loop for i from 0 to 63
-        for address = (+ *bin-sizes-start* (* i 8))
+  (loop for index from 0 to 63
+        for address = (+ *bin-sizes-start* (* index 8))
         do (setf (sicl-gc-memory:memory-64 address)
-                 (+ i 4)))
-  (loop for i from 64 to 510
-        for address = (+ *bin-sizes-start* (* i 8))
-        for float-max-size = (* 67d0 *multiplier*)
+                 (* (+ index 4) 8)))
+  (loop for index from 64 to 510
+        for address = (+ *bin-sizes-start* (* index 8))
+        for float-max-size = (* 67d0 8d0 *multiplier*)
           then (* float-max-size *multiplier*)
         do (setf (sicl-gc-memory:memory-64 address)
                  (round float-max-size)))
   (setf (sicl-gc-memory:memory-64 (+ *bin-sizes-start* (* 511 8)))
-        (expt 2 61)))
+        (expt 2 64)))
 
 (defun init-sentinels ()
   (loop for index from 0 below 512
