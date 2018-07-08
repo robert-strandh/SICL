@@ -44,3 +44,13 @@
                  (round float-max-size)))
   (setf (sicl-gc-memory:memory-64 (+ *bin-sizes-start* (* 511 8)))
         (expt 2 61)))
+
+(defun init-sentinels ()
+  (loop for index from 0 below 512
+        for sentinel-offset = (* index 8)
+        for start-sentinel-address = (+ *start-sentinels-start* sentinel-offset)
+        for end-sentinel-address = (+ *end-sentinels-start* sentinel-offset)
+        do (setf (sicl-gc-memory:memory-64 start-sentinel-address)
+                 end-sentinel-address)
+           (setf (sicl-gc-memory:memory-64 end-sentinel-address)
+                 start-sentinel-address)))
