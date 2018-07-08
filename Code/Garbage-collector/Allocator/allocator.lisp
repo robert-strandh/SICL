@@ -4,6 +4,18 @@
   (assert (zerop (mod chunk 8)))
   (logand (sicl-gc-memory:memory-64 chunk) -1))
 
+(defun (setf chunk-size) (new-size chunk)
+  (assert (zerop (mod chunk 8)))
+  (assert (zerop (mod new-size 8)))
+  (setf (sicl-gc-memory:memory-64 chunk)
+        (logior new-size
+                (logand (sicl-gc-memory:memory-64 chunk) 1))))
+
+(defun update-chunk-trailer-size (chunk)
+  (let* ((size (chunk-size chunk))
+         (last-word-address (+ chunk size -8)))
+    (setf (sicl-gc-memory:memory-64 last-word-address) size)))
+
 (defun chunk-prev-slot-address (chunk)
   (assert (zerop (mod chunk 8)))
   (+ chunk 8))
@@ -55,8 +67,30 @@
     (setf (sicl-gc-memory:memory-64 pa) 0)
     (setf (sicl-gc-memory:memory-64 na) 0)))
 
-(defun link-chunk-between (chunk pa na)
-  (setf (sicl-gc-memory:memory-64 (chunk-prev-slot-address chunk)) pa)
-  (setf (sicl-gc-memory:memory-64 (chunk-next-slot-address chunk)) na)
-  (setf (sicl-gc-memory:memory-64 pa) (chunk-prev-slot-address chunk))
-  (setf (sicl-gc-memory:memory-64 na) (chunk-next-slot-address chunk)))
+;;; Link CHUNK into the doubly linked list of a bin.  PNA is the
+;;; address of the NEXT slot of the chunk that will become the
+;;; previous chunk of CHUNK in the bin, or the address of the START
+;;; sentinel if there is no previous chunk.  NPA is the address of the
+;;; PREVIOUS slot of the chunk that will become the next chunk of
+;;; CHUNK in the bin, or the address of the END sentinel if there is
+;;; no next chunk.
+(defun link-chunk-between (chunk pna npa)
+  (setf (sicl-gc-memory:memory-64 (chunk-prev-slot-address chunk)) pna)
+  (setf (sicl-gc-memory:memory-64 (chunk-next-slot-address chunk)) npa)
+  (setf (sicl-gc-memory:memory-64 pna) (chunk-prev-slot-address chunk))
+  (setf (sicl-gc-memory:memory-64 npa) (chunk-next-slot-address chunk)))
+
+(defun coalesce-two-chunks (chunk1 chunk2)
+  (assert (chunk-free-p chunk1))
+  (assert (chunk-free-p chunk2))
+  (incf (chunk-size chunk1) (chunk-size chunk2))
+  (update-chunk-trailer-size chunk1)
+  chunk1)
+
+(defun coalesce-three-chunks (chunk1 chunk2 chunk3)
+  (assert (chunk-free-p chunk1))
+  (assert (chunk-free-p chunk2))
+  (assert (chunk-free-p chunk3))
+  (incf (chunk-size chunk1) (+ (chunk-size chunk2) (chunk-size chunk3)))
+  (update-chunk-trailer-size chunk1)
+  chunk1)
