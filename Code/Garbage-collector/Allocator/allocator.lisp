@@ -38,7 +38,8 @@
                  (+ i 4)))
   (loop for i from 64 to 510
         for address = (+ *bin-sizes-start* (* i 8))
-        for float-max-size = 67d0 then (* float-max-size *multiplier*)
+        for float-max-size = (* 67d0 *multiplier*)
+          then (* float-max-size *multiplier*)
         do (setf (sicl-gc-memory:memory-64 address)
                  (round float-max-size)))
   (setf (sicl-gc-memory:memory-64 (+ *bin-sizes-start* (* 511 8)))
