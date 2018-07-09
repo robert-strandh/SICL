@@ -2,6 +2,9 @@
 
 (defparameter *memory* (make-array (expt 2 30) :element-type '(unsigned-byte 8)))
 
+(defun end-memory ()
+  (length *memory*))
+
 (defun memory-8 (address)
   (aref *memory* address))
 

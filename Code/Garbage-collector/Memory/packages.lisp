@@ -5,4 +5,5 @@
   (:export #:memory-64
            #:memory-32
            #:memory-16
-           #:memory-8))
+           #:memory-8
+           #:end-memory))
