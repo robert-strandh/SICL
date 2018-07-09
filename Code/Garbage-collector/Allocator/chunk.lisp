@@ -9,7 +9,7 @@
 
 (defun chunk-size (chunk)
   (assert (valid-chunk-alignment-p chunk))
-  (logand (sicl-gc-memory:memory-64 chunk) -1))
+  (logand (sicl-gc-memory:memory-64 chunk) -2))
 
 (defun (setf chunk-size) (new-size chunk)
   (assert (valid-chunk-alignment-p chunk))
