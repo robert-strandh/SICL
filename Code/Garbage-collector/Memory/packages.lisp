@@ -6,4 +6,5 @@
            #:memory-32
            #:memory-16
            #:memory-8
+           #:init-memory
            #:end-memory))

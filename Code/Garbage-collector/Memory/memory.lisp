@@ -3,6 +3,9 @@
 (defparameter *memory*
   (make-array (expt 2 30) :element-type '(unsigned-byte 8) :initial-element 0))
 
+(defun init-memory ()
+  (fill *memory* 0))
+
 (defun end-memory ()
   (length *memory*))
 
