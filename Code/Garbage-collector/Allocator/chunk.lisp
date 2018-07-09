@@ -65,6 +65,14 @@
   (and (not (= (sicl-gc-memory:memory-64 (chunk-prev-slot-address chunk)) 1))
        (not (= (sicl-gc-memory:memory-64 (chunk-next-slot-address chunk)) 1))))
 
+(defun mark-chunk-as-unlinked (chunk)
+  (assert (valid-chunk-alignment-p chunk))
+  (assert (chunk-linked-p chunk))
+  (let* ((pa (chunk-prev-slot-address chunk))
+         (na (chunk-next-slot-address chunk)))
+    (setf (sicl-gc-memory:memory-64 pa) 1)
+    (setf (sicl-gc-memory:memory-64 na) 1)))
+
 (defun unlink-chunk (chunk)
   (assert (valid-chunk-alignment-p chunk))
   (assert (chunk-linked-p chunk))
@@ -74,8 +82,7 @@
          (n (sicl-gc-memory:memory-64 na)))
     (setf (sicl-gc-memory:memory-64 p) n)
     (setf (sicl-gc-memory:memory-64 n) p)
-    (setf (sicl-gc-memory:memory-64 pa) 1)
-    (setf (sicl-gc-memory:memory-64 na) 1)))
+    (mark-chunk-as-unlinked chunk)))
 
 ;;; Link CHUNK into the doubly linked list of a bin.  PNA is the
 ;;; address of the NEXT slot of the chunk that will become the
