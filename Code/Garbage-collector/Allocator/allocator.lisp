@@ -145,3 +145,12 @@
   (let ((start-sentinel-address (+ *start-sentinels-start* bin-offset))
         (end-sentinel-address (+ *end-sentinels-start* bin-offset)))
     (= (sicl-gc-memory:memory-64 start-sentinel-address) end-sentinel-address)))
+
+;;; Given the offset of an initial bin, find the first one that is not
+;;; empty.
+(defun find-first-non-empty-bin (first-bin-offset)
+  (loop for bin-offset = first-bin-offset then (+ bin-offset 8)
+        while (and (< bin-offset (* 512 8)) (not (bin-empty-p bin-offset)))
+        finally (if (= bin-offset (* 512 8))
+                    (error "memory exhausted")
+                    (return bin-offset))))
