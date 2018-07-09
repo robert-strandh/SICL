@@ -184,5 +184,29 @@
                  ;; a big-enough chunk.
                  (let ((chunk (find-first-big-enough-chunk offset size)))
                    (unless (null chunk)
-                     ;; We found a candiate chunk.  Return it.
+                     ;; We found a candidate chunk.  Return it.
                      (return chunk)))))))
+
+;;; Given a size in bytes, allocate and return a best-fit chunk.
+(defun allocate-chunk (size)
+  (let ((candidate (find-chunk size)))
+    (unlink-chunk candidate)
+    (if (< (chunk-size candidate) (+ size (* 4 8)))
+        ;; Return the entire thing, since if we were to split of the
+        ;; right size, we would get a chunk that is smaller than the
+        ;; smallest acceptable size.
+        candidate
+        ;; Otherwise, we split the chunk into one chunk of the exact
+        ;; size we want, and one chunk containing the remaining bytes.
+        (let* ((residue-size (- size (chunk-size candidate)))
+               (residue-chunk (+ candidate residue-size)))
+          (setf (chunk-size candidate) size)
+          (update-chunk-trailer-size candidate)
+          (setf (chunk-size residue-chunk) residue-size)
+          (update-chunk-trailer-size residue-chunk)
+          ;; Before linking the residue chunk, we must make sure that the
+          ;; PREV and NEXT links contain 1, indicating that the chunk is unlinked.
+          (setf (sicl-gc-memory:memory-64 (+ residue-chunk 8)) 1)
+          (setf (sicl-gc-memory:memory-64 (+ residue-chunk 16)) 1)
+          (link-chunk residue-chunk)
+          candidate))))
