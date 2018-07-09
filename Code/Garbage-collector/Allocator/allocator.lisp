@@ -13,6 +13,10 @@
 (defparameter *bin-sizes-start*
   (+ *end-sentinels-start* (* *number-of-bins* 8)))
 
+;;; The address in memory where the heap starts.  For now, we have it
+;;; start right after the bin-size vector.
+(defparameter *heap-start*
+  (+ *bin-sizes-start* (* *number-of-bins* 8)))
 
 ;;; Bin i, where 0 <= i <= 63 contains i+4 words.  For 64 <= i <= 511,
 ;;; we express the max size of a chunk as a fixed multiplier of the
@@ -43,7 +47,7 @@
         do (setf (sicl-gc-memory:memory-64 address)
                  (* 8 (round float-max-size 8))))
   (setf (sicl-gc-memory:memory-64 (+ *bin-sizes-start* (* 511 8)))
-        (expt 2 64)))
+        (- (expt 2 64) 8)))
 
 (defun init-sentinels ()
   (loop for index from 0 below 512
@@ -71,7 +75,8 @@
       (loop with left-address = (+ *bin-sizes-start* (* 64 8))
             with right-address = (+ *bin-sizes-start* (* 512 8))
             until (= right-address (+ left-address 8))
-            do (let* ((middle-address (ash (+ left-address right-address) -1))
+            do (let* ((middle (ash (+ left-address right-address) -1))
+                      (middle-address (* 8 (floor middle 8)))
                       ;; We really want the entry immediately to the
                       ;; left of the middle so as to decide whether it
                       ;; is too small or not.
@@ -212,3 +217,20 @@
                 1)
           (link-chunk residue-chunk)
           candidate))))
+
+(defun init-heap ()
+  (let ((chunk *heap-start*)
+        (size (- (sicl-gc-memory:end-memory) *heap-start*)))
+    (setf (sicl-gc-memory:memory-64 chunk)
+          ;; Make sure we never attempt to coalesce with a preceding
+          ;; (non-existing) chunk by setting the flag that indicates
+          ;; that the previous chunk is in use.
+          (1+ size))
+    (mark-chunk-as-unlinked chunk)
+    (update-chunk-trailer-size chunk)
+    (link-chunk chunk)))
+
+(defun init ()
+  (init-bin-sizes)
+  (init-sentinels)
+  (init-heap))
