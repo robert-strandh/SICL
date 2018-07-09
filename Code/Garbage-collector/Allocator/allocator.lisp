@@ -154,3 +154,17 @@
         finally (if (= bin-offset (* 512 8))
                     (error "memory exhausted")
                     (return bin-offset))))
+
+;;; Given a bin offset and a chunk size in bytes, find the first chunk
+;;; in the bin with that offset that is at least as large as that
+;;; size.  If no such chunk exists, return NIL.
+(defun find-first-big-enough-chunk (bin-offset size)
+  (let ((start-sentinel-address (+ *start-sentinels-start* bin-offset))
+        (end-sentinel-address (+ *end-sentinels-start* bin-offset)))
+    (loop for chunkprev = (sicl-gc-memory:memory-64 start-sentinel-address)
+            then (sicl-gc-memory:memory-64 chunkprev)
+          until (or (= chunkprev end-sentinel-address)
+                    (<= size (chunk-size (- chunkprev 8))))
+          finally (return (if (= chunkprev end-sentinel-address)
+                              nil
+                              (- chunkprev 8))))))
