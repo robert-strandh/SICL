@@ -41,7 +41,7 @@
         for float-max-size = (* 67d0 8d0 *multiplier*)
           then (* float-max-size *multiplier*)
         do (setf (sicl-gc-memory:memory-64 address)
-                 (round float-max-size)))
+                 (* 8 (round float-max-size 8))))
   (setf (sicl-gc-memory:memory-64 (+ *bin-sizes-start* (* 511 8)))
         (expt 2 64)))
 
