@@ -119,3 +119,22 @@
          chunk start-sentinel-address end-sentinel-address)
         (link-chunk-by-size-and-address
          chunk start-sentinel-address end-sentinel-address))))
+
+(defun free (chunk)
+  (assert (not (chunk-free-p chunk)))
+  (let ((following-chunk (following-chunk chunk)))
+    (if (preceding-chunk-free-p chunk)
+        (let ((preceding-chunk (preceding-chunk chunk)))
+          (if (chunk-free-p following-chunk)
+              (progn (unlink-chunk preceding-chunk)
+                     (unlink-chunk following-chunk)
+                     (coalesce-three-chunks preceding-chunk
+                                            chunk
+                                            following-chunk)
+                     (link-chunk preceding-chunk))
+              (progn (unlink-chunk preceding-chunk)
+                     (coalesce-two-chunks preceding-chunk chunk)
+                     (link-chunk preceding-chunk))))
+        (progn (unlink-chunk following-chunk)
+               (coalesce-two-chunks chunk following-chunk)
+               (link-chunk chunk)))))
