@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-allocator)
 
+(defconstant +prev-slot-offset+ (* 1 8))
+
+(defconstant +next-slot-offset+ (* 2 8))
+
 (defun chunk-size (chunk)
   (assert (zerop (mod chunk 8)))
   (logand (sicl-gc-memory:memory-64 chunk) -1))
