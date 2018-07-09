@@ -155,7 +155,7 @@
 ;;; empty.
 (defun find-first-non-empty-bin (first-bin-offset)
   (loop for bin-offset = first-bin-offset then (+ bin-offset 8)
-        while (and (< bin-offset (* 512 8)) (not (bin-empty-p bin-offset)))
+        while (and (< bin-offset (* 512 8)) (bin-empty-p bin-offset))
         finally (if (= bin-offset (* 512 8))
                     (error "memory exhausted")
                     (return bin-offset))))
@@ -203,10 +203,11 @@
         candidate
         ;; Otherwise, we split the chunk into one chunk of the exact
         ;; size we want, and one chunk containing the remaining bytes.
-        (let* ((residue-size (- size (chunk-size candidate)))
-               (residue-chunk (+ candidate residue-size)))
+        (let* ((residue-size (- (chunk-size candidate) size))
+               (residue-chunk (+ candidate size)))
           (setf (chunk-size candidate) size)
           (update-chunk-trailer-size candidate)
+          (setf (sicl-gc-memory:memory-64 residue-chunk) 1)
           (setf (chunk-size residue-chunk) residue-size)
           (update-chunk-trailer-size residue-chunk)
           ;; Before linking the residue chunk, we must make sure that the
@@ -231,6 +232,7 @@
     (link-chunk chunk)))
 
 (defun init ()
+  (sicl-gc-memory:init-memory)
   (init-bin-sizes)
   (init-sentinels)
   (init-heap))
