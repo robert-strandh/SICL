@@ -168,3 +168,21 @@
           finally (return (if (= chunkprev end-sentinel-address)
                               nil
                               (- chunkprev 8))))))
+
+;;; Given a size in bytes, find the best-fit chunk.
+(defun find-chunk (size)
+  (let ((bin-offset (find-ideal-bin-offset size)))
+    (loop for offset = (find-first-non-empty-bin bin-offset)
+            then (find-first-non-empty-bin (+ offset 8))
+          do (if (<= offset (* 63 8))
+                 ;; We have a non-empty bin with all chunks being the
+                 ;; same size, so we just return the first chunk.
+                 (return (- (sicl-gc-memory:memory-64
+                             (+ *start-sentinels-start* offset))
+                            8))
+                 ;; We have a non-empty bin that may or may not contain
+                 ;; a big-enough chunk.
+                 (let ((chunk (find-first-big-enough-chunk offset size)))
+                   (unless (null chunk)
+                     ;; We found a candiate chunk.  Return it.
+                     (return chunk)))))))
