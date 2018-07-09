@@ -4,12 +4,15 @@
 
 (defconstant +next-slot-offset+ (* 2 8))
 
+(defun valid-chunk-alignment-p (chunk)
+  (zerop (mod chunk 8)))
+
 (defun chunk-size (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (logand (sicl-gc-memory:memory-64 chunk) -1))
 
 (defun (setf chunk-size) (new-size chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (assert (zerop (mod new-size 8)))
   (setf (sicl-gc-memory:memory-64 chunk)
         (logior new-size
@@ -21,49 +24,49 @@
     (setf (sicl-gc-memory:memory-64 last-word-address) size)))
 
 (defun chunk-prev-slot-address (chunk)
-  (assert (zerop (mod chunk 8)))
-  (+ chunk 8))
+  (assert (valid-chunk-alignment-p chunk))
+  (+ chunk +prev-slot-offset+))
 
 (defun chunk-next-slot-address (chunk)
-  (assert (zerop (mod chunk 8)))
-  (+ chunk 16))
+  (assert (valid-chunk-alignment-p chunk))
+  (+ chunk +next-slot-offset+))
 
 (defun preceding-chunk-free-p (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (zerop (mod (sicl-gc-memory:memory-64 chunk) 2)))
 
 (defun preceding-chunk-in-use-p (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (not (preceding-chunk-free-p chunk)))
 
 (defun preceding-chunk-size (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (assert (preceding-chunk-free-p chunk))
   (sicl-gc-memory:memory-64 (- chunk 8)))
   
 (defun preceding-chunk (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (assert (preceding-chunk-free-p chunk))
   (- chunk (preceding-chunk-size chunk)))
 
 (defun following-chunk (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (+ chunk (chunk-size chunk)))
 
 (defun chunk-free-p (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (preceding-chunk-free-p (following-chunk chunk)))
 
 ;;; When a chunk is not linked, for reasons of debugging, we set the
 ;;; PREV and NEXT slots to 1.  Since this number is not a multiple of
 ;;; 8, it is an illegal pointer.
 (defun chunk-linked-p (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (and (not (= (sicl-gc-memory:memory-64 (chunk-prev-slot-address chunk)) 1))
        (not (= (sicl-gc-memory:memory-64 (chunk-next-slot-address chunk)) 1))))
 
 (defun unlink-chunk (chunk)
-  (assert (zerop (mod chunk 8)))
+  (assert (valid-chunk-alignment-p chunk))
   (assert (chunk-linked-p chunk))
   (let* ((pa (chunk-prev-slot-address chunk))
          (p (sicl-gc-memory:memory-64 pa))
