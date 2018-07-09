@@ -206,7 +206,9 @@
           (update-chunk-trailer-size residue-chunk)
           ;; Before linking the residue chunk, we must make sure that the
           ;; PREV and NEXT links contain 1, indicating that the chunk is unlinked.
-          (setf (sicl-gc-memory:memory-64 (+ residue-chunk 8)) 1)
-          (setf (sicl-gc-memory:memory-64 (+ residue-chunk 16)) 1)
+          (setf (sicl-gc-memory:memory-64 (+ residue-chunk +prev-slot-offset+))
+                1)
+          (setf (sicl-gc-memory:memory-64 (+ residue-chunk +next-slot-offset+))
+                1)
           (link-chunk residue-chunk)
           candidate))))
