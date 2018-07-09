@@ -138,3 +138,10 @@
         (progn (unlink-chunk following-chunk)
                (coalesce-two-chunks chunk following-chunk)
                (link-chunk chunk)))))
+
+;;; A bin is empty if and only if the start sentinel points to the
+;;; slot of the end sentinel.
+(defun bin-empty-p (bin-offset)
+  (let ((start-sentinel-address (+ *start-sentinels-start* bin-offset))
+        (end-sentinel-address (+ *end-sentinels-start* bin-offset)))
+    (= (sicl-gc-memory:memory-64 start-sentinel-address) end-sentinel-address)))
