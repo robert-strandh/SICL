@@ -9,14 +9,14 @@
 
 (defun chunk-size (chunk)
   (assert (valid-chunk-alignment-p chunk))
-  (logand (sicl-gc-memory:memory-64 chunk) -2))
+  (logand (sicl-gc-memory:memory-64 chunk) -4))
 
 (defun (setf chunk-size) (new-size chunk)
   (assert (valid-chunk-alignment-p chunk))
   (assert (zerop (mod new-size 8)))
   (setf (sicl-gc-memory:memory-64 chunk)
         (logior new-size
-                (logand (sicl-gc-memory:memory-64 chunk) 1))))
+                (logand (sicl-gc-memory:memory-64 chunk) 3))))
 
 (defun update-chunk-trailer-size (chunk)
   (let* ((size (chunk-size chunk))
@@ -55,7 +55,22 @@
 
 (defun chunk-free-p (chunk)
   (assert (valid-chunk-alignment-p chunk))
-  (preceding-chunk-free-p (following-chunk chunk)))
+  (zerop (logand (sicl-gc-memory:memory-64 chunk) 2)))
+
+(defun (setf chunk-free-p) (free-p chunk)
+  (assert (valid-chunk-alignment-p chunk))
+  (let ((following-chunk (following-chunk chunk)))
+    (if free-p
+        (progn (setf (sicl-gc-memory:memory-64 chunk)
+                     (logand (sicl-gc-memory:memory-64 chunk) -3))
+               (unless (= following-chunk (sicl-gc-memory:end-memory))
+                 (setf (sicl-gc-memory:memory-64 following-chunk)
+                       (logand (sicl-gc-memory:memory-64 following-chunk) -2))))
+        (progn (setf (sicl-gc-memory:memory-64 chunk)
+                     (logior (sicl-gc-memory:memory-64 chunk) 2))
+               (unless (= following-chunk (sicl-gc-memory:end-memory))
+                 (setf (sicl-gc-memory:memory-64 following-chunk)
+                       (logand (sicl-gc-memory:memory-64 following-chunk) 1)))))))
 
 ;;; When a chunk is not linked, for reasons of debugging, we set the
 ;;; PREV and NEXT slots to 1.  Since this number is not a multiple of
