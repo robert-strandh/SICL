@@ -79,3 +79,13 @@
   (sicl-allocator::init)
   (loop for operation in operations
         do (execute-operation operation)))
+
+(defun invoke-with-chunks-in-bin (bin-offset function)
+  (let ((start-sentinel-address
+          (+ sicl-allocator::*start-sentinels-start* bin-offset))
+        (end-sentinel-address
+          (+ sicl-allocator::*end-sentinels-start* bin-offset)))
+    (loop for chunkprev = (sicl-gc-memory:memory-64 start-sentinel-address)
+            then (sicl-gc-memory:memory-64 (+ chunkprev 8))
+          until (= chunkprev end-sentinel-address)
+          do (funcall function (- chunkprev 8)))))
