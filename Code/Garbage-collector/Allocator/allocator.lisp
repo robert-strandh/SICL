@@ -141,9 +141,11 @@
               (progn (unlink-chunk preceding-chunk)
                      (coalesce-two-chunks preceding-chunk chunk)
                      (link-chunk preceding-chunk))))
-        (progn (unlink-chunk following-chunk)
-               (coalesce-two-chunks chunk following-chunk)
-               (link-chunk chunk)))))
+        (if (chunk-free-p following-chunk)
+            (progn (unlink-chunk following-chunk)
+                   (coalesce-two-chunks chunk following-chunk)
+                   (link-chunk chunk))
+            (link-chunk chunk)))))
 
 ;;; A bin is empty if and only if the start sentinel points to the
 ;;; slot of the end sentinel.
@@ -168,7 +170,7 @@
   (let ((start-sentinel-address (+ *start-sentinels-start* bin-offset))
         (end-sentinel-address (+ *end-sentinels-start* bin-offset)))
     (loop for chunkprev = (sicl-gc-memory:memory-64 start-sentinel-address)
-            then (sicl-gc-memory:memory-64 chunkprev)
+            then (sicl-gc-memory:memory-64 (+ chunkprev 8))
           until (or (= chunkprev end-sentinel-address)
                     (<= size (chunk-size (- chunkprev 8))))
           finally (return (if (= chunkprev end-sentinel-address)
@@ -212,6 +214,7 @@
           (setf (chunk-free-p candidate) nil)
           (setf (chunk-size residue-chunk) residue-size)
           (update-chunk-trailer-size residue-chunk)
+          (setf (chunk-free-p residue-chunk) t)
           ;; Before linking the residue chunk, we must make sure that the
           ;; PREV and NEXT links contain 1, indicating that the chunk is unlinked.
           (setf (sicl-gc-memory:memory-64 (+ residue-chunk +prev-slot-offset+))
