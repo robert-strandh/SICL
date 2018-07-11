@@ -20,7 +20,7 @@
 (defparameter *operations* '())
 
 (defun one-iteration ()
-  (when (< (random 1d0) 0.1)
+  (when (< (random 1d0) 0.01)
     (setf *allocate-p* (not *allocate-p*)))
   (multiple-value-bind (allocated-space-before free-space-before)
       (total-space)
@@ -35,7 +35,8 @@
                (chunk-size (sicl-allocator::chunk-size chunk)))
           (declare (ignore ignore))
           (setf (cddr (car *operations*)) (list chunk))
-          (assert (<= size chunk-size (* size 1.1)))
+          (assert (or (< (- chunk-size size) (* 4 8))
+                      (<= size chunk-size (* size 1.2))))
           (assert (not (sicl-allocator::chunk-free-p chunk)))
           (setf (aref *chunks* *next-chunk-position*) chunk)
           (incf *next-chunk-position*)
