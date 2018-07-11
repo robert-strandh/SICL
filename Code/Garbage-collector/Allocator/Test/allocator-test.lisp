@@ -17,8 +17,10 @@
 
 (defparameter *allocate-p* t)
 
+(defparameter *operations* '())
+
 (defun one-iteration ()
-  (when (< (random 1d0) 0.001)
+  (when (< (random 1d0) 0.1)
     (setf *allocate-p* (not *allocate-p*)))
   (multiple-value-bind (allocated-space-before free-space-before)
       (total-space)
@@ -28,9 +30,13 @@
                  (> free-space-before 10000)
                  (< *next-chunk-position* (length *chunks*))))
         (let* ((size (* 8 (+ 4 (random 1000))))
+               (ignore (push `(allocate ,size) *operations*))
                (chunk (sicl-allocator::allocate-chunk size))
                (chunk-size (sicl-allocator::chunk-size chunk)))
+          (declare (ignore ignore))
+          (setf (cddr (car *operations*)) (list chunk))
           (assert (<= size chunk-size (* size 1.1)))
+          (assert (not (sicl-allocator::chunk-free-p chunk)))
           (setf (aref *chunks* *next-chunk-position*) chunk)
           (incf *next-chunk-position*)
           (multiple-value-bind (allocated-space-after free-space-after)
@@ -42,6 +48,7 @@
         (let* ((victim-index (random *next-chunk-position*))
                (victim-chunk (aref *chunks* victim-index))
                (chunk-size (sicl-allocator::chunk-size victim-chunk)))
+          (push `(free ,victim-chunk) *operations*)
           (decf *next-chunk-position*)
           (rotatef (aref *chunks* victim-index)
                    (aref *chunks* *next-chunk-position*))
@@ -54,6 +61,20 @@
                        (+ free-space-before chunk-size))))))))
 
 (defun test (n)
+  (setf *next-chunk-position* 0)
+  (setf *allocate-p* t)
+  (setf *operations* '())
   (sicl-allocator::init)
   (loop repeat n
         do (one-iteration)))
+
+(defun execute-operation (operation)
+  (destructuring-bind (name argument) operation
+    (if (eq name 'allocate)
+        (sicl-allocator::allocate-chunk argument)
+        (sicl-allocator::free argument))))
+
+(defun execute-operations (operations)
+  (sicl-allocator::init)
+  (loop for operation in operations
+        do (execute-operation operation)))
