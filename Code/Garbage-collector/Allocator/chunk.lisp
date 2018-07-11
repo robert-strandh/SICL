@@ -70,7 +70,7 @@
                      (logior (sicl-gc-memory:memory-64 chunk) 2))
                (unless (= following-chunk (sicl-gc-memory:end-memory))
                  (setf (sicl-gc-memory:memory-64 following-chunk)
-                       (logand (sicl-gc-memory:memory-64 following-chunk) 1)))))))
+                       (logior (sicl-gc-memory:memory-64 following-chunk) 1)))))))
 
 ;;; When a chunk is not linked, for reasons of debugging, we set the
 ;;; PREV and NEXT slots to 1.  Since this number is not a multiple of
