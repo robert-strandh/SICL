@@ -4,45 +4,52 @@
 \section{Memory is divided into chunks}
 \label{sec-memory-allocator-memory-divided-into-chunks}
 
-Available memory is divided into \emph{chunks}.  A chunk can either be
-\emph{in use} or \emph{free}.  When a chunk is freed, and either the
-previous chunk is free, the following chunk is free, or both the
-previous and the following chunks are free, then the free chunks are
-coalesced into a single free chunk.  As a consequence, there are never
-two consecutive free chunks in memory.
+Available memory is divided into consecutive \emph{chunks} with no
+space in between two chunks.  If there are two consecutive chunks $C1$
+and $C2$ somewhere in the available memory, then $C1$ is said to be
+the \emph{preceding} chunk with respect to $C2$ and $C2$ is said to be
+the \emph{following} chunk with respect to $C1$.
 
-Every chunk has an initial 64-bit word containing the \emph{size} of
-the chunk in 8-bit bytes.  Since this value is always even, the last
-bit is always $0$.  We use the last bit to indicate whether the
-\emph{previous chunk} is in use or free.  If the bit is $1$, the
-previous chunk is in use.  If the bit is $0$, the previous chunk is
-free.  To obtain the size of the chunk in bytes, the last bit of the
-word must first be masked out, using the \texttt{and} operation with
-a mask containing a $1$ in every position except the least significant
-one.
+A chunk can either be \emph{in use} or \emph{free}. When a chunk is
+freed, and either the preceding chunk is free, the following chunk is
+free, or both the preceding and the following chunks are free, then the
+free chunks are coalesced into a single free chunk.  As a consequence,
+there are never two consecutive free chunks in memory.
 
-To determine whether a chunk is in use or free, the address of the
-chunk is added to the size of the chunk, thereby obtaining the address
-of the following chunk in memory.  Then the last bit of the word at
-that address is tested.  If it is $1$, then the chunk is in use.  If
-it is $0$, then the chunk is free.
+Every chunk $C$ has an initial 64-bit word containing the \emph{size}
+of the chunk in 8-bit bytes.  Since this value is always a multiple of
+$4$, the last two bits are always $0$.  We use the \emph{next to last}
+bit to indicate whether $C$ is in use or free.  If the bit is $1$, the
+chunk $C$ is in use.  If the bit is $0$, the chunk $C$ is free.  We
+use \emph{the last} bit to indicate whether the \emph{preceding chunk}
+with respect to $C$ is in use or free.  If the bit is $1$, the
+preceding chunk is in use.  If the bit is $0$, the preceding chunk is
+free.  To obtain the size of the chunk in bytes, the last two bits of
+the word must first be masked out, using the \texttt{and} operation
+with a mask containing a $1$ in every position except the two least
+significant ones.
 
 A free chunk is linked into a doubly linked list of chunks in the same
 bin.  See \refSec{sec-memory-allocator-bins-of-chunks} for more
-details about the available bins.  The second 64-bit word of a free
-chunk is a pointer to the previous chunk in the bin.  The third 64-bit
-word of a free chunk is a pointer to the next chunk in the bin.  These
-words do not point to the beginning of the previous or the next chunk.
-Instead, the second word contains the address of the third word of the
-previous chunk in the bin, and the third word contains the address of
-the second word of the next chunk in the bin.  If there is no previous
-chunk in the bin, then the second word contains the address of a
-\emph{sentinel} that is the beginning of the bin.  Similarly, if there
-is no next chunk in the bin, then the third word contains the address
-of a sentinel that is the end of the bin.  By using these sentinels,
-the algorithms for linking and unlinking a chunk are simplified.  The
-last word of a free chunk contains the size of the chunk, just like
-the first word.
+details about the available bins.  If there are two consecutive chunks
+$C1$ and $C2$ in the linked list in a bin, then $C1$ is said to be the
+\emph{previous} chunk with respect to $C2$ and $C2$ is said to be the
+\emph{next} chunk with respect to $C1$.
+
+The second 64-bit word of a free chunk is a pointer to the previous
+chunk in the bin.  The third 64-bit word of a free chunk is a pointer
+to the next chunk in the bin.  These words do not point to the
+beginning of the previous or the next chunk.  Instead, the second word
+contains the address of the third word of the previous chunk in the
+bin, and the third word contains the address of the second word of the
+next chunk in the bin.  If there is no previous chunk in the bin, then
+the second word contains the address of a \emph{sentinel} that is the
+beginning of the bin.  Similarly, if there is no next chunk in the
+bin, then the third word contains the address of a sentinel that is
+the end of the bin.  By using these sentinels, the algorithms for
+linking and unlinking a chunk are simplified.  The last word of a
+\emph{free chunk} contains the size of the chunk, just like the first
+word.  The last word of a chunk in use is reserved for user data.
 
 Since a free chunk has at least four words in it, this is also the
 minimum size allowed for any chunk.
