@@ -1,7 +1,5 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
-(defvar *compilation-environment*)
-
 ;;; Create a new constructor and scan its creation and initialization form.
 (defgeneric make-constructor (object system))
 
@@ -33,8 +31,8 @@
 ;;; Whether the creation form of CONSTRUCTOR is currently being scanned.
 (defgeneric creation-form-finalized-p (constructor))
 
-;;; Return a list of keys.  Two objects with at least one EQUALP key are
-;;; assumed to be similar.
+;;; Return a list of keys.  Objects with at least one shared key (in the
+;;; sense of equalp) are assumed to be similar.
 (defgeneric equalp-keys (object system))
 
 ;;; Return a modified version of HIR, where all occurring data have been

@@ -5,9 +5,8 @@
 
 (defclass constructor ()
   (;; There must not be circular references within creation forms.  We use
-   ;; this boolean to detect such circularities.  Its value is NIL while
-   ;; processing the dependencies of the current creation form and T once
-   ;; all creation form dependencies have been processed.
+   ;; this boolean to detect such circularities.  Its value is NIL
+   ;; initially and set to T once the creation thunk has been scanned.
    (%creation-form-finalized-p :initform nil :accessor creation-form-finalized-p)
    (%creation-form :initarg :creation-form :reader creation-form)
    (%initialization-form :initarg :initialization-form :reader initialization-form)
@@ -38,22 +37,20 @@
       :creation-form creation-form
       :initialization-form initialization-form)))
 
-(defmethod make-constructor ((bignum bignum) system)
+(defmethod make-constructor ((bignum integer) system)
   (let* ((size (load-time-value
                 (loop for size = 1 then (* size 2)
                       while (and (typep (+ (expt 2 size)) 'fixnum)
                                  (typep (- (expt 2 size)) 'fixnum))
                       maximize size)))
-         (sign (if (minusp bignum) -1 1))
+         (sign (signum bignum))
          (blocks (ceiling (integer-length bignum) size)))
-    (make-instance 'constructor
-      :creation-form
-      (loop for block from blocks downto 0
-            for offset = (* block size)
-            for form = sign then
-            `(dpb ,(ldb (byte size offset) bignum)
-                  (byte ,size ,offset) ,form)
-            finally (return form)))))
+    (loop for block from blocks downto 0
+          for offset = (* block size)
+          for form = sign then
+          `(dpb ,(ldb (byte size offset) bignum)
+                (byte ,size ,offset) ,form)
+          finally (return form))))
 
 (defmethod make-constructor ((ratio ratio) system)
   (make-instance 'constructor
