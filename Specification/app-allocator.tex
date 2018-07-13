@@ -27,6 +27,10 @@ preceding chunk is in use.  If the bit is $0$, the preceding chunk is
 free.  If there is no preceding chunk, i.e. $C$ is the first chunk in
 memory, then the last bit of the first word is set to $1$ to avoid any
 attempt to coalesce $C$ with some non-existing preceding chunk.
+Notice that for all chunks except the last one, there are therefore
+two bits in memory indicating whether the chunk is in use or free; one
+bit in the first word of the chunk itself, and one bit in the
+following chunk.
 
 To obtain the size of the chunk in bytes, the last two bits of
 the word must first be masked out, using the \texttt{and} operation
