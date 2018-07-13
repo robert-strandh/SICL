@@ -76,7 +76,7 @@ Chunk in use followed by free chunk.}
 As \refFig{fig-chunks2} shows, the next-to-last bit of the first word
 of the first chunk and the last bit of the first word of the second
 chunk are both $1$, indicating that the first chunk is in use.  The
-next-to-last bit of the first word of the second chunk i $0$
+next-to-last bit of the first word of the second chunk is $0$
 indicating that the second chunk is free.  The first chunk contains
 the size word followed by user data.  The second chunk contains the
 size in the first and the last word, and the second and third words of
@@ -97,7 +97,7 @@ Free chunk followed by chunk in use.}
 As \refFig{fig-chunks3} shows, the next-to-last bit of the first word
 of the first chunk and the last bit of the first word of the second
 chunk are both $0$, indicating that the first chunk is free.  The
-next-to-last bit of the first word of the second chunk i $1$
+next-to-last bit of the first word of the second chunk is $1$
 indicating that the second chunk is in use.  The first chunk contains
 the size in the first and the last word, and the second and third
 words of the first chunk contain links to the previous and the next
@@ -115,10 +115,13 @@ chunks are in use.
 Two chunks in use.}
 \end{figure}
 
-As \refFig{fig-chunks4} shows, the last bit of the first word of the
-second chunk is $1$, indicating that the first chunk is in use.  Each
-of the chunks contains the size in the first word and the remaining
-words of the chunk contains user data.
+As \refFig{fig-chunks4} shows, the next-to-last bit of the first word
+of the first chunk and the last bit of the first word of the second
+chunk are both $1$, indicating that the first chunk is in use.  The
+next-to-last bit of the first word of the second chunk is also $1$
+indicating that the second chunk is in use as well.  Each of the
+chunks contains the size in the first word and the remaining words of
+the chunk contains user data.
 
 \section{Bins of chunks of similar size}
 \label{sec-memory-allocator-bins-of-chunks}
