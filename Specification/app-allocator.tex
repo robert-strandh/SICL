@@ -136,23 +136,28 @@ contains chunks with $67$ words.  Bins starting at $64$ contain chunks
 with a size greater than the maximum size of chunks in the previous
 bin and less than or equal to some maximum size that is indicated
 explicitly.  The maximum size of chunks in bins $64$ to $511$ grows by
-roughly $8.8$\% compared to the previous one.  Thus the maximum size
-of chunks in bin $64$ is $73$, that of chunks in bin $65$ is $79$,
-etc.  The maximum chunk size of bin $511$ is $2^{61}$ words, or
-$2^{64}$ bytes.  In bins $0$ to $63$, chunks are sorted by address.  In
-bins $64$ to $511$ chunks are sorted first by size and then (if
+roughly less than 10\% compared to the previous one.  Thus the maximum
+size of chunks in bin $64$ is $73$, that of chunks in bin $65$ is
+$79$, etc.  The maximum chunk size of bin $511$ is $2^{61}$ words, or
+$2^{64}$ bytes.  In bins $0$ to $63$, chunks are sorted by address.
+In bins $64$ to $511$ chunks are sorted first by size and then (if
 several chunks have the same size) by address.
 
 Three vectors of $512$ elements each are used to manage the bins.  One
-vector contains the maximum size of chunks in the bin that corresponds
-to the index.  The second vector contains the first sentinel of each
-bin.  The third vector contains the last sentinel of each bin.  When
-the bin is empty, the element in the second vector contains the
-address of the element in the third vector and vice versa.  In
-addition to these three vector, we also maintain a bitmap consisting
-of $8$ $64$-bit words, containing a $1$ if the corresponding bin has
-at least one chunk in it and $0$ if the corresponding bin contains no
-chunks.  \refFig{fig-bins} illustrates the organization of the bins.
+vector contains the maximum size%
+\footnote{In the implementation, the sizes in this vector are given in
+  number of 8-bit bytes, rather than in number of 64-bit words, so as
+  to avoid unnecessary arithmetic operations in the allocator
+  algorithms.}  of chunks in the bin that corresponds to the index.
+The second vector contains the first sentinel of each bin.  The third
+vector contains the last sentinel of each bin.  When the bin is empty,
+the element in the second vector contains the address of the element
+in the third vector and vice versa.  In addition to these three
+vector, we also maintain a bitmap%
+\footnote{This bitmap is not yet implemented.}  consisting of $8$
+$64$-bit words, containing a $1$ if the corresponding bin has at least
+one chunk in it and $0$ if the corresponding bin contains no chunks.
+\refFig{fig-bins} illustrates the organization of the bins.
 
 \begin{figure}
 \begin{center}
@@ -187,26 +192,34 @@ as $n-4$.  If not, we do a binary search to find $b$.
 
 It is possible that $b$ is empty.  We must therefore find the smallest
 bin $b'$ such that $b' \ge b$ and $b'$ is not empty.  We first compute
-$q = b div 64$ and $r = b mod 64$ indicating that $b$ corresponds to
-position $r$ in bitmap $q$.  We then compute a mask $m$ consisting of
-$r$ leading $0$s and $64-r$ trailing $1$s.  This masked is and-ed with
-the bitmap.  We then find the first $1$ in the resulting value.  If
-such a position exists, then we have found $b'$.  If not, we search
-bitmaps $q+1$, $q+2$ etc., without any mask, until a set bit is
-found.  The first such bit found corresponds to $b'$.  If no such bit
-is found, we request more memory from the operating system.
+$q = b \thinspace div \thinspace 64$ and $r = b \thinspace
+mod \thinspace 64$ indicating that $b$ corresponds to position $r$ in
+bitmap $q$.  We then compute a mask $m$ consisting of $r$ leading $0$s
+and $64-r$ trailing $1$s.  This masked is and-ed with the bitmap.  We
+then find the first $1$ in the resulting value.  If such a position
+exists, then we have found $b'$.  If not, we search bitmaps $q+1$,
+$q+2$ etc., without any mask, until a set bit is found.  The first
+such bit found corresponds to $b'$.  If no such bit is found, we
+request more memory from the operating system.
+
+When a non-empty bin is found, if the bin index is less than or equal
+to $63$ we use the first chunk in the bin.  If the bin index is
+greater than or equal to $64$, we do a linear search of the chunks in
+the bin, and use the first chunk that is greater than or equal to $n$
+words.
 
 Once we find a chunk $c$ that is greater than or equal to $n$ words,
 there are two cases:
 
 \begin{enumerate}
 \item If the size of $c$ is less than or equal to $n-4$, then we
-  unlink the chunk from the bin and we are done.  The reason for the
-  $4$ is that we can not use a residue less than $4$ words.
+  unlink the chunk from the bin and return it.  The reason for the $4$
+  is that we can not use a residue less than $4$ words.
 \item If the size $s$ of $c$ is strictly greater than $n$, then we
   unlink $c$ from its bin.  We then split $c$ into a chunk $c1$ of
   size $n$ and a chunk $c2$ of size $s-n$.  The chunk $c2$ is then
-  linked into the bin that corresponds to its size.
+  linked into the bin that corresponds to its size.  Finally, the
+  chunk $c1$ is returned.
 \end{enumerate}
 
 \section{Freeing a chunk}
@@ -237,9 +250,9 @@ find the beginning of $P$.  This is the main reason for storing the
 in-use bit in the chunk following the one that is concerned.
 
 To determine whether the chunk $F$ following $C$ is in use or free,
-use the size of $C$ to find the beginning of $F$.  Then we use the
-size of $F$ to find the chunk $G$ following $F$.  The last bit of the
-first word of $G$ indicates whether $F$ is in use or free.
+use the size of $C$ to find the beginning of $F$.  We then consult the
+next-to-last bit of the first word of $F$.  If it is $1$, then $F$ is
+in use.  If it is $0$, then $F$ is free.
 
 To coalesce the chunk $P$ preceding $C$ (case 2 above) with $C$, $P$
 must first be unlinked from its bin.  Then the size contained in the
