@@ -54,8 +54,8 @@ next chunk in the bin.  If there is no previous chunk in the bin, then
 the second word contains the address of a \emph{sentinel} that is the
 beginning of the bin.  Similarly, if there is no next chunk in the
 bin, then the third word contains the address of a sentinel that is
-the end of the bin.  By using these sentinels, the algorithms for
-linking and unlinking a chunk are simplified.  The last word of a
+the end of the bin.  By using these sentinels, we are able to simplify
+the algorithms for linking and unlinking a chunk.  The last word of a
 \emph{free chunk} contains the size of the chunk, just like the first
 word.  The last word of a chunk in use is reserved for user data.
 
