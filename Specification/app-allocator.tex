@@ -73,12 +73,15 @@ first chunk is in use and the second chunk is free.
 Chunk in use followed by free chunk.}
 \end{figure}
 
-As \refFig{fig-chunks2} shows, the last bit of the first word of the
-second chunk is $1$, indicating that the first chunk is in use.  The
-first chunk contains the size word followed by user data.  The second
-chunk contains the size in the first and the last word, and the second
-and third words of the second chunk contain links to the previous and
-the next chunk in the bin.
+As \refFig{fig-chunks2} shows, the next-to-last bit of the first word
+of the first chunk and the last bit of the first word of the second
+chunk are both $1$, indicating that the first chunk is in use.  The
+next-to-last bit of the first word of the second chunk i $0$
+indicating that the second chunk is free.  The first chunk contains
+the size word followed by user data.  The second chunk contains the
+size in the first and the last word, and the second and third words of
+the second chunk contain links to the previous and the next chunk in
+the bin.
 
 \refFig{fig-chunks3} shows the constellation of two chunks where the
 first chunk is free and the second chunk is in use.
