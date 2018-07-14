@@ -30,13 +30,6 @@
       (setf initialization-thunk
             (compile-form initialization-form system)))))
 
-(defmethod make-constructor (object system)
-  (multiple-value-bind (creation-form initialization-form)
-      (make-load-form object *compilation-environment*)
-    (make-instance 'constructor
-      :creation-form creation-form
-      :initialization-form initialization-form)))
-
 (defmethod make-constructor ((bignum integer) system)
   (let* ((size (load-time-value
                 (loop for size = 1 then (* size 2)
