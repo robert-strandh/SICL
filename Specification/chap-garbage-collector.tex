@@ -47,7 +47,7 @@ allocator that we used for this purpose can be found in
 Since all dyads consist of two words, we can use a mark-and-sweep
 collector for these objects without suffering any fragmentation.  The
 advantage of a mark-and-sweep collector is that objects will never
-move, which is an advantage when they are used as keys in hash tables
+move, which is preferable when they are used as keys in hash tables
 and when they are used to communicate with code in foreign languages
 that assume that an address of an object is fixed once and for all.
 
@@ -93,13 +93,18 @@ The global collector cycles through the following phases:
 
 In this phase the global collector is not doing any work.  Whether it
 has a allocated threads that are blocked or no threads allocated
-remains to be decided.
+remains to be decided.  During this phase, when application threads
+request space from the global heap, objects are allocated \emph{white}
+(see below for more information on the tri-color technique).
 
 \subsection{Requesting roots}
 
 
 See \refSec{sec-garbage-collection-synchronization-between-collectors}
-for more details on this phase.
+for more details on this phase.  During this phase, when application
+threads request space from the global heap, objects are allocated
+\emph{black} (see below for more information on the tri-color
+technique).
 
 \subsection{Waiting for roots}
 
