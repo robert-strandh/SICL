@@ -87,6 +87,8 @@ The global collector cycles through the following phases:
 \item Merging free lists.  In this phase, the global collector merges
   the newly created linked list of unmarked dyads with the existing
   free list.
+\item Clearing bitmaps.  In this final phase, the bitmaps used during
+  collection are cleared.
 \end{enumerate}
 
 \subsection{Idle phase}
