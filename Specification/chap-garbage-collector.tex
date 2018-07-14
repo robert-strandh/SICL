@@ -97,6 +97,14 @@ remains to be decided.  During this phase, when application threads
 request space from the global heap, objects are allocated \emph{white}
 (see below for more information on the tri-color technique).
 
+We maintain a free list of dyads to be used to grant requests for
+objects by mutator threads.  We start a collection before the free
+list is empty so that mutator threads can continue doing useful work
+during a garbage collection of the global heap.  If the free list of
+dyads ever becomes empty, then mutator threads must wait until more
+free dyads become available as a result of a garbage collection of the
+global heap.
+
 \subsection{Requesting roots}
 
 
@@ -177,9 +185,31 @@ memory which is comparable to the space taken up by the gray bitmaps.
 
 \subsection{Collecting unmarked dyads}
 
+We collect unmarked dyads into a list that is separate from the free
+list used to grant request for allocations by mutator threads.  We do
+not want requests for allocations by mutator threads to be granted
+from this list until we have freed the racks these dyads refer to.
+
+If the number of dyads recovered is insufficient, i.e. a new
+allocation would be triggered very soon, more memory is requested from
+the system and used for dyads.
+
 \subsection{Freeing racks}
 
+During this phase, the free list of unmarked dyads is traversed, and
+whenever the dyad is a general instance, the corresponding rack is
+freed.
+
 \subsection{Merging free lists}
+
+Once the racks of unmarked dyads have been freed, the two free lists
+are merged into a single one.
+
+\subsection{Clearing bitmaps}
+
+Finally, we clear all the bitmaps used for marking, and we either
+enter the idle phase, or start a new collection, depending on the
+number of dyads left in the free list.
 
 \subsection{Write barrier}
 
