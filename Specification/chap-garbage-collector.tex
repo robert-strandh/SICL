@@ -40,8 +40,9 @@ We define a global heap divided into two parts called the \emph{dyad
   part} and the \emph{rack part}.  The dyad part is a single vector
 consisting of two-word blocks.  This is where dyads are allocated.
 The rack part of the global heap is organized as the space managed by
-an ordinary memory allocator,  Our adaptation of Doug Lea's memory
-allocator can be found in \refApp{app-memory-allocator}.
+an ordinary memory allocator.  Our adaptation of Doug Lea's memory
+allocator that we used for this purpose can be found in
+\refApp{app-memory-allocator}.
 
 Since all dyads consist of two words, we can use a mark-and-sweep
 collector for these objects without suffering any fragmentation.  The
