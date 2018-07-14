@@ -62,12 +62,12 @@
   (values))
 
 (defmethod scan-datum ((constant-input cleavir-ir:constant-input) system)
-  (let ((value (value constant-input)))
-    (unless (immedate-p value)
+  (let ((value (cleavir-ir:value constant-input)))
+    (unless (immedate-p value system)
       (scan-literal-object value system))))
 
 (defmethod scan-datum ((load-time-value-input cleavir-ir:load-time-value-input) system)
-  (multiple-value-bind (constructor present-p) (constructor object)
+  (multiple-value-bind (constructor present-p) (constructor load-time-value-input)
     (cond ((not present-p)
            (let* ((creation-form (cleavir-ir:form load-time-value-input))
                   (creation-thunk (compile-form creation-form system))
@@ -79,15 +79,13 @@
              (setf (creation-form-finalized-p constructor) t)))
           ((not (creation-form-finalized-p constructor))
            (error 'circular-dependencies-in-creation-form
-                  :object object
+                  :object (creation-form constructor)
                   :creation-form (creation-form constructor))))))
 
 (defmethod scan-literal-object (object system)
   (multiple-value-bind (constructor present-p) (constructor object)
     (cond ((not present-p)
-           (let* ((constructor (make-constructor object system))
-                  (creation-form (creation-form constructor))
-                  (initialization-form (initialization-form constructor)))
+           (let* ((constructor (make-constructor object system)))
              (setf (constructor object) constructor)
              (scan-hir (creation-thunk constructor) system)
              (setf (creation-form-finalized-p constructor) t)
