@@ -1,19 +1,10 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
+;;; Return whether OBJECT is an immediate.
+(defgeneric immediate-p (object system))
+
 ;;; Create a new constructor and scan its creation and initialization form.
 (defgeneric make-constructor (object system))
-
-;;; The first argument of a MAKE-LOAD-FORM call.
-(defgeneric creation-form (constructor))
-
-;;; The second argument of a MAKE-LOAD-FORM call.
-(defgeneric initialization-form (constructor))
-
-;;; The HIR flowchart of a thunk returning a fresh object.
-(defgeneric creation-thunk (constructor))
-
-;;; The HIR flowchart of a thunk that returns no values.
-(defgeneric initialization-thunk (constructor))
 
 ;;; Return the HIR flowchart corresponding to FORM.
 (defgeneric compile-form (form system))

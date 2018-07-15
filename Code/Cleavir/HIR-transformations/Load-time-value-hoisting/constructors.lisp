@@ -11,7 +11,8 @@
    (%creation-form :initarg :creation-form :reader creation-form)
    (%initialization-form :initarg :initialization-form :reader initialization-form)
    (%creation-thunk :initarg :creation-thunk :accessor creation-thunk)
-   (%initialization-thunk :initarg :initialization-thunk :accessor initialization-thunk))
+   (%initialization-thunk :initarg :initialization-thunk :accessor initialization-thunk)
+   (%lexical-location :initform nil :accessor lexical-location))
   (:default-initargs :creation-form nil
                      :initialization-form nil
                      :creation-thunk nil

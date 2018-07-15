@@ -9,12 +9,6 @@
   (declare (ignore object system))
   nil)
 
-(defmethod immediate-p ((input cleavir-ir:constant-input) system)
-  (immediate-p (cleavir-ir:value input)))
-
-(defmethod immediate-p ((input cleavir-ir:immediate-input) system)
-  t)
-
 (defmethod immediate-p ((fixnum fixnum) system)
   t)
 

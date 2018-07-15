@@ -1,8 +1,8 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
-;;; Scanning is the process of associating every externalizable object with
-;;; a suitable constructor.  Constructors of similar objects are coalesced
-;;; in the process.
+;;; Scanning is the process of associating every externalizable object and
+;;; load time value form with a suitable constructor.  Constructors of
+;;; similar objects are coalesced in the process.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -140,12 +140,12 @@
 (defmethod equalp-keys ((hash-table hash-table) system)
   `((,(class-of hash-table) ,(hash-table-test hash-table)
      ,(let ((constructor-table (make-hash-table)))
-           (maphash
-            (lambda (key value)
-              (setf (gethash (constructor key) constructor-table)
-                    (constructor value)))
-            hash-table)
-           constructor-table))))
+        (maphash
+         (lambda (key value)
+           (setf (gethash (constructor key) constructor-table)
+                 (constructor value)))
+         hash-table)
+        constructor-table))))
 
 (defmethod equalp-keys ((pathname pathname) system)
   `((,(class-of pathname)
