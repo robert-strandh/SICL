@@ -78,9 +78,8 @@
              (scan-hir creation-thunk system)
              (setf (creation-form-finalized-p constructor) t)))
           ((not (creation-form-finalized-p constructor))
-           (error 'circular-dependencies-in-creation-form
-                  :object (creation-form constructor)
-                  :creation-form (creation-form constructor))))))
+           (error 'circular-dependencies-in-load-time-value-form
+                  :form (creation-form constructor))))))
 
 (defmethod scan-literal-object (object system)
   (multiple-value-bind (constructor present-p) (constructor object)
