@@ -6,40 +6,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Similarity
-;;;
-;;; Each of these tables maps from some key to the corresponding
-;;; constructor.  The EQL table is used to ensure that each object is only
-;;; scanned once.  This works because if two objects are EQL, they are also
-;;; similar in the sense of CLHS 3.2.4.2.2.  The EQUALP table is used to
-;;; coalesce literal objects where the rules of similarity are less
-;;; restrictive.
-
-(defvar *eql-table*)
-
-(defvar *equalp-table*)
-
-(defmacro with-constructor-tables (&body body)
-  `(let ((*eql-table* (make-hash-table :test #'eql))
-         (*equalp-table* (make-hash-table :test #'equalp)))
-     ,@body))
-
-(defmacro constructor (key)
-  `(gethash ,key *eql-table*))
-
-;;; The function COALESCE ensures that after any two calls (coalesce o1 k1)
-;;; and (coalesce o2 k2), (equalp k1 k2) implies (eq (constructor o1)
-;;; (constructor o2)).
-(defun coalesce (object equalp-key)
-  (let ((similar-constructor (gethash equalp-key *equalp-table*)))
-    (if similar-constructor
-        (setf (constructor object)
-              similar-constructor)
-        (setf (gethash equalp-key *equalp-table*)
-              (constructor object)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Scanning
 
 (defmethod scan-hir ((hir null) system)

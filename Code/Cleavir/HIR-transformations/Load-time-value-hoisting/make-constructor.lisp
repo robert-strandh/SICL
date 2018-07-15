@@ -1,23 +1,6 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
-;;; A constructor is an object that describes how a load-time-value form or
-;;; a literal object can be evaluated or reconstructed at load time.
-
-(defclass constructor ()
-  (;; There must not be circular references within creation forms.  We use
-   ;; this boolean to detect such circularities.  Its value is NIL
-   ;; initially and set to T once the creation thunk has been scanned.
-   (%creation-form-finalized-p :initform nil :accessor creation-form-finalized-p)
-   (%creation-form :initarg :creation-form :reader creation-form)
-   (%initialization-form :initarg :initialization-form :reader initialization-form)
-   (%creation-thunk :initarg :creation-thunk :accessor creation-thunk)
-   (%initialization-thunk :initarg :initialization-thunk :accessor initialization-thunk)
-   (%lexical-location :initform nil :accessor lexical-location))
-  (:default-initargs :creation-form nil
-                     :initialization-form nil
-                     :creation-thunk nil
-                     :initialization-thunk nil))
-
+;;; Automatically compile any given creation form or initialization form.
 (defmethod make-constructor :around (object system)
   (with-accessors ((creation-form creation-form)
                    (creation-thunk creation-thunk)
