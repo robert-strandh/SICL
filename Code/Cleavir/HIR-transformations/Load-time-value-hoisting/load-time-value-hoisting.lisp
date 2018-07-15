@@ -1,9 +1,9 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
 ;;; The purpose of this transformation is to replace all non-immediate
-;;; constants and load-time-value inputs by sequences of instructions, and
-;;; to arrange that these instructions are executed at load time and in the
-;;; correct order.
+;;; constants and load-time-value inputs by outputs of some sequences of
+;;; instructions, and to arrange that these instructions are executed at
+;;; load time and in the correct order.
 ;;;
 ;;; Some parts of this transformation are necessarily client specific,
 ;;; e.g., it is not possible to reconstruct a symbol at load time by means
