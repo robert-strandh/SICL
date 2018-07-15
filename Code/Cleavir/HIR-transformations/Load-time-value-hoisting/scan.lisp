@@ -22,7 +22,7 @@
 ;;; Cleavir datum to appear as a literal object in a file.  So it is
 ;;; important to clearly distinguish between the constructor of a datum and
 ;;; the constructor of a literal object.  I am writing this down here
-;;; because I already forgot this issue twice.
+;;; because I already forgot about this issue twice.
 
 (defmethod scan-datum ((immediate-input cleavir-ir:immediate-input) system)
   (values))

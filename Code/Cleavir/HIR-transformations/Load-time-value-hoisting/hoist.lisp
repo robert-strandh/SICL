@@ -21,7 +21,7 @@
 (defun push-instruction (instruction)
   (cleavir-ir:insert-instruction-before instruction *initial-instruction*))
 
-(defun push-thunk-invocation (thunk &optional outputs)
+(defun push-thunk-invocation (thunk &optional (outputs '()))
   (let ((fvar (cleavir-ir:new-temporary))
         (values (cleavir-ir:make-values-location)))
     (push-instruction
@@ -64,8 +64,7 @@
 (defmethod hoist-hir ((hir cleavir-ir:instruction) system)
   (cleavir-ir:map-instructions
    (lambda (instruction)
-     (loop for datum in (cleavir-ir:inputs instruction)
-           unless (immediate-p datum system) do
+     (loop for datum in (cleavir-ir:inputs instruction) do
        (hoist-datum datum system))
      instruction)
    hir))

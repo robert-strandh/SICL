@@ -51,8 +51,8 @@
 (defmethod make-constructor ((symbol symbol) system)
   (make-instance 'constructor
     ;; We have a problem here - the CAR of the creation form is itself a
-    ;; symbol, leading to a circular creation form.  Systems need to
-    ;; provide a custom method for symbols to avoid this case.
+    ;; symbol, leading to a circular creation form.  Clients must provide a
+    ;; custom method for symbols to avoid this case.
     :creation-form
     `(intern ',(symbol-name symbol)
              ',(symbol-package symbol))))
