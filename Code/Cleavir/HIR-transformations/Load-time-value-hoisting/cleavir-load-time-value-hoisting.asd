@@ -11,6 +11,7 @@
    (:file "condition-reporters-english")
    (:file "generic-functions")
    (:file "immediate-p")
+   (:file "equalp-keys")
    (:file "constructors")
    (:file "scan")
    (:file "hoist")
