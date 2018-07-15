@@ -4,12 +4,16 @@
   (:use #:common-lisp)
   (:export
    #:hoist-load-time-values
-   #:make-constructor
+
+   #:immediate-p
    #:compile-form
+   #:make-constructor
+   #:equalp-keys
+
    #:scan-hir
    #:scan-datum
    #:scan-literal-object
-   #:equalp-keys
+
    #:hoist-toplevel-hir
    #:hoist-hir
    #:hoist-datum))

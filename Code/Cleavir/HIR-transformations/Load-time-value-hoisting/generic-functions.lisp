@@ -3,11 +3,15 @@
 ;;; Return whether OBJECT is an immediate.
 (defgeneric immediate-p (object system))
 
+;;; Return the HIR flowchart corresponding to FORM.
+(defgeneric compile-form (form system))
+
 ;;; Create a new constructor and scan its creation and initialization form.
 (defgeneric make-constructor (object system))
 
-;;; Return the HIR flowchart corresponding to FORM.
-(defgeneric compile-form (form system))
+;;; Return a list of keys.  Objects with at least one shared key (in the
+;;; sense of equalp) are assumed to be similar.
+(defgeneric equalp-keys (object system))
 
 ;;; Scan all data in HIR with SCAN-DATUM.
 (defgeneric scan-hir (hir system))
@@ -18,13 +22,6 @@
 ;;; Ensure that OBJECT is either an immediate or has a suitable
 ;;; constructor.
 (defgeneric scan-literal-object (object system))
-
-;;; Whether the creation form of CONSTRUCTOR is currently being scanned.
-(defgeneric creation-form-finalized-p (constructor))
-
-;;; Return a list of keys.  Objects with at least one shared key (in the
-;;; sense of equalp) are assumed to be similar.
-(defgeneric equalp-keys (object system))
 
 ;;; Return a modified version of HIR, where all occurring data have been
 ;;; suitably processed by HOIST-DATUM.
