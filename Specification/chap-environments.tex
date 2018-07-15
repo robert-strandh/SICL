@@ -35,6 +35,13 @@ etc.  This representation can give us several interesting advantages:
   to exist in a system, as long as they are present in different
   environments, which would allow for simpler experimentation with
   different versions of packages. 
+\item We can use different environments for bootstrapping purposes,
+  avoiding conflicts with existing packages when a new system is
+  built.
+\item By having the compiler work against such a first-class
+  environment, we can bootstrap from any existing \commonlisp{}
+  implementation.  All that is needed is an implementation of the
+  environment protocol for that implementation.
 \item We could even imagine a multi-user system based on different
   environments, and we could then allow users to do things such as
   defining \texttt{:after} methods on \texttt{print-object} that are
