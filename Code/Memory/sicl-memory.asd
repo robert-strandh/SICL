@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :sicl-memory
+(defsystem :sicl-memory
   :components
   ((:file "packages")
    (:file "image" :depends-on ("packages"))))
