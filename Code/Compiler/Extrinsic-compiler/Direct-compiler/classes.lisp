@@ -20,12 +20,15 @@
   (;; In the direct extrinsic compiler, this slot contains a
    ;; vector with elements of type (UNSIGNED-BYTE 8).
    (%instructions :initarg :instructions :reader instructions)
-   ;; This slot holds information about source location as a function
-   ;; of the program counter, and information for the debugger, such
-   ;; as what variables are in scope, where they are stored, and what
-   ;; types they have.  We have yet to determine the exact format of
-   ;; this information.
-   (%debug-info :initarg :debug-info :reader debug-info)))
+   ;; This slot holds a STEP-TABLE for the STEP-IN command of the
+   ;; debugger.
+   (%step-in-table :initarg :step-in-table :reader step-in-table)
+   ;; This slot holds a STEP-TABLE for the STEP-OVER command of the
+   ;; debugger.
+   (%step-over-table :initarg :step-over-table :reader step-over-table)
+   ;; This slot holds a STEP-TABLE for the STEP-OUT command of the
+   ;; debugger.
+   (%step-out-table :initarg :step-out-table :reader step-out-table)))
 
 (defclass function ()
   (;; This slot contains an offset into the instructions vector where
