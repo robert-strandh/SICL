@@ -1,5 +1,21 @@
 (cl:in-package #:sicl-direct-extrinsic-compiler)
 
+;;; A STEP TABLE is a table that is used by the STEP commands of the
+;;; debugger.  The value maps values of the program counter to either
+;;; a singleton value of the program counter (when there is only one
+;;; possible execution path, or to a list of values of the program
+;;; counter (when there is more than one possible execution path).
+(defclass step-table ()
+  (;; This slot contains a vector of the values of the program
+   ;; counter, sorted in increasing order.  To find the corresponding
+   ;; entry in the table, we do a binary search of this vector to
+   ;; obtain an index.  Then we use that index into the
+   ;; NEXT-PROGRAM-COUNTER vector where the value is stored.
+   (%current-program-counter :initarg :current-program-counter
+                             :reader current-program-counter)
+   (%next-program-counter :initarg :next-program-counter
+                          :reader next-program-counter)))
+
 (defclass code ()
   (;; In the direct extrinsic compiler, this slot contains a
    ;; vector with elements of type (UNSIGNED-BYTE 8).
