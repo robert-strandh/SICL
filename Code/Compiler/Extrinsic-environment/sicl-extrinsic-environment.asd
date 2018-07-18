@@ -128,6 +128,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "source-tracking-stream")
    (:file "runtime-environment")
    (:file "symbol-value")
    (:file "traced-funcall")
