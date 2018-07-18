@@ -7,10 +7,7 @@
    (%line-index :initarg :line-index :reader line-index)
    (%character-index :initarg :character-index :reader character-index)))
 
-;;; FIXME: Use SICL-specific client.
-(defmethod eclector.concrete-syntax-tree:source-position
-    ((stream source-tracking-stream) client)
-  (make-instance 'source-position
-    :lines (lines stream)
-    :line-index (current-line-index stream)
-    :character-index (current-character-index stream)))
+(cleavir-io:define-save-info source-position
+  (:lines lines)
+  (:line-index line-index)
+  (:character-index character-index))
