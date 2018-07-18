@@ -66,3 +66,9 @@
     :lines (lines stream)
     :line-index (current-line-index stream)
     :character-index (current-character-index stream)))
+
+(defmacro with-source-tracking-stream-from-file
+    ((stream-var file-spec) &body body)
+  `(with-open-file (,stream-var ,file-spec :direction :input)
+     (let ((,stream-var (source-tracking-stream-from-stream ,stream-var)))
+       ,@body)))
