@@ -21,3 +21,20 @@
 (defun source-tracking-stream-from-stream (stream)
   (make-instance 'source-tracking-stream
     :lines (read-entire-stream stream)))
+
+;;; Gray stream programming
+(defmethod trivial-gray-streams:stream-read-char
+    ((stream source-tracking-stream))
+  (with-accessors ((lines lines)
+                   (current-line-index current-line-index)
+                   (current-character-index current-character-index ))
+      stream
+    (if (= current-line-index (length lines))
+        nil
+        (let ((current-line (aref lines current-line-index)))
+          (if (= current-character-index (length current-line))
+              (prog1 #\Newline
+                (incf current-line-index)
+                (setf current-character-index 0))
+              (prog1 (aref current-line current-character-index)
+                (incf current-character-index)))))))
