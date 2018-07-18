@@ -51,3 +51,10 @@
                (setf current-character-index
                      (length (aref lines current-line-index))))
         (decf current-character-index))))
+
+;;; Our source location contains the vector of lines of the entire
+;;; file, a line index, and a character index within the line.
+(defclass source-position ()
+  ((%lines :initarg :lines :reader lines)
+   (%line-index :initarg :line-index :reader line-index)
+   (%character-index :initarg :character-index :reader character-index)))
