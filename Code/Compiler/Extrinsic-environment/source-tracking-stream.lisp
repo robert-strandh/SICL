@@ -38,3 +38,16 @@
                 (setf current-character-index 0))
               (prog1 (aref current-line current-character-index)
                 (incf current-character-index)))))))
+
+(defmethod trivial-gray-streams:stream-unread-char
+    ((stream source-tracking-stream) character)
+  (declare (ignore character))
+  (with-accessors ((lines lines)
+                   (current-line-index current-line-index)
+                   (current-character-index current-character-index ))
+      stream
+    (if (zerop current-character-index)
+        (progn (decf current-line-index)
+               (setf current-character-index
+                     (length (aref lines current-line-index))))
+        (decf current-character-index))))
