@@ -98,6 +98,7 @@
 
 (defsystem :sicl-extrinsic-environment
   :depends-on (:concrete-syntax-tree
+               :trivial-gray-streams
                :sicl-simple-environment
                :sicl-environment
                :sicl-loop-support
