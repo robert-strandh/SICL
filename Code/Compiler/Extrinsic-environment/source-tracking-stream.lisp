@@ -17,3 +17,7 @@
    ;; This slot contains the index into a particular line of the
    ;; character about to be read.
    (%current-character-index :initform 0 :accessor current-character-index)))
+
+(defun source-tracking-stream-from-stream (stream)
+  (make-instance 'source-tracking-stream
+    :lines (read-entire-stream stream)))
