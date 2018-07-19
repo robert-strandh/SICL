@@ -121,6 +121,7 @@
                :sicl-data-and-control-flow-support
                :sicl-conditionals-support
                :sicl-iteration-support
+               :sicl-source-tracking
                :eclector
                :eclector-concrete-syntax-tree
                :cleavir-equivalent-lexical-locations
