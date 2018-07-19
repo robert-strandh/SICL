@@ -26,7 +26,7 @@
 ;;; executed in a different environment.
 (defun cst-load-source-with-environments
     (file compilation-environment linkage-environment system)
-  (with-open-file (stream file :direction :input)
+  (sicl-source-tracking:with-source-tracking-stream-from-file (stream file)
     (let ((*package* (sicl-genv:special-variable '*package*
                                                  compilation-environment)))
       (loop with eof = (list nil)
