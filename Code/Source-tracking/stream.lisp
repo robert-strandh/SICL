@@ -30,7 +30,7 @@
                    (current-character-index current-character-index ))
       stream
     (if (= current-line-index (length lines))
-        nil
+        :eof
         (let ((current-line (aref lines current-line-index)))
           (if (= current-character-index (length current-line))
               (prog1 #\Newline
