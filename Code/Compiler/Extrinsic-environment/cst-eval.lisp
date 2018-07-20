@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
+(defun native-compile (lambda-expression)
+  (compile nil lambda-expression))
+
 (defun compile-cst (cst environment1 environment2 system)
   (declare (ignore system))
   (let* ((form (cst:raw cst))
@@ -15,7 +18,7 @@
                (hir (cleavir-ast-to-hir:compile-toplevel ast-bis))
                (ignore (cleavir-hir-transformations:eliminate-typeq hir))
                (lambda-expr (translate hir environment2))
-               (fun (compile nil lambda-expr)))
+               (fun (native-compile lambda-expr)))
           (declare (ignore ignore))
           ;; Run this just for test and to check performance.
           (cleavir-hir-transformations:segregate-only hir)
