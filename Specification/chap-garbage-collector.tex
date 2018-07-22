@@ -734,7 +734,10 @@ is also restored to its initial state as describe in
 \refSec{sec-garbage-collection-finding-roots}.  For each root that
 contains a pointer to the nursery, we determine whether it is pointer
 to a dyad or to a rack, and consult the corresponding break table to
-determine a value to be added to the current one.
+determine a value to be added to the current one.  Notice that we can
+handle pointers to any arbitrary position in a rack.  The
+corresponding break table will indicate the correct amount for such
+internal pointers as well.
 
 Next, dyads in the nursery are traversed.  For a \texttt{cons} cell,
 the first break table is consulted in order to adjust both the
