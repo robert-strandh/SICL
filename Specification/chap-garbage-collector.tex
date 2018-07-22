@@ -547,6 +547,14 @@ identified all the roots.  To restore the stack to its initial state,
 this procedure must be executed in reverse order.  However, the stack
 can be kept in this state until roots need to be found a second time.
 
+While it is possible for the garbage collector to handle pointers into
+arbitrary positions of a rack,%
+\footnote{Recall that a pointer to a rack is tagged.  The same tag is
+  used for a pointer to any element of a rack.}
+in such a situation, there must also be an identifiable root that
+refers to the corresponding header.  Otherwise, it may be the case
+that the object is incorrectly determined to be dead.
+
 \subsection{Mark phase}
 
 The mark phase uses a separate bitmap called the \emph{live bitmap}.
