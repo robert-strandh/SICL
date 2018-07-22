@@ -118,6 +118,9 @@ technique).
 
 \subsection{Waiting for roots}
 
+In this phase, we wait for each mutator thread to finish reporting its
+part of the root set.
+
 \subsection{Mark}
 
 The global collector uses the traditional tri-color marking
@@ -241,30 +244,6 @@ the first case, the write barrier is used to make sure there is not a
 reference to a white object stored in a black object.  In the second
 case, the write barrier is used to trigger a migration of local
 objects to the global heap.
-
-Objects in the global heap are \emph{allocated black}, i.e. it is
-assumed that they are referenced.  When the global heap is about to be
-collected, threads are first asked to garbage collect their nurseries
-and then to report any references to objects in the global heap.  Once
-every thread has finished this task, collection in the global heap can
-start.  The first part of the heap is scanned and a free list of
-objects that are no longer referenced is established.  Then, this free
-list is traversed, effectively executing a \texttt{free()} of the rack
-in the second part of the heap.
-
-In order for marking by the global collector to be done in parallel
-with mutator activity, we use a standard three-color marking
-algorithm.  As mentioned before, we use a write barrier, so that when
-a reference to a white object is about to be stored in a black object,
-we change the color of either one of the two to gray.  The choice can
-be based on the type of objects in question, or it can be a global
-choice.  The write barrier is implemented as additional instructions
-emitted by the compiler.  These additional instructions can be avoided
-in many cases, and in particular when the object being stored is known
-to be an immediate object (fixnum, character, etc) or when it is an
-unboxed object to be stored in a specialized array.  The type
-inferencer can thus be used to determine whether the write barrier can
-be elided.
 
 \subsection{Protocol}
 
