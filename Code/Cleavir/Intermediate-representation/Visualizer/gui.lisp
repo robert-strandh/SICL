@@ -156,3 +156,10 @@
 (define-visualizer-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
 
+(define-visualizer-command (com-zoom-in :name t) ()
+  (setf (text-size clim:*application-frame*)
+        (round (* (text-size clim:*application-frame*) 1.2))))
+
+(define-visualizer-command (com-zoom-out :name t) ()
+  (setf (text-size clim:*application-frame*)
+        (round (/ (text-size clim:*application-frame*) 1.2))))
