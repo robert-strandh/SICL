@@ -2,8 +2,7 @@
 
 (clim:define-application-frame visualizer ()
   ((%initial-instruction :initarg :initial-instruction
-                         :accessor initial-instruction)
-   (%text-size :initform 20 :accessor text-size))
+                         :accessor initial-instruction))
   (:panes (application :application :scroll-bars nil
                        :display-function 'display-hir)
           (interactor :interactor :scroll-bars nil))
@@ -143,10 +142,9 @@
 (defun display-hir (frame pane)
   (let* ((*instruction-position-table* (make-hash-table :test #'eq))
          (table *instruction-position-table*))
-    (clim:with-text-size (pane (text-size frame))
-      (layout-program (initial-instruction frame) pane)
-      (draw-nodes (initial-instruction frame) pane)
-      (draw-arcs pane table))))
+    (layout-program (initial-instruction frame) pane)
+    (draw-nodes (initial-instruction frame) pane)
+    (draw-arcs pane table)))
 
 (defun visualize (initial-instruction)
   (clim:run-frame-top-level 
@@ -157,9 +155,13 @@
   (clim:frame-exit clim:*application-frame*))
 
 (define-visualizer-command (com-zoom-in :name t) ()
-  (setf (text-size clim:*application-frame*)
-        (round (* (text-size clim:*application-frame*) 1.2))))
+  (let* ((current-text-style (clim:medium-text-style *standard-output*))
+         (partial-text-style (clim:make-text-style nil nil :larger)))
+    (setf (clim:medium-text-style *standard-output*)
+          (clim:merge-text-styles partial-text-style current-text-style))))
 
 (define-visualizer-command (com-zoom-out :name t) ()
-  (setf (text-size clim:*application-frame*)
-        (round (/ (text-size clim:*application-frame*) 1.2))))
+  (let* ((current-text-style (clim:medium-text-style *standard-output*))
+         (partial-text-style (clim:make-text-style nil nil :smaller)))
+    (setf (clim:medium-text-style *standard-output*)
+          (clim:merge-text-styles partial-text-style current-text-style))))
