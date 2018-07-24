@@ -148,22 +148,6 @@
       (draw-nodes (initial-instruction frame) pane)
       (draw-arcs pane table))))
 
-;; (defun display-hir (frame pane)
-;;   (let* ((*instruction-position-table* (make-hash-table :test #'eq))
-;;          (table *instruction-position-table*))
-;;     (loop for layer = (list (initial-instruction frame))
-;;             then (next-layer layer table)
-;;           for vpos from 20 by 40
-;;           until (null layer)
-;;           do (loop for node in layer
-;;                    for width = (node-width node pane)
-;;                    for hpos = (+ (floor width 2) 10)
-;;                      then (+ hpos width *horizontal-node-separation*)
-;;                    do (setf (gethash node table)
-;;                             (cons hpos vpos))
-;;                       (draw-node node hpos vpos pane)))
-;;     (draw-arcs pane table)))
-
 (defun visualize (initial-instruction)
   (clim:run-frame-top-level 
    (clim:make-application-frame 'visualizer
