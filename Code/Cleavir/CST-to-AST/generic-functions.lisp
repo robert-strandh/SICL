@@ -31,6 +31,8 @@
 
 (defgeneric convert-function-reference (cst info env system))
 
+(defgeneric convert-called-function-reference (cst info env system))
+
 (defgeneric items-from-parameter-group (parameter-group))
 
 (defgeneric convert-global-function-reference (cst info global-env system))
