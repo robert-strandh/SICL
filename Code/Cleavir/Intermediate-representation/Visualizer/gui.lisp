@@ -14,10 +14,17 @@
   (loop for node in layer
         append (loop for successor in (cleavir-ir:successors node)
                      when (null (gethash successor table))
-                       collect successor)))
+                       collect successor)
+        when (typep node 'cleavir-ir:enclose-instruction)
+          collect (cleavir-ir:code node)))
+
+(defun node-label (node)
+  (if (typep node 'cleavir-ir:enter-instruction)
+      "enter"
+      (cleavir-ir-graphviz:label node)))
 
 (defun node-width (node pane)
-  (+ (clim:text-size pane (cleavir-ir-graphviz:label node)) 5))
+  (+ (clim:text-size pane (node-label node)) 5))
 
 (defun draw-arcs (pane table)
   (loop for node being each hash-key of table
@@ -27,7 +34,14 @@
                  for (hpos2 . vpos2) = (gethash successor table)
                  for top = (- vpos2 10)
                  do (clim:draw-arrow* pane
-                                      hpos1 bottom hpos2 top))))
+                                      hpos1 bottom hpos2 top))
+           (when (typep node 'cleavir-ir:enclose-instruction)
+             (let* ((enter (cleavir-ir:code node))
+                    (pos (gethash enter table)))
+               (destructuring-bind (hpos2 . vpos2) pos
+                 (clim:draw-arrow* pane
+                                   hpos2 (- vpos2 10) hpos1 bottom
+                                   :line-dashes t))))))
 
 (defun display-hir (frame pane)
   (let ((table (make-hash-table :test #'eq)))
@@ -37,7 +51,7 @@
           until (null layer)
           do (loop for node in layer
                    for width = (node-width node pane)
-                   for hpos = (+ (floor width 2) 10) then (+ hpos width 10)
+                   for hpos = (+ (floor width 2) 10) then (+ hpos width 50)
                    do (setf (gethash node table)
                             (cons hpos vpos))
                       (clim:draw-rectangle*
@@ -46,7 +60,7 @@
                        (+ hpos (floor width 2)) (+ vpos 10)
                        :filled nil)
                       (clim:draw-text* pane
-                                       (cleavir-ir-graphviz:label node)
+                                       (node-label node)
                                        hpos vpos
                                        :align-x :center :align-y :center)))
     (draw-arcs pane table)))
