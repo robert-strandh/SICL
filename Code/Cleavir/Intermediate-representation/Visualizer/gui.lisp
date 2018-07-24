@@ -2,7 +2,8 @@
 
 (clim:define-application-frame visualizer ()
   ((%initial-instruction :initarg :initial-instruction
-                         :accessor initial-instruction))
+                         :accessor initial-instruction)
+   (%text-size :initform 20 :accessor text-size))
   (:panes (application :application :scroll-bars nil
                        :display-function 'display-hir)
           (interactor :interactor :scroll-bars nil))
@@ -142,9 +143,10 @@
 (defun display-hir (frame pane)
   (let* ((*instruction-position-table* (make-hash-table :test #'eq))
          (table *instruction-position-table*))
-    (layout-program (initial-instruction frame) pane)
-    (draw-nodes (initial-instruction frame) pane)
-    (draw-arcs pane table)))
+    (clim:with-text-size (pane (text-size frame))
+      (layout-program (initial-instruction frame) pane)
+      (draw-nodes (initial-instruction frame) pane)
+      (draw-arcs pane table))))
 
 ;; (defun display-hir (frame pane)
 ;;   (let* ((*instruction-position-table* (make-hash-table :test #'eq))
