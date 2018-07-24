@@ -18,6 +18,12 @@
         when (typep node 'cleavir-ir:enclose-instruction)
           collect (cleavir-ir:code node)))
 
+(defun next-layer-no-nesting (layer table)
+  (loop for node in layer
+        append (loop for successor in (cleavir-ir:successors node)
+                     when (null (gethash successor table))
+                       collect successor)))
+
 (defun node-label (node)
   (if (typep node 'cleavir-ir:enter-instruction)
       "enter"
@@ -25,6 +31,26 @@
 
 (defun node-width (node pane)
   (+ (clim:text-size pane (node-label node)) 5))
+
+(defparameter *horizontal-node-separation* 50)
+
+;;; Compute the width of a layer of nodes.
+(defun compute-layer-width (nodes pane)
+  (loop for node in nodes
+        for width = (node-width node pane)
+        for hpos = (+ (floor width 2) 10)
+          then (+ hpos width *horizontal-node-separation*)
+        finally (return hpos)))
+
+;;; Compute the width and the height of a function
+(defun compute-function-dimensions (enter-instruction pane)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for layer = (list enter-instruction)
+            then (next-layer-no-nesting layer table)
+          for vpos from 20 by 40
+          until (null layer)
+          maximize (compute-layer-width layer pane) into width
+          finally (return (values width vpos)))))
 
 (defun draw-arcs (pane table)
   (loop for node being each hash-key of table
@@ -51,7 +77,8 @@
           until (null layer)
           do (loop for node in layer
                    for width = (node-width node pane)
-                   for hpos = (+ (floor width 2) 10) then (+ hpos width 50)
+                   for hpos = (+ (floor width 2) 10)
+                     then (+ hpos width *horizontal-node-separation*)
                    do (setf (gethash node table)
                             (cons hpos vpos))
                       (clim:draw-rectangle*
