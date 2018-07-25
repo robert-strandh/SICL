@@ -12,6 +12,7 @@
            #:convert-special-variable
            #:convert-variable
 	   #:convert-function-reference
+           #:convert-called-function-reference
 	   #:convert-global-function-reference
            #:convert-code
            #:convert-setq-special-variable
