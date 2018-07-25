@@ -3,8 +3,10 @@
 (clim:define-application-frame visualizer ()
   ((%initial-instruction :initarg :initial-instruction
                          :accessor initial-instruction))
-  (:panes (application :application :scroll-bars nil
-                       :display-function 'display-hir)
+  (:panes (application
+           :application
+           :scroll-bars nil
+           :display-function 'display-hir)
           (interactor :interactor :scroll-bars nil))
   (:layouts (default (clim:vertically (:width 1200 :height 900)
                        (4/5 (clim:scrolling () application))
@@ -103,15 +105,31 @@
                  do (assign-instruction-positions
                      enter-instruction hpos vpos pane))))
 
+(defun compute-dx (instruction instructions)
+  (let ((length (length instructions))
+        (position (position instruction instructions)))
+    (* 6 (let ((middle-position (/ (1- length) 2)))
+           (- position middle-position)))))
+
+(defun draw-control-flow-arc (from-node to-node pane)
+  (destructuring-bind (hpos1 . vpos1)
+      (gethash from-node *instruction-position-table*)
+    (destructuring-bind (hpos2 . vpos2)
+        (gethash to-node *instruction-position-table*)
+      (let ((dx1 (compute-dx to-node (cleavir-ir:successors from-node)))
+            (dx2 (compute-dx from-node (cleavir-ir:predecessors to-node)))
+            (dy1 10)
+            (dy2 -10))
+        (clim:draw-arrow* pane
+                          (+ hpos1 dx1) (+ vpos1 dy1)
+                          (+ hpos2 dx2) (+ vpos2 dy2))))))
+
 (defun draw-arcs (pane table)
   (loop for node being each hash-key of table
           using (hash-value (hpos1 . vpos1))
         for bottom = (+ vpos1 10)
         do (loop for successor in (cleavir-ir:successors node)
-                 for (hpos2 . vpos2) = (gethash successor table)
-                 for top = (- vpos2 10)
-                 do (clim:draw-arrow* pane
-                                      hpos1 bottom hpos2 top))
+                 do (draw-control-flow-arc node successor pane))
            (when (typep node 'cleavir-ir:enclose-instruction)
              (let* ((enter (cleavir-ir:code node))
                     (pos (gethash enter table)))
