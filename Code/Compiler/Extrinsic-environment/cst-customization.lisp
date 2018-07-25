@@ -6,7 +6,7 @@
 ;;; it to generate an access to the CAR of the global function cell
 ;;; that contains the function.  And we want the function cell to be
 ;;; accessed at load time.
-(defmethod cleavir-cst-to-ast::convert-global-function-reference 
+(defmethod cleavir-cst-to-ast:convert-global-function-reference
     (cst (info cleavir-env:global-function-info) (env environment) system)
   (declare (ignore system))
   (cleavir-ast:make-car-ast

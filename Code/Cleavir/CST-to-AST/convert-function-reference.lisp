@@ -1,6 +1,5 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-;;; These are used by (function foo) forms.
 (defmethod convert-global-function-reference (cst info global-env system)
   (declare (ignore global-env))
   (cleavir-ast:make-fdefinition-ast
@@ -39,17 +38,15 @@
 ;;; of type UNDEFINED-FUNCTION, allowing an fboundp check to be skipped.
 ;;; Other than the inlining, they by default have the same behavior.
 
-(defmethod convert-called-function-reference (cst info global-env system)
+(defmethod convert-called-function-reference (cst info env system)
   (when (not (eq (cleavir-env:inline info) 'cl:notinline))
     (let ((ast (cleavir-env:ast info)))
       (when ast
         (return-from convert-called-function-reference
           ;; The AST must be cloned because hoisting is destructive.
           (cleavir-ast-transformations:clone-ast ast)))))
-  (cleavir-ast:make-fdefinition-ast
-   (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info)
-                                         t
-                                         :origin (cst:source cst))))
+  (convert-global-function-reference
+   cst info (cleavir-env:global-environment env) system))
 
 (defmethod convert-called-function-reference
     (cst (info cleavir-env:local-function-info) env system)
