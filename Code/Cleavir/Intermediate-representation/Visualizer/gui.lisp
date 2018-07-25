@@ -15,14 +15,6 @@
 
 (defvar *data-position-table*)
 
-(defun next-layer (layer table)
-  (loop for node in layer
-        append (loop for successor in (cleavir-ir:successors node)
-                     when (null (gethash successor table))
-                       collect successor)
-        when (typep node 'cleavir-ir:enclose-instruction)
-          collect (cleavir-ir:code node)))
-
 (defun next-layer-no-nesting (layer table)
   (loop for node in layer
         append (loop for successor in (cleavir-ir:successors node)
