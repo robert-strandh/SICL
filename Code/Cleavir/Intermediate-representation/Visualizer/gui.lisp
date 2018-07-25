@@ -45,7 +45,7 @@
 (defun node-height (pane)
   (+ (nth-value 1 (clim:text-size pane "A")) 5))
 
-(defparameter *horizontal-node-separation* 100)
+(defparameter *horizontal-node-separation* 150)
 
 ;;; Compute the width of a layer of nodes.
 (defun compute-layer-width (nodes pane)
@@ -213,11 +213,33 @@
                          hpos2 vpos2
                          :ink ink
                          :line-dashes t)))))
+(defgeneric draw-datum (datum pane))
+
+(defmethod draw-datum (datum pane)
+  (destructuring-bind (hpos . vpos) (gethash datum *data-position-table*)
+    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)))
+
+(defmethod draw-datum ((datum cleavir-ir:lexical-location) pane)
+  (destructuring-bind (hpos . vpos) (gethash datum *data-position-table*)
+    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (clim:with-text-size (pane :small)
+      (clim:draw-text* pane (string (cleavir-ir:name datum))
+                       hpos vpos
+                       :align-x :center :align-y :center
+                       :ink clim:+dark-green+))))
+
+(defmethod draw-datum ((datum cleavir-ir:values-location) pane)
+  (destructuring-bind (hpos . vpos) (gethash datum *data-position-table*)
+    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (clim:with-text-size (pane :small)
+      (clim:draw-text* pane "values"
+                       hpos vpos
+                       :align-x :center :align-y :center
+                       :ink clim:+dark-blue+))))
 
 (defun draw-data (pane)
   (loop for datum being each hash-key of *data-position-table*
-          using (hash-value (hpos . vpos))
-        do (clim:draw-circle* pane hpos vpos 10 :filled nil)
+        do (draw-datum datum pane)
            (loop for instruction in (cleavir-ir:defining-instructions datum)
                  do (draw-data-edge instruction datum pane clim:+red+))
            (loop for instruction in (cleavir-ir:using-instructions datum)
