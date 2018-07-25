@@ -3,7 +3,8 @@
 (defsystem #:cleavir-ir-visualizer
   :depends-on (#:cleavir-ir
                #:cleavir-hir
-               #:mcclim)
+               #:mcclim
+               #:clouseau)
   :serial t
   :components
   ((:file "packages")

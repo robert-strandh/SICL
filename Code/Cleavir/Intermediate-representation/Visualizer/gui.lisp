@@ -242,6 +242,9 @@
 (define-visualizer-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
 
+(define-visualizer-command (com-inspect :name t) ()
+  (clouseau:inspector (initial-instruction clim:*application-frame*)))
+
 (define-visualizer-command (com-zoom-in :name t) ()
   (let* ((current-text-style (clim:medium-text-style *standard-output*))
          (partial-text-style (clim:make-text-style nil nil :larger)))
