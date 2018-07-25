@@ -40,6 +40,9 @@
 (defun node-width (node pane)
   (+ (clim:text-size pane (node-label node)) 5))
 
+(defun node-height (pane)
+  (+ (nth-value 1 (clim:text-size pane "A")) 5))
+
 (defparameter *horizontal-node-separation* 100)
 
 ;;; Compute the width of a layer of nodes.
@@ -55,7 +58,7 @@
   (let ((table (make-hash-table :test #'eq)))
     (loop for layer = (list enter-instruction)
             then (next-layer-no-nesting layer table)
-          for vpos from 20 by 40
+          for vpos from 20 by (* 3 (node-height pane))
           until (null layer)
           maximize (compute-layer-width layer pane) into width
           finally (return (values width vpos)))))
@@ -82,7 +85,7 @@
 (defun assign-instruction-positions (enter-instruction hpos vpos pane)
   (loop for layer = (list enter-instruction)
           then (next-layer-no-nesting layer *instruction-position-table*)
-        for dy from 20 by 40
+        for dy from 20 by (* 3 (node-height pane))
         until (null layer)
         do (loop for node in layer
                  for width = (node-width node pane)
@@ -119,8 +122,8 @@
         (gethash to-node *instruction-position-table*)
       (let ((dx1 (compute-dx to-node (cleavir-ir:successors from-node)))
             (dx2 (compute-dx from-node (cleavir-ir:predecessors to-node)))
-            (dy1 10)
-            (dy2 -10))
+            (dy1 (/ (node-height pane) 2))
+            (dy2 (- (/ (node-height pane) 2))))
         (clim:draw-arrow* pane
                           (+ hpos1 dx1) (+ vpos1 dy1)
                           (+ hpos2 dx2) (+ vpos2 dy2))))))
@@ -140,10 +143,11 @@
                                    :line-dashes t))))))
 
 (defun draw-node (node hpos vpos pane)
-  (let ((width (node-width node pane)))
+  (let ((width (node-width node pane))
+        (height (node-height pane)))
     (clim:draw-rectangle* pane
-                          (- hpos (floor width 2)) (- vpos 10)
-                          (+ hpos (floor width 2)) (+ vpos 10)
+                          (- hpos (floor width 2)) (- vpos (/ height 2))
+                          (+ hpos (floor width 2)) (+ vpos (/ height 2))
                           :filled nil)
     (clim:draw-text* pane
                      (node-label node)
