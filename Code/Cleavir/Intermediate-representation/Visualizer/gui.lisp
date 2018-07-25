@@ -178,17 +178,13 @@
          (using-instructions (cleavir-ir:using-instructions datum))
          (instructions (append defining-instructions using-instructions))
          (i-table *instruction-position-table*))
-    (let ((max-hpos (loop for instruction in instructions
-                          maximize (car (gethash instruction i-table))))
-          (max-vpos (loop for instruction in instructions
+    (let ((max-vpos (loop for instruction in instructions
                           maximize (cdr (gethash instruction i-table))))
           (min-hpos (loop for instruction in instructions
                           minimize (car (gethash instruction i-table))))
           (min-vpos (loop for instruction in instructions
                           minimize (cdr (gethash instruction i-table)))))
-      (let ((hpos (if (< (- max-hpos min-hpos) 50)
-                      (+ min-hpos 100)
-                      (/ (+ max-hpos min-hpos) 2))))
+      (let ((hpos (+ min-hpos 100)))
         (setf (gethash datum *data-position-table*)
               (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
 
