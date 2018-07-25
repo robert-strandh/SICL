@@ -173,12 +173,65 @@
        (draw-node node hpos vpos pane)))
    initial-instruction))
 
+(defun layout-datum (datum)
+  (let* ((defining-instructions (cleavir-ir:defining-instructions datum))
+         (using-instructions (cleavir-ir:using-instructions datum))
+         (instructions (append defining-instructions using-instructions))
+         (i-table *instruction-position-table*))
+    (let ((max-hpos (loop for instruction in instructions
+                          maximize (car (gethash instruction i-table))))
+          (max-vpos (loop for instruction in instructions
+                          maximize (cdr (gethash instruction i-table))))
+          (min-hpos (loop for instruction in instructions
+                          minimize (car (gethash instruction i-table))))
+          (min-vpos (loop for instruction in instructions
+                          minimize (cdr (gethash instruction i-table)))))
+      (let ((hpos (if (< (- max-hpos min-hpos) 50)
+                      (+ min-hpos 100)
+                      (/ (+ max-hpos min-hpos) 2))))
+        (setf (gethash datum *data-position-table*)
+              (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
+
+(defun layout-inputs-and-outputs (instruction)
+  (loop for input in (cleavir-ir:inputs instruction)
+        do (layout-datum input))
+  (loop for output in (cleavir-ir:outputs instruction)
+        do (layout-datum output)))
+
+(defun layout-data (initial-instruction pane)
+  (declare (ignore pane))
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction) (layout-inputs-and-outputs instruction))
+   initial-instruction))
+
+(defun draw-data-edge (instruction datum pane ink)
+  (destructuring-bind (hpos1 . vpos1)
+      (gethash instruction *instruction-position-table*)
+    (destructuring-bind (hpos2 . vpos2)
+        (gethash datum *data-position-table*)
+      (clim:draw-line* pane
+                       hpos1 vpos1
+                       hpos2 vpos2
+                       :ink ink
+                       :line-dashes t))))
+
+(defun draw-data (pane)
+  (loop for datum being each hash-key of *data-position-table*
+          using (hash-value (hpos . vpos))
+        do (clim:draw-circle* pane hpos vpos 10 :filled nil)
+           (loop for instruction in (cleavir-ir:defining-instructions datum)
+                 do (draw-data-edge instruction datum pane clim:+red+))
+           (loop for instruction in (cleavir-ir:using-instructions datum)
+                 do (draw-data-edge instruction datum pane clim:+green+))))
+
 (defun display-hir (frame pane)
-  (let* ((*instruction-position-table* (make-hash-table :test #'eq))
-         (table *instruction-position-table*))
+  (let ((*instruction-position-table* (make-hash-table :test #'eq))
+        (*data-position-table* (make-hash-table :test #'eq)))
     (layout-program (initial-instruction frame) pane)
     (draw-nodes (initial-instruction frame) pane)
-    (draw-arcs pane table)))
+    (layout-data (initial-instruction frame) pane)
+    (draw-data pane)
+    (draw-arcs pane *instruction-position-table*)))
 
 (defun visualize (initial-instruction)
   (cleavir-ir:reinitialize-data initial-instruction)
