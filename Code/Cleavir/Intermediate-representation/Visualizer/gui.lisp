@@ -17,6 +17,8 @@
 ;;; positions.
 (defvar *instruction-position-table*)
 
+(defvar *data-position-table*)
+
 (defun next-layer (layer table)
   (loop for node in layer
         append (loop for successor in (cleavir-ir:successors node)
@@ -128,6 +130,20 @@
                           (+ hpos1 dx1) (+ vpos1 dy1)
                           (+ hpos2 dx2) (+ vpos2 dy2))))))
 
+(defun draw-enclosure-arc (from-node to-node pane)
+  (destructuring-bind (hpos1 . vpos1)
+      (gethash from-node *instruction-position-table*)
+    (destructuring-bind (hpos2 . vpos2)
+        (gethash to-node *instruction-position-table*)
+      (let ((dx1 -20)
+            (dx2 20)
+            (dy1 (/ (node-height pane) 2))
+            (dy2 (- (/ (node-height pane) 2))))
+        (clim:draw-arrow* pane
+                          (+ hpos1 dx1) (+ vpos1 dy1)
+                          (+ hpos2 dx2) (+ vpos2 dy2)
+                          :line-dashes t)))))
+
 (defun draw-arcs (pane table)
   (loop for node being each hash-key of table
           using (hash-value (hpos1 . vpos1))
@@ -135,12 +151,7 @@
         do (loop for successor in (cleavir-ir:successors node)
                  do (draw-control-flow-arc node successor pane))
            (when (typep node 'cleavir-ir:enclose-instruction)
-             (let* ((enter (cleavir-ir:code node))
-                    (pos (gethash enter table)))
-               (destructuring-bind (hpos2 . vpos2) pos
-                 (clim:draw-arrow* pane
-                                   hpos2 (- vpos2 10) hpos1 bottom
-                                   :line-dashes t))))))
+             (draw-enclosure-arc (cleavir-ir:code node) node pane))))
 
 (defun draw-node (node hpos vpos pane)
   (let ((width (node-width node pane))
@@ -170,6 +181,7 @@
     (draw-arcs pane table)))
 
 (defun visualize (initial-instruction)
+  (cleavir-ir:reinitialize-data initial-instruction)
   (clim:run-frame-top-level 
    (clim:make-application-frame 'visualizer
                                 :initial-instruction initial-instruction)))
