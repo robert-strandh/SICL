@@ -205,11 +205,14 @@
       (gethash instruction *instruction-position-table*)
     (destructuring-bind (hpos2 . vpos2)
         (gethash datum *data-position-table*)
-      (clim:draw-line* pane
-                       hpos1 vpos1
-                       hpos2 vpos2
-                       :ink ink
-                       :line-dashes t))))
+      (let ((hpos (if (> hpos2 hpos1)
+                      (+ hpos1 (/ (node-width instruction pane) 2))
+                      (- hpos1 (/ (node-width instruction pane) 2)))))
+        (clim:draw-line* pane
+                         hpos vpos1
+                         hpos2 vpos2
+                         :ink ink
+                         :line-dashes t)))))
 
 (defun draw-data (pane)
   (loop for datum being each hash-key of *data-position-table*
