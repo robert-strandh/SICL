@@ -13,10 +13,6 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-;;; Map instructions to a CONS of their horizontal and vertical
-;;; positions.
-(defvar *instruction-position-table*)
-
 (defvar *data-position-table*)
 
 (defun next-layer (layer table)

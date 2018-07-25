@@ -9,4 +9,5 @@
   :components
   ((:file "packages")
    (:file "longest-path")
+   (:file "instruction-layout")
    (:file "gui")))
