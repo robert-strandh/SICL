@@ -8,4 +8,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "longest-path")
    (:file "gui")))
