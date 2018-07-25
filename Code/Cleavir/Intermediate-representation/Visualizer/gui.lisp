@@ -6,7 +6,8 @@
   (:panes (application
            :application
            :scroll-bars nil
-           :display-function 'display-hir)
+           :display-function 'display-hir
+           :text-style (clim:make-text-style :sans-serif :roman 20))
           (interactor :interactor :scroll-bars nil))
   (:layouts (default (clim:vertically (:width 1200 :height 900)
                        (4/5 (clim:scrolling () application))
