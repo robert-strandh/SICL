@@ -71,7 +71,7 @@
         append enter-instructions))
 
 (defun layout-program (enter-instruction pane)
-  (loop for hpos = 10 then (+ hpos rack-width *horizontal-node-separation*)
+  (loop for hpos = 10 then (+ hpos (+ rack-width *horizontal-node-separation*))
         for rack = (list enter-instruction) then (next-rack rack)
         for dimensions = (loop for inst in rack
                                collect (multiple-value-bind (width height)
@@ -153,7 +153,7 @@
                           minimize (instruction-horizontal-position instruction)))
           (min-vpos (loop for instruction in instructions
                           minimize (instruction-vertical-position instruction))))
-      (let ((hpos (+ min-hpos 100)))
+      (let ((hpos (+ min-hpos 120)))
         (setf (datum-position datum) (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
 
 (defun layout-inputs-and-outputs (instruction)
@@ -209,6 +209,28 @@
                        :align-x :center :align-y :center
                        :ink clim:+dark-blue+))))
 
+(defmethod draw-datum ((datum cleavir-ir:constant-input) pane)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (let ((label (princ-to-string (cleavir-ir:value datum))))
+      (clim:with-text-size (pane :small)
+        (clim:draw-text* pane
+                         (subseq label 0 (min 15 (length label)))
+                         hpos vpos
+                         :align-x :center :align-y :center
+                       :ink clim:+dark-blue+)))))
+
+(defmethod draw-datum ((datum cleavir-ir:load-time-value-input) pane)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
+    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (let ((label (princ-to-string (cleavir-ir:form datum))))
+      (clim:with-text-size (pane :small)
+        (clim:draw-text* pane
+                         (subseq label 0 (min 15 (length label)))
+                         hpos vpos
+                         :align-x :center :align-y :center
+                       :ink clim:+dark-blue+)))))
+
 (defun draw-data (pane)
   (loop for datum being each hash-key of *data-position-table*
         do (draw-datum datum pane)
@@ -223,6 +245,7 @@
     (layout-program (initial-instruction frame) pane)
     (draw-nodes (initial-instruction frame) pane)
     (layout-data (initial-instruction frame) pane)
+    (fix-data-overlaps (initial-instruction frame))
     (draw-data pane)
     (draw-arcs pane *instruction-position-table*)))
 
