@@ -93,10 +93,8 @@
            (- position middle-position)))))
 
 (defun draw-control-flow-arc (from-node to-node pane)
-  (destructuring-bind (hpos1 . vpos1)
-      (gethash from-node *instruction-position-table*)
-    (destructuring-bind (hpos2 . vpos2)
-        (gethash to-node *instruction-position-table*)
+  (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
+    (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
       (let ((dx1 (compute-dx to-node (cleavir-ir:successors from-node)))
             (dx2 (compute-dx from-node (cleavir-ir:predecessors to-node)))
             (dy1 (/ (node-height pane) 2))
@@ -106,10 +104,8 @@
                           (+ hpos2 dx2) (+ vpos2 dy2))))))
 
 (defun draw-enclosure-arc (from-node to-node pane)
-  (destructuring-bind (hpos1 . vpos1)
-      (gethash from-node *instruction-position-table*)
-    (destructuring-bind (hpos2 . vpos2)
-        (gethash to-node *instruction-position-table*)
+  (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
+    (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
       (let ((dx1 -20)
             (dx2 20)
             (dy1 (/ (node-height pane) 2))
@@ -145,22 +141,20 @@
 (defun draw-nodes (initial-instruction pane)
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (node)
-     (destructuring-bind (hpos . vpos)
-         (gethash node *instruction-position-table*)
+     (multiple-value-bind (hpos vpos) (instruction-position node)
        (draw-node node hpos vpos pane)))
    initial-instruction))
 
 (defun layout-datum (datum)
   (let* ((defining-instructions (cleavir-ir:defining-instructions datum))
          (using-instructions (cleavir-ir:using-instructions datum))
-         (instructions (append defining-instructions using-instructions))
-         (i-table *instruction-position-table*))
+         (instructions (append defining-instructions using-instructions)))
     (let ((max-vpos (loop for instruction in instructions
-                          maximize (cdr (gethash instruction i-table))))
+                          maximize (instruction-vertical-position instruction)))
           (min-hpos (loop for instruction in instructions
-                          minimize (car (gethash instruction i-table))))
+                          minimize (instruction-horizontal-position instruction)))
           (min-vpos (loop for instruction in instructions
-                          minimize (cdr (gethash instruction i-table)))))
+                          minimize (instruction-vertical-position instruction))))
       (let ((hpos (+ min-hpos 100)))
         (setf (gethash datum *data-position-table*)
               (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
@@ -178,8 +172,7 @@
    initial-instruction))
 
 (defun draw-data-edge (instruction datum pane ink)
-  (destructuring-bind (hpos1 . vpos1)
-      (gethash instruction *instruction-position-table*)
+  (multiple-value-bind (hpos1 vpos1) (instruction-position instruction)
     (destructuring-bind (hpos2 . vpos2)
         (gethash datum *data-position-table*)
       (let ((h1 (if (> hpos2 hpos1)
