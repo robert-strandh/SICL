@@ -182,12 +182,18 @@
       (gethash instruction *instruction-position-table*)
     (destructuring-bind (hpos2 . vpos2)
         (gethash datum *data-position-table*)
-      (let ((hpos (if (> hpos2 hpos1)
-                      (+ hpos1 (/ (node-width instruction pane) 2))
-                      (- hpos1 (/ (node-width instruction pane) 2)))))
+      (let ((h1 (if (> hpos2 hpos1)
+                    (+ hpos1 (/ (node-width instruction pane) 2))
+                    (- hpos1 (/ (node-width instruction pane) 2))))
+            (h2 (if (> hpos2 hpos1)
+                    (- hpos2 30)
+                    (+ hpos2 30)))
+            (v2 (if (> vpos2 vpos1)
+                    (- vpos2 10)
+                    (+ vpos2 10))))
         (clim:draw-line* pane
-                         hpos vpos1
-                         hpos2 vpos2
+                         h1 vpos1
+                         h2 v2
                          :ink ink
                          :line-dashes t)))))
 (defgeneric draw-datum (datum pane))
