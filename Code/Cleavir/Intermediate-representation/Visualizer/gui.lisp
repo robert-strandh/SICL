@@ -96,8 +96,7 @@
         do (loop for enter-instruction in rack
                  for dimension in dimensions
                  for vpos = 10 then (+ vpos (cdr dimension) 50)
-                 do (assign-instruction-positions
-                     enter-instruction hpos vpos pane))))
+                 do (layout-function enter-instruction hpos vpos pane))))
 
 (defun compute-dx (instruction instructions)
   (let ((length (length instructions))
