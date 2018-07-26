@@ -154,8 +154,7 @@
           (min-vpos (loop for instruction in instructions
                           minimize (instruction-vertical-position instruction))))
       (let ((hpos (+ min-hpos 100)))
-        (setf (gethash datum *data-position-table*)
-              (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
+        (setf (datum-position datum) (cons hpos (/ (+ max-vpos min-vpos) 2)))))))
 
 (defun layout-inputs-and-outputs (instruction)
   (loop for input in (cleavir-ir:inputs instruction)
@@ -171,8 +170,7 @@
 
 (defun draw-data-edge (instruction datum pane ink)
   (multiple-value-bind (hpos1 vpos1) (instruction-position instruction)
-    (destructuring-bind (hpos2 . vpos2)
-        (gethash datum *data-position-table*)
+    (multiple-value-bind (hpos2 vpos2) (datum-position datum)
       (let ((h1 (if (> hpos2 hpos1)
                     (+ hpos1 (/ (node-width instruction pane) 2))
                     (- hpos1 (/ (node-width instruction pane) 2))))
@@ -190,11 +188,11 @@
 (defgeneric draw-datum (datum pane))
 
 (defmethod draw-datum (datum pane)
-  (destructuring-bind (hpos . vpos) (gethash datum *data-position-table*)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos 30 10 :filled nil)))
 
 (defmethod draw-datum ((datum cleavir-ir:lexical-location) pane)
-  (destructuring-bind (hpos . vpos) (gethash datum *data-position-table*)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
     (clim:with-text-size (pane :small)
       (clim:draw-text* pane (string (cleavir-ir:name datum))
@@ -203,7 +201,7 @@
                        :ink clim:+dark-green+))))
 
 (defmethod draw-datum ((datum cleavir-ir:values-location) pane)
-  (destructuring-bind (hpos . vpos) (gethash datum *data-position-table*)
+  (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
     (clim:with-text-size (pane :small)
       (clim:draw-text* pane "values"
