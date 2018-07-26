@@ -22,3 +22,19 @@
   (let ((layer (loop for instruction in layer
                      append (cleavir-ir:successors instruction))))
     (filter-instructions layer instruction-on-longest-path)))
+
+(defun layout-function (enter-instruction hpos vpos pane)
+  (let ((*instruction-table* (make-hash-table :test #'eq)))
+    (loop with longest-path = (find-longest-simple-path enter-instruction)
+          for instruction-on-longest-path in longest-path
+          for layer = (list enter-instruction)
+            then (next-instruction-layer layer instruction-on-longest-path)
+          for dy from 20 by (* 3 (node-height pane))
+          until (null layer)
+          do (loop for node in layer
+                   for width = (node-width node pane)
+                   for dx = (+ (floor width 2) 10)
+                     then (+ dx width *horizontal-node-separation*)
+                   do (setf (gethash node *instruction-table*) t)
+                      (setf (instruction-position node)
+                            (cons (+ hpos dx) (+ vpos dy)))))))
