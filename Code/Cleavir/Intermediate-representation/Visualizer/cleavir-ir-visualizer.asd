@@ -11,4 +11,5 @@
    (:file "longest-path")
    (:file "instruction-position")
    (:file "instruction-layout")
+   (:file "datum-position")
    (:file "gui")))

@@ -13,8 +13,6 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-(defvar *data-position-table*)
-
 (defun next-layer-no-nesting (layer table)
   (loop for node in layer
         append (loop for successor in (cleavir-ir:successors node)
