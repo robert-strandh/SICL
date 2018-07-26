@@ -131,14 +131,16 @@
 (defun draw-node (node hpos vpos pane)
   (let ((width (node-width node pane))
         (height (node-height pane)))
-    (clim:draw-rectangle* pane
-                          (- hpos (floor width 2)) (- vpos (/ height 2))
-                          (+ hpos (floor width 2)) (+ vpos (/ height 2))
-                          :filled nil)
-    (clim:draw-text* pane
-                     (node-label node)
-                     hpos vpos
-                     :align-x :center :align-y :center)))
+    (clim:with-output-as-presentation
+        (pane node 'cleavir-ir:instruction)
+      (clim:draw-rectangle* pane
+                            (- hpos (floor width 2)) (- vpos (/ height 2))
+                            (+ hpos (floor width 2)) (+ vpos (/ height 2))
+                            :filled nil)
+      (clim:draw-text* pane
+                       (node-label node)
+                       hpos vpos
+                       :align-x :center :align-y :center))))
 
 (defun draw-nodes (initial-instruction pane)
   (cleavir-ir:map-instructions-arbitrary-order
@@ -218,7 +220,7 @@
            (loop for instruction in (cleavir-ir:defining-instructions datum)
                  do (draw-data-edge instruction datum pane clim:+red+))
            (loop for instruction in (cleavir-ir:using-instructions datum)
-                 do (draw-data-edge instruction datum pane clim:+green+))))
+                 do (draw-data-edge instruction datum pane clim:+dark-green+))))
 
 (defun display-hir (frame pane)
   (let ((*instruction-position-table* (make-hash-table :test #'eq))
@@ -238,8 +240,9 @@
 (define-visualizer-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
 
-(define-visualizer-command (com-inspect :name t) ()
-  (clouseau:inspector (initial-instruction clim:*application-frame*)))
+(define-visualizer-command (com-inspect :name t)
+    ((instruction 'cleavir-ir:instruction))
+  (clouseau:inspector instruction))
 
 (define-visualizer-command (com-zoom-in :name t) ()
   (let* ((current-text-style (clim:medium-text-style *standard-output*))
