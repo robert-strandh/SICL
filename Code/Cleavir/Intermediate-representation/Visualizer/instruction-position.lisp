@@ -43,12 +43,11 @@
            (cdr entry)))))
 
 ;;; Set the horizontal position and the vertical position of INSTRUCTION.
-(defun (setf instruction-position) (instruction hpos vpos)
-  (setf (gethash instruction *instruction-position-table*)
-        (cons hpos vpos)))
+(defun (setf instruction-position) (position instruction)
+  (setf (gethash instruction *instruction-position-table*) position))
 
 ;;; Set the horizontal position of INSTRUCTION.
-(defun (setf instruction-horizontal-position) (instruction hpos)
+(defun (setf instruction-horizontal-position) (hpos instruction)
   (let ((entry (gethash instruction *instruction-position-table*)))
     (if (null entry)
         (setf (gethash instruction *instruction-position-table*)
@@ -57,7 +56,7 @@
     hpos))
 
 ;;; Set the vertical position of INSTRUCTION.
-(defun (setf instruction-vertical-position) (instruction vpos)
+(defun (setf instruction-vertical-position) (vpos instruction)
   (let ((entry (gethash instruction *instruction-position-table*)))
     (if (null entry)
         (setf (gethash instruction *instruction-position-table*)
