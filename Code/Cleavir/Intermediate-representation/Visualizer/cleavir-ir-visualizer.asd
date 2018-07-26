@@ -12,4 +12,5 @@
    (:file "instruction-position")
    (:file "instruction-layout")
    (:file "datum-position")
+   (:file "datum-layout")
    (:file "gui")))
