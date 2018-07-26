@@ -72,18 +72,6 @@
         for enter-instructions = (mapcar #'cleavir-ir:code enclose-instructions)
         append enter-instructions))
 
-(defun assign-instruction-positions (enter-instruction hpos vpos pane)
-  (loop for layer = (list enter-instruction)
-          then (next-layer-no-nesting layer *instruction-position-table*)
-        for dy from 20 by (* 3 (node-height pane))
-        until (null layer)
-        do (loop for node in layer
-                 for width = (node-width node pane)
-                 for dx = (+ (floor width 2) 10)
-                   then (+ dx width *horizontal-node-separation*)
-                 do (setf (gethash node *instruction-position-table*)
-                          (cons (+ hpos dx) (+ vpos dy))))))
-
 (defun layout-program (enter-instruction pane)
   (loop for hpos = 10 then (+ hpos rack-width *horizontal-node-separation*)
         for rack = (list enter-instruction) then (next-rack rack)
