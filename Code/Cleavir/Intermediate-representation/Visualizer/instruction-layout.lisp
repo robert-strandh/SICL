@@ -8,39 +8,38 @@
 ;;; have already been considered for layout, and that may contain
 ;;; duplicates and return a filtered version of it.  The filtered
 ;;; version contains no duplicates and it does not contain any
-;;; instructions that have already been considered for layout, except
-;;; that if one of the instructions in the layer is the same as
-;;; INSTRUCTION-ON-LONGEST-PATH, then it is left included.
-(defun filter-instructions (layer instruction-on-longest-path)
+;;; instructions that have already been considered for layout, nor
+;;; does it include instructions that are in the REST of
+;;; REMAINING-PATH because those are going to be included in a
+;;; subsequent layer
+(defun filter-instructions (layer remaining-path)
   (remove-duplicates
    (loop for instruction in layer
-         when (or (not (gethash instruction *instruction-table*))
-                  (eq instruction instruction-on-longest-path))
+         unless (or (gethash instruction *instruction-table*)
+                    (member instruction (cdr remaining-path)))
            collect instruction)))
 
-(defun next-instruction-layer (layer instruction-on-longest-path)
-  (let ((layer (loop for instruction in layer
-                     append (cleavir-ir:successors instruction))))
-    (filter-instructions layer instruction-on-longest-path)))
+(defun populate-table (instructions)
+  (loop for instruction in instructions
+        do (setf (gethash instruction *instruction-table*) t)))
+
+(defun next-instruction-layer (layer)
+  (loop for instruction in layer
+        append (cleavir-ir:successors instruction)))
 
 (defun compute-layers (enter-instruction)
   (let ((longest-path (find-longest-simple-path enter-instruction)))
-    (loop for instruction in longest-path
-          do (setf (gethash instruction *instruction-table*) t))
-    (loop for instruction-on-longest-path in longest-path
-          for layer = (list enter-instruction)
-            then (next-instruction-layer layer instruction-on-longest-path)
-          until (null layer)
-          collect layer)))
+    (loop with layer = (list enter-instruction)
+          for remaining-path on longest-path
+          for result = (filter-instructions layer remaining-path)
+          collect result
+          do (populate-table result)
+             (setf layer (next-instruction-layer layer)))))
 
 (defun layout-function (enter-instruction hpos vpos pane)
   (let ((*instruction-table* (make-hash-table :test #'eq)))
-    (loop with longest-path = (find-longest-simple-path enter-instruction)
-          for instruction-on-longest-path in longest-path
-          for layer = (list enter-instruction)
-            then (next-instruction-layer layer instruction-on-longest-path)
+    (loop for layer in (compute-layers enter-instruction)
           for dy from 20 by (* 3 (node-height pane))
-          until (null layer)
           do (loop for node in layer
                    for width = (node-width node pane)
                    for dx = (+ (floor width 2) 10)
