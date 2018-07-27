@@ -13,13 +13,6 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-(defun next-layer-no-nesting (layer table)
-  (loop for node in layer
-        append (loop for successor in (cleavir-ir:successors node)
-                     when (null (gethash successor table))
-                       do (setf (gethash successor table) t)
-                       and collect successor)))
-
 (defun node-label (node)
   (if (typep node 'cleavir-ir:enter-instruction)
       "enter"
