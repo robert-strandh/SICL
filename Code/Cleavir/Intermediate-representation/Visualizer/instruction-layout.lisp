@@ -47,3 +47,11 @@
                    do (setf (gethash node *instruction-table*) t)
                       (setf (instruction-position node)
                             (cons (+ hpos dx) (+ vpos dy)))))))
+
+;;; Compute the width and the height of a function
+(defun compute-function-dimensions (enter-instruction pane)
+  (let ((*instruction-table* (make-hash-table :test #'eq)))
+    (loop for layer in (compute-layers enter-instruction)
+          for vpos from 20 by (* 3 (node-height pane))
+          maximize (compute-layer-width layer pane) into width
+          finally (return (values width vpos)))))

@@ -41,16 +41,6 @@
           then (+ hpos width *horizontal-node-separation*)
         finally (return hpos)))
 
-;;; Compute the width and the height of a function
-(defun compute-function-dimensions (enter-instruction pane)
-  (let ((table (make-hash-table :test #'eq)))
-    (loop for layer = (list enter-instruction)
-            then (next-layer-no-nesting layer table)
-          for vpos from 20 by (* 3 (node-height pane))
-          until (null layer)
-          maximize (compute-layer-width layer pane) into width
-          finally (return (values width vpos)))))
-
 (defun find-enclose-instructions (enter-instruction)
   (let ((table (make-hash-table :test #'eq))
         (result '()))
