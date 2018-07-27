@@ -24,12 +24,14 @@
     (filter-instructions layer instruction-on-longest-path)))
 
 (defun compute-layers (enter-instruction)
-  (loop with longest-path = (find-longest-simple-path enter-instruction)
-	for instruction-on-longest-path in longest-path
-	for layer = (list enter-instruction)
-	  then (next-instruction-layer layer instruction-on-longest-path)
-	until (null layer)
-	collect layer))
+  (let ((longest-path (find-longest-simple-path enter-instruction)))
+    (loop for instruction in longest-path
+          do (setf (gethash instruction *instruction-table*) t))
+    (loop for instruction-on-longest-path in longest-path
+          for layer = (list enter-instruction)
+            then (next-instruction-layer layer instruction-on-longest-path)
+          until (null layer)
+          collect layer)))
 
 (defun layout-function (enter-instruction hpos vpos pane)
   (let ((*instruction-table* (make-hash-table :test #'eq)))
