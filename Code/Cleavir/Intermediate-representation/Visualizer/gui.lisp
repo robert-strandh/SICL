@@ -245,15 +245,6 @@
     ((instruction 'cleavir-ir:instruction))
   (clouseau:inspector instruction))
 
-(define-visualizer-command (com-longest-path :name t)
-    ((instruction 'cleavir-ir:instruction))
-  (format *trace-output* "~s~%" (find-longest-simple-path instruction)))
-
-(define-visualizer-command (com-layers :name t)
-    ((instruction 'cleavir-ir:instruction))
-  (let ((*instruction-table* (make-hash-table :test #'eq)))
-    (format *trace-output* "~s~%" (compute-layers instruction))))
-
 (define-visualizer-command (com-zoom-in :name t) ()
   (let* ((current-text-style (clim:medium-text-style *standard-output*))
          (partial-text-style (clim:make-text-style nil nil :larger)))
