@@ -119,8 +119,10 @@
     (clim:with-output-as-presentation
         (pane node 'cleavir-ir:instruction)
       (clim:draw-rectangle* pane
-                            (- hpos (floor width 2)) (- vpos (/ height 2))
-                            (+ hpos (floor width 2)) (+ vpos (/ height 2))
+                            (- hpos (floor width 2))
+                            (- vpos (floor height 2))
+                            (+ hpos (floor width 2))
+                            (+ vpos (floor height 2))
                             :filled nil)
       (clim:draw-text* pane
                        (node-label node)
