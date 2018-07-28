@@ -14,4 +14,4 @@
 
 (define-symbol-macro vertical-rack-separation (round (* 5 *base-height*)))
 
-(define-symbol-macro horizontal-column-separation (round (* 0.5 *base-width*)))
+(define-symbol-macro horizontal-column-separation (round (* 3 *base-width*)))
