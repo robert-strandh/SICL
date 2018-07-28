@@ -4,6 +4,8 @@
 
 (defvar *base-height*)
 
+(defvar *margin* 10)
+
 (define-symbol-macro datum-height (round (+ *base-height* 4)))
 
 (define-symbol-macro datum-width (round (+ *base-width* 4)))
