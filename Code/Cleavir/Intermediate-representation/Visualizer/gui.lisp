@@ -69,21 +69,24 @@
 (defun compute-dx (instruction instructions)
   (let ((length (length instructions))
         (position (position instruction instructions)))
-    (* 6 (let ((middle-position (/ (1- length) 2)))
-           (- position middle-position)))))
+    (round (* *base-width*
+              0.15
+              (let ((middle-position (/ (1- length) 2)))
+                (- position middle-position))))))
 
 (defun draw-long-arc (hpos1 vpos1 hpos2 vpos2 hpos pane)
-  (let ((dy (round (* 0.3 vertical-node-separation))))
+  (let ((dy1 (round (* 0.5 vertical-node-separation)))
+        (dy2 (round (* 0.2 vertical-node-separation))))
     (clim:draw-polygon* pane
                         (list hpos1 vpos1
-                              hpos1 (+ vpos1 dy)
-                              hpos  (+ vpos1 dy)
-                              hpos  (- vpos2 dy)
-                              hpos2 (- vpos2 dy))
+                              hpos1 (+ vpos1 dy2)
+                              hpos  (+ vpos1 dy2)
+                              hpos  (- vpos2 dy1)
+                              hpos2 (- vpos2 dy1))
                         :closed nil
                         :filled nil)
     (clim:draw-arrow* pane
-                      hpos2 (- vpos2 dy)
+                      hpos2 (- vpos2 dy1)
                       hpos2 vpos2)))
 
 (defun draw-control-flow-arc (from-node to-node pane)
