@@ -64,7 +64,7 @@
                  for dimension in dimensions
                  for vpos = 10
                    then (+ vpos (cdr dimension) vertical-rack-separation)
-                 do (layout-function enter-instruction hpos vpos pane))))
+                 do (layout-function enter-instruction hpos vpos))))
 
 (defun compute-dx (instruction instructions)
   (let ((length (length instructions))

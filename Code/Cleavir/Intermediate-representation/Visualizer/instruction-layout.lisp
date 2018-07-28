@@ -44,7 +44,7 @@
            (setf (instruction-position node)
                  (cons (+ hpos dx) vpos))))
 
-(defun layout-function (enter-instruction hpos vpos pane)
+(defun layout-function (enter-instruction hpos vpos)
   (let ((*instruction-table* (make-hash-table :test #'eq)))
     (loop for layer in (compute-layers enter-instruction)
           for dy from 20 by vertical-node-separation
