@@ -39,7 +39,7 @@
 (defun layout-layer (instructions hpos vpos)
   (loop for node in instructions
         for dx = (+ (floor (round *base-width*) 2) 10)
-          then (+ dx horizontal-node-separation)
+          then (+ dx horizontal-column-separation)
         do (setf (gethash node *instruction-table*) t)
            (setf (instruction-position node)
                  (cons (+ hpos dx) vpos))))
