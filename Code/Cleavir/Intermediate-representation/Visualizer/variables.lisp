@@ -9,3 +9,5 @@
 (define-symbol-macro datum-width (+ *base-width* 4))
 
 (define-symbol-macro horizontal-node-separation (* 2.5 *base-width*))
+
+(define-symbol-macro vertical-rack-separation (* 5 *base-height*))

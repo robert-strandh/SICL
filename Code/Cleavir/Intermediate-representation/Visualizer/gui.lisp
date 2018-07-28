@@ -62,7 +62,8 @@
         until (null rack)
         do (loop for enter-instruction in rack
                  for dimension in dimensions
-                 for vpos = 10 then (+ vpos (cdr dimension) 50)
+                 for vpos = 10
+                   then (+ vpos (cdr dimension) vertical-rack-separation)
                  do (layout-function enter-instruction hpos vpos pane))))
 
 (defun compute-dx (instruction instructions)
