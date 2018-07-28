@@ -13,6 +13,10 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
+(defvar *base-width*)
+
+(defvar *base-height*)
+
 (defun node-label (node)
   (if (typep node 'cleavir-ir:enter-instruction)
       "enter"
@@ -225,12 +229,14 @@
 (defun display-hir (frame pane)
   (let ((*instruction-position-table* (make-hash-table :test #'eq))
         (*data-position-table* (make-hash-table :test #'eq)))
-    (layout-program (initial-instruction frame) pane)
-    (draw-nodes (initial-instruction frame) pane)
-    (layout-data (initial-instruction frame) pane)
-    (fix-data-overlaps (initial-instruction frame))
-    (draw-data pane)
-    (draw-arcs pane *instruction-position-table*)))
+    (multiple-value-bind (*base-width* *base-height*)
+        (clim:text-size pane "enclose")
+      (layout-program (initial-instruction frame) pane)
+      (draw-nodes (initial-instruction frame) pane)
+      (layout-data (initial-instruction frame) pane)
+      (fix-data-overlaps (initial-instruction frame))
+      (draw-data pane)
+      (draw-arcs pane *instruction-position-table*))))
 
 (defun visualize (initial-instruction)
   (cleavir-ir:reinitialize-data initial-instruction)
