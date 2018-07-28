@@ -43,7 +43,7 @@
           do (loop for node in layer
                    for width = (node-width node pane)
                    for dx = (+ (floor width 2) 10)
-                     then (+ dx width *horizontal-node-separation*)
+                     then (+ dx width horizontal-node-separation)
                    do (setf (gethash node *instruction-table*) t)
                       (setf (instruction-position node)
                             (cons (+ hpos dx) (+ vpos dy)))))))

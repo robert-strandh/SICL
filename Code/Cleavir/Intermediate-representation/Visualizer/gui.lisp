@@ -13,14 +13,6 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-(defvar *base-width*)
-
-(defvar *base-height*)
-
-(define-symbol-macro datum-height (+ *base-height* 4))
-
-(define-symbol-macro datum-width (+ *base-width* 4))
-
 (defun node-label (node)
   (if (typep node 'cleavir-ir:enter-instruction)
       "enter"
@@ -32,14 +24,12 @@
 (defun node-height (pane)
   (+ (nth-value 1 (clim:text-size pane "A")) 5))
 
-(defparameter *horizontal-node-separation* 150)
-
 ;;; Compute the width of a layer of nodes.
 (defun compute-layer-width (nodes pane)
   (loop for node in nodes
         for width = (node-width node pane)
         for hpos = (+ (floor width 2) 10)
-          then (+ hpos width *horizontal-node-separation*)
+          then (+ hpos width horizontal-node-separation)
         finally (return hpos)))
 
 (defun find-enclose-instructions (enter-instruction)
@@ -62,7 +52,7 @@
         append enter-instructions))
 
 (defun layout-program (enter-instruction pane)
-  (loop for hpos = 10 then (+ hpos (+ rack-width *horizontal-node-separation*))
+  (loop for hpos = 10 then (+ hpos (+ rack-width horizontal-node-separation))
         for rack = (list enter-instruction) then (next-rack rack)
         for dimensions = (loop for inst in rack
                                collect (multiple-value-bind (width height)
