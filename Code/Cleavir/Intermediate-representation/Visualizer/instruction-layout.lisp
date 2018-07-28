@@ -47,7 +47,7 @@
 (defun layout-function (enter-instruction hpos vpos pane)
   (let ((*instruction-table* (make-hash-table :test #'eq)))
     (loop for layer in (compute-layers enter-instruction)
-          for dy from 20 by (* 3 (node-height pane))
+          for dy from 20 by vertical-node-separation
           do (layout-layer layer hpos (+ vpos dy)))))
 
 ;;; Compute the width and the height of a function
