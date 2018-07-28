@@ -17,6 +17,10 @@
 
 (defvar *base-height*)
 
+(define-symbol-macro datum-height (+ *base-height* 4))
+
+(define-symbol-macro datum-width (+ *base-width* 4))
+
 (defun node-label (node)
   (if (typep node 'cleavir-ir:enter-instruction)
       "enter"
@@ -176,11 +180,15 @@
 
 (defmethod draw-datum (datum pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)))
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)))
 
 (defmethod draw-datum ((datum cleavir-ir:lexical-location) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)
     (clim:with-text-size (pane :small)
       (clim:draw-text* pane (string (cleavir-ir:name datum))
                        hpos vpos
@@ -189,7 +197,9 @@
 
 (defmethod draw-datum ((datum cleavir-ir:values-location) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)
     (clim:with-text-size (pane :small)
       (clim:draw-text* pane "values"
                        hpos vpos
@@ -198,7 +208,9 @@
 
 (defmethod draw-datum ((datum cleavir-ir:constant-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)
     (let ((label (princ-to-string (cleavir-ir:value datum))))
       (clim:with-text-size (pane :small)
         (clim:draw-text* pane
@@ -209,7 +221,9 @@
 
 (defmethod draw-datum ((datum cleavir-ir:load-time-value-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos 30 10 :filled nil)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
+                     :filled nil)
     (let ((label (princ-to-string (cleavir-ir:form datum))))
       (clim:with-text-size (pane :small)
         (clim:draw-text* pane
@@ -240,7 +254,7 @@
 
 (defun visualize (initial-instruction)
   (cleavir-ir:reinitialize-data initial-instruction)
-  (clim:run-frame-top-level 
+  (clim:run-frame-top-level
    (clim:make-application-frame 'visualizer
                                 :initial-instruction initial-instruction)))
 
