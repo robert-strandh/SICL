@@ -72,16 +72,45 @@
     (* 6 (let ((middle-position (/ (1- length) 2)))
            (- position middle-position)))))
 
+(defun draw-long-arc (hpos1 vpos1 hpos2 vpos2 hpos pane)
+  (let ((dy (round (* 0.3 vertical-node-separation))))
+    (clim:draw-polygon* pane
+                        (list hpos1 vpos1
+                              hpos1 (+ vpos1 dy)
+                              hpos  (+ vpos1 dy)
+                              hpos  (- vpos2 dy)
+                              hpos2 (- vpos2 dy))
+                        :closed nil
+                        :filled nil)
+    (clim:draw-arrow* pane
+                      hpos2 (- vpos2 dy)
+                      hpos2 vpos2)))
+
 (defun draw-control-flow-arc (from-node to-node pane)
-  (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
-    (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
-      (let ((dx1 (compute-dx to-node (cleavir-ir:successors from-node)))
-            (dx2 (compute-dx from-node (cleavir-ir:predecessors to-node)))
-            (dy1 (/ (node-height pane) 2))
-            (dy2 (- (/ (node-height pane) 2))))
-        (clim:draw-arrow* pane
-                          (+ hpos1 dx1) (+ vpos1 dy1)
-                          (+ hpos2 dx2) (+ vpos2 dy2))))))
+  (let ((dx (round (* 0.6 *base-width*))))
+    (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
+      (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
+        (let ((dx1 (compute-dx to-node (cleavir-ir:successors from-node)))
+              (dx2 (compute-dx from-node (cleavir-ir:predecessors to-node)))
+              (dy1 (/ (node-height pane) 2))
+              (dy2 (- (/ (node-height pane) 2))))
+          (cond ((and (< (abs (- hpos2 hpos1)) *base-width*)
+                      (> vpos2 vpos1)
+                      (< (- vpos2 vpos1) (* 1.5 vertical-node-separation)))
+                 ;; Draw a short downward control arc
+                 (clim:draw-arrow* pane
+                                   (+ hpos1 dx1) (+ vpos1 dy1)
+                                   (+ hpos2 dx2) (+ vpos2 dy2)))
+                ((> hpos2 hpos1)
+                 (draw-long-arc (+ hpos1 dx1) (+ vpos1 dy1)
+                                (+ hpos2 dx2) (+ vpos2 dy2)
+                                (- hpos2 dx)
+                                pane))
+                (t
+                 (draw-long-arc (+ hpos1 dx1) (+ vpos1 dy1)
+                                (+ hpos2 dx2) (+ vpos2 dy2)
+                                (- hpos1 dx)
+                                pane))))))))
 
 (defun draw-enclosure-arc (from-node to-node pane)
   (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
