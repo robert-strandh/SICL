@@ -36,17 +36,20 @@
           do (populate-table result)
              (setf layer (next-instruction-layer layer)))))
 
+(defun layout-layer (instructions hpos vpos pane)
+  (loop for node in instructions
+        for width = (node-width node pane)
+        for dx = (+ (floor width 2) 10)
+          then (+ dx width horizontal-node-separation)
+        do (setf (gethash node *instruction-table*) t)
+           (setf (instruction-position node)
+                 (cons (+ hpos dx) vpos))))
+
 (defun layout-function (enter-instruction hpos vpos pane)
   (let ((*instruction-table* (make-hash-table :test #'eq)))
     (loop for layer in (compute-layers enter-instruction)
           for dy from 20 by (* 3 (node-height pane))
-          do (loop for node in layer
-                   for width = (node-width node pane)
-                   for dx = (+ (floor width 2) 10)
-                     then (+ dx width horizontal-node-separation)
-                   do (setf (gethash node *instruction-table*) t)
-                      (setf (instruction-position node)
-                            (cons (+ hpos dx) (+ vpos dy)))))))
+          do (layout-layer layer hpos (+ vpos dy) pane))))
 
 ;;; Compute the width and the height of a function
 (defun compute-function-dimensions (enter-instruction pane)
