@@ -114,7 +114,13 @@
         do (apply #'draw-long-arc (append arc (list pane)))))
 
 (defun draw-control-flow-arc (from-node to-node pane)
-  (let ((dx (round (* 0.6 *base-width*)))
+  (let (;; DX is used only for long arcs.  It is the horizontal
+        ;; distance from the center of the FROM-NODE (if the TO-NODE
+        ;; is to the left of the FROM-NODE) or from the center of the
+        ;; TO-NODE (if the TO-NODE is to the right of FROM-NODE) to
+        ;; the horizontal position where the arc leaps from one
+        ;; vertical position to another.
+        (dx (round (* 0.6 *base-width*)))
         (long-arcs '()))
     (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
       (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
