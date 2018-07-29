@@ -74,6 +74,26 @@
               (let ((middle-position (/ (1- length) 2)))
                 (- position middle-position))))))
 
+(defclass long-arc ()
+  (;; This slot contains the horizontal position where the arc starts.
+   (%hpos1 :initarg :hpos1 :accessor hpos1)
+   ;; This slot contains the horizontal position where the arc leaps
+   ;; from one vertical position to another.  The value of this slot
+   ;; may be modified slightly if several arcs overlap in the same
+   ;; position.
+   (%hpos2 :initarg :hpos2 :accessor hpos2)
+   ;; This slot contains the horizontal position where the arc ends.
+   (%hpos3 :initarg :hpos3 :accessor hpos3)
+   ;; This slot contains the vertical position where the arc starts.
+   (%vpos1 :initarg :vpos1 :accessor vpos1)
+   ;; This slot contains the vertical position where the arcs turns
+   ;; from its leap to approach its target instruction.  The value of
+   ;; this slot might be modified slightly if many arcs share the same
+   ;; target instruction.
+   (%vpos2 :initarg :vpos2 :accessor vpos2)
+   ;; This slot contains the vertical position where the arc ends.
+   (%vpos3 :initarg :vpos3 :accessor vpos3)))
+
 (defun draw-long-arc (hpos1 vpos1 hpos2 vpos2 hpos pane)
   (let ((dy1 (round (* 0.5 vertical-node-separation)))
         (dy2 (round (* 0.2 vertical-node-separation))))
