@@ -89,9 +89,9 @@
                       hpos2 (- vpos2 dy1)
                       hpos2 vpos2)))
 
-(defun draw-long-arcs (arcs)
+(defun draw-long-arcs (arcs pane)
   (loop for arc in arcs
-        do (apply #'draw-long-arc arc)))
+        do (apply #'draw-long-arc (append arc (list pane)))))
 
 (defun draw-control-flow-arc (from-node to-node pane)
   (let ((dx (round (* 0.6 *base-width*)))
@@ -112,16 +112,14 @@
                 ((> hpos2 hpos1)
                  (push (list (+ hpos1 dx1) (+ vpos1 dy1)
                              (+ hpos2 dx2) (+ vpos2 dy2)
-                             (- hpos2 dx)
-                             pane)
+                             (- hpos2 dx))
                        long-arcs))
                 (t
                  (push (list (+ hpos1 dx1) (+ vpos1 dy1)
                              (+ hpos2 dx2) (+ vpos2 dy2)
-                             (- hpos1 dx)
-                             pane)
+                             (- hpos1 dx))
                        long-arcs))))))
-    (draw-long-arcs long-arcs)))
+    (draw-long-arcs long-arcs pane)))
 
 (defun draw-enclosure-arc (from-node to-node pane)
   (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
