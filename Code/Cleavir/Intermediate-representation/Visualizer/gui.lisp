@@ -84,6 +84,23 @@
    ;; This slot contains the vertical position where the arc ends.
    (%vpos2 :initarg :vpos2 :accessor vpos2)))
 
+(defun make-short-arc (from-instruction to-instruction pane)
+  (multiple-value-bind (hpos1 vpos1)
+      (instruction-position to-instruction)
+    (multiple-value-bind (hpos2 vpos2)
+        (instruction-position to-instruction)
+      (let ((dx1 (compute-dx to-instruction
+                             (cleavir-ir:successors from-instruction)))
+            (dx2 (compute-dx from-instruction
+                             (cleavir-ir:predecessors to-instruction)))
+            (dy1 (/ (node-height pane) 2))
+            (dy2 (- (/ (node-height pane) 2))))
+        (make-instance 'short-arc
+          :hpos1 (+ hpos1 dx1)
+          :vpos1 (+ vpos1 dy1)
+          :hpos2 (+ hpos2 dx2)
+          :vpos2 (+ vpos2 dy2))))))
+
 (defclass long-arc ()
   (;; This slot contains the horizontal position where the arc starts.
    (%hpos1 :initarg :hpos1 :accessor hpos1)
