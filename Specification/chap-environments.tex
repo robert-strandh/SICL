@@ -622,6 +622,65 @@ When the compiler must assume that some variable has indefinite
 extent, then code must be generated to store that variable in a
 heap-allocated environment.
 
+It is entirely possible that allocating objects on the stack may not
+have any significant performance advantage.  If the nursery collector
+allows allocation by incrementing a pointer, then allocation in the
+nursery is just as fast as allocation on the stack.  Furthermore, if
+the nursery collector is a copying collector, then it will not touch
+dead objects.  Therefore, there is also no cost in deleting objects
+that are no longer referenced.  There are three possible additional
+costs associated with allocating objects in the nursery compared to
+allocating objects on the stack:
+
+\begin{enumerate}
+\item If the objects survive for a long time, then they will be traced
+  by the garbage collector, and possibly promoted to an older
+  generation.  This situation is unlikely, however.  It would mean
+  that the program is allocating objects with dynamic extent, but that
+  are nevertheless kept alive for a long time.  Presumably, that means
+  that these objects are being used a lot during the execution of the
+  function that allocated them.  If so, the time for the allocation
+  should be negligible compared to the execution of the function.
+\item The nursery collector will run more often since more objects are
+  allocated from the nursery than would be the case if these objects
+  with dynamic extent were allocated on the stack.  For this aspect to
+  be significant, such allocations must be frequent.
+\item Cache performance might be better for the stack than for the
+  nursery, but this would also be unlikely, given that the nursery is
+  relatively small and relatively frequently accessed, so it is very
+  likely to also be in the cache.  However, it is entirely possible
+  that objects with dynamic extent become inaccessible before the
+  function that created them exits.  Then, allocating the objects on
+  the stack would prevent the garbage collector from reclaiming them,
+  and they would remain allocated beyond their lifetime.  If that is
+  the case, then allocating the objects on the stack may in fact harm
+  cache performance simply because a bigger stack may be required.
+\end{enumerate}
+
+To make sure that this additional cost is significant and thus worth
+removing by having the compiler take into account possible stack
+allocations, a fairly complicated test would have to be devised:
+
+\begin{itemize}
+\item Two versions of the system would have to be implemented.  One
+  that allocates objects with dynamic extent on the stack and another
+  one that allocates those objects on the heap.  For the purpose of
+  benchmarking, the first version could be implemented by having the
+  compiler trust \texttt{dynamic-extent} declarations, and by making
+  sure that such declarations are only inserted where they are
+  correct.
+\item The two versions of the system would need to be executed on a
+  significant and representative application program.
+\item The work of the garbage collector would have to be profiled for
+  the two cases.  In particular, the number of nursery collections and
+  the number of objects being promoted would have to be monitored.
+\item The maximum size of the stack needs to be monitored to determine
+  whether allocating objects on the stack causes a significant
+  difference in required stack space.
+\item Difference in cache performance should be determined as well, if
+  possible.
+\end{itemize}
+
 \section{Runtime information}
 
 The compiler will generate runtime information available both to the
