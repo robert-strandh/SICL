@@ -74,6 +74,16 @@
               (let ((middle-position (/ (1- length) 2)))
                 (- position middle-position))))))
 
+(defclass short-arc ()
+  (;; This slot contains the horizontal position where the arc starts.
+   (%hpos1 :initarg :hpos1 :accessor hpos1)
+   ;; This slot contains the horizontal position where the arc ends.
+   (%hpos2 :initarg :hpos2 :accessor hpos2)
+   ;; This slot contains the vertical position where the arc starts.
+   (%vpos1 :initarg :vpos1 :accessor vpos1)
+   ;; This slot contains the vertical position where the arc ends.
+   (%vpos2 :initarg :vpos2 :accessor vpos2)))
+
 (defclass long-arc ()
   (;; This slot contains the horizontal position where the arc starts.
    (%hpos1 :initarg :hpos1 :accessor hpos1)
