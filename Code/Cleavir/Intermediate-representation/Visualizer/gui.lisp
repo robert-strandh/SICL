@@ -97,6 +97,34 @@
    ;; This slot contains the vertical position where the arc ends.
    (%vpos4 :initarg :vpos4 :accessor vpos4)))
 
+(defun same-destination-p (arc1 arc2)
+  (and (< (abs (- (vpos4 arc1) (vpos4 arc2))) *base-width*)
+       (< (abs (- (hpos3 arc1) (hpos3 arc2))) *base-height*)))
+
+;;; Extract all the arcs from ARCS that have the same destination as
+;;; the first one.
+(defun extract-same-destination (arcs)
+  (loop with result = (list (first arcs))
+        for arc in (rest arcs)
+        when (same-destination-p (first result) arc)
+          do (push arc result)
+        finally (return result)))
+
+;;; When two arcs have the same target instruction, we must make sure
+;;; that the incoming arcs have different vertical positions.
+;;; Otherwise, we can not distinguish which arc represents which
+;;; predecessor.  Notice that the separation in the other dimension
+;;; has already been taken care of by taking into account the order
+;;; between predecessors.
+(defun separate-overlapping-arcs-vertically (arcs)
+  (loop with remaining = arcs
+        until (null remaining)
+        do (let ((group (extract-same-destination remaining)))
+             (loop for arc in (rest group)
+                   for delta from 3
+                   do (decf (vpos3 arc) delta))
+             (setf remaining (set-difference remaining group)))))
+
 (defun draw-long-arc (pane arc)
   (with-accessors ((hpos1 hpos1) (vpos1 vpos1)
                    (hpos2 hpos2) (vpos2 vpos2)
@@ -116,6 +144,7 @@
                       hpos3 vpos4)))
 
 (defun draw-long-arcs (arcs pane)
+  (separate-overlapping-arcs-vertically arcs)
   (loop for arc in arcs
         do (draw-long-arc pane arc)))
 
