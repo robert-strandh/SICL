@@ -206,6 +206,15 @@
                           (+ hpos2 dx2) (+ vpos2 dy2)
                           :line-dashes t)))))
 
+(defun arc-is-short-p (from-instruction to-instruction)
+  (multiple-value-bind (hpos1 vpos1)
+      (instruction-position from-instruction)
+    (multiple-value-bind (hpos2 vpos2)
+        (instruction-position to-instruction)
+      (and (< (abs (- hpos2 hpos1)) *base-width*)
+           (> vpos2 vpos1)
+           (< (- vpos2 vpos1) (* 1.5 vertical-node-separation))))))
+
 (defun draw-arcs (pane table)
   (loop for node being each hash-key of table
           using (hash-value (hpos1 . vpos1))
