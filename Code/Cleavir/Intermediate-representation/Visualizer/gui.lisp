@@ -86,32 +86,38 @@
    (%hpos3 :initarg :hpos3 :accessor hpos3)
    ;; This slot contains the vertical position where the arc starts.
    (%vpos1 :initarg :vpos1 :accessor vpos1)
+   ;; This slot contains the vertical position where the arc turns
+   ;; from its start node to the leap position.
+   (%vpos2 :initarg :vpos2 :accessor vpos2)
    ;; This slot contains the vertical position where the arcs turns
    ;; from its leap to approach its target instruction.  The value of
    ;; this slot might be modified slightly if many arcs share the same
    ;; target instruction.
-   (%vpos2 :initarg :vpos2 :accessor vpos2)
+   (%vpos3 :initarg :vpos3 :accessor vpos3)
    ;; This slot contains the vertical position where the arc ends.
-   (%vpos3 :initarg :vpos3 :accessor vpos3)))
+   (%vpos4 :initarg :vpos4 :accessor vpos4)))
 
-(defun draw-long-arc (hpos1 vpos1 hpos2 vpos2 hpos pane)
-  (let ((dy1 (round (* 0.5 vertical-node-separation)))
-        (dy2 (round (* 0.2 vertical-node-separation))))
+(defun draw-long-arc (pane arc)
+  (with-accessors ((hpos1 hpos1) (vpos1 vpos1)
+                   (hpos2 hpos2) (vpos2 vpos2)
+                   (hpos3 hpos3) (vpos3 vpos3)
+                   (vpos4 vpos4))
+      arc
     (clim:draw-polygon* pane
                         (list hpos1 vpos1
-                              hpos1 (+ vpos1 dy2)
-                              hpos  (+ vpos1 dy2)
-                              hpos  (- vpos2 dy1)
-                              hpos2 (- vpos2 dy1))
+                              hpos1 vpos2
+                              hpos2 vpos2
+                              hpos2 vpos3
+                              hpos3 vpos3)
                         :closed nil
                         :filled nil)
     (clim:draw-arrow* pane
-                      hpos2 (- vpos2 dy1)
-                      hpos2 vpos2)))
+                      hpos3 vpos3
+                      hpos3 vpos4)))
 
 (defun draw-long-arcs (arcs pane)
   (loop for arc in arcs
-        do (apply #'draw-long-arc (append arc (list pane)))))
+        do (draw-long-arc pane arc)))
 
 (defun draw-control-flow-arc (from-node to-node pane)
   (let (;; DX is used only for long arcs.  It is the horizontal
@@ -121,6 +127,8 @@
         ;; the horizontal position where the arc leaps from one
         ;; vertical position to another.
         (dx (round (* 0.6 *base-width*)))
+        (ddy1 (round (* 0.2 vertical-node-separation)))
+        (ddy2 (- (round (* 0.5 vertical-node-separation))))
         (long-arcs '()))
     (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
       (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
@@ -136,14 +144,24 @@
                                    (+ hpos1 dx1) (+ vpos1 dy1)
                                    (+ hpos2 dx2) (+ vpos2 dy2)))
                 ((> hpos2 hpos1)
-                 (push (list (+ hpos1 dx1) (+ vpos1 dy1)
-                             (+ hpos2 dx2) (+ vpos2 dy2)
-                             (- hpos2 dx))
+                 (push (make-instance 'long-arc
+                         :hpos1 (+ hpos1 dx1)
+                         :hpos2 (- hpos2 dx)
+                         :hpos3 (+ hpos2 dx2)
+                         :vpos1 (+ vpos1 dy1)
+                         :vpos2 (+ vpos1 dy1 ddy1)
+                         :vpos3 (+ vpos2 dy2 ddy2)
+                         :vpos4 (+ vpos2 dy2))
                        long-arcs))
                 (t
-                 (push (list (+ hpos1 dx1) (+ vpos1 dy1)
-                             (+ hpos2 dx2) (+ vpos2 dy2)
-                             (- hpos1 dx))
+                 (push (make-instance 'long-arc
+                         :hpos1 (+ hpos1 dx1)
+                         :hpos2 (- hpos1 dx)
+                         :hpos3 (+ hpos2 dx2)
+                         :vpos1 (+ vpos1 dy1)
+                         :vpos2 (+ vpos1 dy1 ddy1)
+                         :vpos3 (+ vpos2 dy2 ddy2)
+                         :vpos4 (+ vpos2 dy2))
                        long-arcs))))))
     (draw-long-arcs long-arcs pane)))
 
