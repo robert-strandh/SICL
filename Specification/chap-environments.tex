@@ -618,6 +618,12 @@ to trust this, because the function might be redefined later.%
   \emph{compilation unit} in which case it can not be redefined
   without the caller being redefined at the same time.}
 
+Even if all the conditions are present for the compiler to prove that
+some object has dynamic extent, it would also have to prevent the
+debugger to access a variable containing that object.  Otherwise, the
+debugger or the inspector could very well hold on to that object
+indefinitely.
+
 When the compiler must assume that some variable has indefinite
 extent, then code must be generated to store that variable in a
 heap-allocated environment.
