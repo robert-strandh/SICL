@@ -143,6 +143,11 @@
                          :line-dashes t)))))
 (defgeneric draw-datum (datum pane))
 
+(defmethod draw-datum :around (datum pane)
+  (clim:with-output-as-presentation
+      (pane datum 'cleavir-ir:datum)
+    (call-next-method)))
+
 (defmethod draw-datum (datum pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos
