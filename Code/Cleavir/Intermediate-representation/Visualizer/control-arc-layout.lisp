@@ -20,6 +20,11 @@
    ;; This slot contains the vertical position where the arc ends.
    (%vpos2 :initarg :vpos2 :accessor vpos2)))
 
+(defmethod print-object ((object short-arc) stream)
+  (print-unreadable-object (object stream :type t)
+    (format stream "[~a ~a] [~a ~a]"
+            (hpos1 object) (vpos1 object) (hpos2 object) (vpos2 object))))
+
 (defun make-short-arc (from-instruction to-instruction pane)
   (multiple-value-bind (hpos1 vpos1)
       (instruction-position from-instruction)
@@ -62,6 +67,21 @@
    (%vpos3 :initarg :vpos3 :accessor vpos3)
    ;; This slot contains the vertical position where the arc ends.
    (%vpos4 :initarg :vpos4 :accessor vpos4)))
+
+(defmethod print-object ((object long-arc) stream)
+  (with-accessors ((hpos1 hpos1) (vpos1 vpos1)
+                   (hpos2 hpos2) (vpos2 vpos2)
+                   (hpos3 hpos3) (vpos3 vpos3)
+                   (vpos4 vpos4))
+      object
+    (print-unreadable-object (object stream)
+      (format stream "[~a ~a] [~a ~a] [~a ~a] [~a ~a] [~a ~a] [~a ~a]"
+              hpos1 vpos1
+              hpos1 vpos2
+              hpos2 vpos2
+              hpos2 vpos3
+              hpos3 vpos3
+              hpos3 vpos4))))
 
 (defun same-destination-p (arc1 arc2)
   (and (< (abs (- (vpos4 arc1) (vpos4 arc2))) *base-width*)
@@ -176,8 +196,13 @@
            (< (- vpos2 vpos1) (* 1.5 vertical-node-separation))))))
 
 (defun draw-arcs (pane arcs)
-  (loop for arc in arcs
-        do (draw-arc pane arc)))
+  (let* ((long-arcs (remove-if-not (lambda (x) (typep x 'long-arc)) arcs))
+         (other-arcs (set-difference arcs long-arcs)))
+    (loop for arc in other-arcs
+          do (draw-arc pane arc))
+    (separate-overlapping-arcs-vertically long-arcs)
+    (loop for arc in long-arcs
+          do (draw-arc pane arc))))
 
 (defun make-arcs (pane table)
   (loop for node being each hash-key of table
