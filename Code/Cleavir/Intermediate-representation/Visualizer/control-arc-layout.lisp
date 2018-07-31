@@ -154,8 +154,33 @@
         until (null remaining)
         do (let ((group (extract-same-destination remaining)))
              (loop for arc in (rest group)
-                   for delta from 3
+                   for delta from 5 by 5
                    do (decf (vpos3 arc) delta))
+             (setf remaining (set-difference remaining group)))))
+
+(defun same-jump-position-p (arc1 arc2)
+  (let ((min1 (min (vpos2 arc1) (vpos3 arc1)))
+        (min2 (min (vpos2 arc2) (vpos3 arc2)))
+        (max1 (max (vpos2 arc1) (vpos3 arc1)))
+        (max2 (max (vpos2 arc2) (vpos3 arc2))))
+    (and (< (abs (- (hpos2 arc1) (hpos2 arc2))) 3)
+         (or (and (< min2 (+ max1 3)) (> max2 (- min1 3)))
+             (and (< min1 (+ max2 3)) (> max1 (- min2 3)))))))
+
+(defun extract-same-jump-position (arcs)
+  (loop with result = (list (first arcs))
+        for arc in (rest arcs)
+        when (same-jump-position-p (first result) arc)
+          do (push arc result)
+        finally (return result)))
+
+(defun separate-overlapping-arcs-horizontally (arcs)
+  (loop with remaining = arcs
+        until (null remaining)
+        do (let ((group (extract-same-jump-position remaining)))
+             (loop for arc in (rest group)
+                   for delta from 5 by 5
+                   do (decf (hpos2 arc) delta))
              (setf remaining (set-difference remaining group)))))
 
 (defclass enclosure-arc ()
@@ -201,6 +226,7 @@
     (loop for arc in other-arcs
           do (draw-arc pane arc))
     (separate-overlapping-arcs-vertically long-arcs)
+        (separate-overlapping-arcs-horizontally long-arcs)
     (loop for arc in long-arcs
           do (draw-arc pane arc))))
 
