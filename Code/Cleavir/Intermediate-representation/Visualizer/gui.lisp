@@ -215,12 +215,16 @@
                        :ink clim:+dark-blue+)))))
 
 (defun draw-data (pane)
-  (loop for datum being each hash-key of *data-position-table*
+  (loop with table = (highlight-clients clim:*application-frame*)
+        for datum being each hash-key of *data-position-table*
+        for highlighted-p = (gethash datum table)
+        for line-thickness = (if highlighted-p 2 1)
         do (draw-datum datum pane)
-           (loop for instruction in (cleavir-ir:defining-instructions datum)
-                 do (draw-data-edge instruction datum pane clim:+red+))
-           (loop for instruction in (cleavir-ir:using-instructions datum)
-                 do (draw-data-edge instruction datum pane clim:+dark-green+))))
+           (clim:with-drawing-options (pane :line-thickness line-thickness)
+             (loop for instruction in (cleavir-ir:defining-instructions datum)
+                   do (draw-data-edge instruction datum pane clim:+red+))
+             (loop for instruction in (cleavir-ir:using-instructions datum)
+                   do (draw-data-edge instruction datum pane clim:+dark-green+)))))
 
 (defun display-hir (frame pane)
   (let ((*instruction-position-table* (make-hash-table :test #'eq))
