@@ -84,8 +84,8 @@
               hpos3 vpos4))))
 
 (defun same-destination-p (arc1 arc2)
-  (and (< (abs (- (vpos4 arc1) (vpos4 arc2))) *base-width*)
-       (< (abs (- (hpos3 arc1) (hpos3 arc2))) *base-height*)))
+  (and (< (abs (- (vpos4 arc1) (vpos4 arc2))) *base-height*)
+       (< (abs (- (hpos3 arc1) (hpos3 arc2))) *base-width*)))
 
 (defun make-long-arc (from-instruction to-instruction pane)
   (let (;; DX is the horizontal distance from the center of the
