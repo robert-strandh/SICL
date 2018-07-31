@@ -10,7 +10,15 @@
               (let ((middle-position (/ (1- length) 2)))
                 (- position middle-position))))))
 
-(defclass short-arc ()
+(defun arc-should-be-highlighted-p (from-instruction to-instruction)
+  (declare (ignore to-instruction))
+  (gethash from-instruction (highlight-successors clim:*application-frame*)))
+
+(defclass arc ()
+  ((%highlighted-p :initarg :highlighted-p
+                   :initform nil :accessor highlighted-p)))
+
+(defclass short-arc (arc)
   (;; This slot contains the horizontal position where the arc starts.
    (%hpos1 :initarg :hpos1 :accessor hpos1)
    ;; This slot contains the horizontal position where the arc ends.
@@ -26,26 +34,35 @@
             (hpos1 object) (vpos1 object) (hpos2 object) (vpos2 object))))
 
 (defun make-short-arc (from-instruction to-instruction pane)
-  (multiple-value-bind (hpos1 vpos1)
-      (instruction-position from-instruction)
-    (multiple-value-bind (hpos2 vpos2)
-        (instruction-position to-instruction)
-      (let ((dx1 (compute-dx to-instruction
-                             (cleavir-ir:successors from-instruction)))
-            (dx2 (compute-dx from-instruction
-                             (cleavir-ir:predecessors to-instruction)))
-            (dy1 (/ (node-height pane) 2))
-            (dy2 (- (/ (node-height pane) 2))))
-        (make-instance 'short-arc
-          :hpos1 (round (+ hpos1 dx1))
-          :vpos1 (round (+ vpos1 dy1))
-          :hpos2 (round (+ hpos2 dx2))
-          :vpos2 (round (+ vpos2 dy2)))))))
+  (let ((highlight-p
+          (arc-should-be-highlighted-p from-instruction to-instruction)))
+    (multiple-value-bind (hpos1 vpos1)
+        (instruction-position from-instruction)
+      (multiple-value-bind (hpos2 vpos2)
+          (instruction-position to-instruction)
+        (let ((dx1 (compute-dx to-instruction
+                               (cleavir-ir:successors from-instruction)))
+              (dx2 (compute-dx from-instruction
+                               (cleavir-ir:predecessors to-instruction)))
+              (dy1 (/ (node-height pane) 2))
+              (dy2 (- (/ (node-height pane) 2))))
+          (make-instance 'short-arc
+            :hpos1 (round (+ hpos1 dx1))
+            :vpos1 (round (+ vpos1 dy1))
+            :hpos2 (round (+ hpos2 dx2))
+            :vpos2 (round (+ vpos2 dy2))
+            :highlighted-p highlight-p))))))
 
 (defmethod draw-arc (pane (arc short-arc))
-  (clim:draw-arrow* pane (hpos1 arc) (vpos1 arc)  (hpos2 arc) (vpos2 arc)))
+  (clim:draw-arrow* pane
+                    (hpos1 arc) (vpos1 arc)
+                    (hpos2 arc) (vpos2 arc)
+                    :ink
+                    (if (highlighted-p arc) clim:+blue+ clim:+black+)
+                    :line-thickness
+                    (if (highlighted-p arc) 2 1)))
 
-(defclass long-arc ()
+(defclass long-arc (arc)
   (;; This slot contains the horizontal position where the arc starts.
    (%hpos1 :initarg :hpos1 :accessor hpos1)
    ;; This slot contains the horizontal position where the arc leaps
@@ -88,7 +105,9 @@
        (< (abs (- (hpos3 arc1) (hpos3 arc2))) *base-width*)))
 
 (defun make-long-arc (from-instruction to-instruction pane)
-  (let (;; DX is the horizontal distance from the center of the
+  (let ((highlight-p
+          (arc-should-be-highlighted-p from-instruction to-instruction))
+        ;; DX is the horizontal distance from the center of the
         ;; FROM-INSTRUCTION (if the TO-INSTRUCTION is to the left of
         ;; the FROM-INSTRUCTION) or from the center of the
         ;; TO-INSTRUCTION (if the TO-INSTRUCTION is to the right of
@@ -114,13 +133,14 @@
             :vpos1 (round (+ vpos1 dy1))
             :vpos2 (round (+ vpos1 dy1 ddy1))
             :vpos3 (round (+ vpos2 dy2 ddy2))
-            :vpos4 (round (+ vpos2 dy2))))))))
+            :vpos4 (round (+ vpos2 dy2))
+            :highlighted-p highlight-p))))))
 
 (defmethod draw-arc (pane (arc long-arc))
   (with-accessors ((hpos1 hpos1) (vpos1 vpos1)
                    (hpos2 hpos2) (vpos2 vpos2)
                    (hpos3 hpos3) (vpos3 vpos3)
-                   (vpos4 vpos4))
+                   (vpos4 vpos4) (highlighted-p highlighted-p))
       arc
     (clim:draw-polygon* pane
                         (list hpos1 vpos1
@@ -128,11 +148,19 @@
                               hpos2 vpos2
                               hpos2 vpos3
                               hpos3 vpos3)
+                        :ink
+                        (if highlighted-p clim:+blue+ clim:+black+)
+                        :line-thickness
+                        (if highlighted-p 2 1)
                         :closed nil
                         :filled nil)
     (clim:draw-arrow* pane
                       hpos3 vpos3
-                      hpos3 vpos4)))
+                      hpos3 vpos4
+                      :ink
+                      (if highlighted-p clim:+blue+ clim:+black+)
+                      :line-thickness
+                      (if highlighted-p 2 1))))
 
 ;;; Extract all the arcs from ARCS that have the same destination as
 ;;; the first one.
@@ -192,7 +220,7 @@
                    do (decf (hpos2 arc) delta))
              (setf remaining (set-difference remaining group)))))
 
-(defclass enclosure-arc ()
+(defclass enclosure-arc (arc)
   (;; This slot contains the horizontal position where the arc starts.
    (%hpos1 :initarg :hpos1 :accessor hpos1)
    ;; This slot contains the horizontal position where the arc ends.

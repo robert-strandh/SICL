@@ -2,7 +2,10 @@
 
 (clim:define-application-frame visualizer ()
   ((%initial-instruction :initarg :initial-instruction
-                         :accessor initial-instruction))
+                         :accessor initial-instruction)
+   (%highlight-successors
+    :initform (make-hash-table :test #'eq)
+    :accessor highlight-successors))
   (:panes (application
            :application
            :scroll-bars nil
@@ -68,7 +71,11 @@
 
 (defun draw-node (node hpos vpos pane)
   (let ((width (node-width node pane))
-        (height (node-height pane)))
+        (height (node-height pane))
+        (highlight-p
+          (loop for predecessor in (cleavir-ir:predecessors node)
+                thereis (gethash predecessor
+                                 (highlight-successors clim:*application-frame*)))))
     (clim:with-output-as-presentation
         (pane node 'cleavir-ir:instruction)
       (clim:draw-rectangle* pane
@@ -76,10 +83,13 @@
                             (- vpos (floor height 2))
                             (+ hpos (floor width 2))
                             (+ vpos (floor height 2))
+                            :ink (if highlight-p clim:+blue+ clim:+black+)
+                            :line-thickness (if highlight-p 2 1)
                             :filled nil)
       (clim:draw-text* pane
                        (node-label node)
                        hpos vpos
+                       :ink (if highlight-p clim:+blue+ clim:+black+)
                        :align-x :center :align-y :center))))
 
 (defun draw-nodes (initial-instruction pane)
@@ -231,3 +241,13 @@
          (partial-text-style (clim:make-text-style nil nil :smaller)))
     (setf (clim:medium-text-style *standard-output*)
           (clim:merge-text-styles partial-text-style current-text-style))))
+
+(define-visualizer-command (com-highlight-successors :name t)
+    ((instruction 'cleavir-ir:instruction))
+  (setf (gethash instruction (highlight-successors clim:*application-frame*))
+        t))
+
+(define-visualizer-command (com-unhighlight-successors :name t)
+    ((instruction 'cleavir-ir:instruction))
+  (setf (gethash instruction (highlight-successors clim:*application-frame*))
+        nil))
