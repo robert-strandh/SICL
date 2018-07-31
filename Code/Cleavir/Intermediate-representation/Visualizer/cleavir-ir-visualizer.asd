@@ -14,4 +14,5 @@
    (:file "instruction-layout")
    (:file "datum-position")
    (:file "datum-layout")
+   (:file "control-arc-layout")
    (:file "gui")))
