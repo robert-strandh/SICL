@@ -167,11 +167,20 @@
          (or (and (< min2 (+ max1 3)) (> max2 (- min1 3)))
              (and (< min1 (+ max2 3)) (> max1 (- min2 3)))))))
 
+(defun some-same-jump-position-p (arcs arc)
+  (loop for a in arcs
+        thereis (same-jump-position-p a arc)))
+
+(defun find-same-jump-position (arcs candidates)
+  (find-if (lambda (x) (some-same-jump-position-p arcs x)) candidates))
+
 (defun extract-same-jump-position (arcs)
   (loop with result = (list (first arcs))
-        for arc in (rest arcs)
-        when (same-jump-position-p (first result) arc)
-          do (push arc result)
+        with remaining = (rest arcs)
+        for candidate = (find-same-jump-position result remaining)
+        until (null candidate)
+        do (push candidate result)
+           (setf remaining (remove candidate remaining))
         finally (return result)))
 
 (defun separate-overlapping-arcs-horizontally (arcs)
