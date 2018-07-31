@@ -231,8 +231,12 @@
 (define-visualizer-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
 
-(define-visualizer-command (com-inspect :name t)
+(define-visualizer-command (com-inspect-instruction :name t)
     ((instruction 'cleavir-ir:instruction))
+  (clouseau:inspector instruction))
+
+(define-visualizer-command (com-inspect-datum :name t)
+    ((instruction 'cleavir-ir:datum))
   (clouseau:inspector instruction))
 
 (define-visualizer-command (com-zoom-in :name t) ()
