@@ -80,3 +80,16 @@
      :documentation "Inspect")
     (object)
   (list object))
+
+(define-visualizer-command (com-highlight-clients :name t)
+    ((instruction 'cleavir-ir:instruction))
+  (setf (gethash instruction (highlight-clients clim:*application-frame*))
+        t))
+
+(clim:define-presentation-to-command-translator highlight-clients
+    (cleavir-ir:datum
+     com-highlight-clients
+     visualizer
+     :documentation "Highlight clients")
+    (object)
+  (list object))
