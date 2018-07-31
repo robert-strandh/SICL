@@ -138,75 +138,6 @@
                    do (decf (vpos3 arc) delta))
              (setf remaining (set-difference remaining group)))))
 
-(defun draw-long-arc (pane arc)
-  (with-accessors ((hpos1 hpos1) (vpos1 vpos1)
-                   (hpos2 hpos2) (vpos2 vpos2)
-                   (hpos3 hpos3) (vpos3 vpos3)
-                   (vpos4 vpos4))
-      arc
-    (clim:draw-polygon* pane
-                        (list hpos1 vpos1
-                              hpos1 vpos2
-                              hpos2 vpos2
-                              hpos2 vpos3
-                              hpos3 vpos3)
-                        :closed nil
-                        :filled nil)
-    (clim:draw-arrow* pane
-                      hpos3 vpos3
-                      hpos3 vpos4)))
-
-(defun draw-long-arcs (arcs pane)
-  (separate-overlapping-arcs-vertically arcs)
-  (loop for arc in arcs
-        do (draw-long-arc pane arc)))
-
-(defun draw-control-flow-arc (from-node to-node pane)
-  (let (;; DX is used only for long arcs.  It is the horizontal
-        ;; distance from the center of the FROM-NODE (if the TO-NODE
-        ;; is to the left of the FROM-NODE) or from the center of the
-        ;; TO-NODE (if the TO-NODE is to the right of FROM-NODE) to
-        ;; the horizontal position where the arc leaps from one
-        ;; vertical position to another.
-        (dx (round (* 0.6 *base-width*)))
-        (ddy1 (round (* 0.2 vertical-node-separation)))
-        (ddy2 (- (round (* 0.5 vertical-node-separation))))
-        (long-arcs '()))
-    (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
-      (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
-        (let ((dx1 (compute-dx to-node (cleavir-ir:successors from-node)))
-              (dx2 (compute-dx from-node (cleavir-ir:predecessors to-node)))
-              (dy1 (/ (node-height pane) 2))
-              (dy2 (- (/ (node-height pane) 2))))
-          (cond ((and (< (abs (- hpos2 hpos1)) *base-width*)
-                      (> vpos2 vpos1)
-                      (< (- vpos2 vpos1) (* 1.5 vertical-node-separation)))
-                 ;; Draw a short downward control arc
-                 (clim:draw-arrow* pane
-                                   (+ hpos1 dx1) (+ vpos1 dy1)
-                                   (+ hpos2 dx2) (+ vpos2 dy2)))
-                ((> hpos2 hpos1)
-                 (push (make-instance 'long-arc
-                         :hpos1 (+ hpos1 dx1)
-                         :hpos2 (- hpos2 dx)
-                         :hpos3 (+ hpos2 dx2)
-                         :vpos1 (+ vpos1 dy1)
-                         :vpos2 (+ vpos1 dy1 ddy1)
-                         :vpos3 (+ vpos2 dy2 ddy2)
-                         :vpos4 (+ vpos2 dy2))
-                       long-arcs))
-                (t
-                 (push (make-instance 'long-arc
-                         :hpos1 (+ hpos1 dx1)
-                         :hpos2 (- hpos1 dx)
-                         :hpos3 (+ hpos2 dx2)
-                         :vpos1 (+ vpos1 dy1)
-                         :vpos2 (+ vpos1 dy1 ddy1)
-                         :vpos3 (+ vpos2 dy2 ddy2)
-                         :vpos4 (+ vpos2 dy2))
-                       long-arcs))))))
-    (draw-long-arcs long-arcs pane)))
-
 (defclass enclosure-arc ()
   (;; This slot contains the horizontal position where the arc starts.
    (%hpos1 :initarg :hpos1 :accessor hpos1)
@@ -234,18 +165,6 @@
   (clim:draw-arrow* pane
                     (hpos1 arc) (vpos1 arc) (hpos2 arc) (vpos2 arc)
                     :line-dashes t))
-
-(defun draw-enclosure-arc (from-node to-node pane)
-  (multiple-value-bind (hpos1 vpos1) (instruction-position from-node)
-    (multiple-value-bind (hpos2 vpos2) (instruction-position to-node)
-      (let ((dx1 -20)
-            (dx2 20)
-            (dy1 (/ (node-height pane) 2))
-            (dy2 (- (/ (node-height pane) 2))))
-        (clim:draw-arrow* pane
-                          (+ hpos1 dx1) (+ vpos1 dy1)
-                          (+ hpos2 dx2) (+ vpos2 dy2)
-                          :line-dashes t)))))
 
 (defun arc-is-short-p (from-instruction to-instruction)
   (multiple-value-bind (hpos1 vpos1)
