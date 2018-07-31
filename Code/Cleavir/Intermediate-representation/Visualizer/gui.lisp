@@ -5,7 +5,10 @@
                          :accessor initial-instruction)
    (%highlight-successors
     :initform (make-hash-table :test #'eq)
-    :accessor highlight-successors))
+    :accessor highlight-successors)
+   (%highlight-clients
+    :initform (make-hash-table :test #'eq)
+    :accessor highlight-clients))
   (:panes (application
            :application
            :scroll-bars nil
@@ -144,9 +147,18 @@
 (defgeneric draw-datum (datum pane))
 
 (defmethod draw-datum :around (datum pane)
-  (clim:with-output-as-presentation
-      (pane datum 'cleavir-ir:datum)
-    (call-next-method)))
+  (let ((line-thickness
+          (if (gethash datum (highlight-clients clim:*application-frame*))
+              2
+              1))
+        (ink
+          (if (gethash datum (highlight-clients clim:*application-frame*))
+              clim:+magenta+
+              clim:+black+)))
+    (clim:with-drawing-options (pane :ink ink :line-thickness line-thickness)
+      (clim:with-output-as-presentation
+          (pane datum 'cleavir-ir:datum)
+        (call-next-method)))))
 
 (defmethod draw-datum (datum pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
