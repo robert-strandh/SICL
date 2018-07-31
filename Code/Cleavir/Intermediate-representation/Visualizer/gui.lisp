@@ -218,7 +218,7 @@
   (loop with table = (highlight-clients clim:*application-frame*)
         for datum being each hash-key of *data-position-table*
         for highlighted-p = (gethash datum table)
-        for line-thickness = (if highlighted-p 2 1)
+        for line-thickness = (if highlighted-p 3 1)
         do (draw-datum datum pane)
            (clim:with-drawing-options (pane :line-thickness line-thickness)
              (loop for instruction in (cleavir-ir:defining-instructions datum)
