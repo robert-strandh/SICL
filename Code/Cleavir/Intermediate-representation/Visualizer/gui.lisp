@@ -235,6 +235,14 @@
     ((instruction 'cleavir-ir:instruction))
   (clouseau:inspector instruction))
 
+(clim:define-presentation-to-command-translator inspect-instruction
+    (cleavir-ir:instruction
+     com-inspect-instruction
+     visualizer
+     :documentation "Inspect")
+    (object)
+  (list object))
+
 (define-visualizer-command (com-inspect-datum :name t)
     ((instruction 'cleavir-ir:datum))
   (clouseau:inspector instruction))
@@ -255,6 +263,14 @@
     ((instruction 'cleavir-ir:instruction))
   (setf (gethash instruction (highlight-successors clim:*application-frame*))
         t))
+
+(clim:define-presentation-to-command-translator highlight-successors
+    (cleavir-ir:instruction
+     com-highlight-successors
+     visualizer
+     :documentation "Highlight successors")
+    (object)
+  (list object))
 
 (define-visualizer-command (com-unhighlight-successors :name t)
     ((instruction 'cleavir-ir:instruction))
