@@ -135,22 +135,25 @@
       (gethash instruction (highlight-data clim:*application-frame*))))
 
 (defun draw-data-edge (instruction datum pane ink)
-  (multiple-value-bind (hpos1 vpos1) (instruction-position instruction)
-    (multiple-value-bind (hpos2 vpos2) (datum-position datum)
-      (let ((h1 (if (> hpos2 hpos1)
-                    (+ hpos1 (/ (node-width instruction pane) 2))
-                    (- hpos1 (/ (node-width instruction pane) 2))))
-            (h2 (if (> hpos2 hpos1)
-                    (- hpos2 30)
-                    (+ hpos2 30)))
-            (v2 (if (> vpos2 vpos1)
-                    (- vpos2 10)
-                    (+ vpos2 10))))
-        (clim:draw-line* pane
-                         h1 vpos1
-                         h2 v2
-                         :ink ink
-                         :line-dashes t)))))
+  (let ((line-thickness
+          (if (data-edge-should-be-highlighted-p instruction datum) 3 1)))
+    (multiple-value-bind (hpos1 vpos1) (instruction-position instruction)
+      (multiple-value-bind (hpos2 vpos2) (datum-position datum)
+        (let ((h1 (if (> hpos2 hpos1)
+                      (+ hpos1 (/ (node-width instruction pane) 2))
+                      (- hpos1 (/ (node-width instruction pane) 2))))
+              (h2 (if (> hpos2 hpos1)
+                      (- hpos2 30)
+                      (+ hpos2 30)))
+              (v2 (if (> vpos2 vpos1)
+                      (- vpos2 10)
+                      (+ vpos2 10))))
+          (clim:draw-line* pane
+                           h1 vpos1
+                           h2 v2
+                           :line-thickness line-thickness
+                           :ink ink
+                           :line-dashes t))))))
 
 (defun datum-should-be-highlighted-p (datum)
   (gethash datum (highlight-clients clim:*application-frame*)))
