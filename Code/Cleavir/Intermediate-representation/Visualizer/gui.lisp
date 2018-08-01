@@ -147,17 +147,17 @@
                          h2 v2
                          :ink ink
                          :line-dashes t)))))
+
+(defun datum-should-be-highlighted-p (datum)
+  (gethash datum (highlight-clients clim:*application-frame*)))
+
 (defgeneric draw-datum (datum pane))
 
 (defmethod draw-datum :around (datum pane)
   (let ((line-thickness
-          (if (gethash datum (highlight-clients clim:*application-frame*))
-              2
-              1))
+          (if (datum-should-be-highlighted-p datum) 2 1))
         (ink
-          (if (gethash datum (highlight-clients clim:*application-frame*))
-              clim:+magenta+
-              clim:+black+)))
+          (if (datum-should-be-highlighted-p datum) clim:+magenta+ clim:+black+)))
     (clim:with-drawing-options (pane :ink ink :line-thickness line-thickness)
       (clim:with-output-as-presentation
           (pane datum 'cleavir-ir:datum)
@@ -218,9 +218,8 @@
                        :ink clim:+dark-blue+)))))
 
 (defun draw-data (pane)
-  (loop with table = (highlight-clients clim:*application-frame*)
-        for datum being each hash-key of *data-position-table*
-        for highlighted-p = (gethash datum table)
+  (loop for datum being each hash-key of *data-position-table*
+        for highlighted-p = (datum-should-be-highlighted-p datum)
         for line-thickness = (if highlighted-p 3 1)
         do (draw-datum datum pane)
            (clim:with-drawing-options (pane :line-thickness line-thickness)
