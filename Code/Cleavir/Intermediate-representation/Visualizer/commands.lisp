@@ -22,6 +22,7 @@
 
 (define-visualizer-command (com-unhighlight-everything :name t) ()
   (clrhash (highlight-successors clim:*application-frame*))
+  (clrhash (highlight-clients clim:*application-frame*))
   (clrhash (highlight-clients clim:*application-frame*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
