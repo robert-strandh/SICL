@@ -8,7 +8,10 @@
     :accessor highlight-successors)
    (%highlight-clients
     :initform (make-hash-table :test #'eq)
-    :accessor highlight-clients))
+    :accessor highlight-clients)
+   (%highlight-data
+    :initform (make-hash-table :test #'eq)
+    :accessor highlight-data))
   (:panes (application
            :application
            :scroll-bars nil
