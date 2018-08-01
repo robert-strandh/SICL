@@ -66,6 +66,32 @@
     (object)
   (list object))
 
+(define-visualizer-command (com-highlight-data :name t)
+    ((instruction 'cleavir-ir:instruction))
+  (setf (gethash instruction (highlight-data clim:*application-frame*))
+        t))
+
+(clim:define-presentation-to-command-translator highlight-data
+    (cleavir-ir:instruction
+     com-highlight-data
+     visualizer
+     :documentation "Highlight data")
+    (object)
+  (list object))
+
+(define-visualizer-command (com-unhighlight-data :name t)
+    ((instruction 'cleavir-ir:instruction))
+  (setf (gethash instruction (highlight-data clim:*application-frame*))
+        nil))
+
+(clim:define-presentation-to-command-translator unhighlight-data
+    (cleavir-ir:instruction
+     com-unhighlight-data
+     visualizer
+     :documentation "Unhighlight data")
+    (object)
+  (list object))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum commands.
