@@ -156,7 +156,13 @@
                            :line-dashes t))))))
 
 (defun datum-should-be-highlighted-p (datum)
-  (gethash datum (highlight-clients clim:*application-frame*)))
+  (or (gethash datum (highlight-clients clim:*application-frame*))
+      (loop for instruction in (cleavir-ir:using-instructions datum)
+              thereis (gethash instruction
+                               (highlight-data clim:*application-frame*)))
+      (loop for instruction in (cleavir-ir:defining-instructions datum)
+              thereis (gethash instruction
+                               (highlight-data clim:*application-frame*)))))
 
 (defgeneric draw-datum (datum pane))
 
