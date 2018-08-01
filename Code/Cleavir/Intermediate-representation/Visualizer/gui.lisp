@@ -130,6 +130,10 @@
    (lambda (instruction) (layout-inputs-and-outputs instruction))
    initial-instruction))
 
+(defun data-edge-should-be-highlighted-p (instruction datum)
+  (or (gethash datum (highlight-clients clim:*application-frame*))
+      (gethash instruction (highlight-data clim:*application-frame*))))
+
 (defun draw-data-edge (instruction datum pane ink)
   (multiple-value-bind (hpos1 vpos1) (instruction-position instruction)
     (multiple-value-bind (hpos2 vpos2) (datum-position datum)
