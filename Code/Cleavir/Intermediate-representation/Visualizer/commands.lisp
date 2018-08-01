@@ -21,7 +21,8 @@
           (clim:merge-text-styles partial-text-style current-text-style))))
 
 (define-visualizer-command (com-unhighlight-everything :name t) ()
-  (clrhash (highlight-successors clim:*application-frame*)))
+  (clrhash (highlight-successors clim:*application-frame*))
+  (clrhash (highlight-clients clim:*application-frame*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -82,8 +83,8 @@
   (list object))
 
 (define-visualizer-command (com-highlight-clients :name t)
-    ((instruction 'cleavir-ir:instruction))
-  (setf (gethash instruction (highlight-clients clim:*application-frame*))
+    ((datum 'cleavir-ir:datum))
+  (setf (gethash datum (highlight-clients clim:*application-frame*))
         t))
 
 (clim:define-presentation-to-command-translator highlight-clients
@@ -91,5 +92,18 @@
      com-highlight-clients
      visualizer
      :documentation "Highlight clients")
+    (object)
+  (list object))
+
+(define-visualizer-command (com-unhighlight-clients :name t)
+    ((datum 'cleavir-ir:datum))
+  (setf (gethash datum (highlight-clients clim:*application-frame*))
+        nil))
+
+(clim:define-presentation-to-command-translator unhighlight-clients
+    (cleavir-ir:datum
+     com-unhighlight-clients
+     visualizer
+     :documentation "Unhighlight clients")
     (object)
   (list object))
