@@ -360,6 +360,32 @@ exit point is reached.
 Dynamic variable binding for the x86-64 backend.}
 \end{figure}
 
+\section{Address space layout}
+
+The architecture specification guarantees that the available address
+space is at least $2^{48}$ bytes, with half of it at the low end of
+the full potential $2^{64}$ byte address space, and the other half at
+the high end of the full potential address space.  The upper half is
+typically reserved for the operating system, so for applications only
+the low $2^{47}$ bytes are available.  We divide this address space as
+follows:
+
+\begin{itemize}
+\item The space reserved for dyads in the global heap (see
+  \refApp{app-memory-allocator}) starts at address $0$ and ends at
+  $2^{45}$.  Only a small part of it is initially allocated, of course
+  and it grows as needed.
+\item The space reserved for racks in the global heap (see
+  \refApp{app-memory-allocator}) starts at address $2^{45}$ and ends at
+  $2^{46}$.  Only a small part of it is initially allocated, of course
+  and it grows as needed.
+\item Each thread is given an address space of $2^{30}$ bytes with the
+  low part (a few megabytes) reserved for the nursery and the rest
+  reserved for the stack.  Only a small part of the stack is initially
+  allocated, and it grows as needed.  The address spaces for threads
+  start at address $2^{46}$.
+\end{itemize}
+
 \section{Parsing keyword arguments}
 
 When the callee accepts keyword arguments, it is convenient to have
