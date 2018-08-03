@@ -339,7 +339,7 @@
     (ld "../CLOS/defclass-support.lisp" r3 r3)
     (ld "../CLOS/defclass-defmacro.lisp" r3 r3)
     (ld "../CLOS/class-unique-number-defparameter.lisp" r3 r3)
-    (create-bridge-classes r3 r3)
+    (create-mop-classes r3 r3)
     (message "End of phase 3~%")))
 
 ;;  LocalWords:  metaobject

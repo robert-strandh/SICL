@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot)
 
-(defun create-bridge-classes (env1 env2)
+(defun create-mop-classes (env1 env2)
   (ld "../CLOS/t-defclass.lisp" env1 env2)
   (ld "../CLOS/function-defclass.lisp" env1 env2)
   (ld "../CLOS/standard-object-defclass.lisp" env1 env2)
