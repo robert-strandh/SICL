@@ -547,13 +547,13 @@ $R_1$.
 Several adaptations are necessary in order to accomplish phase~1:
 
 \begin{itemize}
-\item The macro \texttt{defgeneric} is defined in $R_1$ to remove
-  unbind the name in the run-time environment (which will be $R_2$)
-  before calling \texttt{ensure-generic-function} to create a fresh
-  generic function in the run-time environment.  This way, we make
-  sure that we have a fresh generic function with no methods as a
-  result of a call to \texttt{defgeneric}.  However, we must also make
-  sure we make one single call to \texttt{defgeneric}.
+\item The macro \texttt{defgeneric} is defined in $R_1$ to unbind the
+  name in the run-time environment (which will be $R_2$) before
+  calling the function named \texttt{ensure-generic-function} to
+  create a fresh generic function in the run-time environment.  This
+  way, we make sure that we have a fresh generic function with no
+  methods as a result of a call to \texttt{defgeneric}.  However, we
+  must also make sure we make one single call to \texttt{defgeneric}.
 \item The function \texttt{ensure-generic-function} is defined in
   $R_1$ and operates in $R_2$.  It checks whether there is already a
   function with the name passed as an argument in $R_2$, and if so, it
