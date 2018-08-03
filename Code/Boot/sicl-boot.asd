@@ -2,6 +2,7 @@
 
 (defsystem :sicl-boot
   :depends-on (:cleavir-simple-value-numbering
+               :sicl-source-tracking
 	       :sicl-extrinsic-environment
 	       :sicl-clos-boot-support)
   :serial t
@@ -17,7 +18,7 @@
    (:file "environment-variables")
    (:file "phase1")
    (:file "define-find-class")
-   (:file "create-bridge-classes")
+   (:file "create-mop-classes")
    (:file "phase2")
    (:file "define-effective-slot-definition-class")
    (:file "phase3")
