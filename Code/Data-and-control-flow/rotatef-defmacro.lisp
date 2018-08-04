@@ -35,7 +35,3 @@
 		      (multiple-value-bind ,store-variables ,accessing-form
 			,result))))
     result))
-
-			  
-			  
-				   
