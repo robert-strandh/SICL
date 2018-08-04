@@ -457,8 +457,9 @@ classes.
 
 \begin{definition}
 An \emph{ersatz generic function} is an instance of the ersatz class
-\texttt{generic-function}.  An ersatz generic function can not be
-executed.  It can only be translated into a target generic function.
+\texttt{generic-function}.  It is possible for an ersatz generic
+function be executed in the host system because the header object is
+an instance of the host class \texttt{funcallable-standard-object}.
 The methods on an ersatz generic function are ersatz methods.
 \end{definition}
 
