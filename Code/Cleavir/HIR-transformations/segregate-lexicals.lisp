@@ -98,6 +98,55 @@
     ;; Make sure we keep track of the closure vector expansion.
     (setf (cleavir-ir:closure-size enter) (1+ new-index))))
 
+(defun dominating-instruction (basic-block defining-instructions)
+  (cleavir-basic-blocks:map-basic-block-instructions
+   (lambda (instruction)
+     (when (member instruction defining-instructions)
+       (return-from dominating-instruction instruction)))
+   basic-block))
+
+;;; The cell must be created when the variable comes into scope. In
+;;; flow graph terms, this means at the instruction defining the
+;;; variable closest to the root of the dominance tree in the owning
+;;; function. ENCLOSE instructions whose CODE defines the variable
+;;; also count as defining instructions.
+(defun insert-create-cell-instruction
+    (function-dag defining-instructions owner cell-locations instruction-basic-blocks dominance-tree)
+  ;; Add the enclose instructions which define the variable to the set
+  ;; of defining instructions.
+  (let ((dag-nodes (dag-nodes function-dag)))
+    (loop for (enter . cell-location) in cell-locations
+          unless (eq enter owner)
+            do (dolist (node (gethash enter dag-nodes))
+                 (push (enclose-instruction node) defining-instructions))))
+  (let* ((defining-blocks
+           (remove-duplicates
+            (remove-if-not (lambda (basic-block)
+                             (eq (cleavir-basic-blocks:owner basic-block)
+                                 owner))
+                           (mapcar (lambda (instruction)
+                                     (gethash instruction instruction-basic-blocks))
+                                   defining-instructions))
+            :test #'eq))
+         (dominating-block (first defining-blocks))
+         (dominating-block-distance (length (cleavir-dominance:dominators dominance-tree dominating-block))))
+    (dolist (defining-block (rest defining-blocks))
+      (let ((defining-block-distance (length (cleavir-dominance:dominators dominance-tree defining-block))))
+        (when (< defining-block-distance dominating-block-distance)
+          (setf dominating-block defining-block)
+          (setf dominating-block-distance defining-block-distance))))
+    ;; Start by creating a CREATE-CELL-INSTRUCTION in the basic block
+    ;; before where the first definition of the variable appears.
+    (let* ((first-instruction (dominating-instruction dominating-block defining-instructions))
+           (cleavir-ir:*policy* (cleavir-ir:policy first-instruction)))
+      (if (typep first-instruction 'cleavir-ir:enter-instruction)
+          (cleavir-ir:insert-instruction-after
+           (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
+           first-instruction)
+          (cleavir-ir:insert-instruction-before
+           (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
+           first-instruction)))))
+
 ;;; For a single static lexical location to be eliminated, make sure
 ;;; that the corresponding cell is available in all functions in which
 ;;; the static location is either read or written, as well as in the
@@ -114,19 +163,14 @@
 ;;;
 ;;; We proceed as follows: We insert new instructions after each
 ;;; ENTER-INSTRUCTION to write the cell into the dynamic lexical
-;;; variable supplied for that purpose.  After OWNER, we insert a
-;;; CREATE-CELL instruction.  For every other ENTER-INSTRUCTION in
-;;; CELL-LOCATIONS we add a FETCH instruction after it, and we import
-;;; the cell location of the parent function into the corresponding
+;;; variable supplied for that purpose.  In OWNER's procedure, we
+;;; insert a CREATE-CELL instruction after its first dominating
+;;; definition.  For every other ENTER-INSTRUCTION in CELL-LOCATIONS
+;;; we add a FETCH instruction after it, and we import the cell
+;;; location of the parent function into the corresponding
 ;;; ENCLOSE-INSTRUCTION.
 (defun ensure-cell-available (function-dag cell-locations owner)
-  ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
-  ;; the static lexical location to be eliminated.
-  (let ((cleavir-ir:*policy* (cleavir-ir:policy owner)))
-    (cleavir-ir:insert-instruction-after
-     (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
-     owner))
-  ;; Next, for each entry in CELL-LOCATIONS other than OWNER, transmit
+  ;; For each entry in CELL-LOCATIONS other than OWNER, transmit
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
   ;; ENTER-INSTRUCTION of that entry.
   (loop with dag-nodes = (dag-nodes function-dag)
@@ -210,7 +254,7 @@
 ;;; INSTRUCTION-OWNERS is a hash table mapping an instruction to its
 ;;; owner.  OWNER is the owner of LOCATION.
 (defun process-location
-    (location function-dag instruction-owners owner)
+    (location function-dag instruction-owners owner instruction-basic-blocks dominance-tree)
   (let* (;; Determine all the functions (represented by
 	 ;; ENTER-INSTRUCTIONs) that use (read or write) the location.
 	 (users (functions-using-location location instruction-owners))
@@ -218,17 +262,22 @@
 	 (enters (add-intermediate-functions users function-dag owner))
 	 ;; Compute a dictionary that associates each
 	 ;; ENTER-INSTRUCTION with a cell location.
-	 (cell-locations (allocate-cell-locations enters)))
+	 (cell-locations (allocate-cell-locations enters))
+         (defining-instructions (cleavir-ir:defining-instructions location)))
     (loop for instruction in (cleavir-ir:using-instructions location)
 	  for instruction-owner = (gethash instruction instruction-owners)
 	  for cell-location = (cdr (assoc instruction-owner cell-locations))
 	  do (replace-inputs location cell-location instruction))
-    (loop for instruction in (cleavir-ir:defining-instructions location)
+    (loop for instruction in defining-instructions
 	  for instruction-owner = (gethash instruction instruction-owners)
 	  for cell-location = (cdr (assoc instruction-owner cell-locations))
 	  do (replace-outputs location cell-location instruction))
-    ;; We do this step last, so that we are sure that the CREATE-CELL
-    ;; and FETCH instructions are inserted immediately after the ENTER
+    (insert-create-cell-instruction function-dag
+                                    defining-instructions
+                                    owner cell-locations
+                                    instruction-basic-blocks
+                                    dominance-tree)
+    ;; We do this step last, so that we are sure that the FETCH instructions are inserted immediately after the ENTER
     ;; instruction.
     (ensure-cell-available function-dag cell-locations owner)))
 
@@ -239,13 +288,24 @@
 	 (location-owners (compute-location-owners initial-instruction))
 	 (function-dag (build-function-dag initial-instruction))
 	 (static-locations
-	   (segregate-lexicals initial-instruction location-owners)))
+	   (segregate-lexicals initial-instruction location-owners))
+         (basic-blocks (cleavir-basic-blocks:basic-blocks initial-instruction))
+         (instruction-basic-blocks (cleavir-basic-blocks:instruction-basic-blocks basic-blocks))
+         (dominance-trees (make-hash-table :test #'eq)))
     (loop for static-location in static-locations
 	  for owner = (gethash static-location location-owners)
 	  do (process-location static-location
 			       function-dag
 			       instruction-owners
-			       owner))))
+			       owner
+                               instruction-basic-blocks
+                               (alexandria:ensure-gethash
+                                owner
+                                dominance-trees
+                                (cleavir-dominance:dominance-tree
+                                 (find owner basic-blocks
+                                       :key #'cleavir-basic-blocks:first-instruction)
+                                 #'cleavir-basic-blocks:successors))))))
 
 (defun segregate-only (initial-instruction)
   ;; Make sure everything is up to date.

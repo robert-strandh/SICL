@@ -14,9 +14,7 @@
     (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies)))
       (labels ((maybe-return-inline (node)
                  (let ((enter (cleavir-hir-transformations:enter-instruction node)))
-                   (when (and (all-parameters-required-p enter)
-                              (gethash enter trappers))
-                     ;; function's environment does not escape.
+                   (when (all-parameters-required-p enter)
                      ;; Now we just need to pick off any recursive uses, direct or indirect.
                      (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
                            with result
