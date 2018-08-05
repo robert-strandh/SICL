@@ -2,11 +2,12 @@
 
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
-    car cdr
+    car cdr append list consp
     ;; Functions for arithmetic
     + - * / floor ceiling round
     ;; Functions for calling functions
-    funcall apply))
+    funcall apply
+    cleavir-code-utilities:parse-macro))
 
 (defparameter *imported-variables*
   '(*package* *macroexpand-hook*))
