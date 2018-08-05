@@ -86,3 +86,7 @@
 (defun define-setf-macro-function (environment)
   (setf (sicl-genv:fdefinition '(setf sicl-genv:macro-function) environment)
         #'(setf sicl-genv:macro-function)))
+
+(defun define-global-environment (environment)
+  (setf (sicl-genv:special-variable 'sicl-genv:*global-environment*  environment t)
+        environment))
