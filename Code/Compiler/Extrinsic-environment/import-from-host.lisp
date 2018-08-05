@@ -30,6 +30,7 @@
                          sicl-loop
                          sicl-conditionals
                          cleavir-code-utilities
+                         sicl-data-and-control-flow
                          sicl-cons
                          sicl-iteration
                          sicl-clos
