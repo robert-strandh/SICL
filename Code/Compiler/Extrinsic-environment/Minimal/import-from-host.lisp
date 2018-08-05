@@ -2,7 +2,7 @@
 
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
-    car cdr append list consp
+    car cdr append list consp null not
     ;; Functions for arithmetic
     + - * / floor ceiling round
     ;; Functions for calling functions
