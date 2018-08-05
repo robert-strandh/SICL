@@ -26,6 +26,8 @@
   ;; in them.
   (define-defmacro environment)
   (define-default-setf-expander environment)
+  (define-setf-macro-function environment)
+  (define-global-environment environment)
   (flet ((load-file (file-name)
            (cst-load-file file-name environment system)))
     ;; Load a file containing a definition of the macro LAMBDA.  This
@@ -50,4 +52,19 @@
     ;; defined DEFMACRO to call (SETF MACRO-FUNCTION) directly, but
     ;; that would have been less "natural", so we do it this way
     ;; instead.
-    (load-file "../../../Data-and-control-flow/setf.lisp")))
+    (load-file "../../../Data-and-control-flow/setf.lisp")
+        ;; At this point, we have all the ingredients (the macros LAMBDA and
+    ;; SETF) in order to redefine the macro DEFMACRO as a native macro.
+    ;; SINCE we already have a primitive form of DEFMACRO, we use it to
+    ;; define DEFMACRO.  The result of loading this file is that all new
+    ;; macros defined subsequently will have their macro functions
+    ;; compiled with the target compiler.  However, the macro function of
+    ;; DEFMACRO is still compiled with the host compiler.
+    (load-file "../../../Environment/defmacro-defmacro.lisp")
+    ;; As mentioned above, at this point, we have a version of DEFMACRO
+    ;; that will compile the macro function of the macro definition using
+    ;; the target compiler.  However, the macro function of the macro
+    ;; DEFMACRO itself is still the result of using the host compiler.
+    ;; By loading the definition of DEFMACRO again, we fix this
+    ;; "problem".
+    (load-file "../../../Environment/defmacro-defmacro.lisp")))
