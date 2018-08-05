@@ -4,7 +4,9 @@
   '(;; Functions on CONS cells.
     car cdr
     ;; Functions for arithmetic
-    + - * / floor ceiling round))
+    + - * / floor ceiling round
+    ;; Functions for calling functions
+    funcall apply))
 
 (defparameter *imported-variables*
   '(*package* *macroexpand-hook*))
