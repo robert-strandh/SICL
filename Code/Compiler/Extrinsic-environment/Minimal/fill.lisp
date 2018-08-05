@@ -70,4 +70,10 @@
     (load-file "../../../Environment/defmacro-defmacro.lisp")
     ;; Now that have the final version of the macro DEFMACRO, we can
     ;; load the target version of the macro IN-PACKAGE.
-    (load-file "../../../Environment/in-package.lisp")))
+    (load-file "../../../Environment/in-package.lisp")
+    ;; Up to this point, the macro function of the macro LAMBDA was
+    ;; compiled using the host compiler.  Now that we have the final
+    ;; version of the macro DEFMACRO, we can reload the file containing
+    ;; the definition of the macro LAMBDA, which will cause the macro
+    ;; function to be compiled with the target compiler.
+    (load-file "../../../Evaluation-and-compilation/lambda.lisp")))
