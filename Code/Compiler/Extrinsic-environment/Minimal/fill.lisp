@@ -53,7 +53,7 @@
     ;; that would have been less "natural", so we do it this way
     ;; instead.
     (load-file "../../../Data-and-control-flow/setf.lisp")
-        ;; At this point, we have all the ingredients (the macros LAMBDA and
+    ;; At this point, we have all the ingredients (the macros LAMBDA and
     ;; SETF) in order to redefine the macro DEFMACRO as a native macro.
     ;; SINCE we already have a primitive form of DEFMACRO, we use it to
     ;; define DEFMACRO.  The result of loading this file is that all new
@@ -67,4 +67,7 @@
     ;; DEFMACRO itself is still the result of using the host compiler.
     ;; By loading the definition of DEFMACRO again, we fix this
     ;; "problem".
-    (load-file "../../../Environment/defmacro-defmacro.lisp")))
+    (load-file "../../../Environment/defmacro-defmacro.lisp")
+    ;; Now that have the final version of the macro DEFMACRO, we can
+    ;; load the target version of the macro IN-PACKAGE.
+    (load-file "../../../Environment/in-package.lisp")))
