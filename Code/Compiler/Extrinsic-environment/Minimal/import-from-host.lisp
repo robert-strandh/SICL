@@ -7,6 +7,7 @@
     + - * / floor ceiling round
     ;; Functions for calling functions
     funcall apply
+    sicl-genv:find-package
     cleavir-code-utilities:parse-macro))
 
 (defparameter *imported-variables*
