@@ -11,6 +11,8 @@
   (define-defmacro environment)
   (define-in-package environment)
   (define-default-setf-expander environment)
+  (host-load "../../Environment/defun-expander.lisp")
+  (host-load "../../Data-and-control-flow/shiftf-support.lisp")
   (flet ((load-file (file-name)
            (cst-load-file file-name environment system)))
     ;; Load a file containing a definition of the macro LAMBDA.  This
