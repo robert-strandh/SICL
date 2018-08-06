@@ -36,7 +36,8 @@
 (defpackage #:sicl-conditionals
   (:use #:common-lisp #:cleavir-code-utilities)
   (:export #:or #:or-expander
-           #:and #:when #:unless #:cond
+           #:and #:and-expander
+           #:when #:unless #:cond
 	   #:case #:ccase #:ecase
 	   #:typecase #:ctypecase #:etypecase
 	   #:expand-case-clauses

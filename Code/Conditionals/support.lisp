@@ -58,6 +58,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Expander for macro AND.
+
+(defun and-expander (forms)
+  (labels ((aux (forms)
+	     (if (null (cdr forms))
+		 (car forms)
+		 `(if ,(car forms)
+		      ,(aux (cdr forms))
+		      nil))))
+    (if (null forms)
+	t
+	(aux forms))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Macros CASE, ECASE, CCASE.
 ;;;
 ;;; A normal CASE/ECASE/CCASE clause has the form (KEYS FORM*) where
