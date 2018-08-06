@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-env)
+(cl:in-package #:sicl-evaluation-and-compilation)
 
 (defmacro defmacro (name lambda-list &body body)
   `(eval-when (:compile-toplevel :load-toplevel :execute)
