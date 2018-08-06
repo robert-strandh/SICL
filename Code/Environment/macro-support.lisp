@@ -42,8 +42,13 @@
 ;;; This is not the final version of the macro.  For one thing, we
 ;;; need to handle the optional DOCUMENTATION argument.
 
-(defmacro defconstant (name initial-value &optional documentation)
-  (defconstant-expander name initial-value documentation))
+(defun defconstant-expander (name initial-value documentation)
+  (declare (ignore documentation))
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (setf (sicl-genv:constant-variable
+            ',name
+            (load-time-value (sicl-genv:global-environment)))
+           ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -57,9 +62,34 @@
 ;;; This is not the final version of DEFVAR, because we ignore the
 ;;; documentation for now.
 
-(defmacro defvar
-    (name &optional (initial-value nil initial-value-p) documentation)
-  (defvar-expander name initial-value initial-value-p documentation))
+(defun defvar-expander (name initial-value initial-value-p documentation)
+  (declare (ignore documentation))
+  (if initial-value-p
+      `(progn
+         (eval-when (:compile-toplevel)
+           (setf (sicl-genv:special-variable
+                  ',name
+                  (load-time-value (sicl-genv:global-environment))
+                  nil)
+                 nil)
+           ',name)
+         (eval-when (:load-toplevel :execute)
+           (unless (sicl-genv:boundp
+                    ',name
+                    (load-time-value (sicl-genv:global-environment)))
+             (setf (sicl-genv:special-variable
+                    ',name
+                    (load-time-value (sicl-genv:global-environment))
+                    t)
+                   ,initial-value))
+           ',name))
+      `(eval-when (:compile-toplevel :load-toplevel :execute)
+         (setf (sicl-genv:special-variable
+                ',name
+                (load-time-value (sicl-genv:global-environment))
+                nil)
+               nil)
+         ',name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -74,20 +104,44 @@
 ;;; This is not the final version of DEFPARAMETER, because we ignore
 ;;; the documentation for now.
 
-(defmacro defparameter
-    (&environment env name initial-value &optional documentation)
-  (defparameter-expander env name initial-value documentation))
+(defun defparameter-expander (env name initial-value documentation)
+  (declare (ignore documentation))
+  `(progn
+     (eval-when (:compile-toplevel :load-toplevel :execute)
+       (setf (sicl-genv:special-variable ',name ,env nil)
+             nil))
+     (eval-when (:load-toplevel :execute)
+       (setf (sicl-genv:special-variable
+              ',name
+              (load-time-value (sicl-genv:global-environment))
+              t)
+             ,initial-value)
+       ',name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFTYPE.
 
-(defmacro deftype (name lambda-list &body body)
-  (deftype-expander name lambda-list body))
+(defun deftype-expander (name lambda-list body)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (setf (sicl-genv:type-expander
+            ',name
+            (load-time-value (sicl-genv:global-environment)))
+           (function ,(cleavir-code-utilities:parse-deftype 
+                       name
+                       lambda-list
+                       body)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFINE-COMPILER-MACRO.
 
-(defmacro define-compiler-macro (name lambda-list &body body)
-  (define-compiler-macro-expander name lambda-list body))
+(defun define-compiler-macro-expander (name lambda-list body)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (setf (sicl-genv:compiler-macro-function
+            ',name
+            (load-time-value (sicl-genv:global-environment)))
+           (function ,(cleavir-code-utilities:parse-macro
+                       name
+                       lambda-list
+                       body)))))

@@ -39,18 +39,18 @@
   ;; COMMON-LISP package that name functions and variables that have
   ;; to do with manipulating the environment.
   (:shadow #:fboundp
-	   #:fdefinition
-	   #:macro-function
-	   #:compiler-macro-function
-	   #:boundp
-	   #:makunbound
-	   #:fmakunbound
-	   #:find-class
-	   #:find-package
-	   #:get-setf-expansion
-	   #:declaration
-	   #:symbol-plist
-	   )
+           #:fdefinition
+           #:macro-function
+           #:compiler-macro-function
+           #:boundp
+           #:makunbound
+           #:fmakunbound
+           #:find-class
+           #:find-package
+           #:get-setf-expansion
+           #:declaration
+           #:symbol-plist
+           )
   (:export
    #:environment
    #:fboundp
@@ -102,4 +102,9 @@
   (:use #:common-lisp))
 
 (defpackage #:sicl-standard-environment-macros
-  (:use #:common-lisp))
+  (:use #:common-lisp)
+  (:export #:defconstant-expander
+           #:defvar-expander
+           #:defparameter-expander
+           #:deftype-expander
+           #:define-compiler-macro-expander))
