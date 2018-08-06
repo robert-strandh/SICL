@@ -88,4 +88,4 @@
     (load-file "../../../Data-and-control-flow/nth-value.lisp")
     (load-file "../../../Data-and-control-flow/multiple-value-call-defmacro.lisp")
     ;; Load a file containing the definition of macro DEFUN.
-    (load-file "../../../Environment/defun-defmacro.lisp")))
+    (load-file "../../../Data-and-control-flow/defun-defmacro.lisp")))
