@@ -24,9 +24,9 @@
     sicl-conditionals:or-expander
     sicl-conditionals:and-expander
     sicl-conditionals:cond-expander
-    sicl-conditionals:expand-case-clauses
-    sicl-conditionals:expand-e/ccase-clauses
-    sicl-conditionals:collect-e/ccase-keys
+    sicl-conditionals:case-expander
+    sicl-conditionals:ecase-expander
+    sicl-conditionals:ccase-expander
     sicl-conditionals:compute-let*-bindings
     sicl-conditionals:expand-typecase-clauses
     sicl-conditionals:expand-e/ctypecase-clauses
