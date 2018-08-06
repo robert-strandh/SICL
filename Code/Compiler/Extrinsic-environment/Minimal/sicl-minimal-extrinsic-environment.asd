@@ -11,6 +11,7 @@
                :sicl-clos-support
                :sicl-type-support
                :sicl-conditions
+               :sicl-environment-support
                :closer-mop
                :cleavir-generate-ast
                :cleavir-cst-to-ast
