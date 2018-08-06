@@ -42,8 +42,6 @@
 	   #:case #:case-expander
            #:ccase #:ccase-expander
            #:ecase #:ecase-expander
-	   #:typecase #:ctypecase #:etypecase
-	   #:expand-typecase-clauses
-	   #:expand-e/ctypecase-clauses
-	   #:compute-let*-bindings
-	   #:collect-e/ctypecase-keys))
+	   #:typecase #:typecase-expander
+           #:ctypecase #:ctypecase-expander
+           #:etypecase #:etypecase-expander))
