@@ -19,7 +19,7 @@
 (defgeneric remove-instruction (instruction))
 
 (defmethod remove-instruction (instruction)
-  (error "remove-instruction is not implemented for this type of instruction."))
+  (error "remove-instruction is not implemented for this type of instruction: ~a" instruction))
 
 (defmethod remove-instruction ((instruction cleavir-ir:one-successor-mixin))
   (cleavir-ir:delete-instruction instruction))

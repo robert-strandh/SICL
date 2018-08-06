@@ -68,7 +68,7 @@
              (let ((function (first (cleavir-ir:inputs call))))
                (inline-function initial-instruction call enter (make-hash-table :test #'eq) :uniquep uniquep)
                (dolist (defining-instruction (cleavir-ir:defining-instructions function))
-                 (cleavir-remove-useless-instructions::remove-useless-instructions-from
+                 (cleavir-remove-useless-instructions:remove-useless-instructions-from
                   initial-instruction
                   defining-instruction))))
         (cleavir-ir:set-predecessors initial-instruction))
