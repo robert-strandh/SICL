@@ -11,8 +11,6 @@
   (define-defmacro environment)
   (define-in-package environment)
   (define-default-setf-expander environment)
-  (host-load "../../Environment/defun-support.lisp")
-  (host-load "../../Data-and-control-flow/shiftf-support.lisp")
   (flet ((load-file (file-name)
            (cst-load-file file-name environment system)))
     ;; Load a file containing a definition of the macro LAMBDA.  This
@@ -80,7 +78,6 @@
     ;; because it takes an environment argument, and the host version
     ;; does not work with the Cleavir/SICL environment objects.
     (load-file "../../Data-and-control-flow/get-setf-expansion.lisp")
-    ;; Load a file containing the definitions of the conditional macros
     ;; such as AND, OR, CASE, etc.
     (load-file "../../Conditionals/macros.lisp")
     ;; Load a file containing the definitions of the macros DEFVAR,
