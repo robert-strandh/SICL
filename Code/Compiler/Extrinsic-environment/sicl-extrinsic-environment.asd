@@ -100,7 +100,6 @@
   :depends-on (:concrete-syntax-tree
                :trivial-gray-streams
                :sicl-simple-environment
-               :sicl-environment-support
                :sicl-environment
                :sicl-loop-support
                :sicl-arithmetic
