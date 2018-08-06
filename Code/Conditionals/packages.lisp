@@ -39,7 +39,9 @@
            #:and #:and-expander
            #:when #:unless
            #:cond #:cond-expander
-	   #:case #:ccase #:ecase
+	   #:case #:case-expander
+           #:ccase #:ccase-expander
+           #:ecase #:ecase-expander
 	   #:typecase #:ctypecase #:etypecase
 	   #:expand-case-clauses
 	   #:expand-e/ccase-clauses

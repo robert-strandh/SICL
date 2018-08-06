@@ -105,20 +105,11 @@
 ;;; singleton list containing NIL, the user has to use `(NIL)'. 
 
 (defmacro case (keyform &rest clauses)
-  (let ((variable (gensym)))
-    `(let ((,variable ,keyform))
-       ,(expand-case-clauses clauses variable))))
+  (case-expander keyform clauses))
 
 ;;; For ECASE, the default is to signal a type error. 
 (defmacro ecase (keyform &rest clauses)
-  (let* ((variable (gensym))
-	 (keys (collect-e/ccase-keys clauses 'ecase))
-	 (final `(error 'ecase-type-error
-			:name 'ecase
-			:datum ,variable
-			:expected-type '(member ,@keys))))
-    `(let ((,variable ,keyform))
-       ,(expand-e/ccase-clauses clauses variable final 'ecase))))
+  (ecase-expander keyform clauses))
 
 ;;; For CCASE, the default is to signal a correctable
 ;;; error, allowing a new value to be stored in the
@@ -127,30 +118,8 @@
 ;;; avoid multiple evaluation of the subforms of the place, 
 ;;; even though the HyperSpec allows such multiple evaluation. 
 (defmacro ccase (keyplace &rest clauses &environment env)
-  (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
-      (get-setf-expansion keyplace env)
-    (let* ((label (gensym))
-	   (keys (collect-e/ccase-keys clauses 'ccase))
-	   (final `(restart-case (error 'ccase-type-error
-					:name 'ccase
-					:datum ,(car store-vars)
-					:expected-type '(member ,@keys))
-				 (store-value (v)
-					      :interactive
-					      (lambda ()
-						(format *query-io*
-							"New value: ")
-						(list (read *query-io*)))
-					      :report "Supply a new value"
-					      (setq ,(car store-vars) v)
-					      ,writer-forms
-					      (go ,label)))))
-      `(let* ,(compute-let*-bindings vars vals)
-	 (declare (ignorable ,@vars))
-	 (multiple-value-bind ,store-vars ,reader-forms
-	   (tagbody
-	      ,label
-	      ,(expand-e/ccase-clauses clauses (car store-vars) final 'ccase)))))))
+  (ccase-expander keyplace clauses env))
+
 (defmacro typecase (keyform &rest clauses)
   (let ((variable (gensym)))
     `(let ((,variable ,keyform))

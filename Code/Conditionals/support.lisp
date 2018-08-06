@@ -95,7 +95,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macros CASE, ECASE, CCASE.
+;;; Expanders for macros CASE, ECASE, CCASE.
 ;;;
 ;;; A normal CASE/ECASE/CCASE clause has the form (KEYS FORM*) where
 ;;; KEYS is a designator for a list of objects, except that for CASE,
@@ -123,10 +123,28 @@
       (cons `(eql ,variable ,(car keys))
 	    (eql-ify (cdr keys) variable))))
 
+;;; Collect a list of all the keys for ecase or ccase 
+;;; to be used as the `exptected type' in error reporting.
+(defun collect-e/ccase-keys (clauses name)
+  (if (null clauses)
+      nil
+      (append 
+       (let ((keys (caar clauses)))
+	 (if (and (atom keys)
+		  (not (null keys)))
+	     (list keys)
+	     (if (not (cleavir-code-utilities:proper-list-p keys))
+		 (error 'malformed-keys
+			:name name
+			:keys keys)
+		 keys)))
+       (collect-e/ccase-keys (cdr clauses) name))))
+
 ;;; This function turns a list of CASE clauses into nested IFs.  It
 ;;; checks that the list of clauses is a proper list and that each
 ;;; clause is also a proper list.  It also checks that, if there is an
 ;;; otherwise clause, it is the last one.
+
 (defun expand-case-clauses (clauses variable)
   (if (null clauses)
       'nil
@@ -163,22 +181,10 @@
 			       (progn ,@forms)
 			       ,(expand-case-clauses (cdr clauses) variable))))))))))
 
-;;; Collect a list of all the keys for ecase or ccase 
-;;; to be used as the `exptected type' in error reporting.
-(defun collect-e/ccase-keys (clauses name)
-  (if (null clauses)
-      nil
-      (append 
-       (let ((keys (caar clauses)))
-	 (if (and (atom keys)
-		  (not (null keys)))
-	     (list keys)
-	     (if (not (cleavir-code-utilities:proper-list-p keys))
-		 (error 'malformed-keys
-			:name name
-			:keys keys)
-		 keys)))
-       (collect-e/ccase-keys (cdr clauses) name))))
+(defun case-expander (keyform clauses)
+  (let ((variable (gensym)))
+    `(let ((,variable ,keyform))
+       ,(expand-case-clauses clauses variable))))
 
 ;;; Expand a list of clauses for ECASE or CCASE.  We turn the clauses
 ;;; into nested IFs, where the innermost form (final) depends on
@@ -208,6 +214,16 @@
 		       (progn ,@forms)
 		       ,(expand-e/ccase-clauses (cdr clauses) variable final name))))))))
 
+(defun ecase-expander (keyform clauses)
+  (let* ((variable (gensym))
+	 (keys (collect-e/ccase-keys clauses 'ecase))
+	 (final `(error 'ecase-type-error
+			:name 'ecase
+			:datum ,variable
+			:expected-type '(member ,@keys))))
+    `(let ((,variable ,keyform))
+       ,(expand-e/ccase-clauses clauses variable final 'ecase))))
+
 ;;; This function is does the same thing as
 ;;; (mapcar #'list vars vals), but since we are not
 ;;; using mapping functions here, we have to 
@@ -217,6 +233,32 @@
       '()
       (cons (list (car vars) (car vals))
 	    (compute-let*-bindings (cdr vars) (cdr vals)))))
+
+(defun ccase-expander (keyplace clauses env)
+  (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
+      (get-setf-expansion keyplace env)
+    (let* ((label (gensym))
+	   (keys (collect-e/ccase-keys clauses 'ccase))
+	   (final `(restart-case (error 'ccase-type-error
+					:name 'ccase
+					:datum ,(car store-vars)
+					:expected-type '(member ,@keys))
+				 (store-value (v)
+					      :interactive
+					      (lambda ()
+						(format *query-io*
+							"New value: ")
+						(list (read *query-io*)))
+					      :report "Supply a new value"
+					      (setq ,(car store-vars) v)
+					      ,writer-forms
+					      (go ,label)))))
+      `(let* ,(compute-let*-bindings vars vals)
+	 (declare (ignorable ,@vars))
+	 (multiple-value-bind ,store-vars ,reader-forms
+	   (tagbody
+	      ,label
+	      ,(expand-e/ccase-clauses clauses (car store-vars) final 'ccase)))))))
 
 ;;; Turn a list of TYPECASE clauses into nested IFs.  We check that
 ;;; the list of clauses is a proper list, that each clause is a proper
