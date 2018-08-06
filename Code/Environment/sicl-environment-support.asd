@@ -4,4 +4,4 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "defun-expander")))
+   (:file "defun-support")))

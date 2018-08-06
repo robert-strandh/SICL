@@ -11,7 +11,7 @@
   (define-defmacro environment)
   (define-in-package environment)
   (define-default-setf-expander environment)
-  (host-load "../../Environment/defun-expander.lisp")
+  (host-load "../../Environment/defun-support.lisp")
   (host-load "../../Data-and-control-flow/shiftf-support.lisp")
   (flet ((load-file (file-name)
            (cst-load-file file-name environment system)))
