@@ -94,4 +94,6 @@
     ;; We can not use the version of this function provided by the host,
     ;; because it takes an environment argument, and the host version
     ;; does not work with the Cleavir/SICL environment objects.
-    (load-file "../../../Data-and-control-flow/get-setf-expansion.lisp")))
+    (load-file "../../../Data-and-control-flow/get-setf-expansion.lisp")
+    ;; such as AND, OR, CASE, etc.
+    (load-file "../../../Conditionals/macros.lisp")))

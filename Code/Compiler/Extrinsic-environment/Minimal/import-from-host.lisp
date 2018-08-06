@@ -5,6 +5,10 @@
     car cdr append list consp null not
     ;; Functions for arithmetic
     + - * / floor ceiling round
+    ;; Various functions
+    coerce
+    ;; Funcions related to symbols
+    gensym
     ;; Functions for calling functions
     funcall apply
     sicl-genv:find-package
@@ -13,6 +17,14 @@
     (setf sicl-genv:fdefinition)
     cleavir-environment:global-environment
     cleavir-code-utilities:parse-macro
+    cleavir-code-utilities:proper-list-p
+    sicl-conditionals:expand-case-clauses
+    sicl-conditionals:expand-e/ccase-clauses
+    sicl-conditionals:collect-e/ccase-keys
+    sicl-conditionals:compute-let*-bindings
+    sicl-conditionals:expand-typecase-clauses
+    sicl-conditionals:expand-e/ctypecase-clauses
+    sicl-conditionals:collect-e/ctypecase-keys
     sicl-data-and-control-flow:shiftf-expander
     sicl-data-and-control-flow:defun-expander))
 
@@ -23,11 +35,13 @@
   '(#:common-lisp
     #:sicl-evaluation-and-compilation
     #:sicl-global-environment
-    #:sicl-data-and-control-flow))
+    #:sicl-data-and-control-flow
+    #:sicl-conditionals))
 
 (defun import-from-host (environment)
   (host-load "../../../Data-and-control-flow/defun-support.lisp")
   (host-load "../../../Data-and-control-flow/shiftf-support.lisp")
+  (host-load "../../../Conditionals/support.lisp")
   (loop for name in *imported-functions*
         do (setf (sicl-genv:fdefinition name environment) 
                  (fdefinition name)))
