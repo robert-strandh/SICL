@@ -8,7 +8,8 @@
     ;; Functions for calling functions
     funcall apply
     sicl-genv:find-package
-    cleavir-code-utilities:parse-macro))
+    cleavir-code-utilities:parse-macro
+    sicl-genv:defun-expander))
 
 (defparameter *imported-variables*
   '(*package* *macroexpand-hook*))
