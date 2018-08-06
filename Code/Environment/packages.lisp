@@ -94,6 +94,7 @@
    #:policy
    #:structure-type
    #:structure-size
+   #:defun-expander
    ))
 
 (defpackage #:sicl-standard-environment-functions
