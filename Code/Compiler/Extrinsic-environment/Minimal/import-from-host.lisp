@@ -27,10 +27,9 @@
     sicl-conditionals:case-expander
     sicl-conditionals:ecase-expander
     sicl-conditionals:ccase-expander
-    sicl-conditionals:compute-let*-bindings
-    sicl-conditionals:expand-typecase-clauses
-    sicl-conditionals:expand-e/ctypecase-clauses
-    sicl-conditionals:collect-e/ctypecase-keys
+    sicl-conditionals:typecase-expander
+    sicl-conditionals:etypecase-expander
+    sicl-conditionals:ctypecase-expander
     sicl-data-and-control-flow:shiftf-expander
     sicl-data-and-control-flow:defun-expander))
 
