@@ -22,6 +22,7 @@
     cleavir-code-utilities:parse-deftype
     cleavir-code-utilities:proper-list-p
     sicl-conditionals:or-expander
+    sicl-conditionals:and-expander
     sicl-conditionals:expand-case-clauses
     sicl-conditionals:expand-e/ccase-clauses
     sicl-conditionals:collect-e/ccase-keys
