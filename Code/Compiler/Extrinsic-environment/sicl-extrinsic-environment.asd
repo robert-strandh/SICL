@@ -130,6 +130,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "host-load")
    (:file "runtime-environment")
    (:file "symbol-value")
    (:file "traced-funcall")
