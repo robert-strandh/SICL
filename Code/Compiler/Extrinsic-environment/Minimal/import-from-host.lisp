@@ -17,6 +17,7 @@
     (setf sicl-genv:fdefinition)
     cleavir-environment:global-environment
     cleavir-code-utilities:parse-macro
+    cleavir-code-utilities:parse-deftype
     cleavir-code-utilities:proper-list-p
     sicl-conditionals:expand-case-clauses
     sicl-conditionals:expand-e/ccase-clauses
@@ -36,7 +37,9 @@
     #:sicl-evaluation-and-compilation
     #:sicl-global-environment
     #:sicl-data-and-control-flow
-    #:sicl-conditionals))
+    #:sicl-conditionals
+    #:sicl-standard-environment-macros
+    #:sicl-standard-environment-functions))
 
 (defun import-from-host (environment)
   (host-load "../../../Data-and-control-flow/defun-support.lisp")

@@ -96,4 +96,7 @@
     ;; does not work with the Cleavir/SICL environment objects.
     (load-file "../../../Data-and-control-flow/get-setf-expansion.lisp")
     ;; such as AND, OR, CASE, etc.
-    (load-file "../../../Conditionals/macros.lisp")))
+    (load-file "../../../Conditionals/macros.lisp")
+    ;; Load a file containing the definitions of the macros DEFVAR,
+    ;; DEFPARAMETER, DEFCONSTANT, DEFTYPE, and DEFINE-COMPILER-MACRO.
+    (load-file "../../../Environment/standard-environment-macros.lisp")))
