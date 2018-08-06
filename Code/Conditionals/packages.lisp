@@ -37,7 +37,8 @@
   (:use #:common-lisp #:cleavir-code-utilities)
   (:export #:or #:or-expander
            #:and #:and-expander
-           #:when #:unless #:cond
+           #:when #:unless
+           #:cond #:cond-expander
 	   #:case #:ccase #:ecase
 	   #:typecase #:ctypecase #:etypecase
 	   #:expand-case-clauses

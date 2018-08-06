@@ -80,22 +80,7 @@
 ;;; Macro COND.
 
 (defmacro cond (&rest clauses)
-  (labels ((aux (clauses)
-	     (if (null clauses)
-		 nil
-		 (let ((clause (car clauses)))
-		   (if (not (and (cleavir-code-utilities:proper-list-p clause)
-				 (not (null clause))))
-		       (error 'malformed-cond-clause
-			      :name 'cond
-			      :clause clause)
-		       (if (null (cdr clause))
-			   `(or ,(car clause)
-				,(aux (cdr clauses)))
-			   `(if ,(car clause)
-				(progn ,@(cdr clause))
-				,(aux (cdr clauses)))))))))
-    (aux clauses)))
+  (cond-expander clauses))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
