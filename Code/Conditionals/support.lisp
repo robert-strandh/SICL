@@ -1,4 +1,4 @@
-;;;; Copyright (c) 2008 - 2015
+;;;; Copyright (c) 2008 - 2018
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
@@ -45,16 +45,16 @@
 
 (defun or-expander (forms)
   (labels ((aux (forms)
-	     (if (null (cdr forms))
-		 (car forms)
-		 (let ((temp-var (gensym)))
-		   `(let ((,temp-var ,(car forms)))
-		      (if ,temp-var
-			  ,temp-var
-			  ,(aux (cdr forms))))))))
+             (if (null (cdr forms))
+                 (car forms)
+                 (let ((temp-var (gensym)))
+                   `(let ((,temp-var ,(car forms)))
+                      (if ,temp-var
+                          ,temp-var
+                          ,(aux (cdr forms))))))))
     (if (null forms)
-	nil
-	(aux forms))))
+        nil
+        (aux forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -62,14 +62,14 @@
 
 (defun and-expander (forms)
   (labels ((aux (forms)
-	     (if (null (cdr forms))
-		 (car forms)
-		 `(if ,(car forms)
-		      ,(aux (cdr forms))
-		      nil))))
+             (if (null (cdr forms))
+                 (car forms)
+                 `(if ,(car forms)
+                      ,(aux (cdr forms))
+                      nil))))
     (if (null forms)
-	t
-	(aux forms))))
+        t
+        (aux forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -77,20 +77,20 @@
 
 (defun cond-expander (clauses)
   (labels ((aux (clauses)
-	     (if (null clauses)
-		 nil
-		 (let ((clause (car clauses)))
-		   (if (not (and (cleavir-code-utilities:proper-list-p clause)
-				 (not (null clause))))
-		       (error 'malformed-cond-clause
-			      :name 'cond
-			      :clause clause)
-		       (if (null (cdr clause))
-			   `(or ,(car clause)
-				,(aux (cdr clauses)))
-			   `(if ,(car clause)
-				(progn ,@(cdr clause))
-				,(aux (cdr clauses)))))))))
+             (if (null clauses)
+                 nil
+                 (let ((clause (car clauses)))
+                   (if (not (and (cleavir-code-utilities:proper-list-p clause)
+                                 (not (null clause))))
+                       (error 'malformed-cond-clause
+                              :name 'cond
+                              :clause clause)
+                       (if (null (cdr clause))
+                           `(or ,(car clause)
+                                ,(aux (cdr clauses)))
+                           `(if ,(car clause)
+                                (progn ,@(cdr clause))
+                                ,(aux (cdr clauses)))))))))
     (aux clauses)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -121,7 +121,7 @@
   (if (null keys)
       '()
       (cons `(eql ,variable ,(car keys))
-	    (eql-ify (cdr keys) variable))))
+            (eql-ify (cdr keys) variable))))
 
 ;;; Collect a list of all the keys for ecase or ccase 
 ;;; to be used as the `exptected type' in error reporting.
@@ -130,14 +130,14 @@
       nil
       (append 
        (let ((keys (caar clauses)))
-	 (if (and (atom keys)
-		  (not (null keys)))
-	     (list keys)
-	     (if (not (cleavir-code-utilities:proper-list-p keys))
-		 (error 'malformed-keys
-			:name name
-			:keys keys)
-		 keys)))
+         (if (and (atom keys)
+                  (not (null keys)))
+             (list keys)
+             (if (not (cleavir-code-utilities:proper-list-p keys))
+                 (error 'malformed-keys
+                        :name name
+                        :keys keys)
+                 keys)))
        (collect-e/ccase-keys (cdr clauses) name))))
 
 ;;; This function turns a list of CASE clauses into nested IFs.  It
@@ -149,37 +149,37 @@
   (if (null clauses)
       'nil
       (if (not (consp clauses))
-	  (error 'malformed-case-clauses
-		 :name 'case
-		 :clauses clauses)
-	  (let ((clause (car clauses)))
-	    (unless (and (cleavir-code-utilities:proper-list-p clause)
-			 (not (null clause)))
-	      (error 'malformed-case-clause
-		     :name 'case
-		     :clause clause))
-	    (if (or (eq (car clause) 'otherwise)
-		    (eq (car clause) t))
-		(if (null (cdr clauses))
-		    `(progn ,@(cdr clause))
-		    (error 'otherwise-clause-not-last
-			   :name 'case
-			   :clauses (cdr clauses)))
-		;; it is a normal clause
-		(let ((keys (car clause))
-		      (forms (cdr clause)))
-		  (if (and (atom keys)
-			   (not (null keys)))
-		      `(if (eql ,variable ,keys)
-			   (progn ,@forms)
-			   ,(expand-case-clauses (cdr clauses) variable))
-		      (if (not (cleavir-code-utilities:proper-list-p keys))
-			  (error 'malformed-keys
-				 :name 'case
-				 :keys keys)
-			  `(if (or ,@(eql-ify keys variable))
-			       (progn ,@forms)
-			       ,(expand-case-clauses (cdr clauses) variable))))))))))
+          (error 'malformed-case-clauses
+                 :name 'case
+                 :clauses clauses)
+          (let ((clause (car clauses)))
+            (unless (and (cleavir-code-utilities:proper-list-p clause)
+                         (not (null clause)))
+              (error 'malformed-case-clause
+                     :name 'case
+                     :clause clause))
+            (if (or (eq (car clause) 'otherwise)
+                    (eq (car clause) t))
+                (if (null (cdr clauses))
+                    `(progn ,@(cdr clause))
+                    (error 'otherwise-clause-not-last
+                           :name 'case
+                           :clauses (cdr clauses)))
+                ;; it is a normal clause
+                (let ((keys (car clause))
+                      (forms (cdr clause)))
+                  (if (and (atom keys)
+                           (not (null keys)))
+                      `(if (eql ,variable ,keys)
+                           (progn ,@forms)
+                           ,(expand-case-clauses (cdr clauses) variable))
+                      (if (not (cleavir-code-utilities:proper-list-p keys))
+                          (error 'malformed-keys
+                                 :name 'case
+                                 :keys keys)
+                          `(if (or ,@(eql-ify keys variable))
+                               (progn ,@forms)
+                               ,(expand-case-clauses (cdr clauses) variable))))))))))
 
 (defun case-expander (keyform clauses)
   (let ((variable (gensym)))
@@ -194,33 +194,33 @@
   (if (null clauses)
       final
       (if (not (consp clauses))
-	  (error 'malformed-case-clauses
-		 :name name
-		 :clauses clauses)
-	  (let ((clause (car clauses)))
-	    (unless (and (cleavir-code-utilities:proper-list-p clause)
-			 (not (null clause)))
-	      (error 'malformed-case-clause
-		     :name name
-		     :clause clause))
-	    (let ((keys (car clause))
-		  (forms (cdr clause)))
-	      (if (and (atom keys)
-		       (not (null keys)))
-		  `(if (eql ,variable ,keys)
-		       (progn ,@forms)
-		       ,(expand-e/ccase-clauses (cdr clauses) variable final name))
-		  `(if (or ,@(eql-ify keys variable))
-		       (progn ,@forms)
-		       ,(expand-e/ccase-clauses (cdr clauses) variable final name))))))))
+          (error 'malformed-case-clauses
+                 :name name
+                 :clauses clauses)
+          (let ((clause (car clauses)))
+            (unless (and (cleavir-code-utilities:proper-list-p clause)
+                         (not (null clause)))
+              (error 'malformed-case-clause
+                     :name name
+                     :clause clause))
+            (let ((keys (car clause))
+                  (forms (cdr clause)))
+              (if (and (atom keys)
+                       (not (null keys)))
+                  `(if (eql ,variable ,keys)
+                       (progn ,@forms)
+                       ,(expand-e/ccase-clauses (cdr clauses) variable final name))
+                  `(if (or ,@(eql-ify keys variable))
+                       (progn ,@forms)
+                       ,(expand-e/ccase-clauses (cdr clauses) variable final name))))))))
 
 (defun ecase-expander (keyform clauses)
   (let* ((variable (gensym))
-	 (keys (collect-e/ccase-keys clauses 'ecase))
-	 (final `(error 'ecase-type-error
-			:name 'ecase
-			:datum ,variable
-			:expected-type '(member ,@keys))))
+         (keys (collect-e/ccase-keys clauses 'ecase))
+         (final `(error 'ecase-type-error
+                        :name 'ecase
+                        :datum ,variable
+                        :expected-type '(member ,@keys))))
     `(let ((,variable ,keyform))
        ,(expand-e/ccase-clauses clauses variable final 'ecase))))
 
@@ -232,33 +232,33 @@
   (if (null vars)
       '()
       (cons (list (car vars) (car vals))
-	    (compute-let*-bindings (cdr vars) (cdr vals)))))
+            (compute-let*-bindings (cdr vars) (cdr vals)))))
 
 (defun ccase-expander (keyplace clauses env)
   (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
       (get-setf-expansion keyplace env)
     (let* ((label (gensym))
-	   (keys (collect-e/ccase-keys clauses 'ccase))
-	   (final `(restart-case (error 'ccase-type-error
-					:name 'ccase
-					:datum ,(car store-vars)
-					:expected-type '(member ,@keys))
-				 (store-value (v)
-					      :interactive
-					      (lambda ()
-						(format *query-io*
-							"New value: ")
-						(list (read *query-io*)))
-					      :report "Supply a new value"
-					      (setq ,(car store-vars) v)
-					      ,writer-forms
-					      (go ,label)))))
+           (keys (collect-e/ccase-keys clauses 'ccase))
+           (final `(restart-case (error 'ccase-type-error
+                                        :name 'ccase
+                                        :datum ,(car store-vars)
+                                        :expected-type '(member ,@keys))
+                                 (store-value (v)
+                                              :interactive
+                                              (lambda ()
+                                                (format *query-io*
+                                                        "New value: ")
+                                                (list (read *query-io*)))
+                                              :report "Supply a new value"
+                                              (setq ,(car store-vars) v)
+                                              ,writer-forms
+                                              (go ,label)))))
       `(let* ,(compute-let*-bindings vars vals)
-	 (declare (ignorable ,@vars))
-	 (multiple-value-bind ,store-vars ,reader-forms
-	   (tagbody
-	      ,label
-	      ,(expand-e/ccase-clauses clauses (car store-vars) final 'ccase)))))))
+         (declare (ignorable ,@vars))
+         (multiple-value-bind ,store-vars ,reader-forms
+           (tagbody
+              ,label
+              ,(expand-e/ccase-clauses clauses (car store-vars) final 'ccase)))))))
 
 ;;; Turn a list of TYPECASE clauses into nested IFs.  We check that
 ;;; the list of clauses is a proper list, that each clause is a proper
@@ -268,28 +268,28 @@
   (if (null clauses)
       'nil
       (if (not (consp clauses))
-	  (error 'malformed-typecase-clauses
-		 :name 'typecase
-		 :clauses clauses)
-	  (let ((clause (car clauses)))
-	    (unless (and (cleavir-code-utilities:proper-list-p clause)
-			 (not (null clause)))
-	      (error 'malformed-typecase-clause
-		     :name 'typecase
-		     :clause clause))
-	    (if (or (eq (car clause) 'otherwise)
-		    (eq (car clause) t))
-		(if (null (cdr clauses))
-		    `(progn ,@(cdr clauses))
-		    (error 'otherwise-clause-not-last
-			   :name 'typecase
-			   :clauses (cdr clauses)))
-		;; it is a normal clause
-		(let ((type (car clause))
-		      (forms (cdr clause)))
-		  `(if (typep ,variable ,type)
-		       (progn ,@forms)
-		       ,(expand-typecase-clauses (cdr clauses) variable))))))))
+          (error 'malformed-typecase-clauses
+                 :name 'typecase
+                 :clauses clauses)
+          (let ((clause (car clauses)))
+            (unless (and (cleavir-code-utilities:proper-list-p clause)
+                         (not (null clause)))
+              (error 'malformed-typecase-clause
+                     :name 'typecase
+                     :clause clause))
+            (if (or (eq (car clause) 'otherwise)
+                    (eq (car clause) t))
+                (if (null (cdr clauses))
+                    `(progn ,@(cdr clauses))
+                    (error 'otherwise-clause-not-last
+                           :name 'typecase
+                           :clauses (cdr clauses)))
+                ;; it is a normal clause
+                (let ((type (car clause))
+                      (forms (cdr clause)))
+                  `(if (typep ,variable ,type)
+                       (progn ,@forms)
+                       ,(expand-typecase-clauses (cdr clauses) variable))))))))
 
 ;;; Collect a list of all the types for etypecase or ctypecase 
 ;;; to be used as the `exptected type' in error reporting.
@@ -297,7 +297,7 @@
   (if (null clauses)
       nil
       (cons (caar clauses)
-	    (collect-e/ctypecase-keys (cdr clauses)))))
+            (collect-e/ctypecase-keys (cdr clauses)))))
 
 ;;; Turn a list of clauses for ETYPCASE or CTYPECASE into nested IFs.
 ;;; We check that the list of clauses is a proper list, and that each
@@ -308,20 +308,20 @@
   (if (null clauses)
       final
       (if (not (consp clauses))
-	  (error 'malformed-typecase-clauses
-		 :name name
-		 :clauses clauses)
-	  (let ((clause (car clauses)))
-	    (unless (and (cleavir-code-utilities:proper-list-p clause)
-			 (not (null clause)))
-	      (error 'malformed-typecase-clause
-		     :name name
-		     :clause clause))
-	    (let ((type (car clause))
-		  (forms (cdr clause)))
-	      `(if (typep ,variable ,type)
-		   (progn ,@forms)
-		   ,(expand-e/ctypecase-clauses (cdr clauses) variable final name)))))))
+          (error 'malformed-typecase-clauses
+                 :name name
+                 :clauses clauses)
+          (let ((clause (car clauses)))
+            (unless (and (cleavir-code-utilities:proper-list-p clause)
+                         (not (null clause)))
+              (error 'malformed-typecase-clause
+                     :name name
+                     :clause clause))
+            (let ((type (car clause))
+                  (forms (cdr clause)))
+              `(if (typep ,variable ,type)
+                   (progn ,@forms)
+                   ,(expand-e/ctypecase-clauses (cdr clauses) variable final name)))))))
 
 (defun typecase-expander (keyform clauses)
   (let ((variable (gensym)))
@@ -331,11 +331,11 @@
 ;;; As with ECASE, the default for ETYPECASE is to signal an error.
 (defun etypecase-expander (keyform clauses)
   (let* ((variable (gensym))
-	 (keys (collect-e/ctypecase-keys clauses))
-	 (final `(error 'etypecase-type-error
-			:name 'etypecase
-			:datum ,variable
-			:expected-type '(member ,@keys))))
+         (keys (collect-e/ctypecase-keys clauses))
+         (final `(error 'etypecase-type-error
+                        :name 'etypecase
+                        :datum ,variable
+                        :expected-type '(member ,@keys))))
     `(let ((,variable ,keyform))
        ,(expand-e/ctypecase-clauses clauses variable final 'etypecase))))
 
@@ -346,24 +346,24 @@
   (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
       (get-setf-expansion keyplace env)
     (let* ((label (gensym))
-	   (keys (collect-e/ctypecase-keys clauses))
-	   (final `(restart-case (error 'ctypecase-type-error
-					:name 'ctypecase
-					:datum ,(car store-vars)
-					:expected-type '(member ,@keys))
-				 (store-value (v)
-					      :interactive
-					      (lambda ()
-						(format *query-io*
-							"New value: ")
-						(list (read *query-io*)))
-					      :report "Supply a new value"
-					      (setq ,(car store-vars) v)
-					      ,writer-forms
-					      (go ,label)))))
+           (keys (collect-e/ctypecase-keys clauses))
+           (final `(restart-case (error 'ctypecase-type-error
+                                        :name 'ctypecase
+                                        :datum ,(car store-vars)
+                                        :expected-type '(member ,@keys))
+                                 (store-value (v)
+                                              :interactive
+                                              (lambda ()
+                                                (format *query-io*
+                                                        "New value: ")
+                                                (list (read *query-io*)))
+                                              :report "Supply a new value"
+                                              (setq ,(car store-vars) v)
+                                              ,writer-forms
+                                              (go ,label)))))
       `(let* ,(compute-let*-bindings vars vals)
-	 (declare (ignorable ,@vars))
-	 (multiple-value-bind ,store-vars ,reader-forms
-	   (tagbody
-	      ,label
-	      ,(expand-e/ctypecase-clauses clauses (car store-vars) final 'ctypecase)))))))
+         (declare (ignorable ,@vars))
+         (multiple-value-bind ,store-vars ,reader-forms
+           (tagbody
+              ,label
+              ,(expand-e/ctypecase-clauses clauses (car store-vars) final 'ctypecase)))))))
