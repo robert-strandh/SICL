@@ -8,8 +8,13 @@
     ;; Functions for calling functions
     funcall apply
     sicl-genv:find-package
+    sicl-genv:get-setf-expansion
+    (setf sicl-genv:function-type)
+    (setf sicl-genv:fdefinition)
+    cleavir-environment:global-environment
     cleavir-code-utilities:parse-macro
-    sicl-genv:defun-expander))
+    sicl-data-and-control-flow:shiftf-expander
+    sicl-data-and-control-flow:defun-expander))
 
 (defparameter *imported-variables*
   '(*package* *macroexpand-hook*))
@@ -21,6 +26,8 @@
     #:sicl-data-and-control-flow))
 
 (defun import-from-host (environment)
+  (host-load "../../../Data-and-control-flow/defun-support.lisp")
+  (host-load "../../../Data-and-control-flow/shiftf-support.lisp")
   (loop for name in *imported-functions*
         do (setf (sicl-genv:fdefinition name environment) 
                  (fdefinition name)))

@@ -11,7 +11,6 @@
                :sicl-clos-support
                :sicl-type-support
                :sicl-conditions
-               :sicl-environment-support
                :closer-mop
                :cleavir-generate-ast
                :cleavir-cst-to-ast
@@ -34,7 +33,9 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "host-load")
    (:file "environment")
+   (:file "import-from-sicl-global-environment")
    (:file "import-from-host")
    (:file "symbol-value")
    (:file "traced-funcall")

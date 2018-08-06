@@ -2,6 +2,7 @@
 
 (defun fill-environment (environment system)
   (import-from-host environment)
+  (import-from-sicl-global-environment environment)
   (setf (sicl-global-environment:fdefinition
 	 'cleavir-primop:call-with-variable-bound
 	 environment)
@@ -88,4 +89,9 @@
     (load-file "../../../Data-and-control-flow/nth-value.lisp")
     (load-file "../../../Data-and-control-flow/multiple-value-call-defmacro.lisp")
     ;; Load a file containing the definition of macro DEFUN.
-    (load-file "../../../Data-and-control-flow/defun-defmacro.lisp")))
+    (load-file "../../../Data-and-control-flow/defun-defmacro.lisp")
+    ;; Load file containing definition of function GET-SETF-EXPANSION.
+    ;; We can not use the version of this function provided by the host,
+    ;; because it takes an environment argument, and the host version
+    ;; does not work with the Cleavir/SICL environment objects.
+    (load-file "../../../Data-and-control-flow/get-setf-expansion.lisp")))
