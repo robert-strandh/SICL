@@ -39,10 +39,6 @@
 
 (cl:in-package #:sicl-conditionals)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Implementation of the macros.
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro OR.
@@ -85,50 +81,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macros CASE, ECASE, CCASE.
-;;;
-;;; A normal CASE/ECASE/CCASE clause has the form (KEYS FORM*) where
-;;; KEYS is a designator for a list of objects, except that for CASE,
-;;; the symbols T and OTHERWISE may not be used as such.  Instead,
-;;; when T or OTHERWISE are present in the CAR of a clause, then they
-;;; do not designate a list of objects, and instead that clause is an
-;;; otherwise-clause.  For ECASE and CCASE, T and OTHERWISE can be
-;;; used as as designators for lists, and they then designate the
-;;; singleton list containing itself. 
-;;;
-;;; In the glossary of the HyperSpec (under "list designator"), we
-;;; learn that a list designator is ether a non-NIL atom, in which
-;;; case the denoted list is the list containing that one atom, or
-;;; else it is a proper list, and the denoted list is that list.  In
-;;; particular, this means that if NIL (or equivalently `()') is used
-;;; in the CAR of a CASE clause, then the denoted list is the empty
-;;; list and NOT the list containing NIL.  Thus, to obtain the
-;;; singleton list containing NIL, the user has to use `(NIL)'. 
 
 (defmacro case (keyform &rest clauses)
   (case-expander keyform clauses))
 
-;;; For ECASE, the default is to signal a type error. 
 (defmacro ecase (keyform &rest clauses)
   (ecase-expander keyform clauses))
 
-;;; For CCASE, the default is to signal a correctable
-;;; error, allowing a new value to be stored in the
-;;; place passed as argument to CCASE, using the restart
-;;; STORE-VALUE.  We use GET-SETF-EXPANSION so as to
-;;; avoid multiple evaluation of the subforms of the place, 
-;;; even though the HyperSpec allows such multiple evaluation. 
 (defmacro ccase (keyplace &rest clauses &environment env)
   (ccase-expander keyplace clauses env))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macros TYPECASE, ETYPECASE, CTYPECASE.
 
 (defmacro typecase (keyform &rest clauses)
   (typecase-expander keyform clauses))
 
-;;; As with ECASE, the default for ETYPECASE is to signal an error.
 (defmacro etypecase (keyform &rest clauses)
   (etypecase-expander keyform clauses))
 
-;;; As with CCASE, the default for CTYPECASE is is to signal a
-;;; correctable error, and to allow the value to be altered by the
-;;; STORE-VALUE restart.
 (defmacro ctypecase (keyplace &rest clauses &environment env)
   (ctypecase-expander keyplace clauses env))

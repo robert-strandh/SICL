@@ -30,7 +30,7 @@
 ;;;; POSSIBILITY OF SUCH DAMAGE.
 
 ;;;; This file is part of the conditionals module of the SICL project.
-;;;; See the file SICL.text for a description of the project. 
+;;;; See the file SICL.text for a description of the project.
 ;;;; See the file conditionals.text for a description of the module.
 
 ;;; This implementation also does not use the format function, and
@@ -104,7 +104,7 @@
 ;;; do not designate a list of objects, and instead that clause is an
 ;;; otherwise-clause.  For ECASE and CCASE, T and OTHERWISE can be
 ;;; used as as designators for lists, and they then designate the
-;;; singleton list containing itself. 
+;;; singleton list containing itself.
 ;;;
 ;;; In the glossary of the HyperSpec (under "list designator"), we
 ;;; learn that a list designator is ether a non-NIL atom, in which
@@ -113,7 +113,7 @@
 ;;; particular, this means that if NIL (or equivalently `()') is used
 ;;; in the CAR of a CASE clause, then the denoted list is the empty
 ;;; list and NOT the list containing NIL.  Thus, to obtain the
-;;; singleton list containing NIL, the user has to use `(NIL)'. 
+;;; singleton list containing NIL, the user has to use `(NIL)'.
 
 ;;; Take a list of keys (known to be a proper list), and the name of a
 ;;; variable, and produce a list of forms (eql <variable> key).
@@ -123,12 +123,12 @@
       (cons `(eql ,variable ,(car keys))
             (eql-ify (cdr keys) variable))))
 
-;;; Collect a list of all the keys for ecase or ccase 
+;;; Collect a list of all the keys for ecase or ccase
 ;;; to be used as the `exptected type' in error reporting.
 (defun collect-e/ccase-keys (clauses name)
   (if (null clauses)
       nil
-      (append 
+      (append
        (let ((keys (caar clauses)))
          (if (and (atom keys)
                   (not (null keys)))
@@ -214,6 +214,7 @@
                        (progn ,@forms)
                        ,(expand-e/ccase-clauses (cdr clauses) variable final name))))))))
 
+;;; For ECASE, the default is to signal a type error.
 (defun ecase-expander (keyform clauses)
   (let* ((variable (gensym))
          (keys (collect-e/ccase-keys clauses 'ecase))
@@ -226,14 +227,20 @@
 
 ;;; This function is does the same thing as
 ;;; (mapcar #'list vars vals), but since we are not
-;;; using mapping functions here, we have to 
-;;; implement it recursively. 
+;;; using mapping functions here, we have to
+;;; implement it recursively.
 (defun compute-let*-bindings (vars vals)
   (if (null vars)
       '()
       (cons (list (car vars) (car vals))
             (compute-let*-bindings (cdr vars) (cdr vals)))))
 
+;;; For CCASE, the default is to signal a correctable
+;;; error, allowing a new value to be stored in the
+;;; place passed as argument to CCASE, using the restart
+;;; STORE-VALUE.  We use GET-SETF-EXPANSION so as to
+;;; avoid multiple evaluation of the subforms of the place,
+;;; even though the HyperSpec allows such multiple evaluation.
 (defun ccase-expander (keyplace clauses env)
   (multiple-value-bind (vars vals store-vars writer-forms reader-forms)
       (get-setf-expansion keyplace env)
@@ -291,7 +298,7 @@
                        (progn ,@forms)
                        ,(expand-typecase-clauses (cdr clauses) variable))))))))
 
-;;; Collect a list of all the types for etypecase or ctypecase 
+;;; Collect a list of all the types for etypecase or ctypecase
 ;;; to be used as the `exptected type' in error reporting.
 (defun collect-e/ctypecase-keys (clauses)
   (if (null clauses)
