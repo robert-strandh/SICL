@@ -2,7 +2,7 @@
 
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
-    car cdr append list consp null not
+    car cdr append list consp null not mapcar
     ;; Functions for arithmetic
     + - * / floor ceiling round
     ;; Various functions
@@ -30,6 +30,11 @@
     sicl-conditionals:typecase-expander
     sicl-conditionals:etypecase-expander
     sicl-conditionals:ctypecase-expander
+    sicl-standard-environment-macros:defconstant-expander
+    sicl-standard-environment-macros:defvar-expander
+    sicl-standard-environment-macros:defparameter-expander
+    sicl-standard-environment-macros:deftype-expander
+    sicl-standard-environment-macros:define-compiler-macro-expander
     sicl-data-and-control-flow:shiftf-expander
     sicl-data-and-control-flow:defun-expander))
 
@@ -49,6 +54,7 @@
   (host-load "../../../Data-and-control-flow/defun-support.lisp")
   (host-load "../../../Data-and-control-flow/shiftf-support.lisp")
   (host-load "../../../Conditionals/support.lisp")
+  (host-load "../../../Environment/macro-support.lisp")
   (loop for name in *imported-functions*
         do (setf (sicl-genv:fdefinition name environment) 
                  (fdefinition name)))

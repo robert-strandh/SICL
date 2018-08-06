@@ -102,4 +102,6 @@
     (load-file "../../../Environment/standard-environment-macros.lisp")
     ;; Load a file containing the definition of the function
     ;; MACROEXPAND-1.
-    (load-file "../../../Evaluation-and-compilation/macroexpand.lisp")))
+    (load-file "../../../Evaluation-and-compilation/macroexpand.lisp")
+    ;; Load a file containing the definition of the macro DECLAIM.
+    (load-file "../../../Evaluation-and-compilation/declaim-defmacro.lisp")))
