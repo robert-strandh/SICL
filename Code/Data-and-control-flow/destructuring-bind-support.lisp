@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(deffun destructuring-bind-expander (lambda-list expression body)
+(defun destructuring-bind-expander (lambda-list expression body)
   (let ((expression-var (gensym))
         (parsed-lambda-list
           (cleavir-code-utilities:parse-destructuring-lambda-list lambda-list)))
