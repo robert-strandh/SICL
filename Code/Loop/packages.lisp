@@ -27,6 +27,7 @@
    #:condition
    )
   (:export #:define-parser
+           #:expand-body
 	   #:clause
 	   #:subclauses-mixin
 	   #:var-and-type-spec-mixin
