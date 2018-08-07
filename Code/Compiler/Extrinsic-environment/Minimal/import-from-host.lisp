@@ -37,7 +37,8 @@
     sicl-standard-environment-macros:deftype-expander
     sicl-standard-environment-macros:define-compiler-macro-expander
     sicl-data-and-control-flow:shiftf-expander
-    sicl-data-and-control-flow:defun-expander))
+    sicl-data-and-control-flow:defun-expander
+    sicl-loop:expand-body))
 
 (defparameter *imported-variables*
   '(*package* *macroexpand-hook*))
@@ -49,6 +50,7 @@
     #:sicl-data-and-control-flow
     #:sicl-conditionals
     #:sicl-arithmetic
+    #:sicl-loop
     #:sicl-standard-environment-macros
     #:sicl-standard-environment-functions))
 
