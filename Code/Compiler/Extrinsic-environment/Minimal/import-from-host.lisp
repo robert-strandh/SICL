@@ -2,7 +2,7 @@
 
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
-    car cdr append list consp null not mapcar
+    car cdr cadr cddr append list consp null not endp mapcar
     first second third rest
     ;; Functions for arithmetic
     + - * / floor ceiling round
@@ -39,6 +39,7 @@
     sicl-standard-environment-macros:define-compiler-macro-expander
     sicl-data-and-control-flow:shiftf-expander
     sicl-data-and-control-flow:defun-expander
+    sicl-loop:list-car
     sicl-loop:expand-body))
 
 (defparameter *imported-variables*
