@@ -39,7 +39,6 @@
     sicl-standard-environment-macros:define-compiler-macro-expander
     sicl-data-and-control-flow:shiftf-expander
     sicl-data-and-control-flow:defun-expander
-    sicl-loop:list-car
     sicl-loop:expand-body))
 
 (defparameter *imported-variables*
