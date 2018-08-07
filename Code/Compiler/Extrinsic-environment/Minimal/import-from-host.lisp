@@ -39,6 +39,7 @@
     sicl-standard-environment-macros:define-compiler-macro-expander
     sicl-data-and-control-flow:shiftf-expander
     sicl-data-and-control-flow:defun-expander
+    sicl-data-and-control-flow:psetf-expander
     sicl-loop:expand-body))
 
 (defparameter *imported-variables*
@@ -59,6 +60,7 @@
 (defun import-from-host (environment)
   (host-load "../../../Data-and-control-flow/defun-support.lisp")
   (host-load "../../../Data-and-control-flow/shiftf-support.lisp")
+  (host-load "../../../Data-and-control-flow/psetf-support.lisp")
   (host-load "../../../Conditionals/support.lisp")
   (host-load "../../../Environment/macro-support.lisp")
   (loop for name in *imported-functions*
