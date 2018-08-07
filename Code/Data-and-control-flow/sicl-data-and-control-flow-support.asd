@@ -9,4 +9,5 @@
   ((:file "packages")
    (:file "conditions")
    (:file "condition-reporters-english")
-   (:file "shiftf-support")))
+   (:file "shiftf-support")
+   (:file "psetf-support")))

@@ -2,4 +2,7 @@
 
 (defpackage #:sicl-data-and-control-flow
   (:use #:common-lisp)
-  (:export))
+  (:export #:shiftf-expander
+           #:defun-expander
+           #:psetf-expander))
+
