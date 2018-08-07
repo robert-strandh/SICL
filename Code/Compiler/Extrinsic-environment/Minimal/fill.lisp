@@ -111,4 +111,6 @@
     ;; Load a file containing the definitions of the macros PUSH and POP.
     (load-file "../../../Cons/push-pop-defmacro.lisp")
     ;; Load a file containing the definition of the macro RETURN.
-    (load-file "../../../Data-and-control-flow/return-defmacro.lisp")))
+    (load-file "../../../Data-and-control-flow/return-defmacro.lisp")
+    ;; Load a file containing the definitions of the macros PROG1 and PROG2.
+    (load-file "../../../Data-and-control-flow/prog1-prog2-defmacro.lisp")))
