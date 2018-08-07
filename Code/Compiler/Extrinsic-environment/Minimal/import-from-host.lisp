@@ -51,6 +51,7 @@
     #:sicl-conditionals
     #:sicl-arithmetic
     #:sicl-loop
+    #:sicl-cons
     #:sicl-standard-environment-macros
     #:sicl-standard-environment-functions))
 
