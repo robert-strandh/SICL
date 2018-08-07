@@ -3,6 +3,7 @@
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
     car cdr append list consp null not mapcar
+    first second third rest
     ;; Functions for arithmetic
     + - * / floor ceiling round
     ;; Various functions
