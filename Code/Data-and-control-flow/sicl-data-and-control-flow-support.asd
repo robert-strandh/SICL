@@ -10,4 +10,5 @@
    (:file "conditions")
    (:file "condition-reporters-english")
    (:file "shiftf-support")
-   (:file "psetf-support")))
+   (:file "psetf-support")
+   (:file "rotatef-support")))

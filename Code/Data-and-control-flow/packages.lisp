@@ -4,5 +4,6 @@
   (:use #:common-lisp)
   (:export #:shiftf-expander
            #:defun-expander
-           #:psetf-expander))
+           #:psetf-expander
+           #:rotatef-expander))
 
