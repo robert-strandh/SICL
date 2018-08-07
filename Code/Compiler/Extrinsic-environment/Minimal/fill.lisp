@@ -107,4 +107,6 @@
     (load-file "../../../Evaluation-and-compilation/declaim-defmacro.lisp")
     ;; Load a file containing the definitions of the macros INCF and DECF.
     (load-file "../../../Arithmetic/incf-decf-defmacro.lisp")
-    (load-file "../../../Loop/loop-defmacro.lisp")))
+    (load-file "../../../Loop/loop-defmacro.lisp")
+    ;; Load a file containing the definitions of the macros PUSH and POP.
+    (load-file "../../../Cons/push-pop-defmacro.lisp")))
