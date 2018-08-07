@@ -109,4 +109,6 @@
     (load-file "../../../Arithmetic/incf-decf-defmacro.lisp")
     (load-file "../../../Loop/loop-defmacro.lisp")
     ;; Load a file containing the definitions of the macros PUSH and POP.
-    (load-file "../../../Cons/push-pop-defmacro.lisp")))
+    (load-file "../../../Cons/push-pop-defmacro.lisp")
+    ;; Load a file containing the definition of the macro RETURN.
+    (load-file "../../../Data-and-control-flow/return-defmacro.lisp")))
