@@ -8,9 +8,7 @@
 
 (defun host-load (relative-filename)
   (let ((*package* *package*)
-        (filename (asdf:system-relative-pathname
-                   :sicl-minimal-extrinsic-environment
-                   relative-filename)))
+        (filename (asdf:system-relative-pathname '#:sicl relative-filename)))
     (with-open-file (stream filename :direction :input)
       (loop with eof-marker = (list nil)
             for form = (eclector.reader:read stream nil eof-marker)
