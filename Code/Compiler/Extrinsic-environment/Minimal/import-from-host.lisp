@@ -3,9 +3,9 @@
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
     car cdr cadr cddr append list consp null not endp mapcar
-    first second third rest
+    first second third rest getf member
     ;; Functions for arithmetic
-    + - * / floor ceiling round
+    + - * / floor ceiling round evenp oddp
     ;; Various functions
     coerce eq values
     ;; Funcions related to symbols
