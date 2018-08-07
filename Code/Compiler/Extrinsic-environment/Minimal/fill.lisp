@@ -119,4 +119,6 @@
     ;; Load a file containing the definition of the macro PSETQ.
     (load-file "../../../Data-and-control-flow/psetq-defmacro.lisp")
     ;; Load a file containing the definition of the macro PSETF.
-    (load-file "../../../Data-and-control-flow/psetf-defmacro.lisp")))
+    (load-file "../../../Data-and-control-flow/psetf-defmacro.lisp")
+    ;; Load a file containing the definition of the macro ROTATEF.
+    (load-file "../../../Data-and-control-flow/rotatef-defmacro.lisp")))
