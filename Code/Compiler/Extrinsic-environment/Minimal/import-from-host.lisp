@@ -41,6 +41,7 @@
     sicl-data-and-control-flow:defun-expander
     sicl-data-and-control-flow:psetf-expander
     sicl-data-and-control-flow:rotatef-expander
+    sicl-data-and-control-flow:destructuring-bind-expander
     sicl-loop:expand-body))
 
 (defparameter *imported-variables*
@@ -59,12 +60,13 @@
     #:sicl-standard-environment-functions))
 
 (defun import-from-host (environment)
-  (host-load "../../../Data-and-control-flow/defun-support.lisp")
-  (host-load "../../../Data-and-control-flow/shiftf-support.lisp")
-  (host-load "../../../Data-and-control-flow/psetf-support.lisp")
-  (host-load "../../../Data-and-control-flow/rotatef-support.lisp")
-  (host-load "../../../Conditionals/support.lisp")
-  (host-load "../../../Environment/macro-support.lisp")
+  (host-load "Data-and-control-flow/defun-support.lisp")
+  (host-load "Data-and-control-flow/shiftf-support.lisp")
+  (host-load "Data-and-control-flow/psetf-support.lisp")
+  (host-load "Data-and-control-flow/rotatef-support.lisp")
+  (host-load "Data-and-control-flow/destructuring-bind-support.lisp")
+  (host-load "Conditionals/support.lisp")
+  (host-load "Environment/macro-support.lisp")
   (loop for name in *imported-functions*
         do (setf (sicl-genv:fdefinition name environment) 
                  (fdefinition name)))
