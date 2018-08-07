@@ -124,4 +124,6 @@
     (load-file "Data-and-control-flow/rotatef-defmacro.lisp")
     ;; Load a file containing the definition of the macro
     ;; DESTRUCTURING-BIND.
-    (load-file "Data-and-control-flow/destructuring-bind-defmacro.lisp")))
+    (load-file "Data-and-control-flow/destructuring-bind-defmacro.lisp")
+    ;; Load a file containing the definition of the macro SHIFTF.
+    (load-file "Data-and-control-flow/shiftf-defmacro.lisp")))
