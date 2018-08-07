@@ -11,4 +11,5 @@
    (:file "condition-reporters-english")
    (:file "shiftf-support")
    (:file "psetf-support")
-   (:file "rotatef-support")))
+   (:file "rotatef-support")
+   (:file "destructuring-bind-support")))

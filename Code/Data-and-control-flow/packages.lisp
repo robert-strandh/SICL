@@ -5,5 +5,6 @@
   (:export #:shiftf-expander
            #:defun-expander
            #:psetf-expander
-           #:rotatef-expander))
+           #:rotatef-expander
+           #:destructuring-bind-expander))
 
