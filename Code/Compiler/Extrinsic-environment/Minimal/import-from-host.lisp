@@ -47,6 +47,7 @@
     #:sicl-global-environment
     #:sicl-data-and-control-flow
     #:sicl-conditionals
+    #:sicl-arithmetic
     #:sicl-standard-environment-macros
     #:sicl-standard-environment-functions))
 
