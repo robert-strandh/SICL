@@ -106,4 +106,5 @@
     ;; Load a file containing the definition of the macro DECLAIM.
     (load-file "../../../Evaluation-and-compilation/declaim-defmacro.lisp")
     ;; Load a file containing the definitions of the macros INCF and DECF.
-    (load-file "../../../Arithmetic/incf-decf-defmacro.lisp")))
+    (load-file "../../../Arithmetic/incf-decf-defmacro.lisp")
+    (load-file "../../../Loop/loop-defmacro.lisp")))
