@@ -9,14 +9,14 @@
 ;;; implementation of some high-level functionality of the Common Lisp
 ;;; language, so that implementors of Common Lisp systems can
 ;;; integrate it as it is into their systems, without having to
-;;; implement and maintain a specific version of it. 
+;;; implement and maintain a specific version of it.
 ;;;
 ;;; Author: Robert Strandh (robert.strandh@gmail.com)
 ;;; Date: 2008, 2015.
 ;;;
 ;;; SETF expanders for standard accessors that can be expressed
 ;;; by portable code.  For that to be possible, Common Lisp must
-;;; also define primitive functions for storing values. 
+;;; also define primitive functions for storing values.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -49,7 +49,7 @@
 	       (list store-temp)
 	       `(progn (,',modifier (,',subreader ,subform-temp) ,store-temp) ,store-temp)
 	       `(,',reader ,subform-temp)))))
-     
+
 (define-car/cdr-expander caar rplaca car)
 (define-car/cdr-expander cadr rplaca cdr)
 (define-car/cdr-expander cdar rplacd car)
@@ -95,10 +95,10 @@
 (define-nth-expander eighth 7)
 (define-nth-expander ninth 8)
 (define-nth-expander tenth 9)
-     
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; The 
+;;; The
 
 (define-setf-expander the (value-type place &environment env)
   (multiple-value-bind (temps forms store-vars storing-form accessing-form)
@@ -110,5 +110,3 @@
 		 (the ,value-type (values ,store-vars))
 	       ,storing-form)
 	    `(the ,value-type ,accessing-form))))
-
-
