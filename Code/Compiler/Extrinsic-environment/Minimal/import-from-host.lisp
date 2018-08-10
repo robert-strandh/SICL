@@ -23,6 +23,7 @@
     cleavir-code-utilities:parse-deftype
     cleavir-code-utilities:proper-list-p
     cleavir-code-utilities:separate-ordinary-body
+    cleavir-code-utilities:list-structure
     sicl-conditionals:or-expander
     sicl-conditionals:and-expander
     sicl-conditionals:cond-expander
