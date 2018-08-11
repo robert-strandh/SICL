@@ -18,6 +18,18 @@
     nil
     :origin (cst:source cst))))
 
+;;; FIXME: This one should be removed.
+(defmethod cleavir-generate-ast:convert-global-function
+    ((info cleavir-env:global-function-info) (env environment) system)
+  (declare (ignore system))
+  (cleavir-ast:make-car-ast
+   (cleavir-ast:make-load-time-value-ast
+    `(sicl-genv:function-cell
+      ',(cleavir-env:name info)
+      (sicl-genv:global-environment))
+    ;; The cell is not read-only.
+    nil)))
+
 ;;; When we are asked to compile the name of a special variable, by
 ;;; default Cleavir generates a SYMBOL-VALUE-AST taking the variable
 ;;; name as an input.  For SICL, we do not want that.  Instead we want
@@ -51,6 +63,24 @@
 	  t))
    :origin (cst:source cst)))
 
+;;; FIXME: this one should be removed
+(defmethod cleavir-generate-ast:convert-special-variable
+    ((info cleavir-env:special-variable-info) (env environment) system)
+  (declare (ignore system))
+  (cleavir-ast:make-call-ast
+   (cleavir-ast:make-car-ast
+    (cleavir-ast:make-load-time-value-ast
+     '(sicl-genv:function-cell
+       'sicl-minimal-extrinsic-environment:symbol-value
+       (sicl-genv:global-environment))
+     nil))
+   (list (cleavir-ast:make-load-time-value-ast
+	  `',(cleavir-env:name info)
+	  t)
+	 (cleavir-ast:make-load-time-value-ast
+	  'sicl-genv:*global-environment*
+	  t))))
+
 ;;; When we are asked to compile an assignment to a special variable,
 ;;; by default Cleavir generates a SET-SYMBOL-VALUE-AST taking the
 ;;; variable name and the value as an input.  For SICL, we do not want
@@ -82,6 +112,28 @@
 	  'sicl-genv:*global-environment*
 	  nil))
    :origin (cst:source var-cst)))
+
+(defmethod cleavir-generate-ast:convert-setq-special-variable
+    ((info cleavir-env:special-variable-info)
+     var
+     form-ast
+     (env environment)
+     system)
+  (declare (ignore var system))
+  (cleavir-ast:make-call-ast
+   (cleavir-ast:make-car-ast
+    (cleavir-ast:make-load-time-value-ast
+     '(sicl-genv:function-cell
+       '(setf sicl-minimal-extrinsic-environment:symbol-value)
+       sicl-genv:*global-environment*)
+     nil))
+   (list form-ast
+	 (cleavir-ast:make-load-time-value-ast
+	  `',(cleavir-env:name info)
+	  t)
+	 (cleavir-ast:make-load-time-value-ast
+	  'sicl-genv:*global-environment*
+	  nil))))
 
 ;;; The default method on CLEAVIR-GENERATE-AST:CONVERT-SPECIAL-BINDING
 ;;; generates a call to CLEAVIR-PRIMOP:CALL-WITH-VARIABLE-BOUND, but
