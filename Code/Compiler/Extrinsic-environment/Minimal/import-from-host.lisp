@@ -47,6 +47,7 @@
     sicl-cons:pushnew-expander
     sicl-cons:push-expander
     sicl-cons:pop-expander
+    sicl-cons:remf-expander
     sicl-iteration:dolist-expander
     sicl-iteration:dotimes-expander
     sicl-iteration:do-dostar-expander
