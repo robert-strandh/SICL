@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-evaluation-and-compilation
   (:use #:common-lisp)
-  (:export))
+  (:export #:declaim-expander))
