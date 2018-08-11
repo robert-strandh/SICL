@@ -106,6 +106,7 @@
                :sicl-cons-support
                :sicl-clos-support
                :sicl-type-support
+               :sicl-environment-support
                :sicl-conditions
                :closer-mop
                :cleavir-generate-ast
