@@ -8,4 +8,5 @@
    (:file "conditions")
    (:file "condition-reporters-english")
    (:file "pushnew-support")
+   (:file "remf-support")
    (:file "push-pop-support")))
