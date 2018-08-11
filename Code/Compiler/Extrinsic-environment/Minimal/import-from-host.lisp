@@ -2,7 +2,7 @@
 
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
-    car cdr cadr cddr append list consp null not endp mapcar
+    car cdr cadr cddr append list consp null not endp
     first second third rest getf member
     ;; Functions for arithmetic
     + - * / floor ceiling round evenp oddp
@@ -43,7 +43,10 @@
     sicl-data-and-control-flow:psetf-expander
     sicl-data-and-control-flow:rotatef-expander
     sicl-data-and-control-flow:destructuring-bind-expander
+    sicl-evaluation-and-compilation:declaim-expander
     sicl-cons:pushnew-expander
+    sicl-cons:push-expander
+    sicl-cons:pop-expander
     sicl-iteration:dolist-expander
     sicl-iteration:dotimes-expander
     sicl-iteration:do-dostar-expander
