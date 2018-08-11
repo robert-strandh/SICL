@@ -46,6 +46,7 @@
     sicl-cons:pushnew-expander
     sicl-iteration:dolist-expander
     sicl-iteration:dotimes-expander
+    sicl-iteration:do-dostar-expander
     sicl-loop:expand-body))
 
 (defparameter *imported-variables*
