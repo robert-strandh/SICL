@@ -34,6 +34,7 @@
                          sicl-cons
                          sicl-iteration
                          sicl-clos
+                         sicl-evaluation-and-compilation
                          sicl-standard-environment-macros
                          sicl-environment)
         do (import-functions-from-package-symbols package environment))
