@@ -134,4 +134,6 @@
     ;; Load a file containing the definition of the macro DOLIST.
     (load-file "Iteration/dolist-defmacro.lisp")
     ;; Load a file containing the definition of the macros DO and DO*.
-    (load-file "Iteration/do-dostar-defmacro.lisp")))
+    (load-file "Iteration/do-dostar-defmacro.lisp")
+    ;; Load a file containing the definition of the macro REMF.
+    (load-file "Cons/remf-defmacro.lisp")))
