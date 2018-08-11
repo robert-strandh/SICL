@@ -11,4 +11,5 @@
    (:file "condition-reporters-en")
    (:file "docstrings-en")
    (:file "dolist-support")
-   (:file "dotimes-support")))
+   (:file "dotimes-support")
+   (:file "do-dostar-support")))
