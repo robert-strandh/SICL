@@ -128,4 +128,8 @@
     ;; Load a file containing the definition of the macro SHIFTF.
     (load-file "Data-and-control-flow/shiftf-defmacro.lisp")
     ;; Load a file containing the definition of the macro PUSHNEW.
-    (load-file "Cons/pushnew-defmacro.lisp")))
+    (load-file "Cons/pushnew-defmacro.lisp")
+    ;; Load a file containing the definition of the macro DOTIMES.
+    (load-file "Iteration/dotimes-defmacro.lisp")
+    ;; Load a file containing the definition of the macro DOLIST.
+    (load-file "Iteration/dolist-defmacro.lisp")))
