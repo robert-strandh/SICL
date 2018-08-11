@@ -2,4 +2,6 @@
 
 (defpackage #:sicl-cons
   (:use #:common-lisp)
-  (:export #:pushnew-expander))
+  (:export #:pushnew-expander
+           #:push-expander
+           #:pop-expander))
