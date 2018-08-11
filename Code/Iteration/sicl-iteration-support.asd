@@ -9,4 +9,6 @@
    (:file "conditions")
    (:file "utilities")
    (:file "condition-reporters-en")
-   (:file "docstrings-en")))
+   (:file "docstrings-en")
+   (:file "dolist-support")
+   (:file "dotimes-support")))
