@@ -3,4 +3,5 @@
 (defpackage #:sicl-iteration
   (:use #:common-lisp)
   (:export #:dotimes-expander
-           #:dolist-expander))
+           #:dolist-expander
+           #:do-dostar-expander))
