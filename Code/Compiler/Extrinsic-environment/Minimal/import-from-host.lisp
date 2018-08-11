@@ -43,6 +43,7 @@
     sicl-data-and-control-flow:psetf-expander
     sicl-data-and-control-flow:rotatef-expander
     sicl-data-and-control-flow:destructuring-bind-expander
+    sicl-cons:pushnew-expander
     sicl-loop:expand-body))
 
 (defparameter *imported-variables*
