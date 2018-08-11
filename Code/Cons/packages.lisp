@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export #:pushnew-expander
            #:push-expander
-           #:pop-expander))
+           #:pop-expander
+           #:remf-expander))
