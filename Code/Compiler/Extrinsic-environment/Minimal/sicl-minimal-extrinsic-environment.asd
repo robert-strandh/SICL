@@ -21,7 +21,7 @@
                :cleavir-remove-useless-instructions
                :cleavir-basic-blocks
                :cleavir-meter
-               :sicl-evaluation-and-compilation
+               :sicl-evaluation-and-compilation-support
                :sicl-data-and-control-flow-support
                :sicl-conditionals-support
                :sicl-iteration-support
