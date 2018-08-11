@@ -44,6 +44,8 @@
     sicl-data-and-control-flow:rotatef-expander
     sicl-data-and-control-flow:destructuring-bind-expander
     sicl-cons:pushnew-expander
+    sicl-iteration:dolist-expander
+    sicl-iteration:dotimes-expander
     sicl-loop:expand-body))
 
 (defparameter *imported-variables*
@@ -58,6 +60,7 @@
     #:sicl-arithmetic
     #:sicl-loop
     #:sicl-cons
+    #:sicl-iteration
     #:sicl-standard-environment-macros
     #:sicl-standard-environment-functions))
 
