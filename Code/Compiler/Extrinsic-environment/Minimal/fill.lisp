@@ -126,4 +126,6 @@
     ;; DESTRUCTURING-BIND.
     (load-file "Data-and-control-flow/destructuring-bind-defmacro.lisp")
     ;; Load a file containing the definition of the macro SHIFTF.
-    (load-file "Data-and-control-flow/shiftf-defmacro.lisp")))
+    (load-file "Data-and-control-flow/shiftf-defmacro.lisp")
+    ;; Load a file containing the definition of the macro PUSHNEW.
+    (load-file "Cons/pushnew-defmacro.lisp")))
