@@ -21,3 +21,8 @@
                   :key #'car :test-not #'eq)
           (remove :method options-and-methods
                   :key #'car :test #'eq)))
+
+(defun remove-initial-methods (generic-function)
+  (loop for method in (initial-methods generic-function)
+        do (remove-method generic-function method))
+  (setf (initial-methods generic-function) '()))
