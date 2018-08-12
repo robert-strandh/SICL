@@ -98,12 +98,39 @@
     ;; Make sure we keep track of the closure vector expansion.
     (setf (cleavir-ir:closure-size enter) (1+ new-index))))
 
+;;; Compute the lowest common ancestor for nodes in a dominance
+;;; tree. This algorithm is efficient but may cons more than
+;;; necessary.
+(defun lowest-common-ancestor (nodes dominance-tree)
+  (if (null (rest nodes))
+      (first nodes)
+      (let* ((node-dominators (loop for node in nodes
+                                    collect (cleavir-dominance:dominators dominance-tree node)))
+             (depths (mapcar #'length node-dominators))
+             (depth-upper-bound (reduce #'min depths)))
+        (apply #'mapc
+               (lambda (&rest dominator-slice)
+                 (let ((first (first dominator-slice)))
+                   (when (loop for dominator in (rest dominator-slice)
+                               always (eq first dominator))
+                     (return-from lowest-common-ancestor (first dominator-slice)))))
+               ;; Cut every dominator list to the depth upper bound.
+               (loop for dominators in node-dominators
+                     for depth in depths
+                     collect (nthcdr (- depth depth-upper-bound) dominators))))))
+
+;;; It's not strictly necessary to use this, but it looks better to
+;;; have cells created immediately before the instructions that assign
+;;; them rather than at the top of the basic block.
 (defun dominating-instruction (basic-block defining-instructions)
   (cleavir-basic-blocks:map-basic-block-instructions
    (lambda (instruction)
      (when (member instruction defining-instructions)
        (return-from dominating-instruction instruction)))
-   basic-block))
+   basic-block)
+  ;; If the defining instruction doesn't exist in this block, pick the
+  ;; first instruction.
+  (cleavir-basic-blocks:first-instruction basic-block))
 
 ;;; The cell must be created when the variable comes into scope. In
 ;;; flow graph terms, this means at the instruction defining the
@@ -119,33 +146,28 @@
           unless (eq enter owner)
             do (dolist (node (gethash enter dag-nodes))
                  (push (enclose-instruction node) defining-instructions))))
+  ;; Start by creating a CREATE-CELL-INSTRUCTION in the basic block
+  ;; before where the first definition of the variable appears.
   (let* ((defining-blocks
            (remove-duplicates
-            (remove-if-not (lambda (basic-block)
-                             (eq (cleavir-basic-blocks:owner basic-block)
-                                 owner))
-                           (mapcar (lambda (instruction)
-                                     (gethash instruction instruction-basic-blocks))
-                                   defining-instructions))
+            ;; Remove basic blocks owned by others.
+            (loop for instruction in defining-instructions
+                  for basic-block = (gethash instruction instruction-basic-blocks) 
+                  when (eq (cleavir-basic-blocks:owner basic-block)
+                           owner)
+                    collect basic-block)
             :test #'eq))
-         (dominating-block (first defining-blocks))
-         (dominating-block-distance (length (cleavir-dominance:dominators dominance-tree dominating-block))))
-    (dolist (defining-block (rest defining-blocks))
-      (let ((defining-block-distance (length (cleavir-dominance:dominators dominance-tree defining-block))))
-        (when (< defining-block-distance dominating-block-distance)
-          (setf dominating-block defining-block)
-          (setf dominating-block-distance defining-block-distance))))
-    ;; Start by creating a CREATE-CELL-INSTRUCTION in the basic block
-    ;; before where the first definition of the variable appears.
-    (let* ((first-instruction (dominating-instruction dominating-block defining-instructions))
-           (cleavir-ir:*policy* (cleavir-ir:policy first-instruction)))
-      (if (typep first-instruction 'cleavir-ir:enter-instruction)
-          (cleavir-ir:insert-instruction-after
-           (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
-           first-instruction)
-          (cleavir-ir:insert-instruction-before
-           (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
-           first-instruction)))))
+         (dominating-block (lowest-common-ancestor defining-blocks
+                                                   dominance-tree))
+         (first-instruction (dominating-instruction dominating-block defining-instructions))
+         (cleavir-ir:*policy* (cleavir-ir:policy first-instruction)))
+    (if (typep first-instruction 'cleavir-ir:enter-instruction)
+        (cleavir-ir:insert-instruction-after
+         (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
+         first-instruction)
+        (cleavir-ir:insert-instruction-before
+         (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
+         first-instruction))))
 
 ;;; For a single static lexical location to be eliminated, make sure
 ;;; that the corresponding cell is available in all functions in which
