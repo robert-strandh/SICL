@@ -6,7 +6,8 @@
 
 (defun push-expander (item place env)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (get-setf-expansion place env)
+      (let ((global-environment (cleavir-env:global-environment env)))
+        (sicl-genv:get-setf-expansion place global-environment))
     (let ((item-var (gensym)))
       `(let* ((,item-var ,item)
 	      ,@(mapcar #'list vars vals)
@@ -19,7 +20,8 @@
 
 (defun pop-expander (place env)
   (multiple-value-bind (vars vals store-vars writer-form reader-form)
-      (get-setf-expansion place env)
+      (let ((global-environment (cleavir-env:global-environment env)))
+        (sicl-genv:get-setf-expansion place global-environment))
     `(let* (,@(mapcar #'list vars vals)
 	    (,(car store-vars) ,reader-form))
        (if (listp ,(car store-vars))
