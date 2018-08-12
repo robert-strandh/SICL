@@ -64,6 +64,12 @@
    #:slot-definition-location
    ;; Macros
    #:defclass #:defgeneric #:defmethod
+   ;; Macro support
+   #:with-slots-expander
+   #:with-accessors-expander
+   #:defgeneric-expander
+   #:defmethod-expander
+   #:defclass-expander
    ;; Generic functions.
    #:compute-effective-slot-definition
    #:class-of
