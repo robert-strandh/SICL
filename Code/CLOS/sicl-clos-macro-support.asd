@@ -6,5 +6,6 @@
   :components
   ((:file "with-slots-support")
    (:file "defclass-support")
-   (:file "defgeneric-support")))
+   (:file "defgeneric-support")
+   (:file "defmethod-support")))
 
