@@ -5,5 +5,6 @@
   :serial t
   :components
   ((:file "with-slots-support")
-   (:file "defclass-support")))
+   (:file "defclass-support")
+   (:file "defgeneric-support")))
 
