@@ -105,6 +105,7 @@
                :sicl-arithmetic
                :sicl-cons-support
                :sicl-clos-support
+               :sicl-clos-macro-support
                :sicl-type-support
                :sicl-environment-support
                :sicl-conditions
