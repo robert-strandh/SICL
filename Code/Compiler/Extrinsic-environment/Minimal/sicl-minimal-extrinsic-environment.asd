@@ -48,5 +48,6 @@
    (:file "load")
    (:file "manual-definitions")
    (:file "fill")
-   (:file "initialization")))
+   (:file "initialization")
+   (:file "repl")))
 
