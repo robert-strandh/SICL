@@ -4,5 +4,6 @@
   :depends-on (:sicl-clos-package)
   :serial t
   :components
-  ((:file "with-slots-support")))
+  ((:file "with-slots-support")
+   (:file "defclass-support")))
 
