@@ -38,14 +38,15 @@
 ;;;                     <storing-formn>))) ...))))
 
 (defun shiftf-expander (environment arguments)
-  (let* ((places (butlast arguments))
+  (let* ((global-environment (cleavir-env:global-environment environment))
+         (places (butlast arguments))
 	 (new-value-form (first (last arguments)))
 	 (setf-expansions
 	   ;; Collect the SETF-EXPANSION of each place as a list of the
 	   ;; values returned by GET-SETF-EXPANSION. 
 	   (loop for place in places
 		 collect (multiple-value-list
-			  (get-setf-expansion place environment)))))
+                          (sicl-genv:get-setf-expansion place global-environment)))))
     (flet ((make-let*-bindings (temporary-variables value-forms)
 	     (loop for var in temporary-variables
 		   for form in value-forms

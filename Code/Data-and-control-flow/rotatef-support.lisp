@@ -1,12 +1,13 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
 (defun rotatef-expander (environment places)
-  (let* ((setf-expansions
+  (let* ((global-environment (cleavir-env:global-environment environment))
+         (setf-expansions
            ;; Collect the SETF-EXPANSION of each place as a list of the
            ;; values returned by GET-SETF-EXPANSION. 
            (loop for place in places
                  collect (multiple-value-list
-                          (get-setf-expansion place environment))))
+                          (sicl-genv:get-setf-expansion place global-environment))))
          (result
            ;; We start by creating the body of the result, which
            ;; contains all the STORE-FORMs, storing the
