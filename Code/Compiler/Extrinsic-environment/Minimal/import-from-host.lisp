@@ -69,6 +69,10 @@
     #:sicl-standard-environment-macros
     #:sicl-standard-environment-functions))
 
+(defun import-function-from-host (function-name to-environment)
+  (setf (sicl-genv:fdefinition function-name to-environment)
+        (fdefinition function-name)))
+
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
   (host-load "Data-and-control-flow/shiftf-support.lisp")
@@ -78,8 +82,7 @@
   (host-load "Conditionals/support.lisp")
   (host-load "Environment/macro-support.lisp")
   (loop for name in *imported-functions*
-        do (setf (sicl-genv:fdefinition name environment) 
-                 (fdefinition name)))
+        do (import-function-from-host name environment))
   ;; We can't import (SETF CAR) and (SETF CDR) directly, because they
   ;; might not be defined as functions.  They could be SETF expanders.
   (setf (sicl-genv:fdefinition '(setf car) environment)
