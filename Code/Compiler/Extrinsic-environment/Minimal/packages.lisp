@@ -11,4 +11,5 @@
 	   #:symbol-value)
   (:export #:environment
            #:symbol-value
-           #:import-function-from-host))
+           #:import-function-from-host
+           #:host-load))
