@@ -48,6 +48,21 @@
   (list :lambda-list (lambda-list instruction)
         :closure-size (closure-size instruction)))
 
+;;; Maintain consistency of lambda list with outputs.
+(defmethod substitute-output :after (new old (instruction enter-instruction))
+  (setf (lambda-list instruction)
+        (subst new old (lambda-list instruction) :test #'eq)))
+
+(defmethod (setf outputs) :before (new-outputs (instruction enter-instruction))
+  (let ((old-lambda-outputs (rest (outputs instruction)))
+        (new-lambda-outputs (rest new-outputs)))
+    ;; FIXME: Not sure what to do if the new and old outputs are different lengths.
+    ;; For now we're silent.
+    (setf (lambda-list instruction)
+          (sublis (mapcar #'cons old-lambda-outputs new-lambda-outputs)
+                  (lambda-list instruction)
+                  :test #'eq))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TOP-LEVEL-ENTER-INSTRUCTION.

@@ -183,8 +183,7 @@
     (cleavir-ir:insert-instruction-before
      (cleavir-ir:make-read-cell-instruction cloc d)
      instruction)
-    (setf (cleavir-ir:inputs instruction)
-	  (substitute d sloc (cleavir-ir:inputs instruction)))))
+    (cleavir-ir:substitute-input d sloc instruction)))
 
 ;;; Given a single static lexical location SLOC, a dynamic lexical
 ;;; location CLOC holding the cell that replaces SLOC, and a single
@@ -196,8 +195,7 @@
 (defun replace-outputs (sloc cloc instruction)
   (let ((d (cleavir-ir:new-temporary))
 	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
-    (setf (cleavir-ir:outputs instruction)
-	  (substitute d sloc (cleavir-ir:outputs instruction)))
+    (cleavir-ir:substitute-output d sloc instruction)
     ;; CATCH has two successors and one output. There are other instructions
     ;; like that, but CATCH is the only one whose output is closed over in
     ;; normal code. Due to its unusual control flow, we special case it here.

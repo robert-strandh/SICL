@@ -24,6 +24,22 @@
   (loop for input in (inputs instruction)
 	do (push instruction (using-instructions input))))
 
+;;; The operation (setf inputs (substitute new old inputs)) is quite
+;;; common, so we provide a function for it. Both for cleanliness and
+;;; efficiency.
+(defgeneric substitute-input (new old instruction)
+  (:argument-precedence-order instruction new old))
+
+(defmethod substitute-input (new old instruction)
+  ;; bypass the accessor to avoid the above methods.
+  (setf (slot-value instruction '%inputs)
+        (substitute new old (slot-value instruction '%inputs)))
+  ;; Now maintain consistency.
+  (setf (using-instructions old)
+        (remove instruction (using-instructions old) :test #'eq))
+  (pushnew instruction (using-instructions new))
+  (values))
+
 (defgeneric outputs (instruction))
 
 (defgeneric (setf outputs) (new-outputs instruction))
@@ -43,6 +59,20 @@
   ;; outputs.
   (loop for output in (outputs instruction)
 	do (push instruction (defining-instructions output))))
+
+;; Like the above.
+(defgeneric substitute-output (new old instruction)
+  (:argument-precedence-order instruction new old))
+
+(defmethod substitute-output (new old instruction)
+  ;; bypass the accessor to avoid the above methods.
+  (setf (slot-value instruction '%outputs)
+        (substitute new old (slot-value instruction '%outputs)))
+  ;; Now maintain consistency.
+  (setf (defining-instructions old)
+        (remove instruction (defining-instructions old) :test #'eq))
+  (push instruction (defining-instructions new))
+  (values))
 
 ;;; Default value, since it can be shared by several instructions
 ;;; during generation, similar to the AST case.
