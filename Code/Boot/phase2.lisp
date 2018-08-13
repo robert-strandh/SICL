@@ -243,18 +243,18 @@
   ;; Before we can start creating generic functions, we must make
   ;; sure that the generic-function initialization protocol is
   ;; enabled.
-  (ld "../CLOS/generic-function-initialization-support.lisp" env2 env2)
+  (ld "CLOS/generic-function-initialization-support.lisp" env2 env2)
   (setf (sicl-genv:fdefinition 'sicl-clos::compute-discriminating-function env2)
         (lambda (generic-function) (declare (ignore generic-function)) nil))
-  (ld "../CLOS/invalidate-discriminating-function.lisp" env2 env2)
+  (ld "CLOS/invalidate-discriminating-function.lisp" env2 env2)
   (sicl-extrinsic-environment:import-function-from-host 'shared-initialize env2)
-  (ld "../CLOS/generic-function-initialization-defmethods.lisp" env2 env2)
+  (ld "CLOS/generic-function-initialization-defmethods.lisp" env2 env2)
   ;; We must also make sure that DEFGENERIC is handled properly for
   ;; phase 2.
   (define-ensure-generic-function-phase2 env2 env3 env1)
   (define-defgeneric-phase2 env2 env3)
   ;; Define the accessor generic functions.
-  (ld "../CLOS/accessor-defgenerics.lisp" env2 env2))
+  (ld "CLOS/accessor-defgenerics.lisp" env2 env2))
 
 ;;; Define ENSURE-CLASS to be an alias for the default function
 ;;; ENSURE-CLASS-USING-CLASS-NULL.
@@ -368,20 +368,20 @@
     (define-accessor-generic-functions-phase2 r1 r2 r3)
     (define-direct-slot-definition-class-phase2 r2 r1)
     (sicl-extrinsic-environment:import-function-from-host 'initialize-instance r2)
-    (ld "../CLOS/slot-definition-initialization-defmethods.lisp" r2 r2)
-    (ld "../CLOS/add-remove-direct-subclass-support.lisp" r2 r2)
-    (ld "../CLOS/add-remove-direct-subclass-defuns.lisp" r2 r2)
+    (ld "CLOS/slot-definition-initialization-defmethods.lisp" r2 r2)
+    (ld "CLOS/add-remove-direct-subclass-support.lisp" r2 r2)
+    (ld "CLOS/add-remove-direct-subclass-defuns.lisp" r2 r2)
     (sicl-extrinsic-environment:import-function-from-host 'add-method r2)
     (sicl-extrinsic-environment:import-function-from-host 'make-instance r2)
-    (ld "../CLOS/add-accessor-method.lisp" r2 r2)
+    (ld "CLOS/add-accessor-method.lisp" r2 r2)
     (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass
                                  r2)
           (lambda (class1 class2) (declare (ignore class1 class2)) t))
-    (ld "../CLOS/class-initialization-support.lisp" r2 r2)
-    (ld "../CLOS/class-initialization-defmethods.lisp" r2 r2)
+    (ld "CLOS/class-initialization-support.lisp" r2 r2)
+    (ld "CLOS/class-initialization-defmethods.lisp" r2 r2)
     (sicl-extrinsic-environment:import-function-from-host 'reinitialize-instance r2)
     (sicl-extrinsic-environment:import-function-from-host 'change-class r2)
-    (ld "../CLOS/ensure-class-using-class-support.lisp" r2 r2)
+    (ld "CLOS/ensure-class-using-class-support.lisp" r2 r2)
     (define-ensure-class-phase2 r2 r1 r2)
     (define-default-superclasses-phase2 r2 r2 r2)
     (define-validate-superclass-phase2 r2)
@@ -391,12 +391,12 @@
     (define-reader-method-class-phase2 r2 r1)
     (define-writer-method-class-phase2 r2 r1)
     (define-add-method-phase2 r2 r2)
-    (ld "../CLOS/class-unique-number-defparameter.lisp" r2 r2)
-    (ld "../CLOS/defclass-support.lisp" r2 r2)
-    (ld "../CLOS/defclass-defmacro.lisp" r2 r2)
+    (ld "CLOS/class-unique-number-defparameter.lisp" r2 r2)
+    (ld "CLOS/defclass-support.lisp" r2 r2)
+    (ld "CLOS/defclass-defmacro.lisp" r2 r2)
     (create-mop-classes r2 r2)
     (sicl-extrinsic-environment:import-function-from-host 'print-object r2)
-    (ld "print-object-defmethods-phase2.lisp" r2 r2)
+    (ld "Boot/print-object-defmethods-phase2.lisp" r2 r2)
     (message "End of phase 2~%")))
 
 ;;  LocalWords:  accessor metaobject metaobjects canonicalized
