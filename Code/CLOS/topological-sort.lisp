@@ -150,7 +150,8 @@
     local-precedence-orders))
 
 ;;; Given a class C and a function for computing its direct
-;;; superclasses, compute the class precedence list of C.
+;;; superclasses, compute the class precedence list of C, or return
+;;; NIL if no precedence list can be computed.
 (defun compute-precedence-list-of-class (class direct-superclasses-function)
   (compute-precedence-list
    (compute-local-precedence-orders class direct-superclasses-function)))
