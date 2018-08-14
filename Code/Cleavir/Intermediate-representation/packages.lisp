@@ -34,6 +34,7 @@
    #:box-instruction #:unbox-instruction
    #:allocation-mixin #:dynamic-extent-p
    #:inputs #:outputs
+   #:substitute-input #:substitute-output
    #:successors #:predecessors
    #:policy #:*policy*
    #:origin #:*origin*
