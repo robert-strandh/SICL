@@ -72,6 +72,25 @@
                     :datum name))
            (push value (gethash name table '()))))
 
+(defun process-initform-option (table direct-slot-spec)
+  (multiple-value-bind (value flag) (gethash :initform table)
+    (if flag
+        (progn (unless (= (length value) 1)
+                 (error 'multiple-initform-options-not-permitted
+                        :datum direct-slot-spec))
+               (remhash :initform table)
+               `(:initform ',(car value)
+                 :initfunction ,(make-initfunction (car value))))
+        '())))
+
+(defun process-initarg-options (table)
+  (multiple-value-bind (value flag)
+      (gethash :initarg table)
+    (if flag
+        (progn (remhash :initarg table)
+               `(:initargs ',(reverse value)))
+        '())))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -94,22 +113,10 @@
           (let ((result `(:name ',(car direct-slot-spec))))
             (flet ((add (name value)
                      (setf result (append result (list name value)))))
-              ;; Check and process :initform option.
-              (multiple-value-bind (value flag)
-                  (gethash :initform ht)
-                (when flag
-                  (unless (= (length value) 1)
-                    (error 'multiple-initform-options-not-permitted
-                           :datum direct-slot-spec))
-                  (add :initform `',(car value))
-                  (add :initfunction (make-initfunction (car value)))
-                  (remhash :initform ht)))
-              ;; Process :initarg option.
-              (multiple-value-bind (value flag)
-                  (gethash :initarg ht)
-                (when flag
-                  (add :initargs `',(reverse value))
-                  (remhash :initarg ht)))
+              (setf result
+                    (append result (process-initform-option ht direct-slot-spec)))
+              (setf result
+                    (append result (process-initarg-options ht)))
               ;; Turn :accessor into :reader and :writer
               (multiple-value-bind (value flag)
                   (gethash :accessor ht)
