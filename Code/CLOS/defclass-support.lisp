@@ -157,6 +157,28 @@
   `(list ,@(loop for spec in direct-slot-specs
                  collect (canonicalize-direct-slot-spec spec))))
 
+;;; Canonicalize a single default initarg.  Recall that a
+;;; canonicalized default initarg is a list of three elements: The
+;;; symbol naming the initarg, the form to be used for to compute the
+;;; initial value, and a thunk that, when called, returns the value of
+;;; the form.
+(defun canonicalize-default-initarg (name form)
+  (unless (symbolp name)
+    (error 'default-initarg-name-must-be-symbol
+           :datum name))
+  `(,name ,form (lambda () ,form)))
+
+;;; Canonicalize the :DEFAULT-INITARGS class option.
+(defun canonicalize-default-initargs (initargs)
+  (unless (cleavir-code-utilities:proper-list-p initargs)
+    (error 'malformed-default-initargs
+           :datum `(:default-initargs ,@initargs)))
+  (unless (evenp (length initargs))
+    (error 'malformed-default-initargs
+           :datum `(:default-initargs ,@initargs)))
+  (loop for (name value) on initargs by #'cddr
+        collect (canonicalize-default-initarg name value)))
+
 ;;; Make sure each class options is well formed, and check that a
 ;;; class option appears at most once.  Return a list of class
 ;;; options, including the corresponding keyword argument, to be
