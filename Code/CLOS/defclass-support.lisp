@@ -187,18 +187,21 @@
              :name 'defclass
              :datum (car potential-malformed-option)))))
 
+(defun check-option-names (options)
+  ;; Check that the name of each option is a symbol
+  (let ((potential-malformed-option (member-if-not #'symbolp options :key #'car)))
+    (unless (null potential-malformed-option)
+      (error 'class-option-name-must-be-symbol
+             :name 'defclass
+             :datum (car potential-malformed-option)))))
+
 ;;; Make sure each class options is well formed, and check that a
 ;;; class option appears at most once.  Return a list of class
 ;;; options, including the corresponding keyword argument, to be
 ;;; spliced into the call to ENSURE-CLASS.
 (defun canonicalize-defclass-options (options)
   (check-options-non-empty options)
-  ;; Check that the name of each option is a symbol
-  (let ((potential-malformed-option (member-if-not #'symbolp options :key #'car)))
-    (unless (null potential-malformed-option)
-      (error 'class-option-name-must-be-symbol
-             :name 'defclass
-             :datum (car potential-malformed-option))))
+  (check-option-names options)
   ;; Check that there are no duplicate option names
   (let ((reduced-options (remove-duplicates options :key #'car :test #'eq)))
     (when (< (length reduced-options) (length options))
