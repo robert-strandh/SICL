@@ -179,17 +179,20 @@
   (loop for (name value) on initargs by #'cddr
         collect (canonicalize-default-initarg name value)))
 
-;;; Make sure each class options is well formed, and check that a
-;;; class option appears at most once.  Return a list of class
-;;; options, including the corresponding keyword argument, to be
-;;; spliced into the call to ENSURE-CLASS.
-(defun canonicalize-defclass-options (options)
+(defun check-options-non-empty (options)
   ;; Check that each option is a non-empty list
   (let ((potential-malformed-option (member-if-not #'consp options)))
     (unless (null potential-malformed-option)
       (error 'class-option-must-be-non-empty-list
              :name 'defclass
-             :datum (car potential-malformed-option))))
+             :datum (car potential-malformed-option)))))
+
+;;; Make sure each class options is well formed, and check that a
+;;; class option appears at most once.  Return a list of class
+;;; options, including the corresponding keyword argument, to be
+;;; spliced into the call to ENSURE-CLASS.
+(defun canonicalize-defclass-options (options)
+  (check-options-non-empty options)
   ;; Check that the name of each option is a symbol
   (let ((potential-malformed-option (member-if-not #'symbolp options :key #'car)))
     (unless (null potential-malformed-option)
