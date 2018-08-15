@@ -58,6 +58,14 @@
            :name 'defclass
            :datum (car direct-slot-spec))))
 
+(defun populate-table-with-slot-options (table slot-options)
+  (loop for (name value) on slot-options by #'cddr
+        do (unless (symbolp name)
+             (error 'slot-option-name-must-be-symbol
+                    :name 'defclass
+                    :datum name))
+           (push value (gethash name table '()))))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -79,12 +87,7 @@
                  :name 'defclass
                  :datum direct-slot-spec))
         (let ((ht (make-hash-table :test #'eq)))
-          (loop for (name value) on (cdr direct-slot-spec) by #'cddr
-                do (unless (symbolp name)
-                     (error 'slot-option-name-must-be-symbol
-                            :name 'defclass
-                            :datum name))
-                   (push value (gethash name ht '())))
+          (populate-table-with-slot-options ht (cdr direct-slot-spec))
           (let ((result `(:name ',(car direct-slot-spec))))
             (flet ((add (name value)
                      (setf result (append result (list name value)))))
