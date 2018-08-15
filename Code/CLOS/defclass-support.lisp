@@ -209,23 +209,10 @@
     (loop for option in options
           do (case (car option)
                (:default-initargs
-                (unless (cleavir-code-utilities:proper-list-p (cdr option))
-                  (error 'malformed-default-initargs
-                         :datum option))
-                (unless (evenp (length (cdr option)))
-                  (error 'malformed-default-initargs
-                         :datum option))
-                (let ((canonicalized-initargs '()))
-                  (loop for (name value) on (cdr option) by #'cddr
-                        do (unless (symbolp name)
-                             (error 'default-initarg-name-must-be-symbol
-                                    :datum name))
-                        do (setf canonicalized-initargs
-                                 (append canonicalized-initargs
-                                         `((,name ,value (lambda () ,value))))))
-                  (setf result
-                        (append result `(:direct-default-initargs
-                                         ,canonicalized-initargs)))))
+                (setf result
+                      (append result
+                              `(:direct-default-initargs
+                                ,(canonicalize-default-initargs (cdr option))))))
                (:documentation
                 (unless (null (cddr option))
                   (error 'malformed-documentation-option
