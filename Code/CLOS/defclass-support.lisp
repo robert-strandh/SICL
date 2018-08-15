@@ -195,13 +195,7 @@
              :name 'defclass
              :datum (car potential-malformed-option)))))
 
-;;; Make sure each class options is well formed, and check that a
-;;; class option appears at most once.  Return a list of class
-;;; options, including the corresponding keyword argument, to be
-;;; spliced into the call to ENSURE-CLASS.
-(defun canonicalize-defclass-options (options)
-  (check-options-non-empty options)
-  (check-option-names options)
+(defun check-no-duplicate-option-names (options)
   ;; Check that there are no duplicate option names
   (let ((reduced-options (remove-duplicates options :key #'car :test #'eq)))
     (when (< (length reduced-options) (length options))
@@ -210,7 +204,16 @@
                                :key #'car :test #'eq) 1)
                  (error 'duplicate-class-option-not-allowed
                         :name 'defclass
-                        :datum (car option))))))
+                        :datum (car option)))))))
+
+;;; Make sure each class options is well formed, and check that a
+;;; class option appears at most once.  Return a list of class
+;;; options, including the corresponding keyword argument, to be
+;;; spliced into the call to ENSURE-CLASS.
+(defun canonicalize-defclass-options (options)
+  (check-options-non-empty options)
+  (check-option-names options)
+  (check-no-duplicate-option-names options)
   (let ((result '()))
     (loop for option in options
           do (case (car option)
