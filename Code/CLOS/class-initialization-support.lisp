@@ -3,20 +3,21 @@
 ;;; Implement class initialization according to the section of the
 ;;; AMOP entitled "Initialization of Class Metaobjects".
 
-;;; For :direct-default-initargs, the AMOP says that it defaults to
+;;; For :DIRECT-DEFAULT-INITARGS, the AMOP says that it defaults to
 ;;; the empty list when the class metaobject is being initialized.  We
 ;;; take that to implicitly imply that when the class metaobject is
 ;;; reinitialized as opposed to initialized, there is no default for
 ;;; this initialization argument, so that if it is not given, the old
 ;;; value is retained.  The AMOP furthermore says that this argument
-;;; is a list of canonicalized default initialization arguments.  The
-;;; canonicalization is accomplished directly in the DEFCLASS macro
-;;; (it has to, because a closure needs to be created there to get the
-;;; lexical environment right), so there is no further processing to
-;;; be done after that.  It follows that we can obtain the desired
-;;; effect by using an :initform in the definition of the class.
+;;; is a list of canonicalized default initialization arguments.
+;;; While canonicalization is accomplished directly in the DEFCLASS
+;;; macro (it has to, because a closure needs to be created there to
+;;; get the lexical environment right), it is possible to create a
+;;; class directly by calling MAKE-INSTANCE.  For that reason, we must
+;;; still check that the :DIRECT-DEFAULT-INITARGS, is a canonicalized
+;;; list.
 
-;;; For :direct-slots, the situation is more complicated.  the
+;;; For :DIRECT-SLOTS, the situation is more complicated.  the
 ;;; DEFCLASS macro provides us with the canonicalized
 ;;; slot-descriptions, but it can not create the
 ;;; DIRECT-SLOT-DEFINITION metaobjects, because the class to be used
