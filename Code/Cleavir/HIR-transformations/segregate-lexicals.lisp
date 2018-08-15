@@ -67,14 +67,13 @@
 	collect (cons enter-instruction
                       (cleavir-ir:new-temporary "CELL"))))
 
-;;; Given an ENCLOSE-INSTRUCTION and the associated ENTER-INSTRUCTION,
-;;; as well as the dynamic lexical location holding a cell in the
-;;; function defined by the owner of the ENCLOSE-INSTRUCTION (IMPORT),
-;;; import the cell to the ENCLOSE-INSTRUCTION.
+;;; Given an ENCLOSE-INSTRUCTION and  the dynamic lexical location
+;;; holding a cell in the function defined by the owner of the
+;;; ENCLOSE-INSTRUCTION (IMPORT), import the cell to the ENCLOSE-INSTRUCTION.
 ;;;
 ;;; We add the import to the end of the import list in order to
 ;;; preserve the index of cells in the static environment.
-(defun transmit-cell (enclose import enter)
+(defun transmit-cell (enclose import)
   (let ((imports (cleavir-ir:inputs enclose)))
     ;; Start by adding the new import to the end of the existing
     ;; imports of the ENCLOSE-INSTRUCTION.
