@@ -58,6 +58,12 @@
            :name 'defclass
            :datum (car direct-slot-spec))))
 
+(defun check-slot-options-even-length (direct-slot-spec)
+  (unless (evenp (length (cdr direct-slot-spec)))
+    (error 'slot-options-must-be-even
+           :name 'defclass
+           :datum direct-slot-spec)))
+
 (defun populate-table-with-slot-options (table slot-options)
   (loop for (name value) on slot-options by #'cddr
         do (unless (symbolp name)
@@ -82,10 +88,7 @@
         ;; where every other element is the name of a slot
         ;; option and every other element is the value of
         ;; the slot option.
-        (unless (evenp (length (cdr direct-slot-spec)))
-          (error 'slot-options-must-be-even
-                 :name 'defclass
-                 :datum direct-slot-spec))
+        (check-slot-options-even-length direct-slot-spec)
         (let ((ht (make-hash-table :test #'eq)))
           (populate-table-with-slot-options ht (cdr direct-slot-spec))
           (let ((result `(:name ',(car direct-slot-spec))))
