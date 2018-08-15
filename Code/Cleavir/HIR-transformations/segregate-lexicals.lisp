@@ -69,21 +69,18 @@
 
 ;;; Given an ENCLOSE-INSTRUCTION and the associated ENTER-INSTRUCTION,
 ;;; as well as the dynamic lexical location holding a cell in the
-;;; function defined by the owner of the ENCLOSE-INSTRUCTION (IMPORT)
-;;; and the dynamic lexical location holding the same cell in function
-;;; defined by ENTER-INSTRUCTION (EXPORT), import the cell to the
-;;; ENCLOSE-INSTRUCTION and add a FETCH-INSTRUCTION immediately after
-;;; ENTER-INSTRUCTION that makes the cell available in the function
-;;; defined by ENTER-INSTRUCTION.
+;;; function defined by the owner of the ENCLOSE-INSTRUCTION (IMPORT),
+;;; import the cell to the ENCLOSE-INSTRUCTION.
 ;;;
 ;;; We add the import to the end of the import list in order to
 ;;; preserve the index of cells in the static environment.
-(defun transmit-cell (enclose import enter export)
+(defun transmit-cell (enclose import enter)
   (let ((imports (cleavir-ir:inputs enclose)))
     ;; Start by adding the new import to the end of the existing
     ;; imports of the ENCLOSE-INSTRUCTION.
     (setf (cleavir-ir:inputs enclose) (append imports (list import)))))
 
+;;; Add a fetch instruction after ENTER so that the cell is accessible.
 (defun add-fetch (enter dloc)
   ;; Finally, add a new FETCH-INSTRUCTION after ENTER.
   (let ((env-location (cleavir-ir:static-environment enter))
@@ -142,7 +139,7 @@
                    do (loop for parent in parents
                             for parent-enter = (enter-instruction parent)
                             for import = (cdr (assoc parent-enter cell-locations))
-                            do (transmit-cell enclose import enter cell-location)))
+                            do (transmit-cell enclose import enter)))
              (add-fetch enter cell-location)))
 
 ;;; Given a list of ENTER-INSTRUCTIONs representing the functions that
