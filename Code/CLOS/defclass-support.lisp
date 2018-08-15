@@ -40,6 +40,19 @@
 (defun make-initfunction (form)
   `(lambda () ,form))
 
+(defun check-slot-spec-non-empty-proper-list (direct-slot-spec)
+  (unless (and (cleavir-code-utilities:proper-list-p direct-slot-spec)
+               (consp direct-slot-spec))
+    (error 'malformed-slot-spec
+           :name 'defclass
+           :datum direct-slot-spec)))
+
+(defun check-slot-spec-name-is-symbol (direct-slot-spec)
+  (unless (symbolp (car direct-slot-spec))
+    (error 'illegal-slot-name
+           :name 'defclass
+           :datum (car direct-slot-spec))))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -48,17 +61,10 @@
       (progn
         ;; If the direct-slot-spec is not a symbol, it must
         ;; be a non-empty proper list.
-        (unless (and (cleavir-code-utilities:proper-list-p direct-slot-spec)
-                     (consp direct-slot-spec))
-          (error 'malformed-slot-spec
-                 :name 'defclass
-                 :datum direct-slot-spec))
+        (check-slot-spec-non-empty-proper-list direct-slot-spec)
         ;; In that case, the first element must be the name
         ;; of the slot, which must be a symbol.
-        (unless (symbolp (car direct-slot-spec))
-          (error 'illegal-slot-name
-                 :name 'defclass
-                 :datum (car direct-slot-spec)))
+        (check-slot-spec-name-is-symbol direct-slot-spec)
         ;; The slot options must be a list of even length
         ;; where every other element is the name of a slot
         ;; option and every other element is the value of
