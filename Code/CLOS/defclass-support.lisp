@@ -3,6 +3,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Functions to canonicalize certain parts of the defclass macro
+;;;
+;;; This file contains very simple code that can be executed in a host
+;;; environment, which makes it easier to use during bootstrapping.
+;;; There are no direct references to any SICL-specific features nor
+;;; to any MOP features.
 
 ;;; The DEFCLASS macro.  The AMOP is inconsistent with respect to the
 ;;; CLHS.  For instance, it requires the arguments to ENSURE-CLASS to
