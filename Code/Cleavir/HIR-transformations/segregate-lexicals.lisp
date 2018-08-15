@@ -138,7 +138,7 @@
                    do (loop for parent in parents
                             for parent-enter = (enter-instruction parent)
                             for import = (cdr (assoc parent-enter cell-locations))
-                            do (transmit-cell enclose import enter)))
+                            do (transmit-cell enclose import)))
              (add-fetch enter cell-location)))
 
 ;;; Given a list of ENTER-INSTRUCTIONs representing the functions that
