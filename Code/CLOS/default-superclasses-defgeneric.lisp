@@ -5,11 +5,11 @@
 ;;;; a list of default superclasses when no superclasses are given for
 ;;;; the creation of a class.  This AMOP section:
 ;;;; http://metamodular.com/CLOS-MOP/initialization-of-class-metaobjects2.html
-;;;; describes that when the class that is being instantiated is
-;;;; STANDARD-CLASS, then the default superclasses is a list of a
-;;;; single class, namely the class named STANDARD-OBJECT, and that
-;;;; when the class that is being instantiated is
-;;;; FUNCALLABLE-STANDARD-CLASS, then the default superclasses is a
+;;;; describes that when the class that is being instantiated is an
+;;;; instance of STANDARD-CLASS, then the default superclasses is a
+;;;; list of a single class, namely the class named STANDARD-OBJECT,
+;;;; and that when the class that is being instantiated is an instance
+;;;; of FUNCALLABLE-STANDARD-CLASS, then the default superclasses is a
 ;;;; list of a single class, namely the class named
 ;;;; FUNCALLABLE-STANDARD-OBJECT.  However, in SICL, we turned that
 ;;;; rule into a generic function called DEFAULT-SUPERCLASSES that
