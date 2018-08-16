@@ -91,6 +91,14 @@
                `(:initargs ',(reverse value)))
         '())))
 
+(defun split-accessors (table)
+  (multiple-value-bind (value flag) (gethash :accessor table)
+    (when flag
+      (loop for accessor in value
+            do (push accessor (gethash :reader table '()))
+               (push `(setf ,accessor) (gethash :writer table '())))
+      (remhash :accessor table))))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -117,14 +125,7 @@
                     (append result (process-initform-option ht direct-slot-spec)))
               (setf result
                     (append result (process-initarg-options ht)))
-              ;; Turn :accessor into :reader and :writer
-              (multiple-value-bind (value flag)
-                  (gethash :accessor ht)
-                (when flag
-                  (loop for accessor in value
-                        do (push accessor (gethash :reader ht '()))
-                           (push `(setf ,accessor) (gethash :writer ht '())))
-                  (remhash :accessor ht)))
+              (split-accessors ht)
               ;; Process :reader option.
               (multiple-value-bind (value flag)
                   (gethash :reader ht)
