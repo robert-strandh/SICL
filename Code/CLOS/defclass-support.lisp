@@ -115,6 +115,19 @@
                `(:writers ',(reverse value)))
         '())))
 
+(defun process-documentation (table direct-slot-spec)
+  (multiple-value-bind (value flag) (gethash :documentation table)
+    (if flag
+        (progn (unless (= (length value) 1)
+                 (error 'multiple-documentation-options-not-permitted
+                        :datum direct-slot-spec))
+               (unless (stringp (car value))
+                 (error 'slot-documentation-option-must-be-string
+                        :datum (car value)))
+               (remhash :documentation table)
+               `(:documentation ,(car value)))
+        '())))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -144,18 +157,8 @@
               (split-accessors ht)
               (setf result (append result (process-readers ht)))
               (setf result (append result (process-writers ht)))
-              ;; Check and process :documentation option.
-              (multiple-value-bind (value flag)
-                  (gethash :documentation ht)
-                (when flag
-                  (unless (= (length value) 1)
-                    (error 'multiple-documentation-options-not-permitted
-                           :datum direct-slot-spec))
-                  (unless (stringp (car value))
-                    (error 'slot-documentation-option-must-be-string
-                           :datum (car value)))
-                  (add :documentation (car value))
-                  (remhash :documentation ht)))
+              (setf result
+                    (append result (process-documentation ht direct-slot-spec)))
               ;; Check and process :allocation option.
               (multiple-value-bind (value flag)
                   (gethash :allocation ht)
