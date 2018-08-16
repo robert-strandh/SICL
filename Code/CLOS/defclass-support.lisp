@@ -99,6 +99,22 @@
                (push `(setf ,accessor) (gethash :writer table '())))
       (remhash :accessor table))))
 
+(defun process-readers (table)
+  (multiple-value-bind (value flag)
+      (gethash :reader table)
+    (if flag
+        (progn (remhash :reader table)
+               `(:readers ',(reverse value)))
+        '())))
+
+(defun process-writers (table)
+  (multiple-value-bind (value flag)
+      (gethash :writer table)
+    (if flag
+        (progn (remhash :writer table)
+               `(:writers ',(reverse value)))
+        '())))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -126,18 +142,8 @@
               (setf result
                     (append result (process-initarg-options ht)))
               (split-accessors ht)
-              ;; Process :reader option.
-              (multiple-value-bind (value flag)
-                  (gethash :reader ht)
-                (when flag
-                  (add :readers `',(reverse value))
-                  (remhash :reader ht)))
-              ;; Process :writer option.
-              (multiple-value-bind (value flag)
-                  (gethash :writer ht)
-                (when flag
-                  (add :writers `',(reverse value))
-                  (remhash :writer ht)))
+              (setf result (append result (process-readers ht)))
+              (setf result (append result (process-writers ht)))
               ;; Check and process :documentation option.
               (multiple-value-bind (value flag)
                   (gethash :documentation ht)
