@@ -128,6 +128,16 @@
                `(:documentation ,(car value)))
         '())))
 
+(defun process-allocation (table direct-slot-spec)
+  (multiple-value-bind (value flag) (gethash :allocation table)
+    (if flag
+        (progn (unless (= (length value) 1)
+                 (error 'multiple-allocation-options-not-permitted
+                        :datum direct-slot-spec))
+               (remhash :allocation table)
+               `(:allocation ,(car value)))
+        '())))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -159,15 +169,8 @@
               (setf result (append result (process-writers ht)))
               (setf result
                     (append result (process-documentation ht direct-slot-spec)))
-              ;; Check and process :allocation option.
-              (multiple-value-bind (value flag)
-                  (gethash :allocation ht)
-                (when flag
-                  (unless (= (length value) 1)
-                    (error 'multiple-allocation-options-not-permitted
-                           :datum direct-slot-spec))
-                  (add :allocation (car value))
-                  (remhash :allocation ht)))
+              (setf result
+                    (append result (process-allocation ht direct-slot-spec)))
               ;; Check and process :type option.
               (multiple-value-bind (value flag)
                   (gethash :type ht)
