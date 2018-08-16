@@ -117,7 +117,7 @@
 ;;; make sure that we pass a list of canonicalized slot specifications
 ;;; as the :DIRECT-SLOTS keyword argument to MAKE-INSTANCE when we
 ;;; create a class.  As mentioned before, though, we must remove the
-;;; :READERS and WRITERS entries in those canonicalized slot
+;;; :READERS and :WRITERS entries in those canonicalized slot
 ;;; specifications.
 
 ;;; Take the name of a slot and define a reader function to be used in
@@ -207,7 +207,7 @@
 ;;; be passed to MAKE-INSTANCE in order to create a
 ;;; DIRECT-SLOT-DEFINITION metaobject.  SLOT-SPEC is such a
 ;;; canonicalized slot specification.  In particular, it might contain
-;;; keyword arguments :READERS and WRITERS where the value is a list
+;;; keyword arguments :READERS and :WRITERS where the value is a list
 ;;; of names of generic functions to which to add reader and writer
 ;;; methods.  It also contains a keyword argument :NAME where the
 ;;; value is a symbol naming the slot.  CLASS is a class metaobject
@@ -224,10 +224,10 @@
 ;;; MAKE-INSTANCE in order to create a DIRECT-SLOT-DEFINITION
 ;;; metaobject.  SLOT-SPEC is such a canonicalized slot specification.
 ;;; In particular, it might contain keyword arguments :READERS and
-;;; WRITERS where the value is a list of names of generic functions to
-;;; which to add reader and writer methods.  We return a copy of
-;;; SLOT-SPEC in which the keyword arguments :READERS and WRITERS have
-;;; been removed.
+;;; :WRITERS where the value is a list of names of generic functions
+;;; to which to add reader and writer methods.  We return a copy of
+;;; SLOT-SPEC in which the keyword arguments :READERS and :WRITERS
+;;; have been removed.
 (defun remove-readers-and-writers-from-slot-spec (slot-spec)
   (loop for (name value) on slot-spec by #'cddr
         unless (member name '(:readers :writers))
