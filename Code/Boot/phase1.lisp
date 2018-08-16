@@ -194,8 +194,8 @@
 ;;; methods should be added.  ENV is the environment in which the name
 ;;; of each generic function should be mapped to a generic-function
 ;;; metaobject.  SLOT-NAME is the name of the slot to be written by
-;;; each of the the new writer methods.  CLASS is a class metaobject
-;;; and it is the specializer to be used in the new methods.
+;;; each of the new writer methods.  CLASS is a class metaobject and
+;;; it is the specializer to be used in the new methods.
 (defun add-writer-methods (generic-function-names env slot-name class)
   (loop for name in generic-function-names
         for generic-function = (sicl-genv:fdefinition name env)
@@ -234,7 +234,7 @@
           collect name
           and collect value))
 
-;;; Remove keyword arguments :READERS and :WRITERS fro each canonical
+;;; Remove keyword arguments :READERS and :WRITERS from each canonical
 ;;; slot specification in a list of such canonical slot
 ;;; specifications.
 (defun remove-readers-and-writers-from-slot-specs (slot-specs)
