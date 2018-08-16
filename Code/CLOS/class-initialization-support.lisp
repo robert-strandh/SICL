@@ -52,10 +52,19 @@
 ;;; INITIALIZE-INSTANCE here. 
 
 (defun check-direct-default-initargs (direct-default-initargs)
-  ;; FIXME: check that the elements of the list are canonicalized
-  ;; default initargs.
   (unless (cleavir-code-utilities:proper-list-p direct-default-initargs)
-    (error "direct default initargs must be a proper list")))
+    (error "direct default initargs must be a proper list"))
+  (loop for initarg in direct-default-initargs
+        do (unless (cleavir-code-utilities:proper-list-p initarg)
+             (error "direct default initarg must be a proper list"))
+           (unless (= (length initarg) 3)
+             (error "direct default initarg must be a list of three elements"))
+           (destructuring-bind (name form function) initarg
+             (declare (ignore form))
+             (unless (symbolp name)
+               (error "name of direct default initarg must be a symbol"))
+             (unless (typep function 'function)
+               (error "third element of direct default initarg must be a thunk.")))))
 
 (defun check-direct-superclasses (class direct-superclasses)
   (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
