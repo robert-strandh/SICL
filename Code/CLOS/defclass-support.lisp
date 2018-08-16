@@ -138,6 +138,16 @@
                `(:allocation ,(car value)))
         '())))
 
+(defun process-type (table direct-slot-spec)
+  (multiple-value-bind (value flag)
+      (gethash :type table)
+    (if flag
+        (progn (unless (= (length value) 1)
+                 (error 'multiple-type-options-not-permitted
+                        :datum direct-slot-spec))
+               (remhash :type table)
+               `(:type ,(car value))))))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -171,15 +181,8 @@
                     (append result (process-documentation ht direct-slot-spec)))
               (setf result
                     (append result (process-allocation ht direct-slot-spec)))
-              ;; Check and process :type option.
-              (multiple-value-bind (value flag)
-                  (gethash :type ht)
-                (when flag
-                  (unless (= (length value) 1)
-                    (error 'multiple-type-options-not-permitted
-                           :datum direct-slot-spec))
-                  (add :type (car value))
-                  (remhash :type ht)))
+              (setf result
+                    (append result (process-type ht direct-slot-spec)))
               ;; Add remaining options without checking.
               (maphash (lambda (name value)
                          (add name (reverse value)))
