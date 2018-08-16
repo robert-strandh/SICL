@@ -168,24 +168,19 @@
         (let ((ht (make-hash-table :test #'eq)))
           (populate-table-with-slot-options ht (cdr direct-slot-spec))
           (let ((result `(:name ',(car direct-slot-spec))))
-            (flet ((add (name value)
-                     (setf result (append result (list name value)))))
-              (setf result
-                    (append result (process-initform-option ht direct-slot-spec)))
-              (setf result
-                    (append result (process-initarg-options ht)))
+            (flet ((add (option)
+                     (setf result (append result option))))
+              (add (process-initform-option ht direct-slot-spec))
+              (add (process-initarg-options ht))
               (split-accessors ht)
-              (setf result (append result (process-readers ht)))
-              (setf result (append result (process-writers ht)))
-              (setf result
-                    (append result (process-documentation ht direct-slot-spec)))
-              (setf result
-                    (append result (process-allocation ht direct-slot-spec)))
-              (setf result
-                    (append result (process-type ht direct-slot-spec)))
+              (add (process-readers ht))
+              (add (process-writers ht))
+              (add (process-documentation ht direct-slot-spec))
+              (add (process-allocation ht direct-slot-spec))
+              (add (process-type ht direct-slot-spec))
               ;; Add remaining options without checking.
               (maphash (lambda (name value)
-                         (add name (reverse value)))
+                         (add (list name (reverse value))))
                        ht))
             `(list ,@result))))))
 
