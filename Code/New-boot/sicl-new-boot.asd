@@ -2,4 +2,7 @@
 
 (defsystem #:sicl-new-boot
   :depends-on (#:sicl-new-boot-phase-1)
-  :serial t)
+  :serial t
+  :components
+  ((:file "packages")
+   (:file "boot")))
