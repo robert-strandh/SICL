@@ -16,6 +16,7 @@
      &key &allow-other-keys)
   (apply #'shared-initialize-around-generic-function-default
          #'call-next-method
+         #'invalidate-discriminating-function
          generic-function
          slot-names
          initargs))

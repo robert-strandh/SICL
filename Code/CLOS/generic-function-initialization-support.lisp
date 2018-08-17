@@ -35,6 +35,7 @@
 
 (defun shared-initialize-around-generic-function-default
     (call-next-method
+     invalidate-discriminating-function
      generic-function
      slot-names
      &rest initargs
@@ -81,5 +82,5 @@
 		 :method-class method-class
 		 :name name
 		 initargs)))
-  (invalidate-discriminating-function generic-function)
+  (funcall invalidate-discriminating-function generic-function)
   generic-function)
