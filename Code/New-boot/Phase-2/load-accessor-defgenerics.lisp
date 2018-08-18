@@ -6,7 +6,10 @@
 
 (defun ensure-generic-function-phase-2 (boot)
   (let* ((class-env (sicl-new-boot:e1 boot))
-         (class (sicl-genv:find-class 'standard-generic-function class-env))
+         (gf-class-name 'standard-generic-function)
+         (gf-class (sicl-genv:find-class gf-class-name class-env))
+         (method-class-name 'standard-method)
+         (method-class (sicl-genv:find-class method-class-name class-env))
          (target-env (sicl-new-boot:e3 boot)))
     (setf (sicl-genv:fdefinition 'ensure-generic-function target-env)
           (lambda (function-name &rest arguments
@@ -17,8 +20,9 @@
               (if (sicl-genv:fboundp function-name environment)
                   (sicl-genv:fdefinition function-name environment)
                   (setf (sicl-genv:fdefinition function-name environment)
-                        (apply #'make-instance class
+                        (apply #'make-instance gf-class
                                :name function-name
+                               :method-class method-class
                                args))))))))
 
 (defun load-accessor-defgenerics (boot)
