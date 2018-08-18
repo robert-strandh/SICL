@@ -9,4 +9,5 @@
   ((:file "packages")
    (:file "utilities")
    (:file "load-accessor-defgenerics")
+   (:file "define-mop-classes")
    (:file "boot-phase-2")))

@@ -9,5 +9,5 @@
      'sicl-clos:defclass-expander e2)
     (sicl-minimal-extrinsic-environment:import-function-from-host
      '(setf sicl-genv:special-variable) e2)
-    (load-accessor-defgenerics boot)))
-
+    (load-accessor-defgenerics boot)
+    (create-mop-classes boot)))
