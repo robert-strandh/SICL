@@ -12,6 +12,4 @@
   (let ((boot (make-instance 'boot
                 :e1 (make-environment)
                 :e2 (make-environment))))
-    (sicl-new-boot-phase-1:boot-phase-1 (e1 boot) (e2 boot))))
-
-
+    (sicl-new-boot-phase-1:boot-phase-1 boot)))
