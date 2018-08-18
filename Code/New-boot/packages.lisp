@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export #:boot
            #:e1
-           #:e2))
+           #:e2
+           #:e3))

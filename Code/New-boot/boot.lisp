@@ -11,5 +11,6 @@
 (defun boot ()
   (let ((boot (make-instance 'boot
                 :e1 (make-environment)
-                :e2 (make-environment))))
+                :e2 (make-environment)
+                :e3 (make-environment))))
     (sicl-new-boot-phase-1:boot-phase-1 boot)))
