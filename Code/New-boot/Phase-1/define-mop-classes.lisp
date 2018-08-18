@@ -29,32 +29,21 @@
 ;;; :READERS and :WRITERS entries in those canonicalized slot
 ;;; specifications.
 
-;;; Take the name of a slot and define a reader function to be used in
-;;; a method.  This reader function returns the value of the slot.
-;;; The resulting function calls the host function SLOT-VALUE to
-;;; accomplish its task.
-(defun make-reader-function (slot-name)
-  (compile nil
-           `(lambda (args next-methods)
-              (declare (ignore next-methods))
-              (slot-value (car args) ',slot-name))))
-
-;;; Create a reader method.  SLOT-NAME is the name of a slot for which
-;;; a reader method should be created.  CLASS is a class metaobject
-;;; and it is the specializer to be used in the method.
-(defun make-reader-method (slot-name class)
-  (make-instance 'standard-method
-    :lambda-list '(object)
-    :specializers (list class)
-    :function (make-reader-function slot-name)))
-
 ;;; Add a new reader method to a generic function.  GENERIC-FUNCTION
 ;;; is a generic function metaobject to which the new reader method
 ;;; should be added.  SLOT-NAME is the name of the slot to be read by
 ;;; the new reader method.  CLASS is a class metaobject and it is the
 ;;; specializer to be used in the new method.
 (defun add-reader-method (generic-function slot-name class)
-  (add-method generic-function (make-reader-method slot-name class)))
+  (let ((temp (gensym)))
+    (setf (fdefinition temp) generic-function)
+    (setf (find-class temp) class)
+    (eval `(defmethod ,temp ((object ,temp))
+             (slot-value object ',slot-name)))
+    (fmakunbound temp)
+    (setf (find-class temp) nil)))
+
+;;  (add-method generic-function (make-reader-method slot-name class)))
 
 ;;; Add new reader methods to each generic function in a list of
 ;;; generic functions, each given by its name.  GENERIC-FUNCTION-NAMES
@@ -69,33 +58,19 @@
         for generic-function = (sicl-genv:fdefinition name env)
         do (add-reader-method generic-function slot-name class)))
 
-;;; Take the name of a slot and define a writer function to be used in
-;;; a method.  This writer function sets the value of the slot.  The
-;;; resulting function calls the host function (SETF SLOT-VALUE) to
-;;; accomplish its task.
-(defun make-writer-function (slot-name)
-  (compile nil
-           `(lambda (args next-methods)
-              (declare (ignore next-methods))
-              (setf (slot-value (cadr args) ',slot-name)
-                    (car args)))))
-
-;;; Create a writer method.  SLOT-NAME is the name of a slot for which
-;;; a writer method should be created.  CLASS is a class metaobject
-;;; and it is the specializer to be used in the method.
-(defun make-writer-method (slot-name class)
-  (make-instance 'standard-method
-    :lambda-list '(new-value object)
-    :specializers (list (find-class t) class)
-    :function (make-writer-function slot-name)))
-
 ;;; Add a new writer method to a generic function.  GENERIC-FUNCTION
 ;;; is a generic function metaobject to which the new writer method
 ;;; should be added.  SLOT-NAME is the name of the slot to be written
 ;;; by the new writer method.  CLASS is a class metaobject and it is
 ;;; the specializer to be used in the new method.
 (defun add-writer-method (generic-function slot-name class)
-  (add-method generic-function (make-writer-method slot-name class)))
+  (let ((temp (gensym)))
+    (setf (fdefinition temp) generic-function)
+    (setf (find-class temp) class)
+    (eval `(defmethod ,temp (value (object ,temp))
+             (setf (slot-value object ',slot-name) value)))
+    (fmakunbound temp)
+    (setf (find-class temp) nil)))
 
 ;;; Add new writer methods to each generic function in a list of
 ;;; generic functions, each given by its name.  GENERIC-FUNCTION-NAMES
@@ -162,7 +137,8 @@
                    direct-slots
                    ((:direct-superclasses direct-superclass-names))
                    name
-                   ((:metaclass metaclass-name) 'standard-class)
+                   ((:metaclass metaclass-name)
+                    'closer-mop:funcallable-standard-class)
                  &allow-other-keys)
           ;; We should be called only for the expansion of DEFCLASS,
           ;; and we make sure that we always pass the name of a
@@ -203,7 +179,7 @@
 ;;; STANDARD-OBJECT.
 (defun define-class-t-phase1 (env)
   (setf (sicl-genv:find-class 't env)
-        (find-class 'standard-object)))
+        (find-class 'closer-mop:funcallable-standard-object)))
 
 ;;; We need a special definition of the class named FUNCTION in phase
 ;;; 1, because we want instances of this class to be funcallable in
