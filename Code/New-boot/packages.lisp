@@ -2,4 +2,6 @@
 
 (defpackage #:sicl-new-boot
   (:use #:common-lisp)
-  (:export #:boot))
+  (:export #:boot
+           #:e1
+           #:e2))
