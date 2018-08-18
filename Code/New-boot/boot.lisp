@@ -9,8 +9,11 @@
    (%e3 :initarg :e3 :accessor e3)))
 
 (defun boot ()
-  (let ((boot (make-instance 'boot
-                :e1 (make-environment)
-                :e2 (make-environment)
-                :e3 (make-environment))))
-    (sicl-new-boot-phase-1:boot-phase-1 boot)))
+  (let* ((sicl-minimal-extrinsic-environment::*cache-p* t)
+         (boot (make-instance 'boot
+                 :e1 (make-environment)
+                 :e2 (make-environment)
+                 :e3 (make-environment))))
+    (sicl-new-boot-phase-1:boot-phase-1 boot)
+    (sicl-new-boot-phase-2:boot-phase-2 boot)
+    boot))
