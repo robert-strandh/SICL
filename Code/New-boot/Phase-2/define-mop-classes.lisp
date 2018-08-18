@@ -23,7 +23,8 @@
                                ((eq metaclass-name
                                     'sicl-clos:funcallable-standard-class)
                                 '(funcallable-standard-object))
-                               (t '()))))
+                               (t '()))
+                         direct-superclasses))
                    (superclasses (loop for name in superclass-names
                                        collect (sicl-genv:find-class name e1)))
                    (remaining-keys (copy-list keys)))
