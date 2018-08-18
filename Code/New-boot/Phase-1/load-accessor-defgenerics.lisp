@@ -46,7 +46,7 @@
   (setf (sicl-genv:fdefinition 'ensure-generic-function environment)
         #'ensure-generic-function-phase-1)
   (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" environment)
-  (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" environment)   
+  (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" environment)
   (load-file "CLOS/specializer-direct-methods-defgeneric.lisp" environment)
   (load-file "CLOS/setf-specializer-direct-methods-defgeneric.lisp" environment)
   (load-file "CLOS/eql-specializer-object-defgeneric.lisp" environment)
