@@ -17,7 +17,7 @@
 ;;; contains the slot name associated with the new reader method, and
 ;;; that is also used to determine the method class to be used for the
 ;;; reader method.  SLOT-DEFINITION is also stored in the new reader
-;;; method for optimization purposes. 
+;;; method for optimization purposes.
 (defun add-reader-method (class function-name slot-definition)
   (let* ((lambda-list '(object))
 	 (generic-function (ensure-generic-function
@@ -79,6 +79,3 @@
 				:function method-function
 				:slot-definition slot-definition)))
     (add-method generic-function method)))
-
-
-  
