@@ -124,10 +124,11 @@
 	  (destructuring-bind (function-name . rest)
 	      (rest form)
 	    (multiple-value-bind
-		  (qualifiers lambda-list specializers
+		  (qualifiers required remaining specializers
 		   declarations documentation forms)
 		(sicl-clos::parse-defmethod rest)
-	      (let ((args (gensym))
+	      (let ((lambda-list (append required remaining))
+                    (args (gensym))
 		    (next-methods (gensym)))
 		`(ensure-method
 		  ',function-name

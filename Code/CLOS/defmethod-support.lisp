@@ -35,8 +35,8 @@
     (multiple-value-bind (declarations documentation forms)
         (cleavir-code-utilities:separate-function-body body)
       (values qualifiers
-              (append (mapcar #'car required)
-                      (subseq lambda-list (length required)))
+              (mapcar #'car required)
+              (subseq lambda-list (length required))
               (mapcar #'cadr required)
               declarations
               documentation
@@ -57,9 +57,10 @@
 
 (defun defmethod-expander (ct-env function-name rest)
   (multiple-value-bind
-        (qualifiers lambda-list specializers declarations documentation forms)
+        (qualifiers required remaining specializers declarations documentation forms)
       (parse-defmethod rest)
-    (let* ((fboundp (sicl-genv:fboundp function-name ct-env))
+    (let* ((lambda-list (append required remaining))
+           (fboundp (sicl-genv:fboundp function-name ct-env))
            (binding (if fboundp
                         (sicl-genv:fdefinition function-name ct-env)
                         nil))
