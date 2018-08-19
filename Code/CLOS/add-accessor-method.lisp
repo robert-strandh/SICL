@@ -20,28 +20,28 @@
 ;;; method for optimization purposes.
 (defun add-reader-method (class function-name slot-definition)
   (let* ((lambda-list '(object))
-	 (generic-function (ensure-generic-function
-			    function-name
-			    :lambda-list lambda-list))
-	 (specializers (list class))
-	 (slot-name (slot-definition-name slot-definition))
-	 (method-function
-	   (compile nil `(lambda (arguments next-methods)
-			   (declare (ignore next-methods))
-			   (slot-value (car arguments) ',slot-name))))
-	 (method-class (reader-method-class
-			class slot-definition
-			:lambda-list lambda-list
-			:qualifiers '()
-			:specializers specializers
-			:function method-function
-			:slot-definition slot-definition))
-	 (method (make-instance method-class
-		   :lambda-list lambda-list
-		   :qualifiers '()
-		   :specializers specializers
-		   :function method-function
-		   :slot-definition slot-definition)))
+         (generic-function (ensure-generic-function
+                            function-name
+                            :lambda-list lambda-list))
+         (specializers (list class))
+         (slot-name (slot-definition-name slot-definition))
+         (method-function
+           (compile nil `(lambda (arguments next-methods)
+                           (declare (ignore next-methods))
+                           (slot-value (car arguments) ',slot-name))))
+         (method-class (reader-method-class
+                        class slot-definition
+                        :lambda-list lambda-list
+                        :qualifiers '()
+                        :specializers specializers
+                        :function method-function
+                        :slot-definition slot-definition))
+         (method (make-instance method-class
+                   :lambda-list lambda-list
+                   :qualifiers '()
+                   :specializers specializers
+                   :function method-function
+                   :slot-definition slot-definition)))
     (add-method generic-function method)))
 
 ;;; Add a writer method to a generic function.  CLASS is a class
@@ -55,27 +55,27 @@
 ;;; method for optimization purposes.
 (defun add-writer-method (class function-name slot-definition)
   (let* ((lambda-list '(new-value object))
-	 (generic-function (ensure-generic-function
-			    function-name
-			    :lambda-list lambda-list))
-	 (specializers (list (find-class t) class))
-	 (slot-name (slot-definition-name slot-definition))
-	 (method-function
-	   (compile nil `(lambda (arguments next-methods)
-			   (declare (ignore next-methods))
-			   (setf (slot-value (cadr arguments) ',slot-name)
-				 (car arguments)))))
-	 (method-class (writer-method-class
-			class slot-definition
-			:lambda-list lambda-list
-			:qualifiers '()
-			:specializers specializers
-			:function method-function
-			:slot-definition slot-definition))
-	 (method (make-instance method-class
-				:lambda-list lambda-list
-				:qualifiers '()
-				:specializers specializers
-				:function method-function
-				:slot-definition slot-definition)))
+         (generic-function (ensure-generic-function
+                            function-name
+                            :lambda-list lambda-list))
+         (specializers (list (find-class t) class))
+         (slot-name (slot-definition-name slot-definition))
+         (method-function
+           (compile nil `(lambda (arguments next-methods)
+                           (declare (ignore next-methods))
+                           (setf (slot-value (cadr arguments) ',slot-name)
+                                 (car arguments)))))
+         (method-class (writer-method-class
+                        class slot-definition
+                        :lambda-list lambda-list
+                        :qualifiers '()
+                        :specializers specializers
+                        :function method-function
+                        :slot-definition slot-definition))
+         (method (make-instance method-class
+                                :lambda-list lambda-list
+                                :qualifiers '()
+                                :specializers specializers
+                                :function method-function
+                                :slot-definition slot-definition)))
     (add-method generic-function method)))
