@@ -31,10 +31,11 @@
 
 (cl:in-package #:asdf-user)
 
-(defsystem :sicl-global-environment
-  :depends-on (:cleavir-code-utilities
-	       :cleavir-environment
-               :acclimation)
+(defsystem #:sicl-global-environment
+  :depends-on (#:cleavir-code-utilities
+	       #:cleavir-environment
+               #:sicl-clos-package
+               #:acclimation)
   :serial t
   :components
   ((:file "packages")
