@@ -34,4 +34,6 @@
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-genv:find-class e2)
     (sicl-minimal-extrinsic-environment:import-function-from-host
-     'sicl-genv:typep e2)))
+     'sicl-genv:typep e2)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'cleavir-code-utilities:proper-list-p e2)))
