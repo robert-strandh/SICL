@@ -31,7 +31,7 @@
 (defun make-specializer (specializer environment)
   (cond ((symbolp specializer)
          (sicl-genv:find-class specializer environment))
-        ((typep specializer 'specializer environment)
+        ((sicl-genv:typep specializer 'specializer environment)
          specializer)
         (t
          (error "Specializer must be symbol or specializer metaobject: ~s"
