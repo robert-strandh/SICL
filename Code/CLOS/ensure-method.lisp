@@ -42,7 +42,8 @@
 		      &rest keys
 		      &key specializers
 		      &allow-other-keys)
-  ;; FIXME: Check that SPECIALIZERS is a proper list.
+  (unless (cleavir-code-utilities:proper-list-p specializers)
+    (error "Specializers must be a proper list: ~s" specializers))
   (let ((specs (loop for s in specializers
 		     collect (make-specializer s environment)))
 	(remaining-keys (copy-list keys)))
