@@ -73,6 +73,10 @@
   (setf (sicl-genv:fdefinition function-name to-environment)
         (fdefinition function-name)))
 
+(defun import-package-from-host (package-name to-environment)
+  (push (find-package package-name)
+        (sicl-genv:packages to-environment)))
+
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
   (host-load "Data-and-control-flow/shiftf-support.lisp")
@@ -101,5 +105,4 @@
       (setf (sicl-genv:special-operator symbol environment) t)))
   ;; Import some packages
   (loop for name in *imported-packages*
-        do (push (find-package name)
-                 (sicl-genv:packages environment))))
+        do (import-package-from-host name environment)))
