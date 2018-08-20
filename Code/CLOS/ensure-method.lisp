@@ -30,7 +30,7 @@
 
 (defun make-specializer (specializer environment)
   (cond ((symbolp specializer)
-         (sicl-genv:find-class s environment))
+         (sicl-genv:find-class specializer environment))
         ((typep specializer 'specializer environment)
          specializer)
         (t
