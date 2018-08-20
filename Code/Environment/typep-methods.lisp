@@ -68,3 +68,23 @@
 
 (defmethod typep (object (type-specifier (eql 'values)) environment)
   (error "Illegal type specifier for TYPEP."))
+
+(defmethod typep (object (type-specifier symbol) environment)
+  (let ((expander (type-expander type-specifier environment)))
+    (if (null expander)
+        (let* ((type-class (find-class type-specifier environment))
+               (object-class (class-of object environment)))
+          (if (null type-class)
+              (error "There is no type named ~s" type-specifier)
+              (member type-class
+                      (sicl-clos:class-precedence-list object-class))))
+        (let ((expanded-type (funcall expander type-specifier environment)))
+          (typep object expanded-type environment)))))
+
+(defmethod typep (object (type-specifier cons) environment)
+  (unless (cleavir-code-utilities:proper-list-p type-specifier)
+    (error "Type specifier must be a proper list: ~s" type-specifier))
+  (typep-compound object
+                  (first type-specifier)
+                  (rest type-specifier)
+                  environment))
