@@ -30,7 +30,8 @@
          (qualifiers (subseq all-but-name 0 lambda-list-position))
          (lambda-list (elt all-but-name lambda-list-position))
          (body (subseq all-but-name (1+ lambda-list-position)))
-         (parsed-lambda-list (parse-specialized-lambda-list lambda-list))
+         (parsed-lambda-list
+           (cleavir-code-utilities:parse-specialized-lambda-list lambda-list))
          (required (cleavir-code-utilities:required parsed-lambda-list)))
     (multiple-value-bind (declarations documentation forms)
         (cleavir-code-utilities:separate-function-body body)

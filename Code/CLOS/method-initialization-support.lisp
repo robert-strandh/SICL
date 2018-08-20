@@ -37,7 +37,8 @@
   ;; be signaled if it is not syntactically correct, but we also keep
   ;; the return value because we need to check the number of required
   ;; parameters against the specializers, below.
-  (let ((parsed-lambda-list (parse-ordinary-lambda-list lambda-list)))
+  (let ((parsed-lambda-list
+          (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
     ;; Everything is OK.
     ;; Next, we do the SPECIALIZERS.  Again, the AMOP says that an error
     ;; is signaled if this argument is not supplied.

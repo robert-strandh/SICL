@@ -4,9 +4,6 @@
 
 (defpackage #:sicl-clos
   (:use #:common-lisp)
-  (:import-from #:cleavir-code-utilities
-		#:parse-ordinary-lambda-list
-		#:parse-specialized-lambda-list)
   (:shadow #:documentation)
   (:export
    ;; MOP classes
