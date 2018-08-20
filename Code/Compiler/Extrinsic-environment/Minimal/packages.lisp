@@ -12,4 +12,6 @@
   (:export #:environment
            #:symbol-value
            #:import-function-from-host
-           #:host-load))
+           #:import-package-from-host
+           #:host-load
+           #:cst-load-file))
