@@ -30,4 +30,8 @@
      'remove e2)
     (load-accessor-defgenerics boot)
     (create-mop-classes boot)
-    (define-make-instance e1 e2)))
+    (define-make-instance e1 e2)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'sicl-genv:find-class e2)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'sicl-genv:typep e2)))
