@@ -42,5 +42,6 @@
    (:file "condition-reporters-english")
    (:file "generic-functions")
    (:file "info-methods")
+   (:file "typep-methods")
    (:file "other-methods")
    (:file "other-functions")))
