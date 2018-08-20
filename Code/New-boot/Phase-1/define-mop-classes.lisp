@@ -43,8 +43,6 @@
     (fmakunbound temp)
     (setf (find-class temp) nil)))
 
-;;  (add-method generic-function (make-reader-method slot-name class)))
-
 ;;; Add new reader methods to each generic function in a list of
 ;;; generic functions, each given by its name.  GENERIC-FUNCTION-NAMES
 ;;; is a list of names of generic functions to which new reader
