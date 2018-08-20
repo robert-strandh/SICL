@@ -9,10 +9,17 @@
                      class)
                  arguments))))
 
+(defclass environment (sicl-minimal-extrinsic-environment:environment)
+  ())
+
+(defmethod sicl-genv:class-of (object (environment environment))
+  (class-of object))
+
 (defun boot-phase-2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
+    (change-class e2 'environment)
     (sicl-minimal-extrinsic-environment:import-package-from-host 'sicl-clos e3)
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-clos:defclass-expander e2)
