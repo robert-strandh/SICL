@@ -63,8 +63,16 @@
 
 (defmethod typep-compound :around
     (object atomic-type-specifier subsidiary-type-information environment)
-  (and (typep object atomic-type-specifier environment)
-       (call-next-method)))
+  (let ((expander (type-expander atomic-type-specifier environment)))
+    (if (null expander)
+        (and (typep object atomic-type-specifier environment)
+             (call-next-method))
+        (let* ((original-type-specifier
+                 (cons atomic-type-specifier subsidiary-type-information))
+               (expanded-type (funcall expander
+                                       original-type-specifier
+                                       environment)))
+          (typep object expanded-type environment)))))
 
 (defmethod typep (object (type-specifier (eql 'values)) environment)
   (error "Illegal type specifier for TYPEP."))
