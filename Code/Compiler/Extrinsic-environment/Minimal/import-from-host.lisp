@@ -21,7 +21,6 @@
     cleavir-environment:macro-function
     cleavir-code-utilities:parse-macro
     cleavir-code-utilities:parse-deftype
-    cleavir-code-utilities:proper-list-p
     cleavir-code-utilities:separate-ordinary-body
     cleavir-code-utilities:list-structure
     sicl-conditionals:or-expander
