@@ -50,6 +50,8 @@
            #:get-setf-expansion
            #:declaration
            #:symbol-plist
+           #:class-of
+           #:typep
            )
   (:export
    #:environment
@@ -95,6 +97,9 @@
    #:structure-type
    #:structure-size
    #:defun-expander
+   #:class-of
+   #:typep
+   #:typep-compound
    ))
 
 (defpackage #:sicl-standard-environment-functions
