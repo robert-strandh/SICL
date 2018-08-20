@@ -24,7 +24,7 @@
   (unless (null (rest subsidiary-type-information))
     ;; FIXME: do this with a specific error type.
     (error "Malformed typespecifier"))
-  (not (typep (first subsidiary-type-information))))
+  (not (typep object (first subsidiary-type-information) environment)))
 
 (defmethod typep-compound
     (object
