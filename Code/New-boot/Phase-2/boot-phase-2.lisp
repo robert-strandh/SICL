@@ -13,6 +13,18 @@
                      class)
                  arguments))))
 
+;;; When we need to find a class in E2, like for creating a method
+;;; metaobject, or for finding a specializer for some method, we need
+;;; to find a host class, and the host classes are present in E1, so
+;;; we need a special version of SICL-GENV:FIND-CLASS in E2 that
+;;; ignores its ENVIRONMENT parameter and looks up the class in E1
+;;; instead.
+(defun define-find-class (e1 e2)
+  (setf (sicl-genv:fdefinition 'sicl-genv:find-class e2)
+        (lambda (class-name environment)
+          (declare (ignore environment))
+          (sicl-genv:find-class class-name e1))))
+
 (defclass environment (sicl-minimal-extrinsic-environment:environment)
   ())
 
@@ -37,8 +49,7 @@
     (define-make-instance e1 e2)
     ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
     ;; specializer when a symbol is given.
-    (sicl-minimal-extrinsic-environment:import-function-from-host
-     'sicl-genv:find-class e2)
+    (define-find-class e1 e2)
     ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
     ;; not given, then an instance of SPECIALIZER was.
     (sicl-minimal-extrinsic-environment:import-function-from-host
