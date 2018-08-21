@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+;;; We define MAKE-INSTANCE in environment E2 so that it calls the
+;;; host MAKE-INSTANCE always with a class metaobject and never with a
+;;; symbol.  If our version receives a symbol, it looks up the class
+;;; metaobject in environment E1 before calling the host version.
 (defun define-make-instance (e1 e2)
   (setf (sicl-genv:fdefinition 'make-instance e2)
         (lambda (class &rest arguments)
