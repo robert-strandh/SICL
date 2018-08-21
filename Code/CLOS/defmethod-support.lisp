@@ -65,7 +65,8 @@
            (binding (if fboundp
                         (sicl-genv:fdefinition function-name ct-env)
                         nil))
-           (fun (if (and binding (typep binding 'generic-function))
+           (fun (if (and binding
+                         (sicl-genv:typep binding 'generic-function ct-env))
                     binding
                     nil))
            (generic-function-var (gensym)))
@@ -83,11 +84,11 @@
           ,(make-method-lambda
             (if (null fun)
                 (class-prototype
-                 (sicl-environment:find-class 'standard-generic-function ct-env))
+                 (sicl-genv:find-class 'standard-generic-function ct-env))
                 fun)
             (class-prototype
              (if (null fun)
-                 (sicl-environment:find-class 'standard-method ct-env)
+                 (sicl-genv:find-class 'standard-method ct-env)
                  (generic-function-method-class fun)))
             `(lambda ,lambda-list
                ,@declarations
