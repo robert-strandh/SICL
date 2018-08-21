@@ -35,9 +35,15 @@
     (load-accessor-defgenerics boot)
     (create-mop-classes boot)
     (define-make-instance e1 e2)
+    ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
+    ;; specializer when a symbol is given.
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-genv:find-class e2)
+    ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
+    ;; not given, then an instance of SPECIALIZER was.
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-genv:typep e2)
+    ;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
+    ;; of specializers given is a proper list.
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'cleavir-code-utilities:proper-list-p e2)))
