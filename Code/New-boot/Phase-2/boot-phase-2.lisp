@@ -83,4 +83,6 @@
     ;; of specializers given is a proper list.
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'cleavir-code-utilities:proper-list-p e2)
-    (define-method-on-generic-function-method-class e2)))
+    (define-method-on-generic-function-method-class e2)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'add-method e2)))
