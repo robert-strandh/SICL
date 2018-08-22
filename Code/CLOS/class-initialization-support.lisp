@@ -63,14 +63,18 @@
              (declare (ignore form))
              (unless (symbolp name)
                (error "name of direct default initarg must be a symbol"))
-             (unless (typep function 'function)
+             (unless (sicl-genv:typep function
+                                      'function
+                                      (sicl-genv:global-environment))
                (error "third element of direct default initarg must be a thunk.")))))
 
 (defun check-direct-superclasses (class direct-superclasses)
   (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
     (error "direct superclasses must be proper list"))
   (loop for direct-superclass in direct-superclasses
-	do (unless (typep direct-superclass 'class)
+	do (unless (sicl-genv:typep direct-superclass
+                                    'class
+                                    (sicl-genv:global-environment))
 	     (error "superclass must be a class metaobject"))
 	   (unless (validate-superclass class direct-superclass)
 	     (error "superclass not valid for class"))))
