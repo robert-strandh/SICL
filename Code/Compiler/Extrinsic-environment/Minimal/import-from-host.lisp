@@ -5,7 +5,7 @@
     cons car cdr cadr cddr cdddr append list consp atom null not endp
     length rplaca rplacd first second third rest getf member
     ;; Functions for arithmetic
-    + - * / floor ceiling round evenp oddp
+    + - * / floor ceiling round evenp oddp = /= < <= > >=
     ;; Various functions
     coerce eq values
     ;; Funcions related to symbols
