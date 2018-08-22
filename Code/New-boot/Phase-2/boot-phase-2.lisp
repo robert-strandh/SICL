@@ -97,6 +97,36 @@
                 (t
                  specializer)))))
 
+;;; We already know how to execute a DEFGENERIC form in E2.  Now we
+;;; need to know how to use DEFMETHOD to define methods on the generic
+;;; functions we create with DEFGENERIC.  That is the purpose of this
+;;; function.
+(defun make-defmethod-possible-in-e2 (e1 e2)
+  ;; The first step is to define MAKE-INSTANCE because, ultimately,
+  ;; that is what DEFMETHOD does.
+  (define-make-instance e1 e2)
+  ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
+  ;; specializer when a symbol is given.
+  (define-find-class e1 e2)
+  ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
+  ;; not given, then an instance of SPECIALIZER was.
+  (sicl-minimal-extrinsic-environment:import-function-from-host
+   'sicl-genv:typep e2)
+  ;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
+  ;; of specializers given is a proper list.
+  (sicl-minimal-extrinsic-environment:import-function-from-host
+   'cleavir-code-utilities:proper-list-p e2)
+  (define-method-on-generic-function-method-class e2)
+  (sicl-minimal-extrinsic-environment:import-function-from-host
+   'add-method e2)
+  (sicl-minimal-extrinsic-environment:import-function-from-host
+   'copy-list e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
+        #'defmethod-expander)
+  (load-file "CLOS/ensure-method.lisp" e2)
+  (define-make-specializer e1 e2)
+  (load-file "CLOS/defmethod-defmacro.lisp" e2))
+
 (defun boot-phase-2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -111,26 +141,5 @@
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'remove e2)
     (load-accessor-defgenerics boot)
-    (create-mop-classes boot)
-    (define-make-instance e1 e2)
-    ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
-    ;; specializer when a symbol is given.
-    (define-find-class e1 e2)
-    ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
-    ;; not given, then an instance of SPECIALIZER was.
-    (sicl-minimal-extrinsic-environment:import-function-from-host
-     'sicl-genv:typep e2)
-    ;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
-    ;; of specializers given is a proper list.
-    (sicl-minimal-extrinsic-environment:import-function-from-host
-     'cleavir-code-utilities:proper-list-p e2)
-    (define-method-on-generic-function-method-class e2)
-    (sicl-minimal-extrinsic-environment:import-function-from-host
-     'add-method e2)
-    (sicl-minimal-extrinsic-environment:import-function-from-host
-     'copy-list e2)
-    (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
-          #'defmethod-expander)
-    (load-file "CLOS/ensure-method.lisp" e2)
-    (define-make-specializer e1 e2)
-    (load-file "CLOS/defmethod-defmacro.lisp" e2)))
+    (make-defmethod-possible-in-e2 e1 e2)
+    (create-mop-classes boot)))
