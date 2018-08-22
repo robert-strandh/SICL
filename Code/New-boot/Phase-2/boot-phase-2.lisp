@@ -102,9 +102,6 @@
 ;;; functions we create with DEFGENERIC.  That is the purpose of this
 ;;; function.
 (defun make-defmethod-possible-in-e2 (e1 e2)
-  ;; The first step is to define MAKE-INSTANCE because, ultimately,
-  ;; that is what DEFMETHOD does.
-  (define-make-instance e1 e2)
   ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
   ;; specializer when a symbol is given.
   (define-find-class e1 e2)
@@ -141,5 +138,6 @@
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'remove e2)
     (load-accessor-defgenerics boot)
+    (define-make-instance e1 e2)
     (make-defmethod-possible-in-e2 e1 e2)
     (create-mop-classes boot)))
