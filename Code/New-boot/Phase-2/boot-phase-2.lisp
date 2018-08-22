@@ -56,6 +56,47 @@
              (closer-mop:generic-function-method-class generic-function)))
     (fmakunbound temp)))
 
+(defun defmethod-expander (ct-env function-name rest)
+  (multiple-value-bind
+        (qualifiers
+         required
+         remaining
+         specializers
+         declarations
+         documentation
+         forms)
+      (sicl-clos::parse-defmethod rest)
+    (let* ((lambda-list (append required remaining))
+           (generic-function-var (gensym)))
+      `(let* ((,generic-function-var
+                (ensure-generic-function ',function-name :environment ,ct-env)))
+         (sicl-clos:ensure-method
+          ,generic-function-var
+          ,ct-env
+          :lambda-list ',lambda-list
+          :qualifiers ',qualifiers
+          :specializers ,(sicl-clos::canonicalize-specializers specializers)
+          :documentation ,documentation
+          :function
+          ,(sicl-clos:make-method-lambda
+            (closer-mop:class-prototype (find-class 'standard-generic-function))
+            (closer-mop:class-prototype (find-class 'standard-method))
+            `(lambda ,lambda-list
+               ,@declarations
+               ,@forms)
+            nil))))))
+
+(defun define-make-specializer (e1 e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e2)
+        (lambda (specializer environment)
+          (declare (ignore environment))
+          (cond ((eq specializer 't)
+                 (find-class 't))
+                ((symbolp specializer)
+                 (sicl-genv:find-class specializer e1))
+                (t
+                 specializer)))))
+
 (defun boot-phase-2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -87,4 +128,9 @@
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'add-method e2)
     (sicl-minimal-extrinsic-environment:import-function-from-host
-     'copy-list e2)))
+     'copy-list e2)
+    (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
+          #'defmethod-expander)
+    (load-file "CLOS/ensure-method.lisp" e2)
+    (define-make-specializer e1 e2)
+    (load-file "CLOS/defmethod-defmacro.lisp" e2)))
