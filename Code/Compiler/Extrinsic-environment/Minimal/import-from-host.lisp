@@ -3,7 +3,7 @@
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
     cons car cdr cadr cddr cdddr append list consp atom null not endp
-    rplaca rplacd first second third rest getf member
+    length rplaca rplacd first second third rest getf member
     ;; Functions for arithmetic
     + - * / floor ceiling round evenp oddp
     ;; Various functions
