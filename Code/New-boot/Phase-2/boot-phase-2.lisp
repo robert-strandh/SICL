@@ -86,6 +86,15 @@
                ,@forms)
             nil))))))
 
+;;; When we load the file containing ENSURE-METHOD, we also define the
+;;; function MAKE-SPECIALIZER.  However that function does the wrong
+;;; thing in case the specializer given is the symbol T, because then
+;;; it looks up T in E1 and we get an automatic specialization on the
+;;; host class FUNCALLABLE-STANDARD-OBJECT which is obviously not what
+;;; we want.  So we define a special version of MAKE-SPECIALIZER here.
+;;; It does not have to do any error checking, and it handles T
+;;; specially by looking up the class T in the host environment
+;;; instead of in E1.
 (defun define-make-specializer (e1 e2)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e2)
         (lambda (specializer environment)
