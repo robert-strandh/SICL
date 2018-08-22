@@ -14,9 +14,11 @@
 ;;; a list of specializers of a method.
 (defun update-specializer-profile (generic-function specializers)
   (setf (specializer-profile generic-function)
-	(loop for specializer in specializers
+	(loop with environment = (sicl-genv:global-environment)
+              with class-t = (sicl-genv:find-class 't environment)
+              for specializer in specializers
 	      for p in (specializer-profile generic-function)
-	      collect (if (eq specializer (find-class t))
+	      collect (if (eq specializer class-t)
 			  p
 			  t))))
 
