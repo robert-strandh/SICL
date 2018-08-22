@@ -26,7 +26,7 @@
                                (t '()))
                          direct-superclasses))
                    (superclasses (loop for name in superclass-names
-                                       collect (sicl-genv:find-class name e1)))
+                                       collect (sicl-genv:find-class name e2)))
                    (remaining-keys (copy-list keys)))
               (loop while (remf remaining-keys :metaclass))
               (loop while (remf remaining-keys :direct-superclasses))
