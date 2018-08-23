@@ -31,6 +31,10 @@
 (defmethod sicl-genv:class-of (object (environment environment))
   (class-of object))
 
+(defmethod sicl-genv:typep
+    (object (type-specifier (eql 'class)) (environment environment))
+  t)
+
 ;;; The problem that we are solving with this function is the
 ;;; following: In phase 1, we loaded a bunch of definitions of host
 ;;; generic functions into E2.  We also loaded definitions of host
@@ -136,7 +140,50 @@
   (define-make-specializer e1 e2)
   (load-file "CLOS/defmethod-defmacro.lisp" e2))
 
+;;; The problem we are solving here is that when we do
+;;; (CALL-NEXT-METHOD) in the :AROUND method of SHARED-INITIALIZE, we
+;;; attempt to take the METHOD-FUNCTION of the next method.  But
+;;; METHOD-FUNCTION is a SICL function in E2 and it doesn't have any
+;;; method for the host class STANDARD-METHOD.  We solve this problem
+;;; by adding such a method.
+(defun define-method-on-method-function (e2)
+  (let ((temp (gensym)))
+    (setf (fdefinition temp)
+          (sicl-genv:fdefinition 'sicl-clos:method-function e2))
+    (eval `(defmethod ,temp ((generic-function standard-method))
+             (closer-mop:method-function generic-function)))
+    (fmakunbound temp)))
+
+(defun add-support-for-class-initialization-to-e2 (e1 e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e2)
+        (constantly t))
+  (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e2)
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
+          (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e1)))
+  (load-file "CLOS/add-remove-direct-subclass-support.lisp" e2)
+  (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e2)
+  (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class e2)
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
+          (sicl-genv:find-class 'sicl-clos:standard-reader-method e1)))
+  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class e2)
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
+          (find-class 'closer-mop:standard-writer-method)))
+  (sicl-minimal-extrinsic-environment:import-function-from-host 'compile e2)
+  (load-file "CLOS/add-accessor-method.lisp" e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e2)
+        (lambda (class) (declare (ignore class)) '()))
+  (load-file "CLOS/class-initialization-support.lisp" e2)
+  (sicl-minimal-extrinsic-environment:import-function-from-host
+   'shared-initialize e2)
+  (load-file "CLOS/class-initialization-defmethods.lisp" e2)
+  (define-method-on-method-function e2))
+
 (defun boot-phase-2 (boot)
+  (format *trace-output* "Start of phase 2~%")
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -152,4 +199,5 @@
     (load-accessor-defgenerics boot)
     (define-make-instance e1 e2)
     (make-defmethod-possible-in-e2 e1 e2)
+    (add-support-for-class-initialization-to-e2 e1 e2)
     (create-mop-classes boot)))
