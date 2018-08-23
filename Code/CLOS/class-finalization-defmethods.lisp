@@ -3,18 +3,22 @@
 (defmethod finalize-inheritance ((class real-class))
   (finalize-inheritance-default class))
 
-(defmethod compute-default-initargs ((class regular-class))
+;;; Use REAL-CLASS for now.
+(defmethod compute-default-initargs ((class real-class))
   (compute-default-initargs-default class))
 
-(defmethod compute-slots :around ((class regular-class))
+;;; Use REAL-CLASS for now.
+(defmethod compute-slots :around ((class real-class))
   (declare (ignorable class))
   (let ((slots (call-next-method)))
     (compute-slots-around-default slots)))
 
-(defmethod compute-slots ((class regular-class))
+;;; Use REAL-CLASS for now.
+(defmethod compute-slots ((class real-class))
   (compute-slots-default class))
 
-(defmethod compute-effective-slot-definition ((class regular-class)
+;;; Use REAL-CLASS for now.
+(defmethod compute-effective-slot-definition ((class real-class)
 					      name
 					      direct-slot-definitions)
   (compute-effective-slot-definition-default
