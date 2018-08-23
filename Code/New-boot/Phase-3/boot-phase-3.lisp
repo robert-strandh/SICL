@@ -9,4 +9,7 @@
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (change-class e3 'environment)
-    (load-file "CLOS/class-finalization-support.lisp" e2)))
+    (import-functions-from-host
+     '(find reverse last remove-duplicates reduce mapcar union find-if-not
+       eql count)
+     e2)))
