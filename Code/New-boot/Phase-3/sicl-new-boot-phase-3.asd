@@ -7,4 +7,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "utilities")
    (:file "boot-phase-3")))
