@@ -231,6 +231,7 @@
 	    (setf ,(first outputs)
 		  (multiple-value-list (traced-funcall
 					,*linkage-environment*
+                                        ',(cleavir-ir:origin  instruction)
 					,(first inputs)
 					,@(rest inputs)))))))
 
@@ -259,6 +260,7 @@
     `(progn (setf *dynamic-environment* ,var)
 	    (return (traced-funcall
 		     ,*linkage-environment*
+                     ',(cleavir-ir:origin  instruction)
 		     ,(first inputs)
 		     ,@(rest inputs))))))
 
@@ -269,6 +271,7 @@
   (declare (ignore outputs))
   `(unless (traced-funcall
 	    ,*linkage-environment*
+            ',(cleavir-ir:origin  instruction)
 	    (car (load-time-value
 		  (sicl-genv:function-cell
 		   'typep
@@ -278,6 +281,7 @@
 	    ',(cleavir-ir:value-type instruction))
      (traced-funcall
       ,*linkage-environment*
+      ',(cleavir-ir:origin  instruction)
       (car (load-time-value
 	    (sicl-genv:function-cell
 	     'error
@@ -442,6 +446,7 @@
     ((instruction cleavir-ir:typeq-instruction) inputs outputs successors)
   `(if (traced-funcall
 	,*linkage-environment*
+        ',(cleavir-ir:origin  instruction)
 	(car (load-time-value
 	      (sicl-genv:function-cell
 	       'typep
@@ -548,5 +553,6 @@
     `(progn (setf *dynamic-environment* ,var)
 	    (traced-funcall
 	     ,*linkage-environment*
+             ',(cleavir-ir:origin  instruction)
 	     ,(first inputs)
 	     ,@(rest inputs)))))

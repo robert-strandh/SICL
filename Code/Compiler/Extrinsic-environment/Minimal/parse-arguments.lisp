@@ -40,6 +40,7 @@
 	   (progn (push `(unless (null ,var)
 			   (traced-funcall
 			    ,*linkage-environment*
+                            nil
 			    (car (load-time-value
 				  (sicl-genv:function-cell
 				   'error
@@ -61,6 +62,7 @@
 		    (push `(if (null ,var)
 			       (traced-funcall
 				,*linkage-environment*
+                                nil
 				(car (load-time-value
 				      (sicl-genv:function-cell
 				       'error
@@ -77,6 +79,7 @@
 	   (progn (push `(unless (null ,var)
 			   (traced-funcall
 			    ,*linkage-environment*
+                            nil
 			    (car (load-time-value
 				  (sicl-genv:function-cell
 				   'error
@@ -115,6 +118,7 @@
 				     (getf ,var :allow-other-keys))
 			   (traced-funcall
 			    ,*linkage-environment*
+                            nil
 			    (car (load-time-value
 				  (sicl-genv:function-cell
 				   'error

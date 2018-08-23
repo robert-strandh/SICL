@@ -4,7 +4,7 @@
 
 (defparameter *depth* 0)
 
-(defun traced-funcall (environment function &rest arguments)
+(defun traced-funcall (environment source function &rest arguments)
   (if *trace-funcall*
       (let ((name (or (car (sicl-genv:function-names function environment))
 		      "???"))
@@ -13,6 +13,7 @@
 	      do (format *trace-output* " "))
 	(format *trace-output*
 		"calling ~s with arguments: ~s~%" name arguments)
+	(format *trace-output* "source ~s~%" source)
 	(let ((*depth* (1+ *depth*)))
 	  (setq result (multiple-value-list (apply function arguments))))
 	(loop repeat *depth*
