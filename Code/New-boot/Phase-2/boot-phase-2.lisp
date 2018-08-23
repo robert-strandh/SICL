@@ -110,6 +110,47 @@
                 (t
                  specializer)))))
 
+(defun define-add-accessor-method (e1 e2 e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos::add-reader-method e2)
+        (lambda (class function-name slot-definition)
+          (let* ((lambda-list '(object))
+                 (generic-function (sicl-genv:fdefinition function-name e3))
+                 (specializers (list class))
+                 (slot-name (slot-value slot-definition 'sicl-clos::%name))
+                 (method-function
+                   (compile nil `(lambda (arguments next-methods)
+                                   (declare (ignore next-methods))
+                                   (slot-value (car arguments) ',slot-name))))
+                 (method-class (sicl-genv:find-class
+                                'sicl-clos:standard-reader-method e1))
+                 (method (make-instance method-class
+                           :lambda-list lambda-list
+                           :qualifiers '()
+                           :specializers specializers
+                           :function method-function
+                           :slot-definition slot-definition)))
+            (push method (slot-value generic-function 'sicl-clos::%methods)))))
+  (setf (sicl-genv:fdefinition 'sicl-clos::add-writer-method e2)
+        (lambda (class function-name slot-definition)
+          (let* ((lambda-list '(object))
+                 (generic-function (sicl-genv:fdefinition function-name e3))
+                 (specializers (list class))
+                 (slot-name (slot-value slot-definition 'sicl-clos::%name))
+                 (method-function
+                   (compile nil `(lambda (arguments next-methods)
+                                   (declare (ignore next-methods))
+                                   (setf (slot-value (cadr arguments) ',slot-name)
+                                         (car arguments)))))
+                 (method-class (sicl-genv:find-class
+                                'sicl-clos:standard-writer-method e1))
+                 (method (make-instance method-class
+                           :lambda-list lambda-list
+                           :qualifiers '()
+                           :specializers specializers
+                           :function method-function
+                           :slot-definition slot-definition)))
+            (push method (slot-value generic-function 'sicl-clos::%methods))))))
+
 ;;; We already know how to execute a DEFGENERIC form in E2.  Now we
 ;;; need to know how to use DEFMETHOD to define methods on the generic
 ;;; functions we create with DEFGENERIC.  That is the purpose of this
@@ -154,7 +195,7 @@
              (closer-mop:method-function generic-function)))
     (fmakunbound temp)))
 
-(defun add-support-for-class-initialization-to-e2 (e1 e2)
+(defun add-support-for-class-initialization-to-e2 (e1 e2 e3)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e2)
         (constantly t))
   (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e2)
@@ -180,7 +221,8 @@
   (sicl-minimal-extrinsic-environment:import-function-from-host
    'shared-initialize e2)
   (load-file "CLOS/class-initialization-defmethods.lisp" e2)
-  (define-method-on-method-function e2))
+  (define-method-on-method-function e2)
+  (define-add-accessor-method e1 e2 e3))
 
 (defun boot-phase-2 (boot)
   (format *trace-output* "Start of phase 2~%")
@@ -199,5 +241,5 @@
     (load-accessor-defgenerics boot)
     (define-make-instance e1 e2)
     (make-defmethod-possible-in-e2 e1 e2)
-    (add-support-for-class-initialization-to-e2 e1 e2)
+    (add-support-for-class-initialization-to-e2 e1 e2 e3)
     (create-mop-classes boot)))
