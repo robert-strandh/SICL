@@ -13,5 +13,16 @@
      '(find reverse last remove-duplicates reduce mapcar union find-if-not
        eql count)
      e2)
+    (setf (sicl-genv:special-variable
+           'sicl-clos::*standard-direct-slot-definition* e2 t)
+          (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e1))
+    (setf (sicl-genv:special-variable
+           'sicl-clos::*standard-effective-slot-definition* e2 t)
+          (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
+    (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
+    (load-file "CLOS/slot-definition-class-support.lisp" e2)
+    (load-file "CLOS/slot-definition-class-defgenerics.lisp" e2)
+    (load-file "CLOS/slot-definition-class-defmethods.lisp" e2)
     (load-file "CLOS/class-finalization-defgenerics.lisp" e2)
-    (load-file "CLOS/class-finalization-support.lisp" e2)))
+    (load-file "CLOS/class-finalization-support.lisp" e2)
+    (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
