@@ -19,10 +19,12 @@
 ;;; reader method.  SLOT-DEFINITION is also stored in the new reader
 ;;; method for optimization purposes.
 (defun add-reader-method (class function-name slot-definition)
-  (let* ((lambda-list '(object))
+  (let* ((environment (sicl-genv:global-environment))
+         (lambda-list '(object))
          (generic-function (ensure-generic-function
                             function-name
-                            :lambda-list lambda-list))
+                            :lambda-list lambda-list
+                            :environment environment))
          (specializers (list class))
          (slot-name (slot-definition-name slot-definition))
          (method-function
@@ -54,11 +56,14 @@
 ;;; writer method.  SLOT-DEFINITION is also stored in the new writer
 ;;; method for optimization purposes.
 (defun add-writer-method (class function-name slot-definition)
-  (let* ((lambda-list '(new-value object))
+  (let* ((environment (sicl-genv:global-environment))
+         (lambda-list '(new-value object))
          (generic-function (ensure-generic-function
                             function-name
-                            :lambda-list lambda-list))
-         (specializers (list (find-class t) class))
+                            :lambda-list lambda-list
+                            :environment environment))
+         (specializers (list (sicl-genv:find-class t (sicl-genv:global-environment))
+                             class))
          (slot-name (slot-definition-name slot-definition))
          (method-function
            (compile nil `(lambda (arguments next-methods)
