@@ -16,4 +16,5 @@
                  :e3 (make-environment))))
     (sicl-new-boot-phase-1:boot-phase-1 boot)
     (sicl-new-boot-phase-2:boot-phase-2 boot)
+    (sicl-new-boot-phase-3:boot-phase-3 boot)
     boot))
