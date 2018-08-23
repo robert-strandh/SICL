@@ -12,4 +12,6 @@
     (import-functions-from-host
      '(find reverse last remove-duplicates reduce mapcar union find-if-not
        eql count)
-     e2)))
+     e2)
+    (load-file "CLOS/class-finalization-defgenerics.lisp" e2)
+    (load-file "CLOS/class-finalization-support.lisp" e2)))
