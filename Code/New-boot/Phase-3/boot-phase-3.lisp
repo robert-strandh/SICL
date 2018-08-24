@@ -44,7 +44,7 @@
             (setf (aref (slot-value object '%rack) location) value)))
     (import-functions-from-host
      '((setf sicl-genv:constant-variable) assert sort assoc list* every
-       mapc)
+       mapc 1+ subseq butlast)
      e2)
     (load-file "CLOS/class-unique-number-offset-defconstant.lisp" e2)
     (load-file "CLOS/allocate-instance-defgenerics.lisp" e2)
