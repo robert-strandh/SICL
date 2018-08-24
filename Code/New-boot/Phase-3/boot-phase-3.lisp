@@ -50,4 +50,6 @@
     (load-file "CLOS/allocate-instance-defgenerics.lisp" e2)
     (load-file "CLOS/allocate-instance-support.lisp" e2)
     (load-file "CLOS/allocate-instance-defmethods.lisp" e2)
-    (load-file "CLOS/discriminating-automaton.lisp" e2)))
+    (load-file "CLOS/discriminating-automaton.lisp" e2)
+    (setf (sicl-genv:fdefinition 'sicl-clos::compute-test-tree e2)
+          (lambda (&rest args) (error "~s" args)))))
