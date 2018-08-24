@@ -15,9 +15,9 @@
 (defun load-file-protected (file environment)
   (handler-bind
       ((cleavir-env:no-function-info
-	 (lambda (condition)
-	   (declare (ignore condition))
-	   (invoke-restart 'cleavir-cst-to-ast:consider-global))))
+         (lambda (condition)
+           (declare (ignore condition))
+           (invoke-restart 'cleavir-cst-to-ast:consider-global))))
     (load-file file environment)))
 
 (defun import-function-from-host (name environment)
@@ -26,3 +26,13 @@
 (defun import-functions-from-host (names environment)
   (loop for name in names
         do (import-function-from-host name environment)))
+
+;;; Define a function that, when called, signals an error with the
+;;; name of the function in the error message.  We use this to break
+;;; dependencies between loaded files.
+(defun define-error-function (function-name environment)
+  (setf (sicl-genv:fdefinition function-name environment)
+        (lambda (&rest arguments)
+          (error "Undefined function ~s called with arguments ~s."
+                 function-name
+                 arguments))))
