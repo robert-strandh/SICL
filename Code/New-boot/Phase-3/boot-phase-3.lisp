@@ -65,4 +65,6 @@
     (load-file "CLOS/classp-defmethods.lisp" e2)
     (setf (sicl-genv:fdefinition 'class-of e2)
           (lambda (object)
-            (slot-value object '%class)))))
+            (slot-value object '%class)))
+    (setf (sicl-genv:fdefinition 'sicl-clos::sort-list e2)
+          (lambda (&rest args) (error "~s" args)))))
