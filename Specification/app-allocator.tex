@@ -195,7 +195,7 @@ bin $b'$ such that $b' \ge b$ and $b'$ is not empty.  We first compute
 $q = b \thinspace div \thinspace 64$ and $r = b \thinspace
 mod \thinspace 64$ indicating that $b$ corresponds to position $r$ in
 bitmap $q$.  We then compute a mask $m$ consisting of $r$ leading $0$s
-and $64-r$ trailing $1$s.  This masked is and-ed with the bitmap.  We
+and $64-r$ trailing $1$s.  This mask is \texttt{and}-ed with the bitmap.  We
 then find the first $1$ in the resulting value.  If such a position
 exists, then we have found $b'$.  If not, we search bitmaps $q+1$,
 $q+2$ etc., without any mask, until a set bit is found.  The first
@@ -218,13 +218,16 @@ there are two cases:
 \item If the size $s$ of $c$ is strictly greater than $n$, then we
   unlink $c$ from its bin.  We then split $c$ into a chunk $c1$ of
   size $n$ and a chunk $c2$ of size $s-n$.  The chunk $c2$ is then
-  linked into the bin that corresponds to its size.  Finally, the
-  chunk $c1$ is returned.
+  linked into the bin that corresponds to its size.  The free/used
+  bits are updated to reflect the fact that $c1$ is now used.
+  Finally, the chunk $c1$ is returned.
 \end{enumerate}
 
 \section{Freeing a chunk}
 
-When a chunk $C$ is freed, there are four possible situations:
+When a chunk $C$ is freed, there are four possible situations (recall
+that ``preceding'' and ``following'' refer to the order between chunks
+in the address space):
 
 \begin{enumerate}
 \item The chunk $P$ preceding $C$ and the chunk $F$ following $C$
@@ -242,8 +245,8 @@ When a chunk $C$ is freed, there are four possible situations:
 \end{enumerate}
 
 To determine whether the chunk $P$ preceding $C$ is in use or free, we
-consult the last bit of the first word $C$.  If it is $1$, then the
-$P$ in use.  If it is $0$, $P$ is free.  Only when this bit is $0$ is
+consult the last bit of the first word $C$.  If it is $1$, then
+$P$ is in use.  If it is $0$, $P$ is free.  Only when this bit is $0$ is
 it possible to find the beginning of $P$, because only then does the
 last word of $P$ contain the size of $P$.  And that size is needed to
 find the beginning of $P$.  This is the main reason for storing the
@@ -270,7 +273,12 @@ the bin corresponding to the new size.
 
 To coalesce the chunk $P$ preceding $C$, $C$ itself, and the chunk $F$
 following $C$ (case 4 above), both $P$ and $F$ must first be unlinked
-from their respective bins.  The the size contained in the first word
-of $P$ is modified to contain the sum of the tree sizes.  This new
+from their respective bins.  Then the size contained in the first word
+of $P$ is modified to contain the sum of the three sizes.  This new
 size is then stored in the last word of $F$ as well.  Finally, the
 resulting chunk is linked into the bin corresponding to the new size.
+
+\section{Concurrency}
+
+To be filled in.  Talk about what kind of synchronization is required.
+
