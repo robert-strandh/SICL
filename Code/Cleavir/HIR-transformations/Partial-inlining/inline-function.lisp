@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-partial-inlining)
 
-(defmethod inline-function (initial call enter mapping)
+(defmethod inline-function (initial call enter mapping &key uniquep)
   (let* ((*original-enter-instruction* enter)
          (*instruction-mapping* (make-hash-table :test #'eq))
          ;; The following two variables are used for catch/unwind.
@@ -10,6 +10,8 @@
            (gethash call *instruction-ownerships*))
          (*location-ownerships*
            (cleavir-hir-transformations:compute-location-owners initial))
+         (*copy-functions* (not uniquep))
+         (*copy-locations* (not uniquep))
          (initial-environment (rest (cleavir-ir:outputs enter))) ; CAR is the closure vector - unneeded.
          ;; *policy* is bound closely for these bindings to make especially sure
          ;; that inlined instructions have the policy of the source function,

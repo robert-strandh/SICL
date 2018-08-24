@@ -30,3 +30,13 @@
 ;;; being inlined into.
 
 (defvar *target-enter-instruction*)
+
+;;; True (the default) if we should copy sub functions,
+;;; as required in general.
+
+(defvar *copy-functions*)
+
+;;; True (the default) if we should copy locations, as required
+;;; in general.
+
+(defvar *copy-locations*)

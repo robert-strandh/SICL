@@ -20,16 +20,22 @@
                      ;; Now we just need to pick off any recursive uses, direct or indirect.
                      (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
                            with result
-                           for caller in (gethash enclose destinies)
+                           with enclose-destinies = (gethash enclose destinies)
+                           with unique-p = (unique-p enter enclose-destinies)
+                           for caller in enclose-destinies
                            for call-owner = (gethash caller instruction-owners)
                            when (eq caller :escape)
                              return nil
-                           when (parent-node-p node call-owner)
-                             ;; recursive
+                           when (parent-node-p node call-owner) ; recursive
                              return nil
-                           ;; we're all good, but keep looking through for escapes
-                           do (setf result (cons enter caller))
+                           ;; We're all good, but keep looking through for escapes and recursivity.
+                           do (setf result (list enter caller unique-p))
                            finally (return-from one-potential-inline result)))))
+               (unique-p (enter enclose-destinies)
+                 ;; Return T iff the ENTER is only used for one call, which allows most copying
+                 ;; during the inline process to be skipped.
+                 (and (= (length enclose-destinies) 1)
+                      (= (length (gethash enter (cleavir-hir-transformations:dag-nodes dag))) 1)))
                (parent-node-p (parent enter)
                  ;; parent is a node (i.e. enclose), enter is an enter instruction
                  ;; we return T iff the enter is enclosed by a node that has parent
@@ -50,21 +56,7 @@
 (defun do-inlining (initial-instruction)
   (loop for inline = (one-potential-inline initial-instruction)
         until (null inline)
-        do (let ((enter (car inline)) (call (cdr inline)))
-             (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+        do (destructuring-bind (enter call uniquep) inline
+             (inline-function initial-instruction call enter (make-hash-table :test #'eq) :uniquep uniquep))
            (cleavir-ir:set-predecessors initial-instruction)
-           (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction))
-  #+(or)
-  (loop for inline = (one-potential-inline initial-instruction)
-        for n from 0
-        until (null inline)
-        do (format t "Inline ~d~%" n)
-           (finish-output)
-           (cleavir-ir-graphviz:draw-flowchart
-            initial-instruction (format nil "/tmp/inline~d.dot" n))
-           (let ((enter (car inline)) (call (cdr inline)))
-             (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
-           (cleavir-ir-graphviz:draw-flowchart
-            initial-instruction (format nil "/tmp/before-rui~d.dot" n))
-           (format t "RUI~%")
            (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)))
