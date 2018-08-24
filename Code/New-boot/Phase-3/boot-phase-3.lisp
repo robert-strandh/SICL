@@ -57,4 +57,7 @@
     ;; definition will happen automatically.
     (setf (sicl-genv:fdefinition 'sicl-clos::compute-test-tree e2)
           (lambda (&rest args) (error "~s" args)))
-    (load-file "CLOS/discriminating-tagbody.lisp" e2)))
+    (load-file "CLOS/discriminating-tagbody.lisp" e2)
+    (setf (sicl-genv:fdefinition 'typep e2)
+          (lambda (object type-specifier)
+            (sicl-genv:typep object type-specifier e2)))))
