@@ -18,7 +18,10 @@ there are never two consecutive free chunks in memory.
 
 Every chunk $C$ has an initial 64-bit word containing the \emph{size}
 of the chunk in 8-bit bytes.  Since this value is always a multiple of
-$4$, the last two bits are always $0$.  We use the \emph{next to last}
+$4$%
+\fixme{There is a question concerning whether it would be better to
+align user data on cache lines.},
+the last two bits are always $0$.  We use the \emph{next to last}
 bit to indicate whether $C$ is in use or free.  If the bit is $1$, the
 chunk $C$ is in use.  If the bit is $0$, the chunk $C$ is free.  We
 use \emph{the last} bit to indicate whether the \emph{preceding chunk}
@@ -130,7 +133,7 @@ As indicated in
 \refSec{sec-memory-allocator-memory-divided-into-chunks}, we maintain
 a number of \emph{bins} containing chunks of similar size.  There are
 $512$ bins in total, numbered from $0$ to $511$.  Each of the bins
-from $0$ to $63$ contains chunks of of a single size.  Bin $0$
+from $0$ to $63$ contains chunks of a single size.  Bin $0$
 contains chunks with $4$ words (the minimum size) and bin $63$
 contains chunks with $67$ words.  Bins starting at $64$ contain chunks
 with a size greater than the maximum size of chunks in the previous
