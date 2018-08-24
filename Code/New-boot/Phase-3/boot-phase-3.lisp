@@ -62,4 +62,7 @@
           (lambda (object type-specifier)
             (sicl-genv:typep object type-specifier e2)))
     (load-file "CLOS/classp-defgeneric.lisp" e2)
-    (load-file "CLOS/classp-defmethods.lisp" e2)))
+    (load-file "CLOS/classp-defmethods.lisp" e2)
+    (setf (sicl-genv:fdefinition 'class-of e2)
+          (lambda (object)
+            (slot-value object '%class)))))
