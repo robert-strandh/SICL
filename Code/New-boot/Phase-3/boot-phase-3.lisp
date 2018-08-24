@@ -68,4 +68,7 @@
             (slot-value object '%class)))
     (setf (sicl-genv:fdefinition 'sicl-clos::sort-list e2)
           (lambda (&rest args) (error "~s" args)))
-    (load-file "CLOS/list-utilities.lisp" e2)))
+    (load-file "CLOS/list-utilities.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)))
