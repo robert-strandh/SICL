@@ -52,4 +52,5 @@
     (load-file "CLOS/allocate-instance-defmethods.lisp" e2)
     (load-file "CLOS/discriminating-automaton.lisp" e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::compute-test-tree e2)
-          (lambda (&rest args) (error "~s" args)))))
+          (lambda (&rest args) (error "~s" args)))
+    (load-file "CLOS/discriminating-tagbody.lisp" e2)))
