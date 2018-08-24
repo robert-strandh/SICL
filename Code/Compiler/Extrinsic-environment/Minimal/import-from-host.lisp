@@ -2,7 +2,8 @@
 
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.
-    cons car cdr cadr cddr cdddr append list consp atom null not endp
+    cons car cdr cadr cddr cdddr append list
+    consp atom null listp not endp
     length rplaca rplacd first second third rest getf member
     ;; Functions for arithmetic
     + - * / floor ceiling round evenp oddp = /= < <= > >=
@@ -86,14 +87,21 @@
   (host-load "Environment/macro-support.lisp")
   (loop for name in *imported-functions*
         do (import-function-from-host name environment))
-  ;; We can't import (SETF CAR) and (SETF CDR) directly, because they
-  ;; might not be defined as functions.  They could be SETF expanders.
+  ;; We can't import (SETF CAR) and (SETF CDR) etc directly, because
+  ;; they might not be defined as functions.  They could be SETF
+  ;; expanders.
   (setf (sicl-genv:fdefinition '(setf car) environment)
         (lambda (new-value cons)
           (setf (car cons) new-value)))
   (setf (sicl-genv:fdefinition '(setf cdr) environment)
         (lambda (new-value cons)
           (setf (cdr cons) new-value)))
+  (setf (sicl-genv:fdefinition '(setf cadr) environment)
+        (lambda (new-value cons)
+          (setf (cadr cons) new-value)))
+  (setf (sicl-genv:fdefinition '(setf cddr) environment)
+        (lambda (new-value cons)
+          (setf (cddr cons) new-value)))
   (loop for symbol in *imported-variables*
         for boundp = (boundp symbol)
         do (setf (sicl-genv:special-variable symbol environment boundp)
