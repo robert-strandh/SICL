@@ -10,8 +10,7 @@
 
 (defun activate-class-finalization (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+                   (e2 sicl-new-boot:e2)) boot
     (setf (sicl-genv:special-variable
            'sicl-clos::*standard-direct-slot-definition* e2 t)
           (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e1))
@@ -30,13 +29,8 @@
     (load-file "CLOS/class-finalization-support.lisp" e2)
     (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
 
-(defun boot-phase-3 (boot)
-  (format *trace-output* "Start of phase 3~%")
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
-    (change-class e3 'environment)
-    (activate-class-finalization boot)
+(defun activate-allocate-instance (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)) boot
     (setf (sicl-genv:fdefinition 'sicl-clos::allocate-general-instance e2)
           (lambda (class size)
             (make-instance 'header
@@ -56,7 +50,16 @@
     (load-file "CLOS/class-unique-number-offset-defconstant.lisp" e2)
     (load-file "CLOS/allocate-instance-defgenerics.lisp" e2)
     (load-file "CLOS/allocate-instance-support.lisp" e2)
-    (load-file "CLOS/allocate-instance-defmethods.lisp" e2)
+    (load-file "CLOS/allocate-instance-defmethods.lisp" e2)))
+
+(defun boot-phase-3 (boot)
+  (format *trace-output* "Start of phase 3~%")
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)) boot
+    (change-class e3 'environment)
+    (activate-class-finalization boot)
+    (activate-allocate-instance boot)
     (load-file "CLOS/discriminating-automaton.lisp" e2)
     (load-file-protected "CLOS/discriminating-tagbody.lisp" e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2)
