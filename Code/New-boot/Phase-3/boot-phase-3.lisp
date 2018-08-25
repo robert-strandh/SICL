@@ -90,4 +90,5 @@
     (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
     (load-file "CLOS/no-applicable-method.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
-    (load-file "CLOS/compute-discriminating-function-support.lisp" e2)))
+    (load-file "CLOS/compute-discriminating-function-support.lisp" e2)
+    (load-file-protected "CLOS/satiation.lisp" e2)))
