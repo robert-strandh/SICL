@@ -6,7 +6,7 @@
 
 Available memory is divided into consecutive \emph{chunks} with no
 space in between two chunks.  If there are two consecutive chunks $C1$
-and $C2$ somewhere in the available memory, then $C1$ is said to be
+and $C2$ somewhere in available memory, then $C1$ is said to be
 the \emph{preceding} chunk with respect to $C2$ and $C2$ is said to be
 the \emph{following} chunk with respect to $C1$.
 
@@ -38,7 +38,11 @@ following chunk.
 To obtain the size of the chunk in bytes, the last two bits of
 the word must first be masked out, using the \texttt{and} operation
 with a mask containing a $1$ in every position except the two least
-significant ones.
+significant ones.%
+\fixme{There is a suggestion to store the size multiplied by 4 so that
+  it can be obtained by shifting right by two bits.  This suggestion
+  would avoid having a 64-bit mask.  It is quite unlikely that storing
+  sizes this way would not be enough, at least for the foreseeable future.}
 
 A free chunk is linked into a doubly linked list of chunks in the same
 bin.  See \refSec{sec-memory-allocator-bins-of-chunks} for more
