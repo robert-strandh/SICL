@@ -61,8 +61,15 @@
                 'sicl-clos::compute-and-set-specializer-profile e2)
                (sicl-genv:fdefinition var e3)
                (sicl-genv:find-class 't e2))
-      (funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
-               (sicl-genv:fdefinition var e3)))))
+      #+(or)(funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
+                     (sicl-genv:fdefinition var e3)))
+    (when (and (sicl-genv:fboundp `(setf ,var) e3)
+               (eq (class-of (sicl-genv:fdefinition `(setf ,var) e3))
+                   (sicl-genv:find-class 'standard-generic-function e1)))
+      (funcall (sicl-genv:fdefinition
+                'sicl-clos::compute-and-set-specializer-profile e2)
+               (sicl-genv:fdefinition `(setf ,var) e3)
+               (sicl-genv:find-class 't e2)))))
 
 (defun activate-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
