@@ -57,6 +57,10 @@
     (when (and (sicl-genv:fboundp var e3)
                (eq (class-of (sicl-genv:fdefinition var e3))
                    (sicl-genv:find-class 'standard-generic-function e1)))
+      (funcall (sicl-genv:fdefinition
+                'sicl-clos::compute-and-set-specializer-profile e2)
+               (sicl-genv:fdefinition var e3)
+               (sicl-genv:find-class 't e2))
       (funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
                (sicl-genv:fdefinition var e3)))))
 
@@ -101,6 +105,7 @@
     (load-file "CLOS/compute-discriminating-function-support-a.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
     (load-file-protected "CLOS/satiation.lisp" e2)
+    (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
     (satiate e1 e2 e3)))
 
 (defun boot-phase-3 (boot)
