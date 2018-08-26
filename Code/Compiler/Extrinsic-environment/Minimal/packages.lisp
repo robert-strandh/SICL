@@ -8,10 +8,14 @@
 	   #:throw
 	   #:unwind-protect
 	   #:symbol
-	   #:symbol-value)
+	   #:symbol-value
+           #:trace
+           #:untrace)
   (:export #:environment
            #:symbol-value
            #:import-function-from-host
            #:import-package-from-host
            #:host-load
-           #:cst-load-file))
+           #:cst-load-file
+           #:trace
+           #:untrace))
