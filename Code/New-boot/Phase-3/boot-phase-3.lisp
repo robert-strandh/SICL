@@ -43,7 +43,7 @@
           (lambda (value object location)
             (setf (aref (slot-value object '%rack) location) value)))
     (import-functions-from-host
-     '((setf sicl-genv:constant-variable) assert sort assoc list* every
+     '((setf sicl-genv:constant-variable) sort assoc list* every
        mapc 1+ 1- subseq butlast position identity nthcdr equal
        remove-if-not)
      e2)
@@ -68,6 +68,9 @@
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
+    (sicl-minimal-extrinsic-environment:import-package-from-host
+     'sicl-conditions e2)
+    (load-file "Conditions/assert-defmacro.lisp" e2)
     (load-file "CLOS/discriminating-automaton.lisp" e2)
     (load-file-protected "CLOS/discriminating-tagbody.lisp" e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2)
@@ -99,7 +102,7 @@
     (load-file "CLOS/compute-effective-method-defmethods.lisp" e2)
     (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
     (load-file "CLOS/no-applicable-method.lisp" e2)
-    (import-functions-from-host '(zerop nth intersection) e2)
+    (import-functions-from-host '(zerop nth intersection make-list) e2)
     (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-support.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-support-a.lisp" e2)
