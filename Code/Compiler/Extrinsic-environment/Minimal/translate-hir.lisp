@@ -1,9 +1,31 @@
 (cl:in-package #:sicl-minimal-extrinsic-environment)
 
+(defclass source-information ()
+  ((%positions :initform '() :accessor positions)))
+
+(defun source-position-equal (position1 position2)
+  (and (= (sicl-source-tracking:line-index (car position1))
+          (sicl-source-tracking:line-index (car position2)))
+       (= (sicl-source-tracking:character-index (car position1))
+          (sicl-source-tracking:character-index (car position2)))
+       (= (sicl-source-tracking:line-index (cdr position1))
+          (sicl-source-tracking:line-index (cdr position2)))
+       (= (sicl-source-tracking:character-index (cdr position1))
+          (sicl-source-tracking:character-index (cdr position2)))))
+
+(defvar *source-information*)
+
+(defun record-origin (instruction)
+  (let ((origin (cleavir-ir:origin instruction)))
+    (unless (null origin)
+      (pushnew origin (positions *source-information*)
+               :test #'source-position-equal))))
+
 (defclass fun (closer-mop:funcallable-standard-object)
   ((%untied :initform nil :initarg :untied :accessor untied)
    (%arg-forms :initform nil :initarg :arg-forms :accessor arg-forms)
-   (%name :initform NIL :accessor name))
+   (%name :initform NIL :accessor name)
+   (%source-information :initarg :source-information :reader source-information))
   (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod print-object ((object fun) stream)
@@ -24,7 +46,17 @@
 (defgeneric translate-simple-instruction
     (instruction inputs outputs static-environment))
 
+(defmethod translate-simple-instruction :before
+    (instruction inputs outputs static-environment)
+  (declare (ignore inputs outputs static-environment))
+  (record-origin instruction))
+
 (defgeneric translate-branch-instruction (instruction inputs outputs successors))
+
+(defmethod translate-branch-intruction :before
+    (instruction inputs outputs successors)
+  (declare (ignore inputs outputs successors))
+  (record-origin instruction))
 
 (defvar *basic-blocks*)
 
@@ -183,7 +215,8 @@
 	  (*linkage-environment* linkage-environment)
 	  (*tags* (make-hash-table :test #'eq))
 	  (*vars* (make-hash-table :test #'eq))
-	  (*dynamic-environment-variables* (make-hash-table :test #'eq)))
+	  (*dynamic-environment-variables* (make-hash-table :test #'eq))
+          (*source-information* (make-instance 'source-information)))
       (layout-procedure initial-instruction nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -202,9 +235,11 @@
 	 (wrap `(let ,(loop for input in inputs
 			    for var in static-environment
 			    collect `(,var input))
-		  ,proc)))
+		  ,proc))
+         (source-information *source-information*))
     `(setq ,(first outputs)
-	   (let ((,temp (make-instance 'fun)))
+	   (let ((,temp (make-instance 'fun
+                          :source-information ,source-information)))
 	     (closer-mop:set-funcallable-instance-function ,temp ,wrap)
 	     ,temp))))
 
