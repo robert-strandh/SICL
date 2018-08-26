@@ -115,6 +115,7 @@
     (load-file "CLOS/compute-discriminating-function-support-a.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
     (load-file-protected "CLOS/satiation.lisp" e2)
+    (import-functions-from-host '(format print-object) e2)
     (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
     (satiate e1 e2 e3)))
 
