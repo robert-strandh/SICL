@@ -18,4 +18,6 @@
            #:host-load
            #:cst-load-file
            #:trace
-           #:untrace))
+           #:untrace
+           #:source-information
+           #:positions))
