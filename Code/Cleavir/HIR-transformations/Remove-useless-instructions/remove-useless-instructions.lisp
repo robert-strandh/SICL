@@ -4,7 +4,7 @@
 
 (defmethod instruction-may-be-removed-p (instruction) t)
 
-(defmethod instruction-may-be-removed-p ((instruction cleavir-ir:eq-instruction)) nil)
+(defmethod instruction-may-be-removed-p ((instruction cleavir-ir:two-successors-mixin)) nil)
 
 (defmethod instruction-may-be-removed-p ((instruction cleavir-ir:catch-instruction)) t)
 
