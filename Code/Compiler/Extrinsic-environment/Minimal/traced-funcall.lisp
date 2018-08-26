@@ -5,7 +5,7 @@
 (defparameter *depth* 0)
 
 (defun traced-funcall (environment source function &rest arguments)
-  (if *trace-funcall*
+  (if (gethash function (traced-functions environment))
       (let ((name (or (car (sicl-genv:function-names function environment))
 		      "???"))
 	    (result nil))
