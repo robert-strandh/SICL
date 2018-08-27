@@ -46,7 +46,10 @@
           (lambda (class size)
             (make-instance 'header
               :class class
-              :rack (make-array size :initial-element 1000))))
+              :rack (let ((a (make-array size)))
+                      (loop for i from 0 below size
+                            do (setf (aref a i) (+ i 1000)))
+                      a))))
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e2)
           (lambda (object location)
             (aref (slot-value object '%rack) location)))
@@ -116,7 +119,7 @@
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
     (load-file "CLOS/compute-effective-method-support.lisp" e2)
-    (load-file "CLOS/compute-effective-method-support-a.lisp" e2)
+    (load-file "CLOS/compute-effective-method-support-b.lisp" e2)
     (define-error-function
         'sicl-clos::method-combination-compute-effective-method e2)
     (load-file "CLOS/method-combination-compute-effective-method-support.lisp" e2)
@@ -133,13 +136,7 @@
     (import-functions-from-host '(format print-object) e2)
     (load-file "New-boot/Phase-3/define-methods-on-print-object.lisp" e2)
     (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
-    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e3)
-          (lambda (object location)
-            (aref (slot-value object '%rack) location)))
-    (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e3)
-          (lambda (value object location)
-            (setf (aref (slot-value object '%rack) location) value)))
-    (load-file "CLOS/standard-instance-access.lisp" e3)
+    (load-file "CLOS/standard-instance-access.lisp" e2)
     (satiate-all-functions e1 e2 e3)))
 
 (defun boot-phase-3 (boot)
