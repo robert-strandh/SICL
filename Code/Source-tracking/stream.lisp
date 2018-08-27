@@ -53,12 +53,19 @@
         (decf current-character-index))))
 
 ;;; FIXME: Use SICL-specific client.
-(defmethod eclector.concrete-syntax-tree:source-position
-    ((stream source-tracking-stream) client)
+(defmethod eclector.parse-result:source-position
+    (client (stream source-tracking-stream))
   (make-instance 'source-position
     :lines (lines stream)
     :line-index (current-line-index stream)
     :character-index (current-character-index stream)))
+
+;;; FIXME: Use SICL-specific client.
+(defmethod eclector.parse-result:make-source-range (client start end)
+  (if (and (typep start 'source-position)
+           (typep end 'source-position))
+      (cons start end)
+      nil))
 
 (defmacro with-source-tracking-stream-from-file
     ((stream-var file-spec) &body body)
