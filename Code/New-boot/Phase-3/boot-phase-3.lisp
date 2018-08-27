@@ -29,6 +29,17 @@
     (load-file "CLOS/class-finalization-support.lisp" e2)
     (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
 
+(defun finalize-all-classes (boot)
+  (format *trace-output* "Finalizing all classes.~%")
+  (let* ((e2 (sicl-new-boot:e2 boot))
+         (finalization-function
+           (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance e2)))
+    (do-all-symbols (var)
+      (let ((class (sicl-genv:find-class var e2)))
+        (unless (null class)
+          (funcall finalization-function class)))))
+  (format *trace-output* "Done finalizing all classes.~%"))
+
 (defun activate-allocate-instance (boot)
   (with-accessors ((e2 sicl-new-boot:e2)) boot
     (setf (sicl-genv:fdefinition 'sicl-clos::allocate-general-instance e2)
@@ -53,6 +64,7 @@
     (load-file "CLOS/allocate-instance-defmethods.lisp" e2)))
 
 (defun satiate-all-functions (e1 e2 e3)
+  (format *trace-output* "Satiating all functions.~%")
   (do-all-symbols (var)
     (when (and (sicl-genv:fboundp var e3)
                (eq (class-of (sicl-genv:fdefinition var e3))
@@ -71,7 +83,8 @@
                (sicl-genv:fdefinition `(setf ,var) e3)
                (sicl-genv:find-class 't e2))
       (funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
-               (sicl-genv:fdefinition `(setf ,var) e3)))))
+               (sicl-genv:fdefinition `(setf ,var) e3))))
+  (format *trace-output* "Done satiating all functions.~%"))
 
 (defun activate-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
@@ -120,6 +133,7 @@
     (import-functions-from-host '(format print-object) e2)
     (load-file "New-boot/Phase-3/define-methods-on-print-object.lisp" e2)
     (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
+    (load-file "CLOS/standard-instance-access.lisp" e2)
     (satiate-all-functions e1 e2 e3)))
 
 (defun boot-phase-3 (boot)
@@ -129,5 +143,6 @@
                    (e3 sicl-new-boot:e3)) boot
     (change-class e3 'environment)
     (activate-class-finalization boot)
+    (finalize-all-classes boot)
     (activate-allocate-instance boot)
     (activate-generic-function-invocation boot)))
