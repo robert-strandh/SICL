@@ -4,4 +4,7 @@
   (:use #:common-lisp)
   (:export #:source-position
            #:source-tracking-stream
-           #:with-source-tracking-stream-from-file))
+           #:with-source-tracking-stream-from-file
+           #:lines
+           #:line-index
+           #:character-index))
