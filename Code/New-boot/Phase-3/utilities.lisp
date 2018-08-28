@@ -48,3 +48,6 @@
 
 (defun fbp (function-name environment)
   (sicl-genv:fboundp function-name environment))
+
+(defun repl (environment)
+  (sicl-minimal-extrinsic-environment::repl environment environment nil))
