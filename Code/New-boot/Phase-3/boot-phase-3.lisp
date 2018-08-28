@@ -136,8 +136,15 @@
     (import-functions-from-host '(format print-object) e2)
     (load-file "New-boot/Phase-3/define-methods-on-print-object.lisp" e2)
     (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
-    (load-file "CLOS/standard-instance-access.lisp" e2)
-    (satiate-all-functions e1 e2 e3)))
+    (load-file "CLOS/standard-instance-access.lisp" e2)))
+
+(defun activate-defmethod-in-e3 (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)) boot
+    (load-file "CLOS/make-method-lambda-support.lisp" e3)
+    (load-file "CLOS/make-method-lambda-defuns.lisp" e3)))
+
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
@@ -148,4 +155,6 @@
     (activate-class-finalization boot)
     (finalize-all-classes boot)
     (activate-allocate-instance boot)
-    (activate-generic-function-invocation boot)))
+    (activate-generic-function-invocation boot)
+    (activate-defmethod-in-e3 boot)
+    (satiate-all-functions e1 e2 e3)))
