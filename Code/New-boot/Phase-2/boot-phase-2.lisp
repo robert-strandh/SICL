@@ -180,11 +180,12 @@
    'copy-list e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
         #'defmethod-expander)
-  (load-file "CLOS/ensure-method.lisp" e2)
-  ;; When we loaded CLOS/ensure-method.lisp, we automatically defined
-  ;; an incorrect version of MAKE-SPECIALIZER.  Fix the problem by
-  ;; defining a new, special, version of it.
+  ;; ENSURE-METHOD calls MAKE-SPECIALIZER, but the version of
+  ;; MAKE-SPECIALIZER that is in the file with that name is not
+  ;; correct for phase 2.  Fix the problem by defining a special
+  ;; version of it.
   (define-make-specializer e1 e2)
+  (load-file "CLOS/ensure-method.lisp" e2)
   (load-file "CLOS/defmethod-defmacro.lisp" e2))
 
 ;;; The problem we are solving here is that when we do
