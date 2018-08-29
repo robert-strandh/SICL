@@ -10,8 +10,8 @@
 ;;; combines a call to MAKE-INSTANCE with a call to ADD-METHOD.  A
 ;;; SPECIALIZER, can be either a specializer meta object, or a symbol.
 ;;; If it is a symbol, it is considered to be the name of a class, and
-;;; this function replaces the symbol with the corresponding class
-;;; before calling MAKE-INSTANCE.
+;;; the call to MAKE-SPECIALZIER replaces the symbol with the
+;;; corresponding class before calling MAKE-INSTANCE.
 ;;;
 ;;; Since we might need to find the class with a particular name, we
 ;;; apply the general rule in SICL, namely to use explicit
@@ -21,21 +21,6 @@
 ;;; in the expansion of DEFMETHOD, the environment supplied as the
 ;;; second argument is the run-time environment (and not the
 ;;; compile-time environment) in which the call to DEFMETHOD is made.
-;;;
-;;; Since the environment might be a lexical environment or a global
-;;; environment, we use the function
-;;; SICL-GLOBAL-ENVIRONMENT:FIND-CLASS for the lookup, because that
-;;; function automatically finds the global environment if it is given
-;;; a lexical environment.
-
-(defun make-specializer (specializer environment)
-  (cond ((symbolp specializer)
-         (sicl-genv:find-class specializer environment))
-        ((sicl-genv:typep specializer 'specializer environment)
-         specializer)
-        (t
-         (error "Specializer must be symbol or specializer metaobject: ~s"
-                specializer))))
 
 (defun ensure-method (generic-function
 		      environment
