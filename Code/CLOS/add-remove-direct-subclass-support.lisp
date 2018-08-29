@@ -17,7 +17,7 @@
            :subclass subclass
            :superclass superclass))
   (setf (class-direct-subclasses superclass)
-	(cons subclass (class-direct-subclasses superclass))))
+        (cons subclass (class-direct-subclasses superclass))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -32,5 +32,5 @@
 
 (defun remove-direct-subclass-default (superclass subclass)
   (setf (class-direct-subclasses superclass)
-	(remove subclass (class-direct-subclasses superclass)
-		:test #'eq)))
+        (remove subclass (class-direct-subclasses superclass)
+                :test #'eq)))
