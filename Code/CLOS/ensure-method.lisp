@@ -22,12 +22,6 @@
 ;;; second argument is the run-time environment (and not the
 ;;; compile-time environment) in which the call to DEFMETHOD is made.
 
-(defun make-method-for-generic-function (generic-function specializers keys)
-  (apply #'make-instance
-         (generic-function-method-class generic-function)
-         :specializers specializers
-         keys))
-
 (defun ensure-method (generic-function
 		      environment
 		      &rest keys
