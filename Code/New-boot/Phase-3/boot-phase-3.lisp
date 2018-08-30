@@ -138,12 +138,24 @@
     (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
     (load-file "CLOS/standard-instance-access.lisp" e2)))
 
+;;; The specializers of the generic functions in E3 are the classes of
+;;; the instances in E3, so they are the classes in E2.
+(defun define-make-specializer (e2 e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e3)
+        (lambda (specializer environment)
+          (declare (ignore environment))
+          (cond ((symbolp specializer)
+                 (sicl-genv:find-class specializer e2))
+                (t
+                 specializer)))))
+
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (load-file "CLOS/make-method-lambda-support.lisp" e3)
-    (load-file "CLOS/make-method-lambda-defuns.lisp" e3)))
+    (load-file "CLOS/make-method-lambda-defuns.lisp" e3)
+    (define-make-specializer e2 e3)))
 
 
 (defun boot-phase-3 (boot)
