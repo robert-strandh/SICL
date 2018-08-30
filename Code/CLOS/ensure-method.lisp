@@ -22,6 +22,12 @@
 ;;; second argument is the run-time environment (and not the
 ;;; compile-time environment) in which the call to DEFMETHOD is made.
 
+(defun make-method-for-generic-function (generic-function specializers keys)
+  (apply #'make-instance
+         (generic-function-method-class generic-function)
+         :specializers specializers
+         keys))
+
 (defun ensure-method (generic-function
 		      environment
 		      &rest keys
@@ -33,9 +39,7 @@
 		     collect (make-specializer s environment)))
 	(remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :specializers))
-    (let ((method (apply #'make-instance
-			 (generic-function-method-class generic-function)
-			 :specializers specs
-			 remaining-keys)))
+    (let ((method (make-method-for-generic-function
+                   generic-function specs remaining-keys)))
       (add-method generic-function method)
       method)))
