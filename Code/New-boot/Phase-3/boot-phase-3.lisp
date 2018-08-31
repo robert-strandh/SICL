@@ -198,7 +198,9 @@
     (define-add-method-in-e3 boot)
     (define-make-method-for-generic-function-in-e3 boot)
     (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p copy-list)
+     '(cleavir-code-utilities:proper-list-p
+       copy-list
+       sicl-clos:defmethod-expander)
      e3)
     (load-file "CLOS/ensure-method.lisp" e3)))
 
