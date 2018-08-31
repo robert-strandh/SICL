@@ -177,6 +177,17 @@
                        (cons method (funcall slot-reader generic-function))
                        generic-function))))))
 
+(defun define-make-method-for-generic-function-in-e3 (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e3 sicl-new-boot:e3)) boot
+    (setf (sicl-genv:fdefinition 'sicl-clos::make-method-for-generic-function e3)
+          (lambda (generic-function specializers keys)
+            (declare (ignore generic-function))
+            (apply #'make-instance
+                   (sicl-genv:find-class 'standard-method e1)
+                   :specializers specializers
+                   keys)))))
+
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -184,7 +195,8 @@
     (load-file "CLOS/make-method-lambda-support.lisp" e3)
     (load-file "CLOS/make-method-lambda-defuns.lisp" e3)
     (define-make-specializer e2 e3)
-    (define-add-method-in-e3 boot)))
+    (define-add-method-in-e3 boot)
+    (define-make-method-for-generic-function-in-e3 boot)))
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
