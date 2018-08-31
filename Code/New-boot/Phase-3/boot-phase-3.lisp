@@ -149,14 +149,27 @@
                 (t
                  specializer)))))
 
+(defun define-add-method-in-e3 (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)) boot
+    (let* ((name 'sicl-clos:generic-function-methods)
+           (getter (sicl-genv:fdefinition name e2))
+           (setter (sicl-genv:fdefinition `(setf ,name) e2)))
+      (setf (sicl-genv:fdefinition 'add-method e3)
+            (lambda (generic-function method)
+              (funcall setter
+                       (cons method (funcall getter generic-function))
+                       generic-function))))))
+
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (load-file "CLOS/make-method-lambda-support.lisp" e3)
     (load-file "CLOS/make-method-lambda-defuns.lisp" e3)
-    (define-make-specializer e2 e3)))
-
+    (define-make-specializer e2 e3)
+    (define-add-method-in-e3 boot)))
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
