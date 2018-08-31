@@ -188,6 +188,37 @@
                    :specializers specializers
                    keys)))))
 
+(defun define-defmethod-expander (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)) boot
+    (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e3)
+          (lambda (ct-env function-name rest)
+            (multiple-value-bind
+                  (qualifiers required remaining
+                   specializers declarations documentation forms)
+                (sicl-clos::parse-defmethod rest)
+              (let* ((lambda-list (append required remaining))
+                     (generic-function-var (gensym)))
+                `(let* ((,generic-function-var
+                          (ensure-generic-function ',function-name :environment ,ct-env)))
+                   (sicl-clos:ensure-method
+                    ,generic-function-var
+                    ,ct-env
+                    :lambda-list ',lambda-list
+                    :qualifiers ',qualifiers
+                    :specializers ,(sicl-clos::canonicalize-specializers specializers)
+                    :documentation ,documentation
+                    :function
+                    ,(funcall
+                      (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e3)
+                      nil
+                      nil
+                      `(lambda ,lambda-list
+                         ,@declarations
+                         ,@forms)
+                      nil)))))))))
+
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -198,11 +229,11 @@
     (define-add-method-in-e3 boot)
     (define-make-method-for-generic-function-in-e3 boot)
     (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p
-       copy-list
-       sicl-clos:defmethod-expander)
+     '(cleavir-code-utilities:proper-list-p copy-list)
      e3)
-    (load-file "CLOS/ensure-method.lisp" e3)))
+    (load-file "CLOS/ensure-method.lisp" e3)
+    (define-defmethod-expander boot)
+    (load-file "CLOS/defmethod-defmacro.lisp" e3)))
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
