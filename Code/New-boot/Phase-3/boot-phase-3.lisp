@@ -196,7 +196,10 @@
     (load-file "CLOS/make-method-lambda-defuns.lisp" e3)
     (define-make-specializer e2 e3)
     (define-add-method-in-e3 boot)
-    (define-make-method-for-generic-function-in-e3 boot)))
+    (define-make-method-for-generic-function-in-e3 boot)
+    (import-functions-from-host
+     '(cleavir-code-utilities:proper-list-p copy-list)
+     e3)))
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
