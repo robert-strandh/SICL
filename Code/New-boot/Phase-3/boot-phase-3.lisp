@@ -149,17 +149,32 @@
                 (t
                  specializer)))))
 
+;;; In order to make DEFMETHOD work in E3, we need to be able to add
+;;; methods to a generic function.  We use the SICL-specific function
+;;; ENSURE-METHOD for that, and ENSURE-METHOD calls the Common Lisp
+;;; standard function ADD-METHOD.  But the full ADD-METHOD is a bit to
+;;; complicated for what we need here.  For one thing, it checks for
+;;; existing methods to remove first, and it does some error checking.
+;;; We do not need that here, because we are never going to add a
+;;; method that requires removing any existing method.  For that
+;;; reason, we define a special version of it here.
+;;;
+;;; Now, we are dealing with generic function metaobjects in E3.  They
+;;; are instances of classes in E1, so the accessor methods for thos
+;;; generic function metaobjects are to be found in E2.  Therefore,
+;;; instead of just using PUSH, we have to find and call the
+;;; slot-reader and the slot-writer explicitly which makes this code
+;;; look a bit strange.
 (defun define-add-method-in-e3 (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
+  (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (let* ((name 'sicl-clos:generic-function-methods)
-           (getter (sicl-genv:fdefinition name e2))
-           (setter (sicl-genv:fdefinition `(setf ,name) e2)))
+           (slot-reader (sicl-genv:fdefinition name e2))
+           (slot-writer (sicl-genv:fdefinition `(setf ,name) e2)))
       (setf (sicl-genv:fdefinition 'add-method e3)
             (lambda (generic-function method)
-              (funcall setter
-                       (cons method (funcall getter generic-function))
+              (funcall slot-writer
+                       (cons method (funcall slot-reader generic-function))
                        generic-function))))))
 
 (defun activate-defmethod-in-e3 (boot)
