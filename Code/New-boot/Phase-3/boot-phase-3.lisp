@@ -199,7 +199,8 @@
     (define-make-method-for-generic-function-in-e3 boot)
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p copy-list)
-     e3)))
+     e3)
+    (load-file "CLOS/ensure-method.lisp" e3)))
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
