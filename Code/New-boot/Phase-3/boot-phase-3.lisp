@@ -244,7 +244,8 @@
     (load-file "CLOS/slot-value-etc-defgenerics.lisp" e2)
     (load-file "CLOS/slot-value-etc-support.lisp" e2)
     (load-file "CLOS/slot-value-etc-defmethods.lisp" e2)
-    (load-file "CLOS/instance-slots-offset-defconstant.lisp" e2)))
+    (load-file "CLOS/instance-slots-offset-defconstant.lisp" e2)
+    (load-file "CLOS/shared-initialize-support.lisp" e2)))
 
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
