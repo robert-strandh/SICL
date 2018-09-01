@@ -241,7 +241,8 @@
     (setf (sicl-genv:special-variable 'sicl-clos:+unbound-slot-value+ e2 t)
           10000000)
     (load-file "CLOS/slot-bound-using-index.lisp" e2)
-    (load-file "CLOS/slot-value-etc-defgenerics.lisp" e2)))
+    (load-file "CLOS/slot-value-etc-defgenerics.lisp" e2)
+    (load-file "CLOS/slot-value-etc-support.lisp" e2)))
 
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
