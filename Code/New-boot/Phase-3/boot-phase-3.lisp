@@ -257,10 +257,11 @@
           (lambda (instance slot-names &rest initargs)
             (let* ((class-of (sicl-genv:fdefinition 'class-of e3))
                    (class (funcall class-of instance))
-                   (class-slots (sicl-genv:fdefinition 'class-slots e2))
+                   (class-slots (sicl-genv:fdefinition 'sicl-clos:class-slots e2))
                    (slots (funcall class-slots class)))
               (apply (sicl-genv:fdefinition
-                      'shared-initialize-default-using-class-and-slots e2)
+                      'sicl-clos::shared-initialize-default-using-class-and-slots
+                      e2)
                      instance slot-names class slots initargs))))
     (load-file "CLOS/shared-initialize-defgenerics.lisp" e3)
     (load-file "CLOS/shared-initialize-defmethods.lisp" e3)
