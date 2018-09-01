@@ -96,7 +96,6 @@
     (sicl-minimal-extrinsic-environment:import-package-from-host
      'sicl-conditions e2)
     (load-file "Conditions/assert-defmacro.lisp" e2)
-    (load-file-protected "CLOS/discriminating-tagbody.lisp" e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2)
           (lambda (object)
             (typep object 'standard-object)))
