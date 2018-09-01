@@ -220,8 +220,26 @@
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
+    ;; The function CLASS-OF is called by SHARED-INITIALIZE in order
+    ;; to get the slot-definition metaobjects.
     (setf (sicl-genv:fdefinition 'class-of e3)
-          (lambda (object) (slot-value object '%class)))))
+          (lambda (object) (slot-value object '%class)))
+    ;; The support code for SHARED-INITIALIZE in phase 3 will need to
+    ;; access various slots of class metaobjects and slot-definition
+    ;; metaobjects.  Since we are initializing objects in E3, the
+    ;; class metaobjects for these objects are located in E2.
+    ;; Therefor, it is handy to load the support code for
+    ;; SHARED-INITIALIZE into E2.  Notice, however, that we do not
+    ;; want to define SHARED-INITIALIZE itself in E2 because we
+    ;; already have a definition for it there (imported from the
+    ;; host), and we do want to call SHARED-INITIALIZE from functions
+    ;; in E3.
+    ;;
+    ;; GET-PROPERTIES is called by SHARED-INITIALIZE to get the
+    ;; INITARGs of the slot-definition metaobject.
+    (import-functions-from-host '(get-properties) e2)
+    (setf (sicl-genv:special-variable 'sicl-clos:+unbound-slot-value+ e2 t)
+          10000000)))
 
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
