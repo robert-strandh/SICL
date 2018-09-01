@@ -261,7 +261,8 @@
                    (slots (funcall class-slots class)))
               (apply (sicl-genv:fdefinition
                       'shared-initialize-default-using-class-and-slots e2)
-                     instance slot-names class slots initargs))))))
+                     instance slot-names class slots initargs))))
+    (load-file "CLOS/shared-initialize-defgenerics.lisp" e3)))
 
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
