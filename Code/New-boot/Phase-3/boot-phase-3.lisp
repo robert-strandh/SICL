@@ -216,6 +216,13 @@
                          ,@forms)
                       nil)))))))))
 
+(defun activate-object-initialization (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)) boot
+    (setf (sicl-genv:fdefinition 'class-of e3)
+          (lambda (object) (slot-value object '%class)))))
+
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -243,4 +250,5 @@
     (activate-allocate-instance boot)
     (activate-generic-function-invocation boot)
     (activate-defmethod-in-e3 boot)
+    (activate-object-initialization boot)
     (satiate-all-functions e1 e2 e3)))
