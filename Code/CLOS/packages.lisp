@@ -6,6 +6,8 @@
   (:use #:common-lisp)
   (:shadow #:documentation)
   (:export
+   ;; Constants
+   #:+unbound-slot-value+
    ;; MOP classes
    #:class #:standard-class #:built-in-class #:structure-class
    #:funcallable-standard-class
