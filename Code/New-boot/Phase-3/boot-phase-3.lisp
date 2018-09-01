@@ -266,7 +266,18 @@
     (load-file "CLOS/shared-initialize-defmethods.lisp" e3)
     (load-file "CLOS/initialize-instance-support.lisp" e3)
     (load-file "CLOS/initialize-instance-defgenerics.lisp" e3)
-    (load-file "CLOS/initialize-instance-defmethods.lisp" e3)))
+    (load-file "CLOS/initialize-instance-defmethods.lisp" e3)
+    (load-file "CLOS/make-instance-support.lisp" e2)
+    (setf (sicl-genv:fdefinition 'make-instance e3)
+          (lambda (class &rest initargs)
+            (let ((class-metaobject
+                    (if (symbolp class)
+                        (sicl-genv:find-class class e2)
+                        class)))
+              (apply (sicl-genv:fdefinition 'sicl-clos::make-instance-default e2)
+                     class-metaobject
+                     (sicl-genv:fdefinition 'initialize-instance e3)
+                     initargs))))))
 
 (defun activate-defmethod-in-e3 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
