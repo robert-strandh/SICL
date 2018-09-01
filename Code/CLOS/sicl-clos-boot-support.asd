@@ -30,6 +30,7 @@
    ;; This file contains code for generating the discriminating
    ;; automaton of generic functions.
    (:file "discriminating-automaton")
+   (:file "discriminating-tagbody")
    (:file "default-superclasses-defgeneric")))
 
 ;;  LocalWords:  metaobject accessor metaobjects accessors defgeneric
