@@ -9,4 +9,5 @@
   :components
   ((:file "packages")
    (:file "utilities")
+   (:file "load-accessor-defgenerics")
    (:file "boot-phase-3")))
