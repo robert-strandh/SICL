@@ -183,8 +183,7 @@
                    keys)))))
 
 (defun define-defmethod-expander (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
+  (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e3)
           (lambda (ct-env function-name rest)
@@ -214,8 +213,7 @@
                       nil)))))))))
 
 (defun activate-object-initialization (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
+  (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     ;; The function CLASS-OF is called by SHARED-INITIALIZE in order
     ;; to get the slot-definition metaobjects.
@@ -278,8 +276,7 @@
                      initargs))))))
 
 (defun activate-defmethod-in-e3 (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
+  (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (load-file "CLOS/make-method-lambda-support.lisp" e3)
     (load-file "CLOS/make-method-lambda-defuns.lisp" e3)
