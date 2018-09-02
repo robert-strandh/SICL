@@ -2,7 +2,6 @@
 
 (defun ensure-generic-function-phase-3 (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (let* ((gf-class-name 'standard-generic-function)
            (gf-class (sicl-genv:find-class gf-class-name e2))
@@ -21,3 +20,13 @@
                                  :name function-name
                                  :method-class method-class
                                  args)))))))))
+
+(defun activate-generic-function-initialization (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)
+                   (e4 sicl-new-boot:e4)) boot
+    (import-functions-from-host '(set-difference) e3)))
+
+(defun load-accessor-defgeneric (boot)
+  (ensure-generic-function-phase-3 boot)
+  (activate-generic-function-initialization boot))
