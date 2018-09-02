@@ -16,6 +16,7 @@
    #:method #:standard-method
    #:metaobject
    #:specializer
+   #:eql-specializer
    #:method-combination
    #:slot-definition
    #:direct-slot-definition
