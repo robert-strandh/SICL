@@ -27,6 +27,6 @@
                    (e4 sicl-new-boot:e4)) boot
     (import-functions-from-host '(set-difference) e3)))
 
-(defun load-accessor-defgeneric (boot)
+(defun load-accessor-defgenerics (boot)
   (ensure-generic-function-phase-3 boot)
   (activate-generic-function-initialization boot))

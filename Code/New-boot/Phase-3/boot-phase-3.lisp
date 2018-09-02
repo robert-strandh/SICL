@@ -302,4 +302,5 @@
     (activate-generic-function-invocation boot)
     (activate-defmethod-in-e3 boot)
     (activate-object-initialization boot)
+    (load-accessor-defgenerics boot)
     (satiate-all-functions e1 e2 e3)))
