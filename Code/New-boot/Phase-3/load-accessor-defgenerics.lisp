@@ -25,7 +25,12 @@
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
-    (import-functions-from-host '(set-difference) e3)))
+    (import-functions-from-host
+     '(set-difference stringp
+       cleavir-code-utilities:parse-generic-function-lambda-list
+       cleavir-code-utilities:required
+       make-list)
+     e3)))
 
 (defun load-accessor-defgenerics (boot)
   (ensure-generic-function-phase-3 boot)
