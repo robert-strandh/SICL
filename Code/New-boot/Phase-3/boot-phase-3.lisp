@@ -46,10 +46,7 @@
           (lambda (class size)
             (make-instance 'header
               :class class
-              :rack (let ((a (make-array size)))
-                      (loop for i from 0 below size
-                            do (setf (aref a i) (+ i 1000)))
-                      a))))
+              :rack (make-array size :initial-element 10000000))))
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e2)
           (lambda (object location)
             (aref (slot-value object '%rack) location)))
