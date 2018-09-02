@@ -30,7 +30,11 @@
        cleavir-code-utilities:parse-generic-function-lambda-list
        cleavir-code-utilities:required
        make-list)
-     e3)))
+     e3)
+    ;; We may regret having defined FIND-CLASS this way in E3.
+    (setf (sicl-genv:fdefinition 'find-class e3)
+          (lambda (class-name)
+            (sicl-genv:find-class class-name e2)))))
 
 (defun load-accessor-defgenerics (boot)
   (ensure-generic-function-phase-3 boot)
