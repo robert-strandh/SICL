@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-clos)
 
 ;;;; This file contains the definition of the specified methods on the
-;;;; generic functions ADD-METHOD and REMOVE-METHOD.  
+;;;; generic functions ADD-METHOD and REMOVE-METHOD.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11,7 +11,7 @@
 ;;; http://metamodular.com/CLOS-MOP/add-method-standard-generic-function-standard-method.html
 
 (defmethod add-method ((generic-function standard-generic-function)
-		       (method standard-method))
+                       (method standard-method))
   (add-method-default generic-function method))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,5 +22,5 @@
 ;;; http://metamodular.com/CLOS-MOP/remove-method-standard-generic-function-standard-method.html
 
 (defmethod remove-method ((generic-function standard-generic-function)
-			  (method standard-method))
+                          (method standard-method))
   (remove-method-default generic-function method))
