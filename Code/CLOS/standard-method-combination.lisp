@@ -1,24 +1,28 @@
 (cl:in-package #:sicl-clos)
 
 (define-method-combination standard ()
-  ((around (:around))
-   (before (:before))
-   (primary () :required t)
-   (after (:after)))
+  ((around-methods (:around))
+   (before-methods (:before))
+   (primary-methods () :required t)
+   (after-methods (:after-methods)))
   (flet ((call-methods (methods)
-	   (loop for method in methods
-		 collect `(call-method ,method))))
-    (let ((form (if (and (null before)
-			 (null after)
-			 (null (rest primary)))
-		    `(call-method ,(first primary))
-		    `(multiple-value-prog1
-			 (progn ,@(call-methods before)
-				(call-method ,(first primary)
-					     ,(rest primary)))
-		       ,@(call-methods (reverse after))))))
-      (if (null around)
-	  form
-	  `(call-method ,(first around)
-			(,@(rest around)
-			 (make-method ,form)))))))
+           (loop for method in methods
+                 collect `(call-method ,method))))
+    (if (null primary-methods)
+        '(lambda (&rest args)
+          (error "no primary method"))
+        (let ((all-but-around-form
+                (if (and (null before-methods)
+                         (null after-methods)
+                         (null (rest primary-methods)))
+                    `(call-method ,(first primary-methods))
+                    `(multiple-value-prog1
+                         (progn ,@(call-methods before-methods)
+                                (call-method ,(first primary-methods)
+                                             ,(rest primary-methods)))
+                       ,@(call-methods (reverse after-methods))))))
+          (if (null around-methods)
+              form
+              `(call-method ,(first around-methods)
+                            (,@(rest around-methods)
+                             (make-method ,all-but-around-form))))))))
