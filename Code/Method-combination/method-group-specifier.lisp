@@ -1,0 +1,50 @@
+(cl:in-package #:sicl-method-combination)
+
+(defun make-qualifier-test (qualifier-pattern)
+  (cond ((eq qualifier-pattern '*)
+         t)
+        ((listp qualifier-pattern)
+         (let ((last (last qualifier-pattern))
+               (butlast (butlast qualifier-pattern)))
+           (cond ((null (cdr last))
+                  `(equal qualifiers ',qualifier-pattern))
+                 ((eq (cdr last) '*)
+                  (let* ((prefix (append butlast (list (car last))))
+                         (length (length prefix)))
+                    `(equal (subseq qualifiers 0 ,length)
+                            ',prefix)))
+                 (t
+                  (error "A dotted list for qualifier pattern must end with *")))))
+        (t
+         (error "A qualifier pattern must be either a list or the symbol *"))))
+        
+(defun parse-qualifier-patterns (qualifier-patterns)
+  `(or ,@(loop for pattern in qualifier-patterns
+               collect (make-qualifier-test pattern))))
+
+(defun parse-method-group-specifier (method-group-specifier)
+  (cond ((not (cleavir-code-utilities:proper-list-p method-group-specifier))
+         (error "method group specifier must be a proper list"))
+        ((not (symbolp (first method-group-specifier)))
+         (error "name of method group specifier must be a symbol"))
+        ((null (rest method-group-specifier))
+         (error "method group specifier must have a predicate or qualifier pattern(s)"))
+        (t
+         (let* ((option-names '(:description :order :required))
+                (position (position-if (lambda (x) (member x option-names))
+                                       method-group-specifier
+                                       :start 2))
+                (options (if (null position)
+                             '()
+                             (subseq method-group-specifier position)))
+                (remaining (subseq method-group-specifier 0 position))
+                (second (second remaining)))
+           ;; FIXME: check the options for validity
+           (list (first remaining)
+                 (if (and (= (length remaining) 2)
+                          (symbolp second)
+                          (not (null second))
+                          (not (eq second '*)))
+                     `(,second qualifiers)
+                     (parse-qualifier-patterns (rest remaining)))
+                 options)))))
