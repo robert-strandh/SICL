@@ -17,14 +17,24 @@
          ;; that inlined instructions have the policy of the source function,
          ;; rather than the call.
          (call-arguments
-           (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
-                 for location in initial-environment
-                 for arg in (rest (cleavir-ir:inputs call))
-                 for temp = (cleavir-ir:new-temporary)
-                 for assign = (cleavir-ir:make-assignment-instruction arg temp)
-                 do (cleavir-ir:insert-instruction-before assign call)
-                    (add-to-mapping mapping location temp)
-                 collect temp))
+           (if uniquep
+               ;; We're not copying locations, even for parameters.
+               ;; (We still can't use the arguments directly- might be constant, for one)
+               (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
+                     for location in initial-environment
+                     for arg in (rest (cleavir-ir:inputs call))
+                     for assign = (cleavir-ir:make-assignment-instruction arg location)
+                     do (cleavir-ir:insert-instruction-before assign call)
+                     finally (return initial-environment))
+               ;; Usually we do make temps though.
+               (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
+                     for location in initial-environment
+                     for arg in (rest (cleavir-ir:inputs call))
+                     for temp = (cleavir-ir:new-temporary)
+                     for assign = (cleavir-ir:make-assignment-instruction arg temp)
+                     do (cleavir-ir:insert-instruction-before assign call)
+                        (add-to-mapping mapping location temp)
+                     collect temp)))
          (function-temp (cleavir-ir:new-temporary))
          (new-enter (cleavir-ir:clone-instruction enter))
          (enc (let ((cleavir-ir:*policy* (cleavir-ir:policy call)))
@@ -43,7 +53,17 @@
           for return in (cleavir-ir:local-instructions-of-type
                          enter 'cleavir-ir:return-instruction)
           for input = (first (cleavir-ir:inputs return))
-          do (add-to-mapping mapping input caller-values))
+          when *copy-functions*
+            do (add-to-mapping mapping input caller-values)
+          else
+            ;; If we're not copying functions, we need to edit them so that they refer to
+            ;; the correct return values.
+            ;; NOTE: Because these are inputs to return instructions, I think we can be sure
+            ;; that we (and not an outer function) own them.
+            do (loop for define in (cleavir-ir:defining-instructions input)
+                     do (cleavir-ir:substitute-output caller-values input define))
+               (loop for use in (cleavir-ir:using-instructions input)
+                     do (cleavir-ir:substitute-input caller-values input use)))
     ;; Do the actual inlining.
     ;; FIXME: Once an inlining stops, all remaining residual functions should have
     ;; any variables live at that point added as inputs, etc.
