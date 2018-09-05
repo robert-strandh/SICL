@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-method-combination
   :depends-on (#:cleavir-code-utilities
+               #:sicl-global-environment
                #:concrete-syntax-tree)
   :serial t
   :components
@@ -10,5 +11,6 @@
    (:file "lambda-list-variables")
    (:file "method-group-specifier")
    (:file "method-discriminator")
+   (:file "long-form-expansion")
    (:file "define-method-combination-support")))
 
