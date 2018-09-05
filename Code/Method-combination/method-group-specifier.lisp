@@ -1,28 +1,28 @@
 (cl:in-package #:sicl-method-combination)
 
-(defun make-qualifier-test (qualifier-pattern)
+(defun make-qualifier-test (qualifier-pattern qualifiers-var)
   (cond ((eq qualifier-pattern '*)
          t)
         ((listp qualifier-pattern)
          (let ((last (last qualifier-pattern))
                (butlast (butlast qualifier-pattern)))
            (cond ((null (cdr last))
-                  `(equal qualifiers ',qualifier-pattern))
+                  `(equal ,qualifiers-var ',qualifier-pattern))
                  ((eq (cdr last) '*)
                   (let* ((prefix (append butlast (list (car last))))
                          (length (length prefix)))
-                    `(equal (subseq qualifiers 0 ,length)
+                    `(equal (subseq ,qualifiers-var 0 ,length)
                             ',prefix)))
                  (t
                   (error "A dotted list for qualifier pattern must end with *")))))
         (t
          (error "A qualifier pattern must be either a list or the symbol *"))))
         
-(defun parse-qualifier-patterns (qualifier-patterns)
+(defun parse-qualifier-patterns (qualifier-patterns qualifiers-var)
   `(or ,@(loop for pattern in qualifier-patterns
-               collect (make-qualifier-test pattern))))
+               collect (make-qualifier-test pattern qualifiers-var))))
 
-(defun parse-method-group-specifier (method-group-specifier)
+(defun parse-method-group-specifier (method-group-specifier qualifiers-var)
   (cond ((not (cleavir-code-utilities:proper-list-p method-group-specifier))
          (error "method group specifier must be a proper list"))
         ((not (symbolp (first method-group-specifier)))
@@ -46,5 +46,5 @@
                           (not (null second))
                           (not (eq second '*)))
                      `(,second qualifiers)
-                     (parse-qualifier-patterns (rest remaining)))
+                     (parse-qualifier-patterns (rest remaining) qualifiers-var))
                  options)))))

@@ -1,10 +1,11 @@
 (cl:in-package #:sicl-method-combination)
 
 (defun long-form-lambda (lambda-list method-group-specifiers declarations body)
-  (let ((lambda-list-variables (lambda-list-variables lambda-list)))
+  (let ((lambda-list-variables (lambda-list-variables lambda-list))
+        (method-list-var (gensym "method-list")))
     `(lambda ,lambda-list-variables
        ,@declarations
-       ,(wrap-body method-group-specifiers body))))
+       ,(wrap-body method-list-var method-group-specifiers body))))
        
 ;;; We do not support the :ARGUMENTS and :GENERIC-FUNCTION options
 ;;; yet.
