@@ -3,7 +3,7 @@
 (defun long-form-lambda (lambda-list method-group-specifiers declarations body)
   (let ((lambda-list-variables (lambda-list-variables lambda-list)))
     `(lambda ,lambda-list-variables
-       ,declarations
+       ,@declarations
        ,(wrap-body method-group-specifiers body))))
        
 ;;; We do not support the :ARGUMENTS and :GENERIC-FUNCTION options
