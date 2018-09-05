@@ -331,11 +331,11 @@
   (cdr (assoc symbol (type-expanders env) :test #'eq)))
 
 (defmethod (setf sicl-genv:type-expander)
-    (new-class symbol (env simple-environment))
+    (new-expander symbol (env simple-environment))
   (let ((association (assoc symbol (type-expanders env) :test #'eq)))
     (if (null association)
-	(push (cons symbol new-class) (type-expanders env))
-	(setf (cdr association) new-class))))
+	(push (cons symbol new-expander) (type-expanders env))
+	(setf (cdr association) new-expander))))
 
 (defmethod sicl-genv:packages ((env simple-environment))
   (packages env))
@@ -352,12 +352,12 @@
 
 (defmethod sicl-genv:find-method-combination-template
     (symbol (env simple-environment))
-  (gethash symbol (method-combination-classes env)))
+  (gethash symbol (method-combination-templates env)))
 
 (defmethod (setf sicl-genv:find-method-combination-template)
-    (new-class symbol (env simple-environment))
-  (setf (gethash symbol (method-combination-classes env)) new-class)
-  new-class)
+    (new-template symbol (env simple-environment))
+  (setf (gethash symbol (method-combination-templates env)) new-template)
+  new-template)
 
 (defmethod sicl-genv:declaration (name (env simple-environment))
   (gethash name (declarations env)))
