@@ -9,5 +9,6 @@
    (:file "method-combination-template-defclass")
    (:file "lambda-list-variables")
    (:file "method-group-specifier")
+   (:file "method-discriminator")
    (:file "define-method-combination-support")))
 
