@@ -83,8 +83,7 @@
    #:find-package
    #:special-operator
    #:get-setf-expansion
-   #:find-method-combination-class
-   #:find-standard-method-combination
+   #:find-method-combination-template
    ;; This special variable is deprecated, it should replaced by the
    ;; constant variable +global-environment+
    #:*global-environment*

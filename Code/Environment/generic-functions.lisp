@@ -660,56 +660,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function FIND-METHOD-COMBINATION-CLASS.
+;;; Generic function FIND-METHOD-COMBINATION-TEMPLATE.
 ;;;
-;;; If SYMBOL has a definition as a subclass of the class
-;;; METHOD-COMBINATION in ENVIRONMENT, then that class metaobject is
-;;; returned.  Otherwise NIL is returned.
+;;; If SYMBOL has a definition as a method-combination template, then
+;;; that template is returned.  Otherwise NIL is returned.
 
-(defgeneric find-method-combination-class (symbol environment))
+(defgeneric find-method-combination-template (symbol environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generic function (SETF FIND-METHOD-COMBINATION-CLASS).
+;;; Generic function (SETF FIND-METHOD-COMBINATION-TEMPLATE).
 ;;;
-;;; This function is used in order to associate a subclass of the
-;;; class METHOD-COMBINATION class with a method-combination name in
-;;; ENVIRONMENT.
+;;; This function is used in order to associate a method-combination
+;;; template with a method-combination name in ENVIRONMENT.
 ;;;
-;;; If NEW-CLASS is a class metaobject, then that class metaobject is
-;;; associated with the name SYMBOL in ENVIRONMENT.  If SYMBOL already
-;;; names a method-combination class in ENVIRONMENT than that
-;;; association is lost.
+;;; If NEW-TEMPLATE is a method-combination template object, then that
+;;; object is associated with the name SYMBOL in ENVIRONMENT.  If
+;;; SYMBOL already names a method-combination template in ENVIRONMENT
+;;; than that association is lost.
 ;;;
 ;;; If NEW-CLASS is NIL, then SYMBOL is no longer associated with a
 ;;; method-combination class in ENVIRONMENT.
 
-(defgeneric (setf find-method-combination-class) (new-class symbol environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function FIND-STANDARD-METHOD-COMBINATION.
-;;;
-;;; Return the unique instance of the method-combination class named
-;;; STANDARD.  This generic function exists in order to avoid
-;;; allocating a new instance of the STANDARD method-combination class
-;;; each time a generic function using the standard method combination
-;;; is created.
-;;;
-;;; If no preceding call to (SETF FIND-STANDARD-METHOD-COMBINATION)
-;;; has been made, then this call signals an error.
-
-(defgeneric find-standard-method-combination (environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function (SETF FIND-METHOD-COMBINATION-CLASS).
-;;;
-;;; Set the unique instance of the method-combination class named
-;;; STANDARD.  After this generic function has been called, subsequent
-;;; calls to FIND-STANDARD-METHOD-COMBINATION will return NEW-INSTANCE.
-
-(defgeneric (setf find-standard-method-combination) (new-instance environment))
+(defgeneric (setf find-method-combination-template) (new-template symbol environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
