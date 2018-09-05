@@ -3,13 +3,9 @@
 (defmethod inline-function (initial call enter mapping &key uniquep)
   (let* ((*original-enter-instruction* enter)
          (*instruction-mapping* (make-hash-table :test #'eq))
-         ;; The following two variables are used for catch/unwind.
-         (*instruction-ownerships*
-           (cleavir-hir-transformations:compute-instruction-owners initial))
+         ;; Used for catch/unwind (local-catch-p)
          (*target-enter-instruction*
            (gethash call *instruction-ownerships*))
-         (*location-ownerships*
-           (cleavir-hir-transformations:compute-location-owners initial))
          (*copy-functions* (not uniquep))
          (*copy-locations* (not uniquep))
          (initial-environment (rest (cleavir-ir:outputs enter))) ; CAR is the closure vector - unneeded.

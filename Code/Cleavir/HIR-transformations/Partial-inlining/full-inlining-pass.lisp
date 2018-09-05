@@ -8,8 +8,6 @@
 ;; get one potential inline that can be done.
 (defun one-potential-inline (initial-instruction)
   (let ((dag (cleavir-hir-transformations:build-function-dag initial-instruction))
-        (location-owners (cleavir-hir-transformations:compute-location-owners initial-instruction))
-        (instruction-owners (cleavir-hir-transformations:compute-instruction-owners initial-instruction))
         (destinies (cleavir-hir-transformations:compute-destinies initial-instruction)))
     (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies)))
       (labels ((maybe-return-inline (node)
@@ -23,7 +21,7 @@
                            with enclose-destinies = (gethash enclose destinies)
                            with unique-p = (unique-p enter enclose-destinies)
                            for caller in enclose-destinies
-                           for call-owner = (gethash caller instruction-owners)
+                           for call-owner = (gethash caller *instruction-ownerships*)
                            when (eq caller :escape)
                              return nil
                            when (parent-node-p node call-owner) ; recursive
@@ -54,7 +52,9 @@
                  (cleavir-hir-transformations:dag-nodes dag))))))
 
 (defun do-inlining (initial-instruction)
-  (loop for inline = (one-potential-inline initial-instruction)
+  (loop for *instruction-ownerships* = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
+        for *location-ownerships* = (cleavir-hir-transformations:compute-location-owners initial-instruction)
+        for inline = (one-potential-inline initial-instruction)
         until (null inline)
         do (destructuring-bind (enter call uniquep) inline
              (inline-function initial-instruction call enter (make-hash-table :test #'eq) :uniquep uniquep))
