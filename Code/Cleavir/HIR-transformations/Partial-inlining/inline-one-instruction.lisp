@@ -6,7 +6,7 @@
      enter-instruction
      successor-instruction
      mapping)
-  (declare (ignore enclose-instruction call-instruction enter-instruction mapping))
+  (declare (ignore enter-instruction mapping))
   (let ((copy (find-in-mapping *instruction-mapping* successor-instruction)))
     (cond ((null copy)
            (call-next-method))
@@ -48,6 +48,7 @@
 (defun translate-output (output mapping)
   (let ((new (find-in-mapping mapping output)))
     (cond ((not (null new)) new)
+          ((not *copy-locations*) output)
           ((not (local-location-p output)) output)
           ;; NOTE/FIXME?: Values locations are not made into parameters.
           ;; Therefore if inlining is stopped while a values location is live,
@@ -98,25 +99,27 @@
      enter-instruction
      (successor-instruction cleavir-ir:enclose-instruction)
      mapping)
-  ;; FIXME: Just like the above, but we have to copy the CODE too.
-  (let* ((inputs (cleavir-ir:inputs successor-instruction))
-         (new-inputs (translate-inputs inputs mapping))
-         (outputs (cleavir-ir:outputs successor-instruction))
-         (new-outputs (translate-outputs outputs mapping))
-         (code (copy-function (cleavir-ir:code successor-instruction) mapping))
-         (new-instruction (cleavir-ir:clone-instruction successor-instruction
-                            :inputs new-inputs :outputs new-outputs
-                            :predecessors nil :successors nil
-                            :code code)))
-    (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
-    (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
-    (setf (cleavir-ir:successors enter-instruction)
-          (cleavir-ir:successors successor-instruction))
-    (list (make-instance 'worklist-item
-            :enclose-instruction enclose-instruction
-            :call-instruction call-instruction
-            :enter-instruction enter-instruction
-            :mapping mapping))))
+  (if *copy-functions*
+      ;; FIXME: Just like the above, but we have to copy the CODE too.
+      (let* ((inputs (cleavir-ir:inputs successor-instruction))
+             (new-inputs (translate-inputs inputs mapping))
+             (outputs (cleavir-ir:outputs successor-instruction))
+             (new-outputs (translate-outputs outputs mapping))
+             (code (copy-function (cleavir-ir:code successor-instruction) mapping))
+             (new-instruction (cleavir-ir:clone-instruction successor-instruction
+                                                            :inputs new-inputs :outputs new-outputs
+                                                            :predecessors nil :successors nil
+                                                            :code code)))
+        (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
+        (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+        (setf (cleavir-ir:successors enter-instruction)
+              (cleavir-ir:successors successor-instruction))
+        (list (make-instance 'worklist-item
+                             :enclose-instruction enclose-instruction
+                             :call-instruction call-instruction
+                             :enter-instruction enter-instruction
+                             :mapping mapping)))
+      (call-next-method)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -205,6 +208,70 @@
             :call-instruction new-call
             :enter-instruction new-enter
             :mapping mapping))))
+
+(defmethod inline-one-instruction
+    (enclose-instruction
+     call-instruction
+     enter-instruction
+     (successor-instruction cleavir-ir:catch-instruction)
+     mapping)
+  (if *copy-functions*
+      (call-next-method)
+      ;; If we are NOT copying subfunctions, we need to ensure that any lower
+      ;; UNWINDs refer to our new catch instruction and not the original.
+      ;; We do so by editing the enclosed function.
+      ;; So, FIXME, code repetition again.
+      (let* ((inputs (cleavir-ir:inputs successor-instruction))
+             (new-inputs (translate-inputs inputs mapping))
+             (outputs (cleavir-ir:outputs successor-instruction))
+             ;; Work out what has the CATCH as a destination by checking where its output is used.
+             (unwinds (cleavir-ir:using-instructions (first outputs)))
+             (new-outputs (translate-outputs outputs mapping))
+             (new-instruction (cleavir-ir:clone-instruction successor-instruction
+                                                            :inputs new-inputs
+                                                            :outputs new-outputs
+                                                            :predecessors nil :successors nil))
+             ;; Create a temporary to hold the closure to be called by the
+             ;; call-instruction in the second branch of the new
+             ;; instruction.
+             (new-temp (cleavir-ir:new-temporary))
+             ;; The new CALL-INSTRUCTION is like the previous one, except that
+             ;; the first input is the new closure to be called.
+             (new-call (let ((cleavir-ir:*policy* (cleavir-ir:policy call-instruction)))
+                         (cleavir-ir:make-funcall-instruction
+                          (cons new-temp (rest (cleavir-ir:inputs call-instruction)))
+                          (cleavir-ir:outputs call-instruction)
+                          (first (cleavir-ir:successors call-instruction)))))
+             (new-enter (let ((cleavir-ir:*policy* (cleavir-ir:policy enter-instruction)))
+                          (cleavir-ir:make-enter-instruction
+                           (cleavir-ir:lambda-list enter-instruction)
+                           :successor (second (cleavir-ir:successors successor-instruction))
+                           :origin (cleavir-ir:origin enter-instruction))))
+             (new-enclose (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose-instruction)))
+                            (cleavir-ir:make-enclose-instruction
+                             new-temp new-call new-enter))))
+        (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
+        (add-two-successor-instruction-before-instruction
+         new-instruction enclose-instruction enclose-instruction new-enclose)
+        (setf (cleavir-ir:successors enter-instruction)
+              (list (first (cleavir-ir:successors successor-instruction))))
+        (setf (cleavir-ir:successors new-enter)
+              (list (second (cleavir-ir:successors successor-instruction))))
+        ;; Fix the returns to use the new instruction.
+        (loop for unwind in unwinds
+              ;; as of now, all uses should be UNWINDs, but i don't think we ought to make that required
+              when (typep unwind 'cleavir-ir:unwind-instruction)
+                do (setf (cleavir-ir:destination unwind) new-instruction))
+        (list (make-instance 'worklist-item
+                             :enclose-instruction enclose-instruction
+                             :call-instruction call-instruction
+                             :enter-instruction enter-instruction
+                             :mapping mapping)
+              (make-instance 'worklist-item
+                             :enclose-instruction new-enclose
+                             :call-instruction new-call
+                             :enter-instruction new-enter
+                             :mapping mapping)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -56,7 +56,11 @@
               (new-inputs (translate-inputs-for-copy inputs external-map internal-map stack))
               (new-outputs (translate-outputs-for-copy outputs external-map internal-map stack))
               (copy (cleavir-ir:clone-instruction instruction
-                :inputs new-inputs :outputs new-outputs)))
+                :inputs new-inputs)))
+         ;; Bit of a kludge here. It's possible we're copying an ENTER-INSTRUCTION. If we are, we
+         ;; need to ensure the LAMBDA-LIST uses any cloned locations. This will not be handled by
+         ;; CLONE-INSTRUCTION, but (SETF OUTPUTS) does ensure synchronization.
+         (setf (cleavir-ir:outputs copy) new-outputs)
          (push copy copies)
          (add-to-mapping *instruction-mapping* instruction copy)))
      enter)
