@@ -12,5 +12,6 @@
    (:file "method-group-specifier")
    (:file "method-discriminator")
    (:file "long-form-expansion")
+   (:file "short-form-expansion")
    (:file "define-method-combination-support")))
 
