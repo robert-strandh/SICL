@@ -260,4 +260,6 @@
 
 (defgeneric operation (simple-method-combination))
 
+(defgeneric variant-signature (method-combination))
+
 ;;  LocalWords:  DEFGENERIC
