@@ -61,37 +61,37 @@
 
 (defun compute-effective-method-default (methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
-	(before-methods (remove-if-not #'before-method-p methods))
-	(after-methods (reverse (remove-if-not  #'after-method-p methods)))
-	(around-methods (remove-if-not  #'around-method-p methods)))
+        (before-methods (remove-if-not #'before-method-p methods))
+        (after-methods (reverse (remove-if-not  #'after-method-p methods)))
+        (around-methods (remove-if-not  #'around-method-p methods)))
     (if (null primary-methods)
-	(lambda (&rest args)
-	  (error "no primary method"))
-	(let ((primary-chain
-		(lambda (args)
-		  (funcall (method-function (car primary-methods))
-			   args
-			   (mapcar #'method-function (cdr primary-methods)))))
-	      (before-chain
-		(lambda (args)
-		  (loop for method in before-methods
-			do (funcall (method-function method) args '()))))
-	      (after-chain
-		(lambda (args)
-		  (loop for method in after-methods
-			do (funcall (method-function method) args '())))))
-	  (lambda (&rest args)
-	    (if (null around-methods)
-		(progn (funcall before-chain args)
-		       (multiple-value-prog1
-			   (funcall primary-chain args)
-			 (funcall after-chain args)))
-		(funcall (method-function (car around-methods))
-			 args
-			 (append (mapcar #'method-function (cdr around-methods))
-				 (list (lambda (args next-methods)
-					 (declare (ignore next-methods))
-					 (funcall before-chain args)
-					 (multiple-value-prog1
-					     (funcall primary-chain args)
-					   (funcall after-chain args))))))))))))
+        (lambda (&rest args)
+          (error "no primary method"))
+        (let ((primary-chain
+                (lambda (args)
+                  (funcall (method-function (car primary-methods))
+                           args
+                           (mapcar #'method-function (cdr primary-methods)))))
+              (before-chain
+                (lambda (args)
+                  (loop for method in before-methods
+                        do (funcall (method-function method) args '()))))
+              (after-chain
+                (lambda (args)
+                  (loop for method in after-methods
+                        do (funcall (method-function method) args '())))))
+          (lambda (&rest args)
+            (if (null around-methods)
+                (progn (funcall before-chain args)
+                       (multiple-value-prog1
+                           (funcall primary-chain args)
+                         (funcall after-chain args)))
+                (funcall (method-function (car around-methods))
+                         args
+                         (append (mapcar #'method-function (cdr around-methods))
+                                 (list (lambda (args next-methods)
+                                         (declare (ignore next-methods))
+                                         (funcall before-chain args)
+                                         (multiple-value-prog1
+                                             (funcall primary-chain args)
+                                           (funcall after-chain args))))))))))))
