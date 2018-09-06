@@ -36,4 +36,4 @@
 ;;; Class METHOD-COMBINATION.
 
 (defclass method-combination (metaobject)
-  ())
+  ((%variant-signature :initarg :variant-signature :reader variant-signature)))
