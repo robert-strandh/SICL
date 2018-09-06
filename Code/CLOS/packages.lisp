@@ -44,6 +44,7 @@
    #:class-finalized-p
    #:class-prototype
    #:instance-size
+   #:variant-signature
    ;; Accessors for generic function metaobjects.
    #:generic-function-name
    #:generic-function-argument-precedence-order
