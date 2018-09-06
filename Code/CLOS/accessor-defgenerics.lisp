@@ -262,4 +262,6 @@
 
 (defgeneric variant-signature (method-combination))
 
+(defgeneric template (method-combination))
+
 ;;  LocalWords:  DEFGENERIC
