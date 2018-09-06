@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-method-combination)
 
-(defun define-method-combination-expander (environment name &rest more-arguments)
+(defun define-method-combination-expander (environment name more-arguments)
   (if (or (null more-arguments)
           (and (symbolp (first more-arguments))
                (not (null (first more-arguments)))))
