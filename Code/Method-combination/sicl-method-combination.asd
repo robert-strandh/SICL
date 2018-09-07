@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-method-combination
   :depends-on (#:cleavir-code-utilities
+               #:sicl-clos-package
                #:sicl-global-environment
                #:concrete-syntax-tree)
   :serial t
@@ -13,5 +14,6 @@
    (:file "method-discriminator")
    (:file "long-form-expansion")
    (:file "short-form-expansion")
-   (:file "define-method-combination-support")))
+   (:file "define-method-combination-support")
+   (:file "find-method-combination")))
 
