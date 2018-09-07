@@ -1,5 +1,46 @@
 (cl:in-package #:cleavir-partial-inlining)
 
+;;; Cut and paste a function to inline - i.e. don't copy much of anything, which is nice,
+;;; but means the original is destroyed.
+;;; Unused at the moment.
+(defun interpolate-function (call enter)
+  ;; We need to alter these. We find them before doing any alteration-
+  ;; interleaving modification and finds results in unfortunate effects.
+  (let ((returns (cleavir-ir:local-instructions-of-type enter 'cleavir-ir:return-instruction))
+        (unwinds (cleavir-ir:local-instructions-of-type enter 'cleavir-ir:unwind-instruction)))
+    ;; Make appropriate assignments to do the ENTER's task.
+    (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
+          for location in (rest (cleavir-ir:outputs enter))
+          for arg in (rest (cleavir-ir:inputs call))
+          for assign = (cleavir-ir:make-assignment-instruction arg location)
+          do (cleavir-ir:insert-instruction-before assign call))
+    ;; Turn any unwinds in the body to the function being inlined into
+    ;; into direct control transfers.
+    (loop with target-enter = (gethash call *instruction-ownerships*)
+          for unwind in unwinds
+          for destination = (cleavir-ir:destination unwind)
+          ;; Recapitulates local-catch-p in inline-one-instruction.lisp, a bit.
+          when (eq (gethash destination *instruction-ownerships*) target-enter)
+            ;; it's local: replace it. (If not local, there is nothing to do.)
+            ;; (Similar to the unwind-instruction method on inline-one-instruction)
+            do (let* ((target (second (cleavir-ir:successors destination)))
+                      (nop (let ((cleavir-ir:*policy* (cleavir-ir:policy unwind)))
+                             (cleavir-ir:make-nop-instruction (list target)))))
+                 (cleavir-ir:bypass-instruction nop unwind)))
+    ;; Fix up the return values, and replace return instructions with NOPs that go to after the call.
+    (loop with caller-values = (first (cleavir-ir:outputs call))
+          with next = (first (cleavir-ir:successors call))
+          for return in returns
+          for values = (first (cleavir-ir:inputs return))
+          do (cleavir-ir:replace-datum caller-values values)
+             (let ((nop (let ((cleavir-ir:*policy* (cleavir-ir:policy return)))
+                          (cleavir-ir:make-nop-instruction (list next)))))
+               (cleavir-ir:bypass-instruction nop return)))
+    ;; Replace the call with a regular control arc into the function.
+    (cleavir-ir:bypass-instruction (first (cleavir-ir:successors enter)) call))
+  ;; Done!
+  (values))
+
 (defmethod inline-function (initial call enter mapping &key uniquep)
   (let* ((*original-enter-instruction* enter)
          (*instruction-mapping* (make-hash-table :test #'eq))
@@ -56,10 +97,7 @@
             ;; the correct return values.
             ;; NOTE: Because these are inputs to return instructions, I think we can be sure
             ;; that we (and not an outer function) own them.
-            do (loop for define in (cleavir-ir:defining-instructions input)
-                     do (cleavir-ir:substitute-output caller-values input define))
-               (loop for use in (cleavir-ir:using-instructions input)
-                     do (cleavir-ir:substitute-input caller-values input use)))
+            do (cleavir-ir:replace-datum caller-values input))
     ;; Do the actual inlining.
     ;; FIXME: Once an inlining stops, all remaining residual functions should have
     ;; any variables live at that point added as inputs, etc.
