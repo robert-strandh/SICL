@@ -5,7 +5,9 @@
   (every (lambda (param) (typep param 'cleavir-ir:lexical-location))
          (cleavir-ir:lambda-list enter)))
 
-;; get one potential inline that can be done.
+;; get one potential inline that can be done, or else NIL.
+;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function
+;; is not used for anything but this call.
 (defun one-potential-inline (initial-instruction)
   (let ((dag (cleavir-hir-transformations:build-function-dag initial-instruction))
         (destinies (cleavir-hir-transformations:compute-destinies initial-instruction)))
@@ -45,11 +47,16 @@
                                     ((eq test parent) (return t))
                                     (t (setf todo
                                              (append todo
-                                                     (cleavir-hir-transformations:parents test))))))))))
-        (maphash (lambda (enter nodes)
-                   (unless (eq enter initial-instruction) ; toplevel isn't going to be inlined
-                     (mapc #'maybe-return-inline nodes)))
-                 (cleavir-hir-transformations:dag-nodes dag))))))
+                                                     (cleavir-hir-transformations:parents test)))))))))
+               (depth-first-search (node)
+                 (maybe-return-inline node)
+                 ;; It didn't return, so keep going.
+                 (mapc #'depth-first-search (cleavir-hir-transformations:children node))))
+        ;; We don't call maybe-return-inline on the toplevel function itself, since it obviously can't
+        ;; be inlined, and doesn't have an enclose-instruction, etc.
+        (mapc #'depth-first-search (cleavir-hir-transformations:children dag))
+        ;; No dice.
+        nil))))
 
 (defun do-inlining (initial-instruction)
   (loop for *instruction-ownerships* = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
