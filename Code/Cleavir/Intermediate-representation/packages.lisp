@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export
    #:datum
+   #:replace-datum
    #:immediate-input #:make-immediate-input
    #:load-time-value-input #:make-load-time-value-input
    #:form #:read-only-p
