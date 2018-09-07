@@ -132,6 +132,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function COPY-INSTRUCTION.
+;;;
+;;; Create a copy of an instruction for the purpose of inlining.
+;;; The copy has predecessors and successors of NIL - the caller must
+;;; perform the hookup into the graph.
+;;;
+;;; This is an internal function only concerned with inlining-specific
+;;; copying requirements. Clients should work with their own
+;;; instructions via the more general CLEAVIR-IR:CLONE-INSTRUCTION.
+
+(defgeneric copy-instruction (instruction mapping))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Functions for managing mappings.
 
 ;;; Return the object that FROM is mapped to in MAPPING.  If FROM does
