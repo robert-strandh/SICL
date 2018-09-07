@@ -68,11 +68,13 @@
     (flet ((maybe-replace (instruction)
              (let ((copy (find-in-mapping *instruction-mapping* instruction)))
                (or copy instruction))))
-      (loop for copy in copies
+      (loop with new-enter = (find-in-mapping *instruction-mapping* enter)
+            for copy in copies
             do (setf (cleavir-ir:predecessors copy)
                      (mapcar #'maybe-replace (cleavir-ir:predecessors copy))
                      (cleavir-ir:successors copy)
                      (mapcar #'maybe-replace (cleavir-ir:successors copy)))
+               (setf (gethash copy *instruction-ownerships*) new-enter)
             do (typecase copy
                  (cleavir-ir:enclose-instruction
                   ;; We have to do this in the second loop so that any
@@ -82,8 +84,8 @@
                          (cleavir-ir:code copy) external-map internal-map stack)))
                  (cleavir-ir:unwind-instruction
                   (setf (cleavir-ir:destination copy)
-                        (maybe-replace (cleavir-ir:destination copy)))))))
-    (find-in-mapping *instruction-mapping* enter)))
+                        (maybe-replace (cleavir-ir:destination copy)))))
+            finally (return new-enter)))))
 
 ;;; Returns a copy of a HIR function.
 ;;; This is required because an internal function could have things it's mapped

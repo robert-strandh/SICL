@@ -62,6 +62,7 @@
                      for arg in (rest (cleavir-ir:inputs call))
                      for assign = (cleavir-ir:make-assignment-instruction arg location)
                      do (cleavir-ir:insert-instruction-before assign call)
+                        (setf (gethash assign *instruction-ownerships*) *target-enter-instruction*)
                      finally (return initial-environment))
                ;; Usually we do make temps though.
                (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
@@ -70,6 +71,7 @@
                      for temp = (cleavir-ir:new-temporary)
                      for assign = (cleavir-ir:make-assignment-instruction arg temp)
                      do (cleavir-ir:insert-instruction-before assign call)
+                        (setf (gethash assign *instruction-ownerships*) *target-enter-instruction*)
                         (add-to-mapping mapping location temp)
                      collect temp)))
          (function-temp (cleavir-ir:new-temporary))
@@ -80,6 +82,8 @@
     (setf (cleavir-ir:lambda-list new-enter) '()
           ;; the temporary is the closure variable.
           (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary)))
+    (setf (gethash enc *instruction-ownerships*) *target-enter-instruction*
+          (gethash new-enter *instruction-ownerships*) new-enter)
     (cleavir-ir:insert-instruction-before enc call)
     (setf (cleavir-ir:inputs call)
           (cons function-temp call-arguments))

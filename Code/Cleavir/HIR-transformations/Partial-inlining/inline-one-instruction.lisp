@@ -76,6 +76,15 @@
     :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
     :predecessors nil :successors nil))
 
+;;; Set up the new instruction's owner as the function we're inlining into.
+;;; NOTE: For a partial inline, it should be the enter in the worklist instead.
+;;; But we don't do actual partial inlining yet.
+(defmethod copy-instruction :around (instruction mapping)
+  (declare (ignore mapping))
+  (let ((result (call-next-method)))
+    (setf (gethash result *instruction-ownerships*) *target-enter-instruction*)
+    result))
+
 (defmethod copy-instruction ((instruction cleavir-ir:enclose-instruction) mapping)
   (if *copy-functions*
       (cleavir-ir:clone-instruction instruction
@@ -214,6 +223,9 @@
           (list (first (cleavir-ir:successors successor-instruction))))
     (setf (cleavir-ir:successors new-enter)
           (list (second (cleavir-ir:successors successor-instruction))))
+    (setf (gethash new-call *instruction-ownerships*) *target-enter-instruction*
+          (gethash new-enclose *instruction-ownerships*) *target-enter-instruction*
+          (gethash new-enter *instruction-ownerships*) new-enter)
     (list (make-instance 'worklist-item
             :enclose-instruction enclose-instruction
             :call-instruction call-instruction

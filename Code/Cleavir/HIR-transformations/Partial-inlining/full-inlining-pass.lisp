@@ -59,7 +59,7 @@
         nil))))
 
 (defun do-inlining (initial-instruction)
-  (loop for *instruction-ownerships* = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
+  (loop with *instruction-ownerships* = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
         for *location-ownerships* = (cleavir-hir-transformations:compute-location-owners initial-instruction)
         for inline = (one-potential-inline initial-instruction)
         until (null inline)
