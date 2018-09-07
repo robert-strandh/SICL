@@ -56,9 +56,11 @@
           ((typep output 'cleavir-ir:values-location)
            (setf new (cleavir-ir:make-values-location))
            (add-to-mapping mapping output new)
+           (setf (gethash new *location-ownerships*) *target-enter-instruction*)
            new)
           (t (setf new (cleavir-ir:make-lexical-location
                         (cleavir-ir:name output)))
+             (setf (gethash new *location-ownerships*) *target-enter-instruction*)
              (add-to-mapping mapping output new)
              new))))
     
@@ -225,7 +227,8 @@
           (list (second (cleavir-ir:successors successor-instruction))))
     (setf (gethash new-call *instruction-ownerships*) *target-enter-instruction*
           (gethash new-enclose *instruction-ownerships*) *target-enter-instruction*
-          (gethash new-enter *instruction-ownerships*) new-enter)
+          (gethash new-enter *instruction-ownerships*) new-enter
+          (gethash new-temp *location-ownerships*) *target-enter-instruction*)
     (list (make-instance 'worklist-item
             :enclose-instruction enclose-instruction
             :call-instruction call-instruction

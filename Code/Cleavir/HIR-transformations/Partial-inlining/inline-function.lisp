@@ -72,6 +72,7 @@
                      for assign = (cleavir-ir:make-assignment-instruction arg temp)
                      do (cleavir-ir:insert-instruction-before assign call)
                         (setf (gethash assign *instruction-ownerships*) *target-enter-instruction*)
+                        (setf (gethash temp *location-ownerships*) *target-enter-instruction*)
                         (add-to-mapping mapping location temp)
                      collect temp)))
          (function-temp (cleavir-ir:new-temporary))
@@ -84,6 +85,7 @@
           (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary)))
     (setf (gethash enc *instruction-ownerships*) *target-enter-instruction*
           (gethash new-enter *instruction-ownerships*) new-enter)
+    (setf (gethash function-temp *location-ownerships*) *target-enter-instruction*)
     (cleavir-ir:insert-instruction-before enc call)
     (setf (cleavir-ir:inputs call)
           (cons function-temp call-arguments))

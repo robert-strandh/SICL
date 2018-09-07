@@ -1,5 +1,7 @@
 (cl:in-package #:cleavir-partial-inlining)
 
+(defvar *new-enter*)
+
 (defun ensure-copy (mapping datum)
   (or (find-in-mapping mapping datum)
       (let ((new (typecase datum
@@ -10,6 +12,7 @@
                      (cleavir-ir:name datum)))
                    (t datum))))
         (add-to-mapping mapping datum new)
+        (setf (gethash new *location-ownerships*) *new-enter*)
         new)))
 
 (defun translate-input-for-copy (input external-map internal-map stack)
@@ -46,35 +49,38 @@
 ;;; owned by the function being inlined.
 (defun copy-function-recur (enter external-map internal-map stack)
   (let ((copies nil)
-        (stack (cons enter stack)))
+        (stack (cons enter stack))
+        (*new-enter* (cleavir-ir:clone-instruction enter :outputs nil)))
+    (push *new-enter* copies)
+    ;; We set the outputs after building like this so that (a) they have their ownership correct,
+    ;; and (b) (setf cleavir-ir:outputs) synchronizes the lambda list properly.
+    (setf (cleavir-ir:outputs *new-enter*)
+          (translate-outputs-for-copy (cleavir-ir:outputs *new-enter*)
+                                      external-map internal-map stack))
     ;; First loop: Copy all instructions in the function, but leave
     ;; predecessors and successors disconnected.
     (cleavir-ir:map-local-instructions
      (lambda (instruction)
-       (let* ((inputs (cleavir-ir:inputs instruction))
-              (outputs (cleavir-ir:outputs instruction))
-              (new-inputs (translate-inputs-for-copy inputs external-map internal-map stack))
-              (new-outputs (translate-outputs-for-copy outputs external-map internal-map stack))
-              (copy (cleavir-ir:clone-instruction instruction
-                :inputs new-inputs)))
-         ;; Bit of a kludge here. It's possible we're copying an ENTER-INSTRUCTION. If we are, we
-         ;; need to ensure the LAMBDA-LIST uses any cloned locations. This will not be handled by
-         ;; CLONE-INSTRUCTION, but (SETF OUTPUTS) does ensure synchronization.
-         (setf (cleavir-ir:outputs copy) new-outputs)
-         (push copy copies)
-         (add-to-mapping *instruction-mapping* instruction copy)))
+       (unless (typep instruction 'cleavir-ir:enter-instruction) ; FIXME: Ugly.
+         (let* ((inputs (cleavir-ir:inputs instruction))
+                (outputs (cleavir-ir:outputs instruction))
+                (new-inputs (translate-inputs-for-copy inputs external-map internal-map stack))
+                (new-outputs (translate-outputs-for-copy outputs external-map internal-map stack))
+                (copy (cleavir-ir:clone-instruction instruction
+                  :inputs new-inputs :outputs new-outputs)))
+           (push copy copies)
+           (add-to-mapping *instruction-mapping* instruction copy))))
      enter)
     ;; Second loop: Loop over the copies doing hookups.
     (flet ((maybe-replace (instruction)
              (let ((copy (find-in-mapping *instruction-mapping* instruction)))
                (or copy instruction))))
-      (loop with new-enter = (find-in-mapping *instruction-mapping* enter)
-            for copy in copies
+      (loop for copy in copies
             do (setf (cleavir-ir:predecessors copy)
                      (mapcar #'maybe-replace (cleavir-ir:predecessors copy))
                      (cleavir-ir:successors copy)
                      (mapcar #'maybe-replace (cleavir-ir:successors copy)))
-               (setf (gethash copy *instruction-ownerships*) new-enter)
+               (setf (gethash copy *instruction-ownerships*) *new-enter*)
             do (typecase copy
                  (cleavir-ir:enclose-instruction
                   ;; We have to do this in the second loop so that any
@@ -84,8 +90,8 @@
                          (cleavir-ir:code copy) external-map internal-map stack)))
                  (cleavir-ir:unwind-instruction
                   (setf (cleavir-ir:destination copy)
-                        (maybe-replace (cleavir-ir:destination copy)))))
-            finally (return new-enter)))))
+                        (maybe-replace (cleavir-ir:destination copy)))))))
+    *new-enter*))
 
 ;;; Returns a copy of a HIR function.
 ;;; This is required because an internal function could have things it's mapped
