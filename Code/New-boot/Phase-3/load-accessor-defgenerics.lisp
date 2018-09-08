@@ -41,5 +41,10 @@
     (load-file "CLOS/generic-function-initialization-defmethods.lisp" e3)))
 
 (defun load-accessor-defgenerics (boot)
-  (ensure-generic-function-phase-3 boot)
-  (activate-generic-function-initialization boot))
+  (with-accessors ((e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)
+                   (e4 sicl-new-boot:e4)) boot
+    (ensure-generic-function-phase-3 boot)
+    (activate-generic-function-initialization boot)
+    (sicl-minimal-extrinsic-environment:import-package-from-host
+     'sicl-clos e4)))
