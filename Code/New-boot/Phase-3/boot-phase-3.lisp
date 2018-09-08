@@ -94,7 +94,7 @@
      'sicl-conditions e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2)
           (lambda (object)
-            (typep object 'standard-object)))
+            (typep object 'header)))
     (setf (sicl-genv:fdefinition 'typep e2)
           (lambda (object type-specifier)
             (sicl-genv:typep object type-specifier e2)))
@@ -109,10 +109,18 @@
           #'closer-mop:set-funcallable-instance-function)
     (load-file-protected "CLOS/list-utilities.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
+    (load-file "New-boot/Phase-3/sub-specializer-p.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
     (load-file "CLOS/compute-effective-method-support.lisp" e2)
+    (setf (sicl-genv:fdefinition 'make-method e2)
+          (lambda (function)
+            (funcall (sicl-genv:fdefinition 'make-instance e2)
+                     (sicl-genv:find-class 'standard-method e1)
+                     :function function
+                     :lambda-list '(x &rest args)
+                     :specializers (list (sicl-genv:find-class t e2)))))
     (load-file "CLOS/compute-effective-method-support-b.lisp" e2)
     (define-error-function
         'sicl-clos::method-combination-compute-effective-method e2)
@@ -294,7 +302,8 @@
   (format *trace-output* "Start of phase 3~%")
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+                   (e3 sicl-new-boot:e3)
+                   (e4 sicl-new-boot:e4)) boot
     (change-class e3 'environment)
     (activate-class-finalization boot)
     (finalize-all-classes boot)
