@@ -45,4 +45,6 @@
     (ensure-generic-function-phase-3 boot)
     (activate-generic-function-initialization boot)
     (sicl-minimal-extrinsic-environment:import-package-from-host
-     'sicl-clos e4)))
+     'sicl-clos e4)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'sicl-clos:defgeneric-expander e4)))
