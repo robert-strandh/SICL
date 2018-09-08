@@ -4,9 +4,7 @@
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e4 sicl-new-boot:e4)) boot
     (let* ((gf-class-name 'standard-generic-function)
-           (gf-class (sicl-genv:find-class gf-class-name e2))
-           (method-class-name 'standard-method)
-           (method-class (sicl-genv:find-class method-class-name e2)))
+           (make-instance (sicl-genv:fdefinition 'make-instance e3)))
       (setf (sicl-genv:fdefinition 'ensure-generic-function e4)
             (lambda (function-name &rest arguments
                      &key environment
@@ -16,9 +14,9 @@
                 (if (sicl-genv:fboundp function-name environment)
                     (sicl-genv:fdefinition function-name environment)
                     (setf (sicl-genv:fdefinition function-name environment)
-                          (apply #'make-instance gf-class
+                          (apply make-instance
+                                 gf-class-name
                                  :name function-name
-                                 :method-class method-class
                                  args)))))))))
 
 (defun activate-generic-function-initialization (boot)
