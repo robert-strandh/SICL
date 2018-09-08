@@ -35,7 +35,10 @@
     (setf (sicl-genv:fdefinition 'find-class e3)
           (lambda (class-name)
             (sicl-genv:find-class class-name e2)))
-    (load-file "CLOS/generic-function-initialization-support.lisp" e3)))
+    (load-file "CLOS/generic-function-initialization-support.lisp" e3)
+    (setf (sicl-genv:fdefinition 'sicl-clos::invalidate-discriminating-function e3)
+          #'identity)
+    (load-file "CLOS/generic-function-initialization-defmethods.lisp" e3)))
 
 (defun load-accessor-defgenerics (boot)
   (ensure-generic-function-phase-3 boot)
