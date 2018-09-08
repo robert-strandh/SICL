@@ -47,4 +47,5 @@
     (sicl-minimal-extrinsic-environment:import-package-from-host
      'sicl-clos e4)
     (sicl-minimal-extrinsic-environment:import-function-from-host
-     'sicl-clos:defgeneric-expander e4)))
+     'sicl-clos:defgeneric-expander e4)
+    (load-file "CLOS/defgeneric-defmacro.lisp" e4)))
