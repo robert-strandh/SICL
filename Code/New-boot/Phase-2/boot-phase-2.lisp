@@ -240,8 +240,17 @@
   (format *trace-output* "Start of phase 2~%")
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+                   (e3 sicl-new-boot:e3)
+                   (e4 sicl-new-boot:e4)) boot
     (change-class e2 'environment)
+    (import-functions-from-host '(format) e1)
+    (import-functions-from-host '(format) e2)
+    (import-functions-from-host '(format) e3)
+    (import-functions-from-host '(format) e4)
+    (setf (sicl-genv:special-variable '*trace-output* e1 t) *trace-output*)
+    (setf (sicl-genv:special-variable '*trace-output* e2 t) *trace-output*)
+    (setf (sicl-genv:special-variable '*trace-output* e3 t) *trace-output*)
+    (setf (sicl-genv:special-variable '*trace-output* e4 t) *trace-output*)
     (sicl-minimal-extrinsic-environment:import-package-from-host 'sicl-clos e3)
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-clos:defclass-expander e2)
