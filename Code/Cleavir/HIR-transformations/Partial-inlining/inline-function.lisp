@@ -123,4 +123,5 @@
                                 enter
                                 successor
                                 (mapping item))
-                               worklist)))))))
+                               worklist))))
+      (cleavir-ir:reinitialize-data initial))))
