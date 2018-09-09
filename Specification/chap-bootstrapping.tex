@@ -511,21 +511,9 @@ Before bootstrapping can start, a certain number of \asdf{} systems
 must be loaded, and in particular the system called
 \texttt{sicl-clos-boot-support}.
 
-A number of environments are involved in the bootstrapping process,
-and it is important to tell them apart.  During the bootstrapping
-process, several different \emph{compilation environments} and several
-different \emph{run-time environments} are created and used.  The
-different compilation environments differ slightly in the way macros
-are defined, and the different run-time environments are used to
-create classes and generic functions in different phases of the
-bootstrapping process.  The different run-time environments will also
-have slightly different versions of certain functions that are called
-to create these classes and generic functions.
-
-To distinguish between all these environments, we call the different
-compile-time environments $C_1$, $C_2$, etc., and the different
-run-time environments $R_1$, $R_2$, etc.  The global host environment
-is called $H$.
+In addition to the host environment, four different \sysname{}
+first-class environments are involved.  We shall refer to them as
+$E_1$, $E_2$, $E_3$, and $E_4$.
 
 \subsubsection{Phase 1}
 
