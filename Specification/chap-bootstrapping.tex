@@ -517,8 +517,16 @@ $E_1$, $E_2$, $E_3$, and $E_4$.
 
 \subsubsection{Phase 1}
 
-The purpose of phase~1 is to create a hierarchy of host standard
-classes that has the same structure as the hierarchy of MOP classes.
+The purpose of phase~1 is:
+
+\begin{itemize}
+\item to create host generic functions in $E_2$ corresponding to all
+  the accessor functions defined by \sysname{} on standard MOP
+  classes, and
+\item to create a hierarchy in $E_1$ of host standard classes that has
+  the same structure as the hierarchy of MOP classes.
+\end{itemize}
+
 
 Three different environments are involved in phase~1:
 
@@ -527,51 +535,46 @@ Three different environments are involved in phase~1:
   named \texttt{standard-class}, \texttt{funcallable-standard-class},
   \texttt{built-in-class}, and \texttt{standard-generic-function}.
   These classes are used by \texttt{make-instance} in order to create
-  the classes in $R_1$ and the generic functions in $R_2$
-\item The run-time environment $R_1$ is where instances of the host
+  the classes in $E_1$ and the generic functions in $E_2$
+\item The run-time environment $E_1$ is where instances of the host
   classes named \texttt{standard-class},
   \texttt{funcallable-standard-class}, and \texttt{built-in-class}
   will be associated with the names of the MOP hierarchy of classes.
   These instances are thus host classes.
-\item The run-time environment $R_2$ is where instances of the host
+\item The run-time environment $E_2$ is where instances of the host
   class named \texttt{standard-generic-function} will be associated
   with the names of the different accessors specialized to host
-  classes created in $R_1$.
+  classes created in $E_1$.
 \end{itemize}
 
 One might ask at this point why generic functions are not defined in
 the same environment as classes.  The simple answer is that there are
-some generic functions that were automatically imported into $R_1$
-from the host, that we still need in $R_1$, and that would have been
+some generic functions that were automatically imported into $E_1$
+from the host, that we still need in $E_1$, and that would have been
 overwritten by new ones if we had defined new generic functions in
-$R_1$.
+$E_1$.
 
 Several adaptations are necessary in order to accomplish phase~1:
 
 \begin{itemize}
-\item The macro \texttt{defgeneric} is defined in $R_1$ to unbind the
-  name in the run-time environment (which will be $R_2$) before
-  calling the function named \texttt{ensure-generic-function} to
-  create a fresh generic function in the run-time environment.  This
-  way, we make sure that we have a fresh generic function with no
-  methods as a result of a call to \texttt{defgeneric}.  However, we
-  must also make sure we make one single call to \texttt{defgeneric}.
+\item The macro \texttt{defgeneric} is defined in $E_1$ to
+  assume that the name is not already bound to a function in $E_2$
 \item The function \texttt{ensure-generic-function} is defined in
-  $R_1$ and operates in $R_2$.  It checks whether there is already a
-  function with the name passed as an argument in $R_2$, and if so, it
+  $E_1$ and operates in $E_2$.  It checks whether there is already a
+  function with the name passed as an argument in $E_2$, and if so, it
   returns that function.  It makes no verification that such an
   existing function is really a generic function; it assumes that it
   is.  It also assumes that the parameters of that generic function
   correspond to the arguments of \texttt{ensure-generic-function}.  If
   there is no generic function with the name passed as an argument in
-  $R_2$, it creates an instance of the host class
+  $E_2$, it creates an instance of the host class
   \texttt{standard-generic-function} and associate it with the name in
-  $R_2$.  We define \texttt{ensure-generic-function} in $R_1$ so that
+  $E_2$.  We define \texttt{ensure-generic-function} in $E_1$ so that
   it can also be used to find accessor functions when MOP classes are
   instantiated and methods need to be added to these accessor
   functions.
 \item The function \texttt{ensure-class} has a special version in
-  $R_1$.  Rather than checking for an existing class, it always
+  $E_1$.  Rather than checking for an existing class, it always
   creates a new one.  Furthermore, before calling the host function
   \texttt{make-instance}, it removes the \texttt{:readers} and
   \texttt{:writers} entries from the canonicalized slot specifications
@@ -583,7 +586,7 @@ Several adaptations are necessary in order to accomplish phase~1:
   \texttt{standard-method} using a function that call the host
   functions \texttt{slot-value} and \texttt{(setf slot-value)} and it
   will add these methods to the appropriate generic function found in
-  $R_2$.
+  $E_2$.
 \end{itemize}
 
 Phase~1 is divided into two steps:
@@ -591,13 +594,13 @@ Phase~1 is divided into two steps:
 \begin{enumerate}
 \item First, the \texttt{defgeneric} forms corresponding to the
   accessors of the classes of the MOP hierarchy are evaluated using
-  $R_1$ as both the compilation environment and run-time environment.
-  The result of this step is a set of host generic functions in $R_2$,
+  $E_1$ as both the compilation environment and run-time environment.
+  The result of this step is a set of host generic functions in $E_2$,
   each having no methods.
 \item Next, the \texttt{defclass} forms corresponding to the classes
-  of the MOP hierarchy are evaluated using $R_1$ as both the
+  of the MOP hierarchy are evaluated using $E_1$ as both the
   compilation environment and run-time environment.  The result of
-  this step is a set of host classes in $R_1$ and host standard
+  this step is a set of host classes in $E_1$ and host standard
   methods on the accessor generic functions created in step~1
   specialized to these classes.
 \end{enumerate}
@@ -611,11 +614,11 @@ Four different environments are involved in phase~2:
 
 \begin{itemize}
 \item The compilation environment $C_2$.
-\item The run-time environment $R_1$ is used to look up metaclasses to
+\item The run-time environment $E_1$ is used to look up metaclasses to
   instantiate in order to create the bridge classes.
-\item The run-time environment $R_2$ is the one in which bridge
+\item The run-time environment $E_2$ is the one in which bridge
   classes will be associated with names.
-\item The run-time environment $R_3$ is the one in which bridge
+\item The run-time environment $E_3$ is the one in which bridge
   generic functions will be associated with names.
 \end{itemize}
 
