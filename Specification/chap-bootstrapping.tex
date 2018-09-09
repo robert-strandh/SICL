@@ -404,6 +404,11 @@ arguments, it is just a matter of checking their validity.
 \subsubsection{Definitions}
 
 \begin{definition}
+A \emph{simple instance} is an instance of some class, but that is
+also neither a class nor a generic function.
+\end{definition}
+
+\begin{definition}
 A \emph{host class} is a class in the host system.  If it is an
 instance of the host class \texttt{standard-class}, then it is
 typically created by the host macro \texttt{defclass}.
@@ -414,32 +419,6 @@ A \emph{host instance} is an instance of a host class.  If it is an
 instance of the host class \texttt{standard-object}, then it is
 typically created by a call to the host function
 \texttt{make-instance} using a host class or the name of a host class.
-A host instance could of course also be a host class, but we will use
-\emph{host instance} to mean a host instance that is also not a host
-class.
-\end{definition}
-
-\begin{definition}
-An \emph{ersatz instance} is a target instance represented as a host
-data structure, using a host standard object to represent the
-\emph{header} and a host simple vector to represent the \emph{rack}.
-\end{definition}
-
-\begin{definition}
-An \emph{ersatz class} is an ersatz instance that can be instantiated
-to obtain another ersatz instance.
-\end{definition}
-
-\begin{definition}
-A \emph{bridge class} is a representation of a target class as a host
-instance that is also not a host class.  A bridge class can be
-instantiated to obtain a bridge instance.
-\end{definition}
-
-\begin{definition}
-A \emph{bridge instance} is a target instance represented just like an
-ersatz instance, except that the class object stored in the header is
-not an ersatz class, but a bridge class. 
 \end{definition}
 
 \begin{definition}
@@ -459,25 +438,55 @@ classes.
 \end{definition}
 
 \begin{definition}
-An \emph{ersatz generic function} is an instance of the ersatz class
-\texttt{generic-function}.  It is possible for an ersatz generic
-function be executed in the host system because the header object is
-an instance of the host class \texttt{funcallable-standard-object}.
-The methods on an ersatz generic function are ersatz methods.
+A \emph{simple host instance} is a host instance that is neither a
+host class nor a host generic function.
 \end{definition}
 
 \begin{definition}
-An \emph{ersatz method} is an instance of the ersatz class
-\texttt{method}.  The class specializers of such a method are ersatz
-classes.
+An \emph{ersatz instance} is a target instance represented as a host
+data structure, using a host standard object to represent the
+\emph{header} and a host simple vector to represent the \emph{rack}.
+In fact, the header is an instance of the host class
+\texttt{funcallable-standard-object} so that some ersatz instances can
+be used as functions in the host system.
 \end{definition}
 
 \begin{definition}
-A \emph{bridge generic function} is a generic function which is a host
-instance of the host class \texttt{target:bridge-generic-function}.
-This class is a subclass of \texttt{host:funcallable-standard-object}
-and of the bridge class \texttt{target:standard-generic-function}.
-A bridge generic function is executable just like any host function.
+An ersatz instance is said to be \emph{pure} if the class slot of the
+header is also an ersatz instance.  An ersatz instance is said to be
+\emph{impure} if it is not pure.  See below for more information on
+impure ersatz instances.
+\end{definition}
+
+\begin{definition}
+An \emph{ersatz class} is an ersatz instance that can be instantiated
+to obtain another ersatz instance.
+\end{definition}
+
+\begin{definition}
+An \emph{ersatz generic function} is an ersatz instance that is also a
+generic function.  It is possible for an ersatz generic function be
+executed in the host system because the header object is an instance
+of the host class \texttt{funcallable-standard-object}.  The methods
+on an ersatz generic function are ersatz methods.
+\end{definition}
+
+\begin{definition}
+An \emph{ersatz method} is an ersatz instance that is also a method.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge class} is a representation of a target class as a
+simple host instance.  An impure ersatz instance has a bridge class in
+the class slot of its header.  A bridge class can be instantiated to
+obtain an impure ersatz instance.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge generic function} is a target generic function
+represented as a simple host instance, though it is an instance of the
+host function \texttt{funcallable-standard-object} so it can be
+executed by the host.
 
 Arguments to a bridge generic function are ersatz instances.  The
 bridge generic function uses the 
@@ -489,10 +498,11 @@ The methods on a bridge generic function are bridge methods.
 \end{definition}
 
 \begin{definition}
-A \emph{bridge method} is a a method which is a host instance of the host
-class \texttt{target:method}.  The class specializers of such a method are
-bridge classes.  The \emph{method function} of a bridge method is an
-ordinary host function.
+A \emph{bridge method} is a target method represented by a simple host
+instance.  The class specializers of such a method are bridge classes.%
+\fixme{check the truth of that statement.}
+The \emph{method function} of a bridge method is an ordinary host
+function.
 \end{definition}
 
 \subsubsection{Preparation}
