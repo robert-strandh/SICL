@@ -72,6 +72,7 @@
    #:defmethod-expander
    #:defclass-expander
    ;; Generic functions.
+   #:add-direct-subclass
    #:compute-effective-slot-definition
    #:class-of
    #:allocate-instance
