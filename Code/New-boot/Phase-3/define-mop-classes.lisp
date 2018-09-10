@@ -26,4 +26,5 @@
           (lambda (&rest arguments)
             (declare (ignore arguments))
             (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e2)))
+    (import-functions-from-host '(remove) e3)
     nil))
