@@ -22,4 +22,8 @@
           (lambda (class direct-superclass)
             (declare (ignore class direct-superclass))
             t))
+    (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e3)
+          (lambda (&rest arguments)
+            (declare (ignore arguments))
+            (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e2)))
     nil))
