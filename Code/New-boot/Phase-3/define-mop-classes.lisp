@@ -6,4 +6,5 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4))
       boot
+    (import-functions-from-host '(sicl-genv:typep) e3)
     nil))
