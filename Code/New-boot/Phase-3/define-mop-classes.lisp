@@ -27,4 +27,7 @@
             (declare (ignore arguments))
             (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e2)))
     (import-functions-from-host '(remove) e3)
+    (load-file "CLOS/add-remove-direct-subclass-support.lisp" e3)
+    (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
+    (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3)
     nil))
