@@ -110,7 +110,7 @@ It must be possible to augment the code walker with
 implementation-specific special forms.  Configuration will then
 involve what sub-forms should be evaluated and which ones should not,
 but this is not enough.  The code walker must process every sub-form
-in SOME way, so that a code walker can be created that collect
+in SOME way, so that a code walker can be created that collects
 information or alter these sub-forms.
 
 In particular, it must be possible to configure how a NEW ENVIRONMENT
