@@ -80,4 +80,5 @@
     (define-add-accessor-method e2 e3 e4)
     (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e3)
           (lambda (class) (declare (ignore class)) '()))
+    (load-file "CLOS/class-initialization-support.lisp" e3)
     nil))
