@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
-(defclass environment (sicl-minimal-extrinsic-environment:environment)
-  ())
-
 (defclass header (closer-mop:funcallable-standard-object)
   ((%class :initarg :class)
    (%rack :initarg :rack))

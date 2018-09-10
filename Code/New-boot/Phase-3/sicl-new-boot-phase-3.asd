@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment")
    (:file "utilities")
    (:file "load-accessor-defgenerics")
    (:file "define-mop-classes")
