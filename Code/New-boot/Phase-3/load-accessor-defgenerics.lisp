@@ -2,6 +2,7 @@
 
 (defun ensure-generic-function-phase-3 (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (let* ((gf-class-name 'standard-generic-function)
            (make-instance (sicl-genv:fdefinition 'make-instance e3)))
