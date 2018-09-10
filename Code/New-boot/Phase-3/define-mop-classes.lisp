@@ -18,4 +18,8 @@
                    (e4 sicl-new-boot:e4))
       boot
     (import-functions-from-host '(sicl-genv:typep) e3)
+    (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e3)
+          (lambda (class direct-superclass)
+            (declare (ignore class direct-superclass))
+            t))
     nil))
