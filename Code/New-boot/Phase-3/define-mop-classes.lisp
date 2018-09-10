@@ -78,4 +78,6 @@
     (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
     (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3)
     (define-add-accessor-method e2 e3 e4)
+    (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e3)
+          (lambda (class) (declare (ignore class)) '()))
     nil))
