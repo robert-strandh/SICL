@@ -12,8 +12,8 @@ it is interesting to look at a few use cases.
 ** Simple use cases.
 
 A recent blog post by Christophe Rhodes discussed how a code walker
-could be used for some simple cases from the book "Land of Lisp".  The
-main point of these cases were to distinguish between symbols with
+could be used for some simple cases from the book "Let over Lambda".
+The main point of these cases were to distinguish between symbols with
 particular names in different contexts.  In the simplest case, it was
 required to distinguish between such symbols in a context where they
 were to be evaluated as variables, and a context where no such
@@ -60,14 +60,14 @@ expression should first be computed from the macro definition, then
 that lambda expression should be MINIMALLY COMPILED in the target
 environment, and finally turned into a function in the host
 environment.  We now have a case where we need to SWITCH FROM ONE TYPE
-OF PROCESSING TO A DIFFERENT TYPE OF PROCESSING during during code
+OF PROCESSING TO A DIFFERENT TYPE OF PROCESSING during code
 walking.  In this particular case, we switched from generating AST to
 minimal compilation.
 
 ** Direct interpreter
 
 A code walker should be possible to configure to become a direct
-interpreter, i.e., and interpreter that directly evaluates forms in a
+interpreter, i.e., an interpreter that directly evaluates forms in a
 particular environment.
 
 It is even possible to imagine an extrinsic interpreter that uses the
@@ -76,7 +76,7 @@ first-class global environment to simulate the meaning of forms in the
 target system.  The global environment would then contain two types of
 functions: primitive functions that are directly executed by the host
 system, and target functions that are executed by interpreting some
-body code in the lexical target environment associated with the
+body of code in the lexical target environment associated with the
 function.
 
 * Managing Environments
@@ -95,8 +95,9 @@ variable values.
 ** Implementation-specific handling of standard special forms
 
 The standard allows for an implementation to implement a standard
-special operator as a macro.  This case is handled automatically
-because the code walker would always try the macro first.
+special operator as a macro.  But the code walker must stop when an
+operator defined as a special operator in the standard is encountered,
+whether it happens to be implemented as a macro or not.
 
 ** Implementation-specific special forms.
 
