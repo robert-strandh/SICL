@@ -39,10 +39,10 @@
 
 ;;; Some utilities for making interactive queries easier.
 
-(define-symbol-macro e1 (sicl-new-boot:e1 *b*))
-(define-symbol-macro e2 (sicl-new-boot:e2 *b*))
-(define-symbol-macro e3 (sicl-new-boot:e3 *b*))
-(define-symbol-macro e4 (sicl-new-boot:e4 *b*))
+(define-symbol-macro ee1 (sicl-new-boot:e1 *b*))
+(define-symbol-macro ee2 (sicl-new-boot:e2 *b*))
+(define-symbol-macro ee3 (sicl-new-boot:e3 *b*))
+(define-symbol-macro ee4 (sicl-new-boot:e4 *b*))
 
 (defun fd (function-name environment)
   (sicl-genv:fdefinition function-name environment))
