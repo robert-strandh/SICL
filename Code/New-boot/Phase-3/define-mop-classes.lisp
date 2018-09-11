@@ -109,4 +109,5 @@
     (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e3)
           (lambda (class) (declare (ignore class)) '()))
     (load-file "CLOS/class-initialization-support.lisp" e3)
+    (load-file "CLOS/class-initialization-defmethods.lisp" e3)
     nil))
