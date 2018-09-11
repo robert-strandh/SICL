@@ -58,6 +58,34 @@
                            :slot-definition slot-definition)))
             (push method (slot-value generic-function 'sicl-clos::%methods))))))
 
+(defun define-ensure-class (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3))
+      boot
+    (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e3)
+          (lambda (name
+                   &rest keys
+                   &key
+                     direct-default-initargs
+                     direct-slots
+                     direct-superclasses
+                     (metaclass nil metaclass-p)
+                   &allow-other-keys)
+            (let* ((metaclass-name (if metaclass-p metaclass 'standard-class))
+                   (metaclass-class (sicl-genv:find-class metaclass-name e2))
+                   (superclasses (loop for name in direct-superclasses
+                                       collect (sicl-genv:find-class name e2)))
+                   (remaining-keys (copy-list keys)))
+              (loop while (remf remaining-keys :metaclass))
+              (loop while (remf remaining-keys :direct-superclasses))
+              (setf (sicl-genv:find-class name e3)
+                    (apply #'make-instance metaclass-class
+                           :direct-default-initargs direct-default-initargs
+                           :direct-slots direct-slots
+                           :direct-superclasses superclasses
+                           :name name
+                           remaining-keys)))))))
+
 (defun create-mop-classes (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
