@@ -33,6 +33,6 @@
 
 (defclass function (t)
   ((%entry-point :initarg :entry-point)
-   (%linkage-rack :initarg :linkage-rack)
-   (%environment :initform nil :initarg :environment))
+   (%environment :initform nil :initarg :environment)
+   (%code-object :initform nil :initarg :code-object :reader code-object))
   (:metaclass built-in-class))
