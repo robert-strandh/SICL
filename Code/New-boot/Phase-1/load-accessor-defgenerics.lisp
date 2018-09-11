@@ -109,4 +109,5 @@
   (load-file "CLOS/setf-slot-definition-location-defgeneric.lisp" environment)
   (load-file "CLOS/operation-defgeneric.lisp" environment)
   (load-file "CLOS/variant-signature-defgeneric.lisp" environment)
-  (load-file "CLOS/template-defgeneric.lisp" environment))
+  (load-file "CLOS/template-defgeneric.lisp" environment)
+  (load-file "CLOS/code-object-defgeneric.lisp" environment))
