@@ -110,4 +110,6 @@
           (lambda (class) (declare (ignore class)) '()))
     (load-file "CLOS/class-initialization-support.lisp" e3)
     (load-file "CLOS/class-initialization-defmethods.lisp" e3)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'sicl-clos:defclass-expander e3)
     nil))
