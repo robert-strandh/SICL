@@ -2,8 +2,7 @@
 
 (defun define-ensure-class (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3))
+                   (e2 sicl-new-boot:e2))
       boot
     (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e2)
           (lambda (name
