@@ -73,7 +73,16 @@
                    &allow-other-keys)
             (let* ((metaclass-name (if metaclass-p metaclass 'standard-class))
                    (metaclass-class (sicl-genv:find-class metaclass-name e2))
-                   (superclasses (loop for name in direct-superclasses
+                   (superclass-names
+                     (if (null direct-superclasses)
+                         (cond ((eq metaclass-name 'standard-class)
+                                '(standard-object))
+                               ((eq metaclass-name
+                                    'sicl-clos:funcallable-standard-class)
+                                '(funcallable-standard-object))
+                               (t '()))
+                         direct-superclasses))
+                   (superclasses (loop for name in superclass-names
                                        collect (sicl-genv:find-class name e2)))
                    (remaining-keys (copy-list keys)))
               (loop while (remf remaining-keys :metaclass))
