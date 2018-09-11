@@ -264,4 +264,6 @@
 
 (defgeneric template (method-combination))
 
+(defgeneric code-object (method-combination))
+
 ;;  LocalWords:  DEFGENERIC
