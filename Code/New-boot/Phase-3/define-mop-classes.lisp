@@ -112,4 +112,5 @@
     (load-file "CLOS/class-initialization-defmethods.lisp" e3)
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-clos:defclass-expander e3)
+    (load-file "CLOS/defclass-defmacro.lisp" e3)
     nil))
