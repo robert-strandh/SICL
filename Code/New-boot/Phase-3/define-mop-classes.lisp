@@ -84,13 +84,19 @@
                          direct-superclasses))
                    (superclasses (loop for name in superclass-names
                                        collect (sicl-genv:find-class name e2)))
-                   (remaining-keys (copy-list keys)))
+                   (remaining-keys (copy-list keys))
+                   (direct-slot-objects
+                     (loop for slot in direct-slots
+                           collect (apply (sicl-genv:fdefinition 'make-instance e3)
+                                          'sicl-clos:standard-direct-slot-definition
+                                          slot))))
               (loop while (remf remaining-keys :metaclass))
               (loop while (remf remaining-keys :direct-superclasses))
               (setf (sicl-genv:find-class name e3)
-                    (apply #'make-instance metaclass-class
+                    (apply (sicl-genv:fdefinition 'make-instance e3)
+                           metaclass-class
                            :direct-default-initargs direct-default-initargs
-                           :direct-slots direct-slots
+                           :direct-slots direct-slot-objects
                            :direct-superclasses superclasses
                            :name name
                            remaining-keys)))))))
