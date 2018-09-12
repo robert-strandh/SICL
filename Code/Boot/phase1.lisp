@@ -338,7 +338,6 @@
     (ld "CLOS/standard-direct-slot-definition-defclass.lisp" env1 env1)
     (ld "CLOS/standard-effective-slot-definition-defclass.lisp" env1 env1)
     (ld "CLOS/method-combination-defclass.lisp" env1 env1)
-    (ld "CLOS/simple-method-combination-defclass.lisp" env1 env1)
     (ld "CLOS/specializer-defclass.lisp" env1 env1)
     (ld "CLOS/eql-specializer-defclass.lisp" env1 env1)
     (ld "CLOS/class-unique-number-defparameter.lisp" env1 env1)

@@ -60,7 +60,6 @@
     (load-file "CLOS/standard-direct-slot-definition-defclass.lisp" e2)
     (load-file "CLOS/standard-effective-slot-definition-defclass.lisp" e2)
     (load-file "CLOS/method-combination-defclass.lisp" e2)
-    (load-file "CLOS/simple-method-combination-defclass.lisp" e2)
     (load-file "CLOS/specializer-defclass.lisp" e2)
     (load-file "CLOS/eql-specializer-defclass.lisp" e2)
     (load-file "CLOS/class-unique-number-defparameter.lisp" e2)

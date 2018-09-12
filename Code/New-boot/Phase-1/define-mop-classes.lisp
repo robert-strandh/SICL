@@ -223,7 +223,6 @@
   (load-file "CLOS/standard-direct-slot-definition-defclass.lisp" env1)
   (load-file "CLOS/standard-effective-slot-definition-defclass.lisp" env1)
   (load-file "CLOS/method-combination-defclass.lisp" env1)
-  (load-file "CLOS/simple-method-combination-defclass.lisp" env1)
   (load-file "CLOS/specializer-defclass.lisp" env1)
   (load-file "CLOS/eql-specializer-defclass.lisp" env1)
   (load-file "CLOS/class-unique-number-defparameter.lisp" env1)
