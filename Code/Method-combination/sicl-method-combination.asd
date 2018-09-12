@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-method-combination
+(defsystem #:sicl-method-combination-support
   :depends-on (#:cleavir-code-utilities
                #:sicl-clos-package
                #:sicl-global-environment
