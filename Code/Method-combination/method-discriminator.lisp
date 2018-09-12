@@ -30,8 +30,8 @@
          (parsed-method-group-specifiers
            (parse-method-group-specifiers method-group-specifiers qualifiers-var))
          (method-var (gensym "method")))
-    `(let ,@(loop for specifier in parsed-method-group-specifiers
-                  collect `(,(first specifier) '()))
+    `(let ,(loop for specifier in parsed-method-group-specifiers
+                 collect `(,(first specifier) '()))
        (loop for (,method-var . ,qualifiers-var) in ,method-list-var
              do ,(make-method-discriminator-code
                   parsed-method-group-specifiers method-var)
@@ -42,4 +42,4 @@
                      unless (null required)
                        collect `(when (and ,required (null ,name))
                                   (error "Empty list of requred methods"))))
-       ,body)))
+       ,@body)))
