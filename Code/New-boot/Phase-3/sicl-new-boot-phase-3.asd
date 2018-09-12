@@ -4,7 +4,8 @@
   :depends-on (#:sicl-new-boot-base
                #:sicl-minimal-extrinsic-environment
                #:sicl-clos-boot-support
-               #:sicl-clos-macro-support)
+               #:sicl-clos-macro-support
+               #:sicl-method-combination-support)
   :serial t
   :components
   ((:file "packages")
