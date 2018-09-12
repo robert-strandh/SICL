@@ -258,8 +258,6 @@
 
 (defgeneric (setf slot-definition-location) (new-location slot-definition))
 
-(defgeneric operation (simple-method-combination))
-
 (defgeneric variant-signature (method-combination))
 
 (defgeneric template (method-combination))
