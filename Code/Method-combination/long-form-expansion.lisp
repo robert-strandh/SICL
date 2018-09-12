@@ -3,7 +3,7 @@
 (defun long-form-lambda
     (lambda-list-variables method-group-specifiers declarations body)
   (let ((method-list-var (gensym "method-list")))
-    `(lambda ,lambda-list-variables
+    `(lambda (,method-list-var ,@lambda-list-variables)
        ,@declarations
        ,(wrap-body method-list-var method-group-specifiers body))))
        
