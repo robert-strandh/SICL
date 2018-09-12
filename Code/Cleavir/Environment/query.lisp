@@ -103,7 +103,7 @@
 ;;; FUNCTION-INFO.
 
 ;;; Cleavir tools call this function in order to obtain information
-;;; about a symbol in a variable position.  It could also be used to
+;;; about a symbol in a function position.  It could also be used to
 ;;; obtain information about a function name that is not a symbol.
 (defgeneric function-info (environment function-name))
 
