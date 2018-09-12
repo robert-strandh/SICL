@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-method-combination)
 
 (defclass method-combination-template ()
-  (;; This slot contains a function that, when applied to the list of
+  ((%name :initarg :name)
+   ;; This slot contains a function that, when applied to the list of
    ;; method-combination options (as given after the
    ;; :METHOD-COMBINATION option to DEFGENERIC), returns a SIGNATURE
    ;; which is a list of values of all the local variables that are
@@ -27,4 +28,5 @@
    ;; and then run the code for categorizing the methods and the code
    ;; in the body of the DEFINE-METHOD-COMBINATION form.
    (%effective-method-form-function :initarg :effective-method-form-function
-                                    :reader effective-method-form-function)))
+                                    :reader effective-method-form-function)
+   (%documentation :initarg :documentation)))
