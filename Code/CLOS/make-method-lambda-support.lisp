@@ -13,9 +13,7 @@
 ;;; CALL-NEXT-METHOD.  These next methods are METHOD METAOBJECTS, so
 ;;; that calling them involves using the generic function
 ;;; METHOD-FUNCTION to get the method function of the method
-;;; metaobject and use FUNCALL or APPLY to call it.  But for now we
-;;; don't do it that way, and they don't do it that way in the book
-;;; either.  Instead the next methods are just functions to call. 
+;;; metaobject and use FUNCALL or APPLY to call it.
 ;;;
 ;;; A METHOD LAMBDA is a lambda expression that must be converted into
 ;;; a METHOD FUNCTION.  
