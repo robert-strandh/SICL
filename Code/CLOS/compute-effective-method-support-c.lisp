@@ -49,19 +49,21 @@
 (defun wrap-in-make-method-macrolet (form arguments-var method-class-name)
   (let ((next-methods-var (gensym "NEXT-METHODS-"))
         (call-next-method-arguments-var (gensym "ARGUMENTS-")))
-    `(macrolet ((make-method (make-method-form)
-                  `(make-instance ',',method-class-name
-                     :qualifiers '()
-                     :lambda-list '()
-                     :specializers '()
-                     :function (lambda (,',arguments-var ,',next-methods-var)
-                                 (flet ((next-method-p ()
-                                          (not (null ,',next-methods-var)))
-                                        (call-next-method (&rest ,',call-next-method-arguments-var)
-                                          (funcall (method-function (first ,',next-methods-var))
-                                                   (if (null ,',call-next-method-arguments-var)
-                                                       ,',arguments-var
-                                                       ,',call-next-method-arguments-var)
-                                                   (rest ,',next-methods-var))))
-                                   ,make-method-form)))))
+    `(macrolet
+         ((make-method (make-method-form)
+            `(make-instance ',',method-class-name
+               :qualifiers '()
+               :lambda-list '()
+               :specializers '()
+               :function
+               (lambda (,',arguments-var ,',next-methods-var)
+                 (flet ((next-method-p ()
+                          (not (null ,',next-methods-var)))
+                        (call-next-method (&rest ,',call-next-method-arguments-var)
+                          (funcall (method-function (first ,',next-methods-var))
+                                   (if (null ,',call-next-method-arguments-var)
+                                       ,',arguments-var
+                                       ,',call-next-method-arguments-var)
+                                   (rest ,',next-methods-var))))
+                   ,make-method-form)))))
        ,form)))
