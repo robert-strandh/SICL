@@ -57,6 +57,11 @@
     `(,function-name ,@(expand-sequence forms env system))))
 
 (defmethod expand-form
+    (form (info cleavir-env:global-function-info) env system)
+  (destructuring-bind (function-name . forms) form
+    `(,function-name ,@(expand-sequence forms env system))))
+
+(defmethod expand-form
     (form (info cleavir-env:special-operator-info) env system)
   (expand-special (car form) form env system))
 
@@ -90,3 +95,5 @@
                  ,@(expand-sequence body env system))
                ,@(expand-sequence args env system))))))
 
+(defun macroexpand-all (form env system)
+  (expand form env system))
