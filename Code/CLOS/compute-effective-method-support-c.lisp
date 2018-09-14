@@ -6,8 +6,8 @@
            (if arguments-var-p `(,arguments-var) '())))
     `(lambda (,@arguments-var-list ,next-methods-var)
        ,@(if arguments-var-p
-             `((declare (ignore ,arguments-var)))
-             '())
+             '()
+             `((declare (ignore ,arguments-var))))
        (flet ((next-method-p ()
                 (not (null ,next-methods-var)))
               (call-next-method (&rest ,arguments-var)
@@ -23,9 +23,9 @@
                             (null (rest (rest method))))
                        `(funcall ,(wrap-make-method-form
                                    (second method)
-                                   ,arguments-var
+                                   ',arguments-var
                                    nil
-                                   ,next-methods-var)
+                                   ',next-methods-var)
                                  (list ,next-method-list)))
                       ((not (consp method))
                        `(funcall (method-function ,method)
@@ -44,10 +44,11 @@
                    :function
                    ,(wrap-in-call-method-macrolet
                      (wrap-make-method-form make-method-form
-                                            ,arguments-var
-                                            t)
-                     ,arguments-var
-                     ,next-methods-var))))
+                                            ',arguments-var
+                                            t
+                                            ',next-methods-var)
+                     ',arguments-var
+                     ',next-methods-var))))
      ,form))
 
 (defun wrap-method-combination-form (form method-class-name)
