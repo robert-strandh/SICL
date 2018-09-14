@@ -49,3 +49,12 @@
                      ,arguments-var
                      ,next-methods-var))))
      ,form))
+
+(defun wrap-method-combination-form (form method-class-name)
+  (let ((arguments-var (gensym "ARGUMENTS-"))
+        (next-methods-var (gensym "NEXT-METHODS-")))
+    `(lambda (,arguments-var)
+       ,(wrap-in-call-method-macrolet
+         (wrap-in-make-method-macrolet
+          form method-class-name arguments-var next-methods-var)
+         arguments-var next-methods-var))))
