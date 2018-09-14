@@ -59,3 +59,16 @@
          (wrap-in-make-method-macrolet
           form method-class-name arguments-var next-methods-var)
          arguments-var next-methods-var))))
+
+(defun compute-effective-method-default
+    (generic-function method-combination methods)
+  (let* ((method-qualifier-pairs
+           (loop for method in methods
+                 collect (cons method (method-qualifiers method))))
+         (template (template method-combination))
+         (variant-signature (variant-signature method-combination))
+         (function (effective-method-form-function template))
+         (form (apply function method-qualifier-pairs variant-signature))
+         (method-class (generic-function-method-class generic-function))
+         (method-class-name (class-name method-class)))
+    (wrap-method-combination-form form method-class-name)))
