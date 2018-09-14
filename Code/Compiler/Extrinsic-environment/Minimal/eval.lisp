@@ -58,9 +58,10 @@
          (cadr form))
         ((and (symbolp form)
               (nth-value 1 (sicl-global-environment:constant-variable
-                            form environment1)))
+                            form
+                            (cleavir-environment:global-environment environment1))))
          (nth-value 0 (sicl-global-environment:constant-variable
-                       form environment1)))
+                       form (cleavir-environment:global-environment environment1))))
         ((and (atom form) (not (symbolp form)))
          form)
         ((and (consp form)
