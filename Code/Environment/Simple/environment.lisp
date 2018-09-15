@@ -249,7 +249,13 @@
    (%ast :initform nil :initarg :ast :accessor ast)
    ;; The value of this slot is the proclaimed inline information
    ;; whenever this entry has a function associated with it.
-   (%inline :initform nil :accessor inline)))
+   (%inline :initform nil :accessor inline)
+   ;; The value of this slot is the lambda list of the function, or
+   ;; NIL if no lambda list is known for the function.
+   (%lambda-list :initform nil :accessor lambda-list)
+   ;; The value of this slot is true if the lambda list for the
+   ;; function is know and false otherwise.
+   (%lambda-list-valid-p :initform nil :accessor lambda-list-valid-p)))
 
 ;;; When an instance of FUNCTION-ENTRY is created, we need to set the
 ;;; slot UNBOUND to a function that calls ERROR.  We can not make this
