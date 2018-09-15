@@ -33,6 +33,8 @@
   (let* ((arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
          (function-type `(function ,arg-type t)))
     `(progn (eval-when (:compile-toplevel)
+              (setf (sicl-global-environment:function-lambda-list ',name ,env)
+                    ',lambda-list)
               (setf (sicl-global-environment:function-type ',name ,env)
                     ',function-type))
             (eval-when (:load-toplevel :execute)
