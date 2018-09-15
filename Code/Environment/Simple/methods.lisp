@@ -173,6 +173,22 @@
   (let ((entry (ensure-function-entry env function-name)))
     (unbound entry)))
 
+(defmethod sicl-genv:function-lambda-list
+    (function-name (env simple-environment))
+  (let ((entry (find-function-entry env function-name)))
+    (cond ((null entry)
+           (values nil nil))
+          ((lambda-list-valid-p entry)
+           (values (lambda-list entry) t))
+          (t
+           (values nil nil)))))
+
+(defmethod (setf sicl-genv:function-lambda-list)
+    (new-lambda-list function-name (env simple-environment))
+  (let ((entry (ensure-function-entry env function-name)))
+    (setf (lambda-list entry) new-lambda-list)
+    (setf (lambda-list-valid-p entry) t)))
+
 (defmethod sicl-genv:function-ast (function-name (env simple-environment))
   (let ((entry (find-function-entry env function-name)))
     (if (null entry)
