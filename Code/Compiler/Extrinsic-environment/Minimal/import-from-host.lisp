@@ -16,6 +16,7 @@
     sicl-genv:find-package
     sicl-genv:get-setf-expansion
     (setf sicl-genv:function-type)
+    (setf sicl-genv:function-lambda-list)
     (setf sicl-genv:fdefinition)
     cleavir-environment:global-environment
     cleavir-environment:symbol-macro-expansion
