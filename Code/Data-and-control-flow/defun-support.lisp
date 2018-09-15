@@ -7,7 +7,11 @@
 	  (arg-type
 	    (cleavir-code-utilities:lambda-list-type-specifier lambda-list)))
       `(progn
+         (eval-when (:compile-toplevel)
+           (setf (sicl-genv:function-lambda-list ',name ,global-env)
+                 ',lambda-list))
 	 (eval-when (:compile-toplevel :load-toplevel :execute)
+           ;; FIXME: do different things at different times.
 	   (setf (sicl-env:function-type ',name ,global-env)
 		 `(function ,',arg-type t)))
 	 (eval-when (:load-toplevel :execute)
