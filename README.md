@@ -96,13 +96,20 @@ Check the [Documentation] directory for more information.
 
 ## Getting Help and Contributing
 
-The SICL community members are usually on various IRC channels, mostly
-[#clim] and 
-[#lisp]
+The SICL community members are usually on various IRC channels.  There
+is now a dedicated channel called [#sicl], but discussion can also be
+found on [#lisp], [#clasp], and [#sicl].
 
+[#sicl]: https://webchat.freenode.net/
+[logs]:https://irclog.tymoon.eu/freenode/%23sicl
 [#lisp]: https://webchat.freenode.net/
+[logs]:https://irclog.tymoon.eu/freenode/%23lisp
+[#clasp]: https://webchat.freenode.net/
+[logs]:https://irclog.tymoon.eu/freenode/%23clasp
 [#clim]: https://webchat.freenode.net/
-[logs]:http://irclog.tymoon.eu/freenode/%23clim
+[logs]:https://irclog.tymoon.eu/freenode/%23clim
+
+
 [LICENSE-BSD]:https://github.com/robert-strandh/SICL/blob/master/LICENSE
 
 Keep up on SICL by reading the IRC [logs]
