@@ -103,11 +103,8 @@ found on [#lisp], [#clasp], and [#sicl].
 [#sicl]: https://webchat.freenode.net/
 [logs]:https://irclog.tymoon.eu/freenode/%23sicl
 [#lisp]: https://webchat.freenode.net/
-[logs]:https://irclog.tymoon.eu/freenode/%23lisp
 [#clasp]: https://webchat.freenode.net/
-[logs]:https://irclog.tymoon.eu/freenode/%23clasp
 [#clim]: https://webchat.freenode.net/
-[logs]:https://irclog.tymoon.eu/freenode/%23clim
 
 
 [LICENSE-BSD]:https://github.com/robert-strandh/SICL/blob/master/LICENSE
