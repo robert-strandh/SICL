@@ -63,6 +63,7 @@
    #:function-inline
    #:function-cell
    #:function-unbound
+   #:function-lambda-list
    #:function-ast
    #:function-names
    #:constant-variable
