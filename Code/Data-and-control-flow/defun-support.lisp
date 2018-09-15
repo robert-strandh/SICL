@@ -10,10 +10,6 @@
          (eval-when (:compile-toplevel)
            (setf (sicl-genv:function-lambda-list ',name ,global-env)
                  ',lambda-list))
-	 (eval-when (:compile-toplevel :load-toplevel :execute)
-           ;; FIXME: do different things at different times.
-	   (setf (sicl-env:function-type ',name ,global-env)
-		 `(function ,',arg-type t)))
 	 (eval-when (:load-toplevel :execute)
 	   (setf (sicl-env:fdefinition ',name (sicl-genv:global-environment))
 		 (lambda ,lambda-list
@@ -23,4 +19,8 @@
 			 (list documentation))
 		   (block ,(if (symbolp name) name (second name))
 		     ,@forms)))
-	   ',name)))))
+	   ',name)
+	 (eval-when (:compile-toplevel :load-toplevel :execute)
+           ;; FIXME: do different things at different times.
+	   (setf (sicl-env:function-type ',name ,global-env)
+		 `(function ,',arg-type t)))))))
