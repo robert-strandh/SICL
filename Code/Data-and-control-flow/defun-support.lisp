@@ -8,6 +8,8 @@
 	    (cleavir-code-utilities:lambda-list-type-specifier lambda-list)))
       `(progn
          (eval-when (:compile-toplevel)
+	   (setf (sicl-env:function-type ',name ,global-env)
+		 `(function ,',arg-type t))
            (setf (sicl-genv:function-lambda-list ',name ,global-env)
                  ',lambda-list))
 	 (eval-when (:load-toplevel :execute)
@@ -19,8 +21,8 @@
 			 (list documentation))
 		   (block ,(if (symbolp name) name (second name))
 		     ,@forms)))
-	   ',name)
-	 (eval-when (:compile-toplevel :load-toplevel :execute)
-           ;; FIXME: do different things at different times.
-	   (setf (sicl-env:function-type ',name ,global-env)
-		 `(function ,',arg-type t)))))))
+           (setf (sicl-env:function-type ',name (sicl-genv:global-environment))
+                 `(function ,',arg-type t))
+           (setf (sicl-genv:function-lambda-list ',name (sicl-genv:global-environment))
+                 ',lambda-list)
+           ',name)))))
