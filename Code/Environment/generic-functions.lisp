@@ -292,6 +292,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF FUNCTION-LAMBDA-LIST).
+;;;
+;;; This function associates LAMBDA-LIST as the lambda list of
+;;; the function with the name FUNCTION-NAME.
+
+(defgeneric (setf function-lambda-list)
+    (new-lambda-list function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FUNCTION-AST.
 ;;;
 ;;; This function returns the abstract syntax tree corresponding to
