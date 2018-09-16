@@ -14,16 +14,23 @@
   (let ((lambda-list-variables (lambda-list-variables lambda-list)))
     (multiple-value-bind (declarations documentation forms)
         (cleavir-code-utilities:separate-function-body body)
-      `(setf (sicl-genv:find-method-combination-template ',name ,environment)
-             (make-instance 'method-combination-template
-               :name ',name
-               :documentation ,documentation
-               :variant-signature-determiner
-               (lambda ,lambda-list-variables
-                 (list ,@lambda-list-variables))
-               :effective-method-form-function
-               ,(long-form-lambda
-                 lambda-list-variables
-                 method-group-specifiers
-                 declarations
-                 forms))))))
+      `(let ((template (sicl-genv:find-method-combination-template
+                        ',name ,environment)))
+         (when (null template)
+           (setf template
+                 (make-instance 'method-combination-template
+                   :name ',name
+                   :documentation ,documentation
+                   :variant-signature-determiner
+                   (lambda ,lambda-list-variables
+                     (list ,@lambda-list-variables))
+                   :effective-method-form-function
+                   ,(long-form-lambda
+                     lambda-list-variables
+                     method-group-specifiers
+                     declarations
+                     forms)))
+           (setf (sicl-genv:find-method-combination-template ',name ,environment)
+                 template))
+         ',name))))
+
