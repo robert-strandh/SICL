@@ -125,7 +125,7 @@
     (load-file "CLOS/find-method-combination-defgenerics.lisp" e2)
     (load-file "CLOS/find-method-combination-defmethods.lisp" e2)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
-        (load-file "CLOS/compute-effective-method-support.lisp" e2)
+    (load-file "CLOS/compute-effective-method-support.lisp" e2)
     (setf (sicl-genv:fdefinition 'make-method e2)
           (lambda (function)
             (funcall (sicl-genv:fdefinition 'make-instance e2)
