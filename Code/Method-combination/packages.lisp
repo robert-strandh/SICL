@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-method-combination
   (:use #:common-lisp)
-  (:export #:method-combination-template))
+  (:export #:method-combination-template
+           #:find-method-combination))
