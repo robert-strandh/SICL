@@ -44,13 +44,13 @@ R5 & Register variable (callee saved) \\
 R6 & Register variable (callee saved) \\
 R7 & Register variable (callee saved) \\
 R8 & Register variable (callee saved) \\
-R9 & Frame pointer\\
+R9 & Frame pointer (FP) \\
 R10 & Dynamic environment (callee saved) \\
 R11 & Register variable (callee saved)\\
-R12, IP & Linkage rack\\
-R13, SP & Stack pointer \\
-R14, LR & Link register, scratch \\
-R15, PC & Program counter \\
+R12 & Linkage rack (IP)\\
+R13 & Stack pointer (SP)\\
+R14 & Link register (LR), scratch \\
+R15 & Program counter (PC) \\
 \hline
 \end{tabular}
 
@@ -60,7 +60,7 @@ The callers saves its FP and sets FP to SP.  It then subtracts from SP
 4*N where N is the number of arguments to be passed.  Notice that even
 if all the arguments to be passed will fit in the argument registers,
 the caller still leaves room in the stack frame of the callee.  The
-main reason for this way of doing it is so that FP-SP = argcount in
+main reason for this way of doing it is so that FP-SP = argcount words in
 the callee, and we do not have to dedicate a register specifically for
 the argument count.
 
@@ -78,17 +78,17 @@ do three things:
   whether they will be used or not.  
 \item Compute a strange kind of permutation so that the arguments are
   in the right initial place to start the body code.  This permutation
-  involves the stack frame, the argument register, and the calle-saved
+  involves the stack frame, the argument register, and the callee-saved
   registers.  In most cases, this permutation will be the identity,
   because arguments will remain in scratch registers until they might
   have to be moved to callee-saved registers or to the stack. 
 \end{enumerate}
 
-If there are \&optional parameters that are simple constants or
+If there are \texttt{\&optional} parameters that are simple constants or
 references to preceding variables, they can also easily be
 initialized in case they were not passed by the caller. 
 
-If there are \&optional parameters that require function calls, then
+If there are \texttt{\&optional} parameters that require function calls, then
 the register allocator has computed the initial permutation so that no
 important objects remain in scratch registers.  
 
@@ -108,7 +108,7 @@ an entry onto the dynamic environment, it uses the existing value of
 R10 as the current dynamic environment and it simply extends it rather
 than spilling it.  To restore the original value, F can simply pop off
 the top value.  However, F can decide to spill R10 in case it needs it
-form some other purpose.  However, before a function call, it needs to
+for some other purpose.  However, before a function call, it needs to
 be restored.  A CATCH will store R10 along with other callee-saved
 registers so that it can be restored in case of a throw.
 

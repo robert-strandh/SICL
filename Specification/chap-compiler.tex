@@ -80,7 +80,7 @@ We also allow for a variable to have a \emph{preferred register} which
 is chosen by the register allocator if it is available at the time a
 choice has to be made.  We use this technique to try as much as
 possible to compute a value into a register that it is required to end
-up in eventually, such as a register for a particular argument.5
+up in eventually, such as a register for a particular argument.
 \fixme{Document how we indicate that an instruction might trash a
   register.  Also, attempt to use the same method to indicate that a
   global function or variable value might change across a function
@@ -92,7 +92,7 @@ up in eventually, such as a register for a particular argument.5
 
 To access a special variable, the code must first search the dynamic
 environment in case a per-thread binding exists.  If such a binding
-exists, a tagged pointer of type CONS is returned, but the pointer
+exists, a tagged pointer of type \texttt{CONS} is returned, but the pointer
 refers to an entry on the stack; a dynamic value cell.  If no such
 binding exists, the global value cell is returned.
 

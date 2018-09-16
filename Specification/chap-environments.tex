@@ -387,6 +387,7 @@ not have a definition as a symbol macro.
 
 It is guaranteed that the same (in the sense of \texttt{eq}) function
 is returned by two consecutive calls to this function with the same
+(in the sense of \texttt{eq})
 symbol as the first argument, as long as the definition of
 \textit{symbol} does not change.
 
@@ -404,7 +405,7 @@ signaled.
 This function is a generic version of the \commonlisp{} function
 \texttt{cl:symbol-plist}.
 
-Return the \emph{property list} of \textit{symbol} in
+Returns the \emph{property list} of \textit{symbol} in
 \textit{environment}.
 
 \Defgeneric {(setf symbol-plist)} {new-plist symbol environment}
@@ -468,7 +469,8 @@ returned by the function \texttt{variable-cell} contains this object
 whenever the variable named \textit{symbol} is unbound.  The return
 value of this function is always the same (in the sense of
 \texttt{eq}) when it is passed the same symbol and the same
-environment.  Client code can use the return value of this function to
+environment (in the sense of \texttt{eq}).
+Client code can use the return value of this function to
 determine whether \textit{symbol} is unbound.
 
 \Defgeneric {find-class} {symbol environment}
@@ -534,22 +536,22 @@ This function always returns a valid \texttt{setf} expander.
 \Defgeneric {(setf default-setf-expander)} {new-expander environment}
 
 This generic function is used to set the default \texttt{setf}
-expander in \texttt{environment}.
+expander in \textit{environment}.
 
 \Defgeneric {type-expander} {symbol environment}
 
 This generic function returns the type expander associated with
-\textit{symbol} in \texttt{environment}.  If \textit{symbol} is not
-associated with any type expander in \texttt{environment}, then
+\textit{symbol} in \textit{environment}.  If \textit{symbol} is not
+associated with any type expander in \textit{environment}, then
 \texttt{nil} is returned.
 
 \Defgeneric {(setf type-expander)} {new-expander symbol environment}
 
 This generic function is used to set the type expander associated with
-\textit{symbol} in \texttt{environment}.
+\textit{symbol} in \textit{environment}.
 
 If there is already a type expander associated with \textit{symbol} in
-\texttt{environment}, then the old type expander is lost.
+\textit{environment}, then the old type expander is lost.
 
 \Defgeneric {find-package} {name environment}
 
@@ -594,7 +596,7 @@ assume that they have \emph{indefinite extent}.
 
 This situation occurs when some function captures the environment by
 using a \texttt{lambda} expression which contains references to local
-variables outside the expression itself.  Though such a capture in
+variables outside the expression itself, though such a capture in
 itself does not necessarily imply that the variables thus referenced
 have indefinite extent.  It all depends on what happens to the
 function that is the result of the lambda expression.  
@@ -693,7 +695,7 @@ The compiler will generate runtime information available both to the
 debugger and to the garbage collector.  For each value of the program
 counter%
 \footnote{The values of the program counter are \emph{relative} to the
-  beginning of the code object}, all local locations in use (in
+  beginning of the code object.}, all local locations in use (in
 registers, stack frame, or static environment) have associated type
 information.  Maintaining this type information does not require any
 runtime overhead.  All that is required is a mapping from a program

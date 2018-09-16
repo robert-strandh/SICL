@@ -79,6 +79,7 @@ first chunk is in use and the second chunk is free.
 \caption{\label{fig-chunks2}
 Chunk in use followed by free chunk.}
 \end{figure}
+% figure should show reserved word; and "prvious" in this and the next figure.
 
 As \refFig{fig-chunks2} shows, the next-to-last bit of the first word
 of the first chunk and the last bit of the first word of the second
@@ -128,7 +129,7 @@ chunk are both $1$, indicating that the first chunk is in use.  The
 next-to-last bit of the first word of the second chunk is also $1$
 indicating that the second chunk is in use as well.  Each of the
 chunks contains the size in the first word and the remaining words of
-the chunk contains user data.
+the chunk contains user data and the reserved word.
 
 \section{Bins of chunks of similar size}
 \label{sec-memory-allocator-bins-of-chunks}
@@ -195,7 +196,8 @@ doubly linked lists.
 
 \section{Allocating a chunk}
 
-To allocate a chunk with at least $n$ words in it, we first determine
+To allocate a chunk (or find a marked-free one)
+with at least $n$ words in it, we first determine
 the bin $b$ with the smallest possible maximum chunk size that is
 greater than or equal to $n$.  If $n \le 67$ then the $b$ is computed
 as $n-4$.  If not, we do a binary search to find $b$.
