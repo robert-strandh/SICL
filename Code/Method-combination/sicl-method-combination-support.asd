@@ -16,4 +16,3 @@
    (:file "short-form-expansion")
    (:file "define-method-combination-support")
    (:file "find-method-combination")))
-
