@@ -111,6 +111,7 @@
     (import-package-from-host '#:sicl-method-combination e2)
     (import-function-from-host
      'sicl-method-combination::define-method-combination-expander e2)
+    (load-file "Method-combination/define-method-combination-defmacro.lisp" e2)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
     (load-file "CLOS/compute-effective-method-support.lisp" e2)
     (setf (sicl-genv:fdefinition 'make-method e2)
