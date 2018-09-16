@@ -87,8 +87,7 @@
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
-    (sicl-minimal-extrinsic-environment:import-package-from-host
-     'sicl-conditions e2)
+    (import-package-from-host 'sicl-conditions e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2)
           (lambda (object)
             (typep object 'header)))
