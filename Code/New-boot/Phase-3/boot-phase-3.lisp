@@ -121,7 +121,10 @@
            'sicl-method-combination:method-combination-template e1)
           (find-class 'sicl-method-combination:method-combination-template))
     (load-file "CLOS/standard-method-combination.lisp" e2)
-    (import-function-from-host 'sicl-method-combination:find-method-combination e2)
+    (import-functions-from-host
+     '(sicl-method-combination:find-method-combination
+       sicl-method-combination:effective-method-form-function)
+     e2)
     (load-file "CLOS/find-method-combination-defgenerics.lisp" e2)
     (load-file "CLOS/find-method-combination-defmethods.lisp" e2)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
