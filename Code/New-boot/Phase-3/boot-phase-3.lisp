@@ -117,6 +117,9 @@
        (setf sicl-genv:find-method-combination-template)
        sicl-loop::list-cdr sicl-loop::list-car)
      e2)
+    (setf (sicl-genv:find-class
+           'sicl-method-combination:method-combination-template e1)
+          (find-class 'sicl-method-combination:method-combination-template))
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
     (load-file "CLOS/compute-effective-method-support.lisp" e2)
     (setf (sicl-genv:fdefinition 'make-method e2)
