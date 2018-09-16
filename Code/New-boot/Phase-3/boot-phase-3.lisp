@@ -108,6 +108,7 @@
     (load-file "New-boot/Phase-3/sub-specializer-p.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)
+    (import-package-from-host '#:sicl-method-combination e2)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
     (load-file "CLOS/compute-effective-method-support.lisp" e2)
     (setf (sicl-genv:fdefinition 'make-method e2)
