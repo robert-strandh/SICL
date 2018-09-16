@@ -5,6 +5,8 @@
 ;;;;
 ;;;; In this file, there are no definitions of generic functions, nor
 ;;;; of any methods.  
+;;;;
+;;;; FIXME: remove this file when we have method combinations work.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
