@@ -3,4 +3,5 @@
 (defpackage #:sicl-method-combination
   (:use #:common-lisp)
   (:export #:method-combination-template
-           #:find-method-combination))
+           #:find-method-combination
+           #:effective-method-form-function))
