@@ -67,7 +67,7 @@
                  collect (cons method (method-qualifiers method))))
          (template (template method-combination))
          (variant-signature (variant-signature method-combination))
-         (function (effective-method-form-function template))
+         (function (sicl-method-combination:effective-method-form-function template))
          (form (apply function method-qualifier-pairs variant-signature))
          (method-class (generic-function-method-class generic-function))
          (method-class-name (class-name method-class)))
