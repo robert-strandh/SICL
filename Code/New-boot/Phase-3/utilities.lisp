@@ -27,6 +27,9 @@
   (loop for name in names
         do (import-function-from-host name environment)))
 
+(defun import-package-from-host (name environment)
+  (sicl-minimal-extrinsic-environment:import-package-from-host name environment))
+
 ;;; Define a function that, when called, signals an error with the
 ;;; name of the function in the error message.  We use this to break
 ;;; dependencies between loaded files.
