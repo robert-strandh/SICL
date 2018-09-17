@@ -12,7 +12,7 @@ objects.
 
 In \refChap{chap-data-representation} we describe the data
 representation where every heap allocated object is either a two-word
-\texttt{cons} cell or a \emph{general instances} represented as a
+\texttt{cons} cell or a \emph{general instance} represented as a
 two-word \emph{header} where the first of the two words is a tagged
 pointer to the class object, and the second of the two words is a
 pointer to the \emph{rack} using a special tag for racks.  For the
@@ -72,7 +72,8 @@ The global collector cycles through the following phases:
 \item Requesting roots.  In this phase, the global collector indicates
   to each running application thread that it needs to transmit its
   part of the global root set to the global collector.  For each
-  blocked application thread, a thread is spawned to do the work on
+  blocked application thread, another thread (newly spawned or taken
+  from a thread pool) does the work on
   its behalf.
 \item Waiting for roots.  In this phase, the global collector waits
   for each application thread or each spawned thread to finish
@@ -94,7 +95,7 @@ The global collector cycles through the following phases:
 \subsection{Idle phase}
 
 In this phase the global collector is not doing any work.  Whether it
-has a allocated threads that are blocked or no threads allocated
+has allocated threads that are blocked or no threads allocated
 remains to be decided.  During this phase, when application threads
 request space from the global heap, objects are allocated \emph{white}
 (see below for more information on the tri-color technique).
@@ -168,8 +169,8 @@ recursively set in the same way.  Finally the bit is set.
 
 To exclude an object from the set of gray objects, the address is used
 to determine a bit position in the primary bitmap. The bit is then
-cleared.  If this operation results in the 64-bit word that this bit
-is contained in having all bits cleared, then bit position in the
+cleared.  If this operation results in a 64-bit word that has all bits
+cleared, then the bit position in the
 secondary bitmap is determined, and recursively cleared in the same
 way.
 
@@ -184,7 +185,7 @@ represented as a vector.  Gray objects are initially taken from the
 cache.  Only when the cache is empty is the more costly technique
 used.  Whenever the objects referred to by a gray object are colored
 gray, they are also included in the cache (provided there is room in
-th cache).  The cache could for instance be a vector with around a
+the cache).  The cache could for instance be a vector with around a
 million elements.  Such a vector would occupy only 8 megabytes of
 memory which is comparable to the space taken up by the gray bitmaps.
 
@@ -300,8 +301,8 @@ few megabytes at most.  Instead of a traditional copying collector in
 which objects that survive a collection are promoted, we use a
 \emph{sliding collector} for the nursery.  Such a collector gives a
 very precise idea of the age of different objects, so objects would
-always be promoted in the order of the oldest to the youngest.  This
-technique avoids the problem in traditional copying collector where
+always be promoted in the order of oldest to youngest.  This
+technique avoids the problem in traditional copying collectors where
 the allocation of some intermediate objects is immediately followed by
 a collection, so these objects are promoted even though they are
 likely to die soon after the collection.  In a sliding collector,
@@ -704,7 +705,7 @@ objects that are still in the nursery.
 \subsection{Compaction phase}
 
 In the \emph{compaction phase}, the live bitmaps is used to slide
-dyads to the beginning of the nursery heap and to slide racks so the
+dyads to the beginning of the nursery heap and to slide racks to the
 end of the nursery heap.  A \emph{source} pointer follows live words
 to be copied, and a \emph{target} pointer follows available words.
 
@@ -729,7 +730,7 @@ We use \emph{binary search} to find an entry in a break table.
 
 \subsection{Pointer adjustment phase}
 
-Once break table are built, the stack is scanned to find roots, and it
+Once the break tables are built, the stack is scanned to find roots, and it
 is also restored to its initial state as describe in
 \refSec{sec-garbage-collection-finding-roots}.  For each root that
 contains a pointer to the nursery, we determine whether it is pointer
@@ -772,9 +773,9 @@ thread becomes unstopped, it must then be prevented from running
 application code until the collection has run to completion.
 
 We do this by introducing a variable and two semaphores for each
-application thread that are shared between that thread and the global
-collector threads.  The variable has 4 bit positions with the
-following meaning:
+application thread. The variable and the semaphores are shared between
+that thread and the global collector threads.  The variable has 4 bit
+positions with the following meanings:
 
 \begin{itemize}
 \item \texttt{application-blocked} meaning that the application thread
@@ -818,7 +819,7 @@ At every safe point (function call, function return, and a branch to
 an inferior address%
 \footnote{To minimize the overhead in case of a very tight loop, we
   will use loop unrolling so that a branch to an inferior address will
-  be less frequent}), the application thread consults the shared
+  be less frequent.}), the application thread consults the shared
 variable.  If the \texttt{gc-requested} bit is set, then it clears
 that bit and runs the nursery garbage collector.  At the end of the
 collection, it signals the \texttt{global-gc-may-proceed} semaphore
@@ -852,7 +853,7 @@ operation fail, then it means that the \texttt{gc-request} bit has
 been set since the shared variable was read the first time.  The
 application thread then starts the entire operation over again.
 
-If the CAS operation succeeds. it means that the global collector has
+If the CAS operation succeeds, it means that the global collector has
 been informed that, if it needs for this nursery heap to be garbage
 collected, it has to do it on behalf of the thread.  The application
 thread can now perform the operation that might block the thread.
@@ -877,8 +878,8 @@ operation without any further action.
 
 If the CAS operation fails, then that means that the global collector
 has started a collection on behalf of the application thread since the
-shared variable was read.  Then the application thread starts the
-process over by reading the shared variable again.  If the
+shared variable was read.  Then the application thread
+reads the shared variable again.  If the
 \texttt{gc-in-progress} bit is set, then the application thread clears
 the \texttt{application-blocked} bit and sets the
 \texttt{application-waiting} bit in the second local copy of the
@@ -900,7 +901,7 @@ For each application thread, the following actions are performed:
 
 The contents of the shared variable is read into an ordinary lexical
 variable, and a second copy of it is made.  The
-\texttt{application-blocked} bit is examined
+\texttt{application-blocked} bit is examined.
 
 \begin{enumerate}
 \item If it is cleared, then the \texttt{gc-request} bit is set in the
@@ -954,7 +955,7 @@ into an ordinary lexical variable and a second copy is made.  The
   \item If the CAS operation succeeds, then it means that the
     operation is still blocked, and it has been informed that it can
     safely execute application code when it wakes up.
-  \item If the CAS operation fails, then application may no longer be
+  \item If the CAS operation fails, then the application may no longer be
     blocked.  The entire operation is then restarted by reading the
     shared variable again.
   \end{enumerate}
