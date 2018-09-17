@@ -18,6 +18,7 @@ represent four different \emph{tags} as follows:
   about the representation of \texttt{cons} cells.
 \item \texttt{011}.  This tag is used for various \emph{immediate}
   objects, and in particular for \emph{characters}.
+  \seesec{sec-data-representation-immediate-objects}
 \item \texttt{101}.  This tag is used for all heap-allocated
   \commonlisp{} objects other than \texttt{cons} cells.  A heap
   allocated object like this is called a \emph{general instance}.  It
@@ -36,6 +37,7 @@ On a 64-bit machine, floats of type \texttt{short-float} and
 \texttt{single-float} are represented as immediate values.
 
 \section{Immediate objects}
+\label{sec-data-representation-immediate-objects}
 
 Immediate objects are all objects with \texttt{011} in the lower three
 bits.  Two more bits are used to distinguish between different kinds
@@ -152,7 +154,7 @@ for all possible general instances.
 \label{sec-data-representation-flexible-instances}
 
 A flexible instance must allow for its class to be redefined, making
-it necessary for the instance to be updated before used again.  The
+it necessary for the instance to be updated before being used again.  The
 standard specifically allows for these updates to be delayed and not
 happen as a direct result of the class redefinition.  They must happen
 before an attempt is made to access some slot (or some other
@@ -282,7 +284,7 @@ A code object contains the following information:
   table represent the registers \texttt{RBX}, \texttt{R12},
   \texttt{R13}, \texttt{R14}, and \texttt{R15} as describe in
   \refSec{sec-backend-x86-84-register-use}.  The value of an entry
-  represent the value to add to the value of the base pointer in order
+  represents the value to add to the value of the base pointer in order
   to get the stack location of the saved register.
 \item A vector of strings representing the source code of the
   compilation unit of which this code object is part.  Each string
@@ -298,8 +300,8 @@ A code object contains the following information:
   of the compilation unit of which this code object is part.
 \end{itemize}
 
-The tree tables providing support for the \emph{step} commands of the
-debugger each maps a value $P$ of the program counter to either
+The three tables providing support for the \emph{step} commands of the
+debugger each maps values $P$ of the program counter to either
 another value $N$ of the program counter, or to a list of such values.
 The values correspond either to the beginning or to the end of a form
 to be evaluated.  Each table is sorted by the value of $P$, so that a
@@ -504,7 +506,7 @@ rack with three slots:
 \item An \emph{environment}, which is the lexical environment in which
   the function was defined.  We are not giving the details of how the
   static environment is represented here.
-\item The \emph{entry point}.  The each entry
+\item The \emph{entry point}.  The entry
   point is a \emph{raw address} of an aligned word in the vector
   containing the instructions of the function.  Functions are always
   allocated in the global heap, so the code vector never moves.
@@ -532,7 +534,7 @@ can occur:
   as an argument to \texttt{funcall}.  Then no optimization is
   attempted, and \texttt{funcall} is responsible for determining
   whether the object is a function, a name that designates a function,
-  or an object that does not designate a function in which an error is
+  or an object that does not designate a function in which case an error is
   signaled.
 \item When it can be determined statically that the object called is a
   function (i.e. its class is a subclass of the class
