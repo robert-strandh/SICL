@@ -41,14 +41,14 @@ In addition, the \hs{} requires the existence of a class metaclass
 named \texttt{structure-class}.  Whether conditions have their own
 metaclass is not specified. 
 
-In \sysname{}, every class (i.e., ever instance of a class metaclass)
+In \sysname{}, every class (i.e., every instance of a metaclass)
 contains a \emph{unique number} which is an integer assigned
 sequentially from $0$ as a class is created or modified.  When a class
 is modified, its old unique number is never reused, leaving
 \emph{holes} in the sequence corresponding to numbers that no longer
 correspond to any classes.%
 \footnote{It might be possible for the garbage collector to change the
-  unique numbers of the classed, compacting the sequence, but that
+  unique numbers of the classes, compacting the sequence, but that
   probably will not be necessary.}
 
 Every \emph{general instance}%
@@ -68,10 +68,10 @@ typically created by \texttt{defclass}.  When no superclasses are
 given to \texttt{defclass}, the class \texttt{standard-object} is
 automatically made a superclass of the new class.  
 
-Perhaps the most interesting features of standard classes is that they
+Perhaps the most interesting feature of standard classes is that they
 can be redefined even though there are existing instances of them.
-Without this features, using \commonlisp{} interactively would not be as
-obvious as it is, so in some ways, this features is totally essential
+Without this feature, using \commonlisp{} interactively would not be as
+obvious as it is, so in some ways, this feature is totally essential
 for any interactive language.%
 \footnote{By ``interactive language'', we mean a language in which a
   program is built up by a sequence of interactions that augment and
@@ -117,7 +117,7 @@ however, is making it possible to update an obsolete instance.
 Another very handy feature of standard classes, but a much simpler
 one, is that it allows for instances to \emph{change class}.  In other
 words, without changing the \emph{identity} of the instance, the class
-that is an instance of can be changed to a different class.  Again,
+that it is an instance of can be changed to a different class.  Again,
 the \hs{} gives very specific rules about how the instance must be
 transformed in order to be a legitimate instance of the new class.  No
 special mechanism is required for this feature to work, other than the
@@ -236,8 +236,10 @@ implemented in the ``most efficient way possible''.%
 \footnote{Again, I forget where I read this, and I can't find it.}
 Presumably, the restrictions on structure classes exist to allow for
 an implementation to represent instances as a pointer directly to the
-vector of slots and avoid any indirection, which saves a memory
-access.  However, in \sysname{} \emph{all} heap-allocated objects
+vector of slots and avoid any indirection, which saves some memory
+accesses%
+\footnote{No checks for outdatedness, etc.}
+However, in \sysname{} \emph{all} heap-allocated objects
 (other than \texttt{cons} cells) are represented as a two-word
 \emph{header object} and a \emph{rack} for reasons of
 simplicity and in order to allow our memory-management strategy to
@@ -257,7 +259,7 @@ to work on an efficient implementation of structures.
 
 With respect to bootstrapping, since \sysname{} does not use structure
 classes at all for its implementation, implementing \texttt{defstruct}
-can be done fairly late.  In fact, we may omit it in initial version
+can be done fairly late.  In fact, we may omit it in the initial version
 of the system. 
 
 \section{Generic function dispatch}
@@ -368,7 +370,7 @@ The identification is computed as follows:
   \emph{stamp} of the instance, i.e. the unique number of the class of
   the instance as it was when the instance was created.  The stamp is
   stored in the first element of the rack of the instance.
-\item Otherwise (i.e., if the object is a \emph{special instance}, it
+\item Otherwise (i.e., if the object is a \emph{special instance}), it
   is the \emph{unique number} of the class of the object.
 \end{itemize}
 
@@ -497,8 +499,8 @@ class, then calls are made to
 \texttt{compute-effective-method}, and
 \texttt{compute-discriminating-function} in order to compute a new
 discriminating function for \texttt{class-slots}.  But these functions
-are satiated with respect to \texttt{standard-generic-function} and
-\texttt{class-slots} is a standard-generic-function, so those calls
+are satiated with respect to \texttt{standard-generic-function} and as
+\texttt{class-slots} is a standard-generic-function, those calls
 will terminate. 
 
 \section{Implementing \texttt{slot-value} and \texttt{(setf slot-value)}}
