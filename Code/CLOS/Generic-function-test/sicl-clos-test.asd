@@ -32,5 +32,7 @@
    (:file "../../Method-combination/define-method-combination-support")
    (:file "../../Method-combination/find-method-combination")
    (:file "../compute-effective-method-support-c")
+   (:file "../discriminating-automaton")
+   (:file "../discriminating-tagbody")
    (:file "../method-combination-defclass")))
 
