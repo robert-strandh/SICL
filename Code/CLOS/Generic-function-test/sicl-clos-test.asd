@@ -6,5 +6,6 @@
   :components
   ((:file "package")
    (:file "funcallable-standard-class-defclass")
+   (:file "../generic-function-defclass")
    (:file "../standard-generic-function-defclass")))
 
