@@ -2,4 +2,6 @@
 
 (defpackage #:sicl-clos
   (:use #:common-lisp)
-  (:shadow #:standard-generic-function))
+  (:shadow #:generic-function
+           #:standard-generic-function
+           #:documentation))
