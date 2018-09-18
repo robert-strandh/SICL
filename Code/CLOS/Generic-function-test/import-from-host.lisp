@@ -8,3 +8,6 @@
 
 (setf (find-class 'funcallable-standard-object)
       (find-class 'closer-mop:funcallable-standard-object))
+
+(setf (fdefinition 'set-funcallable-instance-function)
+      #'closer-mop:set-funcallable-instance-function)
