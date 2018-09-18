@@ -4,4 +4,8 @@
   (:use #:common-lisp)
   (:shadow #:generic-function
            #:standard-generic-function
-           #:documentation))
+           #:documentation
+           #:make-method
+           #:call-method
+           #:method-combination)
+  (:export #:variant-signature))
