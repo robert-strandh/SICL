@@ -7,5 +7,6 @@
            #:documentation
            #:make-method
            #:call-method
-           #:method-combination)
+           #:method-combination
+           #:ensure-generic-function)
   (:export #:variant-signature))
