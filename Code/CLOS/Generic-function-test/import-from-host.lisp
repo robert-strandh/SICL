@@ -24,6 +24,9 @@
 (setf (fdefinition 'eql-specializer-object)
       #'closer-mop:eql-specializer-object)
 
+(setf (fdefinition 'make-method-lambda)
+      #'closer-mop:make-method-lambda)
+
 (defun classp (object)
   (typep object 'class))
 
