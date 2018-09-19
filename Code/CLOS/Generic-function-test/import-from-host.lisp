@@ -38,3 +38,6 @@
   (make-instance 'standard-generic-function
     ::name function-name
     :lambda-list lambda-list))
+
+(defmacro defgeneric (name lambda-list)
+  `(ensure-generic-function ',name :lambda-list ',lambda-list))
