@@ -44,5 +44,7 @@
    (:file "compute-discriminating-function-support")
    (:file "../compute-discriminating-function-defmethods")
    (:file "../compute-discriminating-function-support-c")
+   (:file "../generic-function-initialization-support")
+   (:file "../generic-function-initialization-defmethods")
    (:file "../method-combination-defclass")))
 
