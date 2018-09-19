@@ -20,7 +20,7 @@ versions.
 1. Make sure you have installed the dependencies:
 
    * A recent 64-bit version of SBCL 
-   * The system "concrete-syntax-tree" using Quicklisp
+   * The system "concrete-syntax-tree" from Quicklisp
    * The system "eclector", also from Quicklisp
    
 2. Make sure your SBCL has a 10GB heap by passing --dynamic-space-size
