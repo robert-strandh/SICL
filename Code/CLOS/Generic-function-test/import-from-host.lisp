@@ -38,9 +38,10 @@
   (closer-mop:standard-instance-access instance location))
 
 (defun ensure-generic-function (function-name &key lambda-list)
-  (make-instance 'standard-generic-function
-    ::name function-name
-    :lambda-list lambda-list))
+  (setf (fdefinition function-name)
+        (make-instance 'standard-generic-function
+          ::name function-name
+          :lambda-list lambda-list)))
 
 (defmacro my-defgeneric (name lambda-list)
   `(ensure-generic-function ',name :lambda-list ',lambda-list))
