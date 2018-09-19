@@ -8,6 +8,5 @@
            #:make-method
            #:call-method
            #:method-combination
-           #:ensure-generic-function
-           #:defgeneric)
+           #:ensure-generic-function)
   (:export #:variant-signature))
