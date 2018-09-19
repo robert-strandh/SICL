@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "package")
+   (:file "defmethod-support")
    (:file "import-from-host")
    (:file "../generic-function-defclass")
    (:file "../standard-generic-function-defclass")
