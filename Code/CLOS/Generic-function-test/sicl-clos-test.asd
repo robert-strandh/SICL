@@ -46,5 +46,6 @@
    (:file "../compute-discriminating-function-support-c")
    (:file "../generic-function-initialization-support")
    (:file "../generic-function-initialization-defmethods")
+   (:file "../invalidate-discriminating-function")
    (:file "../method-combination-defclass")))
 
