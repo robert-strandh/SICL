@@ -55,3 +55,25 @@
 
 (defun canonicalize-specializers (specializers)
   `(list ,@(mapcar #'canonicalize-specializer specializers)))
+
+(defun defmethod-expander (function-name rest)
+  (multiple-value-bind
+        (qualifiers required remaining specializers declarations documentation forms)
+      (parse-defmethod rest)
+    (let* ((lambda-list (append required remaining))
+           (generic-function-var (gensym)))
+      `(let* ((,generic-function-var (fdefinition ,function-name)))
+         (ensure-method
+          ,generic-function-var
+          :lambda-list ',lambda-list
+          :qualifiers ',qualifiers
+          :specializers ,(canonicalize-specializers specializers)
+          :documentation ,documentation
+          :function
+          ,(make-method-lambda
+            (closer-mop:class-prototype (find-class 'standard-generic-function))
+            (closer-mop:class-prototype (find-class 'standard-method))
+            `(lambda ,lambda-list
+               ,@declarations
+               ,@forms)
+            nil))))))
