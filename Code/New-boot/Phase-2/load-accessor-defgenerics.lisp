@@ -48,7 +48,10 @@
 (defun load-accessor-defgenerics (boot)
   (sicl-minimal-extrinsic-environment:host-load
    "CLOS/generic-function-initialization-support.lisp")
-  (let ((e (sicl-new-boot:e3 boot)))
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
+                   (e sicl-new-boot:e3))
+      boot
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-clos:defgeneric-expander e)
     (load-file "CLOS/defgeneric-defmacro.lisp" e)
