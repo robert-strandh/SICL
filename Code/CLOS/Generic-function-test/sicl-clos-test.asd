@@ -50,5 +50,6 @@
    (:file "../invalidate-discriminating-function")
    (:file "../method-combination-defclass")
    (:file "../make-method-lambda-support")
-   (:file "../make-method-lambda-defmethods")))
+   (:file "../make-method-lambda-defmethods")
+   (:file "../make-method-for-generic-function")))
 
