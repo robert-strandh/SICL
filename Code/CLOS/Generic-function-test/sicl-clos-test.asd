@@ -4,6 +4,7 @@
   :depends-on (#:closer-mop
                #:cleavir-code-utilities
                #:cleavir-environment
+	       #:cleavir-compilation-policy
                #:concrete-syntax-tree)
   :serial t
   :components
@@ -22,6 +23,11 @@
    ;; (:file "../../Environment/typep-methods")
    (:file "../../Environment/other-methods")
    (:file "../../Environment/other-functions")
+   (:file "../../Environment/Simple/packages")
+   (:file "../../Environment/Simple/conditions")
+   (:file "../../Environment/Simple/condition-reporters-english")
+   (:file "../../Environment/Simple/environment")
+   (:file "../../Environment/Simple/methods")
 
    (:file "../../Method-combination/packages")
    (:file "../../Method-combination/method-combination-template-defclass")
