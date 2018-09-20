@@ -269,29 +269,30 @@
     (if (null call-cache)
 	;; No call cache exists with the same applicable method cache.
 	;; We must create a new effective method.
-	(let ((effective-method
-		(compute-effective-method
-		 generic-function
-		 method-combination
-                 applicable-methods)))
+	(let* ((effective-method
+                 (compute-effective-method
+                  generic-function
+                  method-combination
+                  applicable-methods))
+               (effective-method-function (compile nil effective-method)))
 	  ;; Add a new call cache to the call history.
 	  (setf (call-history generic-function)
 		(cons (make-call-cache class-numbers
 				       applicable-methods
-				       effective-method)
+				       effective-method-function)
 		      call-history))
-	  effective-method)
+	  effective-method-function)
 	;; We already have a call cache with the same applicable
 	;; method cache.  Create an entry that reuses the existing
 	;; applicable method cache and the existing effective method.
 	(let ((applicable-methods (applicable-method-cache call-cache))
-	      (effective-method (effective-method-cache call-cache)))
+	      (effective-method-function (effective-method-cache call-cache)))
 	  (setf (call-history generic-function)
 		(cons (make-call-cache class-numbers
 				       applicable-methods
-				       effective-method)
+				       effective-method-function)
 		      call-history))
-	  effective-method))))
+	  effective-method-function))))
     
 ;;; This function can not itself be the discriminating function of a
 ;;; generic function, because it also takes the generic function
@@ -313,7 +314,7 @@
       ;; Found an entry, call the effective method of the entry,
       ;; passing it the arguments we received.
       (return-from default-discriminating-function
-	(apply (effective-method-cache entry) arguments)))
+	(funcall (effective-method-cache entry) arguments)))
     ;; Come here if the call history did not contain an entry for the
     ;; current arguments.
     (let ((classes (mapcar #'class-of required-arguments))
@@ -326,7 +327,7 @@
 						  class-numbers
 						  applicable-methods)))
 	    (return-from default-discriminating-function
-	      (apply effective-method arguments))))
+	      (funcall effective-method arguments))))
 	;; Come here if we can't compute the applicable methods using
 	;; only the classes of the arguments. 
 	(let ((applicable-methods
