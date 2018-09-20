@@ -52,5 +52,6 @@
    (:file "../make-method-lambda-support")
    (:file "../make-method-lambda-defmethods")
    (:file "../make-method-for-generic-function")
-   (:file "ensure-method")))
+   (:file "ensure-method")
+   (:file "my-defmethod-defmacro")))
 
