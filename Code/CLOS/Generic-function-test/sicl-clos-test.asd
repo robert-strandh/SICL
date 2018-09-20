@@ -38,6 +38,8 @@
    (:file "../../Method-combination/short-form-expansion")
    (:file "../../Method-combination/define-method-combination-support")
    (:file "../../Method-combination/find-method-combination")
+   (:file "customization")
+   (:file "define-method-combination")
    (:file "../compute-effective-method-support-c")
    (:file "../compute-effective-method-defgenerics")
    (:file "../compute-effective-method-defmethods-b")
