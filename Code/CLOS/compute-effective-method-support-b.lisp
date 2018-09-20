@@ -65,7 +65,7 @@
         (after-methods (reverse (remove-if-not  #'after-method-p methods)))
         (around-methods (remove-if-not  #'around-method-p methods)))
     (if (null primary-methods)
-        (lambda (&rest args)
+        (lambda (args)
           (error "no primary method"))
         (let ((primary-chain
                 (lambda (args)
@@ -80,7 +80,7 @@
                 (lambda (args)
                   (loop for method in after-methods
                         do (funcall (method-function method) args '())))))
-          (lambda (&rest args)
+          (lambda (args)
             (if (null around-methods)
                 (progn (funcall before-chain args)
                        (multiple-value-prog1

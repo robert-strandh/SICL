@@ -60,7 +60,7 @@
         (after-methods (remove-if-not  #'after-method-p methods))
         (around-methods (remove-if-not  #'around-method-p methods)))
     (if (null primary-methods)
-        (compile nil '(lambda (&rest args)
+        (compile nil '(lambda (args)
                        (declare (ignore args))
                        (error "no primary method")))
         (let ((primary-chain
@@ -81,12 +81,12 @@
           (compile
            nil
            (if (null around-methods)
-               `(lambda (&rest args)
+               `(lambda (args)
                   ,@before-chain
                   (multiple-value-prog1
                       ,primary-chain
                     ,@after-chain))
-               `(lambda (&rest args)
+               `(lambda (args)
                   (funcall ,(method-function (car around-methods))
                            args
                            (list ,@(loop for method in (cdr around-methods)

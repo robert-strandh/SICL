@@ -397,7 +397,7 @@
       ;; Found an entry, call the effective method of the entry,
       ;; passing it the arguments we received.
       (return-from default-discriminating-function
-	(apply (effective-method-cache entry) arguments)))
+	(funcall (effective-method-cache entry) arguments)))
     ;; Come here if the call history did not contain an entry for the
     ;; current arguments.
     (let ((classes (mapcar #'class-of required-arguments))
@@ -411,7 +411,7 @@
 						  classes
 						  applicable-methods)))
 	    (return-from default-discriminating-function
-	      (apply effective-method arguments))))
+	      (funcall effective-method arguments))))
 	;; Come here if we can't compute the applicable methods using
 	;; only the classes of the arguments. 
 	(let ((applicable-methods
@@ -423,7 +423,7 @@
 		   generic-function
 		   method-combination
 		   (final-methods applicable-methods classes))))
-	    (apply effective-method arguments)))))))
+	    (funcall effective-method arguments)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
