@@ -40,19 +40,14 @@
 (defun general-instance-access (instance location)
   (closer-mop:standard-instance-access instance location))
 
+(defvar *mc*)
+
 (defun ensure-generic-function (function-name &key lambda-list)
   (setf (fdefinition function-name)
         (make-instance 'standard-generic-function
           ::name function-name
-          :lambda-list lambda-list)))
+          :lambda-list lambda-list
+          :method-combination *mc*)))
 
 (defmacro my-defgeneric (name lambda-list)
   `(ensure-generic-function ',name :lambda-list ',lambda-list))
-
-(defparameter *env* (make-instance 'sicl-simple-environment:simple-environment))
-
-(defmethod sicl-genv:find-method-combination-template (name (env null))
-  (sicl-genv:find-method-combination-template name *env*))
-
-(defmethod (setf sicl-genv:find-method-combination-template) (mc name (env null))
-  (setf (sicl-genv:find-method-combination-template name *env*) mc))
