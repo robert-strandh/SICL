@@ -9,3 +9,6 @@
 (defun import-functions-from-host (names environment)
   (loop for name in names
         do (import-function-from-host name environment)))
+
+(defun import-package-from-host (name environment)
+  (sicl-minimal-extrinsic-environment:import-package-from-host name environment))
