@@ -39,7 +39,6 @@
    (:file "../discriminating-tagbody")
    (:file "../list-utilities")
    (:file "../compute-applicable-methods-support")
-   (:file "../compute-applicable-methods-defgenerics")
    (:file "../compute-applicable-methods-defmethods")
    (:file "../compute-discriminating-function-defgenerics")
    (:file "compute-discriminating-function-support")
