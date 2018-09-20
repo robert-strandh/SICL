@@ -27,6 +27,9 @@
 (setf (fdefinition 'make-method-lambda)
       #'closer-mop:make-method-lambda)
 
+(setf (fdefinition 'method-function)
+      #'closer-mop:method-function)
+
 (defun classp (object)
   (typep object 'class))
 
@@ -45,3 +48,5 @@
 
 (defmacro my-defgeneric (name lambda-list)
   `(ensure-generic-function ',name :lambda-list ',lambda-list))
+
+(defparameter *env* (make-instance 'sicl-simple-environment:simple-environment))
