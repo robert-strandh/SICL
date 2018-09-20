@@ -62,7 +62,7 @@
       (parse-defmethod rest)
     (let* ((lambda-list (append required remaining))
            (generic-function-var (gensym)))
-      `(let* ((,generic-function-var (fdefinition ,function-name)))
+      `(let* ((,generic-function-var (fdefinition ',function-name)))
          (ensure-method
           ,generic-function-var
           :lambda-list ',lambda-list
