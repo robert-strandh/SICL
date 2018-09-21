@@ -35,9 +35,9 @@
      ,form))
 
 (defun wrap-in-make-method-macrolet
-    (form method-class-name arguments-var next-methods-var)
+    (form method-class arguments-var next-methods-var)
   `(macrolet ((make-method (make-method-form)
-                `(make-instance ',',method-class-name
+                `(make-instance ,',method-class
                    :qualifiers '()
                    :lambda-list '()
                    :specializers '()
@@ -51,13 +51,13 @@
                      ',next-methods-var))))
      ,form))
 
-(defun wrap-method-combination-form (form method-class-name)
+(defun wrap-method-combination-form (form method-class)
   (let ((arguments-var (gensym "ARGUMENTS-"))
         (next-methods-var (gensym "NEXT-METHODS-")))
     `(lambda (,arguments-var)
        ,(wrap-in-call-method-macrolet
          (wrap-in-make-method-macrolet
-          form method-class-name arguments-var next-methods-var)
+          form method-class arguments-var next-methods-var)
          arguments-var next-methods-var))))
 
 (defun compute-effective-method-default
@@ -69,6 +69,5 @@
          (variant-signature (variant-signature method-combination))
          (function (sicl-method-combination:effective-method-form-function template))
          (form (apply function method-qualifier-pairs variant-signature))
-         (method-class (generic-function-method-class generic-function))
-         (method-class-name (class-name method-class)))
-    (wrap-method-combination-form form method-class-name)))
+         (method-class (generic-function-method-class generic-function)))
+    (wrap-method-combination-form form method-class)))
