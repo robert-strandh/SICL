@@ -56,6 +56,9 @@
      'sicl-clos:defgeneric-expander e)
     (load-file "CLOS/defgeneric-defmacro.lisp" e)
     (import-package-from-host 'sicl-method-combination e1)
+    (import-class-from-host
+     'sicl-method-combination:method-combination-template
+     e1)
     (import-functions-from-host
      '(make-instance sicl-loop::list-car sicl-loop::list-cdr equal reverse
        sicl-method-combination::define-method-combination-expander
