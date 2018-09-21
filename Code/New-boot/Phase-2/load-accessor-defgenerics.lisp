@@ -5,25 +5,34 @@
 ;;; Creating class accessor generic functions.
 
 (defun ensure-generic-function-phase-2 (boot)
-  (let* ((class-env (sicl-new-boot:e1 boot))
-         (gf-class-name 'standard-generic-function)
-         (gf-class (sicl-genv:find-class gf-class-name class-env))
-         (method-class-name 'standard-method)
-         (method-class (sicl-genv:find-class method-class-name class-env))
-         (target-env (sicl-new-boot:e3 boot)))
-    (setf (sicl-genv:fdefinition 'ensure-generic-function target-env)
-          (lambda (function-name &rest arguments
-                   &key environment
-                   &allow-other-keys)
-            (let ((args (copy-list arguments)))
-              (loop while (remf args :environment))
-              (if (sicl-genv:fboundp function-name environment)
-                  (sicl-genv:fdefinition function-name environment)
-                  (setf (sicl-genv:fdefinition function-name environment)
-                        (apply #'make-instance gf-class
-                               :name function-name
-                               :method-class method-class
-                               args))))))))
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e3 sicl-new-boot:e3))
+      boot
+    (let* ((class-env (sicl-new-boot:e1 boot))
+           (gf-class-name 'standard-generic-function)
+           (gf-class (sicl-genv:find-class gf-class-name class-env))
+           (method-class-name 'standard-method)
+           (method-class (sicl-genv:find-class method-class-name class-env))
+           (target-env e3)
+           (method-combination
+             (funcall (sicl-genv:fdefinition
+                       'sicl-method-combination:find-method-combination
+                       e1)
+                      'standard '() e1)))
+      (setf (sicl-genv:fdefinition 'ensure-generic-function target-env)
+            (lambda (function-name &rest arguments
+                     &key environment
+                     &allow-other-keys)
+              (let ((args (copy-list arguments)))
+                (loop while (remf args :environment))
+                (if (sicl-genv:fboundp function-name environment)
+                    (sicl-genv:fdefinition function-name environment)
+                    (setf (sicl-genv:fdefinition function-name environment)
+                          (apply #'make-instance gf-class
+                                 :name function-name
+                                 :method-class method-class
+                                 :method-combination method-combination
+                                 args)))))))))
 
 ;;; FIXME: remove the :AROUND method after booting is complete.
 (defun set-up-generic-function-initialization (boot)
