@@ -143,6 +143,12 @@
     (import-functions-from-host '(zerop nth intersection make-list) e2)
     (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-support.lisp" e2)
+    (import-functions-from-host
+     '(sicl-clos::add-path
+       sicl-clos::compute-discriminating-tagbody
+       sicl-clos::extract-transition-information
+       sicl-clos::make-automaton)
+     e2)
     (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
     (load-file-protected "CLOS/satiation.lisp" e2)
