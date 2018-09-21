@@ -18,6 +18,9 @@
                           (apply make-instance
                                  gf-class-name
                                  :name function-name
+                                 ;; :method-combination
+                                 ;; (sicl-method-combination:find-method-combination
+                                 ;; 'standard '() e3)
                                  args)))))))))
 
 (defun activate-generic-function-initialization (boot)
