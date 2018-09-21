@@ -55,6 +55,7 @@
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-clos:defgeneric-expander e)
     (load-file "CLOS/defgeneric-defmacro.lisp" e)
+    (import-package-from-host 'sicl-method-combination e1)
     (ensure-generic-function-phase-2 boot)
     (set-up-generic-function-initialization boot)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e)
