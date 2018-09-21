@@ -78,6 +78,10 @@
        sicl-method-combination::variants
        (setf sicl-method-combination::variants))
      e1)
+    (setf (sicl-genv:fdefinition 'sicl-clos::template e1)
+          (sicl-genv:fdefinition 'sicl-clos::template e2))
+    (setf (sicl-genv:fdefinition 'sicl-clos::variant-signature e1)
+          (sicl-genv:fdefinition 'sicl-clos::variant-signature e2))
     (ensure-generic-function-phase-2 boot)
     (set-up-generic-function-initialization boot)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e)
