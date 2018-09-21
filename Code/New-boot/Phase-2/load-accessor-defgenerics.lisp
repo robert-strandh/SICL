@@ -62,6 +62,7 @@
        sicl-genv:find-method-combination-template
        (setf sicl-genv:find-method-combination-template))
      e1)
+    (load-file "Method-combination/define-method-combination-defmacro.lisp" e1)
     (ensure-generic-function-phase-2 boot)
     (set-up-generic-function-initialization boot)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e)
