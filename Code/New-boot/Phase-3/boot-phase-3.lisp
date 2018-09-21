@@ -60,27 +60,24 @@
     (load-file "CLOS/allocate-instance-support.lisp" e2)
     (load-file "CLOS/allocate-instance-defmethods.lisp" e2)))
 
+(defun satiate-function (function e2)
+  (funcall (sicl-genv:fdefinition
+            'sicl-clos::compute-and-set-specializer-profile e2)
+           function (sicl-genv:find-class 't e2))
+  (funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
+           function))
+
 (defun satiate-all-functions (e1 e2 e3)
   (format *trace-output* "Satiating all functions.~%")
   (do-all-symbols (var)
     (when (and (sicl-genv:fboundp var e3)
                (eq (class-of (sicl-genv:fdefinition var e3))
                    (sicl-genv:find-class 'standard-generic-function e1)))
-      (funcall (sicl-genv:fdefinition
-                'sicl-clos::compute-and-set-specializer-profile e2)
-               (sicl-genv:fdefinition var e3)
-               (sicl-genv:find-class 't e2))
-      (funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
-               (sicl-genv:fdefinition var e3)))
+      (satiate-function (sicl-genv:fdefinition var e3) e2))
     (when (and (sicl-genv:fboundp `(setf ,var) e3)
                (eq (class-of (sicl-genv:fdefinition `(setf ,var) e3))
                    (sicl-genv:find-class 'standard-generic-function e1)))
-      (funcall (sicl-genv:fdefinition
-                'sicl-clos::compute-and-set-specializer-profile e2)
-               (sicl-genv:fdefinition `(setf ,var) e3)
-               (sicl-genv:find-class 't e2))
-      (funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
-               (sicl-genv:fdefinition `(setf ,var) e3))))
+      (satiate-function (sicl-genv:fdefinition `(setf ,var) e3) e2)))
   (format *trace-output* "Done satiating all functions.~%"))
 
 (defun activate-generic-function-invocation (boot)
