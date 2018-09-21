@@ -12,3 +12,7 @@
 
 (defun import-package-from-host (name environment)
   (sicl-minimal-extrinsic-environment:import-package-from-host name environment))
+
+(defun import-class-from-host (name environment)
+  (setf (sicl-genv:find-class name environment)
+        (find-class name)))
