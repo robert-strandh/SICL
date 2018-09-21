@@ -73,6 +73,11 @@
      e1)
     (load-file "Method-combination/define-method-combination-defmacro.lisp" e1)
     (load-file "CLOS/standard-method-combination.lisp" e1)
+    (import-functions-from-host
+     '(sicl-method-combination::variant-signature-determiner
+       sicl-method-combination::variants
+       (setf sicl-method-combination::variants))
+     e1)
     (ensure-generic-function-phase-2 boot)
     (set-up-generic-function-initialization boot)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e)
