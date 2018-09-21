@@ -339,7 +339,7 @@
 		   generic-function
 		   method-combination
                    applicable-methods)))
-	    (apply effective-method arguments)))))))
+	    (funcall effective-method arguments)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
