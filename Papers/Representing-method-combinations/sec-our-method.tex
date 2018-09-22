@@ -1,1 +1,69 @@
 \section{Our technique}
+
+We introduce a class named \texttt{method-combination-template}.  An
+instance of this class represents all method combinations with the
+same \emph{name}, independent of the options.  There is a template for
+\texttt{standard}, a template for \texttt{and}, etc.
+
+A method combination, as used by the \commonlisp{} standard and by the
+MOP is an instance of the class \texttt{method-combination}.  There is
+not a subclass of this class for each method-combination type
+mentioned in the \commonlisp{} standard.  In other words, a method
+combination is a \emph{variant} of a method-combination template.
+
+To avoid creating a new variant instance for each generic function, we
+use the following technique.  We analyze the lambda list in the long
+form of \texttt{define-method-combination}.  The \commonlisp{}
+standard requires this lambda list to be an \emph{ordinary} lambda
+list.  We assume that this lambda list contains only lexical
+variables.  The result of the analysis of this lambda list is a list
+of lexical variables that are available to the body of the code in the
+\texttt{define-method-combination} form.  From this list, we define a
+function called the \emph{variant determiner} as follows:
+
+\begin{verbatim}
+(lambda (...)
+  (list v1 v2 ... vn))
+\end{verbatim}
+
+The lambda list of this function is the lambda list of the
+\texttt{define-method-combination} form and \texttt{v1}, \texttt{v2},
+..., \texttt{vn} are the lexical variables resulting from our analysis
+of the lambda list.  Applying this function to the \emph{options}
+given in the \texttt{defgeneric} form or given to the
+\texttt{find-method-combination} function returns a list of objects
+that uniquely determines the result of a variant, provided that it
+only refers to the lexical variables in its lambda list.  We call this
+list the \emph{variant signature}.
+
+In addition to the variant-determiner function, we create a second
+function as follows:
+
+\begin{verbatim}
+(lambda (<method-list> v1 v2 ... vn)
+  <body>)
+\end{verbatim}
+
+where \texttt{<method-list>} is a lexical variable that contains the
+list of methods to be processed by the method combination, and where
+\texttt{<body>} is the expanded body of the
+\texttt{define-method-combination} form.  We call this function the
+\emph{effective method form function}.  Clearly, with the
+restrictions that we impose, applying this function to the variant
+signature has the same effect as if the original lambda list had been
+used with the method-combination options given in the
+\texttt{defgeneric} form or given to the
+\texttt{find-method-combination} function.
+
+We store the effective method form function in the method-combination
+template.  The template contains a list of variants and each variant
+contains a reference to the template as well as the variant signature.
+
+When \texttt{find-method-combination} is called, we find the template
+with the name that is passed as an argument.  Then, we apply the
+variant determiner to the options, also passed as an argument in order
+to obtain a variant signature.  We use the variant signature to
+traverse the list of variants to determine whether any signature is
+\texttt{equal} to the one just computed.  If so, the corresponding
+variant is returned.  If not, a new variant is allocated, stored in
+the list of variants, and then returned.
