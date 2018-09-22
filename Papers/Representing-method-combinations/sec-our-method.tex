@@ -67,3 +67,8 @@ traverse the list of variants to determine whether any signature is
 \texttt{equal} to the one just computed.  If so, the corresponding
 variant is returned.  If not, a new variant is allocated, stored in
 the list of variants, and then returned.
+
+Clearly, there are some restrictions associated with our technique.  A
+method-combination option can only be of certain restricted types that
+allow comparisons using \texttt{equal}.  In practice, however, options
+are typically symbols, so this restriction should not pose a problem.
