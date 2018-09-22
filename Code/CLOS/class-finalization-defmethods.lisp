@@ -19,8 +19,8 @@
 
 ;;; Use REAL-CLASS for now.
 (defmethod compute-effective-slot-definition ((class real-class)
-					      name
-					      direct-slot-definitions)
+                                              name
+                                              direct-slot-definitions)
   (compute-effective-slot-definition-default
    name
    direct-slot-definitions
