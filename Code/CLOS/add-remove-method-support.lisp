@@ -46,7 +46,7 @@
 
 (defun add-method-default (generic-function method)
   (unless (null (method-generic-function method))
-    (error method-already-associated-with-a-generic-function
+    (error 'method-already-associated-with-a-generic-function
            :method-to-add method
            :its-generic-function (method-generic-function method)))
   ;; FIXME: check that the lambda list are congruent
