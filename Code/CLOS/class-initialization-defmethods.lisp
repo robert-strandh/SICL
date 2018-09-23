@@ -15,7 +15,7 @@
      &key
      &allow-other-keys)
   (apply #'shared-initialize-around-real-class-default
-	 #'call-next-method
-	 class
-	 slot-names
-	 initargs))
+         #'call-next-method
+         class
+         slot-names
+         initargs))

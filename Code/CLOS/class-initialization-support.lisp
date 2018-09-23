@@ -72,33 +72,33 @@
   (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
     (error "direct superclasses must be proper list"))
   (loop for direct-superclass in direct-superclasses
-	do (unless (sicl-genv:typep direct-superclass
+        do (unless (sicl-genv:typep direct-superclass
                                     'class
                                     (sicl-genv:global-environment))
-	     (error "superclass must be a class metaobject"))
-	   (unless (validate-superclass class direct-superclass)
-	     (error "superclass not valid for class"))))
+             (error "superclass must be a class metaobject"))
+           (unless (validate-superclass class direct-superclass)
+             (error "superclass not valid for class"))))
 
 (defun check-and-instantiate-direct-slots (class direct-slots)
   (unless (cleavir-code-utilities:proper-list-p direct-slots)
     (error "direct slots must be proper list"))
   ;; FIXME: check that the elements are canonicalized slot specifications
   (loop for canonicalized-slot-specification in direct-slots
-	collect (apply #'make-instance
-		       (apply #'direct-slot-definition-class
-			      class canonicalized-slot-specification)
-		       canonicalized-slot-specification)))
+        collect (apply #'make-instance
+                       (apply #'direct-slot-definition-class
+                              class canonicalized-slot-specification)
+                       canonicalized-slot-specification)))
 
 (defun add-as-subclass-to-superclasses (class direct-superclasses)
   (loop for superclass in direct-superclasses
-	do (add-direct-subclass superclass class)))
+        do (add-direct-subclass superclass class)))
 
 (defun create-readers-and-writers (class direct-slots)
   (loop for direct-slot in direct-slots
-	do (loop for reader in (slot-definition-readers direct-slot)
-		 do (add-reader-method class reader direct-slot))
-	   (loop for writer in (slot-definition-writers direct-slot)
-		 do (add-writer-method class writer direct-slot))))
+        do (loop for reader in (slot-definition-readers direct-slot)
+                 do (add-reader-method class reader direct-slot))
+           (loop for writer in (slot-definition-writers direct-slot)
+                 do (add-writer-method class writer direct-slot))))
 
 (defun shared-initialize-around-real-class-default
     (call-next-method
@@ -116,12 +116,12 @@
     (setf direct-superclasses (default-superclasses class)))
   (let ((slots (check-and-instantiate-direct-slots class direct-slots)))
     (apply call-next-method
-	   class
-	   slot-names
-	   :direct-superclasses direct-superclasses
-	   :direct-default-initargs direct-default-initargs
-	   :direct-slots slots
-	   initargs)
+           class
+           slot-names
+           :direct-superclasses direct-superclasses
+           :direct-default-initargs direct-default-initargs
+           :direct-slots slots
+           initargs)
     (add-as-subclass-to-superclasses class direct-superclasses)
     (create-readers-and-writers class slots))
   class)
