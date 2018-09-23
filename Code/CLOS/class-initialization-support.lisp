@@ -49,7 +49,7 @@
 ;;; :before, :after, and :around methods that a portable program is
 ;;; allowed to define specialize for STRICT SUBCLASSES of the standard
 ;;; classes, so we are safe if we define an :after method in
-;;; INITIALIZE-INSTANCE here. 
+;;; INITIALIZE-INSTANCE here.
 
 (defun check-direct-default-initargs (direct-default-initargs)
   (unless (cleavir-code-utilities:proper-list-p direct-default-initargs)
