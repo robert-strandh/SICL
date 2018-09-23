@@ -17,7 +17,7 @@
 ;;; still check that the :DIRECT-DEFAULT-INITARGS, is a canonicalized
 ;;; list.
 
-;;; For :DIRECT-SLOTS, the situation is more complicated.  the
+;;; For :DIRECT-SLOTS, the situation is more complicated.  The
 ;;; DEFCLASS macro provides us with the canonicalized
 ;;; slot-descriptions, but it can not create the
 ;;; DIRECT-SLOT-DEFINITION metaobjects, because the class to be used
@@ -30,25 +30,25 @@
 ;;; default for this initialization argument, so that if it is not
 ;;; given, the old value is retained.
 
-;;; Provide an :after method on INITIALIZE-INSTANCE to be used
-;;; when class meta-objects are instantiated.  As the AMOP says,
-;;; we have to provide appropriate default values for the superclasses
-;;; and we have to link the superclasses to this new class meta-object.
-;;; We also have to create slot meta-objects from the slot property
-;;; list provided to initialize-instance.
+;;; Provide an :AFTER method on INITIALIZE-INSTANCE to be used when
+;;; class metaobjects are instantiated.  As the AMOP says, we have to
+;;; provide appropriate default values for the superclasses and we
+;;; have to link the superclasses to this new class metaobject.  We
+;;; also have to create slot metaobjects from the slot property list
+;;; provided to initialize-instance.
 
 ;;; The AMOP is not quite clear when it comes to restrictions on
 ;;; portable programs with respect to methods on INITIALIZE-INSTANCE
 ;;; and REINITIALIZE-INSTANCE.  It explicitly allows for portable
-;;; programs to define :before and :after methods on
+;;; programs to define :BEFORE and :AFTER methods on
 ;;; INITIALIZE-INSTANCE, so one might think that the implementation
-;;; could not define an :after method on INITIALIZE-INSTANCE because
+;;; could not define an :AFTER method on INITIALIZE-INSTANCE because
 ;;; it could be overridden by a perfectly good portable program.  But
-;;; then, when reading the restriction about :around methods (it says
+;;; then, when reading the restriction about :AROUND methods (it says
 ;;; it must be EXTENDING, not OVERRIDING) it seems clear that the
-;;; :before, :after, and :around methods that a portable program is
+;;; :BEFORE, :AFTER, and :AROUND methods that a portable program is
 ;;; allowed to define specialize for STRICT SUBCLASSES of the standard
-;;; classes, so we are safe if we define an :after method in
+;;; classes, so we are safe if we define an :AFTER method in
 ;;; INITIALIZE-INSTANCE here.
 
 (defun check-direct-default-initargs (direct-default-initargs)
