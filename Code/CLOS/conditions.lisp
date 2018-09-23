@@ -41,3 +41,9 @@
 (define-condition option-or-method-must-be-non-empty-list
     (sicl-additional-conditions:sicl-error)
   ((%expression :initarg :expression :reader expressions)))
+
+(define-condition method-already-associated-with-a-generic-function
+    (sicl-additional-conditions:sicl-error)
+  ((%method-to-add :initarg :method-to-add :reader method-to-add)
+   (%its-generic-function :initarg :its-generic-function
+                          :reader its-generic-function)))
