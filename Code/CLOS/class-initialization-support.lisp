@@ -53,7 +53,8 @@
 
 (defun check-direct-default-initargs (direct-default-initargs)
   (unless (cleavir-code-utilities:proper-list-p direct-default-initargs)
-    (error "direct default initargs must be a proper list"))
+    (error 'direct-default-initargs-must-be-a-proper-list
+           :initargs direct-default-initargs))
   (loop for initarg in direct-default-initargs
         do (unless (cleavir-code-utilities:proper-list-p initarg)
              (error "direct default initarg must be a proper list"))
