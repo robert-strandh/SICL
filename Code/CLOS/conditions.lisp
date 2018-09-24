@@ -55,3 +55,7 @@
   ((%method-to-add :initarg :method-to-add :reader method-to-add)
    (%its-generic-function :initarg :its-generic-function
                           :reader its-generic-function)))
+
+(define-condition direct-default-initargs-must-be-a-proper-list
+    (sicl-additional-conditions:sicl-error)
+  ((%initargs :initarg :initargs :reader initargs)))
