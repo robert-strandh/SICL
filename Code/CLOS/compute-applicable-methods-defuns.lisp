@@ -10,4 +10,4 @@
 (defun compute-applicable-methods-using-classes
     (generic-function classes-of-arguments)
   (compute-applicable-methods-using-classes-default generic-function
-						    classes-of-arguments))
+                                                    classes-of-arguments))
