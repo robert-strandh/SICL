@@ -45,12 +45,10 @@
 
 (defmethod class-default-initargs :before (class)
   (unless (class-finalized-p class)
-    (error "Attempt to access the default initargs of the class ~s~@
-            which has not yet been finalized."
-	   class)))
+    (error 'attempt-to-access-the-default-initargs-of-unfinalized-class
+           :offending-class class)))
 
 (defmethod class-slots :before (class)
   (unless (class-finalized-p class)
-    (error "Attempt to access the effective slots of the class ~s~@
-            which has not yet been finalized."
-	   class)))
+    (error 'attempt-to-access-the-effective-slots-of-unfinalized-class
+           :offending-class class)))
