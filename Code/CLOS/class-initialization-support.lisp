@@ -57,7 +57,8 @@
            :initargs direct-default-initargs))
   (loop for initarg in direct-default-initargs
         do (unless (cleavir-code-utilities:proper-list-p initarg)
-             (error "direct default initarg must be a proper list"))
+             (error 'direct-default-initarg-must-be-a-proper-list
+                    :initarg initarg))
            (unless (= (length initarg) 3)
              (error "direct default initarg must be a list of three elements"))
            (destructuring-bind (name form function) initarg
