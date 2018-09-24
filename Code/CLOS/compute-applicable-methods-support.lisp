@@ -5,21 +5,21 @@
 ;;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES.
 ;;;;
 ;;;; In this file, there are no definitions of generic functions, nor
-;;;; of any methods.  
+;;;; of any methods.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utilities.
 
 ;;; Given two specializers S1 and S2 that are not EQ, return true if
-;;; and only if S1 is a sub-specializer S2.  
+;;; and only if S1 is a sub-specializer S2.
 ;;;
 ;;; Recall that this function is used to determine whether one
 ;;; applicable method is more specific than another applicable method.
 ;;; It follows that S1 and S2 can not both be EQL specializers,
 ;;; because they would then either be EQ, and this function would not
 ;;; be called, or they would not be EQ and one of the methods would
-;;; not be applicable.  
+;;; not be applicable.
 ;;;
 ;;; If S1 is an EQL specializer, then S1 is a sub-specializer of S2.
 ;;; If S2 is an EQL specializer, then S2 is not a sub-specializer of
@@ -47,15 +47,15 @@
 		(position specializer2 precedence-list))))))
 
 ;;; Determine whether a method is more specific than another method
-;;; with respect to a list of classes of required arguments.  
+;;; with respect to a list of classes of required arguments.
 ;;;
 ;;; Recall that whether a method is more or less specific than another
 ;;; method is also a function of the classes of the arguments, because
 ;;; the order of two classes in the class precedence list of two
-;;; different argument classes can be different.  
+;;; different argument classes can be different.
 ;;;
 ;;; This function is called only with applicable methods with respect
-;;; to the classes of the arguments supplied.  
+;;; to the classes of the arguments supplied.
 ;;;
 ;;; It is possible for two methods of a generic function to be equally
 ;;; specific (which then means that they have the same specializer in
@@ -79,7 +79,7 @@
 ;;;
 ;;; We use MEMBER (rather than (say) FIND) because MEMBER is a rather
 ;;; simple function that works only on lists, whereas we might want to
-;;; make FIND a generic function.  
+;;; make FIND a generic function.
 (defun subclassp (class1 class2)
   (member class2 (class-precedence-list class1) :test #'eq))
 
@@ -161,4 +161,3 @@
       (lambda (method1 method2)
 	(method-more-specific-p method1 method2 classes-of-arguments)))
      t)))
-
