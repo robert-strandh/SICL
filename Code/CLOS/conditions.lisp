@@ -59,3 +59,7 @@
 (define-condition direct-default-initargs-must-be-a-proper-list
     (sicl-additional-conditions:sicl-error)
   ((%initargs :initarg :initargs :reader initargs)))
+
+(define-condition direct-default-initarg-must-be-a-proper-list
+    (sicl-additional-conditions:sicl-error)
+  ((%initarg :initarg :initarg :reader initarg)))
