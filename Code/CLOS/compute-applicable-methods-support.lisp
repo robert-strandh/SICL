@@ -39,12 +39,12 @@
 ;;; error, which is reassuring.
 (defun sub-specializer-p (specializer1 specializer2 class-of-argument)
   (cond ((typep specializer1 'eql-specializer)
-	 t)
-	((typep specializer2 'eql-specializer)
-	 nil)
-	(t (let ((precedence-list (class-precedence-list class-of-argument)))
-	     (< (position specializer1 precedence-list)
-		(position specializer2 precedence-list))))))
+         t)
+        ((typep specializer2 'eql-specializer)
+         nil)
+        (t (let ((precedence-list (class-precedence-list class-of-argument)))
+             (< (position specializer1 precedence-list)
+                (position specializer2 precedence-list))))))
 
 ;;; Determine whether a method is more specific than another method
 ;;; with respect to a list of classes of required arguments.
@@ -67,10 +67,10 @@
 ;;; FIXME: take into account the argument precedence order.
 (defun method-more-specific-p (method1 method2 classes-of-arguments)
   (loop for s1 in (method-specializers method1)
-	for s2 in (method-specializers method2)
-	for class-of-argument in classes-of-arguments
-	unless (eq s1 s2)
-	  return (sub-specializer-p s1 s2 class-of-argument)))
+        for s2 in (method-specializers method2)
+        for class-of-argument in classes-of-arguments
+        unless (eq s1 s2)
+          return (sub-specializer-p s1 s2 class-of-argument)))
 
 ;;; Determine whether a class C1 is a (not necessarily strict)
 ;;; subclass of another class C2.  This can be done by checking
@@ -91,15 +91,15 @@
 ;;; class.
 (defun maybe-applicable-p (method classes)
   (loop with result = t
-	for specializer in (method-specializers method)
-	for class in classes
-	do (if (classp specializer)
-	       (unless (subclassp class specializer)
-		 (return-from maybe-applicable-p nil))
-	       (if (eq (class-of (eql-specializer-object specializer)) class)
-		   (setf result :sometimes)
-		   (return-from maybe-applicable-p nil)))
-	finally (return result)))
+        for specializer in (method-specializers method)
+        for class in classes
+        do (if (classp specializer)
+               (unless (subclassp class specializer)
+                 (return-from maybe-applicable-p nil))
+               (if (eq (class-of (eql-specializer-object specializer)) class)
+                   (setf result :sometimes)
+                   (return-from maybe-applicable-p nil)))
+        finally (return result)))
 
 ;;; Determine whether a method is applicable to a sequence of
 ;;; arguments.  The list of arguments may contain more elements than
@@ -107,13 +107,13 @@
 ;;; elements of the list of arguments are simply ignored.
 (defun definitely-applicable-p (method arguments)
   (loop for specializer in (method-specializers method)
-	for argument in arguments
-	do (if (classp specializer)
-	       (unless (subclassp (class-of argument) specializer)
-		 (return-from definitely-applicable-p nil))
-	       (unless (eql (eql-specializer-object specializer) argument)
-		 (return-from definitely-applicable-p nil)))
-	finally (return t)))
+        for argument in arguments
+        do (if (classp specializer)
+               (unless (subclassp (class-of argument) specializer)
+                 (return-from definitely-applicable-p nil))
+               (unless (eql (eql-specializer-object specializer) argument)
+                 (return-from definitely-applicable-p nil)))
+        finally (return t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -130,8 +130,8 @@
   (let ((classes-of-arguments (mapcar #'class-of arguments)))
     (sort-list
      (loop for method in (generic-function-methods generic-function)
-	   when (definitely-applicable-p method arguments)
-	     collect method)
+           when (definitely-applicable-p method arguments)
+             collect method)
      (lambda (method1 method2)
        (method-more-specific-p method1 method2 classes-of-arguments)))))
 
@@ -153,11 +153,11 @@
     (values
      (sort-list
       (loop for method in (generic-function-methods generic-function)
-	    when (let ((a (maybe-applicable-p method classes-of-arguments)))
-		   (if (eq a :somtimes)
-		       (return-from b (values '() nil))
-		       a))
-	      collect method)
+            when (let ((a (maybe-applicable-p method classes-of-arguments)))
+                   (if (eq a :somtimes)
+                       (return-from b (values '() nil))
+                       a))
+              collect method)
       (lambda (method1 method2)
-	(method-more-specific-p method1 method2 classes-of-arguments)))
+        (method-more-specific-p method1 method2 classes-of-arguments)))
      t)))
