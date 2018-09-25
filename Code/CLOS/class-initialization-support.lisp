@@ -60,7 +60,8 @@
              (error 'direct-default-initarg-must-be-a-proper-list
                     :initarg initarg))
            (unless (= (length initarg) 3)
-             (error "direct default initarg must be a list of three elements"))
+             (error 'direct-default-initarg-must-be-a-list-of-three-elements
+                    :initarg initarg))
            (destructuring-bind (name form function) initarg
              (declare (ignore form))
              (unless (symbolp name)
