@@ -72,3 +72,8 @@
     (sicl-additional-conditions:sicl-error)
   ((%initarg :initarg :initarg :reader initarg)
    (%name :name :name :reader name)))
+
+(define-condition third-element-of-direct-default-initarg-must-be-a-thunk
+    (sicl-additional-conditions:sicl-error)
+  ((%initarg :initarg :initarg :reader initarg)
+   (%initfunction :initfunction :initfunction :reader initfunction)))
