@@ -67,3 +67,8 @@
 (define-condition direct-default-initarg-must-be-a-list-of-three-elements
     (sicl-additional-conditions:sicl-error)
   ((%initarg :initarg :initarg :reader initarg)))
+
+(define-condition name-of-direct-default-initarg-must-be-a-symbol
+    (sicl-additional-conditions:sicl-error)
+  ((%initarg :initarg :initarg :reader initarg)
+   (%name :name :name :reader name)))
