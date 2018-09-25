@@ -70,7 +70,8 @@
              (unless (sicl-genv:typep function
                                       'function
                                       (sicl-genv:global-environment))
-               (error "third element of direct default initarg must be a thunk.")))))
+               (error 'third-element-of-direct-default-initarg-must-be-a-thunk
+                      :initarg initarg :initfunction function)))))
 
 (defun check-direct-superclasses (class direct-superclasses)
   (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
