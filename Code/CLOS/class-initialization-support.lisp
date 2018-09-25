@@ -65,7 +65,8 @@
            (destructuring-bind (name form function) initarg
              (declare (ignore form))
              (unless (symbolp name)
-               (error "name of direct default initarg must be a symbol"))
+               (error 'name-of-direct-default-initarg-must-be-a-symbol
+                      :initarg initarg :name name))
              (unless (sicl-genv:typep function
                                       'function
                                       (sicl-genv:global-environment))
