@@ -55,19 +55,18 @@
 ;;;
 ;;; MIR instruction MEMREF2-INSTRUCTION
 ;;;
-;;; This instruction loads a memory location.  It takes a two inputs.
-;;; The first input contains the base address of the datum to load.
-;;; The second input contains constant offset.  This instruction has a
-;;; single output which is set to the contents of the memory location
-;;; at the address computed as the sum of the base address and the
-;;; offset.
+;;; This instruction loads a memory location.  It takes a single input
+;;; containing the address of the word to load.  It has a single
+;;; output which is set to the contents of the memory location at the
+;;; address specified by the input and the offset added together.
 
 (defclass memref2-instruction (instruction one-successor-mixin)
-  ())
+  ((%offset :initarg :offset :reader offset)))
 
 (defun make-memref2-instruction (base-address offset output &optional successor)
   (make-instance 'memref2-instruction
-    :inputs (list base-address offset)
+    :inputs (list base-address)
+    :offset offset
     :outputs (list output)
     :successors (if (null successor) '() (list successor))))
 
@@ -94,17 +93,18 @@
 ;;; MIR instruction MEMSET2-INSTRUCTION
 ;;;
 ;;; This instruction stores an item in a memory location.  It takes
-;;; three inputs.  The first input is the base address of a location
-;;; in memory.  The second input is an offset.  The third input is the
-;;; item to be stored in the location in memory whose address is the
-;;; sum of the base address and the offset.
+;;; two inputs.  The first input is the address of a location in
+;;; memory.  The second input is the item to be stored in that
+;;; location.  This instruction adds the input address to the offset
+;;; and stores the input in the resulting address.
 
 (defclass memset2-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-memset2-instruction (base-address offset value &optional successor)
   (make-instance 'memset2-instruction
-    :inputs (list base-address offset value)
+    :inputs (list base-address value)
+    :offset offset
     :outputs '()
     :successors (if (null successor) '() (list successor))))
 
