@@ -84,7 +84,8 @@
              (error 'superclass-must-be-a-class-metaobject
                     :superclass direct-superclass))
            (unless (validate-superclass class direct-superclass)
-             (error "superclass not valid for class"))))
+             (error 'superclass-not-valid-for-class
+                    :superclass direct-superclass))))
 
 (defun check-and-instantiate-direct-slots (class direct-slots)
   (unless (cleavir-code-utilities:proper-list-p direct-slots)
