@@ -89,3 +89,7 @@
 (define-condition superclass-not-valid-for-class
     (sicl-additional-conditions:sicl-error)
   ((%superclass :superclass :superclass :reader superclass)))
+
+(define-condition direct-slots-must-be-proper-list
+    (sicl-additional-conditions:sicl-error)
+  ((%direct-lost :direct-lost :direct-lost :reader direct-lost)))
