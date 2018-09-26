@@ -126,7 +126,8 @@
    #:map-instructions #:map-instructions-with-owner
    #:map-local-instructions #:filter-local-instructions
    #:local-instructions-of-type
-   #:set-predecessors))
+   #:set-predecessors
+   #:offset))
 
 (defpackage #:cleavir-ir-graphviz
   (:use #:common-lisp #:cleavir-ir)
