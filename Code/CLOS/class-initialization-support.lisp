@@ -75,7 +75,8 @@
 
 (defun check-direct-superclasses (class direct-superclasses)
   (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
-    (error "direct superclasses must be proper list"))
+    (error 'direct-superclasses-must-be-proper-list
+           :superclasses direct-superclasses))
   (loop for direct-superclass in direct-superclasses
         do (unless (sicl-genv:typep direct-superclass
                                     'class
