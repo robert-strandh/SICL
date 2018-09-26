@@ -17,16 +17,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum RAW-UNSIGNED-INTEGER.
+;;; Datum RAW-INTEGER.
 
-(defclass raw-unsigned-integer (raw-datum)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum RAW-SIGNED-INTEGER.
-
-(defclass raw-signed-integer (raw-datum)
+(defclass raw-integer (raw-datum)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
