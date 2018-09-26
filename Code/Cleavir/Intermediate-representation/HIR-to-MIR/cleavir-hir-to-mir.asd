@@ -5,4 +5,5 @@
 	       :cleavir-mir)
   :serial t
   :components
-  ((:file "general")))
+  ((:file "packages")
+   (:file "general")))
