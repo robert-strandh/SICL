@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "general")
+   (:file "conditions")
    (:file "graphviz-drawing")))
