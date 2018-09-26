@@ -81,7 +81,8 @@
         do (unless (sicl-genv:typep direct-superclass
                                     'class
                                     (sicl-genv:global-environment))
-             (error "superclass must be a class metaobject"))
+             (error 'superclass-must-be-a-class-metaobject
+                    :superclass direct-superclass))
            (unless (validate-superclass class direct-superclass)
              (error "superclass not valid for class"))))
 
