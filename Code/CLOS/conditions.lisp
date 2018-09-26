@@ -77,3 +77,7 @@
     (sicl-additional-conditions:sicl-error)
   ((%initarg :initarg :initarg :reader initarg)
    (%initfunction :initfunction :initfunction :reader initfunction)))
+
+(define-condition direct-superclasses-must-be-proper-list
+    (sicl-additional-conditions:sicl-error)
+  ((%superclasses :superclasses :superclasses :reader superclasses)
