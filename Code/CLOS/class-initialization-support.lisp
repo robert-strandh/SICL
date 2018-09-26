@@ -90,7 +90,7 @@
 (defun check-and-instantiate-direct-slots (class direct-slots)
   (unless (cleavir-code-utilities:proper-list-p direct-slots)
     (error 'direct-slots-must-be-proper-list
-           :direct-slots direct slots))
+           :direct-slots direct-slots))
   ;; FIXME: check that the elements are canonicalized slot specifications
   (loop for canonicalized-slot-specification in direct-slots
         collect (apply #'make-instance
