@@ -80,4 +80,9 @@
 
 (define-condition direct-superclasses-must-be-proper-list
     (sicl-additional-conditions:sicl-error)
-  ((%superclasses :superclasses :superclasses :reader superclasses)
+  ((%superclasses :superclasses :superclasses :reader superclasses)))
+
+(define-condition superclass-must-be-a-class-metaobject
+    (sicl-additional-conditions:sicl-error)
+  ((%superclass :superclass :superclass :reader superclass)))
+
