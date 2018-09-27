@@ -2,4 +2,5 @@
 
 (defmethod class-prototype :before ((class class))
   (unless (class-finalized-p class)
-    (error "the class is not finalized")))
+    (error 'attempt-to-access-prototype-of-unfinalized-class
+           :offending-class class)))
