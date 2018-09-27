@@ -12,8 +12,8 @@
    (%creation-thunk :initarg :creation-thunk :reader creation-thunk)
    (%initialization-form :initarg :initialization-form :reader initialization-form)
    (%initialization-thunk :initarg :initialization-thunk :reader initialization-thunk)
-   ;; This slot is used during hoisting, to ensure that every constructor
-   ;; is only hoisted once.
+   ;; This slot is used during hoisting to track the lexical location of
+   ;; the constructor and to ensure that it is only hoisted once.
    (%lexical-location :initform nil :accessor lexical-location))
   (:default-initargs :creation-form nil
                      :initialization-form nil

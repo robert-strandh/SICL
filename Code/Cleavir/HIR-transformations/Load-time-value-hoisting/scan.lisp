@@ -33,7 +33,8 @@
       (scan-literal-object value system))))
 
 (defmethod scan-datum ((load-time-value-input cleavir-ir:load-time-value-input) system)
-  (multiple-value-bind (constructor present-p) (constructor load-time-value-input)
+  (multiple-value-bind (constructor present-p)
+      (constructor load-time-value-input)
     (cond ((not present-p)
            (let* ((creation-form (cleavir-ir:form load-time-value-input))
                   (constructor (make-constructor creation-form nil system)))
@@ -45,7 +46,8 @@
                   :form (creation-form constructor))))))
 
 (defmethod scan-literal-object (object system)
-  (multiple-value-bind (constructor present-p) (constructor object)
+  (multiple-value-bind (constructor present-p)
+      (constructor object)
     (cond ((not present-p)
            (let ((constructor
                    (multiple-value-call #'make-constructor
