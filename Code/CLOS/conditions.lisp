@@ -21,6 +21,10 @@
   ()
   (:default-initargs :type 'list))
 
+(define-condition attempt-to-access-prototype-of-unfinalized-class
+    (sicl-additional-conditions:sicl-error)
+  ((%offending-class :initarg :offending-class :reader offending-class)))
+
 (define-condition attempt-to-access-precedence-list-of-unfinalized-class
     (sicl-additional-conditions:sicl-error)
   ((%offending-class :initarg :offending-class :reader offending-class)))
