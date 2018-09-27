@@ -11,8 +11,8 @@
 (defun make-default-discriminating-function (generic-function)
   (lambda (&rest arguments)
     (default-discriminating-function generic-function
-				     arguments
-				     (specializer-profile generic-function))))
+                                     arguments
+                                     (specializer-profile generic-function))))
 
 (defun compute-discriminating-function-default (generic-function)
   (make-default-discriminating-function generic-function))
