@@ -6,8 +6,8 @@
    #:hoist-load-time-values
 
    #:immediate-p
-   #:compile-form
-   #:make-constructor
+   #:hir-from-form
+   #:make-load-form-using-client
    #:equalp-keys
 
    #:scan-hir

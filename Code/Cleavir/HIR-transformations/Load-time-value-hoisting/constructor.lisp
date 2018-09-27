@@ -9,14 +9,23 @@
    ;; initially and set to T once the creation thunk has been scanned.
    (%creation-form-finalized-p :initform nil :accessor creation-form-finalized-p)
    (%creation-form :initarg :creation-form :reader creation-form)
+   (%creation-thunk :initarg :creation-thunk :reader creation-thunk)
    (%initialization-form :initarg :initialization-form :reader initialization-form)
-   (%creation-thunk :initarg :creation-thunk :accessor creation-thunk)
-   (%initialization-thunk :initarg :initialization-thunk :accessor initialization-thunk)
+   (%initialization-thunk :initarg :initialization-thunk :reader initialization-thunk)
+   ;; This slot is used during hoisting, to ensure that every constructor
+   ;; is only hoisted once.
    (%lexical-location :initform nil :accessor lexical-location))
   (:default-initargs :creation-form nil
                      :initialization-form nil
                      :creation-thunk nil
                      :initialization-thunk nil))
+
+(defun make-constructor (creation-form initialization-form system)
+  (make-instance 'constructor
+    :creation-form creation-form
+    :creation-thunk (hir-from-form creation-form system)
+    :initialization-form initialization-form
+    :initialization-thunk (hir-from-form initialization-form system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

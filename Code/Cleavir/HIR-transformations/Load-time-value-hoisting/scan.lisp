@@ -36,12 +36,9 @@
   (multiple-value-bind (constructor present-p) (constructor load-time-value-input)
     (cond ((not present-p)
            (let* ((creation-form (cleavir-ir:form load-time-value-input))
-                  (creation-thunk (compile-form creation-form system))
-                  (constructor (make-instance 'constructor
-                                 :creation-form creation-form
-                                 :creation-thunk creation-thunk)))
+                  (constructor (make-constructor creation-form nil system)))
              (setf (constructor load-time-value-input) constructor)
-             (scan-hir creation-thunk system)
+             (scan-hir (creation-thunk constructor) system)
              (setf (creation-form-finalized-p constructor) t)))
           ((not (creation-form-finalized-p constructor))
            (error 'circular-dependencies-in-load-time-value-form
@@ -50,7 +47,10 @@
 (defmethod scan-literal-object (object system)
   (multiple-value-bind (constructor present-p) (constructor object)
     (cond ((not present-p)
-           (let* ((constructor (make-constructor object system)))
+           (let ((constructor
+                   (multiple-value-call #'make-constructor
+                     (make-load-form-using-client object system)
+                     system)))
              (setf (constructor object) constructor)
              (scan-hir (creation-thunk constructor) system)
              (setf (creation-form-finalized-p constructor) t)

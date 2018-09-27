@@ -4,10 +4,12 @@
 (defgeneric immediate-p (object system))
 
 ;;; Return the HIR flowchart corresponding to FORM.
-(defgeneric compile-form (form system))
+(defgeneric hir-from-form (form system))
 
-;;; Create a new constructor and scan its creation and initialization form.
-(defgeneric make-constructor (object system))
+;;; Similar to CL:MAKE-LOAD-FORM, but instead of receiving an environment
+;;; as the second argument, MAKE-LOAD-FORM-USING-CLIENT receives a client
+;;; object.
+(defgeneric make-load-form-using-client (object system))
 
 ;;; Return a list of keys.  Objects with at least one shared key (in the
 ;;; sense of equalp) are assumed to be similar.

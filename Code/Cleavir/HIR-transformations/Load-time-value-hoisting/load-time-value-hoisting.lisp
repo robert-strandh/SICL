@@ -11,15 +11,15 @@
 ;;; leading to infinite recursion.  The following client specific methods
 ;;; are mandatory for this transformation to succeed:
 ;;;
-;;; - A default method on COMPILE-FORM, that converts a form to the
+;;; - A default method on HIR-FROM-FORM, that converts a form to the
 ;;;   corresponding HIR.
 ;;;
-;;; - A default method on MAKE-CONSTRUCTOR that calls MAKE-LOAD-FORM with a
-;;;   suitable environment.
+;;; - A default method on MAKE-LOAD-FORM-USING-CLIENT that calls
+;;;   MAKE-LOAD-FORM with a suitable environment.
 ;;;
-;;; - Specialized methods on MAKE-CONSTRUCTOR for symbols and strings.  The
-;;;   given defaults are merely for illustration result in infinitely
-;;;   recursive definitions.
+;;; - Specialized methods on MAKE-LOAD-FORM-USING-CLIENT for symbols and
+;;;   strings.  The given defaults are merely for illustration result in
+;;;   infinitely recursive definitions.
 ;;;
 ;;; In addition to the above methods, clients should adapt the behavior of
 ;;; IMMEDIATE-P and EQUALP-KEYS to their needs.
