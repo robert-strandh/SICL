@@ -58,3 +58,11 @@
               (lambda (key value)
                 `(setf (gethash ,key ,hash-table) ',value))
               hash-table))))
+
+(defmethod make-load-form-using-client ((random-state random-state) system)
+  ;; CLHS 22.1.3.10 explicitly permits the following serialization.
+  `(with-standard-io-syntax
+     (values
+      (read-from-string
+       ,(with-standard-io-syntax
+          (prin1-to-string random-state))))))
