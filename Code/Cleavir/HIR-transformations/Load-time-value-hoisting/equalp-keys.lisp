@@ -14,7 +14,12 @@
          (name-constructor (constructor name))
          (package-constructor (constructor package))
          (keys '()))
+    ;; Symbols with similar name and similar package are similar. Also,
+    ;; apparently uninterned symbols with the same name are similar.  This
+    ;; first key takes care of both cases.
     (push (list class name-constructor package-constructor) keys)
+    ;; Two interned symbols can also be similar if they are both accessible
+    ;; in the current package at compile time.
     (unless (null package)
       (push (list class name-constructor (constructor *package*)) keys))
     keys))

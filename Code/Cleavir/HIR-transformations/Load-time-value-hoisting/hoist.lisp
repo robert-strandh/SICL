@@ -12,10 +12,9 @@
 ;;;
 ;;; Auxiliary Functions
 
-;;; The initial instruction is the instruction that, initially, is the
-;;; successor of the enter instruction passed to HOIST-TOPLEVEL-HIR.  All
-;;; calls to creation and initialization thunks are placed before this
-;;; instruction.
+;;; The initial instruction is the instruction that, is the successor of
+;;; the enter instruction passed to HOIST-TOPLEVEL-HIR.  All calls to
+;;; creation and initialization thunks are placed before this instruction.
 (defvar *initial-instruction*)
 
 (defun push-instruction (instruction)
