@@ -38,12 +38,13 @@
               (setf (sicl-global-environment:function-type ',name ,env)
                     ',function-type))
             (eval-when (:load-toplevel :execute)
-              (let ((env (sicl-global-environment:global-environment)))
-                (ensure-generic-function
-                 ',name
-                 :lambda-list ',lambda-list
-                 :environment env)
+              (let* ((env (sicl-global-environment:global-environment))
+                     (fun (ensure-generic-function
+                           ',name
+                           :lambda-list ',lambda-list
+                           :environment env)))
                 (setf (sicl-global-environment:function-lambda-list ',name env)
                       ',lambda-list)
                 (setf (sicl-global-environment:function-type ',name env)
-                      ',function-type))))))
+                      ',function-type)
+                fun)))))
