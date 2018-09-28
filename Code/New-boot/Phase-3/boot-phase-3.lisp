@@ -80,6 +80,11 @@
       (satiate-function (sicl-genv:fdefinition `(setf ,var) e3) e2)))
   (format *trace-output* "Done satiating all functions.~%"))
 
+(defun my-class-of (object)
+  (if (typep object 'header)
+      (slot-value object '%class)
+      (class-of object)))
+
 (defun activate-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -94,7 +99,7 @@
     (load-file "CLOS/classp-defgeneric.lisp" e2)
     (load-file "CLOS/classp-defmethods.lisp" e2)
     (setf (sicl-genv:fdefinition 'class-of e2)
-          #'class-of)
+          #'my-class-of)
     (setf (sicl-genv:fdefinition 'find-class e2)
           (lambda (name)
             (sicl-genv:find-class name e1)))
