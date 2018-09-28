@@ -353,29 +353,30 @@
     (if (null call-cache)
         ;; No call cache exists with the same applicable method cache.
         ;; We must create a new effective method.
-        (let ((effective-method
-                (compute-effective-method
-                 generic-function
-                 method-combination
-                 (final-methods applicable-methods classes))))
+        (let* ((effective-method
+                 (compute-effective-method
+                  generic-function
+                  method-combination
+                  (final-methods applicable-methods classes)))
+               (effective-method-function (compile nil effective-method)))
           ;; Add a new call cache to the call history.
           (setf (call-history generic-function)
                 (cons (make-call-cache class-numbers
                                        applicable-methods
-                                       effective-method)
+                                       effective-method-function)
                       call-history))
-          effective-method)
+          effective-method-function)
         ;; We already have a call cache with the same applicable
         ;; method cache.  Create an entry that reuses the existing
         ;; applicable method cache and the existing effective method.
         (let ((applicable-methods (applicable-method-cache call-cache))
-              (effective-method (effective-method-cache call-cache)))
+              (effective-method-function (effective-method-cache call-cache)))
           (setf (call-history generic-function)
                 (cons (make-call-cache class-numbers
                                        applicable-methods
-                                       effective-method)
+                                       effective-method-function)
                       call-history))
-          effective-method))))
+          effective-method-function))))
     
 ;;; This function can not itself be the discriminating function of a
 ;;; generic function, because it also takes the generic function
@@ -406,24 +407,26 @@
       (multiple-value-bind (applicable-methods ok)
           (compute-applicable-methods-using-classes generic-function classes)
         (when ok
-          (let ((effective-method (add-call-cache generic-function
-                                                  class-numbers
-                                                  classes
-                                                  applicable-methods)))
+          (let* ((effective-method (add-call-cache generic-function
+                                                   class-numbers
+                                                   classes
+                                                   applicable-methods))
+                 (effective-method-function (compile nil effective-method)))
             (return-from default-discriminating-function
-              (funcall effective-method arguments))))
+              (funcall effective-method-function arguments))))
         ;; Come here if we can't compute the applicable methods using
         ;; only the classes of the arguments. 
         (let ((applicable-methods
                 (compute-applicable-methods generic-function arguments)))
           (when (null applicable-methods)
             (apply #'no-applicable-method generic-function arguments))
-          (let ((effective-method
-                  (compute-effective-method
-                   generic-function
-                   method-combination
-                   (final-methods applicable-methods classes))))
-            (funcall effective-method arguments)))))))
+          (let* ((effective-method
+                   (compute-effective-method
+                    generic-function
+                    method-combination
+                    (final-methods applicable-methods classes)))
+                 (effective-method-function (compile nil effective-method)))
+            (funcall effective-method-function arguments)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
