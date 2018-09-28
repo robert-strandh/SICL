@@ -240,31 +240,31 @@
 
 (defun determine-slot-location (class accessor-method)
   (let* ((slot-definition (accessor-method-slot-definition accessor-method))
-	 (slot-name (slot-definition-name slot-definition))
-	 (effective-slots (class-slots class))
-	 (effective-slot (find slot-name effective-slots
-			       :key #'slot-definition-name
-			       :test #'eq)))
+         (slot-name (slot-definition-name slot-definition))
+         (effective-slots (class-slots class))
+         (effective-slot (find slot-name effective-slots
+                               :key #'slot-definition-name
+                               :test #'eq)))
     (slot-definition-location effective-slot)))
 
 (defun effective-method-from-reader-method (class method)
   (let ((location (determine-slot-location class method)))
     (compile nil
-	     `(lambda (instance)
-		(declare (ignorable instance))
-		,(if (consp location)
-		     `(car ',location)
-		     `(standard-instance-access instance ,location))))))
+             `(lambda (instance)
+                (declare (ignorable instance))
+                ,(if (consp location)
+                     `(car ',location)
+                     `(standard-instance-access instance ,location))))))
 
 (defun effective-method-from-writer-method (class method)
   (let ((location (determine-slot-location class method)))
     (compile nil
-	     `(lambda (new-value instance)
-		(declare (ignorable instance))
-		(setf ,(if (consp location)
-			   `(car ',location)
-			   `(standard-instance-access instance ,location))
-		      new-value)))))
+             `(lambda (new-value instance)
+                (declare (ignorable instance))
+                (setf ,(if (consp location)
+                           `(car ',location)
+                           `(standard-instance-access instance ,location))
+                      new-value)))))
 
 ;;; This function takes a method and, if it is a standard reader
 ;;; method or a standard writer method, it replaces it with a method
@@ -273,54 +273,54 @@
 (defun maybe-replace-method (method classes)
   (let ((method-class (class-of method)))
     (flet ((slot-location (direct-slot class)
-	     (let* ((name (slot-definition-name direct-slot))
-		    (effective-slots (class-slots class))
-		    (effective-slot (find name effective-slots
-					  :key #'slot-definition-name
-					  :test #'eq)))
-	       (slot-definition-location effective-slot))))
+             (let* ((name (slot-definition-name direct-slot))
+                    (effective-slots (class-slots class))
+                    (effective-slot (find name effective-slots
+                                          :key #'slot-definition-name
+                                          :test #'eq)))
+               (slot-definition-location effective-slot))))
       (cond ((eq method-class (find-class 'standard-reader-method))
-	     (let* ((direct-slot (accessor-method-slot-definition method))
-		    (location (slot-location direct-slot (car classes)))
-		    (lambda-expression
-		      `(lambda (arguments next-methods)
-			 (declare (ignorable arguments next-methods))
-			 ,(if (consp location)
-			      `(car ',location)
-			      `(standard-instance-access
-				(car arguments) ,location)))))
-	       (make-instance (find-class 'standard-reader-method)
-		 :qualifiers '()
-		 :specializers (method-specializers method)
-		 :lambda-list (method-lambda-list method)
-		 :slot-definition direct-slot
-		 :documentation nil
-		 :function (compile nil lambda-expression))))
-	    ((eq method-class (find-class 'standard-writer-method))
-	     (let* ((direct-slot (accessor-method-slot-definition method))
-		    (location (slot-location direct-slot (cadr classes)))
-		    (lambda-expression
-		      `(lambda (arguments next-methods)
-			 (declare (ignorable arguments next-methods))
-			 ,(if (consp location)
-			      `(setf (car ',location)
-				     (car arguments))
-			      `(setf (standard-instance-access
-				      (cadr arguments) ,location)
-				     (car arguments))))))
-	       (make-instance (find-class 'standard-writer-method)
-		 :qualifiers '()
-		 :specializers (method-specializers method)
-		 :lambda-list (method-lambda-list method)
-		 :slot-definition direct-slot
-		 :documentation nil
-		 :function (compile nil lambda-expression))))
-	    (t
-	     method)))))
+             (let* ((direct-slot (accessor-method-slot-definition method))
+                    (location (slot-location direct-slot (car classes)))
+                    (lambda-expression
+                      `(lambda (arguments next-methods)
+                         (declare (ignorable arguments next-methods))
+                         ,(if (consp location)
+                              `(car ',location)
+                              `(standard-instance-access
+                                (car arguments) ,location)))))
+               (make-instance (find-class 'standard-reader-method)
+                 :qualifiers '()
+                 :specializers (method-specializers method)
+                 :lambda-list (method-lambda-list method)
+                 :slot-definition direct-slot
+                 :documentation nil
+                 :function (compile nil lambda-expression))))
+            ((eq method-class (find-class 'standard-writer-method))
+             (let* ((direct-slot (accessor-method-slot-definition method))
+                    (location (slot-location direct-slot (cadr classes)))
+                    (lambda-expression
+                      `(lambda (arguments next-methods)
+                         (declare (ignorable arguments next-methods))
+                         ,(if (consp location)
+                              `(setf (car ',location)
+                                     (car arguments))
+                              `(setf (standard-instance-access
+                                      (cadr arguments) ,location)
+                                     (car arguments))))))
+               (make-instance (find-class 'standard-writer-method)
+                 :qualifiers '()
+                 :specializers (method-specializers method)
+                 :lambda-list (method-lambda-list method)
+                 :slot-definition direct-slot
+                 :documentation nil
+                 :function (compile nil lambda-expression))))
+            (t
+             method)))))
 
 (defun final-methods (methods classes)
   (loop for method in methods
-	collect (maybe-replace-method method classes)))
+        collect (maybe-replace-method method classes)))
 
 ;;; This function computes a discriminating for a generic function,
 ;;; given the existing call history, and then it call
@@ -345,37 +345,37 @@
 (defun add-call-cache
     (generic-function class-numbers classes applicable-methods)
   (let* ((call-history (call-history generic-function))
-	 (call-cache (car (member applicable-methods call-history
-				  :key #'applicable-method-cache
-				  :test #'equal)))
-	 (method-combination
-	   (generic-function-method-combination generic-function)))
+         (call-cache (car (member applicable-methods call-history
+                                  :key #'applicable-method-cache
+                                  :test #'equal)))
+         (method-combination
+           (generic-function-method-combination generic-function)))
     (if (null call-cache)
-	;; No call cache exists with the same applicable method cache.
-	;; We must create a new effective method.
-	(let ((effective-method
-		(compute-effective-method
-		 generic-function
-		 method-combination
-		 (final-methods applicable-methods classes))))
-	  ;; Add a new call cache to the call history.
-	  (setf (call-history generic-function)
-		(cons (make-call-cache class-numbers
-				       applicable-methods
-				       effective-method)
-		      call-history))
-	  effective-method)
-	;; We already have a call cache with the same applicable
-	;; method cache.  Create an entry that reuses the existing
-	;; applicable method cache and the existing effective method.
-	(let ((applicable-methods (applicable-method-cache call-cache))
-	      (effective-method (effective-method-cache call-cache)))
-	  (setf (call-history generic-function)
-		(cons (make-call-cache class-numbers
-				       applicable-methods
-				       effective-method)
-		      call-history))
-	  effective-method))))
+        ;; No call cache exists with the same applicable method cache.
+        ;; We must create a new effective method.
+        (let ((effective-method
+                (compute-effective-method
+                 generic-function
+                 method-combination
+                 (final-methods applicable-methods classes))))
+          ;; Add a new call cache to the call history.
+          (setf (call-history generic-function)
+                (cons (make-call-cache class-numbers
+                                       applicable-methods
+                                       effective-method)
+                      call-history))
+          effective-method)
+        ;; We already have a call cache with the same applicable
+        ;; method cache.  Create an entry that reuses the existing
+        ;; applicable method cache and the existing effective method.
+        (let ((applicable-methods (applicable-method-cache call-cache))
+              (effective-method (effective-method-cache call-cache)))
+          (setf (call-history generic-function)
+                (cons (make-call-cache class-numbers
+                                       applicable-methods
+                                       effective-method)
+                      call-history))
+          effective-method))))
     
 ;;; This function can not itself be the discriminating function of a
 ;;; generic function, because it also takes the generic function
@@ -386,44 +386,44 @@
 ;;; some other mechanism.
 (defun default-discriminating-function (generic-function arguments profile)
   (let* ((required-argument-count (length profile))
-	 (required-arguments (subseq arguments 0 required-argument-count))
-	 (class-numbers (loop for argument in required-arguments
-			      for p in profile
-			      when p
-				collect (instance-class-number argument)))
-	 (entry (car (member class-numbers (call-history generic-function)
-			     :key #'class-number-cache :test #'equal))))
+         (required-arguments (subseq arguments 0 required-argument-count))
+         (class-numbers (loop for argument in required-arguments
+                              for p in profile
+                              when p
+                                collect (instance-class-number argument)))
+         (entry (car (member class-numbers (call-history generic-function)
+                             :key #'class-number-cache :test #'equal))))
     (unless (null entry)
       ;; Found an entry, call the effective method of the entry,
       ;; passing it the arguments we received.
       (return-from default-discriminating-function
-	(funcall (effective-method-cache entry) arguments)))
+        (funcall (effective-method-cache entry) arguments)))
     ;; Come here if the call history did not contain an entry for the
     ;; current arguments.
     (let ((classes (mapcar #'class-of required-arguments))
-	  (method-combination
-	    (generic-function-method-combination generic-function)))
+          (method-combination
+            (generic-function-method-combination generic-function)))
       (multiple-value-bind (applicable-methods ok)
-	  (compute-applicable-methods-using-classes generic-function classes)
-	(when ok
-	  (let ((effective-method (add-call-cache generic-function
-						  class-numbers
-						  classes
-						  applicable-methods)))
-	    (return-from default-discriminating-function
-	      (funcall effective-method arguments))))
-	;; Come here if we can't compute the applicable methods using
-	;; only the classes of the arguments. 
-	(let ((applicable-methods
-		(compute-applicable-methods generic-function arguments)))
-	  (when (null applicable-methods)
-	    (apply #'no-applicable-method generic-function arguments))
-	  (let ((effective-method
-		  (compute-effective-method
-		   generic-function
-		   method-combination
-		   (final-methods applicable-methods classes))))
-	    (funcall effective-method arguments)))))))
+          (compute-applicable-methods-using-classes generic-function classes)
+        (when ok
+          (let ((effective-method (add-call-cache generic-function
+                                                  class-numbers
+                                                  classes
+                                                  applicable-methods)))
+            (return-from default-discriminating-function
+              (funcall effective-method arguments))))
+        ;; Come here if we can't compute the applicable methods using
+        ;; only the classes of the arguments. 
+        (let ((applicable-methods
+                (compute-applicable-methods generic-function arguments)))
+          (when (null applicable-methods)
+            (apply #'no-applicable-method generic-function arguments))
+          (let ((effective-method
+                  (compute-effective-method
+                   generic-function
+                   method-combination
+                   (final-methods applicable-methods classes))))
+            (funcall effective-method arguments)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
