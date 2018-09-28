@@ -2,12 +2,14 @@
 
 (defmethod class-default-initargs ((class forward-referenced-class))
   (declare (ignore class))
-  (error "A forward referenced class does not have any default initargs"))
+  (error 'attempt-to-access-default-initargs-of-forward-referenced-class
+         :offending-class class))
 
 (defmethod class-precedence-list ((class forward-referenced-class))
   (declare (ignore class))
-  (error "A forward referenced class does not have a precedence list"))
+  (error 'attempt-to-access-precedence-list-of-forward-referenced-class
+         :offending-class class))
 
 (defmethod class-slots ((class forward-referenced-class))
   (declare (ignore class))
-  (error "A forward referenced class does not have any slots"))
+  (error 'attempt-to-access-effective-slots-of-forward-referenced-class))
