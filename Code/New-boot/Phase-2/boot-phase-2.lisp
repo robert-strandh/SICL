@@ -28,9 +28,6 @@
 (defclass environment (sicl-minimal-extrinsic-environment:environment)
   ())
 
-(defmethod sicl-genv:class-of (object (environment environment))
-  (class-of object))
-
 (defmethod sicl-genv:typep
     (object (type-specifier (eql 'class)) (environment environment))
   t)
