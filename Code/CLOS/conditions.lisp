@@ -37,6 +37,18 @@
     (sicl-additional-conditions:sicl-error)
   ((%offending-class :initarg :offending-class :reader offending-class)))
 
+(define-condition attempt-to-access-precedence-list-of-forward-referenced-class
+    (sicl-additional-conditions:sicl-error)
+  ((%offending-class :initarg :offending-class :reader offending-class)))
+
+(define-condition attempt-to-access-default-initargs-of-forward-referenced-class
+    (sicl-additional-conditions:sicl-error)
+  ((%offending-class :initarg :offending-class :reader offending-class)))
+
+(define-condition attempt-to-access-effective-slots-of-forward-referenced-class
+    (sicl-additional-conditions:sicl-error)
+  ((%offending-class :initarg :offending-class :reader offending-class)))
+
 (define-condition no-such-class-name
     (sicl-additional-conditions:sicl-type-error)
   ()
