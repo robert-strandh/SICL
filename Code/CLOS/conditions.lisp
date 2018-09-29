@@ -49,6 +49,10 @@
     (sicl-additional-conditions:sicl-error)
   ((%offending-class :initarg :offending-class :reader offending-class)))
 
+(define-condition malformed-specializer
+    (sicl-additional-conditions:sicl-error)
+  ((%specializer :initarg :specializer :reader specializer)))
+
 (define-condition no-such-class-name
     (sicl-additional-conditions:sicl-type-error)
   ()
