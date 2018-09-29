@@ -51,7 +51,7 @@
               (null (cddr specializer)))
          `(make-instance 'eql-specializer :object ,(cadr specializer)))
         (t
-         (error "malformed specializer: ~s" specializer))))
+         (error 'malformed-specializer :specializer specializer))))
 
 (defun canonicalize-specializers (specializers)
   `(list ,@(mapcar #'canonicalize-specializer specializers)))
