@@ -50,7 +50,7 @@
 ;;; classes of the other required arguments) were passed to
 ;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES, at some point, and that
 ;;; function was able to compute an applicable method using only those
-;;; classed, which is why we have a corresponding class number cache
+;;; classes, which is why we have a corresponding class number cache
 ;;; available.  The length of a class number cache is that of the
 ;;; number of required arguments that are specialized, or
 ;;; equivalently, the number of entries equal to T in the specializer
@@ -82,7 +82,8 @@
 ;;; An EFFECTIVE METHOD CACHE for a particular applicable method cache
 ;;; is the result of calling the generic function
 ;;; COMPUTE-EFFECTIVE-METHOD, passing it the list of methods of that
-;;; applicable method cache.
+;;; applicable method cache and then compiling the result in the null
+;;; lexical environment.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -102,17 +103,23 @@
 ;;;      of the list representing the call history entry.
 
 (defun make-call-cache
-    (class-number-cache applicable-method-cache effective-method-cache)
-  (list* class-number-cache effective-method-cache applicable-method-cache))
+    (class-cache class-number-cache applicable-method-cache effective-method-cache)
+  (list* class-cache
+         class-number-cache
+         effective-method-cache
+         applicable-method-cache))
 
-(defun class-number-cache (call-cache)
+(defun class-cache (call-cache)
   (car call-cache))
 
-(defun applicable-method-cache (call-cache)
-  (cddr call-cache))
+(defun class-number-cache (call-cache)
+  (cadr call-cache))
 
 (defun effective-method-cache (call-cache)
-  (cadr call-cache))
+  (caddr call-cache))
+
+(defun applicable-method-cache (call-cache)
+  (cdddr call-cache))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -361,7 +368,8 @@
                (effective-method-function (compile nil effective-method)))
           ;; Add a new call cache to the call history.
           (setf (call-history generic-function)
-                (cons (make-call-cache class-numbers
+                (cons (make-call-cache classes
+                                       class-numbers
                                        applicable-methods
                                        effective-method-function)
                       call-history))
@@ -372,7 +380,8 @@
         (let ((applicable-methods (applicable-method-cache call-cache))
               (effective-method-function (effective-method-cache call-cache)))
           (setf (call-history generic-function)
-                (cons (make-call-cache class-numbers
+                (cons (make-call-cache classes
+                                       class-numbers
                                        applicable-methods
                                        effective-method-function)
                       call-history))
