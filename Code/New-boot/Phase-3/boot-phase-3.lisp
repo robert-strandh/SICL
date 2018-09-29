@@ -329,6 +329,7 @@
     (load-file "CLOS/make-method-lambda-defuns.lisp" e3)
     (define-make-specializer e2 e3)
     (import-function-from-host 'adjoin e2)
+    (load-file "CLOS/add-remove-direct-method-support.lisp" e2)
     (define-add-method-in-e3 boot)
     (define-make-method-for-generic-function-in-e3 boot)
     (import-functions-from-host
