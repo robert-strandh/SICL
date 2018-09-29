@@ -48,7 +48,7 @@
                       first second third fourth fifth
                       rest last butlast nth
                       rplaca rplacd cadr cddr reverse member-if-not
-                      (setf cadr) (setf cddr)
+                      (setf cadr) (setf cddr) caddr
                       cdddr reduce union assoc mapc intersection
                       get-properties adjoin
                       copy-list set-difference set-exclusive-or)
