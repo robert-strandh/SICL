@@ -24,20 +24,18 @@
   (let ((fvar (cleavir-ir:new-temporary))
         (values (cleavir-ir:make-values-location)))
     (push-instruction
-     (cleavir-ir:make-enclose-instruction fvar nil thunk))
+     (cleavir-ir:make-enclose-instruction fvar *initial-instruction* thunk))
     (push-instruction
      (cleavir-ir:make-funcall-instruction (list fvar) (list values)))
     (push-instruction
      (cleavir-ir:make-multiple-to-fixed-instruction values outputs))))
 
-;;; Ensure that OBJECT is suitably created and initialized at load time and
-;;; that the resulting similar object is stored in the lexical variable
-;;; OUTPUT.
-(defun reconstruct (object output system)
+;;; Ensure that CONSTRUCTOR is run at load time and that the resulting
+;;; object is stored in the lexical variable OUTPUT.
+(defun reconstruct (constructor output system)
   (with-accessors ((creation-thunk creation-thunk)
                    (initialization-thunk initialization-thunk)
-                   (lexical-location lexical-location))
-      (constructor object)
+                   (lexical-location lexical-location)) constructor
     (if lexical-location
         (push-instruction
          (cleavir-ir:make-assignment-instruction lexical-location output))
@@ -53,7 +51,8 @@
 ;;; Hoisting
 
 (defmethod hoist-toplevel-hir ((hir cleavir-ir:enter-instruction) system)
-  (let ((*initial-instruction* (first (cleavir-ir:successors hir))))
+  (let ((*initial-instruction* (first (cleavir-ir:successors hir)))
+        (cleavir-ir:*policy* (cleavir-ir:policy hir)))
     (hoist-hir hir system)
     hir))
 
@@ -68,17 +67,18 @@
      instruction)
    hir))
 
-(defmethod hoist-datum ((immediate-input cleavir-ir:immediate-input) system)
+(defmethod hoist-datum ((datum cleavir-ir:datum) system)
   (values))
 
 (defmethod hoist-datum ((load-time-value-input cleavir-ir:load-time-value-input) system)
-  (reconstruct load-time-value-input
-               (change-class load-time-value-input 'cleavir-ir:lexical-location)
+  (reconstruct (constructor load-time-value-input)
+               (change-class load-time-value-input 'cleavir-ir:lexical-location
+                 :name (cleavir-ir:form load-time-value-input))
                system))
 
 (defmethod hoist-datum ((constant-input cleavir-ir:constant-input) system)
   (let ((value (cleavir-ir:value constant-input)))
-    (unless (immedate-p value system)
-      (reconstruct value
-                   (change-class constant-input 'cleavir-ir:lexical-location)
-                   system))))
+    (reconstruct (constructor value)
+                 (change-class constant-input 'cleavir-ir:lexical-location
+                   :name (cleavir-ir:value constant-input))
+                 system)))

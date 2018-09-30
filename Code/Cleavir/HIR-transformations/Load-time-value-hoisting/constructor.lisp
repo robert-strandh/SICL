@@ -25,7 +25,9 @@
     :creation-form creation-form
     :creation-thunk (hir-from-form creation-form system)
     :initialization-form initialization-form
-    :initialization-thunk (hir-from-form initialization-form system)))
+    :initialization-thunk
+    (unless (not initialization-form)
+      (hir-from-form initialization-form system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
