@@ -43,13 +43,13 @@
 				     :name class-or-name))
 			     class)))
 		      (t
-		       (error "~s must be a class or a class name"
-			      class-or-name)))))
+		       (error 'direct-superclass-must-be-a-class-metaobject-or-a-symbol
+                              :superclass class-or-name)))))
 
 ;;; When the class is created, it is safe to use a default value of
 ;;; the empty list for the :DIRECT-SUPERCLASSES initialization
 ;;; argument, because the AMOP says that the default is the same
-;;; whether this argument is the empty list, or not given at all. 
+;;; whether this argument is the empty list, or not given at all.
 
 (defun ensure-class-using-class-null
     (name
@@ -82,7 +82,7 @@
 ;;; given, which is interpreted to mean that we keep the old value of
 ;;; this slot, and the case where the :DIRECT-SUPERCLASSES
 ;;; initialization argument is given as the empty list, which has
-;;; the same meaning as for initialization. 
+;;; the same meaning as for initialization.
 
 (defun ensure-class-using-class-class
     (class name
