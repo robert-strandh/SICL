@@ -9,7 +9,7 @@
 ;;; from user code.  This means that we have to be careful about
 ;;; default values of initialization arguments.
 ;;;
-;;; When DEFCLASS is used, it is intened to mean that the class be
+;;; When DEFCLASS is used, it is intended to mean that the class be
 ;;; defined according to the specification in DEFCLASS, with omitted
 ;;; options given proper defaults.  If the class already exists, and
 ;;; DEFCLASS is called, the intended meaning is for the class to be
