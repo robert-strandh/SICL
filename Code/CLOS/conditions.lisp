@@ -106,6 +106,10 @@
     (sicl-additional-conditions:sicl-error)
   ((%superclass :superclass :superclass :reader superclass)))
 
+(define-condition direct-superclass-must-be-a-class-metaobject-or-a-symbol
+    (sicl-additional-conditions:sicl-error)
+  ((%superclass :superclass :superclass :reader superclass)))
+
 (define-condition superclass-not-valid-for-class
     (sicl-additional-conditions:sicl-error)
   ((%superclass :superclass :superclass :reader superclass)))
