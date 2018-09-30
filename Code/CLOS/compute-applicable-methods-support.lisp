@@ -22,7 +22,7 @@
 ;;; not be applicable.
 ;;;
 ;;; If S1 is an EQL specializer, then S1 is a sub-specializer of S2.
-;;; If S2 is an EQL specializer, then S2 is not a sub-specializer of
+;;; If S2 is an EQL specializer, then S1 is not a sub-specializer of
 ;;; S2.  Otherwise, S1 and S2 are both classes.  Class S1 is a
 ;;; sub-specizlizer of class S2 with respect to some argument class C
 ;;; if and only if S1 occurs before S2 in the class precedence list of
