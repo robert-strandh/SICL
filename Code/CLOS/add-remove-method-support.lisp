@@ -10,17 +10,19 @@
 ;;;
 ;;; Utilities
 
+(defun compute-specializer-profile (existing-profile specializers)
+  (loop with environment = (sicl-genv:global-environment)
+        with class-t = (sicl-genv:find-class 't environment)
+        for specializer in specializers
+        for p in existing-profile
+        collect (if (eq specializer class-t) p t)))
+
 ;;; Update the specializer profile of a generic function according to
 ;;; a list of specializers of a method.
 (defun update-specializer-profile (generic-function specializers)
   (setf (specializer-profile generic-function)
-        (loop with environment = (sicl-genv:global-environment)
-              with class-t = (sicl-genv:find-class 't environment)
-              for specializer in specializers
-              for p in (specializer-profile generic-function)
-              collect (if (eq specializer class-t)
-                          p
-                          t))))
+        (compute-specializer-profile
+         (specializer-profile generic-function) specializers)))
 
 ;;; Compute a completely new specializer profile for a generic
 ;;; function.
@@ -43,6 +45,14 @@
 ;;; function, specialized for STANDARD-GENERIC-FUNCTION and
 ;;; STANDARD-METHOD.  The default action below is valid for that
 ;;; method.
+
+(defun applicable (class-cache profile method)
+  (let* ((env (sicl-genv:global-environment))
+         (class-t (sicl-genv:find-class 't env))
+         (classes (loop with remaining = class-cache
+                        for p in profile
+                        collect (if p (pop remaining) class-t))))
+    (maybe-applicable-p method classes)))
 
 (defun add-method-default (generic-function method)
   (unless (null (method-generic-function method))
@@ -68,16 +78,26 @@
       (remove-method generic-function method-to-remove)))
   ;; Add this method to the set of methods of this generic function.
   (push method (generic-function-methods generic-function))
-  ;; Update the specializer-profile of the generic-function according
-  ;; to the specializers of the method.
-  (update-specializer-profile generic-function (method-specializers method))
+  (let* ((profile (specializer-profile generic-function))
+         (specializers (method-specializers method))
+         (new-profile (compute-specializer-profile profile specializers)))
+    (unless (equal profile new-profile)
+      (setf (call-history generic-function) '())))
   ;; Associate GENERIC-FUNCTION with METHOD.
   (setf (method-generic-function method) generic-function)
   ;; Call ADD-DIRECT-METHOD for each of the specializers of METHOD.
   (loop for specializer in (method-specializers method)
         do (add-direct-method specializer method))
-  ;; In validate the current discriminating function so that it will
-  ;; be recomputed next time the generic function is called.
+  ;; Remove entries in the call history for which the new method is
+  ;; applicable.
+  (setf (call-history generic-function)
+        (loop with profile = (specializer-profile generic-function)
+              for cache in (call-history generic-function)
+              for class-cache = (class-cache cache)
+              unless (applicable class-cache profile method)
+                collect cache))
+  ;; Invalidate the current discriminating function so that it will be
+  ;; recomputed next time the generic function is called.
   (invalidate-discriminating-function generic-function)
   ;; Update the dependents of GENERIC-FUNCTION.
   (map-dependents generic-function
