@@ -14,9 +14,9 @@
 
 (defmethod cleavir-load-time-value-hoisting:hir-from-form
     (form (client client))
-  (cleavir-ast-to-hir:ast-to-hir
+  (cleavir-ast-to-hir:compile-toplevel-unhoisted
    (cleavir-generate-ast:generate-ast
-    form
+    `(lambda () ,form)
     (environment client)
     client)))
 

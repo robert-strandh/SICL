@@ -5,6 +5,6 @@
          (system (make-instance 'client
                    :environment environment)))
     (cleavir-load-time-value-hoisting:hoist-load-time-values
-     (cleavir-ast-to-hir:ast-to-hir
+     (cleavir-ast-to-hir:compile-toplevel-unhoisted
       (cleavir-generate-ast:generate-ast lambda-form environment system))
      system)))
