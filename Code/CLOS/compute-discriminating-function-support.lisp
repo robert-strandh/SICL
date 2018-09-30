@@ -91,16 +91,28 @@
 ;;;
 ;;; A CALL CACHE represents information about a particular call to a
 ;;; generic function.  It is represented as a proper list with at
-;;; least 2 CONS cells in it, and it conceptually contains 3 items:
+;;; least 3 CONS cells in it, and it conceptually contains 4 items:
 ;;;
-;;;   1. A class number cache.  This item is located in the CAR of the
-;;;      list representing the call cache.
+;;;   1. A class cache containing a list of class metaobjects, one for
+;;;      each specialized required parameter, corresponding to the
+;;;      classes of the arguments of the call.  This item is located
+;;;      in the CAR of the list representing the call cache.
 ;;;
-;;;   2. An applicable method cache.  This item is located in the CDDR
-;;;      of the list representing the call cache.
+;;;   2. A class number cache containing a list of class number, one
+;;;      for each specialized required parameter, corresponding to the
+;;;      class numbers of the classes in the class cache.  This item
+;;;      is located in the CADR of the list representing the call
+;;;      cache.
 ;;;
-;;;   3. An effective method cache.  This item is located in the CADR
-;;;      of the list representing the call history entry.
+;;;   3. An effective method cache, containing the effective method
+;;;      function to invoke for calls with corresponding to the
+;;;      classes in the class cache.  This item is located in the
+;;;      CADDR of the list representing the call history entry.
+;;;
+;;;   4. An applicable method cache, containing a list of the
+;;;      applicable methods that make up the effective method for this
+;;;      call.  This item is located in the CDDDR of the list
+;;;      representing the call cache.
 
 (defun make-call-cache
     (class-cache class-number-cache applicable-method-cache effective-method-cache)
