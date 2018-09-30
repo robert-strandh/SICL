@@ -1,12 +1,10 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
 ;;; Hoisting takes place after scanning.  During hoisting, all occurring
-;;; data are processed by HOIST-DATUM.  The default methods replace all
-;;; constant inputs and load time value inputs by lexical locations, and
-;;; arrange that each of these lexical locations is properly initialized by
-;;; the suitable creation and initialization thunk.  This sequence of
-;;; thunks is placed right after the enter instruction that is passed as a
-;;; first argument to HOIST-TOPLEVEL-HIR.
+;;; data are processed by HOIST-DATUM.  The default methods replace each
+;;; constant input and each load time value input by a lexical locations,
+;;; and arrange that this lexical locations is properly initialized at load
+;;; time by calling the suitable creation and initialization thunk.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -15,20 +13,34 @@
 ;;; The initial instruction is the instruction that, is the successor of
 ;;; the enter instruction passed to HOIST-TOPLEVEL-HIR.  All calls to
 ;;; creation and initialization thunks are placed before this instruction.
-(defvar *initial-instruction*)
+(defvar *toplevel-enter-instruction*)
 
 (defun push-instruction (instruction)
   (cleavir-ir:insert-instruction-before instruction *initial-instruction*))
 
 (defun push-thunk-invocation (thunk &optional (outputs '()))
-  (let ((fvar (cleavir-ir:new-temporary))
-        (values (cleavir-ir:make-values-location)))
-    (push-instruction
-     (cleavir-ir:make-enclose-instruction fvar *initial-instruction* thunk))
-    (push-instruction
-     (cleavir-ir:make-funcall-instruction (list fvar) (list values)))
-    (push-instruction
-     (cleavir-ir:make-multiple-to-fixed-instruction values outputs))))
+  (unless (not thunk)
+    (let* ((before-instruction *toplevel-enter-instruction*)
+           (after-instruction
+             (first
+              (cleavir-ir:successors before-instruction)))
+           (enclosed-thunk
+             (cleavir-ir:new-temporary))
+           (funcall-result
+             (cleavir-ir:make-values-location))
+           (successor
+             (cleavir-ir:make-multiple-to-fixed-instruction
+              funcall-result outputs after-instruction))
+           (successor
+             (cleavir-ir:make-funcall-instruction
+              (list enclosed-thunk)
+              (list funcall-result)
+              successor))
+           (successor
+             (cleavir-ir:make-enclose-instruction
+              enclosed-thunk successor thunk)))
+      (setf (cleavir-ir:successors before-instruction)
+            (list successor)))))
 
 ;;; Ensure that CONSTRUCTOR is run at load time and that the resulting
 ;;; object is stored in the lexical variable OUTPUT.
@@ -51,7 +63,7 @@
 ;;; Hoisting
 
 (defmethod hoist-toplevel-hir ((hir cleavir-ir:enter-instruction) system)
-  (let ((*initial-instruction* (first (cleavir-ir:successors hir)))
+  (let ((*toplevel-enter-instruction* hir)
         (cleavir-ir:*policy* (cleavir-ir:policy hir)))
     (hoist-hir hir system)
     hir))
