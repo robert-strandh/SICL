@@ -15,29 +15,29 @@
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (loop for datum in (cleavir-ir:inputs instruction) do
+       (simplify-datum datum system)
        (scan-datum datum system)))
    hir))
 
 ;;; One thing to keep in mind is that it is entirely permissible for a
 ;;; Cleavir datum to appear as a literal object in a file.  So it is
-;;; important to clearly distinguish between the constructor of a datum and
-;;; the constructor of a literal object.  I am writing this down here
-;;; because I already forgot about this issue twice.
+;;; important to clearly distinguish the case of scanning a datum and the
+;;; case of scanning a literal object.  I am writing this down here because
+;;; I already forgot about this issue twice.
 
-(defmethod scan-datum ((immediate-input cleavir-ir:immediate-input) system)
+(defmethod scan-datum ((datum cleavir-ir:datum) system)
   (values))
 
 (defmethod scan-datum ((constant-input cleavir-ir:constant-input) system)
   (let ((value (cleavir-ir:value constant-input)))
-    (unless (immedate-p value system)
-      (scan-literal-object value system))))
+    (scan-literal-object value system)))
 
 (defmethod scan-datum ((load-time-value-input cleavir-ir:load-time-value-input) system)
   (multiple-value-bind (constructor present-p)
       (constructor load-time-value-input)
     (cond ((not present-p)
-           (let* ((creation-form (cleavir-ir:form load-time-value-input))
-                  (constructor (make-constructor creation-form nil system)))
+           (let* ((form (cleavir-ir:form load-time-value-input))
+                  (constructor (make-constructor form nil system)))
              (setf (constructor load-time-value-input) constructor)
              (scan-hir (creation-thunk constructor) system)
              (setf (creation-form-finalized-p constructor) t)))
@@ -50,9 +50,9 @@
       (constructor object)
     (cond ((not present-p)
            (let ((constructor
-                   (multiple-value-call #'make-constructor
-                     (make-load-form-using-client object system)
-                     system)))
+                   (multiple-value-bind (creation-form initialization-form)
+                       (make-load-form-using-client object system)
+                     (make-constructor creation-form initialization-form system))))
              (setf (constructor object) constructor)
              (scan-hir (creation-thunk constructor) system)
              (setf (creation-form-finalized-p constructor) t)

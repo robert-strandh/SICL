@@ -17,12 +17,12 @@
 ;;; - A default method on MAKE-LOAD-FORM-USING-CLIENT that calls
 ;;;   MAKE-LOAD-FORM with a suitable environment.
 ;;;
-;;; - Specialized methods on MAKE-LOAD-FORM-USING-CLIENT for symbols and
-;;;   strings.  The given defaults are merely for illustration result in
-;;;   infinitely recursive definitions.
+;;; - Methods on MAKE-LOAD-FORM-USING-CLIENT and on SIMPLIFY-DATUM to
+;;;   circumvent circular definitions, especially for fixnums, characters,
+;;;   symbols and strings.
 ;;;
-;;; In addition to the above methods, clients should adapt the behavior of
-;;; IMMEDIATE-P and EQUALP-KEYS to their needs.
+;;; A client may also provide further methods for SIMPLIFY-DATUM and
+;;; EQUALP-KEYS.
 
 (defun hoist-load-time-values (hir system)
   (with-constructor-tables

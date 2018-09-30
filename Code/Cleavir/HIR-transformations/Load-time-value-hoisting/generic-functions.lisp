@@ -1,9 +1,10 @@
 (cl:in-package #:cleavir-load-time-value-hoisting)
 
-;;; Return whether OBJECT is an immediate.
-(defgeneric immediate-p (object system))
+;;; Potentially change the class or modify some slots of DATUM, such that
+;;; it is easier to process in the remaining steps.
+(defgeneric simplify-datum (datum system))
 
-;;; Return the HIR flowchart corresponding to FORM.
+;;; Return the HIR flowchart of a thunk corresponding to FORM.
 (defgeneric hir-from-form (form system))
 
 ;;; Similar to CL:MAKE-LOAD-FORM, but instead of receiving an environment
@@ -12,17 +13,16 @@
 (defgeneric make-load-form-using-client (object system))
 
 ;;; Return a list of keys.  Objects with at least one shared key (in the
-;;; sense of equalp) are assumed to be similar.
+;;; sense of equalp) are assumed to be similar and are coalesced.
 (defgeneric equalp-keys (object system))
 
-;;; Scan all data in HIR with SCAN-DATUM.
+;;; Call SIMPLIFY-DATUM, followed by SCAN-DATUM on each datum in HIR.
 (defgeneric scan-hir (hir system))
 
-;;; Ensure that DATUM is either an immediate or has a suitable constructor.
+;;; Ensure that DATUM has a suitable constructor.
 (defgeneric scan-datum (datum system))
 
-;;; Ensure that OBJECT is either an immediate or has a suitable
-;;; constructor.
+;;; Ensure that OBJECT has a suitable constructor.
 (defgeneric scan-literal-object (object system))
 
 ;;; Return a modified version of HIR, where all occurring data have been

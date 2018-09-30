@@ -5,7 +5,7 @@
   (:export
    #:hoist-load-time-values
 
-   #:immediate-p
+   #:simplify-datum
    #:hir-from-form
    #:make-load-form-using-client
    #:equalp-keys
