@@ -64,7 +64,7 @@
 ;;; of the classes of the specialized required arguments correspond to
 ;;; the unique numbers of the classes in a class number cache, then we
 ;;; have already at some point determined a list of applicable methods
-;;; for that call, so we do not have to compute it again. 
+;;; for that call, so we do not have to compute it again.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -150,7 +150,7 @@
 ;;;
 ;;;   3. If there is not a hit, then control is transferred to the end
 ;;;      of the TAGBODY form.  There, DEFAULT-DISCRIMINATING-FUNCTION
-;;;      is invoked.  
+;;;      is invoked.
 ;;;
 ;;; The default discriminating function does the following:
 ;;;
@@ -158,14 +158,14 @@
 ;;;      required argument is the same as the unique number of its
 ;;;      class.  If it is not the case, call the generic function
 ;;;      UPDATE-INSTANCE-FOR-REDEFINED-CLASS on those arguments and
-;;;      invoke the discriminating function again. 
+;;;      invoke the discriminating function again.
 ;;;
 ;;;   2. If the instances are all up-to-date, then compute a call
 ;;;      profile for the call by calling CLASS-OF for each required
 ;;;      argument and then call the generic function
 ;;;      COMPUTE-APPLICABLE-METHODS-USING-CLASSES with the resulting
 ;;;      call profile.
-;;;   
+;;;
 ;;;   3. If the call in step 2 returns TRUE as a second return value,
 ;;;      then the first value returned represents an applicable method
 ;;;      cache to be stored.  If so, call the generic function
@@ -182,7 +182,7 @@
 ;;;   4. If the call in step 2 returns FALSE as a second return value,
 ;;;      then instead call the generic function
 ;;;      COMPUTE-APPLICABLE-METHODS, passing it all the current
-;;;      arguments.  
+;;;      arguments.
 ;;;
 ;;;   5. If the call in step 4 returns a non-empty list of methods,
 ;;;      then call COMPUTE-EFFECTIVE-METHOD with that list.  Call the
@@ -207,7 +207,7 @@
 ;;; A slot accessor (reader or writer) generic function has methods on
 ;;; it that are instances of STANDARD-READER-METHOD and
 ;;; STANDARD-WRITER-METHOD.  Such methods have the moral meaning of
-;;; (SLOT-VALUE <object> '<slot-name>) and 
+;;; (SLOT-VALUE <object> '<slot-name>) and
 ;;; (SETF (SLOT-VALUE <object> '<slot-name>) <new-value>)
 ;;; where <object> and <new-value> are arguments of the generic function
 ;;; and <slot-name> is the name of the slot given by applying
@@ -219,7 +219,7 @@
 ;;; that idea is that the slot location can be different in different
 ;;; subclasses of the class being specialized to, as given by applying
 ;;; METHOD-SPECIALIZERS to the methods.  It can even be an instance
-;;; slot in some subclasses and shared slot in others.  
+;;; slot in some subclasses and shared slot in others.
 ;;;
 ;;; We handle this situation by "cheating" in the discriminating
 ;;; function.  Once we have determined a list of applicable methods by
@@ -386,7 +386,7 @@
                                        effective-method-function)
                       call-history))
           effective-method-function))))
-    
+
 ;;; This function can not itself be the discriminating function of a
 ;;; generic function, because it also takes the generic function
 ;;; itself as an argument.  However it can be called by the
@@ -424,7 +424,7 @@
             (return-from default-discriminating-function
               (funcall effective-method-function arguments))))
         ;; Come here if we can't compute the applicable methods using
-        ;; only the classes of the arguments. 
+        ;; only the classes of the arguments.
         (let ((applicable-methods
                 (compute-applicable-methods generic-function arguments)))
           (when (null applicable-methods)
