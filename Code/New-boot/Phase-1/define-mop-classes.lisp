@@ -171,13 +171,13 @@
 ;;; subclass of STANDARD-OBJECT is a requirement for the host generic
 ;;; function INITIALIZE-INSTANCE to be able to initialize instances of
 ;;; a class.  We solve this problem by defining a special version of
-;;; the class named T in phase 1 that in fact is the same as the host
-;;; class FUNCALLABLE-STANDARD-OBJECT, which is itself a subclass of
-;;; STANDAR-OBJECT.  This way, we are sure that all our MOP classes in
-;;; phase 1 are in fact subclass of the host class STANDARD-OBJECT.
+;;; the class named T in phase 1 that, in fact, is the same as the
+;;; host class FUNCALLABLE-STANDARD-OBJECT, which is itself a subclass
+;;; of STANDAR-OBJECT.  This way, we are sure that all our MOP classes
+;;; in phase 1 are in fact subclass of the host class STANDARD-OBJECT.
 ;;; We use FUNCALLABLE-STANDARD-OBJECT rather than STANDARD-OBJECT
 ;;; because we want some of our instances to be functions, and rather
-;;; then trying to convince the host CLOS implementation to let us mix
+;;; than trying to convince the host CLOS implementation to let us mix
 ;;; standard objects and funcallable standard objects, we just make
 ;;; all our classes subclasses of FUNCALLABLE-STANDARD-OBJECT.
 (defun define-class-t-phase1 (env)
