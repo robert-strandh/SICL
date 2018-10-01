@@ -32,6 +32,10 @@
     (object (type-specifier (eql 'class)) (environment environment))
   t)
 
+(defmethod sicl-genv:typep
+    (object (type-specifier (eql 'generic-function)) (environment environment))
+  t)
+
 ;;; The problem that we are solving with this function is the
 ;;; following: In phase 1, we loaded a bunch of definitions of host
 ;;; generic functions into E2.  We also loaded definitions of host
@@ -56,36 +60,6 @@
     (eval `(defmethod ,temp ((generic-function standard-generic-function))
              (closer-mop:generic-function-method-class generic-function)))
     (fmakunbound temp)))
-
-(defun defmethod-expander (ct-env function-name rest)
-  (multiple-value-bind
-        (qualifiers
-         required
-         remaining
-         specializers
-         declarations
-         documentation
-         forms)
-      (sicl-clos::parse-defmethod rest)
-    (let* ((lambda-list (append required remaining))
-           (generic-function-var (gensym)))
-      `(let* ((,generic-function-var
-                (ensure-generic-function ',function-name :environment ,ct-env)))
-         (sicl-clos:ensure-method
-          ,generic-function-var
-          ,ct-env
-          :lambda-list ',lambda-list
-          :qualifiers ',qualifiers
-          :specializers ,(sicl-clos::canonicalize-specializers specializers)
-          :documentation ,documentation
-          :function
-          ,(sicl-clos:make-method-lambda
-            (closer-mop:class-prototype (find-class 'standard-generic-function))
-            (closer-mop:class-prototype (find-class 'standard-method))
-            `(lambda ,lambda-list
-               ,@declarations
-               ,@forms)
-            nil))))))
 
 ;;; When we load the file containing ENSURE-METHOD, we also define the
 ;;; function MAKE-SPECIALIZER.  However that function does the wrong
@@ -175,8 +149,31 @@
    'add-method e2)
   (sicl-minimal-extrinsic-environment:import-function-from-host
    'copy-list e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e1)
+        #'sicl-clos::make-method-lambda-default)
+  (setf (sicl-genv:fdefinition 'ensure-generic-function e1)
+        (sicl-genv:fdefinition 'ensure-generic-function e2))
+  (import-functions-from-host
+   '(mapcar
+     subseq
+     1+
+     elt
+     position-if
+     sicl-genv:find-class
+     sicl-genv:typep
+     sicl-genv:fboundp
+     sicl-genv:fdefinition
+     cleavir-code-utilities:separate-function-body
+     cleavir-code-utilities:required
+     cleavir-code-utilities:parse-specialized-lambda-list)
+   e1)
+  (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype e1)
+        #'closer-mop:class-prototype)
+  (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class e1)
+        #'closer-mop:generic-function-method-class)
+  (load-file "CLOS/defmethod-support.lisp" e1)
   (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
-        #'defmethod-expander)
+        (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e1))
   ;; ENSURE-METHOD calls MAKE-SPECIALIZER, but the version of
   ;; MAKE-SPECIALIZER that is in the file with that name is not
   ;; correct for phase 2.  Fix the problem by defining a special
