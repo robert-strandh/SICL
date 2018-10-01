@@ -123,13 +123,13 @@
   (mapcar #'remove-readers-and-writers-from-slot-spec slot-specs))
 
 ;;; This function defines a version of ENSURE-CLASS to be used in
-;;; phase 1.  The definition of ENSURE-CLASS is made in ENV1.  This
-;;; version of ENSURE-CLASS defines a new class in ENV2.  It also uses
-;;; ENV2 to find superclasses of the class to be defined.  ENV3 is the
+;;; phase 1.  The definition of ENSURE-CLASS is made in E1.  This
+;;; version of ENSURE-CLASS defines a new class in E1.  It also uses
+;;; E1 to find superclasses of the class to be defined.  E2 is the
 ;;; environment containing the generic functions to which slot reader
 ;;; and slot writer methods are to be added.
-(defun define-ensure-class (env1 env2 env3)
-  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class env1)
+(defun define-ensure-class (e1 e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e1)
         (lambda (class-name
                  &key
                    direct-slots
@@ -152,14 +152,14 @@
                 ;; which this class wil. be defined.
                 (direct-superclasses
                   (loop for name in direct-superclass-names
-                        collect (sicl-genv:find-class name env2))))
+                        collect (sicl-genv:find-class name e1))))
             (let ((class (make-instance metaclass
                            :name (make-symbol (symbol-name name))
                            :direct-slots slot-copies
                            :direct-superclasses direct-superclasses)))
-              (setf (sicl-genv:find-class class-name env2) class)
+              (setf (sicl-genv:find-class class-name e1) class)
               (loop for slot-spec in direct-slots
-                    do (add-accessor-methods slot-spec class env3)))))))
+                    do (add-accessor-methods slot-spec class e2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -207,7 +207,7 @@
 (defun create-mop-classes-phase1 (e1 e2)
   (load-file "CLOS/defclass-defmacro.lisp" e1)
   (create-exceptional-mop-classes-phase1 e1)
-  (define-ensure-class e1 e1 e2)
+  (define-ensure-class e1 e2)
   (define-funcallable-standard-class)
   (load-file "CLOS/standard-object-defclass.lisp" e1)
   (load-file "CLOS/metaobject-defclass.lisp" e1)
