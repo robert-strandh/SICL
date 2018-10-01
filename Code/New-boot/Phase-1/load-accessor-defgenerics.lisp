@@ -40,8 +40,7 @@
                      args)))))
 
 (defun load-accessor-defgenerics (environment)
-  (sicl-minimal-extrinsic-environment:import-function-from-host
-   'sicl-clos:defgeneric-expander environment)
+  (import-function-from-host 'sicl-clos:defgeneric-expander environment)
   (load-file "CLOS/defgeneric-defmacro.lisp" environment)
   (setf (sicl-genv:fdefinition 'ensure-generic-function environment)
         #'ensure-generic-function-phase-1)
