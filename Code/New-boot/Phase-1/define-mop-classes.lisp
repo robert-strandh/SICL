@@ -180,22 +180,22 @@
 ;;; than trying to convince the host CLOS implementation to let us mix
 ;;; standard objects and funcallable standard objects, we just make
 ;;; all our classes subclasses of FUNCALLABLE-STANDARD-OBJECT.
-(defun define-class-t-phase1 (env)
-  (setf (sicl-genv:find-class 't env)
+(defun define-class-t-phase1 (e1)
+  (setf (sicl-genv:find-class 't e1)
         (find-class 'closer-mop:funcallable-standard-object)))
 
 ;;; We need a special definition of the class named FUNCTION in phase
 ;;; 1, because we want instances of this class to be funcallable in
 ;;; the host.  For that reason, we create this class as an instance of
 ;;; the host class FUNCALLABLE-STANDARD-CLASS.
-(defun define-class-function-phase1 (env)
-  (setf (sicl-genv:find-class 'function env)
+(defun define-class-function-phase1 (e1)
+  (setf (sicl-genv:find-class 'function e1)
         (make-instance 'closer-mop:funcallable-standard-class
           :name (make-symbol (symbol-name '#:function)))))
 
-(defun create-exceptional-mop-classes-phase1 (env)
-  (define-class-t-phase1 env)
-  (define-class-function-phase1 env))
+(defun create-exceptional-mop-classes-phase1 (e1)
+  (define-class-t-phase1 e1)
+  (define-class-function-phase1 e1))
 
 ;;; This function defines class SICL-CLOS:FUNCALLABLE-STANDARD-CLASS
 ;;; in the host environment to be the same as the host version of that
