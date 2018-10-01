@@ -23,10 +23,7 @@
 ;;; special bootstrapping version of it.
 ;;;
 ;;; We can rely entirely on the host to execute the generic-function
-;;; initialization protocol.  There is a little question about the
-;;; initialization argument :METHOD-COMBINATION, but it appears that
-;;; it defaults to the standard method combination, so we do not have
-;;; to pass a method-combination metaobject here.
+;;; initialization protocol.
 
 (defun ensure-generic-function-phase-1
     (function-name &rest arguments &key environment &allow-other-keys)
@@ -37,6 +34,9 @@
         (setf (sicl-genv:fdefinition function-name environment)
               (apply #'make-instance 'standard-generic-function
                      :name function-name
+                     :method-combination
+                     (closer-mop:find-method-combination
+                      #'class-name 'standard '())
                      args)))))
 
 (defun load-accessor-defgenerics (environment)
