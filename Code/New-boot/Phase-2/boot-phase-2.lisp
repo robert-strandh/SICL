@@ -186,6 +186,7 @@
    '(cleavir-code-utilities:proper-list-p
      add-method)
    e1)
+  (load-file "CLOS/make-specializer.lisp" e1)
   (load-file "CLOS/ensure-method.lisp" e2)
   (load-file "CLOS/defmethod-defmacro.lisp" e2))
 
