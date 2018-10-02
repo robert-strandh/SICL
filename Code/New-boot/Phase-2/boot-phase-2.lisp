@@ -182,6 +182,10 @@
   (load-file "CLOS/make-method-for-generic-function.lisp" e1)
   ;; FIXME: this one should move to a different phase.
   (load-file "CLOS/make-method-for-generic-function.lisp" e2)
+  (import-functions-from-host
+   '(cleavir-code-utilities:proper-list-p
+     add-method)
+   e1)
   (load-file "CLOS/ensure-method.lisp" e2)
   (load-file "CLOS/defmethod-defmacro.lisp" e2))
 
