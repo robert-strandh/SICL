@@ -122,7 +122,6 @@
         (t nil)))))
 
 (defmethod cleavir-load-time-value-hoisting:scan-hir :around
-    ((enter-instruction cleavir-ir:enter-instruction) client)
+    ((enter-instruction cleavir-ir:enter-instruction) (client client))
   (let ((cleavir-ir:*policy* (cleavir-ir:policy enter-instruction)))
     (call-next-method)))
-

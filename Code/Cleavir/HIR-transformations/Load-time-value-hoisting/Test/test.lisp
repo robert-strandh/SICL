@@ -18,5 +18,18 @@
                 (cleavir-generate-ast:generate-ast
                  `(lambda () ,form) environment system))))
       (cleavir-load-time-value-hoisting:hoist-load-time-values hir system)
+      (setf (cleavir-ir:lambda-list hir)
+            '(%make-string
+              %cons
+              %find-package
+              %intern
+              sicl-genv:function-cell))
+      (setf (cleavir-ir:outputs hir)
+            (append (cleavir-ir:outputs hir)
+                    (list *make-string*
+                          *cons*
+                          *find-package*
+                          *intern*
+                          *function-cell*)))
       (cleavir-ir:reinitialize-data hir)
       hir)))
