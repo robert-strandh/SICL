@@ -47,7 +47,7 @@
 ;;; doesn't work when given an instance of the host
 ;;; STANDARD-GENERIC-FUNCTION.  Now, in phase 2, we need to add
 ;;; methods to the generic functions in E2, and to create such a
-;;; method, ensure-method calls GENERIC-FUNCTION-METHOD-CLASS which
+;;; method, ENSURE-METHOD calls GENERIC-FUNCTION-METHOD-CLASS which
 ;;; won't work.
 ;;;
 ;;; We solve the problem by adding a method on
