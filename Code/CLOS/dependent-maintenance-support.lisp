@@ -5,7 +5,7 @@
 
 (defun remove-dependent-default (metaobject dependent)
   (setf (dependents metaobject)
-	(remove dependent (dependents metaobject) :test #'eq)))
+        (remove dependent (dependents metaobject) :test #'eq)))
 
 (defun map-dependents-default (metaobject function)
   (mapc function (dependents metaobject)))
