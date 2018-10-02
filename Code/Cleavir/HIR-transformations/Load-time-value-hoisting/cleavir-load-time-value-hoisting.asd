@@ -13,7 +13,7 @@
    (:file "simplify-datum")
    (:file "make-load-form-using-client")
    (:file "constructor")
-   (:file "equalp-keys")
+   (:file "similarity-keys")
    (:file "scan")
    (:file "hoist")
    (:file "load-time-value-hoisting")))

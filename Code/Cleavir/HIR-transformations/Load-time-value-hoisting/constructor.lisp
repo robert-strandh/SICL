@@ -42,23 +42,56 @@
 
 (defvar *eql-table*)
 
+(defvar *equal-table*)
+
 (defvar *equalp-table*)
 
 (defmacro with-constructor-tables (&body body)
   `(let ((*eql-table* (make-hash-table :test #'eql))
+         (*equal-table* (make-hash-table :test #'equal))
          (*equalp-table* (make-hash-table :test #'equalp)))
      ,@body))
 
 (defmacro constructor (key)
   `(gethash ,key *eql-table*))
 
-;;; The function COALESCE ensures that after any two calls (coalesce o1 k1)
-;;; and (coalesce o2 k2), (equalp k1 k2) implies (eq (constructor o1)
-;;; (constructor o2)).
-(defun coalesce (object equalp-key)
-  (let ((similar-constructor (gethash equalp-key *equalp-table*)))
+;;; The next two functions ensure that after any two calls
+;;; (coalesce-using-TEST o1 k1) and (coalesce-using-TEST o2 k2), the
+;;; relation (TEST k1 k2) implies (eq (constructor o1) (constructor o2)).
+(defun coalesce-using-equal (object equal-key)
+  (coalesce object equal-key *equal-table*))
+
+(defun coalesce-using-equalp (object equalp-key)
+  (coalesce object equalp-key *equalp-table*))
+
+(defun coalesce (object key table)
+  (let ((similar-constructor (gethash key table)))
     (if similar-constructor
         (setf (constructor object)
               similar-constructor)
-        (setf (gethash equalp-key *equalp-table*)
+        (setf (gethash key table)
               (constructor object)))))
+
+;;; We provide two helper functions for usage within SIMILARITY-KEYS.
+;;; These can be used to obtain an appropriate key for objects that appear
+;;; in the definition of OBJECT.
+
+(defun equal-representation (object)
+  (multiple-value-bind (value present-p)
+      (constructor object)
+      (if present-p
+          value
+          object)))
+
+(defun equalp-representation (object)
+  (multiple-value-bind (value present-p)
+      (constructor object)
+    (if present-p
+        value
+        (if (characterp object)
+            ;; For characters, we have to inhibit the behavior of EQUALP to
+            ;; compare them with CHAR-EQUAL.
+            (cons (load-time-value (make-instance 'standard-object))
+                  (sxhash object))
+            ;; Otherwise, we just use OBJECT itself as the key.
+            object))))

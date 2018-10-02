@@ -22,7 +22,7 @@
 ;;;   symbols and strings.
 ;;;
 ;;; A client may also provide further methods for SIMPLIFY-DATUM and
-;;; EQUALP-KEYS.
+;;; SIMILARITY-KEYS.
 
 (defun hoist-load-time-values (hir system)
   (with-constructor-tables

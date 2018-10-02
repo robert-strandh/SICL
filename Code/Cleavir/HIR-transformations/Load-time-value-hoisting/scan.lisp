@@ -59,8 +59,12 @@
              (scan-hir (initialization-thunk constructor) system)
              ;; Attempt to coalesce this constructor, i.e., replace it with
              ;; an existing constructor of a similar object.
-             (loop for equalp-key in (equalp-keys object system) do
-               (coalesce object equalp-key))))
+             (multiple-value-bind (equal-keys equalp-keys)
+                 (similarity-keys object system)
+               (loop for equal-key in equal-keys do
+                 (coalesce-using-equal object equal-key))
+               (loop for equalp-key in equalp-keys do
+                 (coalesce-using-equalp object equalp-key)))))
           ((not (creation-form-finalized-p constructor))
            (error 'circular-dependencies-in-creation-form
                   :object object

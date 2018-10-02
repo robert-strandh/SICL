@@ -12,9 +12,13 @@
 ;;; object.
 (defgeneric make-load-form-using-client (object system))
 
-;;; Return a list of keys.  Objects with at least one shared key (in the
-;;; sense of equalp) are assumed to be similar and are coalesced.
-(defgeneric equalp-keys (object system))
+;;; Return two values: A list of equal keys and a list of equalp keys.  Two
+;;; objects o1 and o2 are considered similar if their equal keys have a
+;;; common element in the sense of EQUAL, or if their equalp keys have a
+;;; common element in the sense of EQUALP.  Clients that want to write
+;;; additional methods for this function are encouraged to have a look at
+;;; the auxiliary functions EQUAL-REPRESENTATION and EQUALP-REPRESENTATION.
+(defgeneric similarity-keys (object system))
 
 ;;; Call SIMPLIFY-DATUM, followed by SCAN-DATUM on each datum in HIR.
 (defgeneric scan-hir (hir system))

@@ -8,7 +8,9 @@
    #:simplify-datum
    #:hir-from-form
    #:make-load-form-using-client
-   #:equalp-keys
+   #:equal-representation
+   #:equalp-representation
+   #:similarity-keys
 
    #:scan-hir
    #:scan-datum
