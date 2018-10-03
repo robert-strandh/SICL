@@ -23,14 +23,13 @@
 ;;; compile-time environment) in which the call to DEFMETHOD is made.
 
 (defun ensure-method (generic-function
-		      environment
 		      &rest keys
 		      &key specializers
 		      &allow-other-keys)
   (unless (cleavir-code-utilities:proper-list-p specializers)
     (error "Specializers must be a proper list: ~s" specializers))
   (let ((specs (loop for s in specializers
-		     collect (make-specializer s environment)))
+		     collect (make-specializer s)))
 	(remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :specializers))
     (let ((method (make-method-for-generic-function

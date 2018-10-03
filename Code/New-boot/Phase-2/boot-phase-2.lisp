@@ -72,8 +72,7 @@
 ;;; instead of in E1.
 (defun define-make-specializer (e1 e2)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e2)
-        (lambda (specializer environment)
-          (declare (ignore environment))
+        (lambda (specializer)
           (cond ((eq specializer 't)
                  (find-class 't))
                 ((symbolp specializer)

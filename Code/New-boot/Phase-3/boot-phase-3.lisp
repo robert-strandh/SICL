@@ -164,8 +164,7 @@
 ;;; the instances in E3, so they are the classes in E2.
 (defun define-make-specializer (e2 e3)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e3)
-        (lambda (specializer environment)
-          (declare (ignore environment))
+        (lambda (specializer)
           (cond ((symbolp specializer)
                  (sicl-genv:find-class specializer e2))
                 (t
@@ -225,7 +224,6 @@
                           (ensure-generic-function ',function-name :environment ,ct-env)))
                    (sicl-clos:ensure-method
                     ,generic-function-var
-                    ,ct-env
                     :lambda-list ',lambda-list
                     :qualifiers ',qualifiers
                     :specializers ,(sicl-clos::canonicalize-specializers specializers)

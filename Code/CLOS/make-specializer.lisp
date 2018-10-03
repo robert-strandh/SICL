@@ -13,11 +13,12 @@
 ;;; environment, so the functions FIND-CLASS and TYPEP must find the
 ;;; global environment to look up these entities.
 
-(defun make-specializer (specializer environment)
-  (cond ((symbolp specializer)
-         (sicl-genv:find-class specializer environment))
-        ((sicl-genv:typep specializer 'specializer environment)
-         specializer)
-        (t
-         (error "Specializer must be symbol or specializer metaobject: ~s"
-                specializer))))
+(defun make-specializer (specializer)
+  (let ((environment (sicl-genv:global-environment)))
+    (cond ((symbolp specializer)
+           (sicl-genv:find-class specializer environment))
+          ((sicl-genv:typep specializer 'specializer environment)
+           specializer)
+          (t
+           (error "Specializer must be symbol or specializer metaobject: ~s"
+                  specializer)))))
