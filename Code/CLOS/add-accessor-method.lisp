@@ -62,7 +62,7 @@
                             function-name
                             :lambda-list lambda-list
                             :environment environment))
-         (specializers (list (sicl-genv:find-class t (sicl-genv:global-environment))
+         (specializers (list (sicl-genv:find-class t environment)
                              class))
          (slot-name (slot-definition-name slot-definition))
          (method-function
