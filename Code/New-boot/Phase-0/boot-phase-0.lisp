@@ -2,5 +2,4 @@
 
 (defun boot-phase-0 (boot)
   (with-accessors ((e0 sicl-new-boot:e0) (e1 sicl-new-boot:e1)) boot
-    nil))
-
+    (import-package-from-host 'sicl-clos e0)))
