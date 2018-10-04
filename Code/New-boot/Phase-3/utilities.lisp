@@ -42,6 +42,7 @@
 
 ;;; Some utilities for making interactive queries easier.
 
+(define-symbol-macro ee0 (sicl-new-boot:e0 *b*))
 (define-symbol-macro ee1 (sicl-new-boot:e1 *b*))
 (define-symbol-macro ee2 (sicl-new-boot:e2 *b*))
 (define-symbol-macro ee3 (sicl-new-boot:e3 *b*))
