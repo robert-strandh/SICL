@@ -18,10 +18,6 @@
 ;;; implementations can be relatively small, and if the instruction
 ;;; graph is big, then the control stack can easily be exhausted.
 
-(eval-when (:compile-toplevel)
-  (format t "Class bound: ~a~%" (find-class 'enclose-instruction))
-  (format t "TYPEP expansion: ~a~%" (core:compiler-macroexpand-1 '(typep instruction 'enclose-instruction))))
-
 (defun map-instructions (function initial-instruction)
   (let ((visited-instructions (make-hash-table :test #'eq))
 	(instructions-to-process '()))
