@@ -9,6 +9,7 @@
   (import-function-from-host '(setf sicl-genv:special-variable) env))
 
 (defun boot-phase-1 (boot)
+  (format *trace-output* "Start of phase 1~%")
   (with-accessors ((e1 sicl-new-boot:e1) (e2 sicl-new-boot:e2)) boot
     (import-more-to-env1 e1)
     (import-package-from-host 'sicl-clos e2)
