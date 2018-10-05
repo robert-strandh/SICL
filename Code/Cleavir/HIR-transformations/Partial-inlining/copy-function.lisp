@@ -50,12 +50,14 @@
 (defun copy-function-recur (enter external-map internal-map stack)
   (let ((copies nil)
         (stack (cons enter stack))
-        (*new-enter* (cleavir-ir:clone-instruction enter :outputs nil)))
+        (*new-enter* (cleavir-ir:clone-instruction enter)))
     (push *new-enter* copies)
     ;; We set the outputs after building like this so that (a) they have their ownership correct,
     ;; and (b) (setf cleavir-ir:outputs) synchronizes the lambda list properly.
+    ;; We still copy the outputs in clone-instruction above so that the (setf outputs) method
+    ;; knows how to do the substitution.
     (setf (cleavir-ir:outputs *new-enter*)
-          (translate-outputs-for-copy (cleavir-ir:outputs *new-enter*)
+          (translate-outputs-for-copy (cleavir-ir:outputs enter)
                                       external-map internal-map stack))
     ;; First loop: Copy all instructions in the function, but leave
     ;; predecessors and successors disconnected.

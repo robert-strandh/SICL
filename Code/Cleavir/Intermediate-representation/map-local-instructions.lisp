@@ -52,3 +52,8 @@
 (defun local-instructions-of-type (enter-instruction type)
   (filter-local-instructions (lambda (i) (typep i type))
                              enter-instruction))
+
+(define-compiler-macro local-instructions-of-type (&whole form initial-instruction type)
+  (if (constantp type)
+      `(filter-local-instructions (lambda (i) (typep i ',(eval type))) ,initial-instruction)
+      form))
