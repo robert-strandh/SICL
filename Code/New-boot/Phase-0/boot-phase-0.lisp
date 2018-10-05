@@ -5,6 +5,13 @@
 ;;; FUNCALLABLE-STANDARD-CLASS so that instances of it can be used as
 ;;; functions, and so that we avoid any problems with incompatible
 ;;; superclasses and metaclasses.
+;;;
+;;; Furthermore, this class will be the specializer of the :AROUND
+;;; method on SHARED-INITIALIZE that handles the class-initialization
+;;; protocol.  Recall that this :AROUND method handles the definitions
+;;; of slot readers and slot writers defined in class slots.
+;;; Therefore, that aspect of the host class-initialization protocol
+;;; will not be invoked.
 (defclass funcallable-standard-class
     (closer-mop:funcallable-standard-class)
   ())
@@ -90,6 +97,67 @@
     (load-file "CLOS/ensure-method.lisp" e0)
     (load-file "CLOS/defmethod-support.lisp" e0)
     (load-file "CLOS/defmethod-defmacro.lisp" e0)))
+
+(defun add-readers (environment function-names class slot-name slot-definition)
+  (let ((function (compile nil `(lambda (args next-methods)
+                                  (declare (ignore next-methods))
+                                  (slot-value (car args) ',slot-name)))))
+    (loop for function-name in function-names
+          for gf = (sicl-genv:fdefinition function-name environment)
+          for method = (make-instance 'standard-reader-method
+                         :lambda-list '(object)
+                         :qualifiers '()
+                         :specializers (list class)
+                         :function function
+                         :slot-definition slot-definition)
+          do (add-method gf method))))
+
+(defun add-writers (environment function-names class slot-name slot-definition)
+  (let ((function (compile nil `(lambda (args next-methods)
+                                  (declare (ignore next-methods))
+                                  (setf (slot-value (cadr args) ',slot-name)
+                                        (car arguments))))))
+    (loop for function-name in function-names
+          for gf = (sicl-genv:fdefinition function-name environment)
+          for method = (make-instance 'standard-writer-method
+                         :lambda-list '(new-value object)
+                         :qualifiers '()
+                         :specializers (list (find-class t) class)
+                         :function function
+                         :slot-definition slot-definition)
+          do (add-method gf method))))
+
+(defun enable-class-initialization (boot)
+  (with-accessors ((e0 sicl-new-boot:e0) (e2 sicl-new-boot:e0)) boot
+    (defmethod shared-initialize ((class funcallable-standard-class)
+                                  slot-names
+                                  &rest arguments
+                                  &key
+                                    direct-default-initargs
+                                    direct-superclasses
+                                    direct-slots
+                                  &allow-other-keys)
+      (let ((new-direct-slots
+              (loop for slot-spec in direct-slots
+                    for slot = (apply #'make-instance
+                                      'closer-mop:standard-direct-slot-definition
+                                      slot-spec)
+                    for spec = (copy-list slot-spec)
+                    for slot-name = (getf slot-spec :name)
+                    for readers = (getf spec :readers)
+                    for writers = (getf spec :writers)
+                    do (remf spec :readers)
+                       (remf spec :writers)
+                       (add-readers e2 readers class slot-name slot)
+                       (add-readers e2 writers class slot-name slot)
+                    collect spec)))
+        (apply #'call-next-method
+               class
+               slot-names
+               :direct-superclasses direct-superclasses
+               :direct-default-initargs direct-default-initargs
+               :direct-slots new-direct-slots
+               arguments)))))
 
 (defun boot-phase-0 (boot)
   (format *trace-output* "Start of phase 0~%")
