@@ -39,7 +39,7 @@
        cleavir-code-utilities:required
        cleavir-code-utilities:parse-specialized-lambda-list
        error format
-       make-instance ensure-generic-function
+       make-instance
        add-method
        mapcar subseq 1+ elt position-if copy-list)
      e0)
