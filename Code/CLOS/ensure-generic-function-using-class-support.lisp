@@ -6,7 +6,7 @@
      &rest
        all-keyword-arguments
      &key
-       environment
+       (environment (sicl-genv:global-environment))
        (generic-function-class
 	(sicl-genv:find-class 'standard-generic-function environment))
        (method-class nil method-class-p)
@@ -53,7 +53,7 @@
      &rest
        all-keyword-arguments
      &key
-       environment
+       (environment (sicl-genv:global-environment))
        (generic-function-class
 	(sicl-genv:find-class 'standard-generic-function environment))
        (method-class nil method-class-p)
