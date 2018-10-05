@@ -3,4 +3,5 @@
 (defsystem #:sicl-new-boot-base
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "utilities")))
