@@ -9,6 +9,12 @@
 ;;;; INITIALIZE-INSTANCE specialized for STANDARD-CLASS and
 ;;;; FUNCALLABLE-STANDARD-CLASS.
 
+(defun find-or-create-generic-function (function-name lambda-list)
+  (let ((environment (sicl-genv:global-environment)))
+    (ensure-generic-function function-name
+                             :lambda-list lambda-list
+                             :environment environment)))
+
 ;;; Add a reader method to a generic function.  CLASS is a class
 ;;; metaobject that plays the role of specializer for the argument of
 ;;; the reader method.  FUNCTION-NAME is the name of the reader
@@ -19,12 +25,9 @@
 ;;; reader method.  SLOT-DEFINITION is also stored in the new reader
 ;;; method for optimization purposes.
 (defun add-reader-method (class function-name slot-definition)
-  (let* ((environment (sicl-genv:global-environment))
-         (lambda-list '(object))
-         (generic-function (ensure-generic-function
-                            function-name
-                            :lambda-list lambda-list
-                            :environment environment))
+  (let* ((lambda-list '(object))
+         (generic-function (find-or-create-generic-function
+                            function-name lambda-list))
          (specializers (list class))
          (slot-name (slot-definition-name slot-definition))
          (method-function
@@ -58,10 +61,8 @@
 (defun add-writer-method (class function-name slot-definition)
   (let* ((environment (sicl-genv:global-environment))
          (lambda-list '(new-value object))
-         (generic-function (ensure-generic-function
-                            function-name
-                            :lambda-list lambda-list
-                            :environment environment))
+         (generic-function (find-or-create-generic-function
+                            function-name lambda-list))
          (specializers (list (sicl-genv:find-class t environment)
                              class))
          (slot-name (slot-definition-name slot-definition))
