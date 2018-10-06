@@ -14,4 +14,4 @@
     (import-more-to-env1 e1)
     (import-package-from-host 'sicl-clos e2)
     (load-accessor-defgenerics e2)
-    (create-mop-classes-phase1 e1 e2)))
+    (create-mop-classes-phase1 boot)))
