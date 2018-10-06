@@ -104,7 +104,7 @@
                                   (slot-value (car args) ',slot-name)))))
     (loop for function-name in function-names
           for gf = (sicl-genv:fdefinition function-name environment)
-          for method = (make-instance 'standard-reader-method
+          for method = (make-instance 'closer-mop:standard-reader-method
                          :lambda-list '(object)
                          :qualifiers '()
                          :specializers (list class)
@@ -119,7 +119,7 @@
                                         (car arguments))))))
     (loop for function-name in function-names
           for gf = (sicl-genv:fdefinition function-name environment)
-          for method = (make-instance 'standard-writer-method
+          for method = (make-instance 'closer-mop:standard-writer-method
                          :lambda-list '(new-value object)
                          :qualifiers '()
                          :specializers (list (find-class t) class)
@@ -128,7 +128,7 @@
           do (add-method gf method))))
 
 (defun enable-class-initialization (boot)
-  (with-accessors ((e0 sicl-new-boot:e0) (e2 sicl-new-boot:e0)) boot
+  (with-accessors ((e0 sicl-new-boot:e0) (e2 sicl-new-boot:e2)) boot
     (defmethod shared-initialize ((class funcallable-standard-class)
                                   slot-names
                                   &rest arguments
