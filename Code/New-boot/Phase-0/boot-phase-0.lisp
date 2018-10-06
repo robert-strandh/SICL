@@ -162,5 +162,5 @@
   (format *trace-output* "Start of phase 0~%")
   (import-from-host boot)
   (with-accessors ((e0 sicl-new-boot:e0) (e1 sicl-new-boot:e1)) boot
-    (enable-defmethod boot)
+;;    (enable-defmethod boot)
     (enable-class-initialization boot)))
