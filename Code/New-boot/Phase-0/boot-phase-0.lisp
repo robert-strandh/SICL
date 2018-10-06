@@ -23,22 +23,10 @@
      (superclass closer-mop:funcallable-standard-class))
   t)
 
-(defun import-mop-function (name environment)
-  (let ((host-name (find-symbol (string name) (find-package '#:closer-mop)))
-        (sicl-name (find-symbol (string name) (find-package '#:sicl-clos))))
-    (setf (sicl-genv:fdefinition sicl-name environment)
-          (fdefinition host-name))))
-
-(defun import-mop-functions (names environment)
-  (loop for name in names
-        do (import-mop-function name environment)))
-
 (defun import-from-host (boot)
   (with-accessors ((e0 sicl-new-boot:e0)) boot
     (import-package-from-host 'sicl-clos e0)
     (setf (sicl-genv:special-variable '*trace-output* e0 t) *trace-output*)
-    (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e0)
-          #'sicl-clos::make-method-lambda-default)
     ;; Import class T so that it can be found when we need to create
     ;; the class T as a specializer for unspecialized method parameters.
     (setf (sicl-genv:find-class 't e0)
