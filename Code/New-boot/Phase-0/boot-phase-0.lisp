@@ -90,14 +90,6 @@
     (setf (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e0)
           (find-class 'closer-mop:standard-direct-slot-definition))))
 
-(defun enable-defmethod (boot)
-  (with-accessors ((e0 sicl-new-boot:e0)) boot
-    (load-file "CLOS/make-specializer.lisp" e0)
-    (load-file "CLOS/make-method-for-generic-function.lisp" e0)
-    (load-file "CLOS/ensure-method.lisp" e0)
-    (load-file "CLOS/defmethod-support.lisp" e0)
-    (load-file "CLOS/defmethod-defmacro.lisp" e0)))
-
 (defun add-readers (environment function-names class slot-name slot-definition)
   (let ((function (compile nil `(lambda (args next-methods)
                                   (declare (ignore next-methods))
@@ -116,7 +108,7 @@
   (let ((function (compile nil `(lambda (args next-methods)
                                   (declare (ignore next-methods))
                                   (setf (slot-value (cadr args) ',slot-name)
-                                        (car arguments))))))
+                                        (car args))))))
     (loop for function-name in function-names
           for gf = (sicl-genv:fdefinition function-name environment)
           for method = (make-instance 'closer-mop:standard-writer-method
@@ -156,11 +148,10 @@
               for readers = (getf slot-spec :readers)
               for writers = (getf slot-spec :writers)
               do (add-readers e2 readers class slot-name slot)
-                 (add-readers e2 writers class slot-name slot))))))
+                 (add-writers e2 writers class slot-name slot))))))
 
 (defun boot-phase-0 (boot)
   (format *trace-output* "Start of phase 0~%")
   (import-from-host boot)
   (with-accessors ((e0 sicl-new-boot:e0) (e1 sicl-new-boot:e1)) boot
-;;    (enable-defmethod boot)
     (enable-class-initialization boot)))
