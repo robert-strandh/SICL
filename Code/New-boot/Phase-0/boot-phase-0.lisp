@@ -129,35 +129,34 @@
 
 (defun enable-class-initialization (boot)
   (with-accessors ((e0 sicl-new-boot:e0) (e2 sicl-new-boot:e2)) boot
-    (defmethod shared-initialize ((class funcallable-standard-class)
-                                  slot-names
-                                  &rest arguments
-                                  &key
-                                    direct-default-initargs
-                                    direct-superclasses
-                                    direct-slots
-                                  &allow-other-keys)
+    (defmethod initialize-instance ((class funcallable-standard-class)
+                                    &rest arguments
+                                    &key
+                                      direct-default-initargs
+                                      direct-superclasses
+                                      direct-slots
+                                    &allow-other-keys)
       (let ((new-direct-slots
               (loop for slot-spec in direct-slots
-                    for slot = (apply #'make-instance
-                                      'closer-mop:standard-direct-slot-definition
-                                      slot-spec)
                     for spec = (copy-list slot-spec)
-                    for slot-name = (getf slot-spec :name)
-                    for readers = (getf spec :readers)
-                    for writers = (getf spec :writers)
                     do (remf spec :readers)
                        (remf spec :writers)
-                       (add-readers e2 readers class slot-name slot)
-                       (add-readers e2 writers class slot-name slot)
                     collect spec)))
         (apply #'call-next-method
                class
-               slot-names
                :direct-superclasses direct-superclasses
                :direct-default-initargs direct-default-initargs
                :direct-slots new-direct-slots
-               arguments)))))
+               arguments)
+        (loop for slot-spec in direct-slots
+              for slot = (apply #'make-instance
+                                'closer-mop:standard-direct-slot-definition
+                                slot-spec)
+              for slot-name = (getf slot-spec :name)
+              for readers = (getf slot-spec :readers)
+              for writers = (getf slot-spec :writers)
+              do (add-readers e2 readers class slot-name slot)
+                 (add-readers e2 writers class slot-name slot))))))
 
 (defun boot-phase-0 (boot)
   (format *trace-output* "Start of phase 0~%")
