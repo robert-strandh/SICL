@@ -163,4 +163,4 @@
   (import-from-host boot)
   (with-accessors ((e0 sicl-new-boot:e0) (e1 sicl-new-boot:e1)) boot
     (enable-defmethod boot)
-    (enable-class-initialization)))
+    (enable-class-initialization boot)))
