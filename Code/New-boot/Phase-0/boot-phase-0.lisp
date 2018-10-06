@@ -36,29 +36,7 @@
 (defun import-from-host (boot)
   (with-accessors ((e0 sicl-new-boot:e0)) boot
     (import-package-from-host 'sicl-clos e0)
-    (import-functions-from-host
-     '(sicl-genv:find-class
-       sicl-genv:typep
-       sicl-genv:fboundp
-       sicl-genv:fdefinition
-       cleavir-code-utilities:proper-list-p
-       cleavir-code-utilities:separate-function-body
-       cleavir-code-utilities:required
-       cleavir-code-utilities:parse-specialized-lambda-list
-       error format
-       make-instance
-       add-method
-       mapcar subseq 1+ elt position-if copy-list)
-     e0)
     (setf (sicl-genv:special-variable '*trace-output* e0 t) *trace-output*)
-    (import-mop-functions
-     '(#:add-direct-subclass
-       #:generic-function-method-class
-       #:class-prototype
-       #:method-function
-       #:validate-superclass
-       #:direct-slot-definition-class)
-     e0)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e0)
           #'sicl-clos::make-method-lambda-default)
     ;; Import class T so that it can be found when we need to create
