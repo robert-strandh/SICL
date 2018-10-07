@@ -186,12 +186,12 @@
 	     (pop remaining-labels)
 	     (pop layers)
 	     (setf state target))
-    ;; At this point, there is a single element left in REMAINING-LABELS,
-    ;;  corresponding to a transition to a final state.  There is also
-    ;;  a single element in LAYERS, namely the layer containing
-    ;;  final states. A final state with the action ACTION may already
-    ;;  exist, in which case we reuse it.  If not, we create a new
-    ;;  final state.
+    ;; At this point, there is a single element left in
+    ;; REMAINING-LABELS, corresponding to a transition to a final
+    ;; state.  There is also a single element in LAYERS, namely the
+    ;; layer containing final states. A final state with the action
+    ;; ACTION may already exist, in which case we reuse it.  If not,
+    ;; we create a new final state.
     (assert (and (consp layers) (null (cdr layers))))
     (assert (and (consp remaining-labels) (null (cdr remaining-labels))))
     (let ((final (car (member action (layer-states (car layers))
