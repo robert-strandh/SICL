@@ -25,7 +25,7 @@
 ;;; numbered from 0 to N.  Layer 0 consists of a single state, namely
 ;;; the initial state.  Layer N consists of final states, each
 ;;; corresponding to a particular effective method.
-;;; 
+;;;
 ;;; For any particular sequence of N unique class numbers, the
 ;;; automaton will make exactly N transitions.  It might be possible
 ;;; in some cases for an automaton to make fewer transitions.  As an
@@ -54,7 +54,7 @@
 ;;; For the purpose of building the discriminating automaton, each
 ;;; call cache contains a class number cache and an effective method
 ;;; cache.  Several different call caches may share the same (EQ)
-;;; effective method cache.  
+;;; effective method cache.
 ;;;
 ;;; We represent the automaton as nested lists.  We deliberately avoid
 ;;; using classes so as to avoid circular dependencies.
@@ -166,7 +166,7 @@
     ;; there is no transition for the corresponding label.  Should we
     ;; end up in a final state (which should not happen), then the
     ;; call (state-transitions state) will fail because a final
-    ;; state does not have any transitions. 
+    ;; state does not have any transitions.
     (loop for label = (car remaining-labels)
 	  for transitions = (state-transitions state)
 	  for transition = (assoc label transitions)
