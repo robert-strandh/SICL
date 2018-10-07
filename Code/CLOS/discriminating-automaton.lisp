@@ -145,7 +145,7 @@
 
 (defun make-automaton (n+1)
   (let ((result (loop repeat n+1
-		      collect (make-layer))))
+                      collect (make-layer))))
     (push (make-internal-state) (layer-states (car result)))
     result))
 
@@ -159,8 +159,8 @@
 ;;; state with the same action as the one given.
 (defun add-path (automaton labels action)
   (let ((state (car (layer-states (car automaton))))
-	(layers automaton)
-	(remaining-labels labels))
+        (layers automaton)
+        (remaining-labels labels))
     (pop layers)
     ;; Follow transitions in the automaton until we find a state where
     ;; there is no transition for the corresponding label.  Should we
@@ -168,24 +168,24 @@
     ;; call (state-transitions state) will fail because a final
     ;; state does not have any transitions.
     (loop for label = (car remaining-labels)
-	  for transitions = (state-transitions state)
-	  for transition = (assoc label transitions)
-	  until (null transition)
-	  do (pop remaining-labels)
-	     (pop layers)
-	     (setf state (transition-target transition)))
+          for transitions = (state-transitions state)
+          for transition = (assoc label transitions)
+          until (null transition)
+          do (pop remaining-labels)
+             (pop layers)
+             (setf state (transition-target transition)))
     ;; At this point, STATE is an internal state with no transition
     ;; with the first label in LABELS.  Now, we create new states
     ;; until right before we reach a final state.
     (loop for label = (car remaining-labels)
-	  for target = (make-internal-state)
-	  for transition = (make-transition label target)
-	  until (null (cdr remaining-labels))
-	  do (push transition (state-transitions state))
-	     (push target (layer-states (car layers)))
-	     (pop remaining-labels)
-	     (pop layers)
-	     (setf state target))
+          for target = (make-internal-state)
+          for transition = (make-transition label target)
+          until (null (cdr remaining-labels))
+          do (push transition (state-transitions state))
+             (push target (layer-states (car layers)))
+             (pop remaining-labels)
+             (pop layers)
+             (setf state target))
     ;; At this point, there is a single element left in
     ;; REMAINING-LABELS, corresponding to a transition to a final
     ;; state.  There is also a single element in LAYERS, namely the
@@ -195,45 +195,45 @@
     (assert (and (consp layers) (null (cdr layers))))
     (assert (and (consp remaining-labels) (null (cdr remaining-labels))))
     (let ((final (car (member action (layer-states (car layers))
-			      :key #'state-action))))
+                              :key #'state-action))))
       (when (null final)
-	;; There is no existing state with the action ACTION.  Create
-	;; one and add it to the final layer of the automaton.
-	(setf final (make-final-state action))
-	(push final (layer-states (car layers))))
+        ;; There is no existing state with the action ACTION.  Create
+        ;; one and add it to the final layer of the automaton.
+        (setf final (make-final-state action))
+        (push final (layer-states (car layers))))
       ;; Add a transition from STATE to FINAL.
       (push (make-transition (car remaining-labels) final)
-	    (state-transitions state)))))
+            (state-transitions state)))))
 
 ;;; Compare two transitions for equality.  Two transitions are
 ;;; considered equal if they have the same label and if the target
 ;;; states are the same under EQ.
 (defun transitions-equal (transition1 transition2)
   (and (eql (transition-label transition1)
-	    (transition-label transition2))
+            (transition-label transition2))
        (eq (transition-target transition1)
-	   (transition-target transition2))))
+           (transition-target transition2))))
 
 ;;; Two states are equivalent if they have the same outgoing
 ;;; transitions, as determined by TRANSITION-EQUAL.
 (defun states-equivalent-p (state1 state2)
   (unless (= (length (state-transitions state1))
-	     (length (state-transitions state2)))
+             (length (state-transitions state2)))
     (return-from states-equivalent-p nil))
   (setf (state-transitions state1)
-	(sort (state-transitions state1) #'< :key #'transition-label))
+        (sort (state-transitions state1) #'< :key #'transition-label))
   (setf (state-transitions state2)
-	(sort (state-transitions state2) #'< :key #'transition-label))
+        (sort (state-transitions state2) #'< :key #'transition-label))
   (every #'transitions-equal
-	 (state-transitions state1)
-	 (state-transitions state2)))
+         (state-transitions state1)
+         (state-transitions state2)))
 
 ;;; If the target state of the transition is equivalent to some other
 ;;; state indicated by the alist, then change the transition to point
 ;;; to the equivalent state instead.
 (defun adjust-transition (transition alist)
   (let* ((target (transition-target transition))
-	 (equivalent-target (cdr (assoc target alist))))
+         (equivalent-target (cdr (assoc target alist))))
     (unless (null equivalent-target)
       (setf (transition-target transition) equivalent-target))))
 
@@ -242,7 +242,7 @@
 ;;; EQ.
 (defun adjust-state (state alist)
   (loop for transition in (state-transitions state)
-	do (adjust-transition transition alist)))
+        do (adjust-transition transition alist)))
 
 ;;; Minimize a layer.  The next layer has already been minimized, and
 ;;; the result of that operation was a dictionary (represented as an
@@ -259,7 +259,7 @@
   ;; Start by traversing the layer and updating the transitions
   ;; according to DICO.
   (loop for state in (layer-states layer)
-	do (adjust-state state dico))
+        do (adjust-state state dico))
   (let ((equivalences '()))
     ;; Now, for each state in the layer: First collect any equivalent
     ;; states that occur after the first one in the later.  Then
@@ -270,27 +270,27 @@
     ;; traversal operation because then the result would be undefined,
     ;; so we use explicit list operations instead.
     (loop with remaining-states = (layer-states layer)
-	  for state = (car remaining-states)
-	  until (null (cdr remaining-states))
-	  do (setf (cdr remaining-states)
-		   (loop for s in (cdr remaining-states)
-			 if (states-equivalent-p state s)
-			   do (push (cons s state) equivalences)
-			 else
-			   collect s))
-	     (pop remaining-states))
+          for state = (car remaining-states)
+          until (null (cdr remaining-states))
+          do (setf (cdr remaining-states)
+                   (loop for s in (cdr remaining-states)
+                         if (states-equivalent-p state s)
+                           do (push (cons s state) equivalences)
+                         else
+                           collect s))
+             (pop remaining-states))
     equivalences))
 
 (defun minimize-automaton (automaton)
   (loop for dico = '() then (minimize-layer layer dico)
-	for layer in (cdr (reverse automaton))))
-	
+        for layer in (cdr (reverse automaton))))
+
 ;;; Assign a GENSYMed name to each state of LAYER that does not
 ;;; already have a name.
 (defun name-states-of-layer (layer)
   (loop for state in (layer-states layer)
-	do (when (null (state-name state))
-	     (setf (state-name state) (gensym)))))
+        do (when (null (state-name state))
+             (setf (state-name state) (gensym)))))
 
 ;;; Assign a GENSYMed name to each state of the automaton that does
 ;;; not already have a name.
@@ -321,17 +321,17 @@
 
 (defun state-information (state)
   (cons (state-name state)
-	(if (final-state-p state)
-	    (state-action state)
-	    (loop for transition in (state-transitions state)
-		  for label = (transition-label transition)
-		  for target = (transition-target transition)
-		  for name = (state-name target)
-		  collect (cons label name)))))
+        (if (final-state-p state)
+            (state-action state)
+            (loop for transition in (state-transitions state)
+                  for label = (transition-label transition)
+                  for target = (transition-target transition)
+                  for name = (state-name target)
+                  collect (cons label name)))))
 
 (defun extract-transition-information (automaton)
   (name-states automaton)
   (loop for layer in automaton
-	for states = (layer-states layer)
-	collect (loop for state in states
-		      collect (state-information state))))
+        for states = (layer-states layer)
+        collect (loop for state in states
+                      collect (state-information state))))
