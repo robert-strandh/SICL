@@ -33,6 +33,9 @@
    #:method-qualifiers
    #:method-specializers
    #:accessor-method-slot-definition
+   ;; Accessors for specializer metaobjects.
+   #:specializer-direct-generic-functions
+   #:specializer-direct-methods
    ;; Accessors for class metaobjects. 
    #:class-name
    #:class-direct-superclasses
