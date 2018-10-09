@@ -262,8 +262,14 @@
     ;; REMOVE is needed by the class initialization protocol.
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'remove e2)
-    (load-accessor-defgenerics boot)
+    (setf (sicl-genv:fdefinition 'make-instance e1)
+          (lambda (class-or-name &rest args)
+            (let ((class (if (symbolp class-or-name)
+                             (sicl-genv:find-class class-or-name e1)
+                             class-or-name)))
+              (apply #'make-instance class args))))
     (define-make-instance e1 e2)
     (make-defmethod-possible-in-e2 e1 e2)
+    (load-accessor-defgenerics boot)
     (add-support-for-class-initialization-to-e2 e1 e2 e3)
     (create-mop-classes boot)))

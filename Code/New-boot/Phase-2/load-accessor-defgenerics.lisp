@@ -68,12 +68,6 @@
     (import-class-from-host
      'sicl-method-combination:method-combination-template
      e1)
-    (setf (sicl-genv:fdefinition 'make-instance e1)
-          (lambda (class-or-name &rest args)
-            (let ((class (if (symbolp class-or-name)
-                             (sicl-genv:find-class class-or-name e1)
-                             class-or-name)))
-              (apply #'make-instance class args))))
     (import-functions-from-host
      '(sicl-loop::list-car sicl-loop::list-cdr equal reverse
        sicl-method-combination::define-method-combination-expander
