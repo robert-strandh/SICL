@@ -5,19 +5,21 @@
 ;;; symbol.  If our version receives a symbol, it looks up the class
 ;;; metaobject in environment E1 before calling the host version.
 ;;;
-;;; MAKE-INSTANCe is called by DEFINE-METHOD-COMBINATION to create a
+;;; MAKE-INSTANCE is called by DEFINE-METHOD-COMBINATION to create a
 ;;; method-combination template, and by FIND-METHOD-COMBINATION to
 ;;; create a method-combination variant.  In phase 2, these are both
 ;;; defined in E1.
 (defun define-make-instance-in-e1 (e1)
   (setf (sicl-genv:fdefinition 'make-instance e1)
         (lambda (class-or-name &rest args)
-          (break)
           (let ((class (if (symbolp class-or-name)
                            (sicl-genv:find-class class-or-name e1)
                            class-or-name)))
             (apply #'make-instance class args)))))
 
+;;; MAKE-INSTANCE is called in environment E2 when DEFMETHOD is called
+;;; in environment E2 to create a method to add to a bridge generic
+;;; function in E2.
 (defun define-make-instance-in-e2 (e1 e2)
   (setf (sicl-genv:fdefinition 'make-instance e2)
         (sicl-genv:fdefinition 'make-instance e1)))
@@ -28,7 +30,7 @@
 ;;; we need a special version of SICL-GENV:FIND-CLASS in E2 that
 ;;; ignores its ENVIRONMENT parameter and looks up the class in E1
 ;;; instead.
-(defun define-find-class (e1 e2)
+(defun define-find-class-in-e2 (e1 e2)
   (setf (sicl-genv:fdefinition 'sicl-genv:find-class e2)
         (lambda (class-name environment)
           (declare (ignore environment))
@@ -143,7 +145,7 @@
 (defun make-defmethod-possible-in-e2 (e1 e2)
   ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
   ;; specializer when a symbol is given.
-  (define-find-class e1 e2)
+  (define-find-class-in-e2 e1 e2)
   ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
   ;; not given, then an instance of SPECIALIZER was.
   (sicl-minimal-extrinsic-environment:import-function-from-host
