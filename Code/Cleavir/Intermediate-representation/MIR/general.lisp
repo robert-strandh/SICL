@@ -99,7 +99,7 @@
 ;;; and stores the input in the resulting address.
 
 (defclass memset2-instruction (instruction one-successor-mixin)
-  ())
+  ((%offset :initarg :offset :reader offset)))
 
 (defun make-memset2-instruction (base-address offset value &optional successor)
   (make-instance 'memset2-instruction
