@@ -4,7 +4,7 @@
 ;;; host MAKE-INSTANCE always with a class metaobject and never with a
 ;;; symbol.  If our version receives a symbol, it looks up the class
 ;;; metaobject in environment E1 before calling the host version.
-(defun define-make-instance (e1 e2)
+(defun define-make-instance-in-e2 (e1 e2)
   (setf (sicl-genv:fdefinition 'make-instance e2)
         (lambda (class &rest arguments)
           (apply #'make-instance
@@ -268,7 +268,7 @@
                              (sicl-genv:find-class class-or-name e1)
                              class-or-name)))
               (apply #'make-instance class args))))
-    (define-make-instance e1 e2)
+    (define-make-instance-in-e2 e1 e2)
     (make-defmethod-possible-in-e2 e1 e2)
     (load-accessor-defgenerics boot)
     (add-support-for-class-initialization-to-e2 e1 e2 e3)
