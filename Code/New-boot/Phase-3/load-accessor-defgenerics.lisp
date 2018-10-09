@@ -23,7 +23,7 @@
                                  ;; 'standard '() e3)
                                  args)))))))))
 
-(defun activate-generic-function-initialization (boot)
+(defun enable-generic-function-initialization (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
@@ -47,7 +47,7 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (ensure-generic-function-phase-3 boot)
-    (activate-generic-function-initialization boot)
+    (enable-generic-function-initialization boot)
     (import-package-from-host '#:sicl-clos e4)
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-clos:defgeneric-expander e4)

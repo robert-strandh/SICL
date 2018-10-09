@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
-(defun activate-class-finalization (boot)
+(defun enable-class-finalization (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
     (setf (sicl-genv:special-variable
@@ -131,7 +131,7 @@
                          ,@forms)
                       nil)))))))))
 
-(defun activate-object-initialization (boot)
+(defun enable-object-initialization (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     ;; The function CLASS-OF is called by SHARED-INITIALIZE in order
@@ -196,7 +196,7 @@
                      (sicl-genv:fdefinition 'initialize-instance e3)
                      initargs))))))
 
-(defun activate-defmethod-in-e3 (boot)
+(defun enable-defmethod-in-e3 (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (let ((method-function (sicl-genv:fdefinition 'sicl-clos:method-function e2)))
@@ -241,10 +241,10 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (change-class e3 'environment)
-    (activate-class-finalization boot)
+    (enable-class-finalization boot)
     (finalize-all-classes boot)
-    (activate-defmethod-in-e3 boot)
-    (activate-object-initialization boot)
+    (enable-defmethod-in-e3 boot)
+    (enable-object-initialization boot)
     (satiate-all-functions e1 e2 e3)
     (load-accessor-defgenerics boot)
     (satiate-all-functions e1 e2 e3)
