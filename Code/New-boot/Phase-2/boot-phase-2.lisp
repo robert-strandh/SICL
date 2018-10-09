@@ -1,17 +1,20 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
-;;; We define MAKE-INSTANCE in environment E2 so that it calls the
+;;; We define MAKE-INSTANCE in environment E1 so that it calls the
 ;;; host MAKE-INSTANCE always with a class metaobject and never with a
 ;;; symbol.  If our version receives a symbol, it looks up the class
 ;;; metaobject in environment E1 before calling the host version.
+(defun define-make-instance-in-e1 (e1)
+  (setf (sicl-genv:fdefinition 'make-instance e1)
+        (lambda (class-or-name &rest args)
+          (let ((class (if (symbolp class-or-name)
+                           (sicl-genv:find-class class-or-name e1)
+                           class-or-name)))
+            (apply #'make-instance class args)))))
+
 (defun define-make-instance-in-e2 (e1 e2)
   (setf (sicl-genv:fdefinition 'make-instance e2)
-        (lambda (class &rest arguments)
-          (apply #'make-instance
-                 (if (symbolp class)
-                     (sicl-genv:find-class class e1)
-                     class)
-                 arguments))))
+        (sicl-genv:fdefinition 'make-instance e1)))
 
 ;;; When we need to find a class in E2, like for creating a method
 ;;; metaobject, or for finding a specializer for some method, we need
@@ -262,12 +265,7 @@
     ;; REMOVE is needed by the class initialization protocol.
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'remove e2)
-    (setf (sicl-genv:fdefinition 'make-instance e1)
-          (lambda (class-or-name &rest args)
-            (let ((class (if (symbolp class-or-name)
-                             (sicl-genv:find-class class-or-name e1)
-                             class-or-name)))
-              (apply #'make-instance class args))))
+    (define-make-instance-in-e1 e1)
     (define-make-instance-in-e2 e1 e2)
     (make-defmethod-possible-in-e2 e1 e2)
     (load-accessor-defgenerics boot)
