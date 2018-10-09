@@ -1,5 +1,113 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+(defclass header (closer-mop:funcallable-standard-object)
+  ((%class :initarg :class)
+   (%rack :initarg :rack))
+  (:metaclass closer-mop:funcallable-standard-class))
+
+(defun activate-allocate-instance (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)) boot
+    (setf (sicl-genv:fdefinition 'sicl-clos::allocate-general-instance e2)
+          (lambda (class size)
+            (make-instance 'header
+              :class class
+              :rack (make-array size :initial-element 10000000))))
+    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e2)
+          (lambda (object location)
+            (aref (slot-value object '%rack) location)))
+    (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e2)
+          (lambda (value object location)
+            (setf (aref (slot-value object '%rack) location) value)))
+    (import-functions-from-host
+     '((setf sicl-genv:constant-variable) sort assoc list* every
+       mapc 1+ 1- subseq butlast position identity nthcdr equal
+       remove-if-not mapcar reverse find compile)
+     e2)
+    (load-file "CLOS/class-unique-number-offset-defconstant.lisp" e2)
+    (load-file "CLOS/allocate-instance-defgenerics.lisp" e2)
+    (load-file "CLOS/allocate-instance-support.lisp" e2)
+    (load-file "CLOS/allocate-instance-defmethods.lisp" e2)))
+
+(defun my-class-of (object)
+  (if (typep object 'header)
+      (slot-value object '%class)
+      (class-of object)))
+
+(defun activate-generic-function-invocation (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)) boot
+    (import-package-from-host '#:sicl-conditions e2)
+    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2)
+          (lambda (object)
+            (typep object 'header)))
+    (setf (sicl-genv:fdefinition 'typep e2)
+          (lambda (object type-specifier)
+            (sicl-genv:typep object type-specifier e2)))
+    (load-file "CLOS/classp-defgeneric.lisp" e2)
+    (load-file "CLOS/classp-defmethods.lisp" e2)
+    (setf (sicl-genv:fdefinition 'class-of e2)
+          #'my-class-of)
+    (setf (sicl-genv:fdefinition 'find-class e2)
+          (lambda (name)
+            (sicl-genv:find-class name e1)))
+    (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
+          #'closer-mop:set-funcallable-instance-function)
+    (load-file-protected "CLOS/list-utilities.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
+    (load-file "New-boot/Phase-3/sub-specializer-p.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)
+    (import-package-from-host '#:sicl-method-combination e2)
+    (import-function-from-host
+     'sicl-method-combination::define-method-combination-expander e2)
+    (load-file "Method-combination/define-method-combination-defmacro.lisp" e2)
+    (import-functions-from-host
+     '(sicl-genv:find-method-combination-template
+       (setf sicl-genv:find-method-combination-template)
+       sicl-loop::list-cdr sicl-loop::list-car)
+     e2)
+    (setf (sicl-genv:find-class
+           'sicl-method-combination:method-combination-template e1)
+          (find-class 'sicl-method-combination:method-combination-template))
+    (load-file "CLOS/standard-method-combination.lisp" e2)
+    (import-functions-from-host
+     '(sicl-method-combination:find-method-combination
+       sicl-method-combination:effective-method-form-function)
+     e2)
+    (load-file "CLOS/find-method-combination-defgenerics.lisp" e2)
+    (load-file "CLOS/find-method-combination-defmethods.lisp" e2)
+    (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
+    (load-file "CLOS/compute-effective-method-support.lisp" e2)
+    (setf (sicl-genv:fdefinition 'make-method e2)
+          (lambda (function)
+            (funcall (sicl-genv:fdefinition 'make-instance e2)
+                     (sicl-genv:find-class 'standard-method e1)
+                     :function function
+                     :lambda-list '(x &rest args)
+                     :specializers (list (sicl-genv:find-class t e2)))))
+    (load-file "CLOS/compute-effective-method-support-c.lisp" e2)
+    (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e2)
+    (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
+    (load-file "CLOS/no-applicable-method.lisp" e2)
+    (import-functions-from-host
+     '(zerop nth intersection make-list caddr) e2)
+    (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
+    (load-file "CLOS/compute-discriminating-function-support.lisp" e2)
+    (import-functions-from-host
+     '(sicl-clos::add-path
+       sicl-clos::compute-discriminating-tagbody
+       sicl-clos::extract-transition-information
+       sicl-clos::make-automaton)
+     e2)
+    (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
+    (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
+    (load-file-protected "CLOS/satiation.lisp" e2)
+    (import-functions-from-host '(format print-object) e2)
+    (load-file "New-boot/Phase-3/define-methods-on-print-object.lisp" e2)
+    (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
+    (load-file "CLOS/standard-instance-access.lisp" e2)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Creating class accessor generic functions.
@@ -55,6 +163,8 @@
     (setf (find-class temp) gf-class) nil))
 
 (defun load-accessor-defgenerics (boot)
+  (activate-allocate-instance boot)
+  (activate-generic-function-invocation boot)
   (sicl-minimal-extrinsic-environment:host-load
    "CLOS/generic-function-initialization-support.lisp")
   (with-accessors ((e1 sicl-new-boot:e1)
