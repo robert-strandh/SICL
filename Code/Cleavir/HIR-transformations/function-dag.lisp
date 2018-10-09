@@ -29,7 +29,7 @@
   (initial-instruction node))
 
 (defclass interior-node (dag-node)
-  ((%parents :initarg :parents :reader parents)
+  ((%parents :initarg :parents :accessor parents)
    (%enclose-instruction :initarg :enclose-instruction
 			 :reader enclose-instruction)))
 
