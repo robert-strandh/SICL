@@ -171,7 +171,7 @@
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
       boot
-    (sicl-minimal-extrinsic-environment:import-function-from-host
+    (import-function-from-host
      'sicl-clos:defgeneric-expander e3)
     (load-file "CLOS/defgeneric-defmacro.lisp" e3)
     (import-package-from-host 'sicl-method-combination e1)
@@ -197,7 +197,7 @@
           (sicl-genv:fdefinition 'sicl-clos::variant-signature e2))
     (load-file "Method-combination/find-method-combination.lisp" e1)
     (ensure-generic-function-phase-2 boot)
-    (sicl-minimal-extrinsic-environment:import-function-from-host
+    (import-function-from-host
      'shared-initialize e2)
     (set-up-generic-function-initialization boot)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e3)

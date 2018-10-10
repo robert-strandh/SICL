@@ -148,16 +148,16 @@
   (define-find-class-in-e2 e1 e2)
   ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
   ;; not given, then an instance of SPECIALIZER was.
-  (sicl-minimal-extrinsic-environment:import-function-from-host
+  (import-function-from-host
    'sicl-genv:typep e2)
   ;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
   ;; of specializers given is a proper list.
-  (sicl-minimal-extrinsic-environment:import-function-from-host
+  (import-function-from-host
    'cleavir-code-utilities:proper-list-p e2)
   (define-method-on-generic-function-method-class e2)
-  (sicl-minimal-extrinsic-environment:import-function-from-host
+  (import-function-from-host
    'add-method e2)
-  (sicl-minimal-extrinsic-environment:import-function-from-host
+  (import-function-from-host
    'copy-list e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e1)
         #'sicl-clos::make-method-lambda-default)
@@ -263,13 +263,13 @@
     (setf (sicl-genv:special-variable '*trace-output* e2 t) *trace-output*)
     (setf (sicl-genv:special-variable '*trace-output* e3 t) *trace-output*)
     (setf (sicl-genv:special-variable '*trace-output* e4 t) *trace-output*)
-    (sicl-minimal-extrinsic-environment:import-package-from-host 'sicl-clos e3)
-    (sicl-minimal-extrinsic-environment:import-function-from-host
+    (import-package-from-host 'sicl-clos e3)
+    (import-function-from-host
      'sicl-clos:defclass-expander e2)
-    (sicl-minimal-extrinsic-environment:import-function-from-host
+    (import-function-from-host
      '(setf sicl-genv:special-variable) e2)
     ;; REMOVE is needed by the class initialization protocol.
-    (sicl-minimal-extrinsic-environment:import-function-from-host
+    (import-function-from-host
      'remove e2)
     (define-make-instance-in-e1 e1)
     (define-make-instance-in-e2 e1 e2)
