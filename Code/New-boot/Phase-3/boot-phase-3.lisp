@@ -11,7 +11,7 @@
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
     (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
     (import-functions-from-host
-     '(find reverse last remove-duplicates reduce
+     '(last remove-duplicates reduce
        mapcar union find-if-not eql count)
      e2)
     (load-file "CLOS/slot-definition-class-support.lisp" e2)
