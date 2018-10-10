@@ -171,12 +171,10 @@
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
       boot
-    (import-function-from-host
-     'sicl-clos:defgeneric-expander e3)
+    (import-function-from-host 'sicl-clos:defgeneric-expander e3)
     (load-file "CLOS/defgeneric-defmacro.lisp" e3)
     (import-package-from-host 'sicl-method-combination e1)
-    (import-class-from-host
-     'sicl-method-combination:method-combination-template
+    (import-class-from-host 'sicl-method-combination:method-combination-template
      e1)
     (import-functions-from-host
      '(sicl-loop::list-car sicl-loop::list-cdr equal reverse
@@ -197,8 +195,7 @@
           (sicl-genv:fdefinition 'sicl-clos::variant-signature e2))
     (load-file "Method-combination/find-method-combination.lisp" e1)
     (ensure-generic-function-phase-2 boot)
-    (import-function-from-host
-     'shared-initialize e2)
+    (import-function-from-host 'shared-initialize e2)
     (set-up-generic-function-initialization boot)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e3)
     (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" e3)
