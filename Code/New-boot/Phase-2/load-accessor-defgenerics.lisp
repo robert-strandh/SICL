@@ -5,7 +5,7 @@
    (%rack :initarg :rack))
   (:metaclass closer-mop:funcallable-standard-class))
 
-(defun activate-allocate-instance (boot)
+(defun enable-allocate-instance (boot)
   (with-accessors ((e2 sicl-new-boot:e2)) boot
     (setf (sicl-genv:fdefinition 'sicl-clos::allocate-general-instance e2)
           (lambda (class size)
@@ -33,7 +33,7 @@
       (slot-value object '%class)
       (class-of object)))
 
-(defun activate-generic-function-invocation (boot)
+(defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -163,8 +163,8 @@
     (setf (find-class temp) gf-class) nil))
 
 (defun load-accessor-defgenerics (boot)
-  (activate-allocate-instance boot)
-  (activate-generic-function-invocation boot)
+  (enable-allocate-instance boot)
+  (enable-generic-function-invocation boot)
   (sicl-minimal-extrinsic-environment:host-load
    "CLOS/generic-function-initialization-support.lisp")
   (with-accessors ((e1 sicl-new-boot:e1)
