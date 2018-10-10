@@ -244,8 +244,6 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e2)
         (lambda (class) (declare (ignore class)) '()))
   (load-file "CLOS/class-initialization-support.lisp" e2)
-  (sicl-minimal-extrinsic-environment:import-function-from-host
-   'shared-initialize e2)
   (load-file "CLOS/class-initialization-defmethods.lisp" e2)
   (define-method-on-method-function e2)
   (define-add-accessor-method e1 e2 e3))

@@ -197,6 +197,8 @@
           (sicl-genv:fdefinition 'sicl-clos::variant-signature e2))
     (load-file "Method-combination/find-method-combination.lisp" e1)
     (ensure-generic-function-phase-2 boot)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'shared-initialize e2)
     (set-up-generic-function-initialization boot)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e3)
     (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" e3)
