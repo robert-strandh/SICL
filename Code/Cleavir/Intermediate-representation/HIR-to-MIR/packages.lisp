@@ -2,4 +2,4 @@
 
 (defpackage #:cleavir-hir-to-mir
   (:use #:common-lisp)
-  (:export #:hir-to-mir))
+  (:export #:specialize #:hir-to-mir))
