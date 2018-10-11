@@ -51,24 +51,24 @@
 ;;; same target.
 (defun make-transfer-groups (transfers)
   (loop with trs = (sort (copy-list transfers) #'< :key #'transfer-label)
-	with first = (car trs)
-	with rest = (cdr trs)
-	with result = (list (make-transfer-group
-			     (make-interval (transfer-label first)
-					    (1+ (transfer-label first)))
-			     (transfer-target first)))
-	for tr in rest
-	do (if (and (eq (transfer-target tr)
-			(transfer-group-target (car result)))
-		    (= (transfer-label tr)
-		       (interval-end (transfer-group-interval (car result)))))
-	       (incf (interval-end (transfer-group-interval (car result))))
-	       (push (make-transfer-group
-		      (make-interval (transfer-label tr)
-				     (1+ (transfer-label tr)))
-		      (transfer-target tr))
-		     result))
-	finally (return (reverse result))))
+        with first = (car trs)
+        with rest = (cdr trs)
+        with result = (list (make-transfer-group
+                             (make-interval (transfer-label first)
+                                            (1+ (transfer-label first)))
+                             (transfer-target first)))
+        for tr in rest
+        do (if (and (eq (transfer-target tr)
+                        (transfer-group-target (car result)))
+                    (= (transfer-label tr)
+                       (interval-end (transfer-group-interval (car result)))))
+               (incf (interval-end (transfer-group-interval (car result))))
+               (push (make-transfer-group
+                      (make-interval (transfer-label tr)
+                                     (1+ (transfer-label tr)))
+                      (transfer-target tr))
+                     result))
+        finally (return (reverse result))))
 
 ;;; Given a list of transfer groups, compute a nested IF form.  The
 ;;; argument VAR contains a symbol that is tested against the transfer
@@ -83,42 +83,42 @@
 (defun compute-test-tree (var default transfer-groups open-inf-p open-sup-p)
   (let ((length (length transfer-groups)))
     (if (= length 1)
-	(let* ((transfer-group (car transfer-groups))
-	       (interval (transfer-group-interval transfer-group))
-	       (start (interval-start interval))
-	       (end (interval-end interval))
-	       (target (transfer-group-target transfer-group)))
-	  (if open-inf-p
-	      (if open-sup-p
-		  (if (= end (1+ start))
-		      `(if (= ,var ,start)
-			   (go ,target)
-			   (go ,default))
-		      `(if (< ,var ,start)
-			   (go ,default)
-			   (if (< ,var ,end)
-			       (go ,target)
-			       (go ,default))))
-		  `(if (< ,var ,start)
-		       (go ,default)
-		       (go ,target)))
-	      (if open-sup-p
-		  `(if (< ,var ,end)
-		       (go ,target)
-		       (go ,default))
-		  `(go ,target))))
-	(let* ((half (floor length 2))
-	       (left (subseq transfer-groups 0 half))
-	       (right (subseq transfer-groups half))
-	       ;; FIXME: these cars and cdrs should be abstracted.
-	       (open-p (/= (interval-end
-			    (transfer-group-interval (car (last left))))
-			   (interval-start
-			    (transfer-group-interval (car right))))))
-	  ;; FIXME: these cars and cdrs should be abstracted.
-	  `(if (< ,var ,(interval-start (transfer-group-interval (car right))))
-	       ,(compute-test-tree var default left open-inf-p open-p)
-	       ,(compute-test-tree var default right nil open-sup-p))))))
+        (let* ((transfer-group (car transfer-groups))
+               (interval (transfer-group-interval transfer-group))
+               (start (interval-start interval))
+               (end (interval-end interval))
+               (target (transfer-group-target transfer-group)))
+          (if open-inf-p
+              (if open-sup-p
+                  (if (= end (1+ start))
+                      `(if (= ,var ,start)
+                           (go ,target)
+                           (go ,default))
+                      `(if (< ,var ,start)
+                           (go ,default)
+                           (if (< ,var ,end)
+                               (go ,target)
+                               (go ,default))))
+                  `(if (< ,var ,start)
+                       (go ,default)
+                       (go ,target)))
+              (if open-sup-p
+                  `(if (< ,var ,end)
+                       (go ,target)
+                       (go ,default))
+                  `(go ,target))))
+        (let* ((half (floor length 2))
+               (left (subseq transfer-groups 0 half))
+               (right (subseq transfer-groups half))
+               ;; FIXME: these cars and cdrs should be abstracted.
+               (open-p (/= (interval-end
+                            (transfer-group-interval (car (last left))))
+                           (interval-start
+                            (transfer-group-interval (car right))))))
+          ;; FIXME: these cars and cdrs should be abstracted.
+          `(if (< ,var ,(interval-start (transfer-group-interval (car right))))
+               ,(compute-test-tree var default left open-inf-p open-p)
+               ,(compute-test-tree var default right nil open-sup-p))))))
 
 ;;; VAR is the name of a variable containing the unique number of a
 ;;; class.  TRANSFERS is a list of transfers (recall that a transfer
@@ -135,12 +135,12 @@
 
 (defun test-trees-from-internal-layer-info (var default layer-info)
   (loop for state-info in layer-info
-	collect (car state-info)
-	collect (test-tree-from-transfers var default (cdr state-info))))
+        collect (car state-info)
+        collect (test-tree-from-transfers var default (cdr state-info))))
 
 (defun actions-from-final-layer-info (layer-info)
   (loop for state-info in layer-info
-	append (list (car state-info) (cdr state-info))))
+        append (list (car state-info) (cdr state-info))))
 
 ;;; Create a TAGBODY form that implements the initial part of a
 ;;; discriminating function.  TRANSITION-INFO is the transition
@@ -151,10 +151,10 @@
 (defun compute-discriminating-tagbody (transition-info class-number-vars)
   (let ((default (gensym)))
     `(tagbody
-	,@(append
-	   (loop for layer-info in (butlast transition-info)
-		 for var in class-number-vars
-		 append (test-trees-from-internal-layer-info
-			 var default layer-info))
-	   (actions-from-final-layer-info (car (last transition-info))))
-	,default)))
+        ,@(append
+           (loop for layer-info in (butlast transition-info)
+                 for var in class-number-vars
+                 append (test-trees-from-internal-layer-info
+                         var default layer-info))
+           (actions-from-final-layer-info (car (last transition-info))))
+        ,default)))
