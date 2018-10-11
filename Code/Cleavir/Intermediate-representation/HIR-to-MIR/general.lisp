@@ -1,11 +1,11 @@
-(cl:in-package #:cleavir-ir)
+(cl:in-package #:cleavir-hir-to-mir)
 
 (defgeneric specialize (instruction implementation processor os))
 
 (defun hir-to-mir (initial-instruction implementation processor os)
   (let ((all-instructions '()))
     ;; Gather up all instructions in a list.
-    (map-instructions
+    (cleavir-ir:map-instructions
      (lambda (instruction)
        (push instruction all-instructions))
      initial-instruction)
