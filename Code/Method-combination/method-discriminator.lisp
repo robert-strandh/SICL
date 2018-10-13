@@ -34,12 +34,12 @@
                  collect `(,(first specifier) '()))
        (loop for (,method-var . ,qualifiers-var) in ,method-list-var
              do ,(make-method-discriminator-code
-                  parsed-method-group-specifiers method-var)
-             ,@(loop for specifier in parsed-method-group-specifiers
-                     for name = (first specifier)
-                     for options = (third specifier)
-                     for required = (getf options :required)
-                     unless (null required)
-                       collect `(when (and ,required (null ,name))
-                                  (error "Empty list of requred methods"))))
+                  parsed-method-group-specifiers method-var))
+       ,@(loop for specifier in parsed-method-group-specifiers
+               for name = (first specifier)
+               for options = (third specifier)
+               for required = (getf options :required)
+               unless (null required)
+                 collect `(when (and ,required (null ,name))
+                            (error "Empty list of requred methods")))
        ,@body)))
