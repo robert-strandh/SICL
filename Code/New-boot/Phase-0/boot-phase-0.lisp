@@ -116,9 +116,6 @@
               do (add-readers e2 readers class slot-name slot)
                  (add-writers e2 writers class slot-name slot))))))
 
-(defclass environment (sicl-minimal-extrinsic-environment:environment)
-  ())
-
 (defun boot-phase-0 (boot)
   (format *trace-output* "Start of phase 0~%")
   (change-class (sicl-new-boot:e0 boot) 'environment)
