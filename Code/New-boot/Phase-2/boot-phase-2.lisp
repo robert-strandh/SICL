@@ -36,9 +36,6 @@
           (declare (ignore environment))
           (sicl-genv:find-class class-name e1))))
 
-(defclass environment (sicl-minimal-extrinsic-environment:environment)
-  ())
-
 (defmethod sicl-genv:typep
     (object (type-specifier (eql 'class)) (environment environment))
   t)
