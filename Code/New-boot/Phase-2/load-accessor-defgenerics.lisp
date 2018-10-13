@@ -142,26 +142,6 @@
                                  :method-combination method-combination
                                  args)))))))))
 
-;;; FIXME: remove the :AROUND method after booting is complete.
-(defun set-up-generic-function-initialization (boot)
-  (let* ((temp (gensym))
-         (class-env (sicl-new-boot:e1 boot))
-         (gf-class-name 'generic-function)
-         (gf-class (sicl-genv:find-class gf-class-name class-env)))
-    (setf (find-class temp) gf-class)
-    (eval `(defmethod shared-initialize :around
-            ((generic-function ,temp)
-             slot-names
-             &rest initargs
-             &key &allow-other-keys)
-            (apply #'sicl-clos::shared-initialize-around-generic-function-default
-             #'call-next-method
-             #'identity
-             generic-function
-             slot-names
-             initargs)))
-    (setf (find-class temp) gf-class) nil))
-
 (defun load-accessor-defgenerics (boot)
   (enable-allocate-instance boot)
   (enable-generic-function-invocation boot)
@@ -202,7 +182,6 @@
      'cleavir-code-utilities:parse-generic-function-lambda-list e2)
     (import-function-from-host 'cleavir-code-utilities:required e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)
-    (set-up-generic-function-initialization boot)
     (load-file "CLOS/generic-function-initialization-support.lisp" e2)
     (load-file "CLOS/generic-function-initialization-defmethods.lisp" e2)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e3)
