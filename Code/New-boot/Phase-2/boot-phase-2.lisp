@@ -12,10 +12,11 @@
 (defun define-make-instance-in-e1 (e1)
   (setf (sicl-genv:fdefinition 'make-instance e1)
         (lambda (class-or-name &rest args)
-          (let ((class (if (symbolp class-or-name)
-                           (sicl-genv:find-class class-or-name e1)
-                           class-or-name)))
-            (apply #'make-instance class args)))))
+          (let* ((class (if (symbolp class-or-name)
+                            (sicl-genv:find-class class-or-name e1)
+                            class-or-name))
+                 (result (apply #'make-instance class args)))
+            result))))
 
 ;;; MAKE-INSTANCE is called in environment E2 when DEFMETHOD is called
 ;;; in environment E2 to create a method to add to a bridge generic
@@ -238,7 +239,6 @@
         (lambda (class) (declare (ignore class)) '()))
   (load-file "CLOS/class-initialization-support.lisp" e2)
   (load-file "CLOS/class-initialization-defmethods.lisp" e2)
-  (define-method-on-method-function e2)
   (define-add-accessor-method e1 e2 e3))
 
 (defun boot-phase-2 (boot)
@@ -264,6 +264,7 @@
     (define-make-instance-in-e1 e1)
     (define-make-instance-in-e2 e1 e2)
     (make-defmethod-possible-in-e2 e1 e2)
+    (define-method-on-method-function e2)
     (load-accessor-defgenerics boot)
     (add-support-for-class-initialization-to-e2 e1 e2 e3)
     (create-mop-classes boot)))
