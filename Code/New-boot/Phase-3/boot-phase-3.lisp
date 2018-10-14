@@ -53,7 +53,7 @@
 ;;; reason, we define a special version of it here.
 ;;;
 ;;; Now, we are dealing with generic function metaobjects in E3.  They
-;;; are instances of classes in E1, so the accessor methods for thos
+;;; are instances of classes in E1, so the accessor methods for those
 ;;; generic function metaobjects are to be found in E2.  Therefore,
 ;;; instead of just using PUSH, we have to find and call the
 ;;; slot-reader and the slot-writer explicitly which makes this code
