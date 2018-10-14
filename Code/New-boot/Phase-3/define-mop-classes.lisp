@@ -125,7 +125,6 @@
     (define-ensure-class boot)
     (load-file "CLOS/defclass-defmacro.lisp" e3)
     (import-function-from-host '(setf sicl-genv:special-variable) e3)
-    (satiate-all-functions e1 e2 e3)
     (load-file "CLOS/t-defclass.lisp" e3)
     (load-file "CLOS/function-defclass.lisp" e3)
     (load-file "CLOS/standard-object-defclass.lisp" e3)
