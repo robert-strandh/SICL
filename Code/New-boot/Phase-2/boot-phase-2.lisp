@@ -183,8 +183,6 @@
   ;; correct for phase 2.  Fix the problem by defining a special
   ;; version of it.
   (define-make-specializer e1 e2)
-  (load-file "CLOS/make-method-for-generic-function.lisp" e1)
-  ;; FIXME: this one should move to a different phase.
   (load-file "CLOS/make-method-for-generic-function.lisp" e2)
   (import-functions-from-host
    '(cleavir-code-utilities:proper-list-p
@@ -192,8 +190,6 @@
      copy-list)
    e1)
   (load-file "CLOS/make-specializer.lisp" e1)
-  (load-file "CLOS/ensure-method.lisp" e1)
-  ;; FIXME: this one should move to a different phase.
   (load-file "CLOS/ensure-method.lisp" e2)
   (load-file "CLOS/defmethod-defmacro.lisp" e2))
 
