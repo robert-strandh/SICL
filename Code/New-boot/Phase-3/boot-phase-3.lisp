@@ -32,27 +32,6 @@
           (funcall finalization-function class)))))
   (format *trace-output* "Done finalizing all classes.~%"))
 
-(defun satiate-function (function e2)
-  (funcall (sicl-genv:fdefinition
-            'sicl-clos::compute-and-set-specializer-profile e2)
-           function (sicl-genv:find-class 't e2))
-  (funcall (sicl-genv:fdefinition 'sicl-clos::satiate-generic-function e2)
-           function))
-
-(defun satiate-all-functions (e1 e2 e3)
-  (format *trace-output* "Satiating all functions.~%")
-  (do-all-symbols (var)
-    (when (and (sicl-genv:fboundp var e3)
-               (eq (class-of (sicl-genv:fdefinition var e3))
-                   (sicl-genv:find-class 'standard-generic-function e1)))
-      (satiate-function (sicl-genv:fdefinition var e3) e2))
-    (when (and (sicl-genv:fboundp `(setf ,var) e3)
-               (eq (class-of (sicl-genv:fdefinition `(setf ,var) e3))
-                   (sicl-genv:find-class 'standard-generic-function e1)))
-      (satiate-function (sicl-genv:fdefinition `(setf ,var) e3) e2)))
-  (format *trace-output* "Done satiating all functions.~%"))
-
-
 ;;; The specializers of the generic functions in E3 are the classes of
 ;;; the instances in E3, so they are the classes in E2.
 (defun define-make-specializer (e2 e3)
@@ -245,7 +224,5 @@
     (finalize-all-classes boot)
     (enable-defmethod-in-e3 boot)
     (enable-object-initialization boot)
-    (satiate-all-functions e1 e2 e3)
     (load-accessor-defgenerics boot)
-    (satiate-all-functions e1 e2 e3)
     (create-mop-classes boot)))
