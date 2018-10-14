@@ -60,7 +60,7 @@
           #'closer-mop:set-funcallable-instance-function)
     (load-file-protected "CLOS/list-utilities.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
-    (load-file "New-boot/Phase-3/sub-specializer-p.lisp" e2)
+    (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)
     (import-package-from-host '#:sicl-method-combination e2)
@@ -108,8 +108,8 @@
     (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
     (import-functions-from-host '(format print-object) e2)
-    (load-file "New-boot/Phase-3/define-methods-on-print-object.lisp" e2)
-    (load-file "New-boot/Phase-3/compute-and-set-specialier-profile.lisp" e2)
+    (load-file "New-boot/Phase-2/define-methods-on-print-object.lisp" e2)
+    (load-file "New-boot/Phase-2/compute-and-set-specialier-profile.lisp" e2)
     (load-file "CLOS/standard-instance-access.lisp" e2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
