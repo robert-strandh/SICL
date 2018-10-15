@@ -9,5 +9,6 @@
    (:file "utilities")
    (:file "enable-defgeneric-in-e2")
    (:file "define-accessor-defgenerics-in-e2")
+   (:file "enable-defclass-in-e1")
    (:file "define-mop-classes-in-e1")
    (:file "boot-phase-1")))
