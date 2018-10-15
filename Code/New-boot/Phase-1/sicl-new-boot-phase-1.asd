@@ -7,6 +7,6 @@
   :components
   ((:file "packages")
    (:file "utilities")
-   (:file "load-accessor-defgenerics")
+   (:file "define-accessor-defgenerics-in-e2")
    (:file "define-mop-classes")
    (:file "boot-phase-1")))
