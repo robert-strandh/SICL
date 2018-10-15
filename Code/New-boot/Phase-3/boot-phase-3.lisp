@@ -220,6 +220,8 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (change-class e3 'environment)
+    (import-functions-from-host '(format) e3)
+    (setf (sicl-genv:special-variable '*trace-output* e3 t) *trace-output*)
     (enable-class-finalization boot)
     (finalize-all-classes boot)
     (enable-defmethod-in-e3 boot)
