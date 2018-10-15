@@ -1,54 +1,5 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Creating class accessor generic functions in environment E2.
-;;;
-;;; We want to make it possible to evaluate DEFGENERIC forms in
-;;; environment E2 so that the result is the creation of a host
-;;; standard generic function in E2.
-;;;
-;;; There are different ways in which we can accomplish this task,
-;;; given the constraint that it has to be done by loading DEFGENERIC
-;;; forms corresponding to the class accessor generic functions.
-;;;
-;;; We obviously can not use the host definition of DEFGENERIC because
-;;; it might clobber any existing host definition.  In particular,
-;;; this is the case for class accessor functions that have names in
-;;; the COMMON-LISP package, for instance CLASS-NAME.  Since we must
-;;; supply our own definition of DEFGENERIC, we are free to do what we
-;;; want.
-;;;
-;;; The way we have chosen to do it is to provide a specific
-;;; definition of ENSURE-GENERIC-FUNCTION.  We do not want to use the
-;;; ordinary SICL version of ENSURE-GENERIC-FUNCTION because it
-;;; requires a battery of additional functionality in the form of
-;;; other generic functions.  So to keep things simple, we supply a
-;;; special bootstrapping version of it.
-;;;
-;;; We can rely entirely on the host to execute the generic-function
-;;; initialization protocol.
-
-(defun ensure-generic-function-phase-1
-    (function-name &rest arguments &key environment &allow-other-keys)
-  (let ((args (copy-list arguments)))
-    (loop while (remf args :environment))
-    (if (sicl-genv:fboundp function-name environment)
-        (sicl-genv:fdefinition function-name environment)
-        (setf (sicl-genv:fdefinition function-name environment)
-              (apply #'make-instance 'standard-generic-function
-                     :name function-name
-                     :method-combination
-                     (closer-mop:find-method-combination
-                      #'class-name 'standard '())
-                     args)))))
-
-(defun enable-defgeneric-in-e2 (e2)
-  (import-function-from-host 'sicl-clos:defgeneric-expander e2)
-  (load-file "CLOS/defgeneric-defmacro.lisp" e2)
-  (setf (sicl-genv:fdefinition 'ensure-generic-function e2)
-        #'ensure-generic-function-phase-1))
-
 (defun load-accessor-defgenerics (e2)
   (enable-defgeneric-in-e2 e2)
   (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e2)
