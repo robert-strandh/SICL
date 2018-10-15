@@ -130,8 +130,8 @@
         do (remove-direct-method specializer method))
   ;; Disassociate GENERIC-FUNCTION from METHOD.
   (setf (method-generic-function method) nil)
-  ;; In validate the current discriminating function so that it will
-  ;; be recomputed next time the generic function is called.
+  ;; Invalidate the current discriminating function so that it will be
+  ;; recomputed next time the generic function is called.
   (invalidate-discriminating-function generic-function)
   ;; Update the dependents of GENERIC-FUNCTION.
   (map-dependents generic-function
