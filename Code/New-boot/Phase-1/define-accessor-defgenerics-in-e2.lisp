@@ -2,7 +2,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Creating class accessor generic functions.
+;;; Creating class accessor generic functions in environment E2.
+;;;
+;;; We want to make it possible to evaluate DEFGENERIC forms in
+;;; environment E2 so that the result is the creation of a host
+;;; standard generic function in E2.
 ;;;
 ;;; There are different ways in which we can accomplish this task,
 ;;; given the constraint that it has to be done by loading DEFGENERIC
@@ -39,11 +43,14 @@
                       #'class-name 'standard '())
                      args)))))
 
-(defun load-accessor-defgenerics (e2)
+(defun enable-defgeneric-in-e2 (e2)
   (import-function-from-host 'sicl-clos:defgeneric-expander e2)
   (load-file "CLOS/defgeneric-defmacro.lisp" e2)
   (setf (sicl-genv:fdefinition 'ensure-generic-function e2)
-        #'ensure-generic-function-phase-1)
+        #'ensure-generic-function-phase-1))
+
+(defun load-accessor-defgenerics (e2)
+  (enable-defgeneric-in-e2 e2)
   (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e2)
   (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" e2)
   (load-file "CLOS/specializer-direct-methods-defgeneric.lisp" e2)
