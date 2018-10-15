@@ -8,5 +8,5 @@
   ((:file "packages")
    (:file "utilities")
    (:file "define-accessor-defgenerics-in-e2")
-   (:file "define-mop-classes")
+   (:file "define-mop-classes-in-e1")
    (:file "boot-phase-1")))
