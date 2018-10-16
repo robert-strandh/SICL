@@ -9,6 +9,7 @@
   ((:file "packages")
    (:file "environment")
    (:file "utilities")
+   (:file "enable-defmethod-in-e2")
    (:file "load-accessor-defgenerics")
    (:file "define-mop-classes")
    (:file "boot-phase-2")))

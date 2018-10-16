@@ -136,63 +136,6 @@
                            :slot-definition slot-definition)))
             (push method (slot-value generic-function 'sicl-clos::%methods))))))
 
-;;; We already know how to execute a DEFGENERIC form in E2.  Now we
-;;; need to know how to use DEFMETHOD to define methods on the generic
-;;; functions we create with DEFGENERIC.  That is the purpose of this
-;;; function.
-(defun make-defmethod-possible-in-e2 (e1 e2)
-  ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
-  ;; specializer when a symbol is given.
-  (define-find-class-in-e2 e1 e2)
-  ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
-  ;; not given, then an instance of SPECIALIZER was.
-  (import-function-from-host 'sicl-genv:typep e2)
-  ;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
-  ;; of specializers given is a proper list.
-  (import-function-from-host 'cleavir-code-utilities:proper-list-p e2)
-  (define-method-on-generic-function-method-class e2)
-  (import-function-from-host 'add-method e2)
-  (import-function-from-host 'copy-list e2)
-  (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e1)
-        #'sicl-clos::make-method-lambda-default)
-  (setf (sicl-genv:fdefinition 'ensure-generic-function e1)
-        (sicl-genv:fdefinition 'ensure-generic-function e2))
-  (import-functions-from-host
-   '(mapcar
-     subseq
-     1+
-     elt
-     position-if
-     sicl-genv:find-class
-     sicl-genv:typep
-     sicl-genv:fboundp
-     sicl-genv:fdefinition
-     cleavir-code-utilities:separate-function-body
-     cleavir-code-utilities:required
-     cleavir-code-utilities:parse-specialized-lambda-list)
-   e1)
-  (setf (sicl-genv:fdefinition 'sicl-clos:class-prototype e1)
-        #'closer-mop:class-prototype)
-  (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class e1)
-        #'closer-mop:generic-function-method-class)
-  (load-file "CLOS/defmethod-support.lisp" e1)
-  (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
-        (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e1))
-  ;; ENSURE-METHOD calls MAKE-SPECIALIZER, but the version of
-  ;; MAKE-SPECIALIZER that is in the file with that name is not
-  ;; correct for phase 2.  Fix the problem by defining a special
-  ;; version of it.
-  (define-make-specializer e1 e2)
-  (load-file "CLOS/make-method-for-generic-function.lisp" e2)
-  (import-functions-from-host
-   '(cleavir-code-utilities:proper-list-p
-     add-method
-     copy-list)
-   e1)
-  (load-file "CLOS/make-specializer.lisp" e1)
-  (load-file "CLOS/ensure-method.lisp" e2)
-  (load-file "CLOS/defmethod-defmacro.lisp" e2))
-
 ;;; The problem we are solving here is that when we do
 ;;; (CALL-NEXT-METHOD) in the :AROUND method of SHARED-INITIALIZE, we
 ;;; attempt to take the METHOD-FUNCTION of the next method.  But
@@ -244,14 +187,14 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (change-class e2 'environment)
-    (import-function-from-host 'sicl-clos:defclass-expander e2)
     (import-function-from-host '(setf sicl-genv:special-variable) e2)
-    ;; REMOVE is needed by the class initialization protocol.
-    (import-function-from-host 'remove e2)
     (define-make-instance-in-e1 e1)
     (define-make-instance-in-e2 e1 e2)
-    (make-defmethod-possible-in-e2 e1 e2)
+    (enable-defmethod-in-e2 boot)
     (define-method-on-method-function e2)
     (load-accessor-defgenerics boot)
+    ;; REMOVE is needed by the class initialization protocol.
+    (import-function-from-host 'remove e2)
     (add-support-for-class-initialization-to-e2 e1 e2 e3)
+    (import-function-from-host 'sicl-clos:defclass-expander e2)
     (create-mop-classes boot)))
