@@ -270,7 +270,6 @@
     (define-compile-phase3 r2)
     (ld "CLOS/discriminating-automaton.lisp" r3 r3)
     (define-general-instance-p-phase3 r2)
-    (ldp "CLOS/list-utilities.lisp" r2 r2)
     (ldp "CLOS/discriminating-tagbody.lisp" r2 r2)
     (define-error-function 'sicl-clos::compute-effective-method r2)
     (define-error-function 'sicl-clos::no-applicable-method r2)
