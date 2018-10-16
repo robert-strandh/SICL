@@ -26,7 +26,6 @@
 (defun import-from-host (boot)
   (with-accessors ((e0 sicl-new-boot:e0)) boot
     (import-package-from-host 'sicl-clos e0)
-    (setf (sicl-genv:special-variable '*trace-output* e0 t) *trace-output*)
     ;; Import class T so that it can be found when we need to create
     ;; the class T as a specializer for unspecialized method parameters.
     (setf (sicl-genv:find-class 't e0)

@@ -244,8 +244,6 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (change-class e2 'environment)
-    (import-functions-from-host '(format) e2)
-    (setf (sicl-genv:special-variable '*trace-output* e2 t) *trace-output*)
     (import-package-from-host 'sicl-clos e3)
     (import-function-from-host 'sicl-clos:defclass-expander e2)
     (import-function-from-host '(setf sicl-genv:special-variable) e2)
