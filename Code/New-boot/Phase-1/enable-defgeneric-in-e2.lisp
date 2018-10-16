@@ -68,7 +68,6 @@
                      args)))))
 
 (defun enable-defgeneric-in-e2 (e2)
-  (import-package-from-host 'sicl-clos e2)
   (import-function-from-host 'sicl-clos:defgeneric-expander e2)
   (load-file "CLOS/defgeneric-defmacro.lisp" e2)
   (setf (sicl-genv:fdefinition 'ensure-generic-function e2)

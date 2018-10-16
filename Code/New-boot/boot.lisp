@@ -5,7 +5,8 @@
 
 (defmethod initialize-instance :after ((object environment) &key)
   (import-functions-from-host '(format) object)
-  (setf (sicl-genv:special-variable '*trace-output* object t) *trace-output*))
+  (setf (sicl-genv:special-variable '*trace-output* object t) *trace-output*)
+  (import-package-from-host 'sicl-clos object))
 
 (defclass boot ()
   ((%e0 :initarg :e0 :accessor e0)
