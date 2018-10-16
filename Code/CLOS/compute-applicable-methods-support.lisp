@@ -128,7 +128,7 @@
 
 (defun compute-applicable-methods-default (generic-function arguments)
   (let ((classes-of-arguments (mapcar #'class-of arguments)))
-    (sort-list
+    (sort
      (loop for method in (generic-function-methods generic-function)
            when (definitely-applicable-p method arguments)
              collect method)
@@ -151,7 +151,7 @@
     (generic-function classes-of-arguments)
   (block b
     (values
-     (sort-list
+     (sort
       (loop for method in (generic-function-methods generic-function)
             when (let ((a (maybe-applicable-p method classes-of-arguments)))
                    (if (eq a :somtimes)
