@@ -6,6 +6,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment")
    (:file "utilities")
    (:file "enable-defgeneric-in-e2")
    (:file "define-accessor-defgenerics-in-e2")
