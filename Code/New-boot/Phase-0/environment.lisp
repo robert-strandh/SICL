@@ -16,5 +16,5 @@
 ;;;
 ;;; There are no other classes in this environment.
 
-(defclass environment (sicl-minimal-extrinsic-environment:environment)
+(defclass environment (sicl-new-boot:environment)
   ())

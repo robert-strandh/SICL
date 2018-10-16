@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
-(defclass environment (sicl-minimal-extrinsic-environment:environment)
+(defclass environment (sicl-new-boot:environment)
   ())
 
 (defun boot-phase-1 (boot)

@@ -8,5 +8,5 @@
 ;;;
 ;;; Classes in this environment are bridge classes.
 
-(defclass environment (sicl-minimal-extrinsic-environment:environment)
+(defclass environment (sicl-new-boot:environment)
   ())
