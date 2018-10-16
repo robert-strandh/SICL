@@ -33,31 +33,6 @@
     (object (type-specifier (eql 'generic-function)) (environment environment))
   t)
 
-;;; The problem that we are solving with this function is the
-;;; following: In phase 1, we loaded a bunch of definitions of host
-;;; generic functions into E2.  We also loaded definitions of host
-;;; classes (corresponding to MOP classes) into E1.  When those
-;;; classes were loaded, methods corresponding to class accessors were
-;;; added to the generic functions in E2.  Among them,
-;;; GENERIC-FUNCTION-METHOD-CLASS.  That method works when given an
-;;; instance of the GENERIC-FUNCTION class defined in E1, but it
-;;; doesn't work when given an instance of the host
-;;; STANDARD-GENERIC-FUNCTION.  Now, in phase 2, we need to add
-;;; methods to the generic functions in E2, and to create such a
-;;; method, ENSURE-METHOD calls GENERIC-FUNCTION-METHOD-CLASS which
-;;; won't work.
-;;;
-;;; We solve the problem by adding a method on
-;;; GENERIC-FUNCTION-METHOD-CLASS in E2 that calls the host version of
-;;; the function with that name.
-(defun define-method-on-generic-function-method-class (e2)
-  (let ((temp (gensym)))
-    (setf (fdefinition temp)
-          (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class e2))
-    (eval `(defmethod ,temp ((generic-function standard-generic-function))
-             (closer-mop:generic-function-method-class generic-function)))
-    (fmakunbound temp)))
-
 ;;; When we load the file containing ENSURE-METHOD, we also define the
 ;;; function MAKE-SPECIALIZER.  However that function does the wrong
 ;;; thing in case the specializer given is the symbol T, because then
