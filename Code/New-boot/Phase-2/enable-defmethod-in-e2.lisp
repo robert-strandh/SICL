@@ -51,9 +51,6 @@
     ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
     ;; not given, then an instance of SPECIALIZER was.
     (import-function-from-host 'sicl-genv:typep e2)
-    ;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
-    ;; of specializers given is a proper list.
-    (import-function-from-host 'cleavir-code-utilities:proper-list-p e2)
     (define-method-on-generic-function-method-class e2)
     (import-function-from-host 'add-method e2)
     (import-function-from-host 'copy-list e2)
@@ -68,6 +65,8 @@
        elt
        position-if
        sicl-genv:find-class
+       ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol
+       ;; was not given, then an instance of SPECIALIZER was.
        sicl-genv:typep
        sicl-genv:fboundp
        sicl-genv:fdefinition
@@ -83,7 +82,9 @@
     (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
           (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e1))
     (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p
+     '(;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
+       ;; of specializers given is a proper list.
+       cleavir-code-utilities:proper-list-p
        add-method
        copy-list)
      e1)
