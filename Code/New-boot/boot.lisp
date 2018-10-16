@@ -3,6 +3,10 @@
 (defclass environment (sicl-minimal-extrinsic-environment:environment)
   ())
 
+(defmethod initialize-instance :after ((object environment) &key)
+  (import-functions-from-host '(format) object)
+  (setf (sicl-genv:special-variable '*trace-output* object t) *trace-output*))
+
 (defclass boot ()
   ((%e0 :initarg :e0 :accessor e0)
    (%e1 :initarg :e1 :accessor e1)
