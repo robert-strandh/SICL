@@ -120,6 +120,7 @@
   (load-file "CLOS/add-accessor-method.lisp" e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e2)
         (lambda (class) (declare (ignore class)) '()))
+  (import-function-from-host 'sicl-genv:typep e2)
   (load-file "CLOS/class-initialization-support.lisp" e2)
   (load-file "CLOS/class-initialization-defmethods.lisp" e2)
   (define-add-accessor-method e1 e2 e3))

@@ -48,9 +48,6 @@
     ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
     ;; specializer when a symbol is given.
     (define-find-class-in-e2 e1 e2)
-    ;; TYPEP is used by ENSURE-METHOD to check that, if a symbol was
-    ;; not given, then an instance of SPECIALIZER was.
-    (import-function-from-host 'sicl-genv:typep e2)
     (define-method-on-generic-function-method-class e2)
     (import-function-from-host 'add-method e2)
     (import-function-from-host 'copy-list e2)
