@@ -53,10 +53,7 @@
     (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
           (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e1))
     (import-functions-from-host
-     '(;; PROPER-LIST-P is used by ENSURE-METHOD to check that the list
-       ;; of specializers given is a proper list.
-       cleavir-code-utilities:proper-list-p
-       add-method
+     '(add-method
        copy-list)
      e1)
     (load-file "CLOS/make-specializer.lisp" e1)

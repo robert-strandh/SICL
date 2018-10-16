@@ -206,9 +206,7 @@
     (load-file "CLOS/add-remove-direct-method-defmethods.lisp" e2)
     (define-add-method-in-e3 boot)
     (define-make-method-for-generic-function-in-e3 boot)
-    (import-functions-from-host
-     '(cleavir-code-utilities:proper-list-p copy-list)
-     e3)
+    (import-functions-from-host '(copy-list) e3)
     (load-file "CLOS/ensure-method.lisp" e3)
     (define-defmethod-expander boot)
     (load-file "CLOS/defmethod-defmacro.lisp" e3)))

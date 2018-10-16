@@ -186,7 +186,6 @@
      'cleavir-code-utilities:parse-generic-function-lambda-list e2)
     (import-function-from-host 'cleavir-code-utilities:required e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)
-    (import-function-from-host 'cleavir-code-utilities:proper-list-p e2)
     (load-file "CLOS/generic-function-initialization-support.lisp" e2)
     (load-file "CLOS/generic-function-initialization-defmethods.lisp" e2)
     (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e3)
