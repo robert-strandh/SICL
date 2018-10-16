@@ -42,25 +42,6 @@
              (closer-mop:generic-function-method-class generic-function)))
     (fmakunbound temp)))
 
-;;; When we load the file containing ENSURE-METHOD, we also define the
-;;; function MAKE-SPECIALIZER.  However that function does the wrong
-;;; thing in case the specializer given is the symbol T, because then
-;;; it looks up T in E1 and we get an automatic specialization on the
-;;; host class FUNCALLABLE-STANDARD-OBJECT which is obviously not what
-;;; we want.  So we define a special version of MAKE-SPECIALIZER here.
-;;; It does not have to do any error checking, and it handles T
-;;; specially by looking up the class T in the host environment
-;;; instead of in E1.
-(defun define-make-specializer (e1 e2)
-  (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e2)
-        (lambda (specializer)
-          (cond ((eq specializer 't)
-                 (find-class 't))
-                ((symbolp specializer)
-                 (sicl-genv:find-class specializer e1))
-                (t
-                 specializer)))))
-
 (defun enable-defmethod-in-e2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -101,17 +82,23 @@
     (load-file "CLOS/defmethod-support.lisp" e1)
     (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
           (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e1))
-    ;; ENSURE-METHOD calls MAKE-SPECIALIZER, but the version of
-    ;; MAKE-SPECIALIZER that is in the file with that name is not
-    ;; correct for phase 2.  Fix the problem by defining a special
-    ;; version of it.
-    (define-make-specializer e1 e2)
-    (load-file "CLOS/make-method-for-generic-function.lisp" e2)
     (import-functions-from-host
      '(cleavir-code-utilities:proper-list-p
        add-method
        copy-list)
      e1)
     (load-file "CLOS/make-specializer.lisp" e1)
-    (load-file "CLOS/ensure-method.lisp" e2)
+    (load-file "CLOS/make-method-for-generic-function.lisp" e1)
+    (load-file "CLOS/ensure-method.lisp" e1)
+    (setf (sicl-genv:fdefinition 'sicl-clos:ensure-method e2)
+          (sicl-genv:fdefinition 'sicl-clos:ensure-method e1))
+    ;; When we loaded files containing class definitions into E1, we
+    ;; define the class T to be a subclass of the host class
+    ;; FUNCALLABLE-STANDARD-CLASS.  But MAKE-SPECIALIZER instantiates
+    ;; the class T in order to handle unspecialized method parameters.
+    ;; We need for MAKE-SPECIALIZER to find the host class T instead.
+    ;; We do that by squashing the class T in E1, since that class is
+    ;; no longer needed.
+    (setf (sicl-genv:find-class 't e1)
+          (find-class t))
     (load-file "CLOS/defmethod-defmacro.lisp" e2)))
