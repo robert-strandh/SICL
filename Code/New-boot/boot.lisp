@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-new-boot)
 
-(defun make-environment ()
-  (make-instance 'sicl-minimal-extrinsic-environment:environment))
+(defclass environment (sicl-minimal-extrinsic-environment:environment)
+  ())
 
 (defclass boot ()
   ((%e0 :initarg :e0 :accessor e0)
@@ -14,11 +14,11 @@
   (let ((boot
           (let ((sicl-minimal-extrinsic-environment::*cache-p* t))
             (make-instance 'boot
-              :e0 (make-environment)
-              :e1 (make-environment)
-              :e2 (make-environment)
-              :e3 (make-environment)
-              :e4 (make-environment)))))
+              :e0 (make-instance 'environment)
+              :e1 (make-instance 'environment)
+              :e2 (make-instance 'environment)
+              :e3 (make-instance 'environment)
+              :e4 (make-instance 'environment)))))
     (sicl-new-boot-phase-0:boot-phase-0 boot)
     (sicl-new-boot-phase-1:boot-phase-1 boot)
     (sicl-new-boot-phase-2:boot-phase-2 boot)
