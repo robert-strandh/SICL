@@ -58,7 +58,7 @@
             (sicl-genv:find-class name e1)))
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
           #'closer-mop:set-funcallable-instance-function)
-    (import-function-from-host 'sort e2)
+    (import-functions-from-host '(sort eql) e2)
     (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
