@@ -33,53 +33,6 @@
     (object (type-specifier (eql 'generic-function)) (environment environment))
   t)
 
-;;; This function defines functions ADD-READER-METHOD and
-;;; ADD-WRITER-METHOD in E2 that look up their generic functions in
-;;; E3.  They do not call ADD-METHOD, because ADD-METHOD is defined to
-;;; add methods to generic functions in E2.  The other defect these
-;;; functions have is that they do not set the specializer profile on
-;;; the generic function, so we have to do that manually in phase 3.
-(defun define-add-accessor-method (e1 e2 e3)
-  (setf (sicl-genv:fdefinition 'sicl-clos::add-reader-method e2)
-        (lambda (class function-name slot-definition)
-          (let* ((lambda-list '(object))
-                 (generic-function (sicl-genv:fdefinition function-name e3))
-                 (specializers (list class))
-                 (slot-name (slot-value slot-definition 'sicl-clos::%name))
-                 (method-function
-                   (compile nil `(lambda (arguments next-methods)
-                                   (declare (ignore next-methods))
-                                   (slot-value (car arguments) ',slot-name))))
-                 (method-class (sicl-genv:find-class
-                                'sicl-clos:standard-reader-method e1))
-                 (method (make-instance method-class
-                           :lambda-list lambda-list
-                           :qualifiers '()
-                           :specializers specializers
-                           :function method-function
-                           :slot-definition slot-definition)))
-            (push method (slot-value generic-function 'sicl-clos::%methods)))))
-  (setf (sicl-genv:fdefinition 'sicl-clos::add-writer-method e2)
-        (lambda (class function-name slot-definition)
-          (let* ((lambda-list '(object))
-                 (generic-function (sicl-genv:fdefinition function-name e3))
-                 (specializers (list (sicl-genv:find-class 't e2) class))
-                 (slot-name (slot-value slot-definition 'sicl-clos::%name))
-                 (method-function
-                   (compile nil `(lambda (arguments next-methods)
-                                   (declare (ignore next-methods))
-                                   (setf (slot-value (cadr arguments) ',slot-name)
-                                         (car arguments)))))
-                 (method-class (sicl-genv:find-class
-                                'sicl-clos:standard-writer-method e1))
-                 (method (make-instance method-class
-                           :lambda-list lambda-list
-                           :qualifiers '()
-                           :specializers specializers
-                           :function method-function
-                           :slot-definition slot-definition)))
-            (push method (slot-value generic-function 'sicl-clos::%methods))))))
-
 ;;; The problem we are solving here is that when we do
 ;;; (CALL-NEXT-METHOD) in the :AROUND method of SHARED-INITIALIZE, we
 ;;; attempt to take the METHOD-FUNCTION of the next method.  But
