@@ -81,6 +81,7 @@
   (let* ((profile (specializer-profile generic-function))
          (specializers (method-specializers method))
          (new-profile (compute-specializer-profile profile specializers)))
+    (setf (specializer-profile generic-function) new-profile)
     (unless (equal profile new-profile)
       (setf (call-history generic-function) '())))
   ;; Associate GENERIC-FUNCTION with METHOD.
