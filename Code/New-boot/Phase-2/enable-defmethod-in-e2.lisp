@@ -23,8 +23,6 @@
     ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
     ;; specializer when a symbol is given.
     (define-find-class-in-e2 e1 e2)
-    (import-function-from-host 'add-method e2)
-    (import-function-from-host 'copy-list e2)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e1)
           #'sicl-clos::make-method-lambda-default)
     (setf (sicl-genv:fdefinition 'ensure-generic-function e1)
