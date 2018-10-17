@@ -104,6 +104,8 @@
    #:reader-method-class #:writer-method-class
    #:validate-superclass
    #:finalize-inheritance
+   #:map-dependents
+   #:update-dependent
    ;; Other functions
    #:set-funcallable-instance-function
    #:shared-initialize-around-real-class-default
