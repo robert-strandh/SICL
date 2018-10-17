@@ -11,7 +11,7 @@
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
     (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
     (import-functions-from-host
-     '(last remove-duplicates reduce
+     '(last remove-duplicates reduce copy-list
        mapcar union find-if-not eql count)
      e2)
     (load-file "CLOS/slot-definition-class-support.lisp" e2)
@@ -174,42 +174,6 @@
                      class-metaobject
                      (sicl-genv:fdefinition 'initialize-instance e3)
                      initargs))))))
-
-(defun enable-defmethod-in-e3 (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
-    (let ((method-function (sicl-genv:fdefinition 'sicl-clos:method-function e2)))
-      (setf (sicl-genv:fdefinition 'sicl-clos::make-method-lambda-default e3)
-            (lambda (generic-function method lambda-expression environment)
-              (declare (ignore generic-function method environment))
-              (let ((args (gensym))
-                    (next-methods (gensym)))
-                (values
-                 `(lambda (,args ,next-methods)
-                    (flet ((next-method-p ()
-                             (not (null ,next-methods)))
-                           (call-next-method (&rest args)
-                             (when (null ,next-methods)
-                               (error "no next method"))
-                             (funcall (funcall ,method-function (car ,next-methods))
-                                      (or args ,args)
-                                      (cdr ,next-methods))))
-                      (declare (ignorable #'next-method-p #'call-next-method))
-                      (apply ,lambda-expression
-                             ,args)))
-                 '())))))
-    (load-file "CLOS/make-method-lambda-defuns.lisp" e3)
-    (define-make-specializer e2 e3)
-    (import-function-from-host 'adjoin e2)
-    (load-file "CLOS/add-remove-direct-method-support.lisp" e2)
-    (load-file "CLOS/add-remove-direct-method-defgenerics.lisp" e2)
-    (load-file "CLOS/add-remove-direct-method-defmethods.lisp" e2)
-    (define-add-method-in-e3 boot)
-    (define-make-method-for-generic-function-in-e3 boot)
-    (import-functions-from-host '(copy-list) e3)
-    (load-file "CLOS/ensure-method.lisp" e3)
-    (define-defmethod-expander boot)
-    (load-file "CLOS/defmethod-defmacro.lisp" e3)))
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
