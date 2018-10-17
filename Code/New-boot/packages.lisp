@@ -10,4 +10,5 @@
            #:import-function-from-host
            #:import-functions-from-host
            #:import-package-from-host
-           #:import-class-from-host))
+           #:import-class-from-host
+           #:define-error-function))

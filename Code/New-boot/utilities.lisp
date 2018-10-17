@@ -33,3 +33,13 @@
 (defun import-class-from-host (name environment)
   (setf (sicl-genv:find-class name environment)
         (find-class name)))
+
+;;; Define a function that, when called, signals an error with the
+;;; name of the function in the error message.  We use this to break
+;;; dependencies between loaded files.
+(defun define-error-function (function-name environment)
+  (setf (sicl-genv:fdefinition function-name environment)
+        (lambda (&rest arguments)
+          (error "Undefined function ~s called with arguments ~s."
+                 function-name
+                 arguments))))
