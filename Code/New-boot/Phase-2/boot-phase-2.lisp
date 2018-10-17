@@ -117,6 +117,7 @@
           (assert (null name))
           (assert (not (null definition)))
           (cleavir-env:eval definition e2 e2)))
+  (import-function-from-host 'add-method e2)
   (load-file "CLOS/add-accessor-method.lisp" e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e2)
         (lambda (class) (declare (ignore class)) '()))
