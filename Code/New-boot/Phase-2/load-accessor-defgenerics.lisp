@@ -109,7 +109,6 @@
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
     (import-functions-from-host '(print-object) e2)
     (load-file "New-boot/Phase-2/define-methods-on-print-object.lisp" e2)
-    (load-file "New-boot/Phase-2/compute-and-set-specialier-profile.lisp" e2)
     (load-file "CLOS/standard-instance-access.lisp" e2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
