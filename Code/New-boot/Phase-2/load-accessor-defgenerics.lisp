@@ -28,11 +28,6 @@
     (load-file "CLOS/allocate-instance-support.lisp" e2)
     (load-file "CLOS/allocate-instance-defmethods.lisp" e2)))
 
-(defun my-class-of (object)
-  (if (typep object 'header)
-      (slot-value object '%class)
-      (class-of object)))
-
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
