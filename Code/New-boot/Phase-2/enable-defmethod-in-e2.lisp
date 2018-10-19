@@ -17,6 +17,21 @@
           (declare (ignore environment))
           (sicl-genv:find-class class-name e1))))
 
+(defun define-make-specializer-in-e1 (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)) boot
+    (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e1)
+          (lambda (specializer)
+            (cond ((eq specializer 't)
+                   (find-class 't))
+                  ((symbolp specializer)
+                   (sicl-genv:find-class specializer e1))
+                  ((sicl-genv:typep specializer 'specializer e1)
+                   specializer)
+                  (t
+                   (error "Specializer must be symbol or specializer metaobject: ~s"
+                          specializer)))))))
+
 (defun enable-defmethod-in-e2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -59,13 +74,5 @@
     (load-file "CLOS/ensure-method.lisp" e1)
     (setf (sicl-genv:fdefinition 'sicl-clos:ensure-method e2)
           (sicl-genv:fdefinition 'sicl-clos:ensure-method e1))
-    ;; When we loaded files containing class definitions into E1, we
-    ;; define the class T to be a subclass of the host class
-    ;; FUNCALLABLE-STANDARD-CLASS.  But MAKE-SPECIALIZER instantiates
-    ;; the class T in order to handle unspecialized method parameters.
-    ;; We need for MAKE-SPECIALIZER to find the host class T instead.
-    ;; We do that by squashing the class T in E1, since that class is
-    ;; no longer needed.
-    (setf (sicl-genv:find-class 't e1)
-          (find-class t))
+    (define-make-specializer-in-e1 boot)
     (load-file "CLOS/defmethod-defmacro.lisp" e2)))
