@@ -10,17 +10,6 @@
                 (t
                  specializer)))))
 
-(defun define-make-method-for-generic-function-in-e3 (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e3 sicl-new-boot:e3)) boot
-    (setf (sicl-genv:fdefinition 'sicl-clos::make-method-for-generic-function e3)
-          (lambda (generic-function specializers keys)
-            (declare (ignore generic-function))
-            (apply #'make-instance
-                   (sicl-genv:find-class 'standard-method e1)
-                   :specializers specializers
-                   keys)))))
-
 (defun define-defmethod-expander (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -77,7 +66,9 @@
     (define-make-specializer e2 e3)
     (setf (sicl-genv:fdefinition 'add-method e3)
           (sicl-genv:fdefinition 'add-method e2))
-    (define-make-method-for-generic-function-in-e3 boot)
+    (load-file "CLOS/make-method-for-generic-function.lisp" e2)
+    (setf (sicl-genv:fdefinition 'sicl-clos::make-method-for-generic-function e3)
+          (sicl-genv:fdefinition 'sicl-clos::make-method-for-generic-function e2))
     (import-functions-from-host '(copy-list) e3)
     (load-file "CLOS/ensure-method.lisp" e3)
     (define-defmethod-expander boot)
