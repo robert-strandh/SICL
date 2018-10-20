@@ -84,6 +84,7 @@
     (load-file "CLOS/add-remove-method-defgenerics.lisp" e2)
   (load-file-protected "CLOS/add-remove-method-support.lisp" e2)
   (load-file "CLOS/add-remove-method-defmethods.lisp" e2)
+  (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 nil) nil)
   (load-file "CLOS/add-accessor-method.lisp" e2)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-or-create-generic-function e2)
         (lambda (name lambda-list)
