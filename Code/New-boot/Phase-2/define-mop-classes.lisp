@@ -45,6 +45,8 @@
     (load-file "CLOS/defclass-defmacro.lisp" e2)
     (define-ensure-class boot)
     (load-file "CLOS/t-defclass.lisp" e2)
+    (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 t)
+          (sicl-genv:find-class 't e2))
     (load-file "CLOS/function-defclass.lisp" e2)
     (load-file "CLOS/standard-object-defclass.lisp" e2)
     (load-file "CLOS/metaobject-defclass.lisp" e2)
