@@ -126,6 +126,8 @@
     (load-file "CLOS/defclass-defmacro.lisp" e3)
     (import-function-from-host '(setf sicl-genv:special-variable) e3)
     (load-file "CLOS/t-defclass.lisp" e3)
+    (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 t)
+          (sicl-genv:find-class 't e3))
     (load-file "CLOS/function-defclass.lisp" e3)
     (load-file "CLOS/standard-object-defclass.lisp" e3)
     (load-file "CLOS/metaobject-defclass.lisp" e3)
