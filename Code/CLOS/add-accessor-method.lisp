@@ -59,12 +59,10 @@
 ;;; writer method.  SLOT-DEFINITION is also stored in the new writer
 ;;; method for optimization purposes.
 (defun add-writer-method (class function-name slot-definition)
-  (let* ((environment (sicl-genv:global-environment))
-         (lambda-list '(new-value object))
+  (let* ((lambda-list '(new-value object))
          (generic-function (find-or-create-generic-function
                             function-name lambda-list))
-         (specializers (list (sicl-genv:find-class t environment)
-                             class))
+         (specializers (list *class-t* class))
          (slot-name (slot-definition-name slot-definition))
          (method-function
            (compile nil `(lambda (arguments next-methods)
