@@ -28,23 +28,29 @@
 ;;; ENSURE-CLASS defaults them to the same values that DEFCLASS
 ;;; requires.
 
+(defun find-superclass-or-nil (name)
+  (find-class name nil))
+
+(defun process-direct-superclass (direct-superclass-or-name)
+  (cond ((typep direct-superclass-or-name 'class)
+         direct-superclass-or-name)
+        ((symbolp direct-superclass-or-name)
+         (let ((class (find-superclass-or-nil direct-superclass-or-name)))
+           (if (null class)
+               (setf (find-class direct-superclass-or-name)
+                     (make-instance 'forward-referenced-class
+                       :name direct-superclass-or-name))
+               class)))
+        (t
+         (error 'direct-superclass-must-be-a-class-metaobject-or-a-symbol
+                :superclass direct-superclass-or-name))))
+
 (defun process-direct-superclasses (direct-superclasses)
   (unless (cleavir-code-utilities:proper-list-p direct-superclasses)
     (error 'direct-superclasses-must-be-proper-list
            :superclasses direct-superclasses))
   (loop for class-or-name in direct-superclasses
-	collect (cond ((typep class-or-name 'class)
-		       class-or-name)
-		      ((symbolp class-or-name)
-		       (let ((class (find-class class-or-name nil)))
-			 (if (null class)
-			     (setf (find-class class-or-name)
-				   (make-instance 'forward-referenced-class
-				     :name class-or-name))
-			     class)))
-		      (t
-		       (error 'direct-superclass-must-be-a-class-metaobject-or-a-symbol
-                              :superclass class-or-name)))))
+	collect (process-direct-superclasse class-or-name)))
 
 ;;; When the class is created, it is safe to use a default value of
 ;;; the empty list for the :DIRECT-SUPERCLASSES initialization
