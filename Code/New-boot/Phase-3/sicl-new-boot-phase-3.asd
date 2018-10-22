@@ -11,6 +11,7 @@
    (:file "environment")
    (:file "utilities")
    (:file "enable-defmethod-in-e3")
+   (:file "enable-object-initialization")
    (:file "load-accessor-defgenerics")
    (:file "define-mop-classes")
    (:file "boot-phase-3")))
