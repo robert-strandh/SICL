@@ -3,8 +3,8 @@
 (defclass symbol (t)
   ((%name
     :initarg :name
-    :accessor name)
+    :accessor symbol-name)
    (%package
     :initarg :package
-    :accessor package))
-  #+sicl (:metaclass built-in-class))
+    :accessor symbol-package))
+  (:metaclass built-in-class))
