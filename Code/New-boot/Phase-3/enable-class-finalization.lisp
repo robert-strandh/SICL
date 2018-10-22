@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
+;;; In phase 3, the purpose of class finalization is to finalize the
+;;; bridge classes in E2, so that we can create ersatz generic
+;;; functions in E4, and ersatz classes in E3.  In other words, we are
+;;; using accessors that operate on the bridge classes in E2, and
+;;; those accessors are found in E2 as well.  For that reason, most of
+;;; the code in this file refers to E2.
+
 (defun enable-class-finalization (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
