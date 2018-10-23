@@ -507,13 +507,40 @@ function.
 
 \subsubsection{Preparation}
 
-Before bootstrapping can start, a certain number of \asdf{} systems
-must be loaded, and in particular the system called
-\texttt{sicl-clos-boot-support}.
+In addition to the host environment, five different \sysname{}
+first-class environments are involved in the bootstrapping procedure.
+We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, and $E_4$.
 
-In addition to the host environment, four different \sysname{}
-first-class environments are involved.  We shall refer to them as
-$E_1$, $E_2$, $E_3$, and $E_4$.
+\subsubsection{Phase 0}
+
+We define a class named \texttt{sicl-boot-phase-0:funcallable-standard-class}
+in the host environment.  When we evaluate \texttt{defclass} forms in
+phase 1, the classes created are instances of this class.
+
+In environment $E_0$, we define the following classes:
+
+\begin{itemize}
+\item \texttt{common-lisp:standard-genereic-function}.  This class is
+  the same as the class with the same name in the host environment.
+\item \texttt{common-lisp:standard-method}.  This class is
+  the same as the class with the same name in the host environment.
+\item \texttt{sicl-clos:standard-direct-slot-definition}.  This class
+  is the same as the class named
+  \texttt{closer-mop:standard-direct-slot-definition} in the host
+  environment.
+\item \texttt{common-lisp:standard-class}.  This class is the same as
+  the class named
+  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
+  environment.
+\item \texttt{common-lisp:built-in-class}.  This class is the same as
+  the class named
+  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
+  environment.
+\item \texttt{sicl-clos:funcallable-standard-class}.  This class is
+  the same as the class named
+  \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
+  environment.
+\end{itemize}
 
 \subsubsection{Phase 1}
 
