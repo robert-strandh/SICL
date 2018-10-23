@@ -517,6 +517,18 @@ We define a class named \texttt{sicl-boot-phase-0:funcallable-standard-class}
 in the host environment.  When we evaluate \texttt{defclass} forms in
 phase 1, the classes created are instances of this class.
 
+We define an \texttt{:around} method on \texttt{initialize-instance}
+in the host environment, specialized to
+\texttt{sicl-boot-phase-0:funcallable-standard-class}.  The purpose of
+this \texttt{:around} method is to remove the \texttt{:reader} and
+\texttt{:accessor} slot options supplied in the \texttt{defclass}
+forms that we evaluate in phase 1.  Without this \texttt{:around}
+method, the host function \texttt{initialize-instance} would receive
+keyword arguments \texttt{:readers} and \texttt{:writers} and it would
+then add methods to host generic functions corresponding to the names
+given.  Instead, we want these methods to be added to the generic
+functions in environment $E_2$ defined during phase 1.
+
 In environment $E_0$, we define the following classes:
 
 \begin{itemize}
