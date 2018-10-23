@@ -47,7 +47,7 @@
                              :direct-superclasses direct-superclasses)))
                 (setf (sicl-genv:find-class class-name e1) class)))))))
 
-(defun create-mop-classes-phase1 (boot)
+(defun define-mop-classes-phase1 (boot)
   (with-accessors ((e0 sicl-new-boot:e0)
                    (e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2))
