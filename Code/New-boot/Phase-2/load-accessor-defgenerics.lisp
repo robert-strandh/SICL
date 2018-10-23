@@ -149,8 +149,6 @@
 (defun load-accessor-defgenerics (boot)
   (enable-allocate-instance boot)
   (enable-generic-function-invocation boot)
-  (sicl-minimal-extrinsic-environment:host-load
-   "CLOS/generic-function-initialization-support.lisp")
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
