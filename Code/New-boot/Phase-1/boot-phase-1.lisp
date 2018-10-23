@@ -5,5 +5,4 @@
   (with-accessors ((e1 sicl-new-boot:e1) (e2 sicl-new-boot:e2)) boot
     (change-class e1 'environment)
     (define-accessor-defgenerics e2)
-    (enable-defclass-in-e1 boot)
     (define-mop-classes-phase1 boot)))

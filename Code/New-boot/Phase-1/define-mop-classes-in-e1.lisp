@@ -52,6 +52,7 @@
                    (e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2))
       boot
+    (enable-defclass-in-e1 boot)
     (load-file "CLOS/defclass-defmacro.lisp" e1)
     (define-ensure-class boot)
     (load-file "CLOS/t-defclass.lisp" e1)
