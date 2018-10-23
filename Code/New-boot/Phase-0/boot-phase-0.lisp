@@ -85,13 +85,13 @@
 
 (defun enable-class-initialization (boot)
   (with-accessors ((e0 sicl-new-boot:e0) (e2 sicl-new-boot:e2)) boot
-    (defmethod initialize-instance ((class funcallable-standard-class)
-                                    &rest arguments
-                                    &key
-                                      direct-default-initargs
-                                      direct-superclasses
-                                      direct-slots
-                                    &allow-other-keys)
+    (defmethod initialize-instance :around ((class funcallable-standard-class)
+                                            &rest arguments
+                                            &key
+                                              direct-default-initargs
+                                              direct-superclasses
+                                              direct-slots
+                                            &allow-other-keys)
       (let ((new-direct-slots
               (loop for slot-spec in direct-slots
                     for spec = (copy-list slot-spec)
