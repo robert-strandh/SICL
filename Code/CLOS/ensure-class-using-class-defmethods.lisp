@@ -11,9 +11,9 @@
        metaclass
        &allow-other-keys)
   (declare (ignore direct-default-initargs
-		   direct-slots
-		   direct-superclasses
-		   metaclass))
+                   direct-slots
+                   direct-superclasses
+                   metaclass))
   (apply #'ensure-class-using-class-null name keys))
 
 (defmethod ensure-class-using-class
@@ -27,9 +27,9 @@
        metaclass
        &allow-other-keys)
   (declare (ignore direct-default-initargs
-		   direct-slots
-		   direct-superclasses
-		   metaclass))
+                   direct-slots
+                   direct-superclasses
+                   metaclass))
   (apply #'ensure-class-using-class-class class name keys))
 
 (defmethod ensure-class-using-class
@@ -43,7 +43,7 @@
        metaclass
      &allow-other-keys)
   (declare (ignore direct-default-initargs
-		   direct-slots
-		   direct-superclasses
-		   metaclass))
+                   direct-slots
+                   direct-superclasses
+                   metaclass))
   (apply #'ensure-class-using-class-forward-referenced-class class name keys))
