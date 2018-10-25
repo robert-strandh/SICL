@@ -35,7 +35,8 @@
      e3)
     ;; We may regret having defined FIND-CLASS this way in E3.
     (setf (sicl-genv:fdefinition 'find-class e3)
-          (lambda (class-name)
+          (lambda (class-name &optional error-p)
+            (declare (ignore error-p))
             (sicl-genv:find-class class-name e2)))
     (load-file "CLOS/generic-function-initialization-support.lisp" e3)
     (setf (sicl-genv:fdefinition 'sicl-clos::invalidate-discriminating-function e3)
