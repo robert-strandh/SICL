@@ -94,7 +94,8 @@
         (lambda (class) (declare (ignore class)) '()))
   (import-function-from-host 'sicl-genv:typep e2)
   (load-file "CLOS/class-initialization-support.lisp" e2)
-  (load-file "CLOS/class-initialization-defmethods.lisp" e2))
+  (load-file "CLOS/class-initialization-defmethods.lisp" e2)
+  (sicl-genv:fmakunbound 'shared-initialize e2))
 
 (defun boot-phase-2 (boot)
   (format *trace-output* "Start of phase 2~%")
