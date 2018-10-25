@@ -11,44 +11,6 @@
     (object (type-specifier (eql 'class)) (environment environment))
   t)
 
-(defun define-ensure-class (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3))
-      boot
-    (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e3)
-          (lambda (name
-                   &rest keys
-                   &key
-                     direct-default-initargs
-                     direct-slots
-                     direct-superclasses
-                     (metaclass nil metaclass-p)
-                   &allow-other-keys)
-            (let* ((metaclass-name (if metaclass-p metaclass 'standard-class))
-                   (metaclass-class (sicl-genv:find-class metaclass-name e2))
-                   (superclass-names
-                     (if (null direct-superclasses)
-                         (cond ((eq metaclass-name 'standard-class)
-                                '(standard-object))
-                               ((eq metaclass-name
-                                    'sicl-clos:funcallable-standard-class)
-                                '(funcallable-standard-object))
-                               (t '()))
-                         direct-superclasses))
-                   (superclasses (loop for name in superclass-names
-                                       collect (sicl-genv:find-class name e3)))
-                   (remaining-keys (copy-list keys)))
-              (loop while (remf remaining-keys :metaclass))
-              (loop while (remf remaining-keys :direct-superclasses))
-              (setf (sicl-genv:find-class name e3)
-                    (apply (sicl-genv:fdefinition 'make-instance e3)
-                           metaclass-class
-                           :direct-default-initargs direct-default-initargs
-                           :direct-slots direct-slots
-                           :direct-superclasses superclasses
-                           :name name
-                           remaining-keys)))))))
-
 (defun create-mop-classes (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -56,6 +18,9 @@
                    (e4 sicl-new-boot:e4))
       boot
     (import-functions-from-host '(sicl-genv:typep) e3)
+    (setf (sicl-genv:fdefinition 'typep e3)
+          (lambda (object type)
+            (sicl-genv:typep object type e3)))
     (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e3)
           (lambda (class direct-superclass)
             (declare (ignore class direct-superclass))
@@ -68,14 +33,32 @@
     (load-file "CLOS/add-remove-direct-subclass-support.lisp" e3)
     (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
     (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3)
-    ;; (define-add-accessor-method e2 e3 e4)
-    (setf (sicl-genv:fdefinition 'sicl-clos:default-superclasses e3)
-          (lambda (class) (declare (ignore class)) '()))
+    (import-functions-from-host
+     '(sort mapcar eql position sicl-genv:find-class)
+     e3)
+    (load-file "CLOS/classp-defgeneric.lisp" e3)
+    (load-file "CLOS/classp-defmethods.lisp" e3)
+    (load-file "CLOS/compute-applicable-methods-support.lisp" e3)
+    (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e3)
+    (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e3 t) nil)
+    (load-file-protected "CLOS/add-remove-method-support.lisp" e3)
+    (load-file-protected "CLOS/add-accessor-method.lisp" e3)
+    (load-file "CLOS/default-superclasses-defgeneric.lisp" e3)
+    (load-file "CLOS/default-superclasses-defmethods.lisp" e3)
     (load-file "CLOS/class-initialization-support.lisp" e3)
     (load-file "CLOS/class-initialization-defmethods.lisp" e3)
     (sicl-minimal-extrinsic-environment:import-function-from-host
      'sicl-clos:defclass-expander e3)
-    (define-ensure-class boot)
+    (setf (sicl-genv:fdefinition '(setf find-class) e3)
+          (lambda (new-class symbol &optional errorp)
+            (declare (ignore errorp))
+            (setf (sicl-genv:find-class symbol e3) new-class)))
+    (define-error-function 'change-class e3)
+    (define-error-function 'reinitialize-instance e3)
+    (load-file "CLOS/ensure-class-using-class-support.lisp" e3)
+    (load-file "CLOS/ensure-class-using-class-defgenerics.lisp" e3)
+    (load-file "CLOS/ensure-class-using-class-defmethods.lisp" e3)
+    (load-file "CLOS/ensure-class.lisp" e3)
     (load-file "CLOS/defclass-defmacro.lisp" e3)
     (import-function-from-host '(setf sicl-genv:special-variable) e3)
     (load-file "CLOS/t-defclass.lisp" e3)
