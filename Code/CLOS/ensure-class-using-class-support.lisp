@@ -50,7 +50,7 @@
     (error 'direct-superclasses-must-be-proper-list
            :superclasses direct-superclasses))
   (loop for class-or-name in direct-superclasses
-	collect (process-direct-superclasse class-or-name)))
+	collect (process-direct-superclass class-or-name)))
 
 ;;; When the class is created, it is safe to use a default value of
 ;;; the empty list for the :DIRECT-SUPERCLASSES initialization
