@@ -23,6 +23,8 @@
                        "<E4 Ersatz standard generic function ~s>"
                        (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-name e3)
                                 object)))
+              ((eq class (sicl-genv:find-class 'sicl-clos:standard-reader-method e2))
+               (format stream "<E4 Ersatz standard reader method>"))
               (t (format stream "<unknown object instance of ~s" class)))))))
 
 ;;; We define MAKE-INSTANCE in environment E1 so that it calls the
