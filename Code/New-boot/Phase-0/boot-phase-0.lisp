@@ -16,6 +16,9 @@
     (closer-mop:funcallable-standard-class)
   ())
 
+(defmethod print-object ((object funcallable-standard-class) stream)
+  (format stream "<E1 host class ~a>" (class-name object)))
+
 ;;; This method is apparently necessary so that we are allowed to
 ;;; make instances of our new class.
 (defmethod closer-mop:validate-superclass
