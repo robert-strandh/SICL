@@ -22,5 +22,6 @@
     (finalize-all-classes boot)
     (enable-defmethod-in-e3 boot)
     (enable-object-initialization boot)
+    (enable-method-combinations-in-e3 boot)
     (load-accessor-defgenerics boot)
     (create-mop-classes boot)))
