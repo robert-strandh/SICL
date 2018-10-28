@@ -51,6 +51,8 @@
                                  (sicl-genv:find-class 'cons e2))
                                 ((symbolp object)
                                  (sicl-genv:find-class 't e2))
+                                ((streamp object)
+                                 (sicl-genv:find-class 't e2))
                                 (t
                                  (class-of object)))))
               result)))
