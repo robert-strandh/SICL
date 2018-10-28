@@ -15,4 +15,5 @@
    (:file "enable-object-initialization")
    (:file "load-accessor-defgenerics")
    (:file "define-mop-classes")
+   (:file "enable-method-combinations-in-e3")
    (:file "boot-phase-3")))
