@@ -106,6 +106,7 @@
    #:finalize-inheritance
    #:map-dependents
    #:update-dependent
+   #:find-method-combination
    ;; Other functions
    #:set-funcallable-instance-function
    #:shared-initialize-around-real-class-default
