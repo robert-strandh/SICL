@@ -22,5 +22,7 @@
     (load-file "Method-combination/define-method-combination-support.lisp" e3)
     (load-file "Method-combination/define-method-combination-defmacro.lisp" e3)
     (load-file "Method-combination/method-combination-template-defclass.lisp" e2)
-    (load-file "CLOS/standard-method-combination.lisp" e3)))
+    (load-file "CLOS/standard-method-combination.lisp" e3)
+    (load-file "CLOS/find-method-combination-defgenerics.lisp" e3)
+    (load-file "CLOS/find-method-combination-defmethods.lisp" e3)))
 
