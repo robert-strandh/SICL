@@ -14,7 +14,7 @@
     (load-file "Method-combination/long-form-expansion.lisp" e3)
     (import-functions-from-host
      '(sicl-loop::list-car sicl-loop::list-cdr
-       nth
+       nth reverse
        gethash (setf gethash) make-hash-table)
      e3)
     (load-file "Method-combination/short-form-expansion.lisp" e3)
