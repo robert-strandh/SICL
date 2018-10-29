@@ -11,8 +11,6 @@
     (setf (sicl-genv:fdefinition 'typep e2)
           (lambda (object type-specifier)
             (sicl-genv:typep object type-specifier e2)))
-    ;; (setf (sicl-genv:fdefinition 'sicl-clos::classp e2)
-    ;;      (constantly t))
     (load-file "CLOS/classp-defgeneric.lisp" e2)
     (load-file "CLOS/classp-defmethods.lisp" e2)
     (setf (sicl-genv:fdefinition 'class-of e2)
