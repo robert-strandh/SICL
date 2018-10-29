@@ -2,30 +2,10 @@
 
 
 (defun define-method-on-print-object-for-ersatz-objects (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e3 sicl-new-boot:e3)) boot
     (defmethod print-object ((object header) stream)
-      (let ((class (slot-value object '%class)))
-        (cond ((eq class (sicl-genv:find-class 'standard-class e2))
-               (format stream "<E3 Ersatz standard class ~s>"
-                       (funcall (sicl-genv:fdefinition 'class-name e3) object)))
-              ((eq class (sicl-genv:find-class 'sicl-clos:funcallable-standard-class e2))
-               (format stream
-                       "<E3 Ersatz funcallable standard class ~s>"
-                       (funcall (sicl-genv:fdefinition 'class-name e3) object)))
-              ((eq class (sicl-genv:find-class 'built-in-class e2))
-               (format stream
-                       "<E3 Ersatz built-in class ~s>"
-                       (funcall (sicl-genv:fdefinition 'class-name e3) object)))
-              ((eq class (sicl-genv:find-class 'standard-generic-function e2))
-               (format stream
-                       "<E4 Ersatz standard generic function ~s>"
-                       (funcall (sicl-genv:fdefinition 'sicl-clos:generic-function-name e3)
-                                object)))
-              ((eq class (sicl-genv:find-class 'sicl-clos:standard-reader-method e2))
-               (format stream "<E4 Ersatz standard reader method>"))
-              (t (format stream "<unknown object instance of ~s" class)))))))
+      (funcall (sicl-genv:fdefinition 'print-object e3)
+               object stream))))
 
 ;;; We define MAKE-INSTANCE in environment E1 so that it calls the
 ;;; host MAKE-INSTANCE always with a class metaobject and never with a
