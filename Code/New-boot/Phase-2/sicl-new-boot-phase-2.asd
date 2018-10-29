@@ -9,6 +9,7 @@
   ((:file "packages")
    (:file "environment")
    (:file "utilities")
+   (:file "enable-generic-function-invocation-in-e2")
    (:file "enable-defmethod-in-e2")
    (:file "define-accessor-generic-functions")
    (:file "define-mop-classes")
