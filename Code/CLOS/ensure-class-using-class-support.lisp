@@ -50,7 +50,7 @@
     (error 'direct-superclasses-must-be-proper-list
            :superclasses direct-superclasses))
   (loop for class-or-name in direct-superclasses
-	collect (process-direct-superclass class-or-name)))
+        collect (process-direct-superclass class-or-name)))
 
 ;;; When the class is created, it is safe to use a default value of
 ;;; the empty list for the :DIRECT-SUPERCLASSES initialization
@@ -69,17 +69,17 @@
   (unless metaclass-p
     (setf metaclass 'standard-class))
   (setf direct-superclasses
-	(process-direct-superclasses direct-superclasses))
+        (process-direct-superclasses direct-superclasses))
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
     (setf (find-class name)
-	  (apply #'make-instance metaclass
-		 :direct-default-initargs direct-default-initargs
-		 :direct-slots direct-slots
-		 :direct-superclasses direct-superclasses
-		 :name name
-		 remaining-keys))))
+          (apply #'make-instance metaclass
+                 :direct-default-initargs direct-default-initargs
+                 :direct-slots direct-slots
+                 :direct-superclasses direct-superclasses
+                 :name name
+                 remaining-keys))))
 
 ;;; When the class is reinitialized, it is NOT safe to use a default
 ;;; value of the empty list for the :DIRECT-SUPERCLASSES
@@ -99,27 +99,27 @@
      &allow-other-keys)
   (when metaclass-p
     (cond ((symbolp metaclass)
-	   (setf metaclass (find-class metaclass)))
-	  ((typep metaclass 'class)
-	   nil)
-	  (t
-	   (error "metaclass must be a symbol or a class metaobject class")))
+           (setf metaclass (find-class metaclass)))
+          ((typep metaclass 'class)
+           nil)
+          (t
+           (error "metaclass must be a symbol or a class metaobject class")))
     (unless (eq metaclass (class-of class))
       (error "can't change metaclass during reinitialization of class")))
   (when direct-superclasses-p
     (setf direct-superclasses
-	  (process-direct-superclasses direct-superclasses)))
+          (process-direct-superclasses direct-superclasses)))
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
     (if direct-superclasses-p
-	(apply #'reinitialize-instance
-	       :name name
-	       :direct-superclasses direct-superclasses
-	       remaining-keys)
-	(apply #'reinitialize-instance
-	       :name name
-	       remaining-keys)))
+        (apply #'reinitialize-instance
+               :name name
+               :direct-superclasses direct-superclasses
+               remaining-keys)
+        (apply #'reinitialize-instance
+               :name name
+               remaining-keys)))
   class)
 
 (defun ensure-class-using-class-forward-referenced-class
@@ -135,28 +135,28 @@
   (unless metaclass-p
     (error "metaclass must be given when ensuring a forward-referenced class"))
   (cond ((symbolp metaclass)
-	 (setf metaclass (find-class metaclass)))
-	((typep metaclass 'class)
-	 nil)
-	(t
-	 (error "metaclass must be a symbol or a class metaobject class")))
+         (setf metaclass (find-class metaclass)))
+        ((typep metaclass 'class)
+         nil)
+        (t
+         (error "metaclass must be a symbol or a class metaobject class")))
   (change-class class metaclass)
   (when direct-superclasses-p
     (setf direct-superclasses
-	  (process-direct-superclasses direct-superclasses)))
+          (process-direct-superclasses direct-superclasses)))
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
     (if direct-superclasses-p
-	(apply #'reinitialize-instance class
-	       :direct-default-initargs direct-default-initargs
-	       :direct-slots direct-slots
-	       :name name
-	       :direct-superclasses direct-superclasses
-	       remaining-keys)
-	(apply #'reinitialize-instance class
-	       :direct-default-initargs direct-default-initargs
-	       :direct-slots direct-slots
-	       :name name
-	       remaining-keys)))
+        (apply #'reinitialize-instance class
+               :direct-default-initargs direct-default-initargs
+               :direct-slots direct-slots
+               :name name
+               :direct-superclasses direct-superclasses
+               remaining-keys)
+        (apply #'reinitialize-instance class
+               :direct-default-initargs direct-default-initargs
+               :direct-slots direct-slots
+               :name name
+               remaining-keys)))
   class)
