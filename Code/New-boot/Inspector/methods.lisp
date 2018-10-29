@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-new-boot-inspector)
 
+(defmethod clim:presentation-type-of ((object sicl-new-boot-phase-2::header))
+  t)
+
 (defun define-methods-on-inspec-object (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
