@@ -3,7 +3,7 @@
 (defmethod clim:presentation-type-of ((object sicl-new-boot-phase-2::header))
   t)
 
-(defun define-methods-on-inspec-object (boot)
+(defun define-methods-for-inspector (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)
