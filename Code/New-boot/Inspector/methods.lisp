@@ -16,7 +16,7 @@
             (clim:formatting-cell (pane)
               (format pane "Class: "))
             (clim:formatting-cell (pane)
-              (format pane "~s" class)))
+              (clouseau:inspect-object class pane)))
           (clim:formatting-row (pane)
             (clim:formatting-cell (pane)
               (format pane "Stamp: "))
@@ -27,7 +27,6 @@
                 for location = (funcall location-fun slot)
                 do (clim:formatting-row (pane)
                      (clim:formatting-cell (pane)
-                       (format pane "~s:" name))
+                       (clouseau:inspect-object name pane))
                      (clim:formatting-cell (pane)
-                       (format pane "~s" (aref rack location))))))))))
-
+                       (clouseau:inspect-object (aref rack location) pane)))))))))
