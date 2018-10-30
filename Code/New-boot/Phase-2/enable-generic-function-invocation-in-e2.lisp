@@ -2,8 +2,7 @@
 
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+                   (e2 sicl-new-boot:e2)) boot
     (import-package-from-host '#:sicl-conditions e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2)
           (lambda (object)
@@ -32,8 +31,8 @@
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
           #'closer-mop:set-funcallable-instance-function)
     (import-functions-from-host '(sort eql) e2)
-    (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)
     (import-package-from-host '#:sicl-method-combination e2)
