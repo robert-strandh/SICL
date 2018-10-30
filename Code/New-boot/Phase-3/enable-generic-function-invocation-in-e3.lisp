@@ -32,7 +32,12 @@
     ;; variant signature of the method combination.  It calls
     ;; EFFECTIVE-METHOD-FORM-FUNCTION on the template to get to the
     ;; function to apply.  It calls GENERIC-FUNCTION-METHOD-CLASS on
-    ;; the generic function passed to it as an argument.
+    ;; the generic function passed to it as an argument.  The
+    ;; functions METHOD-QUALIFIERS, TEMPLATE, VARIANT-SIGNATURE and
+    ;; GENERIC-FUNCTION-METHOD-CLASS are all accessor generic
+    ;; functions that were defined during phase 2 by evaluating
+    ;; DEFGENERIC forms and by evaluating DEFCLASS forms that define
+    ;; readers and writers on the generic functions.
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e3)
     (load-file "CLOS/compute-effective-method-support-c.lisp" e3)
     (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e3)
