@@ -3,7 +3,6 @@
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
-    (load-file "CLOS/compute-applicable-methods-support.lisp" e3
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e3)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e3)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e3)
@@ -30,4 +29,4 @@
        sicl-clos::make-automaton)
      e3)
     (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
-    (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))))
+    (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3)))
