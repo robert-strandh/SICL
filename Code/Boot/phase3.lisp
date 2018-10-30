@@ -275,6 +275,7 @@
     (define-error-function 'sicl-clos::no-applicable-method r2)
     (ld "CLOS/classp-defgeneric.lisp" r1 r1)
     (ld "CLOS/classp-defmethods.lisp" r2 r2)
+    (ld "CLOS/sub-specializer-p.lisp" r2 r2)
     (ld "CLOS/compute-applicable-methods-support.lisp" r2 r2)
     (ld "CLOS/compute-applicable-methods-defgenerics.lisp" r1 r1)
     (ld "CLOS/compute-applicable-methods-defmethods.lisp" r2 r2)
