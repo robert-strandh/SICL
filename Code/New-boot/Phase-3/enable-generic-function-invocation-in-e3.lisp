@@ -3,6 +3,13 @@
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
+    (import-functions-from-host
+     '(sort mapcar eql position sicl-genv:find-class)
+     e3)
+    (load-file "CLOS/classp-defgeneric.lisp" e3)
+    (load-file "CLOS/classp-defmethods.lisp" e3)
+    (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e3)
+    (load-file "CLOS/compute-applicable-methods-support.lisp" e3)
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e3)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e3)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e3)
@@ -20,6 +27,17 @@
           (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e2))
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
           #'closer-mop:set-funcallable-instance-function)
+    (setf (sicl-genv:fdefinition 'compile e3)
+          (lambda (name &optional definition)
+            (assert (null name))
+            (assert (not (null definition)))
+            (cleavir-env:eval definition e3 e3)))
+    ;; We may regret having defined FIND-CLASS this way in E3.
+    (setf (sicl-genv:fdefinition 'find-class e3)
+          (lambda (class-name &optional error-p)
+            (declare (ignore error-p))
+            (sicl-genv:find-class class-name e2)))
+    (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
     (load-file "CLOS/compute-discriminating-function-support.lisp" e3)
     (import-functions-from-host
      '(assoc 1+
