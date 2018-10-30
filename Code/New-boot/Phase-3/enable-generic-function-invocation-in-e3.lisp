@@ -25,7 +25,6 @@
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e3)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e3)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e3)
-    (load-file "CLOS/compute-effective-method-support.lisp" e3)
     (load-file "CLOS/compute-effective-method-support-c.lisp" e3)
     (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e3)
     (load-file "CLOS/no-applicable-method-defgenerics.lisp" e3)
