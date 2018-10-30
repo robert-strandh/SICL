@@ -74,7 +74,7 @@
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 t)
           (sicl-genv:find-class 't e3))
     (import-functions-from-host
-     '(error find-if equal set-exclusive-or)
+     '(error find-if equal set-exclusive-or sicl-genv:find-class)
      e3)
     ;; FIXME: load files containing the definition instead
     (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method e3)
