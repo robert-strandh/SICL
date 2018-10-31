@@ -34,6 +34,9 @@
     (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
     (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e3 t) nil)
+    ;; MAKE-LIST is called when a method is removed and a new
+    ;; specializer profile must be computed.
+    (import-function-from-host 'make-list e3)
     (load-file-protected "CLOS/add-remove-method-support.lisp" e3)
     (load-file "CLOS/add-remove-method-defgenerics.lisp" e3)
     (load-file "CLOS/add-remove-method-defmethods.lisp" e3)
