@@ -31,9 +31,11 @@
     (import-functions-from-host
      '(set-difference stringp
        cleavir-code-utilities:parse-generic-function-lambda-list
-       cleavir-code-utilities:required
-       make-list)
+       cleavir-code-utilities:required)
      e3)
+    ;; MAKE-LIST is called from the :AROUND method on
+    ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
+    (import-function-from-host 'make-list e3)
     (load-file "CLOS/generic-function-initialization-support.lisp" e3)
     (setf (sicl-genv:fdefinition 'sicl-clos::invalidate-discriminating-function e3)
           #'identity)
