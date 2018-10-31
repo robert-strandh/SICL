@@ -54,8 +54,6 @@
     (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e3)
           (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e2))))
 
-
-
 (defun define-compute-discriminating-function (boot)
   (with-accessors ((e3 sicl-new-boot:e3)) boot
     (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
