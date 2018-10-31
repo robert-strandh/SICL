@@ -6,6 +6,7 @@
 (defmethod initialize-instance :after ((object environment) &key)
   (import-functions-from-host
    '(format
+     error
      cleavir-code-utilities:proper-list-p)
    object)
   (setf (sicl-genv:special-variable '*trace-output* object t) *trace-output*)

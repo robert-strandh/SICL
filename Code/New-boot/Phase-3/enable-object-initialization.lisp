@@ -52,7 +52,6 @@
     (load-file "CLOS/initialize-instance-support.lisp" e3)
     (load-file "CLOS/initialize-instance-defgenerics.lisp" e3)
     (load-file "CLOS/initialize-instance-defmethods.lisp" e3)
-    (import-function-from-host 'error e2)
     (load-file "CLOS/make-instance-support.lisp" e2)
     (setf (sicl-genv:fdefinition 'make-instance e3)
           (lambda (class &rest initargs)
