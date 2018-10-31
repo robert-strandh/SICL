@@ -54,6 +54,29 @@
     (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e3)
           (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e2))))
 
+
+
+(defun define-compute-discriminating-function (boot)
+  (with-accessors ((e3 sicl-new-boot:e3)) boot
+    (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
+    ;; LIST* is called in order to make a call cache.  CAR, CADR,
+    ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
+    ;; is used to search a list of effictive-slot metaobjects to find
+    ;; one with a particular name.  SUBSEQ is used to extract the
+    ;; required arguments from a list of all the arguments to a
+    ;; generic function.
+    (import-functions-from-host '(list* car cadr caddr cdddr find subseq) e3)
+    (load-file "CLOS/compute-discriminating-function-support.lisp" e3)
+    (import-functions-from-host
+     '(assoc 1+
+       sicl-clos::add-path
+       sicl-clos::compute-discriminating-tagbody
+       sicl-clos::extract-transition-information
+       sicl-clos::make-automaton)
+     e3)
+    (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
+    (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3)))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -77,21 +100,4 @@
           (lambda (class-name &optional error-p)
             (declare (ignore error-p))
             (sicl-genv:find-class class-name e2)))
-    (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
-    ;; LIST* is called in order to make a call cache.  CAR, CADR,
-    ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
-    ;; is used to search a list of effictive-slot metaobjects to find
-    ;; one with a particular name.  SUBSEQ is used to extract the
-    ;; required arguments from a list of all the arguments to a
-    ;; generic function.
-    (import-functions-from-host '(list* car cadr caddr cdddr find subseq) e3)
-    (load-file "CLOS/compute-discriminating-function-support.lisp" e3)
-    (import-functions-from-host
-     '(assoc 1+
-       sicl-clos::add-path
-       sicl-clos::compute-discriminating-tagbody
-       sicl-clos::extract-transition-information
-       sicl-clos::make-automaton)
-     e3)
-    (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
-    (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3)))
+    (define-compute-discriminating-function boot)))
