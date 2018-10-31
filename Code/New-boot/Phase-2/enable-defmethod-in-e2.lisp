@@ -45,7 +45,6 @@
     (import-functions-from-host
      '(mapcar
        subseq
-       1+
        elt
        position-if
        sicl-genv:find-class
@@ -62,6 +61,9 @@
           #'closer-mop:class-prototype)
     (setf (sicl-genv:fdefinition 'sicl-clos:generic-function-method-class e1)
           #'closer-mop:generic-function-method-class)
+    ;; 1+ is called by PARSE-METHOD to obtain an interval designator
+    ;; for SUBSEQ in order to parse the method body.
+    (import-function-from-host '1+ e1)
     (load-file "CLOS/defmethod-support.lisp" e1)
     (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
           (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e1))
