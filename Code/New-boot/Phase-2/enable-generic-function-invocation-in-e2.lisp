@@ -1,5 +1,18 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
+;;; get the class of each of the arguments passed to a generic
+;;; function.  It calls SORT to sort the applicable methods in order
+;;; from most specific to least specific.  EQL is called to compare
+;;; the object of an EQL specializer to an argument passed to a
+;;; generic function.
+(defun define-compute-applicable-methods (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)) boot
+    (import-functions-from-host '(sort mapcar eql) e2)
+    (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
+    (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -30,11 +43,8 @@
             (sicl-genv:find-class name e1)))
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
           #'closer-mop:set-funcallable-instance-function)
-    (import-functions-from-host '(sort eql) e2)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
-    (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
-    (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
-    (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)
+    (define-compute-applicable-methods boot)
     (import-package-from-host '#:sicl-method-combination e2)
     (import-function-from-host
      'sicl-method-combination::define-method-combination-expander e2)
