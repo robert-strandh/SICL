@@ -86,6 +86,9 @@
        sicl-clos::extract-transition-information
        sicl-clos::make-automaton)
      e2)
+    ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
+    ;; argument for MAKE-AUTOMATON..
+    (import-function-from-host '1+ e2)
     (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
     (import-functions-from-host '(print-object) e2)

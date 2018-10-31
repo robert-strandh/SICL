@@ -66,12 +66,15 @@
     (import-functions-from-host '(list* car cadr caddr cdddr find subseq) e3)
     (load-file "CLOS/compute-discriminating-function-support.lisp" e3)
     (import-functions-from-host
-     '(assoc 1+
+     '(assoc
        sicl-clos::add-path
        sicl-clos::compute-discriminating-tagbody
        sicl-clos::extract-transition-information
        sicl-clos::make-automaton)
      e3)
+    ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
+    ;; argument for MAKE-AUTOMATON..
+    (import-function-from-host '1+ e3)
     (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3)))
 
