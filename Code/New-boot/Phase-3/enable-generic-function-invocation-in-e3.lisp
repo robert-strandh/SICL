@@ -64,7 +64,6 @@
     (define-compute-effective-method boot)
     (load-file "CLOS/no-applicable-method-defgenerics.lisp" e3)
     (load-file "CLOS/no-applicable-method.lisp" e3)
-    (import-functions-from-host '(list* caddr find subseq) e3)
     (define-general-instance-access boot)
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
           #'closer-mop:set-funcallable-instance-function)
@@ -79,6 +78,13 @@
             (declare (ignore error-p))
             (sicl-genv:find-class class-name e2)))
     (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
+    ;; LIST* is called in order to make a call cache.  CAR, CADR,
+    ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
+    ;; is used to search a list of effictive-slot metaobjects to find
+    ;; one with a particular name.  SUBSEQ is used to extract the
+    ;; required arguments from a list of all the arguments to a
+    ;; generic function.
+    (import-functions-from-host '(list* car cadr caddr cdddr find subseq) e3)
     (load-file "CLOS/compute-discriminating-function-support.lisp" e3)
     (import-functions-from-host
      '(assoc 1+
