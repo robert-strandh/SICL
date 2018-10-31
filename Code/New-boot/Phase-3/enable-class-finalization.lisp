@@ -19,11 +19,16 @@
     (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
     (import-functions-from-host
      '(last remove-duplicates reduce copy-list
-       mapcar union find-if-not eql count)
+       mapcar union eql count)
      e2)
     (load-file "CLOS/slot-definition-class-support.lisp" e2)
     (load-file "CLOS/slot-definition-class-defgenerics.lisp" e2)
     (load-file "CLOS/slot-definition-class-defmethods.lisp" e2)
     (load-file "CLOS/class-finalization-defgenerics.lisp" e2)
+    ;; FIND-IF-NOT is used to traverse the list of direct slot
+    ;; definitions to find the first one that has a non-null
+    ;; initfunction, which will then be used as the initfunction of
+    ;; the effective slot-definition.
+    (import-function-from-host 'find-if-not e2)
     (load-file "CLOS/class-finalization-support.lisp" e2)
     (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
