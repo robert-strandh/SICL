@@ -77,7 +77,7 @@
           (assert (null name))
           (assert (not (null definition)))
           (cleavir-env:eval definition e2 e2)))
-  (import-functions-from-host '(find-if adjoin set-exclusive-or) e2)
+  (import-functions-from-host '(adjoin set-exclusive-or) e2)
   (define-error-function 'slot-value e2)
   (define-error-function '(setf slot-value) e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method e2)
@@ -92,6 +92,10 @@
   ;; MAKE-LIST is called when a method is removed and a new
   ;; specializer profile must be computed.
   (import-function-from-host 'make-list e2)
+  ;; FIND-IF is called by ADD-METHOD in order to find and existing
+  ;; method with the same specializers and the same qualifiers, so
+  ;; that that existing method can be removed first.
+  (import-function-from-host 'find-if e2)
   (load-file-protected "CLOS/add-remove-method-support.lisp" e2)
   (load-file "CLOS/add-remove-method-defmethods.lisp" e2)
   (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 nil) nil)
