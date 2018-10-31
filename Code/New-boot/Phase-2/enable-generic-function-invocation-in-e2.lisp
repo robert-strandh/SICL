@@ -76,7 +76,7 @@
     (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e2)
     (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
     (load-file "CLOS/no-applicable-method.lisp" e2)
-    (import-functions-from-host '(nth make-list) e2)
+    (import-functions-from-host '(nth) e2)
     (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
     (import-functions-from-host '(list* caddr) e2)
     (load-file "CLOS/compute-discriminating-function-support.lisp" e2)

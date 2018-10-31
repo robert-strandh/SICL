@@ -88,7 +88,10 @@
         (lambda (&rest args) (declare (ignore args)) nil))
   (setf (sicl-genv:fdefinition 'sicl-clos:update-dependent e2)
         (lambda (&rest args) (declare (ignore args)) nil))
-    (load-file "CLOS/add-remove-method-defgenerics.lisp" e2)
+  (load-file "CLOS/add-remove-method-defgenerics.lisp" e2)
+  ;; MAKE-LIST is called when a method is removed and a new
+  ;; specializer profile must be computed.
+  (import-function-from-host 'make-list e2)
   (load-file-protected "CLOS/add-remove-method-support.lisp" e2)
   (load-file "CLOS/add-remove-method-defmethods.lisp" e2)
   (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 nil) nil)
