@@ -17,7 +17,7 @@
            'sicl-clos::*standard-effective-slot-definition* e2 t)
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
     (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
-    (import-functions-from-host '(last reduce copy-list eql count) e2)
+    (import-functions-from-host '(last copy-list eql count) e2)
     (load-file "CLOS/slot-definition-class-support.lisp" e2)
     (load-file "CLOS/slot-definition-class-defgenerics.lisp" e2)
     (load-file "CLOS/slot-definition-class-defmethods.lisp" e2)
@@ -39,5 +39,8 @@
     ;; UNION is used by class finalization to compute a list of
     ;; effective slot definitions.
     (import-function-from-host 'union e2)
+    ;; REDUCE is used by class finalization in several places to combine
+    ;; lists of superclasses, slots, and initargs from superclasses.
+    (import-function-from-host 'reduce e2)
     (load-file "CLOS/class-finalization-support.lisp" e2)
     (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
