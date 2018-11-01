@@ -7,7 +7,7 @@
 ;;; those accessors are found in E2 as well.  For that reason, most of
 ;;; the code in this file refers to E2.
 
-(defun enable-class-finalization (boot)
+(defun define-effective-slot-definition-class (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
     (setf (sicl-genv:special-variable
@@ -15,7 +15,10 @@
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
     (load-file "CLOS/effective-slot-definition-class-support.lisp" e2)
     (load-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e2)
-    (load-file "CLOS/effective-slot-definition-class-defmethods.lisp" e2)
+    (load-file "CLOS/effective-slot-definition-class-defmethods.lisp" e2)))
+
+(defun define-class-finalization (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)) boot
     (load-file "CLOS/class-finalization-defgenerics.lisp" e2)
     ;; FIND-IF-NOT is used to traverse the list of direct slot
     ;; definitions to find the first one that has a non-null
@@ -48,3 +51,9 @@
     (import-function-from-host 'copy-list e2)
     (load-file "CLOS/class-finalization-support.lisp" e2)
     (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
+
+(defun enable-class-finalization (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)) boot
+    (define-effective-slot-definition-class boot)
+    (define-class-finalization boot)))
