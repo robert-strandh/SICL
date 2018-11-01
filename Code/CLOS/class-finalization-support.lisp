@@ -185,7 +185,7 @@
                    name
                    (remove name concatenated
                            :key #'slot-definition-name
-                           :test-not #'eql)))))
+                           :test-not #'eq)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
