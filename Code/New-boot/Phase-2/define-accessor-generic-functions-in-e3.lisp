@@ -161,10 +161,11 @@
     (load-file "Method-combination/find-method-combination.lisp" e1)
     (ensure-generic-function-phase-2 boot)
     (import-function-from-host 'shared-initialize e2)
-    (import-function-from-host
-     'cleavir-code-utilities:parse-generic-function-lambda-list e2)
-    (import-function-from-host 'cleavir-code-utilities:required e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)
+    (import-functions-from-host
+     '(cleavir-code-utilities:parse-generic-function-lambda-list
+       cleavir-code-utilities:required)
+     e2)
     ;; MAKE-LIST is called from the :AROUND method on
     ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
     (import-function-from-host 'make-list e2)
