@@ -11,15 +11,11 @@
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
     (setf (sicl-genv:special-variable
-           'sicl-clos::*standard-direct-slot-definition* e2 t)
-          (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e1))
-    (setf (sicl-genv:special-variable
            'sicl-clos::*standard-effective-slot-definition* e2 t)
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
-    (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
-    (load-file "CLOS/slot-definition-class-support.lisp" e2)
-    (load-file "CLOS/slot-definition-class-defgenerics.lisp" e2)
-    (load-file "CLOS/slot-definition-class-defmethods.lisp" e2)
+    (load-file "CLOS/effective-slot-definition-class-support.lisp" e2)
+    (load-file "CLOS/effective-slot-definition-class-defgeneric.lisp" e2)
+    (load-file "CLOS/effective-slot-definition-class-defmethods.lisp" e2)
     (load-file "CLOS/class-finalization-defgenerics.lisp" e2)
     ;; FIND-IF-NOT is used to traverse the list of direct slot
     ;; definitions to find the first one that has a non-null
