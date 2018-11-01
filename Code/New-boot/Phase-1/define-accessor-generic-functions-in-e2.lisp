@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-new-boot-phase-1)
 
-(defun define-accessor-defgenerics (e2)
+(defun define-accessor-generic-functions (e2)
   (enable-defgeneric-in-e2 e2)
   (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e2)
   (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" e2)
