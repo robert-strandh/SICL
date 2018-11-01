@@ -17,10 +17,7 @@
            'sicl-clos::*standard-effective-slot-definition* e2 t)
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
     (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
-    (import-functions-from-host
-     '(last remove-duplicates reduce copy-list
-       mapcar union eql count)
-     e2)
+    (import-functions-from-host '(last reduce copy-list union eql count) e2)
     (load-file "CLOS/slot-definition-class-support.lisp" e2)
     (load-file "CLOS/slot-definition-class-defgenerics.lisp" e2)
     (load-file "CLOS/slot-definition-class-defmethods.lisp" e2)
@@ -30,5 +27,14 @@
     ;; initfunction, which will then be used as the initfunction of
     ;; the effective slot-definition.
     (import-function-from-host 'find-if-not e2)
+    ;; MAPCAR is used for several things during class finalization.
+    ;; It is used to obtain the class-precedence-list of all
+    ;; superclasses of a class.  It is used to find the initargs of
+    ;; each slot definition object in a list.  And more.
+    (import-function-from-host 'mapcar e2)
+    ;; REMOVE-DUPCLICATES is used in serveral places for class
+    ;; finalization, for computing a list of superclasses, a list of
+    ;; initargs, a list of slots, etc.
+    (import-function-from-host 'remove-duplicates e2)
     (load-file "CLOS/class-finalization-support.lisp" e2)
     (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
