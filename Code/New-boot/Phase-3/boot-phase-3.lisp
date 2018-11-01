@@ -24,6 +24,6 @@
     (enable-object-initialization boot)
     (enable-method-combinations-in-e3 boot)
     (enable-generic-function-invocation boot)
-    (load-accessor-defgenerics boot)
+    (define-accessor-generic-functions boot)
     (create-mop-classes boot)
     (load-file "New-boot/Phase-3/define-methods-on-print-object.lisp" e3)))

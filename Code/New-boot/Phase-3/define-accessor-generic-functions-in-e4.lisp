@@ -41,7 +41,7 @@
           #'identity)
     (load-file "CLOS/generic-function-initialization-defmethods.lisp" e3)))
 
-(defun load-accessor-defgenerics (boot)
+(defun define-accessor-generic-functions (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
