@@ -161,7 +161,6 @@
     (load-file "Method-combination/find-method-combination.lisp" e1)
     (ensure-generic-function-phase-2 boot)
     (import-function-from-host 'shared-initialize e2)
-    (import-function-from-host 'stringp e2)
     (import-function-from-host
      'cleavir-code-utilities:parse-generic-function-lambda-list e2)
     (import-function-from-host 'cleavir-code-utilities:required e2)
@@ -173,6 +172,9 @@
     ;; protocol to verify that the argument precedence order is a
     ;; permutation of the required arguments.
     (import-function-from-host 'set-difference e2)
+    ;; STRINGP is called by the generic-function initialization
+    ;; protocol to verify that the documentation is a string.
+    (import-function-from-host 'stringp e2)
     (load-file "CLOS/generic-function-initialization-support.lisp" e2)
     (load-file "CLOS/generic-function-initialization-defmethods.lisp" e2)
     (load-accessor-defgenerics e3)))

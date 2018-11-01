@@ -27,8 +27,7 @@
 (defun enable-generic-function-initialization (boot)
   (with-accessors ((e3 sicl-new-boot:e3)) boot
     (import-functions-from-host
-     '(stringp
-       cleavir-code-utilities:parse-generic-function-lambda-list
+     '(cleavir-code-utilities:parse-generic-function-lambda-list
        cleavir-code-utilities:required)
      e3)
     ;; MAKE-LIST is called from the :AROUND method on
@@ -38,6 +37,9 @@
     ;; protocol to verify that the argument precedence order is a
     ;; permutation of the required arguments.
     (import-function-from-host 'set-difference e3)
+    ;; STRINGP is called by the generic-function initialization
+    ;; protocol to verify that the documentation is a string.
+    (import-function-from-host 'stringp e3)
     (load-file "CLOS/generic-function-initialization-support.lisp" e3)
     (setf (sicl-genv:fdefinition 'sicl-clos::invalidate-discriminating-function e3)
           #'identity)
