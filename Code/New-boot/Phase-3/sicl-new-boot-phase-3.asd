@@ -14,7 +14,7 @@
    (:file "enable-defmethod-in-e3")
    (:file "enable-object-initialization")
    (:file "enable-generic-function-invocation-in-e3")
-   (:file "load-accessor-defgenerics")
+   (:file "define-accessor-generic-functions-in-e4")
    (:file "define-mop-classes")
    (:file "enable-method-combinations-in-e3")
    (:file "boot-phase-3")))
