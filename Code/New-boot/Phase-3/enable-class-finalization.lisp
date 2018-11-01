@@ -17,7 +17,7 @@
            'sicl-clos::*standard-effective-slot-definition* e2 t)
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
     (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
-    (import-functions-from-host '(copy-list eql count) e2)
+    (import-functions-from-host '(eql count) e2)
     (load-file "CLOS/slot-definition-class-support.lisp" e2)
     (load-file "CLOS/slot-definition-class-defgenerics.lisp" e2)
     (load-file "CLOS/slot-definition-class-defmethods.lisp" e2)
@@ -45,5 +45,8 @@
     ;; Although LAST is not mentioned explicitly, it is needed, because
     ;; the expansion of LOOP with and APPEND clause uses it.
     (import-function-from-host 'last e2)
+    ;; Although COPY-LIST is not mentioned explicitly, it is needed,
+    ;; because the expansion of LOOP with and APPEND clause uses it.
+    (import-function-from-host 'copy-list e2)
     (load-file "CLOS/class-finalization-support.lisp" e2)
     (load-file "CLOS/class-finalization-defmethods.lisp" e2)))
