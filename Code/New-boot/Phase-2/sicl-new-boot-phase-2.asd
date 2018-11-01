@@ -2,8 +2,7 @@
 
 (defsystem #:sicl-new-boot-phase-2
   :depends-on (#:sicl-new-boot-base
-               #:sicl-clos-macro-support
-               #:sicl-method-combination-support)
+               #:sicl-clos-macro-support)
   :serial t
   :components
   ((:file "packages")
