@@ -62,7 +62,7 @@
                                  :method-combination method-combination
                                  args)))))))))
 
-(defun load-accessor-defgenerics (boot)
+(defun define-accessor-generic-functions (boot)
   (enable-allocate-instance boot)
   (enable-generic-function-invocation boot)
   (with-accessors ((e1 sicl-new-boot:e1)

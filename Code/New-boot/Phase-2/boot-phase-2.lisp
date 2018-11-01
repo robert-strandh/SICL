@@ -124,7 +124,7 @@
     (define-make-instance-in-e2 e1 e2)
     (enable-defmethod-in-e2 boot)
     (define-method-on-method-function e2)
-    (load-accessor-defgenerics boot)
+    (define-accessor-generic-functions boot)
     ;; REMOVE is needed by the class initialization protocol.
     (import-function-from-host 'remove e2)
     (add-support-for-class-initialization-to-e2 e1 e2 e3)
