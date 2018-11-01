@@ -17,7 +17,6 @@
            'sicl-clos::*standard-effective-slot-definition* e2 t)
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e1))
     (sicl-genv:fmakunbound 'sicl-clos:direct-slot-definition-class e2)
-    (import-functions-from-host '(eql count) e2)
     (load-file "CLOS/slot-definition-class-support.lisp" e2)
     (load-file "CLOS/slot-definition-class-defgenerics.lisp" e2)
     (load-file "CLOS/slot-definition-class-defmethods.lisp" e2)
@@ -42,6 +41,9 @@
     ;; REDUCE is used by class finalization in several places to combine
     ;; lists of superclasses, slots, and initargs from superclasses.
     (import-function-from-host 'reduce e2)
+    ;; COUNT is used by class finalization to determine the number of
+    ;; slots with :INSTANCE allocation.
+    (import-function-from-host 'count e2)
     ;; Although LAST is not mentioned explicitly, it is needed, because
     ;; the expansion of LOOP with and APPEND clause uses it.
     (import-function-from-host 'last e2)
