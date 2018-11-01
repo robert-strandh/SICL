@@ -41,17 +41,6 @@
           #'identity)
     (load-file "CLOS/generic-function-initialization-defmethods.lisp" e3)))
 
-(defun define-accessor-generic-functions (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)) boot
-    (ensure-generic-function-phase-3 boot)
-    (enable-generic-function-initialization boot)
-    (sicl-minimal-extrinsic-environment:import-function-from-host
-     'sicl-clos:defgeneric-expander e4)
-    (load-file "CLOS/defgeneric-defmacro.lisp" e4)
-    (load-accessor-defgenerics e4)))
-
 (defun load-accessor-defgenerics (e4)
   (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e4)
   (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" e4)
@@ -118,3 +107,14 @@
   (load-file "CLOS/variant-signature-defgeneric.lisp" e4)
   (load-file "CLOS/template-defgeneric.lisp" e4)
   (load-file "CLOS/code-object-defgeneric.lisp" e4))
+
+(defun define-accessor-generic-functions (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)
+                   (e4 sicl-new-boot:e4)) boot
+    (ensure-generic-function-phase-3 boot)
+    (enable-generic-function-initialization boot)
+    (sicl-minimal-extrinsic-environment:import-function-from-host
+     'sicl-clos:defgeneric-expander e4)
+    (load-file "CLOS/defgeneric-defmacro.lisp" e4)
+    (load-accessor-defgenerics e4)))
