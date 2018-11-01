@@ -45,7 +45,6 @@
           #'closer-mop:set-funcallable-instance-function)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
     (define-compute-applicable-methods boot)
-    (import-package-from-host '#:sicl-method-combination e2)
     (import-function-from-host
      'sicl-method-combination::define-method-combination-expander e2)
     (load-file "Method-combination/define-method-combination-defmacro.lisp" e2)

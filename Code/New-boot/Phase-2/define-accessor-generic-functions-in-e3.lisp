@@ -138,7 +138,6 @@
       boot
     (import-function-from-host 'sicl-clos:defgeneric-expander e3)
     (load-file "CLOS/defgeneric-defmacro.lisp" e3)
-    (import-package-from-host 'sicl-method-combination e1)
     (import-class-from-host 'sicl-method-combination:method-combination-template
      e1)
     (import-functions-from-host

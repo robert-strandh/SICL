@@ -6,7 +6,6 @@
     (import-function-from-host 'sicl-genv:find-method-combination-template e3)
     (import-function-from-host '(setf sicl-genv:find-method-combination-template) e3)
     (import-function-from-host 'equal e3)
-    (import-package-from-host 'sicl-method-combination e3)
     (load-file "Method-combination/accessor-defgenerics.lisp" e3)
     (load-file "Method-combination/find-method-combination.lisp" e3)
     (import-function-from-host 'sicl-method-combination::lambda-list-variables e3)
