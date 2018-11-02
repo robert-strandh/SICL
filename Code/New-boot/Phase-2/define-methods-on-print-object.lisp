@@ -28,4 +28,4 @@
           (slot-definition-name object)))
 
 (defmethod print-object ((object method-combination) stream)
-  (format stream "<E2 Bridge method-combination>"))
+  (format stream "<E3 Bridge method-combination>"))
