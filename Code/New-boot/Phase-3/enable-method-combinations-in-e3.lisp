@@ -9,14 +9,17 @@
     (import-function-from-host 'sicl-genv:find-method-combination-template e3)
     (load-file "Method-combination/find-method-combination.lisp" e3)
     (import-function-from-host '(setf sicl-genv:find-method-combination-template) e3)
-    (import-functions-from-host
-     '(sicl-loop::list-car sicl-loop::list-cdr
-       nth reverse)
-      e3)
     (import-function-from-host
      'sicl-method-combination::define-method-combination-expander e3)
     (load-file "Method-combination/define-method-combination-defmacro.lisp" e3)
     (load-file "Method-combination/method-combination-template-defclass.lisp" e2)
+    ;; The standard method combination uses LOOP to traverse the list
+    ;; of methods, so we need to import LIST-CAR and LIST-CDR from the
+    ;; LOOP package.
+    (import-functions-from-host '(sicl-loop::list-car sicl-loop::list-cdr) e3)
+    ;; The standard method combination also uses REVERSE to reverse
+    ;; the order of invocation of the :AFTER methods.
+    (import-function-from-host 'reverse e3)
     (load-file "CLOS/standard-method-combination.lisp" e3)
     (load-file "CLOS/find-method-combination-defgenerics.lisp" e3)
     (load-file "CLOS/find-method-combination-defmethods.lisp" e3)))
