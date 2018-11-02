@@ -1,17 +1,13 @@
 (cl:in-package #:sicl-sequence)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Externally visible conditions
-
 ;;; This condition is used to mix into other conditions that
-;;; will report the construct (function, macro, etc) in which 
-;;; the condition was signaled. 
+;;; will report the construct (function, macro, etc) in which
+;;; the condition was signaled.
 (define-condition name-mixin ()
   ((%name :initarg :name :reader name)))
 
-;;; This condition is used by functions an macros that require 
-;;; some argument to be a nonnegative integer. 
+;;; This condition is used by functions an macros that require
+;;; some argument to be a nonnegative integer.
 (define-condition must-be-nonnegative-integer (type-error name-mixin)
   ()
   (:default-initargs :expected-type '(integer 0)))
@@ -35,7 +31,7 @@
   (:default-initargs :expected-type 'list))
 
 ;;; This condition is used by functions and macros that require
-;;; some list to be a proper list.  
+;;; some list to be a proper list.
 (define-condition must-be-proper-list (type-error name-mixin)
   ()
   (:default-initargs :expected-type 'list))
@@ -66,7 +62,7 @@
   ((%in-sequence :initarg :in-sequence :reader in-sequence)))
 
 ;;; This is the base class of conditions that need to report
-;;; some bounding index to be out of bounds. 
+;;; some bounding index to be out of bounds.
 (define-condition invalid-bounding-index (invalid-sequence-index)
   ())
 
@@ -81,20 +77,9 @@
   ())
 
 ;;; This condition is used to indicate that, although both
-;;; the start and the end indexes are valid bounding indexes 
-;;; separately, the end index is smaller than the start index. 
+;;; the start and the end indexes are valid bounding indexes
+;;; separately, the end index is smaller than the start index.
 ;;; We reuse the datum in the type-error for the start index,
 ;;; and add a slot for the end index.
 (define-condition end-less-than-start (invalid-bounding-index)
   ((end-index :initarg :end-index :reader end-index)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Code that is both considered fast and tiny, so that it
-;;; can be factored out of the specific modules to this common
-;;; place to be used in every module.
-
-
-
-
-

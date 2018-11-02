@@ -12,7 +12,7 @@
 
 ;;; Define the same large value, hoping that the compiler
 ;;; will keep them apart, so they aren't eq.  Tests won't
-;;; fail if that is not true, but they might give false positives. 
+;;; fail if that is not true, but they might give false positives.
 (defparameter *i02* #.(expt 10 100))
 
 ;;; Define a few more large distinct values
@@ -49,13 +49,13 @@
 ;;; Tests for function find
 
 (defun stupid-find (item sequence
-		    &key
-		    key
-		    (test nil test-p)
-		    (test-not nil test-not-p)
-		    (start 0)
-		    end
-		    from-end)
+                    &key
+                    key
+                    (test nil test-p)
+                    (test-not nil test-not-p)
+                    (start 0)
+                    end
+                    from-end)
   (assert (not (and test-p test-not-p)))
   (when test-not-p
     (setf test (lambda (x y) (not (funcall test-not x y)))))
@@ -71,68 +71,68 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    when (funcall test item (funcall key (aref sequence index)))
-	      return (aref sequence index))
+            when (funcall test item (funcall key (aref sequence index)))
+              return (aref sequence index))
       (loop for index from start below end
-	    when (funcall test item (funcall key (aref sequence index)))
-	      return (aref sequence index))))
+            when (funcall test item (funcall key (aref sequence index)))
+              return (aref sequence index))))
 
 (defun test-find (item sequence key test test-not start end from-end)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :test test)
-			     (make-arg :test-not test-not)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end))))
+                             (make-arg :test test)
+                             (make-arg :test-not test-not)
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end))))
       (let ((v1 (apply #'stupid-find item sequence arguments))
-	    (v2 (apply #'find item sequence arguments)))
+            (v2 (apply #'find item sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "*")
-	  (format *trace-output*
-		  "for test: FIND ~s ~s ~s~@
+          (format *trace-output* "*")
+          (format *trace-output*
+                  "for test: FIND ~s ~s ~s~@
                    expected: ~s~%     but saw:  ~s~%"
-		  item sequence arguments v1 v2))))))
+                  item sequence arguments v1 v2))))))
 
 (defun test-find-1 (item sequence test test-not start end from-end)
   (test-find item sequence
-	     -1 test test-not start end from-end)
+             -1 test test-not start end from-end)
   (test-find item sequence
-	     nil test test-not start end from-end)
+             nil test test-not start end from-end)
   (test-find item sequence
-	     #'identity test test-not start end from-end)
+             #'identity test test-not start end from-end)
   (test-find item sequence
-	     'identity test test-not start end from-end)
+             'identity test test-not start end from-end)
 
   (test-find item (coerce sequence 'vector)
-	     -1 test test-not start end from-end)
+             -1 test test-not start end from-end)
   (test-find item (coerce sequence 'vector)
-	     nil test test-not start end from-end)
+             nil test test-not start end from-end)
   (test-find item (coerce sequence 'vector)
-	     #'identity test test-not start end from-end)
+             #'identity test test-not start end from-end)
 
   (test-find item (mapcar #'list sequence)
-	     #'car test test-not start end from-end)
+             #'car test test-not start end from-end)
   (test-find item (mapcar #'list sequence)
-	     'car test test-not start end from-end)
+             'car test test-not start end from-end)
 
   (test-find item (map 'vector #'list sequence)
-	     #'car test test-not start end from-end)
+             #'car test test-not start end from-end)
   (test-find item (map 'vector #'list sequence)
-	     'car test test-not start end from-end))
+             'car test test-not start end from-end))
 
 (defun test-find-2 (item sequence test start end from-end)
   (if (eq test 'eql)
       (progn (test-find-1 item sequence -1 -1 start end from-end)
-	     (test-find-1 item sequence #'eql -1 start end from-end)
-	     (test-find-1 item sequence 'eql -1 start end from-end)
-	     (test-find-1 item sequence -1 #'eql start end from-end)
-	     (test-find-1 item sequence -1 'eql start end from-end))
+             (test-find-1 item sequence #'eql -1 start end from-end)
+             (test-find-1 item sequence 'eql -1 start end from-end)
+             (test-find-1 item sequence -1 #'eql start end from-end)
+             (test-find-1 item sequence -1 'eql start end from-end))
       (progn (test-find-1 item sequence test -1 start end from-end)
-	     (test-find-1 item sequence (symbol-function test) -1 start end from-end)
-	     (test-find-1 item sequence -1 test start end from-end)
-	     (test-find-1 item sequence -1 (symbol-function test) start end from-end))))
+             (test-find-1 item sequence (symbol-function test) -1 start end from-end)
+             (test-find-1 item sequence -1 test start end from-end)
+             (test-find-1 item sequence -1 (symbol-function test) start end from-end))))
 
 (defun test-find-3 (item sequence test start end)
   (test-find-2 item sequence test start end -1)
@@ -143,20 +143,20 @@
   (let ((length (length sequence)))
     (test-find-3 item sequence test -1 -1)
     (loop for index from 0 to length
-	  do (test-find-3 item sequence test -1 index)
-	     (test-find-3 item sequence test index -1))
+          do (test-find-3 item sequence test -1 index)
+             (test-find-3 item sequence test index -1))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (test-find-3 item sequence test start end)))))
-    
+          do (loop for end from start to length
+                   do (test-find-3 item sequence test start end)))))
+
 (define-test |find normal|
   (assert-equal nil
-		(test-find-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-find-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-find-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-find-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-find-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
-		(test-find-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
+                (test-find-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-find-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-find-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-find-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-find-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
+                (test-find-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
 
 (define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity 1a|
   (let ((element '(1)))
@@ -193,15 +193,15 @@
 
 (define-test |find seq-type=list start=error from-end=false test=eql key=identity 2a|
   (assert-error 'type-error
-		(find 1 '(0 1 2) :start 'a)))
+                (find 1 '(0 1 2) :start 'a)))
 
 (define-test |find seq-type=list start=error from-end=false test=eql key=identity 2b|
   (assert-error 'type-error
-		(find 1 '(0 1 2) :test #'eql :start 4)))
+                (find 1 '(0 1 2) :test #'eql :start 4)))
 
 (define-test |find seq-type=list start=error from-end=false test=eql key=identity 2c|
   (assert-error 'type-error
-		(find 1 '(0 1 2) :test #'eql :start -1)))
+                (find 1 '(0 1 2) :test #'eql :start -1)))
 
 (define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=other 1a|
   (let ((element '(1)))
@@ -238,27 +238,27 @@
 
 (define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity error 1a|
   (assert-error 'type-error
-		(find 3 '(0 1 . 2))))
+                (find 3 '(0 1 . 2))))
 
 (define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity error 1b|
   (assert-error 'type-error
-		(find 3 '(0 1 . 2) :test #'eql)))
+                (find 3 '(0 1 . 2) :test #'eql)))
 
 (define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity error 1c|
   (assert-error 'type-error
-		(find 3 '(0 1 . 2) :test 'eql)))
+                (find 3 '(0 1 . 2) :test 'eql)))
 
 (define-test |find seq-type=list start=other from-end=false test=eql key=identity error 1a|
   (assert-error 'type-error
-		(find 3 '(0 1 . 2) :start 2)))
+                (find 3 '(0 1 . 2) :start 2)))
 
 (define-test |find seq-type=list start=other from-end=false test=eql key=identity error 1b|
   (assert-error 'type-error
-		(find 3 '(0 1 . 2) :start 2 :test #'eql)))
+                (find 3 '(0 1 . 2) :start 2 :test #'eql)))
 
 (define-test |find seq-type=list start=other from-end=false test=eql key=identity error 1c|
   (assert-error 'type-error
-		(find 3 '(0 1 . 2) :start 2 :test 'eql)))
+                (find 3 '(0 1 . 2) :start 2 :test 'eql)))
 
 (define-test |find seq-type=list start=0 end=nil from-end=false test=eq key=identity error 1a|
   (let ((element '(a)))
@@ -313,21 +313,21 @@
     (assert-eq
      element
      (car (find element (list '((a)) (list element) '((a)))
-		:test #'eq :start 1 :key #'car)))))
+                :test #'eq :start 1 :key #'car)))))
 
 (define-test |find seq-type=list start=other from-end=false test=eq key=other 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (car (find element (list '((a)) (list element) '((a)))
-		:test #'eq :start 1 :key #'car)))))
+                :test #'eq :start 1 :key #'car)))))
 
 (define-test |find seq-type=list start=other from-end=false test=eq key=other 3|
   (let ((element (copy-tree '(a))))
     (assert-error
      'type-error
      (car (find element (list* '((a)) (list element) '((a)) 'b)
-		:test #'eq :start 2 :key #'car)))))
+                :test #'eq :start 2 :key #'car)))))
 
 (define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=identity 1a|
   (assert-equal
@@ -441,15 +441,15 @@
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eql key=identity 1a|
   (assert-error 'type-error
-		(find 3 '(0 1 2) :end 4)))
+                (find 3 '(0 1 2) :end 4)))
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eql key=identity 1b|
   (assert-error 'type-error
-		(find 3 '(0 1 2) :end 4 :test #'eql)))
+                (find 3 '(0 1 2) :end 4 :test #'eql)))
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eql key=identity 1c|
   (assert-error 'type-error
-		(find 3 '(0 1 2) :end 4 :test 'eql)))
+                (find 3 '(0 1 2) :end 4 :test 'eql)))
 
 (define-test |find seq-type=list start=0 end=other from-end=false test=eql key=other 1a|
   (assert-equal
@@ -483,15 +483,15 @@
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eql key=other 1a|
   (assert-error 'type-error
-		(find 4 '(0 1 2) :end 4 :key #'1+)))
+                (find 4 '(0 1 2) :end 4 :key #'1+)))
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eql key=other 1b|
   (assert-error 'type-error
-		(find 4 '(0 1 2) :end 4 :test #'eql :key #'1+)))
+                (find 4 '(0 1 2) :end 4 :test #'eql :key #'1+)))
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eql key=other 1c|
   (assert-error 'type-error
-		(find 4 '(0 1 2) :end 4 :test 'eql :key #'1+)))
+                (find 4 '(0 1 2) :end 4 :test 'eql :key #'1+)))
 
 (define-test |find seq-type=list start=0 end=other from-end=false test=eq key=identity 1b|
   (assert-equal
@@ -515,11 +515,11 @@
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eq key=identity 1b|
   (assert-error 'type-error
-		(find 'd '(a b c) :end 4 :test #'eq)))
+                (find 'd '(a b c) :end 4 :test #'eq)))
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eq key=identity 1c|
   (assert-error 'type-error
-		(find 'd '(a b c) :end 4 :test 'eq)))
+                (find 'd '(a b c) :end 4 :test 'eq)))
 
 (define-test |find seq-type=list start=0 end=other from-end=false test=eq key=other 1b|
   (assert-equal
@@ -543,11 +543,11 @@
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eq key=other 1b|
   (assert-error 'type-error
-		(find 'e '(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+                (find 'e '(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
 (define-test |find seq-type=list start=0 end=error from-end=false test=eq key=other 1c|
   (assert-error 'type-error
-		(find 'e '(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+                (find 'e '(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
 (define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=identity 1a|
   (assert-equal
@@ -664,15 +664,15 @@
 
 (define-test |find seq-type=vector start=error from-end=false test=eql key=identity 2a|
   (assert-error 'type-error
-		(find 1 #(0 1 2) :start 'a)))
+                (find 1 #(0 1 2) :start 'a)))
 
 (define-test |find seq-type=vector start=error from-end=false test=eql key=identity 2b|
   (assert-error 'type-error
-		(find 1 #(0 1 2) :test #'eql :start 4)))
+                (find 1 #(0 1 2) :test #'eql :start 4)))
 
 (define-test |find seq-type=vector start=error from-end=false test=eql key=identity 2c|
   (assert-error 'type-error
-		(find 1 #(0 1 2) :test #'eql :start -1)))
+                (find 1 #(0 1 2) :test #'eql :start -1)))
 
 (define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=other 1a|
   (let ((element '(1)))
@@ -748,14 +748,14 @@
     (assert-eq
      element
      (car (find element (vector '((a)) (list element) '((a)))
-		:test #'eq :start 1 :key #'car)))))
+                :test #'eq :start 1 :key #'car)))))
 
 (define-test |find seq-type=vector start=other from-end=false test=eq key=other 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (car (find element (vector '((a)) (list element) '((a)))
-		:test #'eq :start 1 :key #'car)))))
+                :test #'eq :start 1 :key #'car)))))
 
 (define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=identity 1a|
   (assert-equal
@@ -869,15 +869,15 @@
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=identity 1a|
   (assert-error 'type-error
-		(find 3 #(0 1 2) :end 4)))
+                (find 3 #(0 1 2) :end 4)))
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=identity 1b|
   (assert-error 'type-error
-		(find 3 #(0 1 2) :end 4 :test #'eql)))
+                (find 3 #(0 1 2) :end 4 :test #'eql)))
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=identity 1c|
   (assert-error 'type-error
-		(find 3 #(0 1 2) :end 4 :test 'eql)))
+                (find 3 #(0 1 2) :end 4 :test 'eql)))
 
 (define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=other 1a|
   (assert-equal
@@ -911,15 +911,15 @@
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=other 1a|
   (assert-error 'type-error
-		(find 4 #(0 1 2) :end 4 :key #'1+)))
+                (find 4 #(0 1 2) :end 4 :key #'1+)))
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=other 1b|
   (assert-error 'type-error
-		(find 4 #(0 1 2) :end 4 :test #'eql :key #'1+)))
+                (find 4 #(0 1 2) :end 4 :test #'eql :key #'1+)))
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=other 1c|
   (assert-error 'type-error
-		(find 4 #(0 1 2) :end 4 :test 'eql :key #'1+)))
+                (find 4 #(0 1 2) :end 4 :test 'eql :key #'1+)))
 
 (define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=identity 1b|
   (assert-equal
@@ -943,11 +943,11 @@
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=identity 1b|
   (assert-error 'type-error
-		(find 'd #(a b c) :end 4 :test #'eq)))
+                (find 'd #(a b c) :end 4 :test #'eq)))
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=identity 1c|
   (assert-error 'type-error
-		(find 'd #(a b c) :end 4 :test 'eq)))
+                (find 'd #(a b c) :end 4 :test 'eq)))
 
 (define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=other 1b|
   (assert-equal
@@ -971,11 +971,11 @@
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=other 1b|
   (assert-error 'type-error
-		(find 'e #(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+                (find 'e #(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
 (define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=other 1c|
   (assert-error 'type-error
-		(find 'e #(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+                (find 'e #(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
 (define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=identity 1a|
   (assert-equal
@@ -1329,7 +1329,7 @@
 
 (define-test find-if-vector.19
   (let ((a (make-array '(10) :initial-contents '(1 2 3 4 5 6 7 8 9 10)
-		       :fill-pointer 5)))
+                       :fill-pointer 5)))
      (assert-equal 2 (find-if #'evenp a))
      (assert-equal 4 (find-if #'evenp a :from-end t))
      (assert-equal 1 (find-if #'oddp a))
@@ -1423,7 +1423,7 @@
 (define-test find-if-string.3
   (assert-equal '#\2
                 (find-if #'evendigitp "12483167")))
-  
+
 (define-test find-if-string.3a
   (assert-equal '#\2
                 (find-if #'evenp "12483167" :key #'(lambda (c) (read-from-string (string c))))))
@@ -1540,7 +1540,7 @@
                    (loop for i from (1+ j) to 7 collect
                      (find-if #'evenp "1473816"
                           :key (compose #'read-from-string #'string)
-                          :start j :end i)))))  
+                          :start j :end i)))))
 
 (define-test find-if-string.18
   (assert-equal '((nil #\4 #\4 #\4 #\8 #\8 #\6)
@@ -1560,8 +1560,8 @@
 
 (define-test find-if-string.19
   (let ((a (make-array '(10) :initial-contents "123456789a"
-		       :fill-pointer 5
-		       :element-type 'character)))
+                       :fill-pointer 5
+                       :element-type 'character)))
     (assert-equal #\2 (find-if #'evendigitp a))
     (assert-equal #\4 (find-if #'evendigitp a :from-end t))
     (assert-equal #\1 (find-if #'odddigitp a))
@@ -1601,81 +1601,81 @@
 
 (define-test find-if.error.5
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda () (find-if)))))
+            (compile nil '(lambda () (find-if)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.6
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda () (find-if #'null)))))
+            (compile nil '(lambda () (find-if #'null)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.7
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda () (find-if #'null nil :bad t)))))
+            (compile nil '(lambda () (find-if #'null nil :bad t)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.8
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (find-if #'null nil :bad t :allow-other-keys nil)))))
+            (compile nil '(lambda ()
+                           (find-if #'null nil :bad t :allow-other-keys nil)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.9
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (find-if #'null nil 1 1)))))
+            (compile nil '(lambda ()
+                           (find-if #'null nil 1 1)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.10
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (find-if #'null nil :key)))))
+            (compile nil '(lambda ()
+                           (find-if #'null nil :key)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.11
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda () (find-if)))))
+            (compile nil '(lambda () (find-if)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
@@ -1693,7 +1693,7 @@
 
 (define-test find-if.error.15
   (assert-error 'type-error
-		 (find-if #'identity '(a b c) :key #'car)))
+                 (find-if #'identity '(a b c) :key #'car)))
 
 ;;; Order of evaluation tests
 
@@ -2135,7 +2135,7 @@
   (assert-equal
    #\2
    (find-if-not #'odddigitp "12483167")))
-  
+
 (define-test find-if-not-string.3a
   (assert-equal
    #\2
@@ -2321,79 +2321,79 @@
 
 (define-test find-if-not.error.5
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda () (find-if-not)))))
+            (compile nil '(lambda () (find-if-not)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.6
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda () (find-if-not #'null)))))
+            (compile nil '(lambda () (find-if-not #'null)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.7
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda () (find-if-not #'null nil :bad t)))))
+            (compile nil '(lambda () (find-if-not #'null nil :bad t)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.8
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (find-if-not #'null nil :bad t :allow-other-keys nil)))))
+            (compile nil '(lambda ()
+                           (find-if-not #'null nil :bad t :allow-other-keys nil)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.9
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (find-if-not #'null nil 1 1)))))
+            (compile nil '(lambda ()
+                           (find-if-not #'null nil 1 1)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.10
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (find-if-not #'null nil :key)))))
+            (compile nil '(lambda ()
+                           (find-if-not #'null nil :key)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
-    
+
 (define-test find-if-not.error.11
   (assert-error 'type-error (locally (find-if-not #'null 'b) t)))
 
 (define-test find-if-not.error.12
   (assert-error 'program-error (find-if-not #'cons '(a b c))))
-    
+
 (define-test find-if-not.error.13
   (assert-error 'type-error (find-if-not #'car '(a b c))))
 
@@ -2414,7 +2414,7 @@
       (find-if-not (progn (setf x (incf i)) #'null)
                    (progn (setf y (incf i)) '(nil nil nil a nil nil)))
       i x y))))
-  
+
 (define-test find-if-not.order.2
   (let ((i 0) a b c d e f)
     (assert-equal
@@ -2443,7 +2443,7 @@
                    )
       i a b c d e f))))
 
-  
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function length
@@ -2567,7 +2567,7 @@
      (flet ((%f () (incf i)
               (make-string 5 :initial-element #\a)))
        (list (length (the (simple-string 5) (%f))) i)))))
-  
+
 
 (define-test length.string.6
   (assert-equal
@@ -2580,25 +2580,25 @@
 
 (define-test length.error.6
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (length)))))
+            (compile nil '(lambda ()
+                           (length)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
 (define-test length.error.7
   (let ((fun nil)
-	(warned nil))
+        (warned nil))
     (handler-bind ((warning (lambda (condition)
-			      (setf warned t)
-			      (muffle-warning condition))))
+                              (setf warned t)
+                              (muffle-warning condition))))
       (setf fun
-	    (compile nil '(lambda ()
-			   (length nil nil)))))
+            (compile nil '(lambda ()
+                           (length nil nil)))))
     (assert-true warned)
     (assert-error 'program-error (funcall fun))))
 
@@ -2671,109 +2671,109 @@
 ;;; Tests for function remove
 
 (defun stupid-remove (item sequence
-		      &key
-		      key
-		      (test nil test-p)
-		      (test-not nil test-not-p)
-		      (start 0)
-		      end
-		      from-end
-		      count)
+                      &key
+                      key
+                      (test nil test-p)
+                      (test-not nil test-not-p)
+                      (start 0)
+                      end
+                      from-end
+                      count)
   (let ((length (length sequence)))
     (if (null end)
-	(setf end length)
-	(assert (<= end length)))
+        (setf end length)
+        (assert (<= end length)))
     (assert (<= 0 start length))
     (assert (not (and test-p test-not-p)))
     (if from-end
-	(reverse (apply #'stupid-remove
-			item (reverse sequence)
-			:key key
-			:start (- length end)
-			:end (- length start)
-			:from-end nil
-			:count count
-			(append (if test-p (list :test test) '())
-				(if test-not-p (list :test-not test-not) '()))))
-	(progn (when (null key)
-		 (setf key #'identity))
-	       (if test-not-p
-		   (setf test (lambda (x y) (not (funcall test-not x y))))
-		   (when (not test-p)
-		     (setf test #'eql)))
-	       (unless count
-		 (setf count length))
-	       (if (<= end start)
-		   sequence
-		   (coerce (append (coerce (subseq sequence 0 start) 'list)
-				   (loop for element in (coerce (subseq sequence start end) 'list)
-					 unless (and (plusp count)
-						     (funcall test item (funcall key element)))
-					   collect element
-					 else
-					   do (decf count))
-				   (coerce (subseq sequence end length) 'list))
-			   (cond ((listp sequence) 'list)
-				 ((stringp sequence) 'string)
-				 (t 'vector))))))))
-			      
+        (reverse (apply #'stupid-remove
+                        item (reverse sequence)
+                        :key key
+                        :start (- length end)
+                        :end (- length start)
+                        :from-end nil
+                        :count count
+                        (append (if test-p (list :test test) '())
+                                (if test-not-p (list :test-not test-not) '()))))
+        (progn (when (null key)
+                 (setf key #'identity))
+               (if test-not-p
+                   (setf test (lambda (x y) (not (funcall test-not x y))))
+                   (when (not test-p)
+                     (setf test #'eql)))
+               (unless count
+                 (setf count length))
+               (if (<= end start)
+                   sequence
+                   (coerce (append (coerce (subseq sequence 0 start) 'list)
+                                   (loop for element in (coerce (subseq sequence start end) 'list)
+                                         unless (and (plusp count)
+                                                     (funcall test item (funcall key element)))
+                                           collect element
+                                         else
+                                           do (decf count))
+                                   (coerce (subseq sequence end length) 'list))
+                           (cond ((listp sequence) 'list)
+                                 ((stringp sequence) 'string)
+                                 (t 'vector))))))))
+
 (defun test-remove (item sequence key test test-not start end from-end count)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :test test)
-			     (make-arg :test-not test-not)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end)
-			     (make-arg :count count))))
+                             (make-arg :test test)
+                             (make-arg :test-not test-not)
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end)
+                             (make-arg :count count))))
       (let ((v1 (apply #'stupid-remove item sequence arguments))
-	    (v2 (apply #'remove item sequence arguments)))
-	(if (equalp v1 v2)
-	    (format *trace-output* "*")
-	    (format *trace-output*
-		    "for test: REMOVE ~s ~s ~s~@
+            (v2 (apply #'remove item sequence arguments)))
+        (if (equalp v1 v2)
+            (format *trace-output* "*")
+            (format *trace-output*
+                    "for test: REMOVE ~s ~s ~s~@
                      expected: ~s~%     but saw:  ~s~%"
-		    item sequence arguments v1 v2))))))
+                    item sequence arguments v1 v2))))))
 
 (defun test-remove-1 (item sequence test test-not start end from-end count)
   (test-remove item sequence
-	       -1 test test-not start end from-end count)
+               -1 test test-not start end from-end count)
   (test-remove item sequence
-	       nil test test-not start end from-end count)
+               nil test test-not start end from-end count)
   (test-remove item sequence
-	       #'identity test test-not start end from-end count)
+               #'identity test test-not start end from-end count)
   (test-remove item sequence
-	       'identity test test-not start end from-end count)
+               'identity test test-not start end from-end count)
 
   (test-remove item (coerce sequence 'vector)
-	       -1 test test-not start end from-end count)
+               -1 test test-not start end from-end count)
   (test-remove item (coerce sequence 'vector)
-	       nil test test-not start end from-end count)
+               nil test test-not start end from-end count)
   (test-remove item (coerce sequence 'vector)
-	       #'identity test test-not start end from-end count)
+               #'identity test test-not start end from-end count)
 
   (test-remove item (mapcar #'list sequence)
-	       #'car test test-not start end from-end count)
+               #'car test test-not start end from-end count)
   (test-remove item (mapcar #'list sequence)
-	       'car test test-not start end from-end count)
+               'car test test-not start end from-end count)
 
   (test-remove item (map 'vector #'list sequence)
-	       #'car test test-not start end from-end count)
+               #'car test test-not start end from-end count)
   (test-remove item (map 'vector #'list sequence)
-	       'car test test-not start end from-end count))
+               'car test test-not start end from-end count))
 
 (defun test-remove-2 (item sequence test start end from-end count)
   (if (eq test 'eql)
       (progn (test-remove-1 item sequence -1 -1 start end from-end count)
-	     (test-remove-1 item sequence #'eql -1 start end from-end count)
-	     (test-remove-1 item sequence 'eql -1 start end from-end count)
-	     (test-remove-1 item sequence -1 #'eql start end from-end count)
-	     (test-remove-1 item sequence -1 'eql start end from-end count))
+             (test-remove-1 item sequence #'eql -1 start end from-end count)
+             (test-remove-1 item sequence 'eql -1 start end from-end count)
+             (test-remove-1 item sequence -1 #'eql start end from-end count)
+             (test-remove-1 item sequence -1 'eql start end from-end count))
       (progn (test-remove-1 item sequence test -1 start end from-end count)
-	     (test-remove-1 item sequence (symbol-function test) -1 start end from-end count)
-	     (test-remove-1 item sequence -1 test start end from-end count)
-	     (test-remove-1 item sequence -1 (symbol-function test) start end from-end count))))
+             (test-remove-1 item sequence (symbol-function test) -1 start end from-end count)
+             (test-remove-1 item sequence -1 test start end from-end count)
+             (test-remove-1 item sequence -1 (symbol-function test) start end from-end count))))
 
 (defun test-remove-3 (item sequence test start end count)
   (test-remove-2 item sequence test start end -1 count)
@@ -2784,27 +2784,27 @@
   (let ((length (length sequence)))
     (test-remove-3 item sequence test -1 -1 -1)
     (loop for index from 0 to length
-	  do (test-remove-3 item sequence test -1 -1 index)
-	     (test-remove-3 item sequence test -1 index -1)
-	     (test-remove-3 item sequence test index -1 -1))
+          do (test-remove-3 item sequence test -1 -1 index)
+             (test-remove-3 item sequence test -1 index -1)
+             (test-remove-3 item sequence test index -1 -1))
     (loop for index1 from 0 to length
-	  do (loop for index2 from 0 to length
-		   do (test-remove-3 item sequence test -1 index1 index2)
-		      (test-remove-3 item sequence test index1 -1 index2)))
+          do (loop for index2 from 0 to length
+                   do (test-remove-3 item sequence test -1 index1 index2)
+                      (test-remove-3 item sequence test index1 -1 index2)))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (loop for count from 0 to length
-			    do (test-remove-3 item sequence test start end -1)
-			    do (test-remove-3 item sequence test start end count))))))
+          do (loop for end from start to length
+                   do (loop for count from 0 to length
+                            do (test-remove-3 item sequence test start end -1)
+                            do (test-remove-3 item sequence test start end count))))))
 
 (define-test |remove normal|
   (assert-equal nil
-		(test-remove-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-remove-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-remove-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-remove-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-remove-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
-		(test-remove-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
+                (test-remove-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-remove-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-remove-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-remove-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-remove-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
+                (test-remove-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
 
 (define-test test.remove.list.1
   (assert-equal
@@ -2862,7 +2862,7 @@
    (remove '(a) '(((b)) ((a)) ((b))) :test #'equal :key #'car)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; 
+;;;
 ;;; Tests for function substitute
 
 (define-test |substitute seq-type=list start=0 end=nil test=eql count=nil key=identity 1|
@@ -2891,7 +2891,7 @@
    (substitute 1 2 '(0 2 3 2))))
 
 (define-test |substitute seq-type=list start=0 end=nil test=eql count=nil key=identity 6|
-  (assert-error 
+  (assert-error
    'type-error
    (substitute 1 2 'a)))
 
@@ -2926,7 +2926,7 @@
    (substitute 1 2 '(0 2 3 2) :test #'eql)))
 
 (define-test |substitute seq-type=list start=0 end=nil test=eql count=nil key=identity 13|
-  (assert-error 
+  (assert-error
    'type-error
    (substitute 1 2 'a :test #'eql)))
 
@@ -2976,7 +2976,7 @@
    (substitute 1 2 '((0) (2) (3) (2)) :key #'car)))
 
 (define-test |substitute seq-type=list start=0 end=nil test=eql count=nil key=other 6|
-  (assert-error 
+  (assert-error
    'type-error
    (substitute 1 2 'a :key #'car)))
 
@@ -3011,7 +3011,7 @@
    (substitute 1 2 '((0) (2) (3) (2)) :test #'eql :key #'car)))
 
 (define-test |substitute seq-type=list start=0 end=nil test=eql count=nil key=other 13|
-  (assert-error 
+  (assert-error
    'type-error
    (substitute 1 2 'a :test #'eql :key #'car)))
 
@@ -3061,7 +3061,7 @@
    (substitute 'b 'c '(a c d c) :test #'eq)))
 
 (define-test |substitute seq-type=list start=0 end=nil test=eq count=nil key=identity 6|
-  (assert-error 
+  (assert-error
    'type-error
    (substitute 'b 'c 'a :test #'eq)))
 
@@ -3111,7 +3111,7 @@
    (substitute 'b 'c '((a) (c) (3) (c)) :test #'eq :key #'car)))
 
 (define-test |substitute seq-type=list start=0 end=nil test=eq count=nil key=other 6|
-  (assert-error 
+  (assert-error
    'type-error
    (substitute 'b 'c 'a :test #'eq :key #'car)))
 
@@ -3140,13 +3140,13 @@
 ;;; Tests for function position
 
 (defun stupid-position (item sequence
-			&key
-			key
-			(test nil test-p)
-			(test-not nil test-not-p)
-			(start 0)
-			end
-			from-end)
+                        &key
+                        key
+                        (test nil test-p)
+                        (test-not nil test-not-p)
+                        (start 0)
+                        end
+                        from-end)
   (assert (not (and test-p test-not-p)))
   (when test-not-p
     (setf test (lambda (x y) (not (funcall test-not x y)))))
@@ -3162,68 +3162,68 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    when (funcall test item (funcall key (aref sequence index)))
-	      return index)
+            when (funcall test item (funcall key (aref sequence index)))
+              return index)
       (loop for index from start below end
-	    when (funcall test item (funcall key (aref sequence index)))
-	      return index)))
+            when (funcall test item (funcall key (aref sequence index)))
+              return index)))
 
 (defun test-position (item sequence key test test-not start end from-end)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :test test)
-			     (make-arg :test-not test-not)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end))))
+                             (make-arg :test test)
+                             (make-arg :test-not test-not)
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end))))
       (let ((v1 (apply #'stupid-position item sequence arguments))
-	    (v2 (apply #'position item sequence arguments)))
+            (v2 (apply #'position item sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "*")
-	  (format *trace-output*
-		  "for test: POSITION ~s ~s ~s~@
+          (format *trace-output* "*")
+          (format *trace-output*
+                  "for test: POSITION ~s ~s ~s~@
                    expected: ~s~%     but saw:  ~s~%"
-		  item sequence arguments v1 v2))))))
+                  item sequence arguments v1 v2))))))
 
 (defun test-position-1 (item sequence test test-not start end from-end)
   (test-position item sequence
-		 -1 test test-not start end from-end)
+                 -1 test test-not start end from-end)
   (test-position item sequence
-		 nil test test-not start end from-end)
+                 nil test test-not start end from-end)
   (test-position item sequence
-		 #'identity test test-not start end from-end)
+                 #'identity test test-not start end from-end)
   (test-position item sequence
-		 'identity test test-not start end from-end)
+                 'identity test test-not start end from-end)
 
   (test-position item (coerce sequence 'vector)
-		 -1 test test-not start end from-end)
+                 -1 test test-not start end from-end)
   (test-position item (coerce sequence 'vector)
-		 nil test test-not start end from-end)
+                 nil test test-not start end from-end)
   (test-position item (coerce sequence 'vector)
-		 #'identity test test-not start end from-end)
+                 #'identity test test-not start end from-end)
 
   (test-position item (mapcar #'list sequence)
-		 #'car test test-not start end from-end)
+                 #'car test test-not start end from-end)
   (test-position item (mapcar #'list sequence)
-		 'car test test-not start end from-end)
+                 'car test test-not start end from-end)
 
   (test-position item (map 'vector #'list sequence)
-		 #'car test test-not start end from-end)
+                 #'car test test-not start end from-end)
   (test-position item (map 'vector #'list sequence)
-		 'car test test-not start end from-end))
+                 'car test test-not start end from-end))
 
 (defun test-position-2 (item sequence test start end from-end)
   (if (eq test 'eql)
       (progn (test-position-1 item sequence -1 -1 start end from-end)
-	     (test-position-1 item sequence #'eql -1 start end from-end)
-	     (test-position-1 item sequence 'eql -1 start end from-end)
-	     (test-position-1 item sequence -1 #'eql start end from-end)
-	     (test-position-1 item sequence -1 'eql start end from-end))
+             (test-position-1 item sequence #'eql -1 start end from-end)
+             (test-position-1 item sequence 'eql -1 start end from-end)
+             (test-position-1 item sequence -1 #'eql start end from-end)
+             (test-position-1 item sequence -1 'eql start end from-end))
       (progn (test-position-1 item sequence test -1 start end from-end)
-	     (test-position-1 item sequence (symbol-function test) -1 start end from-end)
-	     (test-position-1 item sequence -1 test start end from-end)
-	     (test-position-1 item sequence -1 (symbol-function test) start end from-end))))
+             (test-position-1 item sequence (symbol-function test) -1 start end from-end)
+             (test-position-1 item sequence -1 test start end from-end)
+             (test-position-1 item sequence -1 (symbol-function test) start end from-end))))
 
 (defun test-position-3 (item sequence test start end)
   (test-position-2 item sequence test start end -1)
@@ -3234,31 +3234,31 @@
   (let ((length (length sequence)))
     (test-position-3 item sequence test -1 -1)
     (loop for index from 0 to length
-	  do (test-position-3 item sequence test -1 index)
-	     (test-position-3 item sequence test index -1))
+          do (test-position-3 item sequence test -1 index)
+             (test-position-3 item sequence test index -1))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (test-position-3 item sequence test start end)))))
-    
+          do (loop for end from start to length
+                   do (test-position-3 item sequence test start end)))))
+
 (define-test |position normal|
   (assert-equal nil
-		(test-position-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-position-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-position-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-position-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-position-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
-		(test-position-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
+                (test-position-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-position-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-position-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-position-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-position-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
+                (test-position-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position-if
 
 (defun stupid-position-if (predicate sequence
-			   &key
-			   key
-			   (start 0)
-			   end
-			   from-end)
+                           &key
+                           key
+                           (start 0)
+                           end
+                           from-end)
   (unless key
     (setf key #'identity))
   (unless (vectorp sequence)
@@ -3269,54 +3269,54 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    when (funcall predicate (funcall key (aref sequence index)))
-	      return index)
+            when (funcall predicate (funcall key (aref sequence index)))
+              return index)
       (loop for index from start below end
-	    when (funcall predicate (funcall key (aref sequence index)))
-	      return index)))
+            when (funcall predicate (funcall key (aref sequence index)))
+              return index)))
 
 (defun test-position-if (predicate sequence key start end from-end)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end))))
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end))))
       (let ((v1 (apply #'stupid-position-if predicate sequence arguments))
-	    (v2 (apply #'position-if predicate sequence arguments)))
+            (v2 (apply #'position-if predicate sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "*")
-	  (format *trace-output*
-		  "for test: POSITION-IF ~s ~s ~s~@
+          (format *trace-output* "*")
+          (format *trace-output*
+                  "for test: POSITION-IF ~s ~s ~s~@
                    expected: ~s~%     but saw:  ~s~%"
-		  predicate sequence arguments v1 v2))))))
+                  predicate sequence arguments v1 v2))))))
 
 (defun test-position-if-1 (predicate sequence start end from-end)
   (test-position-if predicate sequence
-	     -1 start end from-end)
+             -1 start end from-end)
   (test-position-if predicate sequence
-	     nil start end from-end)
+             nil start end from-end)
   (test-position-if predicate sequence
-	     #'identity start end from-end)
+             #'identity start end from-end)
   (test-position-if predicate sequence
-	     'identity start end from-end)
+             'identity start end from-end)
 
   (test-position-if predicate (coerce sequence 'vector)
-	     -1 start end from-end)
+             -1 start end from-end)
   (test-position-if predicate (coerce sequence 'vector)
-	     nil start end from-end)
+             nil start end from-end)
   (test-position-if predicate (coerce sequence 'vector)
-	     #'identity start end from-end)
+             #'identity start end from-end)
 
   (test-position-if predicate (mapcar #'list sequence)
-	     #'car start end from-end)
+             #'car start end from-end)
   (test-position-if predicate (mapcar #'list sequence)
-	     'car start end from-end)
+             'car start end from-end)
 
   (test-position-if predicate (map 'vector #'list sequence)
-	     #'car start end from-end)
+             #'car start end from-end)
   (test-position-if predicate (map 'vector #'list sequence)
-	     'car start end from-end))
+             'car start end from-end))
 
 (defun test-position-if-2 (predicate sequence start end)
   (test-position-if-1 predicate sequence start end -1)
@@ -3327,26 +3327,26 @@
   (let ((length (length sequence)))
     (test-position-if-2 predicate sequence -1 -1)
     (loop for index from 0 to length
-	  do (test-position-if-2 predicate sequence -1 index)
-	     (test-position-if-2 predicate sequence index -1))
+          do (test-position-if-2 predicate sequence -1 index)
+             (test-position-if-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (test-position-if-2 predicate sequence start end)))))
-    
+          do (loop for end from start to length
+                   do (test-position-if-2 predicate sequence start end)))))
+
 (define-test |position-if normal|
   (assert-equal nil
-		(test-position-if-3 (lambda (x) (eql x *i01*))
-				    (list *i1* *i02* *i2* *i02* *i4*))
-		(test-position-if-3 (lambda (x) (eql x *i5*))
-				    (list *i1* *i02* *i2* *i02* *i4*))
-		(test-position-if-3 (lambda (x) (eq x *l01*))
-				    (list *l1* *l02* *l2* *l02* *l4*))
-		(test-position-if-3 (lambda (x) (eq x *l5* ))
-				    (list *l1* *l02* *l2* *l02* *l4*))
-		(test-position-if-3 (lambda (x) (string-equal x *s01* ))
-				    (list *s1* *s02* *s2* *s02* *s4*))
-		(test-position-if-3 (lambda (x) (string-equal x *s5*))
-				    (list *s1* *s02* *s2* *s02* *s4*))))
+                (test-position-if-3 (lambda (x) (eql x *i01*))
+                                    (list *i1* *i02* *i2* *i02* *i4*))
+                (test-position-if-3 (lambda (x) (eql x *i5*))
+                                    (list *i1* *i02* *i2* *i02* *i4*))
+                (test-position-if-3 (lambda (x) (eq x *l01*))
+                                    (list *l1* *l02* *l2* *l02* *l4*))
+                (test-position-if-3 (lambda (x) (eq x *l5* ))
+                                    (list *l1* *l02* *l2* *l02* *l4*))
+                (test-position-if-3 (lambda (x) (string-equal x *s01* ))
+                                    (list *s1* *s02* *s2* *s02* *s4*))
+                (test-position-if-3 (lambda (x) (string-equal x *s5*))
+                                    (list *s1* *s02* *s2* *s02* *s4*))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3354,11 +3354,11 @@
 ;;; Tests for function position-if-not
 
 (defun stupid-position-if-not (predicate sequence
-			       &key
-			       key
-			       (start 0)
-			       end
-			       from-end)
+                               &key
+                               key
+                               (start 0)
+                               end
+                               from-end)
   (unless key
     (setf key #'identity))
   (unless (vectorp sequence)
@@ -3369,54 +3369,54 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    unless (funcall predicate (funcall key (aref sequence index)))
-	      return index)
+            unless (funcall predicate (funcall key (aref sequence index)))
+              return index)
       (loop for index from start below end
-	    unless (funcall predicate (funcall key (aref sequence index)))
-	      return index)))
+            unless (funcall predicate (funcall key (aref sequence index)))
+              return index)))
 
 (defun test-position-if-not (predicate sequence key start end from-end)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end))))
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end))))
       (let ((v1 (apply #'stupid-position-if-not predicate sequence arguments))
-	    (v2 (apply #'position-if-not predicate sequence arguments)))
+            (v2 (apply #'position-if-not predicate sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "*")
-	  (format *trace-output*
-		  "for test: POSITION-IF-NOT ~s ~s ~s~@
+          (format *trace-output* "*")
+          (format *trace-output*
+                  "for test: POSITION-IF-NOT ~s ~s ~s~@
                    expected: ~s~%     but saw:  ~s~%"
-		  predicate sequence arguments v1 v2))))))
+                  predicate sequence arguments v1 v2))))))
 
 (defun test-position-if-not-1 (predicate sequence start end from-end)
   (test-position-if-not predicate sequence
-			-1 start end from-end)
+                        -1 start end from-end)
   (test-position-if-not predicate sequence
-			nil start end from-end)
+                        nil start end from-end)
   (test-position-if-not predicate sequence
-			#'identity start end from-end)
+                        #'identity start end from-end)
   (test-position-if-not predicate sequence
-			'identity start end from-end)
+                        'identity start end from-end)
 
   (test-position-if-not predicate (coerce sequence 'vector)
-			-1 start end from-end)
+                        -1 start end from-end)
   (test-position-if-not predicate (coerce sequence 'vector)
-			nil start end from-end)
+                        nil start end from-end)
   (test-position-if-not predicate (coerce sequence 'vector)
-			#'identity start end from-end)
+                        #'identity start end from-end)
 
   (test-position-if-not predicate (mapcar #'list sequence)
-			#'car start end from-end)
+                        #'car start end from-end)
   (test-position-if-not predicate (mapcar #'list sequence)
-			'car start end from-end)
+                        'car start end from-end)
 
   (test-position-if-not predicate (map 'vector #'list sequence)
-			#'car start end from-end)
+                        #'car start end from-end)
   (test-position-if-not predicate (map 'vector #'list sequence)
-			'car start end from-end))
+                        'car start end from-end))
 
 (defun test-position-if-not-2 (predicate sequence start end)
   (test-position-if-not-1 predicate sequence start end -1)
@@ -3427,26 +3427,26 @@
   (let ((length (length sequence)))
     (test-position-if-not-2 predicate sequence -1 -1)
     (loop for index from 0 to length
-	  do (test-position-if-not-2 predicate sequence -1 index)
-	     (test-position-if-not-2 predicate sequence index -1))
+          do (test-position-if-not-2 predicate sequence -1 index)
+             (test-position-if-not-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (test-position-if-not-2 predicate sequence start end)))))
-    
+          do (loop for end from start to length
+                   do (test-position-if-not-2 predicate sequence start end)))))
+
 (define-test |position-if-not normal|
   (assert-equal nil
-		(test-position-if-not-3 (lambda (x) (eql x *i01*))
-					(list *i1* *i02* *i2* *i02* *i4*))
-		(test-position-if-not-3 (lambda (x) (eql x *i5*))
-					(list *i1* *i02* *i2* *i02* *i4*))
-		(test-position-if-not-3 (lambda (x) (eq x *l01*))
-					(list *l1* *l02* *l2* *l02* *l4*))
-		(test-position-if-not-3 (lambda (x) (eq x *l5* ))
-					(list *l1* *l02* *l2* *l02* *l4*))
-		(test-position-if-not-3 (lambda (x) (string-equal x *s01* ))
-					(list *s1* *s02* *s2* *s02* *s4*))
-		(test-position-if-not-3 (lambda (x) (string-equal x *s5*))
-					(list *s1* *s02* *s2* *s02* *s4*))))
+                (test-position-if-not-3 (lambda (x) (eql x *i01*))
+                                        (list *i1* *i02* *i2* *i02* *i4*))
+                (test-position-if-not-3 (lambda (x) (eql x *i5*))
+                                        (list *i1* *i02* *i2* *i02* *i4*))
+                (test-position-if-not-3 (lambda (x) (eq x *l01*))
+                                        (list *l1* *l02* *l2* *l02* *l4*))
+                (test-position-if-not-3 (lambda (x) (eq x *l5* ))
+                                        (list *l1* *l02* *l2* *l02* *l4*))
+                (test-position-if-not-3 (lambda (x) (string-equal x *s01* ))
+                                        (list *s1* *s02* *s2* *s02* *s4*))
+                (test-position-if-not-3 (lambda (x) (string-equal x *s5*))
+                                        (list *s1* *s02* *s2* *s02* *s4*))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3454,13 +3454,13 @@
 ;;; Tests for function count
 
 (defun stupid-count (item sequence
-		     &key
-		     key
-		     (test nil test-p)
-		     (test-not nil test-not-p)
-		     (start 0)
-		     end
-		     from-end)
+                     &key
+                     key
+                     (test nil test-p)
+                     (test-not nil test-not-p)
+                     (start 0)
+                     end
+                     from-end)
   (assert (not (and test-p test-not-p)))
   (when test-not-p
     (setf test (lambda (x y) (not (funcall test-not x y)))))
@@ -3476,66 +3476,66 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    count (funcall test item (funcall key (aref sequence index))))
+            count (funcall test item (funcall key (aref sequence index))))
       (loop for index from start below end
-	    count (funcall test item (funcall key (aref sequence index))))))
+            count (funcall test item (funcall key (aref sequence index))))))
 
 (defun test-count (item sequence key test test-not start end from-end)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :test test)
-			     (make-arg :test-not test-not)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end))))
+                             (make-arg :test test)
+                             (make-arg :test-not test-not)
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end))))
       (let ((v1 (apply #'stupid-count item sequence arguments))
-	    (v2 (apply #'count item sequence arguments)))
-	(if (eql v1 v2)
-	    (format *trace-output* "*")
-	    (format *trace-output*
-		    "for test: COUNT ~s ~s ~s~@
+            (v2 (apply #'count item sequence arguments)))
+        (if (eql v1 v2)
+            (format *trace-output* "*")
+            (format *trace-output*
+                    "for test: COUNT ~s ~s ~s~@
                      expected: ~s~%     but saw:  ~s~%"
-		    item sequence arguments v1 v2))))))
+                    item sequence arguments v1 v2))))))
 
 (defun test-count-1 (item sequence test test-not start end from-end)
   (test-count item sequence
-	      -1 test test-not start end from-end)
+              -1 test test-not start end from-end)
   (test-count item sequence
-	      nil test test-not start end from-end)
+              nil test test-not start end from-end)
   (test-count item sequence
-	      #'identity test test-not start end from-end)
+              #'identity test test-not start end from-end)
   (test-count item sequence
-	      'identity test test-not start end from-end)
+              'identity test test-not start end from-end)
 
   (test-count item (coerce sequence 'vector)
-	      -1 test test-not start end from-end)
+              -1 test test-not start end from-end)
   (test-count item (coerce sequence 'vector)
-	      nil test test-not start end from-end)
+              nil test test-not start end from-end)
   (test-count item (coerce sequence 'vector)
-	      #'identity test test-not start end from-end)
+              #'identity test test-not start end from-end)
 
   (test-count item (mapcar #'list sequence)
-	      #'car test test-not start end from-end)
+              #'car test test-not start end from-end)
   (test-count item (mapcar #'list sequence)
-	      'car test test-not start end from-end)
+              'car test test-not start end from-end)
 
   (test-count item (map 'vector #'list sequence)
-	      #'car test test-not start end from-end)
+              #'car test test-not start end from-end)
   (test-count item (map 'vector #'list sequence)
-	      'car test test-not start end from-end))
+              'car test test-not start end from-end))
 
 (defun test-count-2 (item sequence test start end from-end)
   (if (eq test 'eql)
       (progn (test-count-1 item sequence -1 -1 start end from-end)
-	     (test-count-1 item sequence #'eql -1 start end from-end)
-	     (test-count-1 item sequence 'eql -1 start end from-end)
-	     (test-count-1 item sequence -1 #'eql start end from-end)
-	     (test-count-1 item sequence -1 'eql start end from-end))
+             (test-count-1 item sequence #'eql -1 start end from-end)
+             (test-count-1 item sequence 'eql -1 start end from-end)
+             (test-count-1 item sequence -1 #'eql start end from-end)
+             (test-count-1 item sequence -1 'eql start end from-end))
       (progn (test-count-1 item sequence test -1 start end from-end)
-	     (test-count-1 item sequence (symbol-function test) -1 start end from-end)
-	     (test-count-1 item sequence -1 test start end from-end)
-	     (test-count-1 item sequence -1 (symbol-function test) start end from-end))))
+             (test-count-1 item sequence (symbol-function test) -1 start end from-end)
+             (test-count-1 item sequence -1 test start end from-end)
+             (test-count-1 item sequence -1 (symbol-function test) start end from-end))))
 
 (defun test-count-3 (item sequence test start end)
   (test-count-2 item sequence test start end -1)
@@ -3546,31 +3546,31 @@
   (let ((length (length sequence)))
     (test-count-3 item sequence test -1 -1)
     (loop for index from 0 to length
-	  do (test-count-3 item sequence test -1 index)
-	     (test-count-3 item sequence test index -1))
+          do (test-count-3 item sequence test -1 index)
+             (test-count-3 item sequence test index -1))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (test-count-3 item sequence test start end)))))
+          do (loop for end from start to length
+                   do (test-count-3 item sequence test start end)))))
 
 (define-test |count normal|
   (assert-equal nil
-		(test-count-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-count-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
-		(test-count-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-count-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
-		(test-count-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
-		(test-count-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
+                (test-count-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-count-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+                (test-count-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-count-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+                (test-count-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
+                (test-count-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function count-if
 
 (defun stupid-count-if (predicate sequence
-			&key
-			key
-			(start 0)
-			end
-			from-end)
+                        &key
+                        key
+                        (start 0)
+                        end
+                        from-end)
   (unless key
     (setf key #'identity))
   (unless (vectorp sequence)
@@ -3581,52 +3581,52 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    count (funcall predicate (funcall key (aref sequence index))))
+            count (funcall predicate (funcall key (aref sequence index))))
       (loop for index from start below end
-	    count (funcall predicate (funcall key (aref sequence index))))))
+            count (funcall predicate (funcall key (aref sequence index))))))
 
 (defun test-count-if (predicate sequence key start end from-end)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end))))
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end))))
       (let ((v1 (apply #'stupid-count-if predicate sequence arguments))
-	    (v2 (apply #'count-if predicate sequence arguments)))
-	(if (eql v1 v2)
-	    (format *trace-output* "*")
-	    (format *trace-output*
-		    "for test: COUNT-IF ~s ~s ~s~@
+            (v2 (apply #'count-if predicate sequence arguments)))
+        (if (eql v1 v2)
+            (format *trace-output* "*")
+            (format *trace-output*
+                    "for test: COUNT-IF ~s ~s ~s~@
                      expected: ~s~%     but saw:  ~s~%"
-		    predicate sequence arguments v1 v2))))))
+                    predicate sequence arguments v1 v2))))))
 
 (defun test-count-if-1 (predicate sequence start end from-end)
   (test-count-if predicate sequence
-		 -1 start end from-end)
+                 -1 start end from-end)
   (test-count-if predicate sequence
-		 nil start end from-end)
+                 nil start end from-end)
   (test-count-if predicate sequence
-		 #'identity start end from-end)
+                 #'identity start end from-end)
   (test-count-if predicate sequence
-		 'identity start end from-end)
+                 'identity start end from-end)
 
   (test-count-if predicate (coerce sequence 'vector)
-		 -1 start end from-end)
+                 -1 start end from-end)
   (test-count-if predicate (coerce sequence 'vector)
-		 nil start end from-end)
+                 nil start end from-end)
   (test-count-if predicate (coerce sequence 'vector)
-		 #'identity start end from-end)
+                 #'identity start end from-end)
 
   (test-count-if predicate (mapcar #'list sequence)
-		 #'car start end from-end)
+                 #'car start end from-end)
   (test-count-if predicate (mapcar #'list sequence)
-		 'car start end from-end)
+                 'car start end from-end)
 
   (test-count-if predicate (map 'vector #'list sequence)
-		 #'car start end from-end)
+                 #'car start end from-end)
   (test-count-if predicate (map 'vector #'list sequence)
-		 'car start end from-end))
+                 'car start end from-end))
 
 (defun test-count-if-2 (predicate sequence start end)
   (test-count-if-1 predicate sequence start end -1)
@@ -3637,26 +3637,26 @@
   (let ((length (length sequence)))
     (test-count-if-2 predicate sequence -1 -1)
     (loop for index from 0 to length
-	  do (test-count-if-2 predicate sequence -1 index)
-	     (test-count-if-2 predicate sequence index -1))
+          do (test-count-if-2 predicate sequence -1 index)
+             (test-count-if-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (test-count-if-2 predicate sequence start end)))))
+          do (loop for end from start to length
+                   do (test-count-if-2 predicate sequence start end)))))
 
 (define-test |count-if normal|
   (assert-equal nil
-		(test-count-if-3 (lambda (x) (eql x *i01*))
-				 (list *i1* *i02* *i2* *i02* *i4*))
-		(test-count-if-3 (lambda (x) (eql x *i5*))
-				 (list *i1* *i02* *i2* *i02* *i4*))
-		(test-count-if-3 (lambda (x) (eq x *l01*))
-				 (list *l1* *l02* *l2* *l02* *l4*))
-		(test-count-if-3 (lambda (x) (eq x *l5* ))
-				 (list *l1* *l02* *l2* *l02* *l4*))
-		(test-count-if-3 (lambda (x) (string-equal x *s01* ))
-				 (list *s1* *s02* *s2* *s02* *s4*))
-		(test-count-if-3 (lambda (x) (string-equal x *s5*))
-				 (list *s1* *s02* *s2* *s02* *s4*))))
+                (test-count-if-3 (lambda (x) (eql x *i01*))
+                                 (list *i1* *i02* *i2* *i02* *i4*))
+                (test-count-if-3 (lambda (x) (eql x *i5*))
+                                 (list *i1* *i02* *i2* *i02* *i4*))
+                (test-count-if-3 (lambda (x) (eq x *l01*))
+                                 (list *l1* *l02* *l2* *l02* *l4*))
+                (test-count-if-3 (lambda (x) (eq x *l5* ))
+                                 (list *l1* *l02* *l2* *l02* *l4*))
+                (test-count-if-3 (lambda (x) (string-equal x *s01* ))
+                                 (list *s1* *s02* *s2* *s02* *s4*))
+                (test-count-if-3 (lambda (x) (string-equal x *s5*))
+                                 (list *s1* *s02* *s2* *s02* *s4*))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3664,11 +3664,11 @@
 ;;; Tests for function count-if-not
 
 (defun stupid-count-if-not (predicate sequence
-			    &key
-			    key
-			    (start 0)
-			    end
-			    from-end)
+                            &key
+                            key
+                            (start 0)
+                            end
+                            from-end)
   (unless key
     (setf key #'identity))
   (unless (vectorp sequence)
@@ -3679,52 +3679,52 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    count (not (funcall predicate (funcall key (aref sequence index)))))
+            count (not (funcall predicate (funcall key (aref sequence index)))))
       (loop for index from start below end
-	    count (not (funcall predicate (funcall key (aref sequence index)))))))
+            count (not (funcall predicate (funcall key (aref sequence index)))))))
 
 (defun test-count-if-not (predicate sequence key start end from-end)
   (flet ((make-arg (name thing)
-	   (if (eql thing -1) '() (list name thing))))
+           (if (eql thing -1) '() (list name thing))))
     (let ((arguments (append (make-arg :key key)
-			     (make-arg :start start)
-			     (make-arg :end end)
-			     (make-arg :from-end from-end))))
+                             (make-arg :start start)
+                             (make-arg :end end)
+                             (make-arg :from-end from-end))))
       (let ((v1 (apply #'stupid-count-if-not predicate sequence arguments))
-	    (v2 (apply #'count-if-not predicate sequence arguments)))
-	(if (eql v1 v2)
-	    (format *trace-output* "*")
-	    (format *trace-output*
-		    "for test: COUNT-IF-NOT ~s ~s ~s~@
+            (v2 (apply #'count-if-not predicate sequence arguments)))
+        (if (eql v1 v2)
+            (format *trace-output* "*")
+            (format *trace-output*
+                    "for test: COUNT-IF-NOT ~s ~s ~s~@
                      expected: ~s~%     but saw:  ~s~%"
-		    predicate sequence arguments v1 v2))))))
+                    predicate sequence arguments v1 v2))))))
 
 (defun test-count-if-not-1 (predicate sequence start end from-end)
   (test-count-if-not predicate sequence
-		     -1 start end from-end)
+                     -1 start end from-end)
   (test-count-if-not predicate sequence
-		     nil start end from-end)
+                     nil start end from-end)
   (test-count-if-not predicate sequence
-		     #'identity start end from-end)
+                     #'identity start end from-end)
   (test-count-if-not predicate sequence
-		     'identity start end from-end)
+                     'identity start end from-end)
 
   (test-count-if-not predicate (coerce sequence 'vector)
-		     -1 start end from-end)
+                     -1 start end from-end)
   (test-count-if-not predicate (coerce sequence 'vector)
-		     nil start end from-end)
+                     nil start end from-end)
   (test-count-if-not predicate (coerce sequence 'vector)
-		     #'identity start end from-end)
+                     #'identity start end from-end)
 
   (test-count-if-not predicate (mapcar #'list sequence)
-		     #'car start end from-end)
+                     #'car start end from-end)
   (test-count-if-not predicate (mapcar #'list sequence)
-		     'car start end from-end)
+                     'car start end from-end)
 
   (test-count-if-not predicate (map 'vector #'list sequence)
-		     #'car start end from-end)
+                     #'car start end from-end)
   (test-count-if-not predicate (map 'vector #'list sequence)
-		     'car start end from-end))
+                     'car start end from-end))
 
 (defun test-count-if-not-2 (predicate sequence start end)
   (test-count-if-not-1 predicate sequence start end -1)
@@ -3735,25 +3735,25 @@
   (let ((length (length sequence)))
     (test-count-if-not-2 predicate sequence -1 -1)
     (loop for index from 0 to length
-	  do (test-count-if-not-2 predicate sequence -1 index)
-	     (test-count-if-not-2 predicate sequence index -1))
+          do (test-count-if-not-2 predicate sequence -1 index)
+             (test-count-if-not-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from start to length
-		   do (test-count-if-not-2 predicate sequence start end)))))
+          do (loop for end from start to length
+                   do (test-count-if-not-2 predicate sequence start end)))))
 
 (define-test |count-if-not normal|
   (assert-equal nil
-		(test-count-if-not-3 (lambda (x) (eql x *i01*))
-				     (list *i1* *i02* *i2* *i02* *i4*))
-		(test-count-if-not-3 (lambda (x) (eql x *i5*))
-				     (list *i1* *i02* *i2* *i02* *i4*))
-		(test-count-if-not-3 (lambda (x) (eq x *l01*))
-				     (list *l1* *l02* *l2* *l02* *l4*))
-		(test-count-if-not-3 (lambda (x) (eq x *l5* ))
-				     (list *l1* *l02* *l2* *l02* *l4*))
-		(test-count-if-not-3 (lambda (x) (string-equal x *s01* ))
-				     (list *s1* *s02* *s2* *s02* *s4*))
-		(test-count-if-not-3 (lambda (x) (string-equal x *s5*))
-				     (list *s1* *s02* *s2* *s02* *s4*))))
+                (test-count-if-not-3 (lambda (x) (eql x *i01*))
+                                     (list *i1* *i02* *i2* *i02* *i4*))
+                (test-count-if-not-3 (lambda (x) (eql x *i5*))
+                                     (list *i1* *i02* *i2* *i02* *i4*))
+                (test-count-if-not-3 (lambda (x) (eq x *l01*))
+                                     (list *l1* *l02* *l2* *l02* *l4*))
+                (test-count-if-not-3 (lambda (x) (eq x *l5* ))
+                                     (list *l1* *l02* *l2* *l02* *l4*))
+                (test-count-if-not-3 (lambda (x) (string-equal x *s01* ))
+                                     (list *s1* *s02* *s2* *s02* *s4*))
+                (test-count-if-not-3 (lambda (x) (string-equal x *s5*))
+                                     (list *s1* *s02* *s2* *s02* *s4*))))
 
 

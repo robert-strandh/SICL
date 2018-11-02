@@ -4,16 +4,16 @@
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
-;;;; all rights reserved. 
+;;;; all rights reserved.
 ;;;;
-;;;; Permission is hereby granted to use this software for any 
+;;;; Permission is hereby granted to use this software for any
 ;;;; purpose, including using, modifying, and redistributing it.
 ;;;;
 ;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
+;;;; this software assumes any responsibility of the consequences.
 
 ;;;; This file is part of the sequences module of the SICL project.
-;;;; See the file SICL.text for a description of the project. 
+;;;; See the file SICL.text for a description of the project.
 ;;;; See the file sequences.text for a description of the module.
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -176,14 +176,14 @@
 ;;; The CLHS entry for FILL is strange because it requires an error to be signaled
 ;;; if START is not a non-negative integer or if END is not either a non-negative
 ;;; integer or NIL.  However, it does not require an error to be signaled if START
-;;; and END are otherwise invalid bounding index designators, for instance if 
+;;; and END are otherwise invalid bounding index designators, for instance if
 ;;; START > END.  In that case the default rule applies which says that the
-;;; consequences are undefined if the restriction is not respected.  
+;;; consequences are undefined if the restriction is not respected.
 ;;;
 ;;; However, no sane implementation of FILL would fail to test for these restrictions
-;;; and signal an error, so here we just assume that this is the case. 
+;;; and signal an error, so here we just assume that this is the case.
 ;;;
-;;; Question: What happens or should happen if ITEM is not the correct type as 
+;;; Question: What happens or should happen if ITEM is not the correct type as
 ;;; an element of SEQUENCE?
 (fundoc 'fill
         (fmt "Lambda list: (SEQUENCE ITEM &key START END)~@
@@ -207,7 +207,7 @@
 ;;; unspecified" if INITIAL-ELEMENT is not an object that can be
 ;;; stored in the resulting sequence.  According to the error
 ;;; terminology in 1.4.2 of the CLHS this means that the consequences
-;;; are unpredictable but harmless.  So the question here is: What do 
+;;; are unpredictable but harmless.  So the question here is: What do
 ;;; typical implementations do in this case?  This docstring assumes
 ;;; that they signal en error of type TYPE-ERROR.
 ;;;
@@ -219,7 +219,7 @@
 ;;; (or *), the element type of the resulting array is t; otherwise,
 ;;; an error is signaled.".  But what does it mean to "determine" an
 ;;; element type?
-;;; 
+;;;
 ;;; FIXME: For now, I just reproduce what the CLHS says, but this is
 ;;; a temporary solution.
 (fundoc 'make-sequence
@@ -261,7 +261,7 @@
 ;;; try to describe what really happens.  We are assuming that an
 ;;; error is signaled for objects other than vectors and lists, and
 ;;; for dotted lists, so the only time an error is not signaled is when
-;;; we have a circular list. 
+;;; we have a circular list.
 (fundoc 'length
         (fmt "Lambda list: (SEQUENCE)~@
               ~@
@@ -315,7 +315,7 @@
               An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
               An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
               and the interval designated by START and END contains the last CONS cell~@
-              of SEQUENCE.  
+              of SEQUENCE.
               No error is signaled if SEQUENCE is a dotted list such that the interval~@
               designated by START and END does not contain the last CONS cell of SEQUENCE.~@
               No error is signaled if SEQUENCE is a circular list.~@
@@ -395,7 +395,7 @@
               FUNCTION is applied as many times as there are elements in the shortest~@
               sequence of any of the sequences in SEQUENCES and RESULT-SEQUENCE~@
               The result of applying FUNCTION is stored in the successive elements~@
-              of RESULT-SEQUENCE. 
+              of RESULT-SEQUENCE.
               ~@
               If RESULT-SEQUENCE is a VECTOR with a fill-pointer, then the fill-pointer~@
               is not taken into account when determining the shortest sequence, and~@
@@ -496,7 +496,7 @@
               An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
               An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
               and the interval designated by START and END contains the last CONS cell~@
-              of SEQUENCE.  
+              of SEQUENCE.
               No error is signaled if SEQUENCE is a dotted list such that the interval~@
               designated by START and END does not contain the last CONS cell of SEQUENCE.~@
               No error is signaled if SEQUENCE is a circular list.~@
@@ -703,7 +703,7 @@
               ~@
               The elements of the designated intervals of the two sequence may be tested~@
               in any order and any number of times, independently of whether FROM-END is~@
-              true or false. 
+              true or false.
               ~@
               Arguments:~@
               SEQUENCE-1 is a proper sequence.~@
@@ -846,7 +846,7 @@
               Simlarly, this omission means that the behavior is undefined if the~@
               bounding index designators for any of the sequences are not valid~@
               or if some of the other arguments are not of the type indicated."
-	     *test-test-not* *from-end*))
+             *test-test-not* *from-end*))
 
 (fundoc 'replace
         (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key START1 START2 END1 END2)~@
@@ -863,7 +863,7 @@
               the operation is equivalent to first copying the elements of the interval~@
               of SEQUENCE-2 designated by START2 and END2 to a different place, and then~@
               copying those elements to the interval of SEQUENCE-1 designated by~@
-              START1 and END1. 
+              START1 and END1.
               ~@
               If SEQUENCE-1 and SEQUENCE-2 are not the same object, but they nevertheless~@
               share structure between the two designated intervals, then the contents of~@
@@ -1086,7 +1086,7 @@
               An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
               An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
               and the interval designated by START and END contains the last CONS cell~@
-              of SEQUENCE.  
+              of SEQUENCE.
               No error is signaled if SEQUENCE is a dotted list such that the interval~@
               designated by START and END does not contain the last CONS cell of SEQUENCE.~@
               No error is signaled if SEQUENCE is a circular list.~@
@@ -1135,7 +1135,7 @@
               An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
               An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
               and the interval designated by START and END contains the last CONS cell~@
-              of SEQUENCE.  
+              of SEQUENCE.
               No error is signaled if SEQUENCE is a dotted list such that the interval~@
               designated by START and END does not contain the last CONS cell of SEQUENCE.~@
               No error is signaled if SEQUENCE is a circular list.~@
@@ -1244,7 +1244,7 @@
              *satisfy-a-two-argument-test*
              *error-not-proper-sequence*
              *maybe-error-bounding-indexes*))
-            
+
 (fundoc 'count-if
         (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
@@ -1325,7 +1325,7 @@
              *satisfy-a-two-argument-test*
              *error-not-proper-sequence*
              *maybe-error-bounding-indexes*))
-            
+
 (fundoc 'position-if
         (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
@@ -1420,7 +1420,7 @@
              *error-not-proper-sequence*
              *maybe-error-bounding-indexes*
              *error-count*))
-            
+
 (fundoc 'remove-if
         (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
@@ -1483,7 +1483,7 @@
         When SEQUENCE is a list, any CAR or CDR of its top-level list structure~@
         may be modified.~@
         When SEQUENCE is a vector, the length of SEQUENCE may be modified and its~@
-        elements may be moved in order to produce the resulting sequence. 
+        elements may be moved in order to produce the resulting sequence.
         ~@
         When FROM-END is true, it is the last COUNT elements of the interval~@
         designated by START and END that are no longer present in the resulting~@
@@ -1522,7 +1522,7 @@
              *error-not-proper-sequence*
              *maybe-error-bounding-indexes*
              *error-count*))
-            
+
 (fundoc 'delete-if
         (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
@@ -1595,7 +1595,7 @@
         ~@
         There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element."))
-       
+
 (fundoc 'substitute
         (fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
               ~@
@@ -1618,7 +1618,7 @@
              *error-not-proper-sequence*
              *maybe-error-bounding-indexes*
              *error-count*))
-            
+
 (fundoc 'substitute-if
         (fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
@@ -1683,7 +1683,7 @@
         ~@
         There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element."))
-       
+
 (fundoc 'nsubstitute
         (fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
               ~@
@@ -1706,7 +1706,7 @@
              *error-not-proper-sequence*
              *maybe-error-bounding-indexes*
              *error-count*))
-            
+
 (fundoc 'nsubstitute-if
         (fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@

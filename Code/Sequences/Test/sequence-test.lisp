@@ -9,10 +9,10 @@
 
 (defmacro deftest (name form &rest results)
   `(push (make-instance 'test
-	   :name ',name
-	   :form ',form
-	   :results ',results)
-	 *tests*))
+           :name ',name
+           :form ',form
+           :results ',results)
+         *tests*))
 
 (defmacro signals-error (form error-type)
   `(handler-case (eval ,form)
@@ -79,7 +79,7 @@
 
 (defun run-test (test)
   (assert (equal (multiple-value-list (eval (form test)))
-		 (results test))))
+                 (results test))))
 
 (defun sequence-test ()
   (mapc #'run-test *tests*)
