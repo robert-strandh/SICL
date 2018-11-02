@@ -75,6 +75,9 @@
     ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
     ;; argument for MAKE-AUTOMATON..
     (import-function-from-host '1+ e3)
+    ;; NTH is called by COMPUTE-DISCRIMINATING-FUNCTION in order to
+    ;; traverse the parameters that are specialized upon.
+    (import-function-from-host 'nth e3)
     (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
     (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3)))
 
