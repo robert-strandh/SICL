@@ -13,6 +13,28 @@
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)))
 
+(defun enable-method-combination-in-e2 (boot)
+  (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)) boot
+    (import-function-from-host
+     'sicl-method-combination::define-method-combination-expander e2)
+    (load-file "Method-combination/define-method-combination-defmacro.lisp" e2)
+    (import-functions-from-host
+     '(sicl-genv:find-method-combination-template
+       (setf sicl-genv:find-method-combination-template)
+       sicl-loop::list-cdr sicl-loop::list-car)
+     e2)
+    (setf (sicl-genv:find-class
+           'sicl-method-combination:method-combination-template e1)
+          (find-class 'sicl-method-combination:method-combination-template))
+    (load-file "CLOS/standard-method-combination.lisp" e2)
+    (import-functions-from-host
+     '(sicl-method-combination:find-method-combination
+       sicl-method-combination:effective-method-form-function)
+     e2)
+    (load-file "CLOS/find-method-combination-defgenerics.lisp" e2)
+    (load-file "CLOS/find-method-combination-defmethods.lisp" e2)))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -45,24 +67,7 @@
           #'closer-mop:set-funcallable-instance-function)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
     (define-compute-applicable-methods boot)
-    (import-function-from-host
-     'sicl-method-combination::define-method-combination-expander e2)
-    (load-file "Method-combination/define-method-combination-defmacro.lisp" e2)
-    (import-functions-from-host
-     '(sicl-genv:find-method-combination-template
-       (setf sicl-genv:find-method-combination-template)
-       sicl-loop::list-cdr sicl-loop::list-car)
-     e2)
-    (setf (sicl-genv:find-class
-           'sicl-method-combination:method-combination-template e1)
-          (find-class 'sicl-method-combination:method-combination-template))
-    (load-file "CLOS/standard-method-combination.lisp" e2)
-    (import-functions-from-host
-     '(sicl-method-combination:find-method-combination
-       sicl-method-combination:effective-method-form-function)
-     e2)
-    (load-file "CLOS/find-method-combination-defgenerics.lisp" e2)
-    (load-file "CLOS/find-method-combination-defmethods.lisp" e2)
+    (enable-method-combination-in-e2 boot)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
     (setf (sicl-genv:fdefinition 'make-method e2)
           (lambda (function)
