@@ -34,6 +34,7 @@
 
 (defun ensure-generic-function-phase-2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
+                   (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
       boot
     (let* ((class-env (sicl-new-boot:e1 boot))
@@ -45,8 +46,8 @@
            (method-combination
              (funcall (sicl-genv:fdefinition
                        'sicl-method-combination:find-method-combination
-                       e1)
-                      'standard '() e1)))
+                       e2)
+                      'standard '() e2)))
       (setf (sicl-genv:fdefinition 'ensure-generic-function target-env)
             (lambda (function-name &rest arguments
                      &key environment
@@ -141,23 +142,11 @@
     (import-class-from-host 'sicl-method-combination:method-combination-template
      e1)
     (import-functions-from-host
-     '(sicl-loop::list-car sicl-loop::list-cdr equal reverse
-       sicl-method-combination::define-method-combination-expander
-       sicl-genv:find-method-combination-template
-       (setf sicl-genv:find-method-combination-template))
-     e1)
-    (load-file "Method-combination/define-method-combination-defmacro.lisp" e1)
-    (load-file "CLOS/standard-method-combination.lisp" e1)
-    (import-functions-from-host
      '(sicl-method-combination::variant-signature-determiner
        sicl-method-combination::variants
        (setf sicl-method-combination::variants))
-     e1)
-    (setf (sicl-genv:fdefinition 'sicl-clos::template e1)
-          (sicl-genv:fdefinition 'sicl-clos::template e2))
-    (setf (sicl-genv:fdefinition 'sicl-clos::variant-signature e1)
-          (sicl-genv:fdefinition 'sicl-clos::variant-signature e2))
-    (load-file "Method-combination/find-method-combination.lisp" e1)
+     e2)
+    (load-file "Method-combination/find-method-combination.lisp" e2)
     (ensure-generic-function-phase-2 boot)
     (import-function-from-host 'shared-initialize e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)
