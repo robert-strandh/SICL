@@ -19,11 +19,12 @@ versions.
 
 1. Make sure you have installed the dependencies:
 
+[the Concrete-Syntax-Tree repository]:https://github.com/robert-strandh/Concrete-Syntax-Tree
+[the Eclector repository]:https://github.com/robert-strandh/Eclector
+
    * A recent 64-bit version of SBCL 
-[its GitHub repository]:https://github.com/robert-strandh/Concrete-Syntax-Tree
-   * The system "concrete-syntax-tree" from [its GitHub repository]
-[its GitHub repository]:https://github.com/robert-strandh/Eclector
-   * The system "eclector", also from [its GitHub repository]
+   * The system "concrete-syntax-tree" from [the Concrete-Syntax-Tree repository]
+   * The system "eclector", also from [the Eclector repository]
    
 2. Make sure your SBCL has a 10GB heap by passing --dynamic-space-size
    10000 to SBCL when it starts up.
