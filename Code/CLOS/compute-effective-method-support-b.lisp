@@ -68,7 +68,7 @@
         (lambda (args)
           (declare (ignore args))
           (error 'option-or-method-must-be-non-empty-list
-                        :expressions methods))
+                 :expression methods))
         (let ((primary-chain
                 (lambda (args)
                   (funcall (method-function (car primary-methods))

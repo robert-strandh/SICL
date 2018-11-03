@@ -63,7 +63,7 @@
         (compile nil '(lambda (args)
                        (declare (ignore args))
                        (error 'option-or-method-must-be-non-empty-list
-                        :expressions methods)))
+                        :expression methods)))
         (let ((primary-chain
                 `(funcall ,(method-function (car primary-methods))
                           args
