@@ -35,7 +35,8 @@
                ;; and so we can't compute the class precedence list.
                (when (null candidates)
                  ;; FIXME: do this better
-                 (error "can't compute class precedence list"))
+                 (error 'unable-to-compute-class-precedence-list
+                        :offending-class class))
                (if (null (cdr candidates))
                    ;; A unique candiate, return it.
                    (car candidates)

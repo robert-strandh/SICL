@@ -1,6 +1,8 @@
 (defpackage #:cleavir-sbcl-environment
   (:use #:common-lisp))
 
+(require :sb-cltl2)
+
 (in-package #:cleavir-sbcl-environment)
 
 ;;; Using the CLTL2 protocol, sbclwise.

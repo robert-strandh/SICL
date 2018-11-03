@@ -52,6 +52,10 @@
     (program-error code-condition acclimation:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
 
+(define-condition lambda-list-too-many-parameters
+    (program-error code-condition acclimation:condition)
+  ((%parameters :initarg :parameters :reader lambda-list-parameters)))
+
 (define-condition multiple-occurrences-of-lambda-list-keyword
     (program-error code-condition acclimation:condition)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))

@@ -13,7 +13,7 @@
   (unless (every (lambda (qualifier)
 		   (and (atom qualifier) (not (null qualifier))))
 		 qualifiers)
-    (error "a qualifier must be a non-nil atom")))
+    (error 'qualifier-must-be-proper-list :qualifier qualifier)))
 
 (defun initialize-instance-after-method
     (method

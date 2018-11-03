@@ -96,24 +96,32 @@
 (define-condition third-element-of-direct-default-initarg-must-be-a-thunk
     (sicl-additional-conditions:sicl-error)
   ((%initarg :initarg :initarg :reader initarg)
-   (%initfunction :initfunction :initfunction :reader initfunction)))
+   (%initfunction :initarg :initfunction :reader initfunction)))
 
 (define-condition direct-superclasses-must-be-proper-list
     (sicl-additional-conditions:sicl-error)
-  ((%superclasses :superclasses :superclasses :reader superclasses)))
+  ((%superclasses :initarg :superclasses :reader superclasses)))
 
 (define-condition superclass-must-be-a-class-metaobject
     (sicl-additional-conditions:sicl-error)
-  ((%superclass :superclass :superclass :reader superclass)))
+  ((%superclass :initarg :superclass :reader superclass)))
 
 (define-condition direct-superclass-must-be-a-class-metaobject-or-a-symbol
     (sicl-additional-conditions:sicl-error)
-  ((%superclass :superclass :superclass :reader superclass)))
+  ((%superclass :initarg :superclass :reader superclass)))
 
 (define-condition superclass-not-valid-for-class
     (sicl-additional-conditions:sicl-error)
-  ((%superclass :superclass :superclass :reader superclass)))
+  ((%superclass :initarg :superclass :reader superclass)))
 
 (define-condition direct-slots-must-be-proper-list
     (sicl-additional-conditions:sicl-error)
-  ((%direct-lost :direct-lost :direct-lost :reader direct-lost)))
+  ((%direct-lost :initarg :direct-lost :reader direct-lost)))
+
+(define-condition qualifier-must-be-proper-list
+    (sicl-additional-conditions:sicl-error)
+  ((%qualifier :initarg :qualifier :reader qualifier)))
+
+(define-condition argument-precedence-order-must-be-proper-list
+    (sicl-additional-conditions:sicl-error)
+  ((%order :initarg :order :reader argument-precedence-order)))
