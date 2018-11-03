@@ -789,7 +789,7 @@
 	    (parse-all-aux lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
-	(error "something is seriously wrong here"))
+	(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
 	
 (defun parse-generic-function-lambda-list (lambda-list)
@@ -813,7 +813,7 @@
 	    (parse-allow-other-keys lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
-	(error "something is seriously wrong here"))
+        (error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
 	
 (defun parse-specialized-lambda-list (lambda-list)
@@ -839,7 +839,7 @@
 	    (parse-all-aux lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
-	(error "something is seriously wrong here"))
+	(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
 	
 (defun parse-macro-lambda-list (lambda-list)
@@ -897,7 +897,7 @@
 		      (parse-environment lambda-list positions)))
 	      ;; We should have run out of parameters now.
 	      (unless (null (cdr positions))
-		(error "something is seriously wrong here"))
+		(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
 	      ;; All that remains is to deal with the dotted end
 	      ;; of the list.
 	      (let ((rest (cdr (last lambda-list))))
@@ -975,7 +975,7 @@
 		      (parse-environment lambda-list positions)))
 	      ;; We should have run out of parameters now.
 	      (unless (null (cdr positions))
-		(error "something is seriously wrong here"))
+		(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
 	      result))))))
 
 (defun parse-destructuring-lambda-list (lambda-list)
@@ -1009,7 +1009,7 @@
 		     lambda-list positions #'parse-destructuring-optional))
 	      ;; We should have run out of parameters now.
 	      (unless (null (cdr positions))
-		(error "something is seriously wrong here"))
+		(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
 	      ;; All that remains is to deal with the dotted end
 	      ;; of the list.
 	      (let ((rest (cdr (last lambda-list))))
@@ -1051,7 +1051,7 @@
 		    (parse-all-aux lambda-list positions))
 	      ;; We should have run out of parameters now.
 	      (unless (null (cdr positions))
-		(error "something is seriously wrong here"))
+		(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
 	      result))))))
 
 ;;; FIXME: there is considerable code duplication between this one
@@ -1111,7 +1111,7 @@
 		      (parse-environment lambda-list positions)))
 	      ;; We should have run out of parameters now.
 	      (unless (null (cdr positions))
-		(error "something is seriously wrong here"))
+		(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
 	      ;; All that remains is to deal with the dotted end
 	      ;; of the list.
 	      (let ((rest (cdr (last lambda-list))))
@@ -1183,7 +1183,7 @@
 		      (parse-environment lambda-list positions)))
 	      ;; We should have run out of parameters now.
 	      (unless (null (cdr positions))
-		(error "something is seriously wrong here"))
+		(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
 	      result))))))
 
 (defun parse-defsetf-lambda-list (lambda-list)
@@ -1210,7 +1210,7 @@
 	    (parse-environment lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
-	(error "something is seriously wrong here"))
+	(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
 	
 (defun parse-define-modify-macro-lambda-list (lambda-list)
@@ -1229,7 +1229,7 @@
 	    (parse-rest/body lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
-	(error "something is seriously wrong here"))
+	(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
 
 (defun parse-define-method-combination-arguments-lambda-list
@@ -1256,7 +1256,7 @@
 	    (parse-all-aux lambda-list positions))
       ;; We should have run out of parameters now.
       (unless (null (cdr positions))
-	(error "something is seriously wrong here"))
+	(error 'lambda-list-too-many-parameters :parameters (cdr positions)))
       result)))
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -62,7 +62,8 @@
     (if (null primary-methods)
         (compile nil '(lambda (args)
                        (declare (ignore args))
-                       (error "no primary method")))
+                       (error 'option-or-method-must-be-non-empty-list
+                        :expressions methods)))
         (let ((primary-chain
                 `(funcall ,(method-function (car primary-methods))
                           args

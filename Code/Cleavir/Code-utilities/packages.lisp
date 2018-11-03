@@ -49,6 +49,7 @@
 	   #:lambda-list-must-be-proper-list
 	   #:lambda-list-keyword-not-allowed
 	   #:lambda-list-keyword-not-allowed-in-dotted-lambda-list
+           #:lambda-list-too-many-parameters
 	   #:multiple-occurrences-of-lambda-list-keyword
 	   #:incorrect-keyword-order
 	   #:both-rest-and-body-occur-in-lambda-list

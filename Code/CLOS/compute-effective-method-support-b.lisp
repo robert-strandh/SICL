@@ -66,7 +66,9 @@
         (around-methods (remove-if-not  #'around-method-p methods)))
     (if (null primary-methods)
         (lambda (args)
-          (error "no primary method"))
+          (declare (ignore args))
+          (error 'option-or-method-must-be-non-empty-list
+                        :expressions methods))
         (let ((primary-chain
                 (lambda (args)
                   (funcall (method-function (car primary-methods))
