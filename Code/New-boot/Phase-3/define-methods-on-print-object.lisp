@@ -33,3 +33,7 @@
 (defmethod print-object ((object method-combination) stream)
   (format stream "<E4 Ersatz method combination>"))
 
+(defmethod print-object
+    ((object sicl-method-combination:method-combination-template) stream)
+  (format stream "<E4 Ersatz method combination template>"))
+
