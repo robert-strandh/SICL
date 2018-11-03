@@ -24,7 +24,7 @@ versions.
 
    * A recent 64-bit version of SBCL 
    * The system "concrete-syntax-tree" from [the Concrete-Syntax-Tree repository]
-   * The system "eclector", also from [the Eclector repository]
+   * The system "eclector", from [the Eclector repository]
    
 2. Make sure your SBCL has a 10GB heap by passing --dynamic-space-size
    10000 to SBCL when it starts up.
