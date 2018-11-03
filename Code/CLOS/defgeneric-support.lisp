@@ -27,24 +27,34 @@
         do (remove-method generic-function method))
   (setf (initial-methods generic-function) '()))
 
-;;; FIXME: Add options and methods
 (defun defgeneric-expander (env name lambda-list options-and-methods)
   (check-defgeneric-options-and-methods options-and-methods)
-  (let* ((arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
-         (function-type `(function ,arg-type t)))
-    `(progn (eval-when (:compile-toplevel)
-              (setf (sicl-global-environment:function-lambda-list ',name ,env)
-                    ',lambda-list)
-              (setf (sicl-global-environment:function-type ',name ,env)
-                    ',function-type))
-            (eval-when (:load-toplevel :execute)
-              (let* ((env (sicl-global-environment:global-environment))
-                     (fun (ensure-generic-function
-                           ',name
-                           :lambda-list ',lambda-list
-                           :environment env)))
-                (setf (sicl-global-environment:function-lambda-list ',name env)
+  (multiple-value-bind (options methods)
+      (separate-options-and-methods options-and-methods)
+    ;; FIXME: handle methods.
+    (declare (ignore methods))
+    (let* ((method-combination-option (assoc :method-combination options))
+           (method-combination-name (if (null method-combination-option)
+                                        'standard
+                                        (first method-combination-option)))
+           (method-combination-options (if (null method-combination-option)
+                                           '()
+                                           (rest method-combination-option)))
+           (arg-type (cleavir-code-utilities:lambda-list-type-specifier lambda-list))
+           (function-type `(function ,arg-type t)))
+      `(progn (eval-when (:compile-toplevel)
+                (setf (sicl-global-environment:function-lambda-list ',name ,env)
                       ',lambda-list)
-                (setf (sicl-global-environment:function-type ',name env)
-                      ',function-type)
-                fun)))))
+                (setf (sicl-global-environment:function-type ',name ,env)
+                      ',function-type))
+              (eval-when (:load-toplevel :execute)
+                (let* ((env (sicl-global-environment:global-environment))
+                       (fun (ensure-generic-function
+                             ',name
+                             :lambda-list ',lambda-list
+                             :environment env)))
+                  (setf (sicl-global-environment:function-lambda-list ',name env)
+                        ',lambda-list)
+                  (setf (sicl-global-environment:function-type ',name env)
+                        ',function-type)
+                  fun))))))
