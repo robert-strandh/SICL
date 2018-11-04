@@ -139,14 +139,6 @@
       boot
     (import-function-from-host 'sicl-clos:defgeneric-expander e3)
     (load-file "CLOS/defgeneric-defmacro.lisp" e3)
-    (import-class-from-host 'sicl-method-combination:method-combination-template
-     e1)
-    (import-functions-from-host
-     '(sicl-method-combination::variant-signature-determiner
-       sicl-method-combination::variants
-       (setf sicl-method-combination::variants))
-     e2)
-    (load-file "Method-combination/find-method-combination.lisp" e2)
     (ensure-generic-function-phase-2 boot)
     (import-function-from-host 'shared-initialize e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)

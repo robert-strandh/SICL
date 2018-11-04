@@ -34,10 +34,15 @@
     ;; the order of invocation of the :AFTER methods.
     (import-function-from-host 'reverse e2)
     (load-file "CLOS/standard-method-combination.lisp" e2)
+    (import-class-from-host 'sicl-method-combination:method-combination-template
+     e1)
     (import-functions-from-host
-     '(sicl-method-combination:find-method-combination
-       sicl-method-combination:effective-method-form-function)
+     '(sicl-method-combination:effective-method-form-function
+       sicl-method-combination::variant-signature-determiner
+       sicl-method-combination::variants
+       (setf sicl-method-combination::variants))
      e2)
+    (load-file "Method-combination/find-method-combination.lisp" e2)
     (load-file "CLOS/find-method-combination-defgenerics.lisp" e2)
     (load-file "CLOS/find-method-combination-defmethods.lisp" e2)))
 
