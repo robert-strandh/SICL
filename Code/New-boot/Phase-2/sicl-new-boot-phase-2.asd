@@ -7,6 +7,7 @@
   ((:file "packages")
    (:file "environment")
    (:file "utilities")
+   (:file "enable-method-combinations-in-e2")
    (:file "enable-generic-function-invocation-in-e2")
    (:file "enable-defmethod-in-e2")
    (:file "define-accessor-generic-functions-in-e3")
