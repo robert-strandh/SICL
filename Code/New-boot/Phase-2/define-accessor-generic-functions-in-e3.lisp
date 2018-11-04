@@ -63,6 +63,25 @@
                                  :method-combination method-combination
                                  args)))))))))
 
+(defun enable-generic-function-initialization (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)) boot
+    (import-functions-from-host
+     '(cleavir-code-utilities:parse-generic-function-lambda-list
+       cleavir-code-utilities:required)
+     e2)
+    ;; MAKE-LIST is called from the :AROUND method on
+    ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
+    (import-function-from-host 'make-list e2)
+    ;; SET-DIFFERENCE is called by the generic-function initialization
+    ;; protocol to verify that the argument precedence order is a
+    ;; permutation of the required arguments.
+    (import-function-from-host 'set-difference e2)
+    ;; STRINGP is called by the generic-function initialization
+    ;; protocol to verify that the documentation is a string.
+    (import-function-from-host 'stringp e2)
+    (load-file "CLOS/generic-function-initialization-support.lisp" e2)
+    (load-file "CLOS/generic-function-initialization-defmethods.lisp" e2)))
+
 (defun load-accessor-defgenerics (e3)
   (load-file "CLOS/specializer-direct-generic-functions-defgeneric.lisp" e3)
   (load-file "CLOS/setf-specializer-direct-generic-functions-defgeneric.lisp" e3)
@@ -142,20 +161,5 @@
     (ensure-generic-function-phase-2 boot)
     (import-function-from-host 'shared-initialize e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)
-    (import-functions-from-host
-     '(cleavir-code-utilities:parse-generic-function-lambda-list
-       cleavir-code-utilities:required)
-     e2)
-    ;; MAKE-LIST is called from the :AROUND method on
-    ;; SHARED-INITIALIZE specialized to GENERIC-FUNCTION.
-    (import-function-from-host 'make-list e2)
-    ;; SET-DIFFERENCE is called by the generic-function initialization
-    ;; protocol to verify that the argument precedence order is a
-    ;; permutation of the required arguments.
-    (import-function-from-host 'set-difference e2)
-    ;; STRINGP is called by the generic-function initialization
-    ;; protocol to verify that the documentation is a string.
-    (import-function-from-host 'stringp e2)
-    (load-file "CLOS/generic-function-initialization-support.lisp" e2)
-    (load-file "CLOS/generic-function-initialization-defmethods.lisp" e2)
+    (enable-generic-function-initialization boot)
     (load-accessor-defgenerics e3)))
