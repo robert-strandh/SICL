@@ -3,14 +3,16 @@
 (defun enable-method-combinations-in-e3 (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
+    ;; FIND-METHOD-COMBINATION-TEMPLATE is called by FIND-METHOD-COMBINATION.
+    (import-functions-from-host
+     '(sicl-genv:find-method-combination-template
+       (setf sicl-genv:find-method-combination-template))
+     e3)
     (load-file "Method-combination/accessor-defgenerics.lisp" e3)
     ;; EQUAL is called by FIND-METHOD-COMBINATION in order to determine
     ;; equality between variant signatures.
     (import-function-from-host 'equal e3)
-    ;; FIND-METHOD-COMBINATION-TEMPLATE is called by FIND-METHOD-COMBINATION.
-    (import-function-from-host 'sicl-genv:find-method-combination-template e3)
     (load-file "Method-combination/find-method-combination.lisp" e3)
-    (import-function-from-host '(setf sicl-genv:find-method-combination-template) e3)
     (import-function-from-host
      'sicl-method-combination::define-method-combination-expander e3)
     (load-file "Method-combination/define-method-combination-defmacro.lisp" e3)
