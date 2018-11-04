@@ -12,9 +12,6 @@
      e2)
     (import-class-from-host 'sicl-method-combination:method-combination-template
      e1)
-    ;; (setf (sicl-genv:find-class
-    ;;        'sicl-method-combination:method-combination-template e1)
-    ;;       (find-class 'sicl-method-combination:method-combination-template))
     ;; The standard method combination uses LOOP to traverse the list
     ;; of methods, so we need to import LIST-CAR and LIST-CDR from the
     ;; LOOP package.
