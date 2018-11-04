@@ -29,3 +29,7 @@
 
 (defmethod print-object ((object method-combination) stream)
   (format stream "<E3 Bridge method-combination>"))
+
+(defmethod print-object
+    ((object sicl-method-combination:method-combination-template) stream)
+  (format stream "<E3 Bridge method-combination template>"))
