@@ -68,8 +68,6 @@
     (enable-defmethod-in-e2 boot)
     (define-method-on-method-function e2)
     (define-accessor-generic-functions boot)
-    ;; REMOVE is needed by the class initialization protocol.
-    (import-function-from-host 'remove e2)
     (enable-class-initialization-in-e2 e1 e2 e3)
     (import-function-from-host 'sicl-clos:defclass-expander e2)
     (create-mop-classes boot)))

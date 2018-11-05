@@ -27,7 +27,9 @@
           (lambda (&rest arguments)
             (declare (ignore arguments))
             (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e2)))
-    (import-functions-from-host '(remove) e3)
+    ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
+    ;; class from the list of subclasses of some class.
+    (import-function-from-host 'remove e3)
     (load-file "CLOS/add-remove-direct-subclass-support.lisp" e3)
     (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
     (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3)
