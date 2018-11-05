@@ -11,6 +11,14 @@
     (object (type-specifier (eql 'class)) (environment environment))
   (not (symbolp object)))
 
+(defun define-add-remove-direct-subclass (e3)
+  ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
+  ;; class from the list of subclasses of some class.
+  (import-function-from-host 'remove e3)
+  (load-file "CLOS/add-remove-direct-subclass-support.lisp" e3)
+  (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
+  (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3))
+
 (defun create-mop-classes (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -27,12 +35,7 @@
           (lambda (&rest arguments)
             (declare (ignore arguments))
             (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e2)))
-    ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
-    ;; class from the list of subclasses of some class.
-    (import-function-from-host 'remove e3)
-    (load-file "CLOS/add-remove-direct-subclass-support.lisp" e3)
-    (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
-    (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3)
+    (define-add-remove-direct-subclass e3)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e3 t) nil)
     ;; MAKE-LIST is called when a method is removed and a new
     ;; specializer profile must be computed.

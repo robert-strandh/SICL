@@ -1,5 +1,13 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+(defun define-add-remove-direct-subclass (e2)
+  ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
+  ;; class from the list of subclasses of some class.
+  (import-function-from-host 'remove e2)
+  (load-file "CLOS/add-remove-direct-subclass-support.lisp" e2)
+  (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e2)
+  (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e2))
+
 (defun enable-class-initialization-in-e2 (e1 e2 e3)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e2)
         (constantly t))
@@ -7,12 +15,7 @@
         (lambda (&rest arguments)
           (declare (ignore arguments))
           (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e1)))
-  ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
-  ;; class from the list of subclasses of some class.
-  (import-function-from-host 'remove e2)
-  (load-file "CLOS/add-remove-direct-subclass-support.lisp" e2)
-  (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e2)
-  (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e2)
+  (define-add-remove-direct-subclass e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class e2)
         (lambda (&rest arguments)
           (declare (ignore arguments))
