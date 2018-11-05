@@ -83,4 +83,6 @@
     (load-file "CLOS/built-in-class-defclass.lisp" e1)
     (load-file "CLOS/funcallable-standard-object-defclass.lisp" e1)
     (load-file "CLOS/generic-function-defclass.lisp" e1)
-    (load-file "CLOS/standard-generic-function-defclass.lisp" e1)))
+    (load-file "CLOS/standard-generic-function-defclass.lisp" e1)
+    (load-file "Cons/cons-defclass.lisp" e1)
+    (load-file "Sequences/sequence-defclass.lisp" e1)))
