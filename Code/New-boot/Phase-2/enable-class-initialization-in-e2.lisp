@@ -20,6 +20,14 @@
   (load-file-protected "CLOS/add-remove-method-support.lisp" e2)
   (load-file "CLOS/add-remove-method-defmethods.lisp" e2))
 
+(defun define-add-remove-direct-method (e2)
+  ;; ADJOIN is called by ADD-DIRECT-METHOD.
+  ;; REMOVE is called by REMOVE-DIRECT-METHOD.
+  (import-functions-from-host '(adjoin remove) e2)
+  (load-file "CLOS/add-remove-direct-method-defgenerics.lisp" e2)
+  (load-file "CLOS/add-remove-direct-method-support.lisp" e2)
+  (load-file "CLOS/add-remove-direct-method-defmethods.lisp" e2))
+
 (defun enable-class-initialization-in-e2 (e1 e2 e3)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e2)
         (constantly t))
@@ -44,10 +52,7 @@
   (import-functions-from-host '(adjoin set-exclusive-or) e2)
   (define-error-function 'slot-value e2)
   (define-error-function '(setf slot-value) e2)
-  (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method e2)
-        (lambda (&rest args) (declare (ignore args)) nil))
-  (setf (sicl-genv:fdefinition 'sicl-clos:remove-direct-method e2)
-        (lambda (&rest args) (declare (ignore args)) nil))
+  (define-add-remove-direct-method e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:map-dependents e2)
         (lambda (&rest args) (declare (ignore args)) nil))
   (setf (sicl-genv:fdefinition 'sicl-clos:update-dependent e2)
