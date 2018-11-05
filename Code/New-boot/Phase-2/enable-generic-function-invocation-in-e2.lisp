@@ -14,9 +14,14 @@
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)))
 
 (defun define-compute-discriminating-function (e2)
-  (import-functions-from-host '(nth) e2)
   (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
-  (import-functions-from-host '(list* caddr) e2)
+  ;; LIST* is called in order to make a call cache.  CAR, CADR,
+  ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
+  ;; is used to search a list of effictive-slot metaobjects to find
+  ;; one with a particular name.  SUBSEQ is used to extract the
+  ;; required arguments from a list of all the arguments to a
+  ;; generic function.
+  (import-functions-from-host '(list* car cadr caddr cdddr find subseq) e2)
   (load-file "CLOS/compute-discriminating-function-support.lisp" e2)
   (import-functions-from-host
    '(sicl-clos::add-path
@@ -27,6 +32,9 @@
   ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
   ;; argument for MAKE-AUTOMATON..
   (import-function-from-host '1+ e2)
+  ;; NTH is called by COMPUTE-DISCRIMINATING-FUNCTION in order to
+  ;; traverse the parameters that are specialized upon.
+  (import-function-from-host 'nth e2)
   (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2))
 
