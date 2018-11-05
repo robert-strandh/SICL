@@ -6,12 +6,11 @@
 ;;; from most specific to least specific.  EQL is called to compare
 ;;; the object of an EQL specializer to an argument passed to a
 ;;; generic function.
-(defun define-compute-applicable-methods (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)) boot
-    (import-functions-from-host '(sort mapcar eql) e2)
-    (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
-    (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
-    (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)))
+(defun define-compute-applicable-methods (e2)
+  (import-functions-from-host '(sort mapcar eql) e2)
+  (load-file "CLOS/compute-applicable-methods-support.lisp" e2)
+  (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
+  (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2))
 
 (defun define-compute-discriminating-function (e2)
   (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
@@ -69,7 +68,7 @@
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
           #'closer-mop:set-funcallable-instance-function)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
-    (define-compute-applicable-methods boot)
+    (define-compute-applicable-methods e2)
     (enable-method-combination-in-e2 boot)
     (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
     (setf (sicl-genv:fdefinition 'make-method e2)
