@@ -13,6 +13,23 @@
     (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
     (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2)))
 
+(defun define-compute-discriminating-function (e2)
+  (import-functions-from-host '(nth) e2)
+  (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
+  (import-functions-from-host '(list* caddr) e2)
+  (load-file "CLOS/compute-discriminating-function-support.lisp" e2)
+  (import-functions-from-host
+   '(sicl-clos::add-path
+     sicl-clos::compute-discriminating-tagbody
+     sicl-clos::extract-transition-information
+     sicl-clos::make-automaton)
+   e2)
+  ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
+  ;; argument for MAKE-AUTOMATON..
+  (import-function-from-host '1+ e2)
+  (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
+  (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -58,21 +75,7 @@
     (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e2)
     (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
     (load-file "CLOS/no-applicable-method.lisp" e2)
-    (import-functions-from-host '(nth) e2)
-    (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
-    (import-functions-from-host '(list* caddr) e2)
-    (load-file "CLOS/compute-discriminating-function-support.lisp" e2)
-    (import-functions-from-host
-     '(sicl-clos::add-path
-       sicl-clos::compute-discriminating-tagbody
-       sicl-clos::extract-transition-information
-       sicl-clos::make-automaton)
-     e2)
-    ;; 1+ is called by COMPUTE-DISCRIMINATING-FUNCTION to compute an
-    ;; argument for MAKE-AUTOMATON..
-    (import-function-from-host '1+ e2)
-    (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
-    (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2)
+    (define-compute-discriminating-function e2)
     (import-functions-from-host '(print-object) e2)
     (load-file "New-boot/Phase-2/define-methods-on-print-object.lisp" e2)
     (load-file "CLOS/standard-instance-access.lisp" e2)))
