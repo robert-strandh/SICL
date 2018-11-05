@@ -54,7 +54,7 @@
              (closer-mop:method-function generic-function)))
     (fmakunbound temp)))
 
-(defun add-support-for-class-initialization-to-e2 (e1 e2 e3)
+(defun enable-class-initialization-in-e2 (e1 e2 e3)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e2)
         (constantly t))
   (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e2)
@@ -127,6 +127,6 @@
     (define-accessor-generic-functions boot)
     ;; REMOVE is needed by the class initialization protocol.
     (import-function-from-host 'remove e2)
-    (add-support-for-class-initialization-to-e2 e1 e2 e3)
+    (enable-class-initialization-in-e2 e1 e2 e3)
     (import-function-from-host 'sicl-clos:defclass-expander e2)
     (create-mop-classes boot)))
