@@ -147,7 +147,9 @@
   (load-file "CLOS/setf-slot-definition-location-defgeneric.lisp" e3)
   (load-file "CLOS/variant-signature-defgeneric.lisp" e3)
   (load-file "CLOS/template-defgeneric.lisp" e3)
-  (load-file "CLOS/code-object-defgeneric.lisp" e3))
+  (load-file "CLOS/code-object-defgeneric.lisp" e3)
+  (load-file "Package-and-symbol/symbol-name-defgeneric.lisp" e3)
+  (load-file "Package-and-symbol/symbol-package-defgeneric.lisp" e3))
 
 (defun define-accessor-generic-functions (boot)
   (enable-allocate-instance boot)
