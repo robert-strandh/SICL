@@ -31,6 +31,14 @@
   (load-file-protected "CLOS/add-remove-method-support.lisp" e3)
   (load-file "CLOS/add-remove-method-defmethods.lisp" e3))
 
+(defun define-add-remove-direct-method (e3)
+  ;; ADJOIN is called by ADD-DIRECT-METHOD.
+  ;; REMOVE is called by REMOVE-DIRECT-METHOD.
+  (import-functions-from-host '(adjoin remove) e3)
+  (load-file "CLOS/add-remove-direct-method-defgenerics.lisp" e3)
+  (load-file "CLOS/add-remove-direct-method-support.lisp" e3)
+  (load-file "CLOS/add-remove-direct-method-defmethods.lisp" e3))
+
 (defun create-mop-classes (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -90,11 +98,9 @@
     (import-functions-from-host
      '(equal set-exclusive-or sicl-genv:find-class)
      e3)
-    ;; FIXME: load files containing the definition instead
+    ;; FIXME: load files containing the definition instead.
     (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method e3)
-          (lambda (specializer method)
-            (declare (ignore specializer method))
-            nil))
+          (constantly nil))
     (setf (sicl-genv:fdefinition 'sicl-clos:map-dependents e3)
           (lambda (metaobject function)
             (declare (ignore metaobject function))
