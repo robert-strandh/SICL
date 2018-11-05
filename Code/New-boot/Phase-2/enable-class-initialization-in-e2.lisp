@@ -8,6 +8,18 @@
   (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e2)
   (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e2))
 
+(defun define-add-remove-method (e2)
+  (load-file "CLOS/add-remove-method-defgenerics.lisp" e2)
+  ;; MAKE-LIST is called when a method is removed and a new
+  ;; specializer profile must be computed.
+  (import-function-from-host 'make-list e2)
+  ;; FIND-IF is called by ADD-METHOD in order to find and existing
+  ;; method with the same specializers and the same qualifiers, so
+  ;; that that existing method can be removed first.
+  (import-function-from-host 'find-if e2)
+  (load-file-protected "CLOS/add-remove-method-support.lisp" e2)
+  (load-file "CLOS/add-remove-method-defmethods.lisp" e2))
+
 (defun enable-class-initialization-in-e2 (e1 e2 e3)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e2)
         (constantly t))
@@ -40,16 +52,7 @@
         (lambda (&rest args) (declare (ignore args)) nil))
   (setf (sicl-genv:fdefinition 'sicl-clos:update-dependent e2)
         (lambda (&rest args) (declare (ignore args)) nil))
-  (load-file "CLOS/add-remove-method-defgenerics.lisp" e2)
-  ;; MAKE-LIST is called when a method is removed and a new
-  ;; specializer profile must be computed.
-  (import-function-from-host 'make-list e2)
-  ;; FIND-IF is called by ADD-METHOD in order to find and existing
-  ;; method with the same specializers and the same qualifiers, so
-  ;; that that existing method can be removed first.
-  (import-function-from-host 'find-if e2)
-  (load-file-protected "CLOS/add-remove-method-support.lisp" e2)
-  (load-file "CLOS/add-remove-method-defmethods.lisp" e2)
+  (define-add-remove-method e2)
   (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 nil) nil)
   (load-file "CLOS/add-accessor-method.lisp" e2)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-or-create-generic-function e2)
