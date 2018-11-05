@@ -24,19 +24,6 @@
   (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e3)
   (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e3))
     
-;;; COMPUTE-EFFECTIVE-METHOD calls several functions.  For each method
-;;; that is passed to it as an argument, it calls METHOD-QUALIFIERS.
-;;; It calls TEMPLATE on the method combination to get to the
-;;; method-combination template.  It call VARIANT-SIGNATURE on the
-;;; method combination to get to the variant signature of the method
-;;; combination.  It calls EFFECTIVE-METHOD-FORM-FUNCTION on the
-;;; template to get to the function to apply.  It calls
-;;; GENERIC-FUNCTION-METHOD-CLASS on the generic function passed to it
-;;; as an argument.  The functions METHOD-QUALIFIERS, TEMPLATE,
-;;; VARIANT-SIGNATURE and GENERIC-FUNCTION-METHOD-CLASS are all
-;;; accessor generic functions that were defined during phase 2 by
-;;; evaluating DEFGENERIC forms and by evaluating DEFCLASS forms that
-;;; define readers and writers on the generic functions.
 (defun define-compute-effective-method (e3)
   (load-file "CLOS/compute-effective-method-defgenerics.lisp" e3)
   (load-file "CLOS/compute-effective-method-support-c.lisp" e3)
