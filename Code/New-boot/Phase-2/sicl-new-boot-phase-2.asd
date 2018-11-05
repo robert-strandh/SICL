@@ -11,5 +11,6 @@
    (:file "enable-generic-function-invocation-in-e2")
    (:file "enable-defmethod-in-e2")
    (:file "define-accessor-generic-functions-in-e3")
+   (:file "enable-class-initialization-in-e2")
    (:file "define-mop-classes")
    (:file "boot-phase-2")))
