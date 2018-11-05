@@ -13,7 +13,8 @@
   (import-package-from-host 'sicl-clos object)
   (import-package-from-host 'sicl-cons object)
   (import-package-from-host 'sicl-method-combination object)
-  (import-package-from-host 'sicl-package object))
+  (import-package-from-host 'sicl-package object)
+  (import-package-from-host 'sicl-sequence object))
 
 (defclass boot ()
   ((%e0 :initarg :e0 :accessor e0)
