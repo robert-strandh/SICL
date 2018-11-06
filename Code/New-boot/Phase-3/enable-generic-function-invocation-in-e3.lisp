@@ -65,6 +65,13 @@
   (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
 
+(defun define-compile (e3)
+    (setf (sicl-genv:fdefinition 'compile e3)
+          (lambda (name &optional definition)
+            (assert (null name))
+            (assert (not (null definition)))
+            (cleavir-env:eval definition e3 e3))))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -78,11 +85,7 @@
     (define-general-instance-access boot)
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
           #'closer-mop:set-funcallable-instance-function)
-    (setf (sicl-genv:fdefinition 'compile e3)
-          (lambda (name &optional definition)
-            (assert (null name))
-            (assert (not (null definition)))
-            (cleavir-env:eval definition e3 e3)))
+    (define-compile e3)
     ;; We may regret having defined FIND-CLASS this way in E3.
     (setf (sicl-genv:fdefinition 'find-class e3)
           (lambda (class-name &optional error-p)
