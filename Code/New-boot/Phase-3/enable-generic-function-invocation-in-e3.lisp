@@ -72,6 +72,10 @@
             (assert (not (null definition)))
             (cleavir-env:eval definition e3 e3))))
 
+(defun define-no-applicable-method (e3)
+  (load-file "CLOS/no-applicable-method-defgenerics.lisp" e3)
+  (load-file "CLOS/no-applicable-method.lisp" e3))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -80,8 +84,7 @@
     (define-sub-specializer-p boot)
     (define-compute-applicable-methods e3)
     (define-compute-effective-method e3)
-    (load-file "CLOS/no-applicable-method-defgenerics.lisp" e3)
-    (load-file "CLOS/no-applicable-method.lisp" e3)
+    (define-no-applicable-method e3)
     (define-general-instance-access boot)
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
           #'closer-mop:set-funcallable-instance-function)

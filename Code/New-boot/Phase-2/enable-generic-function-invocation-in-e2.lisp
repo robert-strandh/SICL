@@ -42,6 +42,10 @@
   (load-file "CLOS/compute-effective-method-support-c.lisp" e2)
   (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e2))
 
+(defun define-no-applicable-method (e2)
+  (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
+  (load-file "CLOS/no-applicable-method.lisp" e2))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -76,8 +80,7 @@
     (define-compute-applicable-methods e2)
     (enable-method-combination-in-e2 boot)
     (define-compute-effective-method e2)
-    (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
-    (load-file "CLOS/no-applicable-method.lisp" e2)
+    (define-no-applicable-method e2)
     (define-compute-discriminating-function e2)
     (import-functions-from-host '(print-object) e2)
     (load-file "New-boot/Phase-2/define-methods-on-print-object.lisp" e2)
