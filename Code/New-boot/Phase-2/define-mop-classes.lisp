@@ -38,9 +38,7 @@
                            remaining-keys)))))))
 
 (defun create-mop-classes (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3))
+  (with-accessors ((e2 sicl-new-boot:e2))
       boot
     (import-function-from-host 'sicl-clos:defclass-expander e2)
     (load-file "CLOS/defclass-defmacro.lisp" e2)
