@@ -120,7 +120,6 @@
                    (e4 sicl-new-boot:e4)) boot
     (ensure-generic-function-phase-3 boot)
     (enable-generic-function-initialization boot)
-    (sicl-minimal-extrinsic-environment:import-function-from-host
-     'sicl-clos:defgeneric-expander e4)
+    (import-function-from-host 'sicl-clos:defgeneric-expander e4)
     (load-file "CLOS/defgeneric-defmacro.lisp" e4)
     (load-accessor-defgenerics e4)))
