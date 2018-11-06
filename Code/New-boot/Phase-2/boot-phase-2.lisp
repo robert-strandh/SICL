@@ -59,8 +59,7 @@
   (define-method-on-print-object-for-ersatz-objects boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)) boot
+                   (e3 sicl-new-boot:e3)) boot
     (change-class e2 'environment)
     (import-function-from-host '(setf sicl-genv:special-variable) e2)
     (define-make-instance-in-e1 e1)
