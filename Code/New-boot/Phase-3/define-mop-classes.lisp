@@ -61,6 +61,10 @@
           (declare (ignore lambda-list))
           (sicl-genv:fdefinition name e4))))
 
+(defun define-validate-superclass (e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e3)
+        (constantly t)))
+
 (defun create-mop-classes (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -71,8 +75,7 @@
     (setf (sicl-genv:fdefinition 'typep e3)
           (lambda (object type)
             (sicl-genv:typep object type e3)))
-    (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e3)
-          (constantly t))
+    (define-validate-superclass e3)
     (define-direct-slot-definition-class e2 e3)
     (define-add-remove-direct-subclass e3)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e3 t) nil)

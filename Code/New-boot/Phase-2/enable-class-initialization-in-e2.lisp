@@ -50,9 +50,12 @@
           (declare (ignore lambda-list))
           (sicl-genv:fdefinition name e3))))
 
-(defun enable-class-initialization-in-e2 (e1 e2 e3)
+(defun define-validate-superclass (e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e2)
-        (constantly t))
+        (constantly t)))
+
+(defun enable-class-initialization-in-e2 (e1 e2 e3)
+  (define-validate-superclass e2)
   (define-direct-slot-definition-class e1 e2)
   (define-add-remove-direct-subclass e2)
   (define-reader/writer-method-class e1 e2)
