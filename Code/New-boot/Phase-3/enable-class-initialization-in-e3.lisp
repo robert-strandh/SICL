@@ -16,7 +16,6 @@
   (load-file "CLOS/default-superclasses-defmethods.lisp" e3)
   (load-file "CLOS/class-initialization-support.lisp" e3)
   (load-file "CLOS/class-initialization-defmethods.lisp" e3)
-  (import-function-from-host 'sicl-clos:defclass-expander e3)
   (setf (sicl-genv:fdefinition '(setf find-class) e3)
         (lambda (new-class symbol &optional errorp)
           (declare (ignore errorp))
@@ -38,6 +37,7 @@
           (apply (sicl-genv:fdefinition
                   'sicl-clos::ensure-class-using-class-null e3)
                  arguments)))
+  (import-function-from-host 'sicl-clos:defclass-expander e3)
   (load-file "CLOS/defclass-defmacro.lisp" e3)
   (import-function-from-host '(setf sicl-genv:special-variable) e3)
   (define-error-function 'slot-value e3)

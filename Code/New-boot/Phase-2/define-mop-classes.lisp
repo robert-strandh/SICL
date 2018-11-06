@@ -42,6 +42,7 @@
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
       boot
+    (import-function-from-host 'sicl-clos:defclass-expander e2)
     (load-file "CLOS/defclass-defmacro.lisp" e2)
     (define-ensure-class boot)
     (load-file "CLOS/t-defclass.lisp" e2)
