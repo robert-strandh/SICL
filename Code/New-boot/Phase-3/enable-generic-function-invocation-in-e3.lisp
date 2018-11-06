@@ -87,6 +87,10 @@
   (load-file "CLOS/classp-defgeneric.lisp" e3)
   (load-file "CLOS/classp-defmethods.lisp" e3))
 
+(defun define-set-funcallable-instance-function (e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
+        #'closer-mop:set-funcallable-instance-function))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -96,8 +100,7 @@
     (define-compute-effective-method e3)
     (define-no-applicable-method e3)
     (define-general-instance-access boot)
-    (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e3)
-          #'closer-mop:set-funcallable-instance-function)
+    (define-set-funcallable-instance-function e3)
     (define-compile e3)
     (define-find-class e2 e3)
     (define-compute-discriminating-function e3)))

@@ -70,6 +70,10 @@
                                  (class-of object)))))
               result))))
 
+(defun define-set-funcallable-instance-function (e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
+        #'closer-mop:set-funcallable-instance-function))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -83,8 +87,7 @@
     (define-classp e2)
     (define-class-of e2)
     (define-find-class e1 e2)
-    (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
-          #'closer-mop:set-funcallable-instance-function)
+    (define-set-funcallable-instance-function e2)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
     (define-compute-applicable-methods e2)
     (enable-method-combination-in-e2 boot)
