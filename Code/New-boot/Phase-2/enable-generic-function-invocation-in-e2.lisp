@@ -51,6 +51,10 @@
         (lambda (name)
           (sicl-genv:find-class name e1))))
 
+(defun define-classp (e2)
+  (load-file "CLOS/classp-defgeneric.lisp" e2)
+  (load-file "CLOS/classp-defmethods.lisp" e2))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -61,8 +65,7 @@
     (setf (sicl-genv:fdefinition 'typep e2)
           (lambda (object type-specifier)
             (sicl-genv:typep object type-specifier e2)))
-    (load-file "CLOS/classp-defgeneric.lisp" e2)
-    (load-file "CLOS/classp-defmethods.lisp" e2)
+    (define-classp e2)
     (setf (sicl-genv:fdefinition 'class-of e2)
           (lambda (object)
             (let ((result (cond ((typep object 'header)

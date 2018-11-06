@@ -83,11 +83,14 @@
           (declare (ignore error-p))
           (sicl-genv:find-class class-name e2))))
 
+(defun define-classp (e3)
+  (load-file "CLOS/classp-defgeneric.lisp" e3)
+  (load-file "CLOS/classp-defmethods.lisp" e3))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
-    (load-file "CLOS/classp-defgeneric.lisp" e3)
-    (load-file "CLOS/classp-defmethods.lisp" e3)
+    (define-classp e3)
     (define-sub-specializer-p boot)
     (define-compute-applicable-methods e3)
     (define-compute-effective-method e3)
