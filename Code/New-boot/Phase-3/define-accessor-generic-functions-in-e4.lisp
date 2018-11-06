@@ -41,8 +41,6 @@
     ;; protocol to verify that the documentation is a string.
     (import-function-from-host 'stringp e3)
     (load-file "CLOS/generic-function-initialization-support.lisp" e3)
-    (setf (sicl-genv:fdefinition 'sicl-clos::invalidate-discriminating-function e3)
-          #'identity)
     (load-file "CLOS/generic-function-initialization-defmethods.lisp" e3)))
 
 (defun load-accessor-defgenerics (e4)
@@ -119,6 +117,7 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (ensure-generic-function-phase-3 boot)
+    (load-file "CLOS/invalidate-discriminating-function.lisp" e3)
     (enable-generic-function-initialization boot)
     (import-function-from-host 'sicl-clos:defgeneric-expander e4)
     (load-file "CLOS/defgeneric-defmacro.lisp" e4)
