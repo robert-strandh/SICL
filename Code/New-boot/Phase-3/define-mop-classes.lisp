@@ -72,8 +72,7 @@
         (constantly nil)))
 
 (defun create-mop-classes (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3))
+  (with-accessors ((e3 sicl-new-boot:e3))
       boot
     (load-file "CLOS/t-defclass.lisp" e3)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e3 t)
