@@ -46,6 +46,11 @@
   (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
   (load-file "CLOS/no-applicable-method.lisp" e2))
 
+(defun define-find-class (e1 e2)
+  (setf (sicl-genv:fdefinition 'find-class e2)
+        (lambda (name)
+          (sicl-genv:find-class name e1))))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -71,9 +76,7 @@
                                 (t
                                  (class-of object)))))
               result)))
-    (setf (sicl-genv:fdefinition 'find-class e2)
-          (lambda (name)
-            (sicl-genv:find-class name e1)))
+    (define-find-class e1 e2)
     (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
           #'closer-mop:set-funcallable-instance-function)
     (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
