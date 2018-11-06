@@ -77,7 +77,6 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4))
       boot
-    (enable-class-initialization-in-e3 e2 e3 e4)
     (load-file "CLOS/t-defclass.lisp" e3)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 t)
           (sicl-genv:find-class 't e3))
