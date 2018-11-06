@@ -92,6 +92,7 @@
     (load-file "CLOS/defclass-defmacro.lisp" e3)
     (import-function-from-host '(setf sicl-genv:special-variable) e3)
     (define-error-function 'slot-value e3)
+    (define-error-function '(setf slot-value) e3)
     (import-functions-from-host
      '(equal set-exclusive-or sicl-genv:find-class)
      e3)
@@ -110,8 +111,6 @@
           (lambda (&rest arguments)
             (declare (ignore arguments))
             (sicl-genv:find-class 'sicl-clos:standard-writer-method e2)))
-    (define-error-function 'slot-value e3)
-    (define-error-function '(setf slot-value) e3)
     (load-file "CLOS/t-defclass.lisp" e3)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 t)
           (sicl-genv:find-class 't e3))
