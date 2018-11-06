@@ -76,7 +76,7 @@
                    (e3 sicl-new-boot:e3))
       boot
     (load-file "CLOS/t-defclass.lisp" e3)
-    (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 t)
+    (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e3 t)
           (sicl-genv:find-class 't e3))
     (load-file "CLOS/function-defclass.lisp" e3)
     (load-file "CLOS/standard-object-defclass.lisp" e3)
