@@ -158,10 +158,10 @@
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
       boot
-    (import-function-from-host 'sicl-clos:defgeneric-expander e3)
-    (load-file "CLOS/defgeneric-defmacro.lisp" e3)
     (ensure-generic-function-phase-2 boot)
     (import-function-from-host 'shared-initialize e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)
     (enable-generic-function-initialization boot)
+    (import-function-from-host 'sicl-clos:defgeneric-expander e3)
+    (load-file "CLOS/defgeneric-defmacro.lisp" e3)
     (load-accessor-defgenerics e3)))
