@@ -65,6 +65,12 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e3)
         (constantly t)))
 
+(defun define-dependent-protocol (e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:map-dependents e3)
+        (constantly nil))
+  (setf (sicl-genv:fdefinition 'sicl-clos:update-dependent e3)
+        (constantly nil)))
+
 (defun create-mop-classes (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
@@ -118,8 +124,7 @@
     ;; FIXME: load files containing the definition instead.
     (setf (sicl-genv:fdefinition 'sicl-clos:add-direct-method e3)
           (constantly nil))
-    (setf (sicl-genv:fdefinition 'sicl-clos:map-dependents e3)
-          (constantly nil))
+    (define-dependent-protocol e3)
     (define-reader/writer-method-class e2 e3)
     (load-file "CLOS/t-defclass.lisp" e3)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e2 t)
