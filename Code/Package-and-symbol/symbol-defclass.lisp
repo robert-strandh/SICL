@@ -3,8 +3,8 @@
 (defclass symbol (t)
   ((%name
     :initarg :name
-    :accessor symbol-name)
+    :reader symbol-name)
    (%package
     :initarg :package
-    :accessor symbol-package))
+    :reader symbol-package))
   (:metaclass built-in-class))
