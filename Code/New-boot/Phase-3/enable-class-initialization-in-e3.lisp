@@ -1,5 +1,65 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
+(defun define-add-remove-direct-subclass (e3)
+  ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
+  ;; class from the list of subclasses of some class.
+  (import-function-from-host 'remove e3)
+  (load-file "CLOS/add-remove-direct-subclass-support.lisp" e3)
+  (load-file "CLOS/add-remove-direct-subclass-defgenerics.lisp" e3)
+  (load-file "CLOS/add-remove-direct-subclass-defmethods.lisp" e3))
+
+(defun define-add-remove-method (e3)
+  (load-file "CLOS/add-remove-method-defgenerics.lisp" e3)
+  ;; MAKE-LIST is called when a method is removed and a new
+  ;; specializer profile must be computed.
+  (import-function-from-host 'make-list e3)
+  ;; FIND-IF is called by ADD-METHOD in order to find and existing
+  ;; method with the same specializers and the same qualifiers, so
+  ;; that that existing method can be removed first.
+  (import-function-from-host 'find-if e3)
+  (load-file-protected "CLOS/add-remove-method-support.lisp" e3)
+  (load-file "CLOS/add-remove-method-defmethods.lisp" e3))
+
+(defun define-add-remove-direct-method (e3)
+  ;; ADJOIN is called by ADD-DIRECT-METHOD.
+  ;; REMOVE is called by REMOVE-DIRECT-METHOD.
+  (import-functions-from-host '(adjoin remove) e3)
+  (load-file "CLOS/add-remove-direct-method-defgenerics.lisp" e3)
+  (load-file "CLOS/add-remove-direct-method-support.lisp" e3)
+  (load-file "CLOS/add-remove-direct-method-defmethods.lisp" e3))
+
+(defun define-reader/writer-method-class (e2 e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:reader-method-class e3)
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
+          (sicl-genv:find-class 'sicl-clos:standard-reader-method e2)))
+  (setf (sicl-genv:fdefinition 'sicl-clos:writer-method-class e3)
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
+          (sicl-genv:find-class 'sicl-clos:standard-writer-method e2))))
+
+(defun define-direct-slot-definition-class (e2 e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:direct-slot-definition-class e3)
+        (lambda (&rest arguments)
+          (declare (ignore arguments))
+          (sicl-genv:find-class 'sicl-clos:standard-direct-slot-definition e2))))
+
+(defun define-find-or-create-generic-function (e3 e4)
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-or-create-generic-function e3)
+        (lambda (name lambda-list)
+          (declare (ignore lambda-list))
+          (sicl-genv:fdefinition name e4))))
+
+(defun define-validate-superclass (e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:validate-superclass e3)
+        (constantly t)))
+
+(defun define-dependent-protocol (e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:map-dependents e3)
+        (constantly nil))
+  (setf (sicl-genv:fdefinition 'sicl-clos:update-dependent e3)
+        (constantly nil)))
+
 (defun define-ensure-class (e3)
   (load-file "CLOS/ensure-class-using-class-support.lisp" e3)
   ;; When we loaded the support code, we defined
