@@ -1,5 +1,22 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
+(defun define-ensure-class (e3)
+  (load-file "CLOS/ensure-class-using-class-support.lisp" e3)
+  ;; When we loaded the support code, we defined
+  ;; FIND-SUPERCLASS-OR-NIL to call FIND-CLASS, but that's wrong
+  ;; during bootstrapping, so we redifine it here.
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-superclass-or-nil e3)
+        (lambda (name)
+          (sicl-genv:find-class name e3)))
+  ;; Uncomment this code once we have the class NULL.
+  ;; (load-file "CLOS/ensure-class-using-class-defgenerics.lisp" e3)
+  ;; (load-file "CLOS/ensure-class-using-class-defmethods.lisp" e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e3)
+        (lambda (&rest arguments)
+          (apply (sicl-genv:fdefinition
+                  'sicl-clos::ensure-class-using-class-null e3)
+                 arguments))))
+
 (defun enable-class-initialization-in-e3 (e2 e3 e4)
   (import-functions-from-host '(sicl-genv:typep) e3)
   (setf (sicl-genv:fdefinition 'typep e3)
@@ -22,21 +39,7 @@
           (setf (sicl-genv:find-class symbol e3) new-class)))
   (define-error-function 'change-class e3)
   (define-error-function 'reinitialize-instance e3)
-  (load-file "CLOS/ensure-class-using-class-support.lisp" e3)
-  ;; When we loaded the support code, we defined
-  ;; FIND-SUPERCLASS-OR-NIL to call FIND-CLASS, but that's wrong
-  ;; during bootstrapping, so we redifine it here.
-  (setf (sicl-genv:fdefinition 'sicl-clos::find-superclass-or-nil e3)
-        (lambda (name)
-          (sicl-genv:find-class name e3)))
-  ;; Uncomment this code once we have the class NULL.
-  ;; (load-file "CLOS/ensure-class-using-class-defgenerics.lisp" e3)
-  ;; (load-file "CLOS/ensure-class-using-class-defmethods.lisp" e3)
-  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e3)
-        (lambda (&rest arguments)
-          (apply (sicl-genv:fdefinition
-                  'sicl-clos::ensure-class-using-class-null e3)
-                 arguments)))
+  (define-ensure-class e3)
   (import-function-from-host 'sicl-clos:defclass-expander e3)
   (load-file "CLOS/defclass-defmacro.lisp" e3)
   (import-function-from-host '(setf sicl-genv:special-variable) e3)
