@@ -67,6 +67,40 @@
           (assert (not (null definition)))
           (cleavir-env:eval definition e2 e2))))
 
+(defun define-ensure-class (e1 e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e2)
+        (lambda (name
+                 &rest keys
+                 &key
+                   direct-default-initargs
+                   direct-slots
+                   direct-superclasses
+                   (metaclass nil metaclass-p)
+                 &allow-other-keys)
+          (let* ((metaclass-name (if metaclass-p metaclass 'standard-class))
+                 (metaclass-class (sicl-genv:find-class metaclass-name e1))
+                 (superclass-names
+                   (if (null direct-superclasses)
+                       (cond ((eq metaclass-name 'standard-class)
+                              '(standard-object))
+                             ((eq metaclass-name
+                                  'sicl-clos:funcallable-standard-class)
+                              '(funcallable-standard-object))
+                             (t '()))
+                       direct-superclasses))
+                 (superclasses (loop for name in superclass-names
+                                     collect (sicl-genv:find-class name e2)))
+                 (remaining-keys (copy-list keys)))
+            (loop while (remf remaining-keys :metaclass))
+            (loop while (remf remaining-keys :direct-superclasses))
+            (setf (sicl-genv:find-class name e2)
+                  (apply #'make-instance metaclass-class
+                         :direct-default-initargs direct-default-initargs
+                         :direct-slots direct-slots
+                         :direct-superclasses superclasses
+                         :name name
+                         remaining-keys))))))
+
 (defun enable-class-initialization-in-e2 (e1 e2 e3)
   (define-validate-superclass e2)
   (define-direct-slot-definition-class e1 e2)
@@ -89,4 +123,5 @@
   (load-file "CLOS/class-initialization-defmethods.lisp" e2)
   (sicl-genv:fmakunbound 'shared-initialize e2)
   (import-function-from-host 'sicl-clos:defclass-expander e2)
-  (load-file "CLOS/defclass-defmacro.lisp" e2))
+  (load-file "CLOS/defclass-defmacro.lisp" e2)
+  (define-ensure-class e1 e2))
