@@ -32,14 +32,6 @@
   (setf (sicl-genv:fdefinition 'make-instance e2)
         (sicl-genv:fdefinition 'make-instance e1)))
 
-(defmethod sicl-genv:typep
-    (object (type-specifier (eql 'class)) (environment environment))
-  t)
-
-(defmethod sicl-genv:typep
-    (object (type-specifier (eql 'generic-function)) (environment environment))
-  t)
-
 ;;; The problem we are solving here is that when we do
 ;;; (CALL-NEXT-METHOD) in the :AROUND method of SHARED-INITIALIZE, we
 ;;; attempt to take the METHOD-FUNCTION of the next method.  But
