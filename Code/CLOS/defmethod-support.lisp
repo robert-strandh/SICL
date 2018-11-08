@@ -80,15 +80,8 @@
           :specializers ,(canonicalize-specializers specializers)
           :documentation ,documentation
           :function
-          ,(make-method-lambda
-            (if (null fun)
-                (class-prototype
-                 (sicl-genv:find-class 'standard-generic-function ct-env))
-                fun)
-            (class-prototype
-             (if (null fun)
-                 (sicl-genv:find-class 'standard-method ct-env)
-                 (generic-function-method-class fun)))
+          ,(create-method-lambda
+            fun
             `(lambda ,lambda-list
                ,@declarations
                ,@forms)
