@@ -8,28 +8,27 @@
      &key
        (environment (sicl-genv:global-environment))
        (generic-function-class
-	(sicl-genv:find-class 'standard-generic-function environment))
+	(find-metaclass 'standard-generic-function t environment))
        (method-class nil method-class-p)
      &allow-other-keys)
   (declare (ignore generic-function))
   (cond ((symbolp generic-function-class)
-	 (let ((class (sicl-genv:find-class
-		       generic-function-class environment)))
+	 (let ((class (find-metaclass generic-function-class t environment)))
 	   (when (null class)
 	     (error "no such generic-function-class ~s"
 		    generic-function-class))
 	   (setf generic-function-class class)))
-	((typep generic-function-class 'class)
+	((subtypep generic-function-class 'generic-function)
 	 nil)
 	(t
 	 (error "generic function class must be a class or a name")))
   (when method-class-p
     (cond ((symbolp method-class)
-	   (let ((class (sicl-genv:find-class method-class environment)))
+	   (let ((class (find-metaclass method-class t environment)))
 	     (when (null class)
 	       (error "no such method class ~s" method-class))
 	     (setf method-class class)))
-	  ((typep method-class 'class)
+	  ((subtypep method-class 'method)
 	   nil)
 	  (t
 	   (error "method class must be a class or a name"))))
@@ -55,18 +54,17 @@
      &key
        (environment (sicl-genv:global-environment))
        (generic-function-class
-	(sicl-genv:find-class 'standard-generic-function environment))
+	(find-metaclass 'standard-generic-function t environment))
        (method-class nil method-class-p)
      &allow-other-keys)
   (declare (ignore function-name))
   (cond ((symbolp generic-function-class)
-	 (let ((class (sicl-genv:find-class
-		       generic-function-class environment)))
+	 (let ((class (find-metaclass generic-function-class t environment)))
 	   (when (null class)
 	     (error "no such generic-function-class ~s"
 		    generic-function-class))
 	   (setf generic-function-class class)))
-	((typep generic-function-class 'class)
+	((subtypep generic-function-class 'generic-function)
 	 nil)
 	(t
 	 (error "generic function class must be a class or a name")))
@@ -74,11 +72,11 @@
     (error "classes don't agree"))
   (when method-class-p
     (cond ((symbolp method-class)
-	   (let ((class (sicl-genv:find-class method-class environment)))
+	   (let ((class (find-metaclass method-class t environment)))
 	     (when (null class)
 	       (error "no such method class ~s" method-class))
 	     (setf method-class class)))
-	  ((typep method-class 'class)
+	  ((subtypep method-class 'method)
 	   nil)
 	  (t
 	   (error "method class must be a class or a name"))))
