@@ -52,6 +52,7 @@
            #:symbol-plist
            #:class-of
            #:typep
+           #:subtypep
            )
   (:export
    #:environment
@@ -100,6 +101,7 @@
    #:class-of
    #:typep
    #:typep-compound
+   #:subtypep
    ))
 
 (defpackage #:sicl-standard-environment-functions
