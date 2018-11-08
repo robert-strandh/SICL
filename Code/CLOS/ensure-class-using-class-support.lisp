@@ -58,7 +58,7 @@
 ;;; whether this argument is the empty list, or not given at all.
 
 (defun ensure-class-using-class-null
-    (name
+    (class name
      &rest keys
      &key
        direct-default-initargs
@@ -66,6 +66,7 @@
        direct-superclasses
        (metaclass nil metaclass-p)
      &allow-other-keys)
+  (declare (ignore class))
   (unless metaclass-p
     (setf metaclass 'standard-class))
   (setf direct-superclasses

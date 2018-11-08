@@ -14,7 +14,7 @@
                    direct-slots
                    direct-superclasses
                    metaclass))
-  (apply #'ensure-class-using-class-null name keys))
+  (apply #'ensure-class-using-class-null class name keys))
 
 (defmethod ensure-class-using-class
     ((class class)
