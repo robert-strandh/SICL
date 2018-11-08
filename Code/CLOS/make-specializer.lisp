@@ -8,7 +8,7 @@
 (defun make-specializer (specializer)
   (let ((environment (sicl-genv:global-environment)))
     (cond ((symbolp specializer)
-           (sicl-genv:find-class specializer environment))
+           (find-metaclass specializer environment))
           ((sicl-genv:typep specializer 'specializer environment)
            specializer)
           (t
