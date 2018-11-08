@@ -830,3 +830,13 @@
 
 (defgeneric typep-compound
     (object atomic-type-specifier subsidiary-type-information environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function SUBTYPEP.
+;;;
+;;; This function provides the implementation of the standard function
+;;; TYPEP.  It can also be called directly when the environment is
+;;; known.
+
+(defgeneric subtypep (type-specifier-1 type-specifier-2 environment))
