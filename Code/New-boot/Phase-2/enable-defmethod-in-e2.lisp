@@ -38,6 +38,12 @@
           (declare (ignore function-or-nil environment))
           (sicl-clos::make-method-lambda-default nil nil lambda-expression nil))))
 
+(defun define-find-metaclass (environment)
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-metaclass environment)
+        (lambda (symbol &optional errorp env)
+          (declare (ignore errorp env))
+          (sicl-genv:find-class symbol environment))))
+
 (defun enable-defmethod-in-e2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -78,6 +84,7 @@
      '(add-method
        copy-list)
      e1)
+    (define-find-metaclass e1)
     (load-file "CLOS/make-specializer.lisp" e1)
     (load-file "CLOS/make-method-for-generic-function.lisp" e1)
     (load-file "CLOS/ensure-method.lisp" e1)
