@@ -75,7 +75,7 @@
         (lambda (&rest arguments)
           (apply (sicl-genv:fdefinition
                   'sicl-clos::ensure-class-using-class-null e3)
-                 arguments))))
+                 nil arguments))))
 
 (defun enable-class-initialization-in-e3 (e2 e3 e4)
   (import-functions-from-host '(sicl-genv:typep) e3)
