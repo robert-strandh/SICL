@@ -51,6 +51,8 @@
     (import-functions-from-host '(copy-list) e3)
     (setf (sicl-genv:fdefinition 'temp e2)
           (sicl-genv:fdefinition 'sicl-clos::ensure-method e2))
+    (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e3)
+          (sicl-genv:fdefinition 'sicl-clos::method-function e3))
     (load-file "CLOS/ensure-method.lisp" e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method e3)
           (sicl-genv:fdefinition 'sicl-clos::ensure-method e2))
