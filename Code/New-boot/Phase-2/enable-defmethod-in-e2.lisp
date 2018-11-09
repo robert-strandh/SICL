@@ -32,6 +32,12 @@
                    (error "Specializer must be symbol or specializer metaobject: ~s"
                           specializer)))))))
 
+(defun define-create-method-lambda (env)
+  (setf (sicl-genv:fdefinition 'sicl-clos::create-method-lambda env)
+        (lambda (function-or-nil lambda-expression environment)
+          (declare (ignore function-or-nil environment))
+          (sicl-clos::make-method-lambda-default nil nil lambda-expression nil))))
+
 (defun enable-defmethod-in-e2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -64,6 +70,7 @@
     ;; 1+ is called by PARSE-METHOD to obtain an interval designator
     ;; for SUBSEQ in order to parse the method body.
     (import-function-from-host '1+ e1)
+    (define-create-method-lambda e1)
     (load-file "CLOS/defmethod-support.lisp" e1)
     (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e2)
           (sicl-genv:fdefinition 'sicl-clos:defmethod-expander e1))
