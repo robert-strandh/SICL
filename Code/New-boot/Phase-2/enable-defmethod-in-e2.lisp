@@ -87,6 +87,8 @@
     (define-find-metaclass e1)
     (load-file "CLOS/make-specializer.lisp" e1)
     (load-file "CLOS/make-method-for-generic-function.lisp" e1)
+    (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e2)
+          (sicl-genv:fdefinition 'sicl-clos::method-function e2))
     (load-file "CLOS/ensure-method.lisp" e1)
     (setf (sicl-genv:fdefinition 'sicl-clos:ensure-method e2)
           (sicl-genv:fdefinition 'sicl-clos:ensure-method e1))
