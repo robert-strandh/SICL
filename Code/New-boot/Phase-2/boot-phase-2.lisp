@@ -11,11 +11,6 @@
 ;;; host MAKE-INSTANCE always with a class metaobject and never with a
 ;;; symbol.  If our version receives a symbol, it looks up the class
 ;;; metaobject in environment E1 before calling the host version.
-;;;
-;;; MAKE-INSTANCE is called by DEFINE-METHOD-COMBINATION to create a
-;;; method-combination template, and by FIND-METHOD-COMBINATION to
-;;; create a method-combination variant.  In phase 2, these are both
-;;; defined in E1.
 (defun define-make-instance-in-e1 (e1)
   (setf (sicl-genv:fdefinition 'make-instance e1)
         (lambda (class-or-name &rest args)
@@ -30,7 +25,12 @@
 ;;; function in E2.
 (defun define-make-instance-in-e2 (e1 e2)
   (setf (sicl-genv:fdefinition 'make-instance e2)
-        (sicl-genv:fdefinition 'make-instance e1)))
+        (lambda (class-or-name &rest args)
+          (let* ((class (if (symbolp class-or-name)
+                            (sicl-genv:find-class class-or-name e1)
+                            class-or-name))
+                 (result (apply #'make-instance class args)))
+            result))))
 
 ;;; The problem we are solving here is that when we do
 ;;; (CALL-NEXT-METHOD) in the :AROUND method of SHARED-INITIALIZE, we
