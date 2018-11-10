@@ -65,10 +65,7 @@
            (binding (if fboundp
                         (sicl-genv:fdefinition function-name ct-env)
                         nil))
-           (fun (if (and binding
-                         (sicl-genv:typep binding 'generic-function ct-env))
-                    binding
-                    nil))
+           (fun (if binding binding nil))
            (generic-function-var (gensym)))
       `(let* ((rt-env (load-time-value (sicl-genv:global-environment)))
               (,generic-function-var
