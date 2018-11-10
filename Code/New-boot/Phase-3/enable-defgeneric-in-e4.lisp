@@ -5,7 +5,13 @@
                    (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (let* ((gf-class-name 'standard-generic-function)
-           (make-instance (sicl-genv:fdefinition 'make-instance e3)))
+           (method-class-name 'standard-method)
+           (method-class (sicl-genv:find-class method-class-name e2))
+           (make-instance (sicl-genv:fdefinition 'make-instance e3))
+           (method-combination
+             (funcall (sicl-genv:fdefinition
+                       'sicl-method-combination:find-method-combination e3)
+                      'standard '() e3)))
       (setf (sicl-genv:fdefinition 'ensure-generic-function e4)
             (lambda (function-name &rest arguments
                      &key environment
@@ -18,10 +24,8 @@
                           (apply make-instance
                                  gf-class-name
                                  :name function-name
-                                 :method-combination
-                                 (funcall (sicl-genv:fdefinition
-                                           'sicl-method-combination:find-method-combination e3)
-                                          'standard '() e3)
+                                 :method-class method-class
+                                 :method-combination method-combination
                                  args)))))))))
 
 

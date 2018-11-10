@@ -5,18 +5,16 @@
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
       boot
-    (let* ((class-env (sicl-new-boot:e1 boot))
-           (gf-class-name 'standard-generic-function)
-           (gf-class (sicl-genv:find-class gf-class-name class-env))
+    (let* ((gf-class-name 'standard-generic-function)
+           (gf-class (sicl-genv:find-class gf-class-name e1))
            (method-class-name 'standard-method)
-           (method-class (sicl-genv:find-class method-class-name class-env))
-           (target-env e3)
+           (method-class (sicl-genv:find-class method-class-name e1))
            (method-combination
              (funcall (sicl-genv:fdefinition
                        'sicl-method-combination:find-method-combination
                        e2)
                       'standard '() e2)))
-      (setf (sicl-genv:fdefinition 'ensure-generic-function target-env)
+      (setf (sicl-genv:fdefinition 'ensure-generic-function e3)
             (lambda (function-name &rest arguments
                      &key environment
                      &allow-other-keys)
