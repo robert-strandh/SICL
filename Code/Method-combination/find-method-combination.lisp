@@ -10,8 +10,6 @@
             do (when (equal (sicl-clos:variant-signature variant)
                             variant-signature)
                  (return-from find-method-combination variant)))
-      (let ((new-variant (make-instance 'method-combination
-                           :variant-signature variant-signature
-                           :template template)))
+      (let ((new-variant (make-method-combination variant-signature template)))
         (push new-variant (variants template))
         new-variant))))
