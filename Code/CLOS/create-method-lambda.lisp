@@ -1,15 +1,18 @@
 (cl:in-package #:sicl-clos)
 
 (defun create-method-lambda
-    (function-or-nil lambda-expression environment)
-  (make-method-lambda
-   (if (null function-or-nil)
-       (class-prototype
-        (sicl-genv:find-class 'standard-generic-function ct-env))
-       function-or-nil)
-   (class-prototype
-    (if (null function-or-nil)
-        (sicl-genv:find-class 'standard-method ct-env)
-        (generic-function-method-class fun)))
-   lambda-expression
-   environment))
+    (possible-generic-function lambda-expression environment)
+  (let ((generic-function-p (sicl-genv:typep possible-generic-function
+                                             'generic-function
+                                             environment)))
+    (make-method-lambda
+     (if generic-function-p
+         possible-generic-function
+         (class-prototype
+          (sicl-genv:find-class 'standard-generic-function environment)))
+     (class-prototype
+      (if generic-function-p
+          (generic-function-method-class possible-gener)
+          (sicl-genv:find-class 'standard-method ct-env)))
+     lambda-expression
+     environment)))
