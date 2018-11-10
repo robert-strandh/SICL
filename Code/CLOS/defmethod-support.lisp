@@ -70,7 +70,7 @@
       `(let* ((rt-env (load-time-value (sicl-genv:global-environment)))
               (,generic-function-var
                 (ensure-generic-function ',function-name :environment rt-env)))
-         (ensure-method
+         (ensure-method-on-generic-function
           ,generic-function-var
           :lambda-list ',lambda-list
           :qualifiers ',qualifiers
