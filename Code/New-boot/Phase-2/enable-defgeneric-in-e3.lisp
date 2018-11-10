@@ -9,10 +9,10 @@
            (gf-class (sicl-genv:find-class gf-class-name e1))
            (method-class-name 'standard-method)
            (method-class (sicl-genv:find-class method-class-name e1))
+           (make-instance (sicl-genv:fdefinition 'make-instance e2))
            (method-combination
              (funcall (sicl-genv:fdefinition
-                       'sicl-method-combination:find-method-combination
-                       e2)
+                       'sicl-method-combination:find-method-combination e2)
                       'standard '() e2)))
       (setf (sicl-genv:fdefinition 'ensure-generic-function e3)
             (lambda (function-name &rest arguments
@@ -23,7 +23,8 @@
                 (if (sicl-genv:fboundp function-name environment)
                     (sicl-genv:fdefinition function-name environment)
                     (setf (sicl-genv:fdefinition function-name environment)
-                          (apply #'make-instance gf-class
+                          (apply make-instance
+                                 gf-class
                                  :name function-name
                                  :method-class method-class
                                  :method-combination method-combination

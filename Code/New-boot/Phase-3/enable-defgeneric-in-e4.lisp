@@ -3,8 +3,10 @@
 (defun ensure-generic-function-phase-3 (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)) boot
+                   (e4 sicl-new-boot:e4))
+      boot
     (let* ((gf-class-name 'standard-generic-function)
+           (gf-class (sicl-genv:find-class gf-class-name e2))
            (method-class-name 'standard-method)
            (method-class (sicl-genv:find-class method-class-name e2))
            (make-instance (sicl-genv:fdefinition 'make-instance e3))
@@ -22,7 +24,7 @@
                     (sicl-genv:fdefinition function-name environment)
                     (setf (sicl-genv:fdefinition function-name environment)
                           (apply make-instance
-                                 gf-class-name
+                                 gf-class
                                  :name function-name
                                  :method-class method-class
                                  :method-combination method-combination
