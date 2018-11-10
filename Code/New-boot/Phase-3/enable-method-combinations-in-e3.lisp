@@ -12,6 +12,7 @@
     ;; EQUAL is called by FIND-METHOD-COMBINATION in order to determine
     ;; equality between variant signatures.
     (import-function-from-host 'equal e3)
+    (load-file "Method-combination/make-method-combination-defun.lisp" e3)
     (load-file "Method-combination/find-method-combination.lisp" e3)
     (import-function-from-host
      'sicl-method-combination::define-method-combination-expander e3)
