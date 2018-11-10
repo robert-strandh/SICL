@@ -3,7 +3,7 @@
 ;;; This function is used by ENSURE-METHOD to turn a specializer
 ;;; designator into a specializer metaobject.  A specializer
 ;;; designator is either a specializer, denoting itself, or a symbol
-;;; denoting a class with that name as indicated by FIND-CLASS.
+;;; denoting a class with that name.
 
 (defun make-specializer (specializer)
   (let ((environment (sicl-genv:global-environment)))
