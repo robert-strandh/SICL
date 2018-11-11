@@ -32,9 +32,9 @@
 
 (defun define-create-method-lambda (env)
   (setf (sicl-genv:fdefinition 'sicl-clos::create-method-lambda env)
-        (lambda (function-or-nil lambda-expression environment)
-          (declare (ignore function-or-nil environment))
-          (sicl-clos::make-method-lambda-default nil nil lambda-expression nil))))
+        (lambda (function lambda-expression environment)
+          (sicl-clos::make-method-lambda-default
+           function nil lambda-expression environment))))
 
 (defun enable-defmethod-in-e2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)

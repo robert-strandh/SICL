@@ -10,6 +10,12 @@
                 (t
                  specializer)))))
 
+(defun define-create-method-lambda (e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos::create-method-lambda e3)
+        (lambda (function lambda-expression environment)
+          (sicl-clos::make-method-lambda-default
+           function nil lambda-expression environment))))
+
 (defun enable-defmethod-in-e3 (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
@@ -27,10 +33,7 @@
     (load-file "CLOS/ensure-method.lisp" e2)
     (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method e3)
           (sicl-genv:fdefinition 'sicl-clos::ensure-method e2))
-    (setf (sicl-genv:fdefinition 'sicl-clos::create-method-lambda e3)
-          (lambda (function lambda-expression environment)
-            ( sicl-clos::make-method-lambda-default
-              function nil lambda-expression environment)))
+    (define-create-method-lambda e3)
     (import-functions-from-host
      '(mapcar subseq 1+ elt position-if
        sicl-genv:fdefinition sicl-genv:fboundp
