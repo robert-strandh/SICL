@@ -17,20 +17,18 @@
           (declare (ignore environment))
           (sicl-genv:find-class class-name e1))))
 
-(defun define-make-specializer-in-e1 (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)) boot
-    (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e1)
-          (lambda (specializer)
-            (cond ((eq specializer 't)
-                   (find-class 't))
-                  ((symbolp specializer)
-                   (sicl-genv:find-class specializer e1))
-                  ((sicl-genv:typep specializer 'specializer e1)
-                   specializer)
-                  (t
-                   (error "Specializer must be symbol or specializer metaobject: ~s"
-                          specializer)))))))
+(defun define-make-specializer-in-e1 (e1)
+  (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e1)
+        (lambda (specializer)
+          (cond ((eq specializer 't)
+                 (find-class 't))
+                ((symbolp specializer)
+                 (sicl-genv:find-class specializer e1))
+                ((sicl-genv:typep specializer 'specializer e1)
+                 specializer)
+                (t
+                 (error "Specializer must be symbol or specializer metaobject: ~s"
+                        specializer))))))
 
 (defun define-create-method-lambda (env)
   (setf (sicl-genv:fdefinition 'sicl-clos::create-method-lambda env)
@@ -92,7 +90,7 @@
     (setf (sicl-genv:fdefinition 'sicl-clos::add-method-to-generic-function e1)
           (sicl-genv:fdefinition 'sicl-clos::add-method e1))
     (load-file "CLOS/ensure-method.lisp" e1)
-    (define-make-specializer-in-e1 boot)
+    (define-make-specializer-in-e1 e1)
     (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method-on-generic-function e2)
           (sicl-genv:fdefinition 'sicl-clos::ensure-method e1))
     (load-file "CLOS/defmethod-defmacro.lisp" e2)))
