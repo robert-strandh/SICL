@@ -5,18 +5,6 @@
 ;;; functions we create with DEFGENERIC.  That is the purpose of this
 ;;; function.
 
-;;; When we need to find a class in E2, like for creating a method
-;;; metaobject, or for finding a specializer for some method, we need
-;;; to find a host class, and the host classes are present in E1, so
-;;; we need a special version of SICL-GENV:FIND-CLASS in E2 that
-;;; ignores its ENVIRONMENT parameter and looks up the class in E1
-;;; instead.
-(defun define-find-class-in-e2 (e1 e2)
-  (setf (sicl-genv:fdefinition 'sicl-genv:find-class e2)
-        (lambda (class-name environment)
-          (declare (ignore environment))
-          (sicl-genv:find-class class-name e1))))
-
 (defun define-find-specializer-class-t-in-e2 (e1 e2)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e2)
         (lambda () (sicl-genv:find-class 't e1))))
@@ -43,9 +31,6 @@
 (defun enable-defmethod-in-e2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
-    ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
-    ;; specializer when a symbol is given.
-    (define-find-class-in-e2 e1 e2)
     (define-find-specializer-class-t-in-e2 e1 e2)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e1)
           #'sicl-clos::make-method-lambda-default)
