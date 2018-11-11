@@ -36,12 +36,6 @@
           (declare (ignore function-or-nil environment))
           (sicl-clos::make-method-lambda-default nil nil lambda-expression nil))))
 
-(defun define-find-metaclass (environment)
-  (setf (sicl-genv:fdefinition 'sicl-clos::find-metaclass environment)
-        (lambda (symbol &optional errorp env)
-          (declare (ignore errorp env))
-          (sicl-genv:find-class symbol environment))))
-
 (defun enable-defmethod-in-e2 (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -82,15 +76,13 @@
      '(add-method
        copy-list)
      e1)
-    (define-find-metaclass e1)
-    (load-file "CLOS/make-specializer.lisp" e1)
     (load-file "CLOS/make-method-for-generic-function.lisp" e1)
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e2)
           (sicl-genv:fdefinition 'sicl-clos::method-function e2))
     (setf (sicl-genv:fdefinition 'sicl-clos::add-method-to-generic-function e1)
           (sicl-genv:fdefinition 'sicl-clos::add-method e1))
-    (load-file "CLOS/ensure-method.lisp" e1)
     (define-make-specializer-in-e1 e1)
+    (load-file "CLOS/ensure-method.lisp" e1)
     (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method-on-generic-function e2)
           (sicl-genv:fdefinition 'sicl-clos::ensure-method e1))
     (load-file "CLOS/defmethod-defmacro.lisp" e2)))
