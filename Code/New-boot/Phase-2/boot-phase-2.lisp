@@ -58,6 +58,8 @@
     (define-make-instance-in-e2 e1 e2)
     (enable-defmethod-in-e2 boot)
     (define-method-on-method-function e2)
+    (enable-allocate-instance-in-e2 e2)
+    (enable-generic-function-invocation boot)
     (define-accessor-generic-functions boot)
     (enable-class-initialization-in-e2 e1 e2 e3)
     (create-mop-classes boot)))
