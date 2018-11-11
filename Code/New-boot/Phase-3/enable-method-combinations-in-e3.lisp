@@ -28,4 +28,3 @@
     (load-file "CLOS/standard-method-combination.lisp" e3)
     (load-file "CLOS/find-method-combination-defgenerics.lisp" e3)
     (load-file "CLOS/find-method-combination-defmethods.lisp" e3)))
-
