@@ -48,7 +48,7 @@
 
 (defun applicable (class-cache profile method)
   (let* ((env (sicl-genv:global-environment))
-         (class-t (sicl-genv:find-class 't env))
+         (class-t (find-specializer-class-t))
          (classes (loop with remaining = class-cache
                         for p in profile
                         collect (if p (pop remaining) class-t))))
