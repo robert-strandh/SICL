@@ -12,7 +12,7 @@
 
 (defun compute-specializer-profile (existing-profile specializers)
   (loop with environment = (sicl-genv:global-environment)
-        with class-t = (sicl-genv:find-class 't environment)
+        with class-t = (find-specializer-class-t)
         for specializer in specializers
         for p in existing-profile
         collect (if (eq specializer class-t) p t)))
