@@ -17,6 +17,10 @@
           (declare (ignore environment))
           (sicl-genv:find-class class-name e1))))
 
+(defun define-find-specializer-class-t-in-e2 (e1 e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e2)
+        (lambda () (sicl-genv:find-class 't e1))))
+
 (defun define-make-specializer-in-e1 (e1)
   (setf (sicl-genv:fdefinition 'sicl-clos::make-specializer e1)
         (lambda (specializer)
@@ -42,6 +46,7 @@
     ;; FIND-CLASS is used by ENSURE-METHOD to look up a class as a
     ;; specializer when a symbol is given.
     (define-find-class-in-e2 e1 e2)
+    (define-find-specializer-class-t-in-e2 e1 e2)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e1)
           #'sicl-clos::make-method-lambda-default)
     (setf (sicl-genv:fdefinition 'ensure-generic-function e1)

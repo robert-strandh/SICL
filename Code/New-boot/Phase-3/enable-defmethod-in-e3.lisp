@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
+(defun define-find-specializer-class-t-in-e3 (e3)
+  (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e3)
+        (lambda () (sicl-genv:find-class 't e3))))
+
 ;;; The specializers of the generic functions in E3 are the classes of
 ;;; the instances in E3, so they are the classes in E2.
 (defun define-make-specializer (e2)
@@ -19,6 +23,7 @@
 (defun enable-defmethod-in-e3 (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
+    (define-find-specializer-class-t-in-e3 e3)
     (setf (sicl-genv:fdefinition 'sicl-clos:method-function e3)
           (sicl-genv:fdefinition 'sicl-clos:method-function e2))
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e3)
