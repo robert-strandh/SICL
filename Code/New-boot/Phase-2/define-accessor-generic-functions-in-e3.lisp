@@ -93,12 +93,12 @@
   (load-file "Package-and-symbol/symbol-package-defgeneric.lisp" e3))
 
 (defun define-accessor-generic-functions (boot)
-  (enable-allocate-instance boot)
-  (enable-generic-function-invocation boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3))
       boot
+    (enable-allocate-instance-in-e2 e2)
+    (enable-generic-function-invocation boot)
     (enable-defgeneric-in-e3 boot)
     (import-function-from-host 'shared-initialize e2)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e2)
