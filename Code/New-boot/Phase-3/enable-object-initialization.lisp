@@ -30,13 +30,10 @@
     (load-file "CLOS/slot-value-etc-defmethods.lisp" e2)
     (load-file "CLOS/instance-slots-offset-defconstant.lisp" e2)
     (load-file "CLOS/shared-initialize-support.lisp" e2)
-    ;; The version of SHARED-INITIALIZE-DEFAULT that was defined when
-    ;; we loaded the previous file has two problems.  One, it is
-    ;; defined in E2, but we need for it to be defined in E3 so that
-    ;; it is called from the default method on SHARED-INITIALIZE.  The
-    ;; other is that it uses the version of CLASS-OF in E2, but we
-    ;; need for it to use the definition of CLASS-OF in E3.
-    ;; Therefore, we define a special version of it here.
+    ;; Instead of loading the file containing the definition of
+    ;; SHARED-INITIALIZE-DEFAULT, we define our own version here
+    ;; so that we can have it call the main workhorse function
+    ;; SHARED-INITIALIZE-DEFAULT-USING-CLASS-AND-SLOTS in E2.
     (setf (sicl-genv:fdefinition 'sicl-clos::shared-initialize-default e3)
           (lambda (instance slot-names &rest initargs)
             (let* ((class-of (sicl-genv:fdefinition 'class-of e3))
