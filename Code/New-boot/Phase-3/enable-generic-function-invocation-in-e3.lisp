@@ -40,8 +40,7 @@
   (import-functions-from-host '(list* car cadr caddr cdddr find subseq) e3)
   (load-file "CLOS/compute-discriminating-function-support.lisp" e3)
   (import-functions-from-host
-   '(assoc
-     sicl-clos::add-path
+   '(sicl-clos::add-path
      sicl-clos::compute-discriminating-tagbody
      sicl-clos::extract-transition-information
      sicl-clos::make-automaton)
@@ -52,6 +51,9 @@
   ;; NTH is called by COMPUTE-DISCRIMINATING-FUNCTION in order to
   ;; traverse the parameters that are specialized upon.
   (import-function-from-host 'nth e3)
+  ;; ASSOC is used by COMPUTE-DISCRIMINATING-FUNCTION in order to
+  ;; build a dictionary mapping effective-method functions to forms.
+  (import-function-from-host 'assoc e3)
   (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
 
