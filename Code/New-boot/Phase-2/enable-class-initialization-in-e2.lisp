@@ -121,7 +121,6 @@
   (import-function-from-host 'sicl-genv:typep e2)
   (load-file "CLOS/class-initialization-support.lisp" e2)
   (load-file "CLOS/class-initialization-defmethods.lisp" e2)
-  (sicl-genv:fmakunbound 'shared-initialize e2)
   (import-function-from-host 'sicl-clos:defclass-expander e2)
   (load-file "CLOS/defclass-defmacro.lisp" e2)
   (define-ensure-class e1 e2))
