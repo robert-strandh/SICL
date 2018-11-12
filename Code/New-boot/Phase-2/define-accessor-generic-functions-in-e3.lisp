@@ -1,9 +1,5 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Creating class accessor generic functions.
-
 (defun enable-generic-function-initialization (boot)
   (with-accessors ((e2 sicl-new-boot:e2)) boot
     (import-functions-from-host
