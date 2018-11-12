@@ -35,9 +35,3 @@
   (setf (standard-instance-access instance +instance-slots-offset+)
         slots)
   instance)
-
-(defun shared-initialize-default (instance slot-names &rest initargs)
-  (let* ((class (class-of instance))
-         (slots (class-slots class)))
-    (apply #'shared-initialize-default-using-class-and-slots
-           instance slot-names class slots initargs)))
