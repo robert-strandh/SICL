@@ -29,16 +29,6 @@
   (load-file "CLOS/compute-effective-method-support-c.lisp" e3)
   (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e3))
 
-(defun define-general-instance-access (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
-    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3)
-          (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2))
-    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e3)
-          (sicl-genv:fdefinition 'sicl-clos::general-instance-access e2))
-    (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e3)
-          (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e2))))
-
 (defun define-compute-discriminating-function (e3)
   (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e3)
   ;; LIST* is called in order to make a call cache.  CAR, CADR,
@@ -64,6 +54,16 @@
   (import-function-from-host 'nth e3)
   (load-file "CLOS/compute-discriminating-function-support-c.lisp" e3)
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
+
+(defun define-general-instance-access (boot)
+  (with-accessors ((e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)) boot
+    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3)
+          (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2))
+    (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e3)
+          (sicl-genv:fdefinition 'sicl-clos::general-instance-access e2))
+    (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e3)
+          (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e2))))
 
 (defun define-compile (e3)
     (setf (sicl-genv:fdefinition 'compile e3)

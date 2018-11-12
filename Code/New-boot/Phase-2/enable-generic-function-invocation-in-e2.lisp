@@ -12,6 +12,11 @@
   (load-file "CLOS/compute-applicable-methods-defgenerics.lisp" e2)
   (load-file "CLOS/compute-applicable-methods-defmethods.lisp" e2))
 
+(defun define-compute-effective-method (e2)
+  (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
+  (load-file "CLOS/compute-effective-method-support-c.lisp" e2)
+  (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e2))
+
 (defun define-compute-discriminating-function (e2)
   (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
   ;; LIST* is called in order to make a call cache.  CAR, CADR,
@@ -36,11 +41,6 @@
   (import-function-from-host 'nth e2)
   (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2))
-
-(defun define-compute-effective-method (e2)
-  (load-file "CLOS/compute-effective-method-defgenerics.lisp" e2)
-  (load-file "CLOS/compute-effective-method-support-c.lisp" e2)
-  (load-file "CLOS/compute-effective-method-defmethods-b.lisp" e2))
 
 (defun define-no-applicable-method (e2)
   (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
