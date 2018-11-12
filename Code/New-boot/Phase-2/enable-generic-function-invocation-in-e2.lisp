@@ -39,6 +39,9 @@
   ;; NTH is called by COMPUTE-DISCRIMINATING-FUNCTION in order to
   ;; traverse the parameters that are specialized upon.
   (import-function-from-host 'nth e2)
+  ;; ASSOC is used by COMPUTE-DISCRIMINATING-FUNCTION in order to
+  ;; build a dictionary mapping effective-method functions to forms.
+  (import-function-from-host 'assoc e2)
   (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2))
 

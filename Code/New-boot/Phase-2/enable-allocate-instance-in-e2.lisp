@@ -18,7 +18,7 @@
         (lambda (value object location)
           (setf (aref (slot-value object '%rack) location) value)))
   (import-functions-from-host
-   '((setf sicl-genv:constant-variable) sort assoc every
+   '((setf sicl-genv:constant-variable) sort every
      mapc 1+ 1- subseq butlast position identity nthcdr equal
      remove-if-not mapcar reverse find compile)
    e2)
