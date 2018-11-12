@@ -91,7 +91,8 @@
 (defun define-accessor-generic-functions (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)) boot
+                   (e4 sicl-new-boot:e4))
+      boot
     (enable-defgeneric-in-e4 boot)
     (load-file "CLOS/invalidate-discriminating-function.lisp" e3)
     (enable-generic-function-initialization boot)
