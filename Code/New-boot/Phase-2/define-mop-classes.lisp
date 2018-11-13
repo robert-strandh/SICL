@@ -41,4 +41,5 @@
     (load-file "Arithmetic/number-defclass.lisp" e2)
     (load-file "Arithmetic/real-defclass.lisp" e2)
     (load-file "Arithmetic/rational-defclass.lisp" e2)
-    (load-file "Arithmetic/integer-defclass.lisp" e2)))
+    (load-file "Arithmetic/integer-defclass.lisp" e2)
+    (load-file "Arithmetic/fixnum-defclass.lisp" e2)))
