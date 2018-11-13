@@ -89,8 +89,7 @@
   (load-file "Package-and-symbol/symbol-package-defgeneric.lisp" e4))
 
 (defun define-accessor-generic-functions (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)
+  (with-accessors ((e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4))
       boot
     (enable-defgeneric-in-e4 boot)
