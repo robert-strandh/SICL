@@ -19,8 +19,6 @@
 ;;;;
 ;;;;     - It does not have a single predecessor.
 ;;;;
-;;;;     - It has an UNWIND-INSTRUCTION as its predecessor.
-;;;;
 ;;;;     - It has a predecessor with more than one successor.
 ;;;;
 ;;;;     Every leader defines exactly one basic block.
@@ -38,9 +36,7 @@
      (lambda (instruction owner)
        (let ((preds (cleavir-ir:predecessors instruction)))
 	 (when (or (/= (length preds) 1)
-		   (/= (length (cleavir-ir:successors (first preds))) 1)
-		   (typep (first preds)
-			  'cleavir-ir:unwind-instruction))
+		   (/= (length (cleavir-ir:successors (first preds))) 1))
 	   (setf (gethash instruction leaders)
                  (make-instance 'basic-block
                                 :owner owner
