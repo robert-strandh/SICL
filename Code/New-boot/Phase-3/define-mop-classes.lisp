@@ -40,4 +40,5 @@
     (load-file "Package-and-symbol/symbol-defclass.lisp" e3)
     (load-file "Arithmetic/number-defclass.lisp" e3)
     (load-file "Arithmetic/real-defclass.lisp" e3)
-    (load-file "Arithmetic/rational-defclass.lisp" e3)))
+    (load-file "Arithmetic/rational-defclass.lisp" e3)
+    (load-file "Arithmetic/integer-defclass.lisp" e3)))
