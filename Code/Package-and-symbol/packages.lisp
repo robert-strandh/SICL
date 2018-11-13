@@ -4,20 +4,21 @@
   (:use #:common-lisp)
   (:shadow
    .
-   #-sicl (#:package
-           #:packagep
-           #:*package*
-           #:package-name
-           #:package-shadowing-symbols
-           #:package-use-list
-           #:package-used-by-list
-           #:package-error
-           #:make-package
-           #:intern
-           #:find-symbol
-           #:export
-           #:do-symbols
-           #:do-external-symbols))
+   #+sicl-host-test (#:package
+                     #:packagep
+                     #:*package*
+                     #:package-name
+                     #:package-shadowing-symbols
+                     #:package-use-list
+                     #:package-used-by-list
+                     #:package-error
+                     #:make-package
+                     #:intern
+                     #:find-symbol
+                     #:export
+                     #:do-symbols
+                     #:do-external-symbols)
+   #-sicl-host-test ())
   (:export #:package
            #:export
            #:find-symbol
@@ -47,7 +48,8 @@
   (:shadow
    #:package
    .
-   #-sicl (#:symbol))
+   #+sicl-host-test (#:symbol)
+   #-sicl-host-test ())
   (:export #:symbol
            #:symbolp
            #:keyword
