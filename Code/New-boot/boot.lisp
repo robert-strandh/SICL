@@ -22,7 +22,8 @@
    (%e1 :initarg :e1 :accessor e1)
    (%e2 :initarg :e2 :accessor e2)
    (%e3 :initarg :e3 :accessor e3)
-   (%e4 :initarg :e4 :accessor e4)))
+   (%e4 :initarg :e4 :accessor e4)
+   (%e5 :initarg :e5 :accessor e5)))
 
 (defun boot ()
   (let ((boot
@@ -32,9 +33,11 @@
               :e1 (make-instance 'environment)
               :e2 (make-instance 'environment)
               :e3 (make-instance 'environment)
-              :e4 (make-instance 'environment)))))
+              :e4 (make-instance 'environment)
+              :e5 (make-instance 'environment)))))
     (sicl-new-boot-phase-0:boot-phase-0 boot)
     (sicl-new-boot-phase-1:boot-phase-1 boot)
     (sicl-new-boot-phase-2:boot-phase-2 boot)
     (sicl-new-boot-phase-3:boot-phase-3 boot)
+    (sicl-new-boot-phase-4:boot-phase-4 boot)
     boot))
