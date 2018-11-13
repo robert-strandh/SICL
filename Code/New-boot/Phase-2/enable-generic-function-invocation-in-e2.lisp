@@ -73,7 +73,6 @@
                                  (sicl-genv:find-class 't e2))
                                 (t
                                  (class-of object)))))
-              (format *trace-output* "object ~s class ~s~%" object result)
               result))))
 
 (defun define-set-funcallable-instance-function (e2)
