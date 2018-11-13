@@ -15,7 +15,8 @@
   (import-package-from-host 'sicl-method-combination object)
   (import-package-from-host 'sicl-package object)
   (import-package-from-host 'sicl-symbol object)
-  (import-package-from-host 'sicl-sequence object))
+  (import-package-from-host 'sicl-sequence object)
+  (import-package-from-host 'sicl-arithmetic object))
 
 (defclass boot ()
   ((%e0 :initarg :e0 :accessor e0)
