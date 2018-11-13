@@ -66,11 +66,14 @@
                                 ((consp object)
                                  (sicl-genv:find-class 'cons e2))
                                 ((symbolp object)
-                                 (sicl-genv:find-class 't e2))
+                                 (sicl-genv:find-class 'symbol e2))
+                                ((integerp object)
+                                 (sicl-genv:find-class 'fixnum e2))
                                 ((streamp object)
                                  (sicl-genv:find-class 't e2))
                                 (t
                                  (class-of object)))))
+              (format *trace-output* "object ~s class ~s~%" object result)
               result))))
 
 (defun define-set-funcallable-instance-function (e2)
