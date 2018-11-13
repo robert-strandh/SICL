@@ -87,4 +87,5 @@
     (load-file "Cons/cons-defclass.lisp" e1)
     (load-file "Sequences/sequence-defclass.lisp" e1)
     (load-file "Cons/list-defclass.lisp" e1)
-    (load-file "Package-and-symbol/symbol-defclass.lisp" e1)))
+    (load-file "Package-and-symbol/symbol-defclass.lisp" e1)
+    (load-file "Arithmetic/number-defclass.lisp" e1)))
