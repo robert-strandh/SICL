@@ -20,6 +20,7 @@
     (enable-class-finalization boot)
     (finalize-all-classes boot)
     (enable-defmethod-in-e3 boot)
+    (enable-allocate-instance-in-e2 e2)
     (enable-object-initialization boot)
     (enable-method-combinations-in-e3 boot)
     (enable-generic-function-invocation boot)
