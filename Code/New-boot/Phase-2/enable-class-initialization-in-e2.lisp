@@ -60,13 +60,6 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:update-dependent e2)
         (constantly nil)))
 
-(defun define-compile (e2)
-  (setf (sicl-genv:fdefinition 'compile e2)
-        (lambda (name &optional definition)
-          (assert (null name))
-          (assert (not (null definition)))
-          (cleavir-env:eval definition e2 e2))))
-
 (defun define-ensure-class (e1 e2)
   (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e2)
         (lambda (name
@@ -106,7 +99,6 @@
   (define-direct-slot-definition-class e1 e2)
   (define-add-remove-direct-subclass e2)
   (define-reader/writer-method-class e1 e2)
-  (define-compile e2)
   (import-functions-from-host '(adjoin set-exclusive-or) e2)
   (define-error-function 'slot-value e2)
   (define-error-function '(setf slot-value) e2)
