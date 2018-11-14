@@ -10,7 +10,7 @@
    ;; (:file "utilities")
    (:file "enable-class-finalization")
    (:file "enable-defmethod-in-e3")
-   ;; (:file "enable-object-initialization")
+   (:file "enable-object-initialization")
    ;; (:file "enable-generic-function-invocation-in-e3")
    ;; (:file "enable-defgeneric-in-e4")
    ;; (:file "define-accessor-generic-functions-in-e4")

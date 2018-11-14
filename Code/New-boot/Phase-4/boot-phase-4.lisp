@@ -20,7 +20,7 @@
     (enable-class-finalization boot)
     (finalize-all-classes boot)
     (enable-defmethod-in-e4 boot)
-    ;; (enable-object-initialization boot)
+    (enable-object-initialization boot)
     ;; (enable-method-combinations-in-e4 boot)
     ;; (enable-generic-function-invocation boot)
     ;; (define-accessor-generic-functions boot)
