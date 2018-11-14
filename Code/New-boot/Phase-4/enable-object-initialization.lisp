@@ -51,8 +51,8 @@
     (load-file "CLOS/initialize-instance-support.lisp" e4)
     (load-file "CLOS/initialize-instance-defgenerics.lisp" e4)
     (load-file "CLOS/initialize-instance-defmethods.lisp" e4)
-    #+(or)(load-file "CLOS/make-instance-support.lisp" e3)
-    #+(or)(setf (sicl-genv:fdefinition 'make-instance e4)
+    (load-file "CLOS/make-instance-support.lisp" e3)
+    (setf (sicl-genv:fdefinition 'make-instance e4)
           (lambda (class &rest initargs)
             (let ((class-metaobject
                     (if (symbolp class)
