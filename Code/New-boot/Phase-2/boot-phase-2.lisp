@@ -1,6 +1,5 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
-
 (defun define-method-on-print-object-for-ersatz-objects (boot)
   (with-accessors ((e3 sicl-new-boot:e3)) boot
     (defmethod print-object ((object header) stream)
@@ -58,7 +57,6 @@
     (define-make-instance-in-e2 e1 e2)
     (enable-defmethod-in-e2 boot)
     (define-method-on-method-function e2)
-    (enable-allocate-instance-in-e2 e2)
     (enable-generic-function-invocation boot)
     (define-accessor-generic-functions boot)
     (enable-class-initialization-in-e2 e1 e2 e3)
