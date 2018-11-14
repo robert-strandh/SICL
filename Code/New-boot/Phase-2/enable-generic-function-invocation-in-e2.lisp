@@ -1,5 +1,16 @@
 (cl:in-package #:sicl-new-boot-phase-2)
 
+;;; SUB-SPECIALIZER-P calls CLASS-PRECEDENCE-LIST to obtain the class
+;;; precedence list of an argument passed to a generic function.  Then
+;;; it calls POSITION to determine which of two classes comes first in
+;;; that precedence list.
+;;;
+;;; SUB-SPECIALIZER-P is called by COMPUTE-APPLICABLE-METHODS
+;;; (indirectly) to determine which is two methods is more specific.
+(defun define-sub-specializer-p (environment)
+  (import-function-from-host 'position environment)
+  (load-file "New-boot/Phase-2/sub-specializer-p.lisp" environment))
+
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
 ;;; get the class of each of the arguments passed to a generic
 ;;; function.  It calls SORT to sort the applicable methods in order
@@ -45,6 +56,14 @@
   (load-file "CLOS/compute-discriminating-function-support-c.lisp" e2)
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e2))
 
+(defun define-general-instance-access (e2)
+  (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e2)
+        (lambda (object location)
+          (aref (slot-value object '%rack) location)))
+  (setf (sicl-genv:fdefinition '(setf sicl-clos::general-instance-access) e2)
+        (lambda (value object location)
+          (setf (aref (slot-value object '%rack) location) value))))
+
 (defun define-no-applicable-method (e2)
   (load-file "CLOS/no-applicable-method-defgenerics.lisp" e2)
   (load-file "CLOS/no-applicable-method.lisp" e2))
@@ -79,6 +98,13 @@
   (setf (sicl-genv:fdefinition 'sicl-clos:set-funcallable-instance-function e2)
         #'closer-mop:set-funcallable-instance-function))
 
+(defun define-compile (e2)
+  (setf (sicl-genv:fdefinition 'compile e2)
+        (lambda (name &optional definition)
+          (assert (null name))
+          (assert (not (null definition)))
+          (cleavir-env:eval definition e2 e2))))
+
 (defun enable-generic-function-invocation (boot)
   (with-accessors ((e1 sicl-new-boot:e1)
                    (e2 sicl-new-boot:e2)) boot
@@ -93,11 +119,13 @@
     (define-class-of e2)
     (define-find-class e1 e2)
     (define-set-funcallable-instance-function e2)
-    (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e2)
+    (define-sub-specializer-p e2)
     (define-compute-applicable-methods e2)
     (enable-method-combination-in-e2 boot)
     (define-compute-effective-method e2)
     (define-no-applicable-method e2)
+    (define-general-instance-access e2)
+    (define-compile e2)
     (define-compute-discriminating-function e2)
     (import-functions-from-host '(print-object) e2)
     (load-file "New-boot/Phase-2/define-methods-on-print-object.lisp" e2)
