@@ -1,16 +1,15 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
-;;; SUB-SPECIALIZER-P ca calls CLASS-PRECEDENCE-LIST to obtain the
-;;; class precedence list of an argument passed to a generic function.
-;;; Then it calls POSITION to determine which of two classes comes
-;;; first in that precedence list.
+;;; SUB-SPECIALIZER-P calls CLASS-PRECEDENCE-LIST to obtain the class
+;;; precedence list of an argument passed to a generic function.  Then
+;;; it calls POSITION to determine which of two classes comes first in
+;;; that precedence list.
 ;;;
 ;;; SUB-SPECIALIZER-P is called by COMPUTE-APPLICABLE-METHODS
 ;;; (indirectly) to determine which is two methods is more specific.
-(defun define-sub-specializer-p (boot)
-  (with-accessors ((e3 sicl-new-boot:e3)) boot
-    (import-function-from-host 'position e3)
-    (load-file "New-boot/Phase-2/sub-specializer-p.lisp" e3)))
+(defun define-sub-specializer-p (environment)
+  (import-function-from-host 'position environment)
+  (load-file "New-boot/Phase-2/sub-specializer-p.lisp" environment))
 
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
 ;;; get the class of each of the arguments passed to a generic
@@ -97,7 +96,7 @@
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
     (define-classp e3)
-    (define-sub-specializer-p boot)
+    (define-sub-specializer-p e3)
     (define-compute-applicable-methods e3)
     (define-compute-effective-method e3)
     (define-no-applicable-method e3)
