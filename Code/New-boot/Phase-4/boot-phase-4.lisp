@@ -13,13 +13,15 @@
 
 (defun boot-phase-4 (boot)
   (format *trace-output* "Start of phase 4~%")
-  (with-accessors ((e3 sicl-new-boot:e3)
+  (with-accessors ((e2 sicl-new-boot:e2)
+                   (e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)
                    (e5 sicl-new-boot:e5)) boot
     (change-class e4 'environment)
     (enable-class-finalization boot)
     (finalize-all-classes boot)
     (enable-defmethod-in-e4 boot)
+    (enable-allocate-instance-in-e3 e2 e3)
     (enable-object-initialization boot)
     ;; (enable-method-combinations-in-e4 boot)
     ;; (enable-generic-function-invocation boot)
