@@ -28,6 +28,7 @@
     (load-file "CLOS/slot-value-etc-defgenerics.lisp" e2)
     (load-file "CLOS/slot-value-etc-support.lisp" e2)
     (load-file "CLOS/slot-value-etc-defmethods.lisp" e2)
+    (import-function-from-host '(setf sicl-genv:constant-variable) e2)
     (load-file "CLOS/instance-slots-offset-defconstant.lisp" e2)
     (load-file "CLOS/shared-initialize-support.lisp" e2)
     ;; Instead of loading the file containing the definition of
