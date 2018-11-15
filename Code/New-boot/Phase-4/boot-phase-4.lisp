@@ -21,7 +21,7 @@
     (enable-class-finalization boot)
     (finalize-all-classes boot)
     (enable-defmethod-in-e4 boot)
-    (enable-allocate-instance-in-e3 e2 e3)
+    (enable-allocate-instance-in-e3 e3)
     (enable-object-initialization boot)
     (enable-method-combinations-in-e4 boot)
     ;; (enable-generic-function-invocation boot)
