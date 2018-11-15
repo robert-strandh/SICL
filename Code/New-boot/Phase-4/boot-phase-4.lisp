@@ -24,7 +24,7 @@
     (enable-allocate-instance-in-e3 e3)
     (enable-object-initialization boot)
     (enable-method-combinations-in-e4 boot)
-    ;; (enable-generic-function-invocation boot)
+    (enable-generic-function-invocation boot)
     ;; (define-accessor-generic-functions boot)
     ;; (enable-class-initialization-in-e4 e3 e4 e5)
     ;; (create-mop-classes boot)
