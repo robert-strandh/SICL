@@ -731,7 +731,7 @@ We use \emph{binary search} to find an entry in a break table.
 \subsection{Pointer adjustment phase}
 
 Once the break tables are built, the stack is scanned to find roots, and it
-is also restored to its initial state as describe in
+is also restored to its initial state as described in
 \refSec{sec-garbage-collection-finding-roots}.  For each root that
 contains a pointer to the nursery, we determine whether it is pointer
 to a dyad or to a rack, and consult the corresponding break table to
