@@ -24,8 +24,6 @@
   (with-accessors ((e3 sicl-new-boot:e3)
                    (e4 sicl-new-boot:e4)) boot
     (define-find-specializer-class-t-in-e4 e4)
-    ;;(setf (sicl-genv:fdefinition 'sicl-clos:method-function e4)
-    ;;      (sicl-genv:fdefinition 'sicl-clos:method-function e3))
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e4)
           #'sicl-clos::make-method-lambda-default)
     (define-make-specializer e3)
@@ -34,7 +32,7 @@
           (sicl-genv:fdefinition 'sicl-clos::add-method e3))
     (import-functions-from-host '(copy-list) e4)
     (setf (sicl-genv:fdefinition 'sicl-clos::function-of-method e4)
-          (sicl-genv:fdefinition 'sicl-clos::method-function e4))
+          (sicl-genv:fdefinition 'sicl-clos::method-function e3))
     (load-file "CLOS/ensure-method.lisp" e3)
     (setf (sicl-genv:fdefinition 'sicl-clos::ensure-method e4)
           (sicl-genv:fdefinition 'sicl-clos::ensure-method e3))
