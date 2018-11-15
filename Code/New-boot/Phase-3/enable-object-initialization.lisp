@@ -1,13 +1,26 @@
 (cl:in-package #:sicl-new-boot-phase-3)
 
+(defun define-class-of (e3)
+    (setf (sicl-genv:fdefinition 'class-of e3)
+          (lambda (object)
+            (let ((result (cond ((typep object 'sicl-new-boot-phase-2::header)
+                                 (slot-value object 'sicl-new-boot-phase-2::%class))
+                                ((consp object)
+                                 (sicl-genv:find-class 'cons e3))
+                                ((symbolp object)
+                                 (sicl-genv:find-class 'symbol e3))
+                                ((integerp object)
+                                 (sicl-genv:find-class 'fixnum e3))
+                                ((streamp object)
+                                 (sicl-genv:find-class 't e3))
+                                (t
+                                 (class-of object)))))
+              result))))
+
 (defun enable-object-initialization (boot)
   (with-accessors ((e2 sicl-new-boot:e2)
                    (e3 sicl-new-boot:e3)) boot
-    ;; The function CLASS-OF is called by SHARED-INITIALIZE in order
-    ;; to get the slot-definition metaobjects.
-    (setf (sicl-genv:fdefinition 'class-of e3)
-          (lambda (object)
-            (slot-value object 'sicl-new-boot-phase-2::%class)))
+    (define-class-of e3)
     ;; The support code for SHARED-INITIALIZE in phase 3 will need to
     ;; access various slots of class metaobjects and slot-definition
     ;; metaobjects.  Since we are initializing objects in E3, the
