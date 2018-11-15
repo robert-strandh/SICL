@@ -27,5 +27,4 @@
     (enable-generic-function-invocation boot)
     (define-accessor-generic-functions boot)
     (enable-class-initialization-in-e4 e3 e4 e5)
-    ;; (create-mop-classes boot)
-    ))
+    (create-mop-classes boot)))

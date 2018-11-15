@@ -16,7 +16,7 @@
    (:file "enable-defgeneric-in-e5")
    (:file "define-accessor-generic-functions-in-e5")
    (:file "enable-class-initialization-in-e4")
-   ;; (:file "define-mop-classes")
+   (:file "define-mop-classes")
    (:file "enable-method-combinations-in-e4")
    (:file "boot-phase-4")
    ))
