@@ -17,6 +17,6 @@
    ;; (:file "define-accessor-generic-functions-in-e4")
    ;; (:file "enable-class-initialization-in-e3")
    ;; (:file "define-mop-classes")
-   ;; (:file "enable-method-combinations-in-e3")
+   (:file "enable-method-combinations-in-e4")
    (:file "boot-phase-4")
    ))
