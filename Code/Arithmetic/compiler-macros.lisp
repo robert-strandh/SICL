@@ -16,7 +16,7 @@
 	(t `(binary-sub (- ,@(butlast args)) ,(car (last args))))))
 
 (define-compiler-macro * (&rest args)
-  (cond ((null args) 0)
+  (cond ((null args) 1)
 	;; FIXME: check that we have a number
 	((null (cdr args)) (car args))
 	((null (cddr args)) `(binary-mul ,(car args) ,(cadr args)))
