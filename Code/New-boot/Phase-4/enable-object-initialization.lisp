@@ -26,9 +26,14 @@
           10000000)
     (load-file "CLOS/slot-bound-using-index.lisp" e3)
     (load-file "CLOS/standard-instance-access.lisp" e3)
-    (load-file "CLOS/slot-value-etc-defgenerics.lisp" e3)
-    (load-file "CLOS/slot-value-etc-support.lisp" e3)
-    (load-file "CLOS/slot-value-etc-defmethods.lisp" e3)
+    ;; We use the non-generic version of (SETF
+    ;; SLOT-VALUE-USING-CLASS), because the generic function takes an
+    ;; object as its second argument and the class of that object as
+    ;; its first argument.  Therefore the two arguments clash.  They
+    ;; can't both be bridge objects, and they can't both be ersatz
+    ;; objects.
+    (load-file-protected "CLOS/slot-value-etc-support.lisp" e3)
+    (load-file "CLOS/slot-value-etc-defuns.lisp" e3)
     (import-function-from-host '(setf sicl-genv:constant-variable) e3)
     (load-file "CLOS/instance-slots-offset-defconstant.lisp" e3)
     (load-file "CLOS/shared-initialize-support.lisp" e3)
