@@ -4,7 +4,7 @@
   '())
 
 (defmethod default-superclasses ((class standard-class))
-  (find-class 'standard-object))
+  (list (find-superclass 'standard-object)))
 
 (defmethod default-superclasses ((class funcallable-standard-class))
-  (find-class 'funcallable-standard-object))
+  (list (find-superclass 'funcallable-standard-object)))
