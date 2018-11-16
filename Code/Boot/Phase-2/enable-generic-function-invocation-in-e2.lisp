@@ -9,7 +9,7 @@
 ;;; (indirectly) to determine which is two methods is more specific.
 (defun define-sub-specializer-p (environment)
   (import-function-from-host 'position environment)
-  (load-file "boot/Phase-2/sub-specializer-p.lisp" environment))
+  (load-file "Boot/Phase-2/sub-specializer-p.lisp" environment))
 
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
 ;;; get the class of each of the arguments passed to a generic
@@ -128,5 +128,5 @@
     (define-compile e2)
     (define-compute-discriminating-function e2)
     (import-functions-from-host '(print-object) e2)
-    (load-file "boot/Phase-2/define-methods-on-print-object.lisp" e2)
+    (load-file "Boot/Phase-2/define-methods-on-print-object.lisp" e2)
     (load-file "CLOS/standard-instance-access.lisp" e2)))

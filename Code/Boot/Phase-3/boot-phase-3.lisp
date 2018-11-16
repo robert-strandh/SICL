@@ -27,4 +27,4 @@
     (define-accessor-generic-functions boot)
     (enable-class-initialization-in-e3 e2 e3 e4)
     (create-mop-classes boot)
-    (load-file "boot/Phase-3/define-methods-on-print-object.lisp" e3)))
+    (load-file "Boot/Phase-3/define-methods-on-print-object.lisp" e3)))
