@@ -163,7 +163,7 @@ maintainability, it would be desirable to implement
 (defun find-list-1 (item list &key end)
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (loop for index from 0
-        for element in vector
+        for element in list
         when (and (not (null end)) (>= index end))
           return nil
         when (eql item element)
@@ -189,7 +189,7 @@ The code for \texttt{find-list} can now be written like this:
   (declare (optimize (speed 3) (debug 0) (safety 0)))
   (with-end end
     (loop for index from 0
-          for element in vector
+          for element in list
           when (and (not (null end)) (>= index end))
             return nil
           when (eql item element)
