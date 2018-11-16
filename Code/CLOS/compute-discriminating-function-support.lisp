@@ -409,11 +409,11 @@
 (defun default-discriminating-function (generic-function arguments profile)
   (let* ((required-argument-count (length profile))
          (required-arguments (subseq arguments 0 required-argument-count))
-         (class-numbers (loop for argument in required-arguments
-                              for p in profile
-                              when p
-                                collect (instance-class-number argument)))
-         (entry (car (member class-numbers (call-history generic-function)
+         (stamps (loop for argument in required-arguments
+                       for p in profile
+                       when p
+                         collect (instance-class-number argument)))
+         (entry (car (member stamps (call-history generic-function)
                              :key #'class-number-cache :test #'equal))))
     (unless (null entry)
       ;; Found an entry, call the effective method of the entry,
@@ -429,7 +429,7 @@
           (compute-applicable-methods-using-classes generic-function classes)
         (when ok
           (let* ((effective-method (add-call-cache generic-function
-                                                   class-numbers
+                                                   stamps
                                                    classes
                                                    applicable-methods))
                  (effective-method-function (compile nil effective-method)))
