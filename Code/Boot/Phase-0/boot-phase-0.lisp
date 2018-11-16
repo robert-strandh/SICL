@@ -95,7 +95,7 @@
                                               direct-superclasses
                                               direct-slots
                                             &allow-other-keys)
-      (let ((direct-slots
+      (let ((new-direct-slots
               (loop for slot-spec in direct-slots
                     for spec = (copy-list slot-spec)
                     do (remf spec :readers)
@@ -105,7 +105,7 @@
                class
                :direct-superclasses direct-superclasses
                :direct-default-initargs direct-default-initargs
-               :direct-slots direct-slots
+               :direct-slots new-direct-slots
                arguments)
         (loop for slot-spec in direct-slots
               for slot = (apply #'make-instance
