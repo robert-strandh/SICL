@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-0)
+(cl:in-package #:sicl-boot-phase-0)
 
 ;;; This class will be the metaclass of all the MOP classes defined in
 ;;; E1.  We define it as a subclass of the host
@@ -27,7 +27,7 @@
   t)
 
 (defun import-from-host (boot)
-  (with-accessors ((e0 sicl-new-boot:e0)) boot
+  (with-accessors ((e0 sicl-boot:e0)) boot
     ;; Import class T so that it can be found when we need to create
     ;; the class T as a specializer for unspecialized method parameters.
     (setf (sicl-genv:find-class 't e0)
@@ -79,7 +79,7 @@
     (loop for function-name in function-names
           for gf = (sicl-genv:fdefinition function-name environment)
           for method = (make-instance 'closer-mop:standard-writer-method
-                         :lambda-list '(new-value object)
+                         :lambda-list '(value object)
                          :qualifiers '()
                          :specializers (list (find-class t) class)
                          :function function
@@ -87,7 +87,7 @@
           do (add-method gf method))))
 
 (defun enable-class-initialization (boot)
-  (with-accessors ((e0 sicl-new-boot:e0) (e2 sicl-new-boot:e2)) boot
+  (with-accessors ((e0 sicl-boot:e0) (e2 sicl-boot:e2)) boot
     (defmethod initialize-instance :around ((class funcallable-standard-class)
                                             &rest arguments
                                             &key
@@ -95,7 +95,7 @@
                                               direct-superclasses
                                               direct-slots
                                             &allow-other-keys)
-      (let ((new-direct-slots
+      (let ((direct-slots
               (loop for slot-spec in direct-slots
                     for spec = (copy-list slot-spec)
                     do (remf spec :readers)
@@ -105,7 +105,7 @@
                class
                :direct-superclasses direct-superclasses
                :direct-default-initargs direct-default-initargs
-               :direct-slots new-direct-slots
+               :direct-slots direct-slots
                arguments)
         (loop for slot-spec in direct-slots
               for slot = (apply #'make-instance
@@ -119,6 +119,6 @@
 
 (defun boot-phase-0 (boot)
   (format *trace-output* "Start of phase 0~%")
-  (change-class (sicl-new-boot:e0 boot) 'environment)
+  (change-class (sicl-boot:e0 boot) 'environment)
   (import-from-host boot)
   (enable-class-initialization boot))

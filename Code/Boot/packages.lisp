@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-new-boot
+(defpackage #:sicl-boot
   (:use #:common-lisp)
   (:export #:boot
            #:environment

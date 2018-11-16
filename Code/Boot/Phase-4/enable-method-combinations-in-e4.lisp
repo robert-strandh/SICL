@@ -1,8 +1,8 @@
-(cl:in-package #:sicl-new-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-4)
 
 (defun enable-method-combinations-in-e4 (boot)
-  (with-accessors ((e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)) boot
+  (with-accessors ((e3 sicl-boot:e3)
+                   (e4 sicl-boot:e4)) boot
     ;; FIND-METHOD-COMBINATION-TEMPLATE is called by FIND-METHOD-COMBINATION.
     (import-functions-from-host
      '(sicl-genv:find-method-combination-template

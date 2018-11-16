@@ -1,1 +1,1 @@
-(cl:in-package #:sicl-new-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-2)

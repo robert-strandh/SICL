@@ -1,9 +1,9 @@
-(cl:in-package #:sicl-new-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun enable-allocate-instance-in-e2 (e2)
   (setf (sicl-genv:fdefinition 'sicl-clos::allocate-general-instance e2)
         (lambda (class size)
-          (make-instance 'sicl-new-boot-phase-2::header
+          (make-instance 'sicl-boot-phase-2::header
             :class class
             :rack (make-array size :initial-element 10000000))))
   (import-functions-from-host

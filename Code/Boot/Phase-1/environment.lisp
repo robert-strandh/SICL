@@ -1,6 +1,6 @@
-(cl:in-package #:sicl-new-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-1)
 
 ;;; Environment E1.
 
-(defclass environment (sicl-new-boot:environment)
+(defclass environment (sicl-boot:environment)
   ())

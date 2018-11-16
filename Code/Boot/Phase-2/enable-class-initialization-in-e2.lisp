@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-2)
 
 (defun define-add-remove-direct-subclass (e2)
   ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a

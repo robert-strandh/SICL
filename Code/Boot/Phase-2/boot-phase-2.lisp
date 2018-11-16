@@ -1,7 +1,7 @@
-(cl:in-package #:sicl-new-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-2)
 
 (defun define-method-on-print-object-for-ersatz-objects (boot)
-  (with-accessors ((e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e3 sicl-boot:e3)) boot
     (defmethod print-object ((object header) stream)
       (funcall (sicl-genv:fdefinition 'print-object e3)
                object stream))))
@@ -48,9 +48,9 @@
 (defun boot-phase-2 (boot)
   (format *trace-output* "Start of phase 2~%")
   (define-method-on-print-object-for-ersatz-objects boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)) boot
     (change-class e2 'environment)
     (import-function-from-host '(setf sicl-genv:special-variable) e2)
     (define-make-instance-in-e1 e1)

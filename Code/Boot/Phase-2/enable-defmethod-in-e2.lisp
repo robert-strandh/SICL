@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-2)
 
 ;;; We already know how to execute a DEFGENERIC form in E2.  Now we
 ;;; need to know how to use DEFMETHOD to define methods on the generic
@@ -29,8 +29,8 @@
            function nil lambda-expression environment))))
 
 (defun enable-defmethod-in-e2 (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)) boot
+  (with-accessors ((e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2)) boot
     (define-find-specializer-class-t-in-e2 e1 e2)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e1)
           #'sicl-clos::make-method-lambda-default)

@@ -1,8 +1,8 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-new-boot-phase-0
+(defpackage #:sicl-boot-phase-0
   (:use #:common-lisp)
-  (:import-from #:sicl-new-boot
+  (:import-from #:sicl-boot
                 #:load-file
                 #:import-function-from-host
                 #:import-functions-from-host

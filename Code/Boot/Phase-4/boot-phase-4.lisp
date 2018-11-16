@@ -1,8 +1,8 @@
-(cl:in-package #:sicl-new-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-4)
 
 (defun finalize-all-classes (boot)
   (format *trace-output* "Finalizing all classes.~%")
-  (let* ((e3 (sicl-new-boot:e3 boot))
+  (let* ((e3 (sicl-boot:e3 boot))
          (finalization-function
            (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance e3)))
     (do-all-symbols (var)
@@ -13,10 +13,10 @@
 
 (defun boot-phase-4 (boot)
   (format *trace-output* "Start of phase 4~%")
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)
-                   (e5 sicl-new-boot:e5)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)
+                   (e4 sicl-boot:e4)
+                   (e5 sicl-boot:e5)) boot
     (change-class e4 'environment)
     (enable-class-finalization boot)
     (finalize-all-classes boot)

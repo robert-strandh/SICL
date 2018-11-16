@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun define-find-specializer-class-t-in-e3 (e3)
   (setf (sicl-genv:fdefinition 'sicl-clos::find-specializer-class-t e3)
@@ -21,8 +21,8 @@
            function nil lambda-expression environment))))
 
 (defun enable-defmethod-in-e3 (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)) boot
     (define-find-specializer-class-t-in-e3 e3)
     (setf (sicl-genv:fdefinition 'sicl-clos:make-method-lambda e3)
           #'sicl-clos::make-method-lambda-default)

@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-3)
 
 ;;; SUB-SPECIALIZER-P calls CLASS-PRECEDENCE-LIST to obtain the class
 ;;; precedence list of an argument passed to a generic function.  Then
@@ -9,7 +9,7 @@
 ;;; (indirectly) to determine which is two methods is more specific.
 (defun define-sub-specializer-p (environment)
   (import-function-from-host 'position environment)
-  (load-file "New-boot/Phase-2/sub-specializer-p.lisp" environment))
+  (load-file "boot/Phase-2/sub-specializer-p.lisp" environment))
 
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
 ;;; get the class of each of the arguments passed to a generic
@@ -57,8 +57,8 @@
   (load-file "CLOS/compute-discriminating-function-defmethods.lisp" e3))
 
 (defun define-general-instance-access (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)) boot
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-p e3)
           (sicl-genv:fdefinition 'sicl-clos::general-instance-p e2))
     (setf (sicl-genv:fdefinition 'sicl-clos::general-instance-access e3)
@@ -93,8 +93,8 @@
         #'closer-mop:set-funcallable-instance-function))
 
 (defun enable-generic-function-invocation (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)) boot
     (define-classp e3)
     (define-sub-specializer-p e3)
     (define-compute-applicable-methods e3)

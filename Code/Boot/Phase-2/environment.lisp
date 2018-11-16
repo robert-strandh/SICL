@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-2)
 
 ;;; Environment E2.
 ;;;
@@ -8,7 +8,7 @@
 ;;;
 ;;; Classes in this environment are bridge classes.
 
-(defclass environment (sicl-new-boot:environment)
+(defclass environment (sicl-boot:environment)
   ())
 
 (defmethod sicl-genv:typep

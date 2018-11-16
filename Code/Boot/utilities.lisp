@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot)
+(cl:in-package #:sicl-boot)
 
 (defun load-file (file environment)
   (sicl-minimal-extrinsic-environment:cst-load-file file environment nil))
@@ -46,12 +46,12 @@
 
 ;;; Some utilities for making interactive queries easier.
 
-(define-symbol-macro ee0 (sicl-new-boot:e0 *b*))
-(define-symbol-macro ee1 (sicl-new-boot:e1 *b*))
-(define-symbol-macro ee2 (sicl-new-boot:e2 *b*))
-(define-symbol-macro ee3 (sicl-new-boot:e3 *b*))
-(define-symbol-macro ee4 (sicl-new-boot:e4 *b*))
-(define-symbol-macro ee5 (sicl-new-boot:e5 *b*))
+(define-symbol-macro ee0 (sicl-boot:e0 *b*))
+(define-symbol-macro ee1 (sicl-boot:e1 *b*))
+(define-symbol-macro ee2 (sicl-boot:e2 *b*))
+(define-symbol-macro ee3 (sicl-boot:e3 *b*))
+(define-symbol-macro ee4 (sicl-boot:e4 *b*))
+(define-symbol-macro ee5 (sicl-boot:e5 *b*))
 
 (defun fd (function-name environment)
   (sicl-genv:fdefinition function-name environment))

@@ -1,7 +1,7 @@
-(cl:in-package #:sicl-new-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-2)
 
 (defun enable-generic-function-initialization (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)) boot
+  (with-accessors ((e2 sicl-boot:e2)) boot
     (import-functions-from-host
      '(cleavir-code-utilities:parse-generic-function-lambda-list
        cleavir-code-utilities:required)
@@ -89,8 +89,8 @@
   (load-file "Package-and-symbol/symbol-package-defgeneric.lisp" e3))
 
 (defun define-accessor-generic-functions (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3))
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3))
       boot
     (enable-defgeneric-in-e3 boot)
     (import-function-from-host 'shared-initialize e2)

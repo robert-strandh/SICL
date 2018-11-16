@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-0)
+(cl:in-package #:sicl-boot-phase-0)
 
 ;;; Environment E0.
 ;;;
@@ -16,5 +16,5 @@
 ;;;
 ;;; There are no other classes in this environment.
 
-(defclass environment (sicl-new-boot:environment)
+(defclass environment (sicl-boot:environment)
   ())

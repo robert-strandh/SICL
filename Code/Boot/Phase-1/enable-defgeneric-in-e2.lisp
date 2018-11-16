@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-1)
 
 ;;; We want to make it possible to evaluate DEFGENERIC forms in
 ;;; environment E2 so that the result is the creation of a host

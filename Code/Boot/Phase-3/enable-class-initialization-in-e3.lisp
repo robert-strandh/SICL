@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun define-add-remove-direct-subclass (e3)
   ;; REMOVE is called by REMOVE-DIRECT-SUBCLASS in order to remove a
@@ -97,9 +97,9 @@
   (load-file "CLOS/class-initialization-support.lisp" e3)
   (load-file "CLOS/class-initialization-defmethods.lisp" e3)
   (setf (sicl-genv:fdefinition '(setf find-class) e3)
-        (lambda (new-class symbol &optional errorp)
+        (lambda (class symbol &optional errorp)
           (declare (ignore errorp))
-          (setf (sicl-genv:find-class symbol e3) new-class)))
+          (setf (sicl-genv:find-class symbol e3) class)))
   (define-error-function 'change-class e3)
   (define-error-function 'reinitialize-instance e3)
   (define-ensure-class e3)

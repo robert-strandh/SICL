@@ -1,9 +1,9 @@
-(cl:in-package #:sicl-new-boot-phase-2)
+(cl:in-package #:sicl-boot-phase-2)
 
 (defun ensure-generic-function-phase-2 (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3))
+  (with-accessors ((e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3))
       boot
     (let* ((gf-class-name 'standard-generic-function)
            (gf-class (sicl-genv:find-class gf-class-name e1))
@@ -31,9 +31,9 @@
                                  args)))))))))
 
 (defun enable-defgeneric-in-e3 (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3))
+  (with-accessors ((e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3))
       boot
     (ensure-generic-function-phase-2 boot)
     (import-function-from-host 'sicl-clos:defgeneric-expander e3)

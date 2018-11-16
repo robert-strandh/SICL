@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-3)
 
 ;;; Environment E3.
 ;;;
@@ -8,7 +8,7 @@
 ;;;
 ;;; Classes in this environment are ersatz classes.
 
-(defclass environment (sicl-new-boot:environment)
+(defclass environment (sicl-boot:environment)
   ())
 
 (defmethod sicl-genv:typep

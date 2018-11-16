@@ -1,8 +1,8 @@
-(cl:in-package #:sicl-new-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun finalize-all-classes (boot)
   (format *trace-output* "Finalizing all classes.~%")
-  (let* ((e2 (sicl-new-boot:e2 boot))
+  (let* ((e2 (sicl-boot:e2 boot))
          (finalization-function
            (sicl-genv:fdefinition 'sicl-clos:finalize-inheritance e2)))
     (do-all-symbols (var)
@@ -13,9 +13,9 @@
 
 (defun boot-phase-3 (boot)
   (format *trace-output* "Start of phase 3~%")
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)
+                   (e4 sicl-boot:e4)) boot
     (change-class e3 'environment)
     (enable-class-finalization boot)
     (finalize-all-classes boot)
@@ -27,4 +27,4 @@
     (define-accessor-generic-functions boot)
     (enable-class-initialization-in-e3 e2 e3 e4)
     (create-mop-classes boot)
-    (load-file "New-boot/Phase-3/define-methods-on-print-object.lisp" e3)))
+    (load-file "boot/Phase-3/define-methods-on-print-object.lisp" e3)))

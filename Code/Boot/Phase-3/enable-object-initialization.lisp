@@ -1,10 +1,10 @@
-(cl:in-package #:sicl-new-boot-phase-3)
+(cl:in-package #:sicl-boot-phase-3)
 
 (defun define-class-of (e3)
     (setf (sicl-genv:fdefinition 'class-of e3)
           (lambda (object)
-            (let ((result (cond ((typep object 'sicl-new-boot-phase-2::header)
-                                 (slot-value object 'sicl-new-boot-phase-2::%class))
+            (let ((result (cond ((typep object 'sicl-boot-phase-2::header)
+                                 (slot-value object 'sicl-boot-phase-2::%class))
                                 ((consp object)
                                  (sicl-genv:find-class 'cons e3))
                                 ((symbolp object)
@@ -18,8 +18,8 @@
               result))))
 
 (defun enable-object-initialization (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)) boot
     (define-class-of e3)
     ;; The support code for SHARED-INITIALIZE in phase 3 will need to
     ;; access various slots of class metaobjects and slot-definition

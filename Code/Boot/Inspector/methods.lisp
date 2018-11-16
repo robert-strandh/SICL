@@ -1,17 +1,17 @@
-(cl:in-package #:sicl-new-boot-inspector)
+(cl:in-package #:sicl-boot-inspector)
 
-(defmethod clim:presentation-type-of ((object sicl-new-boot-phase-2::header))
+(defmethod clim:presentation-type-of ((object sicl-boot-phase-2::header))
   t)
 
 (defun define-methods-for-inspector (boot)
-  (with-accessors ((e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)
-                   (e4 sicl-new-boot:e4)) boot
+  (with-accessors ((e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)
+                   (e4 sicl-boot:e4)) boot
     (defmethod clouseau:inspect-object
-        ((object sicl-new-boot-phase-2::header) pane)
-      (let ((class (slot-value object 'sicl-new-boot-phase-2::%class))
-            (rack (slot-value object 'sicl-new-boot-phase-2::%rack))
+        ((object sicl-boot-phase-2::header) pane)
+      (let ((class (slot-value object 'sicl-boot-phase-2::%class))
+            (rack (slot-value object 'sicl-boot-phase-2::%rack))
             (name-fun (sicl-genv:fdefinition 'sicl-clos:slot-definition-name e2))
             (location-fun (sicl-genv:fdefinition 'sicl-clos:slot-definition-location e2)))
         (clim:formatting-table (pane)

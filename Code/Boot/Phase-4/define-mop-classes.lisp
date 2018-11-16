@@ -1,7 +1,7 @@
-(cl:in-package #:sicl-new-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-4)
 
 (defun create-mop-classes (boot)
-  (with-accessors ((e4 sicl-new-boot:e4))
+  (with-accessors ((e4 sicl-boot:e4))
       boot
     (load-file "CLOS/t-defclass.lisp" e4)
     (setf (sicl-genv:special-variable 'sicl-clos::*class-t* e4 t)

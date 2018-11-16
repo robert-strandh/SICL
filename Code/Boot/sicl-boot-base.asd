@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-new-boot-base
+(defsystem #:sicl-boot-base
   :depends-on (#:sicl-minimal-extrinsic-environment
                #:sicl-method-combination-support
                #:sicl-clos-macro-support

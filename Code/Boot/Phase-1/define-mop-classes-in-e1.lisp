@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-1)
+(cl:in-package #:sicl-boot-phase-1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -16,9 +16,9 @@
 ;;; and slot writer methods are to be added.  E0 is the environment
 ;;; that contains the metaclasses to instantiate.
 (defun define-ensure-class (boot)
-  (with-accessors ((e0 sicl-new-boot:e0)
-                   (e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2))
+  (with-accessors ((e0 sicl-boot:e0)
+                   (e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2))
       boot
     (setf (sicl-genv:fdefinition 'sicl-clos:ensure-class e1)
           (lambda (class-name
@@ -48,9 +48,9 @@
                 (setf (sicl-genv:find-class class-name e1) class)))))))
 
 (defun define-mop-classes-phase1 (boot)
-  (with-accessors ((e0 sicl-new-boot:e0)
-                   (e1 sicl-new-boot:e1)
-                   (e2 sicl-new-boot:e2))
+  (with-accessors ((e0 sicl-boot:e0)
+                   (e1 sicl-boot:e1)
+                   (e2 sicl-boot:e2))
       boot
     (enable-defclass-in-e1 boot)
     (load-file "CLOS/defclass-defmacro.lisp" e1)

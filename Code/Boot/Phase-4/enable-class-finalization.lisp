@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-new-boot-phase-4)
+(cl:in-package #:sicl-boot-phase-4)
 
 ;;; In phase 4, the purpose of class finalization is to finalize the
 ;;; ersatz classes in E3, so that we can create ersatz generic
@@ -8,8 +8,8 @@
 ;;; the code in this file refers to E3.
 
 (defun define-effective-slot-definition-class (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)) boot
     (setf (sicl-genv:special-variable
            'sicl-clos::*standard-effective-slot-definition* e3 t)
           (sicl-genv:find-class 'sicl-clos:standard-effective-slot-definition e2))
@@ -18,7 +18,7 @@
     (load-file "CLOS/effective-slot-definition-class-defmethods.lisp" e3)))
 
 (defun define-class-finalization (boot)
-  (with-accessors ((e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e3 sicl-boot:e3)) boot
     (load-file "CLOS/class-finalization-defgenerics.lisp" e3)
     ;; FIND-IF-NOT is used to traverse the list of direct slot
     ;; definitions to find the first one that has a non-null
@@ -53,7 +53,7 @@
     (load-file "CLOS/class-finalization-defmethods.lisp" e3)))
 
 (defun enable-class-finalization (boot)
-  (with-accessors ((e2 sicl-new-boot:e2)
-                   (e3 sicl-new-boot:e3)) boot
+  (with-accessors ((e2 sicl-boot:e2)
+                   (e3 sicl-boot:e3)) boot
     (define-effective-slot-definition-class boot)
     (define-class-finalization boot)))
