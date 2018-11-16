@@ -52,9 +52,7 @@ versions.
 7. Create an instance of the BOOT class:
 
    ````
-   (defparameter *b*
-     (let ((sicl-extrinsic-environment::*cache-p* t))
-        (make-instance 'boot)))
+   (defparameter *b* (boot))
    ````
 
    Creating the first environment will take a few minutes.  In
@@ -64,7 +62,7 @@ versions.
 8. Start a REPL:
 
    ````
-   (sicl-extrinsic-environment::repl (r4 *b*) (r4 *b*))
+   (repl ee4)
    ````
 
 [source]: https://github.com/robert-strandh/SICL
