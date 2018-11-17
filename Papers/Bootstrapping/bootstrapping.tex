@@ -1,4 +1,5 @@
-\documentclass{sig-alternate-05-2015}
+\documentclass[format=sigconf]{acmart}
+%\documentclass{sig-alternate-05-2015}
 \usepackage[utf8]{inputenc}
 
 \def\inputfig#1{\input #1}
@@ -10,17 +11,23 @@
 \inputtex{refmacros.tex}
 \inputtex{other-macros.tex}
 
-\begin{document}
 \setcopyright{rightsretained}
-\title{Bootstrapping \commonlisp{} using \commonlisp{}}
-\numberofauthors{1}
-\author{\alignauthor
-Robert Strandh\\
-\affaddr{University of Bordeaux}\\
-\affaddr{351, Cours de la Libération}\\
-\affaddr{Talence, France}\\
-\email{robert.strandh@u-bordeaux1.fr}}
 
+\begin{document}
+\title{Bootstrapping \commonlisp{} using \commonlisp{}}
+
+\author{Irène Durand
+}
+\email{irene.durand@u-bordeaux.fr}
+
+\author{Robert Strandh}
+\email{robert.strandh@u-bordeaux.fr}
+
+\affiliation{
+  \institution{LaBRI, University of Bordeaux}
+  \streetaddress{351 cours de la libération}
+  \city{Talence}
+  \country{France}}
 
 \maketitle
 
@@ -53,8 +60,6 @@ required during the bootstrapping process.
 \end{CCSXML}
 
 \ccsdesc[500]{Software and its engineering~Control structures}
-
-\printccsdesc
 
 \keywords{\clos{}, \commonlisp{}, Iteration}
 
