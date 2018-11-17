@@ -63,9 +63,49 @@ expressed in some unidiomatic way and it is tempting to make the
 modified code more idiomatic, but doing so will then break the
 bootstrapping procedure.
 
-\subsection{Specific \commonlisp{} issues}
+\subsection{\commonlisp{} systems in \commonlisp{}}
 
 Because of the way compilation is defined by the \commonlisp{}
 standard, there are some issues that need to be resolved in order for
 it to be possible for a target \commonlisp{} system to be bootstrapped
-on a host \commonlisp{} system.
+on a host \commonlisp{} system.  Since \sbcl{} is very likely the only
+\commonlisp{} implementation written mostly in \commonlisp{} that can
+be built from an existing \commonlisp{} implementation, we describe
+how \sbcl{} solves some of these issue.
+
+\subsubsection{Packages and environments}
+
+Most existing \commonlisp{} systems have a single global environment
+that is used both as the compilation environment and as the run-time
+environment.  Compiling \commonlisp{} source code requires the
+existence of definitions of macros, types, etc. in that environment,
+and when source code for a target \commonlisp{} system is compiled
+using a host \commonlisp{} system, these definitions must be those of
+the target system.  However, with a single global environment there
+can only be one definition of these entities.
+
+\sbcl{} solves this problem by using different package names for the
+code of the target system.  In the final system, the packages are then
+renamed to conform to the standard.
+
+\subsubsection{The compiler and \clos{}}
+
+Some aspects of \clos{} require the presence of the compiler, at least
+of the resulting code is required to have some reasonable
+performance.  For that reason, it becomes difficult to use generic
+functions and standard classes in the code of the compiler.
+
+\sbcl{} solves this issue by not using generic functions and standard
+classes in the code of the compiler.  By doing it this way, \sbcl{}
+can load the compiler into a minimal running target system and then
+bootstrap CLOS afterwards.
+
+However, not using generic functions and standard classes in the
+compiler has some of the same problems as \commonlisp{} systems that
+are written in some other language, namely that care has to be taken
+to make sure the proper subset of the language is used when the code
+of the compiler is being worked on.  Furthermore, generic functions
+and standard classes are great tools for structuring complex code, so
+not being able to use these tools in such a signficant and complex
+part of a \commonlisp{} implementation has considerable negative
+effects on the structure of the code.
