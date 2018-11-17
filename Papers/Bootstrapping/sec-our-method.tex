@@ -1,4 +1,113 @@
 \section{Our technique}
 \label{sec-our-technique}
 
-\cite{Strandh:2015:ELS:Environments}
+Our technique uses several first-class global environments
+\cite{Strandh:2015:ELS:Environments} to create a graph of objects that
+is isomorphic to the graph of objects to be written to the resulting
+executable file.  By using first-class global environments, we avoid
+the problems related to packages and environments cited in
+\refSec{sec-cl-in-cl}.  The main feature of our technique, though, is
+that we create the generic functions and classes of the metaobject
+protocl \emph{first}.
+
+\begin{definition}
+A \emph{simple instance} is an instance of some class, but that is
+also neither a class nor a generic function.
+\end{definition}
+
+\begin{definition}
+A \emph{host class} is a class in the host system.  If it is an
+instance of the host class \texttt{standard-class}, then it is
+typically created by the host macro \texttt{defclass}.
+\end{definition}
+
+\begin{definition}
+A \emph{host instance} is an instance of a host class.  If it is an
+instance of the host class \texttt{standard-object}, then it is
+typically created by a call to the host function
+\texttt{make-instance} using a host class or the name of a host class.
+\end{definition}
+
+\begin{definition}
+A \emph{host generic function} is a generic function created by the
+host macro \texttt{defgeneric}, so it is a host instance of the host
+class \texttt{generic-function}.  Arguments to the discriminating
+function of such a generic function are host instances.  The host
+function \texttt{class-of} is called on some required arguments in
+order to determine what methods to call.
+\end{definition}
+
+\begin{definition}
+A \emph{host method} is a method created by the host macro
+\texttt{defmethod}, so it is a host instance of the host class
+\texttt{method}.  The class specializers of such a method are host
+classes.
+\end{definition}
+
+\begin{definition}
+A \emph{simple host instance} is a host instance that is neither a
+host class nor a host generic function.
+\end{definition}
+
+\begin{definition}
+An \emph{ersatz instance} is a target instance represented as a host
+data structure, using a host standard object to represent the
+\emph{header} and a host simple vector to represent the \emph{rack}.
+In fact, the header is an instance of the host class
+\texttt{funcallable-standard-object} so that some ersatz instances can
+be used as functions in the host system.
+\end{definition}
+
+\begin{definition}
+An ersatz instance is said to be \emph{pure} if the class slot of the
+header is also an ersatz instance.  An ersatz instance is said to be
+\emph{impure} if it is not pure.  See below for more information on
+impure ersatz instances.
+\end{definition}
+
+\begin{definition}
+An \emph{ersatz class} is an ersatz instance that can be instantiated
+to obtain another ersatz instance.
+\end{definition}
+
+\begin{definition}
+An \emph{ersatz generic function} is an ersatz instance that is also a
+generic function.  It is possible for an ersatz generic function be
+executed in the host system because the header object is an instance
+of the host class \texttt{funcallable-standard-object}.  The methods
+on an ersatz generic function are ersatz methods.
+\end{definition}
+
+\begin{definition}
+An \emph{ersatz method} is an ersatz instance that is also a method.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge class} is a representation of a target class as a
+simple host instance.  An impure ersatz instance has a bridge class in
+the class slot of its header.  A bridge class can be instantiated to
+obtain an impure ersatz instance.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge generic function} is a target generic function
+represented as a simple host instance, though it is an instance of the
+host function \texttt{funcallable-standard-object} so it can be
+executed by the host.
+
+Arguments to a bridge generic function are ersatz instances.  The
+bridge generic function uses the
+\emph{stamp}
+\seesec{sec-generic-function-dispatch-the-discriminating-function} of
+the required arguments to dispatch on.
+
+The methods on a bridge generic function are bridge methods.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge method} is a target method represented by a simple host
+instance.  The class specializers of such a method are bridge classes.%
+\footnote{check the truth of that statement.}
+The \emph{method function} of a bridge method is an ordinary host
+function.
+\end{definition}
