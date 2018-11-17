@@ -1,6 +1,44 @@
 \section{Our technique}
 \label{sec-our-technique}
 
+A \sicl{} object is represented in one of three different ways:
+
+\begin{itemize}
+\item As an \emph{immediate} object where the object is stored in the
+  pointer itself, with the appropriate tag bits.  Fixnums, characters
+  and single floats are represented this way.
+\item As a two-word block.  This is how \texttt{cons} cells are
+  represented.
+\item As a two-word block where the first word points to a class
+  object, and the second word points to a sequence of words, called
+  the \emph{rack}, that contains the slots of the object.  All objects
+  other than immediates and \texttt{cons} cells are represented this
+  way.  We call this representation a \emph{general instance}. 
+\end{itemize}
+
+The first word of the rack contains a \emph{stamp} which is a unique
+integer taken from the class when the instance was created.  The
+stamps of the arguments to a generic function are used by the generic
+dispatch technique to determine which effective method to execute.
+The object representation and generic dispatch technique has been
+described in detail previously
+\cite{Strandh:2014:FGD:2635648.2635654}, but this short summary is
+sufficient to understand out bootstrapping technique.
+
+In the description of our technique, we use the word \emph{class} in a
+general way, as an object that can be used as a model for the creation
+of \emph{instances}.  Thus the word \emph{class} does not imply that
+it is a class in the sense of the host \commonlisp{} implementation.
+
+Similarly, we use the word \emph{generic function} in a general way,
+as an object that can be executed and that can have methods associated
+with it, providing partial implementations of the generic function.
+Thus, in this sense the word \emph{generic function} is not a generic
+function in the sens of the host \commonlisp{} implementation.
+However, during the bootstrapping procedure, these objects are
+executable in the host system, because they are instances of the host
+class \emph{funcallable-standard-object}.
+
 Our technique uses several first-class global environments
 \cite{Strandh:2015:ELS:Environments} to create a graph of objects that
 is isomorphic to the graph of objects to be written to the resulting
@@ -9,6 +47,36 @@ the problems related to packages and environments cited in
 \refSec{sec-cl-in-cl}.  The main feature of our technique, though, is
 that we create the generic functions and classes of the metaobject
 protocl \emph{first}.
+
+The environments are filled with definitions mainly as a result of
+loading files containing production \sicl{} code, though some code
+specific to bootstrapping is required as discussed at the end of this
+section.  This loading process uses the Eclector reader and the
+Cleavir compiler to produce intermediate code in the form of fairly
+conventional \emph{flow graph} of instructions.  The Cleavir compiler
+takes a first-class global environment as an argument, and uses this
+environment to search for definitions of macros etc.  The resulting
+intermediate code is then translated to a simple subset of
+\commonlisp{} code that accesses that same environment for definitions
+of functions and other objects.  This \commonlisp{} code is then
+compiled using the host compiler in order to make it executable in the
+host.
+
+In preparation for the bootstrapping procedure, several first-class
+global environments are created and filled with definitions of \sicl{}
+macros.  The definitions of those macros reside in production \sicl{}
+files.  Little or no special code is required for those definitions.
+
+A number of host object types are used during bootstrapping, in
+particular symbols, packages, \texttt{cons} cells, and integers.
+Though, when such an object is used as an argument to a \sicl{}
+generic function, a special version of \texttt{class-of} assigns a
+\sicl{} class object as its type.  Some of the host functions
+operating on these kinds of objects are \emph{imported} to our
+environments in preparation for the bootstrapping procedure.
+
+To facilitate the description of our technique, we need some
+definitions:
 
 \begin{definition}
 A \emph{simple instance} is an instance of some class, but that is
@@ -50,8 +118,8 @@ host class nor a host generic function.
 \end{definition}
 
 \begin{definition}
-An \emph{ersatz instance} is a target instance represented as a host
-data structure, using a host standard object to represent the
+An \emph{ersatz instance} is a target general instance represented as
+a host data structure, using a host standard object to represent the
 \emph{header} and a host simple vector to represent the \emph{rack}.
 In fact, the header is an instance of the host class
 \texttt{funcallable-standard-object} so that some ersatz instances can
@@ -111,3 +179,5 @@ instance.  The class specializers of such a method are bridge classes.%
 The \emph{method function} of a bridge method is an ordinary host
 function.
 \end{definition}
+
+The essence of our technique consists of three phases:
