@@ -88,7 +88,7 @@
                                for arg in lambda-list
                                when x
                                  collect `(,(nth i class-number-vars)
-                                           (instance-class-number ,arg))
+                                           (stamp ,arg))
                                  and do (incf i))
                      ,tagbody
                      (default-discriminating-function
@@ -102,8 +102,7 @@
                                for j from 0
                                when x
                                  collect `(,(nth i class-number-vars)
-                                           (instance-class-number
-                                            (nth ,j arguments)))
+                                           (stamp (nth ,j arguments)))
                                  and do (incf i))
                      ,tagbody
                      (default-discriminating-function

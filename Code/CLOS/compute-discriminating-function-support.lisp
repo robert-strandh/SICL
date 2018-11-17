@@ -205,7 +205,7 @@
 
 ;;; The implementation of this function is not complete.  Furthermore,
 ;;; this is probably not a good location for it.
-(defun instance-class-number (instance)
+(defun stamp (instance)
   (if (general-instance-p instance)
       (general-instance-access instance 0)
       ;; For now, anything else is considered to be an instance of
@@ -412,7 +412,7 @@
          (stamps (loop for argument in required-arguments
                        for p in profile
                        when p
-                         collect (instance-class-number argument)))
+                         collect (stamp argument)))
          (entry (car (member stamps (call-history generic-function)
                              :key #'class-number-cache :test #'equal))))
     (unless (null entry)
