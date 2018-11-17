@@ -1,0 +1,61 @@
+\section{The \sicl{} source code}
+
+\sicl{} is a system that is written entirely in \commonlisp{}.
+Furthermore, we decided to use the full language to implement the
+system, so as to avoid having to define and remember what subset of
+the language is allowed for which modules.  Thus, the compiler
+(Cleavir) makes heavy use of generic functions and classes.  By using
+these tools, we can have a compiler that is adaptable to different
+target systems.  It is currently used as the main compiler of Clasp,
+and recently, a Cleavir-based compiler has been written for CLISP.
+
+In addition to using the full language for the implementation of
+\sicl{}, we want the code to be as idiomatic as possible.  For
+example, our definition of the class \texttt{t}, looks like this:
+
+\begin{verbatim}
+(defclas t ()
+  ()
+  (:metaclass built-in-class))
+\end{verbatim}
+
+This definition clearly expresses the characteristics of the class
+\texttt{t}.  It has no superclasses because no superclasses are
+explicitly mentioned, and the metaclass \texttt{built-in-class} does
+not provide any default superclasses like \texttt{standard-class} and
+\texttt{funcallable-standard-class} do.  While this definition of the
+class \texttt{t} is clear, it is of course not operational as is.  The
+metaclass \texttt{built-in-class} is an indirect subclass of the class
+\texttt{t}, so the the class \texttt{t} must exist in order for the
+class \texttt{built-in-class} to exist.
+
+Our definition of the class \texttt{standard-class} looks like this:%
+\footnote{In reality, there are intermediate classes between
+  \texttt{class} and \texttt{standard-class} that are not shown here.}
+
+\begin{verbatim}
+(defclas standard-class (class)
+  (...))
+\end{verbatim}
+
+Again, this definition is clear.  No metaclass option is given, so the
+metaclass defaults to \texttt{standard-class}.  Like the defintion of
+\texttt{t}, this definition is not operational as it is, because the
+class \texttt{standard-class} must exist in order to be the metaclass
+of itself.
+
+In addition to using the \clos{} machinery for defining the classes
+defined by the metaobject protocol, we use the same machinery for
+defining system classes.  For example, our definition of the class
+\texttt{symbol} looks like this:
+
+\begin{verbatim}
+(defclass symbol (t)
+  ((%name :reader symbol-name)
+   (%package :reader symbol-package))
+  (:metaclass built-in-class))
+\end{verbatim}
+
+Not only is this definition clear, it is also operational.  By using
+the \clos{} machinery for definitions of system classes, we avoid
+having to use an additional, specific, mechanism for this purpose.
