@@ -30,6 +30,7 @@
 
 (defun define-compute-discriminating-function (e2)
   (load-file "CLOS/compute-discriminating-function-defgenerics.lisp" e2)
+  (load-file "CLOS/stamp-defun.lisp" e2)
   ;; LIST* is called in order to make a call cache.  CAR, CADR,
   ;; CADDR and CDDDR are used as accessors for the call cache.  FIND
   ;; is used to search a list of effictive-slot metaobjects to find
