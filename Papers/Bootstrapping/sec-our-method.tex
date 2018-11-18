@@ -1,6 +1,8 @@
 \section{Our technique}
 \label{sec-our-technique}
 
+\subsection{\sicl{} object representation}
+
 A \sicl{} object is represented in one of three different ways:
 
 \begin{itemize}
@@ -39,6 +41,8 @@ However, during the bootstrapping procedure, these objects are
 executable in the host system, because they are instances of the host
 class \emph{funcallable-standard-object}.
 
+\subsection{Environments for bootstrapping}
+
 Our technique uses several first-class global environments
 \cite{Strandh:2015:ELS:Environments} to create a graph of objects that
 is isomorphic to the graph of objects to be written to the resulting
@@ -61,6 +65,8 @@ intermediate code is then translated to a simple subset of
 of functions and other objects.  This \commonlisp{} code is then
 compiled using the host compiler in order to make it executable in the
 host.
+
+\subsection{Bootstrapping phases}
 
 In preparation for the bootstrapping procedure, several first-class
 global environments are created and filled with definitions of \sicl{}
@@ -236,4 +242,44 @@ contain entries for the corresponding stamps.  Filling the call caches
 is the purpose of our \emph{satiation} technique
 \cite{Strandh:2014:RMI:2635648.2635656}.
 
-%%  LocalWords:  accessors metaobjects accessor immediates
+\subsection{Tying the knot}
+
+At the end of the four phases, we have fully functional impure ersatz
+generic functions in environment $E_4$, and fully functional impure
+classes in environment $E_3$.  But we still do not have a cyclic graph
+of metaobjects that a functioning \clos{} system requires.
+Furthermore, there is still the presence of bridge generic functions
+that might be called in order to operate on our impure ersatz
+metaobjects.
+
+To accomplish the conversion of this hierarchy of objects to a cyclic
+graph, we need to modify the \texttt{class} slot of the headers of
+each impure metaobject so that instead of referring to a bridge class,
+it refers to an impure ersatz class.  This operation will transform
+every impure ersatz metaobject into a pure ersatz metaobject.
+However, there are a few more operations required to completely remove
+all references to bridge metaobjects:
+
+\begin{itemize}
+\item Each ersatz metaobject contains a list of the effective slot
+  definition metaobjects of its class as the second word of the rack.
+  In an impure ersatz metaobject, those effective slot definitions are
+  bridge objects.  Once the \texttt{class} field of the impure ersatz
+  metaobject has been updated, this list must be updated to contain a
+  reference to the list of the ersatz effective slot definitions from
+  the new ersatz class.
+\item Each ersatz generic function contains a slot containing the
+  method class of the methods on this generic function.  In an impure
+  ersatz generic function, this slot refers to a bridge class, so it
+  must also be updated.
+\end{itemize}
+
+We must still find and update all impure ersatz metaobjects in the
+system.  For classes and generic functions, this is trivial, as they
+are all reachable from the first-class global environment they are
+defined in.  For other object types such as methods, slot-definitions,
+method combinations, this is not the case.  They must be found by
+a traversal of the class or generic function metaobject that they are
+part of.  Such a traversal is straightforward.
+
+%%  LocalWords:  accessors metaobjects accessor immediates metaobject
