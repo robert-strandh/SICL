@@ -146,7 +146,7 @@
                  (error 'multiple-type-options-not-permitted
                         :datum direct-slot-spec))
                (remhash :type table)
-               `(:type ,(car value))))))
+               `(:type ',(car value))))))
 
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
