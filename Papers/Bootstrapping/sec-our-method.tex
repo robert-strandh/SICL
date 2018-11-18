@@ -180,4 +180,52 @@ The \emph{method function} of a bridge method is an ordinary host
 function.
 \end{definition}
 
-The essence of our technique consists of three phases:
+The essence of our technique consists of four phases.  In each phase
+$i$, three first-class global environments are involved, $E_{i-1}$,
+$E_{i}$, and $E_{i+1}$.  Before phase $i$ starts, $E_{i-1}$ contains
+classes to be instantiated during phase $i$, and $E_i$ contains
+generic functions that are not involved in phase $i$, but that will be
+used in phase $i+1$ to operate on the instances of the classes in
+$E_{i-1}$.  Some of the generic functions in $E_i$ are accessor
+functions containing methods that were automatically added as a result
+of the classes in $E_{i-1}$ being defined.  Others are higher-level
+functions that call those accessors to accomplish tasks such as
+initialization of various metaobjects, class finalization, creation of
+effective methods, and creation of discriminating functions.
+
+Phase $i$ has two main steps:
+
+\begin{enumerate}
+\item In this step, accessor generic functions are created in
+  $E_{i+1}$ by loading \sicl{} production code containing
+  \texttt{defgeneric} forms.  These generic functions are accessor
+  functions for MOP classes.  Notice that these functions are created
+  in $E_{i+1}$ rather than in $E_i$ so as to protect the existing
+  functions in $E_i$ that are needed later.
+\item In this step, classes are created in $E_i$ by loading \sicl{}
+  production code containing \texttt{defclass} forms.  As a result of
+  the creation of these classes, methods are automatically added to
+  the corresponding accessor generic functions in $E_{i+1}$.
+\end{enumerate}
+
+Depending on the phase, \sicl{} production code might be loaded before
+the first step, between the steps, or after the last step for the
+tasks cited above.
+
+The four phases accomplish the creation of these objects:
+
+\begin{enumerate}
+\item In this phase, host classes and host class metaclasses in $E_0$
+  are used to create host generic functions in $E_2$ and host classes
+  in $E_1$.
+\item In this phase, host classes in $E_1$ are used to create bridge
+  generic functions in $E_3$ and bridge classes in $E_2$.
+\item In this phase, bridge classes in $E_2$ are used to create impure
+  ersatz generic functions in $E_4$ and impure ersatz classes in
+  $E_3$.
+\item In this phase, impure ersatz classes in $E_3$ are used to create
+  pure ersatz generic functions in $E_5$ and pure ersatz classes in
+  $E_4$.
+\end{enumerate}
+
+%%  LocalWords:  accessors metaobjects accessor immediates
