@@ -38,4 +38,5 @@
 (defclass standard-accessor-method (standard-method)
   ((%slot-definition 
     :initarg :slot-definition
+    :type direct-slot-definition
     :accessor accessor-method-slot-definition)))
