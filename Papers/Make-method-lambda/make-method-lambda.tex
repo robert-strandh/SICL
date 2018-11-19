@@ -67,7 +67,24 @@
 
 
 \begin{abstract}
-The MOP macro \texttt{make-method-lambda}...
+The \commonlisp{} metaobject protocol specifies a generic function
+named \texttt{make-method-lambda} to be called at macro-expansion time
+of the macro \texttt{defmethod}. 
+In an article by Costanza and Herzell [], a number of problems with
+this generic function are discussed, and a solution is proposed. 
+
+In this paper, we show that the alleged problems are due to the fact
+that existing implementations do not include proper compile-time
+processing of the associated macro \texttt{defgeneric}, and that with
+proper compile-time processing, the problems indicated in [] simply
+vanish.
+
+The main characteristic of our proposed solution is for the
+compile-time side effects of \texttt{defgeneric} to include saving the
+name of the method class given as an option to that macro call.  With
+this additional information, no difference exists between the behavior
+of direct evaluation of a \texttt{defgeneric} form and a
+\texttt{defmethod} form mentioning the same name of the generic function.
 \end{abstract}
 
  \begin{CCSXML}
