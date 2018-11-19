@@ -1,1 +1,37 @@
 \section{Our technique}
+
+As permitted by the \commonlisp{} standard, the \texttt{defgeneric}
+macro may store information provided in the \texttt{defgeneric} form
+so as to make better error reporting possible when subsequent forms
+are compiled.  In particular, the standard mentions storing
+information about the lambda list given, so that subsequent calls to
+the generic function can be checked for correct argument count.
+This information is kept in an implementation-specific format that
+does not contain the full generic-function metaobject, as this object
+is created when the compiled code resulting from the file compilation
+is loaded.
+
+However, just as it is possible to keep information about the lambda
+list at compile time, it is also possible to keep information about
+the \texttt{:method-class} option given, or, when no option was
+supplied, the fact that the method class is \texttt{standard-method}.
+
+With this additional information, during the expansion of the
+\texttt{defmethod} macro, the name of the method class can be
+retrieved, then a class metaobject from the name, and finally a class
+prototype from the class metaobject. 
+
+While the first parameter of \texttt{make-method-lambda} is indicated
+as a generic-function metaobject, it is not specifically indicated
+that this object might be uninitialized, contrary to the method object
+that must be passed as the second argument.  It is, however, indicated
+that the generic-function object passed as the first argument may not
+be the generic-function object to which the new method will eventually
+be added.  Therefore, there is not much information that
+\texttt{make-method-lambda} can make use of.  The exception would be
+the exact class of the generic function and the exact method class.
+It would be awkward for a method on \texttt{make-method-lambda} to
+access this information explicitly, rather than as specializers of its
+parameters.  For that reason, the first argument to
+\texttt{make-method-lambda} might as well be a class prototype, just
+as the second argument might be. 
