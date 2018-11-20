@@ -1,1 +1,39 @@
 \section{Previous work}
+
+In their article [], Costanza and Herzeel give a simple example of
+this simple \texttt{defmethod} form:
+
+\begin{verbatim}
+(defmethod foo ((x integer) (y integer))
+  (do-something x y))
+\end{verbatim}
+
+\noindent
+and at the end of section 2.1, on page 3, they claim that the
+expansion of that form is ``something like'' the follow form:
+
+{\small\begin{verbatim}
+(let ((gf (ensure-generic-function 'foo)))
+  (multiple-value-bind
+      (lambda-expression extra-initargs)
+      (make-method-lambda
+        gf
+        (class-prototype
+          (generic-function-method-class gf))
+        '(lambda (x y) (do-something x y))
+        lexical-environment-of-defmethod-form)
+    (add-method
+      gf
+      (apply #'make-instance
+             (generic-function-method-class gf)
+             :qualifiers '()
+             :lambda-list '(x y)
+             :specializers (list (find-class 'integer)
+                                 (find-class 'integer))
+             :function (compile nil lambda-expression)
+             extra-initargs))
+\end{verbatim}}
+
+\noindent
+except that we have formatted the code to fit the page, and we have
+added two missing closing parentheses at the end of the form.
