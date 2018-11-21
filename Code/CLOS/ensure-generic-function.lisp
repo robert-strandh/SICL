@@ -12,13 +12,13 @@
      &key (environment (sicl-genv:global-environment))
      &allow-other-keys)
   (let ((generic-function
-	  (if (sicl-environment:fboundp name environment)
-	      (let ((fun (sicl-environment:fdefinition name)))
-		(if (typep fun 'generic-function)
-		    fun
-		    (error 'type-error
-			   :datum fun
-			   :expected-type '(or null generic-function))))
-	      nil)))
+          (if (sicl-environment:fboundp name environment)
+              (let ((fun (sicl-environment:fdefinition name)))
+                (if (typep fun 'generic-function)
+                    fun
+                    (error 'type-error
+                           :datum fun
+                           :expected-type '(or null generic-function))))
+              nil)))
     (apply #'ensure-generic-function-using-class
-	   generic-function name keys)))
+           generic-function name keys)))
