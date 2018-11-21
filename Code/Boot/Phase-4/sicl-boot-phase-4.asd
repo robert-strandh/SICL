@@ -18,5 +18,4 @@
    (:file "enable-class-initialization-in-e4")
    (:file "define-mop-classes")
    (:file "enable-method-combinations-in-e4")
-   (:file "boot-phase-4")
-   ))
+   (:file "boot-phase-4")))
