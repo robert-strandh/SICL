@@ -55,7 +55,7 @@
 ;;; words, find every C in Sc such that there is no element (D . C) in
 ;;; R.
 (defun find-candidates (classes precedence-relation)
-  (loop for class in classes 
+  (loop for class in classes
         unless (find class precedence-relation :key #'cdr :test #'eq)
           collect class))
 
@@ -68,7 +68,7 @@
 ;;; Given a class C, a class D, and a set (represented as a list) of
 ;;; local precedence orders, return true if and only if D is a direct
 ;;; superclass of C.
-(defun direct-superclass-p 
+(defun direct-superclass-p
     (class putative-direct-superclass local-precedence-orders)
   (loop for local-precedence-order in local-precedence-orders
         thereis (and (eq (first local-precedence-order) class)
@@ -90,7 +90,7 @@
 (defun choose-between-candidates
     (candidates reverse-partial-precedence-list local-precedence-orders)
   (loop for putative-direct-superclass in reverse-partial-precedence-list
-        thereis (loop for candidate in candidates 
+        thereis (loop for candidate in candidates
                       when (direct-superclass-p
                             candidate
                             putative-direct-superclass
