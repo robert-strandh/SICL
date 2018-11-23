@@ -1,15 +1,15 @@
 \section{Introduction}
 \label{sec-introduction}
 
-In this paper, by \emph{bootstrapping} a \commonlisp{}
-system we mean creating some \emph{target} \commonlisp{} system by
-building it from its associated source code, using various
-\emph{tools} and \emph{language processors} to transform that source
-code into an \emph{executable file} for some typical operating system
-such as GNU/Linux.  When a target \commonlisp{} system can be
-bootstrapped this way, the typical way of making it evolve through
-maintenance, is to modify its source code and then restart the
-bootstrapping process to build an updated executable file.
+In this paper, by \emph{bootstrapping} a \commonlisp{} system we mean
+creating some \emph{target} \commonlisp{} system by building it from
+its associated source code, using various \emph{tools} and
+\emph{language processors} to transform that source code into an
+\emph{executable file} for some typical operating system such as
+GNU/Linux.  The typical way of making such a target \commonlisp{}
+system evolve through maintenance, is to modify its source code and
+then restart the bootstrapping process to build an updated executable
+file.
 
 Not all \commonlisp{} systems are created so that they can evolve this
 way.  Some systems evolve by the careful modification of an existing
