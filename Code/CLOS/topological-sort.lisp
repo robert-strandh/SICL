@@ -53,7 +53,8 @@
 ;;; precedence relation R, return a set (represented as a list) of
 ;;; classes in Sc that have no predecessors according R.  In other
 ;;; words, find every C in Sc such that there is no element (D . C) in
-;;; R.
+;;; R.  If Sc is the empty set, then the empty set is returned.  If R
+;;; is empty then Sc is returned.
 (defun find-candidates (classes precedence-relation)
   (loop for class in classes
         unless (find class precedence-relation :key #'cdr :test #'eq)
