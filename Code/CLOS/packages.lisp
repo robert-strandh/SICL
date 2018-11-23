@@ -90,6 +90,7 @@
    #:make-method #:add-method #:call-method #:find-method
    #:method-qualifiers #:compute-applicable-methods #:next-method-p
    #:compute-applicable-methods-using-classes
+   #:compute-discriminating-function
    #:invalid-method-error
    #:no-applicable-method #:no-next-method #:remove-method #:defmethod
    #:method-combination #:define-method-combination #:method-combination-error
