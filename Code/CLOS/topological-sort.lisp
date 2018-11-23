@@ -109,12 +109,10 @@
          (remaining-classes all-classes)
          (local-precedence-relations
            (mapcar #'compute-local-precedence-relation local-precedence-orders))
-         (total-precedence-relation
+         (precedence-relation
            (compute-total-precedence-relation local-precedence-relations))
-         (precedence-relation total-precedence-relation)
          (reverse-partial-precedence-list '()))
-    (loop until (null total-precedence-relation)
-          for candidates = (find-candidates remaining-classes precedence-relation)
+    (loop for candidates = (find-candidates remaining-classes precedence-relation)
           until (null candidates)
           do (let ((candidate (if (null (rest candidates))
                                   (first candidates)
