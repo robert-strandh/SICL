@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "cyclify")))
+   (:file "cyclify")
+   (:file "boot-phase-5")))
