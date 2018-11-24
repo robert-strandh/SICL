@@ -5,9 +5,9 @@
 		   (e3 sicl-boot:e3))
       boot
     (with-slots ((class sicl-boot-phase-2::class))
-	generic-function
+	instance
       (let* ((class-name-fun (sicl-genv:fdefinition 'class-name e1))
-	     (class-name (funcall class-name-fun generic-function))
+	     (class-name (funcall class-name-fun instance))
 	     (new-class (sicl-genv:find-class class-name e3)))
 	(setf class new-class)))))
 
@@ -50,10 +50,10 @@
 	       '()
 	       :method-class method-class))
     (let* ((methods-function (sicl-genv:fdefinition 'generic-function-methods e3))
-	   (methods (funcall methods-function generc-function)))
+	   (methods (funcall methods-function generic-function)))
       (loop for method in methods
 	    do (patch-method method boot))))
-  (patch-class-slot generic-function boot)))
+  (patch-class-slot generic-function boot))
 
 (defun cyclify (boot)
   (with-accessors ((e2 sicl-boot:e2)
@@ -64,11 +64,11 @@
       (when (sicl-genv:fboundp symbol e4)
 	(let ((function (sicl-genv:fdefinition symbol e4)))
 	  (when (typep function 'sicl-boot-phase-2::header)
-	    (patch-generic-function function))))
+	    (patch-generic-function function boot))))
       (when (sicl-genv:fboundp `(setf ,symbol) e4)
 	(let ((function (sicl-genv:fdefinition `(setf ,symbol) e4)))
 	  (when (typep function 'sicl-boot-phase-2::header)
-	    (patch-generic-function function))))
+	    (patch-generic-function function boot))))
       (let ((class-or-nil (sicl-genv:find-class symbol e3)))
 	(unless (null class-or-nil)
-	  (patch-class class-or-nil<))))))
+	  (patch-class class-or-nil boot))))))
