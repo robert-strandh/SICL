@@ -87,8 +87,9 @@ the target system.  However, with a single global environment there
 can only be one definition of these entities.
 
 \sbcl{} solves this problem by using different package names for the
-code of the target system.  In the final system, the packages are then
-renamed to conform to the standard.
+code of the host system and the target system.  In a final step, the
+packages of the target system are then renamed to conform to the
+standard.
 
 \subsubsection{The compiler and \clos{}}
 
