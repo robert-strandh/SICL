@@ -294,6 +294,14 @@
 	  "Multiple NAME clauses where found."))
 
 (defmethod acclimation:report-condition
+    ((condition invalid-clause-order)
+     stream
+     (language acclimation:english))
+  (declare (ignorable condition))
+  (format stream
+	  "Invalid clause order.  Variable clauses must precede main clauses."))
+
+(defmethod acclimation:report-condition
     ((condition multiple-variable-occurrences)
      stream
      (language acclimation:english))
