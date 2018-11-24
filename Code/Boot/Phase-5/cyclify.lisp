@@ -51,7 +51,8 @@
 	       generic-function
 	       '()
 	       :method-class method-class))
-    (let* ((methods-function (sicl-genv:fdefinition 'generic-function-methods e3))
+    (let* ((methods-function
+             (sicl-genv:fdefinition 'sicl-clos:generic-function-methods e3))
 	   (methods (funcall methods-function generic-function)))
       (loop for method in methods
 	    do (patch-method method boot))))
