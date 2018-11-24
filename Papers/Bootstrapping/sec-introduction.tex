@@ -16,20 +16,19 @@ way.  Some systems evolve by the careful modification of an existing
 \emph{executing image} which is then saved as an executable file that
 can be executed as usual.
 
-Without arguing pros and cons of either technique, in this paper, we
-will concentrate on the technique of bootstrapping.
+In this paper we will concentrate on the technique of bootstrapping.
 
 Before we can start investigating different options for bootstrapping,
 we must deal with an annoying but crucial detail, namely the
 definition of \emph{source code}.  The Free Software Foundation
 defines it as ``the preferred form of a work for making modifications
 to it''.  We agree completely with this definition.  It excludes the
-use of code that was automatically produced from code in some other
-form.  In practice, it also excludes code written directly in machine
-language and most code written in some assembly language, with the
-exception of small code fragments that can not be expressed very
-easily in some other language, and of code fragments that are part of
-a code generator written in some higher-level language.
+use of code that was automatically produced.  In practice, it also
+excludes code written directly in machine language and most code
+written in assembly language, with the exception of (a) small code
+fragments that can not be expressed easily in some other language, and
+(b) code fragments that are part of a code generator written in some
+higher-level language.
 
 However, for it to be possible for the source code of a \commonlisp{}
 system to be turned into an executable file, there must be
