@@ -1,13 +1,13 @@
 (cl:in-package #:sicl-boot-phase-5)
 
 (defun patch-class-slot (instance boot)
-  (with-accessors ((e1 sicl-boot:e1)
+  (with-accessors ((e2 sicl-boot:e2)
 		   (e3 sicl-boot:e3))
       boot
-    (with-slots ((class sicl-boot-phase-2::class))
+    (with-slots ((class sicl-boot-phase-2::%class))
 	instance
-      (let* ((class-name-fun (sicl-genv:fdefinition 'class-name e1))
-	     (class-name (funcall class-name-fun instance))
+      (let* ((class-name-fun (sicl-genv:fdefinition 'class-name e2))
+	     (class-name (funcall class-name-fun class))
 	     (new-class (sicl-genv:find-class class-name e3)))
 	(setf class new-class)))))
 
@@ -19,15 +19,17 @@
 		   (e3 sicl-boot:e3)
                    (e4 sicl-boot:e4))
       boot
-    (let* ((direct-slots-function (sicl-genv:fdefinition 'class-direct-slots e3))
+    (let* ((direct-slots-function
+             (sicl-genv:fdefinition 'sicl-clos:class-direct-slots e3))
 	   (direct-slots (funcall direct-slots-function class))
-	   (effective-slots-function (sicl-genv:fdefinition 'class-slots e3))
+	   (effective-slots-function
+             (sicl-genv:fdefinition 'sicl-clos:class-slots e3))
 	   (effective-slots (funcall effective-slots-function class)))
       (loop for slot-definition in direct-slots
 	    do (patch-slot-definition slot-definition boot))
       (loop for slot-definition in effective-slots
 	    do (patch-slot-definition slot-definition boot)))
-    (patch-class-slot class)))
+    (patch-class-slot class boot)))
 
 (defun patch-method-combination (method-combination boot)
   (patch-class-slot method-combination boot))
