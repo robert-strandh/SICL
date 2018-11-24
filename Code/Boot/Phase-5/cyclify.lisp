@@ -6,10 +6,11 @@
       boot
     (with-slots ((class sicl-boot-phase-2::%class))
 	instance
-      (let* ((class-name-fun (sicl-genv:fdefinition 'class-name e2))
-	     (class-name (funcall class-name-fun class))
-	     (new-class (sicl-genv:find-class class-name e3)))
-	(setf class new-class)))))
+      (unless (typep class 'sicl-boot-phase-2::header)
+        (let* ((class-name-fun (sicl-genv:fdefinition 'class-name e2))
+               (class-name (funcall class-name-fun class))
+               (new-class (sicl-genv:find-class class-name e3)))
+          (setf class new-class))))))
 
 (defun patch-slot-definition (slot-definition boot)
   (patch-class-slot slot-definition boot))
