@@ -35,7 +35,7 @@ it is a class in the sense of the host \commonlisp{} implementation.
 Similarly, we use the word \emph{generic function} in a general way,
 as an object that can be executed and that can have methods associated
 with it, providing partial implementations of the generic function.
-Thus, in this sense the word \emph{generic function} is not a generic
+Thus, a \emph{generic function} is not a generic
 function in the sense of the host \commonlisp{} implementation.
 However, during the bootstrapping procedure, these objects are
 executable in the host system, because they are instances of the host
@@ -45,18 +45,18 @@ class \emph{funcallable-standard-object}.
 
 Our technique uses several first-class global environments
 \cite{Strandh:2015:ELS:Environments} to create a graph of objects that
-is isomorphic to the graph of objects to be written to the resulting
-executable file.  By using first-class global environments, we avoid
-the problems related to packages and environments cited in
-\refSec{sec-cl-in-cl}.  The main feature of our technique, though, is
-that we create the generic functions and classes of the metaobject
-protocl \emph{first}.
+is isomorphic to the graph of objects to be written to the executable
+file instantiating the target \commonlisp{} implementation.  By using
+first-class global environments, we avoid the problems related to
+packages and environments cited in \refSec{sec-cl-in-cl}.  The main
+feature of our technique, though, is that we create the generic
+functions and classes of the metaobject protocl \emph{first}.
 
 The environments are filled with definitions mainly as a result of
 loading files containing production \sicl{} code, though some code
 specific to bootstrapping is required as discussed at the end of this
 section.  This loading process uses the Eclector reader and the
-Cleavir compiler to produce intermediate code in the form of fairly
+Cleavir compiler to produce intermediate code in the form of a fairly
 conventional \emph{flow graph} of instructions.  The Cleavir compiler
 takes a first-class global environment as an argument, and uses this
 environment to search for definitions of macros etc.  The resulting
