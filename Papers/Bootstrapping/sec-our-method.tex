@@ -2,6 +2,7 @@
 \label{sec-our-technique}
 
 \subsection{\sicl{} object representation}
+\label{sec-our-technique-object-representation}
 
 A \sicl{} object is represented in one of three different ways:
 
@@ -59,12 +60,12 @@ section.  This loading process uses the Eclector reader and the
 Cleavir compiler to produce intermediate code in the form of a fairly
 conventional \emph{flow graph} of instructions.  The Cleavir compiler
 takes a first-class global environment as an argument, and uses this
-environment to search for definitions of macros etc.  The resulting
-intermediate code is then translated to a simple subset of
-\commonlisp{} code that accesses that same environment for definitions
-of functions and other objects.  This \commonlisp{} code is then
-compiled using the host compiler in order to make it executable in the
-host.
+environment to search for definitions of macros, classes, types, etc.
+The resulting intermediate code is then translated to a simple subset
+of \commonlisp{} code that accesses that same environment for
+definitions of functions and other objects.  This \commonlisp{} code
+is then compiled using the host compiler in order to make it
+executable in the host.
 
 \subsection{Bootstrapping phases}
 
@@ -75,7 +76,7 @@ files.  Little or no special code is required for those definitions.
 
 A number of host object types are used during bootstrapping, in
 particular symbols, packages, \texttt{cons} cells, and integers.
-Though, when such an object is used as an argument to a \sicl{}
+However, when such an object is used as an argument to a \sicl{}
 generic function, a special version of \texttt{class-of} assigns a
 \sicl{} class object as its type.  Some of the host functions
 operating on these kinds of objects are \emph{imported} to our
@@ -85,8 +86,8 @@ To facilitate the description of our technique, we need some
 definitions:
 
 \begin{definition}
-A \emph{simple instance} is an instance of some class, but that is
-also neither a class nor a generic function.
+A \emph{simple instance} is an instance of some class that is
+neither a class nor a generic function itself.
 \end{definition}
 
 \begin{definition}
@@ -124,12 +125,13 @@ host class nor a host generic function.
 \end{definition}
 
 \begin{definition}
-An \emph{ersatz instance} is a target general instance represented as
-a host data structure, using a host standard object to represent the
+An \emph{ersatz instance} is a target general instance (as defined in
+\refSec{sec-our-technique-object-representation}) represented as a
+host data structure, using a host standard object to represent the
 \emph{header} and a host simple vector to represent the \emph{rack}.
-In fact, the header is an instance of the host class
-\texttt{funcallable-standard-object} so that some ersatz instances can
-be used as functions in the host system.
+In fact, in order for the ersatz instance to be callable as a function
+in the host system, the header is an instance of the host class
+\texttt{funcallable-standard-object}.
 \end{definition}
 
 \begin{definition}
@@ -146,7 +148,7 @@ to obtain another ersatz instance.
 
 \begin{definition}
 An \emph{ersatz generic function} is an ersatz instance that is also a
-generic function.  It is possible for an ersatz generic function be
+generic function.  It is possible for an ersatz generic function to be
 executed in the host system because the header object is an instance
 of the host class \texttt{funcallable-standard-object}.  The methods
 on an ersatz generic function are ersatz methods.
@@ -164,22 +166,22 @@ obtain an impure ersatz instance.
 \end{definition}
 
 \begin{definition}
-A \emph{bridge generic function} is a target generic function
-represented as a simple host instance, though it is an instance of the
-host function \texttt{funcallable-standard-object} so it can be
-executed by the host.
+A \emph{bridge generic function} is a representation of a target
+generic as a simple host instance, though in order for it to be
+executed by the host, it is an instance of the host function
+\texttt{funcallable-standard-object}.
 
 Arguments to a bridge generic function are ersatz instances.  The
-bridge generic function uses the
+bridge generic function dispatches on the
 \emph{stamp}
-\seesec{sec-generic-function-dispatch-the-discriminating-function} of
-the required arguments to dispatch on.
+\seesec{sec-our-technique-object-representation} of
+its required arguments.
 
 The methods on a bridge generic function are bridge methods.
 \end{definition}
 
 \begin{definition}
-A \emph{bridge method} is a target method represented by a simple host
+A \emph{bridge method} is a target method represented as a simple host
 instance.  The class specializers of such a method are bridge classes.%
 \footnote{check the truth of that statement.}
 The \emph{method function} of a bridge method is an ordinary host
@@ -199,56 +201,55 @@ functions that call those accessors to accomplish tasks such as
 initialization of various metaobjects, class finalization, creation of
 effective methods, and creation of discriminating functions.
 
-Phase $i$ has two main steps:
+A phase $i$ has two main steps:
 
 \begin{enumerate}
-\item In this step, accessor generic functions are created in
-  $E_{i+1}$ by loading \sicl{} production code containing
-  \texttt{defgeneric} forms.  These generic functions are accessor
-  functions for MOP classes.  Notice that these functions are created
-  in $E_{i+1}$ rather than in $E_i$ so as to protect the existing
-  functions in $E_i$ that are needed later.
-\item In this step, classes are created in $E_i$ by loading \sicl{}
-  production code containing \texttt{defclass} forms.  As a result of
-  the creation of these classes, methods are automatically added to
-  the corresponding accessor generic functions in $E_{i+1}$.
+\item Accessor generic functions are created in $E_{i+1}$ by loading
+  \sicl{} production code containing \texttt{defgeneric} forms.  These
+  generic functions are accessor functions for MOP classes.  These
+  functions are created in $E_{i+1}$ rather than in $E_i$ so as to
+  protect the existing functions in $E_i$ that are needed later.
+\item Classes are created in $E_i$ by loading \sicl{} production code
+  containing \texttt{defclass} forms.  As a result of the creation of
+  these classes, methods are automatically added to the corresponding
+  accessor generic functions in $E_{i+1}$.
 \end{enumerate}
 
 Depending on the phase, \sicl{} production code might be loaded before
-the first step, between the steps, or after the last step for the
-tasks cited above.
+the first step, between the two steps, or after the last step.
 
-The four phases accomplish the creation of these objects:
+Four phases accomplish the creation of a number of objects, ending
+with a complete set of ersatz objects:
 
 \begin{enumerate}
-\item In this phase, host classes and host class metaclasses in $E_0$
+\item Host classes and host class metaclasses in $E_0$
   are used to create host generic functions in $E_2$ and host classes
   in $E_1$.
-\item In this phase, host classes in $E_1$ are used to create bridge
+\item Host classes in $E_1$ are used to create bridge
   generic functions in $E_3$ and bridge classes in $E_2$.
-\item In this phase, bridge classes in $E_2$ are used to create impure
+\item Bridge classes in $E_2$ are used to create impure
   ersatz generic functions in $E_4$ and impure ersatz classes in
   $E_3$.
-\item In this phase, impure ersatz classes in $E_3$ are used to create
+\item Impure ersatz classes in $E_3$ are used to create
   pure ersatz generic functions in $E_5$ and pure ersatz classes in
   $E_4$.
 \end{enumerate}
 
-As a result of these phases, the impure ersatz generic functions in
-environment $E_4$ can operate on the pure ersatz generic function in
-environment $E_5$ and on the pure ersatz classes in $E_4$.  But they
-can also operate on impure ersatz objects, provided their call caches
-contain entries for the corresponding stamps.  Filling the call caches
-is the purpose of our \emph{satiation} technique
+The result of these phases is that the impure ersatz generic functions
+in environment $E_4$ can operate on the pure ersatz generic function
+in environment $E_5$ and on the pure ersatz classes in $E_4$.  But
+they can also operate on impure ersatz objects, provided their call
+caches contain entries for the corresponding stamps.  Filling the call
+caches is the purpose of our \emph{satiation} technique
 \cite{Strandh:2014:RMI:2635648.2635656}.
 
 \subsection{Tying the knot}
 
-At the end of the four phases, we have fully functional impure ersatz
+At the end of these four phases, we have fully functional impure ersatz
 generic functions in environment $E_4$, and fully functional impure
-classes in environment $E_3$.  But we still do not have a cyclic graph
+classes in environment $E_3$.  But we still do not have the cyclic graph
 of metaobjects that a functioning \clos{} system requires.
-Furthermore, there is still the presence of bridge generic functions
+Furthermore, there are still bridge generic functions
 that might be called in order to operate on our impure ersatz
 metaobjects.
 
@@ -278,7 +279,7 @@ We must still find and update all impure ersatz metaobjects in the
 system.  For classes and generic functions, this is trivial, as they
 are all reachable from the first-class global environment they are
 defined in.  For other object types such as methods, slot-definitions,
-method combinations, this is not the case.  They must be found by
+and method combinations, this is not the case.  They must be found by
 a traversal of the class or generic function metaobject that they are
 part of.  Such a traversal is straightforward.
 
