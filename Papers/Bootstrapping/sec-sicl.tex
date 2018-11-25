@@ -81,7 +81,7 @@ specifications of the direct slots of a class.  These two definitions
 express the exact same information as two \texttt{defclass} forms
 defining the classes \texttt{class} and \texttt{standard-class},
 respectively.  However, because the \texttt{defclass} form can not be
-used at this stage of the bootstrapping process, a different mechanism
+used at this stage of the bootstrapping procedure, a different mechanism
 must be used.
 
 In addition to using the \clos{} machinery for defining the classes
@@ -121,3 +121,8 @@ In contrast, consider this definition of the system class
 \noindent
 Again, a special mechanism must be used, since \clos{} is not
 available when the type \texttt{symbol} must be defined.
+
+The purpose of the \sicl{} bootstrapping procedure is to make these
+idiomatic definitions operational in the host environment so as to
+create a graph of objects isomorphic to that of the target system, and
+then to create the target graph in an executable file.
