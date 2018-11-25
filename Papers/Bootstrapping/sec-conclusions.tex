@@ -1,1 +1,56 @@
 \section{Conclusions and future work}
+
+We have described a technique for bootstrapping a \commonlisp{} system
+using an existing conforming \commonlisp{} system that is also
+supported by the library \texttt{closer-mop}.  To our knowledge, no
+existing \commonlisp{} system is bootstrapped this way.
+
+There are several advantages to our technique:
+
+\begin{itemize}
+\item The full \commonlisp{} language can be used in order to
+  implement the system, including the compiler, thereby making the
+  code more maintainable.
+\item By bootstrapping the MOP generic functions and the hierarchy of
+  classes first, we eliminate the bootstrapping problems and
+  metastability problems cited by the AMOP book
+  \cite{Kiczales:1991:AMP:574212}.
+\item Also, by bootstrapping the MOP machinery first, we take advantage
+  of it by using it to define all the standard system classes, thereby
+  eliminating the need for special mechanisms for this purpose.
+\item The absence of special mechanisms that are needed in existing
+  implementations for defining many aspects of the system itself,
+  further contributes to the maintainability of our code.
+\end{itemize}
+
+Even though the technique outlined in this paper is known to work,
+many more aspects of the system need further work, including the
+bootstrapping technique itself, in order for a native executable to be
+generated:
+
+\begin{itemize}
+\item We must supply a (simple) code generator that translates
+  intermediate code to native code.  The amount of work required is
+  fairly modest, and mainly consists of creating native code for
+  memory operations such as \texttt{car} and
+  \texttt{standard-instance-access}, for object allocation, and for
+  simple arithmetic on fixnums.
+\item Interface code to the operating system must be supplied, in
+  particular for input/output operations.
+\item We have yet to write the code that translates the host
+  representation of the object graph into a native representation.
+  Special care must be taken for object types that are imported from
+  the host during bootstrapping, such as symbols, numbers, and
+  \texttt{cons} cells.
+\end{itemize}
+
+However, we are in no hurry to create a native executable system.  The
+moment we do, we lose a fairly good environment (namely the host
+\commonlisp{} system) for debugging our code.  Instead, we plan to use
+the host environment for testing as many aspects of \sicl{} as
+possible, and for creating support for better debugging capabilities,
+and only later create a native executable.
+
+In terms of future work, there are still several optimization
+techniques that need to be implemented for the Cleavir compiler
+framework.
