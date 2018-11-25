@@ -19,6 +19,7 @@ example, our definition of the class \texttt{t}, looks like this:
   (:metaclass built-in-class))
 \end{verbatim}
 
+\noindent
 This definition clearly expresses the characteristics of the class
 \texttt{t}.  It has no superclasses because no superclasses are
 explicitly mentioned, and the metaclass \texttt{built-in-class} does
@@ -29,20 +30,59 @@ metaclass \texttt{built-in-class} is an indirect subclass of the class
 \texttt{t}, so the the class \texttt{t} must exist in order for the
 class \texttt{built-in-class} to exist.
 
-Our definition of the class \texttt{standard-class} looks like this:%
+Our definitions of the classes \texttt{class} and
+\texttt{standard-class} look like this:%
 \footnote{In reality, there are intermediate classes between
   \texttt{class} and \texttt{standard-class} that are not shown here.}
+
+\begin{verbatim}
+(defclass class (specializer)
+  ((%name :initform nil :initarg :name ...)
+   ...
+   (%direct-subclasses :initform '() ...)))
+\end{verbatim}
 
 \begin{verbatim}
 (defclass standard-class (class)
   (...))
 \end{verbatim}
 
-Again, this definition is clear.  No metaclass option is given, so the
-metaclass defaults to \texttt{standard-class}.  Like the defintion of
-\texttt{t}, this definition is not operational as it is, because the
-class \texttt{standard-class} must exist in order to be the metaclass
-of itself.
+\noindent
+Again, these definitions are clear.  No metaclass option is given, so
+the metaclass defaults to \texttt{standard-class}.  Like the defintion
+of \texttt{t}, these definitions are not operational as is, because
+the class \texttt{standard-class} must exist in order to be the
+metaclass of itself.
+
+In a \commonlisp{} implementation that must bootstrap \clos{} from a
+subset of the language that does not include \clos{}, some other
+mechanism must be used.  As an example of the consequences of the use
+of such a subset, consider the following definitions from ECL:
+
+\begin{verbatim}
+(defparameter +class-slots+
+  `(,@+specializer-slots+
+    (name :initarg :name :initform nil ...)
+    ...
+    (direct-subclasses :initform nil ...)
+    ...))
+\end{verbatim}
+
+\begin{verbatim}
+(defparameter +standard-class-slots+
+  (append +class-slots+
+          '((optimize-slot-access)
+            (forward))))
+\end{verbatim}
+
+\noindent
+Here, two special variables are defined, each one containing the
+specifications of the direct slots of a class.  These two definitions
+express the exact same information as two \texttt{defclass} forms
+defining the classes \texttt{class} and \texttt{standard-class},
+respectively.  However, because the \texttt{defclass} form can not be
+used at this stage of the bootstrapping process, a different mechanism
+must be used.
 
 In addition to using the \clos{} machinery for defining the classes
 defined by the metaobject protocol, we use the same machinery for
@@ -56,34 +96,28 @@ defining system classes.  For example, our definition of the class
   (:metaclass built-in-class))
 \end{verbatim}
 
+\noindent
 Not only is this definition clear, it is also operational.  By using
 the \clos{} machinery for definitions of system classes, we avoid
 having to use an additional, special, mechanism for this purpose.
 
-In a \commonlisp{} implementation that must bootstrap \clos{} from a
-subset of the language that does not include \clos{}, some other
-mechanism must be used.  As an example of the consequences of the use
-of such a subset, consider the following definitions from ECL:
+In contrast, consider this definition of the system class
+\texttt{symbol} from SBCL:
 
 \begin{verbatim}
-(defparameter +specializer-slots+
-  '((flag :initform nil :accessor eql-specializer-flag)
-    (direct-methods :initform nil :accessor specializer-direct-methods)
-    (direct-generic-functions :initform nil ...)))
+(define-primitive-object
+    (symbol :lowtag other-pointer-lowtag
+            :widetag symbol-header-widetag
+            :alloc-trans %make-symbol
+            :type symbol)
+  ...
+  (name :ref-trans symbol-name :init :arg)
+  (package :ref-trans symbol-package
+           :set-trans %set-symbol-package
+           :init :null)
+  ...)
 \end{verbatim}
 
-\begin{verbatim}
-(defparameter +class-slots+
-  `(,@+specializer-slots+
-    (name :initarg :name :initform nil :accessor class-id)
-    (direct-superclasses :initarg :direct-superclasses ...)
-    ...))
-\end{verbatim}
-
-Here, two special variables are defined, each one containing the
-specifications of the direct slots of a class.  These two definitions
-express the exact same information as two \texttt{defclass} forms
-defining the classes \texttt{specializer} and \texttt{class},
-respectively.  However, because the \texttt{defclass} form can not be
-used at this stage of the bootstrapping process, a different mechanism
-must be used.
+\noindent
+Again, a special mechanism must be used, since \clos{} is not
+available when the type \texttt{symbol} must be defined.
