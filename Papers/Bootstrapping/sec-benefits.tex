@@ -6,7 +6,7 @@ Appendix C of ``The Art of the Metaobject Protocol''
 number of ways in which their system handles circularity and avoids
 bootstrapping and metastability issues.
 
-\subsubsection{Bootstrapping benefits}
+\subsection{Bootstrapping benefits}
 
 The first bootstrapping problem that is mentioned is the fact that
 \texttt{standard-class} must exist before it can be created.  Their
@@ -20,28 +20,27 @@ special case has to be considered.
 The second bootstrapping problem mentioned is that generic functions
 are used for method lookup, but these generic functions can not exist
 until a significant part of the protocol has been implemented.  As an
-example, the take \texttt{ensure-class} that is called as a result of
-a \texttt{defclass} form.  By having \texttt{ensure-class} check for
-the special case when the argument is \texttt{standard-class} and by
-supplying a special function for creating instances of
-\texttt{standard-class} they avoid bootstrapping issues, simply
-because during bootstrapping, all classes created will be instances of
-\texttt{standard-class}.  Also, in order to resolve this issue, they
-supply a special version of \texttt{finalize-inheritance} that checks
-for the metaclass \texttt{standard-class} and calls special-purpose
-code in this case.  Again, with our technique, no such special case is
-needed.  All classes that are instantiated are fully operational in
-the preceding environment, and the \texttt{finalize-inheritance}
-generic function is operational in the same way.
+example, take the call to \texttt{ensure-class} made as a result of
+executing the expansion of a \texttt{defclass} form.  By having
+\texttt{ensure-class} check for the special case when the argument is
+\texttt{standard-class} and by supplying a special function for
+creating instances of \texttt{standard-class} they avoid bootstrapping
+issues, simply because during bootstrapping, all classes created will
+be instances of \texttt{standard-class}.  They also supply a special
+version of \texttt{finalize-inheritance} that checks for the metaclass
+\texttt{standard-class} and calls special-purpose code in this case.
+With our technique, no such special case is needed.  All
+classes that are instantiated are fully operational in the preceding
+environment, as is the \texttt{finalize-inheritance} generic function.
 
-\subsubsection{Metastability benefits}
+\subsection{Metastability benefits}
 
-One example shows how \texttt{slot-value} calls
-\texttt{slot-value-using-class} which calls \texttt{slot-location} and
-which calls \texttt{slot-value} on the class metaobject to access the
-slot metaobjects of the class.  They propose a solution to this
-problem whereby \texttt{slot-location} checks for the specal argument
-\texttt{effective-slots} and returns a predefined location.  Our
+\texttt{slot-value} calls \texttt{slot-value-using-class} which calls
+\texttt{slot-location} which in turn calls \texttt{slot-value} on the
+class metaobject to access the slot metaobjects of the class.  The
+authors propose to solve this problem by arranging for
+\texttt{slot-location} to check for the special argument
+\texttt{effective-slots} and return a predefined location.  Our
 technique does not need this kind of special case, because
 \texttt{class-slots} does not call \texttt{slot-value} at all.  It
 accesses the \texttt{effective-slots} slot directly, using its
@@ -49,30 +48,31 @@ location.  This location has been compiled in during the creation of
 the effective method and discriminating function for
 \texttt{class-slots}.
 
-The final issue discussed in the book has to do with the fact that
-\texttt{compute-discriminating} function is a generic function and
-that it can not be called with itself as an argument when a method has
-been added or removed from it.  Again they solve the issue by a
-special case whereby a test is made to see whether the argument is an
-instance of \texttt{standard-generic-function} and if so, a special
-non-generic version of \texttt{compute-discriminating-function} is
-called instead.  With our technique,
-\texttt{compute-discriminating-function} has a \emph{call cache} that
+The final issue discussed in the book arises because the function
+\texttt{compute-discriminating} function is a generic function that
+can not be called with itself as an argument when a method has been
+added or removed from it.  Again they solve the issue by a special
+case whereby a test is made to see whether the argument is a standard
+generic function (i.e. an instance of
+\texttt{standard-generic-function}) and if so, a special non-generic
+version of \texttt{compute-discriminating-function} is called instead.
+With our technique, every generic function, including
+\texttt{compute-discriminating-function}, has a \emph{call cache} that
 includes an effective method that handles arguments that are instances
-of \texttt{standard-generic-function} and that call cache entry is not
+of \texttt{standard-generic-function}.  That call cache entry is not
 invalidated when new methods are added to
 \texttt{compute-discriminating-function}, at least not when the
 methods added respect the restrictions of the metaobject protocol,
 i.e. that user code is not allowed to add methods that are applicable
 when given only standard objects as arguments.
 
-\subsubsection{Other benefits}
+\subsection{Other benefits}
 
 In addition to solving the bootstrapping issues and the metastability
 issues given in the ``The Art of the Metaobject Protocol'' book, our
 technique has several additional benefits.
 
-For one thing, since we begin the bootstrapping procedure by
+Since we begin the bootstrapping procedure by
 defining the classes and generic functions specified by the metaobject
 protocol, we are able to use the \clos{} machinery to define system
 classes.  In a system where \clos{} is added late, many system classes
