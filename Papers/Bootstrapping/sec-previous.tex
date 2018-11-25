@@ -94,7 +94,7 @@ standard.
 \subsubsection{The compiler and \clos{}}
 
 Some aspects of \clos{} require the presence of the compiler, at least
-of the resulting code is required to have some reasonable
+if the resulting code is required to have some reasonable
 performance.  In particular, the compiler is required to create a
 discriminating function from the effective methods%
 \footnote{Recall that the result of a call to
@@ -103,12 +103,12 @@ discriminating function from the effective methods%
   hence the need for an evaluator.}
 returned by \texttt{compute-effective-method}.
 For that reason, it becomes difficult to use generic
-functions and standard classes in the code of the compiler.
+functions and standard classes in the code of the compiler itself.
 
 \sbcl{} solves this issue by not using generic functions and standard
-classes in the code of the compiler.  By doing it this way, \sbcl{}
-can load the compiler into a minimal running target system and then
-bootstrap CLOS afterwards.
+classes in the code of the compiler.  Thus, \sbcl{} can load the
+compiler into a minimal running target system and then bootstrap CLOS
+afterwards.
 
 However, not using generic functions and standard classes in the
 compiler has some of the same problems as \commonlisp{} systems that
@@ -117,5 +117,5 @@ to make sure the proper subset of the language is used when the code
 of the compiler is being worked on.  Furthermore, generic functions
 and standard classes are great tools for structuring complex code, so
 not being able to use these tools in such a signficant and complex
-part of a \commonlisp{} implementation has considerable negative
-effects on the structure of the code.
+part of a \commonlisp{} implementation negatively affects the clarity
+and maintainability of the code.
