@@ -61,11 +61,25 @@ Cleavir compiler to produce intermediate code in the form of a fairly
 conventional \emph{flow graph} of instructions.  The Cleavir compiler
 takes a first-class global environment as an argument, and uses this
 environment to search for definitions of macros, classes, types, etc.
-The resulting intermediate code is then translated to a simple subset
-of \commonlisp{} code that accesses that same environment for
-definitions of functions and other objects.  This \commonlisp{} code
-is then compiled using the host compiler in order to make it
-executable in the host.
+The resulting intermediate code is then translated in two different
+ways:
+
+\begin{enumerate}
+\item Native target code is generated from it, and attached to host
+  objects representing executable target objects such as ordinary
+  functions, generic functions, and methods.%
+  \footnote{We do not yet have a code generator for native executable
+    code, so currently this part of the bootstrapping procedure is
+    omitted.}
+\item It is translated to a simple subset of \commonlisp{} code that
+  accesses that same environment for definitions of functions and
+  other objects.  This \commonlisp{} code is then compiled using the
+  host compiler in order to make it executable in the host.
+\end{enumerate}
+
+The remainder of this section is concerned with how the
+host-executable code is used in order to determine the graph of target
+objects represented as an isomorphic graph of host objects.
 
 \subsection{Bootstrapping phases}
 
@@ -282,5 +296,30 @@ defined in.  For other object types such as methods, slot-definitions,
 and method combinations, this is not the case.  They must be found by
 a traversal of the class or generic function metaobject that they are
 part of.  Such a traversal is straightforward.
+
+Before the cyclic graph can be traversed and an isomorphic graph be
+generated in a native executable file, additional definitions must be
+loaded:
+
+\begin{itemize}
+\item Standard classes that are needed in order for the resulting
+  native executable to be viable must be loaded.  In particular,
+  definitions of classes such as \texttt{symbol}, \texttt{package},
+  \texttt{cons}, \texttt{sequence}, \texttt{list}, \texttt{null},
+  \texttt{number}, \texttt{rational}, \texttt{integer}, and
+  \texttt{fixnum} are needed in order for it to be possible to load
+  compiled code into the executing image.
+\item Many standard functions are also needed, such as functions on
+  packages, lists, hash tables, etc.  Functions that operate on
+  first-class global environments are needed as well.
+\item A simple version of the compiler must be loaded so that the
+  resulting executable image can construct discriminating functions
+  when definitions of generic functions and methods are loaded.
+\end{itemize}
+
+On the other hand, the garbage collector may not be needed in the
+initial executable image, though the data structures that the garbage
+collector works with must of course be present so that objects can be
+laid out in memory.
 
 %%  LocalWords:  accessors metaobjects accessor immediates metaobject
