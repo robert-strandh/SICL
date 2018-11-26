@@ -214,9 +214,10 @@ A phase $i$ has two main steps:
 \begin{enumerate}
 \item Accessor generic functions are created in $E_{i+1}$ by loading
   \sicl{} production code containing \texttt{defgeneric} forms.  These
-  generic functions are accessor functions for MOP classes.  These
-  functions are created in $E_{i+1}$ rather than in $E_i$ so as to
-  protect the existing functions in $E_i$ that are needed later.
+  generic functions are accessor functions for MOP classes and MOP
+  generic functions.  These functions are created in $E_{i+1}$ rather
+  than in $E_i$ so as to protect the existing functions in $E_i$ that
+  are needed later.
 \item Classes are created in $E_i$ by loading \sicl{} production code
   containing \texttt{defclass} forms.  As a result of the creation of
   these classes, methods are automatically added to the corresponding
