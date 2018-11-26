@@ -35,13 +35,13 @@ environment, as is the \texttt{finalize-inheritance} generic function.
 
 \subsection{Metastability benefits}
 
-\texttt{slot-value} calls \texttt{slot-value-using-class} which calls
-\texttt{slot-location} which in turn calls \texttt{slot-value} on the
-class metaobject to access the slot metaobjects of the class.  The
-authors propose to solve this problem by arranging for
+\texttt{slot-value} calls \texttt{slot-value-using-class} which then
+calls \texttt{slot-location} which in turn calls \texttt{slot-value}
+on the class metaobject to access the slot metaobjects of the class.
+The authors propose to solve this problem by arranging for the function
 \texttt{slot-location} to check for the special argument
 \texttt{effective-slots} and return a predefined location.  Our
-technique does not need this kind of special case, because
+technique does not need this kind of special case, because the function
 \texttt{class-slots} does not call \texttt{slot-value} at all.  It
 accesses the \texttt{effective-slots} slot directly, using its
 location.  This location has been compiled in during the creation of
