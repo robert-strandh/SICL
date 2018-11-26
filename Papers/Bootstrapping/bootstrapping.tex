@@ -46,11 +46,11 @@ are some annoying details that have to be dealt with.
 
 We describe the bootstrapping technique used with \sicl{}, a modern
 implementation of \commonlisp{}.  Though both \sicl{} and the
-bootstrapping process for creating it are still being worked on, they
+bootstrapping procedure for creating it are still being worked on, they
 are sufficiently evolved that the big picture outlined in this paper
 will remain valid.  Our technique uses \emph{first-class global
   environments} to isolate the host environment from the environments
-required during the bootstrapping process.  Contrary to \sbcl{}, and
+required during the bootstrapping procedure.  Contrary to \sbcl{}, and
 implementations written in some other language, in \sicl{}, we build
 the \clos{} MOP classes and generic functions \emph{first}.  This
 technique allows us to use the \clos{} machinery for many other parts
