@@ -41,24 +41,24 @@ other languages.
 \subsection{\commonlisp{} systems in other languages}
 
 When a language such as \clanguage{} or \cplusplus{} is used to
-implement a \commonlisp{} system, a small subset of the
-\commonlisp{} language is implemented this way.  We call that subset
-the \emph{base} language.  The result of the initial bootstrapping
-process is typically an executable file containing the base system.
-Additional modules are then added to the base system to obtain a
-complete \commonlisp{} system.  These additional modules must be
-implemented in the subset of \commonlisp{} defined by the base system
-and previously added modules.
+implement a \commonlisp{} system, a small subset of the \commonlisp{}
+language is implemented this way.  We call that subset the \emph{base}
+language.  The result of the initial bootstrapping procedure is
+typically an executable file containing the base system.  Additional
+modules are then added to the base system to obtain a complete
+\commonlisp{} system.  These additional modules must be implemented in
+the subset of \commonlisp{} defined by the base language and
+previously added modules.
 
 There are several issues with this technique.  For one thing, some
 major components that would be more easily expressed in \commonlisp{}
-must be written using the base language so that new modules can be
-added to the system, in particular a reader and an evaluator.
+must be written using the implementation language so that new modules
+can be added to the system, in particular a reader and an evaluator.
 
 Another major issue has to do with maintenance.  When one of the
 additional modules is modified, it is easy to forget exactly what
 subset of the \commonlisp{} language is allowed at that point in the
-bootstrapping process.  The code for a particular module must often be
+bootstrapping procedure.  The code for a particular module must often be
 expressed in some unidiomatic way and it is tempting to make the
 modified code more idiomatic, but doing so will then break the
 bootstrapping procedure.
