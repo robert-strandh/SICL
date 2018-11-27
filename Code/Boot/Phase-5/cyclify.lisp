@@ -1,5 +1,20 @@
 (cl:in-package #:sicl-boot-phase-5)
 
+(defun define-set-slot-value (boot)
+  (with-accessors ((e2 sicl-boot:e2)
+		   (e3 sicl-boot:e3)
+                   (e4 sicl-boot:e4))
+      boot
+    (defun set-slot-value (instance slot-name value)
+      (let* ((class-of-fun (sicl-genv:fdefinition 'class-of e3))
+             (class (funcall class-of-fun instance))
+             (slots-fun (sicl-genv:fdefinition 'sicl-clos:class-slots e2))
+             (slots (funcall slots-fun class))
+             (slot-name-fun (sicl-genv:fdefinition 'sicl-clos:slot-definition-name e2))
+             (s-s-v-u-c-fun (sicl-genv:fdefinition '(setf sicl-clos:slot-value-using-class) e2))
+             (slot (find slot-name slots :key slot-name-fun)))
+        (funcall s-s-v-u-c-fun value class instance slot)))))
+
 (defun patch-class-slot (instance boot)
   (with-accessors ((e2 sicl-boot:e2)
 		   (e3 sicl-boot:e3))
