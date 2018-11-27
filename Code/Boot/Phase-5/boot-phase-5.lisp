@@ -6,5 +6,6 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
+    (define-set-slot-value boot)
     (funcall (sicl-genv:fdefinition 'sicl-clos:compute-discriminating-function e4)
 	     (sicl-genv:fdefinition 'class-name e5))))
