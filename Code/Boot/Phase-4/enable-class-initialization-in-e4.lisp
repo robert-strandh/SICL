@@ -101,7 +101,7 @@
           (declare (ignore errorp))
           (setf (sicl-genv:find-class symbol e4) new-class)))
   (define-error-function 'change-class e4)
-  (define-error-function 'reinitialize-instance e4)
+  (load-file "CLOS/reinitialize-instance-defgenerics.lisp" e4)
   (define-ensure-class e4)
   (import-function-from-host 'sicl-clos:defclass-expander e4)
   (load-file "CLOS/defclass-defmacro.lisp" e4)
