@@ -39,6 +39,11 @@ reached from only one of the two branches of $T_1$.  In our technique,
 an outer macro provides $T_1$, whereas $T_2$ occurs in the inner loop
 of the function.
 
+Other than requiring an optimizing compiler, our technique uses only
+standard \commonlisp{} features in order to generate fast code.  Our
+technique will work with systems without such a compiler, but no
+improved performance will be observed.
+
 The \cleavir{} compiler framework of the \sicl{} project will
 ultimately include a technique for \emph{path replication} in
 intermediate code, that, while not specifically meant for the kind of
