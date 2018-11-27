@@ -65,7 +65,7 @@ echo STRING=$STRING
 
 echo plot '\' >> $GP
 
-echo "    " $STRING using 1:2 title \'SBCL\' with lines lc rgb \"blue\" dt 2 ',\' >> $GP
+echo "    " $STRING using 1:2 title \'SBCL\' with lines lc rgb \"blue\" ',\' >> $GP
 echo "    " $STRING using 1:3 title \'SICL\' with lines lc \"red\" ',\' >> $GP
 
 # N=2
