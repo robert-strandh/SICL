@@ -2,13 +2,13 @@
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
-;;;; all rights reserved. 
+;;;; all rights reserved.
 ;;;;
-;;;; Permission is hereby granted to use this software for any 
+;;;; Permission is hereby granted to use this software for any
 ;;;; purpose, including using, modifying, and redistributing it.
 ;;;;
 ;;;; The software is provided "as-is" with no warranty.  The user of
-;;;; this software assumes any responsibility of the consequences. 
+;;;; this software assumes any responsibility of the consequences.
 
 (cl:in-package #:sicl-loop)
 
@@ -460,7 +460,7 @@
 ;;;
 ;;; Parsers where FROM/DOWNFROM TO/DOWNTO/ABOVE and BY are all present.
 ;;;
-;;; The combination FROM - TO is not allowed. 
+;;; The combination FROM - TO is not allowed.
 
 ;;; FROM/DOWNFROM - DOWNTO/ABOVE - BY
 (define-parser arithmetic-down-1-parser
@@ -479,7 +479,7 @@
 	       (alternative 'downto-parser 'above-parser)
 	       'by-parser))
 
-;;; FROM/DOWNFROM - BY - DOWNTO/ABOVE 
+;;; FROM/DOWNFROM - BY - DOWNTO/ABOVE
 (define-parser arithmetic-down-2-parser
   (consecutive (lambda (var type-spec from by to)
 		 (make-instance 'for-as-arithmetic-down
@@ -547,7 +547,7 @@
 	       (alternative 'from-parser 'downfrom-parser)
 	       (alternative 'downto-parser 'above-parser)))
 
-;;; BY- DOWNTO/ABOVE - FROM/DOWNFROM 
+;;; BY- DOWNTO/ABOVE - FROM/DOWNFROM
 (define-parser arithmetic-down-6-parser
   (consecutive (lambda (var type-spec by to from)
 		 (make-instance 'for-as-arithmetic-down
@@ -581,7 +581,7 @@
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'by-parser))
 
-;;; DOWNFROM - BY - TO/DOWNTO/ABOVE 
+;;; DOWNFROM - BY - TO/DOWNTO/ABOVE
 (define-parser arithmetic-down-8-parser
   (consecutive (lambda (var type-spec from by to)
 		 (make-instance 'for-as-arithmetic-down
@@ -649,7 +649,7 @@
 	       'downfrom-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)))
 
-;;; BY- TO/DOWNTO/ABOVE - DOWNFROM 
+;;; BY- TO/DOWNTO/ABOVE - DOWNFROM
 (define-parser arithmetic-down-12-parser
   (consecutive (lambda (var type-spec by to from)
 		 (make-instance 'for-as-arithmetic-down
