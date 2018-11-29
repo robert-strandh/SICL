@@ -196,18 +196,19 @@ The \emph{method function} of a bridge method is an ordinary host
 function.
 \end{definition}
 
-The essence of our technique consists of four phases.  In each phase
-$i$, three first-class global environments are involved, $E_{i-1}$,
-$E_{i}$, and $E_{i+1}$.  Before phase $i$ starts, $E_{i-1}$ contains
-classes to be instantiated during phase $i$, and $E_i$ contains
-generic functions that are not involved in phase $i$, but that will be
-used in phase $i+1$ to operate on the instances of the classes in
-$E_{i-1}$.  Some of the generic functions in $E_i$ are accessor
-functions containing methods that were automatically added as a result
-of the classes in $E_{i-1}$ being defined.  Others are higher-level
-functions that call those accessors to accomplish tasks such as
-initialization of various metaobjects, class finalization, creation of
-effective methods, and creation of discriminating functions.
+The essence of our technique consists of four phases, using six
+first-class global environments.  In each phase $i$, three first-class
+global environments are involved, $E_{i-1}$, $E_{i}$, and $E_{i+1}$.
+Before phase $i$ starts, $E_{i-1}$ contains classes to be instantiated
+during phase $i$, and $E_i$ contains generic functions that are not
+involved in phase $i$, but that will be used in phase $i+1$ to operate
+on the instances of the classes in $E_{i-1}$.  Some of the generic
+functions in $E_i$ are accessor functions containing methods that were
+automatically added as a result of the classes in $E_{i-1}$ being
+defined.  Others are higher-level functions that call those accessors
+to accomplish tasks such as initialization of various metaobjects,
+class finalization, creation of effective methods, and creation of
+discriminating functions.
 
 A phase $i$ has two main steps:
 
