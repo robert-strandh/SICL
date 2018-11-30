@@ -23,7 +23,9 @@
 
 (defmethod translate :around ((client sicl-client:sicl-x86-64) instruction)
   (when (null (gethash instruction *translation-table*))
-    (let ((translation (call-next-method)))
+    (let* ((cleavir-ir:*origin* (cleavir-ir:origin instruction))
+           (cleavir-ir:*policy* (cleavir-ir:policy instruction))
+           (translation (call-next-method)))
       (setf (gethash instruction *translation-table*) translation))))
 
 (defgeneric hir-to-mir (client initial-instruction))
