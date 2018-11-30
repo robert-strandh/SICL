@@ -12,4 +12,5 @@
    (:file "cons")
    (:file "integer")
    (:file "general-instance")
-   (:file "environment-related-instructions")))
+   (:file "environment-related-instructions")
+   (:file "hir-to-mir")))
