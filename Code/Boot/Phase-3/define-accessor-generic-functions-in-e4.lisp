@@ -84,7 +84,6 @@
   (load-file "CLOS/setf-slot-definition-location-defgeneric.lisp" e4)
   (load-file "CLOS/variant-signature-defgeneric.lisp" e4)
   (load-file "CLOS/template-defgeneric.lisp" e4)
-  (load-file "CLOS/code-object-defgeneric.lisp" e4)
   (load-file "Package-and-symbol/symbol-name-defgeneric.lisp" e4)
   (load-file "Package-and-symbol/symbol-package-defgeneric.lisp" e4))
 
