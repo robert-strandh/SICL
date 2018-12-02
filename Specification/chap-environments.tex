@@ -316,6 +316,15 @@ lambda list, or \texttt{nil} if no lambda list has been defined for
 \textit{function-name}.  The second value is true if and only if a
 lambda list has been defined for \textit{function-name}.
 
+\Defgeneric {(setf function-lambda-list)}\\
+{new-lambda-list function-name environment}
+
+This generic function is used to associate a new lambda list with a
+function name.
+
+\textit{new-lambda-list} is a new lambda list for the function named
+\textit{function-name}
+
 \Defgeneric {boundp} {symbol environment}
 
 It returns true if \textit{symbol} has a definition in
