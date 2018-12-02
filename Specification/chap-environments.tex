@@ -325,6 +325,12 @@ function name.
 \textit{new-lambda-list} is a new lambda list for the function named
 \textit{function-name}
 
+\Defgeneric {function-ast} {function-name environment}
+
+This function returns the abstract syntax tree corresponding to the
+\textit{function-name}, or \texttt{nil} if no abstract syntax tree has
+been associated with the function.
+
 \Defgeneric {boundp} {symbol environment}
 
 It returns true if \textit{symbol} has a definition in
