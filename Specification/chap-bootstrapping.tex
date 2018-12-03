@@ -540,10 +540,14 @@ functions in environment $E_2$ defined during phase 1.
 In environment $E_0$, we define the following classes:
 
 \begin{itemize}
-\item \texttt{common-lisp:standard-genereic-function}.  This class is
+\item \texttt{common-lisp:standard-generic-function}.  This class is
   the same as the class with the same name in the host environment.
+  It will be used to create host generic functions in environment
+  $E_2$.
 \item \texttt{common-lisp:standard-method}.  This class is
   the same as the class with the same name in the host environment.
+  This class will be used to create methods on the generic functions
+  that we create in environment $E_2$.
 \item \texttt{sicl-clos:standard-direct-slot-definition}.  This class
   is the same as the class named
   \texttt{closer-mop:standard-direct-slot-definition} in the host
