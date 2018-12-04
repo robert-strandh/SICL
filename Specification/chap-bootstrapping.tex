@@ -627,20 +627,18 @@ $E_1$.
 Several adaptations are necessary in order to accomplish phase~1:
 
 \begin{itemize}
-\item The function \texttt{ensure-generic-function} is defined in
-  $E_1$ and operates in $E_2$.  It checks whether there is already a
-  function with the name passed as an argument in $E_2$, and if so, it
-  returns that function.  It makes no verification that such an
-  existing function is really a generic function; it assumes that it
-  is.  It also assumes that the parameters of that generic function
-  correspond to the arguments of \texttt{ensure-generic-function}.  If
-  there is no generic function with the name passed as an argument in
-  $E_2$, it creates an instance of the host class
-  \texttt{standard-generic-function} and associate it with the name in
-  $E_2$.  We define \texttt{ensure-generic-function} in $E_1$ so that
-  it can also be used to find accessor functions when MOP classes are
-  instantiated and methods need to be added to these accessor
-  functions.
+\item A special version of the function
+  \texttt{ensure-generic-function} is defined in environment $E_2$.
+  It checks whether there is already a function with the name passed
+  as an argument in $E_2$, and if so, it returns that function.  It
+  makes no verification that such an existing function is really a
+  generic function; it assumes that it is.  It also assumes that the
+  parameters of that generic function correspond to the arguments of
+  \texttt{ensure-generic-function}.  If there is no generic function
+  with the name passed as an argument in $E_2$, it creates an instance
+  of the host class \texttt{standard-generic-function} and associate
+  it with the name in $E_2$.  To create such an instance, it calls the
+  host function \texttt{make-instance}.
 \item The function \texttt{ensure-class} has a special version in
   $E_1$.  Rather than checking for an existing class, it always
   creates a new one.  Furthermore, before calling the host function
