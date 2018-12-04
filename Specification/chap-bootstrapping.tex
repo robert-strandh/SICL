@@ -533,8 +533,11 @@ forms that we evaluate in phase 1.  Without this \texttt{:around}
 method, the host function \texttt{initialize-instance} would receive
 keyword arguments \texttt{:readers} and \texttt{:writers} and it would
 then add methods to host generic functions corresponding to the names
-given.  Instead, we want these methods to be added to the generic
-functions in environment $E_2$ defined during phase 1.
+given.  Instead, this \texttt{:around} method adds the readers and
+writers to the generic function with the corresponding name in
+envirnoment $E_2$.  It assumes that this generic function exists, so
+we must create it explicitly before a class that defines the accessor
+method can be defined.
 
 In environment $E_0$, we define the following classes:
 
@@ -641,18 +644,7 @@ Several adaptations are necessary in order to accomplish phase~1:
   host function \texttt{make-instance}.
 \item The function \texttt{ensure-class} has a special version in
   $E_1$.  Rather than checking for an existing class, it always
-  creates a new one.  Furthermore, before calling the host function
-  \texttt{make-instance}, it removes the \texttt{:readers} and
-  \texttt{:writers} entries from the canonicalized slot specifications
-  in the \texttt{:direct-slots} keyword argument.  The result is that
-  the class will be created without any slot accessors.  We must do it
-  this way to avoid that the class-initialization protocol of the host
-  create these accessors in the host global environment $H$.  Instead,
-  \texttt{ensure-class} will create instances of the host class
-  \texttt{standard-method} using a function that call the host
-  functions \texttt{slot-value} and \texttt{(setf slot-value)} and it
-  will add these methods to the appropriate generic function found in
-  $E_2$.
+  creates a new one.
 \end{itemize}
 
 Phase~1 is divided into two steps:
