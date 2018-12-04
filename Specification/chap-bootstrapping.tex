@@ -514,15 +514,15 @@ We shall refer to them as $E_0$, $E_1$, $E_2$, $E_3$, $E_4$, and $E_5$.
 
 We define a class named
 \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-environment as a subclass of the host class
-\texttt{funcallable-standard-class}.  When we evaluate
-\texttt{defclass} forms in phase 1, the classes created are instances
-of this class.  We could have chosen this class only for instances
-that need to be executable in the host, and a subclass of the host
-class \texttt{standard-class} for the others, but the host class
-\texttt{funcallable-standard-class} can do everything that the host
-class \texttt{standard-class} can, so we simplify the code by using
-one single class.
+environment.  It is defined as a direct subclass of the host class
+\texttt{closer-mop:funcallable-standard-class}.  When we
+evaluate \texttt{defclass} forms in phase 1, the classes created are
+instances of this class.  We could have chosen this class only for
+instances that need to be executable in the host, and a subclass of
+the host class \texttt{standard-class} for the others, but the host
+class \texttt{funcallable-standard-class} can do everything that the
+host class named \texttt{standard-class} can, so we simplify the code by
+using one single class.
 
 We define an \texttt{:around} method on \texttt{initialize-instance}
 in the host environment, specialized to
@@ -539,6 +539,9 @@ functions in environment $E_2$ defined during phase 1.
 In environment $E_0$, we define the following classes:
 
 \begin{itemize}
+\item \texttt{t}.  This class is the same as the host class
+  \texttt{t}.  It will be used as a specializer on method arguments
+  that are not otherwise specialized.
 \item \texttt{common-lisp:standard-generic-function}.  This class is
   the same as the class with the same name in the host environment.
   It will be used to create host generic functions in environment
