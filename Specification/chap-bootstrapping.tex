@@ -551,15 +551,17 @@ In environment $E_0$, we define the following classes:
 \item \texttt{common-lisp:standard-class}.  This class is the same as
   the class named
   \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.
+  environment.  It will be used to create most classes in $E_1$.
 \item \texttt{common-lisp:built-in-class}.  This class is the same as
   the class named
   \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.
+  environment.  It will be used to create some classes in $E_1$, for
+  example \texttt{t} and \texttt{function}.
 \item \texttt{sicl-clos:funcallable-standard-class}.  This class is
   the same as the class named
   \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
-  environment.
+  environment.  It will be used to create some classes in $E_1$, such
+  as \texttt{generic-function} and \texttt{standard-generic-function}.
 \item \texttt{sicl-clos:standard-direct-slot-definition}.  This class
   is the same as the class named
   \texttt{closer-mop:standard-direct-slot-definition} in the host
