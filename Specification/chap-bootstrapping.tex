@@ -548,11 +548,6 @@ In environment $E_0$, we define the following classes:
   the same as the class with the same name in the host environment.
   This class will be used to create methods on the generic functions
   that we create in environment $E_2$.
-\item \texttt{sicl-clos:standard-direct-slot-definition}.  This class
-  is the same as the class named
-  \texttt{closer-mop:standard-direct-slot-definition} in the host
-  environment.  This class will be used to create slot-definition
-  metaobjects for the classes that we create in environment $E_1$.
 \item \texttt{common-lisp:standard-class}.  This class is the same as
   the class named
   \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
@@ -565,6 +560,11 @@ In environment $E_0$, we define the following classes:
   the same as the class named
   \texttt{sicl-boot-phase-0:funcallable-standard-class} in the host
   environment.
+\item \texttt{sicl-clos:standard-direct-slot-definition}.  This class
+  is the same as the class named
+  \texttt{closer-mop:standard-direct-slot-definition} in the host
+  environment.  This class will be used to create slot-definition
+  metaobjects for the classes that we create in environment $E_1$.
 \end{itemize}
 
 \subsubsection{Phase 1}
