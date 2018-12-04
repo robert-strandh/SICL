@@ -587,16 +587,30 @@ The purpose of phase~1 is:
 Three different environments are involved in phase~1:
 
 \begin{itemize}
-\item The global host environment $H$ is used to find the host classes
-  named \texttt{standard-class}, \texttt{funcallable-standard-class},
-  \texttt{built-in-class}, and \texttt{standard-generic-function}.
-  These classes are used by \texttt{make-instance} in order to create
-  the classes in $E_1$ and the generic functions in $E_2$
+\item Environment $E_0$ is used to find find host classes to
+  instantiate.  The class named \texttt{standard-class} in $E_0$ is
+  used to instantiate most of the classes in environment $E_1$, for
+  example, \texttt{standard-class}, \texttt{built-in-class},
+  \texttt{slot-definition}, etc.  The class named
+  \texttt{built-in-class} in $E_0$ is used to create classes
+  \texttt{t} and \texttt{function} as well as some non-MOP classes in
+  $E_1$.  The class named \texttt{funcallable-standard-class} in $E_0$
+  is used to create classes \texttt{generic-function} and
+  \texttt{standard-generic-function}, also in environment $E_1$.  The
+  class named \texttt{standard-direct-slot-definition} in $E_0$ is
+  used to define slot-definition metaobjects for the classes in
+  environment $E_1$.  Environment $E_0$ is also used to find host
+  classes \texttt{standard-generic-function} and
+  \texttt{standard-method} to instantiate in order to create generic
+  functions in environment $E_2$ as well as methods on those generic
+  functions.
 \item The run-time environment $E_1$ is where instances of the host
   classes named \texttt{standard-class},
-  \texttt{funcallable-standard-class}, and \texttt{built-in-class}
-  will be associated with the names of the MOP hierarchy of classes.
-  These instances are thus host classes.
+  \texttt{funcallable-standard-class}, and \texttt{built-in-class} in
+  environment $E_0$ will be associated with the names of the MOP
+  hierarchy of classes.  These instances are thus host classes.  The
+  entire MOP hierarchy is created as are some built-in classes such as
+  \texttt{cons} and some of the number classes.
 \item The run-time environment $E_2$ is where instances of the host
   class named \texttt{standard-generic-function} will be associated
   with the names of the different accessors specialized to host
