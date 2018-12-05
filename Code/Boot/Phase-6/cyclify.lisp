@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase-5)
+(cl:in-package #:sicl-boot-phase-6)
 
 (defun define-set-slot-value (boot)
   (with-accessors ((e2 sicl-boot:e2)
