@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:export #:boot
            #:environment
-           #:e0 #:e1 #:e2 #:e3 #:e4 #:e5
+           #:e0 #:e1 #:e2 #:e3 #:e4 #:e5 #:e6
            #:load-file
            #:load-file-protected
            #:import-function-from-host
