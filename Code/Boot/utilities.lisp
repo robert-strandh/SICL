@@ -52,6 +52,7 @@
 (define-symbol-macro ee3 (sicl-boot:e3 *b*))
 (define-symbol-macro ee4 (sicl-boot:e4 *b*))
 (define-symbol-macro ee5 (sicl-boot:e5 *b*))
+(define-symbol-macro ee6 (sicl-boot:e6 *b*))
 
 (defun fd (function-name environment)
   (sicl-genv:fdefinition function-name environment))
