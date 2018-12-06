@@ -15,8 +15,8 @@
   (cond ((symbolp generic-function-class)
          (let ((class (find-metaclass generic-function-class t environment)))
            (when (null class)
-             (error "no such generic-function-class ~s"
-                    generic-function-class))
+             (error 'no-such-generic-function-class
+                    :class-name generic-function-class))
            (setf generic-function-class class)))
         ((subtypep generic-function-class 'generic-function)
          nil)
