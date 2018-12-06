@@ -27,7 +27,7 @@ dispatch technique to determine which effective method to execute.
 The object representation and generic dispatch technique has been
 described in detail previously
 \cite{Strandh:2014:FGD:2635648.2635654}, but this short summary is
-sufficient to understand out bootstrapping technique.
+sufficient to understand our bootstrapping technique.
 
 In the description of our technique, we use the word \emph{class} in a
 general way, as an object that can be used as a model for the creation
@@ -57,13 +57,14 @@ functions and classes of the metaobject protocol \emph{first}.
 The environments are filled with definitions mainly as a result of
 loading files containing production \sicl{} code, though some code
 specific to bootstrapping is required as discussed at the end of this
-section.  This loading procedure uses the Eclector reader and the
-Cleavir compiler to produce intermediate code in the form of a fairly
-conventional \emph{flow graph} of instructions.  The Cleavir compiler
-takes a first-class global environment as an argument, and uses this
-environment to search for definitions of macros, classes, types, etc.
-The resulting intermediate code is then translated in two different
-ways:
+section.  This loading procedure uses the Eclector%
+\footnote{https://github.com/robert-strandh/Eclector}
+reader and the Cleavir compiler to produce intermediate code in the
+form of a fairly conventional \emph{flow graph} of instructions.  The
+Cleavir compiler takes a first-class global environment as an
+argument, and uses this environment to search for definitions of
+macros, classes, types, etc.  The resulting intermediate code is then
+translated in two different ways:
 
 \begin{enumerate}
 \item Native target code is generated from it, and attached to host
