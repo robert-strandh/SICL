@@ -3,11 +3,16 @@
 \sicl{} is a system that is written entirely in \commonlisp{}.  We
 decided to use the full language to implement the system so as to
 avoid having to define and remember what subset of the language is
-allowed for which modules.  Thus, the compiler (Cleavir) makes heavy
-use of generic functions and classes.  By using these tools, we can
-have a compiler that is adaptable to different \commonlisp{}
-implementations.  It is currently used as the main compiler of Clasp,
-and recently, a Cleavir-based compiler has been written for CLISP.
+allowed for which modules.  Thus, the compiler, called Cleavir%
+\footnote{Cleavir resides in the \sicl{} repository on GitHub.},
+makes heavy use of generic functions and classes.  By using these two
+types of objects, we can have a compiler that is adaptable to
+different \commonlisp{} implementations.  It is currently used as the
+main compiler of Clasp%
+\footnote{https://github.com/clasp-developers},
+and recently, a Cleavir-based compiler has
+been written for CLISP%
+\footnote{https://clisp.sourceforge.io/}.
 
 In addition to using the full language for the implementation of
 \sicl{}, we want the code to be as idiomatic as possible.  For
@@ -57,7 +62,8 @@ metaclass of itself.
 In a \commonlisp{} implementation that must bootstrap \clos{} from a
 subset of the language that does not include \clos{}, some other
 mechanism must be used.  As an example of the consequences of the use
-of such a subset, consider the following definitions from ECL:
+of such a subset, consider the following definitions from ECL%
+\footnote{https://common-lisp.net/project/ecl/}:
 
 \begin{verbatim}
 (defparameter +class-slots+
