@@ -125,3 +125,7 @@
 (define-condition argument-precedence-order-must-be-proper-list
     (sicl-additional-conditions:sicl-error)
   ((%order :initarg :order :reader argument-precedence-order)))
+
+(define-conditition no-such-generic-function-class
+    (sicl-additional-conditions:sicl-error)
+  ((%class-name :initarg :class-name :reader generic-function-class-name)))
