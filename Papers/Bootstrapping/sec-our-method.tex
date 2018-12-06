@@ -12,11 +12,12 @@ A \sicl{} object is represented in one of three different ways:
   and single floats are represented this way.
 \item As a two-word block.  This is how \texttt{cons} cells are
   represented.
-\item As a two-word block where the first word points to a class
-  object, and the second word points to a sequence of words, called
-  the \emph{rack}, that contains the slots of the object.  All objects
-  other than immediates and \texttt{cons} cells are represented this
-  way.  We call this representation a \emph{general instance}. 
+\item As a two-word block called a \emph{header} where the first word
+  points to a class object, and the second word points to a sequence
+  of words, called the \emph{rack}, that contains the slots of the
+  object.  All objects other than immediates and \texttt{cons} cells
+  are represented this way.  We call this representation a
+  \emph{general instance}.
 \end{itemize}
 
 The first word of the rack contains a \emph{stamp} which is a unique
