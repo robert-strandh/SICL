@@ -86,31 +86,6 @@ An image I is said to be \emph{viable} if and only if it is possible
 to obtain a complete \commonlisp{} system by starting with I and loading a
 sequence of ordinary compiled files.
 
-There are many ways of making a viable image.  We are interested in
-making a \emph{small} viable image.  In particular, we want the
-initial image \emph{not to contain any evaluator} (no compiler, no
-interpreter), because we want to be able to load the compiler as a
-bunch of compiled files.
-
-By requiring the viable image not to contain the compiler, we place
-some restrictions on the code in it.  
-
-One such restriction is that creating the discriminating function of a
-generic function is not allowed to invoke the compiler.  Since doing
-so is typical in any CLOS implementation, we must find a different
-way.  We solve this problem by using a general-purpose discriminating
-function that traverses the call history and invokes the effictive
-method functions that corresponds to the arguments of the call, and if
-no effective method function can be found, calls the machinery to
-compute the effective method function and adds the new effective
-method function to the call history.
-
-Another such restriction concerns the creation of classes.  Typically,
-when a class is created, the reader and writer methods are created by
-invoking the compiler.  Again, a different way must be found.  To solve
-this problem, the method function of an accessor method is created
-as a closure that closes over the index of the slot in the rack.
-
 \subsection{Arguments passed to \texttt{fasl} function}
 \label{sec-bootstrapping-arguments-to-fasl-function}
 
