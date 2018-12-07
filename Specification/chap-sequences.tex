@@ -6,31 +6,25 @@ performance will be obtained by identifying important special cases
 such as the use of \texttt{:test} function \texttt{eq}, or
 \texttt{equal}, or the use of a \texttt{:key} of \texttt{identity}. 
 
-Compiler macros are supplied so as to avoid runtime dispatch
-whenever a special-case function can be determined by only looking at
-the call site.  This ensures high performance for short sequences,
-where argument parsing would otherwise represent a significant
-fraction of the cost of the call.
-
 \section{Current state}
-
-Code exists for most of the functions.  Compiler macros exist for some
-of them.  Some functions can not be written portably; in particular
-\texttt{make-sequence}, because it is implementation-dependent what a
-recognizable subtype of (say) a vector is.
 
 In an attempt to make the functions as fast as possible, we created
 lots of different specialized versions for common cases of keyword
 arguments.  Preliminary tests show that we improve on the speed
-compared to existing commonly used implementations of \commonlisp{}.  However,
-the existence of all those special cases also makes the module hard to
-read and difficult to test.  
+compared to existing commonly used implementations of \commonlisp{}.
+However, the existence of all those special cases also makes the
+module hard to read and difficult to test.
 
 For that reason, we plan to rewrite this module, using an alternative
-strategy. \seesec{sec-sequence-functions-future-work}
+strategy.
 
 \section{Future work}
 \label{sec-sequence-functions-future-work}
+
+Work is in progress using the techniques in our paper at ELS 2017
+\cite{Durand:2017:ELS:Sequence}.  These techniques work well for most
+of the sequence functions such as \texttt{find}, \texttt{position},
+etc.
 
 Concerning the \emph{sorting functions} (i.e., \texttt{sort} and
 \texttt{stable-sort}) there is an interesting challenge with respect
@@ -39,11 +33,6 @@ extra space.  The naive version of mergesort uses $O(n)$ extra space,
 but some research (\cite{Huang:1990:FSM:898863},
 \cite{Huang:1988:PIM:42392.42403},
 \cite{Katajainen:1996:PIM:642136.642138}) indicates that it is
-possible to obtain an in-place stable version of mergesort.   Since
+possible to obtain an in-place stable version of mergesort.  Since
 mergesort is typically significantly faster than quicksort, this would
 be a worthwhile direction to pursue.
-
-Recent development in the \cleavir{} compiler framework
-strongly suggest that we can use a technique that will generate these
-specialized versions automatically from only a few general versions.
-This technique works on intermediate code.
