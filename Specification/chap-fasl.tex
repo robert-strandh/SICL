@@ -1,58 +1,31 @@
 \chapter{Compiled files}
 \label{chap-compiled-files}
 
-When a compiled file (a so called \emph{fasl} file) is loaded, some
-arbitrary code may have to be executed.  For that reason, we think
-that it is best to make the \emph{fasl} file format as simple as
-possible so as to simplify the \emph{fasl} loader.
+In order to simplify \sysname{} as much as possible, we will use the
+external format of the \cleavir{} abstract syntax tree as our so
+called \emph{\textsc{fasl}} format.  The \cleavir{} compiler already contains
+code that makes it possible to read and write abstract syntax trees,
+so with this decision, there is no need to design an additional file
+format.
 
-We think a \emph{fasl} file should consist of a one-word \emph{version
-  identifier} which also contains the \emph{magic number} of the
-file.  Starting immediately after the first word is \emph{executable
-  native code} that has been compiled to be \emph{position
-  independent}.  Loading a \emph{fasl} file is then just a matter of:
+The external format for abstract syntax trees can be read using the
+\commonlisp{} standard \texttt{read} function with a single additional
+reader macro, also provided by \cleavir{}.  Since the \commonlisp{}
+reader will be present in the initial executable \sysname{} system,
+there is no special code needed in order to read a \textsc{fasl} file.
 
-\begin{enumerate}
-\item Calling \texttt{mmap} to map the file to some arbitrary place in
-  the address space.
-\item Verifying the magic number and the version to make sure it is
-  compatible with the current version of the system. 
-\item Using a \texttt{call} instruction (or equivalent) to call the
-  code of the file as a subroutine.
-\item Calling \texttt{munmap} to unmap the file from the address
-  space. 
-\end{enumerate}
+Furthermore, the compiler will also be present in the initial initial
+executable \sysname{} system, so the code for converting an abstract
+syntax tree into native code is also present.
 
-The executable code in the \emph{fasl} file can be seen as a \commonlisp{}
-function that takes 3 functions as arguments, namely
-\texttt{copy-string}, \texttt{intern}, and \texttt{fstorage}, where
-\texttt{copy-string} is a function of a single argument that returns a
-copy of a string passed as an argument, and \texttt{fstorage} is a
-function of a single argument (a function name) that returns a
-\texttt{cons} cell containing the global definition of the function
-with that name.
+The \commonlisp{} standard requires compiled files to be at least
+\emph{minimally compiled}, and the abstract syntax tree format
+fulfills the requirement for minimal compilation.
 
-In order to create objects and modify the environment, the code in the
-\emph{fasl} file executes the following steps:
-
-\begin{enumerate}
-\item Call \texttt{copy-string}, passing it a string object local to
-  the \emph{fasl} file to create a string to contain the
-  name of a package.
-\item Call \texttt{copy-string} again to create a string to contain
-  the name of a symbol.
-\item Call \texttt{intern} with the name of the symbol and the name of
-  the package in order to obtain a symbol.
-\item Call \texttt{fstorage} with the symbol to obtain the storage
-  cell for the desired function.
-\item Take the \texttt{car} of that cell to get the desired function.
-\item Use the function to create the desired object.
-\end{enumerate}
-
-If the name of the function that is wanted is of the form
-\texttt{(setf \emph{name})}, then the function named \texttt{cons}
-first has to be found with the method indicated above.  Then the 
-symbols \texttt{setf}, and \texttt{NIL}, must also be found using the
-same method as above.  The function \texttt{cons} must then be called
-in order to build the list that gives the name of the desired
-function.  Finally, \texttt{fstorage} is called with that list. 
+The main downside of using this format for \textsc{fasl} files is decreased
+performance compared to a format containing native code.  However,
+loading \textsc{fasl} files is typically only done during the development phase
+of some software, and almost never at run-time.  The additional delay
+required when loading an abstract syntax tree as a result of
+converting it to intermediate code and then to native code is likely
+to be barely noticeable during development.
