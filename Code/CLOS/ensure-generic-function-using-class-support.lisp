@@ -21,7 +21,8 @@
         ((subtypep generic-function-class 'generic-function)
          nil)
         (t
-         (error "generic function class must be a class or a name")))
+         (error 'generic-function-class-must-be-class-or-name
+                :object generic-function-class)))
   (when method-class-p
     (cond ((symbolp method-class)
            (let ((class (find-metaclass method-class t environment)))
