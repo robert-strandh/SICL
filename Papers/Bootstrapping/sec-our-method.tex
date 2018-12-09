@@ -83,7 +83,7 @@ The remainder of this section is concerned with how the
 host-executable code is used in order to determine the graph of target
 objects represented as an isomorphic graph of host objects.
 
-\subsection{Bootstrapping phases}
+\subsection{Definitions}
 
 In preparation for the bootstrapping procedure, several first-class
 global environments are created and filled with definitions of \sicl{}
@@ -197,6 +197,8 @@ instance.  The class specializers of such a method are bridge classes.
 The \emph{method function} of a bridge method is an ordinary host
 function.
 \end{definition}
+
+\subsection{Bootstrapping phases}
 
 The essence of our technique consists of four phases, using six
 first-class global environments.  In each phase $i$, three first-class
