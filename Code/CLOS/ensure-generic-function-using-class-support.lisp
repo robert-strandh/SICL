@@ -27,7 +27,7 @@
     (cond ((symbolp method-class)
            (let ((class (find-metaclass method-class t environment)))
              (when (null class)
-               (error "no such method class ~s" method-class))
+               (error 'no-such-method-class :class-name method-class))
              (setf method-class class)))
           ((subtypep method-class 'method)
            nil)
