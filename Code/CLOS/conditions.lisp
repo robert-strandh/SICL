@@ -130,6 +130,10 @@
     (sicl-additional-conditions:sicl-error)
   ((%class-name :initarg :class-name :reader generic-function-class-name)))
 
+(define-condition no-such-method-class
+    (sicl-additional-conditions:sicl-error)
+  ((%class-name :initarg :class-name :reader generic-function-class-name)))
+
 (define-condition generic-function-class-must-be-class-or-name
     (sicl-additional-conditions:sicl-error)
   ((%object :initarg :object :reader object)))
