@@ -112,7 +112,7 @@
 	   ;; different one.
 	   (cons (cons lexical (car free-registers)) solution)))))
 
-;;; Solve the suproblem that is like the original problem but with one
+;;; Solve the subproblem that is like the original problem but with one
 ;;; particular lexical removed.
 (defun solve-sub
     (lexical registers lexicals conflicts register-count req-fun pref-fun)

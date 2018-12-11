@@ -15,7 +15,7 @@
 ;;;;
 ;;;; A node A is said to IMMEDIATELY DOMINATE a node B if and only if
 ;;;; A and B are distinct, A dominates B, and there does not exist a
-;;;; node C district from A and B, such that A dominates C and C
+;;;; node C distinct from A and B, such that A dominates C and C
 ;;;; dominates B.  A node A that IMMEDIATELY DOMINATES a node B is
 ;;;; said to be THE IMMEDIATE DOMINATOR of B, because it is unique. 
 ;;;; 
@@ -33,7 +33,7 @@
 ;;;; not strictly dominate B.
 ;;;;
 ;;;; The concept of dominance frontier is extended to a set of nodes,
-;;;; where it simply means the union of the dominance frontier of each
+;;;; where it simply means the union of the dominance frontiers of each
 ;;;; node in the set. 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,7 +76,7 @@
 ;;;
 ;;; Although advertised as working on flowgraphs (i.e. a graph where
 ;;; the nodes are basic blocks), it works for any types of graph with
-;;; similar characteristics, and in particular for flowchars (i.e.,
+;;; similar characteristics, and in particular for flowcharts (i.e.,
 ;;; graph where the nodes are individual instructions).  All that we
 ;;; require is that the nodes in the graph can be compared using EQ,
 ;;; and that a function is supplied that returns a list of successors
@@ -217,7 +217,7 @@
 ;;; list is always the root node of the flowgraph.
 ;;;
 ;;; By representing it this way, we can use the dominance tree to
-;;; return all insteresting dominance relations.  By itself, a value
+;;; return all interesting dominance relations.  By itself, a value
 ;;; in the table is a set of all dominators of a node.  The CADR of
 ;;; that list is the IMMEDIATE dominator of a node, The CDR of the
 ;;; list is the set of all STRICT dominators of the node. 
