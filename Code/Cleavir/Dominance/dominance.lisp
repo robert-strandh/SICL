@@ -17,24 +17,24 @@
 ;;;; A and B are distinct, A dominates B, and there does not exist a
 ;;;; node C distinct from A and B, such that A dominates C and C
 ;;;; dominates B.  A node A that IMMEDIATELY DOMINATES a node B is
-;;;; said to be THE IMMEDIATE DOMINATOR of B, because it is unique. 
-;;;; 
+;;;; said to be THE IMMEDIATE DOMINATOR of B, because it is unique.
+;;;;
 ;;;; A node A is said to STRICTLY DOMINATE a node B if and only if A
 ;;;; dominates B and A is distinct from B.
-;;;; 
+;;;;
 ;;;; The dominance relation can be represented as a TREE containing
 ;;;; each node of the flow graph, where the root of the tree is the
 ;;;; start node of the graph, and the parent of each node in the tree
 ;;;; other than the root is its unique immediate dominator.  Such a
 ;;;; tree is called a DOMINANCE TREE.
-;;;; 
+;;;;
 ;;;; For a node A, the DOMINANCE FRONTIER of A is the set of all nodes
 ;;;; B such that A dominates an immediate predecessor of B, but A does
 ;;;; not strictly dominate B.
 ;;;;
 ;;;; The concept of dominance frontier is extended to a set of nodes,
 ;;;; where it simply means the union of the dominance frontiers of each
-;;;; node in the set. 
+;;;; node in the set.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -61,7 +61,7 @@
 ;;;
 ;;; Compute the immediate dominator of each node in an arbitrary
 ;;; flowgraph.
-;;; 
+;;;
 ;;; This function is a very close implementation of the algorithm by
 ;;; Thomas Lengauer and Robert Endre Tarjan, as described in their
 ;;; paper "A Fast Algorithm for Finding Dominators in a Flowgraph",
@@ -207,7 +207,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the complete dominance tree.  
+;;; Compute the complete dominance tree.
 ;;;
 ;;; We represent the complete dominance tree as a hash table with the
 ;;; nodes of the flowgraph as keys.  The value for a particular node
@@ -220,7 +220,7 @@
 ;;; return all interesting dominance relations.  By itself, a value
 ;;; in the table is a set of all dominators of a node.  The CADR of
 ;;; that list is the IMMEDIATE dominator of a node, The CDR of the
-;;; list is the set of all STRICT dominators of the node. 
+;;; list is the set of all STRICT dominators of the node.
 
 ;;; From the point of view of client code, this function returns an
 ;;; opaque object to be used as an argument to the three dominator
@@ -264,7 +264,7 @@
 	       (unless (null idom)
 		 (push node (gethash idom result)))))
     result))
-	       
+
 ;;; Given a flow chart or a flow graph, compute the dominance frontier
 ;;; for each node.  To client code, the object returned is opaque, and
 ;;; can be used to pass to the function DOMINANCE-FRONTIER.

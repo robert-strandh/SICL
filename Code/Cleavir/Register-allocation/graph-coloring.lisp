@@ -1,7 +1,7 @@
 (cl:in-package #:cleavir-register-allocation)
 
 ;;; The degree of a lexical is the number of times it appears in
-;;; the conflicts, either as the CAR or as the CDR of a conflict. 
+;;; the conflicts, either as the CAR or as the CDR of a conflict.
 (defun degree (lexical conflicts)
   (count-if (lambda (conflict)
 	      (or (eq lexical (car conflict))
@@ -9,15 +9,15 @@
 	    conflicts))
 
 ;;; The safe rule is the rule that finds a lexical that fulfills two
-;;; criteria: 
-;;; 
+;;; criteria:
+;;;
 ;;;   * The lexical does not have a required register as indictated by
 ;;;     the fact that when REQ-FUN is applied to the lexical, NIL is
 ;;;     returned.
-;;; 
+;;;
 ;;;   * The degree of the lexical is strictly less than the number of
 ;;;     registers.
-;;; 
+;;;
 ;;; If such a lexical exists, this function returns it.  Otherwise it
 ;;; returns NIL.
 (defun safe-rule (lexicals conflicts register-count req-fun)
@@ -56,7 +56,7 @@
 ;;;
 ;;;  * a list of CONFLICTING-ITEMS, i.e. a list where each element is
 ;;;    either a lexical or a register such that the element conflicts
-;;;    with L according to the conflicts in C. 
+;;;    with L according to the conflicts in C.
 ;;;
 ;;;  * a list of remaining conflicts, which is like C but with every
 ;;;    conflict mentioning L removed.
@@ -125,7 +125,7 @@
 			       req-fun
 			       pref-fun)))
       (patch-solution solution lexical conflicting-items registers pref-fun))))
-	  
+
 (defun solve-aux (registers lexicals conflicts register-count req-fun pref-fun)
   (flet ((rule-1 (lexicals conflicts)
 	   (safe-rule lexicals conflicts register-count req-fun))
@@ -137,7 +137,7 @@
 	       '()
 	       (let ((lexical (or (rule-1 lexicals conflicts)
 				  (rule-2 lexicals conflicts))))
-		 
+
 		 (if (null lexical)
 		     ;; This situation happens when all of the
 		     ;; lexicals have required registers.  Then there
@@ -192,7 +192,7 @@
 	do (when (or (member (cons item1 item2) rest :test #'equal)
 		     (member (cons item2 item1) rest :test #'equal))
 	     (error "item (~s . ~s) occurs multiple times" item1 item2)))
-  (catch 'no-solution 
+  (catch 'no-solution
     (solve-aux registers
 	       lexicals
 	       conflicts
