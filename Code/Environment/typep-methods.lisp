@@ -22,8 +22,9 @@
      subsidiary-type-information
      environment)
   (unless (null (rest subsidiary-type-information))
-    ;; FIXME: do this with a specific error type.
-    (error "Malformed typespecifier"))
+    (error 'malformed-type-specifier
+           :type-specifier (cons atomic-type-specifier
+                                 subsidiary-type-information)))
   (not (typep object (first subsidiary-type-information) environment)))
 
 (defmethod typep-compound
@@ -32,8 +33,9 @@
      subsidiary-type-information
      environment)
   (unless (null (rest subsidiary-type-information))
-    ;; FIXME: do this with a specific error type.
-    (error "Malformed typespecifier"))
+    (error 'malformed-type-specifier
+           :type-specifier (cons atomic-type-specifier
+                                 subsidiary-type-information)))
   (eql object (first subsidiary-type-information)))
 
 (defmethod typep-compound
@@ -49,8 +51,9 @@
      subsidiary-type-information
      environment)
   (unless (null (rest subsidiary-type-information))
-    ;; FIXME: do this with a specific error type.
-    (error "Malformed typespecifier"))
+    (error 'malformed-type-specifier
+           :type-specifier (cons atomic-type-specifier
+                                 subsidiary-type-information)))
   (funcall (fdefinition (first subsidiary-type-information) environment)
            object))
 
