@@ -22,3 +22,11 @@
                      (lower (floor integer divisor) (- length length/2))
                      (lower (mod integer divisor) length/2)))))
       (upper integer))))
+
+(defun print-integer (integer base stream)
+  (cond ((zerop integer)
+         (princ #\0 stream))
+        ((minusp integer)
+         (print-positive-integer (- integer) base stream))
+        (t
+         (print-positive-integer integer base stream))))
