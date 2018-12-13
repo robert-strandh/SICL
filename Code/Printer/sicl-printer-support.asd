@@ -4,4 +4,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "integer")))
+   (:file "integer")
+   (:file "ratio")))
