@@ -251,7 +251,19 @@ Depending on the phase, \sicl{} production code might be loaded before
 the first step, between the two steps, or after the last step.
 
 Four phases accomplish the creation of a number of objects, ending
-with a complete set of ersatz objects:
+with a complete set of ersatz objects.  The result if each phase is
+illustrated by a separate figure.  In these figures, the shape of each
+object illustrates its type as shown in \refFig{fig-objects}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-objects.pdf_t}
+\end{center}
+\caption{\label{fig-objects}
+Objects in different phases.}
+\end{figure}
+
+The four phases accomplish this following results:
 
 \begin{enumerate}
 \item Host classes and host class metaclasses in $E_0$
@@ -268,14 +280,6 @@ with a complete set of ersatz objects:
   generic functions in $E_5$ and pure ersatz classes in $E_4$.  The
   result of this phase is illustrated in \refFig{fig-phase-4}.
 \end{enumerate}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-objects.pdf_t}
-\end{center}
-\caption{\label{fig-objects}
-Objects in different phases.}
-\end{figure}
 
 \begin{figure}
 \begin{center}
