@@ -256,15 +256,17 @@ with a complete set of ersatz objects:
 \begin{enumerate}
 \item Host classes and host class metaclasses in $E_0$
   are used to create host generic functions in $E_2$ and host classes
-  in $E_1$.
-\item Host classes in $E_1$ are used to create bridge
-  generic functions in $E_3$ and bridge classes in $E_2$.
-\item Bridge classes in $E_2$ are used to create impure
-  ersatz generic functions in $E_4$ and impure ersatz classes in
-  $E_3$.
-\item Impure ersatz classes in $E_3$ are used to create
-  pure ersatz generic functions in $E_5$ and pure ersatz classes in
-  $E_4$.
+  in $E_1$.  The result of this phase is illustrated in
+  \refFig{fig-phase-1}.
+\item Host classes in $E_1$ are used to create bridge generic
+  functions in $E_3$ and bridge classes in $E_2$.  The result of this
+  phase is illustrated in \refFig{fig-phase-2}.
+\item Bridge classes in $E_2$ are used to create impure ersatz generic
+  functions in $E_4$ and impure ersatz classes in $E_3$.  The result
+  of this phase is illustrated in \refFig{fig-phase-3}.
+\item Impure ersatz classes in $E_3$ are used to create pure ersatz
+  generic functions in $E_5$ and pure ersatz classes in $E_4$.  The
+  result of this phase is illustrated in \refFig{fig-phase-4}.
 \end{enumerate}
 
 \begin{figure}
