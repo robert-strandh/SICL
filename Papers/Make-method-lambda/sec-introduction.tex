@@ -5,3 +5,16 @@ metaobject protocol \cite{Kiczales:1991:AMP:574212}, the generic
 function \texttt{make-method-lambda} plays a role that is very
 different from most of the other generic functions that are part of
 the metaobject protocol.
+
+According to the book, the function has four parameters, all required:
+
+\begin{enumerate}
+\item A generic function metaobject.
+\item A (possibly uninitialized) method metaobject.
+\item A lambda expression.
+\item An environment object.
+\end{enumerate}
+
+The main difference is that \texttt{make-method-lambda} is called as
+part of the expansion code for the \texttt{defmethod} macro, whereas
+other generic functions are called at execution time.
