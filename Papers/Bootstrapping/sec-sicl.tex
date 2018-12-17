@@ -132,3 +132,14 @@ The purpose of the \sicl{} bootstrapping procedure is to make these
 idiomatic definitions operational in the host environment so as to
 create a graph of objects isomorphic to that of the target system, and
 then to create the target graph in an executable file.
+
+By doing it this way, we simplify system maintenance.  The
+bootstrapping procedure is able to work with the definitions of
+classes, generic functions, and methods using the standard macros
+\texttt{defclass}, \texttt{defgeneric}, and \texttt{defmethod}, even
+though these definitions would not be operational in a system that
+needs to build up functionality from a language subset that does not
+include \clos{}.  The \sicl{} maintainer is thus free to alter
+definitions of core system objects, relying on the bootstrapping
+procedure to make those definitions operational and ultimately turning
+them into an executable system.
