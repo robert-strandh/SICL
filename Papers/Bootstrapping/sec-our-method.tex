@@ -33,15 +33,30 @@ In the description of our technique, we use the word \emph{class} in a
 general way, as an object that can be used as a model for the creation
 of \emph{instances}.  Thus the word \emph{class} does not imply that
 it is a class in the sense of the host \commonlisp{} implementation.
+While this usage of the word \emph{class} may seem odd, recall that a
+class is just an ordinary \commonlisp{} object that is passed as an
+argument to \texttt{make-instance} and other functions called by it
+which then returns a different object.  We exploit this idea by
+supplying our own definition of \texttt{make-instance} in different
+phases of the bootstrapping procedure.
 
 Similarly, we use the word \emph{generic function} in a general way,
 as an object that can be executed and that can have methods associated
 with it, providing partial implementations of the generic function.
-Thus, a \emph{generic function} is not a generic
-function in the sense of the host \commonlisp{} implementation.
-However, during the bootstrapping procedure, these objects are
-executable in the host system, because they are instances of the host
-class \emph{funcallable-standard-object}.
+Again, while this usage of the word \emph{generic function} may seem
+odd, recall that a generic function is simply an ordinary
+\commonlisp{} object of type \texttt{funcallable-standard-object} for
+which the ultimate definition (called the \emph{discriminating
+  function}) is computed by combining partial definitions (the
+\emph{methods}) associated with it.  We exploit this fact by providing
+different representations of generic functions in different phases of
+the bootstrapping procedure, and by supplying different versions of
+\texttt{compute-discriminating-function} adapted to each phase.  Thus,
+a \emph{generic function} is not a generic function in the sense of
+the host \commonlisp{} implementation.  However, during the
+bootstrapping procedure, these objects are executable in the host
+system, because they are instances of the host class
+\texttt{funcallable-standard-object}.
 
 \subsection{Environments for bootstrapping}
 
