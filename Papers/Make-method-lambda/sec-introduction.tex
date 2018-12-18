@@ -35,3 +35,19 @@ The book also states that the method object passed as second argument
 may be uninitialized, suggesting that the \emph{class prototype} of
 the method class to be instantiated may be passed as the second
 argument.
+
+The third argument is a lambda expression corresponding to the body of
+the \texttt{defmethod} form.  The purpose of
+\texttt{make-method-lambda} is to wrap this lambda expression in
+another lambda expression that defines the \emph{method function}.  The
+default behavior of \texttt{make-method-lambda} is to return a lambda
+expression with two parameters.  The first parameter is a list of all
+the arguments to the generic function.  The second parameter is a list
+of next methods that can be invoked using \texttt{call-next-method}
+from the body of the method.  Therefore \texttt{make-method-lambda}
+also provides definitions of \texttt{call-next-method} and
+\texttt{next-method-p} that are lexically inside the lambda expression
+it returns.
+
+Finally, the fourth argument to \texttt{make-method-lambda} is an
+environment object.
