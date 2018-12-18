@@ -18,3 +18,20 @@ According to the book, the function has four parameters, all required:
 The main difference is that \texttt{make-method-lambda} is called as
 part of the expansion code for the \texttt{defmethod} macro, whereas
 other generic functions are called at execution time.
+
+The AMOP book states that the generic function passed as the first
+argument may be different from the one that the method is ultimately
+going to be added to.  This possibility seems to exist to handle the
+situation where a \texttt{defgeneric} form is followed by a
+\texttt{defmethod} form in the same file.  In this situation, the
+\commonlisp{} standard clearly states that the file compiler does not
+create the generic function at compile time.  Therefore, when the
+corresponding \texttt{defmethod} form is expanded (and therefore
+\texttt{make-method-lambda} is called), the generic function does not
+yet exist.  It will be created only when the compiled file is loaded
+into the \commonlisp{} system.
+
+The book also states that the method object passed as second argument
+may be uninitialized, suggesting that the \emph{class prototype} of
+the method class to be instantiated may be passed as the second
+argument.
