@@ -17,7 +17,7 @@
 ;;; bind it.
 
 (defun dolist-expander (var list-form result-form body)
-  ;; do some syntax checking
+  ;; Do some syntax checking.
   (binding-var-must-be-symbol 'dolist var)
   (list-form-must-be-list 'dolist list-form)
   (body-must-be-proper-list 'dolist body)
