@@ -1,13 +1,13 @@
 (cl:in-package #:sicl-iteration)
 
-;;; Checks if the binding var is a symbol
+;;; Check that the binding var is a symbol.
 (defun binding-var-must-be-symbol (name binding-var)
   (unless (symbolp binding-var)
     (error 'malformed-binding-var
            :name name
            :datum binding-var)))
 
-;;; Checks if the list-form is a list
+;;; Check that the list-form is a list
 ;;; FIXME: signal a warning if list-form is not a proper-list
 (defun list-form-must-be-list (name list-form)
   (unless (or (listp list-form) (symbolp list-form))
@@ -15,7 +15,7 @@
            :name name
            :datum list-form)))
 
-;;; Checks if the count form is a positive integer
+;;; Check that the count form is a positive integer.
 (defun count-form-must-be-nonnegative-integer (name count-form)
   (unless (or (and (numberp count-form)
                    (not (minusp count-form)))
@@ -24,7 +24,7 @@
            :name name
            :datum count-form)))
 
-;;; Checks if iteration body is a proper list
+;;; Check that iteration body is a proper list.
 (defun body-must-be-proper-list (name body)
   (unless (cleavir-code-utilities:proper-list-p body)
     (error 'malformed-body
