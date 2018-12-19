@@ -313,6 +313,8 @@
 (define-simple-check cleavir-primop:float-sin 2)
 (define-simple-check cleavir-primop:float-cos 2)
 (define-simple-check cleavir-primop:float-sqrt 2)
+(define-simple-check cleavir-primop:slot-read 2)
+(define-simple-check cleavir-primop:slot-write 3)
 (define-simple-check cleavir-primop:unreachable 0)
 (define-simple-check cleavir-primop:ast 1)
 
