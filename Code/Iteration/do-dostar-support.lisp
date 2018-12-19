@@ -38,11 +38,11 @@
 ;;; implementation of some high-level functionality of the Common Lisp
 ;;; language, so that implementors of Common Lisp systems can
 ;;; integrate it as it is into their systems, without having to
-;;; implement and maintain a specific version of it. 
+;;; implement and maintain a specific version of it.
 ;;;
 ;;; A portable implementation of the Common Lisp
-;;; iteration macros.  
-;;; 
+;;; iteration macros.
+;;;
 ;;; This implementation does not use any iteration construct, nor any
 ;;; operations on sequences (other than the ones we define ourself
 ;;; here).  Implementations can therefore load this file very early on
@@ -50,7 +50,7 @@
 ;;; and the loop macro to be defined in terms of the macros defined
 ;;; here.
 
-(defun do-dostar-expander 
+(defun do-dostar-expander
     (name let-type setq-type variable-clauses end-test body)
   ;; Do some syntax checking.
   (check-variable-clauses name variable-clauses)
