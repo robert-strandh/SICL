@@ -2,6 +2,8 @@
 
 (defsystem :sicl-extrinsic-file-compiler
   :depends-on (:eclector
+               :cleavir-code-utilities
+               :cleavir-generate-ast
                :cleavir-cst-to-ast
 	       :cleavir-generate-ast
                :cleavir-hir
