@@ -5,6 +5,7 @@
                #:eclector
                #:cleavir-code-utilities
                #:cleavir-generate-ast
+               #:sicl-simple-environment
                #:cleavir-cst-to-ast)
   :serial t
   :components
