@@ -9,4 +9,5 @@
                #:cleavir-cst-to-ast)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "customization")))
