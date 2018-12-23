@@ -355,12 +355,13 @@
 ;;; Instruction CONSTANT-FDEFINITION-INSTRUCTION.
 
 (defclass constant-fdefinition-instruction (instruction one-successor-mixin)
-  ())
+  ((%name :initarg :name :reader name)))
 
 (defun make-constant-fdefinition-instruction
-    (input output &optional (successor nil successor-p))
+    (name output &optional (successor nil successor-p))
   (make-instance 'constant-fdefinition-instruction
-    :inputs (list input)
+    :name name
+    :inputs '()
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
 
