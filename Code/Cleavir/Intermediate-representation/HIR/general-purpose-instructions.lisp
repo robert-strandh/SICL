@@ -352,6 +352,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction CONSTANT-FDEFINITION-INSTRUCTION.
+
+(defclass constant-fdefinition-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-constant-fdefinition-instruction
+    (input output &optional (successor nil successor-p))
+  (make-instance 'constant-fdefinition-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (if successor-p (list successor) '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction PHI-INSTRUCTION.
 ;;; 
 ;;; This is an instruction used in SSA form.  It has at least two
