@@ -613,6 +613,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a CONSTANT-FDEFINITION-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:constant-fdefinition-ast) context)
+  (cleavir-ir:make-constant-fdefinition-instruction
+   (cleavir-ast:name ast)
+   (first (results context))
+   (first (successors context))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a TYPEQ-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:typeq-ast) context)
