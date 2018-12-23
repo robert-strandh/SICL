@@ -256,6 +256,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class CONSTANT-FDEFINITION-AST.
+;;;
+;;; This AST is not yet generated from a reference to a global
+;;; function, but migration to this AST is suggested.
+
+(defclass constant-fdefinition-ast
+    (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  (;; This slot contains the name of the function
+   (%name-ast :initarg :name :reader name)))
+
+(defun make-constant-fdefinition-ast (name &key origin (policy *policy*))
+  (make-instance 'constant-fdefinition-ast
+    :origin origin :policy policy
+    :name name))
+
+(cleavir-io:define-save-info constant-fdefinition-ast
+  (:name name))
+
+(defmethod children ((ast constant-fdefinition-ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CALL-AST. 
 ;;;
 ;;; A CALL-AST represents a function call.  
