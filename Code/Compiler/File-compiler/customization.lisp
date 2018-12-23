@@ -1,5 +1,15 @@
 (cl:in-package #:sicl-file-compiler)
 
+(defmethod cleavir-cst-to-ast:convert-global-function-reference
+    (cst
+     (info cleavir-env:global-function-info)
+     (env sicl-genv:environment)
+     system)
+  (declare (ignore system))
+  (cleavir-ast:make-constant-fdefinition-ast
+   (cleavir-env:name info)
+   :origin (cst:source cst)))
+
 ;;; For this environment, whenever Cleavir asks for information about
 ;;; a function name and that function name is a symbol in the
 ;;; CLEAVIR-PRIMOP package, we want to return an object of type
