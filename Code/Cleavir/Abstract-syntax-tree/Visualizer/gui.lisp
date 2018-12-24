@@ -13,9 +13,9 @@
                        (1/5 (clim:scrolling () interactor))))))
 
 (defun draw (ast pane x y)
-  (clim:draw-rectangle* pane x y (+ x 40) (+ y 30) :filled nil)
+  (clim:draw-rectangle* pane x y (+ x 60) (+ y 30) :filled nil)
   (clim:draw-text* pane (cleavir-ast-graphviz::label ast)
-                   (+ x 20) (+ y 15) :align-x :center :align-y :center))
+                   (+ x 30) (+ y 15) :align-x :center :align-y :center))
 
 (defun display-ast (frame pane)
   (let* ((ast (ast frame))
@@ -29,7 +29,7 @@
                      (if (null children)
                          (+ y 40)
                          (loop for child in children
-                               do (setf y (draw-ast child (+ x 50) y))
+                               do (setf y (draw-ast child (+ x 70) y))
                                finally (return y)))))))
       (draw-ast ast 10 10))))
                  
