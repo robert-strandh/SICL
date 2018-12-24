@@ -34,10 +34,22 @@
 (defmethod ast-width (pane ast)
   (+ 5 (nth-value 0 (clim:text-size pane (label ast)))))
 
+(defmethod ast-width (pane (ast cleavir-ast:constant-fdefinition-ast))
+  (let* ((width1 (nth-value 0 (clim:text-size pane (label ast))))
+         (function-name (format nil "~S" (cleavir-ast:name ast)))
+         (width2 (nth-value 0 (clim:text-size pane function-name))))
+    (+ 5 (max width1 width2))))
+
 (defgeneric ast-height (pane ast))
 
 (defmethod ast-height (pane ast)
   (+ 5 (nth-value 1 (clim:text-size pane (label ast)))))
+
+(defmethod ast-height (pane (ast cleavir-ast:constant-fdefinition-ast))
+  (let* ((height1 (nth-value 1 (clim:text-size pane "c-fdef")))
+         (function-name (format nil "~S" (cleavir-ast:name ast)))
+         (height2 (nth-value 1 (clim:text-size pane function-name))))
+    (+ 10 height1 height2)))
 
 (defgeneric draw (ast pane x y))
 
@@ -48,6 +60,19 @@
       (clim:draw-rectangle* pane x y (+ x width) (+ y height) :filled nil)
       (clim:draw-text* pane (label ast)
                        (+ x (/ width 2)) (+ y (/ height 2))
+                       :align-x :center :align-y :center))))
+
+(defmethod draw ((ast cleavir-ast:constant-fdefinition-ast) pane x y)
+  (let* ((width (ast-width pane ast))
+         (height (ast-height pane ast))
+         (function-name (format nil "~S" (cleavir-ast:name ast))))
+    (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
+      (clim:draw-rectangle* pane x y (+ x width) (+ y height) :filled nil)
+      (clim:draw-text* pane "c-fdef"
+                       (+ x (/ width 2)) (+ y (/ height 3))
+                       :align-x :center :align-y :center)
+      (clim:draw-text* pane function-name
+                       (+ x (/ width 2)) (+ y (* height 2/3))
                        :align-x :center :align-y :center))))
 
 (defun display-ast (frame pane)
