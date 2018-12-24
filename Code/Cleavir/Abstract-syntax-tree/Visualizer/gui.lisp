@@ -12,9 +12,14 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
+(defgeneric label (ast))
+
+(defmethod label (ast)
+  (cleavir-ast-graphviz::label ast))
+
 (defun draw (ast pane x y)
   (clim:draw-rectangle* pane x y (+ x 60) (+ y 30) :filled nil)
-  (clim:draw-text* pane (cleavir-ast-graphviz::label ast)
+  (clim:draw-text* pane (label ast)
                    (+ x 30) (+ y 15) :align-x :center :align-y :center))
 
 (defun display-ast (frame pane)
