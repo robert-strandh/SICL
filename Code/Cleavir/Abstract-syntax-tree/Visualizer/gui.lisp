@@ -77,7 +77,9 @@
 
 (defgeneric draw-children (table pane ast children x y))
 
-(defun draw-ast (table pane ast x y)
+(defgeneric draw-ast (table pane ast x y))
+
+(defmethod draw-ast (table pane ast x y)
   (if (gethash ast table)
       (+ y 10)
       (let ((children (cleavir-ast:children ast)))
@@ -86,6 +88,15 @@
         (if (null children)
             (+ y (ast-height pane ast) 10)
             (draw-children table pane ast children x y)))))
+
+(defmethod draw-ast (table pane (ast cleavir-ast:function-ast) x y)
+  (if (gethash ast table)
+      (+ y 10)
+      (let* ((children (cleavir-ast:children ast))
+             (reordered (append (rest children) (list (first children)))))
+        (draw ast pane x y)
+        (setf (gethash ast table) (cons x y))
+        (draw-children table pane ast reordered x y))))
 
 (defmethod draw-children (table pane ast children x y)
   (clim:draw-line* pane
