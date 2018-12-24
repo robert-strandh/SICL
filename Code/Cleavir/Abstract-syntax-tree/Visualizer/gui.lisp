@@ -88,7 +88,15 @@
                          (+ y (ast-height pane ast) 10)
                          (loop with width = (ast-width pane ast)
                                for child in children
-                               do (setf y (draw-ast child (+ x width 10) y))
+                               for height = (ast-height pane child)
+                               for yy = (draw-ast child (+ x width 20) y)
+                               when (/= y yy)
+                                 do (clim:draw-line* pane
+                                                     (+ x width 10)
+                                                     (+ y (/ height 2))
+                                                     (+ x width 20)
+                                                     (+ y (/ height 2)))
+                               do (setf y yy)
                                finally (return y)))))))
       (draw-ast ast 10 10))))
                  
