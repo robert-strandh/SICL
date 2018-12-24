@@ -29,19 +29,21 @@
 (defmethod label ((ast cleavir-ast:load-time-value-ast))
   "l-t-v")
 
-(defgeneric ast-width (ast))
+(defgeneric ast-width (pane ast))
 
-(defmethod ast-width (ast)
-  60)
+(defmethod ast-width (pane ast)
+  (+ 5 (nth-value 0 (clim:text-size pane (label ast)))))
 
-(defgeneric ast-height (ast))
+(defgeneric ast-height (pane ast))
 
-(defmethod ast-height (ast)
-  30)
+(defmethod ast-height (pane ast)
+  (+ 5 (nth-value 1 (clim:text-size pane (label ast)))))
 
-(defun draw (ast pane x y)
-  (let ((width (ast-width ast))
-        (height (ast-height ast)))
+(defgeneric draw (ast pane x y))
+
+(defmethod draw (ast pane x y)
+  (let ((width (ast-width pane ast))
+        (height (ast-height pane ast)))
     (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
       (clim:draw-rectangle* pane x y (+ x width) (+ y height) :filled nil)
       (clim:draw-text* pane (label ast)
@@ -58,9 +60,9 @@
                      (draw ast pane x y)
                      (setf (gethash ast table) t)
                      (if (null children)
-                         (+ y (ast-height ast) 10)
-                         (loop for child in children
-                               for width = (ast-width child)
+                         (+ y (ast-height pane ast) 10)
+                         (loop with width = (ast-width pane ast)
+                               for child in children
                                do (setf y (draw-ast child (+ x width 10) y))
                                finally (return y)))))))
       (draw-ast ast 10 10))))
