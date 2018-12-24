@@ -2,7 +2,8 @@
 
 (defsystem #:cleavir-ast-visualizer
   :depends-on (#:cleavir-ast
-               #:mcclim)
+               #:mcclim
+               #:clouseau)
   :serial t
   :components
   ((:file "packages")
