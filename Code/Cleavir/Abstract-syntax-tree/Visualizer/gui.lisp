@@ -17,6 +17,12 @@
 (defmethod label (ast)
   (cleavir-ast-graphviz::label ast))
 
+(defmethod label ((ast cleavir-ast:constant-fdefinition-ast))
+  "c-fdef")
+
+(defmethod label ((ast cleavir-ast:fdefinition-ast))
+  "fdef")
+
 (defun draw (ast pane x y)
   (clim:draw-rectangle* pane x y (+ x 60) (+ y 30) :filled nil)
   (clim:draw-text* pane (label ast)
