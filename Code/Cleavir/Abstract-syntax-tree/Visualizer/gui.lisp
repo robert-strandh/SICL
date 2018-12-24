@@ -36,3 +36,6 @@
 (defun visualize (ast)
   (clim:run-frame-top-level
    (clim:make-application-frame 'visualizer :ast ast)))
+
+(define-visualizer-command (com-quit :name t) ()
+  (clim:frame-exit clim:*application-frame*))
