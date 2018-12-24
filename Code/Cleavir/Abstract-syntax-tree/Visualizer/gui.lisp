@@ -86,18 +86,29 @@
                      (setf (gethash ast table) t)
                      (if (null children)
                          (+ y (ast-height pane ast) 10)
-                         (loop with width = (ast-width pane ast)
-                               for child in children
-                               for height = (ast-height pane child)
-                               for yy = (draw-ast child (+ x width 20) y)
-                               when (/= y yy)
-                                 do (clim:draw-line* pane
-                                                     (+ x width 10)
-                                                     (+ y (/ height 2))
-                                                     (+ x width 20)
-                                                     (+ y (/ height 2)))
-                               do (setf y yy)
-                               finally (return y)))))))
+                         (progn (clim:draw-line* pane
+                                                 (+ x (ast-width pane ast))
+                                                 (+ y (/ (ast-height pane ast) 2))
+                                                 (+ x (ast-width pane ast) 20)
+                                                 (+ y (/ (ast-height pane ast) 2)))
+                                (loop with yy = y
+                                      with width = (ast-width pane ast)
+                                      for child in children
+                                      for height = (ast-height pane child)
+                                      for yyy = (draw-ast child (+ x width 20) yy)
+                                      do (when (/= yy yyy)
+                                           (clim:draw-line* pane
+                                                            (+ x width 10)
+                                                            (+ yy (/ height 2))
+                                                            (+ x width 20)
+                                                            (+ yy (/ height 2)))
+                                           (clim:draw-line* pane
+                                                            (+ x width 10)
+                                                            (+ y (/ (ast-height pane ast) 2))
+                                                            (+ x width 10)
+                                                            (+ yy (/ height 2))))
+                                         (setf yy yyy)
+                                      finally (return yy))))))))
       (draw-ast ast 10 10))))
                  
 (defun visualize (ast)
