@@ -23,10 +23,30 @@
 (defmethod label ((ast cleavir-ast:fdefinition-ast))
   "fdef")
 
+(defmethod label ((ast cleavir-ast:constant-ast))
+  "const")
+
+(defmethod label ((ast cleavir-ast:load-time-value-ast))
+  "l-t-v")
+
+(defgeneric ast-width (ast))
+
+(defmethod ast-width (ast)
+  60)
+
+(defgeneric ast-height (ast))
+
+(defmethod ast-height (ast)
+  30)
+
 (defun draw (ast pane x y)
-  (clim:draw-rectangle* pane x y (+ x 60) (+ y 30) :filled nil)
-  (clim:draw-text* pane (label ast)
-                   (+ x 30) (+ y 15) :align-x :center :align-y :center))
+  (let ((width (ast-width ast))
+        (height (ast-height ast)))
+    (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
+      (clim:draw-rectangle* pane x y (+ x width) (+ y height) :filled nil)
+      (clim:draw-text* pane (label ast)
+                       (+ x (/ width 2)) (+ y (/ height 2))
+                       :align-x :center :align-y :center))))
 
 (defun display-ast (frame pane)
   (let* ((ast (ast frame))
@@ -38,9 +58,10 @@
                      (draw ast pane x y)
                      (setf (gethash ast table) t)
                      (if (null children)
-                         (+ y 40)
+                         (+ y (ast-height ast) 10)
                          (loop for child in children
-                               do (setf y (draw-ast child (+ x 70) y))
+                               for width = (ast-width child)
+                               do (setf y (draw-ast child (+ x width 10) y))
                                finally (return y)))))))
       (draw-ast ast 10 10))))
                  
@@ -50,3 +71,7 @@
 
 (define-visualizer-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
+
+(define-visualizer-command (com-inspect-ast :name t)
+    ((ast 'cleavir-ast:ast))
+  (clouseau:inspector ast))
