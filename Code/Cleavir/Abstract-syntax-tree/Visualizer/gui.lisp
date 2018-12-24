@@ -6,7 +6,7 @@
            :application
            :scroll-bars nil
            :display-function 'display-ast
-           :text-style (clim:make-text-style :sans-serif :roman 20))
+           :text-style (clim:make-text-style :sans-serif :roman 12))
           (interactor :interactor :scroll-bars nil))
   (:layouts (default (clim:vertically (:width 1200 :height 900)
                        (4/5 (clim:scrolling () application))
