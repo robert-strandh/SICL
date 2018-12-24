@@ -75,6 +75,8 @@
                        (+ x (/ width 2)) (+ y (* height 2/3))
                        :align-x :center :align-y :center))))
 
+(defgeneric draw-children (table pane ast children x y))
+
 (defun draw-ast (table pane ast x y)
   (if (gethash ast table)
       (+ y 10)
@@ -83,29 +85,33 @@
         (setf (gethash ast table) (cons x y))
         (if (null children)
             (+ y (ast-height pane ast) 10)
-            (progn (clim:draw-line* pane
-                                    (+ x (ast-width pane ast))
-                                    (+ y (/ (ast-height pane ast) 2))
-                                    (+ x (ast-width pane ast) 10)
-                                    (+ y (/ (ast-height pane ast) 2)))
-                   (loop with yy = y
-                         with width = (ast-width pane ast)
-                         for child in children
-                         for height = (ast-height pane child)
-                         for yyy = (draw-ast table pane child (+ x width 20) yy)
-                         do (when (/= yy yyy)
-                              (clim:draw-line* pane
-                                               (+ x width 10)
-                                               (+ yy (/ height 2))
-                                               (+ x width 20)
-                                               (+ yy (/ height 2)))
-                              (clim:draw-line* pane
-                                               (+ x width 10)
-                                               (+ y (/ (ast-height pane ast) 2))
-                                               (+ x width 10)
-                                               (+ yy (/ height 2))))
-                            (setf yy yyy)
-                         finally (return yy)))))))
+            (draw-children table pane ast children x y)))))
+
+(defmethod draw-children (table pane ast children x y)
+  (clim:draw-line* pane
+                   (+ x (ast-width pane ast))
+                   (+ y (/ (ast-height pane ast) 2))
+                   (+ x (ast-width pane ast) 10)
+                   (+ y (/ (ast-height pane ast) 2)))
+  (loop with yy = y
+        with width = (ast-width pane ast)
+        for child in children
+        for height = (ast-height pane child)
+        for child-pos = (gethash child table)
+        for yyy = (draw-ast table pane child (+ x width 20) yy)
+        do (clim:draw-line* pane
+                            (+ x width 10)
+                            (+ y (/ (ast-height pane ast) 2))
+                            (+ x width 10)
+                            (+ yy (/ height 2)))
+           (unless child-pos
+             (clim:draw-line* pane
+                              (+ x width 10)
+                              (+ yy (/ height 2))
+                              (+ x width 20)
+                              (+ yy (/ height 2))))
+           (setf yy yyy)
+        finally (return yy)))
 
 (defun display-ast (frame pane)
   (let* ((ast (ast frame))
