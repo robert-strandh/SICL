@@ -1454,3 +1454,28 @@ the upper profile is $P = $ ((x$_{1_p}$ . y$_{1_p}$) (x$_{2_p}$
 . y$_{2_p}$) $\cdots$ (x$_{m_p}$ . y$_{m_p}$)) and the lower profile
 is $Q = $ ((x$_{1_q}$ . y$_{1_q}$) (x$_{2_q}$ . y$_{2_q}$) $\cdots$
 (x$_{n_q}$ . y$_{n_q}$)).
+
+To combine the two, we find a suffix of $P$, say ((x$_{k_p}$
+. y$_{k_p}$) $\cdots$ (x$_{m_p}$ . y$_{m_p}$)) such that x$_{k_p} \ge $
+x$_{n_q}$.
+
+Several cases can be distinguished.  The first case is when the suffix
+is empty, i.e. there is no point in $P$ with an $x$ coordinate that is
+greater than or equal to the width of $Q$.  This situation is
+illustrated in \refFig{fig-profile-vertical-case-1}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-profile-vertical-case-1.pdf_t}
+\end{center}
+\caption{\label{fig-profile-vertical-case-1}
+Combining vertical profiles, case 1.}
+\end{figure}
+
+In \refFig{fig-profile-vertical-case-1}, the dotted lines together
+with $Q$ indicate the combined profile.  The combined profile is
+represented by $R = $ ((x$_{1_q}$ . y$_{1_q}$$+$y$_{m_p}$) (x$_{2_q}$
+. y$_{2_q}$$+$y$_{m_p}$) $\cdots$ (x$_{n_q}$
+. y$_{n_q}$$+$y$_{m_p}$)).  In other words, in order to obtain the
+combined profile, we must add the $y$ coordinate of the upper profile
+to every $y$ coordinate of the lower profile.
