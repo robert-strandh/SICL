@@ -1405,3 +1405,38 @@ where a value is needed will result in an error being signaled.
 \end{tabular}
 
 As \texttt{rplaca-ast}, but with \texttt{cl:rplacd}.
+
+\section{A CLIM-based AST visualizer}
+
+\subsection{Profiles and how to combine them}
+
+In order to compute a good layout of AST nodes so as to avoid wasting
+too much whitespace, we need to pack these nodes.  For this purpose,
+we use the concept of a \emph{profile} indicated in
+\refFig{fig-profile}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-profile.pdf_t}
+\end{center}
+\caption{\label{fig-profile}
+A profile.}
+\end{figure}
+
+As \refFig{fig-profile} suggests, the upper-left cordner of a profile
+is always at coordinate (0,0).  Furthermore, a profile can only have
+certain shapes within its bounding rectangle.  The upper edge of the
+profile coincides with the upper edge of the bounding rectangle, and
+the right edge of the profile coincides with the right edge of the
+bounding rectangle.  The path from (0,0) starting towards positive $y$
+coordinates and ending at the lower-right corner is an alternating
+sequence of $90^\circ$ turns, starting with a left turn.  It turns out
+that ASTs can often be considered to have this shape.
+
+We can represent a profile by a sequence of the points where the said
+path makes a right turn, terminated by the point of the lower-right
+corner.  We omit the upper-left corner, since it is always at (0,0).
+We represent each point as a \texttt{cons} cell with the $x$
+coordinate in the \texttt{car} and the $y$ coordinate in the
+\texttt{cdr}.  The example profile in \refFig{fig-profile} is thus
+represented as the list \texttt{((15 . 20) (25 . 25) (30 . 40))}.
