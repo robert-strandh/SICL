@@ -1410,6 +1410,8 @@ As \texttt{rplaca-ast}, but with \texttt{cl:rplacd}.
 
 \subsection{Profiles and how to combine them}
 
+\subsubsection{Concept and representation}
+
 In order to compute a good layout of AST nodes so as to avoid wasting
 too much whitespace, we need to pack these nodes.  For this purpose,
 we use the concept of a \emph{profile} indicated in
@@ -1440,3 +1442,15 @@ We represent each point as a \texttt{cons} cell with the $x$
 coordinate in the \texttt{car} and the $y$ coordinate in the
 \texttt{cdr}.  The example profile in \refFig{fig-profile} is thus
 represented as the list \texttt{((15 . 20) (25 . 25) (30 . 40))}.
+
+The degenerate case is when the profile is a rectangle, in which case
+the sequence of points is a singleton, containing only the point of
+the lower-right corner.
+
+\subsubsection{Combining two profiles vertically}
+
+Let us now see how we can combine two profiles vertically.  Let us say
+the upper profile is $P = $ ((x$_{1_p}$ . y$_{1_p}$) (x$_{2_p}$
+. y$_{2_p}$) $\cdots$ (x$_{m_p}$ . y$_{m_p}$)) and the lower profile
+is $Q = $ ((x$_{1_q}$ . y$_{1_q}$) (x$_{2_q}$ . y$_{2_q}$) $\cdots$
+(x$_{n_q}$ . y$_{n_q}$)).
