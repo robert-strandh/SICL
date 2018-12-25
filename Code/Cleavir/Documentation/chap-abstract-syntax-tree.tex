@@ -65,14 +65,16 @@ specified by the initarg \texttt{:policy} and with accessor
 special variable \texttt{*policy*} can be bound, and will be used
 as an initform.
 
-\section{General types of abstract syntax trees}
+\section{Classes of abstract syntax trees}
+
+\subsection{General types of abstract syntax trees}
 
 There is no abstract syntax tree class corresponding to the special
 operator \texttt{eval-when}.  The compiler takes action based on the
 context of the compilation and either evaluates or generates an
 abstract syntax tree.
 
-\subsection{\texttt{immediate-ast}}
+\subsubsection{\texttt{immediate-ast}}
 \label{immediate-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -87,7 +89,7 @@ A \texttt{immediate-ast} is used by an implementation to represent
 constants that can be represented as immediates in machine code on the
 particular platform used.
 
-\subsection{\texttt{constant-ast}}
+\subsubsection{\texttt{constant-ast}}
 \label{constant-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -109,7 +111,7 @@ of constant, nor between integers of different magnitude.  Later on
 in the compilation process, some backend may replace small integer
 constants by immediate values. 
 
-\subsection{\texttt{fdefinition-ast}}
+\subsubsection{\texttt{fdefinition-ast}}
 \label{fdefinition-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -133,7 +135,7 @@ name of a function.  When the \texttt{fdefinition-ast} is produced as
 a result of a name in the functional position of a form, then the
 \texttt{name-ast} is always a \texttt{constant-ast}.
 
-\subsection{\texttt{symbol-value-ast}}
+\subsubsection{\texttt{symbol-value-ast}}
 \label{symbol-value-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -157,7 +159,7 @@ symbol.  When the \texttt{symbol-value-ast} is produced as a result of
 a reference to a special variable, then the \texttt{symbol-ast} is
 always a \texttt{constant-ast}.
 
-\subsection{\texttt{set-symbol-value-ast}}
+\subsubsection{\texttt{set-symbol-value-ast}}
 \label{set-symbol-value-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -188,7 +190,7 @@ This AST does not produce any value.  It must appear in a context
 where no value is required, such as one of the forms preceding the
 last form of a \texttt{progn-ast} \seesec{progn-ast}.
 
-\subsection{\texttt{lexical-ast}}
+\subsubsection{\texttt{lexical-ast}}
 \label{lexical-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -202,7 +204,7 @@ Initarg & Reader & Description\\
 A \texttt{lexical-ast} is produced whenever the compiler sees a
 reference to a \emph{lexical variable}. 
 
-\subsection{\texttt{call-ast}}
+\subsubsection{\texttt{call-ast}}
 \label{call-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -223,7 +225,7 @@ call.  It contains ASTs for the function to be called and for the
 arguments to that function.  The AST representing the function can be
 any AST that produces a function as a value.
 
-\subsection{\texttt{block-ast}}
+\subsubsection{\texttt{block-ast}}
 \label{block-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -239,7 +241,7 @@ The \texttt{block-ast} is used to represent the \commonlisp{} special operator
 the block because the \texttt{return-from-ast} contains a reference to
 the corresponding \texttt{block-ast}.
 
-\subsection{\texttt{function-ast}}
+\subsubsection{\texttt{function-ast}}
 \label{function-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -255,7 +257,7 @@ Initarg & Reader & Description\\
 The \texttt{function-ast} is one of the more complicated ones, because
 it hides all the implementation details of how arguments are parsed. 
 
-\subsection{\texttt{go-ast}}
+\subsubsection{\texttt{go-ast}}
 \label{go-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -266,7 +268,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-\subsection{\texttt{if-ast}}
+\subsubsection{\texttt{if-ast}}
 \label{if-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -284,7 +286,7 @@ Initarg & Reader & Description\\
 The \texttt{if-ast} corresponds directly to the \commonlisp{} special operator
 \texttt{if}. 
 
-\subsection{\texttt{load-time-value-ast}}
+\subsubsection{\texttt{load-time-value-ast}}
 \label{load-time-value-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -305,7 +307,7 @@ This AST always contains a \emph{form}, so that if it is the result of
 a \emph{constant}, then it is wrapped in a \texttt{quote} special
 form. 
 
-\subsection{\texttt{progn-ast}}
+\subsubsection{\texttt{progn-ast}}
 \label{progn-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -320,7 +322,7 @@ The \texttt{progn-ast} corresponds directly to the \commonlisp{} special
 operator \texttt{progn}.  It returns the values that are return by the
 last AST in the child forms.
 
-\subsection{\texttt{return-from-ast}}
+\subsubsection{\texttt{return-from-ast}}
 \label{return-from-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -334,7 +336,7 @@ corresponding block.\\
 \hline
 \end{tabular}
 
-\subsection{\texttt{setq-ast}}
+\subsubsection{\texttt{setq-ast}}
 \label{setq-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -351,7 +353,7 @@ This AST does not produce any value.  It must appear in a context
 where no value is required, such as one of the forms preceding the
 last form of a \texttt{progn-ast} \seesec{progn-ast}.
 
-\subsection{\texttt{tagbody-ast}}
+\subsubsection{\texttt{tagbody-ast}}
 \label{tagbody-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -366,7 +368,7 @@ Initarg & Reader & Description\\
 An item can either be a \texttt{tag-ast} or an AST corresponding to
 some \texttt{statement}. 
 
-\subsection{\texttt{tag-ast}}
+\subsubsection{\texttt{tag-ast}}
 \label{tag-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -377,7 +379,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-\subsection{\texttt{the-ast}}
+\subsubsection{\texttt{the-ast}}
 \label{the-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -404,7 +406,7 @@ insert an explicit type check, but this is not required by the AST.
 
 Currently, \key types are not usable. This is a limitation.
 
-\subsection{\texttt{typeq-ast}}
+\subsubsection{\texttt{typeq-ast}}
 \label{typeq-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -428,9 +430,9 @@ with the constant type specifier. This is used later in compilation in the case 
 \texttt{cl:typep}, and is computed from the type specifier automatically
 if not provided.
 
-\section{Abstract syntax trees for fixnum arithmetic}
+\subsection{Abstract syntax trees for fixnum arithmetic}
 
-\subsection{\texttt{fixnum-add-ast}}
+\subsubsection{\texttt{fixnum-add-ast}}
 \label{fixnum-add-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -467,7 +469,7 @@ used to represent a fixnum, and $r$ is the value of the lexical
 variable.  If the result is \emph{positive}, then the sum of the two
 operands is $r - 2^n$.
 
-\subsection{\texttt{fixnum-sub-ast}}
+\subsubsection{\texttt{fixnum-sub-ast}}
 \label{fixnum-sub-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -505,7 +507,7 @@ $r$ is the value of the lexical variable.  If the result is
 \emph{positive}, then the difference between the two operands is $r -
 2^n$.
 
-\subsection{\texttt{fixnum-less-ast}}
+\subsubsection{\texttt{fixnum-less-ast}}
 \label{fixnum-less-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -532,7 +534,7 @@ otherwise), except that since this AST can only occur in the test
 position of an \texttt{if-ast}, no value will ever be returned.
 Instead this AST translates to a test and a branch. 
 
-\subsection{\texttt{fixnum-not-less-ast}}
+\subsubsection{\texttt{fixnum-not-less-ast}}
 \label{fixnum-not-less-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -559,7 +561,7 @@ otherwise), except that since this AST can only occur in the test
 position of an \texttt{if-ast}, no value will ever be returned.
 Instead this AST translates to a test and a branch. 
 
-\subsection{\texttt{fixnum-greater-ast}}
+\subsubsection{\texttt{fixnum-greater-ast}}
 \label{fixnum-greater-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -586,7 +588,7 @@ otherwise), except that since this AST can only occur in the test
 position of an \texttt{if-ast}, no value will ever be returned.
 Instead this AST translates to a test and a branch. 
 
-\subsection{\texttt{fixnum-not-greater-ast}}
+\subsubsection{\texttt{fixnum-not-greater-ast}}
 \label{fixnum-not-greater-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -613,7 +615,7 @@ otherwise), except that since this AST can only occur in the test
 position of an \texttt{if-ast}, no value will ever be returned.
 Instead this AST translates to a test and a branch. 
 
-\subsection{\texttt{fixnum-equal-ast}}
+\subsubsection{\texttt{fixnum-equal-ast}}
 \label{fixnum-equal-ast}
 
 \begin{tabular}{|l|l|l|}
@@ -640,14 +642,14 @@ that since this AST can only occur in the test position of an
 \texttt{if-ast}, no value will ever be returned.  Instead this AST
 translates to a test and a branch.
 
-\section{Abstract syntax trees for floating-point arithmetic}
+\subsection{Abstract syntax trees for floating-point arithmetic}
 \label{sec-ast-floating-point-arithmetic}
 
 The ASTs in this section can be used by implementation that want to
 inline floating-point arithmetic.  There are four families of ASTs,
 one for each type of floating-point precision defined by the \hs{}.
 
-\subsection{\texttt{short-float-add-ast}}
+\subsubsection{\texttt{short-float-add-ast}}
 \label{sec-ast-short-float-add}
 
 \begin{tabular}{|l|l|l|}
@@ -667,7 +669,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value of this AST is the short-float value
 representing the sum of the two arguments.
 
-\subsection{\texttt{short-float-sub-ast}}
+\subsubsection{\texttt{short-float-sub-ast}}
 \label{sec-ast-short-float-sub}
 
 \begin{tabular}{|l|l|l|}
@@ -687,7 +689,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value of this AST is the short-float value
 representing the difference of the two arguments.
 
-\subsection{\texttt{short-float-mul-ast}}
+\subsubsection{\texttt{short-float-mul-ast}}
 \label{sec-ast-short-float-mul}
 
 \begin{tabular}{|l|l|l|}
@@ -707,7 +709,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value of this AST is the short-float value
 representing the product of the two arguments.
 
-\subsection{\texttt{short-float-div-ast}}
+\subsubsection{\texttt{short-float-div-ast}}
 \label{sec-ast-short-float-div}
 
 \begin{tabular}{|l|l|l|}
@@ -727,7 +729,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value of this AST is the short-float value
 representing the quotient of the two arguments.
 
-\subsection{\texttt{short-float-less-ast}}
+\subsubsection{\texttt{short-float-less-ast}}
 \label{sec-ast-short-float-less}
 
 \begin{tabular}{|l|l|l|}
@@ -747,7 +749,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
-\subsection{\texttt{short-float-not-greater-ast}}
+\subsubsection{\texttt{short-float-not-greater-ast}}
 \label{sec-ast-short-float-not-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -767,7 +769,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
-\subsection{\texttt{short-float-greater-ast}}
+\subsubsection{\texttt{short-float-greater-ast}}
 \label{sec-ast-short-float-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -787,7 +789,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
-\subsection{\texttt{short-float-not-less-ast}}
+\subsubsection{\texttt{short-float-not-less-ast}}
 \label{sec-ast-short-float-not-less}
 
 \begin{tabular}{|l|l|l|}
@@ -807,7 +809,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
-\subsection{\texttt{short-float-equal-ast}}
+\subsubsection{\texttt{short-float-equal-ast}}
 \label{sec-ast-short-float-equal}
 
 \begin{tabular}{|l|l|l|}
@@ -827,7 +829,7 @@ The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
 
-\subsection{\texttt{single-float-add-ast}}
+\subsubsection{\texttt{single-float-add-ast}}
 \label{sec-ast-single-float-add}
 
 \begin{tabular}{|l|l|l|}
@@ -844,7 +846,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value of this AST is the single-float value
 representing the sum of the two arguments.
 
-\subsection{\texttt{single-float-sub-ast}}
+\subsubsection{\texttt{single-float-sub-ast}}
 \label{sec-ast-single-float-sub}
 
 \begin{tabular}{|l|l|l|}
@@ -861,7 +863,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value of this AST is the single-float value
 representing the difference of the two arguments.
 
-\subsection{\texttt{single-float-mul-ast}}
+\subsubsection{\texttt{single-float-mul-ast}}
 \label{sec-ast-single-float-mul}
 
 \begin{tabular}{|l|l|l|}
@@ -878,7 +880,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value of this AST is the single-float value
 representing the product of the two arguments.
 
-\subsection{\texttt{single-float-div-ast}}
+\subsubsection{\texttt{single-float-div-ast}}
 \label{sec-ast-single-float-div}
 
 \begin{tabular}{|l|l|l|}
@@ -895,7 +897,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value of this AST is the single-float value
 representing the quotient of the two arguments.
 
-\subsection{\texttt{single-float-less-ast}}
+\subsubsection{\texttt{single-float-less-ast}}
 \label{sec-ast-single-float-less}
 
 \begin{tabular}{|l|l|l|}
@@ -912,7 +914,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
-\subsection{\texttt{single-float-not-greater-ast}}
+\subsubsection{\texttt{single-float-not-greater-ast}}
 \label{sec-ast-single-float-not-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -929,7 +931,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
-\subsection{\texttt{single-float-greater-ast}}
+\subsubsection{\texttt{single-float-greater-ast}}
 \label{sec-ast-single-float-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -946,7 +948,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
-\subsection{\texttt{single-float-not-less-ast}}
+\subsubsection{\texttt{single-float-not-less-ast}}
 \label{sec-ast-single-float-not-less}
 
 \begin{tabular}{|l|l|l|}
@@ -963,7 +965,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
-\subsection{\texttt{single-float-equal-ast}}
+\subsubsection{\texttt{single-float-equal-ast}}
 \label{sec-ast-single-float-equal}
 
 \begin{tabular}{|l|l|l|}
@@ -980,7 +982,7 @@ The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
 
-\subsection{\texttt{double-float-add-ast}}
+\subsubsection{\texttt{double-float-add-ast}}
 \label{sec-ast-double-float-add}
 
 \begin{tabular}{|l|l|l|}
@@ -1000,7 +1002,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value of this AST is the double-float value
 representing the sum of the two arguments.
 
-\subsection{\texttt{double-float-sub-ast}}
+\subsubsection{\texttt{double-float-sub-ast}}
 \label{sec-ast-double-float-sub}
 
 \begin{tabular}{|l|l|l|}
@@ -1020,7 +1022,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value of this AST is the double-float value
 representing the difference of the two arguments.
 
-\subsection{\texttt{double-float-mul-ast}}
+\subsubsection{\texttt{double-float-mul-ast}}
 \label{sec-ast-double-float-mul}
 
 \begin{tabular}{|l|l|l|}
@@ -1040,7 +1042,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value of this AST is the double-float value
 representing the product of the two arguments.
 
-\subsection{\texttt{double-float-div-ast}}
+\subsubsection{\texttt{double-float-div-ast}}
 \label{sec-ast-double-float-div}
 
 \begin{tabular}{|l|l|l|}
@@ -1060,7 +1062,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value of this AST is the double-float value
 representing the quotient of the two arguments.
 
-\subsection{\texttt{double-float-less-ast}}
+\subsubsection{\texttt{double-float-less-ast}}
 \label{sec-ast-double-float-less}
 
 \begin{tabular}{|l|l|l|}
@@ -1080,7 +1082,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
-\subsection{\texttt{double-float-not-greater-ast}}
+\subsubsection{\texttt{double-float-not-greater-ast}}
 \label{sec-ast-double-float-not-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -1100,7 +1102,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
-\subsection{\texttt{double-float-greater-ast}}
+\subsubsection{\texttt{double-float-greater-ast}}
 \label{sec-ast-double-float-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -1120,7 +1122,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
-\subsection{\texttt{double-float-not-less-ast}}
+\subsubsection{\texttt{double-float-not-less-ast}}
 \label{sec-ast-double-float-not-less}
 
 \begin{tabular}{|l|l|l|}
@@ -1140,7 +1142,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
-\subsection{\texttt{double-float-equal-ast}}
+\subsubsection{\texttt{double-float-equal-ast}}
 \label{sec-ast-double-float-equal}
 
 \begin{tabular}{|l|l|l|}
@@ -1160,7 +1162,7 @@ The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
 
-\subsection{\texttt{long-float-add-ast}}
+\subsubsection{\texttt{long-float-add-ast}}
 \label{sec-ast-long-float-add}
 
 \begin{tabular}{|l|l|l|}
@@ -1180,7 +1182,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value of this AST is the long-float value
 representing the sum of the two arguments.
 
-\subsection{\texttt{long-float-sub-ast}}
+\subsubsection{\texttt{long-float-sub-ast}}
 \label{sec-ast-long-float-sub}
 
 \begin{tabular}{|l|l|l|}
@@ -1200,7 +1202,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value of this AST is the long-float value
 representing the difference of the two arguments.
 
-\subsection{\texttt{long-float-mul-ast}}
+\subsubsection{\texttt{long-float-mul-ast}}
 \label{sec-ast-long-float-mul}
 
 \begin{tabular}{|l|l|l|}
@@ -1220,7 +1222,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value of this AST is the long-float value
 representing the product of the two arguments.
 
-\subsection{\texttt{long-float-div-ast}}
+\subsubsection{\texttt{long-float-div-ast}}
 \label{sec-ast-long-float-div}
 
 \begin{tabular}{|l|l|l|}
@@ -1240,7 +1242,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value of this AST is the long-float value
 representing the quotient of the two arguments.
 
-\subsection{\texttt{long-float-less-ast}}
+\subsubsection{\texttt{long-float-less-ast}}
 \label{sec-ast-long-float-less}
 
 \begin{tabular}{|l|l|l|}
@@ -1260,7 +1262,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
-\subsection{\texttt{long-float-not-greater-ast}}
+\subsubsection{\texttt{long-float-not-greater-ast}}
 \label{sec-ast-long-float-not-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -1280,7 +1282,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
-\subsection{\texttt{long-float-greater-ast}}
+\subsubsection{\texttt{long-float-greater-ast}}
 \label{sec-ast-long-float-greater}
 
 \begin{tabular}{|l|l|l|}
@@ -1300,7 +1302,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
-\subsection{\texttt{long-float-not-less-ast}}
+\subsubsection{\texttt{long-float-not-less-ast}}
 \label{sec-ast-long-float-not-less}
 
 \begin{tabular}{|l|l|l|}
@@ -1320,7 +1322,7 @@ The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
-\subsection{\texttt{long-float-equal-ast}}
+\subsubsection{\texttt{long-float-equal-ast}}
 \label{sec-ast-long-float-equal}
 
 \begin{tabular}{|l|l|l|}
@@ -1340,9 +1342,9 @@ The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
 
-\section{Abstract syntax trees for operations on conses}
+\subsection{Abstract syntax trees for operations on conses}
 
-\subsection{\texttt{car-ast}}
+\subsubsection{\texttt{car-ast}}
 \label{sec-ast-car}
 
 \begin{tabular}{|l|l|l|}
@@ -1358,7 +1360,7 @@ it does not correspond exactly to the function \texttt{car}, because
 the value of the single child must be a cons cell. The consequences
 are undefined if this condition is not met.
 
-\subsection{\texttt{cdr-ast}}
+\subsubsection{\texttt{cdr-ast}}
 \label{sec-ast-cdr}
 
 \begin{tabular}{|l|l|l|}
@@ -1371,7 +1373,7 @@ are undefined if this condition is not met.
 
 As \texttt{car-ast}, but with \texttt{cl:cdr}.
 
-\subsection{\texttt{rplaca-ast}}
+\subsubsection{\texttt{rplaca-ast}}
 \label{sec-ast-rplaca}
 
 \begin{tabular}{|l|l|l|}
@@ -1389,7 +1391,7 @@ This AST differs from the function \texttt{rplaca} in that it does
 not generate any value. An attempt to compile this AST in a context
 where a value is needed will result in an error being signaled.
 
-\subsection{\texttt{rplacd-ast}}
+\subsubsection{\texttt{rplacd-ast}}
 \label{sec-ast-rplacd}
 
 \begin{tabular}{|l|l|l|}
