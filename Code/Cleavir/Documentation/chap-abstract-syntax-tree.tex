@@ -1557,3 +1557,27 @@ profile is represented by $R = $ ((x$_{1_q}$ . y$_{1_q}$$+$y$_{i_p}$)
 (x$_{2_q}$ . y$_{2_q}$$+$y$_{i_p}$) $\cdots$ (x$_{j_p}$
 . y$_{n_q}$$+$y$_{i_p}$) ((x$_{{j+1}_p}$ . y$_{{j+1}_p}$) $\cdots$
 (x$_{m_p}$ . y$_{m_p}$)).
+
+\subsubsection{Combining two profiles horizontally}
+
+Now let us turn to combining two profiles horizontally.  As it turns
+out, the left profile then represents a single AST node, so it is
+always a rectangle.  This fact makes the combination easier.
+
+Let's say the left profile is $P = $ ((x$_p$ . y$_p$)) and the right
+profile is $Q = $ ((x$_{1_q}$ . y$_{1_q}$) (x$_{2_q}$ . y$_{2_q}$)
+$\cdots$ (x$_{n_q}$ . y$_{n_q}$)).
+
+There are two cases to distinguish.  The first case is when y$_p$ $\ge$
+y$_{n_q}$.  This case is illustrated in
+\refFig{fig-profile-horizontal-case-1}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-profile-horizontal-case-1.pdf_t}
+\end{center}
+\caption{\label{fig-profile-horizontal-case-1}
+Combining horizontal profiles, case 1.}
+\end{figure}
+
+In this case, the resulting profile is $R = $ ((x$_p$$+$x$_{n_q}$ . y$_p$)).
