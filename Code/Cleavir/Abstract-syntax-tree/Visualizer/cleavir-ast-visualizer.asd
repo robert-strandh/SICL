@@ -7,5 +7,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "profiles")
    (:file "layout")
    (:file "gui")))
