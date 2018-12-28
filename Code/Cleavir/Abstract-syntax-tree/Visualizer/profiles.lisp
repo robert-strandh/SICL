@@ -12,13 +12,6 @@
 (defun profile-height (profile)
   (y (first (last profile))))
 
-;;; Find a suffix of PROFILE such that the X value of the first point
-;;; is greater than or equal to X.
-(defun find-suffix-1 (profile x)
-  (loop for suffix on profile
-        when (>= (x (first suffix)) x)
-          return suffix))
-
 ;;; This function can be used when the resulting profile is the same
 ;;; as that of LOWER, except that it has been moved down by DY and
 ;;; width has changed, so that the X coordinate of the last point is
@@ -51,8 +44,8 @@
 
 (defun combine-vertical-profiles-case-3b (upper lower suffix)
   (let* ((suffix-y (y (first suffix)))
-         (y-diff (- (profile-height upper) (y (first suffix))))
-         (suffix-suffix (find-suffix-2 suffix y-diff)))
+         (y-sum (+ (profile-height lower) (y (first suffix))))
+         (suffix-suffix (find-suffix-2 suffix y-sum)))
     (multiple-value-bind (prefix dy)
         (combine-profiles-with-dy-and-width
          lower suffix-y (x (first suffix-suffix)))
@@ -63,6 +56,13 @@
     (if (<= suffix-height (profile-height lower))
         (combine-vertical-profiles-case-3a upper lower suffix)
         (combine-vertical-profiles-case-3b upper lower suffix))))
+
+;;; Find a suffix of PROFILE such that the X value of the first point
+;;; is greater than or equal to X.
+(defun find-suffix-1 (profile x)
+  (loop for suffix on profile
+        when (>= (x (first suffix)) x)
+          return suffix))
 
 (defun combine-vertical-profiles (upper lower)
   (let* ((suffix (find-suffix-1 upper (profile-width lower))))
