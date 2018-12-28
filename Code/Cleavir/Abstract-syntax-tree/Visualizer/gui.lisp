@@ -31,6 +31,9 @@
 
 (defgeneric ast-width (pane ast))
 
+(defmethod ast-width :around (pane ast)
+  (ceiling (call-next-method)))
+
 (defmethod ast-width (pane ast)
   (+ 5 (nth-value 0 (clim:text-size pane (label ast)))))
 
@@ -41,6 +44,9 @@
     (+ 5 (max width1 width2))))
 
 (defgeneric ast-height (pane ast))
+
+(defmethod ast-height :around (pane ast)
+  (ceiling (call-next-method)))
 
 (defmethod ast-height (pane ast)
   (+ 5 (nth-value 1 (clim:text-size pane (label ast)))))
@@ -75,73 +81,15 @@
                        (+ x (/ width 2)) (+ y (* height 2/3))
                        :align-x :center :align-y :center))))
 
-(defgeneric draw-children (table pane ast children x y))
-
-(defgeneric draw-ast (table pane ast x y))
-
-(defmethod draw-ast (table pane ast x y)
-  (if (gethash ast table)
-      (+ y 10)
-      (let ((children (cleavir-ast:children ast)))
-        (draw ast pane x y)
-        (setf (gethash ast table) (cons x y))
-        (if (null children)
-            (+ y (ast-height pane ast) 10)
-            (draw-children table pane ast children x y)))))
-
-(defmethod draw-ast (table pane (ast cleavir-ast:function-ast) x y)
-  (if (gethash ast table)
-      (+ y 10)
-      (let* ((children (cleavir-ast:children ast))
-             (reordered (append (rest children) (list (first children)))))
-        (draw ast pane x y)
-        (setf (gethash ast table) (cons x y))
-        (draw-children table pane ast reordered x y))))
-
-(defmethod draw-children (table pane ast children x y)
-  (clim:draw-line* pane
-                   (+ x (ast-width pane ast))
-                   (+ y (/ (ast-height pane ast) 2))
-                   (+ x (ast-width pane ast) 10)
-                   (+ y (/ (ast-height pane ast) 2)))
-  (loop with yy = y
-        with width = (ast-width pane ast)
-        for child in children
-        for height = (ast-height pane child)
-        for child-pos = (gethash child table)
-        for yyy = (draw-ast table pane child (+ x width 20) yy)
-        do (clim:draw-line* pane
-                            (+ x width 10)
-                            (+ y (/ (ast-height pane ast) 2))
-                            (+ x width 10)
-                            (+ yy (/ height 2)))
-           (if (null child-pos)
-               (clim:draw-line* pane
-                                (+ x width 10)
-                                (+ yy (/ height 2))
-                                (+ x width 20)
-                                (+ yy (/ height 2)))
-               (clim:draw-lines* pane
-                                 (list (+ x width 10)
-                                       (+ yy (/ height 2))
-                                       (+ (car child-pos)
-                                          (/ (ast-width pane child) 2))
-                                       (+ yy (/ height 2))
-                                       (+ (car child-pos)
-                                          (/ (ast-width pane child) 2))
-                                       (+ yy (/ height 2))
-                                       (+ (car child-pos)
-                                          (/ (ast-width pane child) 2))
-                                       (+ (cdr child-pos)
-                                          (/ (ast-height pane child) 2)))
-                                 :line-dashes t))
-           (setf yy yyy)
-        finally (return (+ yy 10))))
 
 (defun display-layout (table pane layout)
   (unless (indirect-p layout)
-    (let ((position (gethash (ast layout) table)))
-      (draw (ast layout) pane (x position) (y position))
+    (let* ((position (position layout))
+           (x (+ (x position) 10))
+           (y (+ (y position) 10)))
+      (clim:with-output-as-presentation (pane layout 'layout)
+        (clim:draw-rectangle* pane x y (+ x 5) (+ y 5) :ink clim:+red+))
+      (draw (ast layout) pane x y)
       (loop for child in (children layout)
             do (display-layout table pane child)))))
 
@@ -177,9 +125,10 @@
   (let* ((ast (ast frame))
          (layout (make-layout pane ast))
          (table (compute-positions layout)))
-    ;; (draw-ast table pane ast 10 10)
     (display-layout table pane layout)
     (draw-edges table pane layout)
+    ;; (clim:with-output-as-presentation (pane layout 'layout)
+    ;;   (clim:draw-rectangle* pane 500 500 600 600 :ink clim:+red+))
     layout))
                  
 (defun visualize (ast)
