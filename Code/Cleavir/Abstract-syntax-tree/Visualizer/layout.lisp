@@ -17,9 +17,10 @@
   (destructuring-bind (first . rest) layouts
     (loop with accumulated-profile = (profile first)
           for layout in rest
-          do (multiple-value-bind (profile dy)
-                 (combine-vertical-profiles accumulated-profile (profile layout))
-               (setf accumulated-profile profile)
+          for profile = (profile layout)
+          do (multiple-value-bind (new-profile dy)
+                 (combine-vertical-profiles accumulated-profile profile)
+               (setf accumulated-profile new-profile)
                (move-layout layout 0 dy))
           finally (return accumulated-profile))))
              
@@ -39,7 +40,7 @@
            (setf (gethash ast table) t)
            (make-instance 'layout
              :ast ast
-             :position (make-point 10 10)
+             :position (make-point 0 0)
              :profile (list (make-point (+ width 20) (+ height 20)))
              :children '()
              :indirect-p nil))
@@ -48,13 +49,13 @@
                                     collect (layout-from-ast table pane child)))
                     (child-profiles (combine-layouts children))
                     (profile (combine-horizontal-profiles
-                              (make-point width height)
+                              (make-point (+ width 20) (+ height 20))
                               child-profiles)))
                (loop for child in children
                      do (move-layout child (+ width 20) 0))
                (make-instance 'layout
                  :ast ast
-                 :position (make-point 10 10)
+                 :position (make-point 0 0)
                  :profile profile
                  :children children
                  :indirect-p nil))))))
