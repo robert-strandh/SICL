@@ -80,7 +80,7 @@
   (let ((total-width (+ (x left) (profile-width right)))
         (new-right (loop for (x . y)  in right
                          collect (make-point (+ x (x left)) y))))
-    (cond ((<= (y left) (profile-height right))
+    (cond ((>= (y left) (profile-height right))
            (values (combine-profiles-with-dy-and-width (list left) 0 total-width)
                    (x left)))
           ((> (y (first right)) (y left))
