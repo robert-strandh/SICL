@@ -103,18 +103,21 @@
       (aux layout))
     table))
 
+(defun draw-edge-to-children (table pane layout)
+  (let* ((ast (ast layout))
+         (position (gethash ast table))
+         (width (ast-width pane ast))
+         (right (+ (x position) width))
+         (height (ast-height pane layout))
+         (middle (+ (y position) (/ height 2))))
+    (clim:draw-line* pane
+                     right middle
+                     (+ right 10) middle)))
+
 (defun draw-edges (table pane layout)
   (labels ((aux (layout)
              (unless (or (indirect-p layout) (null (children layout)))
-               (let* ((ast (ast layout))
-                      (position (gethash ast table))
-                      (width (ast-width pane ast))
-                      (right (+ (x position) width))
-                      (height (ast-height pane layout))
-                      (middle (+ (y position) (/ height 2))))
-                 (clim:draw-line* pane
-                                  right middle
-                                  (+ right 10) middle))
+               (draw-edge-to-children table pane layout)
                (loop for child in (children layout)
                      do (aux child)))))
     (aux layout)))
