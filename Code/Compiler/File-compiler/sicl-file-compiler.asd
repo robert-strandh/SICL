@@ -3,6 +3,7 @@
 (defsystem #:sicl-file-compiler
   :depends-on (#:concrete-syntax-tree
                #:eclector
+               #:eclector-concrete-syntax-tree
                #:cleavir-code-utilities
                #:cleavir-generate-ast
                #:sicl-simple-environment
