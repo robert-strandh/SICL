@@ -103,23 +103,43 @@
       (aux layout))
     table))
 
-(defun draw-edge-to-children (table pane layout)
-  (let* ((ast (ast layout))
-         (position (gethash ast table))
-         (width (ast-width pane ast))
-         (right (+ (x position) width))
-         (height (ast-height pane layout))
-         (middle (+ (y position) (/ height 2))))
-    (clim:draw-line* pane
-                     right middle
-                     (+ right 10) middle)))
+(defun draw-edge-to-children (pane right middle-right)
+  (clim:draw-line* pane
+                   right middle-right
+                   (+ right 10) middle-right))
+
+(defun draw-edge-to-parent (pane left left-middle parent-x parent-y)
+  (clim:draw-lines* pane
+                    (list left left-middle
+                          parent-x left-middle
+                          parent-x left-middle
+                          parent-x parent-y)))
 
 (defun draw-edges (table pane layout)
   (labels ((aux (layout)
              (unless (or (indirect-p layout) (null (children layout)))
-               (draw-edge-to-children table pane layout)
-               (loop for child in (children layout)
-                     do (aux child)))))
+               (let* ((ast (ast layout))
+                      (position (gethash ast table))
+                      (width (ast-width pane ast))
+                      (right (+ (x position) width))
+                      (height (ast-height pane ast))
+                      (middle-right (+ (y position) (/ height 2))))
+                 (draw-edge-to-children pane right middle-right)
+                 (loop for child in (children layout)
+                       do (aux child)
+                          (if (indirect-p child)
+                              (let* ((position (position child))
+                                     (left (x position))
+                                     (middle-left (+ (y position) 2)))
+                                (draw-edge-to-parent
+                                 pane left middle-left (+ right 10) middle-right))
+                              (let* ((ast (ast child))
+                                     (position (gethash ast table))
+                                     (left (x position))
+                                     (height (ast-height pane ast))
+                                     (middle-left (+ (y position) (/ height 2))))
+                                (draw-edge-to-parent
+                                 pane left middle-left (+ right 10) middle-right))))))))
     (aux layout)))
 
 (defun display-ast (frame pane)
