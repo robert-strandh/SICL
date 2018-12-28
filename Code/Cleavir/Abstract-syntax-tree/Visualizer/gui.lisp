@@ -108,12 +108,13 @@
                    right middle-right
                    (+ right 10) middle-right))
 
-(defun draw-edge-to-parent (pane left left-middle parent-x parent-y)
+(defun draw-edge-to-parent (pane left left-middle parent-x parent-y dashes)
   (clim:draw-lines* pane
                     (list left left-middle
                           parent-x left-middle
                           parent-x left-middle
-                          parent-x parent-y)))
+                          parent-x parent-y)
+                    :line-dashes dashes))
 
 (defun draw-edges (table pane layout)
   (labels ((aux (layout)
@@ -130,16 +131,24 @@
                           (if (indirect-p child)
                               (let* ((position (position child))
                                      (left (x position))
-                                     (middle-left (+ (y position) 2)))
+                                     (middle-left (+ (y position) 2))
+                                     (ast (ast child))
+                                     (ast-position (gethash ast table))
+                                     (height (ast-height pane ast))
+                                     (width (ast-width pane ast))
+                                     (bottom (+ (y ast-position) height))
+                                     (middle-bottom (+ (x ast-position) (/ width 2))))
                                 (draw-edge-to-parent
-                                 pane left middle-left (+ right 10) middle-right))
+                                 pane left middle-left middle-bottom bottom t)
+                                (draw-edge-to-parent
+                                 pane left middle-left (+ right 10) middle-right nil))
                               (let* ((ast (ast child))
                                      (position (gethash ast table))
                                      (left (x position))
                                      (height (ast-height pane ast))
                                      (middle-left (+ (y position) (/ height 2))))
                                 (draw-edge-to-parent
-                                 pane left middle-left (+ right 10) middle-right))))))))
+                                 pane left middle-left (+ right 10) middle-right nil))))))))
     (aux layout)))
 
 (defun display-ast (frame pane)
