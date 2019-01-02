@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-file-compiler
   (:use #:common-lisp)
-  (:export))
+  (:export #:ast-from-file))
