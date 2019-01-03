@@ -12,15 +12,6 @@
 ;;; If it is a symbol, it is considered to be the name of a class, and
 ;;; the call to MAKE-SPECIALZIER replaces the symbol with the
 ;;; corresponding class before calling MAKE-INSTANCE.
-;;;
-;;; Since we might need to find the class with a particular name, we
-;;; apply the general rule in SICL, namely to use explicit
-;;; environments whenever we can.  Since this function is not part of
-;;; any specification, we are free to do what we want, so we add the
-;;; environment as a required parameter.  When this function is used
-;;; in the expansion of DEFMETHOD, the environment supplied as the
-;;; second argument is the run-time environment (and not the
-;;; compile-time environment) in which the call to DEFMETHOD is made.
 
 (defun ensure-method (generic-function
                       &rest keys
