@@ -35,7 +35,7 @@
     (load-file "CLOS/generic-function-defclass.lisp" e5)
     (load-file "CLOS/standard-generic-function-defclass.lisp" e5)
     (load-file "Cons/cons-defclass.lisp" e5)
-    (load-file "Sequences/sequence-defclass.lisp" e5)
+    (load-file "Sequence/sequence-defclass.lisp" e5)
     (load-file "Cons/list-defclass.lisp" e5)
     (load-file "Package-and-symbol/symbol-defclass.lisp" e5)
     (load-file "Arithmetic/number-defclass.lisp" e5)
