@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-sequence)
+(cl:in-package #:sicl-utilities)
 
 (defmacro once-only (specs &body body)
   (once-only-expander specs body))
