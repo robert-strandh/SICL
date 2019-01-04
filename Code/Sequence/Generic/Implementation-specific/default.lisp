@@ -1,0 +1,22 @@
+(cl:in-package #:sicl-sequence)
+
+(declaim (inline non-list-length))
+(defun non-list-length (sequence)
+  (declare (type (and sequence (not list)) sequence))
+  (if (typep sequence 'vector)
+      (cl:length sequence)
+      (length sequence)))
+
+(declaim (inline non-list-elt))
+(defun non-list-elt (sequence index)
+  (declare (type (and sequence (not list)) sequence))
+  (if (typep sequence 'vector)
+      (cl:elt sequence index)
+      (elt sequence index)))
+
+(declaim (inline (setf non-list-elt)))
+(defun (setf non-list-elt) (value sequence index)
+  (declare (type (and sequence (not list)) sequence))
+  (if (typep sequence 'vector)
+      (setf (cl:elt sequence index) value)
+      (setf (elt sequence index) value)))
