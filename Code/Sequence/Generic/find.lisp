@@ -12,11 +12,11 @@
           (when (test item (key element))
             (return-from find element)))))))
 
-(replicate-for-each-relevant-vector-subclass <vector-subclass>
-  (defmethod find ((item t) (sequence <vector-subclass>) &key from-end test test-not start end key)
+(replicate-for-each-relevant-vector-subclass #1=#:vector-subclass
+  (defmethod find ((item t) (vector #1#) &key from-end test test-not start end key)
     (with-test-function (test test test-not)
       (with-key-function (key key)
-        (for-each-relevant-element (element index sequence start end from-end)
+        (for-each-relevant-element (element index vector start end from-end)
           (when (test item (key element))
             (return-from find element)))))))
 
