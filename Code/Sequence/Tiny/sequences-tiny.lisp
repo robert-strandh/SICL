@@ -77,29 +77,24 @@
 (defun check-bounding-index-designators-of-vector (client vector start end)
   (cond ((not (and (integerp start) (>= start 0)))
          (error 'invalid-start-index-type
-                :name client
                 :datum start
                 :expected-type '(integer 0)))
         ((> start (vector-length vector))
          (error 'invalid-start-index
-                :name client
                 :datum start
                 :expected-type `(integer 0 ,(vector-length vector))
                 :in-sequence vector))
         ((not (or (null end) (and (integerp end) (>= end 0))))
          (error 'invalid-end-index-type
-                :name client
                 :datum end
                 :expected-type '(or null (integer 0))))
         ((and (integerp end) (> end (vector-length vector)))
          (error 'invalid-end-index
-                :name client
                 :datum end
                 :expected-type `(integer 0 ,(vector-length vector))
                 :in-sequence vector))
         ((and (integerp end) (< end start))
          (error 'end-less-than-start
-                :name client
                 :datum start
                 :end-index end
                 :in-sequence vector))))
@@ -113,17 +108,14 @@
 (defun check-bounding-index-designators-of-list (client list start end)
   (cond ((not (and (integerp start) (>= start 0)))
          (error 'invalid-start-index-type
-                :name client
                 :datum start
                 :expected-type '(integer 0)))
         ((not (or (null end) (and (integerp end) (>= end 0))))
          (error 'invalid-end-index-type
-                :name client
                 :datum end
                 :expected-type '(or null (integer 0))))
         ((and (integerp end) (< end start))
          (error 'end-less-than-start
-                :name client
                 :datum start
                 :end-index end
                 :in-sequence list))))
@@ -137,19 +129,16 @@
 (defun map-over-prefix-cells (client fun list start)
   (when (not (and (integerp start) (>= start 0)))
     (error 'invalid-start-index-type
-           :name client
            :datum start
            :expected-type '(integer 0)))
   (let ((remaining list))
     (loop repeat start
           do (cond ((null remaining)
                     (error 'invalid-start-index
-                           :name client
                            :datum start
                            :in-sequence list))
                    ((atom remaining)
                     (error 'must-be-proper-list
-                           :name client
                            :datum list
                            :expected-type 'list))
                    (t
@@ -172,7 +161,6 @@
 (defun map-over-interval-cells (client fun list remainder start end)
   (when (not (typep end '(or null (integer 0))))
     (error 'invalid-end-index-type
-           :name client
            :datum end
            :expected-type '(or null (integer 0))))
   (let ((remaining remainder))
@@ -181,12 +169,10 @@
                     (= start end))
           do (cond ((null remaining)
                     (error 'invalid-end-index
-                           :name client
                            :datum end
                            :in-sequence list))
                    ((atom remaining)
                     (error 'must-be-proper-list
-                           :name client
                            :datum list
                            :expected-type 'list))
                    (t
@@ -277,7 +263,6 @@
     (declare (ignore last-prefix-cell))
     (when (< prefix-length start)
       (error 'invalid-start-prefix
-             :name client
              :datum start
              :expected-type 'integer
              :in-sequence list))
@@ -286,7 +271,6 @@
         (loop until (null remainder)
               do (cond ((atom remainder)
                         (error 'must-be-proper-list
-                               :name client
                                :datum list
                                :expected-type 'list))
                        (t
@@ -298,7 +282,6 @@
         ;; do until end of interval
         (if (< end start)
             (error 'end-less-than-start
-                   :name client
                    :datum start
                    :expected-type 'integer
                    :in-sequence list
@@ -306,13 +289,11 @@
             (loop repeat (- end start)
                   do (cond ((null remainder)
                             (error 'invalid-end-index
-                                   :name client
                                    :datum end
                                    :expected-type 'integer
                                    :in-sequence list))
                            ((atom remainder)
                             (error 'must-be-proper-list
-                                   :name client
                                    :datum list
                                    :expected-type 'list))
                            (t
@@ -376,7 +357,6 @@
     (declare (ignore last-prefix-cell))
     (when (< prefix-length start)
       (error 'invalid-start-prefix
-             :name client
              :datum start
              :expected-type 'integer
              :in-sequence list))
@@ -386,7 +366,6 @@
           (loop until (null remainder)
                 do (cond ((atom remainder)
                           (error 'must-be-proper-list
-                                 :name client
                                  :datum list
                                  :expected-type 'list))
                          (t
@@ -395,7 +374,6 @@
           ;; do until end of interval
           (if (< end start)
               (error 'end-less-than-start
-                     :name client
                      :datum start
                      :expected-type 'integer
                      :in-sequence list
@@ -403,13 +381,11 @@
               (loop repeat (- end start)
                     do (cond ((null remainder)
                               (error 'invalid-end-index
-                                     :name client
                                      :datum end
                                      :expected-type 'integer
                                      :in-sequence list))
                              ((atom remainder)
                               (error 'must-be-proper-list
-                                     :name client
                                      :datum list
                                      :expected-type 'list))
                              (t
@@ -463,8 +439,7 @@
                                         (key nil key-p)
                                         &allow-other-keys)
   (if (and test-p test-not-p)
-      (error 'both-test-and-test-not-given
-             :name client)
+      (error 'both-test-and-test-not-given)
       (if test-p
           (if key-p
               (lambda (element) (funcall test item (funcall key element)))
@@ -555,7 +530,6 @@
          '())
         ((atom sequence)
          (error 'must-be-sequence
-                :name client
                 :datum sequence))
         (t
          ;; The sequence is a non-empty list.
@@ -574,7 +548,6 @@
                   result)
                  (t
                   (error 'must-be-proper-list
-                         :name client
                          :datum sequence)))))))
 
 (defun copy-seq (sequence)
@@ -593,7 +566,6 @@
         finally (if (null remainder)
                     (return length)
                     (error 'must-be-proper-list
-                           :name name
                            :datum list))))
 
 (defun length-of-proper-sequence (name sequence)
@@ -622,13 +594,11 @@
         (declare (ignore last-prefix-cell))
         (cond ((null remainder)
                (error 'invalid-sequence-index
-                      :name 'elt
                       :datum index
                       :expected-type `(integer 0 ,(1- prefix-length))
                       :in-sequence sequence))
               ((atom remainder)
                (error 'must-be-proper-list
-                      :name 'elt
                       :datum sequence
                       :expected-type 'list))
               (t
@@ -652,20 +622,17 @@
         (declare (ignore last-prefix-cell))
         (cond ((null remainder)
                (error 'invalid-sequence-index
-                      :name 'elt
                       :datum index
                       :expected-type `(integer 0 ,(1- prefix-length))
                       :in-sequence sequence))
               ((atom remainder)
                (error 'must-be-proper-list
-                      :name 'elt
                       :datum sequence
                       :expected-type 'list))
               (t
                (setf (car remainder) new-object))))
       (if (>= index (vector-length sequence))
           (error 'invalid-sequence-index
-                 :name 'elt
                  :datum index
                  :expected-type `(integer 0 ,(1- (vector-length sequence)))
                  :in-sequence sequence)
@@ -704,7 +671,6 @@
                    (setf remaining temp))
               finally (unless (null remaining)
                         (error 'must-be-proper-list
-                               :name client
                                :datum sequence
                                :expected-type 'list)))
         result)
@@ -873,11 +839,9 @@
         (when (< prefix-length (min start1 start2))
           (if (null remainder)
               (error 'invalid-sequence-index
-                     :name client
                      :datum (min start1 start2)
                      :in-sequence l1)
               (error 'must-be-proper-list
-                     :name client
                      :datum l1)))
         (cond ((and (null end1) (null end2))
                ;; If both end1 and end2 are NIL, then the largest one
@@ -1320,7 +1284,6 @@
       (loop do (next-elements)
                (unless (null first-improper)
                  (error 'must-be-proper-list
-                        :name 'map
                         :datum first-improper))
                (if any-end-p
                    ;; This is not optimal because it can signal
@@ -1402,22 +1365,18 @@
          (cond ((listp sequence1)
                 (when (not (null (cdr (last sequence1))))
                   (error 'must-be-proper-list
-                         :name 'merge
                          :datum sequence1)))
                ((not (typep sequence1 'sequence))
                 (error 'must-be-sequence
-                       :name 'merge
                        :datum sequence1))
                (t
                 (setf sequence1 (coerce sequence1 'list))))
          (cond ((listp sequence2)
                 (when (not (null (cdr (last sequence2))))
                   (error 'must-be-proper-list
-                         :name 'merge
                          :datum sequence2)))
                ((not (typep sequence2 'sequence))
                 (error 'must-be-sequence
-                       :name 'merge
                        :datum sequence2))
                (t
                 (setf sequence2 (coerce sequence2 'list))))
@@ -1426,24 +1385,20 @@
          (cond ((listp sequence1)
                 (when (not (null (cdr (last sequence1))))
                   (error 'must-be-proper-list
-                         :name 'merge
                          :datum sequence1))
                 (setf sequence1 (coerce sequence1 'vector)))
                ((not (typep sequence1 'sequence))
                 (error 'must-be-sequence
-                       :name 'merge
                        :datum sequence1))
                (t
                 nil))
          (cond ((listp sequence2)
                 (when (not (null (cdr (last sequence2))))
                   (error 'must-be-proper-list
-                         :name 'merge
                          :datum sequence2))
                 (setf sequence2 (coerce sequence2 'vector)))
                ((not (typep sequence2 'sequence))
                 (error 'must-be-sequence
-                       :name 'merge
                        :datum sequence2))
                (t
                 nil))

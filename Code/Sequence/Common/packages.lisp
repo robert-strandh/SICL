@@ -1,10 +1,8 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-sequence
-    (:use #:common-lisp)
-  (:export #:name-mixin
-           #:name
-           #:in-sequence
+  (:use #:common-lisp)
+  (:export #:in-sequence
            #:end-index
            #:must-be-nonnegative-integer
            #:must-be-sequence

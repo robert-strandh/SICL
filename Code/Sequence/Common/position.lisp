@@ -39,13 +39,11 @@
   (unless (and (integerp start) (>= start 0))
     (error 'invalid-start-index-type
            :expected-type '(integer 0)
-           :datum start
-           :name 'position))
+           :datum start))
   (unless (or (null end) (and (integerp end) (>= end 0)))
     (error 'invalid-end-index-type
            :expected-type '(or null (integer 0))
-           :datum end
-           :name 'position))
+           :datum end))
   (canonicalize-test-and-test-not test test-not position)
   (canonicalize-key key)
   (if (listp sequence)

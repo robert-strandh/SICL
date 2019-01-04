@@ -12,11 +12,9 @@
              (decf start-bis)
           finally (when (and (atom remaining) (not (null remaining)))
                     (error 'must-be-proper-list
-                           :name name
                            :datum list))
                   (when (plusp start-bis)
                     (error 'invalid-start-index
-                           :name name
                            :datum start
                            :expected-type `(integer 0 ,(- start start-bis))
                            :in-sequence list)))
@@ -27,7 +25,6 @@
 (defun tail-must-be-proper-list (name list tail)
   (when (and (atom tail) (not (null tail)))
     (error 'must-be-proper-list
-           :name name
            :datum list)))
 
 ;;; This function is called at the end of some list traversal
@@ -36,11 +33,9 @@
 (defun tail-must-be-proper-list-with-end (name list tail end length)
   (when (and (atom tail) (not (null tail)))
     (error 'must-be-proper-list
-           :name name
            :datum list))
   (when (and (atom tail) (< length end))
     (error 'invalid-end-index
-           :name name
            :datum end
            :in-sequence list
            :expected-type `(integer 0 ,length))))
@@ -53,19 +48,16 @@
   (let ((length (length vector)))
     (when (> start length)
       (error 'invalid-start-index
-             :name name
              :datum start
              :expected-type `(integer 0 ,length)
              :in-sequence vector))
     (unless (<= 0 end length)
       (error 'invalid-end-index
-             :name name
              :datum end
              :expected-type `(integer 0 ,length)
              :in-sequence vector))
     (unless (<= start end)
       (error 'end-less-than-start
-             :name name
              :datum start
              :expected-type `(integer 0 ,end)
              :end-index end
@@ -79,7 +71,6 @@
         do (setf remainder (cdr remainder))
         finally (unless (null remainder)
                   (error 'must-be-proper-list
-                         :name name
                          :datum list))
                 (return length)))
 
@@ -92,11 +83,9 @@
         do (setf remainder (cdr remainder))
            finally (unless (or (null remainder) (consp remainder))
                      (error 'must-be-proper-list
-                         :name name
                          :datum list))
                    (when (< length end)
                      (error 'invalid-end-index
-                            :name name
                             :datum end
                             :expect-type `(integer 0 ,length)
                             :in-sequence list))
@@ -215,8 +204,7 @@
 
 (defmacro canonicalize-test-and-test-not (test-var test-not-var caller-name)
   `(cond ((and (not (null ,test-var)) (not (null ,test-not-var)))
-          (error 'both-test-and-test-not-given
-                 :name ',caller-name))
+          (error 'both-test-and-test-not-given))
          ((null ,test-var)
           (cond ((null ,test-not-var)
                  (setf ,test-var #'eql))
