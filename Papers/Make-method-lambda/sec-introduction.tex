@@ -63,9 +63,9 @@ evaluated in an environment that is not the \emph{null lexical
 lambda is processed.  For example, code like this one:
 
 \begin{verbatim}
-(let ((x 10))
-  (defmethod foo ((y integer))
-    (+ x y)))
+    (let ((x 10))
+      (defmethod foo ((y integer))
+        (+ x y)))
 \end{verbatim}
 
 \noindent
