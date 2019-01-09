@@ -78,4 +78,84 @@ from the generic function metaobject.  Otherwise, the normal way of
 obtaining the method class would be to call the accessor
 \texttt{generic-function-method-class}, passing it the generic
 function metaobject with the name indicated in the \texttt{defmethod}
+form.  If there is no way for the file compiler to determine the
+method class when the \texttt{defmethod} form, then clearly the only
+choice is to call \texttt{make-method-lambda} with the class prototype
+of the class named \texttt{standard-method} as the second argument.
+However, the analysis by Costanza and Herzell is that this behavior is
+a result of the file compiler calling \texttt{ensure-generic-function}
+to obtain a generic-function metaobject and then querying that object
+to obtain the method class.  A simple experiment shows that this is
+not the case in \sbcl{} for instance.
+
+When the following code is compiled with the \sbcl{} file compiler:
+
+\begin{verbatim}
+(defclass hello (standard-method) ())
+
+(defgeneric foo (x y)
+  (:method-class hello))
+
+(defmethod foo (x y)
+  (+ x y))
+
+(eval-when (:compile-toplevel)
+  (print (fdefinition 'foo)))
+\end{verbatim}
+
+\noindent
+the compilation fails when an attempt is made to find the definition
+of \texttt{foo} in the last top-level form.  Thus, after the
+\texttt{defmethod} form has been compiled, the generic-function
+metaobject still does not exist in the compilation environment.
+
+However, tracing \texttt{make-method-lambda} prior to compiling the
+following code:
+
+\begin{verbatim}
+(defclass hello (standard-method) ())
+
+(defgeneric bar (x y)
+  (:method-class hello))
+
+(defmethod bar (x y)
+  (+ x y))
+
+(eval-when (:compile-toplevel)
+  (print (fdefinition 'bar)))
+\end{verbatim}
+
+\noindent
+reveals that \texttt{make-method-lambda} is indeed called as a result
+of compiling the \texttt{defmethod} form, and that the second argument
+passed to the call is an instance of \texttt{standard-method}.
+
+This situation can lead to some problems in client code that are amply
+described in the paper by Costanza and Herzell.  The essence of the
+main problem is that, when a \texttt{defgeneric} form with a
+non-standard \texttt{:method-class} option is followed by a
+\texttt{defmethod} form in the same file, the file compiler may
+generate an expansion of the \texttt{defmethod} form that creates an
+instance of \texttt{standard-method} when the compiled file is
+ultimately loaded, as opposed to an instance of the method class with
+the name that was explicitly mentioned in the \texttt{defgeneric}
 form.
+
+Furthermore, this behavior is inconsistent with the behavior when the
+source file is processed using \texttt{load}.  The reason is that,
+contrary to the file compiler, \texttt{load} completely processes and
+evaluates each top-level form in order.  As a result, when
+\texttt{load} is used, the generic function metaobject \emph{is}
+created as a result of evaluating the \texttt{defgeneric} form, so
+that it \emph{does} exist when the \texttt{defmethod} form is
+ultimately evaluated.  Clearly, such inconsistent behavior between
+directly loading a source file and loading the result of applying the
+file compiler to it first is highly undesirable.
+
+The ultimate conclusion by Costanza and Herzell is that, in order for
+the behavior of the file compiler to be consistent with that of
+loading the source file directly, and indeed for that behavior to be
+correct, the file compiler \emph{must} create the generic function
+metaobject at compile time, so that it can be queried for the desired
+method class when the \texttt{defmethod} form is encountered.  In the
+next section, we propose an alternative solution to this conundrum.
