@@ -1,7 +1,8 @@
 \section{Introduction}
 
 In the definition of the \commonlisp{} \cite{ansi:common:lisp}
-metaobject protocol \cite{Kiczales:1991:AMP:574212}, the generic
+metaobject protocol in the book by Kiczales et al
+\cite{Kiczales:1991:AMP:574212} (also known as the AMOP), the generic
 function \texttt{make-method-lambda} plays a role that is very
 different from most of the other generic functions that are part of
 the metaobject protocol.
@@ -15,9 +16,11 @@ According to the book, the function has four parameters, all required:
 \item An environment object.
 \end{enumerate}
 
-The main difference is that \texttt{make-method-lambda} is called as
-part of the expansion code for the \texttt{defmethod} macro, whereas
-other generic functions are called at execution time.
+The main difference between \texttt{make-method-lambda} and other
+generic functions defined by the metaobject protocol is that
+\texttt{make-method-lambda} is called as part of the expansion code
+for the \texttt{defmethod} macro, whereas other generic functions are
+called at execution time.
 
 The AMOP book states that the generic function passed as the first
 argument may be different from the one that the method is ultimately
@@ -31,23 +34,42 @@ corresponding \texttt{defmethod} form is expanded (and therefore
 yet exist.  It will be created only when the compiled file is loaded
 into the \commonlisp{} system.
 
-The book also states that the method object passed as second argument
-may be uninitialized, suggesting that the \emph{class prototype} of
-the method class to be instantiated may be passed as the second
-argument.
+The AMOP book also states that the method object passed as second
+argument may be uninitialized, suggesting that the \emph{class
+  prototype} of the method class to be instantiated may be passed as
+the second argument.
 
 The third argument is a lambda expression corresponding to the body of
 the \texttt{defmethod} form.  The purpose of
 \texttt{make-method-lambda} is to wrap this lambda expression in
-another lambda expression that defines the \emph{method function}.  The
-default behavior of \texttt{make-method-lambda} is to return a lambda
-expression with two parameters.  The first parameter is a list of all
-the arguments to the generic function.  The second parameter is a list
-of next methods that can be invoked using \texttt{call-next-method}
-from the body of the method.  Therefore \texttt{make-method-lambda}
-also provides definitions of \texttt{call-next-method} and
-\texttt{next-method-p} that are lexically inside the lambda expression
-it returns.
+another lambda expression called the \emph{method lambda} which is
+ultimately compiled in order to yield the \emph{method function}.
+
+The default method lambda returned by \texttt{make-method-lambda} is a
+lambda expression with two parameters.  The first parameter is a list
+of all the arguments to the generic function.  The second parameter is
+a list of next methods that can be invoked using
+\texttt{call-next-method} from the body of the method.  Therefore
+\texttt{make-method-lambda} also provides definitions of
+\texttt{call-next-method} and \texttt{next-method-p} that are
+lexically inside the lambda expression it returns.
+
+It is important that the method lambda is returned as part of the
+expansion of the \texttt{defmethod} macro and that it is then
+processed in the same environment as that of the \texttt{defmethod}
+form itself, so that when the \texttt{defmethod} macro call is
+evaluated in an environment that is not the \emph{null lexical
+  environment}, that environment is taken into account when the method
+lambda is processed.  For example, code like this one:
+
+\begin{verbatim}
+(let ((x 10))
+  (defmethod foo ((y integer))
+    (+ x y)))
+\end{verbatim}
+
+\noindent
+should work as expected.
 
 Finally, the fourth argument to \texttt{make-method-lambda} is an
 environment object.
