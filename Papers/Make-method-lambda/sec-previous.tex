@@ -61,3 +61,21 @@ of Strandh's paper on first-class global environments
 published in 2015, and that of Costanza and Herzell in 2018 and the
 environments defined in that paper allow specialization on the
 \texttt{environment} parameter as well.
+
+As Costanza and Herzell point out, the \texttt{defmethod} macro does
+not allow the programmer to specify a class for the method to be
+created.  That class must be determined by the generic function to
+which the method is ultimately going to be added.  Therefore, in the
+case of a \texttt{defgeneric} form followed by a \texttt{defmethod}
+form, the method class must be the one indicated in the
+\texttt{defgeneric} form.
+
+The conundrum, then, is that the file compiler does not create the
+generic function as a result of compiling the \texttt{defgeneric}
+form, so when a \texttt{defmethod} form with the same name is
+encountered later in the same file, the method class can not be taken
+from the generic function metaobject.  Otherwise, the normal way of
+obtaining the method class would be to call the accessor
+\texttt{generic-function-method-class}, passing it the generic
+function metaobject with the name indicated in the \texttt{defmethod}
+form.
