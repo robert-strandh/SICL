@@ -45,12 +45,19 @@ problems:
 \item The call to \texttt{make-method-lambda} must be made at
   macro-expansion time, whereas in their example, the call is present
   in the expansion, so it will be made at run time.
-\item In their example, the resulting lambda expression, i.e. the
-  original lambda expression of the body of the \texttt{defmethod}
-  form wrapped in the code added by \texttt{make-method-lambda}, is
-  compiled in the null lexical environment.  However, compiling in the
-  null lexical environment would violate the semantics of the
-  \commonlisp{} standard, which requires that the body of the
-  \texttt{defmethod} form be compiled in lexical environment in which
-  it appears.
+\item In their example, the resulting method lambda is compiled in the
+  null lexical environment.  However, compiling in the null lexical
+  environment would violate the semantics of the \commonlisp{}
+  standard, which requires that the body of the \texttt{defmethod}
+  form be compiled in lexical environment in which it appears.
 \end{enumerate}
+
+Costanza and Herzell further analyzes possible specializations for the
+methods on \texttt{make-method-lambda}, and conclude that only the
+\texttt{generic-function} and the \texttt{method} parameters can
+reasonably be specialized.  They can be forgiven for not being aware
+of Strandh's paper on first-class global environments
+\cite{Strandh:2015:ELS:Environments}, even though Strandh's paper was
+published in 2015, and that of Costanza and Herzell in 2018 and the
+environments defined in that paper allow specialization on the
+\texttt{environment} parameter as well.
