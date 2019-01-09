@@ -76,15 +76,16 @@ function are discussed, and a solution is proposed.
 In this paper, we show that the alleged problems are due to the fact
 that existing implementations do not include proper compile-time
 processing of the associated macro \texttt{defgeneric}, and that with
-proper compile-time processing, the problems indicated in
-\cite{Constanza:2008} simply vanish.
+proper compile-time processing, the problems indicated in the paper by
+Costanza and Herzell simply vanish.
 
 The main characteristic of our proposed solution is for the
 compile-time side effects of \texttt{defgeneric} to include saving the
 name of the method class given as an option to that macro call.  With
 this additional information, no difference exists between the behavior
-of direct evaluation of a \texttt{defgeneric} form and a
-\texttt{defmethod} form mentioning the same name of the generic function.
+of direct evaluation and that of file compilation of a
+\texttt{defgeneric} form and a \texttt{defmethod} form mentioning the
+same name of the generic function.
 \end{abstract}
 
  \begin{CCSXML}
