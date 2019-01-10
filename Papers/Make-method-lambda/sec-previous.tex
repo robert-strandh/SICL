@@ -55,12 +55,11 @@ problems:
 Costanza and Herzell further analyzes possible specializations for the
 methods on \texttt{make-method-lambda}, and conclude that only the
 \texttt{generic-function} and the \texttt{method} parameters can
-reasonably be specialized.  They can be forgiven for not being aware
-of Strandh's paper on first-class global environments
-\cite{Strandh:2015:ELS:Environments}, even though Strandh's paper was
-published in 2015, and that of Costanza and Herzell in 2018 and the
-environments defined in that paper allow specialization on the
-\texttt{environment} parameter as well.
+reasonably be specialized.  While this analysis was valid in 2008,
+when the paper by Costanza and Herzell was written, since then,
+Strandh's paper on first-class global environments
+\cite{Strandh:2015:ELS:Environments}, shows how the
+\texttt{environment} parameter can be specialized upon as well.
 
 As Costanza and Herzell point out, the \texttt{defmethod} macro does
 not allow the programmer to specify a class for the method to be
