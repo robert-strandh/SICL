@@ -1,6 +1,6 @@
 \section{Previous work}
 
-In their article \cite{Constanza:2008}, Costanza and Herzeel give a
+In their article \cite{Constanza:2008}, \cnh{} give a
 simple example of this simple \texttt{defmethod} form:
 
 \begin{verbatim}
@@ -52,16 +52,16 @@ problems:
   form be compiled in lexical environment in which it appears.
 \end{enumerate}
 
-Costanza and Herzell further analyzes possible specializations for the
+\cnh{} further analyzes possible specializations for the
 methods on \texttt{make-method-lambda}, and conclude that only the
 \texttt{generic-function} and the \texttt{method} parameters can
 reasonably be specialized.  While this analysis was valid in 2008,
-when the paper by Costanza and Herzell was written, since then,
+when the paper by \cnh{} was written, since then,
 Strandh's paper on first-class global environments
 \cite{Strandh:2015:ELS:Environments}, shows how the
 \texttt{environment} parameter can be specialized upon as well.
 
-As Costanza and Herzell point out, the \texttt{defmethod} macro does
+As \cnh{} point out, the \texttt{defmethod} macro does
 not allow the programmer to specify a class for the method to be
 created.  That class must be determined by the generic function to
 which the method is ultimately going to be added.  Therefore, in the
@@ -81,7 +81,7 @@ form.  If there is no way for the file compiler to determine the
 method class when the \texttt{defmethod} form, then clearly the only
 choice is to call \texttt{make-method-lambda} with the class prototype
 of the class named \texttt{standard-method} as the second argument.
-However, the analysis by Costanza and Herzell is that this behavior is
+However, the analysis by \cnh{} is that this behavior is
 a result of the file compiler calling \texttt{ensure-generic-function}
 to obtain a generic-function metaobject and then querying that object
 to obtain the method class.  A simple experiment shows that this is
@@ -130,7 +130,7 @@ of compiling the \texttt{defmethod} form, and that the second argument
 passed to the call is an instance of \texttt{standard-method}.
 
 This situation can lead to some problems in client code that are amply
-described in the paper by Costanza and Herzell.  The essence of the
+described in the paper by \cnh{}.  The essence of the
 main problem is that, when a \texttt{defgeneric} form with a
 non-standard \texttt{:method-class} option is followed by a
 \texttt{defmethod} form in the same file, the file compiler may
@@ -151,7 +151,7 @@ ultimately evaluated.  Clearly, such inconsistent behavior between
 directly loading a source file and loading the result of applying the
 file compiler to it first is highly undesirable.
 
-The ultimate conclusion by Costanza and Herzell is that, in order for
+The ultimate conclusion by \cnh{} is that, in order for
 the behavior of the file compiler to be consistent with that of
 loading the source file directly, and indeed for that behavior to be
 correct, the file compiler \emph{must} create the generic function

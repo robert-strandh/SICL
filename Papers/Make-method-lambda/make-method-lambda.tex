@@ -66,18 +66,19 @@
 %% }
 
 
+\def\cnh{Costanza and Herzell}
 \begin{abstract}
 The \commonlisp{} metaobject protocol specifies a generic function
 named \texttt{make-method-lambda} to be called at macro-expansion time
-of the macro \texttt{defmethod}.  In an article by Costanza and
-Herzell \cite{Constanza:2008}, a number of problems with this generic
-function are discussed, and a solution is proposed.
+of the macro \texttt{defmethod}.  In an article by \cnh{}
+\cite{Constanza:2008}, a number of problems with this generic function
+are discussed, and a solution is proposed.
 
 In this paper, we show that the alleged problems are due to the fact
 that existing implementations do not include proper compile-time
 processing of the associated macro \texttt{defgeneric}, and that with
 proper compile-time processing, the problems indicated in the paper by
-Costanza and Herzell simply vanish.
+\cnh{} simply vanish.
 
 The main characteristic of our proposed solution is for the
 compile-time side effects of \texttt{defgeneric} to include saving the
@@ -118,7 +119,6 @@ same name of the generic function.
 
 \maketitle
 
-\def\cnh{Costanza and Herzell}
 \inputtex{spec-macros.tex}
 
 \inputtex{sec-introduction.tex}
