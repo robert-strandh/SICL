@@ -151,6 +151,12 @@ ultimately evaluated.  Clearly, such inconsistent behavior between
 directly loading a source file and loading the result of applying the
 file compiler to it first is highly undesirable.
 
+Perhaps even worse, even when the file compiler is used consistently,
+if the file is recompiled after having been loaded previously, the
+existing generic-function metaobject is reinitialized to have the
+correct method class, and the code works as when \texttt{load} is
+used.
+
 The ultimate conclusion by \cnh{} is that, in order for
 the behavior of the file compiler to be consistent with that of
 loading the source file directly, and indeed for that behavior to be
