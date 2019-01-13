@@ -63,23 +63,11 @@ We currently do not plan to supply a module for Unicode support.
 Instead we are relying on the support available in the Unicode library
 by Edi Weitz.
 
-\subsection{Short floats}
-
-On a 32-bit platform, a short float is an immediate floating-point
-value that does not fall into any of the IEEE floating-point
-categories.  It is similar to a single-precision
-IEEE floating-point value, with the difference that five fewer bits
-are used for the mantissa.
-
-On a 64-bit platform, a short float corresponds to a single-precision
-IEEE floating-point value.  The value is stored in the
-most-significant half of the word.
-
 \subsection{Single floats}
 
-On a 64-bit platform, a single float is similar to a double-precision
-IEEE floating-point value, with the difference that five fewer bits
-are used for the mantissa.
+On a 64-bit platform, a single float corresponds to a single-precision
+IEEE floating-point value.  The value is stored in the
+most-significant half of the word.
 
 \section{Representation of \texttt{cons} cells}
 \label{sec-data-representation-cons-cells}
