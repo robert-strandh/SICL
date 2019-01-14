@@ -42,9 +42,9 @@ However, this expansion is not possible.  It has two fundamental
 problems:
 
 \begin{enumerate}
-\item The call to \texttt{make-method-lambda} must be made at
-  macro-expansion time, whereas in their example, the call is present
-  in the expansion, so it will be made at run time.
+\item The call to \mml{} must be made at macro-expansion time, whereas
+  in their example, the call is present in the expansion, so it will
+  be made at run time.
 \item In their example, the resulting method lambda is compiled in the
   null lexical environment.  However, compiling in the null lexical
   environment would violate the semantics of the \commonlisp{}
@@ -52,12 +52,11 @@ problems:
   form be compiled in lexical environment in which it appears.
 \end{enumerate}
 
-\cnh{} further analyzes possible specializations for the
-methods on \texttt{make-method-lambda}, and conclude that only the
-\texttt{generic-function} and the \texttt{method} parameters can
-reasonably be specialized.  While this analysis was valid in 2008,
-when the paper by \cnh{} was written, since then,
-Strandh's paper on first-class global environments
+\cnh{} further analyzes possible specializations for the methods on
+\mml{}, and conclude that only the \texttt{generic-function} and the
+\texttt{method} parameters can reasonably be specialized.  While this
+analysis was valid in 2008, when the paper by \cnh{} was written,
+since then, Strandh's paper on first-class global environments
 \cite{Strandh:2015:ELS:Environments}, shows how the
 \texttt{environment} parameter can be specialized upon as well.
 
@@ -79,13 +78,13 @@ obtaining the method class would be to call the accessor
 function metaobject with the name indicated in the \texttt{defmethod}
 form.  If there is no way for the file compiler to determine the
 method class when the \texttt{defmethod} form, then clearly the only
-choice is to call \texttt{make-method-lambda} with the class prototype
-of the class named \texttt{standard-method} as the second argument.
-However, the analysis by \cnh{} is that this behavior is
-a result of the file compiler calling \texttt{ensure-generic-function}
-to obtain a generic-function metaobject and then querying that object
-to obtain the method class.  A simple experiment shows that this is
-not the case in \sbcl{} for instance.
+choice is to call \mml{} with the class prototype of the class named
+\texttt{standard-method} as the second argument.  However, the
+analysis by \cnh{} is that this behavior is a result of the file
+compiler calling \texttt{ensure-generic-function} to obtain a
+generic-function metaobject and then querying that object to obtain
+the method class.  A simple experiment shows that this is not the case
+in \sbcl{} for instance.
 
 When the following code is compiled with the \sbcl{} file compiler:
 
@@ -108,8 +107,7 @@ of \texttt{foo} in the last top-level form.  Thus, after the
 \texttt{defmethod} form has been compiled, the generic-function
 metaobject still does not exist in the compilation environment.
 
-However, tracing \texttt{make-method-lambda} prior to compiling the
-following code:
+However, tracing \mml{} prior to compiling the following code:
 
 \begin{verbatim}
 (defclass hello (standard-method) ())
@@ -125,9 +123,9 @@ following code:
 \end{verbatim}
 
 \noindent
-reveals that \texttt{make-method-lambda} is indeed called as a result
-of compiling the \texttt{defmethod} form, and that the second argument
-passed to the call is an instance of \texttt{standard-method}.
+reveals that \mml{} is indeed called as a result of compiling the
+\texttt{defmethod} form, and that the second argument passed to the
+call is an instance of \texttt{standard-method}.
 
 This situation can lead to some problems in client code that are amply
 described in the paper by \cnh{}.  The essence of the
@@ -164,5 +162,6 @@ correct, the file compiler \emph{must} create the generic function
 metaobject at compile time, so that it can be queried for the desired
 method class when the \texttt{defmethod} form is encountered.  In the
 next section, we propose an alternative solution to this conundrum.
+
 
 %%  LocalWords:  metaobject defmethod defgeneric
