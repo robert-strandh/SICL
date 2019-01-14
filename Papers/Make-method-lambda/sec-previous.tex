@@ -163,5 +163,22 @@ metaobject at compile time, so that it can be queried for the desired
 method class when the \texttt{defmethod} form is encountered.  In the
 next section, we propose an alternative solution to this conundrum.
 
+To solve the perceived problems with \mml{}, \cnh{} first analyze what
+desirable features this function has, and conclude that the following
+two are essential:
+
+\begin{enumerate}
+\item It can add new lexical definitions inside method bodies.  This
+  is the feature that is used to introduce definitions of
+  \texttt{next-method-p} and \texttt{call-next-method}.
+\item It can create lambda expressions for method functions with
+  parameters in addition to the usual two, namely one for holding the
+  arguments to the generic function and another for holding a list of
+  next methods.
+\end{enumerate}
+
+With these essential features in mind, \cnh{} then propose an
+alternative to \mml{} that does not have the perceived problem that
+this function has.
 
 %%  LocalWords:  metaobject defmethod defgeneric
