@@ -1,0 +1,53 @@
+\appendix
+
+\section{Protocol}
+\label{app-protocol}
+
+In this appendix we present the additional generic functions making up
+the protocol for our first-class global environments.
+
+In order for our definitions to fit in a column, we have abbreviated
+``Generic Function'' as ``GF''.
+\vskip 0.2cm
+\noindent
+\Defgeneric {function-class-name} {fname env}
+
+This generic function returns the name of the class of the function
+associated with \textit{fname} in \textit{env}.
+
+If \textit{fname} is not associated with an ordinary function or a
+generic function in \textit{env}, then an error is signaled.
+
+\vskip 0.2cm
+\noindent
+\Defgeneric {(setf function-class-name)} {class-name fname env}
+
+This generic function is used to set class name of the
+function associated with \textit{fname} in \textit{env}
+to \textit{new-type}.
+
+If \textit{fname} is associated with a macro or a special operator
+in \textit{env}, then an error is signaled.
+
+\vskip 0.2cm
+\noindent
+\Defgeneric {method-class-name} {fname env}
+
+This generic function returns the name of the method class of
+the function associated with \textit{fname} in \textit{env}.
+
+If \textit{fname} is not associated with a
+generic function in \textit{env}, then an error is signaled.
+
+\vskip 0.2cm
+\noindent
+\Defgeneric {(setf method-class-name)} {class-name fname env}
+
+This generic function is used to set method-class name 
+information of the function associated with \textit{fname} in
+\textit{env} to \textit{new-inline}.
+
+\textit{class-name} must be a symbol naming a class.
+
+If \textit{fname} is not associated with a
+generic function in \textit{env}, then an error is signaled.
