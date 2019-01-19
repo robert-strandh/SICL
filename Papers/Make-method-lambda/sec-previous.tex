@@ -50,6 +50,10 @@ problems:
   environment would violate the semantics of the \commonlisp{}
   standard, which requires that the body of the \texttt{defmethod}
   form be compiled in lexical environment in which it appears.
+  However, \cnh{} seem to be convinced that the resulting method
+  lambda is compiled in the null lexical environment, and indeed that
+  it \emph{has to} be compiled this way, as this belief is repeated
+  three times in the paper.
 \end{enumerate}
 
 \cnh{} further analyzes possible specializations for the methods on
@@ -180,5 +184,19 @@ two are essential:
 With these essential features in mind, \cnh{} then propose an
 alternative to \mml{} that does not have the perceived problem that
 this function has.
+
+Their proposed solution has two parts:
+
+\begin{enumerate}
+\item They use custom method-defining macros.  Such a macro would
+  expand to a \texttt{defmethod} form, but this form can contain
+  additional lexical definitions into the method body, introduced by
+  the custom macro.
+\item They propose that method functions always be able to take
+  additional parameters in the form of \commonlisp{} keyword
+  parameters.  Furthermore, the use of the lambda-list keyword
+  \texttt{\&allow-other-keys} would make it easier to combine method
+  functions that accept different additional arguments.
+\end{enumerate}
 
 %%  LocalWords:  metaobject defmethod defgeneric
