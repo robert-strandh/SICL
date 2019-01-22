@@ -310,7 +310,7 @@
 ;;;
 ;;; The lambda list is not a normal lambda list.  It has the following
 ;;; form: 
-;;; ([r1 .. rl [&rest r] [&optional o1 ..om] [&key k1 .. kn &allow-other-keys]]])
+;;; ([r1 .. rl [&optional o1 ..om] [&rest r] [&key k1 .. kn &allow-other-keys]]])
 ;;;
 ;;; where: 
 ;;;
