@@ -23,12 +23,16 @@
 (defmethod static-environment ((instruction enter-instruction))
   (first (outputs instruction)))
 
+(defgeneric dynamic-environment (instruction))
+(defmethod dynamic-environment ((instruction enter-instruction))
+  (second (outputs instruction)))
+
 (defgeneric parameters (instruction))
 (defmethod parameters ((instruction enter-instruction))
-  (rest (outputs instruction)))
+  (cddr (outputs instruction)))
 
 (defun make-enter-instruction
-    (lambda-list &key (successor nil successor-p) origin)
+    (lambda-list dynenv &key (successor nil successor-p) origin)
   (let* ((outputs (loop for item in lambda-list
                         append (cond ((member item lambda-list-keywords) '())
                                      ((consp item)
@@ -40,7 +44,7 @@
       :lambda-list lambda-list
       ;; We add an additional output that will hold the static
       ;; environment.
-      :outputs (cons (new-temporary) outputs)
+      :outputs (list* (new-temporary) dynenv outputs)
       :successors (if successor-p (list successor) '())
       :origin origin)))
 
@@ -54,8 +58,8 @@
         (subst new old (lambda-list instruction) :test #'eq)))
 
 (defmethod (setf outputs) :before (new-outputs (instruction enter-instruction))
-  (let ((old-lambda-outputs (rest (outputs instruction)))
-        (new-lambda-outputs (rest new-outputs)))
+  (let ((old-lambda-outputs (parameters instruction))
+        (new-lambda-outputs (cddr new-outputs)))
     ;; FIXME: Not sure what to do if the new and old outputs are different lengths.
     ;; For now we're silent.
     (setf (lambda-list instruction)
