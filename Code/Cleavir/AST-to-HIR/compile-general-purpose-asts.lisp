@@ -114,6 +114,51 @@
 ;;;
 ;;; Compile ASTs that represent Common Lisp operations.
 
+;;; Convenience macro for a common kind of AST/instruction.
+;;; It is "functional" in that it evaluates its arguments
+;;; left to right like a function, and has a fixed number
+;;; of arguments.
+
+(defmacro define-compile-functional-ast (ast instruction (&rest ast-readers))
+  (let ((temps (loop for reader in ast-readers collect (gensym "TEMP"))))
+    ;; We expand into some nested calls.
+    ;; For example say we had two readers, arg1-ast and arg2-ast.
+    ;; Then we end up with a compile-ast body of
+    #+(or)
+    (let ((temp1 (make-temp)) (temp2 (make-temp)))
+      (compile-ast
+       (arg1-ast ast)
+       (context (list temp1)
+                (list (compile-ast
+                       (arg2-ast ast)
+                       (context (list temp2)
+                                (list (make-instance 'whatever-instruction
+                                        :inputs (list temp1 temp2)
+                                        :outputs (results context)
+                                        :successors (successors context)))
+                                (invocation context))))
+                (invocation context))))
+    (labels ((recur (remaining-readers remaining-temps)
+               (if (null remaining-readers)
+                   `(make-instance ',instruction
+                                   :inputs (list ,@temps)
+                                   :outputs (results context)
+                                   :successors (successors context))
+                   (let ((reader (first remaining-readers))
+                         (rest-readers (rest remaining-readers))
+                         (temp (first remaining-temps))
+                         (rest-temps (rest remaining-temps)))
+                     `(compile-ast
+                       (,first ast)
+                       (context
+                        (list ,temp)
+                        (list ,(recur rest-readers rest-temps))
+                        (invocation context)))))))
+      `(defmethod compile-ast ((ast ,ast) context)
+         (let (,@(loop for temp in temps
+                       collect `(,temp (make-temp))))
+           ,(recur ast-readers temps))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile an IF-AST.
@@ -564,52 +609,25 @@
 ;;;
 ;;; Compile a SYMBOL-VALUE-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)
-  (let ((temp (make-temp)))
-    (compile-ast
-     (cleavir-ast:symbol-ast ast)
-     (context
-      (list temp)
-      (list (cleavir-ir:make-symbol-value-instruction
-	     temp (first (results context)) (first (successors context))))
-      (invocation context)))))
+(define-compile-functional-ast
+    cleavir-ast:symbol-value-ast cleavir-ir:symbol-value-instruction
+  (cleavir-ast:symbol-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a SET-SYMBOL-VALUE-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
-  (let ((temp1 (make-temp))
-	(temp2 (make-temp)))
-    (compile-ast
-     (cleavir-ast:symbol-ast ast)
-     (context
-      (list temp1)
-      (list (compile-ast
-	     (cleavir-ast:value-ast ast)
-	     (context
-	      (list temp2)
-	      (list (cleavir-ir:make-set-symbol-value-instruction
-		     temp1 temp2 (first (successors context))))
-	      (invocation context))))
-      (invocation context)))))
+(define-compile-functional-ast
+    cleavir-ast:set-symbol-value-ast cleavir-ir:set-symbol-value-instruction
+  (cleavir-ast:symbol-ast cleavir-ast:value-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a FDEFINITION-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:fdefinition-ast) context)
-  (let ((temp (make-temp)))
-    (compile-ast
-     (cleavir-ast:name-ast ast)
-     (context
-       (list temp)
-       (list
-	(cleavir-ir:make-fdefinition-instruction
-	 temp
-	 (first (results context))
-	 (first (successors context))))
-       (invocation context)))))
+(define-compile-functional-ast
+    cleavir-ast:fdefinition-ast cleavir-ir:fdefinition-instruction
+  (cleavir-ast:name-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
