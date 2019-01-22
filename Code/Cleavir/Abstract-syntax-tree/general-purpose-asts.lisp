@@ -77,7 +77,7 @@
   ((%dynenv-out :initarg :dynamic-environment-out
                 :accessor dynamic-environment-out-ast)))
 
-(cleavir-io:define-save-info dynamic-environment-out-ast-mixin
+(cleavir-io:define-save-info dynamic-environment-output-ast-mixin
   (:dynamic-environment-out dynamic-environment-out-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
