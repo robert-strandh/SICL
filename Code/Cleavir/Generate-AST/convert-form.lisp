@@ -253,7 +253,7 @@ This function should not require an environment or system, but it unfortunately 
 	   (let* ((info (cleavir-env:function-info env 'list))
 		  (function-ast
 		   (convert-function info env system)))
-	     (cleavir-ast:make-call-ast function-ast args))))
+	     (cleavir-ast:make-call-ast function-ast args *dynamic-environment-ast*))))
     ;; we know the list's format from general-purpose-asts, so we
     ;;  don't do any error checking.
     ;; we do a standard "parse". state is the last
@@ -356,7 +356,8 @@ This function should not require an environment or system, but it unfortunately 
 		       (convert-function info env system)))
 		 (maybe-wrap-return
 		  (cleavir-ast:make-call-ast function-ast
-					     argument-asts)))))
+					     argument-asts
+                                             *dynamic-environment-ast*)))))
       (multiple-value-bind (asts failure)
 	  (maybe-type-wrap-arguments
 	   (function-type-lambda-list ftype)

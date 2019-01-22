@@ -62,6 +62,24 @@
 ;;; effect.
 (defclass side-effect-free-ast-mixin () ())
 
+;;; This class is used as a superclass for ASTs that input a dynamic
+;;; environment.
+(defclass dynamic-environment-input-ast-mixin ()
+  ((%dynenv-in :initarg :dynamic-environment-in
+               :accessor dynamic-environment-in-ast)))
+
+(cleavir-io:define-save-info dynamic-environment-input-ast-mixin
+  (:dynamic-environment-in dynamic-environment-in-ast))
+
+;;; This class is used as a superclass for ASTs that output a dynamic
+;;; environment.
+(defclass dynamic-environment-output-ast-mixin ()
+  ((%dynenv-out :initarg :dynamic-environment-out
+                :accessor dynamic-environment-out-ast)))
+
+(cleavir-io:define-save-info dynamic-environment-out-ast
+  (:dynamic-environment-out dynamic-environment-out-ast))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Predicate to test whether an AST is side-effect free.
@@ -283,13 +301,14 @@
 ;;;
 ;;; A CALL-AST represents a function call.  
 
-(defclass call-ast (ast)
+(defclass call-ast (ast dynamic-environment-input-ast-mixin)
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
-(defun make-call-ast (callee-ast argument-asts &key origin (policy *policy*))
+(defun make-call-ast (callee-ast argument-asts dynenv-in &key origin (policy *policy*))
   (make-instance 'call-ast
     :origin origin :policy policy
+    :dynamic-environment-in dynenv-in
     :callee-ast callee-ast
     :argument-asts argument-asts))
 
@@ -342,14 +361,16 @@
 ;;; LEXICAL-ASTs of any of the ki because they may not be set
 ;;; correctly (conceptually, they all have the value FALSE then).
 
-(defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin
+                        dynamic-environment-output-ast-mixin)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defun make-function-ast (body-ast lambda-list &key origin (policy *policy*))
+(defun make-function-ast (body-ast lambda-list dynenv-out &key origin (policy *policy*))
   (make-instance 'function-ast
     :origin origin :policy policy
     :body-ast body-ast
+    :dynamic-environment-out dynenv-out
     :lambda-list lambda-list))
 
 (cleavir-io:define-save-info function-ast
@@ -417,12 +438,14 @@
 ;;;
 ;;; Class BLOCK-AST.
 
-(defclass block-ast (ast)
+(defclass block-ast (ast dynamic-environment-input-ast-mixin
+                     dynamic-environment-output-ast-mixin)
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
-(defun make-block-ast (body-ast &key origin (policy *policy*))
+(defun make-block-ast (body-ast dynenv-in dynenv-out &key origin (policy *policy*))
   (make-instance 'block-ast
     :origin origin :policy policy
+    :dynamic-environment-in dynenv-in :dynamic-environment-out dynenv-out
     :body-ast body-ast))
   
 (cleavir-io:define-save-info block-ast
@@ -533,12 +556,14 @@
 ;;;
 ;;; Class TAGBODY-AST.
 
-(defclass tagbody-ast (ast no-value-ast-mixin)
+(defclass tagbody-ast (ast no-value-ast-mixin dynamic-environment-input-ast-mixin
+                       dynamic-environment-output-ast-mixin)
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
-(defun make-tagbody-ast (item-asts &key origin (policy *policy*))
+(defun make-tagbody-ast (item-asts dynenv-in dynenv-out &key origin (policy *policy*))
   (make-instance 'tagbody-ast
     :origin origin :policy policy
+    :dynamic-environment-in dynenv-in :dynamic-environment-out dynenv-out
     :item-asts item-asts))
 
 (cleavir-io:define-save-info tagbody-ast
@@ -741,18 +766,20 @@
 ;;;
 ;;; Class MULTIPLE-VALUE-CALL-AST.
 
-(defclass multiple-value-call-ast (ast)
+(defclass multiple-value-call-ast (ast dynamic-environment-input-ast-mixin)
   ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
    (%form-asts :initarg :form-asts :reader form-asts)))
 
-(defun make-multiple-value-call-ast (function-form-ast form-asts &key origin (policy *policy*))
+(defun make-multiple-value-call-ast (function-form-ast form-asts dynenv-in &key origin (policy *policy*))
   (make-instance 'multiple-value-call-ast
     :origin origin :policy policy
+    :dynamic-environment-in dynenv-in
     :function-form-ast function-form-ast
     :form-asts form-asts))
 
 (cleavir-io:define-save-info multiple-value-call-ast
   (:function-form-ast function-form-ast)
+  (:dynamic-environment-in dynamic-environment-in-ast)
   (:form-asts form-asts))
 
 (defmethod children ((ast multiple-value-call-ast))

@@ -56,6 +56,11 @@
 ;;; addition to be being processed by the compiler.
 (defvar *compile-time-too*)
 
+;;; This variable holds a lexical-ast representing the runtime
+;;; dynamic environment, used by a few operators (e.g. BLOCK)
+;;; as well as calls.
+(defvar *dynamic-environment-ast*)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting code to an abstract syntax tree.
@@ -539,7 +544,12 @@
       (let ((canonicalized-dspecs
 	      (cleavir-code-utilities:canonicalize-declaration-specifiers
 	       (reduce #'append (mapcar #'cdr declarations))
-               (cleavir-env:declarations env))))
+               (cleavir-env:declarations env)))
+            ;; make a fresh dynamic environment. The body as well as the
+            ;; lambda list parsing code must be compiled with it.
+            (*dynamic-environment-ast*
+              (cleavir-ast:make-lexical-ast
+               (make-symbol "DYNAMIC-ENVIRONMENT-ARGUMENT"))))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
 	     (itemize-lambda-list parsed-lambda-list)
@@ -551,7 +561,8 @@
 				(make-body rdspecs forms block-name block-name-p)
 				env
 				system)
-	    (cleavir-ast:make-function-ast ast lexical-lambda-list)))))))
+	    (cleavir-ast:make-function-ast ast lexical-lambda-list
+                                           *dynamic-environment-ast*)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
