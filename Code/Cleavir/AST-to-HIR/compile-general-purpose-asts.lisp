@@ -208,9 +208,9 @@
 ;;; which has as first successor the compilation of the body
 ;;; in the same context as the block-ast itself, and as second
 ;;; successor the successor of the block-ast context.
-;;; The context and the catch instruction are stored in the
-;;; *BLOCK-INFO* hash table using the block-ast as a key, so that a
-;;; RETURN-FROM-AST that refers to this block can be compiled
+;;; The context, the continuation, and the destination are stored in
+;;; the *BLOCK-INFO* hash table using the block-ast as a key, so that
+;;; a RETURN-FROM-AST that refers to this block can be compiled
 ;;; either in the block's context if it's local, and to unwind
 ;;; using the correct continuation otherwise.
 
@@ -227,18 +227,23 @@
                    (successors successors)
                    (invocation invocation))
       context
-    ;; We set up this NOP instruction for the CATCH so that
-    ;; the catch instruction can exist while compiling the body.
-    (let* ((dummy (cleavir-ir:make-nop-instruction nil))
+    (let* ((after (first successors))
+           ;; The name is gone by now, so unlike TAGBODY
+           ;; we can't name the catch output.
+           (continuation (cleavir-ir:make-lexical-location
+                          (make-symbol "BLOCK-CONTINUATION")))
            (catch (cleavir-ir:make-catch-instruction
-                   ;; The name is gone by now, so unlike TAGBODY
-                   ;; we can't name the catch output.
-                   (make-temp)
-                   (list dummy (first successors)))))
-      (setf (block-info ast) (cons context catch))
-      ;; Now just hook up the NOP to go to the body.
-      (setf (cleavir-ir:successors dummy)
-            (list (compile-ast (cleavir-ast:body-ast ast) context)))
+                   (find-or-create-location
+                    (cleavir-ast:dynamic-environment-in-ast ast))
+                   continuation
+                   (find-or-create-location
+                    (cleavir-ast:dynamic-environment-out-ast
+                     ast))
+                   (list after))))
+      (setf (block-info ast) (list context continuation after))
+      ;; Now just hook up the catch to go to the body normally.
+      (push (compile-ast (cleavir-ast:body-ast ast) context)
+            (cleavir-ir:successors catch))
       catch)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -268,7 +273,9 @@
 
 (defmethod compile-ast ((ast cleavir-ast:return-from-ast) context)
   (let* ((block-info (block-info (cleavir-ast:block-ast ast)))
-         (block-context (car block-info)) (catch (cdr block-info)))
+         (block-context (first block-info))
+         (continuation (second block-info))
+         (destination (third block-info)))
     (with-accessors ((results results)
                      (successors successors)
                      (invocation invocation))
@@ -278,9 +285,8 @@
 	  (compile-ast (cleavir-ast:form-ast ast) block-context)
           ;; harder case: unwind.
 	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
-                                 ;; the continuation
-				 (first (cleavir-ir:outputs catch))
-                                 catch))
+                                 continuation
+                                 destination))
 		 (new-context (context results
 				       (list new-successor)
 				       (invocation context))))
@@ -298,11 +304,10 @@
 
 ;;; During AST-to-HIR translation, this variable contains a hash table
 ;;; that maps a TAG-AST to information about the tag.  The information
-;;; is a list of two elements.  The first element is the NOP
-;;; instruction that will be the target of any GO instruction to that
-;;; tag.  The second element is the INVOCATION of the compilation
-;;; context, which is used to determine whether the GO to this tag is
-;;; local or non-local.
+;;; is a cons.  The car is the NOP instruction that will be the target
+;;; of any GO instruction to that tag.  The second element is the
+;;; INVOCATION of the compilation context, which is used to determine
+;;; whether the GO to this tag is local or non-local.
 (defparameter *go-info* nil)
 
 (defun go-info (tag-ast)
@@ -311,14 +316,8 @@
 (defun (setf go-info) (new-info tag-ast)
   (setf (gethash tag-ast *go-info*) new-info))
 
-(defun make-continuation-location (name)
-  (cleavir-ir:make-lexical-location
-   (etypecase name
-     (symbol name)
-     (integer (make-symbol (write-to-string name))))))
-
-;;; What we end up with is 0 or more CATCH instructions (one for each tag),
-;;; followed by a NOP, followed by the non-tag items compiled in order like
+;;; What we end up with is 1 CATCH instruction, which has one successor for each
+;;; tag plus one, which is followed by the non-tag items compiled in order like
 ;;; a PROGN, but in a special context that includes info about the tags.
 ;;; The CATCH instruction abnormal successors are NOPs that have the appropriate
 ;;; items as successors.
@@ -328,40 +327,43 @@
                    (successors successors)
                    (invocation invocation))
       context
-    (let* ((dummy (cleavir-ir:make-nop-instruction nil))
-           (result dummy))
-      ;; In the first loop, we make a CATCH for each tag. The CATCH's normal successor
-      ;; is the previously made catch if there was one, or if not the main NOP. The
-      ;; abnormal successor is set to be a fresh NOP, which is used as the successor
-      ;; of local GOs.
+    (let* ((continuation (cleavir-ir:make-lexical-location
+                          (make-symbol "TAGBODY-CONTINUATION")))
+           (catch (cleavir-ir:make-catch-instruction
+                   (find-or-create-location
+                    (cleavir-ast:dynamic-environment-in-ast ast))
+                   continuation
+                   (find-or-create-location
+                    (cleavir-ast:dynamic-environment-out-ast ast))
+                   nil)))
+      ;; In the first loop, we make a NOP for each tag, which will be the
+      ;; destination for any GO or UNWIND to that tag. It's put in the go-info
+      ;; with the invocation, and also put as one of the catch's successors.
       (loop for item-ast in (cleavir-ast:item-asts ast)
-            do (when (typep item-ast 'cleavir-ast:tag-ast)
-                 (setf result
-                       (cleavir-ir:make-catch-instruction
-                        (make-continuation-location (cleavir-ast:name item-ast))
-                        (list result (cleavir-ir:make-nop-instruction nil)))
-                       (go-info item-ast)
-                       (cons result invocation))))
+            when (typep item-ast 'cleavir-ast:tag-ast)
+              do (let ((nop (cleavir-ir:make-nop-instruction nil)))
+                   (push nop (cleavir-ir:successors catch))
+                   (setf (go-info item-ast) (list invocation continuation nop))))
       ;; Now we actually compile the items, in reverse order (like PROGN).
       (loop with next = (first successors)
             for item-ast in (reverse (cleavir-ast:item-asts ast))
-            ;; if an item is a tag, we set the relevant catch's NOP to succeed
+            ;; if an item is a tag, we set the catch's NOP to succeed
             ;; to the right place (the current NEXT).
             ;; We also include the NOP in the normal sequence (i.e. make it NEXT).
             ;; This isn't strictly necessary, but if we don't it makes a pointless
             ;; basic block.
             if (typep item-ast 'cleavir-ast:tag-ast)
-              do (let* ((catch (car (go-info item-ast)))
-                        (nop (second (cleavir-ir:successors catch))))
+              do (let ((nop (car (go-info item-ast))))
                    (setf (cleavir-ir:successors nop) (list next)
                          next nop))
             ;; if it's not a tag, we compile it, expecting no values.
             else do (setf next
                           (compile-ast item-ast
                                        (context '() (list next) invocation)))
-            ;; lastly we hook up the main NOP to go to the item code.
-            finally (setf (cleavir-ir:successors dummy) (list next)))
-      result)))
+            ;; lastly we hook up the main CATCH to go to the item code the first
+            ;; time through. (As the first successor.)
+            finally (push next (cleavir-ir:successors catch)))
+      catch)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -380,11 +382,12 @@
 
 (defmethod compile-ast ((ast cleavir-ast:go-ast) context)
   (let* ((info (go-info (cleavir-ast:tag-ast ast)))
-         (catch (car info)) (invocation (cdr info)))
+         (invocation (first info)) (continuation (second info))
+         (destination (third info)))
     (if (eq invocation (invocation context))
-	(second (cleavir-ir:successors catch))
+	destination
 	(cleavir-ir:make-unwind-instruction
-         (first (cleavir-ir:outputs catch)) catch))))
+         continuation destination))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -396,19 +399,24 @@
       context
     (assert-context ast context nil 1)
     (let* ((all-args (cons (cleavir-ast:callee-ast ast)
-			   (cleavir-ast:argument-asts ast)))
-	   (temps (make-temps all-args)))
+                           (cleavir-ast:argument-asts ast)))
+	   (temps (make-temps all-args))
+           (inputs (list* (first temps)
+                          ;; guaranteed to be a lexical ast, so just
+                          (find-or-create-location
+                           (cleavir-ast:dynamic-environment-in-ast ast))
+                          (rest temps))))
       (compile-arguments
        all-args
        temps
        (if (typep results 'cleavir-ir:values-location)
 	   (make-instance 'cleavir-ir:funcall-instruction
-	     :inputs temps
+	     :inputs inputs
 	     :outputs (list results)
 	     :successors successors)
 	   (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
 	     (make-instance 'cleavir-ir:funcall-instruction
-	       :inputs temps
+	       :inputs inputs
 	       :outputs (list values-temp)
 	       :successors
 	       (list (cleavir-ir:make-multiple-to-fixed-instruction
@@ -469,7 +477,9 @@
 ;;; their final values.
 (defmethod compile-function ((ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-         (enter (cleavir-ir:make-enter-instruction ll :origin (cleavir-ast:origin ast)))
+         (dynenv (find-or-create-location
+                  (cleavir-ast:dynamic-environment-out-ast ast)))
+         (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
          (values (cleavir-ir:make-values-location))
          (return (cleavir-ir:make-return-instruction (list values)))
          (body-context (context values (list return) enter))
@@ -685,8 +695,10 @@
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
+           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
 	   (forms (cleavir-ast:forms ast))
-	   (enter (cleavir-ir:make-top-level-enter-instruction ll forms :origin (cleavir-ast:origin ast)))
+	   (enter (cleavir-ir:make-top-level-enter-instruction ll dynenv forms
+                                                               :origin (cleavir-ast:origin ast)))
 	   (values (cleavir-ir:make-values-location))
 	   (return (cleavir-ir:make-return-instruction (list values)))
 	   (body-context (context values (list return) enter))
@@ -780,22 +792,26 @@
 		   (invocation invocation))
       context
     (assert-context ast context nil 1)
-    (let ((function-temp (cleavir-ir:new-temporary))
-	  (form-temps (loop repeat (length (cleavir-ast:form-asts ast))
-			    collect (cleavir-ir:make-values-location))))
-      (let ((successor
-	      (if (typep results 'cleavir-ir:values-location)
-		  (make-instance 'cleavir-ir:multiple-value-call-instruction
-		    :inputs (cons function-temp form-temps)
-		    :outputs (list results)
-		    :successors successors)
-		  (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
-		    (make-instance 'cleavir-ir:multiple-value-call-instruction
-		      :inputs (cons function-temp form-temps)
-		      :outputs (list values-temp)
-		      :successors
-		      (list (cleavir-ir:make-multiple-to-fixed-instruction
-			     values-temp results (first successors))))))))
+    (let* ((function-temp (cleavir-ir:new-temporary))
+           (form-temps (loop repeat (length (cleavir-ast:form-asts ast))
+                             collect (cleavir-ir:make-values-location)))
+           (inputs (list* function-temp
+                          (find-or-create-location
+                           (cleavir-ast:dynamic-environment-in-ast ast))
+                          form-temps))
+           (successor
+             (if (typep results 'cleavir-ir:values-location)
+                 (make-instance 'cleavir-ir:multiple-value-call-instruction
+                   :inputs inputs
+                   :outputs (list results)
+                   :successors successors)
+                 (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
+                   (make-instance 'cleavir-ir:multiple-value-call-instruction
+                     :inputs inputs
+                     :outputs (list values-temp)
+                     :successors
+                     (list (cleavir-ir:make-multiple-to-fixed-instruction
+                            values-temp results (first successors))))))))
 	(loop for form-ast in (reverse (cleavir-ast:form-asts ast))
 	      for form-temp in (reverse form-temps)
 	      do (setf successor

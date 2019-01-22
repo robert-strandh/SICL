@@ -23,8 +23,8 @@
 (defclass top-level-enter-instruction (enter-instruction)
   ((%forms :initarg :forms :accessor forms)))
 
-(defun make-top-level-enter-instruction (lambda-list forms &key origin)
-  (let ((enter (make-enter-instruction lambda-list :origin origin)))
+(defun make-top-level-enter-instruction (lambda-list forms dynenv &key origin)
+  (let ((enter (make-enter-instruction lambda-list dynenv :origin origin)))
     (change-class enter 'top-level-enter-instruction
 		  :forms forms)))
 
@@ -195,14 +195,21 @@
 ;;; Instruction CATCH-INSTRUCTION.
 ;;;
 ;;; This instruction is used to mark a control point and stack frame
-;;; as an exit point. It has no inputs, one output, and two successors.
-;;; When reached normally, the instruction outputs a "continuation",
-;;; pushes it onto the (implicit) dynamic environment in whatever
-;;; client-defined way, and then proceeds to its first successor.
-;;; If the continuation is used as input to an UNWIND-INSTRUCTION,
-;;; control proceeds to the CATCH's second successor.
+;;; as an exit point. It has one input, two outputs, and one or more
+;;; successors.
 ;;;
-;;; The continuation can only be used, and cannot be used after the
+;;; When reached normally, control proceeds unconditionally to the
+;;; first successor. Additionally, the instruction takes its one input,
+;;; a dynamic environment, and outputs a dynamic environment with a
+;;; new entry added. This is the second output. The first output is
+;;; a "continuation".
+
+;;; If this continuation is used as input to an UNWIND-INSTRUCTION,
+;;; the catch-instruction's stack frame is put back into place, and
+;;; control proceeds to one of the catch-instruction's later
+;;; successors (stored in the unwind-instruction).
+;;;
+;;; The continuation can only be used once, and cannot be used after the
 ;;; function containing the CATCH has returned or been unwound from.
 ;;; In Scheme terms, it is a one-shot escape continuation.
 ;;;
@@ -216,9 +223,10 @@
 (defclass catch-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-catch-instruction (output successors)
+(defun make-catch-instruction (dynenv-in continuation dynenv-out successors)
   (make-instance 'catch-instruction
-    :outputs (list output)
+    :input (list dynenv-in)
+    :outputs (list continuation dynenv-out)
     :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -237,7 +245,8 @@
 (defclass unwind-instruction
     (instruction no-successors-mixin side-effect-mixin)
   (;; The destination of the UNWIND-INSTRUCTION is the
-   ;; CATCH-INSTRUCTION to which it will eventually transfer control.
+   ;; instruction to which it will eventually transfer control.
+   ;; This instruction must be the successor of a CATCH-INSTRUCTION.
    ;; It is not a normal successor because the exit is non-local.
    (%destination :initarg :destination :accessor destination)))
 
