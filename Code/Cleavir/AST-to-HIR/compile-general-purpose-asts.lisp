@@ -353,7 +353,7 @@
             ;; This isn't strictly necessary, but if we don't it makes a pointless
             ;; basic block.
             if (typep item-ast 'cleavir-ast:tag-ast)
-              do (let ((nop (car (go-info item-ast))))
+              do (let ((nop (third (go-info item-ast))))
                    (setf (cleavir-ir:successors nop) (list next)
                          next nop))
             ;; if it's not a tag, we compile it, expecting no values.
@@ -697,7 +697,7 @@
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
 	   (forms (cleavir-ast:forms ast))
-	   (enter (cleavir-ir:make-top-level-enter-instruction ll dynenv forms
+	   (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv
                                                                :origin (cleavir-ast:origin ast)))
 	   (values (cleavir-ir:make-values-location))
 	   (return (cleavir-ir:make-return-instruction (list values)))
@@ -718,7 +718,8 @@
         (*function-info* (make-hash-table :test #'eq))
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-	   (enter (cleavir-ir:make-enter-instruction ll :origin (cleavir-ast:origin ast)))
+           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
+	   (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
 	   (values (cleavir-ir:make-values-location))
 	   (return (cleavir-ir:make-return-instruction (list values)))
 	   (body-context (context values (list return) enter))
@@ -820,7 +821,7 @@
 			(context form-temp (list successor) invocation))))
 	(compile-ast
 	 (cleavir-ast:function-form-ast ast)
-	 (context (list function-temp) (list successor) invocation))))))
+	 (context (list function-temp) (list successor) invocation)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
