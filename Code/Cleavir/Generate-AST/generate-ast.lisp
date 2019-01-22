@@ -137,7 +137,8 @@
             'lambda-call-first-symbol-not-lambda :expr lambda)
     (cleavir-ast:make-call-ast
      (convert-code lambda-list body env system)
-     (convert-sequence args env system))))
+     (convert-sequence args env system)
+     *dynamic-environment-ast*)))
 
 ;;; The general method for processing the lambda list is as follows:
 ;;; We use recursion to process the remaining lambda list.  Before the

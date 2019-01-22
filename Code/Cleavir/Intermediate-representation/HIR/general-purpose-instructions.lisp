@@ -225,7 +225,7 @@
 
 (defun make-catch-instruction (dynenv-in continuation dynenv-out successors)
   (make-instance 'catch-instruction
-    :input (list dynenv-in)
+    :inputs (list dynenv-in)
     :outputs (list continuation dynenv-out)
     :successors successors))
 
