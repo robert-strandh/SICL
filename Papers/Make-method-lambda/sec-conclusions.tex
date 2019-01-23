@@ -1,2 +1,43 @@
 \section{Conclusions and future work}
 \label{sec-conclusions}
+
+We have defined a technique that solves a problem encountered in
+current \commonlisp{} implementations when a \texttt{defgeneric} form
+is followed by a \texttt{defmethod} form in the same compilation
+unit.  When the \texttt{defgeneric} form mentions a method class other
+than \texttt{standard-method}, and the compilation unit is processed
+in a fresh compilation environment, current implementations do not
+propagate the information about the method class to the macro expander
+for \texttt{defmethod}, resulting in \texttt{make-method-lambda} being
+called with a \texttt{method} argument of the wrong class.
+
+Our solution requires the compiler of the \commonlisp{} implementation
+to store a small amount of additional information about the
+generic-function class and the method class when the
+\texttt{defgeneric} form is encountered, and requires the macro
+expander for \texttt{defmethod} to retrieve this information by
+querying the compilation environment.
+
+Contrary to the proposal by \cnh{}, our suggested solution does not
+introduce any incompatibilities that would render some existing code
+obsolete.  Furthermore, our solution does not have the potential
+performance problem of the proposal by \cnh{}, i.e. the additional
+cost of processing keyword arguments to method functions.
+
+Future work includes adding the functions defined in
+\refApp{app-protocol} to the \sicl{}%
+\footnote{See https://github.com/robert-strandh/SICL} protocol for
+first-class global environments.
+
+The \cleavir{} compiler framework which is part of \sicl{} defines a
+modern version of the protocol for environment query defined in the
+second edition of Guy Steele's book \cite{Steele:1990:CLL:95411}.  We
+plan to extend this protocol to include information about the name of
+the generic-function class and of the method class given (explicitly
+or implicitly) in a \texttt{defgeneric} form previously encountered in
+the current compilation environment.  Since our existing protocol
+returns standard objects, no modifications to the existing \cleavir{}
+code will be required as a result of this extension.  The extension
+will allow us to define the macro \texttt{defmethod} in \sicl{} to
+query the environment, and to invoke \texttt{make-method-lambda} with
+appropriate arguments.
