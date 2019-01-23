@@ -44,12 +44,12 @@ problems:
 \begin{enumerate}
 \item The call to \mml{} must be made at macro-expansion time, whereas
   in their example, the call is present in the expansion, so it will
-  be made at run time.
+  be made at load time.
 \item In their example, the resulting method lambda is compiled in the
   null lexical environment.  However, compiling in the null lexical
   environment would violate the semantics of the \commonlisp{}
   standard, which requires that the body of the \texttt{defmethod}
-  form be compiled in lexical environment in which it appears.
+  form be compiled in the lexical environment in which it appears.
   However, \cnh{} seem to be convinced that the resulting method
   lambda is compiled in the null lexical environment, and indeed that
   it \emph{has to} be compiled this way, as this belief is repeated
@@ -133,7 +133,7 @@ call is an instance of \texttt{standard-method}.
 
 This situation can lead to some problems in client code that are amply
 described in the paper by \cnh{}.  The essence of the
-main problem is that, when a \texttt{defgeneric} form with a
+problem is that, when a \texttt{defgeneric} form with a
 non-standard \texttt{:method-class} option is followed by a
 \texttt{defmethod} form in the same file, the file compiler may
 generate an expansion of the \texttt{defmethod} form that creates an
