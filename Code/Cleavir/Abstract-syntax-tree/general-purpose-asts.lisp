@@ -458,16 +458,17 @@
 ;;;
 ;;; Class RETURN-FROM-AST.
 
-(defclass return-from-ast (ast)
+(defclass return-from-ast (ast dynamic-environment-input-ast-mixin)
   ((%block-ast :initarg :block-ast :reader block-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defun make-return-from-ast (block-ast form-ast &key origin (policy *policy*))
+(defun make-return-from-ast (block-ast form-ast dynenv-in &key origin (policy *policy*))
   (make-instance 'return-from-ast
     :origin origin :policy policy
     :block-ast block-ast
-    :form-ast form-ast))
-  
+    :form-ast form-ast
+    :dynamic-environment-in dynenv-in))
+
 (cleavir-io:define-save-info return-from-ast
   (:block-ast block-ast)
   (:form-ast form-ast))
@@ -576,13 +577,14 @@
 ;;;
 ;;; Class GO-AST.
 
-(defclass go-ast (ast)
+(defclass go-ast (ast dynamic-environment-input-ast-mixin)
   ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
-(defun make-go-ast (tag-ast &key origin (policy *policy*))
+(defun make-go-ast (tag-ast dynenv-in &key origin (policy *policy*))
   (make-instance 'go-ast
     :origin origin :policy policy
-    :tag-ast tag-ast))
+    :tag-ast tag-ast
+    :dynamic-environment-in dynenv-in))
 
 (cleavir-io:define-save-info go-ast
   (:tag-ast tag-ast))
