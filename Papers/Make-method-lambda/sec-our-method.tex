@@ -19,7 +19,7 @@ supplied, the fact that the method class is \texttt{standard-method}.
 With this additional information, during the expansion of the
 \texttt{defmethod} macro, the name of the method class can be
 retrieved, then a class metaobject from the name, and finally a class
-prototype from the class metaobject. 
+prototype from the class metaobject.
 
 While the first parameter of \mml{} is indicated by the AMOP book as a
 generic-function metaobject, it is not specifically indicated that
@@ -36,7 +36,45 @@ to \mml{} might as well be a class prototype, just as the second
 argument might be.
 
 As an example of how to accomplish this additional information, we
-suggest adding the following generic functions to the protocol
-described in Strandh's paper on first-class global environments
-\cite{Strandh:2015:ELS:Environments} as indicated in
-\refApp{app-protocol}.
+suggest a solution with two parts:
+
+\begin{enumerate}
+\item The first part involves the possibility for the compiler to
+  store information about a generic function in the compilation
+  environment, as the result of compiling a \texttt{defgeneric} form.
+  Specifically, the name of the generic-function class and the name of
+  the method class would need to be stored, and later retrieved.
+\item The second part requires a modification to the protocol used by
+  the compiler to query the compilation environment in order to
+  determine how a form is to be compiled.
+\end{enumerate}
+
+For a solution to the first part, in \refApp{app-protocol} we show how
+additional information about a generic function can be stored and
+retrieved in the context of the protocol described in Strandh's paper
+on first-class global environments
+\cite{Strandh:2015:ELS:Environments}.
+
+For the second part, recall that in section 8.5 of the second edition
+of Guy Steele's book on \commonlisp{} \cite{Steele:1990:CLL:95411},
+the author describes a protocol for this kind of environment query.
+This protocol contains three functions for environment query, namely
+\texttt{function-information}, \texttt{variable-information} and
+  \texttt{declaration-information}.
+
+Not only are these functions inadequate for all the information that a
+compiler needs to determine about a function or a variable, but they
+are also hard to extend in a backward-compatible way.  A modern
+version of this protocol would likely return standard objects as
+opposed to multiple values, thereby allowing for backward-compatible
+extensions on a per-implementation basis.
+
+For the second part of our solution, the environment function
+\texttt{function-information}, when given the name that has previously
+been encountered in a \texttt{defgeneric} form, would have to return
+information about the name of the generic-function class and the
+method class.  With this additional information, the expander for the
+macro \texttt{defmethod} would query the environment for this
+information, access the corresponding classes, and then the class
+prototypes, and finally call \mml{} with those prototypes as
+arguments.
