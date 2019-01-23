@@ -149,7 +149,7 @@
                          (temp (first remaining-temps))
                          (rest-temps (rest remaining-temps)))
                      `(compile-ast
-                       (,first ast)
+                       (,reader ast)
                        (context
                         (list ,temp)
                         (list ,(recur rest-readers rest-temps))
