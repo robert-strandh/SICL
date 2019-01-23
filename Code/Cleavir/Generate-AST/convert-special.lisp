@@ -277,6 +277,7 @@
     (let ((info (tag-info env (raw tag))))
       (cleavir-ast:make-go-ast
        (cleavir-env:identity info)
+       *dynamic-environment-ast*
        :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -658,6 +659,7 @@
       (cleavir-ast:make-return-from-ast
        (cleavir-env:identity info)
        (convert value-form env system)
+       *dynamic-environment-ast*
        :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
