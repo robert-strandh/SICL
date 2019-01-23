@@ -21,12 +21,12 @@ With this additional information, during the expansion of the
 retrieved, then a class metaobject from the name, and finally a class
 prototype from the class metaobject. 
 
-While the first parameter of \mml{} is indicated as a generic-function
-metaobject, it is not specifically indicated that this object might be
-uninitialized, contrary to the method object that must be passed as
-the second argument.  It is, however, indicated that the
-generic-function object passed as the first argument may not be the
-generic-function object to which the new method will eventually be
+While the first parameter of \mml{} is indicated by the AMOP book as a
+generic-function metaobject, it is not specifically indicated that
+this object might be uninitialized, contrary to the method object that
+must be passed as the second argument.  It is, however, indicated that
+the generic-function object passed as the first argument may not be
+the generic-function object to which the new method will eventually be
 added.  Therefore, there is not much information that \mml{} can make
 use of.  The exception would be the exact class of the generic
 function and the exact method class.  It would be awkward for a method
