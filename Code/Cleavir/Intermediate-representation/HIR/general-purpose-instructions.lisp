@@ -239,8 +239,9 @@
 ;;; The process of unwinding may involve dynamically determined side
 ;;; effects due to UNWIND-PROTECT.
 ;;;
-;;; The instruction has one input, which is the continuation output by a
-;;; CATCH-INSTRUCTION. See its comment for details.
+;;; The instruction has two inputs: the continuation output by a
+;;; CATCH-INSTRUCTION (see its comment for details) and the dynamic
+;;; environment.
 
 (defclass unwind-instruction
     (instruction no-successors-mixin side-effect-mixin)
@@ -250,9 +251,9 @@
    ;; It is not a normal successor because the exit is non-local.
    (%destination :initarg :destination :accessor destination)))
 
-(defun make-unwind-instruction (input destination)
+(defun make-unwind-instruction (continuation dynamic-environment destination)
   (make-instance 'unwind-instruction
-    :inputs (list input)
+    :inputs (list input dynamic-environment)
     :destination destination))
 
 (defmethod clone-initargs append ((instruction unwind-instruction))
