@@ -68,6 +68,8 @@
   ((%dynenv-in :initarg :dynamic-environment-in
                :accessor dynamic-environment-in-ast)))
 
+;;; FIXME: It would be nice if this and the next could have a method
+;;; for CHILDREN as well.
 (cleavir-io:define-save-info dynamic-environment-input-ast-mixin
   (:dynamic-environment-in dynamic-environment-in-ast))
 
@@ -317,7 +319,7 @@
   (:argument-asts argument-asts))
 
 (defmethod children ((ast call-ast))
-  (cons (callee-ast ast) (argument-asts ast)))
+  (list* (callee-ast ast) (dynamic-environment-in-ast ast) (argument-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -378,16 +380,17 @@
   (:body-ast body-ast))
 
 (defmethod children ((ast function-ast))
-  (cons (body-ast ast)
-	(loop for entry in (lambda-list ast)
-	      append (cond ((symbolp entry)
-			    '())
-			   ((consp entry)
-			    (if (= (length entry) 2)
-				entry
-				(cdr entry)))
-			   (t
-			    (list entry))))))
+  (list* (body-ast ast)
+         (dynamic-environment-out-ast ast)
+         (loop for entry in (lambda-list ast)
+               append (cond ((symbolp entry)
+                             '())
+                            ((consp entry)
+                             (if (= (length entry) 2)
+                                 entry
+                                 (cdr entry)))
+                            (t
+                             (list entry))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -452,7 +455,8 @@
   (:body-ast body-ast))
 
 (defmethod children ((ast block-ast))
-  (list (body-ast ast)))
+  (list (dynamic-environment-in-ast ast) (dynamic-environment-out-ast ast)
+        (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -474,7 +478,7 @@
   (:form-ast form-ast))
 
 (defmethod children ((ast return-from-ast))
-  (list (form-ast ast)))
+  (list (dynamic-environment-in-ast ast) (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -571,7 +575,8 @@
   (:item-asts item-asts))
 
 (defmethod children ((ast tagbody-ast))
-  (item-asts ast))
+  (list* (dynamic-environment-in-ast ast) (dynamic-environment-out-ast ast)
+         (item-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -590,7 +595,7 @@
   (:tag-ast tag-ast))
 
 (defmethod children ((ast go-ast))
-  (list (tag-ast ast)))
+  (list (dynamic-environment-in-ast ast) (tag-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -785,8 +790,9 @@
   (:form-asts form-asts))
 
 (defmethod children ((ast multiple-value-call-ast))
-  (cons (function-form-ast ast)
-	(form-asts ast)))
+  (list* (function-form-ast ast)
+         (dynamic-environment-in-ast ast)
+         (form-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
