@@ -384,6 +384,11 @@ This function should not require an environment or system, but it unfortunately 
 		     (process-progn
 		      (append
 		       init
+                       ;; initialize the dynamic environment
+                       (list (cleavir-ast:make-setq-ast
+                              (cleavir-ast:dynamic-environment-out-ast clone)
+                              *dynamic-environment-ast*))
+                       ;; actual body
 		       (list (maybe-wrap-return
 			      (cleavir-ast:body-ast clone)))))))))
 	  ;; Generate an ordinary call.
