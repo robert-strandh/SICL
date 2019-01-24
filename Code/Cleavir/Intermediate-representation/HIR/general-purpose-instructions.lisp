@@ -253,7 +253,7 @@
 
 (defun make-unwind-instruction (continuation dynamic-environment destination)
   (make-instance 'unwind-instruction
-    :inputs (list input dynamic-environment)
+    :inputs (list continuation dynamic-environment)
     :destination destination))
 
 (defmethod clone-initargs append ((instruction unwind-instruction))
