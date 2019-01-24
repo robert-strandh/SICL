@@ -286,7 +286,8 @@
           ;; harder case: unwind.
 	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
                                  continuation
-                                 (cleavir-ast:dynamic-environment-in-ast ast)
+                                 (find-or-create-location
+                                  (cleavir-ast:dynamic-environment-in-ast ast))
                                  destination))
 		 (new-context (context results
 				       (list new-successor)
@@ -388,7 +389,10 @@
     (if (eq invocation (invocation context))
 	destination
 	(cleavir-ir:make-unwind-instruction
-         continuation (cleavir-ast:dynamic-environment-in-ast ast) destination))))
+         continuation
+         (find-or-create-location
+          (cleavir-ast:dynamic-environment-in-ast ast))
+         destination))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
