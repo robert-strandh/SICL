@@ -56,7 +56,7 @@ problems:
   three times in the paper.
 \end{enumerate}
 
-\cnh{} further analyzes possible specializations for the methods on
+\cnh{} further analyze possible specializations for the methods on
 \mml{}, and conclude that only the \texttt{generic-function} and the
 \texttt{method} parameters can reasonably be specialized.  While this
 analysis was valid in 2008, when the paper by \cnh{} was written,
@@ -81,11 +81,11 @@ obtaining the method class would be to call the accessor
 \texttt{generic-function-method-class}, passing it the generic
 function metaobject with the name indicated in the \texttt{defmethod}
 form.  If there is no way for the file compiler to determine the
-method class when the \texttt{defmethod} form, then clearly the only
-choice is to call \mml{} with the class prototype of the class named
-\texttt{standard-method} as the second argument.  However, the
-analysis by \cnh{} is that this behavior is a result of the file
-compiler calling \texttt{ensure-generic-function} to obtain a
+method class when the \texttt{defmethod} form is encountered, then
+clearly the only choice is to call \mml{} with the class prototype of
+the class named \texttt{standard-method} as the second argument.
+However, the analysis by \cnh{} is that this behavior is a result of
+the file compiler calling \texttt{ensure-generic-function} to obtain a
 generic-function metaobject and then querying that object to obtain
 the method class.  A simple experiment shows that this is not the case
 in \sbcl{} for instance.
@@ -184,5 +184,22 @@ Their proposed solution has two parts:
   \texttt{\&allow-other-keys} would make it easier to combine method
   functions that accept different additional arguments.
 \end{enumerate}
+
+While it is able to solve the problem of the inconsistent behavior
+between \texttt{compile-file} and \texttt{load}, this solution has two
+major disadvantages as pointed out by \cnh{}:
+
+\begin{enumerate}
+\item With this solution, method functions have a lambda list that
+  includes keyword parameters.  Processing keyword arguments imposes a
+  significant performance penalty on the invocation of method
+  functions.
+\item Existing \clos{} implementations that use a lambda list without
+  any keyword parameter for method functions are incompatible with
+  this solution.
+\end{enumerate}
+
+In the next section, we propose a solution that has neither of these
+disadvantages.
 
 %%  LocalWords:  metaobject defmethod defgeneric
