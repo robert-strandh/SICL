@@ -19,7 +19,7 @@
   (db origin (block name . body) form
     (declare (ignore block))
     (let* ((new-dynenv (cleavir-ast:make-lexical-ast
-                        (make-symbol "BLOCK-DYNAMIC-ENVIRONMENT")))
+                        '#:block-dynamic-environment))
            (ast (cleavir-ast:make-block-ast nil
                                             *dynamic-environment-ast*
                                             new-dynenv
@@ -770,7 +770,7 @@
     (declare (ignore tagbody))
     (let ((old-dynenv *dynamic-environment-ast*)
           (new-dynenv (cleavir-ast:make-lexical-ast
-                       (make-symbol "TAGBODY-DYNAMIC-ENVIRONMENT")))
+                       '#:tagbody-dynamic-environment))
           (tag-asts
 	    (loop for item in (raw items)
 		  for raw-item = (raw item)
