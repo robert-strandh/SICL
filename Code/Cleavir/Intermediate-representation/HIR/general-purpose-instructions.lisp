@@ -247,7 +247,8 @@
     (instruction no-successors-mixin side-effect-mixin)
   (;; The destination of the UNWIND-INSTRUCTION is the
    ;; instruction to which it will eventually transfer control.
-   ;; This instruction must be the successor of a CATCH-INSTRUCTION.
+   ;; This instruction must be the successor of a CATCH-INSTRUCTION,
+   ;; and must be a WIND-TO-INSTRUCTION.
    ;; It is not a normal successor because the exit is non-local.
    (%destination :initarg :destination :accessor destination)))
 
@@ -256,8 +257,42 @@
     :inputs (list continuation dynamic-environment)
     :destination destination))
 
+;;; Convenience function on the above that hooks up the result to a WIND-TO
+;;; destintion.
+(defun make-connected-unwind-instruction
+    (continuation dynamic-environment destination)
+  (let ((unwind (make-unwind-instruction
+                 continuation dynamic-environment destination)))
+    (push unwind (sources destination))
+    unwind))
+
 (defmethod clone-initargs append ((instruction unwind-instruction))
   (list :destination (destination instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction WIND-TO-INSTRUCTION.
+;;;
+;;; This instruction is used to indicate the destination of a
+;;; non-local transfer of control (i.e., an unwind).
+;;;
+;;; It exists essentially to maintain the invariants of the
+;;; instruction graph, and so is conceptually a NOP. Of course,
+;;; it's possible some implementation may need to do something
+;;; more.
+
+(defclass wind-to-instruction
+    ;; side-effect-mixin is included to prevent deletion in
+    ;; normal circumstances.
+    (instruction one-successor-mixin side-effect-mixin)
+  (;; A list of UNWIND-INSTRUCTIONs with this instruction as
+   ;; their DESTINATION.
+   (%sources :initarg :sources :accessor sources)))
+
+(defun make-wind-to-instruction (&optional successors)
+  (make-instance 'wind-to-instruction
+    :sources nil
+    :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
