@@ -22,9 +22,9 @@ generic function in \textit{env}, then an error is signaled.
 \noindent
 \Defgeneric {(setf function-class-name)} {class-name fname env}
 
-This generic function is used to set class name of the
+This generic function is used to set the class name of the
 function associated with \textit{fname} in \textit{env}
-to \textit{new-type}.
+to \textit{class-name}.
 
 If \textit{fname} is associated with a macro or a special operator
 in \textit{env}, then an error is signaled.
@@ -43,9 +43,9 @@ generic function in \textit{env}, then an error is signaled.
 \noindent
 \Defgeneric {(setf method-class-name)} {class-name fname env}
 
-This generic function is used to set method-class name 
-information of the function associated with \textit{fname} in
-\textit{env} to \textit{new-inline}.
+This generic function is used to set the class name for methods of
+the function associated with \textit{fname} in
+\textit{env} to \textit{class-name}.
 
 \textit{class-name} must be a symbol naming a class.
 
