@@ -1,0 +1,21 @@
+Some Common Lisp implementations evolve through careful modifications
+to an existing image.  Most of the remaining implementations are
+bootstrapped using some lower-level language, typically C.  As far as
+we know, only SBCL is bootstrapped from source code written mainly in
+Common Lisp.  But, in most cases, there is no profound reason for
+using a language other than Common Lisp for creating a Common Lisp
+system, though there are some annoying details that have to be dealt
+with.
+
+We describe the bootstrapping technique used with SICL
+(https://github.com/robert-strandh/SICL), a modern implementation of
+Common Lisp.  Though both SICL and the bootstrapping procedure for
+creating it are still being worked on, they are sufficiently evolved
+that the big picture outlined in this paper will remain valid.  Our
+technique uses first-class global environments to isolate the host
+environment from the environments required during the bootstrapping
+procedure.  Contrary to SBCL, and implementations written in some
+other language, in SICL, we build the CLOS MOP classes and generic
+functions first.  This technique allows us to use the CLOS machinery
+for many other parts of the system, thereby decreasing the amount of
+special-purpose code, and improving maintainability of the system.
