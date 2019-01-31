@@ -1,0 +1,18 @@
+The Common Lisp metaobject protocol specifies a generic function named
+MAKE-METHOD-LAMBDA to be called at macro-expansion time of the macro
+DEFMETHOD.  In an article by Costanza and Herzeel, a number of
+problems with this generic function are discussed, and a solution is
+proposed.
+
+In this paper, we show that the alleged problems are due to the fact
+that existing implementations do not include proper compile-time
+processing of the associated macro DEFGENERIC, and that with
+proper compile-time processing, the problems indicated in the paper by
+Costanza and Herzeel simply vanish.
+
+The main characteristic of our proposed solution is for the
+compile-time side effects of DEFGENERIC to include saving the name of
+the method class given as an option to that macro call.  With this
+additional information, no difference exists between the behavior of
+direct evaluation and that of file compilation of a DEFGENERIC form
+and a DEFMETHOD form mentioning the same name of the generic function.
