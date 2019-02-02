@@ -32,10 +32,12 @@
 ;;;
 ;;; Once we have found the defining info, we traverse the environment
 ;;; again in order to find modifying entries.  We do this traversal
-;;; for each type of modifying entry possible.  The traversal stops
-;;; either when we found the first relevant modifying entry, or we
-;;; reach the place where the variable was defined, in which case no
-;;; relevant modifying entry was found.
+;;; for each type of modifying entry possible.  Depending on the type
+;;; of modifying entry we are looking for, either the traversal stops
+;;; when we found the first relevant modifying entry, or it continues
+;;; to find all relevant modifying entries of that type.  Either way
+;;; the traversal stops when we reach the place where the variable was
+;;; defined.
 
 (defgeneric defining-variable-info (environment symbol))
 
