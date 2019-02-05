@@ -227,7 +227,7 @@
                    (successors successors)
                    (invocation invocation))
       context
-    (let* ((after (cleavir-ir:make-wind-to-instruction successors))
+    (let* ((after (first successors))
            ;; The name is gone by now, so unlike TAGBODY
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
@@ -240,7 +240,7 @@
                     (cleavir-ast:dynamic-environment-out-ast
                      ast))
                    (list after))))
-      (setf (block-info ast) (list context continuation after))
+      (setf (block-info ast) (list context continuation catch))
       ;; Now just hook up the catch to go to the body normally.
       (push (compile-ast (cleavir-ast:body-ast ast) context)
             (cleavir-ir:successors catch))
@@ -268,8 +268,8 @@
 ;;; the BLOCK-AST was compiled, but in the current invocation.  We
 ;;; then insert an UNWIND-INSTRUCTION that serves as the successor of
 ;;; the compilation of the FORM-AST.  The destination of that
-;;; UNWIND-INSTRUCTION is a WIND-TO instruction that process to the
-;;; successor of the context in which the BLOCK-AST was compiled.
+;;; UNWIND-INSTRUCTION is the successor of the context in which the
+;;; BLOCK-AST was compiled.
 
 (defmethod compile-ast ((ast cleavir-ast:return-from-ast) context)
   (let* ((block-info (block-info (cleavir-ast:block-ast ast)))
@@ -284,11 +284,11 @@
           ;; simple case: we are returning locally.
 	  (compile-ast (cleavir-ast:form-ast ast) block-context)
           ;; harder case: unwind.
-	  (let* ((new-successor (cleavir-ir:make-connected-unwind-instruction
+	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
                                  continuation
                                  (find-or-create-location
                                   (cleavir-ast:dynamic-environment-in-ast ast))
-                                 destination))
+                                 destination 1))
 		 (new-context (context results
 				       (list new-successor)
 				       (invocation context))))
@@ -321,9 +321,9 @@
 ;;; What we end up with is 1 CATCH instruction, which has one successor for each
 ;;; tag plus one, which is followed by the non-tag items compiled in order like
 ;;; a PROGN, but in a special context that includes info about the tags.
-;;; The CATCH instruction abnormal successors are WIND-TOs that have the
-;;; appropriate items as successors.
-;;; To accomplish this, we make the catch, then loop over the body twice.
+;;; The CATCH instruction abnormal successors are NOPs that have the appropriate
+;;; items as successors.
+;;; To accomplish this, we make the main NOP, then loop over the body twice.
 (defmethod compile-ast ((ast cleavir-ast:tagbody-ast) context)
   (with-accessors ((results results)
                    (successors successors)
@@ -337,35 +337,38 @@
                    continuation
                    (find-or-create-location
                     (cleavir-ast:dynamic-environment-out-ast ast))
-                   nil)))
-      ;; In the first loop, we make a WIND-TO for each tag, which will be the
+                   nil))
+           (catch-successors nil))
+      ;; In the first loop, we make a NOP for each tag, which will be the
       ;; destination for any GO or UNWIND to that tag. It's put in the go-info
       ;; with the invocation, and also put as one of the catch's successors.
-      (loop for item-ast in (cleavir-ast:item-asts ast)
+      (loop with index = 0
+            for item-ast in (cleavir-ast:item-asts ast)
             when (typep item-ast 'cleavir-ast:tag-ast)
-              do (let ((wto (cleavir-ir:make-wind-to-instruction)))
-                   (push wto (cleavir-ir:successors catch))
-                   (setf (go-info item-ast) (list invocation continuation wto))))
+              do (let ((nop (cleavir-ir:make-nop-instruction nil)))
+                   (push nop catch-successors)
+                   (incf index)
+                   (setf (go-info item-ast) (list invocation continuation nop catch index))))
       ;; Now we actually compile the items, in reverse order (like PROGN).
       (loop with next = (first successors)
             for item-ast in (reverse (cleavir-ast:item-asts ast))
-            ;; if an item is a tag, we set the catch's WIND-TO to succeed
+            ;; if an item is a tag, we set the catch's NOP to succeed
             ;; to the right place (the current NEXT).
-            ;; We also include the WIND-TO in the normal sequence
-            ;; (i.e. make it NEXT).
-            ;; This isn't strictly necessary, but if we don't it results
-            ;; in a pointless basic block.
+            ;; We also include the NOP in the normal sequence (i.e. make it NEXT).
+            ;; This isn't strictly necessary, but if we don't it makes a pointless
+            ;; basic block.
             if (typep item-ast 'cleavir-ast:tag-ast)
-              do (let ((wto (third (go-info item-ast))))
-                   (setf (cleavir-ir:successors wto) (list next)
-                         next wto))
+              do (let ((nop (third (go-info item-ast))))
+                   (setf (cleavir-ir:successors nop) (list next)
+                         next nop))
             ;; if it's not a tag, we compile it, expecting no values.
             else do (setf next
                           (compile-ast item-ast
                                        (context '() (list next) invocation)))
             ;; lastly we hook up the main CATCH to go to the item code the first
             ;; time through. (As the first successor.)
-            finally (push next (cleavir-ir:successors catch)))
+            finally (setf (cleavir-ir:successors catch) (list next)))
+      (setf (rest (cleavir-ir:successors catch)) (nreverse catch-successors))
       catch)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -378,22 +381,24 @@
 ;;;
 ;;; The INVOCATION of the parameter CONTEXT is compared to the
 ;;; tagbody invocation. If they are the same, we have a local transfer
-;;; of control, so we just return the WIND-TO instruction that the CATCH
+;;; of control, so we just return the NOP instruction that the CATCH
 ;;; has as its abnormal successor. If they are not the same, we generate
-;;; an UNWIND-INSTRUCTION with the WIND-TO as its destination and using
-;;; its continuation.
+;;; an UNWIND-INSTRUCTION with the CATCH as its destination and using its
+;;; continuation.
 
 (defmethod compile-ast ((ast cleavir-ast:go-ast) context)
   (let* ((info (go-info (cleavir-ast:tag-ast ast)))
          (invocation (first info)) (continuation (second info))
-         (destination (third info)))
+         (nop (third info))
+         (destination (fourth info)) (index (fifth info)))
     (if (eq invocation (invocation context))
-	destination
-        (cleavir-ir:make-connected-unwind-instruction
+	nop
+	(cleavir-ir:make-unwind-instruction
          continuation
          (find-or-create-location
           (cleavir-ast:dynamic-environment-in-ast ast))
-         destination))))
+         destination
+         index))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
