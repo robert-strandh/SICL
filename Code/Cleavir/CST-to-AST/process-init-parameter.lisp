@@ -38,39 +38,16 @@
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
 (defun process-init-parameter
-    (var-cst supplied-p-cst init-ast env next-ast system)
-  (let* ((var (cst:raw var-cst))
-         (name1 (make-symbol (string-downcase var)))
-	 (lexical-var-ast (cleavir-ast:make-lexical-ast
-                           name1 :origin (cst:source var-cst)))
-         (supplied-p (if (null supplied-p-cst)
-                         nil
-                         (cst:raw supplied-p-cst)))
-	 (name2 (if (null supplied-p)
-		    (gensym)
-		    (make-symbol (string-downcase supplied-p))))
-	 (lexical-supplied-p-ast (cleavir-ast:make-lexical-ast
-                                  name2
-                                  :origin (if (null supplied-p)
-                                              nil
-                                              (cst:source supplied-p-cst)))))
-    (values (process-progn
-	     (list (make-initialization-ast lexical-var-ast
-					    lexical-supplied-p-ast
-					    init-ast
-					    env
-					    system)
-		   (set-or-bind-variable
-		    var-cst
-		    lexical-var-ast
-		    (if (null supplied-p-cst)
-			next-ast
-			(set-or-bind-variable
-			 supplied-p-cst
-			 lexical-supplied-p-ast
-			 next-ast
-			 env
-			 system))
-		    env
-		    system)))
-	    (list lexical-var-ast lexical-supplied-p-ast))))
+    (var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk system)
+  (process-progn
+   (list (make-initialization-ast var-ast supplied-p-ast init-ast
+                                  env system)
+         (set-or-bind-variable
+          var-cst var-ast
+          (if (null supplied-p-cst)
+              next-thunk
+              (lambda ()
+                (set-or-bind-variable
+                 supplied-p-cst supplied-p-ast
+                 next-thunk env system)))
+          env system))))
