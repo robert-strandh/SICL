@@ -493,7 +493,7 @@
             ;; lambda list parsing code must be compiled with it.
             (*dynamic-environment-ast*
               (cleavir-ast:make-lexical-ast
-               (make-symbol "DYNAMIC-ENVIRONMENT-ARGUMENT"))))
+               '#:dynamic-environment-argument)))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
 	     (itemize-lambda-list parsed-lambda-list)

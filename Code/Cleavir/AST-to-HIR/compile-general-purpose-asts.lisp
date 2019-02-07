@@ -231,7 +231,7 @@
            ;; The name is gone by now, so unlike TAGBODY
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
-                          (make-symbol "BLOCK-CONTINUATION")))
+                          '#:block-continuation))
            (catch (cleavir-ir:make-catch-instruction
                    (find-or-create-location
                     (cleavir-ast:dynamic-environment-in-ast ast))
@@ -330,7 +330,7 @@
                    (invocation invocation))
       context
     (let* ((continuation (cleavir-ir:make-lexical-location
-                          (make-symbol "TAGBODY-CONTINUATION")))
+                          '#:tagbody-continuation))
            (catch (cleavir-ir:make-catch-instruction
                    (find-or-create-location
                     (cleavir-ast:dynamic-environment-in-ast ast))
