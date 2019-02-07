@@ -109,7 +109,9 @@
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference name-cst info env system))
          (argument-asts (convert-sequence arguments-cst env system)))
-    (cleavir-ast:make-call-ast function-ast argument-asts
+    (cleavir-ast:make-call-ast function-ast
+                               argument-asts
+                                *dynamic-environment-ast*
                                :origin (cst:source cst))))
 
 ;;; Convert a form representing a call to a named global function.

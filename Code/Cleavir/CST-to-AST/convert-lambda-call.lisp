@@ -16,4 +16,5 @@
     (cleavir-ast:make-call-ast
      (convert-code lambda-list-cst body-cst env system :origin origin)
      (convert-sequence args-cst env system)
+     *dynamic-environment-ast*
      :origin origin)))

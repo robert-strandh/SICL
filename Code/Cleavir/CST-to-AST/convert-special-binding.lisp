@@ -12,7 +12,7 @@
 ;;; information of the variable.  So we construct an ordinary Common
 ;;; Lisp list of CSTs, and then we convert that to a CST.
 (defmethod convert-special-binding
-    (variable-cst value-ast next-ast env system)
+    (variable-cst value-ast next-thunk env system)
   (let* ((call-with-variable-bound-cst
            (cst:cst-from-expression 'cleavir-primop:call-with-variable-bound))
          (quoted-variable-cst
@@ -23,5 +23,11 @@
                                 ,(cst:cst-from-expression
                                   `(cleavir-primop:ast ,value-ast))
                                 ,(cst:cst-from-expression
-                                  `(lambda () (cleavir-primop:ast ,next-ast)))))))
+                                  `(cleavir-primop:ast
+                                    ,(let* ((*dynamic-environment-ast*
+                                              (cleavir-ast:make-lexical-ast
+                                               '#:cwvb-dynamic-environment))
+                                            (next-ast (funcall next-thunk)))
+                                       (cleavir-ast:make-function-ast
+                                        next-ast nil *dynamic-environment-ast*))))))))
     (convert new-cst env system)))

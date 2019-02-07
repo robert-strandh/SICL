@@ -24,6 +24,9 @@
            #:process-parameters-in-group
            #:process-parameter
            #:items-from-parameter-group
+           #:entry-from-parameter
+           #:entries-from-parameter-group
+           #:lambda-list-from-parameter-group
            #:consider-global
            #:consider-special
            #:recover
