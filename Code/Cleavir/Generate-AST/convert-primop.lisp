@@ -314,8 +314,7 @@
     (cleavir-ast:make-call-ast
      (convert function-form env system)
      (loop for argument-form in argument-forms
-	   collect (convert argument-form env system))
-     *dynamic-environment-ast*)))
+	   collect (convert argument-form env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -336,8 +335,7 @@
     (cleavir-ast:make-multiple-value-call-ast
      (convert function-form env system)
      (loop for argument-form in argument-forms
-           collect (convert argument-form env system))
-     *dynamic-environment-ast*)))
+           collect (convert argument-form env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

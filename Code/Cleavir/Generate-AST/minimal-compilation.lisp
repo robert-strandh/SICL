@@ -49,10 +49,11 @@
 		   (cleavir-env:add-lexical-variable new-env req)))
     (values
      `(,@(cleavir-code-utilities:required parsed-lambda-list)
-       ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
+       ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list))
+               (rest-name (cleavir-code-utilities:rest-name parsed-lambda-list)))
 	   (if (eq rest :none)
 	       '()
-	       (prog1 `(&rest ,rest)
+	       (prog1 `(,rest-name ,rest)
 		 (setf new-env
 		       (cleavir-env:add-lexical-variable new-env rest)))))
        ,@(let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))

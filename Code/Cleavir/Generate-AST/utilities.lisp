@@ -1,12 +1,5 @@
 (cl:in-package #:cleavir-generate-ast)
 
-;;; This variable holds a lexical-ast representing the runtime
-;;; dynamic environment, used by a few operators (e.g. BLOCK)
-;;; as well as calls.
-;;; It's defined here because we need it here, but, FIXME, this
-;;; isn't great placement.
-(defvar *dynamic-environment-ast*)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Convenience functions for augmenting the environment with a set of
@@ -242,12 +235,12 @@
              ;; Set up the body in a special thunk so that
              ;; the dynamic environment is hooked up correctly.
              (cleavir-primop:ast
-              ,(let* ((*dynamic-environment-ast*
-                        (cleavir-ast:make-lexical-ast
+              ,(let* ((cleavir-ast:*dynamic-environment*
+                        (cleavir-ast:make-dynamic-environment-ast
                          '#:cwvb-dynamic-environment))
                       (next-ast (funcall next-thunk)))
                  (cleavir-ast:make-function-ast
-                  next-ast nil *dynamic-environment-ast*))))
+                  next-ast nil cleavir-ast:*dynamic-environment*))))
            env system))
 
 ;;; ENV is an environment that is known to contain information about
