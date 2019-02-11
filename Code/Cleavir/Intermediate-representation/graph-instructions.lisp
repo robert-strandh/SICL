@@ -23,8 +23,8 @@
 (defmethod static-environment ((instruction enter-instruction))
   (first (outputs instruction)))
 
-(defgeneric dynamic-environment (instruction))
-(defmethod dynamic-environment ((instruction enter-instruction))
+(defgeneric dynamic-environment-output (instruction))
+(defmethod dynamic-environment-output ((instruction enter-instruction))
   (second (outputs instruction)))
 
 (defgeneric parameters (instruction))

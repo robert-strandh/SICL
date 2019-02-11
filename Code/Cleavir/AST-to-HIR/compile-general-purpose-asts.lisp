@@ -42,7 +42,10 @@
 (defmethod compile-ast :around ((ast cleavir-ast:ast) context)
   (declare (ignore context))
   (let ((cleavir-ir:*policy* (cleavir-ast:policy ast))
-        (cleavir-ir:*origin* (cleavir-ast:origin ast)))
+        (cleavir-ir:*origin* (cleavir-ast:origin ast))
+        (cleavir-ir:*dynamic-environment*
+          (find-or-create-location
+           (cleavir-ast:dynamic-environment ast))))
     (call-next-method)))
 
 ;;; This :AROUND method serves as an adapter for the compilation of
@@ -232,14 +235,14 @@
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
                           '#:block-continuation))
+           (dynenv-out (find-or-create-location
+                        (cleavir-ast:dynamic-environment-out-ast
+                         ast)))
            (catch (cleavir-ir:make-catch-instruction
-                   (find-or-create-location
-                    (cleavir-ast:dynamic-environment-in-ast ast))
                    continuation
-                   (find-or-create-location
-                    (cleavir-ast:dynamic-environment-out-ast
-                     ast))
-                   (list after))))
+                   dynenv-out
+                   (list after)))
+           (cleavir-ir:*dynamic-environment* dynenv-out))
       (setf (block-info ast) (list context continuation catch))
       ;; Now just hook up the catch to go to the body normally.
       (push (compile-ast (cleavir-ast:body-ast ast) context)
@@ -285,10 +288,7 @@
 	  (compile-ast (cleavir-ast:form-ast ast) block-context)
           ;; harder case: unwind.
 	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
-                                 continuation
-                                 (find-or-create-location
-                                  (cleavir-ast:dynamic-environment-in-ast ast))
-                                 destination 1))
+                                 continuation destination 1))
 		 (new-context (context results
 				       (list new-successor)
 				       (invocation context))))
@@ -331,14 +331,12 @@
       context
     (let* ((continuation (cleavir-ir:make-lexical-location
                           '#:tagbody-continuation))
+           (dynenv-out (find-or-create-location
+                        (cleavir-ast:dynamic-environment-out-ast ast)))
            (catch (cleavir-ir:make-catch-instruction
-                   (find-or-create-location
-                    (cleavir-ast:dynamic-environment-in-ast ast))
-                   continuation
-                   (find-or-create-location
-                    (cleavir-ast:dynamic-environment-out-ast ast))
-                   nil))
-           (catch-successors nil))
+                   continuation dynenv-out nil))
+           (catch-successors nil)
+           (cleavir-ir:*dynamic-environment* dynenv-out))
       ;; In the first loop, we make a NOP for each tag, which will be the
       ;; destination for any GO or UNWIND to that tag. It's put in the go-info
       ;; with the invocation, and also put as one of the catch's successors.
@@ -394,11 +392,7 @@
     (if (eq invocation (invocation context))
 	nop
 	(cleavir-ir:make-unwind-instruction
-         continuation
-         (find-or-create-location
-          (cleavir-ast:dynamic-environment-in-ast ast))
-         destination
-         index))))
+         continuation destination index))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -412,11 +406,8 @@
     (let* ((all-args (cons (cleavir-ast:callee-ast ast)
                            (cleavir-ast:argument-asts ast)))
 	   (temps (make-temps all-args))
-           (inputs (list* (first temps)
-                          ;; guaranteed to be a lexical ast, so just
-                          (find-or-create-location
-                           (cleavir-ast:dynamic-environment-in-ast ast))
-                          (rest temps))))
+           ;; In case they diverge at some point.
+           (inputs temps))
       (compile-arguments
        all-args
        temps
@@ -490,6 +481,8 @@
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
          (dynenv (find-or-create-location
                   (cleavir-ast:dynamic-environment-out-ast ast)))
+         (cleavir-ir:*dynamic-environment* dynenv)
+         ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
          (values (cleavir-ir:make-values-location))
          (return (cleavir-ir:make-return-instruction (list values)))
@@ -708,6 +701,7 @@
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
 	   (forms (cleavir-ast:forms ast))
+           (cleavir-ir:*dynamic-environment* dynenv)
 	   (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv
                                                                :origin (cleavir-ast:origin ast)))
 	   (values (cleavir-ir:make-values-location))
@@ -730,6 +724,7 @@
 	(cleavir-ir:*policy* (cleavir-ast:policy ast)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
+           (cleavir-ir:*dynamic-environment* dynenv)
 	   (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
 	   (values (cleavir-ir:make-values-location))
 	   (return (cleavir-ir:make-return-instruction (list values)))
@@ -807,10 +802,7 @@
     (let* ((function-temp (cleavir-ir:new-temporary))
            (form-temps (loop repeat (length (cleavir-ast:form-asts ast))
                              collect (cleavir-ir:make-values-location)))
-           (inputs (list* function-temp
-                          (find-or-create-location
-                           (cleavir-ast:dynamic-environment-in-ast ast))
-                          form-temps))
+           (inputs (list* function-temp form-temps))
            (successor
              (if (typep results 'cleavir-ir:values-location)
                  (make-instance 'cleavir-ir:multiple-value-call-instruction

@@ -39,13 +39,14 @@
    #:successors #:predecessors
    #:policy #:*policy*
    #:origin #:*origin*
+   #:dynamic-environment #:*dynamic-environment*
    #:symbol-value-instruction #:make-symbol-value-instruction
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
    #:constant-fdefinition-instruction #:make-constant-fdefinition-instruction
    #:enter-instruction #:make-enter-instruction
    #:lambda-list #:closure-size
-   #:static-environment #:dynamic-environment #:parameters
+   #:static-environment #:dynamic-environment-output #:parameters
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction #:make-nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction

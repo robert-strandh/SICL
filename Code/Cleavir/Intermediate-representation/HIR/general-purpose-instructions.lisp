@@ -223,9 +223,8 @@
 (defclass catch-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-catch-instruction (dynenv-in continuation dynenv-out successors)
+(defun make-catch-instruction (continuation dynenv-out successors)
   (make-instance 'catch-instruction
-    :inputs (list dynenv-in)
     :outputs (list continuation dynenv-out)
     :successors successors))
 
@@ -252,9 +251,9 @@
    (%destination :initarg :destination :accessor destination)
    (%index :initarg :index :accessor unwind-index)))
 
-(defun make-unwind-instruction (continuation dynamic-environment destination index)
+(defun make-unwind-instruction (continuation destination index)
   (make-instance 'unwind-instruction
-    :inputs (list continuation dynamic-environment)
+    :inputs (list continuation)
     :destination destination
     :index index))
 
