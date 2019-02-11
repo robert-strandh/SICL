@@ -484,8 +484,8 @@
              canonicalized-dspecs)
           (multiple-value-bind (lexical-lambda-list entries)
               (lambda-list-from-parameter-groups (cst:children parsed-lambda-list))
-            (let* ((*dynamic-environment-ast*
-                     (cleavir-ast:make-lexical-ast
+            (let* ((cleavir-ast:*dynamic-environment*
+                     (cleavir-ast:make-dynamic-environment-ast
                       '#:dynamic-environment-argument))
                    (ast
                      (process-parameter-groups
@@ -496,5 +496,5 @@
                       env
                       system)))
               (cleavir-ast:make-function-ast ast lexical-lambda-list
-                                             *dynamic-environment-ast*
+                                             cleavir-ast:*dynamic-environment*
                                              :origin origin))))))))

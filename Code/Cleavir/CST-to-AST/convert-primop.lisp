@@ -304,7 +304,6 @@
      (loop for remaining = arguments-cst then (cst:rest remaining)
            until (cst:null remaining)
            collect (convert (cst:first remaining) env system))
-     *dynamic-environment-ast*
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -331,7 +330,6 @@
      (loop for remaining = arguments-cst then (cst:rest remaining)
            until (cst:null remaining)
            collect (convert (cst:first remaining) env system))
-     *dynamic-environment-ast*
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

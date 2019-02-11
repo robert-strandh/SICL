@@ -59,8 +59,3 @@
 ;;; This variable indicates whether a form should be evaluated in
 ;;; addition to be being processed by the compiler.
 (defvar *compile-time-too*)
-
-;;; This variable holds a lexical-ast representing the runtime
-;;; dynamic environment, used by a few operators (e.g. BLOCK)
-;;; as well as calls.
-(defvar *dynamic-environment-ast*)
