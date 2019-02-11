@@ -132,8 +132,7 @@
             'lambda-call-first-symbol-not-lambda :expr lambda)
     (cleavir-ast:make-call-ast
      (convert-code lambda-list body env system)
-     (convert-sequence args env system)
-     *dynamic-environment-ast*)))
+     (convert-sequence args env system))))
 
 ;;; The general method for processing the lambda list is as follows:
 ;;; We use recursion to process the remaining lambda list.  Before the
@@ -386,7 +385,7 @@
   ;;; construct the eventual  lambda-list used in the function-ast.
   (let* ((required (cleavir-code-utilities:required parsed-lambda-list))
          (optionals (cleavir-code-utilities:optionals parsed-lambda-list))
-         (rest-name '&rest)
+         (rest-name (cleavir-code-utilities:rest-name parsed-lambda-list))
          (rest (cleavir-code-utilities:rest-body parsed-lambda-list))
          (keys (cleavir-code-utilities:keys parsed-lambda-list))
          (aux (cleavir-code-utilities:aux parsed-lambda-list))
@@ -491,8 +490,8 @@
                (cleavir-env:declarations env)))
             ;; make a fresh dynamic environment. The body as well as the
             ;; lambda list parsing code must be compiled with it.
-            (*dynamic-environment-ast*
-              (cleavir-ast:make-lexical-ast
+            (cleavir-ast:*dynamic-environment*
+              (cleavir-ast:make-dynamic-environment-ast
                '#:dynamic-environment-argument)))
 	(multiple-value-bind (idspecs rdspecs)
 	    (itemize-declaration-specifiers
@@ -503,8 +502,8 @@
                parsed-lambda-list idspecs
                (make-body rdspecs forms block-name block-name-p)
                env system)
-	    (cleavir-ast:make-function-ast ast lexical-lambda-list
-                                           *dynamic-environment-ast*)))))))
+	    (cleavir-ast:make-function-ast
+             ast lexical-lambda-list cleavir-ast:*dynamic-environment*)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -548,8 +547,8 @@
 	 (convert-lambda-call form environment system))))
 
 (defun generate-ast (form environment system
-                          &optional (*dynamic-environment-ast*
-                                     (cleavir-ast:make-lexical-ast
+                          &optional (cleavir-ast:*dynamic-environment*
+                                     (cleavir-ast:make-dynamic-environment-ast
                                       '#:unused-dynamic-environment
                                       :policy (cleavir-env:environment-policy
                                                environment))))
