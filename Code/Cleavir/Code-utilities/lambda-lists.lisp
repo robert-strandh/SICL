@@ -314,7 +314,7 @@
 		(check-tree tree-or-lambda-list)
 		tree-or-lambda-list)))
 	(t
-	 (error 'malformed-lambda-list-pattern))))
+	 (error 'malformed-lambda-list-pattern :code nil))))
 
 (defun parse-ordinary-required (required)
   (unless (and (symbolp required)
