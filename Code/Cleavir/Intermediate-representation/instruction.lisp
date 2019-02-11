@@ -86,12 +86,17 @@
 
 (defvar *origin*)
 
+;;; Default value
+(defvar *dynamic-environment*)
+
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
    (%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)
    (%policy :initform *policy* :initarg :policy :accessor policy)
+   (%dynamic-environment :initform *dynamic-environment*
+                         :initarg :dynamic-environment :accessor dynamic-environment)
    (%origin :initform (if (boundp '*origin*) *origin* nil) :initarg :origin :accessor origin)))
 
 (defmethod initialize-instance :after ((obj instruction) &key)
@@ -124,6 +129,8 @@
         :outputs (outputs instruction)
         :predecessors (predecessors instruction)
         :successors (successors instruction)
+        :dynamic-environment (dynamic-environment instruction)
+        :origin (origin instruction)
         :policy (policy instruction)))
 
 (defun clone-instruction (instruction &rest initargs &key &allow-other-keys)
