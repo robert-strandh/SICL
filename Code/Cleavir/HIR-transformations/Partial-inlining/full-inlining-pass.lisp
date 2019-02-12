@@ -125,21 +125,15 @@
         nil))))
 
 (defun do-inlining (initial-instruction)
-  (loop with *instruction-ownerships* = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
-        with *location-ownerships* = (cleavir-hir-transformations:compute-location-owners initial-instruction)
-        for dag = (cleavir-hir-transformations:build-function-dag initial-instruction)
-        for inline = (one-potential-inline initial-instruction dag)
+  (loop for *instruction-ownerships*
+          = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
+        for *location-ownerships*
+          = (cleavir-hir-transformations:compute-location-owners initial-instruction)
+        for inline = (one-potential-inline initial-instruction)
         until (null inline)
-        do (destructuring-bind (enter call node enclose-unique-p enter-unique-p) inline
-             (inline-function initial-instruction call enter (make-hash-table :test #'eq)
-                              :uniquep (and enclose-unique-p enter-unique-p))
-             (when enclose-unique-p
-               ;; enclose was only used once - delete it.
-               (delete-enclose (cleavir-hir-transformations:enclose-instruction node))
-               (if enter-unique-p
-                   ;; This means we passed uniquep to inline-function, and therefore sub-functions
-                   ;; were not copied. We just delete the function itself, not touching sub-functions.
-                   (delete-function-nonrecursive enter)
-                   ;; Not unique, so we really are deleting.
-                   (delete-node node dag))))
-           (cleavir-ir:set-predecessors initial-instruction)))
+        do (destructuring-bind (enter call enclose enclose-unique-p enter-unique-p) inline
+             (declare (ignore enclose-unique-p enter-unique-p))
+             (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
+           (cleavir-ir:set-predecessors initial-instruction)
+           (cleavir-ir:reinitialize-data initial-instruction)
+           (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)))
