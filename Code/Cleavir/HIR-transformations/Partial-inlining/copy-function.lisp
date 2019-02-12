@@ -12,7 +12,6 @@
                      (cleavir-ir:name datum)))
                    (t datum))))
         (add-to-mapping mapping datum new)
-        (setf (gethash new *location-ownerships*) *new-enter*)
         new)))
 
 (defun translate-input-for-copy (input external-map internal-map stack)
@@ -82,7 +81,6 @@
                      (mapcar #'maybe-replace (cleavir-ir:predecessors copy))
                      (cleavir-ir:successors copy)
                      (mapcar #'maybe-replace (cleavir-ir:successors copy)))
-               (setf (gethash copy *instruction-ownerships*) *new-enter*)
             do (typecase copy
                  (cleavir-ir:enclose-instruction
                   ;; We have to do this in the second loop so that any

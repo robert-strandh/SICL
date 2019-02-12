@@ -34,12 +34,14 @@
   (eq (gethash location *location-ownerships*)
       *original-enter-instruction*))
 
-(defun translate-inputs (inputs mapping)
+(defun translate-input (input mapping)
   ;; An input is either already in the mapping, or else it is
   ;; is a location that is owned by some ancestor function.
+  (or (find-in-mapping mapping input) input))
+
+(defun translate-inputs (inputs mapping)
   (loop for input in inputs
-        for new = (find-in-mapping mapping input)
-        collect (if (null new) input new)))
+        collecting (translate-input input mapping)))
 
 ;;; An output can either be in the mapping, be a reference to a
 ;;; location owned by an ancestor function, or a local lexical
@@ -48,7 +50,6 @@
 (defun translate-output (output mapping)
   (let ((new (find-in-mapping mapping output)))
     (cond ((not (null new)) new)
-          ((not *copy-locations*) output)
           ((not (local-location-p output)) output)
           ;; NOTE/FIXME?: Values locations are not made into parameters.
           ;; Therefore if inlining is stopped while a values location is live,
@@ -56,11 +57,9 @@
           ((typep output 'cleavir-ir:values-location)
            (setf new (cleavir-ir:make-values-location))
            (add-to-mapping mapping output new)
-           (setf (gethash new *location-ownerships*) *target-enter-instruction*)
            new)
           (t (setf new (cleavir-ir:make-lexical-location
                         (cleavir-ir:name output)))
-             (setf (gethash new *location-ownerships*) *target-enter-instruction*)
              (add-to-mapping mapping output new)
              new))))
     
@@ -76,39 +75,18 @@
   (cleavir-ir:clone-instruction instruction
     :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
     :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
-    :predecessors nil :successors nil))
-
-;;; Set up the new instruction's owner as the function we're inlining into.
-;;; NOTE: For a partial inline, it should be the enter in the worklist instead.
-;;; But we don't do actual partial inlining yet.
-(defmethod copy-instruction :around (instruction mapping)
-  (declare (ignore mapping))
-  (let ((result (call-next-method)))
-    (setf (gethash result *instruction-ownerships*) *target-enter-instruction*)
-    result))
+    :predecessors nil :successors nil
+    :dynamic-environment (translate-input
+                          (cleavir-ir:dynamic-environment instruction) mapping)))
 
 (defmethod copy-instruction ((instruction cleavir-ir:enclose-instruction) mapping)
-  (if *copy-functions*
-      (cleavir-ir:clone-instruction instruction
-        :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
-        :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
-        :predecessors nil :successors nil
-        :code (copy-function (cleavir-ir:code instruction) mapping))
-      (call-next-method)))
-
-(defmethod copy-instruction :around ((instruction cleavir-ir:catch-instruction) mapping)
-  ;; If we are NOT copying subfunctions, we need to ensure that any lower
-  ;; UNWINDs refer to our new catch instruction and not the original.
-  ;; We do so by editing the enclosed function.
-  (let ((new-instruction (call-next-method)))
-    (unless *copy-functions*
-      ;; We work out what has the CATCH as a destination by checking where its output is used.
-      (loop for unwind in (cleavir-ir:using-instructions (first (cleavir-ir:outputs instruction)))
-            ;; as of now, all uses should be UNWINDs,
-            ;; but i don't think we ought to make that required, therefore...
-            when (typep unwind 'cleavir-ir:unwind-instruction)
-              do (setf (cleavir-ir:destination unwind) new-instruction)))
-    new-instruction))
+  (cleavir-ir:clone-instruction instruction
+    :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
+    :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
+    :predecessors nil :successors nil
+    :dynamic-environment (translate-input
+                          (cleavir-ir:dynamic-environment instruction) mapping)
+    :code (copy-function (cleavir-ir:code instruction) mapping)))
 
 (defmethod copy-instruction ((instruction cleavir-ir:unwind-instruction) mapping)
   (let ((destination (cleavir-ir:destination instruction)))
@@ -116,7 +94,10 @@
         ;; We are unwinding to the function being inlined into,
         ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
         (let ((target (second (cleavir-ir:successors destination)))
-              (cleavir-ir:*policy* (cleavir-ir:policy instruction)))
+              (cleavir-ir:*policy* (cleavir-ir:policy instruction))
+              (cleavir-ir:*dynamic-environment*
+                (translate-input (cleavir-ir:dynamic-environment instruction)
+                                 mapping)))
           (cleavir-ir:make-nop-instruction (list target)))
         ;; We are still actually unwinding, but need to ensure the
         ;; DESTINATION is hooked up correctly.
@@ -127,11 +108,16 @@
           (cleavir-ir:clone-instruction instruction
             :inputs new-inputs :outputs nil
             :predecessors nil :successors nil
+            :dynamic-environment (translate-input
+                                  (cleavir-ir:dynamic-environment instruction) mapping)
             :destination destination)))))
 
 (defmethod copy-instruction ((instruction cleavir-ir:return-instruction) mapping)
   (declare (ignore mapping))
-  (let ((cleavir-ir:*policy* (cleavir-ir:policy instruction)))
+  (let ((cleavir-ir:*policy* (cleavir-ir:policy instruction))
+        (cleavir-ir:*dynamic-environment*
+          (translate-input
+           (cleavir-ir:dynamic-environment instruction) mapping)))
     (cleavir-ir:make-nop-instruction nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -205,17 +191,23 @@
          (new-temp (cleavir-ir:new-temporary))
          ;; The new CALL-INSTRUCTION is like the previous one, except that
          ;; the first input is the new closure to be called.
-         (new-call (let ((cleavir-ir:*policy* (cleavir-ir:policy call-instruction)))
+         (new-call (let ((cleavir-ir:*policy* (cleavir-ir:policy call-instruction))
+                         (cleavir-ir:*dynamic-environment*
+                           (cleavir-ir:dynamic-environment call-instruction)))
                      (cleavir-ir:make-funcall-instruction
                       (cons new-temp (rest (cleavir-ir:inputs call-instruction)))
                       (cleavir-ir:outputs call-instruction)
                       (first (cleavir-ir:successors call-instruction)))))
-         (new-enter (let ((cleavir-ir:*policy* (cleavir-ir:policy enter-instruction)))
+         (new-enter (let ((cleavir-ir:*policy* (cleavir-ir:policy enter-instruction))
+                          (cleavir-ir:*dynamic-environment*
+                            (cleavir-ir:dynamic-environment enter-instruction)))
                       (cleavir-ir:make-enter-instruction
                        (cleavir-ir:lambda-list enter-instruction)
                        :successor (second (cleavir-ir:successors successor-instruction))
                        :origin (cleavir-ir:origin enter-instruction))))
-         (new-enclose (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose-instruction)))
+         (new-enclose (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose-instruction))
+                            (cleavir-ir:*dynamic-environment*
+                              (cleavir-ir:dynamic-environment enclose-instruction)))
                         (cleavir-ir:make-enclose-instruction
                          new-temp new-call new-enter))))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
@@ -225,10 +217,6 @@
           (list (first (cleavir-ir:successors successor-instruction))))
     (setf (cleavir-ir:successors new-enter)
           (list (second (cleavir-ir:successors successor-instruction))))
-    (setf (gethash new-call *instruction-ownerships*) *target-enter-instruction*
-          (gethash new-enclose *instruction-ownerships*) *target-enter-instruction*
-          (gethash new-enter *instruction-ownerships*) new-enter
-          (gethash new-temp *location-ownerships*) *target-enter-instruction*)
     (list (make-instance 'worklist-item
             :enclose-instruction enclose-instruction
             :call-instruction call-instruction
