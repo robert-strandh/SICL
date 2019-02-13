@@ -127,8 +127,7 @@
 (defgeneric inline-function (initial-instruction
                              call-instruction
                              enter-instruction
-                             mapping
-                             &key uniquep))
+                             mapping))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
