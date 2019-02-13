@@ -10,8 +10,8 @@
 ;;; Mixin class for instructions with a single successor.
 (defclass one-successor-mixin () ())
 
-;;; Mixin class for instructions with tow successors.
-(defclass two-successors-mixin () ())
+;;; Mixin class for instructions with more than one successor.
+(defclass multiple-successors-mixin () ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
