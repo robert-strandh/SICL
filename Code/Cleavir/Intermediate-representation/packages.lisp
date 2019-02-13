@@ -30,7 +30,7 @@
    #:clone-instruction #:clone-initargs
    #:no-successors-mixin
    #:one-successor-mixin
-   #:two-successors-mixin
+   #:multiple-successors-mixin
    #:side-effect-mixin #:side-effect-free-p
    #:box-instruction #:unbox-instruction
    #:allocation-mixin #:dynamic-extent-p

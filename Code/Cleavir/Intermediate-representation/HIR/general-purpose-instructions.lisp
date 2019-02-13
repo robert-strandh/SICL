@@ -136,7 +136,7 @@
 ;;; replaced by a call to TYPEP.  When it is replaced by a call to
 ;;; TYPEP, we use the constant input as the second argument to TYPEP.
 
-(defclass typeq-instruction (instruction two-successors-mixin)
+(defclass typeq-instruction (instruction multiple-successors-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (input successors value-type)
@@ -220,7 +220,7 @@
 ;;; Functions returning to the BLOCK would UNWIND to the CATCH, using
 ;;; a closed-over continuation.
 
-(defclass catch-instruction (instruction two-successors-mixin)
+(defclass catch-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-catch-instruction (continuation dynenv-out successors)
@@ -265,7 +265,7 @@
 ;;;
 ;;; Instruction EQ-INSTRUCTION.
 
-(defclass eq-instruction (instruction two-successors-mixin)
+(defclass eq-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-eq-instruction (inputs successors)
@@ -281,7 +281,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass consp-instruction (instruction two-successors-mixin)
+(defclass consp-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-consp-instruction (input successors)
@@ -297,7 +297,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass fixnump-instruction (instruction two-successors-mixin)
+(defclass fixnump-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-fixnump-instruction (input successors)
@@ -313,7 +313,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass characterp-instruction (instruction two-successors-mixin)
+(defclass characterp-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-characterp-instruction (input successors)
