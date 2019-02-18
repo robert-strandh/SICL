@@ -38,6 +38,13 @@
 ;;; predecessors of I become the predecessors of S.
 (defun delete-instruction (instruction)
   (assert (= (length (successors instruction)) 1))
+  ;; An instruction that is its own successor has to be handled
+  ;; differently. The obvious thing to do would be to go through
+  ;; all of I's predecessors, and for each, substitute all occurences
+  ;; of I in the predecessor's successors with the predecessor.
+  ;; But that's a pretty different behavior, so I don't think it
+  ;; should be done here.
+  (assert (not (eq (first (successors instruction)) instruction)))
   (setf (inputs instruction) '())
   (setf (outputs instruction) '())
   (let ((successor (car (successors instruction)))
