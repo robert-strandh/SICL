@@ -36,39 +36,44 @@
 ;;; Delete an instruction I.  I must have a single successor S.  S
 ;;; replaces I as the successor of every predecessor P of I.  The
 ;;; predecessors of I become the predecessors of S.
+;;; If it so happens that I = S, the behavior is a bit different.
+;;; For each predecessor P of I, P replaces I as a successor of P.
 (defun delete-instruction (instruction)
   (assert (= (length (successors instruction)) 1))
-  ;; An instruction that is its own successor has to be handled
-  ;; differently. The obvious thing to do would be to go through
-  ;; all of I's predecessors, and for each, substitute all occurences
-  ;; of I in the predecessor's successors with the predecessor.
-  ;; But that's a pretty different behavior, so I don't think it
-  ;; should be done here.
-  (assert (not (eq (first (successors instruction)) instruction)))
   (setf (inputs instruction) '())
   (setf (outputs instruction) '())
   (let ((successor (car (successors instruction)))
 	(predecessors (predecessors instruction)))
-    (loop for predecessor in predecessors
-	  do (setf (successors predecessor)
-		   (substitute successor instruction (successors predecessor))))
-    (cond ((and (typep instruction 'phi-instruction)
-                (rest predecessors)
-                (typep successor 'phi-instruction))
-           ;; When we delete the first phi in a phi cluster, we must
-           ;; take care to preserve the association between
-           ;; predecessors and inputs
-           (setf (predecessors successor)
-                 (predecessors instruction)))
-          (t ;; Avoid having our successor mention some of our predecessors
-           ;; multiple times in case some of our predecessors are already a
-           ;; predecessors of our successor.
-           (setf (predecessors successor)
-	         (remove instruction (predecessors successor)
-		         :test #'eq))
+    (cond ((eq successor instruction)
+           ;; We have a loop.
            (loop for predecessor in predecessors
-	         do (pushnew predecessor (predecessors successor)
-		             :test #'eq))))))
+                 do (setf (successors predecessor)
+                          (substitute predecessor instruction
+                                      (successors predecessor)))
+                    (pushnew predecessor (predecessors predecessor)
+                             :test #'eq)))
+          (t
+           ;; Common case.
+           (loop for predecessor in predecessors
+                 do (setf (successors predecessor)
+                          (substitute successor instruction (successors predecessor))))
+           (cond ((and (typep instruction 'phi-instruction)
+                       (rest predecessors)
+                       (typep successor 'phi-instruction))
+                  ;; When we delete the first phi in a phi cluster, we must
+                  ;; take care to preserve the association between
+                  ;; predecessors and inputs
+                  (setf (predecessors successor)
+                        (predecessors instruction)))
+                 (t ;; Avoid having our successor mention some of our predecessors
+                  ;; multiple times in case some of our predecessors are already a
+                  ;; predecessors of our successor.
+                  (setf (predecessors successor)
+                        (remove instruction (predecessors successor)
+                                :test #'eq))
+                  (loop for predecessor in predecessors
+                        do (pushnew predecessor (predecessors successor)
+                                    :test #'eq))))))))
 
 ;;; Replace an instruction I with an instruction S, with respect to
 ;;; forward control flow.
