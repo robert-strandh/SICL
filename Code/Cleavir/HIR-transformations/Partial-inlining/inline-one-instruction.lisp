@@ -93,7 +93,8 @@
     (if (local-catch-p destination)
         ;; We are unwinding to the function being inlined into,
         ;; so the UNWIND-INSTRUCTION must be reduced to a NOP.
-        (let ((target (second (cleavir-ir:successors destination)))
+        (let ((target (nth (cleavir-ir:unwind-index instruction)
+                           (cleavir-ir:successors destination)))
               (cleavir-ir:*policy* (cleavir-ir:policy instruction))
               (cleavir-ir:*dynamic-environment*
                 (translate-input (cleavir-ir:dynamic-environment instruction)
@@ -207,6 +208,7 @@
                            collect
                            (cleavir-ir:make-enter-instruction
                             (cleavir-ir:lambda-list enter-instruction)
+                            cleavir-ir:*dynamic-environment*
                             :successor succ
                             :origin (cleavir-ir:origin enter-instruction))))
          (new-encloses (loop with cleavir-ir:*policy* = (cleavir-ir:policy enclose-instruction)
@@ -229,9 +231,9 @@
              :call-instruction call-instruction
              :enter-instruction enter-instruction
              :mapping mapping)
-           (loop for enclose in new-encloses
-                 for call in new-calls
-                 for enter in new-enters
+           (loop for new-enclose in new-encloses
+                 for new-call in new-calls
+                 for new-enter in new-enters
                  collect (make-instance 'worklist-item
                            :enclose-instruction new-enclose
                            :call-instruction new-call
