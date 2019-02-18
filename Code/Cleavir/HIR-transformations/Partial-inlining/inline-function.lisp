@@ -47,7 +47,7 @@
          ;; Used for catch/unwind (local-catch-p)
          (*target-enter-instruction*
            (gethash call *instruction-ownerships*))
-         (initial-environment (cleavir-ir:parameters (cleavir-ir:outputs enter)))
+         (initial-environment (cleavir-ir:parameters enter))
          ;; *policy* is bound closely for these bindings to make especially sure
          ;; that inlined instructions have the policy of the source function,
          ;; rather than the call.
@@ -62,28 +62,21 @@
                  do (cleavir-ir:insert-instruction-before assign call)
                     (add-to-mapping mapping location temp)
                  collect temp))
-         (new-dynenv
-           (cleavir-ir:make-lexical-location '#:inline-dynamic-environment))
+         (dynenv (cleavir-ir:dynamic-environment call))
          (function-temp (cleavir-ir:new-temporary))
          (new-enter (cleavir-ir:clone-instruction enter
-                      :dynamic-environment new-dynenv))
+                      :dynamic-environment dynenv))
          (enc (let ((cleavir-ir:*policy* (cleavir-ir:policy call))
                     (cleavir-ir:*dynamic-environment*
                       (cleavir-ir:dynamic-environment call)))
                 (cleavir-ir:make-enclose-instruction function-temp call new-enter))))
-    ;; Assign the new dynenv, and put it in the mapping
-    (let* ((cleavir-ir:*policy* (cleavir-ir:policy call))
-           (cleavir-ir:*dynamic-environment*
-             (cleavir-ir:dynamic-environment call))
-           (assign (cleavir-ir:make-assignment-instruction
-                    cleavir-ir:*dynamic-environment*
-                    new-dynenv)))
-      (cleavir-ir:insert-instruction-before assign call)
-      (add-to-mapping mapping cleavir-ir:*dynamic-environment* new-dynenv))
+    ;; Map the old inner dynenv to the outer dynenv.
+    (add-to-mapping mapping (cleavir-ir:dynamic-environment enter)
+                    (cleavir-ir:dynamic-environment call))
     ;; the new ENTER shares policy and successor, but has no parameters.
     (setf (cleavir-ir:lambda-list new-enter) '()
           ;; the temporary is the closure variable.
-          (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary) new-dynenv))
+          (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary) dynenv))
     (cleavir-ir:insert-instruction-before enc call)
     (setf (cleavir-ir:inputs call) (cons function-temp call-arguments))
     ;; If we're fully inlining a function, we want to use the call instruction's
