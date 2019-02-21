@@ -114,7 +114,6 @@
             :destination destination)))))
 
 (defmethod copy-instruction ((instruction cleavir-ir:return-instruction) mapping)
-  (declare (ignore mapping))
   (let ((cleavir-ir:*policy* (cleavir-ir:policy instruction))
         (cleavir-ir:*dynamic-environment*
           (translate-input

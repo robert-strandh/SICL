@@ -58,6 +58,10 @@
     (setf (cleavir-ir:outputs *new-enter*)
           (translate-outputs-for-copy (cleavir-ir:outputs enter)
                                       external-map internal-map stack))
+    ;; Make sure the dynamic environment of the enter is correct as well.
+    (setf (cleavir-ir:dynamic-environment *new-enter*)
+          ;; This output will have been translated same as the others.
+          (cleavir-ir:dynamic-environment-output *new-enter*))
     ;; First loop: Copy all instructions in the function, but leave
     ;; predecessors and successors disconnected.
     (cleavir-ir:map-local-instructions
@@ -65,10 +69,14 @@
        (unless (typep instruction 'cleavir-ir:enter-instruction) ; FIXME: Ugly.
          (let* ((inputs (cleavir-ir:inputs instruction))
                 (outputs (cleavir-ir:outputs instruction))
+                (dynamic-environment (cleavir-ir:dynamic-environment instruction))
                 (new-inputs (translate-inputs-for-copy inputs external-map internal-map stack))
                 (new-outputs (translate-outputs-for-copy outputs external-map internal-map stack))
+                (new-dynamic-environment
+                  (translate-input-for-copy dynamic-environment external-map internal-map stack))
                 (copy (cleavir-ir:clone-instruction instruction
-                  :inputs new-inputs :outputs new-outputs)))
+                        :inputs new-inputs :outputs new-outputs
+                        :dynamic-environment new-dynamic-environment)))
            (push copy copies)
            (add-to-mapping *instruction-mapping* instruction copy))))
      enter)
