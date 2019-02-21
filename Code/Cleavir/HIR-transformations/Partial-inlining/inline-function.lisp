@@ -64,19 +64,21 @@
                  collect temp))
          (dynenv (cleavir-ir:dynamic-environment call))
          (function-temp (cleavir-ir:new-temporary))
+         ;; This is used by the "partial" enter, but not actually connected.
+         (fake-dynenv (cleavir-ir:new-temporary))
          (new-enter (cleavir-ir:clone-instruction enter
-                      :dynamic-environment dynenv))
+                      :dynamic-environment fake-dynenv))
          (enc (let ((cleavir-ir:*policy* (cleavir-ir:policy call))
-                    (cleavir-ir:*dynamic-environment*
-                      (cleavir-ir:dynamic-environment call)))
+                    (cleavir-ir:*dynamic-environment* dynenv))
                 (cleavir-ir:make-enclose-instruction function-temp call new-enter))))
     ;; Map the old inner dynenv to the outer dynenv.
-    (add-to-mapping mapping (cleavir-ir:dynamic-environment enter)
+    (add-to-mapping mapping
+                    (cleavir-ir:dynamic-environment enter)
                     (cleavir-ir:dynamic-environment call))
     ;; the new ENTER shares policy and successor, but has no parameters.
     (setf (cleavir-ir:lambda-list new-enter) '()
           ;; the temporary is the closure variable.
-          (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary) dynenv))
+          (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary) fake-dynenv))
     (cleavir-ir:insert-instruction-before enc call)
     (setf (cleavir-ir:inputs call) (cons function-temp call-arguments))
     ;; If we're fully inlining a function, we want to use the call instruction's
