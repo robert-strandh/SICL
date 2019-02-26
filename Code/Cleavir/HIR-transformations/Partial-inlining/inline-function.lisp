@@ -59,6 +59,7 @@
                  for temp = (cleavir-ir:new-temporary)
                  for assign = (cleavir-ir:make-assignment-instruction arg temp)
                  do (cleavir-ir:insert-instruction-before assign call)
+                    (setf (instruction-owner assign) *target-enter-instruction*)
                     (add-to-mapping mapping location temp)
                  collect temp))
          (dynenv (cleavir-ir:dynamic-environment call))

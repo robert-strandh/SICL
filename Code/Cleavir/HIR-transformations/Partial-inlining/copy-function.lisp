@@ -51,6 +51,8 @@
         (stack (cons enter stack))
         (*new-enter* (cleavir-ir:clone-instruction enter)))
     (push *new-enter* copies)
+    ;; Set up ownership.
+    (setf (instruction-owner *new-enter*) *new-enter*)
     ;; We set the outputs after building like this so that (a) they have their ownership correct,
     ;; and (b) (setf cleavir-ir:outputs) synchronizes the lambda list properly.
     ;; We still copy the outputs in clone-instruction above so that the (setf outputs) method
@@ -78,6 +80,7 @@
                         :inputs new-inputs :outputs new-outputs
                         :dynamic-environment new-dynamic-environment)))
            (push copy copies)
+           (setf (instruction-owner copy) *new-enter*)
            (add-to-mapping *instruction-mapping* instruction copy))))
      enter)
     ;; Second loop: Loop over the copies doing hookups.

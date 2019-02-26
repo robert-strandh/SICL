@@ -69,6 +69,12 @@
 ;;;
 ;;; COPYING INSTRUCTIONS
 
+;;; Set up the ownership of the new instruction.
+(defmethod copy-instruction :around (instruction mapping)
+  (let ((result (call-next-method)))
+    (setf (instruction-owner result) *target-enter-instruction*)
+    result))
+
 (defmethod copy-instruction (instruction mapping)
   (cleavir-ir:clone-instruction instruction
     :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
@@ -111,6 +117,7 @@
                                   (cleavir-ir:dynamic-environment instruction) mapping)
             :destination destination)))))
 
+;;; See INLINE-ONE-INSTRUCTION method, below.
 (defmethod copy-instruction ((instruction cleavir-ir:return-instruction) mapping)
   (let ((cleavir-ir:*policy* (cleavir-ir:policy instruction))
         (cleavir-ir:*dynamic-environment*
