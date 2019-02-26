@@ -26,10 +26,9 @@
                            with enclose-unique-p = (= (length enclose-destinies) 1)
                            with enter-unique-p = (enter-unique-p enter dag)
                            for caller in enclose-destinies
-                           for call-owner = (instruction-owner caller)
                            when (eq caller :escape)
                              return nil
-                           when (parent-node-p node call-owner) ; recursive
+                           when (parent-node-p node (instruction-owner caller)) ; recursive
                              return nil
                            ;; We're all good, but keep looking through for escapes and recursivity.
                            do (setf result (list enter caller node enclose-unique-p enter-unique-p))
