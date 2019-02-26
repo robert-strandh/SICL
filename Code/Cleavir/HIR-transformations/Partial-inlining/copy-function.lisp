@@ -15,7 +15,7 @@
         new)))
 
 (defun translate-input-for-copy (input external-map internal-map stack)
-  (let ((owner (gethash input *location-ownerships*)))
+  (let ((owner (location-owner input)))
     (cond ((member owner stack)
            ;; Originally I expected that the input would always be in the map,
            ;; but this does not seem to be the case, for reasons I'm not sure of.
@@ -30,7 +30,7 @@
         collect (translate-input-for-copy input external-map internal-map stack)))
 
 (defun translate-output-for-copy (output external-map internal-map stack)
-  (let ((owner (gethash output *location-ownerships*)))
+  (let ((owner (location-owner output)))
     (cond ((member owner stack)
            (ensure-copy internal-map output))
           ((eq owner *original-enter-instruction*)

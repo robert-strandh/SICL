@@ -1,76 +1,5 @@
 (in-package #:cleavir-partial-inlining)
 
-(defun delete-function-nonrecursive (enter)
-  (cleavir-ir:map-local-instructions
-   (lambda (instruction)
-     (setf (cleavir-ir:inputs instruction) nil
-           (cleavir-ir:outputs instruction) nil))
-   enter))
-
-(defun delete-function (enter dag)
-  (cleavir-ir:map-local-instructions
-   (lambda (instruction)
-     ;; Due to the extra consistency methods, this will ensure the DATA
-     ;; still stop linking back to this instruction.
-     (setf (cleavir-ir:inputs instruction) nil
-           ;; note: may work weirdly with enter instructions, due to the lambda-list consistency method.
-           (cleavir-ir:outputs instruction) nil)
-     (when (typep instruction 'cleavir-ir:enclose-instruction)
-       ;; We need to delete the ENCLOSE's node.
-       ;; (If the CODE has no other ENCLOSE, DELETE-NODE will then
-       ;;  trigger DELETE-FUNCTION recursively.)
-       (let* ((inner-enter (cleavir-ir:code instruction))
-              (nodes (gethash inner-enter (cleavir-hir-transformations:dag-nodes dag)))
-              (node (find instruction nodes :key #'cleavir-hir-transformations:enclose-instruction)))
-         (if node
-             (delete-node node dag)
-             (error "BUG: Inconsistency in function DAG: no node for enclose ~a" instruction)))))
-   enter))
-
-(defun instruction-and-all-users (instruction)
-  (loop with all = (list instruction)
-        with worklist = (cleavir-ir:outputs instruction)
-        do (if (null worklist)
-               (return all)
-               (let ((work (pop worklist)))
-                 (loop for next in (cleavir-ir:using-instructions work)
-                       do (pushnew next all :test #'eq)
-                          (etypecase next
-                            (cleavir-ir:assignment-instruction
-                             (push (first (cleavir-ir:outputs next)) worklist))
-                            ;; FIXME: cleavir-ir:call-instruction
-                            ((or cleavir-ir:funcall-instruction
-                                 cleavir-ir:multiple-value-call-instruction))))))))
-
-(defun delete-enclose (enclose-instruction)
-  (mapc #'cleavir-ir:delete-instruction (instruction-and-all-users enclose-instruction)))
-
-(defun enter-unique-p (enter dag)
-  (= (length (gethash enter (cleavir-hir-transformations:dag-nodes dag))) 1))
-
-(defun delete-node (node dag)
-  (let* ((node-enter (cleavir-hir-transformations:enter-instruction node))
-         (nodes-table (cleavir-hir-transformations:dag-nodes dag))
-         (enter-nodes (gethash node-enter nodes-table))
-         (new-enter-nodes (remove node enter-nodes)))
-    ;; Take our node out of the table.
-    (cond ((null new-enter-nodes) ; function completely deleted
-           (remhash node-enter nodes-table)
-           (delete-function node-enter dag))
-          (t (setf (gethash node-enter nodes-table) new-enter-nodes)))
-    ;; Iterate over parents, removing the parenthood relationship.
-    (loop for parent in (cleavir-hir-transformations:parents node)
-          for parent-children = (cleavir-hir-transformations:children parent)
-          for new-parent-children = (remove node parent-children)
-          do (setf (cleavir-hir-transformations:children parent) new-parent-children))
-    ;; Iterate over children, removing the parenthood relationship.
-    (loop for child in (cleavir-hir-transformations:children node)
-          for child-parents = (cleavir-hir-transformations:parents child)
-          for new-child-parents = (remove node child-parents)
-          when (null new-child-parents) ; we're the only parent - child is now disconnected
-            do (delete-node child dag) ; destroy
-          else do (setf (cleavir-hir-transformations:parents child) new-child-parents))))
-
 ;; FIXME: move? finesse?
 (defun all-parameters-required-p (enter)
   (every (lambda (param) (typep param 'cleavir-ir:lexical-location))
@@ -94,7 +23,7 @@
                            with enclose-unique-p = (= (length enclose-destinies) 1)
                            with enter-unique-p = (enter-unique-p enter dag)
                            for caller in enclose-destinies
-                           for call-owner = (gethash caller *instruction-ownerships*)
+                           for call-owner = (instruction-owner caller)
                            when (eq caller :escape)
                              return nil
                            when (parent-node-p node call-owner) ; recursive

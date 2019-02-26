@@ -27,12 +27,10 @@
            '()))))
 
 (defun local-catch-p (instruction)
-  (eq (gethash instruction *instruction-ownerships*)
-      *target-enter-instruction*))
+  (eq (instruction-owner instruction) *target-enter-instruction*))
 
 (defun local-location-p (location)
-  (eq (gethash location *location-ownerships*)
-      *original-enter-instruction*))
+  (eq (location-owner location) *original-enter-instruction*))
 
 (defun translate-input (input mapping)
   ;; An input is either already in the mapping, or else it is

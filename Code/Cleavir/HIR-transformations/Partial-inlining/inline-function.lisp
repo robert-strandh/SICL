@@ -16,11 +16,11 @@
           do (cleavir-ir:insert-instruction-before assign call))
     ;; Turn any unwinds in the body to the function being inlined into
     ;; into direct control transfers.
-    (loop with target-enter = (gethash call *instruction-ownerships*)
+    (loop with target-enter = (instruction-owner call)
           for unwind in unwinds
           for destination = (cleavir-ir:destination unwind)
           ;; Recapitulates local-catch-p in inline-one-instruction.lisp, a bit.
-          when (eq (gethash destination *instruction-ownerships*) target-enter)
+          when (eq (instruction-owner destination) target-enter)
             ;; it's local: replace it. (If not local, there is nothing to do.)
             ;; (Similar to the unwind-instruction method on inline-one-instruction)
             do (let* ((target (second (cleavir-ir:successors destination)))
@@ -45,8 +45,7 @@
   (let* ((*original-enter-instruction* enter)
          (*instruction-mapping* (make-hash-table :test #'eq))
          ;; Used for catch/unwind (local-catch-p)
-         (*target-enter-instruction*
-           (gethash call *instruction-ownerships*))
+         (*target-enter-instruction* (instruction-owner call))
          (initial-environment (cleavir-ir:parameters enter))
          ;; *policy* is bound closely for these bindings to make especially sure
          ;; that inlined instructions have the policy of the source function,
