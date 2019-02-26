@@ -119,10 +119,6 @@
 ;;; the data stored in the WORKLIST-ITEM.  The loop ends when the
 ;;; worklist is empty.
 ;;;
-;;; When the UNIQUEP flag is true, copying of lexical locations and
-;;; sub functions will be avoided as an optimization. This can only
-;;; be done when the function being inlined is only called in one
-;;; place, hence the name.
 
 (defgeneric inline-function (initial-instruction
                              call-instruction

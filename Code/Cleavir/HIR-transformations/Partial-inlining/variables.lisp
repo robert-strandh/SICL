@@ -15,6 +15,12 @@
 
 (defvar *location-ownerships*)
 
+;;; Interface.
+(defun location-owner (datum)
+  (gethash datum *location-ownerships*))
+(defsetf location-owner (datum) (new-owner)
+  `(setf (gethash ,datum *location-ownerships*) ,new-owner))
+
 ;;; This variable contains a mapping from instructions in the
 ;;; original callee to copies previously created during this inlining.
 ;;; Unlike the lexical variable mappings, it is global.
@@ -25,6 +31,12 @@
 ;;; owners.
 
 (defvar *instruction-ownerships*)
+
+;;; Interface.
+(defun instruction-owner (instruction)
+  (gethash instruction *instruction-ownerships*))
+(defsetf instruction-owner (instruction) (new-owner)
+  `(setf (gethash ,instruction *instruction-ownerships*) ,new-owner))
 
 ;;; This variable contains the ENTER instruction of the function
 ;;; being inlined into.
