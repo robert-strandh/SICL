@@ -78,3 +78,28 @@ macro \texttt{defmethod} would query the environment for this
 information, access the corresponding classes, and then the class
 prototypes, and finally call \mml{} with those prototypes as
 arguments.
+
+While our solution is an improvement on the existing situation, it is
+clearly not perfect.  For one thing, both the generic-function class
+and the method class mentioned in the \texttt{defgeneric} form must
+exist when the \texttt{defmethod} form is encountered, so that the
+class prototypes of these classes can be passed as arguments to \mml{}.
+
+Also, when a custom generic-function class is used, it is possible
+that there exist custom methods on various generic functions for
+initializing instances of this custom class, and these custom methods
+could conceivably intercept and alter the method class in the
+generic-function metaobject thus created.  In such a situation, our
+technique would then use incorrect information about the method class,
+and pass the wrong class prototype as the second argument to \mml{}.
+However, presumably the documentation for the custom generic-function
+class would then mention that it is pointless to supply the
+\texttt{:method-class} option in the \texttt{defgeneric} form.
+Furthermore, it would be reasonable for these custom methods to signal
+an error when the \texttt{:method-class} option mentions a method
+class that is different from the one that the generic-function
+metaobject will ultimately have.  Even in the absence of the
+\texttt{;method-class} option in the \texttt{defgeneric} form, the
+\commonlisp{} standard requires the method class to be
+\texttt{standard-method}.  It is not permissible for these custom
+methods to use a different default method class.
