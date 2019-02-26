@@ -1,5 +1,8 @@
 (in-package #:cleavir-partial-inlining)
 
+(defun enter-unique-p (enter dag)
+  (= (length (gethash enter (cleavir-hir-transformations:dag-nodes dag))) 1))
+
 ;; FIXME: move? finesse?
 (defun all-parameters-required-p (enter)
   (every (lambda (param) (typep param 'cleavir-ir:lexical-location))
