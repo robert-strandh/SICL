@@ -61,6 +61,7 @@
                  do (cleavir-ir:insert-instruction-before assign call)
                     (setf (instruction-owner assign) *target-enter-instruction*)
                     (add-to-mapping mapping location temp)
+                    (setf (location-owner temp) *target-enter-instruction*)
                  collect temp))
          (dynenv (cleavir-ir:dynamic-environment call))
          (function-temp (cleavir-ir:new-temporary))

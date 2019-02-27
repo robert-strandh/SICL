@@ -55,10 +55,12 @@
           ((typep output 'cleavir-ir:values-location)
            (setf new (cleavir-ir:make-values-location))
            (add-to-mapping mapping output new)
+           (setf (location-owner new) *target-enter-instruction*)
            new)
           (t (setf new (cleavir-ir:make-lexical-location
                         (cleavir-ir:name output)))
              (add-to-mapping mapping output new)
+             (setf (location-owner new) *target-enter-instruction*)
              new))))
     
 (defun translate-outputs (outputs mapping)

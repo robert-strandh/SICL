@@ -58,7 +58,7 @@
 (defun do-inlining (initial-instruction)
   (loop with *instruction-ownerships*
           = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
-        for *location-ownerships*
+        with *location-ownerships*
           = (cleavir-hir-transformations:compute-location-owners initial-instruction)
         for dag = (cleavir-hir-transformations:build-function-dag initial-instruction)
         for inline = (one-potential-inline initial-instruction dag)

@@ -2,7 +2,7 @@
 
 (defvar *new-enter*)
 
-(defun ensure-copy (mapping datum)
+(defun ensure-copy (mapping datum new-owner)
   (or (find-in-mapping mapping datum)
       (let ((new (typecase datum
                    (cleavir-ir:values-location
@@ -10,8 +10,11 @@
                    (cleavir-ir:lexical-location
                     (cleavir-ir:make-lexical-location
                      (cleavir-ir:name datum)))
-                   (t datum))))
+                   (t
+                    ;; return immediately to avoid mapping consequences
+                    (return-from ensure-copy datum)))))
         (add-to-mapping mapping datum new)
+        (setf (location-owner new) new-owner)
         new)))
 
 (defun translate-input-for-copy (input external-map internal-map stack)
@@ -21,9 +24,10 @@
            ;; but this does not seem to be the case, for reasons I'm not sure of.
            ;; I think the ownership test should make it be correct anyway though.
            ;; FIXME: Maybe remove input-output distinction here then.
-           (ensure-copy internal-map input))
+           (ensure-copy internal-map input
+                        (find-in-mapping *instruction-mapping* owner)))
           ((eq owner *original-enter-instruction*)
-           (ensure-copy external-map input))
+           (ensure-copy external-map input *target-enter-instruction*))
           (t input))))
 (defun translate-inputs-for-copy (inputs external-map internal-map stack)
   (loop for input in inputs
@@ -32,9 +36,10 @@
 (defun translate-output-for-copy (output external-map internal-map stack)
   (let ((owner (location-owner output)))
     (cond ((member owner stack)
-           (ensure-copy internal-map output))
+           (ensure-copy internal-map output
+                        (find-in-mapping *instruction-mapping* owner)))
           ((eq owner *original-enter-instruction*)
-           (ensure-copy external-map output))
+           (ensure-copy external-map output *target-enter-instruction*))
           (t output))))
 (defun translate-outputs-for-copy (outputs external-map internal-map stack)
   (loop for output in outputs
@@ -53,6 +58,8 @@
     (push *new-enter* copies)
     ;; Set up ownership.
     (setf (instruction-owner *new-enter*) *new-enter*)
+    ;; Put it in the mapping.
+    (add-to-mapping *instruction-mapping* enter *new-enter*)
     ;; We set the outputs after building like this so that (a) they have their ownership correct,
     ;; and (b) (setf cleavir-ir:outputs) synchronizes the lambda list properly.
     ;; We still copy the outputs in clone-instruction above so that the (setf outputs) method
@@ -68,7 +75,7 @@
     ;; predecessors and successors disconnected.
     (cleavir-ir:map-local-instructions
      (lambda (instruction)
-       (unless (typep instruction 'cleavir-ir:enter-instruction) ; FIXME: Ugly.
+       (unless (eq instruction enter) ; FIXME: Ugly.
          (let* ((inputs (cleavir-ir:inputs instruction))
                 (outputs (cleavir-ir:outputs instruction))
                 (dynamic-environment (cleavir-ir:dynamic-environment instruction))
