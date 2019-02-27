@@ -477,24 +477,26 @@
              (canonicalized-dspecs
                (cst:canonicalize-declaration-specifiers
                 system
-                declaration-specifiers)))
+                declaration-specifiers))
+             ;; Note that lambda-list-from-parameter-groups makes ASTs,
+             ;; so this needs to be bound around that call.
+             (cleavir-ast:*dynamic-environment*
+               (cleavir-ast:make-dynamic-environment-ast
+                '#:dynamic-environment-argument)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group
              (itemize-lambda-list parsed-lambda-list)
              canonicalized-dspecs)
           (multiple-value-bind (lexical-lambda-list entries)
               (lambda-list-from-parameter-groups (cst:children parsed-lambda-list))
-            (let* ((cleavir-ast:*dynamic-environment*
-                     (cleavir-ast:make-dynamic-environment-ast
-                      '#:dynamic-environment-argument))
-                   (ast
-                     (process-parameter-groups
-                      (cst:children parsed-lambda-list)
-                      idspecs
-                      entries
-                      (make-body rdspecs (cst:listify forms-cst) block-name-cst)
-                      env
-                      system)))
+            (let ((ast
+                    (process-parameter-groups
+                     (cst:children parsed-lambda-list)
+                     idspecs
+                     entries
+                     (make-body rdspecs (cst:listify forms-cst) block-name-cst)
+                     env
+                     system)))
               (cleavir-ast:make-function-ast ast lexical-lambda-list
                                              cleavir-ast:*dynamic-environment*
                                              :origin origin))))))))
