@@ -50,7 +50,7 @@
     (values
      `(,@(cleavir-code-utilities:required parsed-lambda-list)
        ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list))
-               (rest-name (cleavir-code-utilities:rest-name parsed-lambda-list)))
+               (rest-name '&rest))
 	   (if (eq rest :none)
 	       '()
 	       (prog1 `(,rest-name ,rest)
