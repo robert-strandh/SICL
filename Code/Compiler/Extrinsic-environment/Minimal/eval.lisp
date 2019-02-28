@@ -32,9 +32,14 @@
   (let* ((hash (sxhash form))
          (cached-value (gethash hash *form-cache*))
          (cleavir-generate-ast:*compiler* 'cl:eval)
-         (ast (cleavir-generate-ast:generate-ast form environment1 nil)))
+         (dynenv-ast
+           (cleavir-ast:make-dynamic-environment-ast
+            '#:loader-dynamic-environment
+            :policy (cleavir-env:environment-policy environment1)))
+         (ast (cleavir-generate-ast:generate-ast form environment1 nil dynenv-ast)))
     (if (null cached-value)
-        (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
+        (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value
+                         ast dynenv-ast))
                (hir (cleavir-ast-to-hir:compile-toplevel ast-bis))
                (ignore (cleavir-hir-transformations:eliminate-typeq hir))
                (lambda-expr (translate hir environment2))

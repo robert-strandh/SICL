@@ -91,6 +91,9 @@
 (defmethod translate-datum ((datum cleavir-ir:values-location))
   (lookup-datum datum))
 
+(defun dynamic-environment (instruction)
+  (translate-datum (cleavir-ir:dynamic-environment instruction)))
+
 ;;; For a given owner (which can be an ENTER-INSTRUCTION or NIL),
 ;;; return a list of all the variables (lexical or values) that are
 ;;; owned by that instruction.
@@ -107,12 +110,6 @@
 	    collect (translate-datum var))))
 
 (defvar *tags*)
-
-;;; This variable holds an EQ hash table, mapping each
-;;; ENTER-INSTRUCTION to a GENSYMed symbol that is used to hold the
-;;; dynamic environment as it was when the function corresponding to
-;;; that ENTER-INSTRUCTION was called.
-(defvar *dynamic-environment-variables*)
 
 (defun translate-lambda-list (lambda-list)
   (loop for item in lambda-list
@@ -159,21 +156,13 @@
 (defun layout-procedure (initial-instruction static-environment)
   ;; Make sure we have an ENTER-INSTRUCTION.
   (assert (typep initial-instruction 'cleavir-ir:enter-instruction))
-  ;; Make sure we do not already have a variable associated with this
-  ;; ENTER-INSTRUCTION for holding the dynamic environment at runtime.
-  (assert (null (gethash initial-instruction *dynamic-environment-variables*)))
-  (let* (;; Generate a new variable for holding the dynamic
-	 ;; environment at runtime.
-	 (dynamic-environment-variable (gensym))
-	 (basic-blocks (remove initial-instruction
+  (let* ((basic-blocks (remove initial-instruction
 			       *basic-blocks*
 			       :test-not #'eq
                                :key #'cleavir-basic-blocks:owner))
 	 (first (find initial-instruction basic-blocks
 		      :test #'eq :key #'cleavir-basic-blocks:first-instruction))
 	 (rest (remove first basic-blocks :test #'eq)))
-    (setf (gethash initial-instruction *dynamic-environment-variables*)
-	  dynamic-environment-variable)
     ;; Assign tags to all basic block except the first one
     (loop for block in rest
 	  for instruction = (cleavir-basic-blocks:first-instruction block)
@@ -189,10 +178,10 @@
 	  (owned-vars (compute-owned-variables initial-instruction)))
       `(lambda (&rest args)
 	 (block nil
-	   (let ((,dynamic-environment-variable *dynamic-environment*)
-		 ,@owned-vars)
-	     (declare (ignorable ,dynamic-environment-variable
-				 ,@owned-vars))
+	   (let (,@owned-vars)
+	     (declare (ignorable ,@owned-vars))
+             (setf ,(dynamic-environment initial-instruction)
+                   *dynamic-environment*)
 	     ,(build-argument-parsing-code
 	       (translate-lambda-list
 		(cleavir-ir:lambda-list initial-instruction))
@@ -215,7 +204,6 @@
 	  (*linkage-environment* linkage-environment)
 	  (*tags* (make-hash-table :test #'eq))
 	  (*vars* (make-hash-table :test #'eq))
-	  (*dynamic-environment-variables* (make-hash-table :test #'eq))
           (*source-information* (make-instance 'source-information)))
       (layout-procedure initial-instruction nil))))
 
@@ -248,7 +236,8 @@
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore inputs outputs))
-  (gensym))
+  ;; LAYOUT-PROCEDURE, above, handles everything.
+  '(progn))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:assignment-instruction)
@@ -260,15 +249,14 @@
     ((instruction cleavir-ir:funcall-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
-  (let* ((owner (gethash instruction *instruction-ownerships*))
-	 (var (gethash owner *dynamic-environment-variables*)))
-    `(progn (setf *dynamic-environment* ,var)
-	    (setf ,(first outputs)
-		  (multiple-value-list (traced-funcall
-					,*linkage-environment*
-                                        ',(cleavir-ir:origin  instruction)
-					,(first inputs)
-					,@(rest inputs)))))))
+  `(progn (setf *dynamic-environment*
+                ,(dynamic-environment instruction))
+          (setf ,(first outputs)
+                (multiple-value-list (traced-funcall
+                                      ,*linkage-environment*
+                                      ',(cleavir-ir:origin  instruction)
+                                      ,(first inputs)
+                                      ,@(rest inputs))))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:multiple-value-call-instruction)
@@ -284,20 +272,13 @@
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore outputs))
-  (let* ((owner (gethash instruction *instruction-ownerships*))
-	 (var (gethash owner *dynamic-environment-variables*)))
-    ;; It is not quite correct to set the dynamic environment to that
-    ;; of the current function.  Since it is a tail call it should
-    ;; really be set to the dynamic environment of the caller.
-    ;; However, no function translated here will alter its dynamic
-    ;; run-time environment in any way.  Such modifications are only
-    ;; done in host functions.
-    `(progn (setf *dynamic-environment* ,var)
-	    (return (traced-funcall
-		     ,*linkage-environment*
-                     ',(cleavir-ir:origin  instruction)
-		     ,(first inputs)
-		     ,@(rest inputs))))))
+  `(progn (setf *dynamic-environment*
+                ,(dynamic-environment instruction))
+          (return (traced-funcall
+                   ,*linkage-environment*
+                   ',(cleavir-ir:origin  instruction)
+                   ,(first inputs)
+                   ,@(rest inputs)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:the-instruction)
@@ -552,42 +533,28 @@
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:catch-instruction) inputs outputs successors)
-  (declare (ignore inputs outputs))
-  `(go ,(first successors)))
+  (declare (ignore inputs))
+  `(progn
+     ;; Since we let the host take care of escape extents, we don't
+     ;; need to actually augment the dynamic environment. But we do
+     ;; need to pass it along.
+     (setf ,(second outputs) ,(dynamic-environment instruction))
+     ;; Normal successor.
+     (go ,(first successors))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-ir:unwind-instruction) inputs outputs successors)
   ;; The host lisp handles the dynamic extent of returns, so we don't need the input.
   (declare (ignore inputs outputs))
   (let* ((destination (cleavir-ir:destination instruction))
-         (dynamic-environment-variable
-	  (gethash (gethash destination *instruction-ownerships*)
-		   *dynamic-environment-variables*)))
-    `(progn (unwind ,dynamic-environment-variable)
-            (go ,(gethash (second (cleavir-ir:successors destination)) *tags*)))))
+         (index (cleavir-ir:unwind-index instruction))
+         (target (nth index (cleavir-ir:successors destination)))
+         (tag (gethash target *tags*)))
+    `(progn (unwind ,(dynamic-environment instruction))
+            (go ,tag))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-ir:unwind-instruction)
      inputs outputs static-environment)
   (declare (ignore static-environment))
   (declare (ignore inputs outputs)))
-
-;;; When the FUNCALL-INSTRUCTION is the last instruction of a basic
-;;; block, it is because there is a call to a function that will never
-;;; return, such as ERROR, and the instruction then has no successors
-;;; (which is why it is at the end of the basic block).
-;;;
-;;; We therefore must provide a method on TRANSLATE-BRANCH-INSTRUCTION
-;;; (in addition to the method on TRANSLATE-SIMPLE-INSTRUCTION)
-;;; specialized to FUNCALL-INSTRUCTION.
-(defmethod translate-branch-instruction
-    ((instruction cleavir-ir:funcall-instruction) inputs outputs successors)
-  (declare (ignore outputs successors))
-  (let* ((owner (gethash instruction *instruction-ownerships*))
-	 (var (gethash owner *dynamic-environment-variables*)))
-    `(progn (setf *dynamic-environment* ,var)
-	    (traced-funcall
-	     ,*linkage-environment*
-             ',(cleavir-ir:origin  instruction)
-	     ,(first inputs)
-	     ,@(rest inputs)))))
