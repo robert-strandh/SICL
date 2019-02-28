@@ -38,8 +38,16 @@ expansion of that form is ``something like'' the follow form:
 except that we have formatted the code to fit the page, and we have
 added two missing closing parentheses at the end of the form.
 
-However, this expansion is not possible.  It has two fundamental
-problems:
+This example is a slight variation on the code that is shown in
+section 5.5.1 of the AMOP book.  However, in that section, it is not
+claimed that this code is the result of expanding a \texttt{defmethod}
+form.  Rather, it is given as ``an example of creating a generic
+function and a method metaobject, and then adding the method to the
+generic function''.
+
+Indeed, this expansion is not possible, at least not in a compiling
+implementation, which is the premise of both the paper by \cnh{} and
+this one.  It has two fundamental problems:
 
 \begin{enumerate}
 \item The call to \mml{} must be made at macro-expansion time, whereas
@@ -50,19 +58,14 @@ problems:
   environment would violate the semantics of the \commonlisp{}
   standard, which requires that the body of the \texttt{defmethod}
   form be compiled in the lexical environment in which it appears.
-  However, \cnh{} seem to be convinced that the resulting method
-  lambda is compiled in the null lexical environment, and indeed that
-  it \emph{has to} be compiled this way, as this belief is repeated
-  three times in the paper.
 \end{enumerate}
 
-\cnh{} further analyze possible specializations for the methods on
-\mml{}, and conclude that only the \texttt{generic-function} and the
-\texttt{method} parameters can reasonably be specialized.  While this
-analysis was valid in 2008, when the paper by \cnh{} was written,
-since then, Strandh's paper on first-class global environments
-\cite{Strandh:2015:ELS:Environments}, shows how the
-\texttt{environment} parameter can be specialized upon as well.
+In section 5.4.3 of the AMOP book, an example of an expansion is
+shown, and figure 5.4 clearly mentions that \mml{} is called during
+the macro-expansion phase.  Furthermore, in figure 5.3, which shows the
+expansion of the \texttt{defmethod} macro, no call to \texttt{compile}
+is made.  The result of calling \mml{}, i.e., the \emph{method lambda}
+is simply present in the expanded code.
 
 As \cnh{} point out, the \texttt{defmethod} macro does
 not allow the programmer to specify a class for the method to be
