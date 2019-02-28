@@ -423,12 +423,14 @@
 (defclass top-level-function-ast (function-ast)
   ((%forms :initarg :forms :reader forms)))
 
-(defun make-top-level-function-ast (body-ast lambda-list forms &key origin (policy *policy*))
+(defun make-top-level-function-ast (body-ast lambda-list forms dynenv-out
+                                    &key origin (policy *policy*))
   (make-instance 'top-level-function-ast
     :origin origin :policy policy
     :body-ast body-ast
     :lambda-list lambda-list
-    :forms forms))
+    :forms forms
+    :dynamic-environment-out dynenv-out))
 
 (cleavir-io:define-save-info top-level-function-ast
   (:forms forms))

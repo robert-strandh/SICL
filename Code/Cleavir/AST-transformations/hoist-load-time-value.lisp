@@ -9,11 +9,12 @@
      ast)
     result))
 
-(defun hoist-load-time-value (ast)
-  (let* ((load-time-value-asts (find-load-time-value-asts ast))
+(defun hoist-load-time-value (ast dynamic-environment-ast)
+  (let* ((cleavir-ast:*dynamic-environment* dynamic-environment-ast)
+         (load-time-value-asts (find-load-time-value-asts ast))
 	 (forms (mapcar #'cleavir-ast:form load-time-value-asts)))
     (loop for ast in load-time-value-asts
 	  do (change-class ast 'cleavir-ast:lexical-ast :name (gensym)))
     (cleavir-ast:make-top-level-function-ast
-     ast load-time-value-asts forms
+     ast load-time-value-asts forms dynamic-environment-ast
      :policy (cleavir-ast:policy ast))))
