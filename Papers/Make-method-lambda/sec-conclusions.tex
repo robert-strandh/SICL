@@ -1,7 +1,7 @@
 \section{Conclusions and future work}
 \label{sec-conclusions}
 
-We have defined a technique that solves a problem encountered in
+We have defined a technique that alleviates a problem encountered in
 current \commonlisp{} implementations when a \texttt{defgeneric} form
 is followed by a \texttt{defmethod} form in the same compilation
 unit.  When the \texttt{defgeneric} form mentions a method class other
@@ -23,6 +23,16 @@ introduce any incompatibilities that would render some existing code
 obsolete.  Furthermore, our solution does not have the potential
 performance problem of the proposal by \cnh{}, i.e. the additional
 cost of processing keyword arguments to method functions.
+
+However, there are still some situations where our technique does not
+work.  In particular, when a custom generic-function class is used,
+and the initialization of instances of this class intercepts and
+alters the information about the method class as given in the
+\texttt{defgeneric} form.  For cases like this, we suggest that the
+author of the custom generic function class also add a method on
+\texttt{add-method}, specialized to the custom generic-function class
+so as to verify that the class of the method being added is indeed
+correct, and signal an error otherwise.
 
 Future work includes adding the functions defined in
 \refApp{app-protocol} to the \sicl{}%
