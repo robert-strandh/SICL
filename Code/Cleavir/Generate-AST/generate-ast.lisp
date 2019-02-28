@@ -385,7 +385,7 @@
   ;;; construct the eventual  lambda-list used in the function-ast.
   (let* ((required (cleavir-code-utilities:required parsed-lambda-list))
          (optionals (cleavir-code-utilities:optionals parsed-lambda-list))
-         (rest-name (cleavir-code-utilities:rest-name parsed-lambda-list))
+         (rest-name '&rest)
          (rest (cleavir-code-utilities:rest-body parsed-lambda-list))
          (keys (cleavir-code-utilities:keys parsed-lambda-list))
          (aux (cleavir-code-utilities:aux parsed-lambda-list))
