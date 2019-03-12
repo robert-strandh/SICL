@@ -24,7 +24,14 @@
     (flet ((register-if-unvisited (instruction)
 	     (unless (gethash instruction visited-instructions)
 	       (setf (gethash instruction visited-instructions) t)
-	       (push instruction instructions-to-process))))
+	       (push instruction instructions-to-process)))
+           (register-last-if-unvisited (instruction)
+             (unless (gethash instruction visited-instructions)
+               (setf (gethash instruction visited-instructions) t)
+               (if (null instructions-to-process)
+                   (setf instructions-to-process (list instruction))
+                   (setf (rest (last instructions-to-process))
+                         (list instruction))))))
       (register-if-unvisited initial-instruction)
       (loop until (null instructions-to-process)
 	    do (let ((instruction (pop instructions-to-process)))
@@ -40,19 +47,7 @@
 		   ;; reachable from the initial ENTER-INSTRUCTION of
 		   ;; a particular function are processed before any
 		   ;; instruction of a nested function is processed.
-		   ;; Since we haven't processed this
-		   ;; ENCLOSE-INSTRUCTION before, and since each
-		   ;; nested ENTER-INSTRUCTION is the value of the
-		   ;; CODE slot of a single ENCLOSE-INSTRUCTION, we
-		   ;; know that we haven't yet visited the nested
-		   ;; ENTER-INSTRUCTION.  Therefore, no test is
-		   ;; necessary for that situation.
-		   (let ((code (code instruction)))
-		     (if (null instructions-to-process)
-			 (setf instructions-to-process (list code))
-			 (setf (rest (last instructions-to-process))
-			       (list code)))
-		     (setf (gethash code visited-instructions) t)))
+                   (register-last-if-unvisited (code instruction)))
 		 ;; For each successor of the current instruction, check
 		 ;; whether it has already been visited, and if not,
 		 ;; make sure it gets processed later by pushing it onto
@@ -90,7 +85,14 @@
     (flet ((register-if-unvisited (instruction)
 	     (unless (gethash instruction visited-instructions)
 	       (setf (gethash instruction visited-instructions) t)
-	       (push instruction instructions-to-process))))
+	       (push instruction instructions-to-process)))
+           (register-last-if-unvisited (instruction)
+             (unless (gethash instruction visited-instructions)
+               (setf (gethash instruction visited-instructions) t)
+               (if (null instructions-to-process)
+                   (setf instructions-to-process (list instruction))
+                   (setf (rest (last instructions-to-process))
+                         (list instruction))))))
       (register-if-unvisited initial-instruction)
       (loop until (null instructions-to-process)
 	    do (let ((instruction (pop instructions-to-process)))
@@ -98,11 +100,6 @@
                    (setf current-owner instruction))
 		 (funcall function instruction current-owner)
 		 (when (typep instruction 'enclose-instruction)
-		   (let ((code (code instruction)))
-		     (if (null instructions-to-process)
-			 (setf instructions-to-process (list code))
-			 (setf (rest (last instructions-to-process))
-			       (list code)))
-		     (setf (gethash code visited-instructions) t)))
+                   (register-last-if-unvisited (code instruction)))
 		 (loop for successor in (successors instruction)
 		       do (register-if-unvisited successor)))))))
