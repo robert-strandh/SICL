@@ -100,7 +100,7 @@
 (defun reinitialize-data (initial-instruction)
   ;; In the first pass, we set the defining and the using instructions
   ;; of every datum to the empty set.
-  (map-instructions
+  (map-instructions-arbitrary-order
    (lambda (instruction)
      (loop for datum in (inputs instruction)
 	   do (setf (using-instructions datum) '())
@@ -112,10 +112,12 @@
   ;; In the second pass, we add each instruction as a using
   ;; instruction of its inputs, and a defining instruction of its
   ;; outputs.
-  (map-instructions
+  (map-instructions-arbitrary-order
    (lambda (instruction)
      (loop for datum in (inputs instruction)
 	   do (push instruction (using-instructions datum)))
+     (push instruction
+           (using-instructions (dynamic-environment instruction)))
      (loop for datum in (outputs instruction)
 	   do (push instruction (defining-instructions datum))))
    initial-instruction))
