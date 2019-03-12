@@ -40,8 +40,20 @@
 ;;; For each predecessor P of I, P replaces I as a successor of P.
 (defun delete-instruction (instruction)
   (assert (= (length (successors instruction)) 1))
+  ;; Remove the instruction from datum records; this will spare us
+  ;; a reinitialize-data.
+  (loop for input in (inputs instruction)
+        do (setf (using-instructions input)
+                 (remove instruction (using-instructions input))))
+  (setf (using-instructions (dynamic-environment instruction))
+        (remove instruction (using-instructions
+                             (dynamic-environment instruction))))
   (setf (inputs instruction) '())
+  (loop for output in (outputs instruction)
+        do (setf (defining-instructions output)
+                 (remove instruction (defining-instructions output))))
   (setf (outputs instruction) '())
+  ;; Delete the instruction from the control flow graph.
   (let ((successor (car (successors instruction)))
 	(predecessors (predecessors instruction)))
     (cond ((eq successor instruction)
