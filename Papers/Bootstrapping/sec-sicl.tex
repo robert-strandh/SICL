@@ -28,10 +28,13 @@ example, our definition of the class \texttt{t}, looks like this:
 This definition clearly expresses the characteristics of the class
 \texttt{t}.  It has no superclasses because no superclasses are
 explicitly mentioned, and the metaclass \texttt{built-in-class} does
-not provide any default superclasses like \texttt{standard-class} and
+not provide any default superclasses like \texttt{standard-class}
+and
+
 \texttt{funcallable-standard-class} do.  While this definition of the
 class \texttt{t} is clear, it is not operational as is.  The metaclass
-\texttt{built-in-class} is an indirect subclass of the class
+
+ \texttt{built-in-class} is an indirect subclass of the class
 \texttt{t}, so the class \texttt{t} must exist in order for the class
 \texttt{built-in-class} to exist.
 

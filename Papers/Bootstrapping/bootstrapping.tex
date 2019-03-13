@@ -13,7 +13,7 @@
 
 \acmConference[ELS'19]{the 12th European Lisp Symposium}{April 1--2 2019}{%
   Genoa, Italy}
-\acmISBN{???}
+\acmISBN{978-2-9557474-3-8}
 \acmDOI{}
 
 \setcopyright{rightsretained}
@@ -44,8 +44,9 @@ in most cases, there is no profound reason for using a language other
 than \commonlisp{} for creating a \commonlisp{} system, though there
 are some annoying details that have to be dealt with.
 
-We describe the bootstrapping technique used with \sicl{}%
-\footnote{https://github.com/robert-strandh/SICL}, a modern
+We describe the bootstrapping technique used with \sicl{},
+% \footnote{https://github.com/robert-strandh/SICL},
+a modern
 implementation of \commonlisp{}.  Though both \sicl{} and the
 bootstrapping procedure for creating it are still being worked on, they
 are sufficiently evolved that the big picture outlined in this paper
@@ -54,9 +55,6 @@ will remain valid.  Our technique uses \emph{first-class global
 required during the bootstrapping procedure.  Contrary to \sbcl{}, and
 implementations written in some other language, in \sicl{}, we build
 the \clos{} MOP%
-\footnote{In this paper, we assume that the reader is familiar with the
-  metaobject protocol for implementing \clos{}, as described in the
-  book \cite{Kiczales:1991:AMP:574212} that is dedicated to the subject.}
 classes and generic functions \emph{first}.  This
 technique allows us to use the \clos{} machinery for many other parts
 of the system, thereby decreasing the amount of special-purpose code,

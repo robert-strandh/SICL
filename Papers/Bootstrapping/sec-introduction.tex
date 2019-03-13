@@ -1,7 +1,10 @@
 \section{Introduction}
 \label{sec-introduction}
 
-In this paper, by \emph{bootstrapping} a \commonlisp{} system we mean
+In this paper\footnote{In this paper, we assume that the reader is familiar with the
+  metaobject protocol for implementing \clos{}, as described in the
+  book \cite{Kiczales:1991:AMP:574212} that is dedicated to the subject.}
+, by \emph{bootstrapping} a \commonlisp{} system we mean
 creating some \emph{target} \commonlisp{} system by building it from
 its associated source code, using various \emph{tools} and
 \emph{language processors} to transform that source code into an
@@ -16,7 +19,9 @@ way.  Some systems evolve by the careful modification of an existing
 \emph{executing image} which is then saved as an executable file that
 can be executed as usual.
 
-In this paper we will concentrate on the technique of bootstrapping.
+In this paper we will concentrate on the technique of bootstrapping
+used with \sicl{}%
+\footnote{https://github.com/robert-strandh/SICL}.
 
 Before we can start investigating different options for bootstrapping,
 we must deal with an annoying but crucial detail, namely the
