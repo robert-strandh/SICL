@@ -18,6 +18,7 @@ According to the book, the function has four parameters, all required:
 
 The main difference between \mml{} and other
 generic functions defined by the metaobject protocol is that
+
 \mml{} is called as part of the expansion code
 for the \texttt{defmethod} macro, whereas other generic functions are
 called at execution time.
@@ -45,7 +46,9 @@ the \texttt{defmethod} form.  The purpose of
 another lambda expression called the \emph{method lambda} which is
 ultimately compiled in order to yield the \emph{method function}.
 
-The default method lambda returned by an invocation of \mml{} is a
+The default method lambda returned by an invocation of
+
+\mml{} is a
 lambda expression with two parameters.  The first parameter is a list
 of all the arguments to the generic function.  The second parameter is
 a list of next methods that can be invoked using
