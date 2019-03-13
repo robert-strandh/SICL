@@ -14,5 +14,14 @@
              (push instruction death)))))
      initial-instruction)
     (dolist (catch death)
-      (cleavir-ir:bypass-instruction (first (cleavir-ir:successors catch)) catch))
+      ;; We replace each catch with an assignment (of the dynamic environment).
+      (let* ((cleavir-ir:*policy* (cleavir-ir:policy catch))
+             (cleavir-ir:*dynamic-environment*
+               (cleavir-ir:dynamic-environment catch))
+             (asn (cleavir-ir:make-assignment-instruction
+                   (cleavir-ir:dynamic-environment catch)
+                   (second (cleavir-ir:outputs catch))))
+             (succ (first (cleavir-ir:successors catch))))
+        (cleavir-ir:insert-instruction-between asn catch succ)
+        (cleavir-ir:bypass-instruction asn catch)))
     death))

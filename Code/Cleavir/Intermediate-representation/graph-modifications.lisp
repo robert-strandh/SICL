@@ -36,32 +36,56 @@
 ;;; Delete an instruction I.  I must have a single successor S.  S
 ;;; replaces I as the successor of every predecessor P of I.  The
 ;;; predecessors of I become the predecessors of S.
+;;; If it so happens that I = S, the behavior is a bit different.
+;;; For each predecessor P of I, P replaces I as a successor of P.
 (defun delete-instruction (instruction)
   (assert (= (length (successors instruction)) 1))
+  ;; Remove the instruction from datum records; this will spare us
+  ;; a reinitialize-data.
+  (loop for input in (inputs instruction)
+        do (setf (using-instructions input)
+                 (remove instruction (using-instructions input))))
+  (setf (using-instructions (dynamic-environment instruction))
+        (remove instruction (using-instructions
+                             (dynamic-environment instruction))))
   (setf (inputs instruction) '())
+  (loop for output in (outputs instruction)
+        do (setf (defining-instructions output)
+                 (remove instruction (defining-instructions output))))
   (setf (outputs instruction) '())
+  ;; Delete the instruction from the control flow graph.
   (let ((successor (car (successors instruction)))
 	(predecessors (predecessors instruction)))
-    (loop for predecessor in predecessors
-	  do (setf (successors predecessor)
-		   (substitute successor instruction (successors predecessor))))
-    (cond ((and (typep instruction 'phi-instruction)
-                (rest predecessors)
-                (typep successor 'phi-instruction))
-           ;; When we delete the first phi in a phi cluster, we must
-           ;; take care to preserve the association between
-           ;; predecessors and inputs
-           (setf (predecessors successor)
-                 (predecessors instruction)))
-          (t ;; Avoid having our successor mention some of our predecessors
-           ;; multiple times in case some of our predecessors are already a
-           ;; predecessors of our successor.
-           (setf (predecessors successor)
-	         (remove instruction (predecessors successor)
-		         :test #'eq))
+    (cond ((eq successor instruction)
+           ;; We have a loop.
            (loop for predecessor in predecessors
-	         do (pushnew predecessor (predecessors successor)
-		             :test #'eq))))))
+                 do (setf (successors predecessor)
+                          (substitute predecessor instruction
+                                      (successors predecessor)))
+                    (pushnew predecessor (predecessors predecessor)
+                             :test #'eq)))
+          (t
+           ;; Common case.
+           (loop for predecessor in predecessors
+                 do (setf (successors predecessor)
+                          (substitute successor instruction (successors predecessor))))
+           (cond ((and (typep instruction 'phi-instruction)
+                       (rest predecessors)
+                       (typep successor 'phi-instruction))
+                  ;; When we delete the first phi in a phi cluster, we must
+                  ;; take care to preserve the association between
+                  ;; predecessors and inputs
+                  (setf (predecessors successor)
+                        (predecessors instruction)))
+                 (t ;; Avoid having our successor mention some of our predecessors
+                  ;; multiple times in case some of our predecessors are already a
+                  ;; predecessors of our successor.
+                  (setf (predecessors successor)
+                        (remove instruction (predecessors successor)
+                                :test #'eq))
+                  (loop for predecessor in predecessors
+                        do (pushnew predecessor (predecessors successor)
+                                    :test #'eq))))))))
 
 ;;; Replace an instruction I with an instruction S, with respect to
 ;;; forward control flow.
@@ -88,7 +112,7 @@
 (defun reinitialize-data (initial-instruction)
   ;; In the first pass, we set the defining and the using instructions
   ;; of every datum to the empty set.
-  (map-instructions
+  (map-instructions-arbitrary-order
    (lambda (instruction)
      (loop for datum in (inputs instruction)
 	   do (setf (using-instructions datum) '())
@@ -100,10 +124,12 @@
   ;; In the second pass, we add each instruction as a using
   ;; instruction of its inputs, and a defining instruction of its
   ;; outputs.
-  (map-instructions
+  (map-instructions-arbitrary-order
    (lambda (instruction)
      (loop for datum in (inputs instruction)
 	   do (push instruction (using-instructions datum)))
+     (push instruction
+           (using-instructions (dynamic-environment instruction)))
      (loop for datum in (outputs instruction)
 	   do (push instruction (defining-instructions datum))))
    initial-instruction))

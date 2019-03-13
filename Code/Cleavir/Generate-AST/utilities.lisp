@@ -226,36 +226,44 @@
 		  remaining-dspecs)))))
 
 (defgeneric convert-special-binding
-    (variable value-ast next-ast env system))
+    (variable value-ast next-thunk env system))
 
 (defmethod convert-special-binding
-    (variable value-ast next-ast env system)
+    (variable value-ast next-thunk env system)
   (convert `(cleavir-primop:call-with-variable-bound
              ',variable (cleavir-primop:ast ,value-ast)
-             (lambda () (cleavir-primop:ast ,next-ast)))
+             ;; Set up the body in a special thunk so that
+             ;; the dynamic environment is hooked up correctly.
+             (cleavir-primop:ast
+              ,(let* ((cleavir-ast:*dynamic-environment*
+                        (cleavir-ast:make-dynamic-environment-ast
+                         '#:cwvb-dynamic-environment))
+                      (next-ast (funcall next-thunk)))
+                 (cleavir-ast:make-function-ast
+                  next-ast nil cleavir-ast:*dynamic-environment*))))
            env system))
 
 ;;; ENV is an environment that is known to contain information about
 ;;; the variable VARIABLE, but we don't know whether it is special or
 ;;; lexical.  VALUE-AST is an AST that computes the value to be given
-;;; to VARIABLE.  NEXT-AST is an AST that represents the computation
-;;; to take place after the variable has been given its value.  If the
-;;; variable is special, this function creates a BIND-AST with
-;;; NEXT-AST as its body.  If the variable is lexical, this function
-;;; creates a PROGN-AST with two ASTs in it.  The first one is a
-;;; SETQ-AST that assigns the value to the variable, and the second
-;;; one is the NEXT-AST.
-(defun set-or-bind-variable (variable value-ast next-ast env system)
+;;; to VARIABLE.  NEXT-THUNK is a thunk that will compute a NEXT-AST that
+;;; represents the computation to take place after the variable has
+;;; been given its value.  If the variable is special, this function
+;;; uses CALL-WITH-VARIABLE-BOUND to bind it.  If the variable is
+;;; lexical, this function creates a PROGN-AST with two ASTs in it.
+;;; The first one is a SETQ-AST that assigns the value to the variable,
+;;; and the second one is the NEXT-AST.
+(defun set-or-bind-variable (variable value-ast next-thunk env system)
   (let ((info (cleavir-env:variable-info env variable)))
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)
         (convert-special-binding
-         variable value-ast next-ast env system)
+         variable value-ast next-thunk env system)
 	(cleavir-ast:make-progn-ast
 	 (list (cleavir-ast:make-setq-ast
 		(cleavir-env:identity info)
 		value-ast)
-	       next-ast)))))
+	       (funcall next-thunk))))))
 
 ;;; Given a type in values position (i.e. argument to THE or return
 ;;;  value of a function type), return three values: a list of REQUIRED

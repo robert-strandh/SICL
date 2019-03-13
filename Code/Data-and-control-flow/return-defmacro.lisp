@@ -1,4 +1,4 @@
 (cl:in-package #:sicl-data-and-control-flow)
 
-(defmacro return (form)
+(defmacro return (&optional form)
   `(return-from nil ,form))

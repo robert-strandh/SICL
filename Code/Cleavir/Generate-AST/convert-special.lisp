@@ -18,8 +18,11 @@
     ((symbol (eql 'block)) form env system)
   (db origin (block name . body) form
     (declare (ignore block))
-    (let* ((ast (cleavir-ast:make-block-ast nil :origin origin))
-	   (new-env (cleavir-env:add-block env name ast)))
+    (let* ((new-dynenv (cleavir-ast:make-lexical-ast
+                        '#:block-dynamic-environment))
+           (ast (cleavir-ast:make-block-ast nil new-dynenv :origin origin))
+	   (new-env (cleavir-env:add-block env name ast))
+           (cleavir-ast:*dynamic-environment* new-dynenv))
       (setf (cleavir-ast:body-ast ast)
 	    (process-progn (convert-sequence body new-env system)))
       ast)))
@@ -269,9 +272,8 @@
   (db origin (go tag) form
     (declare (ignore go))
     (let ((info (tag-info env (raw tag))))
-      (cleavir-ast:make-go-ast
-       (cleavir-env:identity info)
-       :origin origin))))
+      (cleavir-ast:make-go-ast (cleavir-env:identity info)
+                               :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -413,26 +415,17 @@
       (let ((new-env (augment-environment-with-declarations env rdspecs)))
 	(process-progn (convert-sequence forms new-env system)))
       (destructuring-bind (var . lexical-ast) (first bindings)
-	(let* (;; We enter the new variable into the environment and
-	       ;; then we process remaining parameters and ultimately
-	       ;; the body of the function.
-	       (new-env (augment-environment-with-variable
-			 var (first idspecs) env env))
-	       ;; We compute the AST of the remaining computation by
-	       ;; recursively calling this same function with the
-	       ;; remaining bindings (if any) and the environment that
-	       ;; we obtained by augmenting the original one with the
-	       ;; parameter variable.
-	       (next-ast (process-remaining-let-bindings (rest bindings)
-							 (rest idspecs)
-							 rdspecs
-							 forms
-							 new-env
-							 system)))
-	  ;; All that is left to do now, is to construct the AST to
-	  ;; return by using the new variable and the AST of the
-	  ;; remaining computation as components.
-	  (set-or-bind-variable var lexical-ast next-ast new-env system)))))
+	(let (;; We enter the new variable into the environment and
+              ;; then we process remaining parameters and ultimately
+              ;; the body of the function.
+              (new-env (augment-environment-with-variable
+                        var (first idspecs) env env)))
+          (set-or-bind-variable var lexical-ast
+                                (lambda ()
+                                  (process-remaining-let-bindings
+                                   (rest bindings) (rest idspecs)
+                                   rdspecs forms new-env system))
+                                new-env system)))))
 
 (defun temp-asts-from-bindings (bindings)
   (loop repeat (length bindings)
@@ -518,22 +511,22 @@
                                       :key #'car :test #'eq)
                                 (cleavir-ast:make-dynamic-allocation-ast
                                  value-ast)
-                                value-ast))
-	       ;; We compute the AST of the remaining computation by
-	       ;; recursively calling this same function with the
-	       ;; remaining bindings (if any) and the environment that
+                                value-ast)))
+          (set-or-bind-variable
+           var wrapped-ast
+           (lambda ()
+             ;; We compute the AST of the remaining computation by
+             ;; recursively calling this same function with the
+             ;; remaining bindings (if any) and the environment that
 	       ;; we obtained by augmenting the original one with the
-	       ;; parameter variable.
-	       (next-ast (process-remaining-let*-bindings (rest bindings)
-							  (rest idspecs)
-							  rdspecs
-							  forms
-							  new-env
-							  system)))
-	  ;; All that is left to do now, is to construct the AST to
-	  ;; return by using the new variable and the AST of the
-	  ;; remaining computation as components.
-	  (set-or-bind-variable var wrapped-ast next-ast new-env system)))))
+             ;; parameter variable.
+             (process-remaining-let*-bindings (rest bindings)
+                                              (rest idspecs)
+                                              rdspecs
+                                              forms
+                                              new-env
+                                              system))
+           new-env system)))))
 
 (defmethod convert-special
     ((symbol (eql 'let*)) form env system)
@@ -760,24 +753,27 @@
     ((symbol (eql 'tagbody)) form env system)
   (db origin (tagbody . items) form
     (declare (ignore tagbody))
-    (let ((tag-asts
-	    (loop for item in (raw items)
-		  for raw-item = (raw item)
-		  when (tagp raw-item)
-		    collect (cleavir-ast:make-tag-ast
-			     raw-item
-			     :origin (location item))))
-	  (new-env env))
+    (let* ((new-dynenv (cleavir-ast:make-dynamic-environment-ast
+                        '#:tagbody-dynamic-environment))
+           (tag-asts
+             (loop with cleavir-ast:*dynamic-environment* = new-dynenv
+                   for item in (raw items)
+                   for raw-item = (raw item)
+                   when (tagp raw-item)
+                     collect (cleavir-ast:make-tag-ast
+                              raw-item
+                              :origin (location item))))
+           (new-env env))
       (loop for ast in tag-asts
 	    do (setf new-env (cleavir-env:add-tag
 			      new-env (cleavir-ast:name ast) ast)))
-      (let ((item-asts (loop for item in (raw items)
+      (let ((item-asts (loop with cleavir-ast:*dynamic-environment* = new-dynenv
+                             for item in (raw items)
 			     collect (if (tagp (raw item))
 					 (pop tag-asts)
 					 (convert item new-env system)))))
 	(process-progn
-	 (list (cleavir-ast:make-tagbody-ast item-asts
-					     :origin origin)
+	 (list (cleavir-ast:make-tagbody-ast item-asts new-dynenv :origin origin)
 	       (convert-constant nil env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

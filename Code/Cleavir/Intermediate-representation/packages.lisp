@@ -30,7 +30,7 @@
    #:clone-instruction #:clone-initargs
    #:no-successors-mixin
    #:one-successor-mixin
-   #:two-successors-mixin
+   #:multiple-successors-mixin
    #:side-effect-mixin #:side-effect-free-p
    #:box-instruction #:unbox-instruction
    #:allocation-mixin #:dynamic-extent-p
@@ -39,13 +39,14 @@
    #:successors #:predecessors
    #:policy #:*policy*
    #:origin #:*origin*
+   #:dynamic-environment #:*dynamic-environment*
    #:symbol-value-instruction #:make-symbol-value-instruction
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
    #:constant-fdefinition-instruction #:make-constant-fdefinition-instruction
    #:enter-instruction #:make-enter-instruction
    #:lambda-list #:closure-size
-   #:static-environment #:parameters
+   #:static-environment #:dynamic-environment-output #:parameters
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction #:make-nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction
@@ -61,7 +62,7 @@
    #:the-values-instruction #:make-the-values-instruction
    #:required-types #:optional-types #:rest-type
    #:catch-instruction #:make-catch-instruction
-   #:unwind-instruction #:make-unwind-instruction #:destination
+   #:unwind-instruction #:make-unwind-instruction #:destination #:unwind-index
    #:eq-instruction #:make-eq-instruction
    #:consp-instruction #:make-consp-instruction
    #:fixnump-instruction #:make-fixnump-instruction

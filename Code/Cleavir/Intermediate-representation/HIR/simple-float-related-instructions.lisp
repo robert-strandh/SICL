@@ -26,7 +26,7 @@
 
 (defmacro define-simple-float-comparison-instruction (name make-name)
   `(progn
-     (defclass ,name (instruction two-successors-mixin)
+     (defclass ,name (instruction multiple-successors-mixin)
        ((%subtype :initarg :subtype :reader subtype)))
      (defun ,make-name (input1 input2 successor1 successor2)
        (make-instance ',name

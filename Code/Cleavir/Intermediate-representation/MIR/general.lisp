@@ -112,7 +112,7 @@
 ;;;
 ;;; MIR instruction SIGNED-ADD-INSTRUCTION
 
-(defclass signed-add-instruction (instruction two-successors-mixin)
+(defclass signed-add-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-signed-add-instruction
@@ -133,7 +133,7 @@
 ;;;
 ;;; MIR instruction SIGNED-SUB-INSTRUCTION
 
-(defclass signed-sub-instruction (instruction two-successors-mixin)
+(defclass signed-sub-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-signed-sub-instruction
@@ -154,7 +154,7 @@
 ;;;
 ;;; MIR instruction SIGNED-LESS-INSTRUCTION
 
-(defclass signed-less-instruction (instruction two-successors-mixin)
+(defclass signed-less-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-signed-less-instruction
@@ -173,7 +173,7 @@
 ;;;
 ;;; MIR instruction SIGNED-NOT-GREATER-INSTRUCTION
 
-(defclass signed-not-greater-instruction (instruction two-successors-mixin)
+(defclass signed-not-greater-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-signed-not-greater-instruction
@@ -192,7 +192,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-ADD-INSTRUCTION
 
-(defclass unsigned-add-instruction (instruction two-successors-mixin)
+(defclass unsigned-add-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-unsigned-add-instruction
@@ -213,7 +213,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-SUB-INSTRUCTION
 
-(defclass unsigned-sub-instruction (instruction two-successors-mixin)
+(defclass unsigned-sub-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-unsigned-sub-instruction
@@ -234,7 +234,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-LESS-INSTRUCTION
 
-(defclass unsigned-less-instruction (instruction two-successors-mixin)
+(defclass unsigned-less-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-unsigned-less-instruction
@@ -253,7 +253,7 @@
 ;;;
 ;;; MIR instruction UNSIGNED-NOT-GREATER-INSTRUCTION
 
-(defclass unsigned-not-greater-instruction (instruction two-successors-mixin)
+(defclass unsigned-not-greater-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-unsigned-not-greater-instruction
@@ -272,7 +272,7 @@
 ;;;
 ;;; MIR instruction EQUAL-INSTRUCTION
 
-(defclass equal-instruction (instruction two-successors-mixin)
+(defclass equal-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-equal-instruction

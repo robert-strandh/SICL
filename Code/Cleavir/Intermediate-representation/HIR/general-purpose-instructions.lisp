@@ -23,8 +23,8 @@
 (defclass top-level-enter-instruction (enter-instruction)
   ((%forms :initarg :forms :accessor forms)))
 
-(defun make-top-level-enter-instruction (lambda-list forms &key origin)
-  (let ((enter (make-enter-instruction lambda-list :origin origin)))
+(defun make-top-level-enter-instruction (lambda-list forms dynenv &key origin)
+  (let ((enter (make-enter-instruction lambda-list dynenv :origin origin)))
     (change-class enter 'top-level-enter-instruction
 		  :forms forms)))
 
@@ -136,7 +136,7 @@
 ;;; replaced by a call to TYPEP.  When it is replaced by a call to
 ;;; TYPEP, we use the constant input as the second argument to TYPEP.
 
-(defclass typeq-instruction (instruction two-successors-mixin)
+(defclass typeq-instruction (instruction multiple-successors-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (input successors value-type)
@@ -195,14 +195,21 @@
 ;;; Instruction CATCH-INSTRUCTION.
 ;;;
 ;;; This instruction is used to mark a control point and stack frame
-;;; as an exit point. It has no inputs, one output, and two successors.
-;;; When reached normally, the instruction outputs a "continuation",
-;;; pushes it onto the (implicit) dynamic environment in whatever
-;;; client-defined way, and then proceeds to its first successor.
-;;; If the continuation is used as input to an UNWIND-INSTRUCTION,
-;;; control proceeds to the CATCH's second successor.
+;;; as an exit point. It has one input, two outputs, and one or more
+;;; successors.
 ;;;
-;;; The continuation can only be used, and cannot be used after the
+;;; When reached normally, control proceeds unconditionally to the
+;;; first successor. Additionally, the instruction takes its one input,
+;;; a dynamic environment, and outputs a dynamic environment with a
+;;; new entry added. This is the second output. The first output is
+;;; a "continuation".
+
+;;; If this continuation is used as input to an UNWIND-INSTRUCTION,
+;;; the catch-instruction's stack frame is put back into place, and
+;;; control proceeds to one of the catch-instruction's later
+;;; successors (stored in the unwind-instruction).
+;;;
+;;; The continuation can only be used once, and cannot be used after the
 ;;; function containing the CATCH has returned or been unwound from.
 ;;; In Scheme terms, it is a one-shot escape continuation.
 ;;;
@@ -213,12 +220,12 @@
 ;;; Functions returning to the BLOCK would UNWIND to the CATCH, using
 ;;; a closed-over continuation.
 
-(defclass catch-instruction (instruction two-successors-mixin)
+(defclass catch-instruction (instruction multiple-successors-mixin)
   ())
 
-(defun make-catch-instruction (output successors)
+(defun make-catch-instruction (continuation dynenv-out successors)
   (make-instance 'catch-instruction
-    :outputs (list output)
+    :outputs (list continuation dynenv-out)
     :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -231,29 +238,34 @@
 ;;; The process of unwinding may involve dynamically determined side
 ;;; effects due to UNWIND-PROTECT.
 ;;;
-;;; The instruction has one input, which is the continuation output by a
-;;; CATCH-INSTRUCTION. See its comment for details.
+;;; The instruction has two inputs: the continuation output by a
+;;; CATCH-INSTRUCTION (see its comment for details) and the dynamic
+;;; environment.
 
 (defclass unwind-instruction
     (instruction no-successors-mixin side-effect-mixin)
   (;; The destination of the UNWIND-INSTRUCTION is the
-   ;; CATCH-INSTRUCTION to which it will eventually transfer control.
+   ;; instruction to which it will eventually transfer control.
+   ;; This instruction must be the successor of a CATCH-INSTRUCTION.
    ;; It is not a normal successor because the exit is non-local.
-   (%destination :initarg :destination :accessor destination)))
+   (%destination :initarg :destination :accessor destination)
+   (%index :initarg :index :accessor unwind-index)))
 
-(defun make-unwind-instruction (input destination)
+(defun make-unwind-instruction (continuation destination index)
   (make-instance 'unwind-instruction
-    :inputs (list input)
-    :destination destination))
+    :inputs (list continuation)
+    :destination destination
+    :index index))
 
 (defmethod clone-initargs append ((instruction unwind-instruction))
-  (list :destination (destination instruction)))
+  (list :destination (destination instruction)
+        :index (unwind-index instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction EQ-INSTRUCTION.
 
-(defclass eq-instruction (instruction two-successors-mixin)
+(defclass eq-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-eq-instruction (inputs successors)
@@ -269,7 +281,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass consp-instruction (instruction two-successors-mixin)
+(defclass consp-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-consp-instruction (input successors)
@@ -285,7 +297,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass fixnump-instruction (instruction two-successors-mixin)
+(defclass fixnump-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-fixnump-instruction (input successors)
@@ -301,7 +313,7 @@
 ;;; If that is the case, then the first output is chosen.  Otherwise,
 ;;; the second output is chosen.
 
-(defclass characterp-instruction (instruction two-successors-mixin)
+(defclass characterp-instruction (instruction multiple-successors-mixin)
   ())
 
 (defun make-characterp-instruction (input successors)

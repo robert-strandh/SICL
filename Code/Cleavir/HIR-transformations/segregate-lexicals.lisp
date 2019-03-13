@@ -83,9 +83,9 @@
 (defun add-fetch (enter dloc)
   ;; Finally, add a new FETCH-INSTRUCTION after ENTER.
   (let ((env-location (cleavir-ir:static-environment enter))
-        ;; The dynamic lexical variable that holds the static
-	;; environment is the first output of the enter instruction.
 	(cleavir-ir:*policy* (cleavir-ir:policy enter))
+        (cleavir-ir:*dynamic-environment*
+          (cleavir-ir:dynamic-environment enter))
         ;; the index of the new cell in the closure will just be the
         ;; size of the existing closure vector.
         (new-index (cleavir-ir:closure-size enter)))
@@ -122,7 +122,9 @@
 (defun ensure-cell-available (function-dag cell-locations owner)
   ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
   ;; the static lexical location to be eliminated.
-  (let ((cleavir-ir:*policy* (cleavir-ir:policy owner)))
+  (let ((cleavir-ir:*policy* (cleavir-ir:policy owner))
+        (cleavir-ir:*dynamic-environment*
+          (cleavir-ir:dynamic-environment owner)))
     (cleavir-ir:insert-instruction-after
      (cleavir-ir:make-create-cell-instruction (cdr (assoc owner cell-locations)))
      owner))
@@ -175,7 +177,9 @@
 ;;; in the inputs of I by D.
 (defun replace-inputs (sloc cloc instruction)
   (let ((d (cleavir-ir:new-temporary))
-	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
+	(cleavir-ir:*policy* (cleavir-ir:policy instruction))
+        (cleavir-ir:*dynamic-environment*
+          (cleavir-ir:dynamic-environment instruction)))
     (cleavir-ir:insert-instruction-before
      (cleavir-ir:make-read-cell-instruction cloc d)
      instruction)
@@ -190,7 +194,9 @@
 ;;; the value of D in CLOC.
 (defun replace-outputs (sloc cloc instruction)
   (let ((d (cleavir-ir:new-temporary))
-	(cleavir-ir:*policy* (cleavir-ir:policy instruction)))
+	(cleavir-ir:*policy* (cleavir-ir:policy instruction))
+        (cleavir-ir:*dynamic-environment*
+          (cleavir-ir:dynamic-environment instruction)))
     (cleavir-ir:substitute-output d sloc instruction)
     ;; CATCH has two successors and one output. There are other instructions
     ;; like that, but CATCH is the only one whose output is closed over in

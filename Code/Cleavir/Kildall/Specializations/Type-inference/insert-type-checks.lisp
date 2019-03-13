@@ -126,6 +126,8 @@
 (defun make-type-error (predecessor datum expected)
   ;; FIXME: programmatic HIR could probably be made nicer.
   (let* ((cleavir-ir:*policy* (cleavir-ir:policy predecessor))
+         (cleavir-ir:*dynamic-environment*
+           (cleavir-ir:dynamic-environment predecessor))
 	 (fdef (cleavir-ir:new-temporary))
 	 (fdefinition-instruction
 	   (cleavir-ir:make-fdefinition-instruction

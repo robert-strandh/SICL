@@ -9,12 +9,17 @@
          (hash (sxhash form))
          (cached-value (gethash hash *form-cache*))
          (cleavir-generate-ast:*compiler* 'cl:eval)
+         (dynenv-ast
+           (cleavir-ast:make-dynamic-environment-ast
+            '#:loader-dynamic-environment
+            :policy (cleavir-env:environment-policy environment1)))
          ;; We just create the AST even when there is a cached value,
          ;; because there might be compile-time side effects that
          ;; occur during the AST generation.
-         (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 nil)))
+         (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 nil dynenv-ast)))
     (if (null cached-value)
-        (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value ast))
+        (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value
+                         ast dynenv-ast))
                (hir (cleavir-ast-to-hir:compile-toplevel ast-bis))
                (ignore (cleavir-hir-transformations:eliminate-typeq hir))
                (lambda-expr (translate hir environment2))
