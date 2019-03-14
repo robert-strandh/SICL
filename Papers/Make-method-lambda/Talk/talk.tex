@@ -179,9 +179,39 @@ The expansion of that form is someting like this:
 
 }
 
-\frame{
+\frame[containsverbatim]{
 \frametitle{Previous work}
+In a paper entitled ``\texttt{make-method-lambda} considered
+harmful'', Costanza and Herzeel identified a problem with
+\texttt{make-method-lambda}.
 
+Consider the following two forms in the same file to be process by
+\texttt{compile-file}:
+
+{\footnotesize
+\begin{verbatim}
+(defgeneric foo (...)...)
+
+(defmethod foo (...)...)
+\end{verbatim}
+
+}
+
+}
+
+\frame{
+  \frametitle{From the \commonlisp{} standard about \texttt{defgeneric}}
+  
+``\texttt{defgeneric} is not required to perform any compile-time side
+effects. ... An implementation may choose to store information about
+the generic function for the purposes of compile-time error-checking
+(such as checking the number of arguments on calls, or noting that a
+definition for the function name has been seen).''
+\vskip 0.5cm
+
+In other words, the generic function is not necessarily created at
+compile time, and it can be argued that it \emph{should not} be
+created then.
 
 }
 
