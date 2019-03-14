@@ -111,21 +111,40 @@ Several objectives:
 \end{itemize}
 }
 
+\frame[containsverbatim]{
+\frametitle{The role of \texttt{make-method-lambda}}
+
+Let's say we have a \texttt{defmethod} form like this:
+
+{\footnotesize
+\begin{verbatim}
+(defmethod ff ((x integer))
+  (1+ x))
+\end{verbatim}
+}
+
+The expansion of that form is someting like this:
+
+{\footnotesize
+\begin{verbatim}
+(let ((#:g001 (ensure-generic-function 'ff)))
+  (add-method #:g001
+    (make-instance (generic-function-method-class #:g001)
+      :qualifiers '()
+      :specializers (list (find-class 'integer))
+      :lambda-list '(x)
+      :function (lambda (arguments next-methods)
+                  (flet ((next-method-p ...)
+                         (call-next-method ...))
+                    (appply (lambda (x) (1+ x)) arguments))))))
+\end{verbatim}
+}
+}
+
 
 \frame{
 \frametitle{Previous work}
 
-
-}
-
-\frame[containsverbatim]{
-\frametitle{Definition of the class \texttt{t}}
-
-\begin{verbatim}
-(defclass t ()
-  ()
-  (:metaclass built-in-class))
-\end{verbatim}
 
 }
 
