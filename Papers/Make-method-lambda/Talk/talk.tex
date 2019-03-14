@@ -143,6 +143,43 @@ The expansion of that form is someting like this:
 
 
 \frame{
+  \frametitle{Specification of \texttt{make-method-lambda}}
+
+  SYNTAX\\
+  \texttt{make-method-lambda}\\
+  \quad{} {\footnotesize
+    \textit{generic-function} \textit{method}
+    \textit{lambda-expression} \textit{environment}
+  }
+
+  ARGUMENTS\\
+  {\footnotesize
+  The \textit{generic-function} argument is a generic function
+  metaobject.\\
+  The \textit{method} argument is a (possibly uninitialized) method
+  metaobject.\\
+  The \textit{lambda-expression} argument is a lambda expression.\\
+  The \textit{environment} argument is the same as the
+  \textbf{\&envrionment} argument to macro expasion functions.}
+
+  VALUES\\
+  {\footnotesize
+  This generic function returns two values.  The first is a lambda
+  expression, the second is a list of initialization arguments and
+  values.}
+
+  PURPOSE\\
+  {\footnotesize
+  This generic function is called to produce a lambda expression which
+  can itself be used to produce a method function for a method and a
+  generic function with the specified classes.  The generic function
+  and method the method function will be used with are not required to
+  be the given ones.  Moreover, the method metaobject may be
+  uninitialized.   ...}
+
+}
+
+\frame{
 \frametitle{Previous work}
 
 
