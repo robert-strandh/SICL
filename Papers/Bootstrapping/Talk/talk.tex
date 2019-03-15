@@ -134,6 +134,27 @@ According to Rhodes (SBCL: A Sanely-Bootstrappable Common Lisp):
 }
 
 \frame{
+\frametitle{How \commonlisp{} systems are built}
+
+Of the systems mainly written in \commonlisp{} there are two ways of
+making them evolve:
+
+\begin{enumerate}
+\item Image-based techniques, i.e., the system evolves by careful
+  evolution of an in-memory image, that is then saved to secondary
+  memory to become a new executable.
+\item The system is built from a set of source files, using an
+  existing \commonlisp{} implementation to create an executable for
+  the new system.
+\end{enumerate}
+
+Again, according to Rhodes, only SBCL uses the second technique,
+though CCL is also built from source, even though at the moment, only
+an old CCL version can be used for the bootstrapping process.
+
+}
+
+\frame{
 \frametitle{Previous work}
 
 
