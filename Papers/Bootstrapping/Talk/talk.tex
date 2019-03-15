@@ -155,6 +155,36 @@ an old CCL version can be used for the bootstrapping process.
 }
 
 \frame{
+\frametitle{Complications with building Common Lisp systems}
+
+Question: Is the build process for creating a \commonlisp{} system
+intrinsically harder than the build process for creating a mere
+file-translating compiler, even for a language as complex as
+\commonlisp{}, and if so, why?
+
+}
+
+\frame{
+\frametitle{Complications with building Common Lisp systems}
+
+Possible answer: We think that it is, and we think that it is due to
+the fact that:
+
+\begin{itemize}
+\item a file translating compiler contains essentially only code, and
+  code is generated from source statements and expressions as the
+  implementation language makes available, whereas
+\item a \commonlisp{} system also contains complex data structures,
+  and these data structures are best created programmatically.
+\end{itemize}
+
+Imagine, for instance, writing the C source statements that will
+generate a single generic function with its methods, effective method
+functions, etc.
+
+}
+
+\frame{
 \frametitle{Previous work}
 
 
