@@ -203,6 +203,97 @@ structures:
   is isomorphic to the one in the target system, then save that graph
   to a file.  This is the strategy used by SICL.
 \end{enumerate}
+}
+
+\frame[containsverbatim]{
+\frametitle{Main objective of SICL}
+
+We want the code to look ``natural''.  For example:
+
+\begin{verbatim}
+(defclass class (specializer)
+  ((%name :initform nil :initarg :name ...)
+   ...
+   (%direct-subclasses :initform '() ...)))
+\end{verbatim}
+
+\begin{verbatim}
+(defclass standard-class (class)
+  (...))
+\end{verbatim}
+
+
+}
+
+\frame[containsverbatim]{
+\frametitle{Main objective of SICL}
+
+This is how the same information is expressed in ECL:
+
+\begin{verbatim}
+(defparameter +class-slots+
+  `(,@+specializer-slots+
+    (name :initarg :name :initform nil ...)
+    ...
+    (direct-subclasses :initform nil ...)
+    ...))
+\end{verbatim}
+
+\begin{verbatim}
+(defparameter +standard-class-slots+
+  (append +class-slots+
+          '((optimize-slot-access)
+            (forward))))
+\end{verbatim}
+
+}
+
+\frame[containsverbatim]{
+\frametitle{Main objective of SICL}
+
+In SICL, we take advantage of the CLOS machinery for defining system
+classes as well as standard classes:
+
+\begin{verbatim}
+(defclass symbol (t)
+  ((%name :reader symbol-name)
+   (%package :reader symbol-package))
+  (:metaclass built-in-class))
+\end{verbatim}
+
+}
+
+\frame[containsverbatim]{
+\frametitle{Main objective of SICL}
+
+This is how the same information is expressed in SBCL:
+
+\begin{verbatim}
+(define-primitive-object
+    (symbol :lowtag other-pointer-lowtag
+            :widetag symbol-header-widetag
+            :alloc-trans %make-symbol
+            :type symbol)
+  ...
+  (name :ref-trans symbol-name :init :arg)
+  (package :ref-trans symbol-package
+           :set-trans %set-symbol-package
+           :init :null)
+  ...)
+\end{verbatim}
+
+}
+
+\frame[containsverbatim]{
+\frametitle{Main objective of SICL}
+
+In fact, we can even write this definition in SICL:
+
+\begin{verbatim}
+(defclass t ()
+  ()
+  (:metaclass built-in-class))
+\end{verbatim}
 
 
 }
