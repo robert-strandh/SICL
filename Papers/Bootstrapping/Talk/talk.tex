@@ -196,10 +196,12 @@ structures:
 \item Create them in an executing subset \commonlisp{} system, and
   then save the memory image to a file.  This strategy is used by the
   image-based implementations, but also by SBCL.
-\item Create a mirror of the final executable as an octet vector in
-  the memory of a host \commonlisp{} system.  This strategy is used by
-  SBCL to create an initial ``core'' image.  It is also the strategy
-  used by SICL.
+\item In a host \commonlisp{} system, create an octet vector that
+  holds a mirror of the contents of the target system.  This strategy
+  is used by SBCL to create an initial ``core'' image.
+\item In a host \commonlisp{} system, create a graph of objects that
+  is isomorphic to the one in the target system, then save that graph
+  to a file.  This is the strategy used by SICL.
 \end{enumerate}
 
 
