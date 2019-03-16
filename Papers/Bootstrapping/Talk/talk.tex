@@ -185,6 +185,27 @@ functions, etc.
 }
 
 \frame{
+\frametitle{Strategies for creating the data structures}
+
+There are several possible strategies for creating these data
+structures:
+
+\begin{enumerate}
+\item Create them when the system starts.  This strategy is used by
+  ECL and Clasp.
+\item Create them in an executing subset \commonlisp{} system, and
+  then save the memory image to a file.  This strategy is used by the
+  image-based implementations, but also by SBCL.
+\item Create a mirror of the final executable as an octet vector in
+  the memory of a host \commonlisp{} system.  This strategy is used by
+  SBCL to create an initial ``core'' image.  It is also the strategy
+  used by SICL.
+\end{enumerate}
+
+
+}
+
+\frame{
 \frametitle{Previous work}
 
 
