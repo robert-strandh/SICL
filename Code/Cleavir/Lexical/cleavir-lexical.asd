@@ -5,4 +5,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "environment")))
+   (:file "environment")
+   (:file "query-functions")
+   (:file "query-methods")))
