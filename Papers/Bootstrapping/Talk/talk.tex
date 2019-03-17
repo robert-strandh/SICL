@@ -206,7 +206,7 @@ structures:
 }
 
 \frame[containsverbatim]{
-\frametitle{Main objective of SICL}
+\frametitle{Objectives of SICL}
 
 We want the code to look ``natural''.  For example:
 
@@ -226,7 +226,7 @@ We want the code to look ``natural''.  For example:
 }
 
 \frame[containsverbatim]{
-\frametitle{Main objective of SICL}
+\frametitle{Objectives of SICL}
 
 This is how the same information is expressed in ECL:
 
@@ -249,7 +249,7 @@ This is how the same information is expressed in ECL:
 }
 
 \frame[containsverbatim]{
-\frametitle{Main objective of SICL}
+\frametitle{Objectives of SICL}
 
 In SICL, we take advantage of the CLOS machinery for defining system
 classes as well as standard classes:
@@ -264,7 +264,7 @@ classes as well as standard classes:
 }
 
 \frame[containsverbatim]{
-\frametitle{Main objective of SICL}
+\frametitle{Objectives of SICL}
 
 This is how the same information is expressed in SBCL:
 
@@ -285,7 +285,7 @@ This is how the same information is expressed in SBCL:
 }
 
 \frame[containsverbatim]{
-\frametitle{Main objective of SICL}
+\frametitle{Objectives of SICL}
 
 In fact, we can even write this definition in SICL:
 
@@ -294,6 +294,23 @@ In fact, we can even write this definition in SICL:
   ()
   (:metaclass built-in-class))
 \end{verbatim}
+
+
+}
+
+\frame{
+  \frametitle{SICL object representation}
+
+  SICL has the following three ways of representing objects:
+
+  \begin{enumerate}
+  \item Immediate objects stored in the pointer itself, appropriately
+    tagged, like fixnums and characters.
+  \item CONS cells represented as a pair of words.
+  \item All other objects represented as a two-word \emph{header}
+    containing a pointer to the class, and a pointer to the
+    \emph{rack} which has some number of consecutive words.
+  \end{enumerate}
 
 
 }
