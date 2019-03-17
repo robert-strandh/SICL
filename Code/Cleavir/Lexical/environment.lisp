@@ -1,4 +1,4 @@
 (cl:in-package #:cleavir-lexical)
 
-(defclass envirnment (trucler-reference:environment)
+(defclass environment (trucler-reference:environment)
   ())
