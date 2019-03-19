@@ -247,6 +247,7 @@ Let's see what SBCL does and let's complilcate the example a bit:
 \end{verbatim}
 }
 
+{\footnotesize
 \begin{verbatim}
 CL-USER> (trace sb-mop:make-method-lambda)
 (SB-MOP:MAKE-METHOD-LAMBDA)
@@ -262,9 +263,17 @@ CL-USER> (compile-file "foo.lisp")
    #<NULL-LEXENV>)
 ...
 \end{verbatim}
+}
+}
 
+\frame[containsverbatim]{
+\frametitle{Previous work}
+So if there are custom methods on \texttt{make-method-lambda}
+specialized to the classes \texttt{bar} and/or \texttt{baz}, they will
+not be called in this scenario.
 
 }
+
 \frame{
 \frametitle{Future work}
 
