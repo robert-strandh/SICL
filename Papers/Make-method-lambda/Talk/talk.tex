@@ -233,6 +233,38 @@ then what arguments does \texttt{defmethod} pass to
 
 }
 
+\frame[containsverbatim]{
+\frametitle{Previous work}
+Let's see what SBCL does and let's complilcate the example a bit:
+
+{\footnotesize
+\begin{verbatim}
+(defgeneric foo (x)
+  (:generic-function-class bar)
+  (:method-class baz))
+
+(defmethod foo (x) (1+ x))
+\end{verbatim}
+}
+
+\begin{verbatim}
+CL-USER> (trace sb-mop:make-method-lambda)
+(SB-MOP:MAKE-METHOD-LAMBDA)
+CL-USER> (compile-file "foo.lisp")
+
+; compiling file "foo.lisp" ...
+; compiling (DEFGENERIC FOO ...)
+; compiling (DEFMETHOD FOO ...)
+0: (SB-MOP:MAKE-METHOD-LAMBDA
+   #<STANDARD-GENERIC-FUNCTION {10006CAAEB}>
+   #<STANDARD-METHOD {10006C5233}>
+   (LAMBDA (X) (1+ X))
+   #<NULL-LEXENV>)
+...
+\end{verbatim}
+
+
+}
 \frame{
 \frametitle{Future work}
 
