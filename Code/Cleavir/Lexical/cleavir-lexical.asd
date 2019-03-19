@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "environment")
    (:file "query-functions")
-   (:file "query-methods")))
+   (:file "query-methods")
+   (:file "optimize-qualities")))
