@@ -194,7 +194,6 @@ Consider the following two forms in the same file to be process by
 
 (defmethod foo (...)...)
 \end{verbatim}
-
 }
 
 }
@@ -212,6 +211,25 @@ definition for the function name has been seen).''
 In other words, the generic function is not necessarily created at
 compile time, and it can be argued that it \emph{should not} be
 created then.
+
+}
+
+\frame[containsverbatim]{
+\frametitle{Previous work}
+Consider again the following two forms in the same file to be process by
+\texttt{compile-file}:
+
+{\footnotesize
+\begin{verbatim}
+(defgeneric foo (...)...)
+
+(defmethod foo (...)...)
+\end{verbatim}
+}
+
+If the generic function is not created in the compilation environment,
+then what arguments does \texttt{defmethod} pass to
+\texttt{make-method-lambda}?
 
 }
 
