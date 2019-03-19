@@ -1,5 +1,4 @@
 \documentclass[format=sigconf]{acmart}
-%\documentclass{sig-alternate-05-2015}
 \usepackage[utf8]{inputenc}
 
 \def\inputfig#1{\input #1}
@@ -11,12 +10,13 @@
 \inputtex{refmacros.tex}
 \inputtex{other-macros.tex}
 
-\acmConference[ELS'19]{the 12th European Lisp Symposium}{April 1--2 2019}{%
-  Genoa, Italy}
+\acmConference[ELS'19]{the 12th European Lisp Symposium}{April 01--02 2019}{%
+  Genova, Italy}
 \acmISBN{978-2-9557474-3-8}
 \acmDOI{}
-
+%% \startPage{}
 \setcopyright{rightsretained}
+\copyrightyear{2019}
 
 \begin{document}
 \title{Bootstrapping \commonlisp{} using \commonlisp{}}
@@ -92,6 +92,7 @@ and improving maintainability of the system.
 \inputtex{sec-conclusions.tex}
 \inputtex{sec-acknowledgments.tex}
 
-\bibliographystyle{abbrv}
+\bibliographystyle{plainnat}
+%\bibliographystyle{abbrv}
 \bibliography{bootstrapping}
 \end{document}
