@@ -168,14 +168,15 @@ file-translating compiler, even for a language as complex as
 \frametitle{Complications with building Common Lisp systems}
 
 Possible answer: We think that it is, and we think that it is due to
-the fact that:
+the following difference between the two:
 
 \begin{itemize}
-\item a file translating compiler contains essentially only code, and
-  code is generated from source statements and expressions as the
-  implementation language makes available, whereas
-\item a \commonlisp{} system also contains complex data structures,
-  and these data structures are best created programmatically.
+\item A file-translating compiler contains essentially only code.
+  That code translates statements and expressions of a source language
+  to object code in assembler or machine language.
+\item A \commonlisp{} system, on the other hand, contains not only
+  code, but also complex data structures.  The most practical way of
+  creating those data structures is by executing some code.
 \end{itemize}
 
 Imagine, for instance, writing the C source statements that will
