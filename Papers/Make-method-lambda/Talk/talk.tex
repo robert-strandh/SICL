@@ -275,6 +275,28 @@ not be called in this scenario.
 }
 
 \frame{
+\frametitle{Our technique}
+
+Three parts:
+\begin{enumerate}
+\item When the compiler sees a \texttt{defgeneric} form, have it
+  store:
+  \begin{enumerate}
+  \item the name of the generic-function class, and
+  \item the name of the method class
+  \end{enumerate}
+  In the compilation environment, associated with the name of the
+  generic function.
+\item When the compiler sees a \texttt{defmethod} form, make it
+  retrieve this information from the function information associated
+  with the name.
+\item Make the compiler retrieve the \emph{class prototypes} of the
+  two classes and pass them to \texttt{make-method-lambda}.
+\end{enumerate}
+
+}
+
+\frame{
 \frametitle{Future work}
 
 
