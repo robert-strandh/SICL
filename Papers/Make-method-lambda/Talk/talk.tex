@@ -296,6 +296,26 @@ Three parts:
 
 }
 
+\frame[containsverbatim]{\frametitle{Problematic case}
+
+Consider again the following forms in a single file to be processed by
+the file compiler:
+\begin{verbatim}
+(defgeneric foo (x)
+  (:generic-function-class bar)
+  (:method-class baz))
+
+(defmethod foo (x) (1+ x))
+\end{verbatim}
+
+It is possible that that there are custom methods on initialization
+functions that alter the method class, so that it is no longer
+\texttt{baz}, perhaps by adding a mixin class.
+
+According to Pascal Costanza, this case is fairly common.
+
+}
+
 \frame{
 \frametitle{Future work}
 
