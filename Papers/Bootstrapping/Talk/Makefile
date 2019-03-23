@@ -16,6 +16,13 @@ $(NAME).pdf: $(TEXFILES) $(PSTEX_T) $(EPS) $(CODE) $(VERBATIM) Makefile
 	$(LATEX) $(NAME).tex
 	$(LATEX) $<
 
+%.pdf: %.fig
+	fig2dev -Lpdftex -m 0.75  $< $@
+
+%.pdf_t: %.fig %.pdf
+	fig2dev -Lpdftex_t -m 0.75 -p $(basename $<).pdf $< $@
+
+
 %.pstex_t: %.fig %.pstex
 	fig2dev -Lpstex_t -m 0.75 -p $(basename $<).pstex $< $@
 
