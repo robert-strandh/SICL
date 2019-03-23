@@ -322,6 +322,28 @@ In fact, we can even write this definition in SICL:
 }
 
 \frame{
+  \frametitle{First-class global environments}
+
+In \sicl{}, the global environment is a first-class object,
+containing the following mappings:
+
+\begin{itemize}
+\item From names to variables, including information
+  about type, global value, etc.
+\item From names to functions, including information about
+  type, compiler macros, inline information, etc.
+\item From names to classes.
+\item From names to \texttt{setf} expanders.
+\item From names to type expanders.
+\item From names to method combinations.
+\item etc.
+\end{itemize}
+
+Having environments be first-class objects, allows us to have several
+simultaneous instance.
+}
+
+\frame{
 \frametitle{Previous work}
 
 
