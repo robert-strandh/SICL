@@ -356,6 +356,25 @@ system without impacting the global environment of that system.
 }
 
 \frame{
+  \frametitle{Cleavir compilation phases}
+
+The Cleavir compiler works as follows:
+
+\begin{enumerate}
+\item It takes \commonlisp{} source code and a first-class global
+  environment and translates the source code to an \emph{abstract
+    syntax tree} (AST).
+\item The abstract syntax tree is translated to a \emph{high-level
+  intermediate representation} (HIR), which resembles a traditional
+  instruction graph, except that only \commonlisp{} objects are
+  manipulated.
+\item HIR is translated to implementation-specific backend code.
+\end{enumerate}
+
+
+}
+
+\frame{
 \frametitle{Previous work}
 
 
