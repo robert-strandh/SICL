@@ -386,6 +386,39 @@ The Cleavir compiler works as follows:
 }
 
 
+\frame[containsverbatim]{
+\frametitle{Executing \sicl{} code in the host}
+
+Suppose we have some code with a call to a global function
+\texttt{foo} like this:
+
+\begin{verbatim}
+...
+(foo <arg1> ...)
+\end{verbatim}
+
+We translate that code to AST and then to HIR.
+\vskip 0.5cm
+The HIR code then represents something like this:
+
+\begin{verbatim}
+(lambda (env)
+  (let ((#:G001 (sicl-genv:function-cell env 'foo)))
+    ...
+    (funcall (car #:G001) <arg1> ...)
+\end{verbatim}
+}
+
+\frame[containsverbatim]{
+\frametitle{Executing \sicl{} code in the host}
+
+So, we can translate the HIR code to a small subset of \commonlisp{}.
+\vskip 0.5cm
+This code is then \emph{tied} to a particular first-class global
+environment $E$ by calling it with $E$ as an argument.
+}
+
+
 \frame{
 \frametitle{Previous work}
 
