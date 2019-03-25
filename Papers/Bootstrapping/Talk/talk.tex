@@ -185,6 +185,27 @@ functions, etc.
 
 }
 
+\frame[containsverbatim]{
+    \frametitle{Defining a generic function statically}
+
+\begin{verbatim}
+struct string class_slots_name =
+{
+  ADD_HEAP_TAG(&string_class)),
+  FIXNUM_BOX(11),
+  ...
+};
+
+struct generic_function class_slots_function =
+{
+  ADD_HEAP_TAG(&generic_function_class),
+  ...
+  ADD_HEAP_TAG(&class-slots-name),
+ ...
+};
+\end{verbatim}
+}
+
 \frame{
 \frametitle{Strategies for creating the data structures}
 
