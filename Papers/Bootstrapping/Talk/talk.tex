@@ -739,19 +739,52 @@ environment $E$ by calling it with $E$ as an argument.
 }
 
 \frame{
-\frametitle{Previous work}
+\frametitle{Living with circularity}
 
+Appendix C of AMOP mentions two categories of circularity issues:
+
+\begin{enumerate}
+\item Bootstrapping issues.
+\item Metastability issues.
+\end{enumerate}
 
 }
 
-\frame[containsverbatim]{
-\frametitle{Definition of the class \texttt{t}}
+\frame{
+\frametitle{Bootstrapping issues}
 
-\begin{verbatim}
-(defclass t ()
-  ()
-  (:metaclass built-in-class))
-\end{verbatim}
+Two issues are mentioned:
+
+\begin{enumerate}
+\item \texttt{standard-class} must exist before any metaobject can be
+  created (including \texttt{standard-class}.
+\item Classes are needed to create generic functions, and
+  generic-functions are needed to create classes.
+\end{enumerate}
+
+With our technique, these problems disappear.
+
+}
+\frame{
+\frametitle{Metastability issues}
+
+Two issues are mentioned:
+
+\begin{enumerate}
+\item \texttt{slot-value} needs to call \texttt{slot-value} of the
+  class, to retrieve a list of slots.
+\item \texttt{compute-discriminating-function} can not be used to
+  compute a discriminating function of
+  \texttt{compute-discriminating-function}. 
+\end{enumerate}
+
+We do not have the first problem, because slot accessors do not call
+\texttt{slot-value}.  They access the slot directly using
+\texttt{standard-instance-access}.
+\vskip 0.5cm
+We do not have the second problem, because the call cache of
+\texttt{compute-discriminating-function} is loaded during
+bootstrapping, and works for standard classes.
 
 }
 
