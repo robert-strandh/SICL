@@ -51,7 +51,7 @@ which the ultimate definition (called the \emph{discriminating
 \emph{methods}) associated with it.  We exploit this fact by providing
 different representations of generic functions in different phases of
 the bootstrapping procedure, and by supplying different versions of
-\texttt{compute-discriminating-function}
+\texttt{compute\--discriminating\--function}
 adapted to each phase.
 Thus,
 a \emph{generic function} is not a generic function in the sense of
@@ -228,15 +228,15 @@ Simplified diagram of MOP classes.}
 The essence of our technique consists of four phases ($1$ to $4$),
 using six first-class global environments.  An initial phase $0$
 imports host classes to environment $E_0$.  Only classes that are
-required in phase $1$ are imported.  Classes {\small\texttt{standard-method},
-\texttt{standard-generic-function}}, and the class used to represent
+required in phase $1$ are imported.  Classes \texttt{standard\--method},
+\texttt{standard\--generic\--function}, and the class used to represent
 slots
-{\small \texttt{standard-direct-slot-definition}} are imported with the
-same.  Classes {\small\texttt{standard-class}, \texttt{built-in-class}}, and
-{\small\texttt{funcallable-standard-class}} in environment $E_0$ all
+\texttt{standard\--direct\--slot\--definition} are imported with the
+same.  Classes \texttt{standard\--class}, \texttt{built\--in\--class}, and
+\texttt{funcallable\--standard\--class} in environment $E_0$ all
 refer to one and the same host class, namely a subclass of the host
 class
-{\small\texttt{funcallable-standard-class}}.
+\texttt{funcallable\--standard\--class}.
 
 In each phase $i > 0$,
 three first-class global environments are involved, $E_{i-1}$,
