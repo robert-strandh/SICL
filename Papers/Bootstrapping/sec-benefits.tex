@@ -42,7 +42,6 @@ then calls \texttt{slot-location} which in turn recursively calls
 metaobjects of the class.  The authors propose to solve this problem
 by arranging for the function \texttt{slot-location} to check for the
 special argument
-
 \texttt{effective-slots} and return a predefined
 location.  Our technique does not need this kind of special case,
 because the function \texttt{class-slots} does not call
@@ -58,17 +57,13 @@ been added or removed from it.  Again they solve the issue by a
 special case whereby a test is made to see whether the argument is a
 standard generic function (i.e. an instance of
 \texttt{standard-generic-function}) and if so, a special version of
-
 \texttt{compute-discriminating-function} which is not a generic
 function is called instead.  With our technique, every generic
 function, \texttt{compute-discriminating-function} included, has a 
-
 \emph{call cache} that includes an effective method that is able to
 handle arguments that are direct instances of
-
 \texttt{standard-generic-function}.  That call cache entry is not
 invalidated when
-
 \texttt{compute-discriminating-function} has new
 methods added to it, at least not when the
 methods added respect the restrictions of the metaobject protocol,
