@@ -141,7 +141,7 @@ making them evolve:
 
 \begin{enumerate}
 \item Image-based techniques, i.e., the system evolves by careful
-  evolution of an in-memory image, that is then saved to secondary
+  modifications to an in-memory image, that is then saved to secondary
   memory to become a new executable.
 \item The system is built from a set of source files, using an
   existing \commonlisp{} implementation to create an executable for
@@ -815,6 +815,14 @@ bootstrapping, and works for standard classes.
 \frame{
 \frametitle{Future work}
 
+\begin{itemize}
+\item Provide a code generator that produces native code.
+\item Produce a native object graph from the representation in the
+  host.  Special attention is needed for objects represented as host
+  objects, such as symbols.
+\item Write code for the interface to the operating system, such as
+  code for input/output, memory allocation, etc.
+\end{itemize}
 
 }
 
