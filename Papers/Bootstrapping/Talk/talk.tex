@@ -328,7 +328,7 @@ In fact, we can even write this definition in SICL:
   \begin{enumerate}
   \item Immediate objects stored in the pointer itself, appropriately
     tagged, like fixnums and characters.
-  \item CONS cells represented as a pair of words.
+  \item \texttt{cons} cells represented as a pair of words.
   \item All other objects represented as a two-word \emph{header}
     containing a pointer to the class, and a pointer to the
     \emph{rack} which has some number of consecutive words.
@@ -352,7 +352,7 @@ containing the following mappings:
 \item From names to variables, including information
   about type, global value, etc.
 \item From names to functions, including information about
-  type, compiler macros, inline information, etc.
+  type, compiler macro, inlining, etc.
 \item From names to classes.
 \item From names to \texttt{setf} expanders.
 \item From names to type expanders.
@@ -438,7 +438,7 @@ The HIR code then represents something like this:
 
 So, we can translate the HIR code to a small subset of \commonlisp{}.
 \vskip 0.5cm
-This code is then \emph{tied} to a particular first-class global
+The resulting code is then \emph{tied} to a particular first-class global
 environment $E$ by calling it with $E$ as an argument.
 }
 
@@ -808,7 +808,7 @@ We do not have the first problem, because slot accessors do not call
 \vskip 0.5cm
 We do not have the second problem, because the call cache of
 \texttt{compute-discriminating-function} is loaded during
-bootstrapping, and works for standard classes.
+bootstrapping, and works for specified classes.
 
 }
 
