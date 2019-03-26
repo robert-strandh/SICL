@@ -279,7 +279,7 @@ classes as well as standard classes:
 \begin{verbatim}
 (defclass symbol (t)
   ((%name :reader symbol-name)
-   (%package :reader symbol-package))
+   (%package :reader symbol-package :writer ...))
   (:metaclass built-in-class))
 \end{verbatim}
 
