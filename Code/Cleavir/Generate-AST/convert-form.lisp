@@ -275,15 +275,22 @@ This function should not require an environment or system, but it unfortunately 
 		 if arg-asts
 		   collect (cleavir-ast:make-setq-ast
 			    (second parameter)
-			    (first arg-asts))
+                            (convert t env system))
 		   and collect (cleavir-ast:make-setq-ast
 				(first parameter)
-				(second parameter))
+				(first arg-asts))
 		   and do (setf arg-asts (rest arg-asts))
 	         else
 		   collect (cleavir-ast:make-setq-ast
 			    (second parameter)
 			    (convert nil env system))
+          ;; This (first parameter) will be dynamically unused,
+          ;; but without this setq there would be no definition
+          ;; dominating all its uses due to the body code that
+          ;; initializes the variable.
+                   and collect (cleavir-ast:make-setq-ast
+                                (first parameter)
+                                (second parameter))
 	  else when (eq state '&rest)
 		 collect (cleavir-ast:make-setq-ast
 			  parameter (make-list-call arg-asts))
