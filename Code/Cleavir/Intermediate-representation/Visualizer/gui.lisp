@@ -93,7 +93,7 @@
                             :line-thickness (if highlight-p 2 1)
                             :filled nil)
       (clim:draw-text* pane
-                       (node-label node)
+                       (string (node-label node))
                        hpos vpos
                        :ink (if highlight-p clim:+blue+ clim:+black+)
                        :align-x :center :align-y :center))))
