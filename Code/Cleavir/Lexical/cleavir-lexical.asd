@@ -8,4 +8,5 @@
    (:file "environment")
    (:file "query-functions")
    (:file "query-methods")
-   (:file "optimize-qualities")))
+   (:file "optimize-qualities")
+   (:file "type-information")))
