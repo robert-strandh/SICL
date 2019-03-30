@@ -13,7 +13,7 @@
 ;;; specifier is obtained.  In this respect TYPE-EXPAND is like
 ;;; MACROEXPAND and unlike MACROEXPAND-1 or MACROEXPAND-ALL.
 
-(defgeneric type-expand (environment type-specifier))
+(defgeneric type-expand (client environment type-specifier))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
