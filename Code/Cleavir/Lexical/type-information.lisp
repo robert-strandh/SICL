@@ -25,7 +25,7 @@
 ;;; NIL.)
 ;;; Used during type inference.
 
-(defgeneric has-extended-char-p (environment))
+(defgeneric has-extended-char-p (client))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
