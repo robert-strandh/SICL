@@ -4,10 +4,14 @@
 ;;;
 ;;; Function TYPE-EXPAND.
 ;;;
-;;; Performs type macroexpansion (macros being defined by DEFTYPE)
-;;; in the given environment. Only top-level, but should expand
-;;; repeatedly. That is to say, this is macroexpand, not
-;;; macroexpand-1 or macroexpand-all.
+;;; This function performs type macroexpansion (type macros being
+;;; defined by DEFTYPE) in the given environment.  It expands only
+;;; top-level type specifiers, i.e., it does not traverse nested type
+;;; specifiers that are arguments to a top-level type specifier such
+;;; as AND or ARRAY (for the element type).  However, it repeatedly
+;;; expands the top-level type specifier until a built-in type
+;;; specifier is obtained.  In this respect TYPE-EXPAND is like
+;;; MACROEXPAND and unlike MACROEXPAND-1 or MACROEXPAND-ALL.
 
 (defgeneric type-expand (environment type-specifier))
 
