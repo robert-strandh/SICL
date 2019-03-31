@@ -19,11 +19,11 @@
 ;;;
 ;;; Function HAS-EXTENDED-CHAR-P.
 ;;;
-;;; Returns a boolean indicating whether the implementation has a
-;;; non-empty EXTENDED-CHAR type. (An implementation may decide to
-;;; have all characters be BASE-CHARs, in which case this returns
-;;; NIL.)
-;;; Used during type inference.
+;;; This function returns a Boolean value, indicating whether the
+;;; implementation has a non-empty EXTENDED-CHAR type.  Recall that an
+;;; implementation may decide to have all characters be BASE-CHARs, in
+;;; which case this function returns NIL.  This function is called
+;;; during type inference.
 
 (defgeneric has-extended-char-p (client))
 
