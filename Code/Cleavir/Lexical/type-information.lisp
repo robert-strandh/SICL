@@ -40,7 +40,7 @@
 ;;; (SINGLE-FLOAT DOUBLE-FLOAT LONG-FLOAT).  This function is called
 ;;; during type inference.
 
-(defgeneric float-types (environment))
+(defgeneric float-types (client))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
