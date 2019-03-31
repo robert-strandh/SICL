@@ -31,13 +31,14 @@
 ;;;
 ;;; Function FLOAT-TYPES.
 ;;;
-;;; Returns a list of floating point types available in the
-;;; implementation, that is, a list with SHORT-FLOAT, SINGLE-FLOAT,
-;;; DOUBLE-FLOAT, and LONG-FLOAT zero or one times each. If two of
-;;; the types are the same, only one should be returned.
-;;; For example, in an implementation where (subtypep short single)
-;;; this might return (SINGLE-FLOAT DOUBLE-FLOAT LONG-FLOAT).
-;;; Used during type inference.
+;;; This function returns a list of floating point types available in
+;;; the implementation, that is, a list with SHORT-FLOAT,
+;;; SINGLE-FLOAT, DOUBLE-FLOAT, and LONG-FLOAT zero or one times each.
+;;; If two of the types are the same, only one should be returned.
+;;; For example, in an implementation where (SUBTYPEP 'SHORT-FLOAT
+;;; 'SINGLE-FLOAT) returns True, this function might return
+;;; (SINGLE-FLOAT DOUBLE-FLOAT LONG-FLOAT).  This function is called
+;;; during type inference.
 
 (defgeneric float-types (environment))
 
