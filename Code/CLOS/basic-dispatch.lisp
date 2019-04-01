@@ -10,7 +10,7 @@
 ;;;; adds something similar to Portable Common Loops later.  It
 ;;;; contains CLOS from the beginning.
 ;;;;
-;;;; The reason for the existence if this basic implementation of
+;;;; The reason for the existence of this basic implementation of
 ;;;; generic function dispatch is that, any of the more fancy
 ;;;; implementations of it requires the native compiler to be present.
 ;;;; But an initial image with the compiler present is not what we
