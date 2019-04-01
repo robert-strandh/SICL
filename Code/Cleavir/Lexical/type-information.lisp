@@ -50,7 +50,7 @@
 ;;; the implementation, e.g. (SINGLE-FLOAT DOUBLE-FLOAT REAL)
 ;;; Used during type inference.
 
-(defgeneric upgraded-complex-part-types (environment))
+(defgeneric upgraded-complex-part-types (client))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
