@@ -19,13 +19,13 @@
 ;;;; This implementation is useful for other purposes as well.  It can
 ;;;; be used as a basic implementation for testing more fancy
 ;;;; implementations.  It could also be used for deployment of
-;;;; applications for which it is undesireable to have the compiler present. 
+;;;; applications for which it is undesireable to have the compiler present.
 ;;;;
 ;;;; Our implementation is similar to that of Chapter 1 of the Art of
 ;;;; the Metaobject Protocol.  It differs in many places, because we
 ;;;; want to avoid using fancy functionality that might not exist in
 ;;;; the early stages of bootstrapping, or functionality that might
-;;;; introduce metastability problems. 
+;;;; introduce metastability problems.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
