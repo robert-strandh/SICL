@@ -60,4 +60,4 @@
 ;;; implementation, e.g. the minimum is (BIT BASE-CHAR CHARACTER T)
 ;;; Used during type inference.
 
-(defgeneric upgraded-array-element-types (environment))
+(defgeneric upgraded-array-element-types (client))
