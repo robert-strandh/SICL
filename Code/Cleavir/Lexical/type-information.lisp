@@ -32,13 +32,13 @@
 ;;; Function FLOAT-TYPES.
 ;;;
 ;;; This function returns a list of floating point types available in
-;;; the implementation, that is, a list with SHORT-FLOAT,
-;;; SINGLE-FLOAT, DOUBLE-FLOAT, and LONG-FLOAT zero or one times each.
-;;; If two of the types are the same, only one should be returned.
-;;; For example, in an implementation where (SUBTYPEP 'SHORT-FLOAT
-;;; 'SINGLE-FLOAT) returns True, this function might return
-;;; (SINGLE-FLOAT DOUBLE-FLOAT LONG-FLOAT).  This function is called
-;;; during type inference.
+;;; the implementation.  The Common Lisp standard requires the
+;;; implementation to support only one of a limited number of
+;;; combinations, namely (SINGLE-FLOAT), (SHORT-FLOAT SINGLE-FLOAT),
+;;; (SINGLE-FLOAT DOUBLE-FLOAT), (SHORT-FLOAT SINGLE-FLOAT
+;;; DOUBLE-FLOAT), (SINGLE-FLOAT DOUBLE-FLOAT LONG-FLOAT), or
+;;; (SHORT-FLOAT SINGLE-FLOAT DOUBLE-FLOAT LONG-FLOAT).  This function
+;;; is called during type inference.
 
 (defgeneric float-types (client))
 
