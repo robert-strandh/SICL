@@ -4,14 +4,14 @@
   (if (consp list)
       (cleavir-primop:car list)
       (if (null list)
-	  nil
+	  list
 	  (error 'must-be-list :datum list))))
 
 (defun cdr (list)
   (if (consp list)
       (cleavir-primop:cdr list)
       (if (null list)
-	  nil
+	  list
 	  (error 'must-be-list :datum list))))
   
 (defun rplaca (cons object)
