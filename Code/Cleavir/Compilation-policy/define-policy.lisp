@@ -1,11 +1,11 @@
 (cl:in-package #:cleavir-compilation-policy)
 
 ;;; Public interface. Given an environment return the available
-;;; policy-qualities in that environment. The returned value has
-;;; the same format as cleavir-env:optimize-qualities, i.e.,
-;;; (name type default) where name is the name of the quality,
-;;; type is the type of allowable values of the policy,
-;;; and default is the value used for a decl like (optimize name).
+;;; policy-qualities in that environment. The returned value has is a
+;;; proper list of entries of the form (NAME TYPE DEFAULT), where NAME
+;;; is the name of the quality, TYPE is the type of allowable values
+;;; of the policy, and DEFAULT is the value used for a declaration
+;;; like (OPTIMIZE NAME).
 (defgeneric policy-qualities (environment)
   (:method-combination append))
 
