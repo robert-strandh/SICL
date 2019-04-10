@@ -32,9 +32,9 @@
     (warn 'bad-optimize-value :specifier `(,name ,default)
 	  :expected type))
   (let ((a (assoc name *cleavir-policy-qualities*)))
-    (if a
-	(setf (rest a) (list type default))
-	(push (list name type default) *cleavir-policy-qualities*))
+    (if (null a)
+	(push (list name type default) *cleavir-policy-qualities*)
+	(setf (rest a) (list type default)))
     name))
 
 ;;; Defines a cleavir policy quality. This way the definition can
