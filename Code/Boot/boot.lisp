@@ -162,17 +162,20 @@
    (%e5 :initarg :e5 :accessor e5)
    (%e6 :initarg :e6 :accessor e6)))
 
+(defclass boot-client () ())
+
 (defun boot ()
-  (let ((boot
-          (let ((sicl-minimal-extrinsic-environment::*cache-p* t))
-            (make-instance 'boot
-              :e0 (make-instance 'environment)
-              :e1 (make-instance 'environment)
-              :e2 (make-instance 'environment)
-              :e3 (make-instance 'environment)
-              :e4 (make-instance 'environment)
-              :e5 (make-instance 'environment)
-              :e6 (make-instance 'environment)))))
+  (let* ((client (make-instance 'boot-client))
+         (boot
+           (let ((sicl-minimal-extrinsic-environment::*cache-p* t))
+             (make-instance 'boot
+               :e0 (make-instance 'environment :system client)
+               :e1 (make-instance 'environment :system client)
+               :e2 (make-instance 'environment :system client)
+               :e3 (make-instance 'environment :system client)
+               :e4 (make-instance 'environment :system client)
+               :e5 (make-instance 'environment :system client)
+               :e6 (make-instance 'environment :system client)))))
     (sicl-boot-phase-0:boot-phase-0 boot)
     (sicl-boot-phase-1:boot-phase-1 boot)
     (sicl-boot-phase-2:boot-phase-2 boot)
