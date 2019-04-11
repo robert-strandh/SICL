@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-boot)
 
+(defclass boot-client () ())
+
 ;;; When we are asked to compile the name of a global function, by
 ;;; default Cleavir generates an FDEFINITION-AST taking the function
 ;;; name as an input.  For SICL, we do not want that.  Instead we want
@@ -161,8 +163,6 @@
    (%e4 :initarg :e4 :accessor e4)
    (%e5 :initarg :e5 :accessor e5)
    (%e6 :initarg :e6 :accessor e6)))
-
-(defclass boot-client () ())
 
 (defun boot ()
   (let* ((client (make-instance 'boot-client))
