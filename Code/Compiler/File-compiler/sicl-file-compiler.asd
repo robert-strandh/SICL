@@ -14,4 +14,5 @@
   ((:file "packages")
    (:file "client")
    (:file "customization")
-   (:file "ast-from-file")))
+   (:file "ast-from-file")
+   (:file "simplify-ast")))
