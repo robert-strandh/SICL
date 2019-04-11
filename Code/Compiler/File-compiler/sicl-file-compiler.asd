@@ -12,5 +12,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "client")
    (:file "customization")
    (:file "ast-from-file")))
