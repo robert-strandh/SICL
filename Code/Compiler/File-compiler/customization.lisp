@@ -4,8 +4,7 @@
     (cst
      (info cleavir-env:global-function-info)
      (env sicl-genv:environment)
-     system)
-  (declare (ignore system))
+     (client sicl-file-compiler))
   (cleavir-ast:make-constant-fdefinition-ast
    (cleavir-env:name info)
    :origin (cst:source cst)))
