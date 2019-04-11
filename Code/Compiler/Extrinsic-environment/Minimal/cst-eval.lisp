@@ -4,7 +4,6 @@
   (compile nil lambda-expression))
 
 (defun compile-cst (cst environment1 environment2 system)
-  (declare (ignore system))
   (let* ((form (cst:raw cst))
          (hash (sxhash form))
          (cached-value (gethash hash *form-cache*))
@@ -16,7 +15,7 @@
          ;; We just create the AST even when there is a cached value,
          ;; because there might be compile-time side effects that
          ;; occur during the AST generation.
-         (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 nil dynenv-ast)))
+         (ast (cleavir-cst-to-ast:cst-to-ast cst environment1 system dynenv-ast)))
     (if (null cached-value)
         (let* ((ast-bis (cleavir-ast-transformations:hoist-load-time-value
                          ast dynenv-ast))
