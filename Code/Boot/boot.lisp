@@ -9,8 +9,10 @@
 ;;; that contains the function.  And we want the function cell to be
 ;;; accessed at load time.
 (defmethod cleavir-cst-to-ast:convert-global-function-reference
-    (cst (info cleavir-env:global-function-info) (env environment) system)
-  (declare (ignore system))
+    (cst
+     (info cleavir-env:global-function-info)
+     (env environment)
+     (client boot-client))
   (cleavir-ast:make-car-ast
    (cleavir-ast:make-load-time-value-ast
     `(sicl-genv:function-cell
