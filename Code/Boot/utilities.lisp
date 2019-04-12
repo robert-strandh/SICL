@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-boot)
 
 (defun load-file (file environment)
-  (sicl-minimal-extrinsic-environment:cst-load-file file environment nil))
+  (sicl-minimal-extrinsic-environment:cst-load-file
+   file environment (make-instance 'boot-client)))
 
 ;;; Function LOAD-FILE-PROTECTED (protected loading).  It wraps the
 ;;; loading of a file in a handler that invokes a restart that tells
