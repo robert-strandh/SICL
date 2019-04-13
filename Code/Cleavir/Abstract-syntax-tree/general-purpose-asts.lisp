@@ -250,15 +250,15 @@
 ;;; Class CONSTANT-SYMBOL-VALUE-AST.
 
 (defclass constant-symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%symbol :initarg :symbol :reader symbol)))
+  ((%name :initarg :name :reader name)))
 
-(defun make-constant-symbol-value-ast (symbol &key origin (policy *policy*))
+(defun make-constant-symbol-value-ast (name &key origin (policy *policy*))
   (make-instance 'constant-symbol-value-ast
     :origin origin :policy policy
-    :symbol symbol))
+    :name name))
 
 (cleavir-io:define-save-info constant-symbol-value-ast
-  (:symbol symbol))
+  (:name name))
 
 (defmethod children ((ast constant-symbol-value-ast))
   '())
