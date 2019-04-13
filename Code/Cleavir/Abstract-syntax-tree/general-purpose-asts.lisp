@@ -299,7 +299,7 @@
 (defclass constant-fdefinition-ast
     (ast one-value-ast-mixin side-effect-free-ast-mixin)
   (;; This slot contains the name of the function
-   (%name-ast :initarg :name :reader name)))
+   (%name :initarg :name :reader name)))
 
 (defun make-constant-fdefinition-ast (name &key origin (policy *policy*))
   (make-instance 'constant-fdefinition-ast
