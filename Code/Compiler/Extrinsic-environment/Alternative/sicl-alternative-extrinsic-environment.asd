@@ -108,4 +108,5 @@
   ((:file "packages")
    (:file "host-load")
    (:file "environment")
-   (:file "cleavir-cst-to-ast-customization")))
+   (:file "cleavir-cst-to-ast-customization")
+   (:file "import-from-host")))
