@@ -44,6 +44,7 @@
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
    #:constant-fdefinition-instruction #:make-constant-fdefinition-instruction
+   #:constant-symbol-value-instruction #:make-constant-symbol-value-instruction
    #:enter-instruction #:make-enter-instruction
    #:lambda-list #:closure-size
    #:static-environment #:dynamic-environment-output #:parameters
