@@ -247,6 +247,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class CONSTANT-SYMBOL-VALUE-AST.
+
+(defclass constant-symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%symbol :initarg :symbol :reader symbol)))
+
+(defun make-constant-symbol-value-ast (symbol &key origin (policy *policy*))
+  (make-instance 'constant-symbol-value-ast
+    :origin origin :policy policy
+    :symbol symbol))
+
+(cleavir-io:define-save-info constant-symbol-value-ast
+  (:symbol symbol))
+
+(defmethod children ((ast symbol-value-ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class SET-SYMBOL-VALUE-AST.
 ;;;
 ;;; This AST is generated from an assignment to a special variable.
