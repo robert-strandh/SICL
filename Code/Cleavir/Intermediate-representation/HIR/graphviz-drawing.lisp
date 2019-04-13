@@ -213,7 +213,7 @@
 (defmethod label ((instruction fdefinition-instruction)) "fdefinition")
 
 (defmethod label ((instruction constant-fdefinition-instruction))
-  "cfdef")
+  (format nil "c-fdef ~s" (name instruction)))
 
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
   (format stream "   ~a [label = \"~a\"];~%"
