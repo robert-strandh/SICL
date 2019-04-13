@@ -288,6 +288,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SET-CONSTANT-SYMBOL-VALUE-AST.
+
+(defclass set-constant-symbol-value-ast (ast no-value-ast-mixin)
+  ((%name :initarg :name :reader name)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-set-constant-symbol-value-ast (name value-ast &key origin (policy *policy*))
+  (make-instance 'set-constant-symbol-value-ast
+    :origin origin :policy policy
+    :name name
+    :value-ast value-ast))
+
+(cleavir-io:define-save-info set-constant-symbol-value-ast
+  (:name name)
+  (:value-ast value-ast))
+
+(defmethod children ((ast set-constant-symbol-value-ast))
+  (list (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class FDEFINITION-AST.
 ;;;
 ;;; This AST is generated from a reference to a global function.
