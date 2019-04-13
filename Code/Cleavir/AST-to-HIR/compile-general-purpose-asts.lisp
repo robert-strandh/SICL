@@ -629,6 +629,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a CONSTANT-SYMBOL-VALUE-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:constant-symbol-value-ast) context)
+  (cleavir-ir:make-constant-symbol-value-instruction
+   (cleavir-ast:name ast)
+   (first (results context))
+   (first (successors context))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a SET-SYMBOL-VALUE-AST.
 
 (define-compile-functional-ast
