@@ -107,4 +107,5 @@
   :components
   ((:file "packages")
    (:file "host-load")
-   (:file "environment")))
+   (:file "environment")
+   (:file "cleavir-cst-to-ast-customization")))
