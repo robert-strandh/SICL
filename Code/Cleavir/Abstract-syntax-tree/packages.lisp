@@ -22,6 +22,7 @@
    #:make-dynamic-environment-ast
    #:symbol-value-ast #:make-symbol-value-ast
    #:set-symbol-value-ast #:make-set-symbol-value-ast
+   #:set-constant-symbol-value-ast #:make-set-constant-symbol-value-ast
    #:symbol #:symbol-ast
    #:fdefinition-ast #:make-fdefinition-ast #:info #:name-ast
    #:constant-fdefinition-ast #:make-constant-fdefinition-ast #:info
