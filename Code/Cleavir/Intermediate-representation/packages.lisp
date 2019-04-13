@@ -42,6 +42,7 @@
    #:dynamic-environment #:*dynamic-environment*
    #:symbol-value-instruction #:make-symbol-value-instruction
    #:set-symbol-value-instruction #:make-set-symbol-value-instruction
+   #:set-constant-symbol-value-instruction #:make-set-constant-symbol-value-instruction
    #:fdefinition-instruction #:make-fdefinition-instruction
    #:constant-fdefinition-instruction #:make-constant-fdefinition-instruction
    #:constant-symbol-value-instruction #:make-constant-symbol-value-instruction
