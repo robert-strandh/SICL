@@ -212,6 +212,9 @@
 
 (defmethod label ((instruction fdefinition-instruction)) "fdefinition")
 
+(defmethod label ((instruction constant-fdefinition-instruction))
+  "cfdef")
+
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
   (format stream "   ~a [label = \"~a\"];~%"
           (instruction-id instruction)
