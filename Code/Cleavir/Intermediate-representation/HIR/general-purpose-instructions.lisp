@@ -364,6 +364,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction SET-CONSTANT-SYMBOL-VALUE-INSTRUCTION.
+
+(defclass set-constant-symbol-value-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ((%name :initarg :name :reader name)))
+
+(defun make-set-constant-symbol-value-instruction (name value-input successor)
+  (make-instance 'set-constant-symbol-value-instruction
+    :name name
+    :inputs (list value-input)
+    :outputs '()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction FDEFINITION-INSTRUCTION.
 
 (defclass fdefinition-instruction (instruction one-successor-mixin)
