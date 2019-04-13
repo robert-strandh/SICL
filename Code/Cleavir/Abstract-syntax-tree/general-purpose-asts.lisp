@@ -260,7 +260,7 @@
 (cleavir-io:define-save-info constant-symbol-value-ast
   (:symbol symbol))
 
-(defmethod children ((ast symbol-value-ast))
+(defmethod children ((ast constant-symbol-value-ast))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
