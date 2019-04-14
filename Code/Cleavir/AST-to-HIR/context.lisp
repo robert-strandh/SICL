@@ -7,7 +7,7 @@
 ;;; Each AST is compiled in a particular COMPILATION CONTEXT or
 ;;; CONTEXT for short.  A context object has three components:
 ;;;
-;;; 1. SUCCESSORS, which is a proper list containing zero or two
+;;; 1. SUCCESSORS, which is a proper list containing one or two
 ;;; elements.  These elements are instructions resulting from the
 ;;; generation of the code that should be executed AFTER the code
 ;;; generated from this AST.  If the list contains two elements, then
