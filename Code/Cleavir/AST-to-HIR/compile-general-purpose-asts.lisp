@@ -647,6 +647,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a SET-CONSTANT-SYMBOL-VALUE-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:set-constant-symbol-value-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let ((temp (make-temp)))
+      (compile-ast
+       (cleavir-ast:value-ast ast)
+       (context
+        (list temp)
+        (list (cleavir-ir:make-set-constant-symbol-value-instruction
+               (cleavir-ast:name ast)
+               temp
+               (first successors)))
+        (invocation context))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a FDEFINITION-AST.
 
 (define-compile-functional-ast
