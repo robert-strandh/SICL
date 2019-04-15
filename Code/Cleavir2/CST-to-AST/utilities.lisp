@@ -26,6 +26,10 @@
              :origin (cst:source cst)))))
 
 (defun proper-list-p (list)
+  ;; IGNORE-ERRORS is only required to signal an error in "safe code",
+  ;; which is defined to be code that is compiled with a SAFETY
+  ;; quality value of 3.
+  (declare (optimize (safety 3)))
   (ignore-errors (list-length list)))
 
 (defun proper-function-name-p (name-cst)
