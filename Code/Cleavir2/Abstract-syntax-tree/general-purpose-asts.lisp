@@ -151,91 +151,45 @@
 ;;; This AST is generated from a reference to a special variable.
 
 (defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
-
-(cleavir-io:define-save-info symbol-value-ast
-  (:symbol-ast symbol-ast))
-
-(defmethod children ((ast symbol-value-ast))
-  (list (symbol-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class CONSTANT-SYMBOL-VALUE-AST.
-
-(defclass constant-symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
-(cleavir-io:define-save-info constant-symbol-value-ast
+(cleavir-io:define-save-info symbol-value-ast
   (:name name))
 
-(defmethod children ((ast constant-symbol-value-ast))
+(defmethod children ((ast symbol-value-ast))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SET-SYMBOL-VALUE-AST.
-;;;
-;;; This AST is generated from an assignment to a special variable.
 
 (defclass set-symbol-value-ast (ast no-value-ast-mixin)
-  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
-
-(cleavir-io:define-save-info set-symbol-value-ast
-  (:symbol-ast symbol-ast)
-  (:value-ast value-ast))
-
-(defmethod children ((ast set-symbol-value-ast))
-  (list (symbol-ast ast) (value-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class SET-CONSTANT-SYMBOL-VALUE-AST.
-
-(defclass set-constant-symbol-value-ast (ast no-value-ast-mixin)
   ((%name :initarg :name :reader name)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(cleavir-io:define-save-info set-constant-symbol-value-ast
+(cleavir-io:define-save-info set-symbol-value-ast
   (:name name)
   (:value-ast value-ast))
 
-(defmethod children ((ast set-constant-symbol-value-ast))
+(defmethod children ((ast set-symbol-value-ast))
   (list (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class FDEFINITION-AST.
 ;;;
-;;; This AST is generated from a reference to a global function.
-
-(defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  (;; This slot contains an AST that produces the function name.
-   (%name-ast :initarg :name-ast :reader name-ast)))
-
-(cleavir-io:define-save-info fdefinition-ast
-  (:name-ast name-ast))
-
-(defmethod children ((ast fdefinition-ast))
-  (list (name-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class CONSTANT-FDEFINITION-AST.
-;;;
 ;;; This AST is not yet generated from a reference to a global
 ;;; function, but migration to this AST is suggested.
 
-(defclass constant-fdefinition-ast
+(defclass fdefinition-ast
     (ast one-value-ast-mixin side-effect-free-ast-mixin)
   (;; This slot contains the name of the function
    (%name :initarg :name :reader name)))
 
-(cleavir-io:define-save-info constant-fdefinition-ast
+(cleavir-io:define-save-info fdefinition-ast
   (:name name))
 
-(defmethod children ((ast constant-fdefinition-ast))
+(defmethod children ((ast fdefinition-ast))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
