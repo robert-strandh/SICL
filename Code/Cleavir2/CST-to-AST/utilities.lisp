@@ -30,7 +30,7 @@
   ;; which is defined to be code that is compiled with a SAFETY
   ;; quality value of 3.
   (declare (optimize (safety 3)))
-  (ignore-errors (list-length list)))
+  (numberp (ignore-errors (list-length list))))
 
 (defun proper-function-name-p (name-cst)
   (let ((name (cst:raw name-cst)))
