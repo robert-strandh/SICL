@@ -4,10 +4,8 @@
   :depends-on (:concrete-syntax-tree
                :concrete-syntax-tree-destructuring
                :cleavir2-ast
-	       :cleavir-ast-transformations
 	       :cleavir-primop
 	       :cleavir-environment
-	       :cleavir-compilation-policy
                :stealth-mixin
                :acclimation)
   :serial t
