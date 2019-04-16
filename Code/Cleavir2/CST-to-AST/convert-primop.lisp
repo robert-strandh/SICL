@@ -294,12 +294,12 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (funcall-cst function-cst . arguments-cst) cst
     (declare (ignore funcall-cst))
-    (cleavir-ast:make-call-ast
-     (convert function-cst env system)
-     (loop for remaining = arguments-cst then (cst:rest remaining)
-           until (cst:null remaining)
-           collect (convert (cst:first remaining) env system))
-     :origin origin)))
+    (make-instance 'cleavir-ast:call-ast
+     :callee-ast (convert function-cst env system)
+     :argument-asts (loop for remaining = arguments-cst
+                            then (cst:rest remaining)
+                          until (cst:null remaining)
+                          collect (convert (cst:first remaining) env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -320,12 +320,11 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
     (declare (ignore multiple-value-call-cst))
-    (cleavir-ast:make-multiple-value-call-ast
-     (convert function-cst env system)
-     (loop for remaining = arguments-cst then (cst:rest remaining)
-           until (cst:null remaining)
-           collect (convert (cst:first remaining) env system))
-     :origin origin)))
+    (make-instance 'cleavir-ast:multiple-value-call-ast
+     :function-form-ast (convert function-cst env system)
+     :form-asts (loop for remaining = arguments-cst then (cst:rest remaining)
+                      until (cst:null remaining)
+                      collect (convert (cst:first remaining) env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -341,10 +340,9 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
     (declare (ignore slot-read-cst))
-    (cleavir-ast:make-slot-read-ast
-     (convert instance-cst env system)
-     (convert slot-number-cst env system)
-     :origin origin)))
+    (make-instance 'cleavir-ast:slot-read-ast
+     :object-ast (convert instance-cst env system)
+     :slot-number-ast (convert slot-number-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -361,11 +359,10 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
     (declare (ignore slot-write-cst))
-    (cleavir-ast:make-slot-write-ast
-     (convert instance-cst env system)
-     (convert slot-number-cst env system)
-     (convert value-cst env system)
-     :origin origin)))
+    (make-instance 'cleavir-ast:slot-write-ast
+     :object-ast (convert instance-cst env system)
+     :stot-number-ast (convert slot-number-cst env system)
+     :value-ast (convert value-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
