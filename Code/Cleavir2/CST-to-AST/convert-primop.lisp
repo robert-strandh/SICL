@@ -28,10 +28,9 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (eq-cst arg1-cst arg2-cst) cst
     (declare (ignore eq-cst))
-    (cleavir-ast:make-eq-ast
-     (convert arg1-cst env system)
-     (convert arg2-cst env system)
-     :origin origin)))
+    (make-instance 'cleavir-ast:eq-ast
+     :arg1-ast (convert arg1-cst env system)
+     :arg2-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -42,10 +41,9 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
     (declare (ignore typeq-cst))
-    (cleavir-ast:make-typeq-ast
-     (convert arg1-cst env system)
-     (cst:raw arg2-cst)
-     :origin origin)))
+    (make-instance 'cleavir-ast:typeq-ast
+     :form-ast: (convert arg1-cst env system)
+     :type-specifier (cst:raw arg2-cst))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -91,10 +89,9 @@
                   collect (let ((info (cleavir-env:variable-info env var)))
                             (assert (typep info 'cleavir-env:lexical-variable-info))
                             info))))
-      (cleavir-ast:make-multiple-value-setq-ast
-       (mapcar #'cleavir-env:identity lexes) ; get actual lexical ASTs
-       (convert form-cst env system)
-       :origin origin))))
+      (make-instance 'cleavir-ast:multiple-value-setq-ast
+       :lhs-asts (mapcar #'cleavir-env:identity lexes)
+       :form-ast (convert form-cst env system)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -105,8 +102,8 @@
   (check-simple-primop-syntax cst 1)
   (cst:db origin (car-cst arg-cst) cst
     (declare (ignore car-cst))
-    (cleavir-ast:make-car-ast (convert arg-cst env system)
-                              :origin origin)))
+    (make-instance 'cleavir-ast:car-ast
+     :cons-ast (convert arg-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -117,8 +114,8 @@
   (check-simple-primop-syntax cst 1)
   (cst:db origin (cdr-cst arg-cst) cst
     (declare (ignore cdr-cst))
-    (cleavir-ast:make-cdr-ast (convert arg-cst env system)
-                              :origin origin)))
+    (make-instance 'cleavir-ast:cdr-ast
+     :cons-ast (convert arg-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -129,9 +126,9 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplaca-cst arg1-cst arg2-cst) cst
     (declare (ignore rplaca-cst))
-    (cleavir-ast:make-rplaca-ast (convert arg1-cst env system)
-                                 (convert arg2-cst env system)
-                                 :origin origin)))
+    (make-instance 'cleavir-ast:rplaca-ast
+      :cons-ast (convert arg1-cst env system)
+      :object-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -142,9 +139,9 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
     (declare (ignore rplacd-cst))
-    (cleavir-ast:make-rplacd-ast (convert arg1-cst env system)
-                                 (convert arg2-cst env system)
-                                 :origin origin)))
+    (make-instance 'cleavir-ast:rpldca-ast
+      :cons-ast (convert arg1-cst env system)
+      :object-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -155,11 +152,10 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore add-cst))
-    (cleavir-ast:make-fixnum-add-ast (convert arg1-cst env system)
-                                     (convert arg2-cst env system)
-                                     (convert variable-cst env system)
-                                     :origin origin)))
-
+    (make-instance 'cleavir-ast:fixnum-add-ast
+      :arg1-ast (convert arg1-cst env system)
+      :arg2-ast (convert arg2-cst env system)
+      :variable-ast (convert variable-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -170,10 +166,10 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore sub-cst))
-    (cleavir-ast:make-fixnum-sub-ast (convert arg1-cst env system)
-                                     (convert arg2-cst env system)
-                                     (convert variable-cst env system)
-                                     :origin origin)))
+    (make-instance 'cleavir-ast:fixnum-sub-ast
+      :arg1-ast (convert arg1-cst env system)
+      :arg2-ast (convert arg2-cst env system)
+      :variable-ast (convert variable-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -272,9 +268,8 @@
             until (cst:null rest-cst)
             do (let* ((variable-cst (cst:first rest-cst))
                       (variable (cst:raw variable-cst))
-                      (variable-ast (cleavir-ast:make-lexical-ast
-                                     variable
-                                     :origin (cst:source variable-cst))))
+                      (variable-ast (make-instance 'cleavir-ast:lexical-ast
+                                     :name variable)))
                  (setf new-env
                        (cleavir-env:add-lexical-variable
                         new-env variable variable-ast))))
