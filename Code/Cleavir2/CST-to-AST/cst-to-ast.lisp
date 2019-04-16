@@ -1,5 +1,8 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+(stealth-mixin:define-stealth-mixin ast-mixin () cleavir-ast:ast
+  ((%origin :initarg :origin :reader origin)))
+
 ;;; During the conversion of a single CST, the value of this variable
 ;;; is the source location of that CST.
 (defvar *origin*)
