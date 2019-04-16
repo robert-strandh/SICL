@@ -682,10 +682,9 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
     (declare (ignore multiple-value-prog1-cst))
-    (cleavir-ast:make-multiple-value-prog1-ast
-     (convert first-cst environment system)
-     (convert-sequence rest-cst environment system)
-     :origin origin)))
+    (make-instance 'cleavir-ast:multiple-value-prog1-ast
+     :first-form-ast (convert first-cst environment system)
+     :form-asts (convert-sequence rest-cst environment system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
