@@ -42,10 +42,11 @@
         (error 'block-name-must-be-a-symbol
                :expr name
                :origin (cst:source name-cst)))
-      (let* ((new-dynenv (cleavir-ast:make-dynamic-environment-ast
-                          '#:block-dynamic-environment))
-             (ast (cleavir-ast:make-block-ast
-                   nil new-dynenv :origin origin))
+      (let* ((new-dynenv (make-instance 'cleavir-ast:lexical-ast
+                           :name '#:block-dynamic-environment
+                           :dynamic-environment nil))
+             (ast (make-instance 'cleavir-ast:block-ast
+                    :dynamic-environment-out new-dynenv))
              (new-env (cleavir-env:add-block env name ast))
              (cleavir-ast:*dynamic-environment* new-dynenv))
         (setf (cleavir-ast:body-ast ast)
@@ -434,19 +435,19 @@
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
-    (cleavir-ast:make-load-time-value-ast
-     (cst:raw form-cst)
-     (if (cst:null remaining-cst)
-         nil
-         (let ((read-only-p (cst:raw (cst:first remaining-cst))))
-           (if (member read-only-p '(nil t))
-               read-only-p
-               ;; The HyperSpec specifically requires a "boolean"
-               ;; and not a "generalized boolean".
-               (error 'read-only-p-must-be-boolean
-                      :expr read-only-p
-                      :origin (cst:source (cst:first remaining-cst))))))
-     :origin origin)))
+    (make-instance 'cleavir-ast:load-time-value-ast
+      :form (cst:raw form-cst)
+      :read-only-p
+      (if (cst:null remaining-cst)
+          nil
+          (let ((read-only-p (cst:raw (cst:first remaining-cst))))
+            (if (member read-only-p '(nil t))
+                read-only-p
+                ;; The HyperSpec specifically requires a "boolean"
+                ;; and not a "generalized boolean".
+                (error 'read-only-p-must-be-boolean
+                       :expr read-only-p
+                       :origin (cst:source (cst:first remaining-cst)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
