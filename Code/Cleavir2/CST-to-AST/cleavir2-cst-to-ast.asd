@@ -8,6 +8,7 @@
 	       :cleavir-primop
 	       :cleavir-environment
 	       :cleavir-compilation-policy
+               :stealth-mixin
                :acclimation)
   :serial t
   :components
