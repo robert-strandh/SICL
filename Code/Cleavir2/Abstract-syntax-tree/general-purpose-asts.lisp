@@ -311,6 +311,7 @@
 ;;; Class BLOCK-AST.
 
 (defclass block-ast (ast dynamic-environment-output-ast-mixin)
+  ;; FIXME: make this read-only and use REINITIALIZE-INSTANCE insteac.
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
 (cleavir-io:define-save-info block-ast
