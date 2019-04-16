@@ -391,9 +391,8 @@
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
     (let ((info (tag-info env (cst:raw tag-cst))))
-      (cleavir-ast:make-go-ast
-       (cleavir-env:identity info)
-       :origin origin))))
+      (make-instance 'cleavir-ast:go-ast
+        :tag-ast (cleavir-env:identity info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -412,18 +411,17 @@
                          (cst:db s (else-cst) tail-cst
                            (convert else-cst env system)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
+          (make-instance 'cleavir-ast:if-ast
+           :test-ast test-ast
+           :then-ast true-ast
+           :else-ast false-ast)
           (cleavir-ast:make-if-ast
-           test-ast
-           true-ast
-           false-ast
-           :origin origin)
-          (cleavir-ast:make-if-ast
+           :test-ast
            (cleavir-ast:make-eq-ast
             test-ast
             (convert-constant (cst:cst-from-expression nil) env system))
-           false-ast
-           true-ast
-           :origin origin)))))
+           :then-ast false-ast
+           :else-ast true-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
