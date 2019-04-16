@@ -356,11 +356,11 @@
                   until (cst:null rest)
                   when (tagp (cst:first rest))
                     collect (let ((tag-cst (cst:first rest)))
-                              (cleavir-ast:make-tag-ast
-                               (cst:raw tag-cst)
-                               :origin (cst:source tag-cst)))))
-          (new-dynenv (cleavir-ast:make-dynamic-environment-ast
-                       '#:tagbody-dynamic-environment))
+                              (make-instance 'cleavir-ast:tag-ast
+                                :name (cst:raw tag-cst)))))
+          (new-dynenv (make-instance 'cleavir-ast:lexical-ast
+                           :name '#:tagbody-dynamic-environment
+                           :dynamic-environment nil))
           (new-env env))
       (loop with cleavir-ast:*dynamic-environment* = new-dynenv
             for ast in tag-asts
@@ -374,8 +374,9 @@
                                            (pop tag-asts)
                                            (convert item-cst new-env system))))))
         (process-progn
-         (list (cleavir-ast:make-tagbody-ast item-asts new-dynenv
-                                             :origin origin)
+         (list (make-instance 'cleavir-ast:tagbody-ast
+                 :item:asts item-asts
+                 :dynamic-environment-out new-dynenv)
                (convert-constant (cst:cst-from-expression nil) env system)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
