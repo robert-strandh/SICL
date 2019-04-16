@@ -278,9 +278,9 @@
 ;;; has a function name in its CAR and an AST in its CDR.
 (defun compute-function-init-asts (functions env)
   (loop for (name . fun-ast) in functions
-        collect (cleavir-ast:make-setq-ast
-                 (function-lexical env name)
-                 fun-ast)))
+        collect (make-instance 'cleavir-ast:setq-ast
+                  :lhs-ast (function-lexical env name)
+                  :value-ast fun-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special ((symbol (eql 'flet)) cst env system)
