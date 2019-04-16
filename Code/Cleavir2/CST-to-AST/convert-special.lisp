@@ -415,11 +415,11 @@
            :test-ast test-ast
            :then-ast true-ast
            :else-ast false-ast)
-          (cleavir-ast:make-if-ast
+          (make-instance cleavir-ast:if-ast
            :test-ast
-           (cleavir-ast:make-eq-ast
-            test-ast
-            (convert-constant (cst:cst-from-expression nil) env system))
+           (make-instance cleavir-ast:eq-ast
+            :arg1-ast test-ast
+            :arg2-ast (convert-constant (cst:cst-from-expression nil) env system))
            :then-ast false-ast
            :else-ast true-ast)))))
 
