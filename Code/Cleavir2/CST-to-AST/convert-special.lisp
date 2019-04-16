@@ -668,10 +668,11 @@
     (multiple-value-bind (req opt rest)
         (the-values-components (cst:raw value-type-cst))
       ;; We don't bother collapsing THE forms for user code.
-      (cleavir-ast:make-the-ast
-       (convert form-cst environment system)
-       req opt rest
-       :origin origin))))
+      (make-instance 'cleavir-ast:the-ast
+        :form-ast (convert form-cst environment system)
+        :required req
+        :optional opt
+        :rest rest))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
