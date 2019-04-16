@@ -1,5 +1,9 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+;;; During the conversion of a single CST, the value of this variable
+;;; is the source location of that CST.
+(defvar *origin*)
+
 (defun cst-to-ast (cst environment system
                        &optional (cleavir-ast:*dynamic-environment*
                                   (cleavir-ast:make-dynamic-environment-ast
