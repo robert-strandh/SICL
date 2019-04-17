@@ -139,7 +139,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
     (declare (ignore rplacd-cst))
-    (make-instance 'cleavir-ast:rpldca-ast
+    (make-instance 'cleavir-ast:rplacd-ast
       :cons-ast (convert arg1-cst env system)
       :object-ast (convert arg2-cst env system))))
 
