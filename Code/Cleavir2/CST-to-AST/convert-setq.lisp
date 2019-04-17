@@ -17,10 +17,9 @@
 (defmethod convert-setq
     (var-cst form-cst (info cleavir-env:lexical-variable-info) env system)
   (process-progn 
-   (list (cleavir-ast:make-setq-ast
-	  (cleavir-env:identity info)
-	  (convert form-cst env system)
-	  :origin (cst:source var-cst))
+   (list (make-instance 'cleavir-ast:setq-ast
+	  :lhs-ast (cleavir-env:identity info)
+	  :value-ast (convert form-cst env system))
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
@@ -40,13 +39,14 @@
 (defmethod convert-setq-special-variable
     (var-cst form-ast info global-env system)
   (declare (ignore system))
-  (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
+  (let ((temp (make-instance 'cleavir-ast:lexical-ast :name (gensym))))
     (process-progn
-     (list (cleavir-ast:make-setq-ast temp form-ast)
-	   (cleavir-ast:make-set-symbol-value-ast
-	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info))
-	    temp
-	    :origin (cst:source var-cst))
+     (list (make-instance 'cleavir-ast:setq-ast
+             :lhs-ast temp
+             :value-ast form-ast)
+	   (make-instance 'cleavir-ast:set-symbol-value-ast
+             :name (cleavir-env:name info)
+             :value-ast temp)
 	   temp))))
 
 (defmethod convert-setq

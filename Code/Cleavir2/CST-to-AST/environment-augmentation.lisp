@@ -8,8 +8,8 @@
   (cst:db origin (name . rest) definition-cst
     (declare (ignore rest))
     (let* ((raw-name (cst:raw name))
-           (var-ast (cleavir-ast:make-lexical-ast raw-name
-                                                  :origin origin)))
+           (var-ast (make-instance 'cleavir-ast:lexical-ast
+                      :name raw-name)))
       (cleavir-env:add-local-function environment raw-name var-ast))))
 
 ;;; Take an environment, a CST representing list of function
@@ -247,8 +247,8 @@
           (unless globally-p
             (setf new-env
                   (cleavir-env:add-special-variable new-env raw-variable)))
-          (let ((var-ast (cleavir-ast:make-lexical-ast raw-variable
-                                                       :origin origin)))
+          (let ((var-ast (make-instance 'cleavir-ast:lexical-ast
+                           :name raw-variable)))
             (setf new-env
                   (cleavir-env:add-lexical-variable
                    new-env raw-variable var-ast)))))
@@ -284,5 +284,5 @@
 (defun augment-environment-with-local-function-name (name-cst environment)
   (let* ((name (cst:raw name-cst))
          (origin (cst:source name-cst))
-         (var-ast (cleavir-ast:make-lexical-ast name :origin origin)))
+         (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
     (cleavir-env:add-local-function environment name var-ast)))

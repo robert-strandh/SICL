@@ -8,5 +8,5 @@
 
 (defun process-progn (asts &optional origin)
   (if (null asts)
-      (cleavir-ast:make-load-time-value-ast 'nil t :origin origin)
-      (cleavir-ast:make-progn-ast asts :origin origin)))
+      (make-instance 'cleavir-ast:constant-ast :value nil)
+      (make-instance 'cleavir-ast:progn-ast :form-asts asts)))

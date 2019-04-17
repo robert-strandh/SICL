@@ -10,12 +10,14 @@
 ;;; SUPPLIED-P-AST computes NIL.
 (defun make-initialization-ast (var-ast supplied-p-ast value-ast env system)
   (let ((nil-cst (cst:cst-from-expression nil)))
-    (cleavir-ast:make-if-ast
-     (cleavir-ast:make-eq-ast
-      supplied-p-ast
-      (convert-constant nil-cst env system))
-     (cleavir-ast:make-setq-ast var-ast value-ast)
-     (convert-constant nil-cst env system))))
+    (make-instance 'cleavir-ast:if-ast
+     :test-ast (make-instance 'cleavir-ast:eq-ast
+                :arg1-ast supplied-p-ast
+                :arg2-ast (convert-constant nil-cst env system))
+     :then-ast (make-instance 'cleavir-ast:setq-ast
+                 :lhs-ast var-ast
+                 :value-ast value-ast)
+     :else-ast (convert-constant nil-cst env system))))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated

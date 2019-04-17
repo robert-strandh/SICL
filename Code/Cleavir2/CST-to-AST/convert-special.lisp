@@ -92,7 +92,7 @@
                        ;; present).
                        (return-from convert-special
                          (convert value-cst env system)))))
-          (cleavir-ast:make-return-from-ast
+          (make-instance 'cleavir-ast:return-from-ast
            :block-ast (cleavir-env:identity info)
            :form-ast (convert value-cst env system)))))))
 

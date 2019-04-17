@@ -481,8 +481,8 @@
              ;; Note that lambda-list-from-parameter-groups makes ASTs,
              ;; so this needs to be bound around that call.
              (cleavir-ast:*dynamic-environment*
-               (cleavir-ast:make-dynamic-environment-ast
-                '#:dynamic-environment-argument)))
+               (make-instance 'cleavir-ast:lexical-ast
+                :name '#:dynamic-environment-argument)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group
              (itemize-lambda-list parsed-lambda-list)
@@ -497,6 +497,7 @@
                      (make-body rdspecs (cst:listify forms-cst) block-name-cst)
                      env
                      system)))
-              (cleavir-ast:make-function-ast ast lexical-lambda-list
-                                             cleavir-ast:*dynamic-environment*
-                                             :origin origin))))))))
+              (make-instance 'cleavir-ast:function-ast
+                :body-ast ast
+                :lambda-list lexical-lambda-list
+                :dynamic-environment cleavir-ast:*dynamic-environment*))))))))

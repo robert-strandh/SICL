@@ -109,8 +109,9 @@
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference name-cst info env system))
          (argument-asts (convert-sequence arguments-cst env system)))
-    (cleavir-ast:make-call-ast function-ast argument-asts
-                               :origin (cst:source cst))))
+    (make-instance 'cleavir-ast:call-ast
+     :callee-ast function-ast
+     :argument-asts argument-asts)))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
@@ -166,9 +167,7 @@
   (declare (ignore global-env))
   (let ((symbol (cleavir-env:name info))
         (origin (cst:source cst)))
-    (cleavir-ast:make-symbol-value-ast
-     (cleavir-ast:make-load-time-value-ast `',symbol t :origin origin)
-     :origin origin)))
+    (make-instance 'cleavir-ast:symbol-value-ast :name symbol)))
 
 (defmethod convert-cst
     (cst (info cleavir-env:special-variable-info) env system)

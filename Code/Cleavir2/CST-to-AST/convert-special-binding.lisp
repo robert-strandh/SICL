@@ -25,9 +25,11 @@
                                 ,(cst:cst-from-expression
                                   `(cleavir-primop:ast
                                     ,(let* ((cleavir-ast:*dynamic-environment*
-                                              (cleavir-ast:make-dynamic-environment-ast
-                                               '#:cwvb-dynamic-environment))
+                                              (make-instance 'cleavir-ast:lexical-ast
+                                               :name '#:cwvb-dynamic-environment))
                                             (next-ast (funcall next-thunk)))
-                                       (cleavir-ast:make-function-ast
-                                        next-ast nil cleavir-ast:*dynamic-environment*))))))))
+                                       (make-instance 'cleavir-ast:function-ast
+                                         :body-ast next-ast
+                                         :lambda-list nil
+                                         :dynenv-out cleavir-ast:*dynamic-environment*))))))))
     (convert new-cst env system)))

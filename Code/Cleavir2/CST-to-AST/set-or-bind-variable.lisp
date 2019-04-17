@@ -16,9 +16,8 @@
     (if (typep info 'cleavir-env:special-variable-info)
         (convert-special-binding
          variable-cst value-ast next-thunk env system)
-	(cleavir-ast:make-progn-ast
-	 (list (cleavir-ast:make-setq-ast
-		(cleavir-env:identity info)
-		value-ast
-                :origin (cst:source variable-cst))
-	       (funcall next-thunk))))))
+	(make-instance 'cleavir-ast:progn-ast
+	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
+                            :lhs-ast: (cleavir-env:identity info)
+                            :value-ast value-ast)
+                     (funcall next-thunk))))))

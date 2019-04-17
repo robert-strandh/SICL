@@ -31,9 +31,11 @@
 (defun convert-constant (constant-cst env system)
   (let* ((global-env (cleavir-env:global-environment env))
          (expression (cst:raw constant-cst))
-         (origin (cst:source constant-cst))
 	 (immediate (convert-constant-to-immediate
                      expression global-env system)))
     (if (null immediate)
-	(cleavir-ast:make-load-time-value-ast `',expression t :origin origin)
-	(cleavir-ast:make-immediate-ast immediate :origin origin))))
+	(make-instance 'cleavir-ast:load-time-value-ast
+          :form `',expression
+          :read-only-p t)
+	(make-instance 'cleavir-ast:immediate-ast
+          :value immediate))))

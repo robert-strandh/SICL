@@ -13,7 +13,6 @@
   (cst:db origin ((lambda-cst lambda-list-cst . body-cst) . args-cst) cst
     (assert (eql (cst:raw lambda-cst) 'cl:lambda) nil
             'lambda-call-first-symbol-not-lambda :expr (cst:raw lambda-cst))
-    (cleavir-ast:make-call-ast
-     (convert-code lambda-list-cst body-cst env system :origin origin)
-     (convert-sequence args-cst env system)
-     :origin origin)))
+    (make-instance 'cleavir-ast:call-ast
+     :callee-ast (convert-code lambda-list-cst body-cst env system)
+     :argument-asts (convert-sequence args-cst env system))))
