@@ -375,7 +375,7 @@
                                            (convert item-cst new-env system))))))
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
-                 :item:asts item-asts
+                 :item-asts item-asts
                  :dynamic-environment-out new-dynenv)
                (convert-constant (cst:cst-from-expression nil) env system)))))))
 

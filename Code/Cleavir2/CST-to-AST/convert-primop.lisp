@@ -42,7 +42,7 @@
   (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
     (declare (ignore typeq-cst))
     (make-instance 'cleavir-ast:typeq-ast
-     :form-ast: (convert arg1-cst env system)
+     :form-ast (convert arg1-cst env system)
      :type-specifier (cst:raw arg2-cst))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

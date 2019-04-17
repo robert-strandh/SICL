@@ -18,6 +18,6 @@
          variable-cst value-ast next-thunk env system)
 	(make-instance 'cleavir-ast:progn-ast
 	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
-                            :lhs-ast: (cleavir-env:identity info)
+                            :lhs-ast (cleavir-env:identity info)
                             :value-ast value-ast)
                      (funcall next-thunk))))))
