@@ -146,17 +146,7 @@
 
 ;;; Augment the environment with an OPTIMIZE specifier.
 (defun augment-environment-with-optimize (optimize environment)
-  ;; Make sure every environment has a complete optimize & policy.
-  (let* ((previous (cleavir-env:optimize
-                    (cleavir-env:optimize-info environment)))
-         (total (cleavir-policy:normalize-optimize
-                 (append optimize previous)
-                 environment))
-         ;; Compute also normalizes, so this is slightly wasteful.
-         (policy (cleavir-policy:compute-policy
-                  total
-                  (cleavir-env:global-environment environment))))
-    (cleavir-env:add-optimize environment total policy)))
+  (cleavir-env:add-optimize environment previous nil))
 
 ;;; Extract any OPTIMIZE information from a set of canonicalized
 ;;; declaration specifiers.
