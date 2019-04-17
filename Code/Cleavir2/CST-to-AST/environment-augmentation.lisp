@@ -146,7 +146,7 @@
 
 ;;; Augment the environment with an OPTIMIZE specifier.
 (defun augment-environment-with-optimize (optimize environment)
-  (cleavir-env:add-optimize environment previous nil))
+  (cleavir-env:add-optimize environment optimize nil))
 
 ;;; Extract any OPTIMIZE information from a set of canonicalized
 ;;; declaration specifiers.
