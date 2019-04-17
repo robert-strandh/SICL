@@ -63,8 +63,7 @@
     (make-instance 'cleavir-ast:values-ast
      :argument-asts (mapcar
 		     (lambda (cst) (convert cst env system))
-		     (cst:listify arguments-cst))
-     :origin origin)))
+		     (cst:listify arguments-cst)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -182,8 +181,7 @@
     (declare (ignore less-cst))
     (make-instance 'cleavir-ast:fixnum-less-ast
       :arg1-ast (convert arg1-cst env system)
-      :arg2-ast (convert arg2-cst env system)
-      :origin origin)))
+      :arg2-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -196,8 +194,7 @@
     (declare (ignore not-greater-cst))
     (make-instance 'cleavir-ast:fixnum-not-greater-ast
       :arg1-ast (convert arg1-cst env system)
-      :arg2-ast (convert arg2-cst env system)
-      :origin origin)))
+      :arg2-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -210,8 +207,7 @@
     (declare (ignore greater-cst))
     (make-instance 'cleavir-ast:fixnum-greater-ast
       :arg1-ast (convert arg1-cst env system)
-      :arg2-ast (convert arg2-cst env system)
-      :origin origin)))
+      :arg2-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -224,8 +220,7 @@
     (declare (ignore not-less-cst))
     (make-instance 'cleavir-ast:fixnum-not-less-ast
       :arg1-ast (convert arg1-cst env system)
-      :arg2-ast (convert arg2-cst env system)
-      :origin origin)))
+      :arg2-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -238,8 +233,7 @@
     (declare (ignore equal-cst))
     (make-instance 'cleavir-ast:fixnum-equal-ast
       :arg1-ast (convert arg1-cst env system)
-      :arg2-ast (convert arg2-cst env system)
-      :origin origin)))
+      :arg2-ast (convert arg2-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -385,8 +379,7 @@
       :index-ast (convert index-cst env system)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
-      :boxed-p (cst:raw boxed-p-cst)
-      :origin origin)))
+      :boxed-p (cst:raw boxed-p-cst))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -413,8 +406,7 @@
       :element-ast (convert object-cst env system)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
-      :boxed-p (cst:raw boxed-p-cst)
-      :origin origin)))
+      :boxed-p (cst:raw boxed-p-cst))))
 
 ;;; The following macro is used to generate a method on
 ;;; CONVERT-SPECIAL for binary floating-point primops.
@@ -427,8 +419,7 @@
        (make-instance ',ast
          :subtype (cst:raw type-cst)
          :arg1-ast (convert arg1-cst env system)
-         :arg2-ast (convert arg2-cst env system)
-         :origin origin))))
+         :arg2-ast (convert arg2-cst env system)))))
 
 (define-float-binop cleavir-primop:float-add
   cleavir-ast:float-add-ast)
@@ -459,8 +450,7 @@
        (declare (ignore op-cst))
        (make-instance ',ast
          :subtype (cst:raw type-cst)
-         :arg-ast (convert arg-cst env system)
-         :origin origin))))
+         :arg-ast (convert arg-cst env system)))))
 
 (define-float-unop cleavir-primop:float-sin
   cleavir-ast:float-sin-ast)
@@ -492,8 +482,7 @@
     (declare (ignore op-cst))
     (make-instance 'cleavir-ast:coerce-ast
      :from (cst:raw type1-cst) :to (cst:raw type2-cst)
-     :arg-ast (convert form-cst env system)
-     :origin origin)))
+     :arg-ast (convert form-cst env system))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -506,4 +495,4 @@
     ((symbol (eql 'cleavir-primop:unreachable)) cst env system)
   (declare (ignore env system))
   (check-simple-primop-syntax cst 0)
-  (make-instance 'cleavir-ast:unreachable-ast :origin (cst:source cst)))
+  (make-instance 'cleavir-ast:unreachable-ast))

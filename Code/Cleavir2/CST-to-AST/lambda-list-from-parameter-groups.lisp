@@ -2,7 +2,6 @@
 
 (defun var-to-lexical (var-cst)
   (let* ((raw (cst:raw var-cst))
-         (origin (cst:source var-cst))
          (name (make-symbol (string-downcase raw))))
     (make-instance 'cleavir-ast:lexical-ast :name name)))
 
