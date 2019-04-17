@@ -165,8 +165,7 @@
 
 (defmethod convert-special-variable (cst info global-env system)
   (declare (ignore global-env))
-  (let ((symbol (cleavir-env:name info))
-        (origin (cst:source cst)))
+  (let ((symbol (cleavir-env:name info)))
     (make-instance 'cleavir-ast:symbol-value-ast :name symbol)))
 
 (defmethod convert-cst
