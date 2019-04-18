@@ -17,9 +17,6 @@
 (defmethod label (ast)
   (cleavir-ast-graphviz::label ast))
 
-(defmethod label ((ast cleavir-ast:constant-fdefinition-ast))
-  "c-fdef")
-
 (defmethod label ((ast cleavir-ast:fdefinition-ast))
   "fdef")
 
@@ -37,7 +34,7 @@
 (defmethod ast-width (pane ast)
   (+ 5 (nth-value 0 (clim:text-size pane (label ast)))))
 
-(defmethod ast-width (pane (ast cleavir-ast:constant-fdefinition-ast))
+(defmethod ast-width (pane (ast cleavir-ast:fdefinition-ast))
   (let* ((width1 (nth-value 0 (clim:text-size pane (label ast))))
          (function-name (format nil "~S" (cleavir-ast:name ast)))
          (width2 (nth-value 0 (clim:text-size pane function-name))))
@@ -51,7 +48,7 @@
 (defmethod ast-height (pane ast)
   (+ 5 (nth-value 1 (clim:text-size pane (label ast)))))
 
-(defmethod ast-height (pane (ast cleavir-ast:constant-fdefinition-ast))
+(defmethod ast-height (pane (ast cleavir-ast:fdefinition-ast))
   (let* ((height1 (nth-value 1 (clim:text-size pane "c-fdef")))
          (function-name (format nil "~S" (cleavir-ast:name ast)))
          (height2 (nth-value 1 (clim:text-size pane function-name))))
@@ -68,7 +65,7 @@
                        (+ x (/ width 2)) (+ y (/ height 2))
                        :align-x :center :align-y :center))))
 
-(defmethod draw ((ast cleavir-ast:constant-fdefinition-ast) pane x y)
+(defmethod draw ((ast cleavir-ast:fdefinition-ast) pane x y)
   (let* ((width (ast-width pane ast))
          (height (ast-height pane ast))
          (function-name (format nil "~S" (cleavir-ast:name ast))))
