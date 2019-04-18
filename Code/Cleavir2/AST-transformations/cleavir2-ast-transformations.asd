@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "clone")
-   (:file "replace")))
+   (:file "replace")
+   (:file "remove-redundant-progn")))
