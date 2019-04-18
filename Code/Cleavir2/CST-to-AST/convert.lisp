@@ -5,14 +5,14 @@
 ;;; CONVERT is responsible for converting a concrete syntax tree to an
 ;;; abstract syntax tree.
 
-(defmethod convert (cst environment system)
+(defmethod convert (cst environment client)
   (let ((form (cst:raw cst)))
     (cond ((and (not (consp form)) (not (symbolp form)))
-           (convert-constant cst environment system))
+           (convert-constant cst environment client))
           ((and (symbolp form) (constantp form))
            (let* ((value (symbol-value form))
                   (value-cst (cst:cst-from-expression value)))
-             (convert-constant value-cst environment system)))
+             (convert-constant value-cst environment client)))
           ((symbolp form)
            (convert-variable cst environment form))
           ((symbolp (car form))
@@ -22,7 +22,7 @@
            ;; specially.  So we must wait until we have more
            ;; information.
            (let ((info (function-info environment (car form))))
-             (convert-cst cst info environment system)))
+             (convert-cst cst info environment client)))
           (t
            ;; The form must be a compound form where the CAR is a lambda
            ;; expression.  Evaluating such a form might have some
@@ -31,10 +31,10 @@
            ;; the form as well.
            (when (and *current-form-is-top-level-p* *compile-time-too*)
              (cleavir-env:eval form environment environment))
-           (convert-lambda-call cst environment system)))))
+           (convert-lambda-call cst environment client)))))
 
-(defmethod convert :around (cst environment system)
-  (declare (ignore cst system))
+(defmethod convert :around (cst environment client)
+  (declare (ignore cst client))
   (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
         (*subforms-are-top-level-p* nil))
     (call-next-method)))

@@ -39,7 +39,7 @@
 ;;; We convert a LET form CST by transforming it into an equivalent
 ;;; LAMBDA form CST.
 
-(defmethod convert-let (cst environment system)
+(defmethod convert-let (cst environment client)
   (when (cst:null (cst:rest cst))
     (error 'let-or-let*-must-have-at-least-one-argument
            :expr (cst:raw cst)
@@ -67,14 +67,14 @@
                                 (cst:cons (cst:cstify variable-csts)
                                           body-forms-cst))
                :rest (cst:cstify initform-csts))))
-      (convert lambda-form-cst environment system))))
+      (convert lambda-form-cst environment client))))
 
 ;;; We convert a LET* form CST by transforming it into nested LET form
 ;;; CSTs and then converting those instead.  This is not trivial,
 ;;; because we need to associate the right declarations with the
 ;;; corresponding LET form CST.
 
-(defmethod convert-let* (cst environment system)
+(defmethod convert-let* (cst environment client)
   (when (cst:null (cst:rest cst))
     (error 'let-or-let*-must-have-at-least-one-argument
            :expr (cst:raw cst)
@@ -85,7 +85,7 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
-              (cst:canonicalize-declarations system declaration-csts))
+              (cst:canonicalize-declarations client declaration-csts))
              (binding-csts (cst:listify bindings-cst))
              (variable-csts
                (loop for binding-cst in binding-csts
@@ -118,4 +118,4 @@
                                                   (cst:cst-from-expression 'declare)
                                                   declaration-cst))
                                                 result))))))
-                finally (return (convert result environment system))))))))
+                finally (return (convert result environment client))))))))

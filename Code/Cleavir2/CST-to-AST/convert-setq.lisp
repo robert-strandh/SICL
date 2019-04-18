@@ -9,36 +9,36 @@
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:constant-variable-info) env system)
-  (declare (ignore var-cst form-cst env system))
+    (var-cst form-cst (info cleavir-env:constant-variable-info) env client)
+  (declare (ignore var-cst form-cst env client))
   (error 'setq-constant-variable
 	 :expr (cleavir-env:name info)))
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:lexical-variable-info) env system)
+    (var-cst form-cst (info cleavir-env:lexical-variable-info) env client)
   (process-progn 
    (list (make-instance 'cleavir-ast:setq-ast
 	  :lhs-ast (cleavir-env:identity info)
-	  :value-ast (convert form-cst env system))
+	  :value-ast (convert form-cst env client))
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:symbol-macro-info) env system)
+    (var-cst form-cst (info cleavir-env:symbol-macro-info) env client)
   (let* ((expansion (funcall (coerce *macroexpand-hook* 'function)
                              (lambda (form env)
                                (declare (ignore form env))
                                (cleavir-env:expansion info))
                              (cleavir-env:name info)
                              env))
-         (expansion-cst (cst:reconstruct expansion var-cst system)))
+         (expansion-cst (cst:reconstruct expansion var-cst client)))
     (convert (cst:list (cst:cst-from-expression 'setf)
                        expansion-cst
                        form-cst)
-             env system)))
+             env client)))
 
 (defmethod convert-setq-special-variable
-    (var-cst form-ast info global-env system)
-  (declare (ignore system))
+    (var-cst form-ast info global-env client)
+  (declare (ignore client))
   (let ((temp (make-instance 'cleavir-ast:lexical-ast :name (gensym))))
     (process-progn
      (list (make-instance 'cleavir-ast:setq-ast
@@ -50,15 +50,15 @@
 	   temp))))
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:special-variable-info) env system)
+    (var-cst form-cst (info cleavir-env:special-variable-info) env client)
   (let ((global-env (cleavir-env:global-environment env)))
     (convert-setq-special-variable var-cst
-                                   (convert form-cst env system)
+                                   (convert form-cst env client)
 				   info
 				   global-env
-				   system)))
+				   client)))
 
-(defun convert-elementary-setq (var-cst form-cst env system)
+(defun convert-elementary-setq (var-cst form-cst env client)
   (let* ((symbol (cst:raw var-cst))
          (info (cleavir-env:variable-info env symbol)))
     (loop while (null info)
@@ -85,4 +85,4 @@
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
 		 (setq info (cleavir-env:variable-info env new-symbol)))))
-    (convert-setq var-cst form-cst info env system)))
+    (convert-setq var-cst form-cst info env client)))

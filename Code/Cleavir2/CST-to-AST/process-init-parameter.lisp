@@ -8,16 +8,16 @@
 ;;; testing whether SUPPLIED-P-AST computes NIL or T, and for
 ;;; assigning the value computed by VALUE-AST to VAR-AST if
 ;;; SUPPLIED-P-AST computes NIL.
-(defun make-initialization-ast (var-ast supplied-p-ast value-ast env system)
+(defun make-initialization-ast (var-ast supplied-p-ast value-ast env client)
   (let ((nil-cst (cst:cst-from-expression nil)))
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
-                :arg2-ast (convert-constant nil-cst env system))
+                :arg2-ast (convert-constant nil-cst env client))
      :then-ast (make-instance 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
                  :value-ast value-ast)
-     :else-ast (convert-constant nil-cst env system))))
+     :else-ast (convert-constant nil-cst env client))))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated
@@ -40,10 +40,10 @@
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
 (defun process-init-parameter
-    (var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk system)
+    (var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk client)
   (process-progn
    (list (make-initialization-ast var-ast supplied-p-ast init-ast
-                                  env system)
+                                  env client)
          (set-or-bind-variable
           var-cst var-ast
           (if (null supplied-p-cst)
@@ -51,5 +51,5 @@
               (lambda ()
                 (set-or-bind-variable
                  supplied-p-cst supplied-p-ast
-                 next-thunk env system)))
-          env system))))
+                 next-thunk env client)))
+          env client))))

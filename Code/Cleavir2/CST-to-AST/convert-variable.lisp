@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-variable (cst environment system)
+(defmethod convert-variable (cst environment client)
   (let* ((symbol (cst:raw cst))
          (info (cleavir-env:variable-info environment symbol)))
     (loop while (null info)
@@ -27,4 +27,4 @@
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
 		 (setq info (cleavir-env:variable-info environment new-symbol)))))
-    (convert-cst cst info environment system)))
+    (convert-cst cst info environment client)))
