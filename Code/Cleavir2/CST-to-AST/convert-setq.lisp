@@ -59,7 +59,7 @@
 				   global-env
 				   client)))
 
-(defun convert-elementary-setq (var-cst form-cst env client)
+(defun convert-elementary-setq (client var-cst form-cst env)
   (let* ((symbol (cst:raw var-cst))
          (info (cleavir-env:variable-info env symbol)))
     (loop while (null info)

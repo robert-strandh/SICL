@@ -749,7 +749,7 @@
                                       :expr variable
                                       :origin (cst:source variable-cst))
                           collect (convert-elementary-setq
-                                   variable-cst form-cst environment client))))
+                                   client variable-cst form-cst environment))))
     (process-progn form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
