@@ -89,12 +89,8 @@
                :sicl-type-support
                :sicl-conditions
                :closer-mop
-               :cleavir-generate-ast
-               :cleavir-cst-to-ast
-               :cleavir-ast-transformations
-               :cleavir-ast-to-hir
-               :cleavir-hir
-               :cleavir-hir-transformations
+               :cleavir2-cst-to-ast
+               :cleavir2-ast-transformations
                :cleavir-meter
                :sicl-evaluation-and-compilation-support
                :sicl-data-and-control-flow-support
