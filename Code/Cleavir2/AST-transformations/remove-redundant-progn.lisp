@@ -1,4 +1,4 @@
-(in-package #:sicl-file-compiler)
+(in-package #:cleavir-ast-transformations)
 
 (defun simplify-ast (ast)
   (let ((table (make-hash-table :test #'eq)))
