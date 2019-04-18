@@ -32,7 +32,7 @@
 
 (defmethod convert-cst
     (cst (info cleavir-env:special-operator-info) env client)
-  (convert-special (car (cst:raw cst)) cst env client))
+  (convert-special client (car (cst:raw cst)) cst env))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -163,7 +163,7 @@
 ;;; Converting a symbol that has a definition as a special variable.
 ;;; We do this by generating a call to SYMBOL-VALUE.
 
-(defmethod convert-special-variable (cst info global-env client)
+(defmethod convert-special-variable (client cst info global-env)
   (declare (ignore global-env))
   (let ((symbol (cleavir-env:name info)))
     (make-instance 'cleavir-ast:symbol-value-ast :name symbol)))

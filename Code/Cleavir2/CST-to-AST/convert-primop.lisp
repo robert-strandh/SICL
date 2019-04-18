@@ -12,7 +12,7 @@
 ;;; code which is then converted again.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:ast)) cst env client)
+    (client (symbol (eql 'cleavir-primop:ast)) cst env)
   (declare (ignore env client))
   (check-simple-primop-syntax cst 1)
   (cst:db origin (primop-cst ast-cst) cst
@@ -24,7 +24,7 @@
 ;;; Converting CLEAVIR-PRIMOP:EQ.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:eq)) cst env client)
+    (client (symbol (eql 'cleavir-primop:eq)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (eq-cst arg1-cst arg2-cst) cst
     (declare (ignore eq-cst))
@@ -37,7 +37,7 @@
 ;;; Converting CLEAVIR-PRIMOP:TYPEQ.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:typeq)) cst env client)
+    (client (symbol (eql 'cleavir-primop:typeq)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
     (declare (ignore typeq-cst))
@@ -56,7 +56,7 @@
 ;;; FIXED-TO-MULTIPLE-INSTRUCTION.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:values)) cst env client)
+    (client (symbol (eql 'cleavir-primop:values)) cst env)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (values-cst . arguments-cst) cst
     (declare (ignore values-cst))
@@ -76,7 +76,7 @@
 ;;; appear as a MULTIPLE-TO-FIXED-INSTRUCTION.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:multiple-value-setq)) cst env client)
+    (client (symbol (eql 'cleavir-primop:multiple-value-setq)) cst env)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (cst:db origin (mvs-cst variables-cst form-cst) cst
@@ -97,7 +97,7 @@
 ;;; Converting CLEAVIR-PRIMOP:CAR.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:car)) cst env client)
+    (client (symbol (eql 'cleavir-primop:car)) cst env)
   (check-simple-primop-syntax cst 1)
   (cst:db origin (car-cst arg-cst) cst
     (declare (ignore car-cst))
@@ -109,7 +109,7 @@
 ;;; Converting CLEAVIR-PRIMOP:CDR.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:cdr)) cst env client)
+    (client (symbol (eql 'cleavir-primop:cdr)) cst env)
   (check-simple-primop-syntax cst 1)
   (cst:db origin (cdr-cst arg-cst) cst
     (declare (ignore cdr-cst))
@@ -121,7 +121,7 @@
 ;;; Converting CLEAVIR-PRIMOP:RPLACA.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:rplaca)) cst env client)
+    (client (symbol (eql 'cleavir-primop:rplaca)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplaca-cst arg1-cst arg2-cst) cst
     (declare (ignore rplaca-cst))
@@ -134,7 +134,7 @@
 ;;; Converting CLEAVIR-PRIMOP:RPLACD.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:rplacd)) cst env client)
+    (client (symbol (eql 'cleavir-primop:rplacd)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
     (declare (ignore rplacd-cst))
@@ -147,7 +147,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-ADD.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:fixnum-add)) cst env client)
+    (client (symbol (eql 'cleavir-primop:fixnum-add)) cst env)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore add-cst))
@@ -161,7 +161,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-SUB.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:fixnum-sub)) cst env client)
+    (client (symbol (eql 'cleavir-primop:fixnum-sub)) cst env)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore sub-cst))
@@ -175,7 +175,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-LESS.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:fixnum-less)) cst env client)
+    (client (symbol (eql 'cleavir-primop:fixnum-less)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (less-cst arg1-cst arg2-cst) cst
     (declare (ignore less-cst))
@@ -188,7 +188,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-NOT-GREATER.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:fixnum-not-greater)) cst env client)
+    (client (symbol (eql 'cleavir-primop:fixnum-not-greater)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (not-greater-cst arg1-cst arg2-cst) cst
     (declare (ignore not-greater-cst))
@@ -201,7 +201,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-GREATER.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:fixnum-greater)) cst env client)
+    (client (symbol (eql 'cleavir-primop:fixnum-greater)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (greater-cst arg1-cst arg2-cst) cst
     (declare (ignore greater-cst))
@@ -214,7 +214,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-NOT-LESS.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:fixnum-not-less)) cst env client)
+    (client (symbol (eql 'cleavir-primop:fixnum-not-less)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (not-less-cst arg1-cst arg2-cst) cst
     (declare (ignore not-less-cst))
@@ -227,7 +227,7 @@
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-EQUAL.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:fixnum-equal)) cst env client)
+    (client (symbol (eql 'cleavir-primop:fixnum-equal)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (equal-cst arg1-cst arg2-cst) cst
     (declare (ignore equal-cst))
@@ -250,7 +250,7 @@
 ;;; are used in the forms, or else things will fail spectacularly.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:let-uninitialized)) cst env client)
+    (client (symbol (eql 'cleavir-primop:let-uninitialized)) cst env)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (let-cst variables-cst . body-cst) cst
@@ -283,7 +283,7 @@
 ;;; a function and then calls this primop.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:funcall)) cst env client)
+    (client (symbol (eql 'cleavir-primop:funcall)) cst env)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (funcall-cst function-cst . arguments-cst) cst
@@ -309,7 +309,7 @@
 ;;; already a function and then calls this primop.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:multiple-value-call)) cst env client)
+    (client (symbol (eql 'cleavir-primop:multiple-value-call)) cst env)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
@@ -330,7 +330,7 @@
 ;;; number to be read.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:slot-read)) cst env client)
+    (client (symbol (eql 'cleavir-primop:slot-read)) cst env)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
     (declare (ignore slot-read-cst))
@@ -349,7 +349,7 @@
 ;;; to the object that will be written to the slot.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:slot-write)) cst env client)
+    (client (symbol (eql 'cleavir-primop:slot-write)) cst env)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
     (declare (ignore slot-write-cst))
@@ -370,7 +370,7 @@
 ;;; boxed.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:aref)) cst env client)
+    (client (symbol (eql 'cleavir-primop:aref)) cst env)
   (check-simple-primop-syntax cst 5)
   (cst:db origin (aref-cst array-cst index-cst type-cst simple-p-cst boxed-p-cst) cst
     (declare (ignore aref-cst))
@@ -395,7 +395,7 @@
 ;;; the last form.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:aset)) cst env client)
+    (client (symbol (eql 'cleavir-primop:aset)) cst env)
   (check-simple-primop-syntax cst 6)
   (cst:db origin (aset-cst array-cst index-cst object-cst type-cst simple-p-cst boxed-p-cst)
       cst
@@ -412,7 +412,7 @@
 ;;; CONVERT-SPECIAL for binary floating-point primops.
 (defmacro define-float-binop (primop ast)
   `(defmethod convert-special
-       ((symbol (eql ',primop)) cst env client)
+       (client (symbol (eql ',primop)) cst env)
      (check-simple-primop-syntax cst 3)
      (cst:db origin (op-cst type-cst arg1-cst arg2-cst) cst
        (declare (ignore op-cst))
@@ -444,7 +444,7 @@
 ;;; CONVERT-SPECIAL for unatry floating-point primops.
 (defmacro define-float-unop (primop ast)
   `(defmethod convert-special
-       ((symbol (eql ',primop)) cst env client)
+       (client (symbol (eql ',primop)) cst env)
      (check-simple-primop-syntax cst 2)
      (cst:db origin (op-cst type-cst arg-cst) cst
        (declare (ignore op-cst))
@@ -476,7 +476,7 @@
 ;;; as well as for arithmetic contagion.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:coerce)) cst env client)
+    (client (symbol (eql 'cleavir-primop:coerce)) cst env)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (op-cst type1-cst type2-cst form-cst) cst
     (declare (ignore op-cst))
@@ -492,7 +492,7 @@
 ;;; should be impossible.
 
 (defmethod convert-special
-    ((symbol (eql 'cleavir-primop:unreachable)) cst env client)
+    (client (symbol (eql 'cleavir-primop:unreachable)) cst env)
   (declare (ignore env client))
   (check-simple-primop-syntax cst 0)
   (make-instance 'cleavir-ast:unreachable-ast))

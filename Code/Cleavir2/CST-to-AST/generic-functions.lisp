@@ -4,7 +4,7 @@
 
 (defgeneric convert-cst (cst info environment client))
 
-(defgeneric convert-special (head cst environment client))
+(defgeneric convert-special (client head cst environment))
 
 (defgeneric convert-special-binding
     (variable value-ast next-ast env client))
