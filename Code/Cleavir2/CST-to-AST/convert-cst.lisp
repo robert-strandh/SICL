@@ -15,7 +15,7 @@
                                  env))
          (expanded-cst (cst:cst-from-expression expanded-form)))
     (with-preserved-toplevel-ness
-      (convert expanded-cst env client))))
+      (convert client expanded-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -54,7 +54,7 @@
                                  env))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
     (with-preserved-toplevel-ness
-      (convert expanded-cst env client))))
+      (convert client expanded-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -75,7 +75,7 @@
                                          env))
                  (expanded-cst (cst:reconstruct expanded-form cst client)))
 
-            (convert expanded-cst env client))
+            (convert client expanded-cst env))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
           (let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
@@ -93,13 +93,13 @@
                                   form
                                   env))
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
-                  (convert expanded-cst env client))
+                  (convert client expanded-cst env))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
                 ;; taking into account the real macro expander.
                 (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
-                  (convert expanded-cst env client))))))))
+                  (convert client expanded-cst env))))))))
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
@@ -146,7 +146,7 @@
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
               (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
-                (convert expanded-cst env client)))))))
+                (convert client expanded-cst env)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

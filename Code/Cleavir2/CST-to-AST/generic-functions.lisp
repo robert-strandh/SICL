@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defgeneric convert (cst environment client))
+(defgeneric convert (client cst environment))
 
 (defgeneric convert-cst (cst info environment client))
 

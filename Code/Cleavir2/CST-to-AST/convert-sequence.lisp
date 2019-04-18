@@ -5,4 +5,4 @@
 (defun convert-sequence (sequence-cst environment client)
   (loop for cst = sequence-cst then (cst:rest cst)
         until (cst:null cst)
-	collect (convert (cst:first cst) environment client)))
+	collect (convert client (cst:first cst) environment)))

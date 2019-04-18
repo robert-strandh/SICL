@@ -29,8 +29,8 @@
   (cst:db origin (eq-cst arg1-cst arg2-cst) cst
     (declare (ignore eq-cst))
     (make-instance 'cleavir-ast:eq-ast
-     :arg1-ast (convert arg1-cst env client)
-     :arg2-ast (convert arg2-cst env client))))
+     :arg1-ast (convert client arg1-cst env)
+     :arg2-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -42,7 +42,7 @@
   (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
     (declare (ignore typeq-cst))
     (make-instance 'cleavir-ast:typeq-ast
-     :form-ast (convert arg1-cst env client)
+     :form-ast (convert client arg1-cst env)
      :type-specifier (cst:raw arg2-cst))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,7 +62,7 @@
     (declare (ignore values-cst))
     (make-instance 'cleavir-ast:values-ast
      :argument-asts (mapcar
-		     (lambda (cst) (convert cst env client))
+		     (lambda (cst) (convert client cst env))
 		     (cst:listify arguments-cst)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -90,7 +90,7 @@
                             info))))
       (make-instance 'cleavir-ast:multiple-value-setq-ast
        :lhs-asts (mapcar #'cleavir-env:identity lexes)
-       :form-ast (convert form-cst env client)))))
+       :form-ast (convert client form-cst env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -102,7 +102,7 @@
   (cst:db origin (car-cst arg-cst) cst
     (declare (ignore car-cst))
     (make-instance 'cleavir-ast:car-ast
-     :cons-ast (convert arg-cst env client))))
+     :cons-ast (convert client arg-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -114,7 +114,7 @@
   (cst:db origin (cdr-cst arg-cst) cst
     (declare (ignore cdr-cst))
     (make-instance 'cleavir-ast:cdr-ast
-     :cons-ast (convert arg-cst env client))))
+     :cons-ast (convert client arg-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -126,8 +126,8 @@
   (cst:db origin (rplaca-cst arg1-cst arg2-cst) cst
     (declare (ignore rplaca-cst))
     (make-instance 'cleavir-ast:rplaca-ast
-      :cons-ast (convert arg1-cst env client)
-      :object-ast (convert arg2-cst env client))))
+      :cons-ast (convert client arg1-cst env)
+      :object-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -139,8 +139,8 @@
   (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
     (declare (ignore rplacd-cst))
     (make-instance 'cleavir-ast:rplacd-ast
-      :cons-ast (convert arg1-cst env client)
-      :object-ast (convert arg2-cst env client))))
+      :cons-ast (convert client arg1-cst env)
+      :object-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -152,9 +152,9 @@
   (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore add-cst))
     (make-instance 'cleavir-ast:fixnum-add-ast
-      :arg1-ast (convert arg1-cst env client)
-      :arg2-ast (convert arg2-cst env client)
-      :variable-ast (convert variable-cst env client))))
+      :arg1-ast (convert client arg1-cst env)
+      :arg2-ast (convert client arg2-cst env)
+      :variable-ast (convert client variable-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -166,9 +166,9 @@
   (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore sub-cst))
     (make-instance 'cleavir-ast:fixnum-sub-ast
-      :arg1-ast (convert arg1-cst env client)
-      :arg2-ast (convert arg2-cst env client)
-      :variable-ast (convert variable-cst env client))))
+      :arg1-ast (convert client arg1-cst env)
+      :arg2-ast (convert client arg2-cst env)
+      :variable-ast (convert client variable-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -180,8 +180,8 @@
   (cst:db origin (less-cst arg1-cst arg2-cst) cst
     (declare (ignore less-cst))
     (make-instance 'cleavir-ast:fixnum-less-ast
-      :arg1-ast (convert arg1-cst env client)
-      :arg2-ast (convert arg2-cst env client))))
+      :arg1-ast (convert client arg1-cst env)
+      :arg2-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -193,8 +193,8 @@
   (cst:db origin (not-greater-cst arg1-cst arg2-cst) cst
     (declare (ignore not-greater-cst))
     (make-instance 'cleavir-ast:fixnum-not-greater-ast
-      :arg1-ast (convert arg1-cst env client)
-      :arg2-ast (convert arg2-cst env client))))
+      :arg1-ast (convert client arg1-cst env)
+      :arg2-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -206,8 +206,8 @@
   (cst:db origin (greater-cst arg1-cst arg2-cst) cst
     (declare (ignore greater-cst))
     (make-instance 'cleavir-ast:fixnum-greater-ast
-      :arg1-ast (convert arg1-cst env client)
-      :arg2-ast (convert arg2-cst env client))))
+      :arg1-ast (convert client arg1-cst env)
+      :arg2-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -219,8 +219,8 @@
   (cst:db origin (not-less-cst arg1-cst arg2-cst) cst
     (declare (ignore not-less-cst))
     (make-instance 'cleavir-ast:fixnum-not-less-ast
-      :arg1-ast (convert arg1-cst env client)
-      :arg2-ast (convert arg2-cst env client))))
+      :arg1-ast (convert client arg1-cst env)
+      :arg2-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -232,8 +232,8 @@
   (cst:db origin (equal-cst arg1-cst arg2-cst) cst
     (declare (ignore equal-cst))
     (make-instance 'cleavir-ast:fixnum-equal-ast
-      :arg1-ast (convert arg1-cst env client)
-      :arg2-ast (convert arg2-cst env client))))
+      :arg1-ast (convert client arg1-cst env)
+      :arg2-ast (convert client arg2-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -289,11 +289,11 @@
   (cst:db origin (funcall-cst function-cst . arguments-cst) cst
     (declare (ignore funcall-cst))
     (make-instance 'cleavir-ast:call-ast
-     :callee-ast (convert function-cst env client)
+     :callee-ast (convert client function-cst env)
      :argument-asts (loop for remaining = arguments-cst
                             then (cst:rest remaining)
                           until (cst:null remaining)
-                          collect (convert (cst:first remaining) env client)))))
+                          collect (convert client (cst:first remaining) env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -315,10 +315,10 @@
   (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
     (declare (ignore multiple-value-call-cst))
     (make-instance 'cleavir-ast:multiple-value-call-ast
-     :function-form-ast (convert function-cst env client)
+     :function-form-ast (convert client function-cst env)
      :form-asts (loop for remaining = arguments-cst then (cst:rest remaining)
                       until (cst:null remaining)
-                      collect (convert (cst:first remaining) env client)))))
+                      collect (convert client (cst:first remaining) env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -335,8 +335,8 @@
   (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
     (declare (ignore slot-read-cst))
     (make-instance 'cleavir-ast:slot-read-ast
-     :object-ast (convert instance-cst env client)
-     :slot-number-ast (convert slot-number-cst env client))))
+     :object-ast (convert client instance-cst env)
+     :slot-number-ast (convert client slot-number-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -354,9 +354,9 @@
   (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
     (declare (ignore slot-write-cst))
     (make-instance 'cleavir-ast:slot-write-ast
-     :object-ast (convert instance-cst env client)
-     :stot-number-ast (convert slot-number-cst env client)
-     :value-ast (convert value-cst env client))))
+     :object-ast (convert client instance-cst env)
+     :stot-number-ast (convert client slot-number-cst env)
+     :value-ast (convert client value-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -375,8 +375,8 @@
   (cst:db origin (aref-cst array-cst index-cst type-cst simple-p-cst boxed-p-cst) cst
     (declare (ignore aref-cst))
     (make-instance 'cleavir-ast:aref-ast
-      :array-ast (convert array-cst env client)
-      :index-ast (convert index-cst env client)
+      :array-ast (convert client array-cst env)
+      :index-ast (convert client index-cst env)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst))))
@@ -401,9 +401,9 @@
       cst
     (declare (ignore aset-cst))
     (make-instance 'cleavir-ast:aset-ast
-      :array-ast (convert array-cst env client)
-      :index-ast (convert index-cst env client)
-      :element-ast (convert object-cst env client)
+      :array-ast (convert client array-cst env)
+      :index-ast (convert client index-cst env)
+      :element-ast (convert client object-cst env)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst))))
@@ -418,8 +418,8 @@
        (declare (ignore op-cst))
        (make-instance ',ast
          :subtype (cst:raw type-cst)
-         :arg1-ast (convert arg1-cst env client)
-         :arg2-ast (convert arg2-cst env client)))))
+         :arg1-ast (convert client arg1-cst env)
+         :arg2-ast (convert client arg2-cst env)))))
 
 (define-float-binop cleavir-primop:float-add
   cleavir-ast:float-add-ast)
@@ -450,7 +450,7 @@
        (declare (ignore op-cst))
        (make-instance ',ast
          :subtype (cst:raw type-cst)
-         :arg-ast (convert arg-cst env client)))))
+         :arg-ast (convert client arg-cst env)))))
 
 (define-float-unop cleavir-primop:float-sin
   cleavir-ast:float-sin-ast)
@@ -482,7 +482,7 @@
     (declare (ignore op-cst))
     (make-instance 'cleavir-ast:coerce-ast
      :from (cst:raw type1-cst) :to (cst:raw type2-cst)
-     :arg-ast (convert form-cst env client))))
+     :arg-ast (convert client form-cst env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

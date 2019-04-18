@@ -67,7 +67,7 @@
                                 (cst:cons (cst:cstify variable-csts)
                                           body-forms-cst))
                :rest (cst:cstify initform-csts))))
-      (convert lambda-form-cst environment client))))
+      (convert client lambda-form-cst environment))))
 
 ;;; We convert a LET* form CST by transforming it into nested LET form
 ;;; CSTs and then converting those instead.  This is not trivial,
@@ -118,4 +118,4 @@
                                                   (cst:cst-from-expression 'declare)
                                                   declaration-cst))
                                                 result))))))
-                finally (return (convert result environment client))))))))
+                finally (return (convert client result environment))))))))

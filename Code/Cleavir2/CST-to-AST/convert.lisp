@@ -5,7 +5,7 @@
 ;;; CONVERT is responsible for converting a concrete syntax tree to an
 ;;; abstract syntax tree.
 
-(defmethod convert (cst environment client)
+(defmethod convert (client cst environment)
   (let ((form (cst:raw cst)))
     (cond ((and (not (consp form)) (not (symbolp form)))
            (convert-constant cst environment client))
@@ -33,7 +33,7 @@
              (cleavir-env:eval form environment environment))
            (convert-lambda-call cst environment client)))))
 
-(defmethod convert :around (cst environment client)
+(defmethod convert :around (client cst environment)
   (declare (ignore cst client))
   (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
         (*subforms-are-top-level-p* nil))

@@ -198,13 +198,14 @@
 (defun convert-body (body env client)
   (let ((new-env (augment-environment-with-declarations env (dspecs body)))
         (block-name-cst (block-name-cst body)))
-    (convert (if block-name-cst
+    (convert client
+             (if block-name-cst
                  (cst:cstify (list* (cst:cst-from-expression 'block)
                                     block-name-cst
                                     (form-csts body)))
                  (cst:cstify (cons (cst:cst-from-expression 'progn)
                                    (form-csts body))))
-             new-env client)))
+             new-env)))
 
 (defmethod process-parameter-groups
     ((parameter-groups null)
@@ -354,7 +355,7 @@
                                                   idspecs
                                                   environment
                                                   client))
-         (init-ast (convert init-form-cst environment client)))
+         (init-ast (convert client init-form-cst environment)))
     (process-init-parameter
      var-cst (first entry)
      supplied-p-cst (second entry)
@@ -393,7 +394,7 @@
                                                   idspecs
                                                   environment
                                                   client))
-         (init-ast (convert init-form-cst environment client)))
+         (init-ast (convert client init-form-cst environment)))
     (process-init-parameter
      var-cst (first entry)
      supplied-p-cst (second entry)
@@ -430,7 +431,7 @@
                                                   idspecs
                                                   environment
                                                   client))
-         (init-ast (convert init-form-cst environment client)))
+         (init-ast (convert client init-form-cst environment)))
     (set-or-bind-variable
      var-cst init-ast
      (lambda ()

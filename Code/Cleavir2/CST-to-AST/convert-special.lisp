@@ -91,10 +91,10 @@
                        ;; value form (or NIL if no return value form was
                        ;; present).
                        (return-from convert-special
-                         (convert value-cst env client)))))
+                         (convert client value-cst env)))))
           (make-instance 'cleavir-ast:return-from-ast
            :block-ast (cleavir-env:identity info)
-           :form-ast (convert value-cst env client)))))))
+           :form-ast (convert client value-cst env)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -136,7 +136,7 @@
                     (member 'cl:eval situations))
                 (process-progn
                  (convert-sequence body-cst environment client))
-                (convert (cst:cst-from-expression nil) environment client))
+                (convert client (cst:cst-from-expression nil) environment))
             (cond ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  Yes  ---  ---
@@ -195,11 +195,13 @@
                          *compile-time-too*))
                    (cleavir-env:eval `(progn ,@(cst:raw body-cst))
                                      environment environment)
-                   (convert (cst:cst-from-expression nil)
-                            environment client))
+                   (convert client
+                            (cst:cst-from-expression nil)
+                            environment))
                   (t
-                   (convert (cst:cst-from-expression nil)
-                            environment client))))))))
+                   (convert client
+                            (cst:cst-from-expression nil)
+                            environment))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -371,7 +373,7 @@
                              collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
-                                           (convert item-cst new-env client))))))
+                                           (convert client item-cst new-env))))))
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
@@ -402,13 +404,13 @@
   (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
-    (let ((test-ast (convert test-cst env client))
-          (true-ast (convert then-cst env client))
+    (let ((test-ast (convert client test-cst env))
+          (true-ast (convert client then-cst env))
           (false-ast (if (cst:null tail-cst)
                          (convert-constant (cst:cst-from-expression nil)
                                            env client)
                          (cst:db s (else-cst) tail-cst
-                           (convert else-cst env client)))))
+                           (convert client else-cst env)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
           (make-instance 'cleavir-ast:if-ast
            :test-ast test-ast
@@ -501,12 +503,12 @@
                  (setf new-env
                        (cleavir-env:add-local-macro new-env name expander))))
       (with-preserved-toplevel-ness
-        (convert (cst:cons (make-instance 'cst:atom-cst
+        (convert client
+                 (cst:cons (make-instance 'cst:atom-cst
                              :raw 'locally
                              :source origin)
                            body-cst)
-                 new-env
-                 client)))))
+                 new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -529,10 +531,11 @@
                          (cleavir-env:add-local-symbol-macro
                           new-env name expansion)))))
       (with-preserved-toplevel-ness
-        (convert (cst:cons (cst:cst-from-expression 'locally)
+        (convert client
+                 (cst:cons (cst:cst-from-expression 'locally)
                            body-cst
                            :source origin)
-                 new-env client)))))
+                 new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -665,7 +668,7 @@
         (the-values-components (cst:raw value-type-cst))
       ;; We don't bother collapsing THE forms for user code.
       (make-instance 'cleavir-ast:the-ast
-        :form-ast (convert form-cst environment client)
+        :form-ast (convert client form-cst environment)
         :required req
         :optional opt
         :rest rest))))
@@ -681,7 +684,7 @@
   (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
     (declare (ignore multiple-value-prog1-cst))
     (make-instance 'cleavir-ast:multiple-value-prog1-ast
-     :first-form-ast (convert first-cst environment client)
+     :first-form-ast (convert client first-cst environment)
      :form-asts (convert-sequence rest-cst environment client))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

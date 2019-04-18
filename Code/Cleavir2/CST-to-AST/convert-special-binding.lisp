@@ -32,4 +32,4 @@
                                          :body-ast next-ast
                                          :lambda-list nil
                                          :dynenv-out cleavir-ast:*dynamic-environment*))))))))
-    (convert new-cst env client)))
+    (convert client new-cst env)))
