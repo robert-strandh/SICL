@@ -40,7 +40,7 @@
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
 (defun process-init-parameter
-    (var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk client)
+    (client var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk)
   (process-progn
    (list (make-initialization-ast var-ast supplied-p-ast init-ast
                                   env client)

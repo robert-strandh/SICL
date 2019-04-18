@@ -58,7 +58,8 @@
 ;;; processing of the parameters in PARAMETER, in
 ;;; REMAINING-PARAMETERS-IN-GROUP, and in REMAINING-PARAMETER-GROUPS.
 (defgeneric process-parameter
-    (parameter
+    (client
+     parameter
      remaining-parameters-in-group
      remaining-parameter-groups
      idspecs-of-parameter
@@ -68,8 +69,7 @@
      remaining-entries-in-group
      remaining-entries
      body
-     environment
-     client))
+     environment))
 
 ;;; Process all the parameters in the list PARAMETERS-IN-GROUP.  This
 ;;; function first computes a new environment by augmenting
@@ -83,15 +83,15 @@
 ;;; parameters in PARAMETERS-IN-GROUP and in
 ;;; REMAINING-PARAMETER-GROUPS.
 (defgeneric process-parameters-in-group
-    (parameters-in-group
+    (client
+     parameters-in-group
      remaining-parameter-groups
      idspecs-in-group
      remaining-idspecs
      entries-in-group
      remaining-entries
      body
-     environment
-     client))
+     environment))
 
 ;;; This function first computes a new environment by augmenting
 ;;; ENVIRONMENT with information from the parameters in
@@ -103,15 +103,15 @@
 ;;; is a lexical lambda list that corresponds to the parameters in
 ;;; PARAMETER-GROUP and REMAINING-PARAMETER-GROUPS.
 (defgeneric process-parameter-group
-    (parameter-group
+    (client
+     parameter-group
      remaining-parameter-groups
      idspecs-in-group
      remaining-idspecs
      entries-in-group
      remaining-entries
      body
-     environment
-     client))
+     environment))
 
 ;;; Process all the parameters in the list of parameter groups
 ;;; PARAMETER-GROUPS.  This function returns two values.  The first
@@ -120,42 +120,43 @@
 ;;; the AST resulting from the processing of those parameters and of
 ;;; BODY.
 (defgeneric process-parameter-groups
-    (parameter-groups
+    (client
+     parameter-groups
      idspecs
      entries
      body
-     envrironment
-     client))
+     envrironment))
 
 (defmethod process-parameters-in-group
-    ((parameters-in-group null)
+    (client
+     (parameters-in-group null)
      remaining-parameter-groups
      idspecs-in-group
      remaining-idspecs
      entries-in-group
      remaining-entries
      body
-     environment
-     client)
+     environment)
   (declare (ignore idspecs-in-group entries-in-group))
-  (process-parameter-groups remaining-parameter-groups
+  (process-parameter-groups client
+                            remaining-parameter-groups
                             remaining-idspecs
                             remaining-entries
                             body
-                            environment
-                            client))
+                            environment))
 
 (defmethod process-parameters-in-group
-    ((parameters-in-group cons)
+    (client
+     (parameters-in-group cons)
      remaining-parameter-groups
      idspecs-in-group
      remaining-idspecs
      entries-in-group
      remaining-entries
      body
-     environment
-     client)
-  (process-parameter (car parameters-in-group)
+     environment)
+  (process-parameter client
+                     (car parameters-in-group)
                      (cdr parameters-in-group)
                      remaining-parameter-groups
                      (car idspecs-in-group)
@@ -165,11 +166,10 @@
                      (cdr entries-in-group)
                      remaining-entries
                      body
-                     environment
-                     client))
+                     environment))
 
 (defgeneric new-environment-from-parameter
-    (parameter idspecs environment client))
+    (client parameter idspecs environment))
 
 ;;; This class is used to describe the body of a function.  It
 ;;; contains the declaration specifiers that apply to the body as a
@@ -195,7 +195,7 @@
     :block-name-cst block-name-cst))
 
 ;;; Convert the body of a function.
-(defun convert-body (body env client)
+(defun convert-body (client body env)
   (let ((new-env (augment-environment-with-declarations env (dspecs body)))
         (block-name-cst (block-name-cst body)))
     (convert client
@@ -208,62 +208,63 @@
              new-env)))
 
 (defmethod process-parameter-groups
-    ((parameter-groups null)
+    (client
+     (parameter-groups null)
      idspecs
      entries
      body
-     environment
-     client)
-  (values (convert-body body environment client) '()))
+     environment)
+  (values (convert-body client body environment) '()))
 
 (defmethod process-parameter-groups
-    ((parameter-groups cons)
+    (client
+     (parameter-groups cons)
      idspecs
      entries
      body
-     environment
-     client)
-  (process-parameter-group (car parameter-groups)
+     environment)
+  (process-parameter-group client
+                           (car parameter-groups)
                            (cdr parameter-groups)
                            (car idspecs)
                            (cdr idspecs)
                            (car entries)
                            (cdr entries)
                            body
-                           environment
-                           client))
+                           environment))
 
 (defmethod process-parameter-group
-    ((parameter-group cst:multi-parameter-group-mixin)
+    (client
+     (parameter-group cst:multi-parameter-group-mixin)
      remaining-parameter-groups
      idspecs-in-group
      remaining-idspecs
      entries-in-group
      remaining-entries
      body
-     environment
-     client)
-  (process-parameters-in-group (cst:parameters parameter-group)
+     environment)
+  (process-parameters-in-group client
+                               (cst:parameters parameter-group)
                                remaining-parameter-groups
                                idspecs-in-group
                                remaining-idspecs
                                entries-in-group
                                remaining-entries
                                body
-                               environment
-                               client))
+                               environment))
 
 (defmethod process-parameter-group
-    ((parameter-group cst:ordinary-rest-parameter-group)
+    (client
+     (parameter-group cst:ordinary-rest-parameter-group)
      remaining-parameter-groups
      idspecs-in-group
      remaining-idspecs
      entries-in-group
      remaining-entries
      body
-     environment
-     client)
-  (process-parameter (cst:parameter parameter-group)
+     environment)
+  (process-parameter client
+                     (cst:parameter parameter-group)
                      '()
                      remaining-parameter-groups
                      (car idspecs-in-group)
@@ -272,38 +273,39 @@
                      (car entries-in-group)
                      '()
                      remaining-entries
-                     body environment client))
+                     body environment))
 
 (defmethod new-environment-from-parameter
-    ((parameter cst:simple-variable) idspecs environment client)
+    (client (parameter cst:simple-variable) idspecs environment)
   (augment-environment-with-variable (cst:name parameter)
                                      idspecs
                                      environment
                                      environment))
 
 (defmethod new-environment-from-parameter
-    ((parameter cst:ordinary-key-parameter) idspecs environment client)
+    (client (parameter cst:ordinary-key-parameter) idspecs environment)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
                                       environment))
 
 (defmethod new-environment-from-parameter
-    ((parameter cst:ordinary-optional-parameter) idspecs environment client)
+    (client (parameter cst:ordinary-optional-parameter) idspecs environment)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
                                       environment))
 
 (defmethod new-environment-from-parameter
-    ((parameter cst:aux-parameter) idspecs environment client)
+    (client  (parameter cst:aux-parameter) idspecs environment)
   (augment-environment-with-variable (cst:name parameter)
                                      idspecs
                                      environment
                                      environment))
 
 (defmethod process-parameter
-    ((parameter cst:simple-variable)
+    (client
+     (parameter cst:simple-variable)
      remaining-parameters-in-group
      remaining-parameter-groups
      idspecs
@@ -313,28 +315,28 @@
      remaining-entries-in-group
      remaining-entries
      body
-     environment
-     client)
-  (let ((new-env (new-environment-from-parameter parameter
+     environment)
+  (let ((new-env (new-environment-from-parameter client
+                                                 parameter
                                                  idspecs
-                                                 environment
-                                                 client)))
+                                                 environment)))
     (set-or-bind-variable
      (cst:name parameter) lexical-ast
      (lambda ()
-       (process-parameters-in-group remaining-parameters-in-group
+       (process-parameters-in-group client
+                                    remaining-parameters-in-group
                                     remaining-parameter-groups
                                     remaining-idspecs-in-group
                                     remaining-idspecs
                                     remaining-entries-in-group
                                     remaining-entries
                                     body
-                                    new-env
-                                    client))
+                                    new-env))
      new-env client)))
 
 (defmethod process-parameter
-    ((parameter cst:ordinary-optional-parameter)
+    (client
+     (parameter cst:ordinary-optional-parameter)
      remaining-parameters-in-group
      remaining-parameter-groups
      idspecs
@@ -344,36 +346,36 @@
      remaining-entries-in-group
      remaining-entries
      body
-     environment
-     client)
+     environment)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
                             (cst:cst-from-expression nil)
                             (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
-         (new-env (new-environment-from-parameter parameter
+         (new-env (new-environment-from-parameter client
+                                                  parameter
                                                   idspecs
-                                                  environment
-                                                  client))
+                                                  environment))
          (init-ast (convert client init-form-cst environment)))
     (process-init-parameter
+     client
      var-cst (first entry)
      supplied-p-cst (second entry)
      init-ast new-env
      (lambda ()
-       (process-parameters-in-group remaining-parameters-in-group
+       (process-parameters-in-group client
+                                    remaining-parameters-in-group
                                     remaining-parameter-groups
                                     remaining-idspecs-in-group
                                     remaining-idspecs
                                     remaining-entries-in-group
                                     remaining-entries
                                     body
-                                    new-env
-                                    client))
-     client)))
+                                    new-env)))))
 
 (defmethod process-parameter
-    ((parameter cst:ordinary-key-parameter)
+    (client
+     (parameter cst:ordinary-key-parameter)
      remaining-parameters-in-group
      remaining-parameter-groups
      idspecs
@@ -383,36 +385,36 @@
      remaining-entries-in-group
      remaining-entries
      body
-     environment
-     client)
+     environment)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
                             (cst:cst-from-expression nil)
                             (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
-         (new-env (new-environment-from-parameter parameter
+         (new-env (new-environment-from-parameter client
+                                                  parameter
                                                   idspecs
-                                                  environment
-                                                  client))
+                                                  environment))
          (init-ast (convert client init-form-cst environment)))
     (process-init-parameter
+     client
      var-cst (first entry)
      supplied-p-cst (second entry)
      init-ast new-env
      (lambda ()
-       (process-parameters-in-group remaining-parameters-in-group
+       (process-parameters-in-group client
+                                    remaining-parameters-in-group
                                     remaining-parameter-groups
                                     remaining-idspecs-in-group
                                     remaining-idspecs
                                     remaining-entries-in-group
                                     remaining-entries
                                     body
-                                    new-env
-                                    client))
-     client)))
+                                    new-env)))))
 
 (defmethod process-parameter
-    ((parameter cst:aux-parameter)
+    (client
+     (parameter cst:aux-parameter)
      remaining-parameters-in-group
      remaining-parameter-groups
      idspecs
@@ -422,28 +424,27 @@
      remaining-entries-in-group
      remaining-entries
      body
-     environment
-     client)
+     environment)
   (declare (ignore entry))
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (cst:form parameter))
-         (new-env (new-environment-from-parameter parameter
+         (new-env (new-environment-from-parameter client
+                                                  parameter
                                                   idspecs
-                                                  environment
-                                                  client))
+                                                  environment))
          (init-ast (convert client init-form-cst environment)))
     (set-or-bind-variable
      var-cst init-ast
      (lambda ()
-       (process-parameters-in-group remaining-parameters-in-group
+       (process-parameters-in-group client
+                                    remaining-parameters-in-group
                                     remaining-parameter-groups
                                     remaining-idspecs-in-group
                                     remaining-idspecs
                                     remaining-entries-in-group
                                     remaining-entries
                                     body
-                                    new-env
-                                    client))
+                                    new-env))
      new-env client)))
 
 (defun itemize-declaration-specifiers-by-parameter-group
@@ -492,12 +493,12 @@
               (lambda-list-from-parameter-groups (cst:children parsed-lambda-list))
             (let ((ast
                     (process-parameter-groups
+                     client
                      (cst:children parsed-lambda-list)
                      idspecs
                      entries
                      (make-body rdspecs (cst:listify forms-cst) block-name-cst)
-                     env
-                     client)))
+                     env)))
               (make-instance 'cleavir-ast:function-ast
                 :body-ast ast
                 :lambda-list lexical-lambda-list
