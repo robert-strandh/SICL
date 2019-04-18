@@ -461,7 +461,7 @@
           (values (cons itemized-dspecs more-itemized-dspecs)
                   more-remaining-dspecs)))))
 
-(defmethod convert-code (lambda-list-cst body-cst env client
+(defmethod convert-code (client lambda-list-cst body-cst env
                          &key (block-name-cst nil))
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list client lambda-list-cst :error-p nil)))

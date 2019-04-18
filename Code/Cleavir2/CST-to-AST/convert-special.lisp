@@ -254,10 +254,9 @@
              :expr (cst:raw name-cst)
              :origin (cst:source name-cst)))
     (let ((block-name-cst (block-name-from-function-name name-cst)))
-      (convert-code lambda-list-cst
+      (convert-code client lambda-list-cst
                     body-cst
                     environment
-                    client
                     :block-name-cst block-name-cst))))
 
 ;;; Convert a CST representing a list of local function definitions.
@@ -547,8 +546,9 @@
     (convert-function-reference name-cst info environment client)))
 
 (defun convert-lambda-function (lambda-form-cst env client)
-  (convert-code (cst:second lambda-form-cst)
-                (cst:rest (cst:rest lambda-form-cst)) env client))
+  (convert-code client
+                (cst:second lambda-form-cst)
+                (cst:rest (cst:rest lambda-form-cst)) env))
 
 (defun check-function-syntax (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)

@@ -14,5 +14,5 @@
     (assert (eql (cst:raw lambda-cst) 'cl:lambda) nil
             'lambda-call-first-symbol-not-lambda :expr (cst:raw lambda-cst))
     (make-instance 'cleavir-ast:call-ast
-     :callee-ast (convert-code lambda-list-cst body-cst env client)
+     :callee-ast (convert-code client lambda-list-cst body-cst env)
      :argument-asts (convert-sequence args-cst env client))))
