@@ -1,6 +1,6 @@
 (in-package #:cleavir-ast-transformations)
 
-(defun simplify-ast (ast)
+(defun remove-redundant-progn (ast)
   (let ((table (make-hash-table :test #'eq)))
     (labels ((aux (ast)
                (unless (gethash ast table)
