@@ -229,7 +229,6 @@
     (variable-cst declarations env orig-env)
   (let ((new-env env)
         (raw-variable (cst:raw variable-cst))
-        (origin (cst:source variable-cst))
         (raw-declarations (mapcar #'cst:raw declarations)))
     (multiple-value-bind (special-p globally-p)
         (variable-is-special-p raw-variable declarations orig-env)
@@ -273,6 +272,5 @@
 
 (defun augment-environment-with-local-function-name (name-cst environment)
   (let* ((name (cst:raw name-cst))
-         (origin (cst:source name-cst))
          (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
     (cleavir-env:add-local-function environment name var-ast)))
