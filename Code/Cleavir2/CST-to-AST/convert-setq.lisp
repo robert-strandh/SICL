@@ -9,13 +9,13 @@
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:constant-variable-info) env client)
+    (client var-cst form-cst (info cleavir-env:constant-variable-info) env)
   (declare (ignore var-cst form-cst env client))
   (error 'setq-constant-variable
 	 :expr (cleavir-env:name info)))
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:lexical-variable-info) env client)
+    (client var-cst form-cst (info cleavir-env:lexical-variable-info) env)
   (process-progn 
    (list (make-instance 'cleavir-ast:setq-ast
 	  :lhs-ast (cleavir-env:identity info)
@@ -23,7 +23,7 @@
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:symbol-macro-info) env client)
+    (client var-cst form-cst (info cleavir-env:symbol-macro-info) env)
   (let* ((expansion (funcall (coerce *macroexpand-hook* 'function)
                              (lambda (form env)
                                (declare (ignore form env))
@@ -38,7 +38,7 @@
              env)))
 
 (defmethod convert-setq-special-variable
-    (var-cst form-ast info global-env client)
+    (client var-cst form-ast info global-env)
   (declare (ignore client))
   (let ((temp (make-instance 'cleavir-ast:lexical-ast :name (gensym))))
     (process-progn
@@ -51,13 +51,13 @@
 	   temp))))
 
 (defmethod convert-setq
-    (var-cst form-cst (info cleavir-env:special-variable-info) env client)
+    (client var-cst form-cst (info cleavir-env:special-variable-info) env)
   (let ((global-env (cleavir-env:global-environment env)))
-    (convert-setq-special-variable var-cst
+    (convert-setq-special-variable client
+                                   var-cst
                                    (convert client form-cst env)
 				   info
-				   global-env
-				   client)))
+				   global-env)))
 
 (defun convert-elementary-setq (client var-cst form-cst env)
   (let* ((symbol (cst:raw var-cst))
@@ -86,4 +86,4 @@
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
 		 (setq info (cleavir-env:variable-info env new-symbol)))))
-    (convert-setq var-cst form-cst info env client)))
+    (convert-setq client var-cst form-cst info env)))

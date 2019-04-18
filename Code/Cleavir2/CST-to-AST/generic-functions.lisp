@@ -39,10 +39,10 @@
 
 (defgeneric convert-special-variable (cst info global-env client))
 
-(defgeneric convert-setq (var-cst form-cst info env client))
+(defgeneric convert-setq (client var-cst form-cst info env))
 
 (defgeneric convert-setq-special-variable
-    (var-cst form-ast info global-env client))
+    (client var-cst form-ast info global-env))
 
 (defgeneric convert-let (cst environment client))
 
