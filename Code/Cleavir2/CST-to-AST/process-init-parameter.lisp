@@ -13,11 +13,11 @@
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
-                :arg2-ast (convert-constant nil-cst env client))
+                :arg2-ast (convert-constant client nil-cst env))
      :then-ast (make-instance 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
                  :value-ast value-ast)
-     :else-ast (convert-constant nil-cst env client))))
+     :else-ast (convert-constant client nil-cst env))))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated

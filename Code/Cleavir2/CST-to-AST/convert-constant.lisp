@@ -22,17 +22,17 @@
 ;;; of the constant as an immediate machine word.  A default method is
 ;;; provided that always returns NIL.
 
-(defgeneric convert-constant-to-immediate (constant env client))
+(defgeneric convert-constant-to-immediate (client constant env))
 
-(defmethod convert-constant-to-immediate (constant env client)
+(defmethod convert-constant-to-immediate (client constant env)
   (declare (ignore constant env client))
   nil)
 
-(defun convert-constant (constant-cst env client)
+(defun convert-constant (client constant-cst env)
   (let* ((global-env (cleavir-env:global-environment env))
          (expression (cst:raw constant-cst))
 	 (immediate (convert-constant-to-immediate
-                     expression global-env client)))
+                     client expression global-env)))
     (if (null immediate)
 	(make-instance 'cleavir-ast:load-time-value-ast
           :form `',expression

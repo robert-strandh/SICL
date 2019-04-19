@@ -24,7 +24,7 @@
 (defmethod convert-cst
     (cst (info cleavir-env:constant-variable-info) env client)
   (let ((cst (cst:cst-from-expression (cleavir-env:value info))))
-    (convert-constant cst env client)))
+    (convert-constant client cst env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
