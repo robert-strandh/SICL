@@ -697,35 +697,35 @@
 ;;; CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
 (defmethod convert-special
     (client (symbol (eql 'multiple-value-call)) cst environment)
-  (declare (ignore environment client))
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
     (client (symbol (eql 'unwind-protect)) cst environment)
-  (declare (ignore environment client))
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
     (client (symbol (eql 'catch)) cst environment)
-  (declare (ignore environment client))
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
     (client (symbol (eql 'throw)) cst environment)
-  (declare (ignore environment client))
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (error 'no-default-method :operator symbol :expr cst))
 
 (defmethod convert-special
     (client (symbol (eql 'progv)) cst environment)
-  (declare (ignore environment client))
+  (declare (ignore client environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 nil)
   (error 'no-default-method :operator symbol :expr cst))

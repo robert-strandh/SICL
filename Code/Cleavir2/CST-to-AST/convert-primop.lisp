@@ -13,7 +13,7 @@
 
 (defmethod convert-special
     (client (symbol (eql 'cleavir-primop:ast)) cst env)
-  (declare (ignore env client))
+  (declare (ignore client env))
   (check-simple-primop-syntax cst 1)
   (cst:db origin (primop-cst ast-cst) cst
     (declare (ignore primop-cst))
@@ -493,6 +493,6 @@
 
 (defmethod convert-special
     (client (symbol (eql 'cleavir-primop:unreachable)) cst env)
-  (declare (ignore env client))
+  (declare (ignore client env))
   (check-simple-primop-syntax cst 0)
   (make-instance 'cleavir-ast:unreachable-ast))
