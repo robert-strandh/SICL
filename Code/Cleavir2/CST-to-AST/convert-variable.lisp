@@ -27,4 +27,4 @@
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
 		 (setq info (cleavir-env:variable-info environment new-symbol)))))
-    (convert-cst cst info environment client)))
+    (convert-cst client cst info environment)))

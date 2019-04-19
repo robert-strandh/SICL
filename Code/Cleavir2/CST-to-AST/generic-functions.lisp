@@ -2,7 +2,7 @@
 
 (defgeneric convert (client cst environment))
 
-(defgeneric convert-cst (cst info environment client))
+(defgeneric convert-cst (client cst info environment))
 
 (defgeneric convert-special (client head cst environment))
 
