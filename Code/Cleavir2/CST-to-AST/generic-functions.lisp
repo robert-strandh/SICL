@@ -29,13 +29,13 @@
 ;;; behavior by adding methods to this function, specialized to the
 ;;; particular client defined by that client code.
 
-(defgeneric convert-function-reference (cst info env client))
+(defgeneric convert-function-reference (client cst info env))
 
-(defgeneric convert-called-function-reference (cst info env client))
+(defgeneric convert-called-function-reference (client cst info env))
 
 (defgeneric items-from-parameter-group (parameter-group))
 
-(defgeneric convert-global-function-reference (cst info global-env client))
+(defgeneric convert-global-function-reference (client cst info global-env))
 
 (defgeneric convert-special-variable (cst info global-env client))
 
