@@ -13,7 +13,7 @@
 
 (defgeneric convert-code (lambda-list body-cst env client &key block-name-cst))
 
-(defgeneric convert-variable (cst environment client))
+(defgeneric convert-variable (client cst environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-variable (cst environment client)
+(defmethod convert-variable (client cst environment)
   (let* ((symbol (cst:raw cst))
          (info (cleavir-env:variable-info environment symbol)))
     (loop while (null info)
