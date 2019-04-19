@@ -39,7 +39,7 @@
 ;;; We convert a LET form CST by transforming it into an equivalent
 ;;; LAMBDA form CST.
 
-(defmethod convert-let (cst environment client)
+(defmethod convert-let (client cst environment)
   (when (cst:null (cst:rest cst))
     (error 'let-or-let*-must-have-at-least-one-argument
            :expr (cst:raw cst)
@@ -74,7 +74,7 @@
 ;;; because we need to associate the right declarations with the
 ;;; corresponding LET form CST.
 
-(defmethod convert-let* (cst environment client)
+(defmethod convert-let* (client cst environment)
   (when (cst:null (cst:rest cst))
     (error 'let-or-let*-must-have-at-least-one-argument
            :expr (cst:raw cst)

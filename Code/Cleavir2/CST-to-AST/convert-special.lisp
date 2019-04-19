@@ -244,7 +244,7 @@
   (cleavir-env:identity (cleavir-env:function-info environment name)))
 
 ;;; Convert a local function definition.
-(defun convert-local-function (definition-cst environment client)
+(defun convert-local-function (client definition-cst environment)
   (check-cst-proper-list definition-cst
                          'local-function-definition-must-be-proper-list)
   (check-argument-count definition-cst 1 nil)
@@ -260,7 +260,7 @@
                     :block-name-cst block-name-cst))))
 
 ;;; Convert a CST representing a list of local function definitions.
-(defun convert-local-functions (definitions-cst environment client)
+(defun convert-local-functions (client definitions-cst environment)
   (check-cst-proper-list definitions-cst 'flet-functions-must-be-proper-list)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
@@ -269,7 +269,7 @@
                        (name-cst (cst:first def-cst))
                        (name (cst:raw name-cst))
                        (fun (convert-local-function
-                             def-cst environment client)))
+                             client def-cst environment)))
                   (cons name fun))))
 
 ;;; Compute and return a list of SETQ-ASTs that will assign the AST of
@@ -292,7 +292,7 @@
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
-             (defs (convert-local-functions definitions-cst env client))
+             (defs (convert-local-functions client definitions-cst env))
              (new-env (augment-environment-from-fdefs env definitions-cst))
              (init-asts
                (compute-function-init-asts defs new-env))
@@ -319,7 +319,7 @@
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
              (new-env (augment-environment-from-fdefs env definitions-cst))
-             (defs (convert-local-functions definitions-cst new-env client))
+             (defs (convert-local-functions client definitions-cst new-env))
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
@@ -759,7 +759,7 @@
 
 (defmethod convert-special
     (client (symbol (eql 'let)) cst environment)
-  (convert-let cst environment client))
+  (convert-let client cst environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -768,7 +768,7 @@
 
 (defmethod convert-special
     (client (symbol (eql 'let*)) cst environment)
-  (convert-let* cst environment client))
+  (convert-let* client cst environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
