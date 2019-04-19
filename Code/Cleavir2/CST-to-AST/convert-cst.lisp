@@ -171,7 +171,7 @@
 (defmethod convert-cst
     (client cst (info cleavir-env:special-variable-info) env)
   (let ((global-env (cleavir-env:global-environment env)))
-    (convert-special-variable cst info global-env client)))
+    (convert-special-variable client cst info global-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

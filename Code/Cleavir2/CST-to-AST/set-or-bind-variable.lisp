@@ -15,7 +15,7 @@
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)
         (convert-special-binding
-         variable-cst value-ast next-thunk env client)
+         client variable-cst value-ast next-thunk env)
 	(make-instance 'cleavir-ast:progn-ast
 	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
                             :lhs-ast (cleavir-env:identity info)

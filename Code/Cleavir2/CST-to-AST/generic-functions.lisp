@@ -7,9 +7,9 @@
 (defgeneric convert-special (client head cst environment))
 
 (defgeneric convert-special-binding
-    (variable value-ast next-ast env client))
+    (client variable value-ast next-ast env))
 
-(defgeneric convert-lambda-call (cst env client))
+(defgeneric convert-lambda-call (client cst env))
 
 (defgeneric convert-code (lambda-list body-cst env client &key block-name-cst))
 
@@ -37,7 +37,7 @@
 
 (defgeneric convert-global-function-reference (client cst info global-env))
 
-(defgeneric convert-special-variable (cst info global-env client))
+(defgeneric convert-special-variable (client cst info global-env))
 
 (defgeneric convert-setq (client var-cst form-cst info env))
 

@@ -8,7 +8,7 @@
 ;;; testing whether SUPPLIED-P-AST computes NIL or T, and for
 ;;; assigning the value computed by VALUE-AST to VAR-AST if
 ;;; SUPPLIED-P-AST computes NIL.
-(defun make-initialization-ast (var-ast supplied-p-ast value-ast env client)
+(defun make-initialization-ast (client var-ast supplied-p-ast value-ast env)
   (let ((nil-cst (cst:cst-from-expression nil)))
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
@@ -42,8 +42,7 @@
 (defun process-init-parameter
     (client var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk)
   (process-progn
-   (list (make-initialization-ast var-ast supplied-p-ast init-ast
-                                  env client)
+   (list (make-initialization-ast client var-ast supplied-p-ast init-ast env)
          (set-or-bind-variable
           client
           var-cst var-ast

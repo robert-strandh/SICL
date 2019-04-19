@@ -472,7 +472,7 @@
 ;;; Given the CST for a MACROLET definition and an environment, return
 ;;; a macro expander (or macro function) for the definition.
 ;;; FIXME: check syntax.
-(defun expander (definition-cst environment client)
+(defun expander (client definition-cst environment)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (let ((lambda-expression (cst:parse-macro client
                                               name-cst
@@ -499,7 +499,7 @@
             do (let* ((definition-cst (cst:first remaining))
                       (name-cst (cst:first definition-cst))
                       (name (cst:raw name-cst))
-                      (expander (expander definition-cst env client)))
+                      (expander (expander client definition-cst env)))
                  (setf new-env
                        (cleavir-env:add-local-macro new-env name expander))))
       (with-preserved-toplevel-ness
@@ -542,11 +542,11 @@
 ;;; Converting FUNCTION.
 ;;;
 
-(defun convert-named-function (name-cst environment client)
+(defun convert-named-function (client name-cst environment)
   (let ((info (function-info environment (cst:raw name-cst))))
     (convert-function-reference client name-cst info environment)))
 
-(defun convert-lambda-function (lambda-form-cst env client)
+(defun convert-lambda-function (client lambda-form-cst env)
   (convert-code client
                 (cst:second lambda-form-cst)
                 (cst:rest (cst:rest lambda-form-cst)) env))
@@ -576,8 +576,8 @@
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
     (let ((result (if (proper-function-name-p name-cst)
-                      (convert-named-function name-cst env client)
-                      (convert-lambda-function name-cst env client))))
+                      (convert-named-function client name-cst env)
+                      (convert-lambda-function client name-cst env))))
       (reinitialize-instance result :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
