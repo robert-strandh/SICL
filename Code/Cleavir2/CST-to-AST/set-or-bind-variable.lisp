@@ -10,7 +10,7 @@
 ;;; creates a PROGN-AST with two ASTs in it.  The first one is a
 ;;; SETQ-AST that assigns the value to the variable, and the second
 ;;; one is the NEXT-AST.
-(defun set-or-bind-variable (variable-cst value-ast next-thunk env client)
+(defun set-or-bind-variable (client variable-cst value-ast next-thunk env)
   (let ((info (cleavir-env:variable-info env (cst:raw variable-cst))))
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)

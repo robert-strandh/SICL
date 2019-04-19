@@ -45,11 +45,13 @@
    (list (make-initialization-ast var-ast supplied-p-ast init-ast
                                   env client)
          (set-or-bind-variable
+          client
           var-cst var-ast
           (if (null supplied-p-cst)
               next-thunk
               (lambda ()
                 (set-or-bind-variable
+                 client
                  supplied-p-cst supplied-p-ast
-                 next-thunk env client)))
-          env client))))
+                 next-thunk env)))
+          env))))

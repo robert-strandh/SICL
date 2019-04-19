@@ -321,6 +321,7 @@
                                                  idspecs
                                                  environment)))
     (set-or-bind-variable
+     client
      (cst:name parameter) lexical-ast
      (lambda ()
        (process-parameters-in-group client
@@ -332,7 +333,7 @@
                                     remaining-entries
                                     body
                                     new-env))
-     new-env client)))
+     new-env)))
 
 (defmethod process-parameter
     (client
@@ -434,6 +435,7 @@
                                                   environment))
          (init-ast (convert client init-form-cst environment)))
     (set-or-bind-variable
+     client
      var-cst init-ast
      (lambda ()
        (process-parameters-in-group client
@@ -445,7 +447,7 @@
                                     remaining-entries
                                     body
                                     new-env))
-     new-env client)))
+     new-env)))
 
 (defun itemize-declaration-specifiers-by-parameter-group
     (items-by-parameter-group canonical-dspecs)
