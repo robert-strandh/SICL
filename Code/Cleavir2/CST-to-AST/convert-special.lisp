@@ -50,7 +50,7 @@
              (new-env (cleavir-env:add-block env name ast))
              (cleavir-ast:*dynamic-environment* new-dynenv))
         (setf (cleavir-ast:body-ast ast)
-              (process-progn (convert-sequence body-cst new-env client)))
+              (process-progn (convert-sequence client body-cst new-env)))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -135,7 +135,7 @@
             (if (or (member :execute situations)
                     (member 'cl:eval situations))
                 (process-progn
-                 (convert-sequence body-cst environment client))
+                 (convert-sequence client body-cst environment))
                 (convert client (cst:cst-from-expression nil) environment))
             (cond ((or
                     ;; CT   LT   E    Mode
@@ -155,7 +155,7 @@
                          *compile-time-too*))
                    (let ((*compile-time-too* t))
                      (process-progn
-                      (convert-sequence body-cst environment client))))
+                      (convert-sequence client body-cst environment))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  NCT
@@ -176,7 +176,7 @@
                                   (member 'eval situations)))))
                    (let ((*compile-time-too* nil))
                      (process-progn
-                      (convert-sequence body-cst environment client))))
+                      (convert-sequence client body-cst environment))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  No   ---  ---
@@ -303,7 +303,7 @@
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence forms-cst final-env client)))))))))
+                   (convert-sequence client forms-cst final-env)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -329,7 +329,7 @@
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence forms-cst final-env client)))))))))
+                   (convert-sequence client forms-cst final-env)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -460,7 +460,7 @@
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
-      (process-progn (convert-sequence form-csts env client)))))
+      (process-progn (convert-sequence client form-csts env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -686,7 +686,7 @@
     (declare (ignore multiple-value-prog1-cst))
     (make-instance 'cleavir-ast:multiple-value-prog1-ast
      :first-form-ast (convert client first-cst environment)
-     :form-asts (convert-sequence rest-cst environment client))))
+     :form-asts (convert-sequence client rest-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -788,4 +788,4 @@
              (new-env (augment-environment-with-declarations
                        environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
-          (process-progn (convert-sequence forms-cst new-env client)))))))
+          (process-progn (convert-sequence client forms-cst new-env)))))))
