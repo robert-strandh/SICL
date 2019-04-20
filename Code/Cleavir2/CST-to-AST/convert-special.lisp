@@ -43,8 +43,7 @@
                :expr name
                :origin (cst:source name-cst)))
       (let* ((new-dynenv (make-instance 'cleavir-ast:lexical-ast
-                           :name '#:block-dynamic-environment
-                           :dynamic-environment nil))
+                           :name '#:block-dynamic-environment))
              (ast (make-instance 'cleavir-ast:block-ast
                     :dynamic-environment-out new-dynenv))
              (new-env (cleavir-env:add-block lexical-environment name ast))
@@ -359,8 +358,7 @@
                               (make-instance 'cleavir-ast:tag-ast
                                 :name (cst:raw tag-cst)))))
           (new-dynenv (make-instance 'cleavir-ast:lexical-ast
-                           :name '#:tagbody-dynamic-environment
-                           :dynamic-environment nil))
+                           :name '#:tagbody-dynamic-environment))
           (new-env  lexical-environment))
       (loop with cleavir-ast:*dynamic-environment* = new-dynenv
             for ast in tag-asts
