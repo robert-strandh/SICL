@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-global-function-reference (client cst info global-env)
+(defmethod convert-global-function-reference (client cst info global-env dynamic-environment-ast)
   (declare (ignore global-env))
   (make-instance 'cleavir-ast:fdefinition-ast
    :name (cleavir-env:name info)))
@@ -8,7 +8,7 @@
 (defmethod convert-function-reference
     (client cst (info cleavir-env:global-function-info) lexical-environment dynamic-environment-ast)
   (convert-global-function-reference
-   client cst info (cleavir-env:global-environment lexical-environment)))
+   client cst info (cleavir-env:global-environment lexical-environment dynamic-environment-ast)))
 
 (defmethod convert-function-reference
     (client cst (info cleavir-env:local-function-info) lexical-environment dynamic-environment-ast)
@@ -44,7 +44,7 @@
           ;; The AST must be cloned because hoisting is destructive.
           (cleavir-ast-transformations:clone-ast ast)))))
   (convert-global-function-reference
-   client cst info (cleavir-env:global-environment lexical-environment)))
+   client cst info (cleavir-env:global-environment lexical-environment dynamic-environment-ast)))
 
 (defmethod convert-called-function-reference
     (client cst (info cleavir-env:local-function-info) lexical-environment dynamic-environment-ast)

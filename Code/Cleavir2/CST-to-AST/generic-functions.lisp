@@ -35,7 +35,7 @@
 
 (defgeneric items-from-parameter-group (parameter-group))
 
-(defgeneric convert-global-function-reference (client cst info global-env))
+(defgeneric convert-global-function-reference (client cst info global-env dynamic-environment-ast))
 
 (defgeneric convert-special-variable (client cst info global-env dynamic-environment-ast))
 
