@@ -464,7 +464,7 @@ q         (init-ast (convert client init-form-cst lexical-environment dynamic-en
           (values (cons itemized-dspecs more-itemized-dspecs)
                   more-remaining-dspecs)))))
 
-(defmethod convert-code (client lambda-list-cst body-cst lexical-environment
+(defmethod convert-code (client lambda-list-cst body-cst lexical-environment dynamic-environment-ast
                          &key (block-name-cst nil))
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list client lambda-list-cst :error-p nil)))

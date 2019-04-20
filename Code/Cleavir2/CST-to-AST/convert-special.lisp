@@ -258,6 +258,7 @@
       (convert-code client lambda-list-cst
                     body-cst
                     lexical-environment
+                    dynamic-environment-ast
                     :block-name-cst block-name-cst))))
 
 ;;; Convert a CST representing a list of local function definitions.
@@ -551,7 +552,9 @@
 (defun convert-lambda-function (client lambda-form-cst  lexical-environment)
   (convert-code client
                 (cst:second lambda-form-cst)
-                (cst:rest (cst:rest lambda-form-cst))  lexical-environment))
+                (cst:rest (cst:rest lambda-form-cst))
+                lexical-environment
+                dynamic-environment-ast))
 
 (defun check-function-syntax (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
