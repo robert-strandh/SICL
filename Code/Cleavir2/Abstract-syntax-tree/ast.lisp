@@ -72,9 +72,8 @@
 ;;; environment.
 (defclass dynamic-environment-input-ast-mixin ()
   ((%dynamic-environment
-    :initform *dynamic-environment*
-    :initarg :dynamic-environment
-    :accessor dynamic-environment)))
+    :initarg :dynamic-environment-ast
+    :accessor dynamic-environment-ast)))
 
 (cleavir-io:define-save-info dynamic-environment-input-ast-mixin
   (:dynamic-environment-in dynamic-environment-in-ast))
