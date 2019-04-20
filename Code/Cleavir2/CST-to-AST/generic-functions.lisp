@@ -1,10 +1,10 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defgeneric convert (client cst environment))
+(defgeneric convert (client cst lexical-environment))
 
-(defgeneric convert-cst (client cst info environment))
+(defgeneric convert-cst (client cst info lexical-environment))
 
-(defgeneric convert-special (client head cst environment))
+(defgeneric convert-special (client head cst lexical-environment))
 
 (defgeneric convert-special-binding
     (client variable value-ast next-ast env))
@@ -13,7 +13,7 @@
 
 (defgeneric convert-code (lambda-list body-cst env client &key block-name-cst))
 
-(defgeneric convert-variable (client cst environment))
+(defgeneric convert-variable (client cst lexical-environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -44,6 +44,6 @@
 (defgeneric convert-setq-special-variable
     (client var-cst form-ast info global-env))
 
-(defgeneric convert-let (client cst environment))
+(defgeneric convert-let (client cst lexical-environment))
 
-(defgeneric convert-let* (client cst environment))
+(defgeneric convert-let* (client cst lexical-environment))

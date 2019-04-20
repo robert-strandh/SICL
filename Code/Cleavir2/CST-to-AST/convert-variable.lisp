@@ -1,8 +1,8 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-variable (client cst environment)
+(defmethod convert-variable (client cst lexical-environment)
   (let* ((symbol (cst:raw cst))
-         (info (cleavir-env:variable-info environment symbol)))
+         (info (cleavir-env:variable-info lexical-environment symbol)))
     (loop while (null info)
 	  do (restart-case (error 'cleavir-env:no-variable-info
 				  :name symbol
@@ -26,5 +26,5 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
-		 (setq info (cleavir-env:variable-info environment new-symbol)))))
-    (convert-cst client cst info environment)))
+		 (setq info (cleavir-env:variable-info lexical-environment new-symbol)))))
+    (convert-cst client cst info lexical-environment)))

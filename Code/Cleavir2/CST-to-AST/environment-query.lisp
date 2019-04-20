@@ -1,7 +1,7 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defun function-info (environment function-name)
-  (let ((result (cleavir-env:function-info environment function-name)))
+(defun function-info (lexical-environment function-name)
+  (let ((result (cleavir-env:function-info lexical-environment function-name)))
     (loop while (null result)
 	  do (restart-case (error 'cleavir-env:no-function-info
 				  :name function-name)
@@ -18,11 +18,11 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
-		 (setq result (cleavir-env:function-info environment new-function-name)))))
+		 (setq result (cleavir-env:function-info lexical-environment new-function-name)))))
     result))
 
-(defun tag-info (environment tag-name)
-  (let ((result (cleavir-env:tag-info environment tag-name)))
+(defun tag-info (lexical-environment tag-name)
+  (let ((result (cleavir-env:tag-info lexical-environment tag-name)))
     (loop while (null result)
 	  do (restart-case (error 'cleavir-env:no-tag-info
 				  :name tag-name)
@@ -32,6 +32,6 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
-		 (setq result (cleavir-env:tag-info environment new-tag-name)))))
+		 (setq result (cleavir-env:tag-info lexical-environment new-tag-name)))))
     result))
 

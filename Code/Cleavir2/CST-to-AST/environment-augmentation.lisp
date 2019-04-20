@@ -4,20 +4,20 @@
 ;;; and return a new environment which is like the one passed as an
 ;;; argument except that it has been augmented by the local function
 ;;; name.
-(defun augment-environment-from-fdef (environment definition-cst)
+(defun augment-environment-from-fdef (lexical-environment definition-cst)
   (cst:db origin (name . rest) definition-cst
     (declare (ignore rest))
     (let* ((raw-name (cst:raw name))
            (var-ast (make-instance 'cleavir-ast:lexical-ast
                       :name raw-name)))
-      (cleavir-env:add-local-function environment raw-name var-ast))))
+      (cleavir-env:add-local-function lexical-environment raw-name var-ast))))
 
 ;;; Take an environment, a CST representing list of function
 ;;; definitions, and return a new environment which is like the one
 ;;; passed as an argument, except that is has been augmented by the
 ;;; local function names in the list.
-(defun augment-environment-from-fdefs (environment definitions-cst)
-  (loop with result = environment
+(defun augment-environment-from-fdefs (lexical-environment definitions-cst)
+  (loop with result = lexical-environment
         for definition-cst = definitions-cst then (cst:rest definition-cst)
         until (cst:null definition-cst)
         do (setf result
@@ -30,51 +30,51 @@
     (declaration-identifier
      declaration-identifier-cst
      declaration-data-cst
-     environment))
+     lexical-environment))
 
 (defmethod augment-environment-with-declaration
     (declaration-identifier
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (warn "Unable to handle declarations specifier: ~s"
         declaration-identifier)
-  environment)
+  lexical-environment)
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'dynamic-extent))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (let ((var-or-function (cst:first declaration-data-cst)))
     (if (cst:consp var-or-function)
         ;; (dynamic-extent (function foo))
         (cleavir-env:add-function-dynamic-extent
-         environment (cst:second var-or-function))
+         lexical-environment (cst:second var-or-function))
         ;; (dynamic-extent foo)
         (cleavir-env:add-variable-dynamic-extent
-         environment var-or-function))))
+         lexical-environment var-or-function))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'ftype))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (cleavir-env:add-function-type
-   environment (second declaration-data-cst) (first declaration-data-cst)))
+   lexical-environment (second declaration-data-cst) (first declaration-data-cst)))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'ignore))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (if (cst:consp (cst:first declaration-data-cst))
       (cleavir-env:add-function-ignore
-       environment
+       lexical-environment
        (cst:second (cst:first declaration-data-cst))
        declaration-identifier-cst)
       (cleavir-env:add-variable-ignore
-       environment
+       lexical-environment
        (cst:first declaration-data-cst)
        declaration-identifier-cst)))
 
@@ -82,14 +82,14 @@
     ((declaration-identifier (eql 'ignorable))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (if (cst:consp (cst:first declaration-data-cst))
       (cleavir-env:add-function-ignore
-       environment
+       lexical-environment
        (cst:second (cst:first declaration-data-cst))
        declaration-identifier-cst)
       (cleavir-env:add-variable-ignore
-       environment
+       lexical-environment
        (cst:first declaration-data-cst)
        declaration-identifier-cst)))
 
@@ -97,56 +97,56 @@
     ((declaration-identifier (eql 'inline))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (cleavir-env:add-inline
-   environment (cst:first declaration-data-cst) declaration-identifier-cst))
+   lexical-environment (cst:first declaration-data-cst) declaration-identifier-cst))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'notinline))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (cleavir-env:add-inline
-   environment (cst:first declaration-data-cst) declaration-identifier-cst))
+   lexical-environment (cst:first declaration-data-cst) declaration-identifier-cst))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'special))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   ;; This case is a bit tricky, because if the
   ;; variable is globally special, nothing should
   ;; be added to the environment.
   (let ((info (cleavir-env:variable-info
-               environment (cst:raw (cst:first declaration-data-cst)))))
+               lexical-environment (cst:raw (cst:first declaration-data-cst)))))
     (if (and (typep info 'cleavir-env:special-variable-info)
              (cleavir-env:global-p info))
-        environment
+        lexical-environment
         (cleavir-env:add-special-variable
-         environment (cst:raw (cst:first declaration-data-cst))))))
+         lexical-environment (cst:raw (cst:first declaration-data-cst))))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'type))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (cst:db source (type-cst variable-cst) declaration-data-cst
-          (cleavir-env:add-variable-type environment variable-cst type-cst)))
+          (cleavir-env:add-variable-type lexical-environment variable-cst type-cst)))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'optimize))
      declaration-identifier-cst
      declaration-data-cst
-     environment)
+     lexical-environment)
   (declare (ignore declaration-identifier-cst declaration-data-cst))
   ;; OPTIMIZE is handled specially, so we do nothing here.
   ;; This method is just for ensuring that the default method,
   ;; which signals a warning, isn't called.
-  environment)
+  lexical-environment)
 
 ;;; Augment the environment with an OPTIMIZE specifier.
-(defun augment-environment-with-optimize (optimize environment)
-  (cleavir-env:add-optimize environment optimize nil))
+(defun augment-environment-with-optimize (optimize lexical-environment)
+  (cleavir-env:add-optimize lexical-environment optimize nil))
 
 ;;; Extract any OPTIMIZE information from a set of canonicalized
 ;;; declaration specifiers.
@@ -157,13 +157,13 @@
 
 ;;; Augment the environment with a list of canonical declartion
 ;;; specifiers.
-(defun augment-environment-with-declarations (environment canonical-dspecs)
+(defun augment-environment-with-declarations (lexical-environment canonical-dspecs)
   (let ((new-env
           ;; handle OPTIMIZE specially.
           (let ((optimize (extract-optimize canonical-dspecs)))
             (if optimize
-                (augment-environment-with-optimize optimize environment)
-                environment))))
+                (augment-environment-with-optimize optimize lexical-environment)
+                lexical-environment))))
     (loop for spec in canonical-dspecs
           for declaration-identifier-cst = (cst:first spec)
           for declaration-identifier = (cst:raw declaration-identifier-cst)
@@ -270,7 +270,7 @@
         (augment-environment-with-variable
          supplied-p-cst dspecs new-env new-env))))
 
-(defun augment-environment-with-local-function-name (name-cst environment)
+(defun augment-environment-with-local-function-name (name-cst lexical-environment)
   (let* ((name (cst:raw name-cst))
          (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
-    (cleavir-env:add-local-function environment name var-ast)))
+    (cleavir-env:add-local-function lexical-environment name var-ast)))

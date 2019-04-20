@@ -7,10 +7,10 @@
 ;;; is the source location of that CST.
 (defvar *origin*)
 
-(defun cst-to-ast (cst environment client
+(defun cst-to-ast (cst lexical-environment client
                        &optional (cleavir-ast:*dynamic-environment*
                                   (make-instance 'cleavir-ast:lexical-ast
                                    :name '#:unused-dynamic-environment)))
   (let ((*subforms-are-top-level-p* t)
 	(*compile-time-too* nil))
-    (convert client cst environment)))
+    (convert client cst lexical-environment)))
