@@ -245,7 +245,7 @@
   (cleavir-env:identity (cleavir-env:function-info lexical-environment name)))
 
 ;;; Convert a local function definition.
-(defun convert-local-function (client definition-cst lexical-environment)
+(defun convert-local-function (client definition-cst lexical-environment dynamic-environment-ast)
   (check-cst-proper-list definition-cst
                          'local-function-definition-must-be-proper-list)
   (check-argument-count definition-cst 1 nil)
@@ -262,7 +262,7 @@
                     :block-name-cst block-name-cst))))
 
 ;;; Convert a CST representing a list of local function definitions.
-(defun convert-local-functions (client definitions-cst lexical-environment)
+(defun convert-local-functions (client definitions-cst lexical-environment dynamic-environment-ast)
   (check-cst-proper-list definitions-cst 'flet-functions-must-be-proper-list)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
@@ -271,7 +271,7 @@
                        (name-cst (cst:first def-cst))
                        (name (cst:raw name-cst))
                        (fun (convert-local-function
-                             client def-cst lexical-environment)))
+                             client def-cst lexical-environment dynamic-environment-ast)))
                   (cons name fun))))
 
 ;;; Compute and return a list of SETQ-ASTs that will assign the AST of
@@ -294,7 +294,7 @@
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
-             (defs (convert-local-functions client definitions-cst  lexical-environment))
+             (defs (convert-local-functions client definitions-cst  lexical-environment dynamic-environment-ast))
              (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
              (init-asts
                (compute-function-init-asts defs new-env))
@@ -321,7 +321,7 @@
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
              (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
-             (defs (convert-local-functions client definitions-cst new-env))
+             (defs (convert-local-functions client definitions-cst new-env dynamic-environment-ast))
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
@@ -373,7 +373,7 @@
                              collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
-                                           (convert client item-cst new-env) dynamic-environment-ast)))))
+                                           (convert client item-cst new-env dynamic-environment-ast))))))
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
@@ -545,11 +545,11 @@
 ;;; Converting FUNCTION.
 ;;;
 
-(defun convert-named-function (client name-cst lexical-environment)
+(defun convert-named-function (client name-cst lexical-environment dynamic-environment-ast)
   (let ((info (function-info lexical-environment (cst:raw name-cst))))
     (convert-function-reference client name-cst info lexical-environment dynamic-environment-ast)))
 
-(defun convert-lambda-function (client lambda-form-cst  lexical-environment)
+(defun convert-lambda-function (client lambda-form-cst lexical-environment dynamic-environment-ast)
   (convert-code client
                 (cst:second lambda-form-cst)
                 (cst:rest (cst:rest lambda-form-cst))
@@ -581,8 +581,8 @@
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
     (let ((result (if (proper-function-name-p name-cst)
-                      (convert-named-function client name-cst  lexical-environment)
-                      (convert-lambda-function client name-cst  lexical-environment))))
+                      (convert-named-function client name-cst lexical-environment dynamic-environment-ast)
+                      (convert-lambda-function client name-cst lexical-environment dynamic-environment-ast))))
       (reinitialize-instance result :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

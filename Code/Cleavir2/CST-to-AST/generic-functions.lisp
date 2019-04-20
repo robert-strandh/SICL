@@ -2,9 +2,9 @@
 
 (defgeneric convert (client cst lexical-environment dynamic-environment-ast))
 
-(defgeneric convert-cst (client cst info lexical-environment))
+(defgeneric convert-cst (client cst info lexical-environment dynamic-environment-ast))
 
-(defgeneric convert-special (client head cst lexical-environment))
+(defgeneric convert-special (client head cst lexical-environment dynamic-environment-ast))
 
 (defgeneric convert-special-binding
     (client variable value-ast next-ast lexical-environment))
