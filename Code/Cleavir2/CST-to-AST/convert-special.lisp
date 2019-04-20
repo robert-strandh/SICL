@@ -765,7 +765,7 @@
 
 (defmethod convert-special
     (client (symbol (eql 'let)) cst lexical-environment dynamic-environment-ast)
-  (convert-let client cst lexical-environment))
+  (convert-let client cst lexical-environment dynamic-environment-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -774,7 +774,7 @@
 
 (defmethod convert-special
     (client (symbol (eql 'let*)) cst lexical-environment dynamic-environment-ast)
-  (convert-let* client cst lexical-environment))
+  (convert-let* client cst lexical-environment dynamic-environment-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
