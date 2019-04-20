@@ -195,7 +195,7 @@
     :block-name-cst block-name-cst))
 
 ;;; Convert the body of a function.
-(defun convert-body (client body lexical-environment)
+(defun convert-body (client body lexical-environment dynamic-environment-ast)
   (let ((new-env (augment-environment-with-declarations lexical-environment (dspecs body)))
         (block-name-cst (block-name-cst body)))
     (convert client
@@ -215,7 +215,7 @@
      entries
      body
      lexical-environment)
-  (values (convert-body client body lexical-environment) '()))
+  (values (convert-body client body lexical-environment dynamic-environment-ast) '()))
 
 (defmethod process-parameter-groups
     (client
