@@ -14,7 +14,7 @@
                   (value-cst (cst:cst-from-expression value)))
              (convert-constant client value-cst lexical-environment)))
           ((symbolp form)
-           (convert-variable client cst lexical-environment))
+           (convert-variable client cst lexical-environment dynamic-environment-ast))
           ((symbolp (car form))
            ;; Even if we are in COMPILE-TIME-TOO mode, at this point, we
            ;; do not know whether to evaluate the form at compile time,
