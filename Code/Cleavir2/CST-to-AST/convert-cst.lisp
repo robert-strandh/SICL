@@ -108,7 +108,7 @@
 (defun make-call (client cst info lexical-environment dynamic-environment-ast arguments-cst)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference client name-cst info lexical-environment dynamic-environment-ast))
-         (argument-asts (convert-sequence client arguments-cst lexical-environment)))
+         (argument-asts (convert-sequence client arguments-cst lexical-environment dynamic-environment-ast)))
     (make-instance 'cleavir-ast:call-ast
      :callee-ast function-ast
      :argument-asts argument-asts)))
