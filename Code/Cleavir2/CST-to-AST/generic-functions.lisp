@@ -11,7 +11,7 @@
 
 (defgeneric convert-lambda-call (client cst lexical-environment dynamic-environment-ast))
 
-(defgeneric convert-code (lambda-list body-cst lexical-environment client &key block-name-cst))
+(defgeneric convert-code (client lambda-list body-cst lexical-environment &key block-name-cst))
 
 (defgeneric convert-variable (client cst lexical-environment dynamic-environment-ast))
 
