@@ -37,7 +37,7 @@
 
 (defgeneric convert-global-function-reference (client cst info global-env))
 
-(defgeneric convert-special-variable (client cst info global-env))
+(defgeneric convert-special-variable (client cst info global-env dynamic-environment-ast))
 
 (defgeneric convert-setq (client var-cst form-cst info lexical-environment))
 

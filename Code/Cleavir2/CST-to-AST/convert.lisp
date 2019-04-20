@@ -22,7 +22,7 @@
            ;; specially.  So we must wait until we have more
            ;; information.
            (let ((info (function-info lexical-environment (car form))))
-             (convert-cst client cst info lexical-environment)))
+             (convert-cst client cst info lexical-environment dynamic-environment-ast)))
           (t
            ;; The form must be a compound form where the CAR is a lambda
            ;; expression.  Evaluating such a form might have some

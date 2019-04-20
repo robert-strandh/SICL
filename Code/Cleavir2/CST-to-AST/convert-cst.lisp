@@ -5,7 +5,7 @@
 ;;; Converting a symbol that has a definition as a symbol macro.
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:symbol-macro-info) lexical-environment)
+    (client cst (info cleavir-env:symbol-macro-info) lexical-environment dynamic-environment-ast)
   (let* ((form (cst:raw cst))
          (expanded-form (funcall (coerce *macroexpand-hook* 'function)
                                  (lambda (form lexical-environment)
@@ -22,7 +22,7 @@
 ;;; Converting a symbol that has a definition as a constant variable.
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:constant-variable-info) lexical-environment)
+    (client cst (info cleavir-env:constant-variable-info) lexical-environment dynamic-environment-ast)
   (let ((cst (cst:cst-from-expression (cleavir-env:value info))))
     (convert-constant client cst lexical-environment)))
 
@@ -31,7 +31,7 @@
 ;;; Converting a special form represented as a CST.
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:special-operator-info) lexical-environment)
+    (client cst (info cleavir-env:special-operator-info) lexical-environment dynamic-environment-ast)
   (convert-special client (car (cst:raw cst)) cst lexical-environment dynamic-environment-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -46,7 +46,7 @@
 ;;; being passed the same kind of environment.
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:local-macro-info) lexical-environment)
+    (client cst (info cleavir-env:local-macro-info) lexical-environment dynamic-environment-ast)
   (let* ((form (cst:raw cst))
          (expanded-form (funcall (coerce *macroexpand-hook* 'function)
                                  (cleavir-env:expander info)
@@ -62,7 +62,7 @@
 ;;; A global macro can have a compiler macro associated with it.
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:global-macro-info) lexical-environment)
+    (client cst (info cleavir-env:global-macro-info) lexical-environment dynamic-environment-ast)
   (let ((compiler-macro (cleavir-env:compiler-macro info))
         (form (cst:raw cst)))
     (with-preserved-toplevel-ness
@@ -118,7 +118,7 @@
 ;;; function-call form.  INFO is the info instance returned form a
 ;;; query of the environment with the name of the function.
 (defmethod convert-cst
-    (client cst (info cleavir-env:global-function-info) lexical-environment)
+    (client cst (info cleavir-env:global-function-info) lexical-environment dynamic-environment-ast)
   ;; When we compile a call to a global function, it is possible that
   ;; we are in COMPILE-TIME-TOO mode.  In that case, we must first
   ;; evaluate the form.
@@ -155,7 +155,7 @@
 ;;; associated with it.
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:local-function-info) lexical-environment)
+    (client cst (info cleavir-env:local-function-info) lexical-environment dynamic-environment-ast)
   (make-call client cst info lexical-environment (cst:rest cst)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -169,7 +169,7 @@
     (make-instance 'cleavir-ast:symbol-value-ast :name symbol)))
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:special-variable-info) lexical-environment)
+    (client cst (info cleavir-env:special-variable-info) lexical-environment dynamic-environment-ast)
   (let ((global-env (cleavir-env:global-environment lexical-environment)))
     (convert-special-variable client cst info global-env dynamic-environment-ast)))
 
@@ -178,7 +178,7 @@
 ;;; Converting a symbol that has a definition as a lexical variable.
 
 (defmethod convert-cst
-    (client cst (info cleavir-env:lexical-variable-info) lexical-environment)
+    (client cst (info cleavir-env:lexical-variable-info) lexical-environment dynamic-environment-ast)
   (declare (ignore client))
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn 'ignored-variable-referenced :expr (cst:raw cst)))
