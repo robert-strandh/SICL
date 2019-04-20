@@ -300,14 +300,20 @@
                                      lexical-environment))
 
 (defmethod new-environment-from-parameter
-    (client (parameter cst:ordinary-key-parameter) idspecs lexical-environment)
+    (client
+     (parameter cst:ordinary-key-parameter)
+     idspecs
+     lexical-environment)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
                                       lexical-environment))
 
 (defmethod new-environment-from-parameter
-    (client (parameter cst:ordinary-optional-parameter) idspecs lexical-environment)
+    (client
+     (parameter cst:ordinary-optional-parameter)
+     idspecs
+     lexical-environment)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
@@ -378,7 +384,10 @@
                                                   parameter
                                                   idspecs
                                                   lexical-environment))
-         (init-ast (convert client init-form-cst lexical-environment dynamic-environment-ast)))
+         (init-ast (convert client
+                            init-form-cst
+                            lexical-environment
+                            dynamic-environment-ast)))
     (process-init-parameter
      client
      var-cst (first entry)
@@ -419,7 +428,10 @@
                                                   parameter
                                                   idspecs
                                                   lexical-environment))
-         (init-ast (convert client init-form-cst lexical-environment dynamic-environment-ast)))
+         (init-ast (convert client
+                            init-form-cst
+                            lexical-environment
+                            dynamic-environment-ast)))
     (process-init-parameter
      client
      var-cst (first entry)
@@ -458,7 +470,11 @@
                                                   parameter
                                                   idspecs
                                                   lexical-environment))
-         (init-ast (convert client init-form-cst lexical-environment dynamic-environment-ast)))
+         (init-ast (convert
+                    client
+                    init-form-cst
+                    lexical-environment
+                    dynamic-environment-ast)))
     (set-or-bind-variable
      client
      var-cst init-ast
@@ -490,7 +506,11 @@
           (values (cons itemized-dspecs more-itemized-dspecs)
                   more-remaining-dspecs)))))
 
-(defmethod convert-code (client lambda-list-cst body-cst lexical-environment dynamic-environment-ast
+(defmethod convert-code (client
+                         lambda-list-cst
+                         body-cst
+                         lexical-environment
+                         dynamic-environment-ast
                          &key (block-name-cst nil))
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list client lambda-list-cst :error-p nil)))
