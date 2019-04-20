@@ -9,13 +9,13 @@
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:constant-variable-info) lexical-environment)
+    (client var-cst form-cst (info cleavir-env:constant-variable-info) lexical-environment dynamic-environment-ast)
   (declare (ignore var-cst form-cst lexical-environment client))
   (error 'setq-constant-variable
 	 :expr (cleavir-env:name info)))
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:lexical-variable-info) lexical-environment)
+    (client var-cst form-cst (info cleavir-env:lexical-variable-info) lexical-environment dynamic-environment-ast)
   (process-progn 
    (list (make-instance 'cleavir-ast:setq-ast
 	  :lhs-ast (cleavir-env:identity info)
@@ -23,7 +23,7 @@
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:symbol-macro-info) lexical-environment)
+    (client var-cst form-cst (info cleavir-env:symbol-macro-info) lexical-environment dynamic-environment-ast)
   (let* ((expansion (funcall (coerce *macroexpand-hook* 'function)
                              (lambda (form lexical-environment)
                                (declare (ignore form lexical-environment))
@@ -39,7 +39,7 @@
              dynamic-environment-ast)))
 
 (defmethod convert-setq-special-variable
-    (client var-cst form-ast info global-env)
+    (client var-cst form-ast info global-env dynamic-environment-ast)
   (declare (ignore client))
   (let ((temp (make-instance 'cleavir-ast:lexical-ast :name (gensym))))
     (process-progn
@@ -52,7 +52,7 @@
 	   temp))))
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:special-variable-info) lexical-environment)
+    (client var-cst form-cst (info cleavir-env:special-variable-info) lexical-environment dynamic-environment-ast)
   (let ((global-env (cleavir-env:global-environment lexical-environment)))
     (convert-setq-special-variable client
                                    var-cst
@@ -87,4 +87,4 @@
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
 		 (setq info (cleavir-env:variable-info lexical-environment new-symbol)))))
-    (convert-setq client var-cst form-cst info lexical-environment)))
+    (convert-setq client var-cst form-cst info lexical-environment dynamic-environment-ast)))
