@@ -9,33 +9,33 @@
 ;;; value is not needed.  We do that by wrapping a PROGN around it.
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:constant-variable-info) env)
-  (declare (ignore var-cst form-cst env client))
+    (client var-cst form-cst (info cleavir-env:constant-variable-info) lexical-environment)
+  (declare (ignore var-cst form-cst lexical-environment client))
   (error 'setq-constant-variable
 	 :expr (cleavir-env:name info)))
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:lexical-variable-info) env)
+    (client var-cst form-cst (info cleavir-env:lexical-variable-info) lexical-environment)
   (process-progn 
    (list (make-instance 'cleavir-ast:setq-ast
 	  :lhs-ast (cleavir-env:identity info)
-	  :value-ast (convert client form-cst env))
+	  :value-ast (convert client form-cst lexical-environment))
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:symbol-macro-info) env)
+    (client var-cst form-cst (info cleavir-env:symbol-macro-info) lexical-environment)
   (let* ((expansion (funcall (coerce *macroexpand-hook* 'function)
-                             (lambda (form env)
-                               (declare (ignore form env))
+                             (lambda (form lexical-environment)
+                               (declare (ignore form lexical-environment))
                                (cleavir-env:expansion info))
                              (cleavir-env:name info)
-                             env))
+                             lexical-environment))
          (expansion-cst (cst:reconstruct expansion var-cst client)))
     (convert client
              (cst:list (cst:cst-from-expression 'setf)
                        expansion-cst
                        form-cst)
-             env)))
+             lexical-environment)))
 
 (defmethod convert-setq-special-variable
     (client var-cst form-ast info global-env)
@@ -51,17 +51,17 @@
 	   temp))))
 
 (defmethod convert-setq
-    (client var-cst form-cst (info cleavir-env:special-variable-info) env)
-  (let ((global-env (cleavir-env:global-environment env)))
+    (client var-cst form-cst (info cleavir-env:special-variable-info) lexical-environment)
+  (let ((global-env (cleavir-env:global-environment lexical-environment)))
     (convert-setq-special-variable client
                                    var-cst
-                                   (convert client form-cst env)
+                                   (convert client form-cst lexical-environment)
 				   info
 				   global-env)))
 
-(defun convert-elementary-setq (client var-cst form-cst env)
+(defun convert-elementary-setq (client var-cst form-cst lexical-environment)
   (let* ((symbol (cst:raw var-cst))
-         (info (cleavir-env:variable-info env symbol)))
+         (info (cleavir-env:variable-info lexical-environment symbol)))
     (loop while (null info)
 	  do (restart-case (error 'cleavir-env:no-variable-info
 				  :name symbol
@@ -85,5 +85,5 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
-		 (setq info (cleavir-env:variable-info env new-symbol)))))
-    (convert-setq client var-cst form-cst info env)))
+		 (setq info (cleavir-env:variable-info lexical-environment new-symbol)))))
+    (convert-setq client var-cst form-cst info lexical-environment)))

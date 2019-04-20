@@ -8,23 +8,23 @@
 ;;; testing whether SUPPLIED-P-AST computes NIL or T, and for
 ;;; assigning the value computed by VALUE-AST to VAR-AST if
 ;;; SUPPLIED-P-AST computes NIL.
-(defun make-initialization-ast (client var-ast supplied-p-ast value-ast env)
+(defun make-initialization-ast (client var-ast supplied-p-ast value-ast lexical-environment)
   (let ((nil-cst (cst:cst-from-expression nil)))
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
-                :arg2-ast (convert-constant client nil-cst env))
+                :arg2-ast (convert-constant client nil-cst lexical-environment))
      :then-ast (make-instance 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
                  :value-ast value-ast)
-     :else-ast (convert-constant client nil-cst env))))
+     :else-ast (convert-constant client nil-cst lexical-environment))))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated
 ;;; SUPPLIED-P variable is present in the lambda list then
 ;;; SUPPLIED-P-CST is NIL.  INIT-AST is the AST that computes the
 ;;; value to be assigned to the variable represented by VAR-CST if no
-;;; argument was supplied for it.  ENV is an environment that already
+;;; argument was supplied for it.  LEXICAL-ENVIRONMENT is an environment that already
 ;;; contains the variables corresponding to VAR-CST and SUPPLIED-P-CST
 ;;; (if it is not NIL).
 ;;;
@@ -40,9 +40,9 @@
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
 (defun process-init-parameter
-    (client var-cst var-ast supplied-p-cst supplied-p-ast init-ast env next-thunk)
+    (client var-cst var-ast supplied-p-cst supplied-p-ast init-ast lexical-environment next-thunk)
   (process-progn
-   (list (make-initialization-ast client var-ast supplied-p-ast init-ast env)
+   (list (make-initialization-ast client var-ast supplied-p-ast init-ast lexical-environment)
          (set-or-bind-variable
           client
           var-cst var-ast
@@ -52,5 +52,5 @@
                 (set-or-bind-variable
                  client
                  supplied-p-cst supplied-p-ast
-                 next-thunk env)))
-          env))))
+                 next-thunk lexical-environment)))
+          lexical-environment))))

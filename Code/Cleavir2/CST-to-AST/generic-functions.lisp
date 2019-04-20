@@ -7,11 +7,11 @@
 (defgeneric convert-special (client head cst lexical-environment))
 
 (defgeneric convert-special-binding
-    (client variable value-ast next-ast env))
+    (client variable value-ast next-ast lexical-environment))
 
-(defgeneric convert-lambda-call (client cst env))
+(defgeneric convert-lambda-call (client cst lexical-environment))
 
-(defgeneric convert-code (lambda-list body-cst env client &key block-name-cst))
+(defgeneric convert-code (lambda-list body-cst lexical-environment client &key block-name-cst))
 
 (defgeneric convert-variable (client cst lexical-environment))
 
@@ -29,9 +29,9 @@
 ;;; behavior by adding methods to this function, specialized to the
 ;;; particular client defined by that client code.
 
-(defgeneric convert-function-reference (client cst info env))
+(defgeneric convert-function-reference (client cst info lexical-environment))
 
-(defgeneric convert-called-function-reference (client cst info env))
+(defgeneric convert-called-function-reference (client cst info lexical-environment))
 
 (defgeneric items-from-parameter-group (parameter-group))
 
@@ -39,7 +39,7 @@
 
 (defgeneric convert-special-variable (client cst info global-env))
 
-(defgeneric convert-setq (client var-cst form-cst info env))
+(defgeneric convert-setq (client var-cst form-cst info lexical-environment))
 
 (defgeneric convert-setq-special-variable
     (client var-cst form-ast info global-env))

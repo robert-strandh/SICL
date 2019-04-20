@@ -20,19 +20,19 @@
 ;;; Converting QUOTE.
 
 (defmethod convert-special
-    (client (symbol (eql 'quote)) cst env)
+    (client (symbol (eql 'quote)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db s (quote-cst const-cst) cst
     (declare (ignore quote-cst))
-    (convert-constant client const-cst env)))
+    (convert-constant client const-cst  lexical-environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting BLOCK.
 
 (defmethod convert-special
-    (client (symbol (eql 'block)) cst env)
+    (client (symbol (eql 'block)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (block name-cst . body-cst) cst
@@ -47,7 +47,7 @@
                            :dynamic-environment nil))
              (ast (make-instance 'cleavir-ast:block-ast
                     :dynamic-environment-out new-dynenv))
-             (new-env (cleavir-env:add-block env name ast))
+             (new-env (cleavir-env:add-block lexical-environment name ast))
              (cleavir-ast:*dynamic-environment* new-dynenv))
         (setf (cleavir-ast:body-ast ast)
               (process-progn (convert-sequence client body-cst new-env)))
@@ -58,7 +58,7 @@
 ;;; Converting RETURN-FROM.
 
 (defmethod convert-special
-    (client (symbol (eql 'return-from)) cst env)
+    (client (symbol (eql 'return-from)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (return-from-cst block-name-cst . rest-csts) cst
@@ -69,7 +69,7 @@
                :expr block-name
                :origin (cst:source block-name-cst)))
       (flet ((find-info (block-name)
-               (cleavir-env:block-info env block-name)))
+               (cleavir-env:block-info lexical-environment block-name)))
         (let ((info (find-info block-name))
               (value-cst (if (cst:null rest-csts)
                              (make-instance 'cst:atom-cst :raw nil)
@@ -91,10 +91,10 @@
                        ;; value form (or NIL if no return value form was
                        ;; present).
                        (return-from convert-special
-                         (convert client value-cst env)))))
+                         (convert client value-cst  lexical-environment)))))
           (make-instance 'cleavir-ast:return-from-ast
            :block-ast (cleavir-env:identity info)
-           :form-ast (convert client value-cst env)))))))
+           :form-ast (convert client value-cst  lexical-environment)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -276,14 +276,14 @@
 ;;; each function in a list of function ASTs to its associated
 ;;; LEXICAL-AST.  FUNCTIONS is a list of CONS cells.  Each CONS cell
 ;;; has a function name in its CAR and an AST in its CDR.
-(defun compute-function-init-asts (functions env)
+(defun compute-function-init-asts (functions  lexical-environment)
   (loop for (name . fun-ast) in functions
         collect (make-instance 'cleavir-ast:setq-ast
-                  :lhs-ast (function-lexical env name)
+                  :lhs-ast (function-lexical lexical-environment name)
                   :value-ast fun-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
-(defmethod convert-special (client (symbol (eql 'flet)) cst env)
+(defmethod convert-special (client (symbol (eql 'flet)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
@@ -292,8 +292,8 @@
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
-             (defs (convert-local-functions client definitions-cst env))
-             (new-env (augment-environment-from-fdefs env definitions-cst))
+             (defs (convert-local-functions client definitions-cst  lexical-environment))
+             (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
              (init-asts
                (compute-function-init-asts defs new-env))
              (final-env (augment-environment-with-declarations
@@ -309,7 +309,7 @@
 ;;;
 ;;; Converting LABELS.
 
-(defmethod convert-special (client (symbol (eql 'labels)) cst env)
+(defmethod convert-special (client (symbol (eql 'labels)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
@@ -318,7 +318,7 @@
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
-             (new-env (augment-environment-from-fdefs env definitions-cst))
+             (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
              (defs (convert-local-functions client definitions-cst new-env))
              (init-asts
                (compute-function-init-asts defs new-env))
@@ -347,7 +347,7 @@
         (integerp raw))))
 
 (defmethod convert-special
-    (client (symbol (eql 'tagbody)) cst env)
+    (client (symbol (eql 'tagbody)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (tagbody-cst . body-cst) cst
     (declare (ignore tagbody-cst))
@@ -361,7 +361,7 @@
           (new-dynenv (make-instance 'cleavir-ast:lexical-ast
                            :name '#:tagbody-dynamic-environment
                            :dynamic-environment nil))
-          (new-env env))
+          (new-env  lexical-environment))
       (loop with cleavir-ast:*dynamic-environment* = new-dynenv
             for ast in tag-asts
             do (setf new-env (cleavir-env:add-tag
@@ -377,20 +377,20 @@
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
                  :dynamic-environment-out new-dynenv)
-               (convert-constant client (cst:cst-from-expression nil) env)))))))
+               (convert-constant client (cst:cst-from-expression nil)  lexical-environment)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting GO.
 
 (defmethod convert-special
-    (client (symbol (eql 'go)) cst env)
+    (client (symbol (eql 'go)) cst  lexical-environment)
   (declare (ignore client))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
-    (let ((info (tag-info env (cst:raw tag-cst))))
+    (let ((info (tag-info lexical-environment (cst:raw tag-cst))))
       (make-instance 'cleavir-ast:go-ast
         :tag-ast (cleavir-env:identity info)))))
 
@@ -398,19 +398,19 @@
 ;;;
 ;;; Converting IF.
 
-(defmethod convert-special (client (symbol (eql 'if)) cst env)
+(defmethod convert-special (client (symbol (eql 'if)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
-    (let ((test-ast (convert client test-cst env))
-          (true-ast (convert client then-cst env))
+    (let ((test-ast (convert client test-cst  lexical-environment))
+          (true-ast (convert client then-cst  lexical-environment))
           (false-ast (if (cst:null tail-cst)
                          (convert-constant client
                                            (cst:cst-from-expression nil)
-                                           env)
+                                            lexical-environment)
                          (cst:db s (else-cst) tail-cst
-                           (convert client else-cst env)))))
+                           (convert client else-cst  lexical-environment)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
           (make-instance 'cleavir-ast:if-ast
            :test-ast test-ast
@@ -420,7 +420,7 @@
            :test-ast
            (make-instance 'cleavir-ast:eq-ast
             :arg1-ast test-ast
-            :arg2-ast (convert-constant client (cst:cst-from-expression nil) env))
+            :arg2-ast (convert-constant client (cst:cst-from-expression nil)  lexical-environment))
            :then-ast false-ast
            :else-ast true-ast)))))
 
@@ -428,7 +428,7 @@
 ;;;
 ;;; Converting LOAD-TIME-VALUE.
 
-(defmethod convert-special (client (symbol (eql 'load-time-value)) cst env)
+(defmethod convert-special (client (symbol (eql 'load-time-value)) cst  lexical-environment)
   (declare (ignore client))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
@@ -455,12 +455,12 @@
 ;;; According to section 3.2.3.1 of the HyperSpec, PROGN processes
 ;;; its subforms the same way as the form itself.
 
-(defmethod convert-special (client (symbol (eql 'progn)) cst env)
+(defmethod convert-special (client (symbol (eql 'progn)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
-      (process-progn (convert-sequence client form-csts env)))))
+      (process-progn (convert-sequence client form-csts  lexical-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -484,7 +484,7 @@
                         lexical-environment))))
 
 (defmethod convert-special
-    (client (symbol (eql 'macrolet)) cst env)
+    (client (symbol (eql 'macrolet)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (macrolet-cst definitions-cst . body-cst) cst
@@ -493,13 +493,13 @@
       (error 'macrolet-definitions-must-be-proper-list
              :expr (cst:raw definitions-cst)
              :origin (cst:source definitions-cst)))
-    (let ((new-env env))
+    (let ((new-env  lexical-environment))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
             do (let* ((definition-cst (cst:first remaining))
                       (name-cst (cst:first definition-cst))
                       (name (cst:raw name-cst))
-                      (expander (expander client definition-cst env)))
+                      (expander (expander client definition-cst  lexical-environment)))
                  (setf new-env
                        (cleavir-env:add-local-macro new-env name expander))))
       (with-preserved-toplevel-ness
@@ -515,12 +515,12 @@
 ;;; Converting SYMBOL-MACROLET.
 
 (defmethod convert-special
-    (client (head (eql 'symbol-macrolet)) cst env)
+    (client (head (eql 'symbol-macrolet)) cst  lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (symbol-macrolet-cst definitions-cst . body-cst) cst
     (declare (ignore symbol-macrolet-cst))
-    (let ((new-env env))
+    (let ((new-env  lexical-environment))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
             do (cst:db definition-origin (name-cst expansion-cst)
@@ -546,10 +546,10 @@
   (let ((info (function-info lexical-environment (cst:raw name-cst))))
     (convert-function-reference client name-cst info lexical-environment)))
 
-(defun convert-lambda-function (client lambda-form-cst env)
+(defun convert-lambda-function (client lambda-form-cst  lexical-environment)
   (convert-code client
                 (cst:second lambda-form-cst)
-                (cst:rest (cst:rest lambda-form-cst)) env))
+                (cst:rest (cst:rest lambda-form-cst))  lexical-environment))
 
 (defun check-function-syntax (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
@@ -571,13 +571,13 @@
                   :expr (cst:raw function-name-cst)
                   :origin (cst:source function-name-cst))))))
 
-(defmethod convert-special (client (symbol (eql 'function)) cst env)
+(defmethod convert-special (client (symbol (eql 'function)) cst  lexical-environment)
   (check-function-syntax cst)
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
     (let ((result (if (proper-function-name-p name-cst)
-                      (convert-named-function client name-cst env)
-                      (convert-lambda-function client name-cst env))))
+                      (convert-named-function client name-cst  lexical-environment)
+                      (convert-lambda-function client name-cst  lexical-environment))))
       (reinitialize-instance result :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

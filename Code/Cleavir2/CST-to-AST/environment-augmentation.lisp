@@ -184,8 +184,8 @@
 ;;; the binding form is compiled, return true if and only if the
 ;;; variable to be bound is special.  Return a second value indicating
 ;;; whether the variable is globally special.
-(defun variable-is-special-p (variable declarations env)
-  (let* ((existing-var-info (cleavir-env:variable-info env variable))
+(defun variable-is-special-p (variable declarations lexical-environment)
+  (let* ((existing-var-info (cleavir-env:variable-info lexical-environment variable))
          (special-var-p
            (typep existing-var-info 'cleavir-env:special-variable-info)))
     (cond ((loop for declaration in declarations
@@ -217,7 +217,7 @@
 ;;; concerning that variable, return a new environment that contains
 ;;; information about that variable.
 ;;;
-;;; ENV is the environment to be augmented.  If the binding form has
+;;; LEXICAL-ENVIRONMENT is the environment to be augmented.  If the binding form has
 ;;; several bindings, it will contain entries for the variables
 ;;; preceding the one that is currently treated.
 ;;;
@@ -226,8 +226,8 @@
 ;;; which the entire LET form was converted.  For a LET* form, it is
 ;;; the same as ENV.
 (defun augment-environment-with-variable
-    (variable-cst declarations env orig-env)
-  (let ((new-env env)
+    (variable-cst declarations lexical-environment orig-env)
+  (let ((new-env lexical-environment)
         (raw-variable (cst:raw variable-cst))
         (raw-declarations (mapcar #'cst:raw declarations)))
     (multiple-value-bind (special-p globally-p)
@@ -262,9 +262,9 @@
 ;;; that it also tests whether the supplied-p parameter is NIL,
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
-(defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs env)
+(defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs lexical-environment)
   (let ((new-env (augment-environment-with-variable
-                  var-cst dspecs env env)))
+                  var-cst dspecs lexical-environment lexical-environment)))
     (if (null supplied-p-cst)
         new-env
         (augment-environment-with-variable

@@ -9,10 +9,10 @@
 ;;;
 ;;; FIXME: do some more error checking.
 
-(defmethod convert-lambda-call (client cst env)
+(defmethod convert-lambda-call (client cst lexical-environment)
   (cst:db origin ((lambda-cst lambda-list-cst . body-cst) . args-cst) cst
     (assert (eql (cst:raw lambda-cst) 'cl:lambda) nil
             'lambda-call-first-symbol-not-lambda :expr (cst:raw lambda-cst))
     (make-instance 'cleavir-ast:call-ast
-     :callee-ast (convert-code client lambda-list-cst body-cst env)
-     :argument-asts (convert-sequence client args-cst env))))
+     :callee-ast (convert-code client lambda-list-cst body-cst lexical-environment)
+     :argument-asts (convert-sequence client args-cst lexical-environment))))

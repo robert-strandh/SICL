@@ -22,14 +22,14 @@
 ;;; of the constant as an immediate machine word.  A default method is
 ;;; provided that always returns NIL.
 
-(defgeneric convert-constant-to-immediate (client constant env))
+(defgeneric convert-constant-to-immediate (client constant lexical-environment))
 
-(defmethod convert-constant-to-immediate (client constant env)
-  (declare (ignore constant env client))
+(defmethod convert-constant-to-immediate (client constant lexical-environment)
+  (declare (ignore constant lexical-environment client))
   nil)
 
-(defun convert-constant (client constant-cst env)
-  (let* ((global-env (cleavir-env:global-environment env))
+(defun convert-constant (client constant-cst lexical-environment)
+  (let* ((global-env (cleavir-env:global-environment lexical-environment))
          (expression (cst:raw constant-cst))
 	 (immediate (convert-constant-to-immediate
                      client expression global-env)))

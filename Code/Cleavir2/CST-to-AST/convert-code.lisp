@@ -195,8 +195,8 @@
     :block-name-cst block-name-cst))
 
 ;;; Convert the body of a function.
-(defun convert-body (client body env)
-  (let ((new-env (augment-environment-with-declarations env (dspecs body)))
+(defun convert-body (client body lexical-environment)
+  (let ((new-env (augment-environment-with-declarations lexical-environment (dspecs body)))
         (block-name-cst (block-name-cst body)))
     (convert client
              (if block-name-cst
@@ -463,7 +463,7 @@
           (values (cons itemized-dspecs more-itemized-dspecs)
                   more-remaining-dspecs)))))
 
-(defmethod convert-code (client lambda-list-cst body-cst env
+(defmethod convert-code (client lambda-list-cst body-cst lexical-environment
                          &key (block-name-cst nil))
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list client lambda-list-cst :error-p nil)))
@@ -500,7 +500,7 @@
                      idspecs
                      entries
                      (make-body rdspecs (cst:listify forms-cst) block-name-cst)
-                     env)))
+                     lexical-environment)))
               (make-instance 'cleavir-ast:function-ast
                 :body-ast ast
                 :lambda-list lexical-lambda-list
