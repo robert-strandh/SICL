@@ -267,7 +267,7 @@
                  (setf new-env
                        (cleavir-env:add-lexical-variable
                         new-env variable variable-ast))))
-      (process-progn (convert-sequence client body-cst new-env)))))
+      (process-progn (convert-sequence client body-cst new-env dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
