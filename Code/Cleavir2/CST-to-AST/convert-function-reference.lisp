@@ -6,27 +6,27 @@
    :name (cleavir-env:name info)))
 
 (defmethod convert-function-reference
-    (client cst (info cleavir-env:global-function-info) lexical-environment)
+    (client cst (info cleavir-env:global-function-info) lexical-environment dynamic-environment-ast)
   (convert-global-function-reference
    client cst info (cleavir-env:global-environment lexical-environment)))
 
 (defmethod convert-function-reference
-    (client cst (info cleavir-env:local-function-info) lexical-environment)
+    (client cst (info cleavir-env:local-function-info) lexical-environment dynamic-environment-ast)
   (declare (ignore client lexical-environment))
   (cleavir-env:identity info))
 
 (defmethod convert-function-reference
-    (client cst (info cleavir-env:global-macro-info) lexical-environment)
+    (client cst (info cleavir-env:global-macro-info) lexical-environment dynamic-environment-ast)
   (error 'function-name-names-global-macro
          :expr (cleavir-env:name info)))
 
 (defmethod convert-function-reference
-    (client cst (info cleavir-env:local-macro-info) lexical-environment)
+    (client cst (info cleavir-env:local-macro-info) lexical-environment dynamic-environment-ast)
   (error 'function-name-names-local-macro
          :expr (cleavir-env:name info)))
 
 (defmethod convert-function-reference
-    (client cst (info cleavir-env:special-operator-info) lexical-environment)
+    (client cst (info cleavir-env:special-operator-info) lexical-environment dynamic-environment-ast)
   (error 'function-name-names-special-operator
          :expr (cleavir-env:name info)))
 
@@ -36,7 +36,7 @@
 ;;; of type UNDEFINED-FUNCTION, allowing an fboundp check to be skipped.
 ;;; Other than the inlining, they by default have the same behavior.
 
-(defmethod convert-called-function-reference (client cst info lexical-environment)
+(defmethod convert-called-function-reference (client cst info lexical-environment dynamic-environment-ast)
   (when (not (eq (cleavir-env:inline info) 'cl:notinline))
     (let ((ast (cleavir-env:ast info)))
       (when ast
@@ -47,21 +47,21 @@
    client cst info (cleavir-env:global-environment lexical-environment)))
 
 (defmethod convert-called-function-reference
-    (client cst (info cleavir-env:local-function-info) lexical-environment)
+    (client cst (info cleavir-env:local-function-info) lexical-environment dynamic-environment-ast)
   (declare (ignore client lexical-environment))
   (cleavir-env:identity info))
 
 (defmethod convert-called-function-reference
-    (client cst (info cleavir-env:global-macro-info) lexical-environment)
+    (client cst (info cleavir-env:global-macro-info) lexical-environment dynamic-environment-ast)
   (error 'function-name-names-global-macro
          :expr (cleavir-env:name info)))
 
 (defmethod convert-called-function-reference
-    (client cst (info cleavir-env:local-macro-info) lexical-environment)
+    (client cst (info cleavir-env:local-macro-info) lexical-environment dynamic-environment-as)
   (error 'function-name-names-local-macro
          :expr (cleavir-env:name info)))
 
 (defmethod convert-called-function-reference
-    (client cst (info cleavir-env:special-operator-info) lexical-environment)
+    (client cst (info cleavir-env:special-operator-info) lexical-environment dynamic-environment-ast)
   (error 'function-name-names-special-operator
          :expr (cleavir-env:name info)))

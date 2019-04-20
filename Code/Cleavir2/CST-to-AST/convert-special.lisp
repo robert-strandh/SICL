@@ -547,7 +547,7 @@
 
 (defun convert-named-function (client name-cst lexical-environment)
   (let ((info (function-info lexical-environment (cst:raw name-cst))))
-    (convert-function-reference client name-cst info lexical-environment)))
+    (convert-function-reference client name-cst info lexical-environment dynamic-environment-ast)))
 
 (defun convert-lambda-function (client lambda-form-cst  lexical-environment)
   (convert-code client

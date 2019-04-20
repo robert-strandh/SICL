@@ -29,9 +29,9 @@
 ;;; behavior by adding methods to this function, specialized to the
 ;;; particular client defined by that client code.
 
-(defgeneric convert-function-reference (client cst info lexical-environment))
+(defgeneric convert-function-reference (client cst info lexical-environment dynamic-environment-ast))
 
-(defgeneric convert-called-function-reference (client cst info lexical-environment))
+(defgeneric convert-called-function-reference (client cst info lexical-environment dynamic-environment-ast))
 
 (defgeneric items-from-parameter-group (parameter-group))
 
