@@ -8,7 +8,7 @@
 ;;; does not correspond exactly to the function CAR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass car-ast (ast one-value-ast-mixin)
+(defclass car-ast (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (cleavir-io:define-save-info car-ast
@@ -25,7 +25,7 @@
 ;;; does not correspond exactly to the function CDR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass cdr-ast (ast one-value-ast-mixin)
+(defclass cdr-ast (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (cleavir-io:define-save-info cdr-ast
@@ -44,7 +44,7 @@
 ;;; generate any value.  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass rplaca-ast (ast no-value-ast-mixin)
+(defclass rplaca-ast (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
@@ -65,7 +65,7 @@
 ;;; generate any value.  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass rplacd-ast (ast no-value-ast-mixin)
+(defclass rplacd-ast (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
