@@ -10,12 +10,12 @@
 ;;; creates a PROGN-AST with two ASTs in it.  The first one is a
 ;;; SETQ-AST that assigns the value to the variable, and the second
 ;;; one is the NEXT-AST.
-(defun set-or-bind-variable (client variable-cst value-ast next-thunk lexical-environment)
+(defun set-or-bind-variable (client variable-cst value-ast next-thunk lexical-environment dynamic-environment-ast)
   (let ((info (cleavir-env:variable-info lexical-environment (cst:raw variable-cst))))
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)
         (convert-special-binding
-         client variable-cst value-ast next-thunk lexical-environment)
+         client variable-cst value-ast next-thunk lexical-environment dynamic-environment-ast)
 	(make-instance 'cleavir-ast:progn-ast
 	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
                             :lhs-ast (cleavir-env:identity info)

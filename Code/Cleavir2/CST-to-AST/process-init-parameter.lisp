@@ -40,7 +40,7 @@
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
 (defun process-init-parameter
-    (client var-cst var-ast supplied-p-cst supplied-p-ast init-ast lexical-environment next-thunk)
+    (client var-cst var-ast supplied-p-cst supplied-p-ast init-ast lexical-environment dynamic-environment-ast next-thunk)
   (process-progn
    (list (make-initialization-ast client var-ast supplied-p-ast init-ast lexical-environment)
          (set-or-bind-variable
@@ -52,5 +52,6 @@
                 (set-or-bind-variable
                  client
                  supplied-p-cst supplied-p-ast
-                 next-thunk lexical-environment)))
-          lexical-environment))))
+                 next-thunk lexical-environment dynamic-environment-ast)))
+          lexical-environment
+          dynamic-environment-ast))))
