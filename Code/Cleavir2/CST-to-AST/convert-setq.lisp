@@ -58,7 +58,8 @@
                                    var-cst
                                    (convert client form-cst lexical-environment dynamic-environment-ast)
 				   info
-				   global-env)))
+				   global-env
+                                   dynamic-environment-ast)))
 
 (defun convert-elementary-setq (client var-cst form-cst lexical-environment)
   (let* ((symbol (cst:raw var-cst))

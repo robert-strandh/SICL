@@ -42,7 +42,7 @@
 (defgeneric convert-setq (client var-cst form-cst info lexical-environment dynamic-environment-ast))
 
 (defgeneric convert-setq-special-variable
-    (client var-cst form-ast info global-env))
+    (client var-cst form-ast info global-env dynamic-environment-ast))
 
 (defgeneric convert-let (client cst lexical-environment))
 
