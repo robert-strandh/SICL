@@ -9,7 +9,7 @@
 (defgeneric convert-special-binding
     (client variable value-ast next-ast lexical-environment))
 
-(defgeneric convert-lambda-call (client cst lexical-environment))
+(defgeneric convert-lambda-call (client cst lexical-environment dynamic-environment-ast))
 
 (defgeneric convert-code (lambda-list body-cst lexical-environment client &key block-name-cst))
 

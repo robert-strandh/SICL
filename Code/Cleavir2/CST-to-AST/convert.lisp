@@ -31,7 +31,7 @@
            ;; the form as well.
            (when (and *current-form-is-top-level-p* *compile-time-too*)
              (cleavir-env:eval form lexical-environment lexical-environment))
-           (convert-lambda-call client cst lexical-environment)))))
+           (convert-lambda-call client cst lexical-environment dynamic-environment-ast)))))
 
 (defmethod convert :around (client cst lexical-environment dynamic-environment-ast)
   (declare (ignore cst client))

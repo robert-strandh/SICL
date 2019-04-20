@@ -9,7 +9,7 @@
 ;;;
 ;;; FIXME: do some more error checking.
 
-(defmethod convert-lambda-call (client cst lexical-environment)
+(defmethod convert-lambda-call (client cst lexical-environment dynamic-environment-ast)
   (cst:db origin ((lambda-cst lambda-list-cst . body-cst) . args-cst) cst
     (assert (eql (cst:raw lambda-cst) 'cl:lambda) nil
             'lambda-call-first-symbol-not-lambda :expr (cst:raw lambda-cst))
