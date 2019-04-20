@@ -32,9 +32,7 @@
 ;;; environment in force.
 
 (defclass ast ()
-  ((%dynamic-environment :initform *dynamic-environment*
-                         :initarg :dynamic-environment
-                         :accessor dynamic-environment)))
+  ())
 
 (cleavir-io:define-save-info ast
   (:dynamic-environment dynamic-environment))
@@ -69,6 +67,17 @@
 ;;; for CHILDREN as well.
 (cleavir-io:define-save-info dynamic-environment-output-ast-mixin
   (:dynamic-environment-out dynamic-environment-out-ast))
+
+;;; This class is used as a superclass for ASTs that input a dynamic
+;;; environment.
+(defclass dynamic-environment-input-ast-mixin ()
+  ((%dynamic-environment
+    :initform *dynamic-environment*
+    :initarg :dynamic-environment
+    :accessor dynamic-environment)))
+
+(cleavir-io:define-save-info dynamic-environment-input-ast-mixin
+  (:dynamic-environment-in dynamic-environment-in-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
