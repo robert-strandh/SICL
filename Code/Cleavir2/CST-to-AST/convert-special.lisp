@@ -45,11 +45,11 @@
       (let* ((new-dynenv (make-instance 'cleavir-ast:lexical-ast
                            :name '#:block-dynamic-environment))
              (ast (make-instance 'cleavir-ast:block-ast
+                    :dynamic-environment-ast dynamic-environment-ast
                     :dynamic-environment-out new-dynenv))
-             (new-env (cleavir-env:add-block lexical-environment name ast))
-             (cleavir-ast:*dynamic-environment* new-dynenv))
+             (new-env (cleavir-env:add-block lexical-environment name ast)))
         (setf (cleavir-ast:body-ast ast)
-              (process-progn (convert-sequence client body-cst new-env dynamic-environment-ast)))
+              (process-progn (convert-sequence client body-cst new-env new-dynenv)))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,7 +93,8 @@
                          (convert client value-cst lexical-environment dynamic-environment-ast)))))
           (make-instance 'cleavir-ast:return-from-ast
            :block-ast (cleavir-env:identity info)
-           :form-ast (convert client value-cst lexical-environment dynamic-environment-ast)))))))
+           :form-ast (convert client value-cst lexical-environment dynamic-environment-ast)
+           :dynamic-environment-ast dynamic-environment-ast))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -282,7 +283,8 @@
   (loop for (name . fun-ast) in functions
         collect (make-instance 'cleavir-ast:setq-ast
                   :lhs-ast (function-lexical lexical-environment name)
-                  :value-ast fun-ast)))
+                  :value-ast fun-ast
+                  :dynamic-environment-ast dynamic-environment-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special (client (symbol (eql 'flet)) cst lexical-environment dynamic-environment-ast)
@@ -363,20 +365,19 @@
           (new-dynenv (make-instance 'cleavir-ast:lexical-ast
                            :name '#:tagbody-dynamic-environment))
           (new-env lexical-environment))
-      (loop with cleavir-ast:*dynamic-environment* = new-dynenv
-            for ast in tag-asts
+      (loop for ast in tag-asts
             do (setf new-env (cleavir-env:add-tag
                               new-env (cleavir-ast:name ast) ast)))
-      (let ((item-asts (loop with cleavir-ast:*dynamic-environment* = new-dynenv
-                             for rest = body-cst then (cst:rest rest)
+      (let ((item-asts (loop for rest = body-cst then (cst:rest rest)
                              until (cst:null rest)
                              collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
-                                           (convert client item-cst new-env dynamic-environment-ast))))))
+                                           (convert client item-cst new-env new-dynenv))))))
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
+                 :dynamic-environment-ast dynamic-environment-ast
                  :dynamic-environment-out new-dynenv)
                (convert-constant client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast)))))))
 
@@ -417,14 +418,17 @@
           (make-instance 'cleavir-ast:if-ast
            :test-ast test-ast
            :then-ast true-ast
-           :else-ast false-ast)
+           :else-ast false-ast
+           :dynamic-environment-ast dynamic-environment-ast)
           (make-instance 'cleavir-ast:if-ast
            :test-ast
            (make-instance 'cleavir-ast:eq-ast
             :arg1-ast test-ast
-            :arg2-ast (convert-constant client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast))
+            :arg2-ast (convert-constant client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast)
+            :dynamic-environment-ast dynamic-environment-ast)
            :then-ast false-ast
-           :else-ast true-ast)))))
+           :else-ast true-ast
+           :dynamic-environment-ast dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -448,7 +452,8 @@
                 ;; and not a "generalized boolean".
                 (error 'read-only-p-must-be-boolean
                        :expr read-only-p
-                       :origin (cst:source (cst:first remaining-cst)))))))))
+                       :origin (cst:source (cst:first remaining-cst))))))
+      :dynamic-environment-ast dynamic-environment-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -678,7 +683,8 @@
         :form-ast (convert client form-cst lexical-environment dynamic-environment-ast)
         :required req
         :optional opt
-        :rest rest))))
+        :rest rest
+        :dynamic-environment-ast dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

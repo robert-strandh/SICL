@@ -111,7 +111,8 @@
          (argument-asts (convert-sequence client arguments-cst lexical-environment dynamic-environment-ast)))
     (make-instance 'cleavir-ast:call-ast
      :callee-ast function-ast
-     :argument-asts argument-asts)))
+     :argument-asts argument-asts
+     :dynamic-environment-ast dynamic-environment-ast)))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
@@ -166,7 +167,9 @@
 (defmethod convert-special-variable (client cst info global-env dynamic-environment-ast)
   (declare (ignore global-env))
   (let ((symbol (cleavir-env:name info)))
-    (make-instance 'cleavir-ast:symbol-value-ast :name symbol)))
+    (make-instance 'cleavir-ast:symbol-value-ast
+      :name symbol
+      :dynamic-environment-ast dynamic-environment-ast)))
 
 (defmethod convert-cst
     (client cst (info cleavir-env:special-variable-info) lexical-environment dynamic-environment-ast)

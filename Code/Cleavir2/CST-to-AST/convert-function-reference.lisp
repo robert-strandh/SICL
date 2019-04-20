@@ -3,7 +3,8 @@
 (defmethod convert-global-function-reference (client cst info global-env dynamic-environment-ast)
   (declare (ignore global-env))
   (make-instance 'cleavir-ast:fdefinition-ast
-   :name (cleavir-env:name info)))
+    :name (cleavir-env:name info)
+    :dynamic-environment-ast dynamic-environment-ast))
 
 (defmethod convert-function-reference
     (client cst (info cleavir-env:global-function-info) lexical-environment dynamic-environment-ast)

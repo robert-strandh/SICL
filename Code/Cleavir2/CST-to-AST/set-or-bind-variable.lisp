@@ -19,5 +19,6 @@
 	(make-instance 'cleavir-ast:progn-ast
 	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
                             :lhs-ast (cleavir-env:identity info)
-                            :value-ast value-ast)
+                            :value-ast value-ast
+                            :dynamic-environment-ast dynamic-environment-ast)
                      (funcall next-thunk))))))

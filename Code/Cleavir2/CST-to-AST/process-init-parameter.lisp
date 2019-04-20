@@ -13,11 +13,14 @@
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
-                :arg2-ast (convert-constant client nil-cst lexical-environment))
+                :arg2-ast (convert-constant client nil-cst lexical-environment)
+                :dynamic-environment-ast dynamic-environment-ast)
      :then-ast (make-instance 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
-                 :value-ast value-ast)
-     :else-ast (convert-constant client nil-cst lexical-environment))))
+                 :value-ast value-ast
+                 :dynamic-environment-ast dynamic-environment-ast)
+     :else-ast (convert-constant client nil-cst lexical-environment)
+     :dynamic-environment-ast dynamic-environment-ast)))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated
@@ -42,7 +45,7 @@
 (defun process-init-parameter
     (client var-cst var-ast supplied-p-cst supplied-p-ast init-ast lexical-environment dynamic-environment-ast next-thunk)
   (process-progn
-   (list (make-initialization-ast client var-ast supplied-p-ast init-ast lexical-environment)
+   (list (make-initialization-ast client var-ast supplied-p-ast init-ast lexical-environment dynamic-environment-ast)
          (set-or-bind-variable
           client
           var-cst var-ast

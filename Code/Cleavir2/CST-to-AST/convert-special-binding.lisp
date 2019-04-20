@@ -24,12 +24,13 @@
                                   `(cleavir-primop:ast ,value-ast))
                                 ,(cst:cst-from-expression
                                   `(cleavir-primop:ast
-                                    ,(let* ((cleavir-ast:*dynamic-environment*
+                                    ,(let* ((dynamic-environment-out-ast
                                               (make-instance 'cleavir-ast:lexical-ast
                                                :name '#:cwvb-dynamic-environment))
                                             (next-ast (funcall next-thunk)))
                                        (make-instance 'cleavir-ast:function-ast
                                          :body-ast next-ast
                                          :lambda-list nil
-                                         :dynenv-out cleavir-ast:*dynamic-environment*))))))))
+                                         :dynamic-environment-ast dynamic-environment-ast
+                                         :dynamic-environment-out dynamic-environment-out-ast))))))))
     (convert client new-cst lexical-environment dynamic-environment-ast)))
