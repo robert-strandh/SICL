@@ -509,9 +509,7 @@
                (cst:canonicalize-declaration-specifiers
                 client
                 declaration-specifiers))
-             ;; Note that lambda-list-from-parameter-groups makes ASTs,
-             ;; so this needs to be bound around that call.
-             (cleavir-ast:*dynamic-environment*
+             (dynamic-environment-ast-out
                (make-instance 'cleavir-ast:lexical-ast
                 :name '#:dynamic-environment-argument)))
         (multiple-value-bind (idspecs rdspecs)
@@ -531,4 +529,5 @@
               (make-instance 'cleavir-ast:function-ast
                 :body-ast ast
                 :lambda-list lexical-lambda-list
-                :dynamic-environment cleavir-ast:*dynamic-environment*))))))))
+                :dynamic-environment-ast dynamic-environment-ast
+                :dynamic-environment-out dynamic-environment-ast-out))))))))

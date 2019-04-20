@@ -24,7 +24,7 @@
 (defmethod convert-cst
     (client cst (info cleavir-env:constant-variable-info) lexical-environment dynamic-environment-ast)
   (let ((cst (cst:cst-from-expression (cleavir-env:value info))))
-    (convert-constant client cst lexical-environment)))
+    (convert-constant client cst lexical-environment dynamic-environment-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

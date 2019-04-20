@@ -25,7 +25,7 @@
   (check-argument-count cst 1 1)
   (cst:db s (quote-cst const-cst) cst
     (declare (ignore quote-cst))
-    (convert-constant client const-cst lexical-environment)))
+    (convert-constant client const-cst lexical-environment dynamic-environment-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -378,7 +378,7 @@
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
                  :dynamic-environment-out new-dynenv)
-               (convert-constant client (cst:cst-from-expression nil) lexical-environment)))))))
+               (convert-constant client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -409,7 +409,8 @@
           (false-ast (if (cst:null tail-cst)
                          (convert-constant client
                                            (cst:cst-from-expression nil)
-                                            lexical-environment)
+                                           lexical-environment
+                                           dynamic-environment-ast)
                          (cst:db s (else-cst) tail-cst
                            (convert client else-cst lexical-environment dynamic-environment-ast)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
@@ -421,7 +422,7 @@
            :test-ast
            (make-instance 'cleavir-ast:eq-ast
             :arg1-ast test-ast
-            :arg2-ast (convert-constant client (cst:cst-from-expression nil) lexical-environment))
+            :arg2-ast (convert-constant client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast))
            :then-ast false-ast
            :else-ast true-ast)))))
 
