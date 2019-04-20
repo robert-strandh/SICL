@@ -10,7 +10,7 @@
 ;;; indicates a slot number (starting from 0).  This AST generates a
 ;;; single value, namely the contents of the slot with the number given.
 
-(defclass slot-read-ast (ast one-value-ast-mixin)
+(defclass slot-read-ast (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)
    (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)))
 
@@ -33,7 +33,7 @@
 ;;; no values.  An attempt to compile this AST in a context where a
 ;;; value is needed will result in an error being signaled.
 
-(defclass slot-write-ast (ast no-value-ast-mixin)
+(defclass slot-write-ast (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)
    (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
