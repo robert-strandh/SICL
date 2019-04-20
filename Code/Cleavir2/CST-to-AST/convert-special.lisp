@@ -279,7 +279,7 @@
 ;;; each function in a list of function ASTs to its associated
 ;;; LEXICAL-AST.  FUNCTIONS is a list of CONS cells.  Each CONS cell
 ;;; has a function name in its CAR and an AST in its CDR.
-(defun compute-function-init-asts (functions lexical-environment)
+(defun compute-function-init-asts (functions lexical-environment dynamic-environment-ast)
   (loop for (name . fun-ast) in functions
         collect (make-instance 'cleavir-ast:setq-ast
                   :lhs-ast (function-lexical lexical-environment name)
@@ -299,7 +299,7 @@
              (defs (convert-local-functions client definitions-cst lexical-environment dynamic-environment-ast))
              (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
              (init-asts
-               (compute-function-init-asts defs new-env))
+               (compute-function-init-asts defs new-env dynamic-environment-ast))
              (final-env (augment-environment-with-declarations
                          new-env canonical-declaration-specifiers)))
         (process-progn
@@ -325,7 +325,7 @@
              (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
              (defs (convert-local-functions client definitions-cst new-env dynamic-environment-ast))
              (init-asts
-               (compute-function-init-asts defs new-env))
+               (compute-function-init-asts defs new-env dynamic-environment-ast))
              (final-env (augment-environment-with-declarations
                          new-env canonical-declaration-specifiers)))
         (process-progn
