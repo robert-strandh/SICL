@@ -5,7 +5,7 @@
 ;;; CONVERT is responsible for converting a concrete syntax tree to an
 ;;; abstract syntax tree.
 
-(defmethod convert (client cst lexical-environment)
+(defmethod convert (client cst lexical-environment dynamic-environment-ast)
   (let ((form (cst:raw cst)))
     (cond ((and (not (consp form)) (not (symbolp form)))
            (convert-constant client cst lexical-environment))
@@ -33,7 +33,7 @@
              (cleavir-env:eval form lexical-environment lexical-environment))
            (convert-lambda-call client cst lexical-environment)))))
 
-(defmethod convert :around (client cst lexical-environment)
+(defmethod convert :around (client cst lexical-environment dynamic-environment-ast)
   (declare (ignore cst client))
   (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
         (*subforms-are-top-level-p* nil))

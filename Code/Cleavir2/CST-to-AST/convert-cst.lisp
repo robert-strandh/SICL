@@ -15,7 +15,7 @@
                                  lexical-environment))
          (expanded-cst (cst:cst-from-expression expanded-form)))
     (with-preserved-toplevel-ness
-      (convert client expanded-cst lexical-environment))))
+      (convert client expanded-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -54,7 +54,7 @@
                                  lexical-environment))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
     (with-preserved-toplevel-ness
-      (convert client expanded-cst lexical-environment))))
+      (convert client expanded-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -75,7 +75,7 @@
                                          lexical-environment))
                  (expanded-cst (cst:reconstruct expanded-form cst client)))
 
-            (convert client expanded-cst lexical-environment))
+            (convert client expanded-cst lexical-environment dynamic-environment-ast))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
           (let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
@@ -93,13 +93,13 @@
                                   form
                                   lexical-environment))
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
-                  (convert client expanded-cst lexical-environment))
+                  (convert client expanded-cst lexical-environment dynamic-environment-ast))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
                 ;; taking into account the real macro expander.
                 (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
-                  (convert client expanded-cst lexical-environment))))))))
+                  (convert client expanded-cst lexical-environment dynamic-environment-ast))))))))
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
@@ -146,7 +146,7 @@
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
               (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
-                (convert client expanded-cst lexical-environment)))))))
+                (convert client expanded-cst lexical-environment dynamic-environment-ast)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

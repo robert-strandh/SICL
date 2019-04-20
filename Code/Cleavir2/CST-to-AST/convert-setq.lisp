@@ -19,7 +19,7 @@
   (process-progn 
    (list (make-instance 'cleavir-ast:setq-ast
 	  :lhs-ast (cleavir-env:identity info)
-	  :value-ast (convert client form-cst lexical-environment))
+	  :value-ast (convert client form-cst lexical-environment dynamic-environment-ast))
 	 (cleavir-env:identity info))))
 
 (defmethod convert-setq
@@ -35,7 +35,8 @@
              (cst:list (cst:cst-from-expression 'setf)
                        expansion-cst
                        form-cst)
-             lexical-environment)))
+             lexical-environment
+             dynamic-environment-ast)))
 
 (defmethod convert-setq-special-variable
     (client var-cst form-ast info global-env)
@@ -55,7 +56,7 @@
   (let ((global-env (cleavir-env:global-environment lexical-environment)))
     (convert-setq-special-variable client
                                    var-cst
-                                   (convert client form-cst lexical-environment)
+                                   (convert client form-cst lexical-environment dynamic-environment-ast)
 				   info
 				   global-env)))
 

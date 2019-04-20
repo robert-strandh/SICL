@@ -205,7 +205,8 @@
                                     (form-csts body)))
                  (cst:cstify (cons (cst:cst-from-expression 'progn)
                                    (form-csts body))))
-             new-env)))
+             new-env
+             dynamic-environment-ast)))
 
 (defmethod process-parameter-groups
     (client
@@ -357,7 +358,7 @@
                                                   parameter
                                                   idspecs
                                                   lexical-environment))
-         (init-ast (convert client init-form-cst lexical-environment)))
+         (init-ast (convert client init-form-cst lexical-environment dynamic-environment-ast)))
     (process-init-parameter
      client
      var-cst (first entry)
@@ -396,7 +397,7 @@
                                                   parameter
                                                   idspecs
                                                   lexical-environment))
-         (init-ast (convert client init-form-cst lexical-environment)))
+         (init-ast (convert client init-form-cst lexical-environment dynamic-environment-ast)))
     (process-init-parameter
      client
      var-cst (first entry)
@@ -433,7 +434,7 @@
                                                   parameter
                                                   idspecs
                                                   lexical-environment))
-         (init-ast (convert client init-form-cst lexical-environment)))
+q         (init-ast (convert client init-form-cst lexical-environment dynamic-environment-ast)))
     (set-or-bind-variable
      client
      var-cst init-ast

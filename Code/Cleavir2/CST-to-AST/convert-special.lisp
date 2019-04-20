@@ -90,10 +90,10 @@
                        ;; value form (or NIL if no return value form was
                        ;; present).
                        (return-from convert-special
-                         (convert client value-cst  lexical-environment)))))
+                         (convert client value-cst  lexical-environment dynamic-environment-ast)))))
           (make-instance 'cleavir-ast:return-from-ast
            :block-ast (cleavir-env:identity info)
-           :form-ast (convert client value-cst  lexical-environment)))))))
+           :form-ast (convert client value-cst  lexical-environment dynamic-environment-ast)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -135,7 +135,7 @@
                     (member 'cl:eval situations))
                 (process-progn
                  (convert-sequence client body-cst lexical-environment))
-                (convert client (cst:cst-from-expression nil) lexical-environment))
+                (convert client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast))
             (cond ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  Yes  ---  ---
@@ -196,11 +196,13 @@
                                      lexical-environment lexical-environment)
                    (convert client
                             (cst:cst-from-expression nil)
-                            lexical-environment))
+                            lexical-environment
+                            dynamic-environment-ast))
                   (t
                    (convert client
                             (cst:cst-from-expression nil)
-                            lexical-environment))))))))
+                            lexical-environment
+                             dynamic-environment-ast))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -370,7 +372,7 @@
                              collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
-                                           (convert client item-cst new-env))))))
+                                           (convert client item-cst new-env) dynamic-environment-ast)))))
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
@@ -401,14 +403,14 @@
   (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
-    (let ((test-ast (convert client test-cst  lexical-environment))
-          (true-ast (convert client then-cst  lexical-environment))
+    (let ((test-ast (convert client test-cst  lexical-environment dynamic-environment-ast))
+          (true-ast (convert client then-cst  lexical-environment dynamic-environment-ast))
           (false-ast (if (cst:null tail-cst)
                          (convert-constant client
                                            (cst:cst-from-expression nil)
                                             lexical-environment)
                          (cst:db s (else-cst) tail-cst
-                           (convert client else-cst  lexical-environment)))))
+                           (convert client else-cst  lexical-environment dynamic-environment-ast)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
           (make-instance 'cleavir-ast:if-ast
            :test-ast test-ast
@@ -506,7 +508,8 @@
                              :raw 'locally
                              :source origin)
                            body-cst)
-                 new-env)))))
+                 new-env
+                 dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -533,7 +536,8 @@
                  (cst:cons (cst:cst-from-expression 'locally)
                            body-cst
                            :source origin)
-                 new-env)))))
+                 new-env
+                 dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -667,7 +671,7 @@
         (the-values-components (cst:raw value-type-cst))
       ;; We don't bother collapsing THE forms for user code.
       (make-instance 'cleavir-ast:the-ast
-        :form-ast (convert client form-cst lexical-environment)
+        :form-ast (convert client form-cst lexical-environment dynamic-environment-ast)
         :required req
         :optional opt
         :rest rest))))
@@ -683,7 +687,7 @@
   (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
     (declare (ignore multiple-value-prog1-cst))
     (make-instance 'cleavir-ast:multiple-value-prog1-ast
-     :first-form-ast (convert client first-cst lexical-environment)
+     :first-form-ast (convert client first-cst lexical-environment dynamic-environment-ast)
      :form-asts (convert-sequence client rest-cst lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

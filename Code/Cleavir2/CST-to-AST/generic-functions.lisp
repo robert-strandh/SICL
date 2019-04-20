@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defgeneric convert (client cst lexical-environment))
+(defgeneric convert (client cst lexical-environment dynamic-environment-ast))
 
 (defgeneric convert-cst (client cst info lexical-environment))
 

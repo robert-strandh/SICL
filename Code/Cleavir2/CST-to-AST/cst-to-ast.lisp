@@ -10,4 +10,4 @@
 (defun cst-to-ast (client cst lexical-environment)
   (let ((*subforms-are-top-level-p* t)
 	(*compile-time-too* nil))
-    (convert client cst lexical-environment)))
+    (convert client cst lexical-environment nil)))

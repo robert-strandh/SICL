@@ -29,8 +29,8 @@
   (cst:db origin (eq-cst arg1-cst arg2-cst) cst
     (declare (ignore eq-cst))
     (make-instance 'cleavir-ast:eq-ast
-     :arg1-ast (convert client arg1-cst lexical-environment)
-     :arg2-ast (convert client arg2-cst lexical-environment))))
+     :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+     :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -42,7 +42,7 @@
   (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
     (declare (ignore typeq-cst))
     (make-instance 'cleavir-ast:typeq-ast
-     :form-ast (convert client arg1-cst lexical-environment)
+     :form-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
      :type-specifier (cst:raw arg2-cst))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,7 +62,7 @@
     (declare (ignore values-cst))
     (make-instance 'cleavir-ast:values-ast
      :argument-asts (mapcar
-		     (lambda (cst) (convert client cst lexical-environment))
+		     (lambda (cst) (convert client cst lexical-environment dynamic-environment-ast))
 		     (cst:listify arguments-cst)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -90,7 +90,7 @@
                             info))))
       (make-instance 'cleavir-ast:multiple-value-setq-ast
        :lhs-asts (mapcar #'cleavir-env:identity lexes)
-       :form-ast (convert client form-cst lexical-environment)))))
+       :form-ast (convert client form-cst lexical-environment dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -102,7 +102,7 @@
   (cst:db origin (car-cst arg-cst) cst
     (declare (ignore car-cst))
     (make-instance 'cleavir-ast:car-ast
-     :cons-ast (convert client arg-cst lexical-environment))))
+     :cons-ast (convert client arg-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -114,7 +114,7 @@
   (cst:db origin (cdr-cst arg-cst) cst
     (declare (ignore cdr-cst))
     (make-instance 'cleavir-ast:cdr-ast
-     :cons-ast (convert client arg-cst lexical-environment))))
+     :cons-ast (convert client arg-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -126,8 +126,8 @@
   (cst:db origin (rplaca-cst arg1-cst arg2-cst) cst
     (declare (ignore rplaca-cst))
     (make-instance 'cleavir-ast:rplaca-ast
-      :cons-ast (convert client arg1-cst lexical-environment)
-      :object-ast (convert client arg2-cst lexical-environment))))
+      :cons-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :object-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -139,8 +139,8 @@
   (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
     (declare (ignore rplacd-cst))
     (make-instance 'cleavir-ast:rplacd-ast
-      :cons-ast (convert client arg1-cst lexical-environment)
-      :object-ast (convert client arg2-cst lexical-environment))))
+      :cons-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :object-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -152,9 +152,9 @@
   (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore add-cst))
     (make-instance 'cleavir-ast:fixnum-add-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment)
-      :variable-ast (convert client variable-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast)
+      :variable-ast (convert client variable-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -166,9 +166,9 @@
   (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore sub-cst))
     (make-instance 'cleavir-ast:fixnum-sub-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment)
-      :variable-ast (convert client variable-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast)
+      :variable-ast (convert client variable-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -180,8 +180,8 @@
   (cst:db origin (less-cst arg1-cst arg2-cst) cst
     (declare (ignore less-cst))
     (make-instance 'cleavir-ast:fixnum-less-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -193,8 +193,8 @@
   (cst:db origin (not-greater-cst arg1-cst arg2-cst) cst
     (declare (ignore not-greater-cst))
     (make-instance 'cleavir-ast:fixnum-not-greater-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -206,8 +206,8 @@
   (cst:db origin (greater-cst arg1-cst arg2-cst) cst
     (declare (ignore greater-cst))
     (make-instance 'cleavir-ast:fixnum-greater-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -219,8 +219,8 @@
   (cst:db origin (not-less-cst arg1-cst arg2-cst) cst
     (declare (ignore not-less-cst))
     (make-instance 'cleavir-ast:fixnum-not-less-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -232,8 +232,8 @@
   (cst:db origin (equal-cst arg1-cst arg2-cst) cst
     (declare (ignore equal-cst))
     (make-instance 'cleavir-ast:fixnum-equal-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+      :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -289,11 +289,11 @@
   (cst:db origin (funcall-cst function-cst . arguments-cst) cst
     (declare (ignore funcall-cst))
     (make-instance 'cleavir-ast:call-ast
-     :callee-ast (convert client function-cst lexical-environment)
+     :callee-ast (convert client function-cst lexical-environment dynamic-environment-ast)
      :argument-asts (loop for remaining = arguments-cst
                             then (cst:rest remaining)
                           until (cst:null remaining)
-                          collect (convert client (cst:first remaining) lexical-environment)))))
+                          collect (convert client (cst:first remaining) lexical-environment dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -315,10 +315,10 @@
   (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
     (declare (ignore multiple-value-call-cst))
     (make-instance 'cleavir-ast:multiple-value-call-ast
-     :function-form-ast (convert client function-cst lexical-environment)
+     :function-form-ast (convert client function-cst lexical-environment dynamic-environment-ast)
      :form-asts (loop for remaining = arguments-cst then (cst:rest remaining)
                       until (cst:null remaining)
-                      collect (convert client (cst:first remaining) lexical-environment)))))
+                      collect (convert client (cst:first remaining) lexical-environment dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -335,8 +335,8 @@
   (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
     (declare (ignore slot-read-cst))
     (make-instance 'cleavir-ast:slot-read-ast
-     :object-ast (convert client instance-cst lexical-environment)
-     :slot-number-ast (convert client slot-number-cst lexical-environment))))
+     :object-ast (convert client instance-cst lexical-environment dynamic-environment-ast)
+     :slot-number-ast (convert client slot-number-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -354,9 +354,9 @@
   (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
     (declare (ignore slot-write-cst))
     (make-instance 'cleavir-ast:slot-write-ast
-     :object-ast (convert client instance-cst lexical-environment)
-     :stot-number-ast (convert client slot-number-cst lexical-environment)
-     :value-ast (convert client value-cst lexical-environment))))
+     :object-ast (convert client instance-cst lexical-environment dynamic-environment-ast)
+     :stot-number-ast (convert client slot-number-cst lexical-environment dynamic-environment-ast)
+     :value-ast (convert client value-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -375,8 +375,8 @@
   (cst:db origin (aref-cst array-cst index-cst type-cst simple-p-cst boxed-p-cst) cst
     (declare (ignore aref-cst))
     (make-instance 'cleavir-ast:aref-ast
-      :array-ast (convert client array-cst lexical-environment)
-      :index-ast (convert client index-cst lexical-environment)
+      :array-ast (convert client array-cst lexical-environment dynamic-environment-ast)
+      :index-ast (convert client index-cst lexical-environment dynamic-environment-ast)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst))))
@@ -401,9 +401,9 @@
       cst
     (declare (ignore aset-cst))
     (make-instance 'cleavir-ast:aset-ast
-      :array-ast (convert client array-cst lexical-environment)
-      :index-ast (convert client index-cst lexical-environment)
-      :element-ast (convert client object-cst lexical-environment)
+      :array-ast (convert client array-cst lexical-environment dynamic-environment-ast)
+      :index-ast (convert client index-cst lexical-environment dynamic-environment-ast)
+      :element-ast (convert client object-cst lexical-environment dynamic-environment-ast)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst))))
@@ -418,8 +418,8 @@
        (declare (ignore op-cst))
        (make-instance ',ast
          :subtype (cst:raw type-cst)
-         :arg1-ast (convert client arg1-cst lexical-environment)
-         :arg2-ast (convert client arg2-cst lexical-environment)))))
+         :arg1-ast (convert client arg1-cst lexical-environment dynamic-environment-ast)
+         :arg2-ast (convert client arg2-cst lexical-environment dynamic-environment-ast)))))
 
 (define-float-binop cleavir-primop:float-add
   cleavir-ast:float-add-ast)
@@ -450,7 +450,7 @@
        (declare (ignore op-cst))
        (make-instance ',ast
          :subtype (cst:raw type-cst)
-         :arg-ast (convert client arg-cst lexical-environment)))))
+         :arg-ast (convert client arg-cst lexical-environment dynamic-environment-ast)))))
 
 (define-float-unop cleavir-primop:float-sin
   cleavir-ast:float-sin-ast)
@@ -482,7 +482,7 @@
     (declare (ignore op-cst))
     (make-instance 'cleavir-ast:coerce-ast
      :from (cst:raw type1-cst) :to (cst:raw type2-cst)
-     :arg-ast (convert client form-cst lexical-environment))))
+     :arg-ast (convert client form-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
