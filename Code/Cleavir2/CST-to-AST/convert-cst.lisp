@@ -32,7 +32,7 @@
 
 (defmethod convert-cst
     (client cst (info cleavir-env:special-operator-info) lexical-environment)
-  (convert-special client (car (cst:raw cst)) cst lexical-environment))
+  (convert-special client (car (cst:raw cst)) cst lexical-environment dynamic-environment-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -163,7 +163,7 @@
 ;;; Converting a symbol that has a definition as a special variable.
 ;;; We do this by generating a call to SYMBOL-VALUE.
 
-(defmethod convert-special-variable (client cst info global-env)
+(defmethod convert-special-variable (client cst info global-env dynamic-environment-ast)
   (declare (ignore global-env))
   (let ((symbol (cleavir-env:name info)))
     (make-instance 'cleavir-ast:symbol-value-ast :name symbol)))
@@ -171,7 +171,7 @@
 (defmethod convert-cst
     (client cst (info cleavir-env:special-variable-info) lexical-environment)
   (let ((global-env (cleavir-env:global-environment lexical-environment)))
-    (convert-special-variable client cst info global-env)))
+    (convert-special-variable client cst info global-env dynamic-environment-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
