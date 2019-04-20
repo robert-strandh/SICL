@@ -1,5 +1,11 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+(defun call-macroexpander (expander form lexical-environment)
+  (funcall (coerce *macroexpand-hook* 'function)
+           expander
+           form
+           lexical-environment))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a symbol that has a definition as a symbol macro.
@@ -10,12 +16,10 @@
                         lexical-environment
                         dynamic-environment-ast)
   (let* ((form (cst:raw cst))
-         (expanded-form (funcall (coerce *macroexpand-hook* 'function)
-                                 (lambda (form lexical-environment)
-                                   (declare (ignore form lexical-environment))
-                                   (cleavir-env:expansion info))
-                                 form
-                                 lexical-environment))
+         (expansion (cleavir-env:expansion info))
+         (expanded-form (call-macroexpander (constantly expansion)
+                                            form
+                                            lexical-environment))
          (expanded-cst (cst:cst-from-expression expanded-form)))
     (with-preserved-toplevel-ness
       (convert client
@@ -67,10 +71,9 @@
                         lexical-environment
                         dynamic-environment-ast)
   (let* ((form (cst:raw cst))
-         (expanded-form (funcall (coerce *macroexpand-hook* 'function)
-                                 (cleavir-env:expander info)
-                                 form
-                                 lexical-environment))
+         (expanded-form (call-macroexpander (cleavir-env:expander info)
+                                            form
+                                            lexical-environment))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
     (with-preserved-toplevel-ness
       (convert client
@@ -94,10 +97,9 @@
       (if (null compiler-macro)
           ;; There is no compiler macro, so we just apply the macro
           ;; expander, and then convert the resulting form.
-          (let* ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
-                                         (cleavir-env:expander info)
-                                         form
-                                         lexical-environment))
+          (let* ((expanded-form (call-macroexpander (cleavir-env:expander info)
+                                                    form
+                                                    lexical-environment))
                  (expanded-cst (cst:reconstruct expanded-form cst client)))
 
             (convert client
@@ -106,22 +108,23 @@
                      dynamic-environment-ast))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
-          (let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
-                                        compiler-macro
-                                        form
-                                        lexical-environment)))
+          (let ((expanded-form (call-macroexpander compiler-macro
+                                                   form
+                                                   lexical-environment)))
             (if (eq form expanded-form)
                 ;; If the two are EQ, this means that the compiler macro
                 ;; declined.  Then we appply the macro function, and
                 ;; then convert the resulting form, just like we did
                 ;; when there was no compiler macro present.
                 (let* ((expanded-form
-                         (funcall (coerce *macroexpand-hook* 'function)
-                                  (cleavir-env:expander info)
-                                  form
-                                  lexical-environment))
+                         (call-macroexpander (cleavir-env:expander info)
+                                             form
+                                             lexical-environment))
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
-                  (convert client expanded-cst lexical-environment dynamic-environment-ast))
+                  (convert client
+                           expanded-cst
+                           lexical-environment
+                           dynamic-environment-ast))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
@@ -183,10 +186,9 @@
                    dynamic-environment-ast (cst:rest cst))
         ;; There is a compiler macro.  We must see whether it will
         ;; accept or decline.
-        (let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
-                                      compiler-macro
-                                      form
-                                      lexical-environment)))
+        (let ((expanded-form (call-macroexpander compiler-macro
+                                                 form
+                                                 lexical-environment)))
           (if (eq form expanded-form)
               ;; If the two are EQ, this means that the compiler macro
               ;; declined.  We are left with function-call form.
