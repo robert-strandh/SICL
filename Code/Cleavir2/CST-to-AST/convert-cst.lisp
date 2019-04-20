@@ -105,7 +105,7 @@
 ;;; the concrete syntax tree representing the entire function-call
 ;;; form.  ARGUMENTS-CST is a CST representing the sequence of
 ;;; arguments to the call.
-(defun make-call (client cst info lexical-environment arguments-cst)
+(defun make-call (client cst info lexical-environment dynamic-environment-ast arguments-cst)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference client name-cst info lexical-environment dynamic-environment-ast))
          (argument-asts (convert-sequence client arguments-cst lexical-environment)))
@@ -129,7 +129,7 @@
         (form (cst:raw cst)))
     (if (or notinline (null compiler-macro))
         ;; There is no compiler macro.  Create the call.
-        (make-call client cst info lexical-environment (cst:rest cst))
+        (make-call client cst info lexical-environment dynamic-environment-ast (cst:rest cst))
         ;; There is a compiler macro.  We must see whether it will
         ;; accept or decline.
         (let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
@@ -141,7 +141,7 @@
               ;; declined.  We are left with function-call form.
               ;; Create the call, just as if there were no compiler
               ;; macro present.
-              (make-call client cst info lexical-environment (cst:rest cst))
+              (make-call client cst info lexical-environment dynamic-environment-ast (cst:rest cst))
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
@@ -156,7 +156,7 @@
 
 (defmethod convert-cst
     (client cst (info cleavir-env:local-function-info) lexical-environment dynamic-environment-ast)
-  (make-call client cst info lexical-environment (cst:rest cst)))
+  (make-call client cst info lexical-environment dynamic-environment-ast (cst:rest cst)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
