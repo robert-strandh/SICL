@@ -49,7 +49,7 @@
              (new-env (cleavir-env:add-block lexical-environment name ast))
              (cleavir-ast:*dynamic-environment* new-dynenv))
         (setf (cleavir-ast:body-ast ast)
-              (process-progn (convert-sequence client body-cst new-env)))
+              (process-progn (convert-sequence client body-cst new-env dynamic-environment-ast)))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -134,7 +134,7 @@
             (if (or (member :execute situations)
                     (member 'cl:eval situations))
                 (process-progn
-                 (convert-sequence client body-cst lexical-environment))
+                 (convert-sequence client body-cst lexical-environment dynamic-environment-ast))
                 (convert client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast))
             (cond ((or
                     ;; CT   LT   E    Mode
@@ -154,7 +154,7 @@
                          *compile-time-too*))
                    (let ((*compile-time-too* t))
                      (process-progn
-                      (convert-sequence client body-cst lexical-environment))))
+                      (convert-sequence client body-cst lexical-environment dynamic-environment-ast))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  NCT
@@ -175,7 +175,7 @@
                                   (member 'eval situations)))))
                    (let ((*compile-time-too* nil))
                      (process-progn
-                      (convert-sequence client body-cst lexical-environment))))
+                      (convert-sequence client body-cst lexical-environment dynamic-environment-ast))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  No   ---  ---
@@ -305,7 +305,7 @@
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence client forms-cst final-env)))))))))
+                   (convert-sequence client forms-cst final-env dynamic-environment-ast)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -331,7 +331,7 @@
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence client forms-cst final-env)))))))))
+                   (convert-sequence client forms-cst final-env dynamic-environment-ast)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -461,7 +461,7 @@
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
-      (process-progn (convert-sequence client form-csts lexical-environment)))))
+      (process-progn (convert-sequence client form-csts lexical-environment dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -691,7 +691,7 @@
     (declare (ignore multiple-value-prog1-cst))
     (make-instance 'cleavir-ast:multiple-value-prog1-ast
      :first-form-ast (convert client first-cst lexical-environment dynamic-environment-ast)
-     :form-asts (convert-sequence client rest-cst lexical-environment))))
+     :form-asts (convert-sequence client rest-cst lexical-environment dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -755,7 +755,7 @@
                                       :expr variable
                                       :origin (cst:source variable-cst))
                           collect (convert-elementary-setq
-                                   client variable-cst form-cst lexical-environment))))
+                                   client variable-cst form-cst lexical-environment dynamic-environment-ast))))
     (process-progn form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -793,4 +793,4 @@
              (new-env (augment-environment-with-declarations
                        lexical-environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
-          (process-progn (convert-sequence client forms-cst new-env)))))))
+          (process-progn (convert-sequence client forms-cst new-env dynamic-environment-ast)))))))

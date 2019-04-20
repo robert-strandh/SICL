@@ -61,7 +61,7 @@
 				   global-env
                                    dynamic-environment-ast)))
 
-(defun convert-elementary-setq (client var-cst form-cst lexical-environment)
+(defun convert-elementary-setq (client var-cst form-cst lexical-environment dynamic-environment-ast)
   (let* ((symbol (cst:raw var-cst))
          (info (cleavir-env:variable-info lexical-environment symbol)))
     (loop while (null info)
