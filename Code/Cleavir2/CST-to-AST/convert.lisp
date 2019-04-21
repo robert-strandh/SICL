@@ -36,5 +36,6 @@
 (defmethod convert :around (client cst lexical-environment dynamic-environment-ast)
   (declare (ignore cst client))
   (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
-        (*subforms-are-top-level-p* nil))
+        (*subforms-are-top-level-p* nil)
+        (*origin* (cst:source cst)))
     (call-next-method)))
