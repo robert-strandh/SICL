@@ -1,6 +1,10 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-special :around (client operator cst lexical-environment dynamic-environment-ast)
+(defmethod convert-special :around (client
+                                    operator
+                                    cst
+                                    lexical-environment
+                                    dynamic-environment-ast)
   (declare (ignore client))
   (when (and *compile-time-too*
              *current-form-is-top-level-p*
@@ -19,20 +23,29 @@
 ;;;
 ;;; Converting QUOTE.
 
-(defmethod convert-special
-    (client (symbol (eql 'quote)) cst lexical-environment dynamic-environment-ast)
+(defmethod convert-special (client
+                            (symbol (eql 'quote))
+                            cst
+                            lexical-environment
+                            dynamic-environment-ast)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db s (quote-cst const-cst) cst
     (declare (ignore quote-cst))
-    (convert-constant client const-cst lexical-environment dynamic-environment-ast)))
+    (convert-constant client
+                      const-cst
+                      lexical-environment
+                      dynamic-environment-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting BLOCK.
 
-(defmethod convert-special
-    (client (symbol (eql 'block)) cst lexical-environment dynamic-environment-ast)
+(defmethod convert-special (client
+                            (symbol (eql 'block))
+                            cst
+                            lexical-environment
+                            dynamic-environment-ast)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (block name-cst . body-cst) cst
@@ -56,8 +69,11 @@
 ;;;
 ;;; Converting RETURN-FROM.
 
-(defmethod convert-special
-    (client (symbol (eql 'return-from)) cst lexical-environment dynamic-environment-ast)
+(defmethod convert-special (client
+                            (symbol (eql 'return-from))
+                            cst
+                            lexical-environment
+                            dynamic-environment-ast)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (return-from-cst block-name-cst . rest-csts) cst
