@@ -19,8 +19,11 @@
    #:lexical-ast
    #:symbol-value-ast
    #:set-symbol-value-ast
-   #:symbo
-   #:fdefinition-ast #:info
+   #:fdefinition-ast
+   #:set-fdefinition-ast
+   #:name-ast
+   #:value-ast
+   #:info
    #:call-ast #:callee-ast #:argument-asts
    #:block-ast #:body
    #:function-ast #:lambda-list
