@@ -233,9 +233,10 @@
                                      global-env
                                      dynamic-environment-ast)
   (declare (ignore global-env))
-  (let ((symbol (cleavir-env:name info)))
+  (let ((name-ast (make-instance 'cleavir-ast:constant-ast
+                    :value (cleavir-env:name info))))
     (make-instance 'cleavir-ast:symbol-value-ast
-      :name symbol
+      :name-ast name-ast
       :dynamic-environment-ast dynamic-environment-ast)))
 
 (defmethod convert-cst (client
