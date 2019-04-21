@@ -6,9 +6,11 @@
                                               global-env
                                               dynamic-environment-ast)
   (declare (ignore global-env))
-  (make-instance 'cleavir-ast:fdefinition-ast
-    :name (cleavir-env:name info)
-    :dynamic-environment-ast dynamic-environment-ast))
+  (let ((name-ast (make-instance 'cleavir-ast:constant-ast
+                    :value (cleavir-env:name info))))
+    (make-instance 'cleavir-ast:fdefinition-ast
+      :name-ast name-ast
+      :dynamic-environment-ast dynamic-environment-ast)))
 
 (defmethod convert-function-reference (client
                                        cst
