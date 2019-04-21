@@ -6,12 +6,14 @@
 ;;; containing NIL in case the list of ASTs is NIL.
 
 (defun process-progn (asts)
-  (if (null asts)
-      (make-instance 'cleavir-ast:constant-ast :value nil)
-      ;; Do some PROGN compression.
-      (make-instance 'cleavir-ast:progn-ast
-        :form-asts (loop for ast in asts
-                         if (typep ast 'cleavir-ast:progn-ast)
-                           append (cleavir-ast:form-asts ast)
-                         else
-                           collect ast))))
+  (cond ((null asts)
+         (make-instance 'cleavir-ast:constant-ast :value nil))
+        ((null (rest asts))
+         (first asts))
+        (t ;; Do some PROGN compression.
+         (make-instance 'cleavir-ast:progn-ast
+           :form-asts (loop for ast in asts
+                            if (typep ast 'cleavir-ast:progn-ast)
+                              append (cleavir-ast:form-asts ast)
+                            else
+                              collect ast)))))
