@@ -101,13 +101,13 @@
 
 (defclass symbol-value-ast
     (ast one-value-ast-mixin side-effect-free-ast-mixin dynamic-environment-input-ast-mixin)
-  ((%name :initarg :name :reader name)))
+  ((%name-ast :initarg :name-ast :reader name-ast)))
 
 (cleavir-io:define-save-info symbol-value-ast
-  (:name name))
+  (:name-ast name-ast))
 
 (defmethod children ((ast symbol-value-ast))
-  '())
+  (list (name-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -461,19 +461,19 @@
 			:reader type-specifier-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defmethod type-specifier-ast :around ((ast typeq-ast))
-  (let ((value (call-next-method))
-        (*dynamic-environment*
-          (dynamic-environment ast)))
-    (when (null value)
-      (setq value
-            (make-instance 'load-time-value-ast
-              :form `',(type-specifier ast)
-              :read-only-p t))
-      (reinitialize-instance
-       ast
-       :type-specifier-ast value))
-    value))
+;; (defmethod type-specifier-ast :around ((ast typeq-ast))
+;;   (let ((value (call-next-method))
+;;         (*dynamic-environment*
+;;           (dynamic-environment ast)))
+;;     (when (null value)
+;;       (setq value
+;;             (make-instance 'load-time-value-ast
+;;               :form `',(type-specifier ast)
+;;               :read-only-p t))
+;;       (reinitialize-instance
+;;        ast
+;;        :type-specifier-ast value))
+;;     value))
 
 (cleavir-io:define-save-info typeq-ast
   (:type-specifier type-specifier)
