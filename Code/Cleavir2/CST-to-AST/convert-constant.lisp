@@ -9,9 +9,6 @@
                          constant-cst
                          lexical-environment
                          dynamic-environment-ast)
-  (declare (ignore client lexical-environment))
-  (let ((expression (cst:raw constant-cst)))
-    (make-instance 'cleavir-ast:load-time-value-ast
-      :form `',expression
-      :read-only-p t
-      :dynamic-environment-ast dynamic-environment-ast)))
+  (declare (ignore client lexical-environment dynamic-environment-ast))
+  (make-instance 'cleavir-ast:constant-ast
+    :value (cst:raw constant-cst)))
