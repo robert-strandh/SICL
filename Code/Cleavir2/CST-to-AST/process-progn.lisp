@@ -8,4 +8,10 @@
 (defun process-progn (asts)
   (if (null asts)
       (make-instance 'cleavir-ast:constant-ast :value nil)
-      (make-instance 'cleavir-ast:progn-ast :form-asts asts)))
+      ;; Do some PROGN compression.
+      (make-instance 'cleavir-ast:progn-ast
+        :form-asts (loop for ast in asts
+                         if (typep ast 'cleavir-ast:progn-ast)
+                           append (cleavir-ast:form-asts ast)
+                         else
+                           collect ast))))
