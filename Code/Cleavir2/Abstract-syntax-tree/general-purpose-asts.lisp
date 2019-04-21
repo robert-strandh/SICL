@@ -129,19 +129,18 @@
 ;;;
 ;;; Class FDEFINITION-AST.
 ;;;
-;;; This AST is not yet generated from a reference to a global
-;;; function, but migration to this AST is suggested.
+;;; This AST is generated from a reference to a global function.
 
 (defclass fdefinition-ast
     (ast one-value-ast-mixin side-effect-free-ast-mixin dynamic-environment-input-ast-mixin)
-  (;; This slot contains the name of the function
-   (%name :initarg :name :reader name)))
+  (;; This slot contains an AST that produces the function name.
+   (%name-ast :initarg :name-ast :reader name-ast)))
 
 (cleavir-io:define-save-info fdefinition-ast
-  (:name name))
+  (:name-ast name-ast))
 
 (defmethod children ((ast fdefinition-ast))
-  '())
+  (list (name-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
