@@ -115,15 +115,15 @@
 
 (defclass set-symbol-value-ast
     (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
-  ((%name :initarg :name :reader name)
+  ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
 (cleavir-io:define-save-info set-symbol-value-ast
-  (:name name)
+  (:name-ast name-ast)
   (:value-ast value-ast))
 
 (defmethod children ((ast set-symbol-value-ast))
-  (list (value-ast ast)))
+  (list (name-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
