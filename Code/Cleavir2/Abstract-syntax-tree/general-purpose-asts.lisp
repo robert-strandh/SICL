@@ -144,6 +144,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SET-FDEFINITION-AST.
+
+(defclass set-fdefinition-ast
+    (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
+  ((%name-ast :initarg :name-ast :reader name-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(cleavir-io:define-save-info set-fdefinition-ast
+  (:name-ast name-ast)
+  (:value-ast value-ast))
+
+(defmethod children ((ast set-fdefinition-ast))
+  (list (name-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CALL-AST. 
 ;;;
 ;;; A CALL-AST represents a function call.  
