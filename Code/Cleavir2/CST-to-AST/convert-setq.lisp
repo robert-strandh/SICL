@@ -49,7 +49,8 @@
              :value-ast form-ast
              :dynamic-environment-ast dynamic-environment-ast)
 	   (make-instance 'cleavir-ast:set-symbol-value-ast
-             :name (cleavir-env:name info)
+             :name-ast (make-instance 'cleavir-ast:constant-ast
+                         :value (cleavir-env:name info))
              :value-ast temp
              :dynamic-environment-ast dynamic-environment-ast)
 	   temp))))
