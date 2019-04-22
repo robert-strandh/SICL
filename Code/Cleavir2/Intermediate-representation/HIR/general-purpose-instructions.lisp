@@ -145,13 +145,6 @@
 (defclass the-instruction (instruction one-successor-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
-(defun make-the-instruction (input successor value-type)
-  (make-instance 'the-instruction
-    :inputs (list input)
-    :outputs '()
-    :successors (list successor)
-    :value-type value-type))
-
 (defmethod clone-initargs append ((instruction the-instruction))
   (list :value-type (value-type instruction)))
 

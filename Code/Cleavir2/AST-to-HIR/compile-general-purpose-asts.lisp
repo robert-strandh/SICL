@@ -559,7 +559,11 @@
 ;;; Compile a THE-AST.
 
 (defun make-type-check (type-specifier var successor)
-  (cleavir-ir:make-the-instruction var successor type-specifier))
+  (make-instance 'cleavir-ir:the-instruction
+    :input var
+    :outputs '()
+    :successor successor
+    :value-type type-specifier))
 
 (defmethod compile-ast ((ast cleavir-ast:the-ast) context)
   (with-accessors ((results results)
@@ -584,11 +588,12 @@
         (t ; lexical locations
          (loop for lex in results
                do (setf successor
-                        (cleavir-ir:make-the-instruction
-                         lex successor (cond
-                                         (required (pop required))
-                                         (optional (pop optional))
-                                         (t rest)))))
+                        (make-instance 'cleavir-ir:the-instruction
+                          :input lex
+                          :successor successor
+                          :value-type (cond (required (pop required))
+                                            (optional (pop optional))
+                                            (t rest)))))
          (compile-ast form-ast (context results
                                         (list successor)
                                         invocation)))))))

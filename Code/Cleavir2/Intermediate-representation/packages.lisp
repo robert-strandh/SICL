@@ -54,7 +54,7 @@
    #:return-instruction
    #:enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
-   #:the-instruction #:make-the-instruction
+   #:the-instruction
    #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
    #:the-values-instruction #:make-the-values-instruction
    #:required-types #:optional-types #:rest-type
