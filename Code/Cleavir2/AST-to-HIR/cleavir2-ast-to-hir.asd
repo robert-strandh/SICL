@@ -9,7 +9,7 @@
 (defsystem #:cleavir2-ast-to-hir
   :depends-on (#:acclimation
                #:cleavir2-ast
-               #:cleavir-hir
+               #:cleavir2-hir
                #:cleavir-primop)
   :serial t
   :components
