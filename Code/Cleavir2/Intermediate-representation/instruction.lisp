@@ -82,7 +82,11 @@
    (%dynamic-environment :initform *dynamic-environment*
                          :initarg :dynamic-environment :accessor dynamic-environment)))
 
-(defmethod initialize-instance :after ((obj instruction) &key)
+(defmethod initialize-instance :after ((obj instruction) &key input output successor)
+  (let ((inputs (if (null input) (inputs obj) (list input)))
+        (outputs (if (null output) (outputs obj) (list output)))
+        (successors (if (null successor) (successors obj) (list successor))))
+    (reinitialize-instance obj :inputs inputs :outputs outputs :successors successors))
   (unless (and (listp (successors obj))
 	       (every (lambda (successor)
 			(typep successor 'instruction))
