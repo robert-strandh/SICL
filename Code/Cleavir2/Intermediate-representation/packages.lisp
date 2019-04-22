@@ -56,7 +56,7 @@
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction
    #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
-   #:the-values-instruction #:make-the-values-instruction
+   #:the-values-instruction
    #:required-types #:optional-types #:rest-type
    #:catch-instruction
    #:unwind-instruction #:destination #:unwind-index

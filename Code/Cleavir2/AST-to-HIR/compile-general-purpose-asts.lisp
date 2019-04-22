@@ -581,9 +581,12 @@
          (compile-ast form-ast
                       (context results
                                (list
-                                (cleavir-ir:make-the-values-instruction
-                                 results successor
-                                 required optional rest))
+                                (make-instance 'cleavir-ir:the-values-instruction
+                                  :input results
+                                  :successor successor
+                                  :required required
+                                  :optional optional
+                                  :rest rest))
                                invocation)))
         (t ; lexical locations
          (loop for lex in results

@@ -67,16 +67,6 @@
    (%optional-types :initarg :optional :reader optional-types)
    (%rest-type :initarg :rest :reader rest-type)))
 
-(defun make-the-values-instruction (input successor
-				    required optional rest)
-  (make-instance 'the-values-instruction
-    :inputs (list input)
-    :outputs '()
-    :successors (list successor)
-    :required required
-    :optional optional
-    :rest rest))
-
 (defmethod clone-initargs append ((instruction the-values-instruction))
   (list :required (required-types instruction)
         :optional (optional-types instruction)
