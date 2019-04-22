@@ -546,7 +546,7 @@
                      entries
                      (make-body rdspecs (cst:listify forms-cst) block-name-cst)
                      lexical-environment
-                     dynamic-environment-ast)))
+                     dynamic-environment-ast-out)))
               (make-instance 'cleavir-ast:function-ast
                 :body-ast ast
                 :lambda-list lexical-lambda-list
