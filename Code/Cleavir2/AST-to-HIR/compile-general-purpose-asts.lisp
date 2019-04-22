@@ -674,10 +674,10 @@
        (cleavir-ast:form-ast ast)
        (context
         (list temp)
-        (list (cleavir-ir:make-typeq-instruction
-               temp
-               successors
-               (cleavir-ast:type-specifier ast)))
+        (list (make-instance 'cleavir-ir:typeq-instruction
+                :input temp
+                :successors successors
+                :value-type (cleavir-ast:type-specifier ast)))
         (invocation context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

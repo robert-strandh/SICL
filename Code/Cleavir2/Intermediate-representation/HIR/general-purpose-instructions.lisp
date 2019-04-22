@@ -121,12 +121,6 @@
 (defclass typeq-instruction (instruction multiple-successors-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
-(defun make-typeq-instruction (input successors value-type)
-  (make-instance 'typeq-instruction
-    :inputs (list input)
-    :successors successors
-    :value-type value-type))
-
 (defmethod clone-initargs append ((instruction typeq-instruction))
   (list :value-type (value-type instruction)))
 

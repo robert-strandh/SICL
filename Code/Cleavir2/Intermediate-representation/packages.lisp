@@ -53,7 +53,7 @@
    #:tailcall-instruction #:make-tailcall-instruction
    #:return-instruction
    #:enclose-instruction #:code
-   #:typeq-instruction #:make-typeq-instruction #:value-type
+   #:typeq-instruction #:value-type
    #:the-instruction
    #:dynamic-allocation-instruction
    #:the-values-instruction
