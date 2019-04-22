@@ -17,13 +17,6 @@
 (defclass multiple-to-fixed-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-multiple-to-fixed-instruction
-    (input outputs &optional (successor nil successor-p))
-  (make-instance 'multiple-to-fixed-instruction
-    :inputs (list input)
-    :outputs outputs
-    :successors (if successor-p (list successor) '())))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FIXED-TO-MULTIPLE-INSTRUCTION.

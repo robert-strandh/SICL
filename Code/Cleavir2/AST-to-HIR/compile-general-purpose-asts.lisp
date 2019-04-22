@@ -425,8 +425,10 @@
                :inputs inputs
                :outputs (list values-temp)
                :successors
-               (list (cleavir-ir:make-multiple-to-fixed-instruction
-                      values-temp results (first successors))))))
+               (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                       :input values-temp
+                       :outputs results
+                       :successor (first successors))))))
        (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -546,9 +548,10 @@
      (cleavir-ast:form-ast ast)
      (context
       vtemp
-      (list (cleavir-ir:make-multiple-to-fixed-instruction
-             vtemp locations
-             (first (successors context))))
+      (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+              :input vtemp l
+              :outputs ocations
+              :successor (first (successors context))))
       (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -805,8 +808,10 @@
                      :inputs inputs
                      :outputs (list values-temp)
                      :successors
-                     (list (cleavir-ir:make-multiple-to-fixed-instruction
-                            values-temp results (first successors))))))))
+                     (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                             :input values-temp
+                             :outputs results
+                             :successor (first successors))))))))
         (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
               for form-temp in (reverse form-temps)
               do (setf successor
