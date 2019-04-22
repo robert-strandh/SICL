@@ -6,9 +6,11 @@
 ;;;; instruction of the instruction graph resulting from the
 ;;;; compilation of the entire AST.
 
-(defsystem :cleavir-ast-to-hir
-  :depends-on (:acclimation
-	       :cleavir-ast :cleavir-hir :cleavir-primop)
+(defsystem #:cleavir2-ast-to-hir
+  :depends-on (#::acclimation
+	       #::cleavir2-ast
+               #::cleavir-hir #
+               :cleavir-primop)
   :serial t
   :components
   ((:file "packages")
