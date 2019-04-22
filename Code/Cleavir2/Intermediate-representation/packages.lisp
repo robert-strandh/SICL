@@ -74,17 +74,17 @@
    #:fixnum-less-instruction
    #:fixnum-not-greater-instruction
    #:fixnum-equal-instruction
-   #:float-add-instruction #:make-float-add-instruction
-   #:float-sub-instruction #:make-float-sub-instruction
-   #:float-mul-instruction #:make-float-mul-instruction
-   #:float-div-instruction #:make-float-div-instruction
+   #:float-add-instruction
+   #:float-sub-instruction
+   #:float-mul-instruction
+   #:float-div-instruction
    #:subtype
-   #:float-less-instruction #:make-float-less-instruction
-   #:float-not-greater-instruction #:make-float-not-greater-instruction
-   #:float-equal-instruction #:make-float-equal-instruction
-   #:float-sin-instruction #:make-float-sin-instruction
-   #:float-cos-instruction #:make-float-cos-instruction
-   #:float-sqrt-instruction #:make-float-sqrt-instruction
+   #:float-less-instruction
+   #:float-not-greater-instruction
+   #:float-equal-instruction
+   #:float-sin-instruction
+   #:float-cos-instruction
+   #:float-sqrt-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
