@@ -45,7 +45,7 @@
    #:lambda-list #:closure-size
    #:static-environment #:dynamic-environment-output #:parameters
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
-   #:nop-instruction #:make-nop-instruction
+   #:nop-instruction
    #:unreachable-instruction #:make-unreachable-instruction
    #:assignment-instruction
    #:funcall-instruction #:make-funcall-instruction

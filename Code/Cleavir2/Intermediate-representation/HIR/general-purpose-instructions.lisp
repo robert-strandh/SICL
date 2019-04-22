@@ -38,10 +38,6 @@
 (defclass nop-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-nop-instruction (successors)
-  (make-instance 'nop-instruction
-    :successors successors))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction UNREACHABLE-INSTRUCTION.

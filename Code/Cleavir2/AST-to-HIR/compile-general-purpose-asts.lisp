@@ -344,7 +344,8 @@
       (loop with index = 0
             for item-ast in (cleavir-ast:item-asts ast)
             when (typep item-ast 'cleavir-ast:tag-ast)
-              do (let ((nop (cleavir-ir:make-nop-instruction nil)))
+              do (let ((nop (make-instance 'cleavir-ir:nop-instruction
+                              :successors '())))
                    (push nop catch-successors)
                    (incf index)
                    (setf (go-info item-ast) (list invocation continuation nop catch index))))
