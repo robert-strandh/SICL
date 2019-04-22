@@ -41,9 +41,7 @@
 ;;; Instructions inherit policies from the AST that birthed them.
 (defmethod compile-ast :around ((ast cleavir-ast:ast) context)
   (declare (ignore context))
-  (let ((cleavir-ir:*policy* (cleavir-ast:policy ast))
-        (cleavir-ir:*origin* (cleavir-ast:origin ast))
-        (cleavir-ir:*dynamic-environment*
+  (let ((cleavir-ir:*dynamic-environment*
           (find-or-create-location
            (cleavir-ast:dynamic-environment ast))))
     (call-next-method)))
@@ -483,7 +481,7 @@
                   (cleavir-ast:dynamic-environment-out-ast ast)))
          (cleavir-ir:*dynamic-environment* dynenv)
          ;; Note the ENTER gets its own output as its dynamic environment.
-         (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
+         (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (values (cleavir-ir:make-values-location))
          (return (cleavir-ir:make-return-instruction (list values)))
          (body-context (context values (list return) enter))
@@ -625,17 +623,7 @@
 
 (define-compile-functional-ast
     cleavir-ast:symbol-value-ast cleavir-ir:symbol-value-instruction
-  (cleavir-ast:symbol-ast))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a CONSTANT-SYMBOL-VALUE-AST.
-
-(defmethod compile-ast ((ast cleavir-ast:constant-symbol-value-ast) context)
-  (cleavir-ir:make-constant-symbol-value-instruction
-   (cleavir-ast:name ast)
-   (first (results context))
-   (first (successors context))))
+  (cleavir-ast:name-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -643,26 +631,7 @@
 
 (define-compile-functional-ast
     cleavir-ast:set-symbol-value-ast cleavir-ir:set-symbol-value-instruction
-  (cleavir-ast:symbol-ast cleavir-ast:value-ast))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a SET-CONSTANT-SYMBOL-VALUE-AST.
-
-(defmethod compile-ast ((ast cleavir-ast:set-constant-symbol-value-ast) context)
-  (with-accessors ((results results)
-                   (successors successors))
-      context
-    (let ((temp (make-temp)))
-      (compile-ast
-       (cleavir-ast:value-ast ast)
-       (context
-        (list temp)
-        (list (cleavir-ir:make-set-constant-symbol-value-instruction
-               (cleavir-ast:name ast)
-               temp
-               (first successors)))
-        (invocation context))))))
+  (cleavir-ast:name-ast cleavir-ast:value-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -671,16 +640,6 @@
 (define-compile-functional-ast
     cleavir-ast:fdefinition-ast cleavir-ir:fdefinition-instruction
   (cleavir-ast:name-ast))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a CONSTANT-FDEFINITION-AST.
-
-(defmethod compile-ast ((ast cleavir-ast:constant-fdefinition-ast) context)
-  (cleavir-ir:make-constant-fdefinition-instruction
-   (cleavir-ast:name ast)
-   (first (results context))
-   (first (successors context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -724,15 +683,13 @@
   (let ((*block-info* (make-hash-table :test #'eq))
         (*go-info* (make-hash-table :test #'eq))
         (*location-info* (make-hash-table :test #'eq))
-        (*function-info* (make-hash-table :test #'eq))
-        (cleavir-ir:*policy* (cleavir-ast:policy ast)))
+        (*function-info* (make-hash-table :test #'eq)))
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
            (forms (cleavir-ast:forms ast))
            (cleavir-ir:*dynamic-environment* dynenv)
-           (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv
-                                                               :origin (cleavir-ast:origin ast)))
+           (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (values (cleavir-ir:make-values-location))
            (return (cleavir-ir:make-return-instruction (list values)))
            (body-context (context values (list return) enter))
@@ -749,12 +706,11 @@
   (let ((*block-info* (make-hash-table :test #'eq))
         (*go-info* (make-hash-table :test #'eq))
         (*location-info* (make-hash-table :test #'eq))
-        (*function-info* (make-hash-table :test #'eq))
-        (cleavir-ir:*policy* (cleavir-ast:policy ast)))
+        (*function-info* (make-hash-table :test #'eq)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
            (cleavir-ir:*dynamic-environment* dynenv)
-           (enter (cleavir-ir:make-enter-instruction ll dynenv :origin (cleavir-ast:origin ast)))
+           (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (values (cleavir-ir:make-values-location))
            (return (cleavir-ir:make-return-instruction (list values)))
            (body-context (context values (list return) enter))
@@ -920,12 +876,13 @@
       context
     (ecase (length successors)
       (1
-       (let ((cleavir-ast:*policy* (cleavir-ast:policy ast)))
-         (compile-ast (cleavir-ast:make-if-ast
-                       ast
-                       (cleavir-ast:make-load-time-value-ast (list 'quote t))
-                       (cleavir-ast:make-load-time-value-ast (list 'quote nil)))
-                      context)))
+       (compile-ast (make-instance 'cleavir-ast:if-ast
+                      :test-ast ast
+                      :then-ast (make-instance 'cleavir-ast:constant-ast
+                                  :value (list 'quote t))
+                      :else-ast (make-instance 'cleavir-ast:constant-ast
+                                  :value (list 'quote nil)))
+                    context))
       (2
        (assert-context ast context 0 2)
        (let ((arg1-ast (cleavir-ast:arg1-ast ast))
