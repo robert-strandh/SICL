@@ -58,7 +58,7 @@
    #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
    #:the-values-instruction #:make-the-values-instruction
    #:required-types #:optional-types #:rest-type
-   #:catch-instruction #:make-catch-instruction
+   #:catch-instruction
    #:unwind-instruction #:make-unwind-instruction #:destination #:unwind-index
    #:eq-instruction #:make-eq-instruction
    #:consp-instruction #:make-consp-instruction

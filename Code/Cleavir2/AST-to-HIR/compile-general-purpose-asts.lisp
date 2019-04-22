@@ -237,10 +237,9 @@
            (dynenv-out (find-or-create-location
                         (cleavir-ast:dynamic-environment-out-ast
                          ast)))
-           (catch (cleavir-ir:make-catch-instruction
-                   continuation
-                   dynenv-out
-                   (list after)))
+           (catch (make-instance 'cleavir-ir:catch-instruction
+                   :outputs (list continuation dynenv-out)
+                   :successors (list after)))
            (cleavir-ir:*dynamic-environment* dynenv-out))
       (setf (block-info ast) (list context continuation catch))
       ;; Now just hook up the catch to go to the body normally.
@@ -332,8 +331,9 @@
                           '#:tagbody-continuation))
            (dynenv-out (find-or-create-location
                         (cleavir-ast:dynamic-environment-out-ast ast)))
-           (catch (cleavir-ir:make-catch-instruction
-                   continuation dynenv-out nil))
+           (catch (make-instance 'cleavir-ir:catch-instruction
+                    :outputs (list continuation dynenv-out)
+                    :successors '()))
            (catch-successors nil)
            (cleavir-ir:*dynamic-environment* dynenv-out))
       ;; In the first loop, we make a NOP for each tag, which will be the

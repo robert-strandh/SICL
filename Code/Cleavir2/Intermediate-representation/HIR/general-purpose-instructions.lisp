@@ -216,11 +216,6 @@
 (defclass catch-instruction (instruction multiple-successors-mixin)
   ())
 
-(defun make-catch-instruction (continuation dynenv-out successors)
-  (make-instance 'catch-instruction
-    :outputs (list continuation dynenv-out)
-    :successors successors))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction UNWIND-INSTRUCTION.
