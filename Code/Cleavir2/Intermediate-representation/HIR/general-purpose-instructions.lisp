@@ -162,12 +162,6 @@
     (instruction one-successor-mixin)
   ())
 
-(defun make-dynamic-allocation-instruction (input successor)
-  (make-instance 'dynamic-allocation-instruction
-    :inputs (list input)
-    :outputs nil
-    :successors (list successor)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction CATCH-INSTRUCTION.

@@ -55,7 +55,7 @@
    #:enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction
-   #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
+   #:dynamic-allocation-instruction
    #:the-values-instruction
    #:required-types #:optional-types #:rest-type
    #:catch-instruction

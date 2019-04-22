@@ -617,8 +617,10 @@
      (cleavir-ast:form-ast ast)
      (context results
               (list
-               (cleavir-ir:make-dynamic-allocation-instruction
-                (first results) (first successors)))
+               (make-instance 'cleavir-ir:dynamic-allocation-instruction
+                 :input (first results)
+                 :outputs '()
+                 :successor(first successors)))
               invocation))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
