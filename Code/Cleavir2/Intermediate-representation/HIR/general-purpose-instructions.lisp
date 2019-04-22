@@ -108,10 +108,6 @@
     (instruction no-successors-mixin side-effect-mixin)
   ())
 
-(defun make-return-instruction (inputs)
-  (make-instance 'return-instruction
-    :inputs inputs))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TYPEQ-INSTRUCTION.

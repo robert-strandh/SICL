@@ -491,7 +491,7 @@
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (values (cleavir-ir:make-values-location))
-         (return (cleavir-ir:make-return-instruction (list values)))
+         (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
          (body-context (context values (list return) enter))
          (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
@@ -700,7 +700,7 @@
            (cleavir-ir:*dynamic-environment* dynenv)
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (values (cleavir-ir:make-values-location))
-           (return (cleavir-ir:make-return-instruction (list values)))
+           (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
            (body-context (context values (list return) enter))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
@@ -721,7 +721,7 @@
            (cleavir-ir:*dynamic-environment* dynenv)
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (values (cleavir-ir:make-values-location))
-           (return (cleavir-ir:make-return-instruction (list values)))
+           (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
            (body-context (context values (list return) enter))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a

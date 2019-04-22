@@ -51,7 +51,7 @@
    #:funcall-instruction #:make-funcall-instruction
    #:funcall-no-return-instruction #:make-funcall-no-return-instruction
    #:tailcall-instruction #:make-tailcall-instruction
-   #:return-instruction #:make-return-instruction
+   #:return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
