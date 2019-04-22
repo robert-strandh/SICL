@@ -70,10 +70,10 @@
              (call-next-method
               ast
               (context (list temp)
-                       (list (cleavir-ir:make-fixed-to-multiple-instruction
-                              (list temp)
-                              results
-                              (first successors)))
+                       (list (make-instance 'cleavir-ir:fixed-to-multiple-instruction
+                              :inputs (list temp)
+                              :output results
+                              :successor (first successors)))
                        invocation))))
           ((null results)
            ;; We don't need the result.  This situation typically
@@ -839,8 +839,8 @@
              (let ((temps (make-temps arguments)))
                (compile-arguments
                 arguments temps
-                (cleavir-ir:make-fixed-to-multiple-instruction
-                 temps results (first successors))
+                (make-instance 'cleavir-ir:fixed-to-multiple-instruction
+                 :inputs temps :output results :successor (first successors))
                 invocation)))
             (t ;lexical locations
              ;; this is a bit tricky because there may be more or less

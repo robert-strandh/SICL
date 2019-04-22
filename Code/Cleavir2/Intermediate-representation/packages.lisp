@@ -105,7 +105,7 @@
    #:unsigned-not-greater-instruction #:make-unsigned-not-greater-instruction
    #:equal-instruction #:make-equal-instruction
    #:multiple-to-fixed-instruction #:make-multiple-to-fixed-instruction
-   #:fixed-to-multiple-instruction #:make-fixed-to-multiple-instruction
+   #:fixed-to-multiple-instruction
    #:multiple-value-call-instruction #:make-multiple-value-call-instruction
    #:create-cell-instruction #:make-create-cell-instruction
    #:fetch-instruction #:make-fetch-instruction
