@@ -39,14 +39,6 @@
 ;;; instruction resulting from the compilation.
 (defgeneric compile-ast (ast context))
 
-;;; Instructions inherit policies from the AST that birthed them.
-(defmethod compile-ast :around ((ast cleavir-ast:ast) context)
-  (declare (ignore context))
-  (let ((cleavir-ir:*dynamic-environment*
-          (find-or-create-location
-           (cleavir-ast:dynamic-environment ast))))
-    (call-next-method)))
-
 ;;; This :AROUND method serves as an adapter for the compilation of
 ;;; ASTs that generate a single value.  If such an AST is compiled in
 ;;; a unfit context (i.e, a context other than one that has a single
@@ -239,8 +231,7 @@
                          ast)))
            (catch (make-instance 'cleavir-ir:catch-instruction
                    :outputs (list continuation dynenv-out)
-                   :successors (list after)))
-           (cleavir-ir:*dynamic-environment* dynenv-out))
+                   :successors (list after))))
       (setf (block-info ast) (list context continuation catch))
       ;; Now just hook up the catch to go to the body normally.
       (push (compile-ast (cleavir-ast:body-ast ast) context)
@@ -336,8 +327,7 @@
            (catch (make-instance 'cleavir-ir:catch-instruction
                     :outputs (list continuation dynenv-out)
                     :successors '()))
-           (catch-successors nil)
-           (cleavir-ir:*dynamic-environment* dynenv-out))
+           (catch-successors nil))
       ;; In the first loop, we make a NOP for each tag, which will be the
       ;; destination for any GO or UNWIND to that tag. It's put in the go-info
       ;; with the invocation, and also put as one of the catch's successors.
@@ -487,7 +477,6 @@
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
          (dynenv (find-or-create-location
                   (cleavir-ast:dynamic-environment-out-ast ast)))
-         (cleavir-ir:*dynamic-environment* dynenv)
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (values (cleavir-ir:make-values-location))
@@ -549,8 +538,8 @@
      (context
       vtemp
       (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-              :input vtemp l
-              :outputs ocations
+              :input vtemp
+              :outputs locations
               :successor (first (successors context))))
       (invocation context)))))
 
@@ -707,7 +696,6 @@
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
            (forms (cleavir-ast:forms ast))
-           (cleavir-ir:*dynamic-environment* dynenv)
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (values (cleavir-ir:make-values-location))
            (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
@@ -728,7 +716,6 @@
         (*function-info* (make-hash-table :test #'eq)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
-           (cleavir-ir:*dynamic-environment* dynenv)
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (values (cleavir-ir:make-values-location))
            (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
