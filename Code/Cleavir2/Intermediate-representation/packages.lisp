@@ -46,7 +46,7 @@
    #:static-environment #:dynamic-environment-output #:parameters
    #:top-level-enter-instruction #:make-top-level-enter-instruction #:forms
    #:nop-instruction
-   #:unreachable-instruction #:make-unreachable-instruction
+   #:unreachable-instruction
    #:assignment-instruction
    #:funcall-instruction #:make-funcall-instruction
    #:funcall-no-return-instruction #:make-funcall-no-return-instruction

@@ -45,9 +45,6 @@
 (defclass unreachable-instruction (instruction no-successors-mixin)
   ())
 
-(defun make-unreachable-instruction ()
-  (make-instance 'unreachable-instruction))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction ASSIGNMENT-INSTRUCTION.

@@ -634,7 +634,7 @@
   ;; To avoid any possibility of an instruction using an
   ;; uninitialized location it's better to cut that instruction off
   ;; entirely, i.e. make it not a successor.
-  (cleavir-ir:make-unreachable-instruction))
+  (make-instance 'cleavir-ir:unreachable-instruction))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
