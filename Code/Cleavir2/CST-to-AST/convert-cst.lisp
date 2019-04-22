@@ -59,11 +59,12 @@
 ;;; Converting a compound form that calls a local macro.
 ;;; A local macro can not have a compiler macro associated with it.
 ;;;
-;;; If we found a local macro in ENV, it means that LEXICAL-ENVIRONMENT is not the
-;;; global environment.  And it must be the same kind of agumentation
-;;; environment that was used when the local macro was created by the
-;;; use of MACROLET.  Therefore, the expander should be able to handle
-;;; being passed the same kind of environment.
+;;; If we found a local macro in LEXICAL-ENVIRONMENT, it means that
+;;; LEXICAL-ENVIRONMENT is not the global environment.  And it must be
+;;; the same kind of agumentation environment that was used when the
+;;; local macro was created by the use of MACROLET.  Therefore, the
+;;; expander should be able to handle being passed the same kind of
+;;; environment.
 
 (defmethod convert-cst (client
                         cst
@@ -194,7 +195,12 @@
               ;; declined.  We are left with function-call form.
               ;; Create the call, just as if there were no compiler
               ;; macro present.
-              (make-call client cst info lexical-environment dynamic-environment-ast (cst:rest cst))
+              (make-call client
+                         cst
+                         info
+                         lexical-environment
+                         dynamic-environment-ast
+                         (cst:rest cst))
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
