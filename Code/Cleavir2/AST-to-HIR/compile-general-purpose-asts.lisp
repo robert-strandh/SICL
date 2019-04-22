@@ -504,10 +504,10 @@
   (let ((enter (or (gethash ast *function-info*)
                    (setf (gethash ast *function-info*)
                          (compile-function ast)))))
-    (cleavir-ir:make-enclose-instruction
-     (first (results context))
-     (first (successors context))
-     enter)))
+    (make-instance 'cleavir-ir:enclose-instruction
+     :output (first (results context))
+     :successor (first (successors context))
+     :code enter)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

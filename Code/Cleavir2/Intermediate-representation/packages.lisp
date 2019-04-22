@@ -52,7 +52,7 @@
    #:funcall-no-return-instruction #:make-funcall-no-return-instruction
    #:tailcall-instruction #:make-tailcall-instruction
    #:return-instruction
-   #:enclose-instruction #:make-enclose-instruction #:code
+   #:enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
    #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction

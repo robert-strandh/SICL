@@ -75,11 +75,5 @@
                                allocation-mixin)
   ((%code :initarg :code :accessor code)))  
 
-(defun make-enclose-instruction (output successor code)
-  (make-instance 'enclose-instruction
-    :outputs (list output)
-    :successors (list successor)
-    :code code))
-
 (defmethod clone-initargs append ((instruction enclose-instruction))
   (list :code (code instruction)))
