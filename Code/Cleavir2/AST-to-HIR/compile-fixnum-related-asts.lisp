@@ -18,10 +18,10 @@
                 (list (compile-ast
                        (cleavir-ast:arg2-ast ast)
                        (context (list temp2)
-                                (list (cleavir-ir:make-fixnum-add-instruction
-                                       (list temp1 temp2)
-                                       result
-                                       successors))
+                                (list (make-instance 'cleavir-ir:fixnum-add-instruction
+                                       :inputs (list temp1 temp2)
+                                       :outputs result
+                                       :successors successors))
                                 (invocation context))))
                 (invocation context))))))
 
@@ -43,10 +43,10 @@
                 (list (compile-ast
                        (cleavir-ast:arg2-ast ast)
                        (context (list temp2)
-                                (list (cleavir-ir:make-fixnum-sub-instruction
-                                       (list temp1 temp2)
-                                       result
-                                       successors))
+                                (list (make-instance 'cleavir-ir:fixnum-sub-instruction
+                                       :inputs (list temp1 temp2)
+                                       :outputs result
+                                       :successors successors))
                                 (invocation context))))
                 (invocation context))))))
 
@@ -68,9 +68,9 @@
                        (cleavir-ast:arg2-ast ast)
                        (context
                         (list temp2)
-                        (list (cleavir-ir:make-fixnum-less-instruction
-                               (list temp1 temp2)
-                               successors))
+                        (list (make-instance 'cleavir-ir:fixnum-less-instruction
+                               :inputs (list temp1 temp2)
+                               :successors successors))
                         (invocation context))))
                 (invocation context))))))
 
@@ -92,9 +92,9 @@
                        (cleavir-ast:arg2-ast ast)
                        (context
                         (list temp2)
-                        (list (cleavir-ir:make-fixnum-not-greater-instruction
-                               (list temp1 temp2)
-                               successors))
+                        (list (make-instance 'cleavir-ir:fixnum-not-greater-instruction
+                               :inputs (list temp1 temp2)
+                               :successors successors))
                         (invocation context))))
                 (invocation context))))))
 
@@ -116,9 +116,9 @@
                        (cleavir-ast:arg2-ast ast)
                        (context
                         (list temp2)
-                        (list (cleavir-ir:make-fixnum-less-instruction
-                               (list temp2 temp1)
-                               successors))
+                        (list (make-instance 'cleavir-ir:fixnum-less-instruction
+                               :inputs (list temp2 temp1)
+                               :successors successors))
                         (invocation context))))
                 (invocation context))))))
 
@@ -140,9 +140,9 @@
                        (cleavir-ast:arg2-ast ast)
                        (context
                         (list temp2)
-                        (list (cleavir-ir:make-fixnum-not-greater-instruction
-                               (list temp2 temp1)
-                               successors))
+                        (list (make-instance 'cleavir-ir:fixnum-not-greater-instruction
+                               :inputs (list temp2 temp1)
+                               :successors successors))
                         (invocation context))))
                 (invocation context))))))
 
@@ -164,8 +164,8 @@
                        (cleavir-ast:arg2-ast ast)
                        (context
                         (list temp2)
-                        (list (cleavir-ir:make-fixnum-equal-instruction
-                               (list temp2 temp1)
-                               successors))
+                        (list (make-instance 'cleavir-ir:fixnum-equal-instruction
+                               :inputs (list temp2 temp1)
+                               :successors successors))
                         (invocation context))))
                 (invocation context))))))

@@ -300,11 +300,6 @@
 (defclass fixnump-instruction (instruction multiple-successors-mixin)
   ())
 
-(defun make-fixnump-instruction (input successors)
-  (make-instance 'fixnump-instruction
-    :inputs (list input)
-    :successors successors))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction CHARACTERP-INSTRUCTION.

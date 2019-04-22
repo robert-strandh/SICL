@@ -62,18 +62,18 @@
    #:unwind-instruction #:make-unwind-instruction #:destination #:unwind-index
    #:eq-instruction #:make-eq-instruction
    #:consp-instruction #:make-consp-instruction
-   #:fixnump-instruction #:make-fixnump-instruction
+   #:fixnump-instruction
    #:characterp-instruction #:make-characterp-instruction
    #:phi-instruction #:make-phi-instruction
    #:use-instruction #:make-use-instruction
    #:aref-instruction #:aset-instruction
    #:element-type #:simple-p #:boxed-p
    #:coerce-instruction #:from-type #:to-type #:make-coerce-instruction
-   #:fixnum-add-instruction #:make-fixnum-add-instruction
-   #:fixnum-sub-instruction #:make-fixnum-sub-instruction
-   #:fixnum-less-instruction #:make-fixnum-less-instruction
-   #:fixnum-not-greater-instruction #:make-fixnum-not-greater-instruction
-   #:fixnum-equal-instruction #:make-fixnum-equal-instruction
+   #:fixnum-add-instruction
+   #:fixnum-sub-instruction
+   #:fixnum-less-instruction
+   #:fixnum-not-greater-instruction
+   #:fixnum-equal-instruction
    #:float-add-instruction #:make-float-add-instruction
    #:float-sub-instruction #:make-float-sub-instruction
    #:float-mul-instruction #:make-float-mul-instruction
