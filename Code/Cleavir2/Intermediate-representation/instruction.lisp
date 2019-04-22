@@ -79,8 +79,7 @@
    (%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)
-   (%dynamic-environment :initform *dynamic-environment*
-                         :initarg :dynamic-environment :accessor dynamic-environment)))
+   (%dynamic-environment :initarg :dynamic-environment :accessor dynamic-environment)))
 
 (defmethod initialize-instance :after ((obj instruction) &key input output successor)
   (let ((inputs (if (null input) (inputs obj) (list input)))
