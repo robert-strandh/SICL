@@ -20,7 +20,7 @@
                        (context (list temp2)
                                 (list (make-instance 'cleavir-ir:fixnum-add-instruction
                                        :inputs (list temp1 temp2)
-                                       :outputs result
+                                       :output result
                                        :successors successors))
                                 (invocation context))))
                 (invocation context))))))
@@ -45,7 +45,7 @@
                        (context (list temp2)
                                 (list (make-instance 'cleavir-ir:fixnum-sub-instruction
                                        :inputs (list temp1 temp2)
-                                       :outputs result
+                                       :output result
                                        :successors successors))
                                 (invocation context))))
                 (invocation context))))))
