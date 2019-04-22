@@ -146,13 +146,5 @@
   ((%from-type :initarg :from :reader from-type)
    (%to-type :initarg :to :reader to-type)))
 
-(defun make-coerce-instruction
-    (from to input output successor)
-  (make-instance 'coerce-instruction
-    :from from :to to
-    :inputs (list input)
-    :outputs (list output)
-    :successors (list successor)))
-
 (defmethod clone-initargs append ((instruction coerce-instruction))
   (list :from-type (from-type instruction) :to-type (to-type instruction)))

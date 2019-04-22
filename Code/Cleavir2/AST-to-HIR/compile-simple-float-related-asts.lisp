@@ -130,12 +130,12 @@
          :element-type from
          :inputs (list input)
          :outputs (list unboxed-input)
-         :successors (list (cleavir-ir:make-coerce-instruction
-                             from to
-                             unboxed-input unboxed-output
-                             (make-instance 'cleavir-ir:box-instruction
-                               :element-type to
-                               :inputs (list unboxed-output)
-                               :outputs (results context)
-                               :successors (successors context))))))
+         :successors (list (make-instance 'cleavir-ir:coerce-instruction
+                             :from from :to to
+                             :input unboxed-input :output unboxed-output
+                             :successor (make-instance 'cleavir-ir:box-instruction
+                                          :element-type to
+                                          :inputs (list unboxed-output)
+                                          :outputs (results context)
+                                          :successors (successors context))))))
       (invocation context)))))

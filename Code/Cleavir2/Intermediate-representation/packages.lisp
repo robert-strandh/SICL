@@ -68,7 +68,7 @@
    #:use-instruction #:make-use-instruction
    #:aref-instruction #:aset-instruction
    #:element-type #:simple-p #:boxed-p
-   #:coerce-instruction #:from-type #:to-type #:make-coerce-instruction
+   #:coerce-instruction #:from-type #:to-type
    #:fixnum-add-instruction
    #:fixnum-sub-instruction
    #:fixnum-less-instruction
