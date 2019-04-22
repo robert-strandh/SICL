@@ -28,9 +28,10 @@
   (let ((next successor))
     (loop for value in results
           do (setf next
-                   (cleavir-ir:make-assignment-instruction
-                    (cleavir-ir:make-constant-input 'nil)
-                    value next))
+                   (make-instance 'cleavir-ir:assignment-instruction
+                    :input (cleavir-ir:make-constant-input 'nil)
+                    :output value
+                    :successor next))
           finally (return next))))
 
 ;;; The generic function called on various AST types.  It compiles AST
@@ -668,10 +669,10 @@
 ;;; This AST has ONE-VALUE-AST-MIXIN as a superclass.
 
 (defmethod compile-ast ((ast cleavir-ast:lexical-ast) context)
-  (cleavir-ir:make-assignment-instruction
-   (find-or-create-location ast)
-   (first (results context))
-   (first (successors context))))
+  (make-instance 'cleavir-ir:assignment-instruction
+   :input (find-or-create-location ast)
+   :output (first (results context))
+   :successor (first (successors context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -769,10 +770,10 @@
   (with-accessors ((results results)
                    (successors successors))
       context
-    (cleavir-ir:make-assignment-instruction
-     (cleavir-ir:make-immediate-input (cleavir-ast:value ast))
-     (first results)
-     (first successors))))
+    (make-instance 'cleavir-ir:assignment-instruction
+     :input (cleavir-ir:make-immediate-input (cleavir-ast:value ast))
+     :output (first results)
+     :successor (first successors))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -915,8 +916,8 @@
   (with-accessors ((results results)
                    (successors successors))
       context
-    (cleavir-ir:make-assignment-instruction
-     (cleavir-ir:make-load-time-value-input
-      (cleavir-ast:form ast) (cleavir-ast:read-only-p ast))
-     (first results)
-     (first successors))))
+    (make-instance 'cleavir-ir:assignment-instruction
+     :input (cleavir-ir:make-load-time-value-input
+             (cleavir-ast:form ast) (cleavir-ast:read-only-p ast))
+     :output (first results)
+     :successor (first successors))))
