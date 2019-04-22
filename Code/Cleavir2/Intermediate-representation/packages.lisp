@@ -59,7 +59,7 @@
    #:the-values-instruction #:make-the-values-instruction
    #:required-types #:optional-types #:rest-type
    #:catch-instruction
-   #:unwind-instruction #:make-unwind-instruction #:destination #:unwind-index
+   #:unwind-instruction #:destination #:unwind-index
    #:eq-instruction #:make-eq-instruction
    #:consp-instruction #:make-consp-instruction
    #:fixnump-instruction

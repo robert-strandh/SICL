@@ -239,12 +239,6 @@
    (%destination :initarg :destination :accessor destination)
    (%index :initarg :index :accessor unwind-index)))
 
-(defun make-unwind-instruction (continuation destination index)
-  (make-instance 'unwind-instruction
-    :inputs (list continuation)
-    :destination destination
-    :index index))
-
 (defmethod clone-initargs append ((instruction unwind-instruction))
   (list :destination (destination instruction)
         :index (unwind-index instruction)))

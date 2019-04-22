@@ -285,8 +285,10 @@
           ;; simple case: we are returning locally.
           (compile-ast (cleavir-ast:form-ast ast) block-context)
           ;; harder case: unwind.
-          (let* ((new-successor (cleavir-ir:make-unwind-instruction
-                                 continuation destination 1))
+          (let* ((new-successor (make-instance 'cleavir-ir:unwind-instruction
+                                  :input continuation
+                                  :destination
+                                  destination :index 1))
                  (new-context (context results
                                        (list new-successor)
                                        (invocation context))))
@@ -390,8 +392,10 @@
          (destination (fourth info)) (index (fifth info)))
     (if (eq invocation (invocation context))
         nop
-        (cleavir-ir:make-unwind-instruction
-         continuation destination index))))
+        (make-instance 'cleavir-ir:unwind-instruction
+          :input continuation
+          :destination destination
+          :index index))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
