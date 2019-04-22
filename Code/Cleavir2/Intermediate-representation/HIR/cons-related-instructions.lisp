@@ -11,12 +11,6 @@
 (defclass car-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-car-instruction (input output successor)
-  (make-instance 'car-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (list successor)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction CDR-INSTRUCTION.
@@ -27,12 +21,6 @@
 
 (defclass cdr-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-cdr-instruction (input output successor)
-  (make-instance 'cdr-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -47,12 +35,6 @@
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-rplaca-instruction (input1 input2 successor)
-  (make-instance 'rplaca-instruction
-    :inputs (list input1 input2)
-    :outputs '()
-    :successors (list successor)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction RPLACD-INSTRUCTION
@@ -65,9 +47,3 @@
 (defclass rplacd-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-rplacd-instruction (input1 input2 successor)
-  (make-instance 'rplacd-instruction
-    :inputs (list input1 input2)
-    :outputs '()
-    :successors (list successor)))

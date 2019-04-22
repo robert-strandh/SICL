@@ -60,13 +60,6 @@
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-funcall-instruction
-    (inputs outputs &optional (successor nil successor-p))
-  (make-instance 'funcall-instruction
-    :inputs inputs
-    :outputs outputs
-    :successors (if successor-p (list successor) '())))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FUNCALL-NO-RETURN-INSTRUCTION.
@@ -82,20 +75,12 @@
     (instruction no-successors-mixin side-effect-mixin)
   ())
 
-(defun make-funcall-no-return-instruction (inputs)
-  (make-instance 'funcall-no-return-instruction
-    :inputs inputs))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TAILCALL-INSTRUCTION.
 
 (defclass tailcall-instruction (instruction no-successors-mixin)
   ())
-
-(defun make-tailcall-instruction (inputs)
-  (make-instance 'tailcall-instruction
-    :inputs inputs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -231,11 +216,6 @@
 (defclass consp-instruction (instruction multiple-successors-mixin)
   ())
 
-(defun make-consp-instruction (input successors)
-  (make-instance 'consp-instruction
-    :inputs (list input)
-    :successors successors))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FIXNUMP-INSTRUCTION.
@@ -258,23 +238,12 @@
 (defclass characterp-instruction (instruction multiple-successors-mixin)
   ())
 
-(defun make-characterp-instruction (input successors)
-  (make-instance 'characterp-instruction
-    :inputs (list input)
-    :successors successors))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction SYMBOL-VALUE-INSTRUCTION.
 
 (defclass symbol-value-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-symbol-value-instruction (input output successor)
-  (make-instance 'symbol-value-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -284,25 +253,12 @@
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-set-symbol-value-instruction (symbol-input value-input successor)
-  (make-instance 'set-symbol-value-instruction
-    :inputs (list symbol-input value-input)
-    :outputs '()
-    :successors (list successor)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FDEFINITION-INSTRUCTION.
 
 (defclass fdefinition-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-fdefinition-instruction
-    (input output &optional (successor nil successor-p))
-  (make-instance 'fdefinition-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (if successor-p (list successor) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -319,12 +275,6 @@
 (defclass phi-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-phi-instruction (inputs output successor)
-  (make-instance 'phi-instruction
-    :inputs inputs
-    :outputs (list output)
-    :successors (list successor)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction USE-INSTRUCTION.
@@ -339,9 +289,3 @@
 
 (defclass use-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-use-instruction (input successor)
-  (make-instance 'use-instruction
-    :inputs (list input)
-    :outputs '()
-    :successors (list successor)))

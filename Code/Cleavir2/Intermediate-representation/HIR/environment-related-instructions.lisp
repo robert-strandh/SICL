@@ -12,12 +12,6 @@
                                    allocation-mixin)
   ())
 
-(defun make-create-cell-instruction (output &optional successor)
-  (make-instance 'create-cell-instruction
-    :inputs '()
-    :outputs (list output)
-    :successors (if (null successor) nil (list successor))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FETCH-INSTRUCTION.
@@ -39,13 +33,6 @@
 (defclass fetch-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-fetch-instruction
-    (env-input index-input output &optional successor)
-  (make-instance 'fetch-instruction
-    :inputs (list env-input index-input)
-    :outputs (list output)
-    :successors (if (null successor) nil (list successor))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -63,12 +50,6 @@
 (defclass read-cell-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-read-cell-instruction (input output &optional successor)
-  (make-instance 'read-cell-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (if (null successor) nil (list successor))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction WRITE-CELL-INSTRUCTION.
@@ -84,12 +65,6 @@
 
 (defclass write-cell-instruction (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-write-cell-instruction (cell-input value-input &optional successor)
-  (make-instance 'write-cell-instruction
-    :inputs (list cell-input value-input)
-    :outputs '()
-    :successors (if (null successor) nil (list successor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -111,11 +86,6 @@
 (defclass add-activation-record-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-add-activation-record-instruction (env-input size-input env-output)
-  (make-instance 'add-activation-record-instruction
-    :inputs (list env-input size-input)
-    :outputs (list env-output)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction REMOVE-ACTIVATION-RECORD-INSTRUCTION.
@@ -133,11 +103,6 @@
 
 (defclass remove-activation-record-instruction (instruction one-successor-mixin)
   ())
-
-(defun make-remove-activation-record-instruction (env-input env-output)
-  (make-instance 'remove-activation-record-instruction
-    :inputs (list env-input)
-    :outputs (list env-output)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -158,13 +123,6 @@
     (instruction one-successor-mixin)
   ())
 
-(defun make-load-from-static-environment-instruction
-    (env-input offset-input output)
-  (make-instance 'load-from-static-environment-instruction
-    :inputs (list env-input offset-input)
-    :outputs (list output)))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction STORE-TO-STATIC-ENVIRONMENT-INSTRUCTION
@@ -184,9 +142,3 @@
 (defclass store-to-static-environment-instruction
     (instruction one-successor-mixin)
   ())
-
-(defun make-store-to-static-environment-instruction
-    (env-input offset-input value-input)
-  (make-instance 'store-to-static-environment-instruction
-    :inputs (list env-input offset-input value-input)
-    :outputs '()))

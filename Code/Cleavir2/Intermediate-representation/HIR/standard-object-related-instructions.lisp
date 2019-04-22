@@ -13,12 +13,6 @@
 (defclass slot-read-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-slot-read-instruction (input1 input2 output successor)
-  (make-instance 'slot-read-instruction
-    :inputs (list input1 input2)
-    :outputs (list output)
-    :successors (list successor)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction SLOT-WRITE-INSTRUCTION
@@ -32,9 +26,3 @@
 (defclass slot-write-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
-
-(defun make-slot-write-instruction (input1 input2 input3 successor)
-  (make-instance 'slot-write-instruction
-    :inputs (list input1 input2 input3)
-    :outputs '()
-    :successors (list successor)))

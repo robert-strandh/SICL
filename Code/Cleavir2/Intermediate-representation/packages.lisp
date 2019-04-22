@@ -38,9 +38,9 @@
    #:substitute-input #:substitute-output
    #:successors #:predecessors
    #:dynamic-environment #:*dynamic-environment*
-   #:symbol-value-instruction #:make-symbol-value-instruction
-   #:set-symbol-value-instruction #:make-set-symbol-value-instruction
-   #:fdefinition-instruction #:make-fdefinition-instruction
+   #:symbol-value-instruction
+   #:set-symbol-value-instruction
+   #:fdefinition-instruction
    #:enter-instruction #:make-enter-instruction
    #:lambda-list #:closure-size
    #:static-environment #:dynamic-environment-output #:parameters
@@ -48,9 +48,9 @@
    #:nop-instruction
    #:unreachable-instruction
    #:assignment-instruction
-   #:funcall-instruction #:make-funcall-instruction
-   #:funcall-no-return-instruction #:make-funcall-no-return-instruction
-   #:tailcall-instruction #:make-tailcall-instruction
+   #:funcall-instruction
+   #:funcall-no-return-instruction
+   #:tailcall-instruction
    #:return-instruction
    #:enclose-instruction #:code
    #:typeq-instruction #:value-type
@@ -61,11 +61,11 @@
    #:catch-instruction
    #:unwind-instruction #:destination #:unwind-index
    #:eq-instruction
-   #:consp-instruction #:make-consp-instruction
+   #:consp-instruction
    #:fixnump-instruction
-   #:characterp-instruction #:make-characterp-instruction
-   #:phi-instruction #:make-phi-instruction
-   #:use-instruction #:make-use-instruction
+   #:characterp-instruction
+   #:phi-instruction
+   #:use-instruction
    #:aref-instruction #:aset-instruction
    #:element-type #:simple-p #:boxed-p
    #:coerce-instruction #:from-type #:to-type
@@ -85,32 +85,32 @@
    #:float-sin-instruction
    #:float-cos-instruction
    #:float-sqrt-instruction
-   #:car-instruction #:make-car-instruction
-   #:cdr-instruction #:make-cdr-instruction
-   #:rplaca-instruction #:make-rplaca-instruction
-   #:rplacd-instruction #:make-rplacd-instruction
-   #:slot-read-instruction #:make-slot-read-instruction
-   #:slot-write-instruction #:make-slot-write-instruction
-   #:memref1-instruction #:make-memref1-instruction
-   #:memref2-instruction #:make-memref2-instruction
-   #:memset1-instruction #:make-memset1-instruction
-   #:memset2-instruction #:make-memset2-instruction
-   #:signed-add-instruction #:make-signed-add-instruction
-   #:signed-sub-instruction #:make-signed-sub-instruction
-   #:signed-less-instruction #:make-signed-less-instruction
-   #:signed-not-greater-instruction #:make-signed-not-greater-instruction
-   #:unsigned-add-instruction #:make-unsigned-add-instruction
-   #:unsigned-sub-instruction #:make-unsigned-sub-instruction
-   #:unsigned-less-instruction #:make-unsigned-less-instruction 
-   #:unsigned-not-greater-instruction #:make-unsigned-not-greater-instruction
-   #:equal-instruction #:make-equal-instruction
+   #:car-instruction
+   #:cdr-instruction
+   #:rplaca-instruction
+   #:rplacd-instruction
+   #:slot-read-instruction
+   #:slot-write-instruction
+   #:memref1-instruction
+   #:memref2-instruction
+   #:memset1-instruction
+   #:memset2-instruction
+   #:signed-add-instruction
+   #:signed-sub-instruction
+   #:signed-less-instruction
+   #:signed-not-greater-instruction
+   #:unsigned-add-instruction
+   #:unsigned-sub-instruction
+   #:unsigned-less-instruction
+   #:unsigned-not-greater-instruction
+   #:equal-instruction
    #:multiple-to-fixed-instruction
    #:fixed-to-multiple-instruction
-   #:multiple-value-call-instruction #:make-multiple-value-call-instruction
-   #:create-cell-instruction #:make-create-cell-instruction
-   #:fetch-instruction #:make-fetch-instruction
-   #:read-cell-instruction #:make-read-cell-instruction 
-   #:write-cell-instruction #:make-write-cell-instruction 
+   #:multiple-value-call-instruction
+   #:create-cell-instruction
+   #:fetch-instruction
+   #:read-cell-instruction
+   #:write-cell-instruction
    #:add-activation-record-instruction
    #:make-add-activation-record-instruction
    #:remove-activation-record-instruction

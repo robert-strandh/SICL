@@ -45,13 +45,6 @@
     (instruction one-successor-mixin side-effect-mixin)
   ())
 
-(defun make-multiple-value-call-instruction
-    (inputs output &optional (successor nil successor-p))
-  (make-instance 'multiple-value-call-instruction
-    :inputs inputs
-    :outputs (list output)
-    :successors (if successor-p (list successor) '())))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction THE-VALUES-INSTRUCTION.
