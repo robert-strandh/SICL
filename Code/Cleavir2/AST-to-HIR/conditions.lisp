@@ -12,10 +12,10 @@
 
 (defun assert-context (ast context ast-results ast-successors)
   (when (or (and ast-results
-		 (/= ast-results (length (results context))))
-	    (and ast-successors
-		 (/= ast-successors
-		     (length (successors context)))))
+                 (/= ast-results (length (results context))))
+            (and ast-successors
+                 (/= ast-successors
+                     (length (successors context)))))
     (error 'miscontext :ast ast :context context
-		       :ast-results ast-results
-		       :ast-successors ast-successors)))
+                       :ast-results ast-results
+                       :ast-successors ast-successors)))

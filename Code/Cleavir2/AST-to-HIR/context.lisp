@@ -68,16 +68,16 @@
 
 (defun context (results successors invocation)
   (unless (or (and (listp results)
-		   (every (lambda (result)
-			    (typep result 'cleavir-ir:lexical-location))
-			  results))
-	      (typep results 'cleavir-ir:values-location))
+                   (every (lambda (result)
+                            (typep result 'cleavir-ir:lexical-location))
+                          results))
+              (typep results 'cleavir-ir:values-location))
     (error "illegal results: ~s" results))
   (unless (and (listp successors)
-	       (<= 1 (length successors) 2)
-	       (every (lambda (successor)
-			(typep successor 'cleavir-ir:instruction))
-		      successors))
+               (<= 1 (length successors) 2)
+               (every (lambda (successor)
+                        (typep successor 'cleavir-ir:instruction))
+                      successors))
     (error "illegal successors: ~s" successors))
   (when (and (= (length successors) 2) (not (null results)))
     (error "Illegal combination of results and successors"))
@@ -95,8 +95,8 @@
 
 (defun clone-context (context &rest args)
   (apply #'reinitialize-instance
-	 (make-instance 'context
-			:result (results context)
-			:successor (successors context)
-			:invocation (invocation context))
-	 args))
+         (make-instance 'context
+                        :result (results context)
+                        :successor (successors context)
+                        :invocation (invocation context))
+         args))

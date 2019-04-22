@@ -9,18 +9,18 @@
 (defun compile-and-unbox-arguments
     (arguments temps element-type successor invocation)
   (loop with succ = successor
-	for arg in (reverse arguments)
-	for temp in (reverse temps)
-	for inter = (make-temp)
-	do (setf succ
-		 (make-instance 'cleavir-ir:unbox-instruction
-		   :element-type element-type
-		   :inputs (list inter)
-		   :outputs (list temp)
-		   :successors (list succ)))
-	   (setf succ
-		 (compile-ast arg (context `(,inter) `(,succ) invocation)))
-	finally (return succ)))
+        for arg in (reverse arguments)
+        for temp in (reverse temps)
+        for inter = (make-temp)
+        do (setf succ
+                 (make-instance 'cleavir-ir:unbox-instruction
+                   :element-type element-type
+                   :inputs (list inter)
+                   :outputs (list temp)
+                   :successors (list succ)))
+           (setf succ
+                 (compile-ast arg (context `(,inter) `(,succ) invocation)))
+        finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
