@@ -220,11 +220,6 @@
 (defclass eq-instruction (instruction multiple-successors-mixin)
   ())
 
-(defun make-eq-instruction (inputs successors)
-  (make-instance 'eq-instruction
-    :inputs inputs
-    :successors successors))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction CONSP-INSTRUCTION.

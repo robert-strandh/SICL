@@ -60,7 +60,7 @@
    #:required-types #:optional-types #:rest-type
    #:catch-instruction
    #:unwind-instruction #:destination #:unwind-index
-   #:eq-instruction #:make-eq-instruction
+   #:eq-instruction
    #:consp-instruction #:make-consp-instruction
    #:fixnump-instruction
    #:characterp-instruction #:make-characterp-instruction

@@ -918,9 +918,9 @@
                   arg2-ast
                   (context
                    (list temp2)
-                   (list (cleavir-ir:make-eq-instruction
-                          (list temp1 temp2)
-                          successors))
+                   (list (make-instance 'cleavir-ir:eq-instruction
+                          :inputs (list temp1 temp2)
+                          :successors successors))
                    invocation)))
            invocation)))))))
 
