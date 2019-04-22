@@ -59,13 +59,6 @@
 (defclass assignment-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-assignment-instruction
-    (input output &optional (successor nil successor-p))
-  (make-instance 'assignment-instruction
-    :inputs (list input)
-    :outputs (list output)
-    :successors (if successor-p (list successor) '())))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FUNCALL-INSTRUCTION.
