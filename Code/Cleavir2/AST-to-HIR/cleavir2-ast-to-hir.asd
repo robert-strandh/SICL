@@ -18,6 +18,7 @@
    (:file "conditions")
    (:file "condition-reporters-english")
    (:file "utilities")
+   (:file "compile-ast")
    (:file "compile-general-purpose-asts")
    (:file "compile-fixnum-related-asts")
    (:file "compile-simple-float-related-asts")
