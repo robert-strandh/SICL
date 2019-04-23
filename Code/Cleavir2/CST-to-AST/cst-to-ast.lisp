@@ -1,7 +1,7 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
 (stealth-mixin:define-stealth-mixin ast-mixin () cleavir-ast:ast
-  ((%origin :initfform *origin* :initarg :origin :reader origin)))
+  ((%origin :initform *origin* :initarg :origin :reader origin)))
 
 (defun cst-to-ast (client cst lexical-environment)
   (let ((*subforms-are-top-level-p* t)
