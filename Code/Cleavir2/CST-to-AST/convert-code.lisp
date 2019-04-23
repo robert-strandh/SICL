@@ -347,7 +347,7 @@
     (set-or-bind-variable
      client
      (cst:name parameter) lexical-ast
-     (lambda ()
+     (lambda (new-dynamic-environment-ast)
        (process-parameters-in-group client
                                     remaining-parameters-in-group
                                     remaining-parameter-groups
@@ -357,7 +357,7 @@
                                     remaining-entries
                                     body
                                     new-env
-                                    dynamic-environment-ast))
+                                    new-dynamic-environment-ast))
      new-env
      dynamic-environment-ast)))
 
@@ -478,7 +478,7 @@
     (set-or-bind-variable
      client
      var-cst init-ast
-     (lambda ()
+     (lambda (new-dynamic-environment-ast)
        (process-parameters-in-group client
                                     remaining-parameters-in-group
                                     remaining-parameter-groups
@@ -488,7 +488,7 @@
                                     remaining-entries
                                     body
                                     new-env
-                                    dynamic-environment-ast))
+                                    new-dynamic-environment-ast))
      new-env
      dynamic-environment-ast)))
 

@@ -61,7 +61,7 @@
                                init-ast
                                lexical-environment
                                dynamic-environment-ast
-                               next-thunk)
+                               body-function)
   (process-progn
    (list (make-initialization-ast client
                                   var-ast
@@ -73,11 +73,14 @@
           client
           var-cst var-ast
           (if (null supplied-p-cst)
-              next-thunk
-              (lambda ()
+              body-function
+              (lambda (new-dynamic-environment-ast)
                 (set-or-bind-variable
                  client
                  supplied-p-cst supplied-p-ast
-                 next-thunk lexical-environment dynamic-environment-ast)))
+                 (lambda (inner-dynamic-environment-ast)
+                   (funcall body-function inner-dynamic-environment-ast))
+                 lexical-environment
+                 new-dynamic-environment-ast)))
           lexical-environment
           dynamic-environment-ast))))

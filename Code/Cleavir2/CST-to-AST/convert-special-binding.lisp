@@ -3,7 +3,7 @@
 (defmethod convert-special-binding (client
                                     variable-cst
                                     value-ast
-                                    next-thunk
+                                    body-function
                                     lexical-environment
                                     dynamic-environment-ast)
   (let ((dynamic-environment-out-ast
@@ -14,5 +14,5 @@
                  lexical-environment
                  dynamic-environment-ast)
       :value-ast value-ast
-      :body-ast (funcall next-thunk) ; FIXME: supply argument once implemented.
+      :body-ast (funcall body-function dynamic-environment-out-ast)
       :dynamic-environment-out dynamic-environment-out-ast)))
