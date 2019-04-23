@@ -20,15 +20,30 @@
   ;; using-instructions will be incorrect, therefore
   nil)
 
+(defun remove-useless-instructions-with-worklist (initial-instruction worklist)
+  (let ((worklist worklist))
+    (loop (when (null worklist) (return))
+          (let ((instruction (pop worklist)))
+            (when (and (instruction-may-be-removed-p instruction)
+                       (every (lambda (output)
+                                (null (cleavir-ir:using-instructions output)))
+                              (cleavir-ir:outputs instruction)))
+              (dolist (output (cleavir-ir:outputs instruction))
+                (setf (cleavir-ir:defining-instructions output)
+                      (remove instruction (cleavir-ir:defining-instructions output))))
+              (dolist (input (cleavir-ir:inputs instruction))
+                (setf (cleavir-ir:using-instructions input)
+                      (remove instruction (cleavir-ir:using-instructions input)))
+                (dolist (defining-instruction (cleavir-ir:defining-instructions input))
+                  (push defining-instruction worklist)))
+              (cleavir-ir:delete-instruction instruction))))))
+
 (defun remove-useless-instructions (initial-instruction)
-  (cleavir-meter:with-meter (m *remove-useless-instructions-meter*)
-    (loop do (let ((useless-instructions '()))
-	       (cleavir-ir:map-instructions-arbitrary-order
-		(lambda (instruction)
-		  (cleavir-meter:increment-size m)
-		  (when (instruction-may-be-removed-p instruction)
-		    (push instruction useless-instructions)))
-		initial-instruction)
-	       (when (null useless-instructions)
-		 (loop-finish))
-	       (mapc #'cleavir-ir:delete-instruction useless-instructions)))))
+  (remove-useless-instructions-with-worklist initial-instruction
+                                             (cleavir-ir:instructions-of-type initial-instruction t)))
+
+;;; An incremental version of remove-useless-instructions meant for
+;;; clients which know where in the graph a potentially useless
+;;; instruction has appeared.
+(defun remove-useless-instructions-from (initial-instruction instructions)
+  (remove-useless-instructions-with-worklist initial-instruction instructions))
