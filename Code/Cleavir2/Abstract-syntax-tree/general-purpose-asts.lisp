@@ -630,18 +630,20 @@
 ;;;
 ;;; Class BIND-AST.
 ;;;
-;;; This AST is used to create a dynamic binding for a symbol for the
-;;; duration of the execution of the body.  It is generated as a
+;;; This AST is used to create a dynamic binding for a variable for
+;;; the duration of the execution of the body.  It is generated as a
 ;;; result of a binding of a special variable in a LET, LET*, or a
-;;; lambda list of a function. 
+;;; lambda list of a function.
 
-(defclass bind-ast (ast dynamic-environment-input-ast-mixin)
-  ((%symbol :initarg :symbol :reader symbol)
+(defclass bind-ast (ast
+                    dynamic-environment-input-ast-mixin
+                    dynamic-environment-output-ast-mixin)
+  ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
 (cleavir-io:define-save-info bind-ast
-  (:symbol symbol)
+  (:name-ast name-ast)
   (:value-ast value-ast)
   (:body-ast body-ast))
 
