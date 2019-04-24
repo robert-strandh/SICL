@@ -5,11 +5,13 @@
   ;; with a single argument, namely a function that, given a function
   ;; name, returns the function cell from the environment the code
   ;; will be loaded into.
-  (let* ((dynamic-environment-out (make-instance 'cleavir-ast:lexical-ast :name 'dummy))
+  (let* ((dynamic-environment-output-ast
+           (cleavir-ast:dynamic-environment-input-ast ast))
+         (cleavir-cst-to-ast::*origin* nil)
          (wrapped-ast (make-instance 'cleavir-ast:function-ast
                         :lambda-list '()
                         :body-ast ast
-                        :dynamic-environment-ast nil
-                        :dynamic-environment-out dynamic-environment-out)))
+                        :dynamic-environment-input-ast nil
+                        :dynamic-environment-output-ast dynamic-environment-output-ast)))
     (cleavir-ast-to-hir:compile-toplevel-unhoisted wrapped-ast)))
 
