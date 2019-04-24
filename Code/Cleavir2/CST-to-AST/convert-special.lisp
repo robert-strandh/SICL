@@ -451,13 +451,15 @@
 ;;; Converting LOAD-TIME-VALUE.
 
 (defmethod convert-special (client (symbol (eql 'load-time-value)) cst lexical-environment dynamic-environment-ast)
-  (declare (ignore client))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
     (make-instance 'cleavir-ast:load-time-value-ast
-      :form (cst:raw form-cst)
+      :form-ast (convert client
+                 form-cst
+                 lexical-environment
+                 dynamic-environment-ast)
       :read-only-p
       (if (cst:null remaining-cst)
           nil
