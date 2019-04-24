@@ -837,6 +837,7 @@
       context
     (make-instance 'cleavir-ir:assignment-instruction
      :input (cleavir-ir:make-load-time-value-input
-             (cleavir-ast:form ast) (cleavir-ast:read-only-p ast))
+             ;; FIXME: the FORM-AST should be compiled.
+             (cleavir-ast:form-ast ast) (cleavir-ast:read-only-p ast))
      :output (first results)
      :successor (first successors))))
