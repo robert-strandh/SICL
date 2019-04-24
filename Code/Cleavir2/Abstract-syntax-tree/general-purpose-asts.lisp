@@ -521,7 +521,7 @@
   (:read-only-p read-only-p))
 
 (defmethod children ((ast load-time-value-ast))
-  (:form-ast form-ast))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
