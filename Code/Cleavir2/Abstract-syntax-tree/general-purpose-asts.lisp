@@ -229,7 +229,7 @@
 
 (defmethod children ((ast function-ast))
   (list* (body-ast ast)
-         (dynamic-environment-out-ast ast)
+         (dynamic-environment-output-ast ast)
          (loop for entry in (lambda-list ast)
                append (cond ((symbolp entry)
                              '())
@@ -287,7 +287,7 @@
   (:body-ast body-ast))
 
 (defmethod children ((ast block-ast))
-  (list (dynamic-environment-out-ast ast) (body-ast ast)))
+  (list (dynamic-environment-output-ast ast) (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -380,7 +380,7 @@
   (:item-asts item-asts))
 
 (defmethod children ((ast tagbody-ast))
-  (list* (dynamic-environment-out-ast ast) (item-asts ast)))
+  (list* (dynamic-environment-output-ast ast) (item-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -478,7 +478,7 @@
    (%form-ast :initarg :form-ast :reader form-ast)))
 
 ;; (defmethod type-specifier-ast :around ((ast typeq-ast))
-;;   (let ((value (call-next-method))
+;;   (let ((value (call-next-method)))
 ;;         (*dynamic-environment*
 ;;           (dynamic-environment ast)))
 ;;     (when (null value)

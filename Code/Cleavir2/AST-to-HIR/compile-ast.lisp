@@ -72,7 +72,7 @@
 
 (defvar *origin* nil)
 
-(defvar *dynamic-environment-location*)
+(defvar *dynamic-environment-location* nil)
 
 (stealth-mixin:define-stealth-mixin instruction-mixin () cleavir-ir:instruction
   ((%origin :initform *origin* :reader origin))
