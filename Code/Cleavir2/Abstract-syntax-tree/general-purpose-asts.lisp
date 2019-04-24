@@ -511,17 +511,17 @@
 
 (defclass load-time-value-ast
     (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
-  ((%form :initarg :form :reader form)
+  ((%form-ast :initarg :form-ast :reader form-ast)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
 ;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
 ;;; saved when the AST is saved. 
 (cleavir-io:define-save-info load-time-value-ast
-  (:form form)
+  (:form-ast form-ast)
   (:read-only-p read-only-p))
 
 (defmethod children ((ast load-time-value-ast))
-  '())
+  (:form-ast form-ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
