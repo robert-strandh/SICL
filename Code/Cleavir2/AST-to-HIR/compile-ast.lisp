@@ -69,3 +69,11 @@
 (defmethod compile-ast :before
     ((ast cleavir-ast:no-value-ast-mixin) context)
   (assert-context ast context 0 1))
+
+(defvar *origin* nil)
+
+(defvar *dynamic-environment-location*)
+
+(stealth-mixin:define-stealth-mixin instruction-mixin () cleavir-ir:instruction
+  ((%origin :initform *origin* :reader origin))
+  (:default-initargs :dynamic-environment-location *dynamic-environment-location*))
