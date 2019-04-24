@@ -37,7 +37,6 @@
    #:multiple-value-prog1-ast
    #:first-form-ast
    #:load-time-value-ast #:read-only-p
-   #:form
    #:body-asts
    #:progn-ast #:form-asts
    #:return-from-ast #:form-ast
