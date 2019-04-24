@@ -668,4 +668,3 @@
 
 (defmethod children ((ast eq-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
-
