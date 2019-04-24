@@ -77,3 +77,9 @@
 (stealth-mixin:define-stealth-mixin instruction-mixin () cleavir-ir:instruction
   ((%origin :initform *origin* :reader origin))
   (:default-initargs :dynamic-environment-location *dynamic-environment-location*))
+
+(defmethod compile-ast :around
+    ((ast cleavir-ast:dynamic-environment-input-ast-mixin) context)
+  (let ((*dynamic-environment-location*
+          (find-or-create-location (cleavir-ast:dynamic-environment-ast ast))))
+    (call-next-method)))
