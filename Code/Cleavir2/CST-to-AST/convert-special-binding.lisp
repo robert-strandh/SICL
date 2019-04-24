@@ -6,7 +6,7 @@
                                     body-function
                                     lexical-environment
                                     dynamic-environment-ast)
-  (let ((dynamic-environment-out-ast
+  (let ((dynamic-environment-output-ast
           (make-instance 'cleavir-ast:lexical-ast :name '#:bound-env)))
     (make-instance 'cleavir-ast:bind-ast
       :name-ast (convert client
@@ -14,5 +14,5 @@
                  lexical-environment
                  dynamic-environment-ast)
       :value-ast value-ast
-      :body-ast (funcall body-function dynamic-environment-out-ast)
-      :dynamic-environment-out dynamic-environment-out-ast)))
+      :body-ast (funcall body-function dynamic-environment-output-ast)
+      :dynamic-environment-output-ast dynamic-environment-output-ast)))

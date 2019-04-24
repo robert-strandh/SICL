@@ -55,14 +55,19 @@
         (error 'block-name-must-be-a-symbol
                :expr name
                :origin (cst:source name-cst)))
-      (let* ((new-dynenv (make-instance 'cleavir-ast:lexical-ast
-                           :name '#:block-dynamic-environment))
+      (let* ((new-dynamic-environment-ast
+               (make-instance 'cleavir-ast:lexical-ast
+                 :name '#:block-dynamic-environment))
              (ast (make-instance 'cleavir-ast:block-ast
                     :dynamic-environment-input-ast dynamic-environment-ast
-                    :dynamic-environment-out new-dynenv))
-             (new-env (cleavir-env:add-block lexical-environment name ast)))
+                    :dynamic-environment-output-ast new-dynamic-environment-ast))
+             (new-lexical-environment
+               (cleavir-env:add-block lexical-environment name ast)))
         (setf (cleavir-ast:body-ast ast)
-              (process-progn (convert-sequence client body-cst new-env new-dynenv)))
+              (process-progn (convert-sequence client
+                                               body-cst
+                                               new-lexical-environment
+                                               new-dynamic-environment-ast)))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -352,11 +357,15 @@
                                             definitions-cst
                                             lexical-environment
                                             dynamic-environment-ast))
-             (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
+             (new-lexical-environment
+               (augment-environment-from-fdefs lexical-environment definitions-cst))
              (init-asts
-               (compute-function-init-asts defs new-env dynamic-environment-ast))
-             (final-env (augment-environment-with-declarations
-                         new-env canonical-declaration-specifiers)))
+               (compute-function-init-asts defs
+                                           new-lexical-environment
+                                           dynamic-environment-ast))
+             (final-lexical-environment
+               (augment-environment-with-declarations
+                new-lexical-environment canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  ;; So that flet with empty body works.
@@ -364,7 +373,7 @@
                   (process-progn
                    (convert-sequence client
                                      forms-cst
-                                     final-env
+                                     final-lexical-environment
                                      dynamic-environment-ast)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -384,15 +393,17 @@
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
-             (new-env (augment-environment-from-fdefs lexical-environment definitions-cst))
+             (new-lexical-environment
+               (augment-environment-from-fdefs lexical-environment definitions-cst))
              (defs (convert-local-functions client
                                             definitions-cst
-                                            new-env
+                                            new-lexical-environment
                                             dynamic-environment-ast))
              (init-asts
-               (compute-function-init-asts defs new-env dynamic-environment-ast))
-             (final-env (augment-environment-with-declarations
-                         new-env canonical-declaration-specifiers)))
+               (compute-function-init-asts defs new-lexical-environment dynamic-environment-ast))
+             (final-lexical-environment
+               (augment-environment-with-declarations
+                new-lexical-environment canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  ;; So that flet with empty body works.
@@ -400,7 +411,7 @@
                   (process-progn
                    (convert-sequence client
                                      forms-cst
-                                     final-env
+                                     final-lexical-environment
                                      dynamic-environment-ast)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -433,23 +444,28 @@
                     collect (let ((tag-cst (cst:first rest)))
                               (make-instance 'cleavir-ast:tag-ast
                                 :name (cst:raw tag-cst)))))
-          (new-dynenv (make-instance 'cleavir-ast:lexical-ast
-                           :name '#:tagbody-dynamic-environment))
-          (new-env lexical-environment))
+          (new-dynamic-environment-ast
+            (make-instance 'cleavir-ast:lexical-ast
+              :name '#:tagbody-dynamic-environment))
+          (new-lexical-environment lexical-environment))
       (loop for ast in tag-asts
-            do (setf new-env (cleavir-env:add-tag
-                              new-env (cleavir-ast:name ast) ast)))
+            do (setf new-lexical-environment
+                     (cleavir-env:add-tag
+                      new-lexical-environment (cleavir-ast:name ast) ast)))
       (let ((item-asts (loop for rest = body-cst then (cst:rest rest)
                              until (cst:null rest)
                              collect (let ((item-cst (cst:first rest)))
                                        (if (tagp item-cst)
                                            (pop tag-asts)
-                                           (convert client item-cst new-env new-dynenv))))))
+                                           (convert client
+                                                    item-cst
+                                                    new-lexical-environment
+                                                    new-dynamic-environment-ast))))))
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
                  :dynamic-environment-input-ast dynamic-environment-ast
-                 :dynamic-environment-out new-dynenv)
+                 :dynamic-environment-output-ast new-dynamic-environment-ast)
                (convert-constant client
                                  (cst:cst-from-expression nil)
                                  lexical-environment
@@ -609,22 +625,22 @@
       (error 'macrolet-definitions-must-be-proper-list
              :expr (cst:raw definitions-cst)
              :origin (cst:source definitions-cst)))
-    (let ((new-env lexical-environment))
+    (let ((new-lexical-environment lexical-environment))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
             do (let* ((definition-cst (cst:first remaining))
                       (name-cst (cst:first definition-cst))
                       (name (cst:raw name-cst))
                       (expander (expander client definition-cst lexical-environment)))
-                 (setf new-env
-                       (cleavir-env:add-local-macro new-env name expander))))
+                 (setf new-lexical-environment
+                       (cleavir-env:add-local-macro new-lexical-environment name expander))))
       (with-preserved-toplevel-ness
         (convert client
                  (cst:cons (make-instance 'cst:atom-cst
                              :raw 'locally
                              :source origin)
                            body-cst)
-                 new-env
+                 new-lexical-environment
                  dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -640,22 +656,22 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (symbol-macrolet-cst definitions-cst . body-cst) cst
     (declare (ignore symbol-macrolet-cst))
-    (let ((new-env lexical-environment))
+    (let ((new-lexical-environment lexical-environment))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
             do (cst:db definition-origin (name-cst expansion-cst)
                    (cst:first remaining)
                  (let ((name (cst:raw name-cst))
                        (expansion (cst:raw expansion-cst)))
-                   (setf new-env
+                   (setf new-lexical-environment
                          (cleavir-env:add-local-symbol-macro
-                          new-env name expansion)))))
+                          new-lexical-environment name expansion)))))
       (with-preserved-toplevel-ness
         (convert client
                  (cst:cons (cst:cst-from-expression 'locally)
                            body-cst
                            :source origin)
-                 new-env
+                 new-lexical-environment
                  dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -972,10 +988,11 @@
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
-             (new-env (augment-environment-with-declarations
-                       lexical-environment canonical-declaration-specifiers)))
+             (new-lexical-environment
+               (augment-environment-with-declarations
+                lexical-environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
           (process-progn (convert-sequence client
                                            forms-cst
-                                           new-env
+                                           new-lexical-environment
                                            dynamic-environment-ast)))))))
