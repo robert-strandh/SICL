@@ -13,6 +13,8 @@
    #:side-effect-free-p
    #:dynamic-environment-input-ast-mixin
    #:dynamic-environment-output-ast-mixin
+   #:dynamic-environment-input-ast
+   #:dynamic-environment-output-ast
    #:immediate-ast #:value
    #:constant-ast
    #:lexical-ast
