@@ -79,7 +79,9 @@
    (%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)
-   (%dynamic-environment :initarg :dynamic-environment :accessor dynamic-environment)))
+   (%dynamic-environment-location
+    :initarg :dynamic-environment-location
+    :accessor dynamic-environment-location)))
 
 (defmethod initialize-instance :after ((obj instruction) &key input output successor)
   (let ((inputs (if (null input) (inputs obj) (list input)))
@@ -115,7 +117,7 @@
         :outputs (outputs instruction)
         :predecessors (predecessors instruction)
         :successors (successors instruction)
-        :dynamic-environment (dynamic-environment instruction)))
+        :dynamic-environment-location (dynamic-environment-location instruction)))
 
 (defun clone-instruction (instruction &rest initargs &key &allow-other-keys)
   (apply #'make-instance (class-of instruction) (append initargs (clone-initargs instruction))))

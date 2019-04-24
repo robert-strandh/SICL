@@ -45,9 +45,9 @@
   (loop for input in (inputs instruction)
         do (setf (using-instructions input)
                  (remove instruction (using-instructions input))))
-  (setf (using-instructions (dynamic-environment instruction))
+  (setf (using-instructions (dynamic-environment-location instruction))
         (remove instruction (using-instructions
-                             (dynamic-environment instruction))))
+                             (dynamic-environment-location instruction))))
   (setf (inputs instruction) '())
   (loop for output in (outputs instruction)
         do (setf (defining-instructions output)
@@ -129,7 +129,7 @@
      (loop for datum in (inputs instruction)
 	   do (push instruction (using-instructions datum)))
      (push instruction
-           (using-instructions (dynamic-environment instruction)))
+           (using-instructions (dynamic-environment-location instruction)))
      (loop for datum in (outputs instruction)
 	   do (push instruction (defining-instructions datum))))
    initial-instruction))

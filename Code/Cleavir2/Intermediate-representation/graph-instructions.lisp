@@ -46,7 +46,7 @@
       ;; environment.
       :outputs (list* (new-temporary) dynenv outputs)
       :successors (if successor-p (list successor) '())
-      :dynamic-environment dynenv)))
+      :dynamic-environment-location dynenv)))
 
 (defmethod clone-initargs append ((instruction enter-instruction))
   (list :lambda-list (lambda-list instruction)
