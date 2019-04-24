@@ -366,8 +366,11 @@
     (or (symbolp raw)
         (integerp raw))))
 
-(defmethod convert-special
-    (client (symbol (eql 'tagbody)) cst lexical-environment dynamic-environment-ast)
+(defmethod convert-special (client
+                            (symbol (eql 'tagbody))
+                            cst
+                            lexical-environment
+                            dynamic-environment-ast)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (tagbody-cst . body-cst) cst
     (declare (ignore tagbody-cst))
@@ -395,7 +398,10 @@
                  :item-asts item-asts
                  :dynamic-environment-ast dynamic-environment-ast
                  :dynamic-environment-out new-dynenv)
-               (convert-constant client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast)))))))
+               (convert-constant client
+                                 (cst:cst-from-expression nil)
+                                 lexical-environment
+                                 dynamic-environment-ast)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -416,20 +422,33 @@
 ;;;
 ;;; Converting IF.
 
-(defmethod convert-special (client (symbol (eql 'if)) cst lexical-environment dynamic-environment-ast)
+(defmethod convert-special (client
+                            (symbol (eql 'if))
+                            cst
+                            lexical-environment
+                            dynamic-environment-ast)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
-    (let ((test-ast (convert client test-cst lexical-environment dynamic-environment-ast))
-          (true-ast (convert client then-cst lexical-environment dynamic-environment-ast))
+    (let ((test-ast (convert client
+                             test-cst
+                             lexical-environment
+                             dynamic-environment-ast))
+          (true-ast (convert client
+                             then-cst
+                             lexical-environment
+                             dynamic-environment-ast))
           (false-ast (if (cst:null tail-cst)
                          (convert-constant client
                                            (cst:cst-from-expression nil)
                                            lexical-environment
                                            dynamic-environment-ast)
                          (cst:db s (else-cst) tail-cst
-                           (convert client else-cst lexical-environment dynamic-environment-ast)))))
+                           (convert client
+                                    else-cst
+                                    lexical-environment
+                                    dynamic-environment-ast)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
           (make-instance 'cleavir-ast:if-ast
            :test-ast test-ast
@@ -440,7 +459,10 @@
            :test-ast
            (make-instance 'cleavir-ast:eq-ast
             :arg1-ast test-ast
-            :arg2-ast (convert-constant client (cst:cst-from-expression nil) lexical-environment dynamic-environment-ast)
+            :arg2-ast (convert-constant client
+                       (cst:cst-from-expression nil)
+                       lexical-environment
+                       dynamic-environment-ast)
             :dynamic-environment-ast dynamic-environment-ast)
            :then-ast false-ast
            :else-ast true-ast
@@ -450,7 +472,11 @@
 ;;;
 ;;; Converting LOAD-TIME-VALUE.
 
-(defmethod convert-special (client (symbol (eql 'load-time-value)) cst lexical-environment dynamic-environment-ast)
+(defmethod convert-special (client
+                            (symbol (eql 'load-time-value))
+                            cst
+                            lexical-environment
+                            dynamic-environment-ast)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
