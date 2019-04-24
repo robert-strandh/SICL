@@ -56,6 +56,9 @@
         nil))))
 
 (defun do-inlining (initial-instruction)
+  ;; Need to remove all useless instructions first for incremental
+  ;; r-u-i to catch everything.
+  (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)
   (loop with *instruction-ownerships*
           = (cleavir-hir-transformations:compute-instruction-owners initial-instruction)
         with *location-ownerships*
@@ -65,7 +68,10 @@
         until (null inline)
         do (destructuring-bind (enter call enclose enclose-unique-p enter-unique-p) inline
              (declare (ignore enclose-unique-p enter-unique-p))
-             (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
-           (cleavir-ir:set-predecessors initial-instruction)
-           (cleavir-ir:reinitialize-data initial-instruction)
-           (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)))
+             ;; Find all instructions that could potentially be deleted after inlining.
+             (let ((function-defs (cleavir-ir:defining-instructions (first (cleavir-ir:inputs call)))))
+               (inline-function initial-instruction call enter (make-hash-table :test #'eq))
+               (cleavir-remove-useless-instructions::remove-useless-instructions-from
+                initial-instruction function-defs)))
+             (cleavir-ir:set-predecessors initial-instruction))
+  (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction))
