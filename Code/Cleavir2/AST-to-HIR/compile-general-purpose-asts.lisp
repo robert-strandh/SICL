@@ -123,7 +123,7 @@
            (continuation (cleavir-ir:make-lexical-location
                           '#:block-continuation))
            (dynenv-out (find-or-create-location
-                        (cleavir-ast::dynamic-environment-out-ast ast)))
+                        (cleavir-ast:dynamic-environment-output-ast ast)))
            (catch (make-instance 'cleavir-ir:catch-instruction
                    :outputs (list continuation dynenv-out)
                    :successors (list after))))
@@ -218,7 +218,7 @@
     (let* ((continuation (cleavir-ir:make-lexical-location
                           '#:tagbody-continuation))
            (dynenv-out (find-or-create-location
-                        (cleavir-ast:dynamic-environment-out-ast ast)))
+                        (cleavir-ast:dynamic-environment-output-ast ast)))
            (catch (make-instance 'cleavir-ir:catch-instruction
                     :outputs (list continuation dynenv-out)
                     :successors '()))
@@ -371,11 +371,13 @@
 (defmethod compile-function ((ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
          (dynenv (find-or-create-location
-                  (cleavir-ast:dynamic-environment-out-ast ast)))
+                  (cleavir-ast:dynamic-environment-output-ast ast)))
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (values (cleavir-ir:make-values-location))
-         (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
+         (return (make-instance 'cleavir-ir:return-instruction
+                   :inputs (list values)
+                   :dynamic-environment-location dynenv))
          (body-context (context values (list return) enter))
          (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
@@ -589,11 +591,13 @@
         (*function-info* (make-hash-table :test #'eq)))
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
+           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-output-ast ast)))
            (forms (cleavir-ast:forms ast))
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (values (cleavir-ir:make-values-location))
-           (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
+           (return (make-instance 'cleavir-ir:return-instruction
+                     :inputs (list values)
+                     :dynamic-environment-location dynenv))
            (body-context (context values (list return) enter))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
@@ -610,10 +614,12 @@
         (*location-info* (make-hash-table :test #'eq))
         (*function-info* (make-hash-table :test #'eq)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-out-ast ast)))
+           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-output-ast ast)))
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (values (cleavir-ir:make-values-location))
-           (return (make-instance 'cleavir-ir:return-instruction :inputs (list values)))
+           (return (make-instance 'cleavir-ir:return-instruction
+                     :inputs (list values)
+                     :dynamic-environment-location dynenv))
            (body-context (context values (list return) enter))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
