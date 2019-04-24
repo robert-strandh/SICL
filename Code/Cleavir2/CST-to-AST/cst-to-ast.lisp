@@ -5,5 +5,7 @@
 
 (defun cst-to-ast (client cst lexical-environment)
   (let ((*subforms-are-top-level-p* t)
-	(*compile-time-too* nil))
-    (convert client cst lexical-environment nil)))
+	(*compile-time-too* nil)
+        (dynamic-environment-input-ast
+          (make-instance 'cleavir-ast:lexical-ast :name '#:dummy)))
+    (convert client cst lexical-environment dynamic-environment-input-ast)))
