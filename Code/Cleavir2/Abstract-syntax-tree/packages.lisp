@@ -11,8 +11,12 @@
    #:one-value-ast-mixin
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
-   #:*dynamic-environment* #:dynamic-environment
+   ;; FIXME: check whether this symbol is still needed here.
+   #:*dynamic-environment*
+   #:dynamic-environment
+   #:dynamic-environment-input-ast-mixin
    #:dynamic-environment-output-ast-mixin
+   #:dynamic-environment-ast
    #:dynamic-environment-out-ast
    #:immediate-ast #:value
    #:constant-ast
