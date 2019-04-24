@@ -1,5 +1,17 @@
 (cl:in-package #:cleavir-partial-inlining)
 
+;;; Remove data references to old enter and call instructions for.
+(defun disconnect-enter-call-data (enter-instruction call-instruction)
+  (dolist (input (cleavir-ir:inputs call-instruction))
+    (setf (cleavir-ir:using-instructions input)
+          (delete call-instruction (cleavir-ir:using-instructions input))))
+  (dolist (output (cleavir-ir:outputs call-instruction))
+    (setf (cleavir-ir:defining-instructions output)
+          (delete call-instruction (cleavir-ir:defining-instructions output))))
+  (dolist (output (cleavir-ir:outputs enter-instruction))
+    (setf (cleavir-ir:defining-instructions output)
+          (delete enter-instruction (cleavir-ir:defining-instructions output)))))
+
 (defmethod inline-one-instruction :around
     (enclose-instruction
      call-instruction
@@ -23,6 +35,7 @@
                           (cleavir-ir:predecessors copy)
                           (substitute pred call-instruction
                                       (cleavir-ir:predecessors copy))))
+           (disconnect-enter-call-data enter-instruction call-instruction)
            ;; Our work here is done: return no worklist items.
            '()))))
 
@@ -280,4 +293,6 @@
           (cleavir-ir:predecessors call-successor)
           (substitute new-instruction call-instruction
                       (cleavir-ir:predecessors call-successor)))
+    ;; manually update the data as well.
+    (disconnect-enter-call-data enter-instruction call-instruction)
     '()))
