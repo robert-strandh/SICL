@@ -529,7 +529,7 @@
                (cst:canonicalize-declaration-specifiers
                 client
                 declaration-specifiers))
-             (dynamic-environment-ast-out
+             (dynamic-environment-output-ast
                (make-instance 'cleavir-ast:lexical-ast
                 :name '#:dynamic-environment-argument)))
         (multiple-value-bind (idspecs rdspecs)
@@ -546,9 +546,9 @@
                      entries
                      (make-body rdspecs (cst:listify forms-cst) block-name-cst)
                      lexical-environment
-                     dynamic-environment-ast-out)))
+                     dynamic-environment-output-ast)))
               (make-instance 'cleavir-ast:function-ast
                 :body-ast ast
                 :lambda-list lexical-lambda-list
-                :dynamic-environment-ast dynamic-environment-ast
-                :dynamic-environment-out dynamic-environment-ast-out))))))))
+                :dynamic-environment-input-ast dynamic-environment-ast
+                :dynamic-environment-output-ast dynamic-environment-output-ast))))))))

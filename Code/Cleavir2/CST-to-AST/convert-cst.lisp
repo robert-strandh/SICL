@@ -159,7 +159,7 @@
     (make-instance 'cleavir-ast:call-ast
      :callee-ast function-ast
      :argument-asts argument-asts
-     :dynamic-environment-ast dynamic-environment-ast)))
+     :dynamic-environment-input-ast dynamic-environment-ast)))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
@@ -243,7 +243,7 @@
                     :value (cleavir-env:name info))))
     (make-instance 'cleavir-ast:symbol-value-ast
       :name-ast name-ast
-      :dynamic-environment-ast dynamic-environment-ast)))
+      :dynamic-environment-input-ast dynamic-environment-ast)))
 
 (defmethod convert-cst (client
                         cst

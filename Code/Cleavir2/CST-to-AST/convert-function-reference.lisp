@@ -10,7 +10,7 @@
                     :value (cleavir-env:name info))))
     (make-instance 'cleavir-ast:fdefinition-ast
       :name-ast name-ast
-      :dynamic-environment-ast dynamic-environment-ast)))
+      :dynamic-environment-input-ast dynamic-environment-ast)))
 
 (defmethod convert-function-reference (client
                                        cst

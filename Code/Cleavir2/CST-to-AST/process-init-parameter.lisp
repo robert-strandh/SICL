@@ -22,16 +22,16 @@
                            nil-cst
                            lexical-environment
                            dynamic-environment-ast)
-                :dynamic-environment-ast dynamic-environment-ast)
+                :dynamic-environment-input-ast dynamic-environment-ast)
      :then-ast (make-instance 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
                  :value-ast value-ast
-                 :dynamic-environment-ast dynamic-environment-ast)
+                 :dynamic-environment-input-ast dynamic-environment-ast)
      :else-ast (convert-constant client
                 nil-cst
                 lexical-environment
                 dynamic-environment-ast)
-     :dynamic-environment-ast dynamic-environment-ast)))
+     :dynamic-environment-input-ast dynamic-environment-ast)))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated

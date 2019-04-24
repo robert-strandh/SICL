@@ -58,7 +58,7 @@
       (let* ((new-dynenv (make-instance 'cleavir-ast:lexical-ast
                            :name '#:block-dynamic-environment))
              (ast (make-instance 'cleavir-ast:block-ast
-                    :dynamic-environment-ast dynamic-environment-ast
+                    :dynamic-environment-input-ast dynamic-environment-ast
                     :dynamic-environment-out new-dynenv))
              (new-env (cleavir-env:add-block lexical-environment name ast)))
         (setf (cleavir-ast:body-ast ast)
@@ -116,7 +116,7 @@
                       value-cst
                       lexical-environment
                       dynamic-environment-ast)
-           :dynamic-environment-ast dynamic-environment-ast))))))
+           :dynamic-environment-input-ast dynamic-environment-ast))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -332,7 +332,7 @@
         collect (make-instance 'cleavir-ast:setq-ast
                   :lhs-ast (function-lexical lexical-environment name)
                   :value-ast fun-ast
-                  :dynamic-environment-ast dynamic-environment-ast)))
+                  :dynamic-environment-input-ast dynamic-environment-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special (client
@@ -448,7 +448,7 @@
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts
-                 :dynamic-environment-ast dynamic-environment-ast
+                 :dynamic-environment-input-ast dynamic-environment-ast
                  :dynamic-environment-out new-dynenv)
                (convert-constant client
                                  (cst:cst-from-expression nil)
@@ -509,7 +509,7 @@
            :test-ast test-ast
            :then-ast true-ast
            :else-ast false-ast
-           :dynamic-environment-ast dynamic-environment-ast)
+           :dynamic-environment-input-ast dynamic-environment-ast)
           (make-instance 'cleavir-ast:if-ast
            :test-ast
            (make-instance 'cleavir-ast:eq-ast
@@ -518,10 +518,10 @@
                        (cst:cst-from-expression nil)
                        lexical-environment
                        dynamic-environment-ast)
-            :dynamic-environment-ast dynamic-environment-ast)
+            :dynamic-environment-input-ast dynamic-environment-ast)
            :then-ast false-ast
            :else-ast true-ast
-           :dynamic-environment-ast dynamic-environment-ast)))))
+           :dynamic-environment-input-ast dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -552,7 +552,7 @@
                 (error 'read-only-p-must-be-boolean
                        :expr read-only-p
                        :origin (cst:source (cst:first remaining-cst))))))
-      :dynamic-environment-ast dynamic-environment-ast)))
+      :dynamic-environment-input-ast dynamic-environment-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -819,7 +819,7 @@
         :required req
         :optional opt
         :rest rest
-        :dynamic-environment-ast dynamic-environment-ast))))
+        :dynamic-environment-input-ast dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

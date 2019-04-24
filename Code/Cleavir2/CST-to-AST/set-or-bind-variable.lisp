@@ -29,5 +29,5 @@
 	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
                             :lhs-ast (cleavir-env:identity info)
                             :value-ast value-ast
-                            :dynamic-environment-ast dynamic-environment-ast)
+                            :dynamic-environment-input-ast dynamic-environment-ast)
                      (funcall body-function dynamic-environment-ast))))))

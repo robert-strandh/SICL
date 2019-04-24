@@ -16,4 +16,4 @@
     (make-instance 'cleavir-ast:call-ast
      :callee-ast (convert-code client lambda-list-cst body-cst lexical-environment dynamic-environment-ast)
      :argument-asts (convert-sequence client args-cst lexical-environment dynamic-environment-ast)
-     :dynamic-environment-ast dynamic-environment-ast)))
+     :dynamic-environment-input-ast dynamic-environment-ast)))
