@@ -72,6 +72,5 @@
              (let ((function-defs (cleavir-ir:defining-instructions (first (cleavir-ir:inputs call)))))
                (inline-function initial-instruction call enter (make-hash-table :test #'eq))
                (cleavir-remove-useless-instructions::remove-useless-instructions-from
-                initial-instruction function-defs)))
-           (cleavir-ir:set-predecessors initial-instruction))
+                initial-instruction function-defs))))
   (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction))

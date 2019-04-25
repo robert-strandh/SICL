@@ -31,10 +31,11 @@
            (loop for pred in (cleavir-ir:predecessors enclose-instruction)
                  do (setf (cleavir-ir:successors pred)
                           (substitute copy enclose-instruction
-                                      (cleavir-ir:successors pred))
-                          (cleavir-ir:predecessors copy)
-                          (substitute pred call-instruction
-                                      (cleavir-ir:predecessors copy))))
+                                      (cleavir-ir:successors pred)))
+                    (setf (cleavir-ir:predecessors copy)
+                          (push pred (cleavir-ir:predecessors copy))))
+           (disconnect-predecessor enter-instruction)
+           (disconnect-predecessor call-instruction)
            (disconnect-enter-call-data enter-instruction call-instruction)
            ;; Our work here is done: return no worklist items.
            '()))))
@@ -153,8 +154,11 @@
   (let ((new-instruction (copy-instruction successor-instruction mapping)))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+    ;; Point ENTER-INSTRUCTION to the next successor.
+    (disconnect-predecessor enter-instruction)
     (setf (cleavir-ir:successors enter-instruction)
           (cleavir-ir:successors successor-instruction))
+    (attach-predecessor enter-instruction)
     (list (make-instance 'worklist-item
             :enclose-instruction enclose-instruction
             :call-instruction call-instruction
@@ -243,7 +247,9 @@
     (add-multiple-successor-instruction-before-instruction
      new-instruction enclose-instruction (list* enclose-instruction new-encloses))
     ;; For the first successor, we just reuse the enter and enclose and such.
+    (disconnect-predecessor enter-instruction)
     (setf (cleavir-ir:successors enter-instruction) (list prime-successor))
+    (attach-predecessor enter-instruction)
     ;; Now just the worklist.
     (list* (make-instance 'worklist-item
              :enclose-instruction enclose-instruction
@@ -275,6 +281,8 @@
   (let ((new-instruction (copy-instruction successor-instruction mapping)))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:bypass-instruction new-instruction enclose-instruction)
+    (disconnect-predecessor enter-instruction)
+    (disconnect-predecessor call-instruction)
     '()))
 
 (defmethod inline-one-instruction
@@ -293,6 +301,7 @@
           (cleavir-ir:predecessors call-successor)
           (substitute new-instruction call-instruction
                       (cleavir-ir:predecessors call-successor)))
+    (disconnect-predecessor enter-instruction)
     ;; manually update the data as well.
     (disconnect-enter-call-data enter-instruction call-instruction)
     '()))

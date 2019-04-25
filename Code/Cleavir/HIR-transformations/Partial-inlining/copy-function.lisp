@@ -55,6 +55,7 @@
   (let ((copies nil)
         (stack (cons enter stack))
         (*new-enter* (cleavir-ir:clone-instruction enter)))
+    (disconnect-predecessor *new-enter*)
     (push *new-enter* copies)
     ;; Set up ownership.
     (setf (instruction-owner *new-enter*) *new-enter*)
@@ -86,6 +87,7 @@
                 (copy (cleavir-ir:clone-instruction instruction
                         :inputs new-inputs :outputs new-outputs
                         :dynamic-environment new-dynamic-environment)))
+           (disconnect-predecessor copy)
            (push copy copies)
            (setf (instruction-owner copy) *new-enter*)
            (add-to-mapping *instruction-mapping* instruction copy))))

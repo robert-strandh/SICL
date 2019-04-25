@@ -41,6 +41,16 @@
   ;; Done!
   (values))
 
+;;; Remvoe an enter instruction from the list of predecessors of its successors.
+(defun disconnect-predecessor (instruction)
+  (dolist (successor (cleavir-ir:successors instruction))
+    (setf (cleavir-ir:predecessors successor)
+          (delete instruction (cleavir-ir:predecessors successor)))))
+
+(defun attach-predecessor (instruction)
+  (dolist (successor (cleavir-ir:successors instruction))
+    (push instruction (cleavir-ir:predecessors successor))))
+
 (defmethod inline-function (initial call enter mapping)
   (let* ((*original-enter-instruction* enter)
          (*instruction-mapping* (make-hash-table :test #'eq))
@@ -80,6 +90,9 @@
     (setf (cleavir-ir:lambda-list new-enter) '()
           ;; the temporary is the closure variable.
           (cleavir-ir:outputs new-enter) (list (cleavir-ir:new-temporary) fake-dynenv))
+    ;; Ensure that the enc's successor doens't contain enc as a
+    ;; predecessor, since this is outdated information.
+    (disconnect-predecessor enc)
     (cleavir-ir:insert-instruction-before enc call)
     (setf (cleavir-ir:inputs call) (cons function-temp call-arguments))
     ;; If we're fully inlining a function, we want to use the call instruction's
