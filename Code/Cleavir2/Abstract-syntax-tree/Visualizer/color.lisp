@@ -21,7 +21,7 @@
 (defun compute-dynamic-environment-colors (ast)
   (let ((visited (make-hash-table :test #'eq))
         (colors (make-hash-table :test #'eq))
-        (choices (list clim:+red+ clim:+blue+ clim:+green+
+        (choices (list clim:+blue+ clim:+green+ clim:+red+
                        clim:+cyan+ clim:+magenta+ clim:+gold+)))
     ;; Turn the choices into a circular list.
     (setf (cdr (last choices)) choices)
