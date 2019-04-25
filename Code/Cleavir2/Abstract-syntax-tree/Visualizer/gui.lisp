@@ -73,8 +73,8 @@
         (pen-color (gethash (cleavir-ast:dynamic-environment-output-ast ast)
                             dynamic-environment-colors)))
     (clim:draw-line* pane
-                     (+ x width) y
-                     (+ x width) (+ y height)
+                     (+ x width) (- y 1)
+                     (+ x width) (+ y height 1)
                      :ink pen-color
                      :line-thickness 3)))
 
