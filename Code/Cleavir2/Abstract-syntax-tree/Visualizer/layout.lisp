@@ -1,5 +1,14 @@
 (cl:in-package #:cleavir-ast-visualizer)
 
+(defgeneric significant-children (ast))
+
+(defmethod significant-children (ast)
+  (cleavir-ast:children ast))
+
+;;; Exclude the dynamic-environment output AST from the drawing.
+(defmethod significant-children ((ast cleavir-ast:block-ast))
+  (rest (cleavir-ast:children ast)))
+
 (defclass layout ()
   ((%ast :initarg :ast :reader ast)
    (%indirect-p :initarg :indirect-p :reader indirect-p)
@@ -61,10 +70,10 @@
                  :indirect-p nil))))))
                
 (defmethod layout-from-ast (table pane ast)
-  (layout-from-ast-with-children table pane ast (cleavir-ast:children ast)))
+  (layout-from-ast-with-children table pane ast (significant-children ast)))
 
 (defmethod layout-from-ast (table pane (ast cleavir-ast:function-ast))
-  (let* ((children (cleavir-ast:children ast))
+  (let* ((children (significant-children ast))
          (reorganized (if (null children) '()
                           (append (rest children) (list (first children))))))
     (layout-from-ast-with-children table pane ast reorganized)))
