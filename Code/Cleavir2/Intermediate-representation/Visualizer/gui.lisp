@@ -208,6 +208,10 @@
   (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos
                      (floor datum-width 2) (floor datum-height 2)
+                     :ink clim:+pink+
+                     :filled t)
+    (clim:draw-oval* pane hpos vpos
+                     (floor datum-width 2) (floor datum-height 2)
                      :filled nil)
     (let ((label (princ-to-string (cleavir-ir:value datum))))
       (clim:with-text-size (pane :small)
