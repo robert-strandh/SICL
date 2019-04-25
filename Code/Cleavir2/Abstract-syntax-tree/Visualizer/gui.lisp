@@ -12,22 +12,6 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-(defgeneric label (ast))
-
-(defmethod label (ast)
-  (cleavir-ast-graphviz::label ast))
-
-(defmethod label ((ast cleavir-ast:fdefinition-ast))
-  "fdef")
-
-(defmethod label ((ast cleavir-ast:constant-ast))
-  (let* ((label (format nil "~s" (cleavir-ast:value ast)))
-         (length (length label)))
-    (subseq label 0 (min length 30))))
-
-(defmethod label ((ast cleavir-ast:load-time-value-ast))
-  "l-t-v")
-
 (defgeneric ast-width (pane ast))
 
 (defmethod ast-width :around (pane ast)
