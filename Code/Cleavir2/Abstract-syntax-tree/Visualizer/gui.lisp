@@ -44,12 +44,25 @@
 (defmethod ast-height (pane ast)
   (+ 5 (nth-value 1 (clim:text-size pane (label ast)))))
 
+(defgeneric line-thickness (ast))
+
+(defmethod line-thickness (ast)
+  (declare (ignore ast))
+  1)
+
+(defmethod line-thickness ((ast cleavir-ast:dynamic-environment-input-ast-mixin))
+  3)
+
+(defmethod line-thickness ((ast cleavir-ast:dynamic-environment-output-ast-mixin))
+  3)
+
 (defgeneric draw (ast pane x y dynamic-environment-colors))
 
 (defmethod draw (ast pane x y dynamic-environment-colors)
   (let ((width (ast-width pane ast))
         (height (ast-height pane ast))
-        (pen-color (pen-color ast dynamic-environment-colors)))
+        (pen-color (pen-color ast dynamic-environment-colors))
+        (line-thickness (line-thickness ast)))
     (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
       (clim:draw-rectangle* pane
                             x y (+ x width) (+ y height)
@@ -57,7 +70,7 @@
                             :filled t)
       (clim:draw-rectangle* pane
                             x y (+ x width) (+ y height)
-                            :line-thickness 3
+                            :line-thickness line-thickness
                             :ink pen-color
                             :filled nil)
       (clim:draw-text* pane (label ast)
@@ -77,6 +90,36 @@
                      (+ x width) (+ y height 1)
                      :ink pen-color
                      :line-thickness 3)))
+
+(defmethod draw :after ((ast cleavir-ast:return-from-ast)
+                        pane
+                        x y
+                        dynamic-environment-colors)
+  (let* ((width (ast-width pane ast))
+         (height (ast-height pane ast))
+         (block-ast (cleavir-ast:block-ast ast))
+         (pen-color (gethash (cleavir-ast:dynamic-environment-output-ast block-ast)
+                             dynamic-environment-colors)))
+    (clim:draw-line* pane
+                     (- x 1) (+ y height)
+                     (+ x width 1) (+ y height)
+                     :ink pen-color
+                     :line-thickness 3)))
+
+;; (defmethod draw :after ((ast cleavir-ast:go-ast)
+;;                         pane
+;;                         x y
+;;                         dynamic-environment-colors)
+;;   (let* ((width (ast-width pane ast))
+;;          (height (ast-height pane ast))
+;;          (tag-ast (cleavir-ast:tag-ast ast))
+;;          (pen-color (gethash (cleavir-ast:dynamic-environment-output-ast tag-ast)
+;;                              dynamic-environment-colors)))
+;;     (clim:draw-line* pane
+;;                      (- x 1) (+ y height)
+;;                      (+ x width 1) (+ y height)
+;;                      :ink pen-color
+;;                      :line-thickness 3)))
 
 (defun display-layout (dynamic-environment-colors pane layout)
   (unless (indirect-p layout)
