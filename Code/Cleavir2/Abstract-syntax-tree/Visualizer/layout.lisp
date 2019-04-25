@@ -6,8 +6,9 @@
   (cleavir-ast:children ast))
 
 ;;; Exclude the dynamic-environment output AST from the drawing.
-(defmethod significant-children ((ast cleavir-ast:block-ast))
-  (rest (cleavir-ast:children ast)))
+(defmethod significant-children ((ast cleavir-ast:dynamic-environment-output-ast-mixin))
+  (remove (cleavir-ast:dynamic-environment-output-ast ast)
+          (cleavir-ast:children ast)))
 
 (defclass layout ()
   ((%ast :initarg :ast :reader ast)
