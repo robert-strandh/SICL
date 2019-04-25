@@ -28,6 +28,14 @@
 (defmethod label ((ast cleavir-ast:load-time-value-ast))
   "l-t-v")
 
+(defgeneric background-color (ast))
+
+(defmethod background-color (ast)
+  clim:+white+)
+
+(defmethod background-color ((ast cleavir-ast:constant-ast))
+  clim:+pink+)
+
 (defgeneric ast-width (pane ast))
 
 (defmethod ast-width :around (pane ast)
@@ -50,7 +58,13 @@
   (let ((width (ast-width pane ast))
         (height (ast-height pane ast)))
     (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
-      (clim:draw-rectangle* pane x y (+ x width) (+ y height) :filled nil)
+      (clim:draw-rectangle* pane
+                            x y (+ x width) (+ y height)
+                            :ink (background-color ast)
+                            :filled t)
+      (clim:draw-rectangle* pane
+                            x y (+ x width) (+ y height)
+                            :filled nil)
       (clim:draw-text* pane (label ast)
                        (+ x (/ width 2)) (+ y (/ height 2))
                        :align-x :center :align-y :center))))
