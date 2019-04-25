@@ -21,7 +21,9 @@
   "fdef")
 
 (defmethod label ((ast cleavir-ast:constant-ast))
-  "const")
+  (let* ((label (format nil "~s" (cleavir-ast:value ast)))
+         (length (length label)))
+    (subseq label 0 (min length 30))))
 
 (defmethod label ((ast cleavir-ast:load-time-value-ast))
   "l-t-v")
