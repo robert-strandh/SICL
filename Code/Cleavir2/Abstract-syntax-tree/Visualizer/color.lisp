@@ -8,6 +8,16 @@
 (defmethod background-color ((ast cleavir-ast:constant-ast))
   clim:+pink+)
 
+(defgeneric pen-color (ast dynamic-environment-colors))
+
+(defmethod pen-color (ast dynamic-environment-colors)
+  clim:+black+)
+
+(defmethod pen-color ((ast cleavir-ast:dynamic-environment-input-ast-mixin)
+                      dynamic-environment-colors)
+  (gethash (cleavir-ast:dynamic-environment-input-ast ast) dynamic-environment-colors))
+
+
 (defun compute-dynamic-environment-colors (ast)
   (let ((visited (make-hash-table :test #'eq))
         (colors (make-hash-table :test #'eq))
