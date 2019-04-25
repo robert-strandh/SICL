@@ -28,14 +28,6 @@
 (defmethod label ((ast cleavir-ast:load-time-value-ast))
   "l-t-v")
 
-(defgeneric background-color (ast))
-
-(defmethod background-color (ast)
-  clim:+white+)
-
-(defmethod background-color ((ast cleavir-ast:constant-ast))
-  clim:+pink+)
-
 (defgeneric ast-width (pane ast))
 
 (defmethod ast-width :around (pane ast)
