@@ -48,7 +48,8 @@
 
 (defmethod draw (ast pane x y dynamic-environment-colors)
   (let ((width (ast-width pane ast))
-        (height (ast-height pane ast)))
+        (height (ast-height pane ast))
+        (pen-color (pen-color ast dynamic-environment-colors)))
     (clim:with-output-as-presentation (pane ast 'cleavir-ast:ast)
       (clim:draw-rectangle* pane
                             x y (+ x width) (+ y height)
@@ -56,10 +57,26 @@
                             :filled t)
       (clim:draw-rectangle* pane
                             x y (+ x width) (+ y height)
+                            :line-thickness 3
+                            :ink pen-color
                             :filled nil)
       (clim:draw-text* pane (label ast)
                        (+ x (/ width 2)) (+ y (/ height 2))
                        :align-x :center :align-y :center))))
+
+(defmethod draw :after ((ast cleavir-ast:dynamic-environment-output-ast-mixin)
+                        pane
+                        x y
+                        dynamic-environment-colors)
+  (let ((width (ast-width pane ast))
+        (height (ast-height pane ast))
+        (pen-color (gethash (cleavir-ast:dynamic-environment-output-ast ast)
+                            dynamic-environment-colors)))
+    (clim:draw-line* pane
+                     (+ x width) y
+                     (+ x width) (+ y height)
+                     :ink pen-color
+                     :line-thickness 3)))
 
 (defun display-layout (dynamic-environment-colors pane layout)
   (unless (indirect-p layout)
