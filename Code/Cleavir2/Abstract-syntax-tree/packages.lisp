@@ -87,9 +87,3 @@
    #:scope-ast
    #:map-ast-depth-first-preorder
    ))
-
-(defpackage #:cleavir-ast-graphviz
-  (:use #:common-lisp #:cleavir-ast)
-  (:shadowing-import-from #:cleavir-ast #:symbol)
-  (:export
-   #:draw-ast))
