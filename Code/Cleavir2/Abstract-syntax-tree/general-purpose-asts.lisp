@@ -33,27 +33,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class IMMEDIATE-AST.
-;;;
-;;; This class represents constants that have a representation that
-;;; allows them to be immediate values in the resulting machine code.
-;;; Obviously, whether that is possible depends on the implementation.
-;;;
-;;; The value of the constant is represented as a possibly-negative
-;;; integer that is the machine-code representation of the constant.
-
-(defclass immediate-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%value :initarg :value :reader value)))
-
-(cleavir-io:define-save-info immediate-ast
-  (:value value))
-
-(defmethod children ((ast immediate-ast))
-  (declare (ignorable ast))
-  '())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class CONSTANT-AST.
 ;;;
 ;;; This class represents Lisp constants in source code.  

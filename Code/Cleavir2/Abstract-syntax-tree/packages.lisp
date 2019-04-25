@@ -15,8 +15,7 @@
    #:dynamic-environment-output-ast-mixin
    #:dynamic-environment-input-ast
    #:dynamic-environment-output-ast
-   #:immediate-ast #:value
-   #:constant-ast
+   #:constant-ast #:value
    #:lexical-ast
    #:symbol-value-ast
    #:set-symbol-value-ast
