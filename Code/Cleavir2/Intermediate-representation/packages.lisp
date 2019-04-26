@@ -37,7 +37,9 @@
    #:inputs #:outputs
    #:substitute-input #:substitute-output
    #:successors #:predecessors
+   ;; FIXME: check that these two are still needed.
    #:dynamic-environment #:*dynamic-environment*
+   #:dynamic-environment-location
    #:symbol-value-instruction
    #:set-symbol-value-instruction
    #:fdefinition-instruction
