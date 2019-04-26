@@ -469,7 +469,8 @@
 ;;; Converting CLEAVIR-PRIMOP:MULTIPLE-VALUE-SETQ.
 ;;;
 ;;; Assigns the given variables to the values of the form.
-;;; Does not return values. The variables must be lexical.
+;;; Returns all values of the form.
+;;; The variables must be lexical.
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:multiple-value-setq)) form env system)
