@@ -16,12 +16,8 @@
 ;;;;
 ;;;;   * The owner of an ENTER-INSTRUCTION is itself.
 ;;;;
-;;;;   * For all instruction types, EXCEPT the UNWIND-INSTRUCTION, the
-;;;;     owner of the successors of an instruction I is the same as
-;;;;     the owner of I.
-;;;;
-;;;;   * The owner of the successor of an UNWIND-INSTRUCTION I is the
-;;;;     value returned by calling (INVOCATION I).
+;;;;   * For all instruction types the owner of the successors of an
+;;;;     instruction I is the same as the owner of I.
 ;;;;
 ;;;; The owner of a datum D is the outermost ENTER-INSTRUCTION of all
 ;;;; the owners of all the instructions using D.
