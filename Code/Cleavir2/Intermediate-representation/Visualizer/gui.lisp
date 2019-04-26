@@ -238,17 +238,31 @@
                          :align-x :center :align-y :center
                        :ink clim:+dark-blue+)))))
 
+(defvar *dynamic-environment-locations*)
+
 (defun draw-data (pane)
   (loop for datum being each hash-key of *data-position-table*
-        do (draw-datum datum pane)
-           (loop for instruction in (cleavir-ir:defining-instructions datum)
-                 do (draw-data-edge instruction datum pane clim:+red+))
-           (loop for instruction in (cleavir-ir:using-instructions datum)
-                 do (draw-data-edge instruction datum pane clim:+dark-green+))))
+        do (unless (member datum *dynamic-environment-locations*)
+             (draw-datum datum pane)
+             (loop for instruction in (cleavir-ir:defining-instructions datum)
+                   do (draw-data-edge instruction datum pane clim:+red+))
+             (loop for instruction in (cleavir-ir:using-instructions datum)
+                   do (draw-data-edge instruction datum pane clim:+dark-green+)))))
+
+(defun find-all-dynamic-environment-locations (initial-instruction)
+  (let ((result '()))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (pushnew (cleavir-ir:dynamic-environment-location instruction)
+                result))
+     initial-instruction)
+    result))
 
 (defun display-hir (frame pane)
   (let ((*instruction-position-table* (make-hash-table :test #'eq))
-        (*data-position-table* (make-hash-table :test #'eq)))
+        (*data-position-table* (make-hash-table :test #'eq))
+        (*dynamic-environment-locations*
+          (find-all-dynamic-environment-locations (initial-instruction frame))))
     (multiple-value-bind (*base-width* *base-height*)
         (clim:text-size pane "enclose")
       (layout-program (initial-instruction frame) pane)
