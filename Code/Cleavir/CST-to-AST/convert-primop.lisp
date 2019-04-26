@@ -74,9 +74,8 @@
 ;;;
 ;;; This primitive operation can be used to compile
 ;;; CL:MULTIPLE-VALUE-SETQ. Unlike that operator, it requires all
-;;; the variables to be lexical, and can only be used in a no-values
-;;; context. In the result HIR code, the use of this operation will
-;;; appear as a MULTIPLE-TO-FIXED-INSTRUCTION.
+;;; the variables to be lexical, and returns all values from the
+;;; form.
 
 (defmethod convert-special
     ((symbol (eql 'cleavir-primop:multiple-value-setq)) cst env system)
