@@ -14,7 +14,7 @@
                   (value-cst (cst:cst-from-expression value)))
              (convert-constant value-cst environment system)))
           ((symbolp form)
-           (convert-variable cst environment client))
+           (convert-variable cst environment system))
           ((symbolp (car form))
            ;; Even if we are in COMPILE-TIME-TOO mode, at this point, we
            ;; do not know whether to evaluate the form at compile time,
