@@ -1,17 +1,17 @@
 (cl:in-package #:cleavir-hir-transformations)
 
 ;;;; In this file we define functions for building and traversing a
-;;;; FUNCTION TREE.  Such a tree defines the nesting of functions in a
-;;;; program.  A node (other than the root) of the tree contains a
+;;;; FUNCTION DAG.  Such a dag defines the nesting of functions in a
+;;;; program.  A node (other than the root) of the dag contains a
 ;;;; slot holding an ENCLOSE-INSTRUCTION.  Each node contains a list
-;;;; of CHILDREN that are also tree nodes.  The children of a node N
+;;;; of CHILDREN that are also dag nodes.  The children of a node N
 ;;;; (other than the root) containing some ENCLOSE-INSTRUCTION E are
 ;;;; nodes that contain the ENCLOSE-INSTRUCTIONs owned by the CODE of
 ;;;; (i.e., the ENTER-INSTRUCTION associated with) E.  The children of
 ;;;; the root node are nodes containing the ENCLOSE-INSTRUCTIONs owned
 ;;;; by the ENTER-INSTRUCTION INITIAL-INSTRUCTION.  In addition to a
 ;;;; list of children, the root node also contains an EQ hash table
-;;;; that maps ENTER-INSTRUCTIONs to tree nodes such that the tree
+;;;; that maps ENTER-INSTRUCTIONs to tree nodes such that the dag
 ;;;; node is either the root, or it contains the ENCLOSE-INSTRUCTION
 ;;;; that the ENTER-INSTRUCTION is associated with.
 
@@ -38,11 +38,11 @@
 
 (defun build-function-dag (initial-instruction)
   (let* (;; Create an EQ hash table that maps ENTER-INSTRUCTIONs to
-	 ;; tree nodes such that the tree node is either the root, or
-	 ;; it contains the ENCLOSE-INSTRUCTION that the
+	 ;; dag nodes such that the dag node is either the root, or
+	 ;; it contains the ENCLOSE-INSTRUCTIONs that the
 	 ;; ENTER-INSTRUCTION is associated with.
 	 (table (make-hash-table :test #'eq))
-	 ;; Create the root of the tree that is ultimately going to be
+	 ;; Create the root of the dag that is ultimately going to be
 	 ;; returned as the value of this function.
 	 (root (make-instance 'function-dag
 		 :dag-nodes table
