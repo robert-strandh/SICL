@@ -2,4 +2,4 @@
 
 (defun hir-to-cl (initial-instruction)
   (let ((*visited* (make-hash-table :test #'eq)))
-    (translate initial-instruction)))
+    (translate-enter-instruction initial-instruction)))
