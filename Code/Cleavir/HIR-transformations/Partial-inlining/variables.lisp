@@ -32,6 +32,9 @@
 
 (defvar *instruction-ownerships*)
 
+;;; This variable contains the function DAG.
+(defvar *function-dag*)
+
 ;;; Interface.
 (defun instruction-owner (instruction)
   (gethash instruction *instruction-ownerships*))

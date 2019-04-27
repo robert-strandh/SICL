@@ -51,10 +51,16 @@
 ;;; If an output is owned by something in the stack, it ought to be copied,
 ;;; but if not, it's something closed over and must not be copied, unless it's
 ;;; owned by the function being inlined.
-(defun copy-function-recur (enter external-map internal-map stack)
-  (let ((copies nil)
-        (stack (cons enter stack))
-        (*new-enter* (cleavir-ir:clone-instruction enter)))
+(defun copy-function-recur (enter enclose old-enter external-map internal-map stack)
+  (let* ((copies nil)
+         (stack (cons enter stack))
+         (*new-enter* (cleavir-ir:clone-instruction enter))
+         ;; Hook up the new enclose and enter instructions into the DAG.
+         (dag-nodes (cleavir-hir-transformations:dag-nodes *function-dag*))
+         (new-node (cleavir-hir-transformations:add-enclose-to-parents
+                    enclose
+                    (gethash old-enter dag-nodes))))
+    (setf (gethash *new-enter* dag-nodes) (list new-node))
     (disconnect-predecessor *new-enter*)
     (push *new-enter* copies)
     ;; Set up ownership.
@@ -107,7 +113,7 @@
                   ;; UNWINDS in the inner function can be hooked up to copies.
                   (setf (cleavir-ir:code copy)
                         (copy-function-recur
-                         (cleavir-ir:code copy) external-map internal-map stack)))
+                         (cleavir-ir:code copy) copy *new-enter* external-map internal-map stack)))
                  (cleavir-ir:unwind-instruction
                   (setf (cleavir-ir:destination copy)
                         (maybe-replace (cleavir-ir:destination copy)))))))
@@ -117,7 +123,8 @@
 ;;; This is required because an internal function could have things it's mapped
 ;;; over refer to inputs that were copied by inlining.
 ;;; ENTER is an enter instruction representing the function being copied.
+;;; ENCLOSE is the enclosing instruction.
 ;;; MAPPING is the lexical variable mapping used during this inline.
 ;;; The copy of ENTER is returned.
-(defun copy-function (enter mapping)
-  (copy-function-recur enter mapping (make-hash-table :test #'eq) nil))
+(defun copy-function (enter enclose mapping)
+  (copy-function-recur enter enclose *target-enter-instruction* mapping (make-hash-table :test #'eq) nil))

@@ -100,13 +100,18 @@
                           (cleavir-ir:dynamic-environment instruction) mapping)))
 
 (defmethod copy-instruction ((instruction cleavir-ir:enclose-instruction) mapping)
-  (cleavir-ir:clone-instruction instruction
-    :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
-    :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
-    :predecessors nil :successors nil
-    :dynamic-environment (translate-input
-                          (cleavir-ir:dynamic-environment instruction) mapping)
-    :code (copy-function (cleavir-ir:code instruction) mapping)))
+  (let ((new-enclose
+          (cleavir-ir:clone-instruction
+           instruction
+           :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
+           :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
+           :predecessors nil :successors nil
+           :dynamic-environment (translate-input
+                                 (cleavir-ir:dynamic-environment instruction) mapping))))
+    ;; We hook things up like this so that the function DAG can be updated correctly.
+    (setf (cleavir-ir:code new-enclose)
+          (copy-function (cleavir-ir:code instruction) new-enclose mapping))
+    new-enclose))
 
 (defmethod copy-instruction ((instruction cleavir-ir:unwind-instruction) mapping)
   (let ((destination (cleavir-ir:destination instruction)))
