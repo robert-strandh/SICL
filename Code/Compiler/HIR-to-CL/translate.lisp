@@ -24,5 +24,6 @@
   (let ((tag (gethash instruction *visited*)))
     (if (null tag)
         (progn (setf (gethash instruction *visited*) (gensym))
-               (call-next-method))
+               (cons (gethash instruction *visited*)
+                     (call-next-method)))
         `((go ,tag)))))
