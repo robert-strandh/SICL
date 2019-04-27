@@ -568,12 +568,15 @@
 ;;; the FORM-AST produces fewer values than there are lexical
 ;;; locations in LHS-ASTS, then NIL is assigned to the remaining
 ;;; lexical locations.  If there are more values there are lexical
-;;; locations in LHS-ASTS, then the additional values are ignored.
+;;; locations in LHS-ASTS, then the additional values are not
+;;; assigned anywhere.
 ;;;
-;;; This AST does not return a value, so it must be compiled in a
-;;; context where no value is required.
+;;; Unlike the special operator, this AST returns all values from
+;;; the form (including unassigned values). This allows it to be
+;;; used in concert with MULTIPLE-VALUE-PROG1 to implement THE
+;;; type checks, and potentially other things.
 
-(defclass multiple-value-setq-ast (ast no-value-ast-mixin)
+(defclass multiple-value-setq-ast (ast)
   ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
