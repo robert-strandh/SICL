@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "translate")
+   (:file "translate-enter-instruction")
    (:file "hir-to-cl")))
