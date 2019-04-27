@@ -61,3 +61,24 @@
 	   (push node (gethash (cleavir-ir:code instruction) table nil)))))
      initial-instruction)
     root))
+
+(defun remove-enclose-from-function-dag (dag enclose)
+  (let* ((table (dag-nodes dag))
+         (enter (cleavir-ir:code enclose))
+         (nodes (gethash enter table)))
+    (dolist (node nodes)
+      (when (eq (enclose-instruction node) enclose)
+        (dolist (parent (parents node))
+          (setf (children parent)
+                (remove node (children parent))))
+        (setf (gethash enter table)
+              (remove enclose nodes))
+        (return)))))
+
+(defun add-enclose-to-parents (enclose parents)
+  (let ((node (make-instance 'interior-node
+                             :parents parents
+                             :enclose-instruction enclose)))
+    (dolist (parent parents)
+      (push node (children parent)))
+    node))

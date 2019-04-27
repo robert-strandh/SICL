@@ -31,4 +31,6 @@
    #:enclose-instruction
    #:dag-nodes
    #:parents
-   #:children))
+   #:children
+   #:remove-enclose-from-function-dag
+   #:add-enclose-to-parents))
