@@ -26,6 +26,10 @@
                   (apply #'funcall ,(mapcar #'cleavir-ir:name inputs))))
           (translate successor context))))
 
+(defmethod translate ((instruction cleavir-ir:return-instruction) context)
+  `((return-from ,(block-name context)
+      (apply #'values ,(values-location context)))))
+
 (defmethod translate :around (instruction context)
   (let* ((visited (visited context))
          (tag (gethash instruction visited)))
