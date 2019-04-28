@@ -1,4 +1,5 @@
 (cl:in-package #:sicl-hir-to-cl)
 
 (defclass context ()
-  ((%visited :initform (make-hash-table :test #'eq) :reader visited)))
+  ((%visited :initform (make-hash-table :test #'eq) :reader visited)
+   (%values-location :initform (gensym) :reader values-location)))

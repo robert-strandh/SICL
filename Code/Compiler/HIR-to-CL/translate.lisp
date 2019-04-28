@@ -20,9 +20,8 @@
 
 (defmethod translate ((instruction cleavir-ir:funcall-instruction) context)
   (let ((inputs (cleavir-ir:inputs instruction))
-        (output (first (cleavir-ir:outputs instruction)))
         (successor (first (cleavir-ir:successors instruction))))
-    (cons `(setq ,(cleavir-ir:name output)
+    (cons `(setq ,(values-location context)
                  (multiple-value-list
                   (apply #'funcall ,(mapcar #'cleavir-ir:name inputs))))
           (translate successor context))))
