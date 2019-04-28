@@ -66,39 +66,40 @@
       `(lambda (,lambda-list-variable
                 ,static-environment-variable
                 ,dynamic-environment-variable)
-         (let (,@(make-let-bindings lambda-list)
-               (,remaining-variable ,lambda-list-variable))
-           ;; Check that enough arguments were passed.
-           ,@(if (null required-parameters)
-                 '()
-                 `((when (< (length ,lambda-list-variable)
-                            ,(length required-parameters))
-                     (error "Not enough arguments"))))
-           ;; Check that not too many arguments were passed
-           ,@(if (and (null rest-parameter) (null key-parameters))
-                 '()
-                 `((when (> (length ,lambda-list-variable)
-                            ,(+ (length required-parameters)
-                                (length optional-parameters)))
-                     (error "Too many arguments"))))
-           ,@(loop for required-parameter in required-parameters
-                   collect `(setq ,(cleavir-ir:name required-parameter)
-                                  (pop ,remaining-variable)))
-           ,@(loop for optional-parameter in optional-parameters
-                   collect `(setq ,(cleavir-ir:name (first optional-parameter))
-                                  (pop ,remaining-variable))
-                   collect `(setq ,(cleavir-ir:name (first optional-parameter))
-                                  t))
-           ,@(if (null rest-parameter)
-                 '()
-                 `((setq ,(cleavir-ir:name rest-parameter) ,remaining-variable)))
-           ,@(loop for key-parameter in key-parameters
-                   collect `(multiple-value-bind (indicator value tail)
-                                (get-properties ,remaining-variable
-                                                '(,(first key-parameter)))
-                              (unless (null tail)
-                                (setf ,(cleavir-ir:name (second key-parameter))
-                                      value)
-                                (setf ,(cleavir-ir:name (third key-parameter))
-                                      t))))
-           (tagbody ,@(translate successor context)))))))
+         (block ,(block-name context)
+           (let (,@(make-let-bindings lambda-list)
+                 (,remaining-variable ,lambda-list-variable))
+             ;; Check that enough arguments were passed.
+             ,@(if (null required-parameters)
+                   '()
+                   `((when (< (length ,lambda-list-variable)
+                              ,(length required-parameters))
+                       (error "Not enough arguments"))))
+             ;; Check that not too many arguments were passed
+             ,@(if (and (null rest-parameter) (null key-parameters))
+                   '()
+                   `((when (> (length ,lambda-list-variable)
+                              ,(+ (length required-parameters)
+                                  (length optional-parameters)))
+                       (error "Too many arguments"))))
+             ,@(loop for required-parameter in required-parameters
+                     collect `(setq ,(cleavir-ir:name required-parameter)
+                                    (pop ,remaining-variable)))
+             ,@(loop for optional-parameter in optional-parameters
+                     collect `(setq ,(cleavir-ir:name (first optional-parameter))
+                                    (pop ,remaining-variable))
+                     collect `(setq ,(cleavir-ir:name (first optional-parameter))
+                                    t))
+             ,@(if (null rest-parameter)
+                   '()
+                   `((setq ,(cleavir-ir:name rest-parameter) ,remaining-variable)))
+             ,@(loop for key-parameter in key-parameters
+                     collect `(multiple-value-bind (indicator value tail)
+                                  (get-properties ,remaining-variable
+                                                  '(,(first key-parameter)))
+                                (unless (null tail)
+                                  (setf ,(cleavir-ir:name (second key-parameter))
+                                        value)
+                                  (setf ,(cleavir-ir:name (third key-parameter))
+                                        t))))
+             (tagbody ,@(translate successor context))))))))
