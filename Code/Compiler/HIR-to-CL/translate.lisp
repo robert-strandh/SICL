@@ -6,8 +6,8 @@
 (defmethod translate (instruction context)
   (declare (ignore context))
   (cons `(invalid ,instruction)
-        (reduce #'append
-                (mapcar #'translate (cleavir-ir:successors instruction)))))
+        (loop for successor in (cleavir-ir:successors instruction)
+              append (translate successor context))))
 
 (defmethod translate ((instruction cleavir-ir:assignment-instruction) context)
   (let* ((input (first (cleavir-ir:inputs instruction)))
