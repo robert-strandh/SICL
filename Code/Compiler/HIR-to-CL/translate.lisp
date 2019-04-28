@@ -4,7 +4,6 @@
 
 ;;; FIXME: Remove this method later.
 (defmethod translate (instruction context)
-  (declare (ignore context))
   (cons `(invalid ,instruction)
         (loop for successor in (cleavir-ir:successors instruction)
               append (translate successor context))))
