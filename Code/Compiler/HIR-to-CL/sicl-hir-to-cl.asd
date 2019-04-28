@@ -8,5 +8,6 @@
    (:file "context")
    (:file "translate")
    (:file "translate-cons-related-instructions")
+   (:file "translate-multiple-value-related-instructions")
    (:file "translate-enter-instruction")
    (:file "hir-to-cl")))
