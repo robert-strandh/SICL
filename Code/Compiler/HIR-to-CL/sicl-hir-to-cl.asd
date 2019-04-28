@@ -7,5 +7,6 @@
   ((:file "packages")
    (:file "context")
    (:file "translate")
+   (:file "translate-cons-related-instructions")
    (:file "translate-enter-instruction")
    (:file "hir-to-cl")))
