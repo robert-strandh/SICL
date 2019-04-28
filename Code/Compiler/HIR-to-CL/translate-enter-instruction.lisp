@@ -51,7 +51,7 @@
               rest-parameter
               (reverse key-parameters)))))
 
-(defun translate-enter-instruction (enter-instruction) 
+(defun translate-enter-instruction (enter-instruction context)
   (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
          (successor (first (cleavir-ir:successors enter-instruction)))
          (lambda-list-variable (gensym))
@@ -101,4 +101,4 @@
                                       value)
                                 (setf ,(cleavir-ir:name (third key-parameter))
                                       t))))
-           (tagbody ,@(translate successor)))))))
+           (tagbody ,@(translate successor context)))))))
