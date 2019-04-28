@@ -20,6 +20,15 @@
                       (cleavir-ir:name input)))
           (translate successor))))
 
+(defmethod translate ((instruction cleavir-ir:funcall-instruction))
+  (let ((inputs (cleavir-ir:inputs instruction))
+        (output (first (cleavir-ir:outputs instruction)))
+        (successor (first (cleavir-ir:successors instruction))))
+    (cons `(setq ,(cleavir-ir:name output)
+                 (multiple-value-list
+                  (apply #'funcall ,(mapcar #'cleavir-ir:name inputs))))
+          (translate successor))))
+
 (defmethod translate :around (instruction)
   (let ((tag (gethash instruction *visited*)))
     (if (null tag)
