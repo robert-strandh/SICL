@@ -5,4 +5,4 @@
   (:export
    #:segregate-only
    #:segregate-lexicals
-))
+   #:build-function-dag))
