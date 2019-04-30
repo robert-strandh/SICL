@@ -1,17 +1,5 @@
 (cl:in-package #:sicl-hir-to-cl)
 
-(defun make-let-bindings (lambda-list)
-  (loop for item in lambda-list
-        unless (member item lambda-list-keywords)
-          append (cond ((atom item)
-                        (list (cleavir-ir:name item)))
-                       ((= (length item) 2)
-                        (list (cleavir-ir:name (first item))
-                              (cleavir-ir:name (second item))))
-                       (t
-                        (list (cleavir-ir:name (second item))
-                              (cleavir-ir:name (third item)))))))
-
 ;;; Return 4 values:
 ;;;
 ;;;   * A list of reuqired parameters, each one represented as a
@@ -67,7 +55,7 @@
                 ,static-environment-variable
                 ,dynamic-environment-variable)
          (block ,(block-name context)
-           (let (,@(make-let-bindings lambda-list)
+           (let (,@(mapcar #'cleavir-ir:name (find-lexical-locations enter-instruction))
                  (,remaining-variable ,arguments-variable))
              ;; Check that enough arguments were passed.
              ,@(if (null required-parameters)
