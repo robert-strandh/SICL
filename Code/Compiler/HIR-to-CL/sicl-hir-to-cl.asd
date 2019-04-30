@@ -1,7 +1,8 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-hir-to-cl
-  :depends-on (#:cleavir2-hir)
+  :depends-on (#:cleavir2-hir
+               #:closer-mop)
   :serial t
   :components
   ((:file "packages")
