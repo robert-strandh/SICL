@@ -54,7 +54,7 @@
 (defun translate-enter-instruction (enter-instruction context)
   (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
          (successor (first (cleavir-ir:successors enter-instruction)))
-         (lambda-list-variable (gensym))
+         (arguments-variable (gensym))
          (static-environment-variable (gensym))
          (dynamic-environment-variable (gensym))
          (remaining-variable (gensym)))
@@ -63,22 +63,22 @@
                           rest-parameter
                           key-parameters)
         (split-lambda-list lambda-list)
-      `(lambda (,lambda-list-variable
+      `(lambda (,arguments-variable
                 ,static-environment-variable
                 ,dynamic-environment-variable)
          (block ,(block-name context)
            (let (,@(make-let-bindings lambda-list)
-                 (,remaining-variable ,lambda-list-variable))
+                 (,remaining-variable ,arguments-variable))
              ;; Check that enough arguments were passed.
              ,@(if (null required-parameters)
                    '()
-                   `((when (< (length ,lambda-list-variable)
+                   `((when (< (length ,arguments-variable)
                               ,(length required-parameters))
                        (error "Not enough arguments"))))
              ;; Check that not too many arguments were passed
              ,@(if (and (null rest-parameter) (null key-parameters))
                    '()
-                   `((when (> (length ,lambda-list-variable)
+                   `((when (> (length ,arguments-variable)
                               ,(+ (length required-parameters)
                                   (length optional-parameters)))
                        (error "Too many arguments"))))
