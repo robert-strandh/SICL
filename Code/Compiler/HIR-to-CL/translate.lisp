@@ -34,7 +34,8 @@
   (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))
         (enter (cleavir-ir:code instruction))
         (successor (first (cleavir-ir:successors instruction))))
-    `((setq ,name (funcall ,(enclose-function-var context)))
+    `((setq ,name (funcall ,(enclose-function-var context)
+                           ,(gethash enter (function-names context))))
       (closer-mop:set-funcallable-instance-function
        ,name
        (lambda (&rest args)
