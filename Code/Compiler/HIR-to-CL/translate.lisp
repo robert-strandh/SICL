@@ -30,6 +30,20 @@
   `((return-from ,(block-name context)
       (apply #'values ,(values-location context)))))
 
+(defmethod translate ((instruction cleavir-ir:enclose-instruction) context)
+  (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))
+        (enter (cleavir-ir:code instruction))
+        (successor (first (cleavir-ir:successors instruction))))
+    `((setq ,name (funcall ,(enclose-function-var context)))
+      (closer-mop:set-funcallable-instance-function
+       ,name
+       (lambda (&rest args)
+         (funcall ,(gethash enter (function-names context))
+                  args
+                  (funcall ,(static-env-function-var context) ,name)
+                  *dynamic-environment*)))
+      ,@(translate successor context))))
+
 (defmethod translate :around (instruction context)
   (let* ((visited (visited context))
          (tag (gethash instruction visited)))
