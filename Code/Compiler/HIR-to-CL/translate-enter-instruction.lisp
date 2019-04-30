@@ -54,9 +54,9 @@
 (defun translate-enter-instruction (enter-instruction context)
   (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
          (successor (first (cleavir-ir:successors enter-instruction)))
-         (arguments-variable (gensym))
-         (static-environment-variable (gensym))
-         (dynamic-environment-variable (gensym))
+         (arguments-variable (gensym "arguments"))
+         (static-environment-variable (gensym "static-env"))
+         (dynamic-environment-variable (gensym "dynamic-env"))
          (remaining-variable (gensym)))
     (multiple-value-bind (required-parameters
                           optional-parameters
