@@ -17,11 +17,8 @@
       (loop until (null result)
             for candidate = (find-if (lambda (list) (null (rest list))) result)
             collect (first candidate)
-            do (format *trace-output* "before: ~s ~s~%" candidate result)
             do (setf result (delete candidate result))
-            do (format *trace-output* "middle: ~s ~s~%" candidate result)
                (loop for remaining in result
                      do (setf (rest remaining)
-                              (delete (first candidate) (rest remaining))))
-            do (format *trace-output* "after: ~s ~s~%" candidate result)))))
+                              (delete (first candidate) (rest remaining))))))))
 
