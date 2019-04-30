@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "context")
+   (:file "sort-functions")
    (:file "translate")
    (:file "translate-cons-related-instructions")
    (:file "translate-multiple-value-related-instructions")
