@@ -70,6 +70,13 @@
             (car ,input-name))
       ,@(translate successor context))))
 
+(defmethod translate ((instruction cleavir-ir:create-cell-instruction) context)
+  (let* ((output (first (cleavir-ir:outputs instruction)))
+         (output-name (cleavir-ir:name output))
+         (successor (first (cleavir-ir:successors instruction))))
+    `((setq ,output-name (list nil))
+      ,@(translate successor context))))
+
 (defmethod translate ((instruction cleavir-ir:write-cell-instruction) context)
   (let* ((inputs (cleavir-ir:inputs instruction))
          (cons-input (first inputs))
@@ -79,6 +86,10 @@
          (successor (first (cleavir-ir:successors instruction))))
     `((rplaca ,cons-name ,object-name)
       ,@(translate successor context))))
+
+(defmethod translate ((instruction cleavir-ir:nop-instruction) context)
+  (let ((successor (first (cleavir-ir:successors instruction))))
+    (translate successor context)))
 
 (defmethod translate :around (instruction context)
   (let* ((visited (visited context))
