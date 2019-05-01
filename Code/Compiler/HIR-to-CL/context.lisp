@@ -8,3 +8,5 @@
    (%static-env-function-var
     :initform (gensym "static-env-function")
     :reader static-env-function-var)))
+
+(defvar *static-environment-variable*)
