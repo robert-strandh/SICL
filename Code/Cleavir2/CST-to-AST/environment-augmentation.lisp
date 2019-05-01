@@ -1,29 +1,5 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-;;; Take an environment and the CST of a single function definition,
-;;; and return a new environment which is like the one passed as an
-;;; argument except that it has been augmented by the local function
-;;; name.
-(defun augment-environment-from-fdef (lexical-environment definition-cst)
-  (cst:db origin (name . rest) definition-cst
-    (declare (ignore rest))
-    (let* ((raw-name (cst:raw name))
-           (var-ast (make-instance 'cleavir-ast:lexical-ast
-                      :name raw-name)))
-      (cleavir-env:add-local-function lexical-environment raw-name var-ast))))
-
-;;; Take an environment, a CST representing list of function
-;;; definitions, and return a new environment which is like the one
-;;; passed as an argument, except that is has been augmented by the
-;;; local function names in the list.
-(defun augment-environment-from-fdefs (lexical-environment definitions-cst)
-  (loop with result = lexical-environment
-        for definition-cst = definitions-cst then (cst:rest definition-cst)
-        until (cst:null definition-cst)
-        do (setf result
-                 (augment-environment-from-fdef result definition-cst))
-        finally (return result)))
-
 ;;; Augment the environment with a single canonicalized declaration
 ;;; specifier.
 (defgeneric augment-environment-with-declaration
@@ -274,3 +250,24 @@
   (let* ((name (cst:raw name-cst))
          (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
     (cleavir-env:add-local-function lexical-environment name var-ast)))
+
+;;; Take an environment and a CST representing a single local function
+;;; definition.  Return a new environment which is like the one passed
+;;; as an argument, except the it has been augmented by the name of
+;;; the local function.
+(defun augment-environment-from-fdef (lexical-environment definition-cst)
+  (let ((name-cst (cst:first definition-cst)))
+    (augment-environment-with-local-function-name name-cst lexical-environment)))
+
+;;; Take an environment, a CST representing a list of function
+;;; definitions, and return a new environment which is like the one
+;;; passed as an argument, except that is has been augmented by the
+;;; local function names in the list.
+(defun augment-environment-from-fdefs (lexical-environment definitions-cst)
+  (loop with result = lexical-environment
+        for remaining = definitions-cst then (cst:rest remaining)
+        until (cst:null remaining)
+        do (let ((definition-cst (cst:first remaining)))
+             (setf result
+                   (augment-environment-from-fdef result definition-cst)))
+        finally (return result)))

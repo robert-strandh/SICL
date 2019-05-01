@@ -259,27 +259,6 @@
       function-name
       (cst:second function-name)))
 
-;;; Take an environment and a CST representing a single local function
-;;; definition.  Return a new environment which is like the one passed
-;;; as an argument, except the it has been augmented by the name of
-;;; the local function.
-(defun augment-environment-from-fdef (lexical-environment definition-cst)
-  (let ((name-cst (cst:first definition-cst)))
-    (augment-environment-with-local-function-name name-cst lexical-environment)))
-
-;;; Take an environment, a CST representing a list of function
-;;; definitions, and return a new environment which is like the one
-;;; passed as an argument, except that is has been augmented by the
-;;; local function names in the list.
-(defun augment-environment-from-fdefs (lexical-environment definitions-cst)
-  (loop with result = lexical-environment
-        for remaining = definitions-cst then (cst:rest remaining)
-        until (cst:null remaining)
-        do (let ((definition-cst (cst:first remaining)))
-             (setf result
-                   (augment-environment-from-fdef result definition-cst)))
-        finally (return result)))
-
 ;;; Given an environment and the name of a function, return the
 ;;; LEXICAL-AST that will have the function with that name as a value.
 ;;; It is known that the environment contains an entry corresponding
