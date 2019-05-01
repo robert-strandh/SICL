@@ -176,4 +176,8 @@
                    for location = (gethash owner locations)
                    do (setf (cleavir-ir:inputs enclose)
                             (append (cleavir-ir:inputs enclose)
-                                    (list location)))))))
+                                    (list location)))))
+    (loop for create-cell in create-cell-instructions
+          for owner = (gethash create-cell create-cell-owners)
+          for location = (gethash owner locations)
+          do (eliminate-create-cell-instruction create-cell location))))
