@@ -26,3 +26,14 @@
   (compute-instruction-owners initial-instruction
                               'cleavir-ir:enclose-instruction))
 
+;;; Given an ENTER-INSTRUCTION, return a list of all the
+;;; ENCLOSE-INSTRUCTIONs that have that ENTER-INSTRUCTION as its CODE.
+(defun find-enclose-instructions (initial-instruction enter-instruction)
+  (let ((result '()))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (when (and (typep instruction 'cleavir-ir:enclose-instruction)
+                  (eq (cleavir-ir:code instruction) enter-instruction)))
+       (push instruction result))
+     initial-instruction)
+    result))
