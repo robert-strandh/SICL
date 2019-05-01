@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "hoist-fdefinitions")))
+   (:file "hoist-fdefinitions")
+   (:file "eliminate-create-cell")))
