@@ -23,7 +23,7 @@
         (successor (first (cleavir-ir:successors instruction))))
     (cons `(setq ,(values-location context)
                  (multiple-value-list
-                  (apply #'funcall ,(mapcar #'cleavir-ir:name inputs))))
+                  (funcall ,@(mapcar #'cleavir-ir:name inputs))))
           (translate successor context))))
 
 (defmethod translate ((instruction cleavir-ir:return-instruction) context)
