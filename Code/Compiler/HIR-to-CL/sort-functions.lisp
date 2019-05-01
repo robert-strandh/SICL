@@ -21,4 +21,3 @@
                (loop for remaining in result
                      do (setf (rest remaining)
                               (delete (first candidate) (rest remaining))))))))
-
