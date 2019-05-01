@@ -48,13 +48,16 @@
       ,@(translate successor context))))
 
 (defmethod translate ((instruction cleavir-ir:fetch-instruction) context)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (index (cleavir-ir:value input))
+  (let* ((inputs (cleavir-ir:inputs instruction))
+         (static-environment-input (first inputs))
+         (static-environment-input-name (cleavir-ir:name static-environment-input))
+         (index-input (second inputs))
+         (index (cleavir-ir:value index-input))
          (output (first (cleavir-ir:outputs instruction)))
          (output-name (cleavir-ir:name output))
          (successor (first (cleavir-ir:successors instruction))))
     `((setq ,output-name
-            (aref ,*static-environment-variable* ,(+ index 2)))
+            (aref ,static-environment-input-name ,(+ index 2)))
       ,@(translate successor context))))
 
 (defmethod translate ((instruction cleavir-ir:read-cell-instruction) context)
