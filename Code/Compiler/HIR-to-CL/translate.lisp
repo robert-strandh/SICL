@@ -35,7 +35,9 @@
         (enter (cleavir-ir:code instruction))
         (successor (first (cleavir-ir:successors instruction))))
     `((setq ,name (funcall ,(enclose-function-var context)
-                           ,(gethash enter (function-names context))))
+                           ,(gethash enter (function-names context))
+                           ,@(mapcar #'cleavir-ir:name
+                                     (cleavir-ir:inputs instruction))))
       (closer-mop:set-funcallable-instance-function
        ,name
        (lambda (&rest args)
