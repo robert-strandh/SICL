@@ -39,23 +39,34 @@
               rest-parameter
               (reverse key-parameters)))))
 
+(defun find-valid-lexical-locations (enter-instruction exclude)
+  (set-difference (find-lexical-locations enter-instruction)
+                  exclude))
+
 (defun translate-enter-instruction (enter-instruction context)
   (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
+         (outputs (cleavir-ir:outputs enter-instruction))
+         (static-environment-output (first outputs))
+         (dynamic-environment-output (second outputs))
          (successor (first (cleavir-ir:successors enter-instruction)))
          (arguments-variable (gensym "arguments"))
-         (*static-environment-variable* (gensym "static-env"))
-         (dynamic-environment-variable (gensym "dynamic-env"))
-         (remaining-variable (gensym)))
+         (static-environment-variable (cleavir-ir:name static-environment-output))
+         (*static-environment-variable* static-environment-variable)
+         (dynamic-environment-variable (cleavir-ir:name dynamic-environment-output))
+         (remaining-variable (gensym))
+         (lexical-locations (find-valid-lexical-locations
+                             enter-instruction (list static-environment-output
+                                                     dynamic-environment-output))))
     (multiple-value-bind (required-parameters
                           optional-parameters
                           rest-parameter
                           key-parameters)
         (split-lambda-list lambda-list)
       `(lambda (,arguments-variable
-                ,*static-environment-variable*
+                ,static-environment-variable
                 ,dynamic-environment-variable)
          (block ,(block-name context)
-           (let (,@(mapcar #'cleavir-ir:name (find-lexical-locations enter-instruction))
+           (let (,@(mapcar #'cleavir-ir:name lexical-locations)
                  (,remaining-variable ,arguments-variable))
              ;; Check that enough arguments were passed.
              ,@(if (null required-parameters)
