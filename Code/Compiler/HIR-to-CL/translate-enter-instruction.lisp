@@ -43,7 +43,7 @@
   (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
          (successor (first (cleavir-ir:successors enter-instruction)))
          (arguments-variable (gensym "arguments"))
-         (static-environment-variable (gensym "static-env"))
+         (*static-environment-variable* (gensym "static-env"))
          (dynamic-environment-variable (gensym "dynamic-env"))
          (remaining-variable (gensym)))
     (multiple-value-bind (required-parameters
@@ -52,7 +52,7 @@
                           key-parameters)
         (split-lambda-list lambda-list)
       `(lambda (,arguments-variable
-                ,static-environment-variable
+                ,*static-environment-variable*
                 ,dynamic-environment-variable)
          (block ,(block-name context)
            (let (,@(mapcar #'cleavir-ir:name (find-lexical-locations enter-instruction))
