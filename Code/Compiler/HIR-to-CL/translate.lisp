@@ -47,6 +47,36 @@
                   *dynamic-environment*)))
       ,@(translate successor context))))
 
+(defmethod translate ((instruction cleavir-ir:fetch-instruction) context)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (index (cleavir-ir:value input))
+         (output (first (cleavir-ir:outputs instruction)))
+         (output-name (cleavir-ir:name output))
+         (successor (first (cleavir-ir:successors instruction))))
+    `((setq ,output-name
+            (aref ,*static-environment-variable* ,(+ index 2)))
+      ,@(translate successor context))))
+
+(defmethod translate ((instruction cleavir-ir:read-cell-instruction) context)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (input-name (cleavir-ir:name input))
+         (output (first (cleavir-ir:outputs instruction)))
+         (output-name (cleavir-ir:name output))
+         (successor (first (cleavir-ir:successors instruction))))
+    `((setq ,output-name
+            (car ,input-name))
+      ,@(translate successor context))))
+
+(defmethod translate ((instruction cleavir-ir:write-cell-instruction) context)
+  (let* ((inputs (cleavir-ir:inputs instruction))
+         (cons-input (first inputs))
+         (object-input (second inputs))
+         (cons-name (cleavir-ir:name cons-input))
+         (object-name (cleavir-ir:name object-input))
+         (successor (first (cleavir-ir:successors instruction))))
+    `((rplaca ,cons-name ,object-name)
+      ,@(translate successor context))))
+
 (defmethod translate :around (instruction context)
   (let* ((visited (visited context))
          (tag (gethash instruction visited)))
