@@ -10,3 +10,5 @@
     :reader static-env-function-var)))
 
 (defvar *static-environment-variable*)
+
+(defvar *top-level-function-parameter*)
