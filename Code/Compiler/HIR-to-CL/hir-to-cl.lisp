@@ -18,4 +18,4 @@
     `(lambda (xxx)
        (let (,@(make-code-bindings initial-instruction context)
              ,(mapcar #'cleavir-ir:name lexical-locations))
-         ,@(translate successor context)))))
+         (tagbody ,@(translate successor context))))))
