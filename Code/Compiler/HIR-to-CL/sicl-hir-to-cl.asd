@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-hir-to-cl
   :depends-on (#:cleavir2-hir
+               #:sicl-hir-transformations
                #:closer-mop)
   :serial t
   :components
