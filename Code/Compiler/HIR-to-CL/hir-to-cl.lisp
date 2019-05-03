@@ -11,14 +11,18 @@
         (context (make-instance 'context))
         (lexical-locations (find-lexical-locations initial-instruction))
         (successor (first (cleavir-ir:successors initial-instruction)))
-        (*static-environment-variable* (gensym "temp"))
+        (*static-environment-variable* (gensym "static-environment"))
         (*top-level-function-parameter* (gensym "function-cell")))
     (loop for enter-instruction in (butlast enter-instructions)
           do (setf (gethash enter-instruction (function-names context))
                    (gensym "code")))
     `(lambda (,*top-level-function-parameter*)
        (let (,@(make-code-bindings initial-instruction context)
-             ,(mapcar #'cleavir-ir:name lexical-locations))
+             ,(mapcar #'cleavir-ir:name lexical-locations)
+             (,*static-environment-variable*
+               (vector nil
+                       (funcall ,*top-level-function-parameter*
+                                'enclose))))
          (tagbody ,@(translate successor context))))))
 
 (defmethod translate
