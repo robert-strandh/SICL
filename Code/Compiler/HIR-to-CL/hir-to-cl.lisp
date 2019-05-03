@@ -17,15 +17,15 @@
           do (setf (gethash enter-instruction (function-names context))
                    (gensym "code")))
     `(lambda (,*top-level-function-parameter*)
-       (let* (,@(make-code-bindings initial-instruction context)
+       (let* ((,(static-env-function-var context)
+                (funcall ,*top-level-function-parameter* 'static-environment-function))
+              ,@(make-code-bindings initial-instruction context)
               ,@(mapcar #'cleavir-ir:name lexical-locations)
               ,(values-location context)
               (,*static-environment-variable*
                 (vector nil
                         (funcall ,*top-level-function-parameter*
-                                 'enclose)))
-              (,(static-env-function-var context)
-                (funcall ,*top-level-function-parameter* 'static-environment-function)))
+                                 'enclose))))
          (block ,(block-name context)
            (tagbody ,@(translate successor context)))))))
 
