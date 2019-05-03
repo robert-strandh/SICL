@@ -65,6 +65,7 @@
       `(lambda (,arguments-variable
                 ,static-environment-variable
                 ,dynamic-environment-variable)
+         (declare (ignorable ,dynamic-environment-variable))
          (block ,(block-name context)
            (let (,@(mapcar #'cleavir-ir:name lexical-locations)
                  (,remaining-variable ,arguments-variable))
