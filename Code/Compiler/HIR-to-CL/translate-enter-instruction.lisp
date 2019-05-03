@@ -69,7 +69,9 @@
          (block ,(block-name context)
            (let (,@(mapcar #'cleavir-ir:name lexical-locations)
                  ,(values-location context)
-                 (,remaining-variable ,arguments-variable))
+                 (,remaining-variable ,arguments-variable)
+                 (,(static-env-function-var context)
+                   (funcall ,*top-level-function-parameter* 'static-environment-function)))
              ;; Check that enough arguments were passed.
              ,@(if (null required-parameters)
                    '()

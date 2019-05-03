@@ -23,7 +23,9 @@
               (,*static-environment-variable*
                 (vector nil
                         (funcall ,*top-level-function-parameter*
-                                 'enclose))))
+                                 'enclose)))
+              (,(static-env-function-var context)
+                (funcall ,*top-level-function-parameter* 'static-environment-function)))
          (block ,(block-name context)
            (tagbody ,@(translate successor context)))))))
 
