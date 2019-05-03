@@ -23,7 +23,8 @@
                (vector nil
                        (funcall ,*top-level-function-parameter*
                                 'enclose))))
-         (tagbody ,@(translate successor context))))))
+         (block ,(block-name context)
+           (tagbody ,@(translate successor context)))))))
 
 (defmethod translate
     ((instruction sicl-hir-transformations::find-function-cell-instruction) context)
