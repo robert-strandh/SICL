@@ -68,6 +68,7 @@
          (declare (ignorable ,dynamic-environment-variable))
          (block ,(block-name context)
            (let (,@(mapcar #'cleavir-ir:name lexical-locations)
+                 ,(values-location context)
                  (,remaining-variable ,arguments-variable))
              ;; Check that enough arguments were passed.
              ,@(if (null required-parameters)

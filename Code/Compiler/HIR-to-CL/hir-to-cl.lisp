@@ -19,6 +19,7 @@
     `(lambda (,*top-level-function-parameter*)
        (let (,@(make-code-bindings initial-instruction context)
              ,@(mapcar #'cleavir-ir:name lexical-locations)
+             ,(values-location context)
              (,*static-environment-variable*
                (vector nil
                        (funcall ,*top-level-function-parameter*
