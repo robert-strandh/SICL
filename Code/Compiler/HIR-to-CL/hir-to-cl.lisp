@@ -26,6 +26,10 @@
                 (vector nil
                         (funcall ,*top-level-function-parameter*
                                  'enclose))))
+         (declare (ignore ,(cleavir-ir:name
+                            (cleavir-ir:dynamic-environment-location initial-instruction))))
+         (declare (ignorable ,(cleavir-ir:name
+                               (first (cleavir-ir:outputs initial-instruction)))))
          (block ,(block-name context)
            (tagbody ,@(translate successor context)))))))
 
