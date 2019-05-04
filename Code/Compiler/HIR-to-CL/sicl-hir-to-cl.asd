@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "context")
+   (:file "dynamic-environment")
    (:file "sort-functions")
    (:file "find-lexical-locations")
    (:file "translate")
