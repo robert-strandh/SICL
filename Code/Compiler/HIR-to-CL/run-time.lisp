@@ -6,4 +6,12 @@
 (defgeneric static-environment (function))
 
 (defclass funcallable-standard-class (closer-mop:funcallable-standard-class)
-  ((%static-environment :initarg :static-environment :reader static-environment)))
+  ((%code :initarg :code :reader code)
+   (%static-environment :initarg :static-environment :reader static-environment)))
+
+(defun enclose (code &rest static-environment-values)
+  (make-instance 'funcallable-standard-class
+    :code code
+    :static-environment
+    (coerce (list* nil #'static-environment static-environment-values)
+            'vector)))
