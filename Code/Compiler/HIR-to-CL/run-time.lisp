@@ -9,6 +9,11 @@
   ((%code :initarg :code :reader code)
    (%static-environment :initarg :static-environment :reader static-environment)))
 
+(defmethod closer-mop:validate-superclass
+    ((class funcallable-standard-class)
+     (superclass closer-mop:funcallable-standard-class))
+  t)
+
 (defun enclose (code &rest static-environment-values)
   (make-instance 'funcallable-standard-class
     :code code
