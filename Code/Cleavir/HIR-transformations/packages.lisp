@@ -23,6 +23,8 @@
    #:maybe-eliminate)
   (:export
    #:compute-destinies
+   #:find-enclose-destinies
+   #:destiny-find-encloses
    #:discern-trappers
    #:discern-sharing)
   (:export
