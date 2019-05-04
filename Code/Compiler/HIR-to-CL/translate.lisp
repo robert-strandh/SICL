@@ -100,6 +100,20 @@
           ,@(translate successor2 context)
           ,out)))))
 
+(defmethod translate ((instruction cleavir-ir:consp-instruction) context)
+  (let ((input (first (cleavir-ir:inputs instruction))))
+    (destructuring-bind (successor1 successor2)
+        (cleavir-ir:successors instruction)
+      (let ((else (gensym))
+            (out (gensym)))
+        `((when (consp ,input)
+            (go ,else))
+          ,@(translate successor1 context)
+          (go ,out)
+          ,else
+          ,@(translate successor2 context)
+          ,out)))))
+
 (defmethod translate :around (instruction context)
   (let* ((visited (visited context))
          (tag (gethash instruction visited)))
