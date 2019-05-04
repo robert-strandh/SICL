@@ -24,3 +24,8 @@
 (defun function-finder (environment)
   (lambda (name)
     (sicl-genv:function-cell name environment)))
+
+(defun fill-environment (environment)
+  (setf (sicl-genv:fdefinition 'enclose environment) #'enclose)
+  (setf (sicl-genv:fdefinition 'static-environment-function environment)
+        #'static-environment))
