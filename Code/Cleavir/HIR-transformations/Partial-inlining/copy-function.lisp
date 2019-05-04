@@ -93,6 +93,10 @@
                 (copy (cleavir-ir:clone-instruction instruction
                         :inputs new-inputs :outputs new-outputs
                         :dynamic-environment new-dynamic-environment)))
+           (typecase instruction
+             ((or cleavir-ir:enclose-instruction cleavir-ir:funcall-instruction)
+              (pushnew instruction *destinies-worklist*)
+              (pushnew copy *destinies-worklist*)))
            (disconnect-predecessor copy)
            (push copy copies)
            (setf (instruction-owner copy) *new-enter*)

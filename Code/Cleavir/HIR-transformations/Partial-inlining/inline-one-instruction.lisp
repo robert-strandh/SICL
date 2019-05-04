@@ -91,6 +91,12 @@
     (setf (instruction-owner result) *target-enter-instruction*)
     result))
 
+(defmethod copy-instruction :around ((instruction cleavir-ir:funcall-instruction) mapping)
+  (let* ((result (call-next-method)))
+    (pushnew instruction *destinies-worklist*)
+    (pushnew result *destinies-worklist*)
+    result))
+
 (defmethod copy-instruction (instruction mapping)
   (cleavir-ir:clone-instruction instruction
     :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
@@ -108,6 +114,8 @@
            :predecessors nil :successors nil
            :dynamic-environment (translate-input
                                  (cleavir-ir:dynamic-environment instruction) mapping))))
+    (pushnew instruction *destinies-worklist*)
+    (pushnew new-enclose *destinies-worklist*)
     ;; We hook things up like this so that the function DAG can be updated correctly.
     (setf (cleavir-ir:code new-enclose)
           (copy-function (cleavir-ir:code instruction) new-enclose mapping))
@@ -251,6 +259,12 @@
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (add-multiple-successor-instruction-before-instruction
      new-instruction enclose-instruction (list* enclose-instruction new-encloses))
+    ;; FIXME: Since we are only doing full inlining, we don't need to
+    ;; update DAG here, since these new enclose and enter instructions
+    ;; will disappear, as they are artifacts of the inlining
+    ;; process. When this becomes partial inlining, we will have to
+    ;; keep track of these more carefully.
+
     ;; For the first successor, we just reuse the enter and enclose and such.
     (disconnect-predecessor enter-instruction)
     (setf (cleavir-ir:successors enter-instruction) (list prime-successor))
