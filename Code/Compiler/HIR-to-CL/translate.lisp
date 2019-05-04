@@ -91,6 +91,21 @@
   (let ((successor (first (cleavir-ir:successors instruction))))
     (translate successor context)))
 
+(defmethod translate ((instruction cleavir-ir:eq-instruction) context)
+  (destructuring-bind (input1 input2)
+      (cleavir-ir:inputs instruction)
+    (destructuring-bind (successor1 successor2)
+        (cleavir-ir:successors instruction)
+      (let ((else (gensym))
+            (out (gensym)))
+        `((when (eq ,input1 ,input2)
+            (go ,else))
+          ,@(translate successor1 context)
+          (go ,out)
+          ,else
+          ,@(translate successor2 context)
+          ,out)))))
+
 (defmethod translate :around (instruction context)
   (let* ((visited (visited context))
          (tag (gethash instruction visited)))
