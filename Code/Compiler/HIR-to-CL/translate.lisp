@@ -2,12 +2,6 @@
 
 (defgeneric translate (instruction context))
 
-;;; FIXME: Remove this method later.
-(defmethod translate (instruction context)
-  (cons `(invalid ,instruction)
-        (loop for successor in (cleavir-ir:successors instruction)
-              append (translate successor context))))
-
 (defmethod translate ((instruction cleavir-ir:assignment-instruction) context)
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (output (first (cleavir-ir:outputs instruction)))
