@@ -9,6 +9,7 @@
   ((:file "packages")
    (:file "context")
    (:file "dynamic-environment")
+   (:file "run-time")
    (:file "sort-functions")
    (:file "find-lexical-locations")
    (:file "translate")
