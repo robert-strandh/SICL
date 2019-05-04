@@ -20,3 +20,7 @@
     :static-environment
     (coerce (list* nil #'static-environment static-environment-values)
             'vector)))
+
+(defun function-finder (environment)
+  (lambda (name)
+    (sicl-genv:function-cell name environment)))
