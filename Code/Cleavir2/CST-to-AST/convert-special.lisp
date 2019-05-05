@@ -861,10 +861,23 @@
                             cst
                             lexical-environment
                             dynamic-environment-ast)
-  (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
-  (error 'no-default-method :operator symbol :expr cst))
+  (cst:db origin (unwind-protect-cst protected-form-cst . cleanup-form-csts) cst
+    (declare (ignore unwind-protect-cst))
+    (let ((cleanup-thunk-cst
+            (cst:cons (cst:cst-from-expression 'lambda)
+                      (cons (cst:cst-from-expression '())
+                            cleanup-form-csts))))
+      (make-instance 'cleavir-ast:unwind-protect-ast
+        :protected-form-ast (convert client
+                             protected-form-cst
+                             lexical-environment
+                             dynamic-environment-ast)
+        :cleanup-thunk-ast (convert client
+                            cleanup-thunk-cst
+                            lexical-environment
+                            dynamic-environment-ast)))))
 
 (defmethod convert-special (client
                             (symbol (eql 'catch))
