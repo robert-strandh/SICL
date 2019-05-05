@@ -5,20 +5,21 @@
 
 (defgeneric static-environment (function))
 
-(defclass funcallable-standard-class (closer-mop:funcallable-standard-class)
+(defclass funcallable-standard-object (closer-mop:funcallable-standard-object)
   ((%code :initarg :code :reader code)
-   (%static-environment :initarg :static-environment :reader static-environment)))
+   (%static-environment :initarg :static-environment :reader static-environment))
+  (:metaclass closer-mop:funcallable-standard-class))
 
 (defmethod closer-mop:validate-superclass
-    ((class funcallable-standard-class)
-     (superclass closer-mop:funcallable-standard-class))
+    ((class funcallable-standard-object)
+     (superclass closer-mop:funcallable-standard-object))
   t)
 
 (defun enclose (code &rest static-environment-values)
-  (make-instance 'funcallable-standard-class
+  (make-instance 'funcallable-standard-object
     :code code
     :static-environment
-    (coerce (list* nil #'static-environment static-environment-values)
+    (coerce (list* nil #'enclose static-environment-values)
             'vector)))
 
 (defun function-finder (environment)
