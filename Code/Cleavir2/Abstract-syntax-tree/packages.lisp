@@ -48,6 +48,9 @@
    #:required-types #:optional-types #:rest-type
    #:typeq-ast #:type-specifier #:type-specifier-ast
    #:bind-ast
+   #:unwind-protect-ast
+   #:protected-form-ast
+   #:cleanup-thunk-ast
    #:eq-ast
    #:car-ast #:cons-ast
    #:cdr-ast
