@@ -631,6 +631,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class UNWIND-PROTECT-AST.
+;;;
+;;; This AST is generated from an UNWIND-PROTECT form.  The protected
+;;; form of the original form is turned into a corresponding AST,
+;;; whereas the cleanup forms are wrapped in a LAMBDA expression so
+;;; that those forms are executed as part of a thunk.
+
+(defclass unwind-protect-ast (ast
+                              dynamic-environment-input-ast-mixin
+                              dynamic-environment-output-ast-mixin)
+  ((%protected-form-ast :initarg :protected-form-ast :reader protected-form-ast)
+   (%cleanup-thunk-ast :initarg :cleanup-thunk-ast :reader cleanup-thunk-ast)))
+
+(cleavir-io:define-save-info unwind-protect-ast
+  (:protected-form-ast protected-form-ast)
+  (:cleanup-thunk-ast cleanup-thunk-ast))
+
+(defmethod children ((ast unwind-protect-ast))
+  (list (protected-form-ast ast) (cleanup-thunk-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class EQ-AST.
 ;;;
 ;;; This AST can be used to to test whether two objects are identical.
