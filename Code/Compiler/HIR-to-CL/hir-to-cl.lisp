@@ -18,14 +18,14 @@
                    (gensym "code")))
     `(lambda (,*top-level-function-parameter*)
        (let* ((,(static-env-function-var context)
-                (funcall ,*top-level-function-parameter* 'static-environment-function))
+                (car (funcall ,*top-level-function-parameter* 'static-environment-function)))
               ,@(make-code-bindings initial-instruction context)
               ,@(mapcar #'cleavir-ir:name lexical-locations)
               ,(values-location context)
               (,*static-environment-variable*
                 (vector nil
-                        (funcall ,*top-level-function-parameter*
-                                 'enclose))))
+                        (car (funcall ,*top-level-function-parameter*
+                                      'enclose)))))
          (declare (ignore ,(cleavir-ir:name
                             (cleavir-ir:dynamic-environment-location initial-instruction))))
          (declare (ignorable ,(cleavir-ir:name
