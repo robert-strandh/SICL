@@ -10,7 +10,7 @@
          (output-name (cleavir-ir:name output))
          (successor (first (cleavir-ir:successors instruction))))
     `((setq ,output-name
-            (aref ,static-environment-input-name ,(+ index 2)))
+            (aref ,static-environment-input-name ,(+ index 1)))
       ,@(translate client successor context))))
 
 (defmethod translate (client (instruction cleavir-ir:read-cell-instruction) context)
