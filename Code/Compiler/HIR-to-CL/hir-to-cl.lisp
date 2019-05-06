@@ -23,7 +23,7 @@
               ,@(mapcar #'cleavir-ir:name lexical-locations)
               ,(values-location context)
               (,*static-environment-variable*
-                (vector nil #'enclose)))
+                (vector nil nil)))
          (declare (ignore ,(cleavir-ir:name
                             (cleavir-ir:dynamic-environment-location initial-instruction))))
          (declare (ignorable ,(cleavir-ir:name
