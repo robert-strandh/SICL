@@ -62,7 +62,10 @@
      initial-instruction)
     root))
 
-(defun remove-enclose-from-function-dag (dag enclose)
+;;; Removes an enclose instruction from the function-dag. If INHERIT
+;;; is true, then children of the deleted node are reattached to the
+;;; parent of the deleted node.
+(defun remove-enclose-from-function-dag (dag enclose &optional inherit)
   (let* ((table (dag-nodes dag))
          (enter (cleavir-ir:code enclose))
          (nodes (gethash enter table)))
@@ -70,7 +73,11 @@
       (when (eq (enclose-instruction node) enclose)
         (dolist (parent (parents node))
           (setf (children parent)
-                (remove node (children parent))))
+                (remove node (children parent)))
+          (when inherit
+            (dolist (child (children node))
+              (push child (children parent))
+              (nsubstitute parent node (parents child)))))
         (setf (gethash enter table)
               (remove enclose nodes))
         (return)))))
