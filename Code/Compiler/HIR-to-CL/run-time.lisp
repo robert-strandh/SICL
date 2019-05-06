@@ -19,7 +19,7 @@
   (make-instance 'funcallable-standard-object
     :code code
     :static-environment
-    (coerce (list* nil nil static-environment-values)
+    (coerce (list* nil static-environment-values)
             'vector)))
 
 (defun function-finder (environment)
