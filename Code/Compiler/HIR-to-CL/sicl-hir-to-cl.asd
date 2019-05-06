@@ -17,5 +17,5 @@
    (:file "translate-cons-related-instructions")
    (:file "translate-environment-related-instructions")
    (:file "translate-multiple-value-related-instructions")
-   (:file "translate-enter-instruction")
+   (:file "translate-graph-instructions")
    (:file "hir-to-cl")))
