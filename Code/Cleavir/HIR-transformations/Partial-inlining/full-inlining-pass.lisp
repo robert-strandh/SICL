@@ -81,16 +81,20 @@
         for inline = (one-potential-inline *function-dag* *destinies-map*)
         until (null inline)
         do (destructuring-bind (enter call node enclose-unique-p enter-unique-p) inline
-             (declare (ignore enclose-unique-p enter-unique-p))
              ;; Find all instructions that could potentially be deleted after inlining.
              (let ((function-defs (cleavir-ir:defining-instructions (first (cleavir-ir:inputs call))))
                    (destinies-map *destinies-map*))
-               (inline-function initial-instruction call enter (make-hash-table :test #'eq))
+               (if (and enclose-unique-p enter-unique-p)
+                   (interpolate-function call enter)
+                   (inline-function initial-instruction call enter (make-hash-table :test #'eq)))
                (dolist (deleted
                         (cleavir-remove-useless-instructions:remove-useless-instructions-from function-defs))
                  (typecase deleted
                    (cleavir-ir:enclose-instruction
-                    (cleavir-hir-transformations:remove-enclose-from-function-dag *function-dag* deleted))))
+                    (cleavir-hir-transformations:remove-enclose-from-function-dag
+                     *function-dag*
+                     deleted
+                     (and enclose-unique-p enter-unique-p)))))
                ;; The call is gone, so it is no longer a destiny.
                (update-destinies-map (cons (cleavir-hir-transformations:enclose-instruction node)
                                            *destinies-worklist*)
