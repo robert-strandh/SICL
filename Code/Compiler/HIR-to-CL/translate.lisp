@@ -6,19 +6,19 @@
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (output (first (cleavir-ir:outputs instruction)))
          (successor (first (cleavir-ir:successors instruction))))
-    (cons `(setq ,(cleavir-ir:name output)
-                 ,(if (typep input 'cleavir-ir:constant-input)
-                      `',(cleavir-ir:value input)
-                      (cleavir-ir:name input)))
-          (translate client successor context))))
+    `((setq ,(cleavir-ir:name output)
+            ,(if (typep input 'cleavir-ir:constant-input)
+                 `',(cleavir-ir:value input)
+                 (cleavir-ir:name input)))
+      ,@(translate client successor context))))
 
 (defmethod translate (client (instruction cleavir-ir:funcall-instruction) context)
   (let ((inputs (cleavir-ir:inputs instruction))
         (successor (first (cleavir-ir:successors instruction))))
-    (cons `(setq ,(values-location context)
-                 (multiple-value-list
-                  (funcall ,@(mapcar #'cleavir-ir:name inputs))))
-          (translate client successor context))))
+     `((setq ,(values-location context)
+             (multiple-value-list
+              (funcall ,@(mapcar #'cleavir-ir:name inputs))))
+       ,@(translate client successor context))))
 
 (defmethod translate (client (instruction cleavir-ir:return-instruction) context)
   `((return-from ,(block-name context)
