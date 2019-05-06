@@ -43,7 +43,7 @@
   (set-difference (find-lexical-locations enter-instruction)
                   exclude))
 
-(defun translate-enter-instruction (enter-instruction context)
+(defun translate-enter-instruction (client enter-instruction context)
   (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
          (outputs (cleavir-ir:outputs enter-instruction))
          (static-environment-output (first outputs))
@@ -103,9 +103,9 @@
                                         value)
                                   (setf ,(cleavir-ir:name (third key-parameter))
                                         t))))
-             (tagbody ,@(translate successor context))))))))
+             (tagbody ,@(translate client successor context))))))))
 
-(defmethod translate ((instruction cleavir-ir:enclose-instruction) context)
+(defmethod translate (client (instruction cleavir-ir:enclose-instruction) context)
   (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))
         (enter (cleavir-ir:code instruction))
         (successor (first (cleavir-ir:successors instruction))))
@@ -120,4 +120,4 @@
                   args
                   (funcall ,(static-env-function-var context) ,name)
                   *dynamic-environment*)))
-      ,@(translate successor context))))
+      ,@(translate client successor context))))

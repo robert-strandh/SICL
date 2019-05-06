@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-hir-to-cl)
 
-(defmethod translate ((instruction cleavir-ir:fetch-instruction) context)
+(defmethod translate (client (instruction cleavir-ir:fetch-instruction) context)
   (let* ((inputs (cleavir-ir:inputs instruction))
          (static-environment-input (first inputs))
          (static-environment-input-name (cleavir-ir:name static-environment-input))
@@ -11,9 +11,9 @@
          (successor (first (cleavir-ir:successors instruction))))
     `((setq ,output-name
             (aref ,static-environment-input-name ,(+ index 2)))
-      ,@(translate successor context))))
+      ,@(translate client successor context))))
 
-(defmethod translate ((instruction cleavir-ir:read-cell-instruction) context)
+(defmethod translate (client (instruction cleavir-ir:read-cell-instruction) context)
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (input-name (cleavir-ir:name input))
          (output (first (cleavir-ir:outputs instruction)))
@@ -21,16 +21,16 @@
          (successor (first (cleavir-ir:successors instruction))))
     `((setq ,output-name
             (car ,input-name))
-      ,@(translate successor context))))
+      ,@(translate client successor context))))
 
-(defmethod translate ((instruction cleavir-ir:create-cell-instruction) context)
+(defmethod translate (client (instruction cleavir-ir:create-cell-instruction) context)
   (let* ((output (first (cleavir-ir:outputs instruction)))
          (output-name (cleavir-ir:name output))
          (successor (first (cleavir-ir:successors instruction))))
     `((setq ,output-name (list nil))
-      ,@(translate successor context))))
+      ,@(translate client successor context))))
 
-(defmethod translate ((instruction cleavir-ir:write-cell-instruction) context)
+(defmethod translate (client (instruction cleavir-ir:write-cell-instruction) context)
   (let* ((inputs (cleavir-ir:inputs instruction))
          (cons-input (first inputs))
          (object-input (second inputs))
@@ -38,4 +38,4 @@
          (object-name (cleavir-ir:name object-input))
          (successor (first (cleavir-ir:successors instruction))))
     `((rplaca ,cons-name ,object-name)
-      ,@(translate successor context))))
+      ,@(translate client successor context))))
