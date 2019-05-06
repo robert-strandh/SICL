@@ -24,23 +24,6 @@
   `((return-from ,(block-name context)
       (apply #'values ,(values-location context)))))
 
-(defmethod translate ((instruction cleavir-ir:enclose-instruction) context)
-  (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))
-        (enter (cleavir-ir:code instruction))
-        (successor (first (cleavir-ir:successors instruction))))
-    `((setq ,name (funcall (aref ,*static-environment-variable* 1)
-                           ,(gethash enter (function-names context))
-                           ,@(mapcar #'cleavir-ir:name
-                                     (cleavir-ir:inputs instruction))))
-      (closer-mop:set-funcallable-instance-function
-       ,name
-       (lambda (&rest args)
-         (funcall ,(gethash enter (function-names context))
-                  args
-                  (funcall ,(static-env-function-var context) ,name)
-                  *dynamic-environment*)))
-      ,@(translate successor context))))
-
 (defmethod translate ((instruction cleavir-ir:nop-instruction) context)
   (let ((successor (first (cleavir-ir:successors instruction))))
     (translate successor context)))
