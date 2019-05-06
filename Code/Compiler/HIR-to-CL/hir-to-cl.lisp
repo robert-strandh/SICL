@@ -27,7 +27,8 @@
          (declare (ignore ,(cleavir-ir:name
                             (cleavir-ir:dynamic-environment-location initial-instruction))))
          (declare (ignorable ,(cleavir-ir:name
-                               (first (cleavir-ir:outputs initial-instruction)))))
+                               (first (cleavir-ir:outputs initial-instruction)))
+                             ,*static-environment-variable*))
          (block ,(block-name context)
            (tagbody ,@(translate client successor context)))))))
 
