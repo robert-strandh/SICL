@@ -12,3 +12,5 @@
 (defvar *static-environment-variable*)
 
 (defvar *top-level-function-parameter*)
+
+(defvar *dynamic-environment-staack* '())
