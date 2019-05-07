@@ -1,5 +1,12 @@
 (cl:in-package #:sicl-hir-to-cl)
 
+(defun tag-every-instruction (initial-instruction context)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (setf (gethash instruction (tags context))
+           (gensym)))
+   initial-instruction))
+
 (defun make-code-bindings (client initial-instruction context)
   (let ((enter-instructions (sort-functions initial-instruction)))
     (loop for enter-instruction in (butlast enter-instructions)
@@ -13,6 +20,7 @@
         (successor (first (cleavir-ir:successors initial-instruction)))
         (*static-environment-variable* (gensym "static-environment"))
         (*top-level-function-parameter* (gensym "function-cell")))
+    (tag-every-instruction initial-instruction context)
     (loop for enter-instruction in (butlast enter-instructions)
           do (setf (gethash enter-instruction (function-names context))
                    (gensym "code")))
