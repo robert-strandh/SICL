@@ -26,6 +26,13 @@
                                               dynamic-environment-stack)
             `((go ,tag)))))
 
+(defmethod translate-last-instruction (client
+                                       (instruction cleavir-ir:return-instruction)
+                                       context
+                                       dynamic-environment-stack)
+  `((return-from ,(block-name context)
+      (apply #'values ,(values-location context)))))
+
 (defun translate-basic-block
     (client basic-block context dynamic-environment-stack)
   (let* ((instructions (instructions basic-block))
