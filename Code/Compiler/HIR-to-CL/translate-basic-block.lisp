@@ -20,9 +20,7 @@
     (client instruction context dynamic-environment-stack)
   (let* ((successor (first (cleavir-ir:successors instruction)))
          (successor-block (basic-block-of-leader successor))
-         (tag (tag-of-basic-block successor-block))
-         (dynamic-environment-location
-           (cleavir-ir:dynamic-environment-location successor)))
+         (tag (tag-of-basic-block successor-block)))
     (append (translate client instruction context)
             (compute-dynamic-environment-pops successor
                                               dynamic-environment-stack)
