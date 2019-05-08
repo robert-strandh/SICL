@@ -15,3 +15,17 @@
 (defvar *top-level-function-parameter*)
 
 (defvar *dynamic-environment-staack* '())
+
+;;; When a single function is translated, this special variable holds
+;;; an EQ hash table.  Each key in that hash table is a lexical
+;;; location of that single function, corresponding to a dynamic
+;;; environment.  The value is a list of basic blocks of that function
+;;; that are executed in the corresponding dynamic environment at run
+;;; time.
+(defvar *basic-blocks-in-dynamic-environment*)
+
+;;; Given a lexical location corresponding to a dynamic environment,
+;;; return a list of basic blocks that will be executed in teh
+;;; corresponding dynamic environment at run time.
+(defun basic-blocks-in-dynamic-environment (dynamic-environment-location)
+  (gethash dynamic-environment-location *basic-blocks-in-dynamic-environment*))
