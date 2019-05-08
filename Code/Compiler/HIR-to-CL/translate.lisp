@@ -16,10 +16,6 @@
              (multiple-value-list
               (funcall ,@(mapcar #'cleavir-ir:name inputs)))))))
 
-(defmethod translate (client (instruction cleavir-ir:return-instruction) context)
-  `((return-from ,(block-name context)
-      (apply #'values ,(values-location context)))))
-
 (defmethod translate (client (instruction cleavir-ir:nop-instruction) context)
   (declare (ignore context))
   '())
