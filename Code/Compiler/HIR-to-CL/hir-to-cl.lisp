@@ -44,8 +44,6 @@
     (client (instruction sicl-hir-transformations::find-function-cell-instruction) context)
   (let* ((name (sicl-hir-transformations::name instruction))
          (output (first (cleavir-ir:outputs instruction)))
-         (output-name (cleavir-ir:name output))
-         (successor (first (cleavir-ir:successors instruction))))
+         (output-name (cleavir-ir:name output)))
   `((setq ,output-name
-          (funcall ,*top-level-function-parameter* ',name))
-    ,@(translate client successor context))))
+          (funcall ,*top-level-function-parameter* ',name)))))

@@ -3,6 +3,14 @@
 (defgeneric translate-last-instruction
     (client instruction context dynamic-environment-stack))
 
+(defun compute-dynamic-environment-pops (successor dynamic-environment-stack)
+  (let* ((dynamic-environment-location
+           (cleavir-ir:dynamic-environment-location successor))
+         (pos (position dynamic-environment-location
+                        dynamic-environment-stack)))
+    (loop repeat pos
+          collect `(pop *dynamic-environment*))))
+
 ;;; Default method on TRANSLATE-LAST-INSTRUCTION.  It is used when the
 ;;; last instruction is a simple instruction with a single successor
 ;;; that happened to be the last instruction of a basic block because
@@ -16,10 +24,8 @@
          (dynamic-environment-location
            (cleavir-ir:dynamic-environment-location successor)))
     (append (translate client instruction context)
-            (let ((pos (position dynamic-environment-location
-                                 dynamic-environment-stack)))
-              (loop repeat pos
-                    collect `(pop *dynamic-environment*)))
+            (compute-dynamic-environment-pops successor
+                                              dynamic-environment-stack)
             `((go ,tag)))))
 
 (defun translate-basic-block

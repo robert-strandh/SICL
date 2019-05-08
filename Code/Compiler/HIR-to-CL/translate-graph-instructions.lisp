@@ -108,8 +108,7 @@
 
 (defmethod translate (client (instruction cleavir-ir:enclose-instruction) context)
   (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))
-        (enter (cleavir-ir:code instruction))
-        (successor (first (cleavir-ir:successors instruction))))
+        (enter (cleavir-ir:code instruction)))
     `((setq ,name
             (enclose ,(gethash enter (function-names context))
                      ,@(mapcar #'cleavir-ir:name
@@ -120,5 +119,4 @@
          (funcall ,(gethash enter (function-names context))
                   args
                   (funcall ,(static-env-function-var context) ,name)
-                  *dynamic-environment*)))
-      ,@(translate client successor context))))
+                  *dynamic-environment*))))))
