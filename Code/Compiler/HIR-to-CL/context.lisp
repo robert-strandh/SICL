@@ -14,8 +14,6 @@
 
 (defvar *top-level-function-parameter*)
 
-(defvar *dynamic-environment-staack* '())
-
 ;;; When a single function is translated, the value of this special
 ;;; variable is an EQ hash table.  Each key of that hash table is a
 ;;; basic block.  The value is the lexical location corresponding to
