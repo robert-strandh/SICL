@@ -20,8 +20,8 @@
   ;; using-instructions will be incorrect, therefore
   nil)
 
-(defun remove-useless-instructions-with-worklist (initial-instruction worklist)
-  (let ((worklist worklist))
+(defun remove-useless-instructions-with-worklist (worklist)
+  (let ((deleted '()))
     (loop (when (null worklist) (return))
           (let ((instruction (pop worklist)))
             (when (and (instruction-may-be-removed-p instruction)
@@ -36,14 +36,15 @@
                       (remove instruction (cleavir-ir:using-instructions input)))
                 (dolist (defining-instruction (cleavir-ir:defining-instructions input))
                   (push defining-instruction worklist)))
-              (cleavir-ir:delete-instruction instruction))))))
+              (push instruction deleted)
+              (cleavir-ir:delete-instruction instruction))))
+    deleted))
 
 (defun remove-useless-instructions (initial-instruction)
-  (remove-useless-instructions-with-worklist initial-instruction
-                                             (cleavir-ir:instructions-of-type initial-instruction t)))
+  (remove-useless-instructions-with-worklist (cleavir-ir:instructions-of-type initial-instruction t)))
 
 ;;; An incremental version of remove-useless-instructions meant for
 ;;; clients which know where in the graph a potentially useless
-;;; instruction has appeared.
-(defun remove-useless-instructions-from (initial-instruction instructions)
-  (remove-useless-instructions-with-worklist initial-instruction instructions))
+;;; instruction has appeared.  Returns the instructions deleted.
+(defun remove-useless-instructions-from (instructions)
+  (remove-useless-instructions-with-worklist instructions))

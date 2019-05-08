@@ -1,5 +1,17 @@
 (cl:in-package #:cleavir-partial-inlining)
 
+;;; Remove data references to old enter and call instructions for.
+(defun disconnect-enter-call-data (enter-instruction call-instruction)
+  (dolist (input (cleavir-ir:inputs call-instruction))
+    (setf (cleavir-ir:using-instructions input)
+          (delete call-instruction (cleavir-ir:using-instructions input))))
+  (dolist (output (cleavir-ir:outputs call-instruction))
+    (setf (cleavir-ir:defining-instructions output)
+          (delete call-instruction (cleavir-ir:defining-instructions output))))
+  (dolist (output (cleavir-ir:outputs enter-instruction))
+    (setf (cleavir-ir:defining-instructions output)
+          (delete enter-instruction (cleavir-ir:defining-instructions output)))))
+
 (defmethod inline-one-instruction :around
     (enclose-instruction
      call-instruction
@@ -19,10 +31,12 @@
            (loop for pred in (cleavir-ir:predecessors enclose-instruction)
                  do (setf (cleavir-ir:successors pred)
                           (substitute copy enclose-instruction
-                                      (cleavir-ir:successors pred))
-                          (cleavir-ir:predecessors copy)
-                          (substitute pred call-instruction
-                                      (cleavir-ir:predecessors copy))))
+                                      (cleavir-ir:successors pred)))
+                    (setf (cleavir-ir:predecessors copy)
+                          (push pred (cleavir-ir:predecessors copy))))
+           (disconnect-predecessor enter-instruction)
+           (disconnect-predecessor call-instruction)
+           (disconnect-enter-call-data enter-instruction call-instruction)
            ;; Our work here is done: return no worklist items.
            '()))))
 
@@ -77,6 +91,12 @@
     (setf (instruction-owner result) *target-enter-instruction*)
     result))
 
+(defmethod copy-instruction :around ((instruction cleavir-ir:funcall-instruction) mapping)
+  (let* ((result (call-next-method)))
+    (pushnew instruction *destinies-worklist*)
+    (pushnew result *destinies-worklist*)
+    result))
+
 (defmethod copy-instruction (instruction mapping)
   (cleavir-ir:clone-instruction instruction
     :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
@@ -86,13 +106,20 @@
                           (cleavir-ir:dynamic-environment instruction) mapping)))
 
 (defmethod copy-instruction ((instruction cleavir-ir:enclose-instruction) mapping)
-  (cleavir-ir:clone-instruction instruction
-    :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
-    :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
-    :predecessors nil :successors nil
-    :dynamic-environment (translate-input
-                          (cleavir-ir:dynamic-environment instruction) mapping)
-    :code (copy-function (cleavir-ir:code instruction) mapping)))
+  (let ((new-enclose
+          (cleavir-ir:clone-instruction
+           instruction
+           :inputs (translate-inputs (cleavir-ir:inputs instruction) mapping)
+           :outputs (translate-outputs (cleavir-ir:outputs instruction) mapping)
+           :predecessors nil :successors nil
+           :dynamic-environment (translate-input
+                                 (cleavir-ir:dynamic-environment instruction) mapping))))
+    (pushnew instruction *destinies-worklist*)
+    (pushnew new-enclose *destinies-worklist*)
+    ;; We hook things up like this so that the function DAG can be updated correctly.
+    (setf (cleavir-ir:code new-enclose)
+          (copy-function (cleavir-ir:code instruction) new-enclose mapping))
+    new-enclose))
 
 (defmethod copy-instruction ((instruction cleavir-ir:unwind-instruction) mapping)
   (let ((destination (cleavir-ir:destination instruction)))
@@ -140,8 +167,11 @@
   (let ((new-instruction (copy-instruction successor-instruction mapping)))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:insert-instruction-before new-instruction enclose-instruction)
+    ;; Point ENTER-INSTRUCTION to the next successor.
+    (disconnect-predecessor enter-instruction)
     (setf (cleavir-ir:successors enter-instruction)
           (cleavir-ir:successors successor-instruction))
+    (attach-predecessor enter-instruction)
     (list (make-instance 'worklist-item
             :enclose-instruction enclose-instruction
             :call-instruction call-instruction
@@ -229,8 +259,16 @@
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (add-multiple-successor-instruction-before-instruction
      new-instruction enclose-instruction (list* enclose-instruction new-encloses))
+    ;; FIXME: Since we are only doing full inlining, we don't need to
+    ;; update DAG here, since these new enclose and enter instructions
+    ;; will disappear, as they are artifacts of the inlining
+    ;; process. When this becomes partial inlining, we will have to
+    ;; keep track of these more carefully.
+
     ;; For the first successor, we just reuse the enter and enclose and such.
+    (disconnect-predecessor enter-instruction)
     (setf (cleavir-ir:successors enter-instruction) (list prime-successor))
+    (attach-predecessor enter-instruction)
     ;; Now just the worklist.
     (list* (make-instance 'worklist-item
              :enclose-instruction enclose-instruction
@@ -262,6 +300,8 @@
   (let ((new-instruction (copy-instruction successor-instruction mapping)))
     (add-to-mapping *instruction-mapping* successor-instruction new-instruction)
     (cleavir-ir:bypass-instruction new-instruction enclose-instruction)
+    (disconnect-predecessor enter-instruction)
+    (disconnect-predecessor call-instruction)
     '()))
 
 (defmethod inline-one-instruction
@@ -280,4 +320,7 @@
           (cleavir-ir:predecessors call-successor)
           (substitute new-instruction call-instruction
                       (cleavir-ir:predecessors call-successor)))
+    (disconnect-predecessor enter-instruction)
+    ;; manually update the data as well.
+    (disconnect-enter-call-data enter-instruction call-instruction)
     '()))

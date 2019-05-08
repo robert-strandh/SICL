@@ -32,6 +32,15 @@
 
 (defvar *instruction-ownerships*)
 
+;;; This variable contains the function DAG.
+(defvar *function-dag*)
+
+;;; This variable contains the map of ENCLOSE-INSTRUCTIONs to their destinies.
+(defvar *destinies-map*)
+
+;;; This variable keeps track of which INSTRUCTIONs affect the destinies-map.
+(defvar *destinies-worklist*)
+
 ;;; Interface.
 (defun instruction-owner (instruction)
   (gethash instruction *instruction-ownerships*))

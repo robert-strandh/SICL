@@ -23,6 +23,8 @@
    #:maybe-eliminate)
   (:export
    #:compute-destinies
+   #:find-enclose-destinies
+   #:destiny-find-encloses
    #:discern-trappers
    #:discern-sharing)
   (:export
@@ -31,4 +33,6 @@
    #:enclose-instruction
    #:dag-nodes
    #:parents
-   #:children))
+   #:children
+   #:remove-enclose-from-function-dag
+   #:add-enclose-to-parents))
