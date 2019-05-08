@@ -12,6 +12,8 @@
                         :lambda-list '()
                         :body-ast ast
                         :dynamic-environment-input-ast nil
-                        :dynamic-environment-output-ast dynamic-environment-output-ast)))
-    (cleavir-ast-to-hir:compile-toplevel-unhoisted wrapped-ast)))
-
+                        :dynamic-environment-output-ast dynamic-environment-output-ast))
+         (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted wrapped-ast)))
+    (sicl-hir-transformations:hoist-fdefinitions hir)
+    (cleavir-hir-transformations::process-captured-variables hir)
+    hir))
