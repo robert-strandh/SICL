@@ -36,11 +36,11 @@
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (eq ,input1 ,input2)
               (progn ,@(compute-dynamic-environment-pops
-                        (successor1 dynamic-environment-stack))
+                        successor1 dynamic-environment-stack)
                      (go ,then-tag))
               (progn ,@(compute-dynamic-environment-pops
-                        (successor2 dynamic-environment-stack))
-                     (go ,else-tag)))))))
+                        successor2 dynamic-environment-stack)
+                     (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:consp-instruction)
@@ -53,11 +53,11 @@
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (consp ,input)
               (progn ,@(compute-dynamic-environment-pops
-                        (successor1 dynamic-environment-stack))
+                        successor1 dynamic-environment-stack)
                      (go ,then-tag))
               (progn ,@(compute-dynamic-environment-pops
-                        (successor2 dynamic-environment-stack))
-                     (go ,else-tag)))))))
+                        successor2 dynamic-environment-stack)
+                     (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:fixnump-instruction)
@@ -70,11 +70,11 @@
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (typep ,input 'fixnum)
               (progn ,@(compute-dynamic-environment-pops
-                        (successor1 dynamic-environment-stack))
+                        successor1 dynamic-environment-stack)
                      (go ,then-tag))
               (progn ,@(compute-dynamic-environment-pops
-                        (successor2 dynamic-environment-stack))
-                     (go ,else-tag)))))))
+                        successor2 dynamic-environment-stack)
+                     (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:characterp-instruction)
@@ -87,8 +87,8 @@
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (characterp ,input)
               (progn ,@(compute-dynamic-environment-pops
-                        (successor1 dynamic-environment-stack))
+                        successor1 dynamic-environment-stack)
                      (go ,then-tag))
               (progn ,@(compute-dynamic-environment-pops
-                        (successor2 dynamic-environment-stack))
-                     (go ,else-tag)))))))
+                        successor2 dynamic-environment-stack)
+                     (go ,else-tag))))))))
