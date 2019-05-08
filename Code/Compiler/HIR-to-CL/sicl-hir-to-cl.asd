@@ -19,4 +19,5 @@
    (:file "translate-environment-related-instructions")
    (:file "translate-multiple-value-related-instructions")
    (:file "translate-graph-instructions")
+   (:file "translate-basic-block")
    (:file "hir-to-cl")))
