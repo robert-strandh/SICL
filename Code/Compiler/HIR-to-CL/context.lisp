@@ -40,3 +40,12 @@
 ;;; return the basic block having that instruction as its leader.
 (defun basic-block-of-leader (leader)
   (gethash leader *basic-block-of-leader*))
+
+;;; When a single function is translated, the value of this special
+;;; variable is n EQ hash table.  Each key in that hash table is a
+;;; basic block.  The value is the unique tag of that basic block.
+(defvar *tag-of-basic-block*)
+
+;;; Given a basic block, return the unique tag of that basic block.
+(defun tag-of-basic-block (basic-block)
+  (gethash basic-block *tag-of-basic-block*))
