@@ -8,6 +8,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "basic-block")
    (:file "context")
    (:file "dynamic-environment")
    (:file "run-time")
