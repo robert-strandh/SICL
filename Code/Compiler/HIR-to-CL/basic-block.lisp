@@ -7,7 +7,9 @@
          (length (length predecessors)))
     (and (not (zerop length))
          (or (> length 1)
-             (> (length (cleavir-ir:successors (first predecessors))) 1)))))
+             (let ((predecessor (first predecessors)))
+               (or (> (length (cleavir-ir:successors predecessor)) 1)
+                   (typep predecessor 'cleavir-ir:enter-instruction)))))))
         
 ;;; Find the leaders in a single function, i.e. do not follow the CODE
 ;;; of ENCLOSE instructions.
