@@ -1,10 +1,13 @@
 (cl:in-package #:sicl-hir-to-cl)
 
-;;; Return true if and only if INSTRUCTION is a leader. 
+;;; Return true if and only if INSTRUCTION is a leader.  We exclude
+;;; the ENTER-INSTRUCTION and consider its successor a leader instead.
 (defun leaderp (instruction)
-  (let ((predecessors (cleavir-ir:predecessors instruction)))
-    (or (/= (length predecessors) 1)
-        (> (length (cleavir-ir:successors (first predecessors))) 1))))
+  (let* ((predecessors (cleavir-ir:predecessors instruction))
+         (length (length predecessors)))
+    (and (not (zerop length))
+         (or (> length 1)
+             (> (length (cleavir-ir:successors (first predecessors))) 1)))))
         
 ;;; Find the leaders in a single function, i.e. do not follow the CODE
 ;;; of ENCLOSE instructions.
