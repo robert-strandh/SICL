@@ -199,10 +199,9 @@
 ;;; successors.
 ;;;
 ;;; When reached normally, control proceeds unconditionally to the
-;;; first successor. Additionally, the instruction takes its one input,
-;;; a dynamic environment, and outputs a dynamic environment with a
-;;; new entry added. This is the second output. The first output is
-;;; a "continuation".
+;;; first successor. It outputs a dynamic environment with a new entry
+;;; added. This is the second output. The first output is a
+;;; "continuation".
 
 ;;; If this continuation is used as input to an UNWIND-INSTRUCTION,
 ;;; the catch-instruction's stack frame is put back into place, and
