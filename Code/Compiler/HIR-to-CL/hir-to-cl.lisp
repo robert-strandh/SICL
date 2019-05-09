@@ -56,11 +56,12 @@
                            dynamic-environment-location)
                       for basic-block in basic-blocks
                       collect (tag-of-basic-block basic-block)
-                      append (translate-basic-block
-                              client
-                              basic-block
-                              context
-                              (list dynamic-environment-location)))))))))
+                      append (let ((*dynamic-environment-stack*
+                                     (list dynamic-environment-location)))
+                               (translate-basic-block
+                                client
+                                basic-block
+                                context)))))))))
 
 (defmethod translate
     (client (instruction sicl-hir-transformations::find-function-cell-instruction) context)

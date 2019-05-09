@@ -12,6 +12,8 @@
 
 (defvar *top-level-function-parameter*)
 
+(defvar *dynamic-environment-stack*)
+
 ;;; When a single function is translated, the value of this special
 ;;; variable is an EQ hash table.  Each key of that hash table is a
 ;;; basic block.  The value is the lexical location corresponding to
@@ -58,3 +60,4 @@
 ;;; Given a basic block, return the unique tag of that basic block.
 (defun tag-of-basic-block (basic-block)
   (gethash basic-block *tag-of-basic-block*))
+

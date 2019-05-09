@@ -22,8 +22,7 @@
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:eq-instruction)
-                                        context
-                                        dynamic-environment-stack)
+                                        context)
   (destructuring-bind (input1 input2)
       (cleavir-ir:inputs instruction)
     (destructuring-bind (successor1 successor2)
@@ -31,60 +30,49 @@
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (eq ,input1 ,input2)
-              (progn ,@(compute-dynamic-environment-pops
-                        successor1 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor1)
                      (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops
-                        successor2 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor2)
                      (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:consp-instruction)
-                                        context
-                                        dynamic-environment-stack)
+                                        context)
   (let ((input (first (cleavir-ir:inputs instruction))))
     (destructuring-bind (successor1 successor2)
         (cleavir-ir:successors instruction)
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (consp ,input)
-              (progn ,@(compute-dynamic-environment-pops
-                        successor1 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor1)
                      (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops
-                        successor2 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor2)
                      (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:fixnump-instruction)
-                                        context
-                                        dynamic-environment-stack)
+                                        context)
   (let ((input (first (cleavir-ir:inputs instruction))))
     (destructuring-bind (successor1 successor2)
         (cleavir-ir:successors instruction)
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (typep ,input 'fixnum)
-              (progn ,@(compute-dynamic-environment-pops
-                        successor1 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor1)
                      (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops
-                        successor2 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor2)
                      (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:characterp-instruction)
-                                        context
-                                        dynamic-environment-stack)
+                                        context)
   (let ((input (first (cleavir-ir:inputs instruction))))
     (destructuring-bind (successor1 successor2)
         (cleavir-ir:successors instruction)
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (characterp ,input)
-              (progn ,@(compute-dynamic-environment-pops
-                        successor1 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor1)
                      (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops
-                        successor2 dynamic-environment-stack)
+              (progn ,@(compute-dynamic-environment-pops successor2)
                      (go ,else-tag))))))))
