@@ -285,6 +285,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a BIND-AST.
+
+(defmethod compilel-ast ((ast cleavir-ast:bind-ast) context)
+  (let* ((name-temp (make-temp))
+         (value-temp (make-temp))
+         (body (compile-ast (cleavir-ast:body-ast ast) context))
+         (wrapped-body (make-instance 'cleavir-ir:bind-instruction
+                         :inputs (list name-temp value-temp)
+                         :successor body)))
+    (compile-ast (cleavir-ast:name-ast ast)
+                 (context (list name-temp)
+                          (compile-ast (cleavir-ast:value-ast ast)
+                                       (context (list value-temp)
+                                                (list wrapped-body)
+                                                (invocation context)))
+                          (invocation context)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a CALL-AST.
 
 (defmethod compile-ast ((ast cleavir-ast:call-ast) context)
