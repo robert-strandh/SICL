@@ -9,7 +9,7 @@
 
 (defmethod translate-final-instruction (client (instruction cleavir-ir:catch-instruction) context)
   (let* ((dynamic-environment-output-location
-           (first (cleavir-ir:outputs instruction)))
+           (second (cleavir-ir:outputs instruction)))
          (basic-blocks (basic-blocks-in-dynamic-environment
                         dynamic-environment-output-location))
          (*dynamic-environment-stack*
