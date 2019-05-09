@@ -7,7 +7,7 @@
         for tag = (tag-of-basic-block basic-block)
         collect `(,i (go ,tag))))
 
-(defmethod translate (client (instruction cleavir-ir:catch-instruction) context)
+(defmethod translate-final-instruction (client (instruction cleavir-ir:catch-instruction) context)
   (let* ((dynamic-environment-output-location
            (first (cleavir-ir:outputs instruction)))
          (basic-blocks (basic-blocks-in-dynamic-environment
