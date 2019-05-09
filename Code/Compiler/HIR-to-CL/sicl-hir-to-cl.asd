@@ -20,4 +20,5 @@
    (:file "translate-multiple-value-related-instructions")
    (:file "translate-graph-instructions")
    (:file "translate-basic-block")
+   (:file "translate-catch-instruction")
    (:file "hir-to-cl")))
