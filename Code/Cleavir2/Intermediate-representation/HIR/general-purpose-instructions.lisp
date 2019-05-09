@@ -200,6 +200,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction BIND-INSTRUCTION.
+;;;
+;;; This instruction is used to bind a special variable to a value
+;;; and then execute some code in a new run-time environment in
+;;; which that binding is in force.
+;;;
+;;; The instruction has two inputs.  The first input is a symbol
+;;; naming the variable to be bound.  The second input is the value
+;;; that the variable is to be bound to.
+;;;
+;;; The instruction has a single output, a lexical location indicating
+;;; a new dynamic environment in which the variable is bound.
+
+(defclass bind-instruction
+    (instruction one-successor-mixin side-effect-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction EQ-INSTRUCTION.
 
 (defclass eq-instruction (instruction multiple-successors-mixin)
