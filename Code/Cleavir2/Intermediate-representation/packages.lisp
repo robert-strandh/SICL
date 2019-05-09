@@ -62,6 +62,7 @@
    #:required-types #:optional-types #:rest-type
    #:catch-instruction
    #:unwind-instruction #:destination #:unwind-index
+   #:bind-instruction
    #:eq-instruction
    #:consp-instruction
    #:fixnump-instruction
