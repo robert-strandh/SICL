@@ -13,8 +13,7 @@
 ;;; Default method on TRANSLATE-FINAL-INSTRUCTION.  It is used when
 ;;; the final instruction is a simple instruction with a single
 ;;; successor that happened to be the final instruction of a basic
-;;; block because its single successor (which must be the LEADER of a
-;;; basic block) has multiple predecessors.
+;;; block because its single successor is the LEADER of a basic block.
 (defmethod translate-final-instruction (client instruction context)
   (let* ((successor (first (cleavir-ir:successors instruction)))
          (successor-block (basic-block-of-leader successor))
