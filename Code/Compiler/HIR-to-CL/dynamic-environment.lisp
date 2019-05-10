@@ -4,8 +4,14 @@
 
 (defclass entry () ())
 
-(defclass block/tagbody-entry (entry)
+(defclass exit-point (entry)
+  ((%valid-p :initform t :accessor valid-p)))
+
+(defclass block/tagbody-entry (exit-point)
   ((%identifier :initarg :identifier :reader identifier)))
+
+(defclass catch-entry (exit-point)
+  ((%tag :initarg :tag :reader tag)))
 
 (defclass special-variable-entry (entry)
   ((%name :initarg :name :reader name)
