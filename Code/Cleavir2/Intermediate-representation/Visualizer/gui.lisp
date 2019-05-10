@@ -289,8 +289,13 @@
       (draw-data pane)
       (draw-arcs pane (make-arcs pane *instruction-position-table*)))))
 
-(defun visualize (initial-instruction)
+(defun visualize (initial-instruction &key new-process-p)
   (cleavir-ir:reinitialize-data initial-instruction)
-  (clim:run-frame-top-level
-   (clim:make-application-frame 'visualizer
-                                :initial-instruction initial-instruction)))
+  (let ((frame (clim:make-application-frame
+                'visualizer
+                :initial-instruction initial-instruction)))
+    (flet ((run ()
+             (clim:run-frame-top-level frame)))
+      (if new-process-p
+          (clim-sys:make-process #'run)
+          (run)))))
