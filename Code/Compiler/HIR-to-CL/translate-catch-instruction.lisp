@@ -10,6 +10,8 @@
 (defmethod translate-final-instruction (client (instruction cleavir-ir:catch-instruction) context)
   (let* ((dynamic-environment-output-location
            (second (cleavir-ir:outputs instruction)))
+         (continuation-output
+           (first (cleavir-ir:outputs instruction)))
          (basic-blocks (basic-blocks-in-dynamic-environment
                         dynamic-environment-output-location))
          (*dynamic-environment-stack*
@@ -19,7 +21,7 @@
          ,@(loop for basic-block in basic-blocks
                  for tag = (tag-of-basic-block basic-block)
                  collect `(,tag
-                           (case (catch 'foo
+                           (case (catch ',(cleavir-ir:name continuation-output)
                                    ,@(translate-basic-block
                                       client
                                       basic-block
