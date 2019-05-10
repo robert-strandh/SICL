@@ -2,6 +2,10 @@
 
 ;;; Return true if and only if INSTRUCTION is a leader.  We exclude
 ;;; the ENTER-INSTRUCTION and consider its successor a leader instead.
+;;; Furthermore, we do not want a basic block to contain instructions
+;;; with different dynamic environments.  Therefore, we also consider
+;;; an instruction a leader if it has a predecessor that is in a
+;;; different dynamic environment.
 (defun leaderp (instruction)
   (let* ((predecessors (cleavir-ir:predecessors instruction))
          (length (length predecessors)))
@@ -9,7 +13,9 @@
          (or (> length 1)
              (let ((predecessor (first predecessors)))
                (or (> (length (cleavir-ir:successors predecessor)) 1)
-                   (typep predecessor 'cleavir-ir:enter-instruction)))))))
+                   (typep predecessor 'cleavir-ir:enter-instruction)
+                   (not (eq (cleavir-ir:dynamic-environment-location instruction)
+                            (cleavir-ir:dynamic-environment-location predecessor)))))))))
         
 ;;; Find the leaders in a single function, i.e. do not follow the CODE
 ;;; of ENCLOSE instructions.
