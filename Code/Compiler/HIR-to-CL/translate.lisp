@@ -76,3 +76,9 @@
                      (go ,then-tag))
               (progn ,@(compute-dynamic-environment-pops successor2)
                      (go ,else-tag))))))))
+
+(defmethod translate-final-instruction (client
+                                        (instruction cleavir-ir:unwind-instruction)
+                                        constext)
+  `(unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
+           ,(cleavir-ir:unwind-index instruction)))
