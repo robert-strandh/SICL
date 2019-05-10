@@ -21,10 +21,10 @@
       (tagbody
          ,@(loop for basic-block in basic-blocks
                  for tag = (tag-of-basic-block basic-block)
-                 collect `(,tag
-                           (case (catch ',(cleavir-ir:name continuation-output)
-                                   ,@(translate-basic-block
-                                      client
-                                      basic-block
-                                      context))
-                             ,@(make-case-clauses instruction))))))))
+                 collect tag
+                 collect `(case (catch ',(cleavir-ir:name continuation-output)
+                                  ,@(translate-basic-block
+                                     client
+                                     basic-block
+                                     context))
+                            ,@(make-case-clauses instruction)))))))
