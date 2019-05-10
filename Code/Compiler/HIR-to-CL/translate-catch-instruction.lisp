@@ -27,5 +27,3 @@
                                       basic-block
                                       context))
                              ,@(make-case-clauses instruction))))))))
-
-
