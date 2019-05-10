@@ -16,7 +16,7 @@
                    (typep predecessor 'cleavir-ir:enter-instruction)
                    (not (eq (cleavir-ir:dynamic-environment-location instruction)
                             (cleavir-ir:dynamic-environment-location predecessor)))))))))
-        
+
 ;;; Find the leaders in a single function, i.e. do not follow the CODE
 ;;; of ENCLOSE instructions.
 (defun find-leaders (enter-instruction)
