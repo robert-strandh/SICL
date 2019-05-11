@@ -37,9 +37,9 @@
     `(lambda (,*top-level-function-parameter*)
        (let* ((,(static-env-function-var context)
                 (car (funcall ,*top-level-function-parameter* 'static-environment-function)))
+              ,(values-location context)
               ,@(make-code-bindings client initial-instruction context)
               ,@(mapcar #'cleavir-ir:name lexical-locations)
-              ,(values-location context)
               (,*static-environment-variable*
                 (vector nil)))
          (declare (ignore ,(cleavir-ir:name
