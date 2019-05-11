@@ -9,4 +9,4 @@
 (defmethod translate (client (instruction cleavir-ir:fixed-to-multiple-instruction) context)
   (let ((inputs (cleavir-ir:inputs instruction)))
     `((setq ,(values-location context)
-            (list ,(mapcar #'cleavir-ir:name inputs))))))
+            (list ,@(mapcar #'cleavir-ir:name inputs))))))
