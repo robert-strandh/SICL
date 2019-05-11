@@ -44,7 +44,10 @@
 ;;; value here represents the value of that constant variable at
 ;;; compile time.
 
-(defclass constant-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass constant-ast (ast
+                        one-value-ast-mixin
+                        side-effect-free-ast-mixin
+                        dynamic-environment-input-ast-mixin)
   ((%value :initarg :value :reader value)))
 
 (cleavir-io:define-save-info constant-ast
