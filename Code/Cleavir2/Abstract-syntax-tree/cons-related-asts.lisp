@@ -8,7 +8,7 @@
 ;;; does not correspond exactly to the function CAR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass car-ast (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
+(defclass car-ast (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (cleavir-io:define-save-info car-ast
@@ -25,7 +25,7 @@
 ;;; does not correspond exactly to the function CDR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass cdr-ast (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
+(defclass cdr-ast (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (cleavir-io:define-save-info cdr-ast

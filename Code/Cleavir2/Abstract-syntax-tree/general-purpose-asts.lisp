@@ -45,9 +45,9 @@
 ;;; compile time.
 
 (defclass constant-ast (ast
+                        dynamic-environment-input-ast-mixin
                         one-value-ast-mixin
-                        side-effect-free-ast-mixin
-                        dynamic-environment-input-ast-mixin)
+                        side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
 (cleavir-io:define-save-info constant-ast
@@ -82,7 +82,7 @@
 ;;; This AST is generated from a reference to a special variable.
 
 (defclass symbol-value-ast
-    (ast one-value-ast-mixin side-effect-free-ast-mixin dynamic-environment-input-ast-mixin)
+    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name-ast :initarg :name-ast :reader name-ast)))
 
 (cleavir-io:define-save-info symbol-value-ast
@@ -114,7 +114,7 @@
 ;;; This AST is generated from a reference to a global function.
 
 (defclass fdefinition-ast
-    (ast one-value-ast-mixin side-effect-free-ast-mixin dynamic-environment-input-ast-mixin)
+    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin side-effect-free-ast-mixin)
   (;; This slot contains an AST that produces the function name.
    (%name-ast :initarg :name-ast :reader name-ast)))
 
@@ -199,8 +199,10 @@
 ;;; LEXICAL-ASTs of any of the ki because they may not be set
 ;;; correctly (conceptually, they all have the value FALSE then).
 
-(defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin
+(defclass function-ast (ast
                         dynamic-environment-input-ast-mixin
+                        one-value-ast-mixin
+                        side-effect-free-ast-mixin
                         dynamic-environment-output-ast-mixin)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
@@ -492,7 +494,7 @@
 ;;; know at AST creation time whether it is true or false. 
 
 (defclass load-time-value-ast
-    (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
+    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
   ((%form-ast :initarg :form-ast :reader form-ast)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
@@ -587,7 +589,7 @@
 ;;; does not allow escape from the form with the declaration.
 
 (defclass dynamic-allocation-ast
-    (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
+    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
   ((%form-ast :initarg :form-ast :reader form-ast)))
 
 (cleavir-io:define-save-info dynamic-allocation-ast

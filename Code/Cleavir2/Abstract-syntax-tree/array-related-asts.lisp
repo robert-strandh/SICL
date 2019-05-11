@@ -13,7 +13,7 @@
 ;;; are boxed or not (if not, an additional BOX-INSTRUCTION will
 ;;; be added at the output)
 
-(defclass aref-ast (ast one-value-ast-mixin dynamic-environment-input-ast-mixin)
+(defclass aref-ast (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%element-type :initarg :element-type :reader element-type)
