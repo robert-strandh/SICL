@@ -29,9 +29,9 @@
               ast
               (context (list temp)
                        (list (make-instance 'cleavir-ir:fixed-to-multiple-instruction
-                              :inputs (list temp)
-                              :output results
-                              :successor (first successors)))
+                               :inputs (list temp)
+                               :output results
+                               :successor (first successors)))
                        invocation))))
           ((null results)
            ;; We don't need the result.  This situation typically
