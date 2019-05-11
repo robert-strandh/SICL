@@ -67,7 +67,8 @@
               (process-progn (convert-sequence client
                                                body-cst
                                                new-lexical-environment
-                                               new-dynamic-environment-ast)))
+                                               new-dynamic-environment-ast)
+                             new-dynamic-environment-ast))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -168,7 +169,8 @@
                  (convert-sequence client
                                    body-cst
                                    lexical-environment
-                                   dynamic-environment-ast))
+                                   dynamic-environment-ast)
+                 dynamic-environment-ast)
                 (convert client
                          (cst:cst-from-expression nil)
                          lexical-environment
@@ -194,7 +196,8 @@
                       (convert-sequence client
                                         body-cst
                                         lexical-environment
-                                        dynamic-environment-ast))))
+                                        dynamic-environment-ast)
+                      dynamic-environment-ast)))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  NCT
@@ -218,7 +221,8 @@
                       (convert-sequence client
                                         body-cst
                                         lexical-environment
-                                        dynamic-environment-ast))))
+                                        dynamic-environment-ast)
+                      dynamic-environment-ast)))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  No   ---  ---
@@ -353,7 +357,9 @@
                    (convert-sequence client
                                      forms-cst
                                      final-lexical-environment
-                                     dynamic-environment-ast)))))))))
+                                     dynamic-environment-ast)
+                   dynamic-environment-ast)))
+         dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -391,7 +397,9 @@
                    (convert-sequence client
                                      forms-cst
                                      final-lexical-environment
-                                     dynamic-environment-ast)))))))))
+                                     dynamic-environment-ast)
+                   dynamic-environment-ast)))
+         dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -448,7 +456,8 @@
                (convert-constant client
                                  (cst:cst-from-expression nil)
                                  lexical-environment
-                                 dynamic-environment-ast)))))))
+                                 dynamic-environment-ast))
+         dynamic-environment-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -568,7 +577,8 @@
       (process-progn (convert-sequence client
                                        form-csts
                                        lexical-environment
-                                       dynamic-environment-ast)))))
+                                       dynamic-environment-ast)
+                     dynamic-environment-ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -937,7 +947,7 @@
                                    form-cst
                                    lexical-environment
                                    dynamic-environment-ast))))
-    (process-progn form-asts)))
+    (process-progn form-asts dynamic-environment-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -987,4 +997,5 @@
           (process-progn (convert-sequence client
                                            forms-cst
                                            new-lexical-environment
-                                           dynamic-environment-ast)))))))
+                                           dynamic-environment-ast)
+                         dynamic-environment-ast))))))

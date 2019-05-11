@@ -5,9 +5,11 @@
 ;;; Turn a list of ASTs into either a PROGN-AST or a CONSTANT-AST
 ;;; containing NIL in case the list of ASTs is NIL.
 
-(defun process-progn (asts)
+(defun process-progn (asts dynamic-environment-ast)
   (cond ((null asts)
-         (make-instance 'cleavir-ast:constant-ast :value nil))
+         (make-instance 'cleavir-ast:constant-ast
+           :dynamic-environment-input-ast dynamic-environment-ast
+           :value nil))
         ((null (rest asts))
          (first asts))
         (t ;; Do some PROGN compression.

@@ -9,6 +9,7 @@
                          constant-cst
                          lexical-environment
                          dynamic-environment-ast)
-  (declare (ignore client lexical-environment dynamic-environment-ast))
+  (declare (ignore client lexical-environment))
   (make-instance 'cleavir-ast:constant-ast
+    :dynamic-environment-input-ast dynamic-environment-ast
     :value (cst:raw constant-cst)))

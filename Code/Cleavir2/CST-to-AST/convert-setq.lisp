@@ -21,7 +21,8 @@
 	  :lhs-ast (cleavir-env:identity info)
 	  :value-ast (convert client form-cst lexical-environment dynamic-environment-ast)
           :dynamic-environment-input-ast dynamic-environment-ast)
-	 (cleavir-env:identity info))))
+	 (cleavir-env:identity info))
+   dynamic-environment-ast))
 
 (defmethod convert-setq
     (client var-cst form-cst (info cleavir-env:symbol-macro-info) lexical-environment dynamic-environment-ast)
@@ -50,10 +51,12 @@
              :dynamic-environment-input-ast dynamic-environment-ast)
 	   (make-instance 'cleavir-ast:set-symbol-value-ast
              :name-ast (make-instance 'cleavir-ast:constant-ast
+                         :dynamic-environment-input-ast dynamic-environment-ast
                          :value (cleavir-env:name info))
              :value-ast temp
              :dynamic-environment-input-ast dynamic-environment-ast)
-	   temp))))
+	   temp)
+     dynamic-environment-ast)))
 
 (defmethod convert-setq
     (client var-cst form-cst (info cleavir-env:special-variable-info) lexical-environment dynamic-environment-ast)
