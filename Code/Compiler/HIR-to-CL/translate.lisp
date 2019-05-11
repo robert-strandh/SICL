@@ -80,5 +80,5 @@
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:unwind-instruction)
                                         constext)
-  `(unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
-           ,(cleavir-ir:unwind-index instruction)))
+  `((unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
+            ,(cleavir-ir:unwind-index instruction))))
