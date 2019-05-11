@@ -545,9 +545,20 @@
 ;;;
 ;;; Compile a SYMBOL-VALUE-AST.
 
-(define-compile-functional-ast
-    cleavir-ast:symbol-value-ast cleavir-ir:symbol-value-instruction
-  (cleavir-ast:name-ast))
+(defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)
+  (let ((name-ast (cleavir-ast:name-ast ast)))
+    (if (typep name-ast 'cleavir-ast:constant-ast)
+        (make-instance 'cleavir-ir:symbol-value-instruction
+          :input (make-instance 'cleavir-ir:constant-input
+                   :value (cleavir-ast:value name-ast))
+          :output (first (results context)))
+        (let ((temp (make-temp)))
+          (compile-ast name-ast
+                       (context (list temp)
+                                (list (make-instance 'cleavir-ir:symbol-value-instruction
+                                        :input temp
+                                        :output (first (results context))))
+                                (invocation context)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
