@@ -26,7 +26,22 @@
   (lambda (name)
     (sicl-genv:function-cell name environment)))
 
+(defun symbol-value-function (environment)
+  (lambda (symbol)
+    (loop for entry in *dynamic-environment*
+          when (and (typep entry 'special-variable-entry)
+                    (eq (name entry) symbol))
+            return (value entry)
+          finally
+             (multiple-value-bind (value boundp)
+                 (sicl-genv:special-variable symbol environment)
+               (if boundp
+                   (return value)
+                   (error "Unbound variable ~s" symbol))))))
+
 (defun fill-environment (environment)
   (setf (sicl-genv:fdefinition 'enclose environment) #'enclose)
   (setf (sicl-genv:fdefinition 'static-environment-function environment)
-        #'static-environment))
+        #'static-environment)
+  (setf (sicl-genv:fdefinition 'symbol-value environment)
+        (symbol-value-function environment)))
