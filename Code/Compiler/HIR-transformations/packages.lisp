@@ -2,4 +2,6 @@
 
 (defpackage sicl-hir-transformations
   (:use #:common-lisp)
-  (:export #:hoist-fdefinitions))
+  (:export #:hoist-fdefinitions
+           #:convert-symbol-value
+           #:convert-set-symbol-value))
