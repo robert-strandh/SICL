@@ -5,22 +5,35 @@
 
 (defun transform-fdefinition-instruction (top-level-enter-instruction
                                           fdefinition-instruction)
-  (let* ((variable (first (cleavir-ir:inputs fdefinition-instruction)))
-         (assignment-instruction (first (cleavir-ir:defining-instructions variable)))
-         (constant-input (first (cleavir-ir:inputs assignment-instruction)))
-         (function-name (cleavir-ir:value constant-input))
-         (dynamic-environment-location
-           (cleavir-ir:dynamic-environment-output top-level-enter-instruction))
-         (new (make-instance 'find-function-cell-instruction
-                :name function-name
-                :inputs '()
-                :output variable
-                :dynamic-environment-location dynamic-environment-location)))
-    (change-class assignment-instruction 'cleavir-ir:nop-instruction
-                  :inputs '()
-                  :outputs '())
-    (change-class fdefinition-instruction 'cleavir-ir:car-instruction)
-    (cleavir-ir:insert-instruction-after new top-level-enter-instruction)))
+  (let ((input (first (cleavir-ir:inputs fdefinition-instruction))))
+    (if (typep input 'cleavir-ir:lexical-location)
+        (let* ((assignment-instruction (first (cleavir-ir:defining-instructions input)))
+               (constant-input (first (cleavir-ir:inputs assignment-instruction)))
+               (function-name (cleavir-ir:value constant-input))
+               (dynamic-environment-location
+                 (cleavir-ir:dynamic-environment-output top-level-enter-instruction))
+               (new (make-instance 'find-function-cell-instruction
+                      :name function-name
+                      :inputs '()
+                      :output input
+                      :dynamic-environment-location dynamic-environment-location)))
+          (change-class assignment-instruction 'cleavir-ir:nop-instruction
+                        :inputs '()
+                        :outputs '())
+          (change-class fdefinition-instruction 'cleavir-ir:car-instruction)
+          (cleavir-ir:insert-instruction-after new top-level-enter-instruction))
+        (let* ((function-name (cleavir-ir:value input))
+               (dynamic-environment-location
+                 (cleavir-ir:dynamic-environment-output top-level-enter-instruction))
+               (temp (cleavir-ast-to-hir:make-temp ))
+               (new (make-instance 'find-function-cell-instruction
+                      :name function-name
+                      :inputs '()
+                      :output temp
+                      :dynamic-environment-location dynamic-environment-location)))
+          (change-class fdefinition-instruction 'cleavir-ir:car-instruction
+                        :inputs (list temp))
+          (cleavir-ir:insert-instruction-after new top-level-enter-instruction)))))
 
 (defun find-fdefinition-instructions (top-level-enter-instruction)
   (let ((result '()))
