@@ -25,7 +25,7 @@
 (defun node-label (node)
   (if (typep node 'cleavir-ir:enter-instruction)
       "enter"
-      (cleavir-ir-graphviz:label node)))
+      (label node)))
 
 (defun node-width (node pane)
   (+ (clim:text-size pane (node-label node)) 5))
