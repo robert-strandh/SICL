@@ -14,6 +14,8 @@
                         :dynamic-environment-input-ast nil
                         :dynamic-environment-output-ast dynamic-environment-output-ast))
          (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted wrapped-ast)))
+    (sicl-hir-transformations:convert-symbol-value hir)
+    (sicl-hir-transformations:convert-set-symbol-value hir)
     (sicl-hir-transformations:hoist-fdefinitions hir)
     (cleavir-hir-transformations::process-captured-variables hir)
     hir))
