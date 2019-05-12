@@ -15,5 +15,6 @@
    (:file "datum-position")
    (:file "datum-layout")
    (:file "control-arc-layout")
+   (:file "label")
    (:file "gui")
    (:file "commands")))
