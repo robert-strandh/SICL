@@ -129,15 +129,3 @@
    #:local-instructions-of-type
    #:set-predecessors
    #:offset))
-
-(defpackage #:cleavir-ir-graphviz
-  (:use #:common-lisp #:cleavir-ir)
-  (:export
-   #:draw-instruction
-   #:draw-datum
-   #:draw-flowchart
-   #:label
-   #:input-label #:output-label
-   #:*input-label-hook* #:*output-label-hook*
-   #:name
-   #:datum-id))
