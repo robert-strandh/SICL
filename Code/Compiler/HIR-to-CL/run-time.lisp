@@ -39,9 +39,24 @@
                    (return value)
                    (error "Unbound variable ~s" symbol))))))
 
+(defun set-symbol-value-function (environment)
+  (lambda (symbol value)
+    (loop for entry in *dynamic-environment*
+          when (and (typep entry 'special-variable-entry)
+                    (eq (name entry) symbol))
+            do (setf (value entry) value)
+               (return-from set-symbol-value-function value)
+          finally
+             ;; FIXME, make sure it is special.
+             (setf (sicl-genv:special-variable symbol environment t)
+                   value)
+             (return value))))
+
 (defun fill-environment (environment)
   (setf (sicl-genv:fdefinition 'enclose environment) #'enclose)
   (setf (sicl-genv:fdefinition 'static-environment-function environment)
         #'static-environment)
   (setf (sicl-genv:fdefinition 'symbol-value environment)
-        (symbol-value-function environment)))
+        (symbol-value-function environment))
+  (setf (sicl-genv:fdefinition '(setf symbol-value) environment)
+        (set-symbol-value-function environment)))
