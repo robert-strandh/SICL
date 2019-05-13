@@ -2,6 +2,11 @@
 
 (defgeneric translate (client instruction context))
 
+(defun translate-intput (input)
+  (if (typep input 'cleavir-ir:constant-input)
+      `',(cleavir-ir:value input)
+      (cleavir-ir:name input)))
+
 (defmethod translate (client (instruction cleavir-ir:assignment-instruction) context)
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (output (first (cleavir-ir:outputs instruction))))
