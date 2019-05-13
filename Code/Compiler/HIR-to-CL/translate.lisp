@@ -17,7 +17,7 @@
   (let ((inputs (cleavir-ir:inputs instruction)))
      `((setq ,(values-location context)
              (multiple-value-list
-              (funcall ,@(mapcar #'cleavir-ir:name inputs)))))))
+              (funcall ,@(mapcar #'translate-input inputs)))))))
 
 (defmethod translate (client (instruction cleavir-ir:nop-instruction) context)
   (declare (ignore context))
