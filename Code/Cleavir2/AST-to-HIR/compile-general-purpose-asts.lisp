@@ -551,7 +551,8 @@
         (make-instance 'cleavir-ir:symbol-value-instruction
           :input (make-instance 'cleavir-ir:constant-input
                    :value (cleavir-ast:value name-ast))
-          :output (first (results context)))
+          :output (first (results context))
+          :successor (first (successors context)))
         (let ((temp (make-temp)))
           (compile-ast name-ast
                        (context (list temp)
