@@ -51,11 +51,11 @@
     (labels ((aux (node)
                ;; FIXME: recurses into children multiple times. Efficiency concern
                (let* ((enclose (enclose-instruction node))
-                      (enter (cleavir-ir:code enclose))
-                      ;; if there no children, recursion stops here.
-                      (child-non-escapes (mapcar #'aux (children node))))
+                      (enter (cleavir-ir:code enclose)))
                  (setf (gethash enter result)
-                       (every #'identity child-non-escapes)) ; no child escapes
+                       ;; if there no children, recursion stops here.
+                       ;; no child escapes
+                       (every #'aux (children node)))
                  ;; Now return whether WE don't escape, for our caller's sake.
                  (not (member :escape (gethash enclose destinies))))))
       ;; We have to do the recursion funny since the initial instruction
