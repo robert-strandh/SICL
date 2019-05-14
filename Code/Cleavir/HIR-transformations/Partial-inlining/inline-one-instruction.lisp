@@ -18,7 +18,7 @@
      enter-instruction
      successor-instruction
      mapping)
-  (declare (ignore enter-instruction mapping))
+  (declare (ignore mapping))
   (let ((copy (find-in-mapping *instruction-mapping* successor-instruction)))
     (cond ((null copy)
            (call-next-method))
