@@ -43,6 +43,15 @@
   (test-block-1 client)
   (test-block-2 client))
 
+(defun test-bind (client)
+  (let ((environment (make-environment))
+        (form '(flet ((stuff (x) (+ x *x*)))
+                (let ((*x* 10))
+                  (stuff 20)))))
+    (setf (sicl-genv:fdefinition '+ environment) #'+)
+    (setf (sicl-genv:special-variable '*x* environment t) 5)
+    (assert (eql (eval client form environment) 30))))
+
 (defun test (client)
   (test-let client)
   (test-symbol-value client)
