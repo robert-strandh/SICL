@@ -287,7 +287,7 @@
 ;;;
 ;;; Compile a BIND-AST.
 
-(defmethod compilel-ast ((ast cleavir-ast:bind-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:bind-ast) context)
   (let* ((name-temp (make-temp))
          (value-temp (make-temp))
          (body (compile-ast (cleavir-ast:body-ast ast) context))
