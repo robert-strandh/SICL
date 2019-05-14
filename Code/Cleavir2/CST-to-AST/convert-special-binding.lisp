@@ -15,4 +15,5 @@
                  dynamic-environment-ast)
       :value-ast value-ast
       :body-ast (funcall body-function dynamic-environment-output-ast)
+      :dynamic-environment-input-ast dynamic-environment-ast
       :dynamic-environment-output-ast dynamic-environment-output-ast)))
