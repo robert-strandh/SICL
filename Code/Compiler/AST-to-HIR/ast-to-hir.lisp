@@ -1,12 +1,23 @@
 (cl:in-package #:sicl-ast-to-hir)
 
+(defgeneric dynamic-environment-input-ast (ast))
+
+(defmethod dynamic-environment-input-ast (ast)
+  (loop for child in (cleavir-ast:children ast)
+        for result = (dynamic-environment-input-ast child)
+        while (null result)
+        finally (return result)))
+
+(defmethod dynamic-environment-input-ast
+    ((ast cleavir-ast:dynamic-environment-input-ast-mixin))
+  (cleavir-ast:dynamic-environment-input-ast ast))
+
 (defun ast-to-hir (ast)
   ;; Wrap the AST in a FUNCTION-AST that will be called at load time
   ;; with a single argument, namely a function that, given a function
   ;; name, returns the function cell from the environment the code
   ;; will be loaded into.
-  (let* ((dynamic-environment-output-ast
-           (cleavir-ast:dynamic-environment-input-ast ast))
+  (let* ((dynamic-environment-output-ast (dynamic-environment-input-ast ast))
          (cleavir-cst-to-ast::*origin* nil)
          (wrapped-ast (make-instance 'cleavir-ast:function-ast
                         :lambda-list '()
