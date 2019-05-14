@@ -8,4 +8,6 @@
                #:sicl-ast-to-hir
                #:sicl-hir-to-cl)
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "eval")))
+
