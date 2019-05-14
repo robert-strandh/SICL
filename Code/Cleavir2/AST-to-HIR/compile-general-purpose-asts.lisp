@@ -296,10 +296,10 @@
                          :successor body)))
     (compile-ast (cleavir-ast:name-ast ast)
                  (context (list name-temp)
-                          (compile-ast (cleavir-ast:value-ast ast)
-                                       (context (list value-temp)
-                                                (list wrapped-body)
-                                                (invocation context)))
+                          (list (compile-ast (cleavir-ast:value-ast ast)
+                                             (context (list value-temp)
+                                                      (list wrapped-body)
+                                                      (invocation context))))
                           (invocation context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
