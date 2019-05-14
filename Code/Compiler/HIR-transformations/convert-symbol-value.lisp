@@ -37,7 +37,8 @@
         (function-temp (cleavir-ast-to-hir:make-temp))
         (function-name-input
           (make-instance 'cleavir-ir:constant-input
-            :value '(setf symbol-value))))
+            :value '(setf symbol-value)))
+        (values-location (cleavir-ir:make-values-location)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
        :input function-name-input
@@ -45,10 +46,15 @@
        :dynamic-environment-location
        (cleavir-ir:dynamic-environment-location instruction))
      instruction)
-    (change-class instruction 'cleavir-ir:funcall-instruction
-                  :inputs (list function-temp
-                                value-input
-                                variable-name-input))))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:funcall-instruction
+       :inputs (list function-temp value-input variable-name-input)
+       :output values-location
+       :dynamic-environment-location
+       (cleavir-ir:dynamic-environment-location instruction))
+     instruction)
+    (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
+                  :inputs (list values-location))))
 
 (defun convert-set-symbol-value (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
