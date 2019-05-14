@@ -9,5 +9,5 @@
                #:sicl-hir-to-cl)
   :components
   ((:file "packages")
-   (:file "eval")))
-
+   (:file "eval")
+   (:file "test")))
