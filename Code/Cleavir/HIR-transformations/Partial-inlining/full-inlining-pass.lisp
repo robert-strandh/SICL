@@ -11,12 +11,13 @@
 ;; get one potential inline that can be done, or else NIL.
 ;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function
 ;; is not used for anything but this call.
-(defun one-potential-inline (dag destinies)
-  (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies)))
+(defun one-potential-inline (dag destinies closure-converted-p)
+  (let ((trappers (unless closure-converted-p
+                    (cleavir-hir-transformations:discern-trappers dag destinies))))
     (labels ((maybe-return-inline (node)
                (let ((enter (cleavir-hir-transformations:enter-instruction node)))
                  (when (and (all-parameters-required-p enter)
-                            (gethash enter trappers))
+                            (or closure-converted-p (gethash enter trappers)))
                    ;; function's environment does not escape.
                    ;; Now we just need to pick off any recursive uses, direct or indirect.
                    (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
@@ -67,7 +68,18 @@
       (setf (gethash enclose destinies-map)
             (cleavir-hir-transformations:find-enclose-destinies enclose)))))
 
-(defun do-inlining (initial-instruction)
+;;; Apply full inlining to the HIR graph. This should be run in two
+;;; passes. The first pass, before closure conversion, inlines
+;;; functions which are trappers. After closure conversion, it is safe
+;;; to inline all functions, since the environment is explicated. The
+;;; reason the first pass cannot inline everything is because then,
+;;; closure conversion will not be able to allocate cells in the
+;;; correct place if any bindings are closed over. Consider the following example:
+;;; (lambda ()
+;;;   (mapcar #'funcall
+;;;           (loop for i from 0 to 5
+;;;                 collect (let ((y i)) (lambda () y)))))
+(defun do-inlining (initial-instruction &optional closure-converted-p)
   ;; Need to remove all useless instructions first for incremental
   ;; r-u-i to catch everything.
   (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)
@@ -78,7 +90,7 @@
         with *function-dag* = (cleavir-hir-transformations:build-function-dag initial-instruction)
         with *destinies-map* = (cleavir-hir-transformations:compute-destinies initial-instruction)
         with *destinies-worklist* = '()
-        for inline = (one-potential-inline *function-dag* *destinies-map*)
+        for inline = (one-potential-inline *function-dag* *destinies-map* closure-converted-p)
         until (null inline)
         do (destructuring-bind (enter call node enclose-unique-p enter-unique-p) inline
              ;; Find all instructions that could potentially be deleted after inlining.
