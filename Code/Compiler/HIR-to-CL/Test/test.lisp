@@ -20,6 +20,16 @@
     (setf (sicl-genv:special-variable '*x* environment t) 10)
     (assert (eql (eval client form environment) 30))))
 
+(defun test-block (client)
+  (let ((environment (make-environment))
+        (form '(let ((x 10))
+                (block hello
+                  (return-from hello (+ x 20))
+                  50))))
+    (setf (sicl-genv:fdefinition '+ environment) #'+)
+    (assert (eql (eval client form environment) 30))))
+
 (defun test (client)
   (test-let client)
-  (test-symbol-value client))
+  (test-symbol-value client)
+  (test-block client))
