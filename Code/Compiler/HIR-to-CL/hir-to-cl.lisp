@@ -47,6 +47,8 @@
          (declare (ignorable ,(cleavir-ir:name
                                (first (cleavir-ir:outputs initial-instruction)))
                              ,*static-environment-variable*))
+         (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)))
+         (declare (ignorable ,(static-env-function-var context)))
          (block ,(block-name context)
            (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
               ,@(loop with dynamic-environment-location
