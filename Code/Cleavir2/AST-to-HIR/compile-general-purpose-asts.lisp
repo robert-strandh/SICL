@@ -291,8 +291,11 @@
   (let* ((name-temp (make-temp))
          (value-temp (make-temp))
          (body (compile-ast (cleavir-ast:body-ast ast) context))
+         (dynenv (find-or-create-location
+                  (cleavir-ast:dynamic-environment-output-ast ast)))
          (wrapped-body (make-instance 'cleavir-ir:bind-instruction
                          :inputs (list name-temp value-temp)
+                         :output dynenv
                          :successor body)))
     (compile-ast (cleavir-ast:name-ast ast)
                  (context (list name-temp)
