@@ -162,6 +162,21 @@
     (enclose-instruction
      call-instruction
      enter-instruction
+     (successor-instruction cleavir-ir:fetch-instruction)
+     mapping)
+  ;; No need to do anything. Everything should be wired up correctly.
+  (setf (cleavir-ir:successors enter-instruction)
+        (cleavir-ir:successors successor-instruction))
+  (list (make-instance 'worklist-item
+                       :enclose-instruction enclose-instruction
+                       :call-instruction call-instruction
+                       :enter-instruction enter-instruction
+                       :mapping mapping)))
+
+(defmethod inline-one-instruction
+    (enclose-instruction
+     call-instruction
+     enter-instruction
      (successor-instruction cleavir-ir:one-successor-mixin)
      mapping)
   (let ((new-instruction (copy-instruction successor-instruction mapping)))

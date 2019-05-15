@@ -123,6 +123,7 @@
 (defgeneric inline-function (initial-instruction
                              call-instruction
                              enter-instruction
+                             node
                              mapping))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

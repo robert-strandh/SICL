@@ -2,12 +2,13 @@
 
 ;;; Cut and paste a function to inline - i.e. don't copy much of anything, which is nice,
 ;;; but means the original is destroyed.
-(defun interpolate-function (call enter)
+(defun interpolate-function (call enter node)
   (let ((returns '())
         (unwinds '())
         (target-enter (instruction-owner call))
         (old-dynenv (cleavir-ir:dynamic-environment enter))
-        (call-dynenv (cleavir-ir:dynamic-environment call)))
+        (call-dynenv (cleavir-ir:dynamic-environment call))
+        (cells (cleavir-ir:inputs (cleavir-hir-transformations:enclose-instruction node))))
     ;; Update the ownerships of each local instruction and datum and
     ;; find the exit point instructions. Also update the dynamic
     ;; environments of instructions whose dynamic environment is the
@@ -30,6 +31,15 @@
        (when (typep instruction 'cleavir-ir:unwind-instruction)
          (push instruction unwinds)))
      enter)
+    (dolist (fetch (cleavir-ir:using-instructions (cleavir-ir:static-environment enter)))
+      (let* ((inputs (cleavir-ir:inputs fetch))
+             (index (cleavir-ir:value (second inputs)))
+             (cell (first (cleavir-ir:outputs fetch)))
+             (real-cell (nth index cells)))
+        (dolist (use (cleavir-ir:using-instructions cell))
+          (nsubstitute real-cell cell (cleavir-ir:inputs use))
+          (push use (cleavir-ir:using-instructions real-cell)))
+        (cleavir-ir:delete-instruction fetch)))
     ;; We need to alter these. We find them before doing any alteration-
     ;; interleaving modification and finds results in unfortunate effects.
     ;; Make appropriate assignments to do the ENTER's task.
@@ -79,11 +89,12 @@
   (dolist (successor (cleavir-ir:successors instruction))
     (push instruction (cleavir-ir:predecessors successor))))
 
-(defmethod inline-function (initial call enter mapping)
+(defmethod inline-function (initial call enter node mapping)
   (let* ((*original-enter-instruction* enter)
          (*instruction-mapping* (make-hash-table :test #'eq))
          ;; Used for catch/unwind (local-catch-p)
          (*target-enter-instruction* (instruction-owner call))
+         (cells (cleavir-ir:inputs (cleavir-hir-transformations:enclose-instruction node)))
          (initial-environment (cleavir-ir:parameters enter))
          ;; *policy* is bound closely for these bindings to make especially sure
          ;; that inlined instructions have the policy of the source function,
@@ -131,6 +142,13 @@
                          enter 'cleavir-ir:return-instruction)
           for input = (first (cleavir-ir:inputs return))
           do (add-to-mapping mapping input caller-values))
+    ;; Only works for full inlining, but wire up any fetch cells to
+    ;; the real cells submitted.
+    (dolist (fetch (cleavir-ir:using-instructions (cleavir-ir:static-environment enter)))
+      (let* ((inputs (cleavir-ir:inputs fetch))
+             (index (cleavir-ir:value (second inputs)))
+             (cell (first (cleavir-ir:outputs fetch))))
+        (add-to-mapping mapping cell (nth index cells))))
     ;; Do the actual inlining.
     ;; FIXME: Once an inlining stops, all remaining residual functions should have
     ;; any variables live at that point added as inputs, etc.
