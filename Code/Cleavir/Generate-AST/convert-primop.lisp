@@ -484,3 +484,25 @@
        (mapcar #'cleavir-env:identity lexes) ; get actual lexical ASTs
        (convert form env system)
        :origin origin))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CST-TO-AST
+;;;
+;;; This primop can be used to access ASTs from generated code,
+;;; which is useful for e.g. saving inline definitions.
+;;; Its argument, a form, is converted to an AST and then treated as
+;;; a literal- similar to `',(cst-to-ast form ...), but with the form
+;;; being converted from a CST like anything else.
+;;; The environment used is the current environment, stripped of
+;;; runtime bindings.
+;;; Here in GENERATE-AST this is more pointless and badly named,
+;;; but this system is on the way out.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:cst-to-ast)) form env system)
+  (db origin (op form) form
+    (declare (ignore op))
+    (convert-constant
+     (convert form (cleavir-env:compile-time env) system)
+     env system)))

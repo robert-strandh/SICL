@@ -40,4 +40,5 @@
    #:multiple-value-setq
    #:values
    #:unreachable
-   #:ast))
+   #:ast
+   #:cst-to-ast))

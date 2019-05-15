@@ -1,3 +1,4 @@
+
 (cl:in-package #:cleavir-cst-to-ast)
 
 (defun check-simple-primop-syntax (cst argument-count)
@@ -514,3 +515,24 @@
   (declare (ignore env system))
   (check-simple-primop-syntax cst 0)
   (make-instance 'cleavir-ast:unreachable-ast :origin (cst:source cst)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CST-TO-AST
+;;;
+;;; This primop can be used to access ASTs from generated code,
+;;; which is useful for e.g. saving inline definitions.
+;;; Its argument, a form, is converted to an AST and then treated as
+;;; a literal- similar to `',(cst-to-ast form ...), but with the form
+;;; being converted from a CST like anything else.
+;;; The environment used is the current environment, stripped of
+;;; runtime bindings.
+
+(defmethod convert-special
+    ((symbol (eql 'cleavir-primop:cst-to-ast)) cst env system)
+  (check-simple-primop-syntax cst 1)
+  (cst:db origin (op-cst form-cst) cst
+    (declare (ignore op-cst))
+    (convert-constant
+     (convert form-cst (cleavir-env:compile-time env) system)
+     env system)))

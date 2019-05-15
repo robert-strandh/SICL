@@ -317,6 +317,7 @@
 (define-simple-check cleavir-primop:slot-write 3)
 (define-simple-check cleavir-primop:unreachable 0)
 (define-simple-check cleavir-primop:ast 1)
+(define-simple-check cleavir-primop:cst-to-ast 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
