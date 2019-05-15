@@ -533,6 +533,7 @@
   (check-simple-primop-syntax cst 1)
   (cst:db origin (op-cst form-cst) cst
     (declare (ignore op-cst))
-    (convert-constant
-     (convert form-cst (cleavir-env:compile-time env) system)
-     env system)))
+    (cleavir-ast:make-load-time-value-ast
+     `',(convert form-cst (cleavir-env:compile-time env) system)
+     t
+     :origin (cst:source form-cst))))
