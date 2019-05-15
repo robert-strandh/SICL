@@ -23,4 +23,5 @@
    (:file "translate-catch-instruction")
    (:file "translate-array-related-instructions")
    (:file "translate-boxing-related-instructions")
+   (:file "translate-fixnum-related-instructions")
    (:file "hir-to-cl")))
