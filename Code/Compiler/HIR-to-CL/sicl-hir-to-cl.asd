@@ -22,4 +22,5 @@
    (:file "translate-basic-block")
    (:file "translate-catch-instruction")
    (:file "translate-array-related-instructions")
+   (:file "translate-boxing-related-instructions")
    (:file "hir-to-cl")))
