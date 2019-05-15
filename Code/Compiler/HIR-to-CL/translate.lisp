@@ -23,27 +23,26 @@
   (declare (ignore context))
   '())
 
-(defmethod translate (client (instruction cleavir-ir:bind-instruction) context)
-  (let ((successor (first (cleavir-ir:successors instruction))))
+(defmethod translate-final-instruction (client (instruction cleavir-ir:bind-instruction) context)
+  (let* ((successor (first (cleavir-ir:successors instruction)))
+         (dynamic-environment-output-location
+           (first (cleavir-ir:outputs instruction)))
+         (basic-blocks (basic-blocks-in-dynamic-environment
+                        dynamic-environment-output-location))
+         (*dynamic-environment-stack*
+           (cons dynamic-environment-output-location *dynamic-environment-stack*)))
     `((push (make-instance 'special-variable-entry
-              :name `',(first (cleavir-ir:inputs instruction))
-              :value (cleavir-ir:name (second (cleavir-ir:inputs instruction))))
+              :name ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
+              :value ,(cleavir-ir:name (second (cleavir-ir:inputs instruction))))
             *dynamic-environment*)
       (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
-         ,@(loop with dynamic-environment-output-location
-                   = (first (cleavir-ir:outputs instruction))
-                 with basic-blocks
-                   = (basic-blocks-in-dynamic-environment
-                      dynamic-environment-output-location)
-                 for basic-block in basic-blocks
-                 collect (tag-of-basic-block basic-block)
-                 append (let ((*dynamic-environment-stack*
-                                (cons dynamic-environment-output-location
-                                      *dynamic-environment-stack*)))
-                          (translate-basic-block
-                           client
-                           basic-block
-                           context)))))))
+         ,@(loop for basic-block in basic-blocks
+                 for tag = (tag-of-basic-block basic-block)
+                 collect tag
+                 append (translate-basic-block
+                         client
+                         basic-block
+                         context))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:eq-instruction)
