@@ -2,7 +2,7 @@ yes             aref-instruction
 yes             aset-instruction
 yes             assignment-instruction
 yes             bind-instruction
-not yet         box-instruction
+yes             box-instruction
 yes             car-instruction
 yes             catch-instruction
 yes             cdr-instruction
@@ -13,11 +13,11 @@ yes             enter-instruction
 yes             eq-instruction
 hoisted         fdefinition-instruction
 yes             fixed-to-multiple-instruction
-not yet         fixnum-add-instruction
-not yet         fixnum-equal-instruction
-not yet         fixnum-less-instruction
-not yet         fixnum-not-greater-instruction
-not yet         fixnum-sub-instruction
+yes             fixnum-add-instruction
+yes             fixnum-equal-instruction
+yes             fixnum-less-instruction
+yes             fixnum-not-greater-instruction
+yes             fixnum-sub-instruction
 NA              float-add-instruction
 NA              float-cos-instruction
 NA              float-div-instruction
@@ -43,6 +43,6 @@ not yet         the-instruction
 not yet         the-values-instruction
 yes             top-level-enter-instruction
 not yet         typeq-instruction
-not yet         unbox-instruction
+yes             unbox-instruction
 not yet         unreachable-instruction
 yes             unwind-instruction
