@@ -55,4 +55,5 @@
 (defun test (client)
   (test-let client)
   (test-symbol-value client)
-  (test-block client))
+  (test-block client)
+  (test-bind client))
