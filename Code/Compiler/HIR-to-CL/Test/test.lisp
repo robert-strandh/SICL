@@ -59,9 +59,17 @@
     (setf (sicl-genv:special-operator 'cleavir-primop:car environment) t)
     (assert (eql (eval client form environment) 1))))
 
+(defun test-cdr (client)
+  (let ((environment (make-environment))
+        (form '(cleavir-primop:cdr (list 1 2))))
+    (setf (sicl-genv:fdefinition 'list environment) #'list)
+    (setf (sicl-genv:special-operator 'cleavir-primop:cdr environment) t)
+    (assert (equal (eval client form environment) '(2)))))
+
 (defun test (client)
   (test-let client)
   (test-symbol-value client)
   (test-block client)
   (test-bind client)
-  (test-car client))
+  (test-car client)
+  (test-cdr client))
