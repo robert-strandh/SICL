@@ -5,6 +5,7 @@
                #:concrete-syntax-tree
                #:cleavir2-ast
                #:cleavir2-cst-to-ast
+               #:cleavir-primop
                #:sicl-ast-to-hir
                #:sicl-hir-to-cl)
   :components
