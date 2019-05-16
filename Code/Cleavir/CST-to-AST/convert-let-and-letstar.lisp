@@ -55,7 +55,7 @@
            (initform-csts (loop for binding-cst in binding-csts
                                 collect (if (or (cst:atom binding-cst)
                                                 (cst:null (cst:rest binding-cst)))
-                                            (cst:cst-from-expression 'nil)
+                                            (make-atom-cst nil origin)
                                             (cst:second binding-cst))))
            (lambda-form-cst
              (make-instance 'cst:cons-cst
@@ -63,9 +63,10 @@
                         ,@(cst:raw body-forms-cst))
                       ,(mapcar #'cst:raw initform-csts))
                :source origin
-               :first (cst:cons (cst:cst-from-expression 'lambda)
+               :first (cst:cons (make-atom-cst 'lambda origin)
                                 (cst:cons (cst:cstify variable-csts)
-                                          body-forms-cst))
+                                          body-forms-cst)
+                                :source origin)
                :rest (cst:cstify initform-csts))))
       (convert lambda-form-cst environment system))))
 
@@ -96,26 +97,28 @@
             (itemize-declaration-specifiers (mapcar #'list variable-csts)
                                             canonical-declaration-specifiers)
           (loop with remaining-dspecs-cst = (cst:cstify remaining-dspecs)
-                with result = (cst:cstify
-                               (cons (cst:cst-from-expression 'locally)
-                                     (if (null remaining-dspecs)
-                                         (cst:listify forms-cst)
-                                         (cons
-                                          (cst:cons (cst:cst-from-expression 'declare)
-                                                    remaining-dspecs-cst
-                                                    :source (cst:source remaining-dspecs-cst))
-                                          (cst:listify forms-cst)))))
+                with result = (cst:cons (make-atom-cst 'locally origin)
+                                        (if (null remaining-dspecs)
+                                            forms-cst
+                                            (cst:cons
+                                             (cst:cons (make-atom-cst 'declare origin)
+                                                       remaining-dspecs-cst
+                                                       :source (cst:source remaining-dspecs-cst))
+                                             forms-cst
+                                             :source origin))
+                                        :source origin)
                 for binding-cst in (reverse binding-csts)
-                for declaration-cst in (reverse item-specific-dspecs)
+                for declaration-csts in (reverse item-specific-dspecs)
                 do (setf result
-                         (cst:cstify
-                          (cons (cst:cst-from-expression 'let)
-                                (cons (cst:list binding-cst)
-                                      (if (null declaration-cst)
-                                          (list result)
-                                          (list (cst:cstify
-                                                 (cons
-                                                  (cst:cst-from-expression 'declare)
-                                                  declaration-cst))
-                                                result))))))
+                         (cst:cons
+                          (make-atom-cst 'let origin)
+                          (cst:cons (cst:list binding-cst)
+                                    (if (null declaration-csts)
+                                        (cst:list result)
+                                        (cst:list
+                                         (cst:cons (make-atom-cst 'declare)
+                                                   (cst:cstify declaration-csts))
+                                         result))
+                                    :source origin)
+                          :source origin))
                 finally (return (convert result environment system))))))))

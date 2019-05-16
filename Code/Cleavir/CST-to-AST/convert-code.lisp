@@ -173,38 +173,21 @@
 
 ;;; This class is used to describe the body of a function.  It
 ;;; contains the declaration specifiers that apply to the body as a
-;;; whole, the forms of the body and information about a possible
-;;; BLOCK that the body code should be wrapped in.  The main reason
-;;; for the existence of this class is to keep the number of arguments
-;;; down of several functions below, not for the purpose of
-;;; performance, but simply to avoid very long lambda lists in the
-;;; source code.
+;;; whole, and the body as a CST.
 (defclass body ()
   ((%dspecs :initarg :dspecs :accessor dspecs)
-   ;; This slot contains an ordinary Common Lisp list of CSTs, each
-   ;; representing a form of the body.
-   (%form-csts :initarg :form-csts :accessor form-csts)
-   (%block-name-cst :initform nil
-                    :initarg :block-name-cst
-                    :reader block-name-cst)))
+   (%cst :initarg :cst :accessor body-cst)))
 
-(defun make-body (dspecs form-csts block-name-cst)
+(defun make-body (dspecs cst)
   (make-instance 'body
     :dspecs dspecs
-    :form-csts form-csts
-    :block-name-cst block-name-cst))
+    :cst cst))
 
 ;;; Convert the body of a function.
 (defun convert-body (body env system)
-  (let ((new-env (augment-environment-with-declarations env (dspecs body)))
-        (block-name-cst (block-name-cst body)))
-    (convert (if block-name-cst
-                 (cst:cstify (list* (cst:cst-from-expression 'block)
-                                    block-name-cst
-                                    (form-csts body)))
-                 (cst:cstify (cons (cst:cst-from-expression 'progn)
-                                   (form-csts body))))
-             new-env system)))
+  (convert (body-cst body)
+           (augment-environment-with-declarations env (dspecs body))
+           system))
 
 (defmethod process-parameter-groups
     ((parameter-groups null)
@@ -459,6 +442,14 @@
           (values (cons itemized-dspecs more-itemized-dspecs)
                   more-remaining-dspecs)))))
 
+(defun cst-for-body (forms-cst block-name-cst &optional origin)
+  (if block-name-cst
+      (cst:cons (make-atom-cst 'block origin)
+                (cst:cons block-name-cst forms-cst)
+                :source origin)
+      (cst:cons (make-atom-cst 'progn origin) forms-cst
+                :source origin)))
+
 (defmethod convert-code (lambda-list-cst body-cst env system
                          &key (block-name-cst nil) origin)
   (let ((parsed-lambda-list
@@ -494,7 +485,7 @@
                      (cst:children parsed-lambda-list)
                      idspecs
                      entries
-                     (make-body rdspecs (cst:listify forms-cst) block-name-cst)
+                     (make-body rdspecs (cst-for-body forms-cst block-name-cst origin))
                      env
                      system)))
               (cleavir-ast:make-function-ast ast lexical-lambda-list

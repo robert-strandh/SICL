@@ -74,7 +74,6 @@
                                          form
                                          env))
                  (expanded-cst (cst:reconstruct expanded-form cst system)))
-
             (convert expanded-cst env system))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
