@@ -330,7 +330,7 @@
      system)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
-                            (cst:cst-from-expression nil)
+                            (make-atom-cst nil (cst:source var-cst))
                             (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
          (new-env (new-environment-from-parameter parameter
@@ -369,7 +369,7 @@
      system)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
-                            (cst:cst-from-expression nil)
+                            (make-atom-cst nil (cst:source var-cst))
                             (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
          (new-env (new-environment-from-parameter parameter

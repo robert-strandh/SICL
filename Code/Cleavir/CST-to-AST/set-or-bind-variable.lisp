@@ -21,4 +21,5 @@
 		(cleavir-env:identity info)
 		value-ast
                 :origin (cst:source variable-cst))
-	       (funcall next-thunk))))))
+	       (funcall next-thunk))
+         :origin (cst:source variable-cst)))))

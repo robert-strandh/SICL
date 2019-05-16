@@ -13,7 +13,7 @@
                                    (cleavir-env:expansion info))
                                  form
                                  env))
-         (expanded-cst (cst:cst-from-expression expanded-form)))
+         (expanded-cst (cst:reconstruct expanded-form cst system)))
     (with-preserved-toplevel-ness
       (convert expanded-cst env system))))
 
