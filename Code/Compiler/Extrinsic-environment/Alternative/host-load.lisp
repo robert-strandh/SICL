@@ -5,6 +5,13 @@
 ;;; read the code.  We need to do it that way because we need for the
 ;;; occurrences of the backquote reader macro character to generate
 ;;; macro calls to the Eclector version of the corresponding macros.
+;;; And the reason we need that is that the functions that we load
+;;; this way, when called, will generate forms containing instances of
+;;; the backquote macro, so when the compiler uses these functions to
+;;; expand macro forms, it needs to be able to compile the resulting
+;;; form against a first-class global environment that does not
+;;; contain the host version of the backquote macro machinery, but
+;;; only the SICL version.
 
 (defun quiet-warning-handler (condition)
   (let ((restart (find-restart 'muffle-warning condition)))
