@@ -110,8 +110,7 @@
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
                           '#:block-continuation))
-           (dynenv-out (find-or-create-location
-                        (cleavir-ast:dynamic-environment-output-ast ast)))
+           (dynenv-out (cleavir-ir:make-lexical-location '#:block))
            (catch (make-instance 'cleavir-ir:catch-instruction
                    :outputs (list continuation dynenv-out)
                    :successors (list after)))
@@ -211,8 +210,7 @@
       context
     (let* ((continuation (cleavir-ir:make-lexical-location
                           '#:tagbody-continuation))
-           (dynenv-out (find-or-create-location
-                        (cleavir-ast:dynamic-environment-output-ast ast)))
+           (dynenv-out (cleavir-ir:make-lexical-location '#:tagbody))
            (catch (make-instance 'cleavir-ir:catch-instruction
                     :outputs (list continuation dynenv-out)
                     :successors '()))
@@ -288,8 +286,7 @@
 (defmethod compile-ast ((ast cleavir-ast:bind-ast) context)
   (let* ((name-temp (make-temp))
          (value-temp (make-temp))
-         (dynenv (find-or-create-location
-                  (cleavir-ast:dynamic-environment-output-ast ast)))
+         (dynenv (cleavir-ir:make-lexical-location '#:bind))
          (new-context (clone-context
                        context
                        :dynamic-environment-location dynenv))
@@ -396,8 +393,7 @@
 ;;; their final values.
 (defmethod compile-function ((ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-         (dynenv (find-or-create-location
-                  (cleavir-ast:dynamic-environment-output-ast ast)))
+         (dynenv (cleavir-ir:make-lexical-location '#:function))
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (values (cleavir-ir:make-values-location))
@@ -626,7 +622,7 @@
         (*function-info* (make-hash-table :test #'eq)))
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-output-ast ast)))
+           (dynenv (cleavir-ir:make-lexical-location '#:top))
            (forms (cleavir-ast:forms ast))
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (values (cleavir-ir:make-values-location))
@@ -649,7 +645,7 @@
         (*location-info* (make-hash-table :test #'eq))
         (*function-info* (make-hash-table :test #'eq)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-           (dynenv (find-or-create-location (cleavir-ast:dynamic-environment-output-ast ast)))
+           (dynenv (cleavir-ir:make-lexical-location '#:topnh))
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (values (cleavir-ir:make-values-location))
            (return (make-instance 'cleavir-ir:return-instruction
