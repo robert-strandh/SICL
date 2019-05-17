@@ -185,9 +185,13 @@
     ;;   (clim:draw-rectangle* pane 500 500 600 600 :ink clim:+red+))
     layout))
                  
-(defun visualize (ast)
-  (clim:run-frame-top-level
-   (clim:make-application-frame 'visualizer :ast ast)))
+(defun visualize (ast &key new-process-p)
+  (let ((frame (clim:make-application-frame 'visualizer :ast ast)))
+    (flet ((run ()
+             (clim:run-frame-top-level frame)))
+      (if new-process-p
+          (clim-sys:make-process #'run)
+          (run)))))
 
 (define-visualizer-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
