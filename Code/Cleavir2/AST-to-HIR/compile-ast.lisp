@@ -14,8 +14,7 @@
 ;;; error if appropriate.
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
   (with-accessors ((results results)
-                   (successors successors)
-                   (invocation invocation))
+                   (successors successors))
       context
     (assert-context ast context nil 1)
     ;; We have a context with one successor, so RESULTS can be a
@@ -27,12 +26,14 @@
            (let ((temp (make-temp)))
              (call-next-method
               ast
-              (context (list temp)
-                       (list (make-instance 'cleavir-ir:fixed-to-multiple-instruction
-                               :inputs (list temp)
-                               :output results
-                               :successor (first successors)))
-                       invocation))))
+              (clone-context
+               context
+               :result temp
+               :successor
+               (make-instance 'cleavir-ir:fixed-to-multiple-instruction
+                 :inputs (list temp)
+                 :output results
+                 :successor (first successors))))))
           ((null results)
            ;; We don't need the result.  This situation typically
            ;; happens when we compile a form other than the last of
@@ -47,18 +48,20 @@
                ;; We allocate a temporary variable to receive the
                ;; result, and that variable will not be used.
                (call-next-method ast
-                                 (context (list (make-temp))
-                                          successors
-                                          invocation))))
+                                 (clone-context
+                                  context
+                                  :result (make-temp)
+                                  :successors successors))))
           (t
            ;; We have at least one result.  In case there is more
            ;; than one, we generate a successor where all but the
            ;; first one are filled with NIL.
            (let ((successor (nil-fill (rest results) (first successors))))
              (call-next-method ast
-                               (context (list (first results))
-                                        (list successor)
-                                        invocation)))))))
+                               (clone-context
+                                context
+                                :result (first results)
+                                :successor successor)))))))
 
 ;;; If these checks fail, it's an internal bug, since the
 ;;; :around method should fix the results and successors.
@@ -80,6 +83,9 @@
 
 (defmethod compile-ast :around
     ((ast cleavir-ast:dynamic-environment-input-ast-mixin) context)
-  (let ((*dynamic-environment-location*
-          (find-or-create-location (cleavir-ast:dynamic-environment-input-ast ast))))
+  (let ((*dynamic-environment-location* (dynamic-environment-location context)))
+    (call-next-method)))
+
+(defmethod compile-ast :around (ast context)
+  (let ((*dynamic-environment-location* (dynamic-environment-location context)))
     (call-next-method)))

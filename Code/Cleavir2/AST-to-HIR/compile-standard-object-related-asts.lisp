@@ -9,17 +9,18 @@
         (temp2 (make-temp)))
     (compile-ast
      (cleavir-ast:object-ast ast)
-     (context
-      (list temp1)
-      (list (compile-ast
-             (cleavir-ast:slot-number-ast ast)
-             (context (list temp2)
-                      (list (make-instance 'cleavir-ir:slot-read-instruction
-                              :inputs (list temp1 temp2)
-                              :outputs (results context)
-                              :successors (successors context)))
-                      (invocation context))))
-      (invocation context)))))
+     (clone-context
+      context
+      :result temp1
+      :successor (compile-ast
+                  (cleavir-ast:slot-number-ast ast)
+                  (clone-context
+                   context
+                   :result temp2
+                   :successor  (make-instance 'cleavir-ir:slot-read-instruction
+                                 :inputs (list temp1 temp2)
+                                 :outputs (results context)
+                                 :successors (successors context))))))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -31,20 +32,23 @@
         (temp3 (make-temp)))
     (compile-ast
      (cleavir-ast:object-ast ast)
-     (context
-      (list temp1)
-      (list (compile-ast
-             (cleavir-ast:slot-number-ast ast)
-             (context
-              (list temp2)
-              (list (compile-ast
-                     (cleavir-ast:value-ast ast)
-                     (context
-                      (list temp3)
-                      (list (make-instance 'cleavir-ir:slot-write-instruction
-                              :inputs (list temp1 temp2 temp3)
-                              :outputs '()
-                              :successors (successors context)))
-                      (invocation context))))
-              (invocation context))))
-      (invocation context)))))
+     (clone-context
+      context
+      :result temp1
+      :successor
+      (compile-ast
+       (cleavir-ast:slot-number-ast ast)
+       (clone-context
+        context
+        :result temp2
+        :successor
+        (compile-ast
+         (cleavir-ast:value-ast ast)
+         (clone-context
+          context
+          :result temp3
+          :successor
+          (make-instance 'cleavir-ir:slot-write-instruction
+            :inputs (list temp1 temp2 temp3)
+            :outputs '()
+            :successors (successors context))))))))))
