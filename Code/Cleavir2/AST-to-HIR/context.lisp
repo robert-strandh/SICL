@@ -64,7 +64,10 @@
 (defclass context ()
   ((%results :initarg :results :reader results)
    (%successors :initarg :successors :accessor successors)
-   (%invocation :initarg :invocation :reader invocation)))
+   (%invocation :initarg :invocation :reader invocation)
+   (%dynamic-environment-location
+    :initarg :dynamic-environment-location
+    :reader dynamic-environment-location)))
 
 (defmethod initialize-instance :after ((context context) &key result successor)
   (let ((successors (if (null successor) (successors context) (list successor)))
@@ -85,24 +88,32 @@
       (error "Illegal combination of results and successors"))
     (unless (typep (invocation context) 'cleavir-ir:enter-instruction)
       (error "Illegal invocation"))
+    (unless (typep (dynamic-environment-location context) 'cleavir-ir:lexical-location)
+      (error "Illegal dynamic environment location ~s"
+             (dynamic-environment-location context)))
     (reinitialize-instance context
       :results results
       :successors successors)))
 
-(defun context (results successors invocation)
+(defun context (results successors invocation dynamic-environment-location)
   (make-instance 'context
     :results results
     :successors successors
-    :invocation invocation))
+    :invocation invocation
+    :dynamic-environment-location dynamic-environment-location))
 
 (defmethod print-object ((obj context) stream)
   (print-unreadable-object (obj stream)
     (format stream " results: ~s" (results obj))
-    (format stream " successors: ~s" (successors obj))))
+    (format stream " successors: ~s" (successors obj))
+    (format stream " dynenv: ~s" (dynamic-environment-location obj))))
 
 (defun clone-context (context &rest keyword-arguments)
   (apply #'make-instance 'context
-         (append keyword-arguments
-                 (list :results (results context)
-                       :successors (successors context)
-                       :invocation (invocation context)))))
+         (append
+          keyword-arguments
+          (list :results (results context)
+                :successors (successors context)
+                :invocation (invocation context)
+                :dynamic-environment-location
+                (dynamic-environment-location context)))))
