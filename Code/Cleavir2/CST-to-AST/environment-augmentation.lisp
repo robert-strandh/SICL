@@ -201,8 +201,11 @@
 ;;; is globally special.  For a LET form, this is the environment in
 ;;; which the entire LET form was converted.  For a LET* form, it is
 ;;; the same as ENV.
-(defun augment-environment-with-variable
-    (variable-cst declarations lexical-environment orig-env)
+(defun augment-environment-with-variable (variable-cst
+                                          declarations
+                                          lexical-environment
+                                          orig-env
+                                          dynamic-environment-ast)
   (let ((new-env lexical-environment)
         (raw-variable (cst:raw variable-cst))
         (raw-declarations (mapcar #'cst:raw declarations)))
@@ -213,7 +216,8 @@
             (setf new-env
                   (cleavir-env:add-special-variable new-env raw-variable)))
           (let ((var-ast (make-instance 'cleavir-ast:lexical-ast
-                           :name raw-variable)))
+                           :name raw-variable
+                           :dynamic-environment-input-ast dynamic-environment-ast)))
             (setf new-env
                   (cleavir-env:add-lexical-variable
                    new-env raw-variable var-ast)))))
@@ -238,36 +242,58 @@
 ;;; that it also tests whether the supplied-p parameter is NIL,
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
-(defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs lexical-environment)
-  (let ((new-env (augment-environment-with-variable
-                  var-cst dspecs lexical-environment lexical-environment)))
+(defun augment-environment-with-parameter (var-cst
+                                           supplied-p-cst
+                                           dspecs
+                                           lexical-environment
+                                           dynamic-environment-ast)
+  (let ((new-env (augment-environment-with-variable var-cst
+                                                    dspecs
+                                                    lexical-environment
+                                                    lexical-environment
+                                                    dynamic-environment-ast)))
     (if (null supplied-p-cst)
         new-env
-        (augment-environment-with-variable
-         supplied-p-cst dspecs new-env new-env))))
+        (augment-environment-with-variable supplied-p-cst
+                                           dspecs
+                                           new-env
+                                           new-env
+                                           dynamic-environment-ast))))
 
-(defun augment-environment-with-local-function-name (name-cst lexical-environment)
+(defun augment-environment-with-local-function-name (name-cst
+                                                     lexical-environment
+                                                     dynamic-environment-ast)
   (let* ((name (cst:raw name-cst))
-         (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
+         (var-ast (make-instance 'cleavir-ast:lexical-ast
+                    :name name
+                    :dynamic-environment-input-ast dynamic-environment-ast)))
     (cleavir-env:add-local-function lexical-environment name var-ast)))
 
 ;;; Take an environment and a CST representing a single local function
 ;;; definition.  Return a new environment which is like the one passed
 ;;; as an argument, except the it has been augmented by the name of
 ;;; the local function.
-(defun augment-environment-from-fdef (lexical-environment definition-cst)
+(defun augment-environment-from-fdef (lexical-environment
+                                      definition-cst
+                                      dynamic-environment-ast)
   (let ((name-cst (cst:first definition-cst)))
-    (augment-environment-with-local-function-name name-cst lexical-environment)))
+    (augment-environment-with-local-function-name name-cst
+                                                  lexical-environment
+                                                  dynamic-environment-ast)))
 
 ;;; Take an environment, a CST representing a list of function
 ;;; definitions, and return a new environment which is like the one
 ;;; passed as an argument, except that is has been augmented by the
 ;;; local function names in the list.
-(defun augment-environment-from-fdefs (lexical-environment definitions-cst)
+(defun augment-environment-from-fdefs (lexical-environment
+                                       definitions-cst
+                                       dynamic-environment-ast)
   (loop with result = lexical-environment
         for remaining = definitions-cst then (cst:rest remaining)
         until (cst:null remaining)
         do (let ((definition-cst (cst:first remaining)))
              (setf result
-                   (augment-environment-from-fdef result definition-cst)))
+                   (augment-environment-from-fdef result
+                                                  definition-cst
+                                                  dynamic-environment-ast)))
         finally (return result)))

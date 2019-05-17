@@ -43,7 +43,9 @@
 (defmethod convert-setq-special-variable
     (client var-cst form-ast info global-env dynamic-environment-ast)
   (declare (ignore client))
-  (let ((temp (make-instance 'cleavir-ast:lexical-ast :name (gensym))))
+  (let ((temp (make-instance 'cleavir-ast:lexical-ast
+                :name (gensym)
+                :dynamic-environment-input-ast dynamic-environment-ast)))
     (process-progn
      (list (make-instance 'cleavir-ast:setq-ast
              :lhs-ast temp

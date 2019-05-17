@@ -57,7 +57,8 @@
                :origin (cst:source name-cst)))
       (let* ((new-dynamic-environment-ast
                (make-instance 'cleavir-ast:lexical-ast
-                 :name '#:block-dynamic-environment))
+                 :name '#:block-dynamic-environment
+                 :dynamic-environment-input-ast dynamic-environment-ast))
              (ast (make-instance 'cleavir-ast:block-ast
                     :dynamic-environment-input-ast dynamic-environment-ast
                     :dynamic-environment-output-ast new-dynamic-environment-ast))
@@ -341,7 +342,9 @@
                                             lexical-environment
                                             dynamic-environment-ast))
              (new-lexical-environment
-               (augment-environment-from-fdefs lexical-environment definitions-cst))
+               (augment-environment-from-fdefs lexical-environment
+                                               definitions-cst
+                                               dynamic-environment-ast))
              (init-asts
                (compute-function-init-asts defs
                                            new-lexical-environment
@@ -379,7 +382,9 @@
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
              (new-lexical-environment
-               (augment-environment-from-fdefs lexical-environment definitions-cst))
+               (augment-environment-from-fdefs lexical-environment
+                                               definitions-cst
+                                               dynamic-environment-ast))
              (defs (convert-local-functions client
                                             definitions-cst
                                             new-lexical-environment
@@ -433,7 +438,8 @@
                                 :name (cst:raw tag-cst)))))
           (new-dynamic-environment-ast
             (make-instance 'cleavir-ast:lexical-ast
-              :name '#:tagbody-dynamic-environment))
+              :name '#:tagbody-dynamic-environment
+              :dynamic-environment-input-ast dynamic-environment-ast))
           (new-lexical-environment lexical-environment))
       (loop for ast in tag-asts
             do (setf new-lexical-environment

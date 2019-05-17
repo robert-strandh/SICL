@@ -329,7 +329,8 @@
             do (let* ((variable-cst (cst:first rest-cst))
                       (variable (cst:raw variable-cst))
                       (variable-ast (make-instance 'cleavir-ast:lexical-ast
-                                     :name variable)))
+                                      :name variable
+                                      :dynamic-environment-input-ast dynamic-environment-ast)))
                  (setf new-env
                        (cleavir-env:add-lexical-variable
                         new-env variable variable-ast))))

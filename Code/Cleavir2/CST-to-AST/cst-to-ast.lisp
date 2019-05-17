@@ -7,5 +7,7 @@
   (let ((*subforms-are-top-level-p* t)
 	(*compile-time-too* nil)
         (dynamic-environment-input-ast
-          (make-instance 'cleavir-ast:lexical-ast :name '#:dummy)))
+          (make-instance 'cleavir-ast:lexical-ast
+            :name '#:dummy
+            :dynamic-environment-input-ast 'do-not-use)))
     (convert client cst lexical-environment dynamic-environment-input-ast)))

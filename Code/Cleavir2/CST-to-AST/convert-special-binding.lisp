@@ -7,7 +7,9 @@
                                     lexical-environment
                                     dynamic-environment-ast)
   (let ((dynamic-environment-output-ast
-          (make-instance 'cleavir-ast:lexical-ast :name '#:bound-env)))
+          (make-instance 'cleavir-ast:lexical-ast
+            :name '#:bound-env
+            :dynamic-environment-input-ast dynamic-environment-ast)))
     (make-instance 'cleavir-ast:bind-ast
       :name-ast (make-instance 'cleavir-ast:constant-ast
                   :value (cst:raw variable-cst)

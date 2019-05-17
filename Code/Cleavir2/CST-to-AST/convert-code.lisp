@@ -177,7 +177,11 @@
                      dynamic-environment-ast))
 
 (defgeneric new-environment-from-parameter
-    (client parameter idspecs lexical-environment))
+    (client
+     parameter
+     idspecs
+     lexical-environment
+     dynamic-environment-ast))
 
 ;;; This class is used to describe the body of a function.  It
 ;;; contains the declaration specifiers that apply to the body as a
@@ -293,38 +297,52 @@
                      dynamic-environment-ast))
 
 (defmethod new-environment-from-parameter
-    (client (parameter cst:simple-variable) idspecs lexical-environment)
+    (client
+     (parameter cst:simple-variable)
+     idspecs
+     lexical-environment
+     dynamic-environment-ast)
   (augment-environment-with-variable (cst:name parameter)
                                      idspecs
                                      lexical-environment
-                                     lexical-environment))
+                                     lexical-environment
+                                     dynamic-environment-ast))
 
 (defmethod new-environment-from-parameter
     (client
      (parameter cst:ordinary-key-parameter)
      idspecs
-     lexical-environment)
+     lexical-environment
+     dynamic-environment-ast)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
-                                      lexical-environment))
+                                      lexical-environment
+                                      dynamic-environment-ast))
 
 (defmethod new-environment-from-parameter
     (client
      (parameter cst:ordinary-optional-parameter)
      idspecs
-     lexical-environment)
+     lexical-environment
+     dynamic-environment-ast)
   (augment-environment-with-parameter (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
-                                      lexical-environment))
+                                      lexical-environment
+                                      dynamic-environment-ast))
 
 (defmethod new-environment-from-parameter
-    (client  (parameter cst:aux-parameter) idspecs lexical-environment)
+    (client
+     (parameter cst:aux-parameter)
+     idspecs
+     lexical-environment
+     dynamic-environment-ast)
   (augment-environment-with-variable (cst:name parameter)
                                      idspecs
                                      lexical-environment
-                                     lexical-environment))
+                                     lexical-environment
+                                     dynamic-environment-ast))
 
 (defmethod process-parameter
     (client
@@ -343,7 +361,8 @@
   (let ((new-env (new-environment-from-parameter client
                                                  parameter
                                                  idspecs
-                                                 lexical-environment)))
+                                                 lexical-environment
+                                                 dynamic-environment-ast)))
     (set-or-bind-variable
      client
      (cst:name parameter) lexical-ast
@@ -383,7 +402,8 @@
          (new-env (new-environment-from-parameter client
                                                   parameter
                                                   idspecs
-                                                  lexical-environment))
+                                                  lexical-environment
+                                                  dynamic-environment-ast))
          (init-ast (convert client
                             init-form-cst
                             lexical-environment
@@ -418,7 +438,7 @@
      remaining-entries
      body
      lexical-environment
-      dynamic-environment-ast)
+     dynamic-environment-ast)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
                             (cst:cst-from-expression nil)
@@ -427,7 +447,8 @@
          (new-env (new-environment-from-parameter client
                                                   parameter
                                                   idspecs
-                                                  lexical-environment))
+                                                  lexical-environment
+                                                  dynamic-environment-ast))
          (init-ast (convert client
                             init-form-cst
                             lexical-environment
@@ -469,7 +490,8 @@
          (new-env (new-environment-from-parameter client
                                                   parameter
                                                   idspecs
-                                                  lexical-environment))
+                                                  lexical-environment
+                                                  dynamic-environment-ast))
          (init-ast (convert
                     client
                     init-form-cst
@@ -531,13 +553,15 @@
                 declaration-specifiers))
              (dynamic-environment-output-ast
                (make-instance 'cleavir-ast:lexical-ast
-                :name '#:dynamic-environment-argument)))
+                 :name '#:dynamic-environment-argument
+                 :dynamic-environment-input-ast dynamic-environment-ast)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group
              (itemize-lambda-list parsed-lambda-list)
              canonicalized-dspecs)
           (multiple-value-bind (lexical-lambda-list entries)
-              (lambda-list-from-parameter-groups (cst:children parsed-lambda-list))
+              (lambda-list-from-parameter-groups (cst:children parsed-lambda-list)
+                                                 dynamic-environment-output-ast)
             (let ((ast
                     (process-parameter-groups
                      client
