@@ -66,23 +66,30 @@
    (%successors :initarg :successors :accessor successors)
    (%invocation :initarg :invocation :reader invocation)))
 
+(defmethod initialize-instance :after ((context context) &key result successor)
+  (let ((successors (if (null successor) (successors context) (list successor)))
+        (results (if (null result) (results context) (list result))))
+    (unless (or (and (listp results)
+                     (every (lambda (result)
+                              (typep result 'cleavir-ir:lexical-location))
+                            results))
+                (typep results 'cleavir-ir:values-location))
+      (error "illegal results: ~s" results))
+    (unless (and (listp successors)
+                 (<= 1 (length successors) 2)
+                 (every (lambda (successor)
+                          (typep successor 'cleavir-ir:instruction))
+                        successors))
+      (error "illegal successors: ~s" successors))
+    (when (and (= (length successors) 2) (not (null results)))
+      (error "Illegal combination of results and successors"))
+    (unless (typep (invocation context) 'cleavir-ir:enter-instruction)
+      (error "Illegal invocation"))
+    (reinitialize-instance context
+      :results results
+      :successors successors)))
+
 (defun context (results successors invocation)
-  (unless (or (and (listp results)
-                   (every (lambda (result)
-                            (typep result 'cleavir-ir:lexical-location))
-                          results))
-              (typep results 'cleavir-ir:values-location))
-    (error "illegal results: ~s" results))
-  (unless (and (listp successors)
-               (<= 1 (length successors) 2)
-               (every (lambda (successor)
-                        (typep successor 'cleavir-ir:instruction))
-                      successors))
-    (error "illegal successors: ~s" successors))
-  (when (and (= (length successors) 2) (not (null results)))
-    (error "Illegal combination of results and successors"))
-  (unless (typep invocation 'cleavir-ir:enter-instruction)
-    (error "Illegal invocation"))
   (make-instance 'context
     :results results
     :successors successors
@@ -93,10 +100,9 @@
     (format stream " results: ~s" (results obj))
     (format stream " successors: ~s" (successors obj))))
 
-(defun clone-context (context &rest args)
-  (apply #'reinitialize-instance
-         (make-instance 'context
-                        :result (results context)
-                        :successor (successors context)
-                        :invocation (invocation context))
-         args))
+(defun clone-context (context &rest keyword-arguments)
+  (apply #'make-instance 'context
+         (append keyword-arguments
+                 (list :results (results context)
+                       :successors (successors context)
+                       :invocation (invocation context)))))
