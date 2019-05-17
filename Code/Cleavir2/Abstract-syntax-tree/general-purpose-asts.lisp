@@ -65,7 +65,10 @@
 ;;; a reference contains the name of the variable, but it is used only
 ;;; for debugging purposes and for the purpose of error reporting.
 
-(defclass lexical-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+(defclass lexical-ast (ast
+                       dynamic-environment-input-ast-mixin
+                       one-value-ast-mixin
+                       side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
 (cleavir-io:define-save-info lexical-ast
