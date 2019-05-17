@@ -49,7 +49,8 @@
              (new-env (cleavir-env:add-block env name ast))
              (cleavir-ast:*dynamic-environment* new-dynenv))
         (setf (cleavir-ast:body-ast ast)
-              (process-progn (convert-sequence body-cst new-env system)))
+              (process-progn (convert-sequence body-cst new-env system)
+                             origin))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,7 +72,7 @@
                (cleavir-env:block-info env block-name)))
         (let ((info (find-info block-name))
               (value-cst (if (cst:null rest-csts)
-                             (make-instance 'cst:atom-cst :raw nil)
+                             (make-atom-cst nil origin)
                              (cst:first rest-csts))))
           (loop while (null info)
                 do (restart-case (error 'cleavir-env:no-block-info
@@ -134,8 +135,9 @@
             (if (or (member :execute situations)
                     (member 'cl:eval situations))
                 (process-progn
-                 (convert-sequence body-cst environment system))
-                (convert (cst:cst-from-expression nil) environment system))
+                 (convert-sequence body-cst environment system)
+                 s)
+                (convert (make-atom-cst nil s) environment system))
             (cond ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  Yes  ---  ---
@@ -194,11 +196,9 @@
                          *compile-time-too*))
                    (cleavir-env:eval `(progn ,@(cst:raw body-cst))
                                      environment environment)
-                   (convert (cst:cst-from-expression nil)
-                            environment system))
+                   (convert (make-atom-cst nil s) environment system))
                   (t
-                   (convert (cst:cst-from-expression nil)
-                            environment system))))))))
+                   (convert (make-atom-cst nil s) environment system))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -302,7 +302,9 @@
                  ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence forms-cst final-env system)))))))))
+                   (convert-sequence forms-cst final-env system)
+                   origin)))
+         origin)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -325,10 +327,11 @@
                          new-env canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
-                 ;; So that flet with empty body works.
                  (list
                   (process-progn
-                   (convert-sequence forms-cst final-env system)))))))))
+                   (convert-sequence forms-cst final-env system)
+                   origin)))
+         origin)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -375,7 +378,8 @@
         (process-progn
          (list (cleavir-ast:make-tagbody-ast item-asts new-dynenv
                                              :origin origin)
-               (convert-constant (cst:cst-from-expression nil) env system)))))))
+               (convert-constant (make-atom-cst nil origin) env system))
+         origin)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -405,7 +409,7 @@
     (let ((test-ast (convert test-cst env system))
           (true-ast (convert then-cst env system))
           (false-ast (if (cst:null tail-cst)
-                         (convert-constant (cst:cst-from-expression nil)
+                         (convert-constant (make-atom-cst nil origin)
                                            env system)
                          (cst:db s (else-cst) tail-cst
                            (convert else-cst env system)))))
@@ -418,7 +422,8 @@
           (cleavir-ast:make-if-ast
            (cleavir-ast:make-eq-ast
             test-ast
-            (convert-constant (cst:cst-from-expression nil) env system))
+            (convert-constant (make-atom-cst nil origin) env system)
+            :origin origin)
            false-ast
            true-ast
            :origin origin)))))
@@ -502,10 +507,8 @@
                  (setf new-env
                        (cleavir-env:add-local-macro new-env name expander))))
       (with-preserved-toplevel-ness
-        (convert (cst:cons (make-instance 'cst:atom-cst
-                             :raw 'locally
-                             :source origin)
-                           body-cst)
+        (convert (cst:cons (make-atom-cst 'locally origin) body-cst
+                           :source origin)
                  new-env
                  system)))))
 
@@ -530,7 +533,7 @@
                          (cleavir-env:add-local-symbol-macro
                           new-env name expansion)))))
       (with-preserved-toplevel-ness
-        (convert (cst:cons (cst:cst-from-expression 'locally)
+        (convert (cst:cons (make-atom-cst 'locally origin)
                            body-cst
                            :source origin)
                  new-env system)))))
@@ -678,7 +681,7 @@
                                       :origin (cst:source variable-cst))
                           collect (convert-elementary-setq
                                    variable-cst form-cst environment system))))
-    (process-progn form-asts)))
+    (process-progn form-asts (cst:source cst))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -715,4 +718,4 @@
              (new-env (augment-environment-with-declarations
                        environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
-          (process-progn (convert-sequence forms-cst new-env system)))))))
+          (process-progn (convert-sequence forms-cst new-env system) origin))))))

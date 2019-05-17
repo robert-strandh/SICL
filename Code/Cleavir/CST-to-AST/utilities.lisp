@@ -1,5 +1,8 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+(defun make-atom-cst (object &optional origin)
+  (make-instance 'cst:atom-cst :raw object :source origin))
+
 ;;; Take a CST, check whether it represents a proper list.  If it does
 ;;; not represent ERROR-TYPE is a symbol that is passed to ERROR.
 (defun check-cst-proper-list (cst error-type)

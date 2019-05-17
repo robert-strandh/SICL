@@ -16,12 +16,14 @@
 
 (defmethod convert-setq
     (var-cst form-cst (info cleavir-env:lexical-variable-info) env system)
-  (process-progn 
-   (list (cleavir-ast:make-setq-ast
-	  (cleavir-env:identity info)
-	  (convert form-cst env system)
-	  :origin (cst:source var-cst))
-	 (cleavir-env:identity info))))
+  (let ((origin (cst:source var-cst)))
+    (process-progn
+     (list (cleavir-ast:make-setq-ast
+            (cleavir-env:identity info)
+            (convert form-cst env system)
+            :origin origin)
+           (cleavir-env:identity info))
+     origin)))
 
 (defmethod convert-setq
     (var-cst form-cst (info cleavir-env:symbol-macro-info) env system)
@@ -31,23 +33,27 @@
                                (cleavir-env:expansion info))
                              (cleavir-env:name info)
                              env))
-         (expansion-cst (cst:reconstruct expansion var-cst system)))
-    (convert (cst:list (cst:cst-from-expression 'setf)
-                       expansion-cst
-                       form-cst)
+         (expansion-cst (cst:reconstruct expansion var-cst system))
+         (origin (cst:source var-cst)))
+    (convert (cst:cons (make-atom-cst 'setf origin)
+                       (cst:list expansion-cst form-cst)
+                       :source origin)
              env system)))
 
 (defmethod convert-setq-special-variable
     (var-cst form-ast info global-env system)
   (declare (ignore system))
-  (let ((temp (cleavir-ast:make-lexical-ast (gensym))))
+  (let* ((origin (cst:source var-cst))
+         (temp (cleavir-ast:make-lexical-ast (gensym) :origin origin)))
     (process-progn
-     (list (cleavir-ast:make-setq-ast temp form-ast)
+     (list (cleavir-ast:make-setq-ast temp form-ast :origin origin)
 	   (cleavir-ast:make-set-symbol-value-ast
-	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info))
+	    (cleavir-ast:make-load-time-value-ast `',(cleavir-env:name info) t
+                                                  :origin origin)
 	    temp
-	    :origin (cst:source var-cst))
-	   temp))))
+	    :origin origin)
+	   temp)
+     origin)))
 
 (defmethod convert-setq
     (var-cst form-cst (info cleavir-env:special-variable-info) env system)
