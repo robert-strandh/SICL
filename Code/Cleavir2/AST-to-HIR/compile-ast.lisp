@@ -33,7 +33,9 @@
                (make-instance 'cleavir-ir:fixed-to-multiple-instruction
                  :inputs (list temp)
                  :output results
-                 :successor (first successors))))))
+                 :successor (first successors)
+                 :dynamic-environment-location
+                 (dynamic-environment-location context))))))
           ((null results)
            ;; We don't need the result.  This situation typically
            ;; happens when we compile a form other than the last of
@@ -80,11 +82,6 @@
 (stealth-mixin:define-stealth-mixin instruction-mixin () cleavir-ir:instruction
   ((%origin :initform *origin* :reader origin))
   (:default-initargs :dynamic-environment-location *dynamic-environment-location*))
-
-(defmethod compile-ast :around
-    ((ast cleavir-ast:dynamic-environment-input-ast-mixin) context)
-  (let ((*dynamic-environment-location* (dynamic-environment-location context)))
-    (call-next-method)))
 
 (defmethod compile-ast :around (ast context)
   (let ((*dynamic-environment-location* (dynamic-environment-location context)))
