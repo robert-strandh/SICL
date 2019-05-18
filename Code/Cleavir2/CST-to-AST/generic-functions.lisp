@@ -11,7 +11,8 @@
 
 (defgeneric convert-lambda-call (client cst lexical-environment))
 
-(defgeneric convert-code (client lambda-list body-cst lexical-environment &key block-name-cst))
+(defgeneric convert-code
+    (client lambda-list body-cst lexical-environment &key block-name-cst))
 
 (defgeneric convert-variable (client cst lexical-environment))
 
@@ -31,7 +32,8 @@
 
 (defgeneric convert-function-reference (client cst info lexical-environment))
 
-(defgeneric convert-called-function-reference (client cst info lexical-environment))
+(defgeneric convert-called-function-reference
+    (client cst info lexical-environment))
 
 (defgeneric items-from-parameter-group (parameter-group))
 

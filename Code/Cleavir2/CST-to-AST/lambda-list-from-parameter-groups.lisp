@@ -15,39 +15,31 @@
 (defgeneric entries-from-parameter-group (parameter-group))
 
 (defmethod entries-from-parameter-group
-    ((parameter-group cst:multi-parameter-group-mixin)
-    )
+    ((parameter-group cst:multi-parameter-group-mixin))
   (loop for parameter in (cst:parameters parameter-group)
         collect (entry-from-parameter parameter)))
 
 (defmethod entries-from-parameter-group
-    ((parameter-group cst:ordinary-rest-parameter-group)
-    )
+    ((parameter-group cst:ordinary-rest-parameter-group))
   (list (entry-from-parameter (cst:parameter parameter-group))))
 
 (defmethod entries-from-parameter-group
-    ((parameter-group cst:aux-parameter-group)
-    )
+    ((parameter-group cst:aux-parameter-group))
   ;; Don't need any.
   nil)
 
 (defgeneric entry-from-parameter (parameter))
 
-(defmethod entry-from-parameter ((parameter cst:simple-variable)
-                                )
+(defmethod entry-from-parameter ((parameter cst:simple-variable))
   (var-to-lexical (cst:name parameter)))
 
-(defmethod entry-from-parameter ((parameter cst:ordinary-optional-parameter)
-                                )
+(defmethod entry-from-parameter ((parameter cst:ordinary-optional-parameter))
   (init-var-to-lexicals (cst:name parameter)
-                        (cst:supplied-p parameter)
-                       ))
+                        (cst:supplied-p parameter)))
 
-(defmethod entry-from-parameter ((parameter cst:ordinary-key-parameter)
-                                )
+(defmethod entry-from-parameter ((parameter cst:ordinary-key-parameter))
   (init-var-to-lexicals (cst:name parameter)
-                        (cst:supplied-p parameter)
-                       ))
+                        (cst:supplied-p parameter)))
 
 (defgeneric lambda-list-from-parameter-group (parameter-group entries))
 

@@ -282,6 +282,5 @@
         until (cst:null remaining)
         do (let ((definition-cst (cst:first remaining)))
              (setf result
-                   (augment-environment-from-fdef result
-                                                  definition-cst)))
+                   (augment-environment-from-fdef result definition-cst)))
         finally (return result)))

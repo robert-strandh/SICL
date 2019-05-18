@@ -1,9 +1,7 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-special :around (client
-                                    operator
-                                    cst
-                                    lexical-environment)
+(defmethod convert-special :around
+    (client operator cst lexical-environment)
   (declare (ignore client))
   (when (and *compile-time-too*
              *current-form-is-top-level-p*
@@ -22,10 +20,8 @@
 ;;;
 ;;; Converting QUOTE.
 
-(defmethod convert-special (client
-                            (symbol (eql 'quote))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'quote)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db s (quote-cst const-cst) cst
@@ -38,10 +34,8 @@
 ;;;
 ;;; Converting BLOCK.
 
-(defmethod convert-special (client
-                            (symbol (eql 'block))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'block)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (block name-cst . body-cst) cst
@@ -64,10 +58,8 @@
 ;;;
 ;;; Converting RETURN-FROM.
 
-(defmethod convert-special (client
-                            (symbol (eql 'return-from))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'return-from)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (return-from-cst block-name-cst . rest-csts) cst
@@ -136,10 +128,8 @@
 
 (defparameter *use-file-compilation-sematics-p* nil)
 
-(defmethod convert-special (client
-                            (symbol (eql 'eval-when))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'eval-when)) cst lexical-environment)
   (check-eval-when-syntax cst)
   (with-preserved-toplevel-ness
     (cst:db s (eval-when-cst situations-cst . body-cst) cst
@@ -292,10 +282,8 @@
                   :value-ast fun-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
-(defmethod convert-special (client
-                            (symbol (eql 'flet))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'flet)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
@@ -329,10 +317,8 @@
 ;;;
 ;;; Converting LABELS.
 
-(defmethod convert-special (client
-                            (symbol (eql 'labels))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'labels)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
@@ -376,10 +362,8 @@
     (or (symbolp raw)
         (integerp raw))))
 
-(defmethod convert-special (client
-                            (symbol (eql 'tagbody))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'tagbody)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (tagbody-cst . body-cst) cst
     (declare (ignore tagbody-cst))
@@ -414,10 +398,8 @@
 ;;;
 ;;; Converting GO.
 
-(defmethod convert-special (client
-                            (symbol (eql 'go))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'go)) cst lexical-environment)
   (declare (ignore client))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
@@ -431,10 +413,8 @@
 ;;;
 ;;; Converting IF.
 
-(defmethod convert-special (client
-                            (symbol (eql 'if))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'if)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
@@ -472,10 +452,8 @@
 ;;;
 ;;; Converting LOAD-TIME-VALUE.
 
-(defmethod convert-special (client
-                            (symbol (eql 'load-time-value))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'load-time-value)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
@@ -503,10 +481,8 @@
 ;;; According to section 3.2.3.1 of the HyperSpec, PROGN processes
 ;;; its subforms the same way as the form itself.
 
-(defmethod convert-special (client
-                            (symbol (eql 'progn))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'progn)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
@@ -536,10 +512,8 @@
                         (cleavir-env:compile-time lexical-environment)
                         lexical-environment))))
 
-(defmethod convert-special (client
-                            (symbol (eql 'macrolet))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'macrolet)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (macrolet-cst definitions-cst . body-cst) cst
@@ -569,10 +543,8 @@
 ;;;
 ;;; Converting SYMBOL-MACROLET.
 
-(defmethod convert-special (client
-                            (head (eql 'symbol-macrolet))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (head (eql 'symbol-macrolet)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (symbol-macrolet-cst definitions-cst . body-cst) cst
@@ -636,10 +608,8 @@
                   :expr (cst:raw function-name-cst)
                   :origin (cst:source function-name-cst))))))
 
-(defmethod convert-special (client
-                            (symbol (eql 'function))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'function)) cst lexical-environment)
   (check-function-syntax cst)
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
@@ -731,10 +701,8 @@
   (multiple-value-call #'fudge-values-type
     (parse-values-type values-type)))
 
-(defmethod convert-special (client
-                            (symbol (eql 'the))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'the)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (cst:db origin (the-cst value-type-cst form-cst) cst
@@ -752,10 +720,8 @@
 ;;;
 ;;; Converting MULTIPLE-VALUE-PROG1.
 
-(defmethod convert-special (client
-                            (symbol (eql 'multiple-value-prog1))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'multiple-value-prog1)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
@@ -775,19 +741,15 @@
 
 ;;; Implementations should probably convert this in terms of
 ;;; CLEAVIR-PRIMOP:MULTIPLE-VALUE-CALL.
-(defmethod convert-special (client
-                            (symbol (eql 'multiple-value-call))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'multiple-value-call)) cst lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
-(defmethod convert-special (client
-                            (symbol (eql 'unwind-protect))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'unwind-protect)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (unwind-protect-cst protected-form-cst . cleanup-form-csts) cst
@@ -804,28 +766,22 @@
                             cleanup-thunk-cst
                             lexical-environment)))))
 
-(defmethod convert-special (client
-                            (symbol (eql 'catch))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'catch)) cst lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (error 'no-default-method :operator symbol :expr cst))
 
-(defmethod convert-special (client
-                            (symbol (eql 'throw))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'throw)) cst lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (error 'no-default-method :operator symbol :expr cst))
 
-(defmethod convert-special (client
-                            (symbol (eql 'progv))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'progv)) cst lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 nil)
@@ -836,10 +792,8 @@
 ;;; Converting SETQ.
 ;;;
 
-(defmethod convert-special (client
-                            (symbol (eql 'setq))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'setq)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (unless (oddp (length (cst:raw cst)))
     (error 'setq-must-have-even-number-of-arguments
@@ -864,10 +818,8 @@
 ;;; Converting LET.
 ;;;
 
-(defmethod convert-special (client
-                            (symbol (eql 'let))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'let)) cst lexical-environment)
   (convert-let client cst lexical-environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -875,10 +827,8 @@
 ;;; Converting LET*.
 ;;;
 
-(defmethod convert-special (client
-                            (symbol (eql 'let*))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'let*)) cst lexical-environment)
   (convert-let* client cst lexical-environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -886,10 +836,8 @@
 ;;; Converting LOCALLY.
 ;;;
 
-(defmethod convert-special (client
-                            (symbol (eql 'locally))
-                            cst
-                            lexical-environment)
+(defmethod convert-special
+    (client (symbol (eql 'locally)) cst lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (locally-cst . body-forms-cst) cst
     (declare (ignore locally-cst))

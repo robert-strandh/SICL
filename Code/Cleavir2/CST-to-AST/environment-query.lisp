@@ -34,4 +34,3 @@
 				(list (read *query-io*)))
 		 (setq result (cleavir-env:tag-info lexical-environment new-tag-name)))))
     result))
-

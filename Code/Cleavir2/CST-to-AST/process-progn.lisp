@@ -7,8 +7,7 @@
 
 (defun process-progn (asts)
   (cond ((null asts)
-         (make-instance 'cleavir-ast:constant-ast
-           :value nil))
+         (make-instance 'cleavir-ast:constant-ast :value nil))
         ((null (rest asts))
          (first asts))
         (t ;; Do some PROGN compression.
