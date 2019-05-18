@@ -84,9 +84,11 @@
   ;; two inlining passes around closure conversion to save some
   ;; recomputation time.
   (let* ((*function-dag* (cleavir-hir-transformations:build-function-dag initial-instruction))
+         (function-dag *function-dag*)
          (*destinies-map* (cleavir-hir-transformations:compute-destinies initial-instruction))
+         (destinies-map *destinies-map*)
          (*instruction-ownerships* (cleavir-hir-transformations:compute-instruction-owners initial-instruction))
-         (inline (one-potential-inline *function-dag* *destinies-map* closure-converted-p)))
+         (inline (one-potential-inline function-dag destinies-map closure-converted-p)))
     ;; This code is structured as a do-while loop so that we can avoid
     ;; unnecessary graph traversals if there is nothing to do.
     (when (null inline)
@@ -94,14 +96,13 @@
     ;; Need to remove all useless instructions first for incremental
     ;; r-u-i to catch everything.
     (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)
-    (loop (when (null inline)
-            (return))
-          (let ((*location-ownerships* (cleavir-hir-transformations:compute-location-owners initial-instruction))
-                (*destinies-worklist* '()))
+    (let ((*location-ownerships* (cleavir-hir-transformations:compute-location-owners initial-instruction))
+          (*destinies-worklist* '()))
+      (loop (when (null inline)
+              (return))
             (destructuring-bind (enter call node enclose-unique-p enter-unique-p) inline
               ;; Find all instructions that could potentially be deleted after inlining.
-              (let ((function-defs (cleavir-ir:defining-instructions (first (cleavir-ir:inputs call))))
-                    (destinies-map *destinies-map*))
+              (let ((function-defs (cleavir-ir:defining-instructions (first (cleavir-ir:inputs call)))))
                 (if (and enclose-unique-p enter-unique-p)
                     (interpolate-function call enter node)
                     (inline-function initial-instruction call enter node (make-hash-table :test #'eq)))
@@ -110,13 +111,13 @@
                   (typecase deleted
                     (cleavir-ir:enclose-instruction
                      (cleavir-hir-transformations:remove-enclose-from-function-dag
-                      *function-dag*
+                      function-dag
                       deleted
                       (and enclose-unique-p enter-unique-p)))))
                 ;; The call is gone, so it is no longer a destiny.
                 (update-destinies-map (cons (cleavir-hir-transformations:enclose-instruction node)
                                             *destinies-worklist*)
                                       destinies-map)
-                (setf *destinies-worklist* nil))))
-          (setf inline (one-potential-inline *function-dag* *destinies-map* closure-converted-p))))
+                (setf *destinies-worklist* nil)))
+            (setf inline (one-potential-inline function-dag destinies-map closure-converted-p)))))
   (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction))
