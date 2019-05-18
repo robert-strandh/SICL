@@ -13,7 +13,7 @@
 ;;; are boxed or not (if not, an additional BOX-INSTRUCTION will
 ;;; be added at the output)
 
-(defclass aref-ast (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
+(defclass aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%element-type :initarg :element-type :reader element-type)
@@ -45,7 +45,7 @@
 ;;; the values in the array are boxed or not (if not an additional
 ;;; UNBOX-INSTRUCTION will be added at the input)
 
-(defclass aset-ast (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
+(defclass aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%element-ast :initarg :element-ast :reader element-ast)

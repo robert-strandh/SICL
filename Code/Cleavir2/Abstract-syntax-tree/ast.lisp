@@ -44,28 +44,6 @@
 ;;; effect.
 (defclass side-effect-free-ast-mixin () ())
 
-;;; This class is used as a superclass for ASTs that output a dynamic
-;;; environment.
-(defclass dynamic-environment-output-ast-mixin ()
-  ((%dynamic-environment-output-ast
-    :initarg :dynamic-environment-output-ast
-    :accessor dynamic-environment-output-ast)))
-
-;;; FIXME: It would be nice if this could have a method
-;;; for CHILDREN as well.
-(cleavir-io:define-save-info dynamic-environment-output-ast-mixin
-  (:dynamic-environment-output-ast dynamic-environment-output-ast))
-
-;;; This class is used as a superclass for ASTs that input a dynamic
-;;; environment.
-(defclass dynamic-environment-input-ast-mixin ()
-  ((%dynamic-environment-input-ast
-    :initarg :dynamic-environment-input-ast
-    :accessor dynamic-environment-input-ast)))
-
-(cleavir-io:define-save-info dynamic-environment-input-ast-mixin
-  (:dynamic-environment-input-ast dynamic-environment-input-ast))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Predicate to test whether an AST is side-effect free.

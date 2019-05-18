@@ -11,10 +11,6 @@
    #:one-value-ast-mixin
    #:side-effect-free-ast-mixin
    #:side-effect-free-p
-   #:dynamic-environment-input-ast-mixin
-   #:dynamic-environment-output-ast-mixin
-   #:dynamic-environment-input-ast
-   #:dynamic-environment-output-ast
    #:constant-ast #:value
    #:lexical-ast
    #:symbol-value-ast

@@ -45,7 +45,7 @@
 ;;; compile time.
 
 (defclass constant-ast (ast
-                        dynamic-environment-input-ast-mixin
+                       
                         one-value-ast-mixin
                         side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
@@ -66,7 +66,7 @@
 ;;; for debugging purposes and for the purpose of error reporting.
 
 (defclass lexical-ast (ast
-                       dynamic-environment-input-ast-mixin
+                      
                        one-value-ast-mixin
                        side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
@@ -85,7 +85,7 @@
 ;;; This AST is generated from a reference to a special variable.
 
 (defclass symbol-value-ast
-    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin side-effect-free-ast-mixin)
+    (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name-ast :initarg :name-ast :reader name-ast)))
 
 (cleavir-io:define-save-info symbol-value-ast
@@ -99,7 +99,7 @@
 ;;; Class SET-SYMBOL-VALUE-AST.
 
 (defclass set-symbol-value-ast
-    (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
+    (ast no-value-ast-mixin)
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -117,7 +117,7 @@
 ;;; This AST is generated from a reference to a global function.
 
 (defclass fdefinition-ast
-    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin side-effect-free-ast-mixin)
+    (ast one-value-ast-mixin side-effect-free-ast-mixin)
   (;; This slot contains an AST that produces the function name.
    (%name-ast :initarg :name-ast :reader name-ast)))
 
@@ -132,7 +132,7 @@
 ;;; Class SET-FDEFINITION-AST.
 
 (defclass set-fdefinition-ast
-    (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
+    (ast no-value-ast-mixin)
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -149,7 +149,7 @@
 ;;;
 ;;; A CALL-AST represents a function call.  
 
-(defclass call-ast (ast dynamic-environment-input-ast-mixin)
+(defclass call-ast (ast)
   ((%callee-ast :initarg :callee-ast :reader callee-ast)
    (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
@@ -203,10 +203,10 @@
 ;;; correctly (conceptually, they all have the value FALSE then).
 
 (defclass function-ast (ast
-                        dynamic-environment-input-ast-mixin
+                       
                         one-value-ast-mixin
                         side-effect-free-ast-mixin
-                        dynamic-environment-output-ast-mixin)
+                       )
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
@@ -216,7 +216,6 @@
 
 (defmethod children ((ast function-ast))
   (list* (body-ast ast)
-         (dynamic-environment-output-ast ast)
          (loop for entry in (lambda-list ast)
                append (cond ((symbolp entry)
                              '())
@@ -241,7 +240,7 @@
 ;;; evaluate the original AST, the transformed AST must be called with
 ;;; the values of those forms as arguments.
 
-(defclass top-level-function-ast (function-ast dynamic-environment-input-ast-mixin)
+(defclass top-level-function-ast (function-ast)
   ((%forms :initarg :forms :reader forms)))
 
 (cleavir-io:define-save-info top-level-function-ast
@@ -265,8 +264,8 @@
 ;;; Class BLOCK-AST.
 
 (defclass block-ast (ast
-                     dynamic-environment-input-ast-mixin
-                     dynamic-environment-output-ast-mixin)
+                    
+                    )
   ;; FIXME: make this read-only and use REINITIALIZE-INSTANCE insteac.
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
@@ -274,13 +273,13 @@
   (:body-ast body-ast))
 
 (defmethod children ((ast block-ast))
-  (list (dynamic-environment-output-ast ast) (body-ast ast)))
+  (list (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class RETURN-FROM-AST.
 
-(defclass return-from-ast (ast dynamic-environment-input-ast-mixin)
+(defclass return-from-ast (ast)
   ((%block-ast :initarg :block-ast :reader block-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
@@ -298,7 +297,7 @@
 ;;; This AST does not correspond exactly to the SETQ special operator,
 ;;; because the AST does not return a value.
 
-(defclass setq-ast (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
+(defclass setq-ast (ast no-value-ast-mixin)
   ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -327,7 +326,7 @@
 ;;; context where no value is required.
 
 (defclass multiple-value-setq-ast
-    (ast no-value-ast-mixin dynamic-environment-input-ast-mixin)
+    (ast no-value-ast-mixin)
   ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
@@ -359,15 +358,15 @@
 (defclass tagbody-ast
     (ast
      no-value-ast-mixin
-     dynamic-environment-input-ast-mixin
-     dynamic-environment-output-ast-mixin)
+    
+    )
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
 (cleavir-io:define-save-info tagbody-ast
   (:item-asts item-asts))
 
 (defmethod children ((ast tagbody-ast))
-  (list* (dynamic-environment-output-ast ast) (item-asts ast)))
+  (item-asts ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -395,7 +394,7 @@
 ;;; it is desirable to signal an error when there is a violation of
 ;;; the declared type, the TYPEQ-AST should be used instead.
 
-(defclass the-ast (ast dynamic-environment-input-ast-mixin)
+(defclass the-ast (ast)
   ((%form-ast :initarg :form-ast :reader form-ast)
    (%required-types :initarg :required :reader required-types)
    (%optional-types :initarg :optional :reader optional-types)
@@ -448,7 +447,7 @@
 ;;; TYPE-SPECIFIER-AST slot with NIL and we compute the real value of
 ;;; it only when it is requested.
 
-(defclass typeq-ast (ast boolean-ast-mixin dynamic-environment-input-ast-mixin)
+(defclass typeq-ast (ast boolean-ast-mixin)
   (;; This slot contains the type specifier as an S-expression.  When
    ;; this AST is compiled to HIR, the contents of this slot will be
    ;; transmitted to the TYPEQ-INSTRUCTION so that it can be used by
@@ -466,8 +465,6 @@
 
 ;; (defmethod type-specifier-ast :around ((ast typeq-ast))
 ;;   (let ((value (call-next-method)))
-;;         (*dynamic-environment*
-;;           (dynamic-environment ast)))
 ;;     (when (null value)
 ;;       (setq value
 ;;             (make-instance 'load-time-value-ast
@@ -497,7 +494,7 @@
 ;;; know at AST creation time whether it is true or false. 
 
 (defclass load-time-value-ast
-    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
+    (ast one-value-ast-mixin)
   ((%form-ast :initarg :form-ast :reader form-ast)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
@@ -518,7 +515,7 @@
 ;;; produces as many values as the AST in the THEN-AST or ELSE-AST
 ;;; produces, according to the value of the TEST AST.
 
-(defclass if-ast (ast dynamic-environment-input-ast-mixin)
+(defclass if-ast (ast)
   ((%test-ast :initarg :test-ast :reader test-ast)
    (%then-ast :initarg :then-ast :reader then-ast)
    (%else-ast :initarg :else-ast :reader else-ast)))
@@ -535,7 +532,7 @@
 ;;;
 ;;; Class MULTIPLE-VALUE-CALL-AST.
 
-(defclass multiple-value-call-ast (ast dynamic-environment-input-ast-mixin)
+(defclass multiple-value-call-ast (ast)
   ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
    (%form-asts :initarg :form-asts :reader form-asts)))
 
@@ -553,7 +550,7 @@
 ;;; This corresponds directly to CLEAVIR-PRIMOP:VALUES,
 ;;; and CL:VALUES through it.
 
-(defclass values-ast (ast dynamic-environment-input-ast-mixin)
+(defclass values-ast (ast)
   ((%argument-asts :initarg :argument-asts :reader argument-asts)))
 
 (cleavir-io:define-save-info values-ast
@@ -592,7 +589,7 @@
 ;;; does not allow escape from the form with the declaration.
 
 (defclass dynamic-allocation-ast
-    (ast dynamic-environment-input-ast-mixin one-value-ast-mixin)
+    (ast one-value-ast-mixin)
   ((%form-ast :initarg :form-ast :reader form-ast)))
 
 (cleavir-io:define-save-info dynamic-allocation-ast
@@ -623,8 +620,8 @@
 ;;; lambda list of a function.
 
 (defclass bind-ast (ast
-                    dynamic-environment-input-ast-mixin
-                    dynamic-environment-output-ast-mixin)
+                   
+                   )
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)
    (%body-ast :initarg :body-ast :reader body-ast)))
@@ -647,8 +644,8 @@
 ;;; that those forms are executed as part of a thunk.
 
 (defclass unwind-protect-ast (ast
-                              dynamic-environment-input-ast-mixin
-                              dynamic-environment-output-ast-mixin)
+                             
+                             )
   ((%protected-form-ast :initarg :protected-form-ast :reader protected-form-ast)
    (%cleanup-thunk-ast :initarg :cleanup-thunk-ast :reader cleanup-thunk-ast)))
 
@@ -667,7 +664,7 @@
 ;;; It has two children.  This AST can only appear in the TEST
 ;;; position of an IF-AST.
 
-(defclass eq-ast (ast boolean-ast-mixin dynamic-environment-input-ast-mixin)
+(defclass eq-ast (ast boolean-ast-mixin)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
