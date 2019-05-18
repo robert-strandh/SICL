@@ -68,7 +68,7 @@
 
 (defun test-rplaca (client)
   (let ((environment (make-environment))
-        (form '(let ((l (list 1))) (cleavir-primop:rplaca l 2) '(2))))
+        (form '(let ((l (list 1))) (cleavir-primop:rplaca l 2) l)))
     (setf (sicl-genv:fdefinition 'list environment) #'list)
     (setf (sicl-genv:special-operator 'cleavir-primop:rplaca environment) t)
     (assert (equal (eval client form environment) '(2)))))
