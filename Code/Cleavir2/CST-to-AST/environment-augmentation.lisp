@@ -204,8 +204,7 @@
 (defun augment-environment-with-variable (variable-cst
                                           declarations
                                           lexical-environment
-                                          orig-env
-                                          dynamic-environment-ast)
+                                          orig-env)
   (let ((new-env lexical-environment)
         (raw-variable (cst:raw variable-cst))
         (raw-declarations (mapcar #'cst:raw declarations)))
@@ -216,8 +215,7 @@
             (setf new-env
                   (cleavir-env:add-special-variable new-env raw-variable)))
           (let ((var-ast (make-instance 'cleavir-ast:lexical-ast
-                           :name raw-variable
-                           :dynamic-environment-input-ast dynamic-environment-ast)))
+                           :name raw-variable)))
             (setf new-env
                   (cleavir-env:add-lexical-variable
                    new-env raw-variable var-ast)))))
@@ -245,28 +243,22 @@
 (defun augment-environment-with-parameter (var-cst
                                            supplied-p-cst
                                            dspecs
-                                           lexical-environment
-                                           dynamic-environment-ast)
+                                           lexical-environment)
   (let ((new-env (augment-environment-with-variable var-cst
                                                     dspecs
                                                     lexical-environment
-                                                    lexical-environment
-                                                    dynamic-environment-ast)))
+                                                    lexical-environment)))
     (if (null supplied-p-cst)
         new-env
         (augment-environment-with-variable supplied-p-cst
                                            dspecs
                                            new-env
-                                           new-env
-                                           dynamic-environment-ast))))
+                                           new-env))))
 
 (defun augment-environment-with-local-function-name (name-cst
-                                                     lexical-environment
-                                                     dynamic-environment-ast)
+                                                     lexical-environment)
   (let* ((name (cst:raw name-cst))
-         (var-ast (make-instance 'cleavir-ast:lexical-ast
-                    :name name
-                    :dynamic-environment-input-ast dynamic-environment-ast)))
+         (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
     (cleavir-env:add-local-function lexical-environment name var-ast)))
 
 ;;; Take an environment and a CST representing a single local function
@@ -274,26 +266,22 @@
 ;;; as an argument, except the it has been augmented by the name of
 ;;; the local function.
 (defun augment-environment-from-fdef (lexical-environment
-                                      definition-cst
-                                      dynamic-environment-ast)
+                                      definition-cst)
   (let ((name-cst (cst:first definition-cst)))
     (augment-environment-with-local-function-name name-cst
-                                                  lexical-environment
-                                                  dynamic-environment-ast)))
+                                                  lexical-environment)))
 
 ;;; Take an environment, a CST representing a list of function
 ;;; definitions, and return a new environment which is like the one
 ;;; passed as an argument, except that is has been augmented by the
 ;;; local function names in the list.
 (defun augment-environment-from-fdefs (lexical-environment
-                                       definitions-cst
-                                       dynamic-environment-ast)
+                                       definitions-cst)
   (loop with result = lexical-environment
         for remaining = definitions-cst then (cst:rest remaining)
         until (cst:null remaining)
         do (let ((definition-cst (cst:first remaining)))
              (setf result
                    (augment-environment-from-fdef result
-                                                  definition-cst
-                                                  dynamic-environment-ast)))
+                                                  definition-cst)))
         finally (return result)))

@@ -12,26 +12,20 @@
                                 var-ast
                                 supplied-p-ast
                                 value-ast
-                                lexical-environment
-                                dynamic-environment-ast)
+                                lexical-environment)
   (let ((nil-cst (cst:cst-from-expression nil)))
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
                 :arg2-ast (convert-constant client
                            nil-cst
-                           lexical-environment
-                           dynamic-environment-ast)
-                :dynamic-environment-input-ast dynamic-environment-ast)
+                           lexical-environment))
      :then-ast (make-instance 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
-                 :value-ast value-ast
-                 :dynamic-environment-input-ast dynamic-environment-ast)
+                 :value-ast value-ast)
      :else-ast (convert-constant client
                 nil-cst
-                lexical-environment
-                dynamic-environment-ast)
-     :dynamic-environment-input-ast dynamic-environment-ast)))
+                lexical-environment))))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated
@@ -60,28 +54,23 @@
                                supplied-p-ast
                                init-ast
                                lexical-environment
-                               dynamic-environment-ast
                                body-function)
   (process-progn
    (list (make-initialization-ast client
                                   var-ast
                                   supplied-p-ast
                                   init-ast
-                                  lexical-environment
-                                  dynamic-environment-ast)
+                                  lexical-environment)
          (set-or-bind-variable
           client
           var-cst var-ast
           (if (null supplied-p-cst)
               body-function
-              (lambda (new-dynamic-environment-ast)
+              (lambda ()
                 (set-or-bind-variable
                  client
                  supplied-p-cst supplied-p-ast
-                 (lambda (inner-dynamic-environment-ast)
-                   (funcall body-function inner-dynamic-environment-ast))
-                 lexical-environment
-                 new-dynamic-environment-ast)))
-          lexical-environment
-          dynamic-environment-ast))
-   dynamic-environment-ast))
+                 (lambda ()
+                   (funcall body-function))
+                 lexical-environment)))
+          lexical-environment))))

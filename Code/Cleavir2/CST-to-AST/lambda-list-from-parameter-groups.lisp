@@ -1,54 +1,53 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defun var-to-lexical (var-cst dynamic-environment-ast)
+(defun var-to-lexical (var-cst)
   (let* ((raw (cst:raw var-cst))
          (name (make-symbol (string-downcase raw))))
     (make-instance 'cleavir-ast:lexical-ast
-      :name name
-      :dynamic-environment-input-ast dynamic-environment-ast)))
+      :name name)))
 
-(defun init-var-to-lexicals (var-cst supplied-p-cst dynamic-environment-ast)
-  (list (var-to-lexical var-cst dynamic-environment-ast)
+(defun init-var-to-lexicals (var-cst supplied-p-cst)
+  (list (var-to-lexical var-cst)
         (if (null supplied-p-cst)
             (make-instance 'cleavir-ast:lexical-ast :name (gensym))
-            (var-to-lexical supplied-p-cst dynamic-environment-ast))))
+            (var-to-lexical supplied-p-cst))))
 
-(defgeneric entries-from-parameter-group (parameter-group dynamic-environment-ast))
+(defgeneric entries-from-parameter-group (parameter-group))
 
 (defmethod entries-from-parameter-group
     ((parameter-group cst:multi-parameter-group-mixin)
-     dynamic-environment-ast)
+    )
   (loop for parameter in (cst:parameters parameter-group)
-        collect (entry-from-parameter parameter dynamic-environment-ast)))
+        collect (entry-from-parameter parameter)))
 
 (defmethod entries-from-parameter-group
     ((parameter-group cst:ordinary-rest-parameter-group)
-     dynamic-environment-ast)
-  (list (entry-from-parameter (cst:parameter parameter-group) dynamic-environment-ast)))
+    )
+  (list (entry-from-parameter (cst:parameter parameter-group))))
 
 (defmethod entries-from-parameter-group
     ((parameter-group cst:aux-parameter-group)
-     dynamic-environment-ast)
+    )
   ;; Don't need any.
   nil)
 
-(defgeneric entry-from-parameter (parameter dynamic-environment-ast))
+(defgeneric entry-from-parameter (parameter))
 
 (defmethod entry-from-parameter ((parameter cst:simple-variable)
-                                 dynamic-environment-ast)
-  (var-to-lexical (cst:name parameter) dynamic-environment-ast))
+                                )
+  (var-to-lexical (cst:name parameter)))
 
 (defmethod entry-from-parameter ((parameter cst:ordinary-optional-parameter)
-                                 dynamic-environment-ast)
+                                )
   (init-var-to-lexicals (cst:name parameter)
                         (cst:supplied-p parameter)
-                        dynamic-environment-ast))
+                       ))
 
 (defmethod entry-from-parameter ((parameter cst:ordinary-key-parameter)
-                                 dynamic-environment-ast)
+                                )
   (init-var-to-lexicals (cst:name parameter)
                         (cst:supplied-p parameter)
-                        dynamic-environment-ast))
+                       ))
 
 (defgeneric lambda-list-from-parameter-group (parameter-group entries))
 
@@ -87,9 +86,9 @@
 
 ;;; Given a list of parameter groups, return a lambda list suitable
 ;;; for the FUNCTION-AST, as well as a list of lists of lexical variables.
-(defun lambda-list-from-parameter-groups (parameter-groups dynamic-environment-ast)
+(defun lambda-list-from-parameter-groups (parameter-groups)
   (loop for group in parameter-groups
-        for entries = (entries-from-parameter-group group dynamic-environment-ast)
+        for entries = (entries-from-parameter-group group)
         for lambda-list-part = (lambda-list-from-parameter-group group entries)
         appending lambda-list-part into lambda-list
         collecting entries into components

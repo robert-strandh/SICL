@@ -4,11 +4,9 @@
 ;;; as a chain of CONS-CSTs terminated by a NULL-CST.
 (defun convert-sequence (client
                          sequence-cst
-                         lexical-environment
-                         dynamic-environment-ast)
+                         lexical-environment)
   (loop for cst = sequence-cst then (cst:rest cst)
         until (cst:null cst)
 	collect (convert client
                          (cst:first cst)
-                         lexical-environment
-                         dynamic-environment-ast)))
+                         lexical-environment)))

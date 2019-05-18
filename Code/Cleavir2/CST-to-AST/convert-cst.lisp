@@ -13,8 +13,7 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:symbol-macro-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (let* ((form (cst:raw cst))
          (expansion (cleavir-env:expansion info))
          (expanded-form (call-macroexpander (constantly expansion)
@@ -24,8 +23,7 @@
     (with-preserved-toplevel-ness
       (convert client
                expanded-cst
-               lexical-environment
-               dynamic-environment-ast))))
+               lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -34,10 +32,9 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:constant-variable-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (let ((cst (cst:cst-from-expression (cleavir-env:value info))))
-    (convert-constant client cst lexical-environment dynamic-environment-ast)))
+    (convert-constant client cst lexical-environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -46,13 +43,11 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:special-operator-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (convert-special client
                    (car (cst:raw cst))
                    cst
-                   lexical-environment
-                   dynamic-environment-ast))
+                   lexical-environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -69,8 +64,7 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:local-macro-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (let* ((form (cst:raw cst))
          (expanded-form (call-macroexpander (cleavir-env:expander info)
                                             form
@@ -79,8 +73,7 @@
     (with-preserved-toplevel-ness
       (convert client
                expanded-cst
-               lexical-environment
-               dynamic-environment-ast))))
+               lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -90,8 +83,7 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:global-macro-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (let ((compiler-macro (cleavir-env:compiler-macro info))
         (form (cst:raw cst)))
     (with-preserved-toplevel-ness
@@ -105,8 +97,7 @@
 
             (convert client
                      expanded-cst
-                     lexical-environment
-                     dynamic-environment-ast))
+                     lexical-environment))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
           (let ((expanded-form (call-macroexpander compiler-macro
@@ -124,8 +115,7 @@
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
                   (convert client
                            expanded-cst
-                           lexical-environment
-                           dynamic-environment-ast))
+                           lexical-environment))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
@@ -133,8 +123,7 @@
                 (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
                   (convert client
                            expanded-cst
-                           lexical-environment
-                           dynamic-environment-ast))))))))
+                           lexical-environment))))))))
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
@@ -144,22 +133,18 @@
                   cst
                   info
                   lexical-environment
-                  dynamic-environment-ast
                   arguments-cst)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference client
                                                           name-cst
                                                           info
-                                                          lexical-environment
-                                                          dynamic-environment-ast))
+                                                          lexical-environment))
          (argument-asts (convert-sequence client
                                           arguments-cst
-                                          lexical-environment
-                                          dynamic-environment-ast)))
+                                          lexical-environment)))
     (make-instance 'cleavir-ast:call-ast
      :callee-ast function-ast
-     :argument-asts argument-asts
-     :dynamic-environment-input-ast dynamic-environment-ast)))
+     :argument-asts argument-asts)))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire
@@ -168,8 +153,7 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:global-function-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   ;; When we compile a call to a global function, it is possible that
   ;; we are in COMPILE-TIME-TOO mode.  In that case, we must first
   ;; evaluate the form.
@@ -183,8 +167,7 @@
         (make-call client
                    cst
                    info
-                   lexical-environment
-                   dynamic-environment-ast (cst:rest cst))
+                   lexical-environment (cst:rest cst))
         ;; There is a compiler macro.  We must see whether it will
         ;; accept or decline.
         (let ((expanded-form (call-macroexpander compiler-macro
@@ -199,7 +182,6 @@
                          cst
                          info
                          lexical-environment
-                         dynamic-environment-ast
                          (cst:rest cst))
               ;; If the two are not EQ, this means that the compiler
               ;; macro replaced the original form with a new form.
@@ -207,8 +189,7 @@
               (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
                 (convert client
                          expanded-cst
-                         lexical-environment
-                         dynamic-environment-ast)))))))
+                         lexical-environment)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -219,13 +200,11 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:local-function-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (make-call client
              cst
              info
              lexical-environment
-             dynamic-environment-ast
              (cst:rest cst)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -236,27 +215,22 @@
 (defmethod convert-special-variable (client
                                      cst
                                      info
-                                     global-env
-                                     dynamic-environment-ast)
+                                     global-env)
   (declare (ignore global-env))
   (let ((name-ast (make-instance 'cleavir-ast:constant-ast
-                    :dynamic-environment-input-ast dynamic-environment-ast
                     :value (cleavir-env:name info))))
     (make-instance 'cleavir-ast:symbol-value-ast
-      :name-ast name-ast
-      :dynamic-environment-input-ast dynamic-environment-ast)))
+      :name-ast name-ast)))
 
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:special-variable-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (let ((global-env (cleavir-env:global-environment lexical-environment)))
     (convert-special-variable client
                               cst
                               info
-                              global-env
-                              dynamic-environment-ast)))
+                              global-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -265,8 +239,7 @@
 (defmethod convert-cst (client
                         cst
                         (info cleavir-env:lexical-variable-info)
-                        lexical-environment
-                        dynamic-environment-ast)
+                        lexical-environment)
   (declare (ignore client))
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn 'ignored-variable-referenced :expr (cst:raw cst)))

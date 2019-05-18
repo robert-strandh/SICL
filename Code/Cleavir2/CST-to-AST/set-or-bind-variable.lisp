@@ -18,16 +18,14 @@
                              variable-cst
                              value-ast
                              body-function
-                             lexical-environment
-                             dynamic-environment-ast)
+                             lexical-environment)
   (let ((info (cleavir-env:variable-info lexical-environment (cst:raw variable-cst))))
     (assert (not (null info)))
     (if (typep info 'cleavir-env:special-variable-info)
         (convert-special-binding
-         client variable-cst value-ast body-function lexical-environment dynamic-environment-ast)
+         client variable-cst value-ast body-function lexical-environment)
 	(make-instance 'cleavir-ast:progn-ast
 	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
                             :lhs-ast (cleavir-env:identity info)
-                            :value-ast value-ast
-                            :dynamic-environment-input-ast dynamic-environment-ast)
-                     (funcall body-function dynamic-environment-ast))))))
+                            :value-ast value-ast)
+                     (funcall body-function))))))

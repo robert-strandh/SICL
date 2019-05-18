@@ -3,8 +3,7 @@
 (defmethod convert-special :around (client
                                     operator
                                     cst
-                                    lexical-environment
-                                    dynamic-environment-ast)
+                                    lexical-environment)
   (declare (ignore client))
   (when (and *compile-time-too*
              *current-form-is-top-level-p*
@@ -26,16 +25,14 @@
 (defmethod convert-special (client
                             (symbol (eql 'quote))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db s (quote-cst const-cst) cst
     (declare (ignore quote-cst))
     (convert-constant client
                       const-cst
-                      lexical-environment
-                      dynamic-environment-ast)))
+                      lexical-environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -44,8 +41,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'block))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (block name-cst . body-cst) cst
@@ -55,21 +51,13 @@
         (error 'block-name-must-be-a-symbol
                :expr name
                :origin (cst:source name-cst)))
-      (let* ((new-dynamic-environment-ast
-               (make-instance 'cleavir-ast:lexical-ast
-                 :name '#:block-dynamic-environment
-                 :dynamic-environment-input-ast dynamic-environment-ast))
-             (ast (make-instance 'cleavir-ast:block-ast
-                    :dynamic-environment-input-ast dynamic-environment-ast
-                    :dynamic-environment-output-ast new-dynamic-environment-ast))
+      (let* ((ast (make-instance 'cleavir-ast:block-ast))
              (new-lexical-environment
                (cleavir-env:add-block lexical-environment name ast)))
         (setf (cleavir-ast:body-ast ast)
               (process-progn (convert-sequence client
                                                body-cst
-                                               new-lexical-environment
-                                               new-dynamic-environment-ast)
-                             new-dynamic-environment-ast))
+                                               new-lexical-environment)))
         ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -79,8 +67,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'return-from))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (return-from-cst block-name-cst . rest-csts) cst
@@ -115,15 +102,12 @@
                        (return-from convert-special
                          (convert client
                                   value-cst
-                                  lexical-environment
-                                  dynamic-environment-ast)))))
+                                  lexical-environment)))))
           (make-instance 'cleavir-ast:return-from-ast
            :block-ast (cleavir-env:identity info)
            :form-ast (convert client
                       value-cst
-                      lexical-environment
-                      dynamic-environment-ast)
-           :dynamic-environment-input-ast dynamic-environment-ast))))))
+                      lexical-environment)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -155,8 +139,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'eval-when))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-eval-when-syntax cst)
   (with-preserved-toplevel-ness
     (cst:db s (eval-when-cst situations-cst . body-cst) cst
@@ -169,13 +152,10 @@
                 (process-progn
                  (convert-sequence client
                                    body-cst
-                                   lexical-environment
-                                   dynamic-environment-ast)
-                 dynamic-environment-ast)
+                                   lexical-environment))
                 (convert client
                          (cst:cst-from-expression nil)
-                         lexical-environment
-                         dynamic-environment-ast))
+                         lexical-environment))
             (cond ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  Yes  ---  ---
@@ -196,9 +176,7 @@
                      (process-progn
                       (convert-sequence client
                                         body-cst
-                                        lexical-environment
-                                        dynamic-environment-ast)
-                      dynamic-environment-ast)))
+                                        lexical-environment))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; No   Yes  Yes  NCT
@@ -221,9 +199,7 @@
                      (process-progn
                       (convert-sequence client
                                         body-cst
-                                        lexical-environment
-                                        dynamic-environment-ast)
-                      dynamic-environment-ast)))
+                                        lexical-environment))))
                   ((or
                     ;; CT   LT   E    Mode
                     ;; Yes  No   ---  ---
@@ -244,13 +220,11 @@
                                      lexical-environment lexical-environment)
                    (convert client
                             (cst:cst-from-expression nil)
-                            lexical-environment
-                            dynamic-environment-ast))
+                            lexical-environment))
                   (t
                    (convert client
                             (cst:cst-from-expression nil)
-                            lexical-environment
-                             dynamic-environment-ast))))))))
+                            lexical-environment))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -274,8 +248,7 @@
 ;;; Convert a local function definition.
 (defun convert-local-function (client
                                definition-cst
-                               lexical-environment
-                               dynamic-environment-ast)
+                               lexical-environment)
   (check-cst-proper-list definition-cst
                          'local-function-definition-must-be-proper-list)
   (check-argument-count definition-cst 1 nil)
@@ -288,14 +261,12 @@
       (convert-code client lambda-list-cst
                     body-cst
                     lexical-environment
-                    dynamic-environment-ast
                     :block-name-cst block-name-cst))))
 
 ;;; Convert a CST representing a list of local function definitions.
 (defun convert-local-functions (client
                                 definitions-cst
-                                lexical-environment
-                                dynamic-environment-ast)
+                                lexical-environment)
   (check-cst-proper-list definitions-cst 'flet-functions-must-be-proper-list)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
@@ -306,8 +277,7 @@
                        (fun (convert-local-function
                              client
                              def-cst
-                             lexical-environment
-                             dynamic-environment-ast)))
+                             lexical-environment)))
                   (cons name fun))))
 
 ;;; Compute and return a list of SETQ-ASTs that will assign the AST of
@@ -315,20 +285,17 @@
 ;;; LEXICAL-AST.  FUNCTIONS is a list of CONS cells.  Each CONS cell
 ;;; has a function name in its CAR and an AST in its CDR.
 (defun compute-function-init-asts (functions
-                                   lexical-environment
-                                   dynamic-environment-ast)
+                                   lexical-environment)
   (loop for (name . fun-ast) in functions
         collect (make-instance 'cleavir-ast:setq-ast
                   :lhs-ast (function-lexical lexical-environment name)
-                  :value-ast fun-ast
-                  :dynamic-environment-input-ast dynamic-environment-ast)))
+                  :value-ast fun-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special (client
                             (symbol (eql 'flet))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
@@ -339,16 +306,13 @@
                (cst:canonicalize-declarations client declaration-csts))
              (defs (convert-local-functions client
                                             definitions-cst
-                                            lexical-environment
-                                            dynamic-environment-ast))
+                                            lexical-environment))
              (new-lexical-environment
                (augment-environment-from-fdefs lexical-environment
-                                               definitions-cst
-                                               dynamic-environment-ast))
+                                               definitions-cst))
              (init-asts
                (compute-function-init-asts defs
-                                           new-lexical-environment
-                                           dynamic-environment-ast))
+                                           new-lexical-environment))
              (final-lexical-environment
                (augment-environment-with-declarations
                 new-lexical-environment canonical-declaration-specifiers)))
@@ -359,10 +323,7 @@
                   (process-progn
                    (convert-sequence client
                                      forms-cst
-                                     final-lexical-environment
-                                     dynamic-environment-ast)
-                   dynamic-environment-ast)))
-         dynamic-environment-ast)))))
+                                     final-lexical-environment)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -371,8 +332,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'labels))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
@@ -383,14 +343,12 @@
                (cst:canonicalize-declarations client declaration-csts))
              (new-lexical-environment
                (augment-environment-from-fdefs lexical-environment
-                                               definitions-cst
-                                               dynamic-environment-ast))
+                                               definitions-cst))
              (defs (convert-local-functions client
                                             definitions-cst
-                                            new-lexical-environment
-                                            dynamic-environment-ast))
+                                            new-lexical-environment))
              (init-asts
-               (compute-function-init-asts defs new-lexical-environment dynamic-environment-ast))
+               (compute-function-init-asts defs new-lexical-environment))
              (final-lexical-environment
                (augment-environment-with-declarations
                 new-lexical-environment canonical-declaration-specifiers)))
@@ -401,10 +359,7 @@
                   (process-progn
                    (convert-sequence client
                                      forms-cst
-                                     final-lexical-environment
-                                     dynamic-environment-ast)
-                   dynamic-environment-ast)))
-         dynamic-environment-ast)))))
+                                     final-lexical-environment)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -424,8 +379,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'tagbody))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (tagbody-cst . body-cst) cst
     (declare (ignore tagbody-cst))
@@ -436,10 +390,6 @@
                     collect (let ((tag-cst (cst:first rest)))
                               (make-instance 'cleavir-ast:tag-ast
                                 :name (cst:raw tag-cst)))))
-          (new-dynamic-environment-ast
-            (make-instance 'cleavir-ast:lexical-ast
-              :name '#:tagbody-dynamic-environment
-              :dynamic-environment-input-ast dynamic-environment-ast))
           (new-lexical-environment lexical-environment))
       (loop for ast in tag-asts
             do (setf new-lexical-environment
@@ -452,18 +402,13 @@
                                            (pop tag-asts)
                                            (convert client
                                                     item-cst
-                                                    new-lexical-environment
-                                                    new-dynamic-environment-ast))))))
+                                                    new-lexical-environment))))))
         (process-progn
          (list (make-instance 'cleavir-ast:tagbody-ast
-                 :item-asts item-asts
-                 :dynamic-environment-input-ast dynamic-environment-ast
-                 :dynamic-environment-output-ast new-dynamic-environment-ast)
+                 :item-asts item-asts)
                (convert-constant client
                                  (cst:cst-from-expression nil)
-                                 lexical-environment
-                                 dynamic-environment-ast))
-         dynamic-environment-ast)))))
+                                 lexical-environment)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -472,8 +417,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'go))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (declare (ignore client))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
@@ -490,48 +434,39 @@
 (defmethod convert-special (client
                             (symbol (eql 'if))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 3)
   (cst:db origin (if-cst test-cst then-cst . tail-cst) cst
     (declare (ignore if-cst))
     (let ((test-ast (convert client
                              test-cst
-                             lexical-environment
-                             dynamic-environment-ast))
+                             lexical-environment))
           (true-ast (convert client
                              then-cst
-                             lexical-environment
-                             dynamic-environment-ast))
+                             lexical-environment))
           (false-ast (if (cst:null tail-cst)
                          (convert-constant client
                                            (cst:cst-from-expression nil)
-                                           lexical-environment
-                                           dynamic-environment-ast)
+                                           lexical-environment)
                          (cst:db s (else-cst) tail-cst
                            (convert client
                                     else-cst
-                                    lexical-environment
-                                    dynamic-environment-ast)))))
+                                    lexical-environment)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
           (make-instance 'cleavir-ast:if-ast
            :test-ast test-ast
            :then-ast true-ast
-           :else-ast false-ast
-           :dynamic-environment-input-ast dynamic-environment-ast)
+           :else-ast false-ast)
           (make-instance 'cleavir-ast:if-ast
            :test-ast
            (make-instance 'cleavir-ast:eq-ast
             :arg1-ast test-ast
             :arg2-ast (convert-constant client
                        (cst:cst-from-expression nil)
-                       lexical-environment
-                       dynamic-environment-ast)
-            :dynamic-environment-input-ast dynamic-environment-ast)
+                       lexical-environment))
            :then-ast false-ast
-           :else-ast true-ast
-           :dynamic-environment-input-ast dynamic-environment-ast)))))
+           :else-ast true-ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -540,8 +475,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'load-time-value))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
@@ -549,8 +483,7 @@
     (make-instance 'cleavir-ast:load-time-value-ast
       :form-ast (convert client
                  form-cst
-                 lexical-environment
-                 dynamic-environment-ast)
+                 lexical-environment)
       :read-only-p
       (if (cst:null remaining-cst)
           nil
@@ -561,8 +494,7 @@
                 ;; and not a "generalized boolean".
                 (error 'read-only-p-must-be-boolean
                        :expr read-only-p
-                       :origin (cst:source (cst:first remaining-cst))))))
-      :dynamic-environment-input-ast dynamic-environment-ast)))
+                       :origin (cst:source (cst:first remaining-cst)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -574,17 +506,14 @@
 (defmethod convert-special (client
                             (symbol (eql 'progn))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (with-preserved-toplevel-ness
     (cst:db origin (progn-cst . form-csts) cst
       (declare (ignore progn-cst))
       (process-progn (convert-sequence client
                                        form-csts
-                                       lexical-environment
-                                       dynamic-environment-ast)
-                     dynamic-environment-ast))))
+                                       lexical-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -610,8 +539,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'macrolet))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (macrolet-cst definitions-cst . body-cst) cst
@@ -635,8 +563,7 @@
                              :raw 'locally
                              :source origin)
                            body-cst)
-                 new-lexical-environment
-                 dynamic-environment-ast)))))
+                 new-lexical-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -645,8 +572,7 @@
 (defmethod convert-special (client
                             (head (eql 'symbol-macrolet))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (symbol-macrolet-cst definitions-cst . body-cst) cst
@@ -666,8 +592,7 @@
                  (cst:cons (cst:cst-from-expression 'locally)
                            body-cst
                            :source origin)
-                 new-lexical-environment
-                 dynamic-environment-ast)))))
+                 new-lexical-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -676,24 +601,20 @@
 
 (defun convert-named-function (client
                                name-cst
-                               lexical-environment
-                               dynamic-environment-ast)
+                               lexical-environment)
   (let ((info (function-info lexical-environment (cst:raw name-cst))))
     (convert-function-reference client
                                 name-cst
                                 info
-                                lexical-environment
-                                dynamic-environment-ast)))
+                                lexical-environment)))
 
 (defun convert-lambda-function (client
                                 lambda-form-cst
-                                lexical-environment
-                                dynamic-environment-ast)
+                                lexical-environment)
   (convert-code client
                 (cst:second lambda-form-cst)
                 (cst:rest (cst:rest lambda-form-cst))
-                lexical-environment
-                dynamic-environment-ast))
+                lexical-environment))
 
 (defun check-function-syntax (cst)
   (check-cst-proper-list cst 'form-must-be-proper-list)
@@ -718,20 +639,17 @@
 (defmethod convert-special (client
                             (symbol (eql 'function))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-function-syntax cst)
   (cst:db origin (function-cst name-cst) cst
     (declare (ignore function-cst))
     (let ((result (if (proper-function-name-p name-cst)
                       (convert-named-function client
                                               name-cst
-                                              lexical-environment
-                                              dynamic-environment-ast)
+                                              lexical-environment)
                       (convert-lambda-function client
                                                name-cst
-                                               lexical-environment
-                                               dynamic-environment-ast))))
+                                               lexical-environment))))
       (reinitialize-instance result :origin origin))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -816,8 +734,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'the))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (cst:db origin (the-cst value-type-cst form-cst) cst
@@ -826,11 +743,10 @@
         (the-values-components (cst:raw value-type-cst))
       ;; We don't bother collapsing THE forms for user code.
       (make-instance 'cleavir-ast:the-ast
-        :form-ast (convert client form-cst lexical-environment dynamic-environment-ast)
+        :form-ast (convert client form-cst lexical-environment)
         :required req
         :optional opt
-        :rest rest
-        :dynamic-environment-input-ast dynamic-environment-ast))))
+        :rest rest))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -839,8 +755,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'multiple-value-prog1))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
@@ -848,12 +763,10 @@
     (make-instance 'cleavir-ast:multiple-value-prog1-ast
       :first-form-ast (convert client
                        first-cst
-                       lexical-environment
-                       dynamic-environment-ast)
+                       lexical-environment)
       :form-asts (convert-sequence client
                   rest-cst
-                  lexical-environment
-                  dynamic-environment-ast))))
+                  lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -865,8 +778,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'multiple-value-call))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
@@ -875,8 +787,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'unwind-protect))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (unwind-protect-cst protected-form-cst . cleanup-form-csts) cst
@@ -888,18 +799,15 @@
       (make-instance 'cleavir-ast:unwind-protect-ast
         :protected-form-ast (convert client
                              protected-form-cst
-                             lexical-environment
-                             dynamic-environment-ast)
+                             lexical-environment)
         :cleanup-thunk-ast (convert client
                             cleanup-thunk-cst
-                            lexical-environment
-                            dynamic-environment-ast)))))
+                            lexical-environment)))))
 
 (defmethod convert-special (client
                             (symbol (eql 'catch))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
@@ -908,8 +816,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'throw))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
@@ -918,8 +825,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'progv))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (declare (ignore client lexical-environment))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 nil)
@@ -933,8 +839,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'setq))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (unless (oddp (length (cst:raw cst)))
     (error 'setq-must-have-even-number-of-arguments
@@ -951,9 +856,8 @@
                                    client
                                    variable-cst
                                    form-cst
-                                   lexical-environment
-                                   dynamic-environment-ast))))
-    (process-progn form-asts dynamic-environment-ast)))
+                                   lexical-environment))))
+    (process-progn form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -963,9 +867,8 @@
 (defmethod convert-special (client
                             (symbol (eql 'let))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
-  (convert-let client cst lexical-environment dynamic-environment-ast))
+                            lexical-environment)
+  (convert-let client cst lexical-environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -975,9 +878,8 @@
 (defmethod convert-special (client
                             (symbol (eql 'let*))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
-  (convert-let* client cst lexical-environment dynamic-environment-ast))
+                            lexical-environment)
+  (convert-let* client cst lexical-environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -987,8 +889,7 @@
 (defmethod convert-special (client
                             (symbol (eql 'locally))
                             cst
-                            lexical-environment
-                            dynamic-environment-ast)
+                            lexical-environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (locally-cst . body-forms-cst) cst
     (declare (ignore locally-cst))
@@ -1002,6 +903,4 @@
         (with-preserved-toplevel-ness
           (process-progn (convert-sequence client
                                            forms-cst
-                                           new-lexical-environment
-                                           dynamic-environment-ast)
-                         dynamic-environment-ast))))))
+                                           new-lexical-environment)))))))
