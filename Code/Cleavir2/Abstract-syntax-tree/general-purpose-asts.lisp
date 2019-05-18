@@ -45,7 +45,6 @@
 ;;; compile time.
 
 (defclass constant-ast (ast
-                       
                         one-value-ast-mixin
                         side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
@@ -66,7 +65,6 @@
 ;;; for debugging purposes and for the purpose of error reporting.
 
 (defclass lexical-ast (ast
-                      
                        one-value-ast-mixin
                        side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
@@ -98,8 +96,7 @@
 ;;;
 ;;; Class SET-SYMBOL-VALUE-AST.
 
-(defclass set-symbol-value-ast
-    (ast no-value-ast-mixin)
+(defclass set-symbol-value-ast (ast no-value-ast-mixin)
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -131,8 +128,7 @@
 ;;;
 ;;; Class SET-FDEFINITION-AST.
 
-(defclass set-fdefinition-ast
-    (ast no-value-ast-mixin)
+(defclass set-fdefinition-ast (ast no-value-ast-mixin)
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
@@ -203,10 +199,8 @@
 ;;; correctly (conceptually, they all have the value FALSE then).
 
 (defclass function-ast (ast
-                       
                         one-value-ast-mixin
-                        side-effect-free-ast-mixin
-                       )
+                        side-effect-free-ast-mixin)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
@@ -263,9 +257,7 @@
 ;;;
 ;;; Class BLOCK-AST.
 
-(defclass block-ast (ast
-                    
-                    )
+(defclass block-ast (ast)
   ;; FIXME: make this read-only and use REINITIALIZE-INSTANCE insteac.
   ((%body-ast :initarg :body-ast :accessor body-ast)))
 
@@ -325,8 +317,7 @@
 ;;; This AST does not return a value, so it must be compiled in a
 ;;; context where no value is required.
 
-(defclass multiple-value-setq-ast
-    (ast no-value-ast-mixin)
+(defclass multiple-value-setq-ast (ast no-value-ast-mixin)
   ((%lhs-asts :initarg :lhs-asts :reader lhs-asts)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
@@ -355,11 +346,7 @@
 ;;;
 ;;; Class TAGBODY-AST.
 
-(defclass tagbody-ast
-    (ast
-     no-value-ast-mixin
-    
-    )
+(defclass tagbody-ast (ast no-value-ast-mixin)
   ((%item-asts :initarg :item-asts :reader item-asts)))
 
 (cleavir-io:define-save-info tagbody-ast
@@ -493,8 +480,7 @@
 ;;; because it can only be a Boolean which is not evaluated, so we
 ;;; know at AST creation time whether it is true or false. 
 
-(defclass load-time-value-ast
-    (ast one-value-ast-mixin)
+(defclass load-time-value-ast (ast one-value-ast-mixin)
   ((%form-ast :initarg :form-ast :reader form-ast)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
@@ -588,8 +574,7 @@
 ;;; Note that this loses information from DYNAMIC-EXTENT, which
 ;;; does not allow escape from the form with the declaration.
 
-(defclass dynamic-allocation-ast
-    (ast one-value-ast-mixin)
+(defclass dynamic-allocation-ast (ast one-value-ast-mixin)
   ((%form-ast :initarg :form-ast :reader form-ast)))
 
 (cleavir-io:define-save-info dynamic-allocation-ast
@@ -619,9 +604,7 @@
 ;;; result of a binding of a special variable in a LET, LET*, or a
 ;;; lambda list of a function.
 
-(defclass bind-ast (ast
-                   
-                   )
+(defclass bind-ast (ast)
   ((%name-ast :initarg :name-ast :reader name-ast)
    (%value-ast :initarg :value-ast :reader value-ast)
    (%body-ast :initarg :body-ast :reader body-ast)))
@@ -643,9 +626,7 @@
 ;;; whereas the cleanup forms are wrapped in a LAMBDA expression so
 ;;; that those forms are executed as part of a thunk.
 
-(defclass unwind-protect-ast (ast
-                             
-                             )
+(defclass unwind-protect-ast (ast)
   ((%protected-form-ast :initarg :protected-form-ast :reader protected-form-ast)
    (%cleanup-thunk-ast :initarg :cleanup-thunk-ast :reader cleanup-thunk-ast)))
 
