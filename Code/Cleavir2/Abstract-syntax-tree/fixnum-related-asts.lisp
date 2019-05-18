@@ -135,4 +135,3 @@
 ;;; position where a value is required, an error is signaled.
 
 (define-fixnum-comparison-ast fixnum-equal-ast)
-
