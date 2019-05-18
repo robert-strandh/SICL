@@ -73,6 +73,13 @@
     (setf (sicl-genv:special-operator 'cleavir-primop:rplaca environment) t)
     (assert (equal (eval client form environment) '(2)))))
 
+(defun test-rplacd (client)
+  (let ((environment (make-environment))
+        (form '(let ((l (cons 2 3))) (cleavir-primop:rplacd l 1) l)))
+    (setf (sicl-genv:fdefinition 'list environment) #'list)
+    (setf (sicl-genv:special-operator 'cleavir-primop:rplacd environment) t)
+    (assert (equal (eval client form environment) '(2 . 1)))))
+
 (defun test-eq (client)
   (let ((environment (make-environment))
         (form '(if (null (list)) 1 2)))
@@ -88,4 +95,5 @@
   (test-car client)
   (test-cdr client)
   (test-rplaca client)
+  (test-rplacd client)
   (test-eq client))
