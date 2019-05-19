@@ -222,7 +222,8 @@
             for item-ast in (cleavir-ast:item-asts ast)
             when (typep item-ast 'cleavir-ast:tag-ast)
               do (let ((nop (make-instance 'cleavir-ir:nop-instruction
-                              :successors '())))
+                              :successors '()
+                              :dynamic-environment-location dynenv-out)))
                    (push nop catch-successors)
                    (incf index)
                    (setf (go-info item-ast) (list invocation continuation nop catch index))))
