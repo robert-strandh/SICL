@@ -60,8 +60,27 @@
     (setf (sicl-genv:fdefinition '+ environment) #'+)
     (assert (= (eval client form environment) 21))))
 
+(defun test-tagbody-2 (client)
+  (let ((environment (make-environment))
+        (form '(let ((x 10))
+                (tagbody
+                   (let ((y 5))
+                     (setq x (+ x y))
+                     (go hello))
+                   (setq x (+ x 7))
+                 hello
+                   (setq x (+ x 6))
+                   (go out)
+                 hi
+                   (setq x (+ x 1))
+                 out)
+                x)))
+    (setf (sicl-genv:fdefinition '+ environment) #'+)
+    (assert (= (eval client form environment) 21))))
+
 (defun test-tagbody (client)
-  (test-tagbody-1 client))
+  (test-tagbody-1 client)
+  (test-tagbody-2 client))
 
 (defun test-bind (client)
   (let ((environment (make-environment))
