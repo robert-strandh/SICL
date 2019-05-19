@@ -133,20 +133,27 @@
                        (t ; treat as unknown
                         (pushnew :escape destinies :test #'eq))))))))
 
-(defun destiny-find-encloses (call-instruction)
-  (let ((worklist (list (first (cleavir-ir:inputs call-instruction))))
+;; Given a destiny, find the enclose instruction destined to flow
+;; there.
+(defun destiny-find-encloses (instruction)
+  (let ((worklist (list (first (cleavir-ir:inputs instruction))))
+        (seen (make-hash-table))
         (encloses '()))
+    (setf (gethash instruction seen) t)
     (loop (when (null worklist)
             (return encloses))
           (let ((work (pop worklist)))
             ;; note that we could hit the same work multiple times, so we use pushnew liberally.
-            (loop for next in (cleavir-ir:defining-instructions work)
-                  do (typecase next
-                       ;; here is where we could allow other instructions, etc.
-                       (cleavir-ir:assignment-instruction
-                        (push (first (cleavir-ir:inputs next)) worklist))
-                       (cleavir-ir:enclose-instruction
-                        (pushnew next encloses))))))))
+            (dolist (next (cleavir-ir:defining-instructions work))
+              ;; prevent cycles
+              (unless (gethash next seen)
+                (typecase next
+                  ;; here is where we could allow other instructions, etc.
+                  (cleavir-ir:assignment-instruction
+                   (pushnew (first (cleavir-ir:inputs next)) worklist))
+                  (cleavir-ir:enclose-instruction
+                   (pushnew next encloses)))
+                (setf (gethash next seen) t)))))))
 
 ;;; Compute a hash table from enclose instructions to "destinies".
 ;;; A destiny is a list. Elements of the list are either call instructions or :escape.
