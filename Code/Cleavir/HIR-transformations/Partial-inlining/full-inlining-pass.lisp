@@ -61,12 +61,39 @@
       (etypecase thing
         (cleavir-ir:enclose-instruction
          (pushnew thing encloses))
-        (cleavir-ir:funcall-instruction
+        ((or cleavir-ir:assignment-instruction cleavir-ir:funcall-instruction)
          (dolist (enclose (cleavir-hir-transformations:destiny-find-encloses thing))
            (pushnew enclose encloses)))))
     (dolist (enclose encloses)
       (setf (gethash enclose destinies-map)
             (cleavir-hir-transformations:find-enclose-destinies enclose)))))
+
+;;; When a cell is no longer an input to an enclose-instruction,
+;;; it can be transformed into a normal lexical location.
+(defun maybe-decell (cell)
+  (let ((using-instructions (cleavir-ir:using-instructions cell))
+        (create (first (cleavir-ir:defining-instructions cell))))
+    (when (and (typep create 'cleavir-ir:create-cell-instruction)
+               (notany (lambda (instruction)
+                         (typep instruction 'cleavir-ir:enclose-instruction))
+                       using-instructions))
+      (let ((temp (cleavir-ir:new-temporary)))
+        (dolist (using using-instructions)
+          (typecase using
+            (cleavir-ir:write-cell-instruction
+             (change-class using 'cleavir-ir:assignment-instruction
+                           :inputs (rest (cleavir-ir:inputs using))
+                           :outputs (list temp))
+             (push using (cleavir-ir:defining-instructions temp))
+             ;; Suffices to just push write-cell because every cell
+             ;; has one.
+             (push using *destinies-worklist*))
+            (cleavir-ir:read-cell-instruction
+             (let ((output (first (cleavir-ir:outputs using))))
+               (dolist (output-use (cleavir-ir:using-instructions output))
+                 (nsubstitute temp output (cleavir-ir:inputs output-use))
+                 (push output-use (cleavir-ir:using-instructions temp)))
+               (cleavir-ir:delete-instruction using)))))))))
 
 ;;; Apply full inlining to the HIR graph. This should be run in two
 ;;; passes. The first pass, before closure conversion, inlines
@@ -79,6 +106,9 @@
 ;;;   (mapcar #'funcall
 ;;;           (loop for i from 0 to 5
 ;;;                 collect (let ((y i)) (lambda () y)))))
+;;; It is possible to inline only after closure conversion and still
+;;; catch everything, but this may increase the time spent closure
+;;; converting.
 (defun do-inlining (initial-instruction &optional closure-converted-p)
   ;; FIXME: We may want to share these dynamic variables between the
   ;; two inlining passes around closure conversion to save some
@@ -106,14 +136,17 @@
                 (if (and enclose-unique-p enter-unique-p)
                     (interpolate-function call enter node)
                     (inline-function initial-instruction call enter node (make-hash-table :test #'eq)))
-                (dolist (deleted
-                         (cleavir-remove-useless-instructions:remove-useless-instructions-from function-defs))
-                  (typecase deleted
-                    (cleavir-ir:enclose-instruction
-                     (cleavir-hir-transformations:remove-enclose-from-function-dag
-                      function-dag
-                      deleted
-                      (and enclose-unique-p enter-unique-p)))))
+                (cleavir-remove-useless-instructions:remove-useless-instructions-with-worklist
+                 function-defs
+                 (lambda (deleted)
+                   (typecase deleted
+                     (cleavir-ir:enclose-instruction
+                      (cleavir-hir-transformations:remove-enclose-from-function-dag
+                       function-dag
+                       deleted
+                       (and enclose-unique-p enter-unique-p))
+                      (mapc #'maybe-decell (cleavir-ir:inputs deleted))))
+                   (cleavir-ir:delete-instruction deleted)))
                 ;; The call is gone, so it is no longer a destiny.
                 (update-destinies-map (cons (cleavir-hir-transformations:enclose-instruction node)
                                             *destinies-worklist*)
