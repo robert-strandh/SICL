@@ -43,6 +43,26 @@
   (test-block-1 client)
   (test-block-2 client))
 
+(defun test-tagbody-1 (client)
+  (let ((environment (make-environment))
+        (form '(let ((x 10))
+                (tagbody
+                   (setq x (+ x 5))
+                   (go hello)
+                   (setq x (+ x 7))
+                 hello
+                   (setq x (+ x 6))
+                   (go out)
+                 hi
+                   (setq x (+ x 1))
+                 out)
+                x)))
+    (setf (sicl-genv:fdefinition '+ environment) #'+)
+    (assert (= (eval client form environment) 21))))
+
+(defun test-tagbody (client)
+  (test-tagbody-1 client))
+
 (defun test-bind (client)
   (let ((environment (make-environment))
         (form '(flet ((stuff (x) (+ x *x*)))
@@ -91,6 +111,7 @@
   (test-let client)
   (test-symbol-value client)
   (test-block client)
+  (test-tagbody client)
   (test-bind client)
   (test-car client)
   (test-cdr client)
