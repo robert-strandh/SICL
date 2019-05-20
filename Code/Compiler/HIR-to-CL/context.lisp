@@ -2,7 +2,7 @@
 
 (defclass context ()
   ((%function-names :initform (make-hash-table :test #'eq) :reader function-names)
-   (%values-location :initform (gensym "values") :reader values-location)
+   (%values-locations :initarg :values-locations :reader values-locations)
    (%block-name :initform (gensym "block") :reader block-name)
    (%static-env-function-var
     :initform (gensym "static-env-function")
