@@ -6,9 +6,32 @@
           collect `(,(gethash enter-instruction (function-names context))
                     ,(translate-enter-instruction client enter-instruction context)))))
 
+(defun find-values-locations (initial-instruction)
+  (let ((result (make-hash-table :test #'eq)))
+    (cleavir-ir:map-instructions-arbitrary-order
+     (lambda (instruction)
+       (loop with inputs = (cleavir-ir:inputs instruction)
+             with outputs = (cleavir-ir:outputs instruction)
+             for datum in (append inputs outputs)
+             when (typep datum 'cleavir-ir:values-location)
+               do (let ((symbol (gethash datum result)))
+                    (if (null symbol)
+                        (setf (gethash datum result) (gensym))
+                        symbol))))
+     initial-instruction)
+    result))
+
+(defun all-values-location-names (table)
+  (loop for name being each hash-value of table
+        collect name))
+
+(defun values-location-name (values-location context)
+  (gethash values-location (values-locations context)))
+
 (defun hir-to-cl (client initial-instruction)
   (let* ((enter-instructions (sort-functions initial-instruction))
-         (context (make-instance 'context))
+         (values-locations (find-values-locations initial-instruction))
+         (context (make-instance 'context :values-locations values-locations))
          (lexical-locations (find-lexical-locations initial-instruction))
          (successor (first (cleavir-ir:successors initial-instruction)))
          (*static-environment-variable* (gensym "static-environment"))
@@ -37,7 +60,7 @@
     `(lambda (,*top-level-function-parameter*)
        (let* ((,(static-env-function-var context)
                 (car (funcall ,*top-level-function-parameter* 'static-environment-function)))
-              ,(values-location context)
+              ,@(all-values-location-names (values-locations context))
               ,@(make-code-bindings client initial-instruction context)
               ,@(mapcar #'cleavir-ir:name lexical-locations)
               (,*static-environment-variable*
