@@ -14,8 +14,10 @@
             ,(translate-input input)))))
 
 (defmethod translate (client (instruction cleavir-ir:funcall-instruction) context)
-  (let ((inputs (cleavir-ir:inputs instruction)))
-     `((setq ,(values-location context)
+  (let* ((values-location (first (cleavir-ir:outputs instruction)))
+         (name (gethash values-location (values-locations context)))
+         (inputs (cleavir-ir:inputs instruction)))
+     `((setq ,name
              (multiple-value-list
               (funcall ,@(mapcar #'translate-input inputs)))))))
 

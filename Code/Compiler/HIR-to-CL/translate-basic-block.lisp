@@ -25,8 +25,10 @@
 (defmethod translate-final-instruction (client
                                        (instruction cleavir-ir:return-instruction)
                                        context)
-  `((return-from ,(block-name context)
-      (apply #'values ,(values-location context)))))
+  (let* ((values-location (first (cleavir-ir:inputs instruction)))
+         (name (gethash values-location (values-locations context))))
+    `((return-from ,(block-name context)
+        (apply #'values ,name)))))
 
 (defun translate-basic-block (client basic-block context)
   (let* ((instructions (instructions basic-block))
