@@ -170,6 +170,7 @@
                                   destination :index 1))
                  (new-context (clone-context
                                context
+                               :results (results block-context)
                                :successor new-successor)))
             (compile-ast (cleavir-ast:form-ast ast) new-context))))))
 
