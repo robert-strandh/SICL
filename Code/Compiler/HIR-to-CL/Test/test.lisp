@@ -126,6 +126,23 @@
     (setf (sicl-genv:fdefinition 'null environment) #'null)
     (assert (eql (eval client form environment) 1))))
 
+(defun test-labels (client)
+  (let ((environment (make-environment))
+        (form '(labels ((is-even (n)
+                         (if (zerop n)
+                             t
+                             (is-odd (1- n))))
+                        (is-odd (n)
+                         (if (zerop n)
+                             nil
+                             (is-even (1- n)))))
+                (list (is-even 33) (is-odd 33)))))
+    (setf (sicl-genv:fdefinition 'list environment) #'list)
+    (setf (sicl-genv:fdefinition '1- environment) #'1-)
+    (setf (sicl-genv:fdefinition 'zerop environment) #'zerop)
+    (setf (sicl-genv:special-operator 'if environment) t)
+    (assert (equal (eval client form environment) '(nil t)))))
+
 (defun test (client)
   (test-let client)
   (test-symbol-value client)
