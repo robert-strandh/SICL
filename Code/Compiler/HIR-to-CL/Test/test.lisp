@@ -7,6 +7,22 @@
     (sicl-hir-to-cl::fill-environment environment)
     environment))
 
+(defun test-if-1 (client)
+  (let ((environment (make-environment))
+        (form '(if (ff 10) 11 12)))
+    (setf (sicl-genv:fdefinition 'ff environment) (constantly nil))
+    (assert (eql (eval client form environment) 12))))
+
+(defun test-if-2 (client)
+  (let ((environment (make-environment))
+        (form '(if (ff 10) 11 12)))
+    (setf (sicl-genv:fdefinition 'ff environment) (constantly t))
+    (assert (eql (eval client form environment) 11))))
+
+(defun test-if (client)
+  (test-if-1 client)
+  (test-if-2 client))
+
 (defun test-let (client)
   (let ((environment (make-environment))
         (form '(let ((x 10)) (+ x 20))))
@@ -144,6 +160,7 @@
     (assert (equal (eval client form environment) '(nil t)))))
 
 (defun test (client)
+  (test-if client)
   (test-let client)
   (test-symbol-value client)
   (test-block client)
@@ -153,4 +170,5 @@
   (test-cdr client)
   (test-rplaca client)
   (test-rplacd client)
-  (test-eq client))
+  (test-eq client)
+  (test-labels client))
