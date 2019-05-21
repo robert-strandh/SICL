@@ -141,12 +141,23 @@
     (setf (sicl-genv:special-operator 'cleavir-primop:rplacd environment) t)
     (assert (equal (eval client form environment) '(2 . 1)))))
 
-(defun test-eq (client)
+(defun test-eq-1 (client)
   (let ((environment (make-environment))
         (form '(if (null (list)) 1 2)))
     (setf (sicl-genv:fdefinition 'list environment) #'list)
     (setf (sicl-genv:fdefinition 'null environment) #'null)
     (assert (eql (eval client form environment) 1))))
+
+(defun test-eq-2 (client)
+  (let ((environment (make-environment))
+        (form '(if (cleavir-primop:eq (ff 10) 234) 1 2)))
+    (setf (sicl-genv:fdefinition 'ff environment) (constantly t))
+    (setf (sicl-genv:special-operator 'cleavir-primop:eq environment) t)
+    (assert (eql (eval client form environment) 2))))
+
+(defun test-eq (client)
+  (test-eq-1 client)
+  (test-eq-2 client))
 
 (defun test-labels (client)
   (let ((environment (make-environment))
