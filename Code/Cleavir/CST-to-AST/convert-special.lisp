@@ -1,12 +1,11 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
 (defmethod convert-special :around (operator cst environment system)
-  (declare (ignore system))
   (when (and *compile-time-too*
              *current-form-is-top-level-p*
              (not (member operator
                           '(progn locally macrolet symbol-macrolet eval-when))))
-    (cleavir-env:eval (cst:raw cst) environment environment))
+    (cleavir-env:cst-eval cst environment environment system))
   (restart-case (call-next-method)
     (recover ()
       :report "Recover by replacing form by a call to ERROR."
@@ -194,8 +193,10 @@
                          (or (member :execute situations)
                              (member 'eval situations))
                          *compile-time-too*))
-                   (cleavir-env:eval `(progn ,@(cst:raw body-cst))
-                                     environment environment)
+                   (cleavir-env:cst-eval
+                    (cst:cons (make-atom-cst 'progn s) body-cst
+                              :source s)
+                    environment environment system)
                    (convert (make-atom-cst nil s) environment system))
                   (t
                    (convert (make-atom-cst nil s) environment system))))))))
