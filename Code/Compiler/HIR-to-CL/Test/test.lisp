@@ -29,6 +29,12 @@
     (setf (sicl-genv:fdefinition '+ environment) #'+)
     (assert (eql (eval client form environment) 30))))
 
+(defun test-let* (client)
+  (let ((environment (make-environment))
+        (form '(let* ((x 10) (y 20)) (+ x y))))
+    (setf (sicl-genv:fdefinition '+ environment) #'+)
+    (assert (eql (eval client form environment) 30))))
+
 (defun test-symbol-value (client)
   (let ((environment (make-environment))
         (form '(+ *x* 20)))
@@ -170,6 +176,7 @@
 (defun test (client)
   (test-if client)
   (test-let client)
+  (test-let* client)
   (test-symbol-value client)
   (test-block client)
   (test-tagbody client)
