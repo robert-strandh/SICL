@@ -473,7 +473,8 @@
              ;; so this needs to be bound around that call.
              (cleavir-ast:*dynamic-environment*
                (cleavir-ast:make-dynamic-environment-ast
-                '#:dynamic-environment-argument)))
+                '#:dynamic-environment-argument
+                :origin origin)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group
              (itemize-lambda-list parsed-lambda-list)
