@@ -17,7 +17,7 @@
                       (instruction cleavir-ir:slot-read-instruction))
   (let ((slot-address (make-instance 'cleavir-ir:lexical-location
                         :name '#:slot-address)))
-    (multiple-value-bind (object-location slot-number)
+    (destructuring-bind (object-location slot-number)
         (cleavir-ir:inputs instruction)
       (find-slot
        object-location slot-number slot-address
@@ -31,7 +31,7 @@
                       (instruction cleavir-ir:slot-write-instruction))
   (let ((slot-address (make-instance 'cleavir-ir:lexical-location
                         :name '#:slot-address)))
-    (multiple-value-bind (object-location slot-number value-location)
+    (destructuring-bind (object-location slot-number value-location)
         (cleavir-ir:inputs instruction)
       (find-slot
        object-location slot-number slot-address
