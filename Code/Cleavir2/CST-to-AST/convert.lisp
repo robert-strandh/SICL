@@ -34,7 +34,7 @@
            ;; in COMPILE-TIME-TOO mode, in which case we must evaluate
            ;; the form as well.
            (when (and *current-form-is-top-level-p* *compile-time-too*)
-             (cleavir-env:eval form lexical-environment lexical-environment))
+             (cst-eval client cst lexical-environment))
            (convert-lambda-call client cst lexical-environment)))))
 
 (defmethod convert :around (client cst lexical-environment)
