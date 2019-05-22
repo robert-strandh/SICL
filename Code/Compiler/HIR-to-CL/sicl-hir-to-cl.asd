@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-hir-to-cl
   :depends-on (#:cleavir2-hir
+               #:cleavir2-ast-to-hir
                #:sicl-hir-transformations
                #:sicl-alternative-extrinsic-environment
                #:closer-mop)
