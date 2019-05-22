@@ -503,6 +503,9 @@
 ;;; Given the CST for a MACROLET definition and an environment, return
 ;;; a macro expander (or macro function) for the definition.
 ;;; FIXME: check syntax.
+
+;;; FIXME: Once we have a CST version of PARSE-MACRO we should use it
+;;; instead, and then call CST-EVAL on the resulting lambda expression.
 (defun expander (client definition-cst lexical-environment)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (let ((lambda-expression (cst:parse-macro client
@@ -510,9 +513,9 @@
                                               lambda-list-cst
                                               `(progn ,@(cst:raw body-cst))
                                               lexical-environment)))
-      (cleavir-env:eval lambda-expression
-                        (cleavir-env:compile-time lexical-environment)
-                        lexical-environment))))
+      (eval client
+            lambda-expression
+            (cleavir-env:compile-time lexical-environment)))))
 
 (defmethod convert-special
     (client (symbol (eql 'macrolet)) cst lexical-environment)
