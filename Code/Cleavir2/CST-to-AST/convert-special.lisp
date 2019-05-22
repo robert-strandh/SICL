@@ -206,8 +206,10 @@
                          (or (member :execute situations)
                              (member 'eval situations))
                          *compile-time-too*))
-                   (cleavir-env:eval `(progn ,@(cst:raw body-cst))
-                                     lexical-environment lexical-environment)
+                   (cst-eval client
+                             (cst:cons (cst:cst-from-expression 'cons)
+                                       body-cst)
+                             lexical-environment)
                    (convert client
                             (cst:cst-from-expression nil)
                             lexical-environment))
