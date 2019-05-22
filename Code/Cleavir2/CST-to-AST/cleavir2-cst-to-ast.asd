@@ -15,6 +15,7 @@
    (:file "environment-augmentation")
    (:file "environment-query")
    (:file "variables")
+   (:file "eval")
    (:file "generic-functions")
    (:file "convert-function-reference")
    (:file "convert-special-binding")
