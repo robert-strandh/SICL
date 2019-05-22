@@ -158,7 +158,7 @@
   ;; we are in COMPILE-TIME-TOO mode.  In that case, we must first
   ;; evaluate the form.
   (when (and *current-form-is-top-level-p* *compile-time-too*)
-    (cleavir-env:eval (cst:raw cst) lexical-environment lexical-environment))
+    (cst-eval client cst lexical-environment))
   (let ((compiler-macro (cleavir-env:compiler-macro info))
         (notinline (eq 'notinline (cleavir-env:inline info)))
         (form (cst:raw cst)))
