@@ -2,6 +2,7 @@
 
 (defpackage #:cleavir-cst-to-ast
   (:use #:common-lisp)
+  (:shadow #:eval)
   (:export #:cst-to-ast
            #:*compiler*
            #:convert
