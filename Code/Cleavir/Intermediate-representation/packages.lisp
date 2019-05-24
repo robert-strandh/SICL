@@ -58,6 +58,7 @@
    #:tailcall-instruction #:make-tailcall-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
+   #:initialize-closure-instruction #:make-initialize-closure-instruction
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:the-instruction #:make-the-instruction
    #:dynamic-allocation-instruction #:make-dynamic-allocation-instruction
