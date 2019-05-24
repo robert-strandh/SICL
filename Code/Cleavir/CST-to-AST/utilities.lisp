@@ -10,12 +10,20 @@
            expander form env))
 
 (defun expand-macro (expander cst env)
-  (expand expander (cst:raw cst) env))
+  (with-encapsulated-conditions
+      (cst macroexpansion-error
+           macroexpansion-warning
+           macroexpansion-style-warning)
+    (expand expander (cst:raw cst) env)))
 
 (defun expand-compiler-macro (expander cst env)
   (let ((form (cst:raw cst)))
     (restart-case
-        (expand expander form env)
+        (with-encapsulated-conditions
+            (cst compiler-macro-expansion-error
+                 compiler-macro-expansion-warning
+                 compiler-macro-expansion-style-warning)
+          (expand expander form env))
       (continue ()
         :report "Ignore compiler macro."
         (return-from expand-compiler-macro form)))))
@@ -26,7 +34,7 @@
 ;;; Take a CST, check whether it represents a proper list.  If it does
 ;;; not represent ERROR-TYPE is a symbol that is passed to ERROR.
 (defun check-cst-proper-list (cst error-type)
-  (unless  (cst:proper-list-p cst)
+  (unless (cst:proper-list-p cst)
     (error error-type
            :expr (cst:raw cst)
            :origin (cst:source cst))))

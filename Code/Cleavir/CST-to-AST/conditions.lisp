@@ -2,22 +2,30 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; The base classes for conditions used here. 
+;;; The base classes for conditions used here.
+
+(define-condition compilation-condition (acclimation:condition)
+  ((%expr :initarg :expr :reader expr)
+   (%origin :initarg :origin :reader origin)))
 
 (define-condition compilation-program-error
-    (program-error acclimation:condition)
-  ((%expr :initarg :expr :reader expr)
-   (%origin :initarg :origin :reader origin)))
+    (program-error compilation-condition)
+  ())
 
 (define-condition compilation-warning
-    (warning acclimation:condition)
-  ((%expr :initarg :expr :reader expr)
-   (%origin :initarg :origin :reader origin)))
+    (warning compilation-condition)
+  ())
 
 (define-condition compilation-style-warning
-    (style-warning acclimation:condition)
-  ((%expr :initarg :expr :reader expr)
-   (%origin :initarg :origin :reader origin)))
+    (style-warning compilation-condition)
+  ())
+
+;;; This class is used for conditions that "encapsulate"
+;;; other conditions, for when something out of our control
+;;; (e.g. a macroexpander) signals.
+(define-condition encapsulated-condition (acclimation:condition)
+  ((%original-condition :initarg :condition
+                        :reader original-condition)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -304,4 +312,89 @@
 
 (define-condition odd-keyword-portion-style-warning
     (odd-keyword-portion argument-mismatch-style-warning)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Encapsulation conditions.
+
+;;; These two functions create condition handlers.
+;;; The handlers take the condition they are given, and signal
+;;; a new condition that encapsulates but also has source
+;;; information from the CST.
+;;; They also allow higher level handlers to use the
+;;; PASS-ORIGINAL-CONDITION restart to allow the original
+;;; condition to propagate instead.
+(defun warning-encapsulator (cst condition-type)
+  (lambda (condition)
+    (let ((muffle t))
+      (restart-case
+          (warn condition-type
+                :expr (cst:raw cst)
+                :origin (cst:source cst)
+                :condition condition)
+        (pass-original-condition ()
+          :report "Let the originally signaled condition propagate."
+          (setf muffle nil)))
+      (when muffle
+        (muffle-warning condition)))))
+
+(defun error-encapsulator (cst condition-type)
+  (lambda (condition)
+    (restart-case
+        (error condition-type
+               :expr (cst:raw cst)
+               :origin (cst:source cst)
+               :condition condition)
+      (pass-original-condition ()
+        :report "Let the originally signaled condition propagate."))))
+
+;;; Helper macro. Establishes a handler-bind that wraps
+;;; caught conditions in the given classes.
+(defmacro with-encapsulated-conditions
+    ((cst error-type warning-type style-warning-type) &body body)
+  (let ((cstg (gensym "CST")))
+    `(let ((,cstg ,cst))
+       (handler-bind
+           ((style-warning
+              (warning-encapsulator ,cstg ',style-warning-type))
+            ((and warning (not style-warning))
+              (warning-encapsulator ,cstg ',warning-type))
+            (error (error-encapsulator ,cstg ',error-type)))
+         ,@body))))
+
+;;; This condition is signaled when a macroexpander signals
+;;; an error.
+(define-condition macroexpansion-error
+    (compilation-program-error encapsulated-condition)
+  ())
+
+;;; This condition is signaled when a macroexpander signals
+;;; a warning.
+(define-condition macroexpansion-warning
+    (compilation-warning encapsulated-condition)
+  ())
+
+;;; This condition is signaled when a macroexpander signals
+;;; a style-warning.
+(define-condition macroexpansion-style-warning
+    (compilation-style-warning encapsulated-condition)
+  ())
+
+;;; This condition is signaled when a compiler-macroexpander signals
+;;; an error.
+(define-condition compiler-macro-expansion-error
+    (compilation-program-error encapsulated-condition)
+  ())
+
+;;; This condition is signaled when a compiler-macroexpander signals
+;;; a warning.
+(define-condition compiler-macro-expansion-warning
+    (compilation-warning encapsulated-condition)
+  ())
+
+;;; This condition is signaled when a compiler-macroexpander signals
+;;; a style-warning.
+(define-condition compiler-macro-expansion-style-warning
+    (compilation-style-warning encapsulated-condition)
   ())
