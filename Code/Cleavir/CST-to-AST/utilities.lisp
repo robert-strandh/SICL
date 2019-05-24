@@ -1,5 +1,25 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
+(defun symbol-macro-expander (expansion)
+  (lambda (form env)
+    (declare (ignore form env))
+    expansion))
+
+(defun expand (expander form env)
+  (funcall (coerce *macroexpand-hook* 'function)
+           expander form env))
+
+(defun expand-macro (expander cst env)
+  (expand expander (cst:raw cst) env))
+
+(defun expand-compiler-macro (expander cst env)
+  (let ((form (cst:raw cst)))
+    (restart-case
+        (expand expander form env)
+      (continue ()
+        :report "Ignore compiler macro."
+        (return-from expand-compiler-macro form)))))
+
 (defun make-atom-cst (object &optional origin)
   (make-instance 'cst:atom-cst :raw object :source origin))
 

@@ -27,13 +27,10 @@
 
 (defmethod convert-setq
     (var-cst form-cst (info cleavir-env:symbol-macro-info) env system)
-  (let* ((expansion (funcall (coerce *macroexpand-hook* 'function)
-                             (lambda (form env)
-                               (declare (ignore form env))
-                               (cleavir-env:expansion info))
-                             (cleavir-env:name info)
-                             env))
-         (expansion-cst (cst:reconstruct expansion var-cst system))
+  (let* ((expansion (cleavir-env:expansion info))
+         (expander (symbol-macro-expander expansion))
+         (expanded-variable (expand-macro expander var-cst env))
+         (expanded-cst (cst:reconstruct expanded-variable var-cst system))
          (origin (cst:source var-cst)))
     (convert (cst:cons (make-atom-cst 'setf origin)
                        (cst:list expansion-cst form-cst)
