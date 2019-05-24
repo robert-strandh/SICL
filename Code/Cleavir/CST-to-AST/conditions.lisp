@@ -323,7 +323,7 @@
 ;;; a new condition that encapsulates but also has source
 ;;; information from the CST.
 ;;; They also allow higher level handlers to use the
-;;; PASS-ORIGINAL-CONDITION restart to allow the original
+;;; SIGNAL-ORIGINAL-CONDITION restart to allow the original
 ;;; condition to propagate instead.
 (defun warning-encapsulator (cst condition-type)
   (lambda (condition)
@@ -333,7 +333,7 @@
                 :expr (cst:raw cst)
                 :origin (cst:source cst)
                 :condition condition)
-        (pass-original-condition ()
+        (signal-original-condition ()
           :report "Let the originally signaled condition propagate."
           (setf muffle nil)))
       (when muffle
@@ -346,7 +346,7 @@
                :expr (cst:raw cst)
                :origin (cst:source cst)
                :condition condition)
-      (pass-original-condition ()
+      (signal-original-condition ()
         :report "Let the originally signaled condition propagate."))))
 
 ;;; Helper macro. Establishes a handler-bind that wraps
