@@ -46,11 +46,11 @@
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (let ((var-or-function (cst:first declaration-data-cst)))
-    (if (cst:consp var-or-function)
+  (let ((var-or-function (cst:raw (cst:first declaration-data-cst))))
+    (if (consp var-or-function)
         ;; (dynamic-extent (function foo))
         (cleavir-env:add-function-dynamic-extent
-         environment (cst:second var-or-function))
+         environment (second var-or-function))
         ;; (dynamic-extent foo)
         (cleavir-env:add-variable-dynamic-extent
          environment var-or-function))))
@@ -61,37 +61,34 @@
      declaration-data-cst
      environment)
   (cleavir-env:add-function-type
-   environment (second declaration-data-cst) (first declaration-data-cst)))
+   environment (cst:second declaration-data-cst)
+   (cst:first declaration-data-cst)))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'ignore))
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (if (cst:consp (cst:first declaration-data-cst))
-      (cleavir-env:add-function-ignore
-       environment
-       (cst:second (cst:first declaration-data-cst))
-       declaration-identifier-cst)
-      (cleavir-env:add-variable-ignore
-       environment
-       (cst:first declaration-data-cst)
-       declaration-identifier-cst)))
+  (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
+        (ignore (cst:raw declaration-identifier-cst)))
+    (if (consp var-or-function)
+        (cleavir-env:add-function-ignore
+         environment (second var-or-function) ignore)
+        (cleavir-env:add-variable-ignore
+         environment var-or-function ignore))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'ignorable))
      declaration-identifier-cst
      declaration-data-cst
      environment)
-  (if (cst:consp (cst:first declaration-data-cst))
-      (cleavir-env:add-function-ignore
-       environment
-       (cst:second (cst:first declaration-data-cst))
-       declaration-identifier-cst)
-      (cleavir-env:add-variable-ignore
-       environment
-       (cst:first declaration-data-cst)
-       declaration-identifier-cst)))
+  (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
+        (ignore (cst:raw declaration-identifier-cst)))
+    (if (consp var-or-function)
+        (cleavir-env:add-function-ignore
+         environment (second var-or-function) ignore)
+        (cleavir-env:add-variable-ignore
+         environment var-or-function ignore))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'inline))
@@ -99,7 +96,8 @@
      declaration-data-cst
      environment)
   (cleavir-env:add-inline
-   environment (cst:first declaration-data-cst) declaration-identifier-cst))
+   environment (cst:raw (cst:first declaration-data-cst))
+   (cst:raw declaration-identifier-cst)))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'notinline))
@@ -107,7 +105,8 @@
      declaration-data-cst
      environment)
   (cleavir-env:add-inline
-   environment (cst:first declaration-data-cst) declaration-identifier-cst))
+   environment (cst:raw (cst:first declaration-data-cst))
+   (cst:raw declaration-identifier-cst)))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'special))
@@ -131,7 +130,8 @@
      declaration-data-cst
      environment)
   (cst:db source (type-cst variable-cst) declaration-data-cst
-          (cleavir-env:add-variable-type environment variable-cst type-cst)))
+    (cleavir-env:add-variable-type
+     environment (cst:raw variable-cst) (cst:raw type-cst))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'optimize))
