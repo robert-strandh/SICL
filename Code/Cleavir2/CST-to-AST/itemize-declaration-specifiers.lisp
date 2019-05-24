@@ -14,15 +14,15 @@
   (loop with name = (cst:raw name-cst)
         for spec in canonical-declaration-specifiers
         for declaration-identifier = (cst:raw (cst:first spec))
-	if (or (and (member declaration-identifier
+        if (or (and (member declaration-identifier
                             '(ignore ignorable dynamic-extent special))
                     (eq (cst:raw (cst:second spec)) name))
                (and (eq declaration-identifier 'type)
                     (eq (cst:raw (cst:third spec)) name)))
-	  collect spec into first
-	else
-	  collect spec into second
-	finally (return (values first second))))
+          collect spec into first
+        else
+          collect spec into second
+        finally (return (values first second))))
 
 ;;; This function takes two arguments.  The first argument, VARIABLES,
 ;;; is a list of items, where each item is a non-empty list of CSTs.
@@ -43,13 +43,13 @@
   (if (null variables)
       (values '() canonical-dspecs)
       (multiple-value-bind (itemized-dspecs remaining-dspecs)
-	  (itemize-declaration-specifiers (cdr variables) canonical-dspecs)
-	(let ((item-specific-dspecs '()))
-	  (loop for var in (first variables)
-		do (multiple-value-bind (is-dspecs r-dspecs)
-		       (separate-declarations remaining-dspecs var)
-		     (setf item-specific-dspecs
-			   (append is-dspecs item-specific-dspecs))
-		     (setf remaining-dspecs r-dspecs)))
-	  (values (cons item-specific-dspecs itemized-dspecs)
-		  remaining-dspecs)))))
+          (itemize-declaration-specifiers (cdr variables) canonical-dspecs)
+        (let ((item-specific-dspecs '()))
+          (loop for var in (first variables)
+                do (multiple-value-bind (is-dspecs r-dspecs)
+                       (separate-declarations remaining-dspecs var)
+                     (setf item-specific-dspecs
+                           (append is-dspecs item-specific-dspecs))
+                     (setf remaining-dspecs r-dspecs)))
+          (values (cons item-specific-dspecs itemized-dspecs)
+                  remaining-dspecs)))))
