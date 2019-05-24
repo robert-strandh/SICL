@@ -306,3 +306,47 @@
      (language acclimation:english))
   (format stream
 	  " as inferred from its inline definition."))
+
+(defmethod acclimation:report-condition
+  ((condition macroexpansion-error)
+   stream
+   (language acclimation:english))
+  (format stream
+          "ERROR during macroexpansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition macroexpansion-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "WARNING during macroexpansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition macroexpansion-style-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "STYLE-WARNING during macroexpansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+
+(defmethod acclimation:report-condition
+  ((condition compiler-macro-expansion-error)
+   stream
+   (language acclimation:english))
+  (format stream
+          "ERROR during compiler-macro-expansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition compiler-macro-expansion-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "WARNING during compiler-macro-expansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition compiler-macro-expansion-style-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "STYLE-WARNING during compiler-macro-expansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
