@@ -77,7 +77,7 @@
                                       (format *query-io* "Enter new name: ")
                                       (list (read *query-io*)))
                        (setq info (find-info new-block-name)))
-                     (recover ()
+                     (continue ()
                        ;; In order to recover from the error, we ignore
                        ;; the RETURN-FROM form and only compile the return
                        ;; value form (or NIL if no return value form was

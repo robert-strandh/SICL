@@ -38,7 +38,7 @@
           (cleavir-env:environment-policy environment)))
     (restart-case
         (call-next-method)
-      (recover ()
+      (continue ()
         :report "Replace with call to ERROR."
         (convert (cst:cst-from-expression
                   `(error 'run-time-program-error
