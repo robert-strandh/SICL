@@ -30,10 +30,18 @@
            (convert-lambda-call cst environment system)))))
 
 (defmethod convert :around (cst environment system)
-  (declare (ignore cst system))
+  (declare (ignore cst))
   (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
         (*subforms-are-top-level-p* nil)
         ;; gives all generated ASTs the appropriate policy.
         (cleavir-ast:*policy*
           (cleavir-env:environment-policy environment)))
-    (call-next-method)))
+    (restart-case
+        (call-next-method)
+      (recover ()
+        :report "Replace with call to ERROR."
+        (convert (cst:cst-from-expression
+                  `(error 'run-time-program-error
+                          :expr ',(cst:raw cst)
+                          :origin ',(cst:source cst)))
+                 environment system)))))
