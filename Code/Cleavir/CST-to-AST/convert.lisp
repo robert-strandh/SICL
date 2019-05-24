@@ -30,7 +30,6 @@
            (convert-lambda-call cst environment system)))))
 
 (defmethod convert :around (cst environment system)
-  (declare (ignore cst))
   (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
         (*subforms-are-top-level-p* nil)
         ;; gives all generated ASTs the appropriate policy.
