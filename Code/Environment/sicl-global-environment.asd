@@ -34,6 +34,7 @@
 (defsystem #:sicl-global-environment
   :depends-on (#:cleavir-code-utilities
 	       #:cleavir-environment
+               #:trucler-reference
                #:sicl-clos-package
                #:acclimation)
   :serial t
