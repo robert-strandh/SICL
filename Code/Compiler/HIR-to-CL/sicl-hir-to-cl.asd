@@ -25,4 +25,5 @@
    (:file "translate-array-related-instructions")
    (:file "translate-boxing-related-instructions")
    (:file "translate-fixnum-related-instructions")
-   (:file "hir-to-cl")))
+   (:file "hir-to-cl")
+   (:file "cst-eval")))
