@@ -11,4 +11,5 @@
    (:file "import-from-host")
    (:file "define-defmacro")
    (:file "fill-environment")
-   (:file "environment")))
+   (:file "environment")
+   (:file "load-file")))
