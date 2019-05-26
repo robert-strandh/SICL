@@ -5,6 +5,7 @@
                #:cleavir2-ast-to-hir
                #:sicl-hir-transformations
                #:sicl-alternative-extrinsic-environment
+               #:sicl-ast-to-hir
                #:closer-mop)
   :serial t
   :components
