@@ -1,5 +1,6 @@
 (cl:in-package #:sicl-boot-phase-0)
 
 (defun fill-environment (client environment)
-  (declare (igore client))
-  (import-from-host environment))
+  (declare (ignore client))
+  (import-from-host environment)
+  (define-defmacro environment))
