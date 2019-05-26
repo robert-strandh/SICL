@@ -28,7 +28,9 @@
        (when (typep instruction 'cleavir-ir:return-instruction)
          (push instruction returns))
        (when (typep instruction 'cleavir-ir:unwind-instruction)
-         (push instruction unwinds)))
+         (push instruction unwinds))
+       (when (typep instruction 'cleavir-ir:funcall-instruction)
+         (push instruction *destinies-worklist*)))
      enter)
     ;; We need to alter these. We find them before doing any alteration-
     ;; interleaving modification and finds results in unfortunate effects.
