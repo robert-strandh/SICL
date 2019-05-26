@@ -25,7 +25,7 @@
            ;; simply because it might be a special form that is handled
            ;; specially.  So we must wait until we have more
            ;; information.
-           (let ((info (function-info lexical-environment (car form))))
+           (let ((info (describe-function client lexical-environment (car form))))
              (convert-cst client cst info lexical-environment)))
           (t
            ;; The form must be a compound form where the CAR is a lambda

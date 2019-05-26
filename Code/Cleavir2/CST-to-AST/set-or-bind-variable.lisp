@@ -19,13 +19,13 @@
                              value-ast
                              body-function
                              lexical-environment)
-  (let ((info (cleavir-env:variable-info lexical-environment (cst:raw variable-cst))))
+  (let ((info (trucler:describe-variable client lexical-environment (cst:raw variable-cst))))
     (assert (not (null info)))
-    (if (typep info 'cleavir-env:special-variable-info)
+    (if (typep info 'trucler:special-variable-description)
         (convert-special-binding
          client variable-cst value-ast body-function lexical-environment)
 	(make-instance 'cleavir-ast:progn-ast
 	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
-                            :lhs-ast (cleavir-env:identity info)
+                            :lhs-ast (trucler:identity info)
                             :value-ast value-ast)
                      (funcall body-function))))))

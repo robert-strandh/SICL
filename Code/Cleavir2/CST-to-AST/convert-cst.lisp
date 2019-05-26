@@ -12,10 +12,10 @@
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:symbol-macro-info)
+                        (info trucler:symbol-macro-description)
                         lexical-environment)
   (let* ((form (cst:raw cst))
-         (expansion (cleavir-env:expansion info))
+         (expansion (trucler:expansion info))
          (expanded-form (call-macroexpander (constantly expansion)
                                             form
                                             lexical-environment))
@@ -31,9 +31,9 @@
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:constant-variable-info)
+                        (info trucler:constant-variable-description)
                         lexical-environment)
-  (let ((cst (cst:cst-from-expression (cleavir-env:value info))))
+  (let ((cst (cst:cst-from-expression (trucler:value info))))
     (convert-constant client cst lexical-environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -42,7 +42,7 @@
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:special-operator-info)
+                        (info trucler:special-operator-description)
                         lexical-environment)
   (convert-special client
                    (car (cst:raw cst))
@@ -63,10 +63,10 @@
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:local-macro-info)
+                        (info trucler:local-macro-description)
                         lexical-environment)
   (let* ((form (cst:raw cst))
-         (expanded-form (call-macroexpander (cleavir-env:expander info)
+         (expanded-form (call-macroexpander (trucler:expander info)
                                             form
                                             lexical-environment))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
@@ -82,15 +82,15 @@
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:global-macro-info)
+                        (info trucler:global-macro-description)
                         lexical-environment)
-  (let ((compiler-macro (cleavir-env:compiler-macro info))
+  (let ((compiler-macro (trucler:compiler-macro info))
         (form (cst:raw cst)))
     (with-preserved-toplevel-ness
       (if (null compiler-macro)
           ;; There is no compiler macro, so we just apply the macro
           ;; expander, and then convert the resulting form.
-          (let* ((expanded-form (call-macroexpander (cleavir-env:expander info)
+          (let* ((expanded-form (call-macroexpander (trucler:expander info)
                                                     form
                                                     lexical-environment))
                  (expanded-cst (cst:reconstruct expanded-form cst client)))
@@ -109,7 +109,7 @@
                 ;; then convert the resulting form, just like we did
                 ;; when there was no compiler macro present.
                 (let* ((expanded-form
-                         (call-macroexpander (cleavir-env:expander info)
+                         (call-macroexpander (trucler:expander info)
                                              form
                                              lexical-environment))
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
@@ -152,15 +152,15 @@
 ;;; query of the environment with the name of the function.
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:global-function-info)
+                        (info trucler:global-function-description)
                         lexical-environment)
   ;; When we compile a call to a global function, it is possible that
   ;; we are in COMPILE-TIME-TOO mode.  In that case, we must first
   ;; evaluate the form.
   (when (and *current-form-is-top-level-p* *compile-time-too*)
     (cst-eval client cst lexical-environment))
-  (let ((compiler-macro (cleavir-env:compiler-macro info))
-        (notinline (eq 'notinline (cleavir-env:inline info)))
+  (let ((compiler-macro (trucler:compiler-macro info))
+        (notinline (eq 'notinline (trucler:inline info)))
         (form (cst:raw cst)))
     (if (or notinline (null compiler-macro))
         ;; There is no compiler macro.  Create the call.
@@ -199,7 +199,7 @@
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:local-function-info)
+                        (info trucler:local-function-description)
                         lexical-environment)
   (make-call client
              cst
@@ -218,15 +218,15 @@
                                      global-env)
   (declare (ignore global-env))
   (let ((name-ast (make-instance 'cleavir-ast:constant-ast
-                    :value (cleavir-env:name info))))
+                    :value (trucler:name info))))
     (make-instance 'cleavir-ast:symbol-value-ast
       :name-ast name-ast)))
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:special-variable-info)
+                        (info trucler:special-variable-description)
                         lexical-environment)
-  (let ((global-env (cleavir-env:global-environment lexical-environment)))
+  (let ((global-env (trucler:global-environment client lexical-environment)))
     (convert-special-variable client
                               cst
                               info
@@ -238,9 +238,9 @@
 
 (defmethod convert-cst (client
                         cst
-                        (info cleavir-env:lexical-variable-info)
+                        (info trucler:lexical-variable-description)
                         lexical-environment)
   (declare (ignore client))
-  (when (eq (cleavir-env:ignore info) 'ignore)
+  (when (eq (trucler:ignore info) 'ignore)
     (warn 'ignored-variable-referenced :expr (cst:raw cst)))
-  (cleavir-env:identity info))
+  (trucler:identity info))

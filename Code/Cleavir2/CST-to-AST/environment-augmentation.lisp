@@ -3,13 +3,15 @@
 ;;; Augment the environment with a single canonicalized declaration
 ;;; specifier.
 (defgeneric augment-environment-with-declaration
-    (declaration-identifier
+    (client
+     declaration-identifier
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment))
 
 (defmethod augment-environment-with-declaration
-    (declaration-identifier
+    (client
+     declaration-identifier
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
@@ -18,101 +20,113 @@
   lexical-environment)
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'dynamic-extent))
+    (client
+     (declaration-identifier (eql 'dynamic-extent))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
   (let ((var-or-function (cst:raw (cst:first declaration-data-cst))))
     (if (consp var-or-function)
         ;; (dynamic-extent (function foo))
-        (cleavir-env:add-function-dynamic-extent
-         lexical-environment (second var-or-function))
+        (trucler:add-function-dynamic-extent
+         client lexical-environment (second var-or-function))
         ;; (dynamic-extent foo)
-        (cleavir-env:add-variable-dynamic-extent
-         lexical-environment var-or-function))))
+        (trucler:add-variable-dynamic-extent
+         client lexical-environment var-or-function))))
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'ftype))
+    (client
+     (declaration-identifier (eql 'ftype))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
-  (cleavir-env:add-function-type
-   lexical-environment (second declaration-data-cst) (first declaration-data-cst)))
+  (trucler:add-function-type
+   client lexical-environment (second declaration-data-cst) (first declaration-data-cst)))
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'ignore))
-     declaration-identifier-cst
-     declaration-data-cst
-     lexical-environment)
-  (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
-        (ignore (cst:raw declaration-identifier-cst)))
-    (if (consp var-or-function)
-        (cleavir-env:add-function-ignore
-         lexical-environment (second var-or-function) ignore)
-        (cleavir-env:add-variable-ignore
-         lexical-environment var-or-function ignore))))
-
-(defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'ignorable))
+    (client
+     (declaration-identifier (eql 'ignore))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
   (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
         (ignore (cst:raw declaration-identifier-cst)))
     (if (consp var-or-function)
-        (cleavir-env:add-function-ignore
+        (trucler:add-function-ignore
+         client lexical-environment (second var-or-function) ignore)
+        (trucler:add-variable-ignore
+         client lexical-environment var-or-function ignore))))
+
+(defmethod augment-environment-with-declaration
+    (client
+     (declaration-identifier (eql 'ignorable))
+     declaration-identifier-cst
+     declaration-data-cst
+     lexical-environment)
+  (let ((var-or-function (cst:raw (cst:first declaration-data-cst)))
+        (ignore (cst:raw declaration-identifier-cst)))
+    (if (consp var-or-function)
+        (trucler:add-function-ignore
+         client
          lexical-environment (second var-or-function) ignore)
-        (cleavir-env:add-variable-ignore
-         lexical-environment var-or-function ignore))))
+        (trucler:add-variable-ignore
+         client lexical-environment var-or-function ignore))))
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'inline))
+    (client
+     (declaration-identifier (eql 'inline))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
-  (cleavir-env:add-inline
+  (trucler:add-inline
+   client
    lexical-environment
    (cst:raw (cst:first declaration-data-cst))
    (cst:raw declaration-identifier-cst)))
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'notinline))
+    (client
+     (declaration-identifier (eql 'notinline))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
-  (cleavir-env:add-inline
+  (trucler:add-inline
+   client
    lexical-environment
    (cst:raw (cst:first declaration-data-cst))
    (cst:raw declaration-identifier-cst)))
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'special))
+    (client
+     (declaration-identifier (eql 'special))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
   ;; This case is a bit tricky, because if the
   ;; variable is globally special, nothing should
   ;; be added to the environment.
-  (let ((info (cleavir-env:variable-info
-               lexical-environment (cst:raw (cst:first declaration-data-cst)))))
-    (if (and (typep info 'cleavir-env:special-variable-info)
-             (cleavir-env:global-p info))
+  (let ((info (trucler:describe-variable
+               client lexical-environment (cst:raw (cst:first declaration-data-cst)))))
+    (if (typep info 'trucler:global-special-variable-description)
         lexical-environment
-        (cleavir-env:add-special-variable
-         lexical-environment (cst:raw (cst:first declaration-data-cst))))))
+        (trucler:add-special-variable
+         client lexical-environment (cst:raw (cst:first declaration-data-cst))))))
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'type))
+    (client
+     (declaration-identifier (eql 'type))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
   (cst:db source (type-cst variable-cst) declaration-data-cst
-    (cleavir-env:add-variable-type lexical-environment
-                                   (cst:raw variable-cst)
-                                   (cst:raw type-cst))))
+    (trucler:add-variable-type client
+                               lexical-environment
+                               (cst:raw variable-cst)
+                               (cst:raw type-cst))))
 
 (defmethod augment-environment-with-declaration
-    ((declaration-identifier (eql 'optimize))
+    (client
+     (declaration-identifier (eql 'optimize))
      declaration-identifier-cst
      declaration-data-cst
      lexical-environment)
@@ -123,8 +137,15 @@
   lexical-environment)
 
 ;;; Augment the environment with an OPTIMIZE specifier.
-(defun augment-environment-with-optimize (optimize lexical-environment)
-  (cleavir-env:add-optimize lexical-environment optimize nil))
+(defun augment-environment-with-optimize (client optimize lexical-environment)
+  (let ((quality (if (symbolp optimize) optimize (first optimize)))
+        (value (if (symbolp optimize) 3 (second optimize))))
+    (ecase quality
+      (speed (trucler:add-speed client lexical-environment value))
+      (compilation-speed (trucler:add-compilation-speed client lexical-environment value))
+      (safety (trucler:add-safety client lexical-environment value))
+      (space (trucler:add-space client lexical-environment value))
+      (debug (trucler:add-debug client lexical-environment value)))))
 
 ;;; Extract any OPTIMIZE information from a set of canonicalized
 ;;; declaration specifiers.
@@ -135,12 +156,12 @@
 
 ;;; Augment the environment with a list of canonical declartion
 ;;; specifiers.
-(defun augment-environment-with-declarations (lexical-environment canonical-dspecs)
+(defun augment-environment-with-declarations (client lexical-environment canonical-dspecs)
   (let ((new-env
           ;; handle OPTIMIZE specially.
           (let ((optimize (extract-optimize canonical-dspecs)))
             (if optimize
-                (augment-environment-with-optimize optimize lexical-environment)
+                (augment-environment-with-optimize client optimize lexical-environment)
                 lexical-environment))))
     (loop for spec in canonical-dspecs
           for declaration-identifier-cst = (cst:first spec)
@@ -151,6 +172,7 @@
           for declaration-data-cst = (cst:rest spec)
           do (setf new-env
                    (augment-environment-with-declaration
+                    client
                     declaration-identifier
                     declaration-identifier-cst
                     declaration-data-cst
@@ -162,19 +184,21 @@
 ;;; the binding form is compiled, return true if and only if the
 ;;; variable to be bound is special.  Return a second value indicating
 ;;; whether the variable is globally special.
-(defun variable-is-special-p (variable declarations lexical-environment)
-  (let* ((existing-var-info (cleavir-env:variable-info lexical-environment variable))
+(defun variable-is-special-p (client variable declarations lexical-environment)
+  (let* ((existing-var-description (trucler:describe-variable client lexical-environment variable))
          (special-var-p
-           (typep existing-var-info 'cleavir-env:special-variable-info)))
+           (typep existing-var-description 'trucler:special-variable-description)))
     (cond ((loop for declaration in declarations
                  thereis (and (eq (cst:raw (cst:first declaration)) 'special)
                               (eq (cst:raw (cst:second declaration)) variable)))
            ;; If it is declared special it is.
            (values t
                    (and special-var-p
-                        (cleavir-env:global-p existing-var-info))))
+                        (typep existing-var-description
+                               'trucler:global-special-variable-description))))
           ((and special-var-p
-            (cleavir-env:global-p existing-var-info))
+                (typep existing-var-description
+                       'trucler:global-special-variable-description))
            ;; It is mentioned in the environment as globally special.
            ;; if it's only special because of a local declaration,
            ;; this binding is not special.
@@ -203,7 +227,8 @@
 ;;; is globally special.  For a LET form, this is the environment in
 ;;; which the entire LET form was converted.  For a LET* form, it is
 ;;; the same as ENV.
-(defun augment-environment-with-variable (variable-cst
+(defun augment-environment-with-variable (client
+                                          variable-cst
                                           declarations
                                           lexical-environment
                                           orig-env)
@@ -211,29 +236,29 @@
         (raw-variable (cst:raw variable-cst))
         (raw-declarations (mapcar #'cst:raw declarations)))
     (multiple-value-bind (special-p globally-p)
-        (variable-is-special-p raw-variable declarations orig-env)
+        (variable-is-special-p client raw-variable declarations orig-env)
       (if special-p
           (unless globally-p
             (setf new-env
-                  (cleavir-env:add-special-variable new-env raw-variable)))
+                  (trucler:add-special-variable client new-env raw-variable)))
           (let ((var-ast (make-instance 'cleavir-ast:lexical-ast
                            :name raw-variable)))
             (setf new-env
-                  (cleavir-env:add-lexical-variable
-                   new-env raw-variable var-ast)))))
+                  (trucler:add-lexical-variable
+                   client new-env raw-variable var-ast)))))
     (let ((type (declared-type declarations)))
       (unless (equal type '(and))
         (setf new-env
-              (cleavir-env:add-variable-type new-env raw-variable type))))
+              (trucler:add-variable-type client new-env raw-variable type))))
     (when (member 'ignore raw-declarations :test #'eq :key #'car)
       (setf new-env
-            (cleavir-env:add-variable-ignore new-env raw-variable 'ignore)))
+            (trucler:add-variable-ignore client new-env raw-variable 'ignore)))
     (when (member 'ignorable raw-declarations :test #'eq :key #'car)
       (setf new-env
-            (cleavir-env:add-variable-ignore new-env raw-variable 'ignorable)))
+            (trucler:add-variable-ignore client new-env raw-variable 'ignorable)))
     (when (member 'dynamic-extent raw-declarations :test #'eq :key #'car)
       (setf new-env
-            (cleavir-env:add-variable-dynamic-extent new-env raw-variable)))
+            (trucler:add-variable-dynamic-extent client new-env raw-variable)))
     new-env))
 
 ;;; The only purpose of this function is to call the function
@@ -242,47 +267,54 @@
 ;;; that it also tests whether the supplied-p parameter is NIL,
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
-(defun augment-environment-with-parameter (var-cst
+(defun augment-environment-with-parameter (client
+                                           var-cst
                                            supplied-p-cst
                                            dspecs
                                            lexical-environment)
-  (let ((new-env (augment-environment-with-variable var-cst
+  (let ((new-env (augment-environment-with-variable client
+                                                    var-cst
                                                     dspecs
                                                     lexical-environment
                                                     lexical-environment)))
     (if (null supplied-p-cst)
         new-env
-        (augment-environment-with-variable supplied-p-cst
+        (augment-environment-with-variable client
+                                           supplied-p-cst
                                            dspecs
                                            new-env
                                            new-env))))
 
-(defun augment-environment-with-local-function-name (name-cst
+(defun augment-environment-with-local-function-name (client
+                                                     name-cst
                                                      lexical-environment)
   (let* ((name (cst:raw name-cst))
          (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
-    (cleavir-env:add-local-function lexical-environment name var-ast)))
+    (trucler:add-local-function client lexical-environment name var-ast)))
 
 ;;; Take an environment and a CST representing a single local function
 ;;; definition.  Return a new environment which is like the one passed
 ;;; as an argument, except the it has been augmented by the name of
 ;;; the local function.
-(defun augment-environment-from-fdef (lexical-environment
+(defun augment-environment-from-fdef (client
+                                      lexical-environment
                                       definition-cst)
   (let ((name-cst (cst:first definition-cst)))
-    (augment-environment-with-local-function-name name-cst
+    (augment-environment-with-local-function-name client
+                                                  name-cst
                                                   lexical-environment)))
 
 ;;; Take an environment, a CST representing a list of function
 ;;; definitions, and return a new environment which is like the one
 ;;; passed as an argument, except that is has been augmented by the
 ;;; local function names in the list.
-(defun augment-environment-from-fdefs (lexical-environment
+(defun augment-environment-from-fdefs (client
+                                       lexical-environment
                                        definitions-cst)
   (loop with result = lexical-environment
         for remaining = definitions-cst then (cst:rest remaining)
         until (cst:null remaining)
         do (let ((definition-cst (cst:first remaining)))
              (setf result
-                   (augment-environment-from-fdef result definition-cst)))
+                   (augment-environment-from-fdef client result definition-cst)))
         finally (return result)))

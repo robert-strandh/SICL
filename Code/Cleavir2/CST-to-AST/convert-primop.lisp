@@ -85,11 +85,11 @@
     (let ((lexes
             (loop for var in (cst:raw variables-cst)
                   do (assert (symbolp var))
-                  collect (let ((info (cleavir-env:variable-info lexical-environment var)))
-                            (assert (typep info 'cleavir-env:lexical-variable-info))
+                  collect (let ((info (trucler:describe-variable client lexical-environment var)))
+                            (assert (typep info 'trucler:lexical-variable-description))
                             info))))
       (make-instance 'cleavir-ast:multiple-value-setq-ast
-       :lhs-asts (mapcar #'cleavir-env:identity lexes)
+       :lhs-asts (mapcar #'trucler:identity lexes)
        :form-ast (convert client form-cst lexical-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -265,7 +265,7 @@
                       (variable-ast (make-instance 'cleavir-ast:lexical-ast
                                       :name variable)))
                  (setf new-env
-                       (cleavir-env:add-lexical-variable
+                       (trucler:add-lexical-variable
                         new-env variable variable-ast))))
       (process-progn (convert-sequence client body-cst new-env)))))
 

@@ -199,7 +199,8 @@
 
 ;;; Convert the body of a function.
 (defun convert-body (client body lexical-environment)
-  (let ((new-env (augment-environment-with-declarations lexical-environment (dspecs body)))
+  (let ((new-env (augment-environment-with-declarations
+                  client lexical-environment (dspecs body)))
         (block-name-cst (block-name-cst body)))
     (convert client
              (if block-name-cst
@@ -284,7 +285,8 @@
      (parameter cst:simple-variable)
      idspecs
      lexical-environment)
-  (augment-environment-with-variable (cst:name parameter)
+  (augment-environment-with-variable client
+                                     (cst:name parameter)
                                      idspecs
                                      lexical-environment
                                      lexical-environment))
@@ -294,7 +296,8 @@
      (parameter cst:ordinary-key-parameter)
      idspecs
      lexical-environment)
-  (augment-environment-with-parameter (cst:name parameter)
+  (augment-environment-with-parameter client
+                                      (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
                                       lexical-environment))
@@ -304,7 +307,8 @@
      (parameter cst:ordinary-optional-parameter)
      idspecs
      lexical-environment)
-  (augment-environment-with-parameter (cst:name parameter)
+  (augment-environment-with-parameter client
+                                      (cst:name parameter)
                                       (cst:supplied-p parameter)
                                       idspecs
                                       lexical-environment))
@@ -314,7 +318,8 @@
      (parameter cst:aux-parameter)
      idspecs
      lexical-environment)
-  (augment-environment-with-variable (cst:name parameter)
+  (augment-environment-with-variable client
+                                     (cst:name parameter)
                                      idspecs
                                      lexical-environment
                                      lexical-environment))

@@ -2,23 +2,23 @@
 
 (defmethod convert-variable (client cst lexical-environment)
   (let* ((symbol (cst:raw cst))
-         (info (cleavir-env:variable-info lexical-environment symbol)))
+         (info (trucler:describe-variable client lexical-environment symbol)))
     (loop while (null info)
-	  do (restart-case (error 'cleavir-env:no-variable-info
+	  do (restart-case (error 'trucler:no-variable-description
 				  :name symbol
 				  :origin (cst:source cst))
 	       (recover ()
 		 :report (lambda (stream)
 			   (format stream "Consider the variable as special."))
                  (setf info 
-                       (make-instance 'cleavir-env:special-variable-info
+                       (make-instance 'trucler:special-variable-description
                                       :name symbol)))
                ;; This is identical to RECOVER, but more specifically named.
 	       (consider-special ()
 		 :report (lambda (stream)
 			   (format stream "Consider the variable as special."))
                  (setf info
-                       (make-instance 'cleavir-env:special-variable-info
+                       (make-instance 'trucler:special-variable-description
                          :name symbol)))
 	       (substitute (new-symbol)
 		 :report (lambda (stream)
@@ -26,5 +26,5 @@
 		 :interactive (lambda ()
 				(format *query-io* "Enter new name: ")
 				(list (read *query-io*)))
-		 (setq info (cleavir-env:variable-info lexical-environment new-symbol)))))
+		 (setq info (trucler:describe-variable client lexical-environment new-symbol)))))
     (convert-cst client cst info lexical-environment)))

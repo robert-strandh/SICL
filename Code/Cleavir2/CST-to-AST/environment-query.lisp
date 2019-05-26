@@ -1,16 +1,16 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defun function-info (lexical-environment function-name)
-  (let ((result (cleavir-env:function-info lexical-environment function-name)))
+(defun describe-function (client lexical-environment function-name)
+  (let ((result (trucler:describe-function client lexical-environment function-name)))
     (loop while (null result)
-          do (restart-case (error 'cleavir-env:no-function-info
+          do (restart-case (error 'trucler:no-function-description
                                   :name function-name)
                (consider-global ()
                  :report (lambda (stream)
                            (format stream
                                    "Treat it as the name of a global function."))
-                 (return-from function-info
-                   (make-instance 'cleavir-env:global-function-info
+                 (return-from describe-function
+                   (make-instance 'trucler:global-function-description
                      :name function-name)))
                (substitute (new-function-name)
                  :report (lambda (stream)
@@ -18,13 +18,15 @@
                  :interactive (lambda ()
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
-                 (setq result (cleavir-env:function-info lexical-environment new-function-name)))))
+                 (setq result (trucler:describe-function client
+                                                         lexical-environment
+                                                         new-function-name)))))
     result))
 
-(defun tag-info (lexical-environment tag-name)
-  (let ((result (cleavir-env:tag-info lexical-environment tag-name)))
+(defun describe-tag (client lexical-environment tag-name)
+  (let ((result (trucler:describe-tag client lexical-environment tag-name)))
     (loop while (null result)
-          do (restart-case (error 'cleavir-env:no-tag-info
+          do (restart-case (error 'trucler:no-tag-description
                                   :name tag-name)
                (substitute (new-tag-name)
                  :report (lambda (stream)
@@ -32,5 +34,7 @@
                  :interactive (lambda ()
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
-                 (setq result (cleavir-env:tag-info lexical-environment new-tag-name)))))
+                 (setq result (trucler:describe-tag client
+                                                    lexical-environment
+                                                    new-tag-name)))))
     result))

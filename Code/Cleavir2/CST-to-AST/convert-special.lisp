@@ -2,7 +2,6 @@
 
 (defmethod convert-special :around
     (client operator cst lexical-environment)
-  (declare (ignore client))
   (when (and *compile-time-too*
              *current-form-is-top-level-p*
              (not (member operator
@@ -47,7 +46,7 @@
                :origin (cst:source name-cst)))
       (let* ((ast (make-instance 'cleavir-ast:block-ast))
              (new-lexical-environment
-               (cleavir-env:add-block lexical-environment name ast)))
+               (trucler:add-block client lexical-environment name ast)))
         (setf (cleavir-ast:body-ast ast)
               (process-progn (convert-sequence client
                                                body-cst
@@ -69,14 +68,14 @@
         (error 'block-name-must-be-a-symbol
                :expr block-name
                :origin (cst:source block-name-cst)))
-      (flet ((find-info (block-name)
-               (cleavir-env:block-info lexical-environment block-name)))
-        (let ((info (find-info block-name))
+      (flet ((find-description (block-name)
+               (trucler:describe-block client lexical-environment block-name)))
+        (let ((info (find-description block-name))
               (value-cst (if (cst:null rest-csts)
                              (make-instance 'cst:atom-cst :raw nil)
                              (cst:first rest-csts))))
           (loop while (null info)
-                do (restart-case (error 'cleavir-env:no-block-info
+                do (restart-case (error 'trucler:no-block-description
                                         :name (cst:raw block-name-cst)
                                         :origin (cst:source block-name-cst))
                      (substitute (new-block-name)
@@ -85,7 +84,7 @@
                        :interactive (lambda ()
                                       (format *query-io* "Enter new name: ")
                                       (list (read *query-io*)))
-                       (setq info (find-info new-block-name)))
+                       (setq info (find-description new-block-name)))
                      (recover ()
                        ;; In order to recover from the error, we ignore
                        ;; the RETURN-FROM form and only compile the return
@@ -96,7 +95,7 @@
                                   value-cst
                                   lexical-environment)))))
           (make-instance 'cleavir-ast:return-from-ast
-           :block-ast (cleavir-env:identity info)
+           :block-ast (trucler:identity info)
            :form-ast (convert client
                       value-cst
                       lexical-environment)))))))
@@ -234,8 +233,8 @@
 ;;; LEXICAL-AST that will have the function with that name as a value.
 ;;; It is known that the environment contains an entry corresponding
 ;;; to the name given as an argument.
-(defun function-lexical (lexical-environment name)
-  (cleavir-env:identity (cleavir-env:function-info lexical-environment name)))
+(defun function-lexical (client lexical-environment name)
+  (trucler:identity (trucler:describe-function client lexical-environment name)))
 
 ;;; Convert a local function definition.
 (defun convert-local-function (client
@@ -276,11 +275,12 @@
 ;;; each function in a list of function ASTs to its associated
 ;;; LEXICAL-AST.  FUNCTIONS is a list of CONS cells.  Each CONS cell
 ;;; has a function name in its CAR and an AST in its CDR.
-(defun compute-function-init-asts (functions
+(defun compute-function-init-asts (client
+                                   functions
                                    lexical-environment)
   (loop for (name . fun-ast) in functions
         collect (make-instance 'cleavir-ast:setq-ast
-                  :lhs-ast (function-lexical lexical-environment name)
+                  :lhs-ast (function-lexical client lexical-environment name)
                   :value-ast fun-ast)))
 
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
@@ -298,14 +298,16 @@
                                             definitions-cst
                                             lexical-environment))
              (new-lexical-environment
-               (augment-environment-from-fdefs lexical-environment
+               (augment-environment-from-fdefs client
+                                               lexical-environment
                                                definitions-cst))
              (init-asts
-               (compute-function-init-asts defs
+               (compute-function-init-asts client
+                                           defs
                                            new-lexical-environment))
              (final-lexical-environment
                (augment-environment-with-declarations
-                new-lexical-environment canonical-declaration-specifiers)))
+                client new-lexical-environment canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  ;; So that flet with empty body works.
@@ -330,16 +332,17 @@
       (let* ((canonical-declaration-specifiers
                (cst:canonicalize-declarations client declaration-csts))
              (new-lexical-environment
-               (augment-environment-from-fdefs lexical-environment
+               (augment-environment-from-fdefs client
+                                               lexical-environment
                                                definitions-cst))
              (defs (convert-local-functions client
                                             definitions-cst
                                             new-lexical-environment))
              (init-asts
-               (compute-function-init-asts defs new-lexical-environment))
+               (compute-function-init-asts client defs new-lexical-environment))
              (final-lexical-environment
                (augment-environment-with-declarations
-                new-lexical-environment canonical-declaration-specifiers)))
+                client new-lexical-environment canonical-declaration-specifiers)))
         (process-progn
          (append init-asts
                  ;; So that flet with empty body works.
@@ -379,8 +382,8 @@
           (new-lexical-environment lexical-environment))
       (loop for ast in tag-asts
             do (setf new-lexical-environment
-                     (cleavir-env:add-tag
-                      new-lexical-environment (cleavir-ast:name ast) ast)))
+                     (trucler:add-tag
+                      client new-lexical-environment (cleavir-ast:name ast) ast)))
       (let ((item-asts (loop for rest = body-cst then (cst:rest rest)
                              until (cst:null rest)
                              collect (let ((item-cst (cst:first rest)))
@@ -402,14 +405,13 @@
 
 (defmethod convert-special
     (client (symbol (eql 'go)) cst lexical-environment)
-  (declare (ignore client))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 1)
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
-    (let ((info (tag-info lexical-environment (cst:raw tag-cst))))
+    (let ((info (describe-tag client lexical-environment (cst:raw tag-cst))))
       (make-instance 'cleavir-ast:go-ast
-        :tag-ast (cleavir-env:identity info)))))
+        :tag-ast (trucler:identity info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -515,7 +517,7 @@
                                               lexical-environment)))
       (eval client
             lambda-expression
-            (cleavir-env:compile-time lexical-environment)))))
+            (trucler:restrict-for-macrolet-expander client lexical-environment)))))
 
 (defmethod convert-special
     (client (symbol (eql 'macrolet)) cst lexical-environment)
@@ -535,7 +537,7 @@
                       (name (cst:raw name-cst))
                       (expander (expander client definition-cst lexical-environment)))
                  (setf new-lexical-environment
-                       (cleavir-env:add-local-macro new-lexical-environment name expander))))
+                       (trucler:add-local-macro client new-lexical-environment name expander))))
       (with-preserved-toplevel-ness
         (convert client
                  (cst:cons (make-instance 'cst:atom-cst
@@ -562,8 +564,8 @@
                  (let ((name (cst:raw name-cst))
                        (expansion (cst:raw expansion-cst)))
                    (setf new-lexical-environment
-                         (cleavir-env:add-local-symbol-macro
-                          new-lexical-environment name expansion)))))
+                         (trucler:add-local-symbol-macro
+                          client new-lexical-environment name expansion)))))
       (with-preserved-toplevel-ness
         (convert client
                  (cst:cons (cst:cst-from-expression 'locally)
@@ -579,7 +581,7 @@
 (defun convert-named-function (client
                                name-cst
                                lexical-environment)
-  (let ((info (function-info lexical-environment (cst:raw name-cst))))
+  (let ((info (describe-function client lexical-environment (cst:raw name-cst))))
     (convert-function-reference client
                                 name-cst
                                 info
@@ -852,7 +854,7 @@
                (cst:canonicalize-declarations client declaration-csts))
              (new-lexical-environment
                (augment-environment-with-declarations
-                lexical-environment canonical-declaration-specifiers)))
+                client lexical-environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
           (process-progn (convert-sequence client
                                            forms-cst

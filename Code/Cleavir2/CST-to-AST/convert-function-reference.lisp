@@ -6,46 +6,46 @@
                                               global-env)
   (declare (ignore global-env))
   (let ((name-ast (make-instance 'cleavir-ast:constant-ast
-                    :value (cleavir-env:name info))))
+                    :value (trucler:name info))))
     (make-instance 'cleavir-ast:fdefinition-ast
       :name-ast name-ast)))
 
 (defmethod convert-function-reference (client
                                        cst
-                                       (info cleavir-env:global-function-info)
+                                       (info trucler:global-function-description)
                                        lexical-environment)
   (convert-global-function-reference client
                                      cst
                                      info
-                                     (cleavir-env:global-environment lexical-environment)))
+                                     (trucler:global-environment client lexical-environment)))
 
 (defmethod convert-function-reference (client
                                        cst
-                                       (info cleavir-env:local-function-info)
+                                       (info trucler:local-function-description)
                                        lexical-environment)
   (declare (ignore client lexical-environment))
-  (cleavir-env:identity info))
+  (trucler:identity info))
 
 (defmethod convert-function-reference (client
                                        cst
-                                       (info cleavir-env:global-macro-info)
+                                       (info trucler:global-macro-description)
                                        lexical-environment)
   (error 'function-name-names-global-macro
-         :expr (cleavir-env:name info)))
+         :expr (trucler:name info)))
 
 (defmethod convert-function-reference (client
                                        cst
-                                       (info cleavir-env:local-macro-info)
+                                       (info trucler:local-macro-description)
                                        lexical-environment)
   (error 'function-name-names-local-macro
-         :expr (cleavir-env:name info)))
+         :expr (trucler:name info)))
 
 (defmethod convert-function-reference (client
                                        cst
-                                       (info cleavir-env:special-operator-info)
+                                       (info trucler:special-operator-description)
                                        lexical-environment)
   (error 'function-name-names-special-operator
-         :expr (cleavir-env:name info)))
+         :expr (trucler:name info)))
 
 ;;; These are used by (foo ...) forms.
 ;;; It's useful to distinguish them. For instance, an implementation
@@ -57,8 +57,8 @@
                                               cst
                                               info
                                               lexical-environment)
-  (when (not (eq (cleavir-env:inline info) 'cl:notinline))
-    (let ((ast (cleavir-env:ast info)))
+  (when (not (eq (trucler:inline info) 'cl:notinline))
+    (let ((ast (trucler:inline-data info)))
       (when ast
         (return-from convert-called-function-reference
           ;; The AST must be cloned because hoisting is destructive.
@@ -66,32 +66,32 @@
   (convert-global-function-reference client
                                      cst
                                      info
-                                     (cleavir-env:global-environment lexical-environment)))
+                                     (trucler:global-environment client lexical-environment)))
 
 (defmethod convert-called-function-reference (client
                                               cst
-                                              (info cleavir-env:local-function-info)
+                                              (info trucler:local-function-description)
                                               lexical-environment)
   (declare (ignore client lexical-environment))
-  (cleavir-env:identity info))
+  (trucler:identity info))
 
 (defmethod convert-called-function-reference (client
                                               cst
-                                              (info cleavir-env:global-macro-info)
+                                              (info trucler:global-macro-description)
                                               lexical-environment)
   (error 'function-name-names-global-macro
-         :expr (cleavir-env:name info)))
+         :expr (trucler:name info)))
 
 (defmethod convert-called-function-reference (client
                                               cst
-                                              (info cleavir-env:local-macro-info)
+                                              (info trucler:local-macro-description)
                                               lexical-environment)
   (error 'function-name-names-local-macro
-         :expr (cleavir-env:name info)))
+         :expr (trucler:name info)))
 
 (defmethod convert-called-function-reference (client
                                               cst
-                                              (info cleavir-env:special-operator-info)
+                                              (info trucler:special-operator-description)
                                               lexical-environment)
   (error 'function-name-names-special-operator
-         :expr (cleavir-env:name info)))
+         :expr (trucler:name info)))
