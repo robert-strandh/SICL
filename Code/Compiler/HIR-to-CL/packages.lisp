@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-hir-to-cl
   (:use #:common-lisp)
-  (:export #:hir-to-cl))
+  (:export #:hir-to-cl
+           #:cst-eval))
