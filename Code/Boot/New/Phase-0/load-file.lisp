@@ -9,7 +9,7 @@
         (unless (eq (first first-form) 'in-package)
           (error "File must start with an IN-PACKAGE form."))
         (setf *package* (find-package (second first-form))))
-      (loop with client = (make-instance 'trucler-reference:environment)
+      (loop with client = (make-instance 'trucler-reference:client)
             with eof-marker = (list nil)
             for cst = (eclector.concrete-syntax-tree:cst-read stream nil eof-marker)
             until (eq cst eof-marker)
