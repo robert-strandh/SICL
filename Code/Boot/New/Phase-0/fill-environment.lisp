@@ -5,4 +5,5 @@
   (import-from-host environment)
   (define-defmacro environment)
   (define-backquote-macros environment)
-  (define-default-setf-expander environment))
+  (define-default-setf-expander environment)
+  (define-setf-macro-function environment))
