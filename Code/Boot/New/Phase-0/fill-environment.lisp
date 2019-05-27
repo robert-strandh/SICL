@@ -6,4 +6,14 @@
   (define-defmacro environment)
   (define-backquote-macros environment)
   (define-default-setf-expander environment)
-  (define-setf-macro-function environment))
+  (define-setf-macro-function environment)
+  ;; Load a file containing a definition of the macro LAMBDA.  This
+  ;; macro is particularly simple, so it doesn't really matter how
+  ;; it is expanded.  This is fortunate, because at the time this
+  ;; file is loaded, the definition of DEFMACRO is still one we
+  ;; created "manually" and which uses the host compiler to compile
+  ;; the macro function in the null lexical environment.  We define
+  ;; the macro LAMBDA before we redefine DEFMACRO as a target macro
+  ;; because PARSE-MACRO returns a LAMBDA form, so we need this
+  ;; macro in order to redefine DEFMACRO.
+  (load-file "Evaluation-and-compilation/lambda.lisp" environment))
