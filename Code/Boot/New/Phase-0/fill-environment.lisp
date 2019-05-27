@@ -29,4 +29,12 @@
   ;; defined DEFMACRO to call (SETF MACRO-FUNCTION) directly, but
   ;; that would have been less "natural", so we do it this way
   ;; instead.
-  (load-file "Data-and-control-flow/setf.lisp" environment))
+  (load-file "Data-and-control-flow/setf.lisp" environment)
+  ;; At this point, we have all the ingredients (the macros LAMBDA and
+  ;; SETF) in order to redefine the macro DEFMACRO as a native macro.
+  ;; SINCE we already have a primitive form of DEFMACRO, we use it to
+  ;; define DEFMACRO.  The result of loading this file is that all new
+  ;; macros defined subsequently will have their macro functions
+  ;; compiled with the target compiler.  However, the macro function of
+  ;; DEFMACRO is still compiled with the host compiler.
+  (load-file "Evaluation-and-compilation/defmacro-defmacro.lisp" environment))
