@@ -21,7 +21,9 @@
    #:hir-transformations
    #:introduce-intermediate
    #:eliminate-superfluous-temporaries
-   #:maybe-eliminate)
+   #:maybe-eliminate
+   #:replace-inputs
+   #:replace-outputs)
   (:export
    #:compute-destinies
    #:find-enclose-destinies
