@@ -4,4 +4,5 @@
   (declare (ignore client))
   (import-from-host environment)
   (define-defmacro environment)
-  (define-backquote-macros environment))
+  (define-backquote-macros environment)
+  (define-default-setf-expander environment))
