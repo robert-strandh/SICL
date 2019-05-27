@@ -21,4 +21,12 @@
   ;; MULTIPLE-VALUE-BIND.  We need it early because it is used in the
   ;; expansion of SETF, which we also need early for reasons explained
   ;; below.
-  (load-file "Environment/multiple-value-bind.lisp" environment))
+  (load-file "Environment/multiple-value-bind.lisp" environment)
+  ;; Load a file containing a definition of the macro SETF.  We need
+  ;; the SETF macro early, because it is needed in order to define
+  ;; the macro DEFMACRO.  The reason for that, is that the expansion
+  ;; of DEFMACRO uses SETF to set the macro function.  We could have
+  ;; defined DEFMACRO to call (SETF MACRO-FUNCTION) directly, but
+  ;; that would have been less "natural", so we do it this way
+  ;; instead.
+  (load-file "Data-and-control-flow/setf.lisp" environment))
