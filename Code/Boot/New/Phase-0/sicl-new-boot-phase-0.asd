@@ -10,6 +10,7 @@
   ((:file "packages")
    (:file "import-from-host")
    (:file "define-defmacro")
+   (:file "define-backquote-macro")
    (:file "fill-environment")
    (:file "environment")
    (:file "load-file")))
