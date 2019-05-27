@@ -12,6 +12,7 @@
    (:file "define-defmacro")
    (:file "define-backquote-macro")
    (:file "define-default-setf-expander")
+   (:file "define-setf-macro-function")
    (:file "fill-environment")
    (:file "environment")
    (:file "load-file")))
