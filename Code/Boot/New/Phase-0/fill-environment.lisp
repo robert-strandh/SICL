@@ -16,4 +16,9 @@
   ;; the macro LAMBDA before we redefine DEFMACRO as a target macro
   ;; because PARSE-MACRO returns a LAMBDA form, so we need this
   ;; macro in order to redefine DEFMACRO.
-  (load-file "Evaluation-and-compilation/lambda.lisp" environment))
+  (load-file "Evaluation-and-compilation/lambda.lisp" environment)
+  ;; Load a file containing the definition of the macro
+  ;; MULTIPLE-VALUE-BIND.  We need it early because it is used in the
+  ;; expansion of SETF, which we also need early for reasons explained
+  ;; below.
+  (load-file "Environment/multiple-value-bind.lisp" environment))
