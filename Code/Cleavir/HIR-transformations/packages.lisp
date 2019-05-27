@@ -13,6 +13,7 @@
    #:type-inference
    #:process-captured-variables
    #:segregate-only
+   #:read-only-location-p
    #:simplify-boxes
    #:compute-instruction-owners
    #:compute-location-owners
