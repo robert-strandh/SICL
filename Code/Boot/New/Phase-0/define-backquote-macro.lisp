@@ -6,6 +6,6 @@
 
 (defun define-backquote-macros (environment)
   (setf (sicl-genv:fdefinition 'eclector.reader::expand environment)
-	(fdefinition 'eclector.reader::transform))
+        (fdefinition 'eclector.reader::transform))
   (setf (sicl-genv:macro-function 'eclector.reader::quasiquote environment)
-	(macro-function 'eclector.reader::quasiquote)))
+        (macro-function 'eclector.reader::quasiquote)))
