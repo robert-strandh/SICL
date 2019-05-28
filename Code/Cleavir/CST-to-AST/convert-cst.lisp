@@ -89,6 +89,7 @@
 ;;; form.  ARGUMENTS-CST is a CST representing the sequence of
 ;;; arguments to the call.
 (defun make-call (cst info env arguments-cst system)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference name-cst info env system))
          (argument-asts (convert-sequence arguments-cst env system)))
