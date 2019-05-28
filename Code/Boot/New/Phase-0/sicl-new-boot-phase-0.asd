@@ -9,6 +9,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "host-load")
    (:file "import-from-host")
    (:file "define-defmacro")
    (:file "define-backquote-macro")
