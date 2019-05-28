@@ -34,8 +34,8 @@
 ;;; LAMBDA form CST.
 
 (defmethod convert-let (cst environment system)
-  (when (cst:null (cst:rest cst))
-    (error 'let-or-let*-must-have-at-least-one-argument :cst cst))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (let-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let-cst))
     (check-bindings bindings-cst)
@@ -68,8 +68,8 @@
 ;;; corresponding LET form CST.
 
 (defmethod convert-let* (cst environment system)
-  (when (cst:null (cst:rest cst))
-    (error 'let-or-let*-must-have-at-least-one-argument :cst cst))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (let*-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let*-cst))
     (check-bindings bindings-cst)
