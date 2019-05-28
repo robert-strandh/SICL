@@ -2,9 +2,10 @@
 
 (defsystem #:sicl-new-boot-phase-0
   :depends-on (#:sicl-hir-to-cl
-               :sicl-source-tracking
-               :eclector
-               :eclector-concrete-syntax-tree)
+               #:sicl-source-tracking
+               #:sicl-data-and-control-flow-support
+               #:eclector
+               #:eclector-concrete-syntax-tree)
   :serial t
   :components
   ((:file "packages")
