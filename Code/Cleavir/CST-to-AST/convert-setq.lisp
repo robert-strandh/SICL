@@ -33,7 +33,7 @@
          (expanded-cst (cst:reconstruct expanded-variable var-cst system))
          (origin (cst:source var-cst)))
     (convert (cst:cons (make-atom-cst 'setf origin)
-                       (cst:list expansion-cst form-cst)
+                       (cst:list expanded-cst form-cst)
                        :source origin)
              env system)))
 
