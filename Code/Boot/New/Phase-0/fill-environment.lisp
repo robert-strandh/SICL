@@ -63,5 +63,7 @@
   ;; loaded as part of the file standard-environment-functions.lisp
   ;; loaded below.
   (load-file "Data-and-control-flow/nth-value.lisp" environment)
-  (load-file "Data-and-control-flow/multiple-value-call-defmacro.lisp" environment))
+  (load-file "Data-and-control-flow/multiple-value-call-defmacro.lisp" environment)
+  ;; Load a file containing the definition of macro DEFUN.
+  (load-file "Data-and-control-flow/defun-defmacro.lisp" environment))
 
