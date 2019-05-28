@@ -3,7 +3,7 @@
 (define-condition no-info
     (program-error acclimation:condition)
   ((%name :initarg :name :reader name)
-   (%origin :initarg :origin :reader origin)))
+   (%origin :initform nil :initarg :origin :reader origin)))
 
 (define-condition no-variable-info (no-info)
   ())

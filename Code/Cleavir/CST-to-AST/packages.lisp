@@ -27,10 +27,11 @@
            #:entry-from-parameter
            #:entries-from-parameter-group
            #:lambda-list-from-parameter-group
-           #:consider-global
-           #:consider-special
-           #:recover
            ;; Names of conditions.
+           #:compilation-condition
+           #:compilation-program-error
+           #:compilation-warning
+           #:compilation-style-warning
            #:run-time-program-error
            #:incorrect-number-of-arguments
            #:values-&rest-syntax
@@ -67,4 +68,21 @@
            #:not-enough-arguments-warning
            #:not-enough-arguments-style-warning
            #:odd-keyword-portion-warning
-           #:odd-keyword-portion-style-warning))
+           #:odd-keyword-portion-style-warning
+           #:macroexpansion-error
+           #:macroexpansion-warning
+           #:macroexpansion-style-warning
+           #:compiler-macro-expansion-error
+           #:compiler-macro-expansion-warning
+           #:compiler-macro-expansion-style-warning
+           #:eval-error #:eval-warning #:eval-style-warning
+           ;; Condition readers.
+           #:expr #:origin
+           #:original-condition
+           #:expected-min #:expected-max #:observed
+           #:callee-ftype
+           ;; Restart names.
+           #:consider-global
+           #:consider-special
+           #:substitute
+           #:signal-original-condition))
