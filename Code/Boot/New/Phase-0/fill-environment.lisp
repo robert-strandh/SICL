@@ -37,4 +37,11 @@
   ;; macros defined subsequently will have their macro functions
   ;; compiled with the target compiler.  However, the macro function of
   ;; DEFMACRO is still compiled with the host compiler.
+  (load-file "Evaluation-and-compilation/defmacro-defmacro.lisp" environment)
+  ;; As mentioned above, at this point, we have a version of DEFMACRO
+  ;; that will compile the macro function of the macro definition using
+  ;; the target compiler.  However, the macro function of the macro
+  ;; DEFMACRO itself is still the result of using the host compiler.
+  ;; By loading the definition of DEFMACRO again, we fix this
+  ;; "problem".
   (load-file "Evaluation-and-compilation/defmacro-defmacro.lisp" environment))
