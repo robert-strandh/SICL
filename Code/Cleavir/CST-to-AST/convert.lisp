@@ -30,17 +30,23 @@
            (convert-lambda-call cst environment system)))))
 
 (defmethod convert :around (cst environment system)
-  (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
-        (*subforms-are-top-level-p* nil)
-        ;; gives all generated ASTs the appropriate policy.
-        (cleavir-ast:*policy*
-          (cleavir-env:environment-policy environment)))
-    (restart-case
-        (call-next-method)
-      (continue ()
-        :report "Replace with call to ERROR."
-        (convert (cst:cst-from-expression
-                  `(error 'run-time-program-error
-                          :expr ',(cst:raw cst)
-                          :origin ',(cst:source cst)))
-                 environment system)))))
+  (restart-case
+      ;; We bind these only here so that if a restart is invoked,
+      ;; the new CONVERT call will get the right values
+      ;; (i.e., the ones outside our binding)
+      (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
+            (*subforms-are-top-level-p* nil)
+            ;; gives all generated ASTs the appropriate policy.
+            (cleavir-ast:*policy*
+              (cleavir-env:environment-policy environment)))
+        (call-next-method))
+    (continue ()
+      :report "Replace with call to ERROR."
+      (convert (cst:cst-from-expression
+                `(error 'run-time-program-error
+                        :expr ',(cst:raw cst)
+                        :origin ',(cst:source cst)))
+               environment system))
+    (substitute-cst (cst)
+      :report "Compile the given CST in place of the problematic one."
+      (convert cst environment system))))

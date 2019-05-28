@@ -84,5 +84,5 @@
            ;; Restart names.
            #:consider-global
            #:consider-special
-           #:substitute
+           #:substitute #:substitute-cst
            #:signal-original-condition))
