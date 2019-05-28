@@ -126,7 +126,7 @@
 
 ;;; This condition is signaled when the bindings of an FLET form are
 ;;; not a proper list.
-(define-condition flet-functions-must-be-proper-list
+(define-condition local-functions-must-be-proper-list
     (compilation-program-error)
   ())
 

@@ -227,8 +227,7 @@
 
 ;;; Convert a local function definition.
 (defun convert-local-function (definition-cst environment system)
-  (check-cst-proper-list definition-cst
-                         'local-function-definition-must-be-proper-list)
+  ;; FIXME: The error message if this check fails needs improvement.
   (check-argument-count definition-cst 1 nil)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (unless (proper-function-name-p name-cst)
@@ -244,15 +243,16 @@
 
 ;;; Convert a CST representing a list of local function definitions.
 (defun convert-local-functions (definitions-cst environment system)
-  (check-cst-proper-list definitions-cst 'flet-functions-must-be-proper-list)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
         until (cst:null remaining)
         collect (let* ((def-cst (cst:first remaining))
-                       (name-cst (cst:first def-cst))
-                       (name (cst:raw name-cst))
                        (fun (convert-local-function
-                             def-cst environment system)))
+                             def-cst environment system))
+                       ;; compute these after calling convert-local-function
+                       ;; so that we know def-cst is actually a list.
+                       (name-cst (cst:first def-cst))
+                       (name (cst:raw name-cst)))
                   (cons name fun))))
 
 ;;; Compute and return a list of SETQ-ASTs that will assign the AST of
@@ -271,6 +271,12 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
     (declare (ignore flet-cst))
+    (check-cst-proper-list definitions-cst 'local-functions-must-be-proper-list)
+    (loop for remaining = definitions-cst then (cst:rest remaining)
+          until (cst:null remaining)
+          do (check-cst-proper-list
+              (cst:first remaining)
+              'local-function-definition-must-be-proper-list))
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
@@ -299,6 +305,12 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
     (declare (ignore labels-cst))
+    (check-cst-proper-list definitions-cst 'local-functions-must-be-proper-list)
+    (loop for remaining = definitions-cst then (cst:rest remaining)
+          until (cst:null remaining)
+          do (check-cst-proper-list
+              (cst:first remaining)
+              'local-function-definition-must-be-proper-list))
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers

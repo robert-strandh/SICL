@@ -40,12 +40,11 @@
            #:form-must-be-proper-list
            #:situations-must-be-proper-list
            #:invalid-eval-when-situation
-           #:flet-functions-must-be-proper-list
+           #:local-functions-must-be-proper-list
            #:local-function-definition-must-be-proper-list
            #:lambda-must-be-proper-list
            #:function-argument-must-be-function-name-or-lambda-expression
            #:function-name-must-be-proper-function-name
-           #:let-or-let*-must-have-at-least-one-argument
            #:bindings-must-be-proper-list
            #:binding-must-be-symbol-or-list
            #:binding-must-have-length-one-or-two
