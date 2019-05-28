@@ -124,12 +124,6 @@
     (compilation-program-error)
   ())
 
-;;; This condition is signaled when the bindings of an FLET form are
-;;; not a proper list.
-(define-condition local-functions-must-be-proper-list
-    (compilation-program-error)
-  ())
-
 ;;; This condition is signaled when a local function definition is not
 ;;; a proper list.
 (define-condition local-function-definition-must-be-proper-list
@@ -160,7 +154,7 @@
 ;;; LET* form (i.e., the bindings) is not a proper list.
 (define-condition bindings-must-be-proper-list
     (compilation-program-error)
-  ())
+  ((%operator :initarg :operator :reader operator)))
 
 ;;; This condition is signaled when a binding of a LET or a LET* form
 ;;; is neither a symbol nor a list.

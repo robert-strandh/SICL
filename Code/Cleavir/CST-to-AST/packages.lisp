@@ -40,7 +40,6 @@
            #:form-must-be-proper-list
            #:situations-must-be-proper-list
            #:invalid-eval-when-situation
-           #:local-functions-must-be-proper-list
            #:local-function-definition-must-be-proper-list
            #:lambda-must-be-proper-list
            #:function-argument-must-be-function-name-or-lambda-expression

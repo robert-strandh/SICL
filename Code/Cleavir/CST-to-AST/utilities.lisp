@@ -38,9 +38,9 @@
 
 ;;; Take a CST, check whether it represents a proper list.  If it does
 ;;; not represent ERROR-TYPE is a symbol that is passed to ERROR.
-(defun check-cst-proper-list (cst error-type)
+(defun check-cst-proper-list (cst error-type &rest more-initargs)
   (unless (cst:proper-list-p cst)
-    (error error-type :cst cst)))
+    (apply #'error error-type :cst cst more-initargs)))
 
 ;;; Check that the number of arguments greater than or equal to MIN
 ;;; and less than or equal to MAX.  When MAX is NIL, then there is no

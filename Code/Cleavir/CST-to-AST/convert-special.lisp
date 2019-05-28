@@ -265,18 +265,22 @@
                  (function-lexical env name)
                  fun-ast)))
 
+(defun check-function-bindings (bindings operator)
+  (check-cst-proper-list bindings 'bindings-must-be-proper-list
+                         :operator operator)
+  (loop for remaining = bindings then (cst:rest remaining)
+        until (cst:null remaining)
+        do (check-cst-proper-list
+            (cst:first remaining)
+            'local-function-definition-must-be-proper-list)))
+
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special ((symbol (eql 'flet)) cst env system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
     (declare (ignore flet-cst))
-    (check-cst-proper-list definitions-cst 'local-functions-must-be-proper-list)
-    (loop for remaining = definitions-cst then (cst:rest remaining)
-          until (cst:null remaining)
-          do (check-cst-proper-list
-              (cst:first remaining)
-              'local-function-definition-must-be-proper-list))
+    (check-function-bindings definitions-cst 'flet)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
@@ -305,12 +309,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
     (declare (ignore labels-cst))
-    (check-cst-proper-list definitions-cst 'local-functions-must-be-proper-list)
-    (loop for remaining = definitions-cst then (cst:rest remaining)
-          until (cst:null remaining)
-          do (check-cst-proper-list
-              (cst:first remaining)
-              'local-function-definition-must-be-proper-list))
+    (check-function-bindings definitions-cst 'labels)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
@@ -488,8 +487,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (macrolet-cst definitions-cst . body-cst) cst
     (declare (ignore macrolet-cst))
-    (unless (cst:proper-list-p definitions-cst)
-      (error 'macrolet-definitions-must-be-proper-list :cst definitions-cst))
+    (check-function-bindings definitions-cst 'macrolet)
     (let ((new-env env))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
