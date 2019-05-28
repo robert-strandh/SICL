@@ -12,6 +12,8 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "conditions")
+   (:file "condition-reporters-english")
    (:file "environment-augmentation")
    (:file "environment-query")
    (:file "variables")
@@ -36,6 +38,4 @@
    (:file "convert-special")
    (:file "convert-primop")
    (:file "convert-cst")
-   (:file "cst-to-ast")
-   (:file "conditions")
-   (:file "condition-reporters-english")))
+   (:file "cst-to-ast")))
