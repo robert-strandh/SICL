@@ -46,4 +46,5 @@
    (:file "info-methods")
    (:file "typep-methods")
    (:file "other-methods")
+   (:file "trucler-methods")
    (:file "other-functions")))
