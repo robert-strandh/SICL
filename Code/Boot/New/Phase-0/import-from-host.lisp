@@ -1,7 +1,6 @@
 (cl:in-package #:sicl-boot-phase-0)
 
-(defun import-from-host (environment)
-  ;; Import every function from the COMMON-LISP package.
+(defun import-standard-common-lisp-functions (environment)
   (do-symbols (symbol (find-package '#:common-lisp))
     (when (fboundp symbol)
       (unless (special-operator-p symbol)
@@ -10,8 +9,18 @@
             (setf (sicl-genv:fdefinition symbol environment) definition)))))
     (when (fboundp `(setf ,symbol))
       (setf (sicl-genv:fdefinition `(setf ,symbol) environment)
-            (fdefinition `(setf ,symbol)))))
-  ;; Define all standard special operators.
+            (fdefinition `(setf ,symbol))))))
+
+(defun define-standard-common-lisp-special-operators (environment)
   (do-symbols (symbol (find-package '#:common-lisp))
     (when (special-operator-p symbol)
       (setf (sicl-genv:special-operator symbol environment) t))))
+
+(defun import-from-cleavir-code-utilities (environment)
+  (setf (sicl-genv:fdefinition 'cleavir-code-utilities:parse-macro environment)
+        #'cleavir-code-utilities:parse-macro))
+
+(defun import-from-host (environment)
+  (import-standard-common-lisp-functions environment)
+  (define-standard-common-lisp-special-operators environment)
+  (import-from-cleavir-code-utilities environment))
