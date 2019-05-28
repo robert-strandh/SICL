@@ -350,3 +350,25 @@
   (format stream
           "STYLE-WARNING during compiler-macro-expansion:~%~@<  ~@;~a~:>"
           (original-condition condition)))
+
+(defmethod acclimation:report-condition
+  ((condition eval-error)
+   stream
+   (language acclimation:english))
+  (format stream
+          "ERROR while evaluating compiler-time side effect:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition eval-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "WARNING while evaluating compile-time side effect:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition eval-style-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "STYLE-WARNING while evaluating compile-time side effect:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
