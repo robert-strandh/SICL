@@ -5,7 +5,7 @@
              *current-form-is-top-level-p*
              (not (member operator
                           '(progn locally macrolet symbol-macrolet eval-when))))
-    (cleavir-env:cst-eval cst environment environment system)))
+    (cst-eval cst environment system)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -186,10 +186,10 @@
                          (or (member :execute situations)
                              (member 'eval situations))
                          *compile-time-too*))
-                   (cleavir-env:cst-eval
+                   (cst-eval
                     (cst:cons (make-atom-cst 'progn s) body-cst
                               :source s)
-                    environment environment system)
+                    environment system)
                    (convert (make-atom-cst nil s) environment system))
                   (t
                    (convert (make-atom-cst nil s) environment system))))))))

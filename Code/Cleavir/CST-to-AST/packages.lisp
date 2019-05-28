@@ -75,6 +75,7 @@
            #:compiler-macro-expansion-error
            #:compiler-macro-expansion-warning
            #:compiler-macro-expansion-style-warning
+           #:eval-error #:eval-warning #:eval-style-warning
            ;; Condition readers.
            #:expr #:origin
            #:original-condition

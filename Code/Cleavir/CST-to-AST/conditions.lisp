@@ -398,3 +398,21 @@
 (define-condition compiler-macro-expansion-style-warning
     (compilation-style-warning encapsulated-condition)
   ())
+
+;;; This condition is signaled when a compile-time side-effect signals
+;;; an error.
+(define-condition eval-error
+    (compilation-program-error encapsulated-condition)
+  ())
+
+;;; This condition is signaled when a compile-time side-effect signals
+;;; a warning.
+(define-condition eval-warning
+    (compilation-warning encapsulated-condition)
+  ())
+
+;;; This condition is signaled when a compile-time side-effect signals
+;;; a style warning.
+(define-condition eval-style-warning
+    (compilation-style-warning encapsulated-condition)
+  ())

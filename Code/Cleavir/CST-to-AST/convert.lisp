@@ -26,7 +26,7 @@
            ;; in COMPILE-TIME-TOO mode, in which case we must evaluate
            ;; the form as well.
            (when (and *current-form-is-top-level-p* *compile-time-too*)
-             (cleavir-env:eval form environment environment))
+             (cst-eval cst environment system))
            (convert-lambda-call cst environment system)))))
 
 (defmethod convert :around (cst environment system)
