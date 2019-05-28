@@ -75,16 +75,6 @@
 	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
-    ((condition flet-functions-must-be-proper-list)
-     stream
-     (language acclimation:english))
-  (format stream
-	  "The function definitions of an FLET form must be a proper list,~@
-           but the following was found instead:~@
-           ~s"
-	  (cst:raw (cst condition))))
-
-(defmethod acclimation:report-condition
     ((condition local-function-definition-must-be-proper-list)
      stream
      (language acclimation:english))
