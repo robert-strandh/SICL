@@ -455,9 +455,7 @@
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list system lambda-list-cst :error-p nil)))
     (when (null parsed-lambda-list)
-      (error 'malformed-lambda-list
-             :expr (cst:raw lambda-list-cst)
-             :origin (cst:source lambda-list-cst)))
+      (error 'malformed-lambda-list :cst lambda-list-cst))
     (multiple-value-bind (declaration-csts documentation forms-cst)
         (cst:separate-function-body body-cst)
       ;; FIXME: Handle documentation

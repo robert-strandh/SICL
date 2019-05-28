@@ -20,18 +20,15 @@
 
 (defmethod convert-function-reference
     (cst (info cleavir-env:global-macro-info) env system)
-  (error 'function-name-names-global-macro
-         :expr (cleavir-env:name info)))
+  (error 'function-name-names-global-macro :cst cst))
 
 (defmethod convert-function-reference
     (cst (info cleavir-env:local-macro-info) env system)
-  (error 'function-name-names-local-macro
-         :expr (cleavir-env:name info)))
+  (error 'function-name-names-local-macro :cst cst))
 
 (defmethod convert-function-reference
     (cst (info cleavir-env:special-operator-info) env system)
-  (error 'function-name-names-special-operator
-         :expr (cleavir-env:name info)))
+  (error 'function-name-names-special-operator :cst cst))
 
 ;;; These are used by (foo ...) forms.
 ;;; It's useful to distinguish them. For instance, an implementation
@@ -56,15 +53,12 @@
 
 (defmethod convert-called-function-reference
     (cst (info cleavir-env:global-macro-info) env system)
-  (error 'function-name-names-global-macro
-         :expr (cleavir-env:name info)))
+  (error 'function-name-names-global-macro :cst cst))
 
 (defmethod convert-called-function-reference
     (cst (info cleavir-env:local-macro-info) env system)
-  (error 'function-name-names-local-macro
-         :expr (cleavir-env:name info)))
+  (error 'function-name-names-local-macro :cst cst))
 
 (defmethod convert-called-function-reference
     (cst (info cleavir-env:special-operator-info) env system)
-  (error 'function-name-names-special-operator
-         :expr (cleavir-env:name info)))
+  (error 'function-name-names-special-operator :cst cst))

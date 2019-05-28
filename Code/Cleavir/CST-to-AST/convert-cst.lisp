@@ -162,7 +162,6 @@
     (cst (info cleavir-env:lexical-variable-info) env system)
   (declare (ignore system))
   (when (eq (cleavir-env:ignore info) 'ignore)
-    (warn 'ignored-variable-referenced :expr (cst:raw cst)
-          :origin (cst:source cst)))
+    (warn 'ignored-variable-referenced :cst cst))
   (cleavir-generate-ast::maybe-wrap-the (cleavir-env:type info)
                                         (cleavir-env:identity info)))

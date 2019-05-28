@@ -5,8 +5,7 @@
 ;;; The base classes for conditions used here.
 
 (define-condition compilation-condition (acclimation:condition)
-  ((%expr :initarg :expr :reader expr)
-   (%origin :initarg :origin :reader origin)))
+  ((%cst :initarg :cst :reader cst)))
 
 (define-condition compilation-program-error
     (program-error compilation-condition)
@@ -266,9 +265,13 @@
 ;;; This condition is signaled by methods on CONVERT-SPECIAL,
 ;;; specialized to operators for which Cleavir does not provide a
 ;;; default method.
+;;; It is not a compilation-program-error because the source code
+;;; could be fine- this is instead an issue with the client, and
+;;; very likely a bug in its use of Cleavir.
 (define-condition no-default-method
-    (compilation-program-error)
-  ((%operator :initarg :operator :reader operator)))
+    (error acclimation:condition)
+  ((%cst :initarg :cst :reader cst)
+   (%operator :initarg :operator :reader operator)))
 
 ;;; This condition is signaled when a LAMBDA-CALL expression is
 ;;; encountered, but the first symbol isn't LAMBDA.
@@ -330,8 +333,7 @@
     (let ((muffle t))
       (restart-case
           (warn condition-type
-                :expr (cst:raw cst)
-                :origin (cst:source cst)
+                :cst cst
                 :condition condition)
         (signal-original-condition ()
           :report "Let the originally signaled condition propagate."
@@ -343,8 +345,7 @@
   (lambda (condition)
     (restart-case
         (error condition-type
-               :expr (cst:raw cst)
-               :origin (cst:source cst)
+               :cst cst
                :condition condition)
       (signal-original-condition ()
         :report "Let the originally signaled condition propagate."))))

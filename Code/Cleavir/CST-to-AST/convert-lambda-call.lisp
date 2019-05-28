@@ -12,7 +12,7 @@
 (defmethod convert-lambda-call (cst env system)
   (cst:db origin ((lambda-cst lambda-list-cst . body-cst) . args-cst) cst
     (assert (eql (cst:raw lambda-cst) 'cl:lambda) nil
-            'lambda-call-first-symbol-not-lambda :expr (cst:raw lambda-cst))
+            'lambda-call-first-symbol-not-lambda :cst lambda-cst)
     (cleavir-ast:make-call-ast
      (convert-code lambda-list-cst body-cst env system :origin origin)
      (convert-sequence args-cst env system)

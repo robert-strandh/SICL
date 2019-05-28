@@ -31,9 +31,7 @@
     (declare (ignore block))
     (let ((name (cst:raw name-cst)))
       (unless (symbolp name)
-        (error 'block-name-must-be-a-symbol
-               :expr name
-               :origin (cst:source name-cst)))
+        (error 'block-name-must-be-a-symbol :cst name-cst))
       (let* ((new-dynenv (cleavir-ast:make-dynamic-environment-ast
                           '#:block-dynamic-environment))
              (ast (cleavir-ast:make-block-ast
@@ -57,9 +55,7 @@
     (declare (ignore return-from-cst))
     (let ((block-name (cst:raw block-name-cst)))
       (unless (symbolp block-name)
-        (error 'block-name-must-be-a-symbol
-               :expr block-name
-               :origin (cst:source block-name-cst)))
+        (error 'block-name-must-be-a-symbol :cst block-name-cst))
       (flet ((find-info (block-name)
                (cleavir-env:block-info env block-name)))
         (let ((info (find-info block-name))
@@ -68,8 +64,7 @@
                              (cst:first rest-csts))))
           (loop while (null info)
                 do (restart-case (error 'cleavir-env:no-block-info
-                                        :name (cst:raw block-name-cst)
-                                        :origin (cst:source block-name-cst))
+                                        :cst block-name-cst)
                      (substitute (new-block-name)
                        :report (lambda (stream)
                                  (format stream "Substitute a different name."))
@@ -98,9 +93,7 @@
   (check-argument-count cst 1 nil)
   (let ((situations-cst (cst:second cst)))
     (unless (cst:proper-list-p situations-cst)
-      (error 'situations-must-be-proper-list
-             :expr (cst:raw situations-cst)
-             :origin (cst:source situations-cst)))
+      (error 'situations-must-be-proper-list :cst situations-cst))
     ;; Check each situation
     (loop for remaining = situations-cst then (cst:rest remaining)
           until (cst:null remaining)
@@ -110,9 +103,7 @@
                             (member situation
                                     '(:compile-toplevel :load-toplevel :execute
                                       compile load eval)))
-                 (error 'invalid-eval-when-situation
-                        :expr situation
-                        :origin (cst:source situation-cst)))))))
+                 (error 'invalid-eval-when-situation :cst situation-cst))))))
 
 (defmethod convert-special
     ((symbol (eql 'eval-when)) cst environment system)
@@ -242,8 +233,7 @@
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (unless (proper-function-name-p name-cst)
       (error 'function-name-must-be-proper-function-name
-             :expr (cst:raw name-cst)
-             :origin (cst:source name-cst)))
+             :cst name-cst))
     (let ((block-name-cst (block-name-from-function-name name-cst)))
       (convert-code lambda-list-cst
                     body-cst
@@ -442,8 +432,7 @@
                ;; The HyperSpec specifically requires a "boolean"
                ;; and not a "generalized boolean".
                (error 'read-only-p-must-be-boolean
-                      :expr read-only-p
-                      :origin (cst:source (cst:first remaining-cst))))))
+                      :cst (cst:first remaining-cst)))))
      :origin origin)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -488,9 +477,7 @@
   (cst:db origin (macrolet-cst definitions-cst . body-cst) cst
     (declare (ignore macrolet-cst))
     (unless (cst:proper-list-p definitions-cst)
-      (error 'macrolet-definitions-must-be-proper-list
-             :expr (cst:raw definitions-cst)
-             :origin (cst:source definitions-cst)))
+      (error 'macrolet-definitions-must-be-proper-list :cst definitions-cst))
     (let ((new-env env))
       (loop for remaining = definitions-cst then (cst:rest remaining)
             until (cst:null remaining)
@@ -555,16 +542,12 @@
           ((cst:consp function-name-cst)
            (unless (eq (cst:raw (cst:first function-name-cst)) 'lambda)
              (error 'function-argument-must-be-function-name-or-lambda-expression
-                    :expr (cst:raw function-name-cst)
-                    :origin (cst:source function-name-cst)))
+                    :cst function-name-cst))
            (unless (cst:proper-list-p function-name-cst)
-             (error 'lambda-must-be-proper-list
-                    :expr (cst:raw function-name-cst)
-                    :origin (cst:source function-name-cst))))
+             (error 'lambda-must-be-proper-list :cst function-name-cst)))
           (t
            (error 'function-argument-must-be-function-name-or-lambda-expression
-                  :expr (cst:raw function-name-cst)
-                  :origin (cst:source function-name-cst))))))
+                  :cst function-name-cst)))))
 
 (defmethod convert-special ((symbol (eql 'function)) cst env system)
   (check-function-syntax cst)
@@ -624,35 +607,35 @@
   (declare (ignore environment system))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
-  (error 'no-default-method :operator symbol :expr cst))
+  (error 'no-default-method :operator symbol :cst cst))
 
 (defmethod convert-special
     ((symbol (eql 'unwind-protect)) cst environment system)
   (declare (ignore environment system))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
-  (error 'no-default-method :operator symbol :expr cst))
+  (error 'no-default-method :operator symbol :cst cst))
 
 (defmethod convert-special
     ((symbol (eql 'catch)) cst environment system)
   (declare (ignore environment system))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
-  (error 'no-default-method :operator symbol :expr cst))
+  (error 'no-default-method :operator symbol :cst cst))
 
 (defmethod convert-special
     ((symbol (eql 'throw)) cst environment system)
   (declare (ignore environment system))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
-  (error 'no-default-method :operator symbol :expr cst))
+  (error 'no-default-method :operator symbol :cst cst))
 
 (defmethod convert-special
     ((symbol (eql 'progv)) cst environment system)
   (declare (ignore environment system))
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 nil)
-  (error 'no-default-method :operator symbol :expr cst))
+  (error 'no-default-method :operator symbol :cst cst))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -663,16 +646,13 @@
     ((symbol (eql 'setq)) cst environment system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (unless (oddp (length (cst:raw cst)))
-    (error 'setq-must-have-even-number-of-arguments
-           :expr cst
-           :origin (cst:source cst)))
+    (error 'setq-must-have-even-number-of-arguments :cst cst))
   (let* ((csts (cst:listify (cst:rest cst)))
          (form-asts (loop for (variable-cst form-cst) on csts by #'cddr
                           for variable = (cst:raw variable-cst)
                           unless (symbolp variable)
                             do (error 'setq-var-must-be-symbol
-                                      :expr variable
-                                      :origin (cst:source variable-cst))
+                                      :cst variable-cst)
                           collect (convert-elementary-setq
                                    variable-cst form-cst environment system))))
     (process-progn form-asts (cst:source cst))))

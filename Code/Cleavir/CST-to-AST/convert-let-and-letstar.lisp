@@ -13,19 +13,13 @@
                            (cst:null (cst:rest (cst:rest cst)))))))
          nil)
         ((cst:atom cst)
-         (error 'binding-must-be-symbol-or-list
-                :expr (cst:raw cst)
-                :origin (cst:source cst)))
+         (error 'binding-must-be-symbol-or-list :cst cst))
         ((or (and (cst:atom (cst:rest cst))
                   (not (cst:null (cst:rest cst))))
              (not (cst:null (cst:rest (cst:rest cst)))))
-         (error 'binding-must-have-length-one-or-two
-                :expr (cst:raw cst)
-                :origin (cst:source cst)))
+         (error 'binding-must-have-length-one-or-two :cst cst))
         (t
-         (error 'variable-must-be-a-symbol
-                :expr (cst:raw (cst:first cst))
-                :origin (cst:source (cst:first cst))))))
+         (error 'variable-must-be-a-symbol :cst (cst:first cst)))))
 
 ;;; Check the syntax of the bindings of a LET or a LET* form.  If the
 ;;; syntax is incorrect, signal an error and propose a restart for
@@ -41,9 +35,7 @@
 
 (defmethod convert-let (cst environment system)
   (when (cst:null (cst:rest cst))
-    (error 'let-or-let*-must-have-at-least-one-argument
-           :expr (cst:raw cst)
-           :origin (cst:source cst)))
+    (error 'let-or-let*-must-have-at-least-one-argument :cst cst))
   (cst:db origin (let-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let-cst))
     (check-bindings bindings-cst)
@@ -77,9 +69,7 @@
 
 (defmethod convert-let* (cst environment system)
   (when (cst:null (cst:rest cst))
-    (error 'let-or-let*-must-have-at-least-one-argument
-           :expr (cst:raw cst)
-           :origin (cst:source cst)))
+    (error 'let-or-let*-must-have-at-least-one-argument :cst cst))
   (cst:db origin (let*-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let*-cst))
     (check-bindings bindings-cst)

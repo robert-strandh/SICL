@@ -40,9 +40,7 @@
 ;;; not represent ERROR-TYPE is a symbol that is passed to ERROR.
 (defun check-cst-proper-list (cst error-type)
   (unless (cst:proper-list-p cst)
-    (error error-type
-           :expr (cst:raw cst)
-           :origin (cst:source cst))))
+    (error error-type :cst cst)))
 
 ;;; Check that the number of arguments greater than or equal to MIN
 ;;; and less than or equal to MAX.  When MAX is NIL, then there is no
@@ -55,11 +53,10 @@
                  (or (null max)
                      (<= count max)))
       (error 'incorrect-number-of-arguments
-             :expr (cst:raw cst)
+             :cst cst
              :expected-min min
              :expected-max max
-             :observed count
-             :origin (cst:source cst)))))
+             :observed count))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

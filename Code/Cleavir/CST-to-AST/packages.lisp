@@ -77,7 +77,7 @@
            #:compiler-macro-expansion-style-warning
            #:eval-error #:eval-warning #:eval-style-warning
            ;; Condition readers.
-           #:expr #:origin
+           #:cst
            #:original-condition
            #:expected-min #:expected-max #:observed
            #:callee-ftype

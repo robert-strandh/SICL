@@ -10,9 +10,8 @@
 
 (defmethod convert-setq
     (var-cst form-cst (info cleavir-env:constant-variable-info) env system)
-  (declare (ignore var-cst form-cst env system))
-  (error 'setq-constant-variable
-	 :expr (cleavir-env:name info)))
+  (declare (ignore var-cst env system))
+  (error 'setq-constant-variable :cst form-cst))
 
 (defmethod convert-setq
     (var-cst form-cst (info cleavir-env:lexical-variable-info) env system)
