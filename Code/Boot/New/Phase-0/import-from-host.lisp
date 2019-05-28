@@ -20,7 +20,13 @@
   (setf (sicl-genv:fdefinition 'cleavir-code-utilities:parse-macro environment)
         #'cleavir-code-utilities:parse-macro))
 
+(defun import-macro-expanders (environment)
+  (setf (sicl-genv:fdefinition 'sicl-data-and-control-flow:defun-expander environment)
+        (fdefinition 'sicl-data-and-control-flow:defun-expander)))
+
 (defun import-from-host (environment)
+  (host-load "Data-and-control-flow/defun-support.lisp")
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-special-operators environment)
-  (import-from-cleavir-code-utilities environment))
+  (import-from-cleavir-code-utilities environment)
+  (import-macro-expanders environment))
