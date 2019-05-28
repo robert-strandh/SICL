@@ -1,6 +1,23 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
 (defmethod acclimation:report-condition
+    ((condition incorrect-number-of-arguments)
+     stream
+     (language acclimation:english))
+  (let ((form (cst:raw (cst condition)))
+        (min (expected-min condition)) (max (expected-max condition)))
+    (format stream
+            "In the form ~s, ~s is used with ~d arguments, ~@
+             but expects ~@?."
+            form (first form) (observed condition)
+            (cond ((and min max) "between ~d and ~d")
+                  (min "at least ~d")
+                  (max "at least ~d")
+                  ;; If we hit here it's actually a bug.
+                  (t "otherwise"))
+            min max)))
+
+(defmethod acclimation:report-condition
     ((condition values-&rest-syntax)
      stream
      (language acclimation:english))
@@ -26,6 +43,15 @@
            but the following was found instead:~@
            ~s"
 	  (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
+    ((condition form-must-be-proper-list)
+     stream
+     (language acclimation:english))
+  (format stream
+          "Forms must be proper lists,~@
+           but the following was found instead:~%~s"
+          (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition situations-must-be-proper-list)
@@ -78,6 +104,15 @@
            but the following was found instead:~@
            ~s"
 	  (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
+    ((condition function-name-must-be-proper-function-name)
+     stream
+     (language acclimation:english))
+  (format stream
+          "The names bound by FLET must be valid function names,~@
+           but the following was found instead:~%~s"
+          (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition bindings-must-be-proper-list)
