@@ -62,5 +62,6 @@
   ;; This definition is needed by the function CONSTANTP which is
   ;; loaded as part of the file standard-environment-functions.lisp
   ;; loaded below.
-  (load-file "Data-and-control-flow/nth-value.lisp" environment))
+  (load-file "Data-and-control-flow/nth-value.lisp" environment)
+  (load-file "Data-and-control-flow/multiple-value-call-defmacro.lisp" environment))
 
