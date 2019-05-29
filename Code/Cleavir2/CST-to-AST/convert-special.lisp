@@ -283,6 +283,15 @@
                   :lhs-ast (function-lexical client lexical-environment name)
                   :value-ast fun-ast)))
 
+(defun check-function-bindings (bindings operator)
+  (check-cst-proper-list bindings 'bindings-must-be-proper-list
+                         :operator operator)
+  (loop for remaining = bindings then (cst:rest remaining)
+        until (cst:null remaining)
+        do (check-cst-proper-list
+            (cst:first remaining)
+            'local-function-definition-must-be-proper-list)))
+
 ;;; FIXME: add the processing of DYNAMIC-EXTENT declarations.
 (defmethod convert-special
     (client (symbol (eql 'flet)) cst lexical-environment)
