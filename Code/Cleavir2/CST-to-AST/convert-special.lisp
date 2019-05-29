@@ -103,7 +103,7 @@
   (check-argument-count cst 1 nil)
   (let ((situations-cst (cst:second cst)))
     (unless (cst:proper-list-p situations-cst)
-      (error 'situations-must-be-proper-list :cst situation-cst))
+      (error 'situations-must-be-proper-list :cst situations-cst))
     ;; Check each situation
     (loop for remaining = situations-cst then (cst:rest remaining)
           until (cst:null remaining)
