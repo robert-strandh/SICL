@@ -1,12 +1,29 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
 (defmethod acclimation:report-condition
+    ((condition incorrect-number-of-arguments)
+     stream
+     (language acclimation:english))
+  (let ((form (cst:raw (cst condition)))
+        (min (expected-min condition)) (max (expected-max condition)))
+    (format stream
+            "In the form ~s, ~s is used with ~d arguments, ~@
+             but expects ~@?."
+            form (first form) (observed condition)
+            (cond ((and min max) "between ~d and ~d")
+                  (min "at least ~d")
+                  (max "at least ~d")
+                  ;; If we hit here it's actually a bug.
+                  (t "otherwise"))
+            min max)))
+
+(defmethod acclimation:report-condition
     ((condition values-&rest-syntax)
      stream
      (language acclimation:english))
   (format stream "The values type ~s is syntactically invalid:~@
                   it has a &rest variable followed by more elements."
-          (expr condition)))
+          (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition ignored-variable-referenced)
@@ -14,7 +31,7 @@
      (language acclimation:english))
   (format stream "The variable ~s was referenced,~@
                   despite being declared ~s."
-          (expr condition)
+          (cst:raw (cst condition))
           'ignore))
 
 (defmethod acclimation:report-condition
@@ -25,7 +42,16 @@
 	  "The name of a block must be a symbol,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
+    ((condition form-must-be-proper-list)
+     stream
+     (language acclimation:english))
+  (format stream
+          "Forms must be proper lists,~@
+           but the following was found instead:~%~s"
+          (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition situations-must-be-proper-list)
@@ -35,7 +61,7 @@
 	  "EVAL-WHEN situations must be a proper list,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition invalid-eval-when-situation)
@@ -46,17 +72,16 @@
            :COMPILE-TOPLEVEL, :LOAD-TOPLEVEL, :EXECUTE, COMPILE, LOAD, EVAL,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
-    ((condition flet-functions-must-be-proper-list)
+    ((condition local-function-definition-must-be-proper-list)
      stream
      (language acclimation:english))
   (format stream
-	  "The function definitions of an FLET form must be a proper list,~@
-           but the following was found instead:~@
-           ~s"
-	  (expr condition)))
+          "Definitions of local functions must be proper lists,~@
+           but the following was found instead:~%~s"
+          (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition lambda-must-be-proper-list)
@@ -66,7 +91,7 @@
 	  "A LAMBDA expression must be a proper list,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition function-argument-must-be-function-name-or-lambda-expression)
@@ -77,17 +102,27 @@
            a function name or a LAMBDA expression,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
+    ((condition function-name-must-be-proper-function-name)
+     stream
+     (language acclimation:english))
+  (format stream
+          "The names bound by FLET must be valid function names,~@
+           but the following was found instead:~%~s"
+          (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition bindings-must-be-proper-list)
      stream
      (language acclimation:english))
   (format stream
-	  "The bindings of a LET or LET* special form must be a proper list,~@
+	  "The bindings of a ~s special form must be a proper list,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+          (operator condition)
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition binding-must-be-symbol-or-list)
@@ -97,7 +132,7 @@
 	  "A binding of a LET or LET* special form must be symbol or a list,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition binding-must-have-length-one-or-two)
@@ -108,7 +143,7 @@
            must be a proper list of length 1 or 2,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition variable-must-be-a-symbol)
@@ -119,7 +154,7 @@
            the first element of that list must be a symbol,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition read-only-p-must-be-boolean)
@@ -130,7 +165,7 @@
            must be a Boolean constant (so T or NIL),~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition block-name-unknown)
@@ -141,7 +176,7 @@
            must have been established by a BLOCK special form,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition setq-must-have-even-number-of-arguments)
@@ -151,7 +186,7 @@
 	  "The SETQ special form must have an even number of arguments,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition setq-var-must-be-symbol)
@@ -161,7 +196,7 @@
 	  "The variable assigned to in a SETQ special form must be a symbol,~@
            but the following was found instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition setq-constant-variable)
@@ -171,7 +206,7 @@
 	  "The variable assigned to in a SETQ must not be a constant variable,~@
            but the following constant variable was found:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition variable-name-unknown)
@@ -183,7 +218,7 @@
            or some form such as LET or LET* for creating a local variable,~@
            but the following undefined variable was found:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition function-name-unknown)
@@ -195,7 +230,7 @@
            or some form such as FLET or LABELS for creating a local function,~@
            but the following undefined function was found:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition function-name-names-global-macro)
@@ -206,7 +241,7 @@
            must refer to a global or a local function, but the~@
            name refers to a global macro instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition function-name-names-local-macro)
@@ -217,7 +252,7 @@
            must refer to a global or a local function, but the~@
            name refers to a local macro instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition function-name-names-special-operator)
@@ -228,7 +263,7 @@
            must refer to a global or a local function, but the~@
            name refers to a special operator instead:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition no-default-method)
@@ -243,7 +278,7 @@
            name of the operator and to the implementation-specific environment.~@
            The following form was found:~@
            ~s"
-	  (expr condition)))
+	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
     ((condition lambda-call-first-symbol-not-lambda)
@@ -254,7 +289,7 @@
           first argument instead of the symbol LAMBDA. The following~@
           form was found:~@
           ~s"
-          (expr condition)))
+          (cst:raw (cst condition))))
 
 ;; Helper for below.
 
@@ -266,8 +301,8 @@
   (format stream
 	  "~s was called with too many arguments:~%~s~@
           Expected at most ~d,"
-	  (car (expr condition))
-	  (expr condition)
+	  (car (cst:raw (cst condition)))
+	  (cst:raw (cst condition))
 	  (expected-max condition)))
 
 (defmethod acclimation:report-condition
@@ -277,8 +312,8 @@
   (format stream
 	  "~s was called with too few arguments:~%~s~@
           Expected at least ~d,"
-	  (car (expr condition))
-	  (expr condition)
+	  (car (cst:raw (cst condition)))
+	  (cst:raw (cst condition))
 	  (expected-min condition)))
 
 (defmethod acclimation:report-condition
@@ -287,8 +322,8 @@
    (language acclimation:english))
   (format stream
 	  "~s was called with an odd number of arguments in the keyword portion:~%~s"
-	  (car (expr condition))
-	  (expr condition)))
+	  (car (cst:raw (cst condition)))
+	  (cst:raw (cst condition))))
 
 ;; Display the type declaration that informed us of the problem.
 (defmethod acclimation:report-condition :after
@@ -306,3 +341,69 @@
      (language acclimation:english))
   (format stream
 	  " as inferred from its inline definition."))
+
+(defmethod acclimation:report-condition
+  ((condition macroexpansion-error)
+   stream
+   (language acclimation:english))
+  (format stream
+          "ERROR during macroexpansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition macroexpansion-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "WARNING during macroexpansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition macroexpansion-style-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "STYLE-WARNING during macroexpansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+
+(defmethod acclimation:report-condition
+  ((condition compiler-macro-expansion-error)
+   stream
+   (language acclimation:english))
+  (format stream
+          "ERROR during compiler-macro-expansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition compiler-macro-expansion-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "WARNING during compiler-macro-expansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition compiler-macro-expansion-style-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "STYLE-WARNING during compiler-macro-expansion:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+
+(defmethod acclimation:report-condition
+  ((condition eval-error)
+   stream
+   (language acclimation:english))
+  (format stream
+          "ERROR while evaluating compiler-time side effect:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition eval-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "WARNING while evaluating compile-time side effect:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
+(defmethod acclimation:report-condition
+  ((condition eval-style-warning)
+   stream
+   (language acclimation:english))
+  (format stream
+          "STYLE-WARNING while evaluating compile-time side effect:~%~@<  ~@;~a~:>"
+          (original-condition condition)))
