@@ -30,8 +30,9 @@
 ;;; Check the syntax of the bindings of a LET or a LET* form.  If the
 ;;; syntax is incorrect, signal an error and propose a restart for
 ;;; fixing it up.
-(defun check-bindings (cst)
-  (check-cst-proper-list cst 'bindings-must-be-proper-list)
+(defun check-bindings (cst operator)
+  (check-cst-proper-list cst 'bindings-must-be-proper-list
+                         :operator operator)
   (loop for remaining = cst then (cst:rest remaining)
         until (cst:null remaining)
         do (check-binding (cst:first remaining))))
@@ -40,13 +41,11 @@
 ;;; LAMBDA form CST.
 
 (defmethod convert-let (client cst lexical-environment)
-  (when (cst:null (cst:rest cst))
-    (error 'let-or-let*-must-have-at-least-one-argument
-           :expr (cst:raw cst)
-           :origin (cst:source cst)))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (let-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let-cst))
-    (check-bindings bindings-cst)
+    (check-bindings bindings-cst 'let)
     (let* ((binding-csts (cst:listify bindings-cst))
            (variable-csts (loop for binding-cst in binding-csts
                                 collect (if (cst:atom binding-cst)
@@ -75,13 +74,11 @@
 ;;; corresponding LET form CST.
 
 (defmethod convert-let* (client cst lexical-environment)
-  (when (cst:null (cst:rest cst))
-    (error 'let-or-let*-must-have-at-least-one-argument
-           :expr (cst:raw cst)
-           :origin (cst:source cst)))
+  (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-argument-count cst 1 nil)
   (cst:db origin (let*-cst bindings-cst . body-forms-cst) cst
     (declare (ignore let*-cst))
-    (check-bindings bindings-cst)
+    (check-bindings bindings-cst 'let*)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
