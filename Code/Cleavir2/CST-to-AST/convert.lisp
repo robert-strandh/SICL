@@ -38,8 +38,22 @@
            (convert-lambda-call client cst lexical-environment)))))
 
 (defmethod convert :around (client cst lexical-environment)
-  (declare (ignore cst client))
-  (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
-        (*subforms-are-top-level-p* nil)
-        (*origin* (cst:source cst)))
-    (call-next-method)))
+  (restart-case
+      ;; We bind these only here so that if a restart is invoked,
+      ;; the new CONVERT call will get the right values
+      ;; (i.e., the ones outside our binding)
+      (let ((*current-form-is-top-level-p* *subforms-are-top-level-p*)
+            (*subforms-are-top-level-p* nil)
+            (*origin* (cst:source cst)))
+        (call-next-method))
+    (continue ()
+      :report "Replace with call to ERROR."
+      (convert client
+               (cst:cst-from-expression
+                `(error 'run-time-program-error
+                        :expr ',(cst:raw cst)
+                        :origin ',(cst:source cst)))
+               lexical-environment))
+    (substitute-cst (cst)
+      :report "Compile the given CST in place of the problematic one."
+      (convert client cst lexical-environment))))
