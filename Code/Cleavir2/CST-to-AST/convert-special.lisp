@@ -258,7 +258,6 @@
 (defun convert-local-functions (client
                                 definitions-cst
                                 lexical-environment)
-  (check-cst-proper-list definitions-cst 'flet-functions-must-be-proper-list)
   (loop for remaining = definitions-cst
           then (cst:rest remaining)
         until (cst:null remaining)
@@ -299,6 +298,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (flet-cst definitions-cst . body-cst) cst
     (declare (ignore flet-cst))
+    (check-function-bindings definitions-cst 'flet)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
@@ -336,6 +336,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (labels-cst definitions-cst . body-cst) cst
     (declare (ignore labels-cst))
+    (check-function-bindings definitions-cst 'labels)
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
