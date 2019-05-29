@@ -134,6 +134,7 @@
                   info
                   lexical-environment
                   arguments-cst)
+  (check-cst-proper-list cst 'form-must-be-proper-list)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference client
                                                           name-cst
