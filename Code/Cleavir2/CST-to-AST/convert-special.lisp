@@ -240,8 +240,7 @@
 (defun convert-local-function (client
                                definition-cst
                                lexical-environment)
-  (check-cst-proper-list definition-cst
-                         'local-function-definition-must-be-proper-list)
+  ;; FIXME: The error message if this check fails needs improvement.
   (check-argument-count definition-cst 1 nil)
   (cst:db origin (name-cst lambda-list-cst . body-cst) definition-cst
     (unless (proper-function-name-p name-cst)
