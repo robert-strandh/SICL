@@ -14,12 +14,10 @@
                         cst
                         (info trucler:symbol-macro-description)
                         lexical-environment)
-  (let* ((form (cst:raw cst))
-         (expansion (trucler:expansion info))
-         (expanded-form (call-macroexpander (constantly expansion)
-                                            form
-                                            lexical-environment))
-         (expanded-cst (cst:cst-from-expression expanded-form)))
+  (let* ((expansion (trucler:expansion info))
+         (expander (symbol-macro-expander expansion))
+         (expanded-form (expand-macro expander cst lexical-environment))
+         (expanded-cst (cst:reconstruct expanded-form cst client)))
     (with-preserved-toplevel-ness
       (convert client
                expanded-cst
