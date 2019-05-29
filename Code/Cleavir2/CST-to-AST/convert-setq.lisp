@@ -10,7 +10,7 @@
 
 (defmethod convert-setq
     (client var-cst form-cst (info trucler:constant-variable-description) lexical-environment)
-  (declare (ignore var-cst form-cst lexical-environment client))
+  (declare (ignore var-cst lexical-environment client))
   (error 'setq-constant-variable :cst form-cst))
 
 (defmethod convert-setq
