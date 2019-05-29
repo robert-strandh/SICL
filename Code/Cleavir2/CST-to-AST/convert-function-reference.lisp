@@ -30,22 +30,19 @@
                                        cst
                                        (info trucler:global-macro-description)
                                        lexical-environment)
-  (error 'function-name-names-global-macro
-         :expr (trucler:name info)))
+  (error 'function-name-names-global-macro :cst cst))
 
 (defmethod convert-function-reference (client
                                        cst
                                        (info trucler:local-macro-description)
                                        lexical-environment)
-  (error 'function-name-names-local-macro
-         :expr (trucler:name info)))
+  (error 'function-name-names-local-macro :cst cst))
 
 (defmethod convert-function-reference (client
                                        cst
                                        (info trucler:special-operator-description)
                                        lexical-environment)
-  (error 'function-name-names-special-operator
-         :expr (trucler:name info)))
+  (error 'function-name-names-special-operator :cst cst))
 
 ;;; These are used by (foo ...) forms.
 ;;; It's useful to distinguish them. For instance, an implementation
@@ -79,19 +76,16 @@
                                               cst
                                               (info trucler:global-macro-description)
                                               lexical-environment)
-  (error 'function-name-names-global-macro
-         :expr (trucler:name info)))
+  (error 'function-name-names-global-macro :cst cst))
 
 (defmethod convert-called-function-reference (client
                                               cst
                                               (info trucler:local-macro-description)
                                               lexical-environment)
-  (error 'function-name-names-local-macro
-         :expr (trucler:name info)))
+  (error 'function-name-names-local-macro :cst cst))
 
 (defmethod convert-called-function-reference (client
                                               cst
                                               (info trucler:special-operator-description)
                                               lexical-environment)
-  (error 'function-name-names-special-operator
-         :expr (trucler:name info)))
+  (error 'function-name-names-special-operator :cst cst))

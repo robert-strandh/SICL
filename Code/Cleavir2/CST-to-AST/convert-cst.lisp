@@ -243,5 +243,5 @@
                         lexical-environment)
   (declare (ignore client))
   (when (eq (trucler:ignore info) 'ignore)
-    (warn 'ignored-variable-referenced :expr (cst:raw cst)))
+    (warn 'ignored-variable-referenced :cst cst))
   (trucler:identity info))

@@ -18,11 +18,10 @@
                  (or (null max)
                      (<= count max)))
       (error 'incorrect-number-of-arguments
-             :expr (cst:raw cst)
+             :cst cst
              :expected-min min
              :expected-max max
-             :observed count
-             :origin (cst:source cst)))))
+             :observed count))))
 
 (defun proper-list-p (list)
   ;; IGNORE-ERRORS is only required to signal an error in "safe code",
