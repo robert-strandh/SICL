@@ -176,40 +176,21 @@
 
 ;;; This class is used to describe the body of a function.  It
 ;;; contains the declaration specifiers that apply to the body as a
-;;; whole, the forms of the body and information about a possible
-;;; BLOCK that the body code should be wrapped in.  The main reason
-;;; for the existence of this class is to keep the number of arguments
-;;; down of several functions below, not for the purpose of
-;;; performance, but simply to avoid very long lambda lists in the
-;;; source code.
+;;; whole, and the body as a CST.
 (defclass body ()
   ((%dspecs :initarg :dspecs :accessor dspecs)
-   ;; This slot contains an ordinary Common Lisp list of CSTs, each
-   ;; representing a form of the body.
-   (%form-csts :initarg :form-csts :accessor form-csts)
-   (%block-name-cst :initform nil
-                    :initarg :block-name-cst
-                    :reader block-name-cst)))
+   (%cst :initarg :cst :accessor body-cst)))
 
-(defun make-body (dspecs form-csts block-name-cst)
+(defun make-body (dspecs cst)
   (make-instance 'body
     :dspecs dspecs
-    :form-csts form-csts
-    :block-name-cst block-name-cst))
+    :cst cst))
 
 ;;; Convert the body of a function.
 (defun convert-body (client body lexical-environment)
   (let ((new-env (augment-environment-with-declarations
-                  client lexical-environment (dspecs body)))
-        (block-name-cst (block-name-cst body)))
-    (convert client
-             (if block-name-cst
-                 (cst:cstify (list* (cst:cst-from-expression 'block)
-                                    block-name-cst
-                                    (form-csts body)))
-                 (cst:cstify (cons (cst:cst-from-expression 'progn)
-                                   (form-csts body))))
-             new-env)))
+                  client lexical-environment (dspecs body))))
+    (convert client (body-cst body) new-env)))
 
 (defmethod process-parameter-groups
     (client
@@ -371,7 +352,7 @@
      lexical-environment)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
-                            (cst:cst-from-expression nil)
+                            (make-atom-cst nil (cst:source var-cst))
                             (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
          (new-env (new-environment-from-parameter client
@@ -412,7 +393,7 @@
      lexical-environment)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
-                            (cst:cst-from-expression nil)
+                            (make-atom-cst nil (cst:source var-cst))
                             (cst:form parameter)))
          (supplied-p-cst (cst:supplied-p parameter))
          (new-env (new-environment-from-parameter client
@@ -491,6 +472,14 @@
           (values (cons itemized-dspecs more-itemized-dspecs)
                   more-remaining-dspecs)))))
 
+(defun cst-for-body (forms-cst block-name-cst &optional origin)
+  (if (null block-name-cst)
+      (cst:cons (make-atom-cst 'progn origin) forms-cst
+                :source origin)
+      (cst:cons (make-atom-cst 'block origin)
+                (cst:cons block-name-cst forms-cst)
+                :source origin)))
+
 (defmethod convert-code (client
                          lambda-list-cst
                          body-cst
@@ -523,7 +512,8 @@
                      (cst:children parsed-lambda-list)
                      idspecs
                      entries
-                     (make-body rdspecs (cst:listify forms-cst) block-name-cst)
+                     ;; FIXME: replace NIL by ORIGIN.
+                     (make-body rdspecs (cst-for-body forms-cst block-name-cst nil))
                      lexical-environment)))
               (make-instance 'cleavir-ast:function-ast
                 :body-ast ast
