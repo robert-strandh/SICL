@@ -1,11 +1,5 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defun call-macroexpander (expander form lexical-environment)
-  (funcall (coerce *macroexpand-hook* 'function)
-           expander
-           form
-           lexical-environment))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a symbol that has a definition as a symbol macro.
