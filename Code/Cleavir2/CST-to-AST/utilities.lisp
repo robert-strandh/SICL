@@ -28,6 +28,9 @@
         :report "Ignore compiler macro."
         (return-from expand-compiler-macro form)))))
 
+(defun make-atom-cst (object &optional origin)
+  (make-instance 'cst:atom-cst :raw object :source origin))
+
 ;;; Take a CST, check whether it represents a proper list.  If it does
 ;;; not represent a proper list, call ERROR.  ERROR-TYPE is a symbol
 ;;; that is passed to ERROR.
