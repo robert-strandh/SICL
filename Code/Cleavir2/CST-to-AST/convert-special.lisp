@@ -68,7 +68,7 @@
                (trucler:describe-block client lexical-environment block-name)))
         (let ((info (find-description block-name))
               (value-cst (if (cst:null rest-csts)
-                             (make-instance 'cst:atom-cst :raw nil)
+                             (make-atom-cst nil origin)
                              (cst:first rest-csts))))
           (loop while (null info)
                 do (restart-case (error 'trucler:no-block-description :cst cst)
@@ -133,7 +133,7 @@
                                    body-cst
                                    lexical-environment))
                 (convert client
-                         (cst:cst-from-expression nil)
+                         (make-atom-cst nil s)
                          lexical-environment))
             (cond ((or
                     ;; CT   LT   E    Mode
@@ -196,15 +196,15 @@
                              (member 'eval situations))
                          *compile-time-too*))
                    (cst-eval client
-                             (cst:cons (cst:cst-from-expression 'cons)
+                             (cst:cons (make-atom-cst 'progn s)
                                        body-cst)
                              lexical-environment)
                    (convert client
-                            (cst:cst-from-expression nil)
+                            (make-atom-cst nil s)
                             lexical-environment))
                   (t
                    (convert client
-                            (cst:cst-from-expression nil)
+                            (make-atom-cst nil s)
                             lexical-environment))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,7 +396,7 @@
          (list (make-instance 'cleavir-ast:tagbody-ast
                  :item-asts item-asts)
                (convert-constant client
-                                 (cst:cst-from-expression nil)
+                                 (make-atom-cst nil origin)
                                  lexical-environment)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -431,7 +431,7 @@
                              lexical-environment))
           (false-ast (if (cst:null tail-cst)
                          (convert-constant client
-                                           (cst:cst-from-expression nil)
+                                           (make-atom-cst nil origin)
                                            lexical-environment)
                          (cst:db s (else-cst) tail-cst
                            (convert client
@@ -447,7 +447,7 @@
            (make-instance 'cleavir-ast:eq-ast
             :arg1-ast test-ast
             :arg2-ast (convert-constant client
-                       (cst:cst-from-expression nil)
+                       (make-atom-cst nil origin)
                        lexical-environment))
            :then-ast false-ast
            :else-ast true-ast)))))
@@ -537,9 +537,7 @@
                        (trucler:add-local-macro client new-lexical-environment name expander))))
       (with-preserved-toplevel-ness
         (convert client
-                 (cst:cons (make-instance 'cst:atom-cst
-                             :raw 'locally
-                             :source origin)
+                 (cst:cons (make-atom-cst 'locally origin)
                            body-cst)
                  new-lexical-environment)))))
 
@@ -565,7 +563,7 @@
                           client new-lexical-environment name expansion)))))
       (with-preserved-toplevel-ness
         (convert client
-                 (cst:cons (cst:cst-from-expression 'locally)
+                 (cst:cons (make-atom-cst 'locally origin)
                            body-cst
                            :source origin)
                  new-lexical-environment)))))
