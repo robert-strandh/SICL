@@ -12,7 +12,8 @@
                                 var-ast
                                 supplied-p-ast
                                 value-ast
-                                lexical-environment)
+                                lexical-environment
+                                origin)
   (let ((nil-cst (make-atom-cst nil origin)))
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
@@ -55,22 +56,24 @@
                                init-ast
                                lexical-environment
                                body-function)
-  (process-progn
-   (list (make-initialization-ast client
-                                  var-ast
-                                  supplied-p-ast
-                                  init-ast
-                                  lexical-environment)
-         (set-or-bind-variable
-          client
-          var-cst var-ast
-          (if (null supplied-p-cst)
-              body-function
-              (lambda ()
-                (set-or-bind-variable
-                 client
-                 supplied-p-cst supplied-p-ast
-                 (lambda ()
-                   (funcall body-function))
-                 lexical-environment)))
-          lexical-environment))))
+  (let ((origin (cst:source var-cst)))
+    (process-progn
+     (list (make-initialization-ast client
+                                    var-ast
+                                    supplied-p-ast
+                                    init-ast
+                                    lexical-environment
+                                    origin)
+           (set-or-bind-variable
+            client
+            var-cst var-ast
+            (if (null supplied-p-cst)
+                body-function
+                (lambda ()
+                  (set-or-bind-variable
+                   client
+                   supplied-p-cst supplied-p-ast
+                   (lambda ()
+                     (funcall body-function))
+                   lexical-environment)))
+            lexical-environment)))))
