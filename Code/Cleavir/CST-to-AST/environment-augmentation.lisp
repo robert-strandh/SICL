@@ -274,12 +274,16 @@
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
 (defun augment-environment-with-parameter (var-cst supplied-p-cst dspecs env)
-  (let ((new-env (augment-environment-with-variable
-                  var-cst dspecs env env)))
-    (if (null supplied-p-cst)
-        new-env
-        (augment-environment-with-variable
-         supplied-p-cst dspecs new-env new-env))))
+  ;; The dspecs contain declarations for both variables (and only these variables),
+  ;; so we have to perform a final separation.
+  (multiple-value-bind (var-dspecs supplied-p-dspecs)
+      (separate-declarations dspecs var-cst)
+    (let ((new-env (augment-environment-with-variable
+                    var-cst var-dspecs env env)))
+      (if (null supplied-p-cst)
+          new-env
+          (augment-environment-with-variable
+           supplied-p-cst supplied-p-dspecs new-env new-env)))))
 
 (defun augment-environment-with-local-function-name (name-cst environment)
   (let* ((name (cst:raw name-cst))
