@@ -1,6 +1,14 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
 (defmethod acclimation:report-condition
+    ((condition malformed-lambda-list)
+     stream
+     (language acclimation:english))
+  (let ((form (cst:raw (cst condition))))
+    (format stream "The lambda list ~s is malformed."
+          (cst:raw (cst condition)))))
+
+(defmethod acclimation:report-condition
     ((condition incorrect-number-of-arguments)
      stream
      (language acclimation:english))
