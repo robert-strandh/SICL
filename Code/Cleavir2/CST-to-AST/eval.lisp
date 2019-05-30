@@ -2,6 +2,11 @@
 
 (defgeneric cst-eval (client cst environment))
 
+(defmethod cst-eval :around (client cst environment)
+  (with-encapsulated-conditions
+      (cst eval-error eval-warning eval-style-warning)
+    (call-next-method)))
+
 (defgeneric eval (client form environment))
 
 (defmethod eval (client form environment)
