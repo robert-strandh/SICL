@@ -28,9 +28,11 @@
            #:entry-from-parameter
            #:entries-from-parameter-group
            #:lambda-list-from-parameter-group
-           #:consider-global
-           #:consider-special
            ;; Names of conditions.
+           #:compilation-condition
+           #:compilation-program-error
+           #:compilation-warning
+           #:compilation-style-warning
            #:run-time-program-error
            #:incorrect-number-of-arguments
            #:values-&rest-syntax
@@ -43,7 +45,6 @@
            #:lambda-must-be-proper-list
            #:function-argument-must-be-function-name-or-lambda-expression
            #:function-name-must-be-proper-function-name
-           #:let-or-let*-must-have-at-least-one-argument
            #:bindings-must-be-proper-list
            #:binding-must-be-symbol-or-list
            #:binding-must-have-length-one-or-two
@@ -66,4 +67,21 @@
            #:not-enough-arguments-warning
            #:not-enough-arguments-style-warning
            #:odd-keyword-portion-warning
-           #:odd-keyword-portion-style-warning))
+           #:odd-keyword-portion-style-warning
+           #:macroexpansion-error
+           #:macroexpansion-warning
+           #:macroexpansion-style-warning
+           #:compiler-macro-expansion-error
+           #:compiler-macro-expansion-warning
+           #:compiler-macro-expansion-style-warning
+           #:eval-error #:eval-warning #:eval-style-warning
+           ;; Condition readers.
+           #:cst
+           #:original-condition
+           #:expected-min #:expected-max #:observed
+           #:callee-ftype
+           ;; Restart names.
+           #:consider-global
+           #:consider-special
+           #:substitute #:substitute-cst
+           #:signal-original-condition))
