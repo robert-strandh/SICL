@@ -30,7 +30,6 @@
            #:lambda-list-from-parameter-group
            #:consider-global
            #:consider-special
-           #:recover
            ;; Names of conditions.
            #:run-time-program-error
            #:incorrect-number-of-arguments

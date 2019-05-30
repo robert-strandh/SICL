@@ -65,13 +65,13 @@
 	  do (restart-case (error 'trucler:no-variable-description
 				  :name symbol
 				  :origin (cst:source var-cst))
-	       (recover ()
+	       (continue ()
 		 :report (lambda (stream)
 			   (format stream "Consider the variable as special."))
                  (setf info
                        (make-instance 'trucler:special-variable-description
                          :name symbol)))
-               ;; This is identical to RECOVER, but more specifically named.
+               ;; This is identical to CONTINUE, but more specifically named.
 	       (consider-special ()
 		 :report (lambda (stream)
 			   (format stream "Consider the variable as special."))
