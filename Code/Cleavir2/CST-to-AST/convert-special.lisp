@@ -1,19 +1,12 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defmethod convert-special :around
+(defmethod convert-special :before
     (client operator cst lexical-environment)
   (when (and *compile-time-too*
              *current-form-is-top-level-p*
              (not (member operator
                           '(progn locally macrolet symbol-macrolet eval-when))))
-    (cst-eval client cst lexical-environment))
-  (restart-case (call-next-method)
-    (recover ()
-      :report "Recover by replacing form by a call to ERROR."
-      (cst:cst-from-expression
-       '(error 'run-time-program-error
-         :expr (cst:raw cst)
-         :origin (cst:source cst))))))
+    (cst-eval client cst lexical-environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
