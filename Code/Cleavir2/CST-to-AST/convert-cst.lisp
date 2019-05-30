@@ -145,8 +145,7 @@
   (when (and *current-form-is-top-level-p* *compile-time-too*)
     (cst-eval client cst lexical-environment))
   (let ((compiler-macro (trucler:compiler-macro info))
-        (notinline (eq 'notinline (trucler:inline info)))
-        (form (cst:raw cst)))
+        (notinline (eq 'notinline (trucler:inline info))))
     (if (or notinline (null compiler-macro))
         ;; There is no compiler macro.  Create the call.
         (make-call client
@@ -155,10 +154,10 @@
                    lexical-environment (cst:rest cst))
         ;; There is a compiler macro.  We must see whether it will
         ;; accept or decline.
-        (let ((expanded-form (call-macroexpander compiler-macro
-                                                 form
-                                                 lexical-environment)))
-          (if (eq form expanded-form)
+        (let ((expanded-form (expand-compiler-macro compiler-macro
+                                                    cst
+                                                    lexical-environment)))
+          (if (eq (cst:raw cst) expanded-form)
               ;; If the two are EQ, this means that the compiler macro
               ;; declined.  We are left with function-call form.
               ;; Create the call, just as if there were no compiler
