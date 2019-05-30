@@ -229,6 +229,8 @@
 (defmethod label ((instruction enclose-instruction))
   (format nil "enclose~:[~; DX~]" (dynamic-extent-p instruction)))
 
+(defmethod label ((instruction initialize-closure-instruction)) "initialize-closure")
+
 (defmethod draw-instruction ((instruction unwind-instruction) stream)
   (format stream "   ~a [label = \"~a\"];~%"
           (instruction-id instruction)
