@@ -79,45 +79,35 @@
                         (info trucler:global-macro-description)
                         lexical-environment)
   (let ((compiler-macro (trucler:compiler-macro info))
-        (form (cst:raw cst)))
+        (expander (trucler:expander info)))
     (with-preserved-toplevel-ness
       (if (null compiler-macro)
           ;; There is no compiler macro, so we just apply the macro
           ;; expander, and then convert the resulting form.
-          (let* ((expanded-form (call-macroexpander (trucler:expander info)
-                                                    form
-                                                    lexical-environment))
+          (let* ((expanded-form (expand-macro expander cst lexical-environment))
                  (expanded-cst (cst:reconstruct expanded-form cst client)))
-
-            (convert client
-                     expanded-cst
-                     lexical-environment))
+            (convert client expanded-cst lexical-environment))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
-          (let ((expanded-form (call-macroexpander compiler-macro
-                                                   form
-                                                   lexical-environment)))
-            (if (eq form expanded-form)
+          (let ((expanded-form (expand-compiler-macro compiler-macro
+                                                      cst
+                                                      lexical-environment)))
+            (if (eq (cst:raw cst) expanded-form)
                 ;; If the two are EQ, this means that the compiler macro
                 ;; declined.  Then we appply the macro function, and
                 ;; then convert the resulting form, just like we did
                 ;; when there was no compiler macro present.
-                (let* ((expanded-form
-                         (call-macroexpander (trucler:expander info)
-                                             form
-                                             lexical-environment))
+                (let* ((expanded-form (expand-macro expander
+                                                    cst
+                                                    lexical-environment))
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
-                  (convert client
-                           expanded-cst
-                           lexical-environment))
+                  (convert client expanded-cst lexical-environment))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
                 ;; taking into account the real macro expander.
                 (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
-                  (convert client
-                           expanded-cst
-                           lexical-environment))))))))
+                  (convert client expanded-cst lexical-environment))))))))
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
