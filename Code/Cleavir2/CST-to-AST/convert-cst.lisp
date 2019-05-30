@@ -63,15 +63,11 @@
                         cst
                         (info trucler:local-macro-description)
                         lexical-environment)
-  (let* ((form (cst:raw cst))
-         (expanded-form (call-macroexpander (trucler:expander info)
-                                            form
-                                            lexical-environment))
+  (let* ((expander (cleavir-env:expander info))
+         (expanded-form (expand-macro expander cst lexical-environment))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
     (with-preserved-toplevel-ness
-      (convert client
-               expanded-cst
-               lexical-environment))))
+      (convert client expanded-cst lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
