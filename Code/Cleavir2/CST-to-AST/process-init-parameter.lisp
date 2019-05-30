@@ -13,7 +13,7 @@
                                 supplied-p-ast
                                 value-ast
                                 lexical-environment)
-  (let ((nil-cst (cst:cst-from-expression nil)))
+  (let ((nil-cst (make-atom-cst nil origin)))
     (make-instance 'cleavir-ast:if-ast
      :test-ast (make-instance 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
