@@ -23,17 +23,15 @@
 
 (defmethod convert-setq
     (client var-cst form-cst (info trucler:symbol-macro-description) lexical-environment)
-  (let* ((expansion (funcall (coerce *macroexpand-hook* 'function)
-                             (lambda (form lexical-environment)
-                               (declare (ignore form lexical-environment))
-                               (trucler:expansion info))
-                             (trucler:name info)
-                             lexical-environment))
-         (expansion-cst (cst:reconstruct expansion var-cst client)))
+  (let* ((expansion (trucler:expansion info))
+         (expander (symbol-macro-expander expansion))
+         (expanded-variable (expand-macro expander var-cst lexical-environment))
+         (expanded-cst (cst:reconstruct expanded-variable var-cst client))
+         (origin (cst:source var-cst)))
     (convert client
-             (cst:list (cst:cst-from-expression 'setf)
-                       expansion-cst
-                       form-cst)
+             (cst:cons (make-atom-cst 'setf origin)
+                       (cst:list expanded-cst form-cst)
+                       :source origin)
              lexical-environment)))
 
 (defmethod convert-setq-special-variable
