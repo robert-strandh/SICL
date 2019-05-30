@@ -242,6 +242,7 @@
           then (cst:rest remaining)
         until (cst:null remaining)
         collect (let* ((def-cst (cst:first remaining))
+                       (*origin* (cst:source def-cst))
                        (fun (convert-local-function
                              client
                              def-cst

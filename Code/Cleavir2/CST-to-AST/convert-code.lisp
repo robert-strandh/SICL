@@ -472,13 +472,13 @@
           (values (cons itemized-dspecs more-itemized-dspecs)
                   more-remaining-dspecs)))))
 
-(defun cst-for-body (forms-cst block-name-cst &optional origin)
+(defun cst-for-body (forms-cst block-name-cst)
   (if (null block-name-cst)
-      (cst:cons (make-atom-cst 'progn origin) forms-cst
-                :source origin)
-      (cst:cons (make-atom-cst 'block origin)
+      (cst:cons (make-atom-cst 'progn *origin*) forms-cst
+                :source *origin*)
+      (cst:cons (make-atom-cst 'block *origin*)
                 (cst:cons block-name-cst forms-cst)
-                :source origin)))
+                :source *origin*)))
 
 (defmethod convert-code (client
                          lambda-list-cst
@@ -512,8 +512,7 @@
                      (cst:children parsed-lambda-list)
                      idspecs
                      entries
-                     ;; FIXME: replace NIL by ORIGIN.
-                     (make-body rdspecs (cst-for-body forms-cst block-name-cst nil))
+                     (make-body rdspecs (cst-for-body forms-cst block-name-cst))
                      lexical-environment)))
               (make-instance 'cleavir-ast:function-ast
                 :body-ast ast
