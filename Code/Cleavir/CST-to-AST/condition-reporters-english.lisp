@@ -18,7 +18,8 @@
             "In the form ~s, ~s is used with ~d arguments, ~@
              but expects ~@?."
             form (first form) (observed condition)
-            (cond ((and min max) "between ~d and ~d")
+            (cond ((and min max (= min max)) "exactly ~d")
+                  ((and min max) "between ~d and ~d")
                   (min "at least ~d")
                   (max "at least ~d")
                   ;; If we hit here it's actually a bug.

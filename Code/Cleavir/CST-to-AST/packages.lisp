@@ -33,7 +33,9 @@
            #:compilation-warning
            #:compilation-style-warning
            #:run-time-program-error
-           #:incorrect-number-of-arguments
+           #:incorrect-number-of-arguments-error
+           #:incorrect-number-of-arguments-warning
+           #:incorrect-number-of-arguments-style-warning
            #:values-&rest-syntax
            #:ignored-variable-referenced
            #:block-name-must-be-a-symbol
@@ -61,10 +63,6 @@
            #:no-default-method
            #:lambda-call-first-symbol-not-lambda
            #:malformed-lambda-list
-           #:too-many-arguments-warning
-           #:too-many-arguments-style-warning
-           #:not-enough-arguments-warning
-           #:not-enough-arguments-style-warning
            #:odd-keyword-portion-warning
            #:odd-keyword-portion-style-warning
            #:macroexpansion-error

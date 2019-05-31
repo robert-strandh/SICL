@@ -83,6 +83,11 @@
     (compilation-style-warning incorrect-number-of-arguments)
   ())
 
+;;; See odd-keyword-portion.
+(define-condition odd-keyword-portion-warning
+    (compilation-warning odd-keyword-portion)
+  ())
+
 ;;; This condition is signaled when a function call has an odd number
 ;;; of arguments in the &key portion, but it's possible there will be
 ;;; no issue due to redefinitions etc.
@@ -271,40 +276,6 @@
 
 ;;; This condition is signaled when a lambda list is malformed.
 (define-condition malformed-lambda-list (compilation-program-error)
-  ())
-
-;;; This condition is signaled when a function of known type is
-;;; called with too many arguments.
-(define-condition too-many-arguments-warning
-    (too-many-arguments argument-mismatch-warning)
-  ())
-
-;;; This condition is called when a function is called with too
-;;; many arguments, but we only know that for other reasons. For
-;;; example, from an inline definition. Technically the programmer
-;;; could redefine the function to make the call okay.
-(define-condition too-many-arguments-style-warning
-    (too-many-arguments argument-mismatch-style-warning)
-  ())
-
-;;; This condition is signaled when a function of known type is
-;;; called with too few arguments.
-(define-condition not-enough-arguments-warning
-    (not-enough-arguments argument-mismatch-warning)
-  ())
-
-;;; See too-many-arguments-style-warning.
-(define-condition not-enough-arguments-style-warning
-    (not-enough-arguments argument-mismatch-style-warning)
-  ())
-
-;;; See odd-keyword-portion.
-(define-condition odd-keyword-portion-warning
-    (odd-keyword-portion argument-mismatch-warning)
-  ())
-
-(define-condition odd-keyword-portion-style-warning
-    (odd-keyword-portion argument-mismatch-style-warning)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
