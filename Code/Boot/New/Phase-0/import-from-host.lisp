@@ -11,6 +11,10 @@
       (setf (sicl-genv:fdefinition `(setf ,symbol) environment)
             (fdefinition `(setf ,symbol))))))
 
+(defun define-standard-common-lisp-variables (environment)
+  (setf (sicl-genv:special-variable '*macroexpand-hook* environment t)
+        *macroexpand-hook*))
+
 (defun define-standard-common-lisp-special-operators (environment)
   (do-symbols (symbol (find-package '#:common-lisp))
     (when (special-operator-p symbol)
@@ -48,13 +52,17 @@
                  (fdefinition name))))
 
 (defun import-from-trucler (environment)
-  (setf (sicl-genv:fdefinition 'trucler:global-environment environment)
-        (fdefinition 'trucler:global-environment)))
+  (loop for name in '(trucler:global-environment
+                      trucler:symbol-macro-expansion
+                      trucler:macro-function)
+        do (setf (sicl-genv:fdefinition name environment)
+                 (fdefinition name))))
 
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
   (host-load "Environment/macro-support.lisp")
   (import-standard-common-lisp-functions environment)
+  (define-standard-common-lisp-variables environment)
   (define-standard-common-lisp-special-operators environment)
   (import-from-cleavir-code-utilities environment)
   (import-macro-expanders environment)
