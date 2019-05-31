@@ -20,7 +20,7 @@
     (form &optional (env (sicl-global-environment:global-environment)))
   (let ((expander nil))
     (cond ((symbolp form)
-	   (let ((expansion (cleavir-env:symbol-macro-expansion form env)))
+	   (let ((expansion (trucler:symbol-macro-expansion form env)))
 	     (unless (eq form expansion)
 	       (setf expander
 		     (lambda (form environment)
@@ -28,7 +28,7 @@
 		       expansion)))
 	     (values expansion (not (eq form expansion)))))
 	  ((and (consp form) (symbolp (car form)))
-	   (setf expander (cleavir-env:macro-function (car form) env)))
+	   (setf expander (trucler:macro-function (car form) env)))
 	  (t
 	   nil))
     (if (null expander)
