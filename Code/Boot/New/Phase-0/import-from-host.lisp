@@ -30,7 +30,12 @@
                       sicl-conditionals:ccase-expander
                       sicl-conditionals:typecase-expander
                       sicl-conditionals:etypecase-expander
-                      sicl-conditionals:ctypecase-expander)
+                      sicl-conditionals:ctypecase-expander
+                      sicl-standard-environment-macros:defconstant-expander
+                      sicl-standard-environment-macros:defvar-expander
+                      sicl-standard-environment-macros:defparameter-expander
+                      sicl-standard-environment-macros:deftype-expander
+                      sicl-standard-environment-macros:define-compiler-macro-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
@@ -48,6 +53,7 @@
 
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
+  (host-load "Environment/macro-support.lisp")
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-special-operators environment)
   (import-from-cleavir-code-utilities environment)
