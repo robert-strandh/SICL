@@ -61,8 +61,8 @@
      declaration-data-cst
      environment)
   (cleavir-env:add-function-type
-   environment (cst:second declaration-data-cst)
-   (cst:first declaration-data-cst)))
+   environment (cst:raw (cst:second declaration-data-cst))
+   (cst:raw (cst:first declaration-data-cst))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'ignore))
