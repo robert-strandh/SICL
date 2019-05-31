@@ -65,5 +65,10 @@
   (load-file "Data-and-control-flow/nth-value.lisp" environment)
   (load-file "Data-and-control-flow/multiple-value-call-defmacro.lisp" environment)
   ;; Load a file containing the definition of macro DEFUN.
-  (load-file "Data-and-control-flow/defun-defmacro.lisp" environment))
+  (load-file "Data-and-control-flow/defun-defmacro.lisp" environment)
+  ;; Load file containing definition of function GET-SETF-EXPANSION.
+  ;; We can not use the version of this function provided by the host,
+  ;; because it takes an environment argument, and the host version
+  ;; does not work with the Cleavir/SICL environment objects.
+  (load-file "Data-and-control-flow/get-setf-expansion.lisp" environment))
 
