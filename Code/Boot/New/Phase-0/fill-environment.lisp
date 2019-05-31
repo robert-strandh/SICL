@@ -86,4 +86,6 @@
   (load-file "Arithmetic/incf-decf-defmacro.lisp" environment)
     (load-file "Loop/loop-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the macros PUSH and POP.
-  (load-file "Cons/push-pop-defmacro.lisp" environment))
+  (load-file "Cons/push-pop-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro RETURN.
+  (load-file "Data-and-control-flow/return-defmacro.lisp" environment))
