@@ -11,7 +11,9 @@
 
 (defmethod convert (client cst lexical-environment)
   (let ((form (cst:raw cst)))
-    (cond ((and (not (consp form)) (not (symbolp form)))
+    (cond ((or (and (not (consp form)) (not (symbolp form)))
+               (keywordp form)
+               (member form '(t nil)))
            (convert-constant client cst lexical-environment))
           ((symbolp form)
            (convert-variable client cst lexical-environment))
