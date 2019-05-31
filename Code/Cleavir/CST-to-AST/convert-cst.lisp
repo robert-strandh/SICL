@@ -94,11 +94,11 @@
         (function-info-argument-properties info)
       (when validp
         (cond ((or (< args-length nreq) ; too few
-                   (and (not restp)
+                   (and (not restp) (not keysp)
                         (> args-length npos))) ; too many
                (warn 'incorrect-number-of-arguments-style-warning
                      :expected-min nreq
-                     :expected-max (and (not restp) npos)
+                     :expected-max (and (not restp) (not keysp) npos)
                      :observed args-length
                      :cst cst))
               ((and keysp (oddp (- args-length npos)))
