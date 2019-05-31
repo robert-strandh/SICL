@@ -84,12 +84,34 @@
                 (let ((expanded-cst (cst:reconstruct expanded-form cst system)))
                   (convert expanded-cst env system))))))))
 
+;;; Given a FUNCTION-INFO and cst of a call, signal warnings if the call can
+;;; be determined to be invalid for the function.
+;;; TODO: We only signal STYLE-WARNINGs, because we don't yet keep track of
+;;; when we can/should signal a full WARNING.
+(defun check-call (cst info)
+  (let ((args-length (1- (length (cst:raw cst)))))
+    (multiple-value-bind (validp nreq npos restp keysp)
+        (function-info-argument-properties info)
+      (when validp
+        (cond ((or (< args-length nreq) ; too few
+                   (and (not restp)
+                        (> args-length npos))) ; too many
+               (warn 'incorrect-number-of-arguments-style-warning
+                     :expected-min nreq
+                     :expected-max (and (not restp) npos)
+                     :observed args-length
+                     :cst cst))
+              ((and keysp (oddp (- args-length npos)))
+               (warn 'odd-keyword-portion-style-warning
+                     :cst cst)))))))
+
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
 ;;; form.  ARGUMENTS-CST is a CST representing the sequence of
 ;;; arguments to the call.
 (defun make-call (cst info env arguments-cst system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
+  (check-call cst info)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference name-cst info env system))
          (argument-asts (convert-sequence arguments-cst env system)))
