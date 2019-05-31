@@ -44,7 +44,8 @@
                       sicl-standard-environment-macros:defparameter-expander
                       sicl-standard-environment-macros:deftype-expander
                       sicl-standard-environment-macros:define-compiler-macro-expander
-                      sicl-evaluation-and-compilation:declaim-expander)
+                      sicl-evaluation-and-compilation:declaim-expander
+                      sicl-loop:expand-body)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
