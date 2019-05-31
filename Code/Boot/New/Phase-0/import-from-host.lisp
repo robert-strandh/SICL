@@ -21,8 +21,18 @@
         #'cleavir-code-utilities:parse-macro))
 
 (defun import-macro-expanders (environment)
-  (setf (sicl-genv:fdefinition 'sicl-data-and-control-flow:defun-expander environment)
-        (fdefinition 'sicl-data-and-control-flow:defun-expander)))
+  (loop for name in '(sicl-data-and-control-flow:defun-expander
+                      sicl-conditionals:or-expander
+                      sicl-conditionals:and-expander
+                      sicl-conditionals:cond-expander
+                      sicl-conditionals:case-expander
+                      sicl-conditionals:ecase-expander
+                      sicl-conditionals:ccase-expander
+                      sicl-conditionals:typecase-expander
+                      sicl-conditionals:etypecase-expander
+                      sicl-conditionals:ctypecase-expander)
+        do (setf (sicl-genv:fdefinition name environment)
+                 (fdefinition name))))
 
 (defun import-sicl-envrionment-functions (environment)
   (loop for name in '((setf sicl-genv:fdefinition)
