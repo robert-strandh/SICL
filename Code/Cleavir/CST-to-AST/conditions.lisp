@@ -30,35 +30,26 @@
 ;;;
 ;;; More specific but still general conditions.
 
-(define-condition argument-mismatch
+;;; Conditions of this type are signalled when the number of arguments
+;;; can be determined to be incorrect at compile time, i.e. for special
+;;; operators, primitive operators, and calls to known functions.
+;;;
+;;; EXPECTED-MIN is the minimum number of arguments allowed for the
+;;; operator and it is a non-negative integer.  EXPECTED-MAX is the
+;;; maximum number of arguments allowed for this operator, and is
+;;; either a non-negative integer, or NIL, meaning that the operator
+;;; can take an arbitrary number of arguments.  OBSERVED is the number
+;;; of arguments actually supplied.
+(define-condition incorrect-number-of-arguments
     (acclimation:condition)
-  ((%expected-min :initarg :expected-min :reader expected-min)
-   (%expected-max :initarg :expected-max :reader expected-max)))
-
-(define-condition argument-mismatch-warning
-    (argument-mismatch compilation-warning)
-  ;; The type is canonicalized.
-  ((%callee-ftype :initarg :callee-ftype :reader callee-ftype)))
-
-(define-condition argument-mismatch-style-warning
-    (argument-mismatch compilation-style-warning)
-  ;; FIXME: might include a "reason" field for when there's more
-  ;; than one possible way to signal this.
-  ())
-
-;;; These three are further specialized with the above two below.
-(define-condition too-many-arguments
-    (argument-mismatch)
-  ())
-
-(define-condition not-enough-arguments
-    (argument-mismatch)
-  ())
+  ((%expected-min :initarg :expected-min :initform nil :reader expected-min)
+   (%expected-max :initarg :expected-max :initform nil :reader expected-max)
+   (%observed :initarg :observed :reader observed)))
 
 ;;; The class of conditions signaled when an odd number of
 ;;; arguments is passed to the &key portion of a lambda list.
 (define-condition odd-keyword-portion
-    (argument-mismatch)
+    (acclimation:condition)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -72,21 +63,32 @@
   ((%expr :initarg :expr :reader expr)
    (%origin :initarg :origin :reader origin)))
 
-;;; This condition is signaled when the number of arguments can be
-;;; determined to be incorrect at compile time, i.e. for special
-;;; operators, primitive operators, and calls to standard functions.
-;;;
-;;; EXPECTED-MIN is the minimum number of arguments allowed for the
-;;; operator and it is a non-negative integer.  EXPECTED-MAX is the
-;;; maximum number of arguments allowed for this operator, and is
-;;; either a non-negative integer, or NIL, meaning that the operator
-;;; can take an arbitrary number of arguments.  OBSERVED is the number
-;;; of arguments actually supplied.
-(define-condition incorrect-number-of-arguments
-    (compilation-program-error)
-  ((%expected-min :initarg :expected-min :reader expected-min)
-   (%expected-max :initarg :expected-max :reader expected-max)
-   (%observed :initarg :observed :reader observed)))
+;;; This condition is signaled when an incorrect number of arguments
+;;; stops the compiler, e.g. in the case of a special operator.
+(define-condition incorrect-number-of-arguments-error
+    (compilation-program-error incorrect-number-of-arguments)
+  ())
+
+;;; This condition is signaled when an incorrect number of arguments
+;;; will result in undefined behavior at runtime, e.g. for a standard
+;;; function or function with explicit type declaration.
+(define-condition incorrect-number-of-arguments-warning
+    (compilation-warning incorrect-number-of-arguments)
+  ())
+
+;;; This condition is signaled when an incorrect number of arguments
+;;; can be determined by the compiler, but it's possible there will
+;;; be no issue, e.g. for a function that may be redefined later.
+(define-condition incorrect-number-of-arguments-style-warning
+    (compilation-style-warning incorrect-number-of-arguments)
+  ())
+
+;;; This condition is signaled when a function call has an odd number
+;;; of arguments in the &key portion, but it's possible there will be
+;;; no issue due to redefinitions etc.
+(define-condition odd-keyword-portion-style-warning
+    (compilation-style-warning odd-keyword-portion)
+  ())
 
 ;;; This condition is signaled when a values type has erroneous
 ;;; syntax around &rest.

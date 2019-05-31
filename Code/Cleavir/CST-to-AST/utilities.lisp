@@ -52,7 +52,7 @@
     (unless (and (>= count min)
                  (or (null max)
                      (<= count max)))
-      (error 'incorrect-number-of-arguments
+      (error 'incorrect-number-of-arguments-error
              :cst cst
              :expected-min min
              :expected-max max
