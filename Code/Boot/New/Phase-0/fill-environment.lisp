@@ -73,5 +73,8 @@
   (load-file "Data-and-control-flow/get-setf-expansion.lisp" environment)
   ;; Load a file containing definisions of standard conditional
   ;; macros, such as AND, OR, CASE, etc.
-  (load-file "Conditionals/macros.lisp" environment))
+  (load-file "Conditionals/macros.lisp" environment)
+  ;; Load a file containing the definitions of the macros DEFVAR,
+  ;; DEFPARAMETER, DEFCONSTANT, DEFTYPE, and DEFINE-COMPILER-MACRO.
+  (load-file "Environment/standard-environment-macros.lisp" environment))
 
