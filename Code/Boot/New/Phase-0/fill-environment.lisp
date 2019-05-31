@@ -84,4 +84,6 @@
   (load-file "Evaluation-and-compilation/declaim-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the macros INCF and DECF.
   (load-file "Arithmetic/incf-decf-defmacro.lisp" environment)
-    (load-file "Loop/loop-defmacro.lisp" environment))
+    (load-file "Loop/loop-defmacro.lisp" environment)
+  ;; Load a file containing the definitions of the macros PUSH and POP.
+  (load-file "Cons/push-pop-defmacro.lisp" environment))
