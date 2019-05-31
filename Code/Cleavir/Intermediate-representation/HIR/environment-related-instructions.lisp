@@ -2,6 +2,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction INITIALIZE-CLOSURE-INSTRUCTION.
+;;;
+;;; This instruction takes as the first input, a lexical location
+;;; holding the output of an ENCLOSE-INSTRUCTION.  The rest of the
+;;; inputs initialize the closure with their values.
+(defclass initialize-closure-instruction (instruction one-successor-mixin
+                                          side-effect-mixin)
+  ())
+
+(defun make-initialize-closure-instruction (closure values)
+  (make-instance 'initialize-closure-instruction
+    :inputs (list* closure values)
+    :outputs '()))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction CREATE-CELL-INSTRUCTION.
 ;;;
 ;;; This instruction has no inputs and a single output.  The output is

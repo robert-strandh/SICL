@@ -3,14 +3,27 @@
 (defun enter-unique-p (enter dag)
   (= (length (gethash enter (cleavir-hir-transformations:dag-nodes dag))) 1))
 
-;; FIXME: move? finesse?
+;;; FIXME: move? finesse?
 (defun all-parameters-required-p (enter)
   (every (lambda (param) (typep param 'cleavir-ir:lexical-location))
          (cleavir-ir:lambda-list enter)))
 
-;; get one potential inline that can be done, or else NIL.
-;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function
-;; is not used for anything but this call.
+;;; Check that a call is valid so that we can avoid inlining invalid calls,
+;;; and the inliner can safely assume calls are valid.
+;;; That is, for something like ((lambda ()) x), we want a full call so that
+;;; the client's runtime can do its normal error signaling.
+;;; We assume that all-parameters-required-p is true of the enter, which
+;;; makes this very easy to determine.
+;;; FIXME: We should probably signal a warning. If we do, make sure it's not
+;;; redundant with CST-to-ASTs.
+(defun call-valid-p (enter call)
+  (let ((nparams (length (cleavir-ir:lambda-list enter)))
+        (nargs (1- (length (cleavir-ir:inputs call))))) ; one input for the function
+    (= nparams nargs)))
+
+;;; get one potential inline that can be done, or else NIL.
+;;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function
+;;; is not used for anything but this call.
 (defun one-potential-inline (dag destinies)
   (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies)))
     (labels ((maybe-return-inline (node)
@@ -29,6 +42,7 @@
                            return nil
                          when (parent-node-p node (instruction-owner caller)) ; recursive
                            return nil
+                         unless (call-valid-p enter caller) return nil
                          ;; We're all good, but keep looking through for escapes and recursivity.
                          do (setf result (list enter caller node enclose-unique-p enter-unique-p))
                          finally (return-from one-potential-inline result)))))
