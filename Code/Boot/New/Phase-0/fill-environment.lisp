@@ -76,5 +76,7 @@
   (load-file "Conditionals/macros.lisp" environment)
   ;; Load a file containing the definitions of the macros DEFVAR,
   ;; DEFPARAMETER, DEFCONSTANT, DEFTYPE, and DEFINE-COMPILER-MACRO.
-  (load-file "Environment/standard-environment-macros.lisp" environment))
-
+  (load-file "Environment/standard-environment-macros.lisp" environment)
+  ;; Load a file containing the definition of the function
+  ;; MACROEXPAND-1.
+  (load-file "Evaluation-and-compilation/macroexpand.lisp" environment))
