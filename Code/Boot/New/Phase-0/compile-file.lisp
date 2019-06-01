@@ -16,11 +16,9 @@
                             (apply #'cst:list csts)))
              (ast (let ((cleavir-cst-to-ast::*origin* nil))
                     (cleavir-cst-to-ast:cst-to-ast client cst environment))))
-        (let* ((pos (position #\/ relative-pathname :from-end t))
-               (lisp-filename (subseq relative-pathname (1+ pos)))
-               (dot-pos (position #\. lisp-filename))
-               (root (subseq lisp-filename 0 dot-pos))
-               (filename (concatenate 'string root ".fasl"))
+        (let* ((dot-pos (position #\. relative-pathname))
+               (prefix (subseq relative-pathname 0 dot-pos))
+               (filename (concatenate 'string prefix ".fasl"))
                (output-relative-pathname (concatenate 'string
                                                       "Boot/New/Phase-0/ASTs/"
                                                       filename))
