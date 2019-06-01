@@ -2,5 +2,5 @@
 
 (defpackage #:sicl-boot-phase-0
   (:use #:common-lisp)
-  (:shadow #:load-file)
+  (:shadow #:load-file #:compile-file)
   (:export))
