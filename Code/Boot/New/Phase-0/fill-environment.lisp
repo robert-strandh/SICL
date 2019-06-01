@@ -108,4 +108,6 @@
     ;; Load a file containing the definition of the macro PUSHNEW.
     (ld "Cons/pushnew-defmacro.lisp")
     ;; Load a file containing the definition of the macro DOTIMES.
-    (ld "Iteration/dotimes-defmacro.lisp")))
+    (ld "Iteration/dotimes-defmacro.lisp")
+    ;; Load a file containing the definition of the macro DOLIST.
+    (ld "Iteration/dolist-defmacro.lisp")))
