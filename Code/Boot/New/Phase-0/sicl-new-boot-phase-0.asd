@@ -21,4 +21,5 @@
    (:file "define-setf-macro-function")
    (:file "fill-environment")
    (:file "environment")
-   (:file "load-file")))
+   (:file "load-file")
+   (:file "compile-files")))
