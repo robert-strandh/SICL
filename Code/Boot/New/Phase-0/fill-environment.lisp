@@ -98,4 +98,7 @@
   ;; Load a file containing the definition of the macro PSETF.
   (load-file "Data-and-control-flow/psetf-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro ROTATEF.
-  (load-file "Data-and-control-flow/rotatef-defmacro.lisp" environment))
+  (load-file "Data-and-control-flow/rotatef-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro
+  ;; DESTRUCTURING-BIND.
+  (load-file "Data-and-control-flow/destructuring-bind-defmacro.lisp" environment))
