@@ -80,6 +80,13 @@
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
+(defun import-from-closer-mop (environment)
+  (loop for name in '(#:ensure-class)
+        for closer-mop-symbol = (intern (string name) '#:closer-mop)
+        for sicl-clos-symbol = (intern (string name) '#:sicl-clos)
+        do (setf (sicl-genv:fdefinition sicl-clos-symbol environment)
+                 (fdefinition closer-mop-symbol))))
+
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
   (host-load "Environment/macro-support.lisp")
@@ -91,4 +98,5 @@
   (import-from-cleavir-code-utilities environment)
   (import-macro-expanders environment)
   (import-sicl-envrionment-functions environment)
-  (import-from-trucler environment))
+  (import-from-trucler environment)
+  (import-from-closer-mop environment))
