@@ -92,4 +92,6 @@
   ;; Load a file containing the definitions of the macros PROG1 and PROG2.
   (load-file "Data-and-control-flow/prog1-prog2-defmacro.lisp" environment)
   ;; Load a file containing the definitions of the macros PROG and PROG*.
-  (load-file "Data-and-control-flow/prog-progstar-defmacro.lisp" environment))
+  (load-file "Data-and-control-flow/prog-progstar-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro PSETQ.
+  (load-file "Data-and-control-flow/psetq-defmacro.lisp" environment))
