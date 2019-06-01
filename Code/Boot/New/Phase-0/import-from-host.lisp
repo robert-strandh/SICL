@@ -25,8 +25,10 @@
     (setf (sicl-genv:special-operator symbol environment) t)))
 
 (defun import-from-cleavir-code-utilities (environment)
-  (setf (sicl-genv:fdefinition 'cleavir-code-utilities:parse-macro environment)
-        #'cleavir-code-utilities:parse-macro))
+  (loop for name in '(cleavir-code-utilities:parse-macro
+                      cleavir-code-utilities:separate-ordinary-body)
+        do (setf (sicl-genv:fdefinition name environment)
+                 (fdefinition name))))
 
 (defun import-macro-expanders (environment)
   (loop for name in '(sicl-data-and-control-flow:defun-expander
