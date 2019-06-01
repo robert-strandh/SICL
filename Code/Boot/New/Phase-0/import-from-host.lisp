@@ -49,7 +49,8 @@
                       sicl-evaluation-and-compilation:declaim-expander
                       sicl-loop:expand-body
                       sicl-cons:push-expander
-                      sicl-cons:pop-expander)
+                      sicl-cons:pop-expander
+                      sicl-data-and-control-flow:psetf-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
