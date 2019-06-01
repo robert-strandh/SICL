@@ -76,7 +76,8 @@
 (defun import-from-trucler (environment)
   (loop for name in '(trucler:global-environment
                       trucler:symbol-macro-expansion
-                      trucler:macro-function)
+                      trucler:macro-function
+                      trucler-reference:global-environment)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
@@ -86,6 +87,10 @@
         for sicl-clos-symbol = (intern (string name) '#:sicl-clos)
         do (setf (sicl-genv:fdefinition sicl-clos-symbol environment)
                  (fdefinition closer-mop-symbol))))
+
+(defun import-from-sicl-clos (environment)
+  (setf (sicl-genv:special-variable 'sicl-clos::*class-unique-number* environment t)
+        'sicl-clos::*class-unique-number*))
 
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
@@ -99,4 +104,5 @@
   (import-macro-expanders environment)
   (import-sicl-envrionment-functions environment)
   (import-from-trucler environment)
-  (import-from-closer-mop environment))
+  (import-from-closer-mop environment)
+  (import-from-sicl-clos environment))
