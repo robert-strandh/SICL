@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-boot-phase-0)
 
-(defun load-file (relative-filename environment)
+(defun load-file (client relative-filename environment)
   (let ((*package* *package*)
         (filename (asdf:system-relative-pathname '#:sicl relative-filename)))
     (sicl-source-tracking:with-source-tracking-stream-from-file
@@ -9,8 +9,7 @@
         (unless (eq (first first-form) 'in-package)
           (error "File must start with an IN-PACKAGE form."))
         (setf *package* (find-package (second first-form))))
-      (loop with client = (make-instance 'trucler-reference:client)
-            with eof-marker = (list nil)
+      (loop with eof-marker = (list nil)
             for cst = (eclector.concrete-syntax-tree:cst-read stream nil eof-marker)
             until (eq cst eof-marker)
             do (sicl-hir-to-cl:cst-eval client cst environment)))))
