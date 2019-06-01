@@ -52,6 +52,7 @@
                       sicl-cons:push-expander
                       sicl-cons:pop-expander
                       sicl-cons:pushnew-expander
+                      sicl-cons:remf-expander
                       sicl-data-and-control-flow:psetf-expander
                       sicl-data-and-control-flow:rotatef-expander
                       sicl-data-and-control-flow:destructuring-bind-expander
