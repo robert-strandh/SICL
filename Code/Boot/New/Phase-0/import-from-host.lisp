@@ -51,7 +51,8 @@
                       sicl-cons:push-expander
                       sicl-cons:pop-expander
                       sicl-data-and-control-flow:psetf-expander
-                      sicl-data-and-control-flow:rotatef-expander)
+                      sicl-data-and-control-flow:rotatef-expander
+                      sicl-data-and-control-flow:destructuring-bind-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
