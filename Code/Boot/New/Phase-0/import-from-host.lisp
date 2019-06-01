@@ -50,7 +50,8 @@
                       sicl-loop:expand-body
                       sicl-cons:push-expander
                       sicl-cons:pop-expander
-                      sicl-data-and-control-flow:psetf-expander)
+                      sicl-data-and-control-flow:psetf-expander
+                      sicl-data-and-control-flow:rotatef-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
