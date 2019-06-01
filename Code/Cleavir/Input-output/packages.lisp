@@ -6,6 +6,8 @@
    #:*io-readtable*
    #:save-info
    #:define-save-info
-   #:read-model-object))
+   #:read-model-object
+   #:read-model
+   #:write-model))
 
    
