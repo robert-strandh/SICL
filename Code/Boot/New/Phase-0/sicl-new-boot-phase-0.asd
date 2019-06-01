@@ -9,6 +9,8 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "client")
+   (:file "eval")
    (:file "host-load")
    (:file "import-from-host")
    (:file "define-defmacro")
