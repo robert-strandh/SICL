@@ -23,4 +23,5 @@
                                                       "Boot/New/Phase-0/ASTs/"
                                                       filename))
                (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname)))
+          (ensure-directories-exist output-pathname)
           (cleavir-io:write-model output-pathname "V0" ast))))))
