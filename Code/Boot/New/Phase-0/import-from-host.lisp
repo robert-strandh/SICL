@@ -56,7 +56,8 @@
                       sicl-data-and-control-flow:rotatef-expander
                       sicl-data-and-control-flow:destructuring-bind-expander
                       sicl-data-and-control-flow:shiftf-expander
-                      sicl-iteration:dotimes-expander)
+                      sicl-iteration:dotimes-expander
+                      sicl-iteration:dolist-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
