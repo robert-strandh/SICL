@@ -20,8 +20,8 @@
     (client (instruction cleavir-ir:multiple-value-call-instruction) context)
   (let ((inputs (cleavir-ir:inputs instruction))
         (table (values-locations context)))
-    `(setf ,(gethash (first (cleavir-ir:outputs instruction)) table)
-           (multiple-value-list
-            (apply ,(cleavir-ir:name (first inputs))
-                   (append ,@(loop for input in inputs
-                                   collect (gethash input table))))))))
+    `((setq ,(gethash (first (cleavir-ir:outputs instruction)) table)
+            (multiple-value-list
+             (apply ,(cleavir-ir:name (first inputs))
+                    (append ,@(loop for input in (rest inputs)
+                                    collect (gethash input table)))))))))
