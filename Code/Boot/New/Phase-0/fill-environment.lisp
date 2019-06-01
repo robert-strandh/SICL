@@ -114,4 +114,6 @@
     ;; Load a file containing the definition of the macros DO and DO*.
     (ld "Iteration/do-dostar-defmacro.lisp")
     ;; Load a file containing the definition of the macro REMF.
-    (ld "Cons/remf-defmacro.lisp")))
+    (ld "Cons/remf-defmacro.lisp")
+    ;; Load a file containing the definition of the macro DEFCLASS.
+    (ld "CLOS/defclass-defmacro.lisp")))
