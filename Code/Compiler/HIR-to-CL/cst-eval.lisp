@@ -8,5 +8,6 @@
          (hir (sicl-ast-to-hir:ast-to-hir ast))
          (cl (hir-to-cl client hir))
          (fun (compile nil cl))
-         (*dynamic-environment* '()))
-    (funcall fun (function-finder environment))))
+         (*dynamic-environment* '())
+         (global-environment (trucler-reference:global-environment environment)))
+    (funcall fun (function-finder global-environment))))
