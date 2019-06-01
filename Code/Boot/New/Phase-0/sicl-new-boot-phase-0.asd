@@ -5,12 +5,14 @@
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support
                #:eclector
-               #:eclector-concrete-syntax-tree)
+               #:eclector-concrete-syntax-tree
+               #:cleavir-io)
   :serial t
   :components
   ((:file "packages")
    (:file "client")
    (:file "eval")
+   (:file "compile-file")
    (:file "host-load")
    (:file "import-from-host")
    (:file "define-defmacro")
