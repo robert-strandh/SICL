@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-hir-to-cl-test)
 
+(defmethod trucler-reference:global-environment
+    ((environment sicl-alternative-extrinsic-environment:environment))
+  environment)
+
 (defun make-environment ()
   (let ((environment
           (make-instance 'sicl-alternative-extrinsic-environment:environment)))
@@ -184,6 +188,17 @@
     (assert (equal (multiple-value-list (eval client form environment))
                    '(20 10)))))
 
+(defun test-multiple-value-call (client)
+  (let ((environment (make-environment))
+        (form '(cleavir-primop:multiple-value-call #'values (ff 3))))
+    (setf (sicl-genv:special-operator 'cleavir-primop:multiple-value-call environment) t)
+    (setf (sicl-genv:fdefinition 'ff environment)
+          (lambda (x) (values (1+ x) (1- x))))
+    (setf (sicl-genv:fdefinition 'values environment)
+          #'values)
+    (assert (equal (multiple-value-list (eval client form environment))
+                   '(4 2)))))
+
 (defun test ()
   (let ((client (make-instance 'trucler-reference:client)))
     (test-if client)
@@ -198,4 +213,5 @@
     (test-rplaca client)
     (test-rplacd client)
     (test-eq client)
-    (test-labels client)))
+    (test-labels client)
+    (test-multiple-value-call client)))
