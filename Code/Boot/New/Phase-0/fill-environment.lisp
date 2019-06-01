@@ -96,4 +96,6 @@
   ;; Load a file containing the definition of the macro PSETQ.
   (load-file "Data-and-control-flow/psetq-defmacro.lisp" environment)
   ;; Load a file containing the definition of the macro PSETF.
-  (load-file "Data-and-control-flow/psetf-defmacro.lisp" environment))
+  (load-file "Data-and-control-flow/psetf-defmacro.lisp" environment)
+  ;; Load a file containing the definition of the macro ROTATEF.
+  (load-file "Data-and-control-flow/rotatef-defmacro.lisp" environment))
