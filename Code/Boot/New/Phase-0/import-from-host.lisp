@@ -27,7 +27,8 @@
 (defun import-from-cleavir-code-utilities (environment)
   (loop for name in '(cleavir-code-utilities:parse-macro
                       cleavir-code-utilities:separate-ordinary-body
-                      cleavir-code-utilities:list-structure)
+                      cleavir-code-utilities:list-structure
+                      cleavir-code-utilities:proper-list-p)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
@@ -59,7 +60,8 @@
                       sicl-data-and-control-flow:shiftf-expander
                       sicl-iteration:dotimes-expander
                       sicl-iteration:dolist-expander
-                      sicl-iteration:do-dostar-expander)
+                      sicl-iteration:do-dostar-expander
+                      sicl-clos:defclass-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
@@ -81,6 +83,7 @@
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
   (host-load "Environment/macro-support.lisp")
+  (host-load "CLOS/defclass-support.lisp")
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-variables environment)
   (define-standard-common-lisp-special-operators environment)
