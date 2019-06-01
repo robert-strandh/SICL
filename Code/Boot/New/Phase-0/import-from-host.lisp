@@ -26,7 +26,8 @@
 
 (defun import-from-cleavir-code-utilities (environment)
   (loop for name in '(cleavir-code-utilities:parse-macro
-                      cleavir-code-utilities:separate-ordinary-body)
+                      cleavir-code-utilities:separate-ordinary-body
+                      cleavir-code-utilities:list-structure)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
@@ -50,6 +51,7 @@
                       sicl-loop:expand-body
                       sicl-cons:push-expander
                       sicl-cons:pop-expander
+                      sicl-cons:pushnew-expander
                       sicl-data-and-control-flow:psetf-expander
                       sicl-data-and-control-flow:rotatef-expander
                       sicl-data-and-control-flow:destructuring-bind-expander
