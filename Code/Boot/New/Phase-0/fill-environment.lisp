@@ -110,4 +110,6 @@
     ;; Load a file containing the definition of the macro DOTIMES.
     (ld "Iteration/dotimes-defmacro.lisp")
     ;; Load a file containing the definition of the macro DOLIST.
-    (ld "Iteration/dolist-defmacro.lisp")))
+    (ld "Iteration/dolist-defmacro.lisp")
+    ;; Load a file containing the definition of the macros DO and DO*.
+    (ld "Iteration/do-dostar-defmacro.lisp")))
