@@ -10,6 +10,7 @@
   (define-default-setf-expander environment)
   (define-setf-macro-function environment)
   (flet ((ld (relative-file-name)
+           (format *trace-output* "Loading file ~a~%" relative-file-name)
            (load-file client relative-file-name environment)))
     ;; Load a file containing a definition of the macro LAMBDA.  This
     ;; macro is particularly simple, so it doesn't really matter how
