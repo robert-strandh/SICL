@@ -117,4 +117,6 @@
     ;; Load a file containing the definition of the macro REMF.
     (ld "Cons/remf-defmacro.lisp")
     ;; Load a file containing the definition of the macro DEFCLASS.
-    (ld "CLOS/defclass-defmacro.lisp")))
+    (ld "CLOS/defclass-defmacro.lisp")
+    ;; Load a file containing the definition of the macro DEFGENERIC.
+    (ld "CLOS/defgeneric-defmacro.lisp")))
