@@ -3,6 +3,9 @@
 (stealth-mixin:define-stealth-mixin ast-mixin () cleavir-ast:ast
   ((%origin :initform *origin* :initarg :origin :reader origin)))
 
+(cleavir-io:define-save-info ast-mixin
+  (:origin origin))
+
 (defun cst-to-ast (client cst lexical-environment)
   (let ((*subforms-are-top-level-p* t)
 	(*compile-time-too* nil)
