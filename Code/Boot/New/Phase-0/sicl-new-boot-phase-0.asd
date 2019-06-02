@@ -4,6 +4,7 @@
   :depends-on (#:sicl-hir-to-cl
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support
+               #:sicl-package-support
                #:eclector
                #:eclector-concrete-syntax-tree
                #:cleavir-io)
