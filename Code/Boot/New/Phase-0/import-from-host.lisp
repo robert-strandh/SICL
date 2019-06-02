@@ -61,7 +61,8 @@
                       sicl-iteration:dotimes-expander
                       sicl-iteration:dolist-expander
                       sicl-iteration:do-dostar-expander
-                      sicl-clos:defclass-expander)
+                      sicl-clos:defclass-expander
+                      sicl-clos:defgeneric-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
@@ -96,6 +97,7 @@
   (host-load "Data-and-control-flow/defun-support.lisp")
   (host-load "Environment/macro-support.lisp")
   (host-load "CLOS/defclass-support.lisp")
+  (host-load "CLOS/defgeneric-support.lisp")
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-variables environment)
   (define-standard-common-lisp-special-operators environment)
