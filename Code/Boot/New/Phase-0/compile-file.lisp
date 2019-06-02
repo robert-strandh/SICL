@@ -3,7 +3,8 @@
 (defun compile-file (client relative-pathname environment)
   (let ((*package* *package*)
         (input-pathname (asdf:system-relative-pathname '#:sicl relative-pathname)))
-    (with-open-file (input-stream input-pathname :direction :input)
+    (sicl-source-tracking:with-source-tracking-stream-from-file
+        (input-stream input-pathname)
       (let ((first-form (eclector.reader:read input-stream nil nil)))
         (assert (and (consp first-form)
                      (eq (first first-form) 'in-package)))
