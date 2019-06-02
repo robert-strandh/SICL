@@ -98,6 +98,7 @@
   (host-load "Environment/macro-support.lisp")
   (host-load "CLOS/defclass-support.lisp")
   (host-load "CLOS/defgeneric-support.lisp")
+  (host-load "CLOS/make-method-lambda-support.lisp")
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-variables environment)
   (define-standard-common-lisp-special-operators environment)
