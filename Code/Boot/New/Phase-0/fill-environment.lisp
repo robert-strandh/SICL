@@ -119,4 +119,6 @@
     ;; Load a file containing the definition of the macro DEFCLASS.
     (ld "CLOS/defclass-defmacro.lisp")
     ;; Load a file containing the definition of the macro DEFGENERIC.
-    (ld "CLOS/defgeneric-defmacro.lisp")))
+    (ld "CLOS/defgeneric-defmacro.lisp")
+    ;; Load a file containing the definition of the macro DEFMETHOD.
+    (ld "CLOS/defmethod-defmacro.lisp")))
