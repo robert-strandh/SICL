@@ -91,7 +91,9 @@
 
 (defun import-from-sicl-clos (environment)
   (setf (sicl-genv:special-variable 'sicl-clos::*class-unique-number* environment t)
-        'sicl-clos::*class-unique-number*))
+        'sicl-clos::*class-unique-number*)
+  (setf (sicl-genv:fdefinition 'sicl-clos:defmethod-expander environment)
+        #'sicl-clos:defmethod-expander))
 
 (defun import-from-host (environment)
   (host-load "Data-and-control-flow/defun-support.lisp")
