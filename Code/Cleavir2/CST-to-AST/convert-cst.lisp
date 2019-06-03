@@ -12,6 +12,7 @@
          (expander (symbol-macro-expander expansion))
          (expanded-form (expand-macro expander cst lexical-environment))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
+    (setf (cst:source expanded-cst) (cst:source cst))
     (with-preserved-toplevel-ness
       (convert client
                expanded-cst
@@ -60,6 +61,7 @@
   (let* ((expander (cleavir-env:expander info))
          (expanded-form (expand-macro expander cst lexical-environment))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
+    (setf (cst:source expanded-cst) (cst:source cst))
     (with-preserved-toplevel-ness
       (convert client expanded-cst lexical-environment))))
 
@@ -80,6 +82,7 @@
           ;; expander, and then convert the resulting form.
           (let* ((expanded-form (expand-macro expander cst lexical-environment))
                  (expanded-cst (cst:reconstruct expanded-form cst client)))
+            (setf (cst:source expanded-cst) (cst:source cst))
             (convert client expanded-cst lexical-environment))
           ;; There is a compiler macro, so we must see whether it will
           ;; accept or decline.
@@ -95,12 +98,14 @@
                                                     cst
                                                     lexical-environment))
                        (expanded-cst (cst:reconstruct expanded-form cst client)))
+                  (setf (cst:source expanded-cst) (cst:source cst))
                   (convert client expanded-cst lexical-environment))
                 ;; If the two are not EQ, this means that the compiler
                 ;; macro replaced the original form with a new form.
                 ;; This new form must then again be converted without
                 ;; taking into account the real macro expander.
                 (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
+                  (setf (cst:source expanded-cst) (cst:source cst))
                   (convert client expanded-cst lexical-environment))))))))
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
@@ -121,7 +126,7 @@
          (argument-asts (convert-sequence client
                                           arguments-cst
                                           lexical-environment)))
-    (make-instance 'cleavir-ast:call-ast
+    (cleavir-ast:make-ast 'cleavir-ast:call-ast
      :callee-ast function-ast
      :argument-asts argument-asts)))
 
@@ -165,6 +170,7 @@
               ;; macro replaced the original form with a new form.
               ;; This new form must then be converted.
               (let ((expanded-cst (cst:reconstruct expanded-form cst client)))
+                (setf (cst:source expanded-cst) (cst:source cst))
                 (convert client
                          expanded-cst
                          lexical-environment)))))))
@@ -195,9 +201,9 @@
                                      info
                                      global-env)
   (declare (ignore global-env))
-  (let ((name-ast (make-instance 'cleavir-ast:constant-ast
+  (let ((name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
                     :value (trucler:name info))))
-    (make-instance 'cleavir-ast:symbol-value-ast
+    (cleavir-ast:make-ast 'cleavir-ast:symbol-value-ast
       :name-ast name-ast)))
 
 (defmethod convert-cst (client
