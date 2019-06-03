@@ -61,16 +61,11 @@
         (qualifiers required remaining specializers declarations documentation forms)
       (parse-defmethod rest)
     (let* ((lambda-list (append required remaining))
-           (fboundp (sicl-genv:fboundp function-name ct-env))
-           (binding (if fboundp
-                        (sicl-genv:fdefinition function-name ct-env)
-                        nil))
-           (fun (if binding binding nil))
            (generic-function-var (gensym)))
-      `(let* ((rt-env (load-time-value (sicl-genv:global-environment)))
+      `(let* ((rt-env (sicl-genv:global-environment))
               (,generic-function-var
                 (ensure-generic-function ',function-name :environment rt-env)))
-         (ensure-method-on-generic-function
+         (ensure-method
           ,generic-function-var
           :lambda-list ',lambda-list
           :qualifiers ',qualifiers
@@ -78,8 +73,8 @@
           :documentation ,documentation
           :function
           ,(create-method-lambda
-            fun
+            function-name
             `(lambda ,lambda-list
                ,@declarations
                ,@forms)
-            nil))))))
+            ct-env))))))
