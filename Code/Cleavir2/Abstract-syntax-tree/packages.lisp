@@ -5,6 +5,7 @@
   (:shadow #:symbol)
   (:export
    #:ast #:children
+   #:make-ast
    #:source-info
    #:boolean-ast-mixin
    #:no-value-ast-mixin
@@ -84,5 +85,4 @@
    #:unreachable-ast
    #:child-ast
    #:scope-ast
-   #:map-ast-depth-first-preorder
-   ))
+   #:map-ast-depth-first-preorder))
