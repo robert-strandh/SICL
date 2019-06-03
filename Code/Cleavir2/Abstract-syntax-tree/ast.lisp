@@ -63,3 +63,13 @@
 (defmethod side-effect-free-p ((ast side-effect-free-ast-mixin))
   (declare (ignorable ast))
   t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This function is a trampoline to MAKE-INSTANCE.  The purpose is to
+;;; make it easier to trace AST creation or to set breakpoints.
+
+(defgeneric make-ast (class-or-name &rest initargs))
+
+(defmethod make-ast (class-or-name &rest initargs)
+  (apply #'make-instance class-or-name initargs))
