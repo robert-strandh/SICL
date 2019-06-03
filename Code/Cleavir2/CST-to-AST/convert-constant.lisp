@@ -7,5 +7,5 @@
 
 (defun convert-constant (client constant-cst lexical-environment)
   (declare (ignore client lexical-environment))
-  (make-instance 'cleavir-ast:constant-ast
+  (cleavir-ast:make-ast 'cleavir-ast:constant-ast
     :value (cst:raw constant-cst)))

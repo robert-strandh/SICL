@@ -28,7 +28,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (eq-cst arg1-cst arg2-cst) cst
     (declare (ignore eq-cst))
-    (make-instance 'cleavir-ast:eq-ast
+    (cleavir-ast:make-ast 'cleavir-ast:eq-ast
      :arg1-ast (convert client arg1-cst lexical-environment)
      :arg2-ast (convert client arg2-cst lexical-environment))))
 
@@ -41,7 +41,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
     (declare (ignore typeq-cst))
-    (make-instance 'cleavir-ast:typeq-ast
+    (cleavir-ast:make-ast 'cleavir-ast:typeq-ast
      :form-ast (convert client arg1-cst lexical-environment)
      :type-specifier (cst:raw arg2-cst))))
 
@@ -60,7 +60,7 @@
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (values-cst . arguments-cst) cst
     (declare (ignore values-cst))
-    (make-instance 'cleavir-ast:values-ast
+    (cleavir-ast:make-ast 'cleavir-ast:values-ast
      :argument-asts (mapcar
 		     (lambda (cst) (convert client cst lexical-environment))
 		     (cst:listify arguments-cst)))))
@@ -88,7 +88,7 @@
                   collect (let ((info (trucler:describe-variable client lexical-environment var)))
                             (assert (typep info 'trucler:lexical-variable-description))
                             info))))
-      (make-instance 'cleavir-ast:multiple-value-setq-ast
+      (cleavir-ast:make-ast 'cleavir-ast:multiple-value-setq-ast
        :lhs-asts (mapcar #'trucler:identity lexes)
        :form-ast (convert client form-cst lexical-environment)))))
 
@@ -101,7 +101,7 @@
   (check-simple-primop-syntax cst 1)
   (cst:db origin (car-cst arg-cst) cst
     (declare (ignore car-cst))
-    (make-instance 'cleavir-ast:car-ast
+    (cleavir-ast:make-ast 'cleavir-ast:car-ast
       :cons-ast (convert client arg-cst lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -113,7 +113,7 @@
   (check-simple-primop-syntax cst 1)
   (cst:db origin (cdr-cst arg-cst) cst
     (declare (ignore cdr-cst))
-    (make-instance 'cleavir-ast:cdr-ast
+    (cleavir-ast:make-ast 'cleavir-ast:cdr-ast
       :cons-ast (convert client arg-cst lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -125,7 +125,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplaca-cst arg1-cst arg2-cst) cst
     (declare (ignore rplaca-cst))
-    (make-instance 'cleavir-ast:rplaca-ast
+    (cleavir-ast:make-ast 'cleavir-ast:rplaca-ast
       :cons-ast (convert client arg1-cst lexical-environment)
       :object-ast (convert client arg2-cst lexical-environment))))
 
@@ -138,7 +138,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
     (declare (ignore rplacd-cst))
-    (make-instance 'cleavir-ast:rplacd-ast
+    (cleavir-ast:make-ast 'cleavir-ast:rplacd-ast
       :cons-ast (convert client arg1-cst lexical-environment)
       :object-ast (convert client arg2-cst lexical-environment))))
 
@@ -151,7 +151,7 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore add-cst))
-    (make-instance 'cleavir-ast:fixnum-add-ast
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-add-ast
       :arg1-ast (convert client arg1-cst lexical-environment)
       :arg2-ast (convert client arg2-cst lexical-environment)
       :variable-ast (convert client variable-cst lexical-environment))))
@@ -165,7 +165,7 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore sub-cst))
-    (make-instance 'cleavir-ast:fixnum-sub-ast
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-sub-ast
       :arg1-ast (convert client arg1-cst lexical-environment)
       :arg2-ast (convert client arg2-cst lexical-environment)
       :variable-ast (convert client variable-cst lexical-environment))))
@@ -179,7 +179,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (less-cst arg1-cst arg2-cst) cst
     (declare (ignore less-cst))
-    (make-instance 'cleavir-ast:fixnum-less-ast
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-less-ast
       :arg1-ast (convert client arg1-cst lexical-environment)
       :arg2-ast (convert client arg2-cst lexical-environment))))
 
@@ -192,7 +192,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (not-greater-cst arg1-cst arg2-cst) cst
     (declare (ignore not-greater-cst))
-    (make-instance 'cleavir-ast:fixnum-not-greater-ast
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-not-greater-ast
       :arg1-ast (convert client arg1-cst lexical-environment)
       :arg2-ast (convert client arg2-cst lexical-environment))))
 
@@ -205,7 +205,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (greater-cst arg1-cst arg2-cst) cst
     (declare (ignore greater-cst))
-    (make-instance 'cleavir-ast:fixnum-greater-ast
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-greater-ast
       :arg1-ast (convert client arg1-cst lexical-environment)
       :arg2-ast (convert client arg2-cst lexical-environment))))
 
@@ -218,7 +218,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (not-less-cst arg1-cst arg2-cst) cst
     (declare (ignore not-less-cst))
-    (make-instance 'cleavir-ast:fixnum-not-less-ast
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-not-less-ast
       :arg1-ast (convert client arg1-cst lexical-environment)
       :arg2-ast (convert client arg2-cst lexical-environment))))
 
@@ -231,7 +231,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (equal-cst arg1-cst arg2-cst) cst
     (declare (ignore equal-cst))
-    (make-instance 'cleavir-ast:fixnum-equal-ast
+    (cleavir-ast:make-ast 'cleavir-ast:fixnum-equal-ast
       :arg1-ast (convert client arg1-cst lexical-environment)
       :arg2-ast (convert client arg2-cst lexical-environment))))
 
@@ -262,7 +262,7 @@
             until (cst:null rest-cst)
             do (let* ((variable-cst (cst:first rest-cst))
                       (variable (cst:raw variable-cst))
-                      (variable-ast (make-instance 'cleavir-ast:lexical-ast
+                      (variable-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                                       :name variable)))
                  (setf new-env
                        (trucler:add-lexical-variable
@@ -288,7 +288,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (funcall-cst function-cst . arguments-cst) cst
     (declare (ignore funcall-cst))
-    (make-instance 'cleavir-ast:call-ast
+    (cleavir-ast:make-ast 'cleavir-ast:call-ast
      :callee-ast (convert client function-cst lexical-environment)
      :argument-asts (loop for remaining = arguments-cst
                             then (cst:rest remaining)
@@ -314,7 +314,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
     (declare (ignore multiple-value-call-cst))
-    (make-instance 'cleavir-ast:multiple-value-call-ast
+    (cleavir-ast:make-ast 'cleavir-ast:multiple-value-call-ast
      :function-form-ast (convert client function-cst lexical-environment)
      :form-asts (loop for remaining = arguments-cst then (cst:rest remaining)
                       until (cst:null remaining)
@@ -334,7 +334,7 @@
   (check-simple-primop-syntax cst 2)
   (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
     (declare (ignore slot-read-cst))
-    (make-instance 'cleavir-ast:slot-read-ast
+    (cleavir-ast:make-ast 'cleavir-ast:slot-read-ast
      :object-ast (convert client instance-cst lexical-environment)
      :slot-number-ast (convert client slot-number-cst lexical-environment))))
 
@@ -353,7 +353,7 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
     (declare (ignore slot-write-cst))
-    (make-instance 'cleavir-ast:slot-write-ast
+    (cleavir-ast:make-ast 'cleavir-ast:slot-write-ast
      :object-ast (convert client instance-cst lexical-environment)
      :stot-number-ast (convert client slot-number-cst lexical-environment)
      :value-ast (convert client value-cst lexical-environment))))
@@ -374,7 +374,7 @@
   (check-simple-primop-syntax cst 5)
   (cst:db origin (aref-cst array-cst index-cst type-cst simple-p-cst boxed-p-cst) cst
     (declare (ignore aref-cst))
-    (make-instance 'cleavir-ast:aref-ast
+    (cleavir-ast:make-ast 'cleavir-ast:aref-ast
       :array-ast (convert client array-cst lexical-environment)
       :index-ast (convert client index-cst lexical-environment)
       :element-type (cst:raw type-cst)
@@ -400,7 +400,7 @@
   (cst:db origin (aset-cst array-cst index-cst object-cst type-cst simple-p-cst boxed-p-cst)
       cst
     (declare (ignore aset-cst))
-    (make-instance 'cleavir-ast:aset-ast
+    (cleavir-ast:make-ast 'cleavir-ast:aset-ast
       :array-ast (convert client array-cst lexical-environment)
       :index-ast (convert client index-cst lexical-environment)
       :element-ast (convert client object-cst lexical-environment)
@@ -416,7 +416,7 @@
      (check-simple-primop-syntax cst 3)
      (cst:db origin (op-cst type-cst arg1-cst arg2-cst) cst
        (declare (ignore op-cst))
-       (make-instance ',ast
+       (cleavir-ast:make-ast ',ast
          :subtype (cst:raw type-cst)
          :arg1-ast (convert client arg1-cst lexical-environment)
          :arg2-ast (convert client arg2-cst lexical-environment)))))
@@ -448,7 +448,7 @@
      (check-simple-primop-syntax cst 2)
      (cst:db origin (op-cst type-cst arg-cst) cst
        (declare (ignore op-cst))
-       (make-instance ',ast
+       (cleavir-ast:make-ast ',ast
          :subtype (cst:raw type-cst)
          :arg-ast (convert client arg-cst lexical-environment)))))
 
@@ -480,7 +480,7 @@
   (check-simple-primop-syntax cst 3)
   (cst:db origin (op-cst type1-cst type2-cst form-cst) cst
     (declare (ignore op-cst))
-    (make-instance 'cleavir-ast:coerce-ast
+    (cleavir-ast:make-ast 'cleavir-ast:coerce-ast
      :from (cst:raw type1-cst) :to (cst:raw type2-cst)
      :arg-ast (convert client form-cst lexical-environment))))
 
@@ -495,4 +495,4 @@
     (client (symbol (eql 'cleavir-primop:unreachable)) cst lexical-environment)
   (declare (ignore client lexical-environment))
   (check-simple-primop-syntax cst 0)
-  (make-instance 'cleavir-ast:unreachable-ast))
+  (cleavir-ast:make-ast 'cleavir-ast:unreachable-ast))

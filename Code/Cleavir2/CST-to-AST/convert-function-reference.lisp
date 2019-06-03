@@ -5,9 +5,10 @@
                                               info
                                               global-env)
   (declare (ignore global-env))
-  (let ((name-ast (make-instance 'cleavir-ast:constant-ast
-                    :value (trucler:name info))))
-    (make-instance 'cleavir-ast:fdefinition-ast
+  (let* ((*origin* (cst:source cst))
+         (name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
+                     :value (trucler:name info))))
+    (cleavir-ast:make-ast 'cleavir-ast:fdefinition-ast
       :name-ast name-ast)))
 
 (defmethod convert-function-reference (client

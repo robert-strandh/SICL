@@ -241,7 +241,7 @@
           (unless globally-p
             (setf new-env
                   (trucler:add-special-variable client new-env raw-variable)))
-          (let ((var-ast (make-instance 'cleavir-ast:lexical-ast
+          (let ((var-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                            :name raw-variable)))
             (setf new-env
                   (trucler:add-lexical-variable
@@ -289,7 +289,7 @@
                                                      name-cst
                                                      lexical-environment)
   (let* ((name (cst:raw name-cst))
-         (var-ast (make-instance 'cleavir-ast:lexical-ast :name name)))
+         (var-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast :name name)))
     (trucler:add-local-function client lexical-environment name var-ast)))
 
 ;;; Take an environment and a CST representing a single local function

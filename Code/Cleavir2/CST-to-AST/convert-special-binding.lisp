@@ -5,8 +5,8 @@
                                     value-ast
                                     body-function
                                     lexical-environment)
-  (make-instance 'cleavir-ast:bind-ast
-    :name-ast (make-instance 'cleavir-ast:constant-ast
+  (cleavir-ast:make-ast 'cleavir-ast:bind-ast
+    :name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
                 :value (cst:raw variable-cst))
     :value-ast value-ast
     :body-ast (funcall body-function)))

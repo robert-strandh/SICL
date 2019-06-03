@@ -24,8 +24,8 @@
     (if (typep info 'trucler:special-variable-description)
         (convert-special-binding
          client variable-cst value-ast body-function lexical-environment)
-	(make-instance 'cleavir-ast:progn-ast
-	 :form-asts (list (make-instance 'cleavir-ast:setq-ast
+	(cleavir-ast:make-ast 'cleavir-ast:progn-ast
+	 :form-asts (list (cleavir-ast:make-ast 'cleavir-ast:setq-ast
                             :lhs-ast (trucler:identity info)
                             :value-ast value-ast)
                      (funcall body-function))))))

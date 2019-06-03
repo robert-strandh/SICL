@@ -514,6 +514,6 @@
                      entries
                      (make-body rdspecs (cst-for-body forms-cst block-name-cst))
                      lexical-environment)))
-              (make-instance 'cleavir-ast:function-ast
+              (cleavir-ast:make-ast 'cleavir-ast:function-ast
                 :body-ast ast
                 :lambda-list lexical-lambda-list))))))))

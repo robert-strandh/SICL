@@ -15,13 +15,13 @@
                                 lexical-environment
                                 origin)
   (let ((nil-cst (make-atom-cst nil origin)))
-    (make-instance 'cleavir-ast:if-ast
-     :test-ast (make-instance 'cleavir-ast:eq-ast
+    (cleavir-ast:make-ast 'cleavir-ast:if-ast
+     :test-ast (cleavir-ast:make-ast 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
                 :arg2-ast (convert-constant client
                            nil-cst
                            lexical-environment))
-     :then-ast (make-instance 'cleavir-ast:setq-ast
+     :then-ast (cleavir-ast:make-ast 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
                  :value-ast value-ast)
      :else-ast (convert-constant client

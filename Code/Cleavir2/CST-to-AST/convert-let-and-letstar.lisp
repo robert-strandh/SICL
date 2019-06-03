@@ -51,7 +51,7 @@
                                             (make-atom-cst nil origin)
                                             (cst:second binding-cst))))
            (lambda-form-cst
-             (make-instance 'cst:cons-cst
+             (cleavir-ast:make-ast 'cst:cons-cst
                :raw `((lambda ,(mapcar #'cst:raw variable-csts)
                         ,@(cst:raw body-forms-cst))
                       ,(mapcar #'cst:raw initform-csts))

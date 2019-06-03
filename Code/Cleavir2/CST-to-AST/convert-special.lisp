@@ -35,7 +35,7 @@
     (let ((name (cst:raw name-cst)))
       (unless (symbolp name)
         (error 'block-name-must-be-a-symbol :cst name-cst))
-      (let* ((ast (make-instance 'cleavir-ast:block-ast))
+      (let* ((ast (cleavir-ast:make-ast 'cleavir-ast:block-ast))
              (new-lexical-environment
                (trucler:add-block client lexical-environment name ast)))
         (setf (cleavir-ast:body-ast ast)
@@ -81,7 +81,7 @@
                          (convert client
                                   value-cst
                                   lexical-environment)))))
-          (make-instance 'cleavir-ast:return-from-ast
+          (cleavir-ast:make-ast 'cleavir-ast:return-from-ast
            :block-ast (trucler:identity info)
            :form-ast (convert client
                       value-cst
@@ -262,7 +262,7 @@
                                    functions
                                    lexical-environment)
   (loop for (name . fun-ast) in functions
-        collect (make-instance 'cleavir-ast:setq-ast
+        collect (cleavir-ast:make-ast 'cleavir-ast:setq-ast
                   :lhs-ast (function-lexical client lexical-environment name)
                   :value-ast fun-ast)))
 
@@ -371,7 +371,7 @@
                   until (cst:null rest)
                   when (tagp (cst:first rest))
                     collect (let ((tag-cst (cst:first rest)))
-                              (make-instance 'cleavir-ast:tag-ast
+                              (cleavir-ast:make-ast 'cleavir-ast:tag-ast
                                 :name (cst:raw tag-cst)))))
           (new-lexical-environment lexical-environment))
       (loop for ast in tag-asts
@@ -387,7 +387,7 @@
                                                     item-cst
                                                     new-lexical-environment))))))
         (process-progn
-         (list (make-instance 'cleavir-ast:tagbody-ast
+         (list (cleavir-ast:make-ast 'cleavir-ast:tagbody-ast
                  :item-asts item-asts)
                (convert-constant client
                                  (make-atom-cst nil origin)
@@ -404,7 +404,7 @@
   (cst:db origin (go-cst tag-cst) cst
     (declare (ignore go-cst))
     (let ((info (describe-tag client lexical-environment (cst:raw tag-cst))))
-      (make-instance 'cleavir-ast:go-ast
+      (cleavir-ast:make-ast 'cleavir-ast:go-ast
         :tag-ast (trucler:identity info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -432,13 +432,13 @@
                                     else-cst
                                     lexical-environment)))))
       (if (typep test-ast 'cleavir-ast:boolean-ast-mixin)
-          (make-instance 'cleavir-ast:if-ast
+          (cleavir-ast:make-ast 'cleavir-ast:if-ast
            :test-ast test-ast
            :then-ast true-ast
            :else-ast false-ast)
-          (make-instance 'cleavir-ast:if-ast
+          (cleavir-ast:make-ast 'cleavir-ast:if-ast
            :test-ast
-           (make-instance 'cleavir-ast:eq-ast
+           (cleavir-ast:make-ast 'cleavir-ast:eq-ast
             :arg1-ast test-ast
             :arg2-ast (convert-constant client
                        (make-atom-cst nil origin)
@@ -456,7 +456,7 @@
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
-    (make-instance 'cleavir-ast:load-time-value-ast
+    (cleavir-ast:make-ast 'cleavir-ast:load-time-value-ast
       :form-ast (convert client
                  form-cst
                  lexical-environment)
@@ -702,7 +702,7 @@
     (multiple-value-bind (req opt rest)
         (the-values-components (cst:raw value-type-cst))
       ;; We don't bother collapsing THE forms for user code.
-      (make-instance 'cleavir-ast:the-ast
+      (cleavir-ast:make-ast 'cleavir-ast:the-ast
         :form-ast (convert client form-cst lexical-environment)
         :required req
         :optional opt
@@ -718,7 +718,7 @@
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-prog1-cst first-cst . rest-cst) cst
     (declare (ignore multiple-value-prog1-cst))
-    (make-instance 'cleavir-ast:multiple-value-prog1-ast
+    (cleavir-ast:make-ast 'cleavir-ast:multiple-value-prog1-ast
       :first-form-ast (convert client
                        first-cst
                        lexical-environment)
@@ -750,7 +750,7 @@
             (cst:cons (cst:cst-from-expression 'lambda)
                       (cons (cst:cst-from-expression '())
                             cleanup-form-csts))))
-      (make-instance 'cleavir-ast:unwind-protect-ast
+      (cleavir-ast:make-ast 'cleavir-ast:unwind-protect-ast
         :protected-form-ast (convert client
                              protected-form-cst
                              lexical-environment)

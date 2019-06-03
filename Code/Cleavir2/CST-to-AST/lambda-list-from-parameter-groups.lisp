@@ -3,13 +3,13 @@
 (defun var-to-lexical (var-cst)
   (let* ((raw (cst:raw var-cst))
          (name (make-symbol (string-downcase raw))))
-    (make-instance 'cleavir-ast:lexical-ast
+    (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
       :name name)))
 
 (defun init-var-to-lexicals (var-cst supplied-p-cst)
   (list (var-to-lexical var-cst)
         (if (null supplied-p-cst)
-            (make-instance 'cleavir-ast:lexical-ast :name (gensym))
+            (cleavir-ast:make-ast 'cleavir-ast:lexical-ast :name (gensym))
             (var-to-lexical supplied-p-cst))))
 
 (defgeneric entries-from-parameter-group (parameter-group))

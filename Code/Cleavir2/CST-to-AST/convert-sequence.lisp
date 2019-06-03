@@ -7,4 +7,5 @@
                          lexical-environment)
   (loop for cst = sequence-cst then (cst:rest cst)
         until (cst:null cst)
-	collect (convert client (cst:first cst) lexical-environment)))
+	collect (let ((*origin* (cst:source (cst:first cst))))
+                  (convert client (cst:first cst) lexical-environment))))

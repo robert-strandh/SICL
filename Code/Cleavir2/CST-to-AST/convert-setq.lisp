@@ -16,7 +16,7 @@
 (defmethod convert-setq
     (client var-cst form-cst (info trucler:lexical-variable-description) lexical-environment)
   (process-progn 
-   (list (make-instance 'cleavir-ast:setq-ast
+   (list (cleavir-ast:make-ast 'cleavir-ast:setq-ast
 	  :lhs-ast (trucler:identity info)
 	  :value-ast (convert client form-cst lexical-environment))
 	 (trucler:identity info))))
@@ -28,6 +28,7 @@
          (expanded-variable (expand-macro expander var-cst lexical-environment))
          (expanded-cst (cst:reconstruct expanded-variable var-cst client))
          (origin (cst:source var-cst)))
+    (setf (cst:source expanded-cst) origin)
     (convert client
              (cst:cons (make-atom-cst 'setf origin)
                        (cst:list expanded-cst form-cst)
@@ -37,14 +38,14 @@
 (defmethod convert-setq-special-variable
     (client var-cst form-ast info global-env)
   (declare (ignore client))
-  (let ((temp (make-instance 'cleavir-ast:lexical-ast
+  (let ((temp (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                 :name (gensym))))
     (process-progn
-     (list (make-instance 'cleavir-ast:setq-ast
+     (list (cleavir-ast:make-ast 'cleavir-ast:setq-ast
              :lhs-ast temp
              :value-ast form-ast)
-	   (make-instance 'cleavir-ast:set-symbol-value-ast
-             :name-ast (make-instance 'cleavir-ast:constant-ast
+	   (cleavir-ast:make-ast 'cleavir-ast:set-symbol-value-ast
+             :name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
                          :value (trucler:name info))
              :value-ast temp)
 	   temp))))
