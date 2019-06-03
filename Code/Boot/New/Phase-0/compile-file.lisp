@@ -16,7 +16,12 @@
              (cst (cst:cons (cst:cst-from-expression 'progn)
                             (apply #'cst:list csts)))
              (ast (let ((cleavir-cst-to-ast::*origin* nil))
-                    (cleavir-cst-to-ast:cst-to-ast client cst environment))))
+                    (handler-bind
+                        ((trucler:no-function-description
+                           (lambda (condition)
+                             (declare (ignore condition))
+                             (invoke-restart 'cleavir-cst-to-ast:consider-global))))
+                      (cleavir-cst-to-ast:cst-to-ast client cst environment)))))
         (let* ((dot-pos (position #\. relative-pathname))
                (prefix (subseq relative-pathname 0 dot-pos))
                (filename (concatenate 'string prefix ".fasl"))
