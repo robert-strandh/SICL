@@ -26,8 +26,9 @@
                         cst
                         (info trucler:constant-variable-description)
                         lexical-environment)
-  (let ((cst (cst:cst-from-expression (trucler:value info))))
-    (convert-constant client cst lexical-environment)))
+  (let ((new-cst (cst:cst-from-expression (trucler:value info))))
+    (setf (cst:source new-cst) (cst:source cst))
+    (convert-constant client new-cst lexical-environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
