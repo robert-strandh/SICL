@@ -18,9 +18,18 @@
   (check-argument-count cst 1 1)
   (cst:db s (quote-cst const-cst) cst
     (declare (ignore quote-cst))
-    (convert-constant client
-                      const-cst
-                      lexical-environment)))
+    ;; Frequently, the constant itself appears unquoted in source
+    ;; code, such as when it is the argument to a macro that then
+    ;; quotes it.  In that case, the entire form will not have any
+    ;; source information, but the constant itself will.  In this
+    ;; situation, we take the source information from the constant
+    ;; itself so that we have some idea of the origin it.
+    (let ((*origin* (if (null (cst:source cst))
+                        (cst:source const-cst)
+                        (cst:source cst))))
+      (convert-constant client
+                        const-cst
+                        lexical-environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -389,9 +398,10 @@
         (process-progn
          (list (cleavir-ast:make-ast 'cleavir-ast:tagbody-ast
                  :item-asts item-asts)
-               (convert-constant client
-                                 (make-atom-cst nil origin)
-                                 lexical-environment)))))))
+               (let ((*origin* origin))
+                 (convert-constant client
+                                   (make-atom-cst nil origin)
+                                   lexical-environment))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
