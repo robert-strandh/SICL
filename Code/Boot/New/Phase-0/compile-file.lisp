@@ -26,7 +26,7 @@
                (prefix (subseq relative-pathname 0 dot-pos))
                (filename (concatenate 'string prefix ".fasl"))
                (output-relative-pathname (concatenate 'string
-                                                      "Boot/New/Phase-0/ASTs/"
+                                                      "Boot/New/ASTs/"
                                                       filename))
                (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname)))
           (ensure-directories-exist output-pathname)
