@@ -25,3 +25,6 @@
     ((class funcallable-standard-class)
      (superclass closer-mop:funcallable-standard-class))
   t)
+
+(defun boot (boot)
+  (declare (ignore boot)))
