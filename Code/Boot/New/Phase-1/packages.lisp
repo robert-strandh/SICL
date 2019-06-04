@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-boot-phase-1
   (:use #:common-lisp)
-  (:export #:boot-phase-1))
+  (:export #:boot))
