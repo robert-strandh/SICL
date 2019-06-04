@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "environment")
    (:file "import-from-host")
+   (:file "add-readers-and-writers")
    (:file "boot-phase-1")))
