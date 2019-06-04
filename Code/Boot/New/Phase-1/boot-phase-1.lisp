@@ -28,6 +28,6 @@
 
 (defun boot (boot)
   (format *trace-output* "Start phase 1~%")
-  (let ((environment (make-instance 'environment)))
-    (setf (sicl-boot:e1 boot) environment)
+  (with-accessors ((e1 sicl-boot:e1)) boot
+    (change-class e1 'environment)
     (import-from-host boot)))
