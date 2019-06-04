@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-boot
   (:use #:common-lisp)
-  (:export))
+  (:export #:environment))
