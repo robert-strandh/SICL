@@ -30,4 +30,5 @@
   (format *trace-output* "Start phase 1~%")
   (with-accessors ((e1 sicl-boot:e1)) boot
     (change-class e1 'environment)
-    (import-from-host boot)))
+    (import-from-host boot)
+    (enable-class-initialization boot)))
