@@ -11,4 +11,5 @@
                 :e6 (make-instance 'environment))))
     (sicl-boot-phase-0:boot boot)
     (sicl-boot-phase-1:boot boot)
+    (sicl-boot-phase-2:boot boot)
     boot))
