@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "enable-defgeneric")
    (:file "boot")))
