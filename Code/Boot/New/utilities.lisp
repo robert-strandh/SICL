@@ -1,1 +1,10 @@
 (cl:in-package #:sicl-boot)
+
+(defun load-fasl (relative-pathname environment)
+  (let* ((pathname (asdf:system-relative-pathname '#:sicl relative-pathname))
+         (ast (cleavir-io:read-model pathname '(v0)))
+         (hir (sicl-ast-to-hir:ast-to-hir ast))
+         (cl (sicl-hir-to-cl:hir-to-cl nil hir))
+         (fun (compile nil cl))
+         (sicl-hir-to-cl:*dynamic-environment* '()))
+    (funcall fun (sicl-hir-to-cl:function-finder environment))))
