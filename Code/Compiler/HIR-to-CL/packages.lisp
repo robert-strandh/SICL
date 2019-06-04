@@ -4,4 +4,6 @@
   (:use #:common-lisp)
   (:export #:hir-to-cl
            #:cst-eval
-           #:fill-environment))
+           #:fill-environment
+           #:function-finder
+           #:*dynamic-environment*))
