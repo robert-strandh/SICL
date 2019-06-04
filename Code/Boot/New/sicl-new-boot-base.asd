@@ -8,4 +8,5 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "boot-class")
    (:file "utilities")))
