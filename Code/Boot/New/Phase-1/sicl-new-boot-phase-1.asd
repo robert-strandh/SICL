@@ -8,4 +8,5 @@
    (:file "environment")
    (:file "import-from-host")
    (:file "add-readers-and-writers")
+   (:file "enable-class-initialization")
    (:file "boot-phase-1")))
