@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-boot)
 
 (defun load-fasl (relative-pathname environment)
-  (let* ((pathname (asdf:system-relative-pathname '#:sicl relative-pathname))
+  (let* ((prefixed (concatenate 'string "ASTs/" relative-pathname))
+         (pathname (asdf:system-relative-pathname '#:sicl-new-boot prefixed))
          (ast (cleavir-io:read-model pathname '(v0)))
          (hir (sicl-ast-to-hir:ast-to-hir ast))
          (cl (sicl-hir-to-cl:hir-to-cl nil hir))
