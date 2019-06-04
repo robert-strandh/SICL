@@ -27,4 +27,7 @@
   t)
 
 (defun boot (boot)
-  (declare (ignore boot)))
+  (format *trace-output* "Start phase 1~%")
+  (let ((environment (make-instance 'environment)))
+    (setf (sicl-boot:e1 boot) environment)
+    (import-from-host boot)))
