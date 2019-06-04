@@ -8,3 +8,15 @@
          (fun (compile nil cl))
          (sicl-hir-to-cl:*dynamic-environment* '()))
     (funcall fun (sicl-hir-to-cl:function-finder environment))))
+
+(defun import-function-from-host (name environment)
+  (setf (sicl-genv:fdefinition name environment)
+        (fdefinition name)))
+
+(defun import-package-from-host (name environment)
+  (push (find-package name)
+        (sicl-genv:packages environment)))
+
+(defun import-class-from-host (name environment)
+  (setf (sicl-genv:find-class name environment)
+        (find-class name)))
