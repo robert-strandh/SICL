@@ -6,6 +6,8 @@
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support
                #:sicl-package-support
+               #:sicl-sequence-support
+               #:sicl-arithmetic
                #:eclector
                #:eclector-concrete-syntax-tree
                #:cleavir-io)
