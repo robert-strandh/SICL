@@ -105,6 +105,8 @@
     (cf "CLOS/setf-slot-definition-location-defgeneric.lisp")
     (cf "CLOS/variant-signature-defgeneric.lisp")
     (cf "CLOS/template-defgeneric.lisp")
+    (cf "CLOS/make-method-for-generic-function.lisp")
+    (cf "CLOS/ensure-method.lisp")
     (cf "CLOS/class-unique-number-defparameter.lisp")
     (cf "Package-and-symbol/symbol-name-defgeneric.lisp")
     (cf "Package-and-symbol/symbol-package-defgeneric.lisp")
