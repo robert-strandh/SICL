@@ -62,7 +62,8 @@
                       sicl-iteration:dolist-expander
                       sicl-iteration:do-dostar-expander
                       sicl-clos:defclass-expander
-                      sicl-clos:defgeneric-expander)
+                      sicl-clos:defgeneric-expander
+                      sicl-method-combination:define-method-combination-expander)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
 
