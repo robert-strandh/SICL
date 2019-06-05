@@ -10,5 +10,6 @@
    (:file "set-up-environments")
    (:file "header")
    (:file "define-make-instance")
+   (:file "enable-defmethod")
    (:file "enable-method-combinations")
    (:file "boot")))
