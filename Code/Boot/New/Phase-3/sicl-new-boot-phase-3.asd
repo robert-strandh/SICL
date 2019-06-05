@@ -9,5 +9,6 @@
    (:file "utilities")
    (:file "set-up-environments")
    (:file "header")
+   (:file "define-make-instance")
    (:file "enable-method-combinations")
    (:file "boot")))
