@@ -107,7 +107,7 @@
 (defun defparameter-expander (env name initial-value documentation)
   (declare (ignore documentation))
   `(progn
-     (eval-when (:compile-toplevel :load-toplevel :execute)
+     (eval-when (:compile-toplevel)
        (setf (sicl-genv:special-variable ',name ,env nil)
              nil))
      (eval-when (:load-toplevel :execute)
