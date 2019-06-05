@@ -7,4 +7,5 @@
     (set-up-environments boot)
     (enable-defgeneric e3)
     (load-accessor-defgenerics e3)
-    (enable-defclass boot)))
+    (enable-defclass boot)
+    (load-mop-defclasses boot)))
