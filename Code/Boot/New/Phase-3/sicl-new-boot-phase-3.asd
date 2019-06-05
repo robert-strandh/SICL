@@ -6,5 +6,6 @@
   :components
   ((:file "packages")
    (:file "environment")
+   (:file "utilities")
    (:file "set-up-environments")
    (:file "boot")))
