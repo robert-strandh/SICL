@@ -84,26 +84,38 @@
                 (let ((expanded-cst (cst:reconstruct expanded-form cst system)))
                   (convert expanded-cst env system))))))))
 
-;;; Given a FUNCTION-INFO and cst of a call, signal warnings if the call can
-;;; be determined to be invalid for the function.
-;;; TODO: We only signal STYLE-WARNINGs, because we don't yet keep track of
-;;; when we can/should signal a full WARNING.
-(defun check-call (cst info)
-  (let ((args-length (1- (length (cst:raw cst)))))
-    (multiple-value-bind (validp nreq npos restp keysp)
-        (function-info-argument-properties info)
-      (when validp
-        (cond ((or (< args-length nreq) ; too few
-                   (and (not restp) (not keysp)
-                        (> args-length npos))) ; too many
-               (warn 'incorrect-number-of-arguments-style-warning
-                     :expected-min nreq
-                     :expected-max (and (not restp) (not keysp) npos)
-                     :observed args-length
-                     :cst cst))
-              ((and keysp (oddp (- args-length npos)))
-               (warn 'odd-keyword-portion-style-warning
-                     :cst cst)))))))
+;;; Wrap argument ASTs in THE-ASTs based on the function type.
+;;; Also signals warnings for obviously problematic calls
+;;; (i.e. argument count mismatch)
+(defun maybe-type-wrap-arguments (cst info argument-asts)
+  (multiple-value-bind (validp required optional restp rest keysp keys aok-p)
+      (ftype-data info)
+    (declare (ignore keys aok-p)) ; Probably need constant propagation
+    (let ((args-length (length argument-asts))
+          (nreq (length required))
+          (npos (+ (length required) (length optional))))
+      (cond ((not validp) ; nothing could be determined about the type - give up
+             argument-asts)
+            ((or (< args-length (length required)) ; too few arguments
+                 (and (not restp) (not keysp)
+                      (> args-length npos))) ; too many
+             (warn 'incorrect-number-of-arguments-style-warning
+                   :expected-min nreq
+                   :expected-max (and (not restp) (not keysp) npos)
+                   :observed args-length
+                   :cst cst)
+             argument-asts)
+            ((and keysp (oddp (- args-length npos)))
+             (warn 'odd-keyword-portion-style-warning :cst cst)
+             argument-asts)
+            (t ; call has a fine number of arguments
+             (loop for arg-ast in argument-asts
+                   for type = (cond (required (pop required))
+                                    (optional (pop optional))
+                                    (restp rest)
+                                    (t 't)) ; keysp but not restp
+                   collect (cleavir-generate-ast::maybe-wrap-the
+                            type arg-ast)))))))
 
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
@@ -111,10 +123,11 @@
 ;;; arguments to the call.
 (defun make-call (cst info env arguments-cst system)
   (check-cst-proper-list cst 'form-must-be-proper-list)
-  (check-call cst info)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference name-cst info env system))
-         (argument-asts (convert-sequence arguments-cst env system)))
+         (argument-asts (maybe-type-wrap-arguments
+                         cst info
+                         (convert-sequence arguments-cst env system))))
     (cleavir-ast:make-call-ast function-ast argument-asts
                                :origin (cst:source cst))))
 
