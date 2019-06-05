@@ -107,4 +107,12 @@
     (cf "CLOS/template-defgeneric.lisp")
     (cf "CLOS/class-unique-number-defparameter.lisp")
     (cf "Package-and-symbol/symbol-name-defgeneric.lisp")
-    (cf "Package-and-symbol/symbol-package-defgeneric.lisp")))
+    (cf "Package-and-symbol/symbol-package-defgeneric.lisp")
+    ;; Files related to method combinations
+    (cf "Method-combination/make-method-combination-defun.lisp")
+    (cf "Method-combination/accessor-defgenerics.lisp")
+    (cf "Method-combination/find-method-combination.lisp")
+    (cf "Method-combination/method-combination-template-defclass.lisp")
+    (cf "CLOS/standard-method-combination.lisp")
+    (cf "CLOS/find-method-combination-defgenerics.lisp")
+    (cf "CLOS/find-method-combination-defmethods.lisp")))
