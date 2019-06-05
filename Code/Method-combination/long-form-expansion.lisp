@@ -15,7 +15,7 @@
     (multiple-value-bind (declarations documentation forms)
         (cleavir-code-utilities:separate-function-body body)
       `(let ((template (sicl-genv:find-method-combination-template
-                        ',name ,environment)))
+                        ',name (sicl-genv:global-environment))))
          (when (null template)
            (setf template
                  (make-instance 'method-combination-template
@@ -30,7 +30,8 @@
                      method-group-specifiers
                      declarations
                      forms)))
-           (setf (sicl-genv:find-method-combination-template ',name ,environment)
+           (setf (sicl-genv:find-method-combination-template
+                  ',name (sicl-genv:global-environment))
                  template))
          ',name))))
 
