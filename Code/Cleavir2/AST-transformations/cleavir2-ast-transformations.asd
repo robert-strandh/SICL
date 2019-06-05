@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "clone")
    (:file "replace")
-   (:file "remove-redundant-progn")))
+   (:file "remove-redundant-progn")
+   (:file "hoist-load-time-value")))
