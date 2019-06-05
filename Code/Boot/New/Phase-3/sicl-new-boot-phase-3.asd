@@ -8,4 +8,5 @@
    (:file "environment")
    (:file "utilities")
    (:file "set-up-environments")
+   (:file "header")
    (:file "boot")))
