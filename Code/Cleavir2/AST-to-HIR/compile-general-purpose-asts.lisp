@@ -110,7 +110,7 @@
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
                           '#:block-continuation))
-           (dynenv-out (cleavir-ir:make-lexical-location '#:block))
+           (dynenv-out (cleavir-ir:make-lexical-location (gensym "block")))
            (catch (make-instance 'cleavir-ir:catch-instruction
                    :outputs (list continuation dynenv-out)
                    :successors (list after)))
