@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export #:method-combination-template
            #:find-method-combination
-           #:effective-method-form-function))
+           #:effective-method-form-function
+           #:define-method-combination-expander))
