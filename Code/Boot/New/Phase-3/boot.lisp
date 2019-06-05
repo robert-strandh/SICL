@@ -5,4 +5,5 @@
   (with-accessors ((e2 sicl-boot:e2) (e3 sicl-boot:e3)) boot
     (change-class e3 'environment)
     (set-up-environments boot)
-    (define-make-instance boot)))
+    (define-make-instance boot)
+    (enable-defmethod boot)))
