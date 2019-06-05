@@ -121,4 +121,5 @@
     ;; Load a file containing the definition of the macro DEFGENERIC.
     (ld "CLOS/defgeneric-defmacro.lisp")
     ;; Load a file containing the definition of the macro DEFMETHOD.
-    (ld "CLOS/defmethod-defmacro.lisp")))
+    (ld "CLOS/defmethod-defmacro.lisp")
+    (ld "Method-combination/define-method-combination-defmacro.lisp")))
