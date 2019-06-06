@@ -134,5 +134,4 @@
     (define-compile e3)
     (define-compute-discriminating-function e3)
     (import-functions-from-host '(print-object) e3)
-    (load-fasl "Boot/Phase-2/define-methods-on-print-object.fasl" e3)
     (load-fasl "CLOS/standard-instance-access.fasl" e3)))
