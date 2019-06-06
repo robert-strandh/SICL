@@ -9,7 +9,7 @@
 ;;; (indirectly) to determine which is two methods is more specific.
 (defun define-sub-specializer-p (environment)
   (import-function-from-host 'position environment)
-  (load-fasl "Boot/Phase-2/sub-specializer-p.fasl" environment))
+  (load-fasl "Boot/New/Phase-3/sub-specializer-p.fasl" environment))
 
 ;;; COMPUTE-APPLICABLE-METHODS calls MAPCAR (indirectly) in order to
 ;;; get the class of each of the arguments passed to a generic
@@ -119,10 +119,12 @@
     (import-function-from-host 'cleavir-code-utilities:proper-list-p e2)
     (import-functions-from-host '(endp car cdr null rplacd atom eq not) e2)
     (import-functions-from-host '(cadr cddr cdddr) e2)
+    (import-functions-from-host '((setf cdr) apply) e2)
     (define-classp e3)
     (define-class-of e3)
     (define-find-class e2 e3)
     (define-set-funcallable-instance-function e3)
+    (import-function-from-host '(setf sicl-genv:fdefinition) e3)
     (define-sub-specializer-p e3)
     (define-compute-applicable-methods e3)
     (enable-method-combinations boot)
