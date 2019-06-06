@@ -42,6 +42,12 @@
                   (eq (identifier entry) identifier))
           return entry))
 
+(defun push-entry (entry)
+  (push entry *dynamic-environment*))
+
+(defun pop-entry ()
+  (pop *dynamic-environment*))
+
 (defun unwind (identifier continuation origin)
   (let ((entry (find-entry identifier)))
     (cond ((null entry)
