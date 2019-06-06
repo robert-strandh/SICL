@@ -107,6 +107,8 @@
     (cf "CLOS/template-defgeneric.lisp")
     (cf "CLOS/make-method-for-generic-function.lisp")
     (cf "CLOS/ensure-method.lisp")
+    (cf "CLOS/classp-defgeneric.lisp")
+    (cf "CLOS/classp-defmethods.lisp")
     (cf "CLOS/class-unique-number-defparameter.lisp")
     (cf "Package-and-symbol/symbol-name-defgeneric.lisp")
     (cf "Package-and-symbol/symbol-package-defgeneric.lisp")
