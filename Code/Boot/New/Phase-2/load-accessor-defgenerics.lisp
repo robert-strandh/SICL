@@ -2,7 +2,6 @@
 
 (defun load-accessor-defgenerics (e3)
   (flet ((ld (relative-pathname)
-           (format *trace-output* "Loading ~s~%" relative-pathname)
            (sicl-boot:load-fasl relative-pathname e3)))
     (ld "CLOS/specializer-direct-generic-functions-defgeneric.fasl")
     (ld "CLOS/setf-specializer-direct-generic-functions-defgeneric.fasl")

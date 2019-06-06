@@ -1,6 +1,7 @@
 (cl:in-package #:sicl-boot)
 
 (defun load-fasl (relative-pathname environment)
+  (format *trace-output* "Loading file ~s~%" relative-pathname)
   (let* ((prefixed (concatenate 'string "ASTs/" relative-pathname))
          (pathname (asdf:system-relative-pathname '#:sicl-new-boot prefixed))
          (ast (cleavir-io:read-model pathname '(v0)))

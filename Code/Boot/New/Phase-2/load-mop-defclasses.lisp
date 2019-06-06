@@ -4,7 +4,6 @@
   (with-accessors ((e2 sicl-boot:e2))
       boot
     (flet ((ld (relative-pathname)
-             (format *trace-output* "Loading ~s~%" relative-pathname)
              (sicl-boot:load-fasl relative-pathname e2)))
       (ld "CLOS/t-defclass.fasl")
       (ld "CLOS/function-defclass.fasl")
