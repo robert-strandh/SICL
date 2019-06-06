@@ -51,7 +51,6 @@
     ;; for SUBSEQ in order to parse the method body.
     (import-functions-from-host '(1+ add-method copy-list) e2)
     (flet ((ld (name environment)
-             (format *trace-output* "Loading file ~s~%" name)
              (load-fasl name environment)))
       (import-functions-from-host
        '((setf sicl-genv:fdefinition)

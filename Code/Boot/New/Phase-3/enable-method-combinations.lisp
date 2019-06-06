@@ -4,7 +4,6 @@
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)) boot
     (flet ((ld (name environment)
-             (format *trace-output* "Loading file ~s~%" name)
              (load-fasl name environment)))
       ;; FIND-METHOD-COMBINATION-TEMPLATE is called by FIND-METHOD-COMBINATION.
       (import-function-from-host 'sicl-genv:find-method-combination-template e3)
