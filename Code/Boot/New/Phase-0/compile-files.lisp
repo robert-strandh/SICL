@@ -133,4 +133,5 @@
     (cf "CLOS/compute-discriminating-function-support.lisp")
     (cf "CLOS/compute-discriminating-function-support-c.lisp")
     (cf "CLOS/compute-discriminating-function-defmethods.lisp")
+    (cf "CLOS/standard-instance-access.lisp")
     (cf "Boot/New/Phase-3/sub-specializer-p.lisp")))
