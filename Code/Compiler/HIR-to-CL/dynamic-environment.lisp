@@ -10,15 +10,31 @@
 (defclass block/tagbody-entry (exit-point)
   ((%identifier :initarg :identifier :reader identifier)))
 
+(defmethod print-object ((object block/tagbody-entry) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (identifier object))))
+
 (defclass catch-entry (exit-point)
   ((%tag :initarg :tag :reader tag)))
+
+(defmethod print-object ((object catch-entry) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (tag object))))
 
 (defclass special-variable-entry (entry)
   ((%name :initarg :name :reader name)
    (%value :initarg :value :accessor value)))
 
+(defmethod print-object ((object special-variable-entry) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s ~s" (name object) (value object))))
+
 (defclass unwind-protect-entry (entry)
   ((%thunk :initarg :thunk :reader thunk)))
+
+(defmethod print-object ((object unwind-protect-entry) stream)
+  (print-unreadable-object (object stream :type t :identity t)
+    (format stream "~s" (thunk object))))
 
 (defun find-entry (identifier)
   (loop for entry in *dynamic-environment*
@@ -26,7 +42,7 @@
                   (eq (identifier entry) identifier))
           return entry))
 
-(defun unwind (identifier continuation)
+(defun unwind (identifier continuation origin)
   (let ((entry (find-entry identifier)))
     (cond ((null entry)
            (error "Attempt to unwind to a non-existing exit point."))
