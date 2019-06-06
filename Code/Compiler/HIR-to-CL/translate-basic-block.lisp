@@ -8,7 +8,7 @@
          (pos (position dynamic-environment-location
                         *dynamic-environment-stack*)))
     (loop repeat pos
-          collect `(pop *dynamic-environment*))))
+          collect `(pop-entry))))
 
 ;;; Default method on TRANSLATE-FINAL-INSTRUCTION.  It is used when
 ;;; the final instruction is a simple instruction with a single

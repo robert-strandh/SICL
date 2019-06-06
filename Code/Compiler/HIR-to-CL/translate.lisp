@@ -33,10 +33,9 @@
                         dynamic-environment-output-location))
          (*dynamic-environment-stack*
            (cons dynamic-environment-output-location *dynamic-environment-stack*)))
-    `((push (make-instance 'special-variable-entry
-              :name ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
-              :value ,(cleavir-ir:name (second (cleavir-ir:inputs instruction))))
-            *dynamic-environment*)
+    `((push-entry (make-instance 'special-variable-entry
+                    :name ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
+                    :value ,(cleavir-ir:name (second (cleavir-ir:inputs instruction)))))
       (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
          ,@(loop for basic-block in basic-blocks
                  for tag = (tag-of-basic-block basic-block)
@@ -107,4 +106,5 @@
                                         (instruction cleavir-ir:unwind-instruction)
                                         constext)
   `((unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
-            ,(cleavir-ir:unwind-index instruction))))
+            ,(cleavir-ir:unwind-index instruction)
+            ,(cleavir-ast-to-hir:origin instruction))))

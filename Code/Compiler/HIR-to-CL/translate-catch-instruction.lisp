@@ -17,9 +17,8 @@
                         dynamic-environment-output-location))
          (*dynamic-environment-stack*
            (cons dynamic-environment-output-location *dynamic-environment-stack*)))
-    `((push (make-instance 'block/tagbody-entry
-              :identifier ,(cleavir-ir:name continuation-output))
-            *dynamic-environment*)
+    `((push-entry (make-instance 'block/tagbody-entry
+                    :identifier ,(cleavir-ir:name continuation-output)))
       (tagbody
          ,@(loop for basic-block in basic-blocks
                  for tag = (tag-of-basic-block basic-block)
