@@ -87,9 +87,9 @@
 ;;; Wrap argument ASTs in THE-ASTs based on the function type.
 ;;; Also signals warnings for obviously problematic calls
 ;;; (i.e. argument count mismatch)
-(defun maybe-type-wrap-arguments (cst info argument-asts)
+(defun maybe-type-wrap-arguments (cst function-type argument-asts)
   (multiple-value-bind (validp required optional restp rest keysp keys aok-p)
-      (ftype-data info)
+      (parse-function-type function-type)
     (declare (ignore keys aok-p)) ; Probably need constant propagation
     (let ((args-length (length argument-asts))
           (nreq (length required))
@@ -117,6 +117,13 @@
                    collect (cleavir-generate-ast::maybe-wrap-the
                             type arg-ast)))))))
 
+;;; Wrap a function call based on the function's return type.
+(defun maybe-wrap-return (function-type call-ast)
+  (let ((rettype (or (third function-type) '*)))
+    (if (eq rettype '*)
+        call-ast
+        (cleavir-generate-ast::maybe-wrap-the rettype call-ast))))
+
 ;;; Construct a CALL-AST representing a function-call form.  CST is
 ;;; the concrete syntax tree representing the entire function-call
 ;;; form.  ARGUMENTS-CST is a CST representing the sequence of
@@ -125,11 +132,14 @@
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (let* ((name-cst (cst:first cst))
          (function-ast (convert-called-function-reference name-cst info env system))
+         (function-type (function-type info))
          (argument-asts (maybe-type-wrap-arguments
-                         cst info
+                         cst function-type
                          (convert-sequence arguments-cst env system))))
-    (cleavir-ast:make-call-ast function-ast argument-asts
-                               :origin (cst:source cst))))
+    (maybe-wrap-return
+     function-type
+     (cleavir-ast:make-call-ast function-ast argument-asts
+                                :origin (cst:source cst)))))
 
 ;;; Convert a form representing a call to a named global function.
 ;;; CST is the concrete syntax tree representing the entire

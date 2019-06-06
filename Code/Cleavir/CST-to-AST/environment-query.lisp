@@ -100,5 +100,5 @@
         (error () '(function * *)))
       '(function * *)))
 
-(defun ftype-data (function-info)
-  (parse-function-type (normalize-ftype (cleavir-env:type function-info))))
+(defun function-type (info)
+  (normalize-ftype (cleavir-env:type info)))
