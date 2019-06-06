@@ -13,4 +13,5 @@
    (:file "enable-defmethod")
    (:file "enable-method-combinations")
    (:file "define-method-on-method-function")
+   (:file "enable-generic-function-invocation")
    (:file "boot")))
