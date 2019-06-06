@@ -6,4 +6,5 @@
     (change-class e3 'environment)
     (set-up-environments boot)
     (define-make-instance boot)
-    (enable-defmethod boot)))
+    (enable-defmethod boot)
+    (define-method-on-method-function e3)))
