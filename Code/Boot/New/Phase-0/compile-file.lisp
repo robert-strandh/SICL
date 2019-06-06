@@ -20,7 +20,11 @@
                         ((trucler:no-function-description
                            (lambda (condition)
                              (declare (ignore condition))
-                             (invoke-restart 'cleavir-cst-to-ast:consider-global))))
+                             (invoke-restart 'cleavir-cst-to-ast:consider-global)))
+                         (trucler:no-variable-description
+                           (lambda (condition)
+                             (declare (ignore condition))
+                             (invoke-restart 'cleavir-cst-to-ast:consider-special))))
                       (cleavir-cst-to-ast:cst-to-ast client cst environment)))))
         (let* ((dot-pos (position #\. relative-pathname))
                (prefix (subseq relative-pathname 0 dot-pos))
