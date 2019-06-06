@@ -133,5 +133,5 @@
     (define-general-instance-access e3)
     (define-compile e3)
     (define-compute-discriminating-function e3)
-    (import-functions-from-host '(print-object) e3)
+    (import-functions-from-host '(apply endp cons) e3)
     (load-fasl "CLOS/standard-instance-access.fasl" e3)))
