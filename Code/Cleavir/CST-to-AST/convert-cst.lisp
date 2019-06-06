@@ -119,7 +119,7 @@
 
 ;;; Wrap a function call based on the function's return type.
 (defun maybe-wrap-return (function-type call-ast)
-  (let ((rettype (or (third function-type) '*)))
+  (let ((rettype (third function-type)))
     (if (eq rettype '*)
         call-ast
         (cleavir-generate-ast::maybe-wrap-the rettype call-ast))))

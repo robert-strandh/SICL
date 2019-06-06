@@ -88,7 +88,11 @@
   (if (consp ftype)
       (handler-case
           (case (car ftype)
-            ((function) ftype)
+            ((function)
+             ;; This may be from a user declaration, so don't accept it out of hand
+             (destructuring-bind (&optional (lambda-list '*) (ret '*))
+                 (rest ftype)
+               `(function ,lambda-list ,ret)))
             ((and)
              ;; We just collect the first valid and helpful one. TODO: Actually merge?
              (loop for sub in (rest ftype)
