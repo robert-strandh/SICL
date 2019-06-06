@@ -107,4 +107,4 @@
                                         constext)
   `((unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
             ,(cleavir-ir:unwind-index instruction)
-            ,(cleavir-ast-to-hir:origin instruction))))
+            ',(cleavir-ast-to-hir:origin instruction))))
