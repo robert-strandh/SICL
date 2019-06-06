@@ -84,5 +84,6 @@
   (:default-initargs :dynamic-environment-location *dynamic-environment-location*))
 
 (defmethod compile-ast :around (ast context)
-  (let ((*dynamic-environment-location* (dynamic-environment-location context)))
+  (let ((*dynamic-environment-location* (dynamic-environment-location context))
+        (*origin* (cleavir-cst-to-ast::origin ast)))
     (call-next-method)))
