@@ -64,4 +64,4 @@
                  when (typep top 'unwind-protect-entry)
                    do (funcall (thunk entry))
                  do (pop *dynamic-environment*))
-           (throw (identifier (pop *dynamic-environment*)) continuation)))))
+           (throw (identifier (first *dynamic-environment*)) continuation)))))
