@@ -8,4 +8,5 @@
     (define-make-instance boot)
     (enable-defmethod boot)
     (define-method-on-method-function e3)
-    (enable-generic-function-invocation boot)))
+    (enable-generic-function-invocation boot)
+    (define-accessor-generic-functions boot)))
