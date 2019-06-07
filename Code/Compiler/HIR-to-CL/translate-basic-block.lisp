@@ -2,6 +2,12 @@
 
 (defgeneric translate-final-instruction (client instruction context))
 
+(defmethod translate-final-instruction :around (client instruction context)
+  (cons `(setq source
+               (compute-source-info
+                source ',(cleavir-ast-to-hir:origin instruction)))
+        (call-next-method)))
+
 (defun compute-dynamic-environment-pops (successor)
   (let* ((dynamic-environment-location
            (cleavir-ir:dynamic-environment-location successor))
