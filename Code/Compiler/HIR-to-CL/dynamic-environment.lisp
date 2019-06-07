@@ -65,3 +65,8 @@
                    do (funcall (thunk entry))
                  do (pop *dynamic-environment*))
            (throw (identifier (first *dynamic-environment*)) continuation)))))
+
+(defun compute-source-info (old new)
+  (if (null new) old new))
+
+(declaim (notinline compute-source-info))
