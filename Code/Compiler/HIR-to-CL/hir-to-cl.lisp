@@ -63,6 +63,7 @@
               ,@(all-values-location-names (values-locations context))
               ,@(make-code-bindings client initial-instruction context)
               ,@(mapcar #'cleavir-ir:name lexical-locations)
+              (source nil)
               (,*static-environment-variable*
                 (vector nil)))
          (declare (ignore ,(cleavir-ir:name
