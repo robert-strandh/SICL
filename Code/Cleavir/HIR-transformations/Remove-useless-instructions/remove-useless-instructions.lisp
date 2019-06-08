@@ -20,6 +20,15 @@
   ;; using-instructions will be incorrect, therefore
   nil)
 
+;;; These instructions are harmless, and we don't want them removed before
+;;; they are analyzed.
+(defmethod instruction-may-be-removed-p
+    ((instruction cleavir-ir:the-instruction))
+  nil)
+(defmethod instruction-may-be-removed-p
+    ((instruction cleavir-ir:the-values-instruction))
+  nil)
+
 (defun remove-useless-instructions-with-worklist (worklist)
   (let ((deleted '()))
     (loop (when (null worklist) (return))

@@ -88,27 +88,21 @@
   (if (consp ftype)
       (handler-case
           (case (car ftype)
-            ((function) ftype)
-            ((and or)
-             ;; We just collect the first valid one. TODO: Actually merge?
+            ((function)
+             ;; This may be from a user declaration, so don't accept it out of hand
+             (destructuring-bind (&optional (lambda-list '*) (ret '*))
+                 (rest ftype)
+               `(function ,lambda-list ,ret)))
+            ((and)
+             ;; We just collect the first valid and helpful one. TODO: Actually merge?
              (loop for sub in (rest ftype)
                    for normalized = (normalize-ftype sub)
                    unless (equal normalized '(function * *))
-                     return normalized))
+                     return normalized
+                   finally (return '(function * *))))
             (t '(function * *)))
         (error () '(function * *)))
       '(function * *)))
 
-;;; Given a function info, return information about numbers of arguments it works with.
-;;; Specifically, (values validp nreq npos restp keysp)
-;;; i.e., number of required arguments, number of positional arguments, whether it takes
-;;; a &rest, whether it additionaly has &key.
-(defun function-info-argument-properties (function-info)
-  ;; TODO: Use inline AST and actual lambda list if available (e.g. local fns)
-  (multiple-value-bind (validp required optional restp rest keysp keys aok-p)
-      (parse-function-type (normalize-ftype (cleavir-env:type function-info)))
-    (declare (ignore rest keys aok-p))
-    (if validp
-        (values t (length required) (+ (length required) (length optional))
-                restp keysp)
-        nil)))
+(defun function-type (info)
+  (normalize-ftype (cleavir-env:type info)))
