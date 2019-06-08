@@ -62,8 +62,8 @@
     (declare (ignore values-cst))
     (cleavir-ast:make-ast 'cleavir-ast:values-ast
      :argument-asts (mapcar
-		     (lambda (cst) (convert client cst lexical-environment))
-		     (cst:listify arguments-cst)))))
+                     (lambda (cst) (convert client cst lexical-environment))
+                     (cst:listify arguments-cst)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
