@@ -12,4 +12,5 @@
    (:file "finalize-all-classes")
    (:file "enable-defmethod")
    (:file "enable-allocate-instance")
+   (:file "enable-object-initialization")
    (:file "boot")))
