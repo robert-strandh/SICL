@@ -153,7 +153,6 @@
     (define-compile e3)
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e3)
     (load-fasl "Data-and-control-flow/setf.fasl" e3)
-    (sicl-boot-phase-0::define-default-setf-expander e3)
     (define-compute-discriminating-function e3)
     (import-functions-from-host '(apply endp cons eq coerce) e3)
     (load-fasl "CLOS/standard-instance-access.fasl" e3)))
