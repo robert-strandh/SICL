@@ -149,4 +149,7 @@
     (cf "CLOS/add-accessor-method.lisp")
     (cf "CLOS/class-initialization-support.lisp")
     (cf "CLOS/class-initialization-defmethods.lisp")
+    (cf "Evaluation-and-compilation/lambda.lisp")
+    (cf "Data-and-control-flow/setf.lisp")
+    (cf "Data-and-control-flow/get-setf-expansion.lisp")
     (cf "Boot/New/Phase-3/sub-specializer-p.lisp")))
