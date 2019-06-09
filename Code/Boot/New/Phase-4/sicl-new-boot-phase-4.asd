@@ -1,0 +1,10 @@
+(cl:in-package #:asdf-user)
+
+(defsystem #:sicl-new-boot-phase-4
+  :depends-on (#:sicl-new-boot-base
+               #:sicl-clos-boot-support)
+  :serial t
+  :components
+  ((:file "packages")
+   (:file "environment")
+   (:file "utilities")))
