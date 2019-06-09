@@ -58,7 +58,13 @@
                       'sicl-clos::shared-initialize-default-using-class-and-slots
                       e3)
                      instance slot-names class slots initargs))))
-    (import-function-from-host 'list e4)
+    (import-functions-from-host
+     '(list append
+       (setf sicl-genv:fdefinition))
+     e4)
+    (import-functions-from-host
+     '(atom cddr (setf cdr))
+     e3)
     (load-fasl "CLOS/shared-initialize-defgenerics.fasl" e4)
     (load-fasl "CLOS/shared-initialize-defmethods.fasl" e4)
     (load-fasl "CLOS/initialize-instance-support.fasl" e4)
