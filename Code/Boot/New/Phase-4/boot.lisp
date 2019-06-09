@@ -6,4 +6,5 @@
                    (e4 sicl-boot:e4)
                    (e5 sicl-boot:e6))
       boot
-    (change-class e4 'environment)))
+    (change-class e4 'environment)
+    (enable-class-finalization boot)))
