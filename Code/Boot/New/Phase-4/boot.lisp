@@ -10,4 +10,5 @@
     (enable-class-finalization boot)
     (finalize-all-classes boot)
     (enable-defmethod boot)
-    (enable-allocate-instance e3)))
+    (enable-allocate-instance e3)
+    (enable-object-initialization boot)))
