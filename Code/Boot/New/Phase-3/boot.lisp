@@ -10,4 +10,5 @@
     (define-method-on-method-function e3)
     (enable-generic-function-invocation boot)
     (define-accessor-generic-functions boot)
-    (enable-class-initialization boot)))
+    (enable-class-initialization boot)
+    (create-mop-classes boot)))
