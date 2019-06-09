@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-alternative-extrinsic-environment)
+(cl:in-package #:sicl-extrinsic-environment)
 
 (defparameter *imported-functions*
   '(;; Functions on CONS cells.

@@ -77,7 +77,7 @@
 ;;;; system as an explicit mechanism.  Client code that needs this
 ;;;; functionality must provide it.
 
-(defsystem sicl-alternative-extrinsic-environment
+(defsystem sicl-extrinsic-environment
   :depends-on (:concrete-syntax-tree
                :trivial-gray-streams
                :sicl-simple-environment

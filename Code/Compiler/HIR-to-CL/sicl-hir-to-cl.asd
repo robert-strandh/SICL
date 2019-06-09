@@ -4,7 +4,7 @@
   :depends-on (#:cleavir2-hir
                #:cleavir2-ast-to-hir
                #:sicl-hir-transformations
-               #:sicl-alternative-extrinsic-environment
+               #:sicl-extrinsic-environment
                #:sicl-ast-to-hir
                #:closer-mop)
   :serial t

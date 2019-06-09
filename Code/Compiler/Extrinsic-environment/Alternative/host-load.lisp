@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-alternative-extrinsic-environment)
+(cl:in-package #:sicl-extrinsic-environment)
 
 ;;; This is a simple version of the Common Lisp LOAD function.  It
 ;;; differs from the host version by the fact that it uses Eclector to
