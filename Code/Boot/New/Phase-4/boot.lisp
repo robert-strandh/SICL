@@ -8,4 +8,5 @@
       boot
     (change-class e4 'environment)
     (enable-class-finalization boot)
-    (finalize-all-classes boot)))
+    (finalize-all-classes boot)
+    (enable-defmethod boot)))
