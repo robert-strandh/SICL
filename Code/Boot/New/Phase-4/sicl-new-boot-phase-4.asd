@@ -9,4 +9,5 @@
    (:file "environment")
    (:file "utilities")
    (:file "enable-class-finalization")
+   (:file "finalize-all-classes")
    (:file "boot")))
