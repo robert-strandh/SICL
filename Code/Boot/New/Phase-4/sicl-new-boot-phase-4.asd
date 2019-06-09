@@ -10,4 +10,5 @@
    (:file "utilities")
    (:file "enable-class-finalization")
    (:file "finalize-all-classes")
+   (:file "enable-defmethod")
    (:file "boot")))
