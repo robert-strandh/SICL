@@ -7,4 +7,5 @@
   :components
   ((:file "packages")
    (:file "environment")
-   (:file "utilities")))
+   (:file "utilities")
+   (:file "boot")))
