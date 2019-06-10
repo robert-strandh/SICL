@@ -13,4 +13,5 @@
    (:file "enable-defmethod")
    (:file "enable-allocate-instance")
    (:file "enable-object-initialization")
+   (:file "enable-method-combinations")
    (:file "boot")))
