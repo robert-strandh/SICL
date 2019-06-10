@@ -7,7 +7,8 @@
     (import-functions-from-host
      '(sicl-genv:find-method-combination-template
        (setf sicl-genv:find-method-combination-template)
-       (setf sicl-genvmacro-function))
+       (setf sicl-genv:macro-function)
+       null)
      e4)
     (load-fasl "Method-combination/accessor-defgenerics.fasl" e4)
     ;; EQUAL is called by FIND-METHOD-COMBINATION in order to determine
