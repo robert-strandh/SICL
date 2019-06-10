@@ -59,7 +59,7 @@
                         cst
                         (info trucler:local-macro-description)
                         lexical-environment)
-  (let* ((expander (cleavir-env:expander info))
+  (let* ((expander (trucler:expander info))
          (expanded-form (expand-macro expander cst lexical-environment))
          (expanded-cst (cst:reconstruct expanded-form cst client)))
     (setf (cst:source expanded-cst) (cst:source cst))
