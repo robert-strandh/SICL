@@ -7,7 +7,6 @@
                :cleavir2-ast-transformations
 	       :cleavir-primop
                :trucler-reference
-	       :cleavir-environment
                :stealth-mixin
                :acclimation)
   :serial t
