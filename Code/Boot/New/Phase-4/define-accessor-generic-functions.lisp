@@ -93,11 +93,11 @@
   (with-accessors ((e4 sicl-boot:e4)
                    (e5 sicl-boot:e5))
       boot
+    (import-function-from-host 'cdr e4)
     (enable-defgeneric boot)
     (import-function-from-host 'shared-initialize e4)
     (load-fasl "CLOS/invalidate-discriminating-function.fasl" e4)
     (enable-generic-function-initialization boot)
     (import-function-from-host 'cleavir-code-utilities:proper-list-p e4)
     (import-function-from-host 'length e4)
-    (import-function-from-host 'cdr e4)
     (load-accessor-defgenerics e5)))
