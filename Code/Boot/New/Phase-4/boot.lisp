@@ -12,4 +12,5 @@
     (enable-defmethod boot)
     (enable-allocate-instance e3)
     (enable-object-initialization boot)
-    (enable-method-combinations boot)))
+    (enable-method-combinations boot)
+    (enable-generic-function-invocation boot)))
