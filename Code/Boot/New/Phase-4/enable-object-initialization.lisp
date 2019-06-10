@@ -4,7 +4,7 @@
   (setf (sicl-genv:fdefinition 'class-of e4)
         (lambda (object)
           (let ((result (cond ((typep object 'sicl-boot-phase-3::header)
-                               (slot-value object 'sicl-boot-phase-2::%class))
+                               (slot-value object 'sicl-boot-phase-3::%class))
                               ((consp object)
                                (sicl-genv:find-class 'cons e4))
                               ((symbolp object)
