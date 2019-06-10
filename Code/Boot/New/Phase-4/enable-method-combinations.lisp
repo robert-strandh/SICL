@@ -10,6 +10,9 @@
        (setf sicl-genv:macro-function)
        null)
      e4)
+    (import-functions-from-host
+     '(gensym values rest)
+     e3)
     (load-fasl "Method-combination/accessor-defgenerics.fasl" e4)
     ;; EQUAL is called by FIND-METHOD-COMBINATION in order to determine
     ;; equality between variant signatures.
