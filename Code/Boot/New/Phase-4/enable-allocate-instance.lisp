@@ -3,7 +3,7 @@
 (defun enable-allocate-instance (e3)
   (setf (sicl-genv:fdefinition 'sicl-clos::allocate-general-instance e3)
         (lambda (class size)
-          (make-instance 'sicl-boot-phase-2::header
+          (make-instance 'sicl-boot-phase-3::header
             :class class
             :rack (make-array size :initial-element 10000000))))
   (import-functions-from-host
