@@ -11,7 +11,9 @@
        null)
      e4)
     (import-functions-from-host
-     '(gensym values rest)
+     '(gensym values rest
+       sicl-conditionals:cond-expander
+       sicl-conditionals:and-expander)
      e3)
     (load-fasl "Method-combination/accessor-defgenerics.fasl" e4)
     ;; EQUAL is called by FIND-METHOD-COMBINATION in order to determine
@@ -30,6 +32,7 @@
     ;; The standard method combination also uses REVERSE to reverse
     ;; the order of invocation of the :AFTER methods.
     (import-function-from-host 'reverse e4)
+    (load-fasl "Conditionals/macros.fasl" e3)
     (load-fasl "CLOS/standard-method-combination.fasl" e4)
     (load-fasl "CLOS/find-method-combination-defgenerics.fasl" e4)
     (load-fasl "CLOS/find-method-combination-defmethods.fasl" e4)))
