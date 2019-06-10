@@ -120,6 +120,7 @@
     (cf "CLOS/standard-method-combination.lisp")
     (cf "CLOS/find-method-combination-defgenerics.lisp")
     (cf "CLOS/find-method-combination-defmethods.lisp")
+    (cf "Method-combination/define-method-combination-defmacro.lisp")
     (cf "CLOS/compute-applicable-methods-support.lisp")
     (cf "CLOS/compute-applicable-methods-defgenerics.lisp")
     (cf "CLOS/compute-applicable-methods-defmethods.lisp")
