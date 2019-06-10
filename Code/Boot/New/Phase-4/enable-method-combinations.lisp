@@ -8,10 +8,11 @@
      '(sicl-genv:find-method-combination-template
        (setf sicl-genv:find-method-combination-template)
        (setf sicl-genv:macro-function)
-       null)
+       null
+       apply)
      e4)
     (import-functions-from-host
-     '(gensym values rest
+     '(gensym values rest second
        sicl-conditionals:cond-expander
        sicl-conditionals:and-expander)
      e3)
