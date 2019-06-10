@@ -15,4 +15,5 @@
    (:file "enable-object-initialization")
    (:file "enable-method-combinations")
    (:file "enable-generic-function-invocation")
+   (:file "enable-defgeneric")
    (:file "boot")))
