@@ -50,6 +50,8 @@
     ;; because the expansion of LOOP with and APPEND clause uses it.
     (import-function-from-host 'copy-list e4)
     (load-fasl "CLOS/class-finalization-support.fasl" e4)
+    ;; FIXME: Temporary import.
+    (import-function-from-host 'error (sicl-boot:e3 boot))
     (load-fasl "CLOS/class-finalization-defmethods.fasl" e4)))
 
 (defun enable-class-finalization (boot)
