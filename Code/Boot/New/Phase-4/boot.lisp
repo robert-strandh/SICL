@@ -16,4 +16,5 @@
     (enable-generic-function-invocation boot)
     (enable-defgeneric boot)
     (define-accessor-generic-functions boot)
-    (enable-class-initialization boot)))
+    (enable-class-initialization boot)
+    (create-mop-classes boot)))
