@@ -15,4 +15,5 @@
     (enable-method-combinations boot)
     (enable-generic-function-invocation boot)
     (enable-defgeneric boot)
-    (define-accessor-generic-functions boot)))
+    (define-accessor-generic-functions boot)
+    (enable-class-initialization boot)))
