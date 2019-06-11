@@ -17,9 +17,9 @@
     (client var-cst form-cst (info trucler:lexical-variable-description) lexical-environment)
   (process-progn 
    (list (cleavir-ast:make-ast 'cleavir-ast:setq-ast
-	  :lhs-ast (trucler:identity info)
-	  :value-ast (convert client form-cst lexical-environment))
-	 (trucler:identity info))))
+          :lhs-ast (trucler:identity info)
+          :value-ast (convert client form-cst lexical-environment))
+         (trucler:identity info))))
 
 (defmethod convert-setq
     (client var-cst form-cst (info trucler:symbol-macro-description) lexical-environment)
@@ -44,11 +44,11 @@
      (list (cleavir-ast:make-ast 'cleavir-ast:setq-ast
              :lhs-ast temp
              :value-ast form-ast)
-	   (cleavir-ast:make-ast 'cleavir-ast:set-symbol-value-ast
+           (cleavir-ast:make-ast 'cleavir-ast:set-symbol-value-ast
              :name-ast (cleavir-ast:make-ast 'cleavir-ast:constant-ast
                          :value (trucler:name info))
              :value-ast temp)
-	   temp))))
+           temp))))
 
 (defmethod convert-setq
     (client var-cst form-cst (info trucler:special-variable-description) lexical-environment)
@@ -56,34 +56,34 @@
     (convert-setq-special-variable client
                                    var-cst
                                    (convert client form-cst lexical-environment)
-				   info
-				   global-env)))
+                                   info
+                                   global-env)))
 
 (defun convert-elementary-setq (client var-cst form-cst lexical-environment)
   (let* ((symbol (cst:raw var-cst))
          (info (trucler:describe-variable client lexical-environment symbol)))
     (loop while (null info)
-	  do (restart-case (error 'trucler:no-variable-description
-				  :name symbol
-				  :origin (cst:source var-cst))
-	       (continue ()
-		 :report (lambda (stream)
-			   (format stream "Consider the variable as special."))
+          do (restart-case (error 'trucler:no-variable-description
+                                  :name symbol
+                                  :origin (cst:source var-cst))
+               (continue ()
+                 :report (lambda (stream)
+                           (format stream "Consider the variable as special."))
                  (setf info
                        (make-instance 'trucler:special-variable-description
                          :name symbol)))
                ;; This is identical to CONTINUE, but more specifically named.
-	       (consider-special ()
-		 :report (lambda (stream)
-			   (format stream "Consider the variable as special."))
+               (consider-special ()
+                 :report (lambda (stream)
+                           (format stream "Consider the variable as special."))
                  (setf info
                        (make-instance 'trucler:special-variable-description
                          :name symbol)))
-	       (substitute (new-symbol)
-		 :report (lambda (stream)
-			   (format stream "Substitute a different name."))
-		 :interactive (lambda ()
-				(format *query-io* "Enter new name: ")
-				(list (read *query-io*)))
-		 (setq info (trucler:describe-variable client lexical-environment new-symbol)))))
+               (substitute (new-symbol)
+                 :report (lambda (stream)
+                           (format stream "Substitute a different name."))
+                 :interactive (lambda ()
+                                (format *query-io* "Enter new name: ")
+                                (list (read *query-io*)))
+                 (setq info (trucler:describe-variable client lexical-environment new-symbol)))))
     (convert-setq client var-cst form-cst info lexical-environment)))
