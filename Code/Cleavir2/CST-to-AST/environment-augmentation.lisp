@@ -222,20 +222,17 @@
 ;;; several bindings, it will contain entries for the variables
 ;;; preceding the one that is currently treated.
 ;;;
-;;; ORIG-ENV is the environment in which we check whether the variable
-;;; is globally special.  For a LET form, this is the environment in
-;;; which the entire LET form was converted.  For a LET* form, it is
-;;; the same as ENV.
-(defun augment-environment-with-variable (client
-                                          variable-cst
-                                          declarations
-                                          environment
-                                          orig-env)
+;;; ORIGINAL-ENVIRONMENT is the environment in which we check whether
+;;; the variable is globally special.  For a LET form, this is the
+;;; environment in which the entire LET form was converted.  For a
+;;; LET* form, it is the same as ENVIRONMENT.
+(defun augment-environment-with-variable
+    (client variable-cst declarations environment original-environment)
   (let ((new-env environment)
         (raw-variable (cst:raw variable-cst))
         (raw-declarations (mapcar #'cst:raw declarations)))
     (multiple-value-bind (special-p globally-p)
-        (variable-is-special-p client raw-variable declarations orig-env)
+        (variable-is-special-p client raw-variable declarations original-environment)
       (if special-p
           (unless globally-p
             (setf new-env
@@ -266,27 +263,16 @@
 ;;; that it also tests whether the supplied-p parameter is NIL,
 ;;; indicating that no supplied-p parameter was given.  This function
 ;;; returns the augmented environment.
-(defun augment-environment-with-parameter (client
-                                           var-cst
-                                           supplied-p-cst
-                                           dspecs
-                                           environment)
-  (let ((new-env (augment-environment-with-variable client
-                                                    var-cst
-                                                    dspecs
-                                                    environment
-                                                    environment)))
+(defun augment-environment-with-parameter
+    (client var-cst supplied-p-cst dspecs environment)
+  (let ((new-env (augment-environment-with-variable
+		  client var-cst dspecs environment environment)))
     (if (null supplied-p-cst)
         new-env
-        (augment-environment-with-variable client
-                                           supplied-p-cst
-                                           dspecs
-                                           new-env
-                                           new-env))))
+        (augment-environment-with-variable
+	 client supplied-p-cst dspecs new-env new-env))))
 
-(defun augment-environment-with-local-function-name (client
-                                                     name-cst
-                                                     environment)
+(defun augment-environment-with-local-function-name (client name-cst environment)
   (let* ((name (cst:raw name-cst))
          (var-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast :name name)))
     (trucler:add-local-function client environment name var-ast)))
@@ -295,21 +281,15 @@
 ;;; definition.  Return a new environment which is like the one passed
 ;;; as an argument, except the it has been augmented by the name of
 ;;; the local function.
-(defun augment-environment-from-fdef (client
-                                      environment
-                                      definition-cst)
+(defun augment-environment-from-fdef (client environment definition-cst)
   (let ((name-cst (cst:first definition-cst)))
-    (augment-environment-with-local-function-name client
-                                                  name-cst
-                                                  environment)))
+    (augment-environment-with-local-function-name client name-cst environment)))
 
 ;;; Take an environment, a CST representing a list of function
 ;;; definitions, and return a new environment which is like the one
 ;;; passed as an argument, except that is has been augmented by the
 ;;; local function names in the list.
-(defun augment-environment-from-fdefs (client
-                                       environment
-                                       definitions-cst)
+(defun augment-environment-from-fdefs (client environment definitions-cst)
   (loop with result = environment
         for remaining = definitions-cst then (cst:rest remaining)
         until (cst:null remaining)
