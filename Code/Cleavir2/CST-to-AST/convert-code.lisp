@@ -69,7 +69,7 @@
      remaining-entries-in-group
      remaining-entries
      body
-     lexical-environment))
+     environment))
 
 ;;; Process all the parameters in the list PARAMETERS-IN-GROUP.  This
 ;;; function first computes a new environment by augmenting
@@ -91,7 +91,7 @@
      entries-in-group
      remaining-entries
      body
-     lexical-environment))
+     environment))
 
 ;;; This function first computes a new environment by augmenting
 ;;; ENVIRONMENT with information from the parameters in
@@ -111,7 +111,7 @@
      entries-in-group
      remaining-entries
      body
-     lexical-environment))
+     environment))
 
 ;;; Process all the parameters in the list of parameter groups
 ;;; PARAMETER-GROUPS.  This function returns two values.  The first
@@ -120,12 +120,7 @@
 ;;; the AST resulting from the processing of those parameters and of
 ;;; BODY.
 (defgeneric process-parameter-groups
-    (client
-     parameter-groups
-     idspecs
-     entries
-     body
-     lexical-envrironment))
+    (client parameter-groups idspecs entries body environment))
 
 (defmethod process-parameters-in-group
     (client
@@ -136,14 +131,14 @@
      entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (declare (ignore idspecs-in-group entries-in-group))
   (process-parameter-groups client
                             remaining-parameter-groups
                             remaining-idspecs
                             remaining-entries
                             body
-                            lexical-environment))
+                            environment))
 
 (defmethod process-parameters-in-group
     (client
@@ -154,7 +149,7 @@
      entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (process-parameter client
                      (car parameters-in-group)
                      (cdr parameters-in-group)
@@ -166,13 +161,10 @@
                      (cdr entries-in-group)
                      remaining-entries
                      body
-                     lexical-environment))
+                     environment))
 
 (defgeneric new-environment-from-parameter
-    (client
-     parameter
-     idspecs
-     lexical-environment))
+    (client parameter idspecs environment))
 
 ;;; This class is used to describe the body of a function.  It
 ;;; contains the declaration specifiers that apply to the body as a
@@ -187,27 +179,17 @@
     :cst cst))
 
 ;;; Convert the body of a function.
-(defun convert-body (client body lexical-environment)
+(defun convert-body (client body environment)
   (let ((new-env (augment-environment-with-declarations
-                  client lexical-environment (dspecs body))))
+                  client environment (dspecs body))))
     (convert client (body-cst body) new-env)))
 
 (defmethod process-parameter-groups
-    (client
-     (parameter-groups null)
-     idspecs
-     entries
-     body
-     lexical-environment)
-  (values (convert-body client body lexical-environment) '()))
+    (client (parameter-groups null) idspecs entries body environment)
+  (values (convert-body client body environment) '()))
 
 (defmethod process-parameter-groups
-    (client
-     (parameter-groups cons)
-     idspecs
-     entries
-     body
-     lexical-environment)
+    (client (parameter-groups cons) idspecs entries body environment)
   (process-parameter-group client
                            (car parameter-groups)
                            (cdr parameter-groups)
@@ -216,7 +198,7 @@
                            (car entries)
                            (cdr entries)
                            body
-                           lexical-environment))
+                           environment))
 
 (defmethod process-parameter-group
     (client
@@ -227,7 +209,7 @@
      entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (process-parameters-in-group client
                                (cst:parameters parameter-group)
                                remaining-parameter-groups
@@ -236,7 +218,7 @@
                                entries-in-group
                                remaining-entries
                                body
-                               lexical-environment))
+                               environment))
 
 (defmethod process-parameter-group
     (client
@@ -247,7 +229,7 @@
      entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (process-parameter client
                      (cst:parameter parameter-group)
                      '()
@@ -259,51 +241,27 @@
                      '()
                      remaining-entries
                      body
-                     lexical-environment))
+                     environment))
 
 (defmethod new-environment-from-parameter
-    (client
-     (parameter cst:simple-variable)
-     idspecs
-     lexical-environment)
-  (augment-environment-with-variable client
-                                     (cst:name parameter)
-                                     idspecs
-                                     lexical-environment
-                                     lexical-environment))
+    (client (parameter cst:simple-variable) idspecs environment)
+  (augment-environment-with-variable
+   client (cst:name parameter) idspecs environment environment))
 
 (defmethod new-environment-from-parameter
-    (client
-     (parameter cst:ordinary-key-parameter)
-     idspecs
-     lexical-environment)
-  (augment-environment-with-parameter client
-                                      (cst:name parameter)
-                                      (cst:supplied-p parameter)
-                                      idspecs
-                                      lexical-environment))
+    (client (parameter cst:ordinary-key-parameter) idspecs environment)
+  (augment-environment-with-parameter
+   client (cst:name parameter) (cst:supplied-p parameter) idspecs environment))
 
 (defmethod new-environment-from-parameter
-    (client
-     (parameter cst:ordinary-optional-parameter)
-     idspecs
-     lexical-environment)
-  (augment-environment-with-parameter client
-                                      (cst:name parameter)
-                                      (cst:supplied-p parameter)
-                                      idspecs
-                                      lexical-environment))
+    (client (parameter cst:ordinary-optional-parameter) idspecs environment)
+  (augment-environment-with-parameter
+   client (cst:name parameter) (cst:supplied-p parameter) idspecs environment))
 
 (defmethod new-environment-from-parameter
-    (client
-     (parameter cst:aux-parameter)
-     idspecs
-     lexical-environment)
-  (augment-environment-with-variable client
-                                     (cst:name parameter)
-                                     idspecs
-                                     lexical-environment
-                                     lexical-environment))
+    (client (parameter cst:aux-parameter) idspecs environment)
+  (augment-environment-with-variable
+   client (cst:name parameter) idspecs environment environment))
 
 (defmethod process-parameter
     (client
@@ -317,11 +275,11 @@
      remaining-entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (let ((new-env (new-environment-from-parameter client
                                                  parameter
                                                  idspecs
-                                                 lexical-environment)))
+                                                 environment)))
     (set-or-bind-variable
      client
      (cst:name parameter) lexical-ast
@@ -349,7 +307,7 @@
      remaining-entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
                             (make-atom-cst nil (cst:source var-cst))
@@ -358,10 +316,10 @@
          (new-env (new-environment-from-parameter client
                                                   parameter
                                                   idspecs
-                                                  lexical-environment))
+                                                  environment))
          (init-ast (convert client
                             init-form-cst
-                            lexical-environment)))
+                            environment)))
     (process-init-parameter
      client
      var-cst (first entry)
@@ -390,7 +348,7 @@
      remaining-entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (if (null (cst:form parameter))
                             (make-atom-cst nil (cst:source var-cst))
@@ -399,10 +357,10 @@
          (new-env (new-environment-from-parameter client
                                                   parameter
                                                   idspecs
-                                                  lexical-environment))
+                                                  environment))
          (init-ast (convert client
                             init-form-cst
-                            lexical-environment)))
+                            environment)))
     (process-init-parameter
      client
      var-cst (first entry)
@@ -431,18 +389,18 @@
      remaining-entries-in-group
      remaining-entries
      body
-     lexical-environment)
+     environment)
   (declare (ignore entry))
   (let* ((var-cst (cst:name parameter))
          (init-form-cst (cst:form parameter))
          (new-env (new-environment-from-parameter client
                                                   parameter
                                                   idspecs
-                                                  lexical-environment))
+                                                  environment))
          (init-ast (convert
                     client
                     init-form-cst
-                    lexical-environment)))
+                    environment)))
     (set-or-bind-variable
      client
      var-cst init-ast
@@ -480,11 +438,8 @@
                 (cst:cons block-name-cst forms-cst)
                 :source *origin*)))
 
-(defmethod convert-code (client
-                         lambda-list-cst
-                         body-cst
-                         lexical-environment
-                         &key (block-name-cst nil))
+(defmethod convert-code
+    (client lambda-list-cst body-cst environment &key (block-name-cst nil))
   (let ((parsed-lambda-list
           (cst:parse-ordinary-lambda-list client lambda-list-cst :error-p nil)))
     (when (null parsed-lambda-list)
@@ -513,7 +468,7 @@
                      idspecs
                      entries
                      (make-body rdspecs (cst-for-body forms-cst block-name-cst))
-                     lexical-environment)))
+                     environment)))
               (cleavir-ast:make-ast 'cleavir-ast:function-ast
                 :body-ast ast
                 :lambda-list lexical-lambda-list))))))))
