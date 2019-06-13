@@ -48,3 +48,6 @@
 (defgeneric convert-let (client cst environment))
 
 (defgeneric convert-let* (client cst environment))
+
+;;; This function returns the contents of the ORIGIN slot of an AST.
+(defgeneric origin (ast))
