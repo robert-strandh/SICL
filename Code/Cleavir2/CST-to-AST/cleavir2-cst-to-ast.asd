@@ -1,14 +1,14 @@
 (cl:in-package #:asdf-user)
 
-(defsystem :cleavir2-cst-to-ast
-  :depends-on (:concrete-syntax-tree
-               :concrete-syntax-tree-destructuring
-               :cleavir2-ast
-               :cleavir2-ast-transformations
-	       :cleavir-primop
-               :trucler-reference
-               :stealth-mixin
-               :acclimation)
+(defsystem #:cleavir2-cst-to-ast
+  :depends-on (#:concrete-syntax-tree
+               #:concrete-syntax-tree-destructuring
+               #:cleavir2-ast
+               #:cleavir2-ast-transformations
+               #:cleavir-primop
+               #:trucler-reference
+               #:stealth-mixin
+               #:acclimation)
   :serial t
   :components
   ((:file "packages")
