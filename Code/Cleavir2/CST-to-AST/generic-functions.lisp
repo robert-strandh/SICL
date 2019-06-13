@@ -1,20 +1,20 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defgeneric convert (client cst lexical-environment))
+(defgeneric convert (client cst environment))
 
-(defgeneric convert-cst (client cst info lexical-environment))
+(defgeneric convert-cst (client cst info environment))
 
-(defgeneric convert-special (client head cst lexical-environment))
+(defgeneric convert-special (client head cst environment))
 
 (defgeneric convert-special-binding
-    (client variable value-ast next-ast lexical-environment))
+    (client variable value-ast next-ast environment))
 
-(defgeneric convert-lambda-call (client cst lexical-environment))
+(defgeneric convert-lambda-call (client cst environment))
 
 (defgeneric convert-code
-    (client lambda-list body-cst lexical-environment &key block-name-cst))
+    (client lambda-list body-cst environment &key block-name-cst))
 
-(defgeneric convert-variable (client cst lexical-environment))
+(defgeneric convert-variable (client cst environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -30,10 +30,9 @@
 ;;; behavior by adding methods to this function, specialized to the
 ;;; particular client defined by that client code.
 
-(defgeneric convert-function-reference (client cst info lexical-environment))
+(defgeneric convert-function-reference (client cst info environment))
 
-(defgeneric convert-called-function-reference
-    (client cst info lexical-environment))
+(defgeneric convert-called-function-reference (client cst info environment))
 
 (defgeneric items-from-parameter-group (parameter-group))
 
@@ -41,11 +40,11 @@
 
 (defgeneric convert-special-variable (client cst info global-env))
 
-(defgeneric convert-setq (client var-cst form-cst info lexical-environment))
+(defgeneric convert-setq (client var-cst form-cst info environment))
 
 (defgeneric convert-setq-special-variable
     (client var-cst form-ast info global-env))
 
-(defgeneric convert-let (client cst lexical-environment))
+(defgeneric convert-let (client cst environment))
 
-(defgeneric convert-let* (client cst lexical-environment))
+(defgeneric convert-let* (client cst environment))
