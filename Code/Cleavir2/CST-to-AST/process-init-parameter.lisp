@@ -8,32 +8,28 @@
 ;;; testing whether SUPPLIED-P-AST computes NIL or T, and for
 ;;; assigning the value computed by VALUE-AST to VAR-AST if
 ;;; SUPPLIED-P-AST computes NIL.
-(defun make-initialization-ast (client
-                                var-ast
-                                supplied-p-ast
-                                value-ast
-                                lexical-environment
-                                origin)
+(defun make-initialization-ast
+    (client var-ast supplied-p-ast value-ast environment origin)
   (let ((nil-cst (make-atom-cst nil origin)))
     (cleavir-ast:make-ast 'cleavir-ast:if-ast
      :test-ast (cleavir-ast:make-ast 'cleavir-ast:eq-ast
                 :arg1-ast supplied-p-ast
                 :arg2-ast (convert-constant client
                            nil-cst
-                           lexical-environment))
+                           environment))
      :then-ast (cleavir-ast:make-ast 'cleavir-ast:setq-ast
                  :lhs-ast var-ast
                  :value-ast value-ast)
      :else-ast (convert-constant client
                 nil-cst
-                lexical-environment))))
+                environment))))
 
 ;;; VAR-CST and SUPPLIED-P-CST are CSTs representing a parameter
 ;;; variable and its associated SUPPLIED-P variable. If no associated
 ;;; SUPPLIED-P variable is present in the lambda list then
 ;;; SUPPLIED-P-CST is NIL.  INIT-AST is the AST that computes the
 ;;; value to be assigned to the variable represented by VAR-CST if no
-;;; argument was supplied for it.  LEXICAL-ENVIRONMENT is an environment that already
+;;; argument was supplied for it.  ENVIRONMENT is an environment that already
 ;;; contains the variables corresponding to VAR-CST and SUPPLIED-P-CST
 ;;; (if it is not NIL).
 ;;;
@@ -49,21 +45,17 @@
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
 (defun process-init-parameter (client
-                               var-cst
-                               var-ast
-                               supplied-p-cst
-                               supplied-p-ast
-                               init-ast
-                               lexical-environment
-                               body-function)
+			       var-cst
+			       var-ast
+			       supplied-p-cst
+			       supplied-p-ast
+			       init-ast
+			       environment
+			       body-function)
   (let ((origin (cst:source var-cst)))
     (process-progn
-     (list (make-initialization-ast client
-                                    var-ast
-                                    supplied-p-ast
-                                    init-ast
-                                    lexical-environment
-                                    origin)
+     (list (make-initialization-ast
+	    client var-ast supplied-p-ast init-ast environment origin)
            (set-or-bind-variable
             client
             var-cst var-ast
@@ -75,5 +67,5 @@
                    supplied-p-cst supplied-p-ast
                    (lambda ()
                      (funcall body-function))
-                   lexical-environment)))
-            lexical-environment)))))
+                   environment)))
+            environment)))))
