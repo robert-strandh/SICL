@@ -51,11 +51,6 @@
 ;;;
 ;;; Variables that control certain behavior of the compiler.
 
-;;; This variable should be bound by client code to one of the symbols
-;;; CL:COMPILE, CL:COMPILE-FILE, or CL:EVAL before the main entry
-;;; point is called.
-(defvar *compiler*)
-
 ;;; This variable should be bound to a true value if this system is
 ;;; called from teh file compiler.
 (defparameter *use-file-compilation-sematics-p* nil)
