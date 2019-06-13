@@ -12,10 +12,13 @@
          (cleavir-ast:make-ast 'cleavir-ast:constant-ast :value nil))
         ((null (rest asts))
          (first asts))
-        (t ;; Do some PROGN compression.
+        (t
+	 ;; Do some PROGN compression.  Remove a redundant AST only
+	 ;; if it does not have any ORIGIN information.
          (cleavir-ast:make-ast 'cleavir-ast:progn-ast
            :form-asts (loop for ast in asts
-                            if (typep ast 'cleavir-ast:progn-ast)
+                            if (and (typep ast 'cleavir-ast:progn-ast)
+				    (null (origin ast)))
                               append (cleavir-ast:form-asts ast)
                             else
                               collect ast)))))
