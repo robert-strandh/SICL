@@ -117,8 +117,6 @@
                                       compile load eval)))
                  (error 'invalid-eval-when-situation :cst situation-cst))))))
 
-(defparameter *use-file-compilation-sematics-p* nil)
-
 (defmethod convert-special
     (client (symbol (eql 'eval-when)) cst lexical-environment)
   (check-eval-when-syntax cst)

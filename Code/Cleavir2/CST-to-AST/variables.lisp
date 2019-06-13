@@ -56,6 +56,10 @@
 ;;; point is called.
 (defvar *compiler*)
 
+;;; This variable should be bound to a true value if this system is
+;;; called from teh file compiler.
+(defparameter *use-file-compilation-sematics-p* nil)
+
 ;;; This variable indicates whether a form should be evaluated in
 ;;; addition to be being processed by the compiler.
 (defvar *compile-time-too*)
