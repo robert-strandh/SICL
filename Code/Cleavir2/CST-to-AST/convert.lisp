@@ -1,9 +1,5 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-;;; During the conversion of a single CST, the value of this variable
-;;; is the source location of that CST.
-(defvar *origin*)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT is responsible for converting a concrete syntax tree to an

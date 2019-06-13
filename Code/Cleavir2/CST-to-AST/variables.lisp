@@ -59,3 +59,7 @@
 ;;; This variable indicates whether a form should be evaluated in
 ;;; addition to be being processed by the compiler.
 (defvar *compile-time-too*)
+
+;;; During the conversion of a single CST, the value of this variable
+;;; is the source location of that CST.
+(defvar *origin*)
