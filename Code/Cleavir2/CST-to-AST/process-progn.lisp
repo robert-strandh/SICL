@@ -2,8 +2,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Turn a list of ASTs into either a PROGN-AST or a CONSTANT-AST
-;;; containing NIL in case the list of ASTs is NIL.
+;;; Turn a list of ASTs into either a CONSTANT-AST if the list of ASTs
+;;; is empty, into the first AST in the list, if the list contains a
+;;; singleton element, or into a PROGN-AST with the list of ASTs as it
+;;; FORM-AST slot otherwise.
 
 (defun process-progn (asts)
   (cond ((null asts)
