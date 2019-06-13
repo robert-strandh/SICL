@@ -4,7 +4,7 @@
   (:use #:common-lisp)
   (:shadow #:eval)
   (:export #:cst-to-ast
-           #:*compiler*
+           #:*use-file-compilation-sematics-p*
            #:convert
            #:convert-constant
            #:convert-constant-to-immediate
@@ -12,9 +12,9 @@
            #:convert-special-binding
            #:convert-special-variable
            #:convert-variable
-	   #:convert-function-reference
+           #:convert-function-reference
            #:convert-called-function-reference
-	   #:convert-global-function-reference
+           #:convert-global-function-reference
            #:convert-code
            #:convert-setq-special-variable
            #:convert-setq
