@@ -1,29 +1,29 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
 (defun symbol-macro-expander (expansion)
-  (lambda (form env)
-    (declare (ignore form env))
+  (lambda (form environment)
+    (declare (ignore form environment))
     expansion))
 
-(defun expand (expander form env)
+(defun expand (expander form environment)
   (funcall (coerce *macroexpand-hook* 'function)
-           expander form env))
+           expander form environment))
 
-(defun expand-macro (expander cst env)
+(defun expand-macro (expander cst environment)
   (with-encapsulated-conditions
       (cst macroexpansion-error
            macroexpansion-warning
            macroexpansion-style-warning)
-    (expand expander (cst:raw cst) env)))
+    (expand expander (cst:raw cst) environment)))
 
-(defun expand-compiler-macro (expander cst env)
+(defun expand-compiler-macro (expander cst environment)
   (let ((form (cst:raw cst)))
     (restart-case
         (with-encapsulated-conditions
             (cst compiler-macro-expansion-error
                  compiler-macro-expansion-warning
                  compiler-macro-expansion-style-warning)
-          (expand expander form env))
+          (expand expander form environment))
       (continue ()
         :report "Ignore compiler macro."
         (return-from expand-compiler-macro form)))))
