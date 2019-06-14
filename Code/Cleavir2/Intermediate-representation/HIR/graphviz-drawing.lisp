@@ -47,16 +47,6 @@
   (format stream "   ~a [fillcolor = aquamarine, label = \"~a\"]~%"
 	  (datum-id datum) (value datum)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing datum LOAD-TIME-VALUE-INPUT.
-
-(defmethod draw-datum ((datum load-time-value-input) stream)
-  (format stream "  ~a [shape = box, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = orange, label = \"~s\"]~%"
-	  (datum-id datum) (form datum)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing instructions.

@@ -116,16 +116,3 @@
 (defun make-immediate-input (value)
   (make-instance 'immediate-input
     :value value))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class LOAD-TIME-VALUE-INPUT.
-
-(defclass load-time-value-input (datum)
-  ((%form :initarg :form :reader form)
-   (%read-only-p :initarg :read-only-p :reader read-only-p)))
-
-(defun make-load-time-value-input (form &optional read-only-p)
-  (make-instance 'load-time-value-input
-    :form form
-    :read-only-p read-only-p))
