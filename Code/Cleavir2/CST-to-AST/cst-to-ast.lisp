@@ -8,7 +8,7 @@
 
 (defun cst-to-ast (client cst lexical-environment)
   (let ((*subforms-are-top-level-p* t)
-	(*compile-time-too* nil)
+        (*compile-time-too* nil)
         (trucler-environment
           (make-instance 'trucler-reference:environment
             :global-environment lexical-environment)))
