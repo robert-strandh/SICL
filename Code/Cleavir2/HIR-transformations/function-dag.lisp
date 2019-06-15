@@ -22,7 +22,7 @@
 
 (defclass function-dag (dag-node)
   ((%initial-instruction :initarg :initial-instruction
-			 :reader initial-instruction)
+                         :reader initial-instruction)
    (%dag-nodes :initarg :dag-nodes :reader dag-nodes)))
 
 (defmethod enter-instruction ((node function-dag))
@@ -31,33 +31,33 @@
 (defclass interior-node (dag-node)
   ((%parents :initarg :parents :accessor parents)
    (%enclose-instruction :initarg :enclose-instruction
-			 :reader enclose-instruction)))
+                         :reader enclose-instruction)))
 
 (defmethod enter-instruction ((node interior-node))
   (cleavir-ir:code (enclose-instruction node)))
 
 (defun build-function-dag (initial-instruction)
   (let* (;; Create an EQ hash table that maps ENTER-INSTRUCTIONs to
-	 ;; tree nodes such that the tree node is either the root, or
-	 ;; it contains the ENCLOSE-INSTRUCTION that the
-	 ;; ENTER-INSTRUCTION is associated with.
-	 (table (make-hash-table :test #'eq))
-	 ;; Create the root of the tree that is ultimately going to be
-	 ;; returned as the value of this function.
-	 (root (make-instance 'function-dag
-		 :dag-nodes table
-		 :initial-instruction initial-instruction)))
+         ;; tree nodes such that the tree node is either the root, or
+         ;; it contains the ENCLOSE-INSTRUCTION that the
+         ;; ENTER-INSTRUCTION is associated with.
+         (table (make-hash-table :test #'eq))
+         ;; Create the root of the tree that is ultimately going to be
+         ;; returned as the value of this function.
+         (root (make-instance 'function-dag
+                 :dag-nodes table
+                 :initial-instruction initial-instruction)))
     ;; Enter the root into the table.
     (setf (gethash initial-instruction table) (list root))
     (cleavir-ir:map-instructions-with-owner
      (lambda (instruction owner)
        (when (typep instruction 'cleavir-ir:enclose-instruction)
-	 (let* ((parents (gethash owner table))
-		(node (make-instance 'interior-node
-			:parents parents
-			:enclose-instruction instruction)))
-	   (loop for parent in parents
+         (let* ((parents (gethash owner table))
+                (node (make-instance 'interior-node
+                        :parents parents
+                        :enclose-instruction instruction)))
+           (loop for parent in parents
                  do (push node (children parent)))
-	   (push node (gethash (cleavir-ir:code instruction) table nil)))))
+           (push node (gethash (cleavir-ir:code instruction) table nil)))))
      initial-instruction)
     root))
