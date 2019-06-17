@@ -649,8 +649,8 @@ The ASTs in this section can be used by implementation that want to
 inline floating-point arithmetic.  There are four families of ASTs,
 one for each type of floating-point precision defined by the \hs{}.
 
-\subsubsection{\texttt{short-float-add-ast}}
-\label{sec-ast-short-float-add}
+\subsubsection{\texttt{float-add-ast}}
+\label{sec-ast-float-add}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -662,15 +662,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
-values.  The value of this AST is the short-float value
+The arguments of this AST must evaluate to float
+values.  The value of this AST is the float value
 representing the sum of the two arguments.
 
-\subsubsection{\texttt{short-float-sub-ast}}
-\label{sec-ast-short-float-sub}
+\subsubsection{\texttt{float-sub-ast}}
+\label{sec-ast-float-sub}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -682,15 +682,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
-values.  The value of this AST is the short-float value
+The arguments of this AST must evaluate to float
+values.  The value of this AST is the float value
 representing the difference of the two arguments.
 
-\subsubsection{\texttt{short-float-mul-ast}}
-\label{sec-ast-short-float-mul}
+\subsubsection{\texttt{float-mul-ast}}
+\label{sec-ast-float-mul}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -702,15 +702,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
-values.  The value of this AST is the short-float value
+The arguments of this AST must evaluate to float
+values.  The value of this AST is the float value
 representing the product of the two arguments.
 
-\subsubsection{\texttt{short-float-div-ast}}
-\label{sec-ast-short-float-div}
+\subsubsection{\texttt{float-div-ast}}
+\label{sec-ast-float-div}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -722,15 +722,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
-values.  The value of this AST is the short-float value
+The arguments of this AST must evaluate to float
+values.  The value of this AST is the float value
 representing the quotient of the two arguments.
 
-\subsubsection{\texttt{short-float-less-ast}}
-\label{sec-ast-short-float-less}
+\subsubsection{\texttt{float-less-ast}}
+\label{sec-ast-float-less}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -742,15 +742,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
+The arguments of this AST must evaluate to float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
-\subsubsection{\texttt{short-float-not-greater-ast}}
-\label{sec-ast-short-float-not-greater}
+\subsubsection{\texttt{float-not-greater-ast}}
+\label{sec-ast-float-not-greater}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -762,15 +762,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
+The arguments of this AST must evaluate to float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
-\subsubsection{\texttt{short-float-greater-ast}}
-\label{sec-ast-short-float-greater}
+\subsubsection{\texttt{float-greater-ast}}
+\label{sec-ast-float-greater}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -782,15 +782,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
+The arguments of this AST must evaluate to float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
-\subsubsection{\texttt{short-float-not-less-ast}}
-\label{sec-ast-short-float-not-less}
+\subsubsection{\texttt{float-not-less-ast}}
+\label{sec-ast-float-not-less}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -802,15 +802,15 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
+The arguments of this AST must evaluate to float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
-\subsubsection{\texttt{short-float-equal-ast}}
-\label{sec-ast-short-float-equal}
+\subsubsection{\texttt{float-equal-ast}}
+\label{sec-ast-float-equal}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -822,523 +822,10 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the short-float
+This AST can be used by implementation that support the float
 floating-point data type.  
 
-The arguments of this AST must evaluate to short-float
-values.  The value is a Boolean indicating whether the first argument
-is equal to the second argument.
-
-\subsubsection{\texttt{single-float-add-ast}}
-\label{sec-ast-single-float-add}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value of this AST is the single-float value
-representing the sum of the two arguments.
-
-\subsubsection{\texttt{single-float-sub-ast}}
-\label{sec-ast-single-float-sub}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value of this AST is the single-float value
-representing the difference of the two arguments.
-
-\subsubsection{\texttt{single-float-mul-ast}}
-\label{sec-ast-single-float-mul}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value of this AST is the single-float value
-representing the product of the two arguments.
-
-\subsubsection{\texttt{single-float-div-ast}}
-\label{sec-ast-single-float-div}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value of this AST is the single-float value
-representing the quotient of the two arguments.
-
-\subsubsection{\texttt{single-float-less-ast}}
-\label{sec-ast-single-float-less}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value is a Boolean indicating whether the first argument
-is strictly less than the second argument.
-
-\subsubsection{\texttt{single-float-not-greater-ast}}
-\label{sec-ast-single-float-not-greater}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value is a Boolean indicating whether the first argument
-is less than or equal to the second argument.
-
-\subsubsection{\texttt{single-float-greater-ast}}
-\label{sec-ast-single-float-greater}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value is a Boolean indicating whether the first argument
-is strictly greater than the second argument.
-
-\subsubsection{\texttt{single-float-not-less-ast}}
-\label{sec-ast-single-float-not-less}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value is a Boolean indicating whether the first argument
-is greater than or equal to the second argument.
-
-\subsubsection{\texttt{single-float-equal-ast}}
-\label{sec-ast-single-float-equal}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-The arguments of this AST must evaluate to single-float
-values.  The value is a Boolean indicating whether the first argument
-is equal to the second argument.
-
-\subsubsection{\texttt{double-float-add-ast}}
-\label{sec-ast-double-float-add}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value of this AST is the double-float value
-representing the sum of the two arguments.
-
-\subsubsection{\texttt{double-float-sub-ast}}
-\label{sec-ast-double-float-sub}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value of this AST is the double-float value
-representing the difference of the two arguments.
-
-\subsubsection{\texttt{double-float-mul-ast}}
-\label{sec-ast-double-float-mul}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value of this AST is the double-float value
-representing the product of the two arguments.
-
-\subsubsection{\texttt{double-float-div-ast}}
-\label{sec-ast-double-float-div}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value of this AST is the double-float value
-representing the quotient of the two arguments.
-
-\subsubsection{\texttt{double-float-less-ast}}
-\label{sec-ast-double-float-less}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value is a Boolean indicating whether the first argument
-is strictly less than the second argument.
-
-\subsubsection{\texttt{double-float-not-greater-ast}}
-\label{sec-ast-double-float-not-greater}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value is a Boolean indicating whether the first argument
-is less than or equal to the second argument.
-
-\subsubsection{\texttt{double-float-greater-ast}}
-\label{sec-ast-double-float-greater}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value is a Boolean indicating whether the first argument
-is strictly greater than the second argument.
-
-\subsubsection{\texttt{double-float-not-less-ast}}
-\label{sec-ast-double-float-not-less}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value is a Boolean indicating whether the first argument
-is greater than or equal to the second argument.
-
-\subsubsection{\texttt{double-float-equal-ast}}
-\label{sec-ast-double-float-equal}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to double-float
-values.  The value is a Boolean indicating whether the first argument
-is equal to the second argument.
-
-\subsubsection{\texttt{long-float-add-ast}}
-\label{sec-ast-long-float-add}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value of this AST is the long-float value
-representing the sum of the two arguments.
-
-\subsubsection{\texttt{long-float-sub-ast}}
-\label{sec-ast-long-float-sub}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value of this AST is the long-float value
-representing the difference of the two arguments.
-
-\subsubsection{\texttt{long-float-mul-ast}}
-\label{sec-ast-long-float-mul}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value of this AST is the long-float value
-representing the product of the two arguments.
-
-\subsubsection{\texttt{long-float-div-ast}}
-\label{sec-ast-long-float-div}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value of this AST is the long-float value
-representing the quotient of the two arguments.
-
-\subsubsection{\texttt{long-float-less-ast}}
-\label{sec-ast-long-float-less}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value is a Boolean indicating whether the first argument
-is strictly less than the second argument.
-
-\subsubsection{\texttt{long-float-not-greater-ast}}
-\label{sec-ast-long-float-not-greater}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value is a Boolean indicating whether the first argument
-is less than or equal to the second argument.
-
-\subsubsection{\texttt{long-float-greater-ast}}
-\label{sec-ast-long-float-greater}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value is a Boolean indicating whether the first argument
-is strictly greater than the second argument.
-
-\subsubsection{\texttt{long-float-not-less-ast}}
-\label{sec-ast-long-float-not-less}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
-values.  The value is a Boolean indicating whether the first argument
-is greater than or equal to the second argument.
-
-\subsubsection{\texttt{long-float-equal-ast}}
-\label{sec-ast-long-float-equal}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
-\hline
-\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The arguments of this AST must evaluate to long-float
+The arguments of this AST must evaluate to float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
 
