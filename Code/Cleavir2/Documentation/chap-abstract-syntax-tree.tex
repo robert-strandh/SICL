@@ -278,19 +278,17 @@ The \texttt{if-ast} corresponds directly to the \commonlisp{} special operator
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:form} & \texttt{form} & The form.\\
+\texttt{:form-ast} & \texttt{form-ast} & The AST of the form.\\
 \texttt{:read-only-p} & \texttt{read-only-p} & The read-only-p argument.\\
 \hline
 \end{tabular}
 
 A \texttt{load-time-value-ast} is produced whenever the compiler sees
-a \texttt{load-time-value} special form, but also when it sees a
-\emph{constant} and processing is done by \texttt{compile-file},
-rather than by \texttt{compile} or \texttt{eval}.  
+a \texttt{load-time-value} special form.
 
-This AST always contains a \emph{form}, so that if it is the result of
-a \emph{constant}, then it is wrapped in a \texttt{quote} special
-form. 
+This AST always contains a \emph{form-ast}, which is the result of the
+translation of the \texttt{form} argument to the
+\texttt{load-time-value} special operator.
 
 \subsubsection{\texttt{progn-ast}}
 \label{progn-ast}
