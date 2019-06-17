@@ -12,27 +12,27 @@ environment has been eliminated.%
 \footnote{More traditional languages use the term \emph{abstract
     syntax tree} for a notation that is much closer to the source code
   than the notation we use here.}
-An abstract syntax tree consists of
-a graph of class instances.  Each class corresponds to some intrinsic
-category of source code elements.
+An abstract syntax tree consists of a graph of standard objects.  Each
+object class corresponds to some intrinsic category of source code
+elements.
 
-Every lexical variable has been replaced by a class instance that
+Every lexical variable has been replaced by a standard object that
 contains its name, but different variables with the same name in the
-source code are represented by different instances.  Global functions
-and special variables are similarly represented by class instances
-that contain the name of the function or variable.  Since different
-lexical variables with different names are represented by different
-instances, there is no need for scoping operators such as
-\texttt{let} or \texttt{let*}, which is why there are no classes that
-correspond to these source constructs.  
+source code are represented by different object instances.  Global
+functions and special variables are similarly represented by standard
+objects that contain the name of the function or variable.  Since
+different lexical variables with different names are represented by
+different object instances, there is no need for scoping operators
+such as \texttt{let} or \texttt{let*}, which is why there are no
+classes that correspond to these source constructs.
 
 Macros and symbol macros have been expanded so that the only operators
 that remain are special operators and global functions.  
 
-There are no classes that correspond to declarations.  Implementations
-should replace type declarations by the use of instances of the
-\texttt{the-ast} class or the \texttt{typeq-ast} class as indicated by
-the \hs{}.
+There are no AST classes that correspond to declarations.
+Implementations should replace type declarations by the use of
+instances of the \texttt{the-ast} class or the \texttt{typeq-ast}
+class as indicated by the \hs{}.
 
 Functions that can not be expressed as simpler functions, and that are
 performance critical, have been given their own abstract syntax trees.
@@ -49,7 +49,7 @@ Implementations are free to create subclasses of the AST classes
 listed here, for instance in order to add additional information to
 AST nodes.  In that case, it might be necessary to provide overriding
 or extending methods on the generic functions that handle the abstract
-syntax tree, in particular when it is translated into MIR.  
+syntax tree, in particular when it is translated into HIR.
 
 Implementations are also free to create entirely new AST classes.
 Then it might be necessary to provide primary methods on some generic
