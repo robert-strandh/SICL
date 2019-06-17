@@ -298,135 +298,103 @@ then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\Defprimop{short-float-add} {}
+\Defprimop{float-add} {}
+
+\def\ittakesthree{It takes three arguments.  The
+first one is a floating-point type and it is not evaluated.  The
+second and the third arguments are both forms that must evaluate to
+floats of the type indicated by the first argument.}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{+}.  It takes two arguments, both forms
-that must evaluate to short floats.
+\commonlisp{} function \texttt{+}.  \ittakesthree{}
 
-The value of a form with this operator is a short float
-representing the sum of the two arguments.
-
-If the result of the operation is greater than the value of the
-constant variable \texttt{most-positive-short-float}, then an error of
-type \texttt{floating-point-overflow} is signaled.
-
-If the result of the operation is less than the value of the
-constant variable \texttt{most-negative-short-float}, then an error of
-type \texttt{floating-point-underflow} is signaled.
-
-\Defprimop{short-float-sub} {}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{-}.  It takes two arguments, both forms
-that must evaluate to short floats.
-
-The value of a form with this operator is a short float
-representing the difference of the two arguments.
+The value of a form with this operator is a float of the type
+indicated by the first argument, representing the sum of the second
+and the third arguments.
 
 If the result of the operation is greater than the value of the
-constant variable \texttt{most-positive-short-float}, then an error of
-type \texttt{floating-point-overflow} is signaled.
-
-If the result of the operation is less than the value of the
-constant variable \texttt{most-negative-short-float}, then an error of
-type \texttt{floating-point-underflow} is signaled.
-
-\Defprimop{short-float-mul} {}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{*}.  It takes two arguments, both forms
-that must evaluate to short floats.
-
-The value of a form with this operator is a short float
-representing the product of the two arguments.
-
-If the result of the operation is greater than the value of the
-constant variable \texttt{most-positive-short-float}, then an error of
-type \texttt{floating-point-overflow} is signaled.
+constant variable that contains the most positive floating-point value
+of the type indicated by the first argument, then an error of type
+\texttt{floating-point-overflow} is signaled.
 
 If the result of the operation is less than the value of the constant
-variable \texttt{most-negative-short-float}, then an error of type
+variable that contains the most negative floating-point value of the
+type indicated by the first argument, then an error of type
 \texttt{floating-point-underflow} is signaled.
 
-\Defprimop{short-float-div} {}
+\Defprimop{float-sub} {}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{/}.  It takes two arguments, both forms
-that must evaluate to short floats.
+\commonlisp{} function \texttt{-}.  \ittakesthree{}
 
-The value of a form with this operator is a short float
-representing the quotient of the two arguments.
-
-If the result of the operation is greater than the value of the
-constant variable \texttt{most-positive-short-float}, then an error of
-type \texttt{floating-point-overflow} is signaled.
-
-If the result of the operation is less than the value of the constant
-variable \texttt{most-negative-short-float}, then an error of type
-\texttt{floating-point-underflow} is signaled.
-
-\Defprimop{short-float-less} {}
+\Defprimop{float-mul} {}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{<}.  It takes two arguments, both forms
-that must evaluate to short floats.  It can only appear as the
-\emph{test-form} in the special form \texttt{if}.
+\commonlisp{} function \texttt{*}.  \ittakesthree{}
+
+\Defprimop{float-div} {}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{/}.  \ittakesthree{}
+
+\Defprimop{float-less} {}
+
+This primitive operation is used in the implementation of the
+\commonlisp{} function \texttt{<}.  \ittakesthree{}
+It can only appear as the \emph{test-form} in the special form
+\texttt{if}.
 
 If the first argument is strictly less than the second argument, then
 the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\Defprimop{short-float-not-greater} {}
+\Defprimop{float-not-greater} {}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{<=}.  It takes two arguments, both forms
-that must evaluate to short floats.  It can only appear as the
-\emph{test-form} in the special form \texttt{if}.
+\commonlisp{} function \texttt{<=}.  \ittakesthree{}
+It can only appear as the \emph{test-form} in the special form
+\texttt{if}.
 
 If the first argument is less than or equal to the second argument,
 then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\Defprimop{short-float-greater} {}
+\Defprimop{float-greater} {}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{>}.  It takes two arguments, both forms
-that must evaluate to short floats.  It can only appear as the
-\emph{test-form} in the special form \texttt{if}.
+\commonlisp{} function \texttt{>}.  \ittakesthree{} It can only appear
+as the \emph{test-form} in the special form \texttt{if}.
 
 If the first argument is strictly greater than the second argument,
 then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\Defprimop{short-float-not-less} {}
+\Defprimop{float-not-less} {}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{>=}.  It takes two arguments, both forms
-that must evaluate to short floats.  It can only appear as the
-\emph{test-form} in the special form \texttt{if}.
+\commonlisp{} function \texttt{>=}.  \ittakesthree{} It can only appear
+as the \emph{test-form} in the special form \texttt{if}.
 
 If the first argument is greater than or equal to the second argument,
 then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\Defprimop{short-float-equal} {}
+\Defprimop{float-equal} {}
 
 This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{=}.  It takes two arguments, both forms
-that must evaluate to short floats.  It can only appear as the
-\emph{test-form} in the special form \texttt{if}.
+\commonlisp{} function \texttt{=}.  \ittakesthree{} It can only appear
+as the \emph{test-form} in the special form \texttt{if}.
 
 If the first argument is numerically equal to the second argument,
 then the \emph{then} branch of the \texttt{if} form is evaluated.
 Otherwise, the \emph{else} branch of the \texttt{if} form is
 evaluated.
 
-\Defprimop{short-float-sin} {}
+\Defprimop{float-sin} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sin}.  It takes a single argument which
@@ -438,7 +406,7 @@ the \emph{sine} of the argument.
 This operation always succeeds, since the value of the \texttt{sin}
 function is always in the range allowed by short floats.
 
-\Defprimop{short-float-cos} {}
+\Defprimop{float-cos} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{cos}.  It takes a single argument which
@@ -450,7 +418,7 @@ the \emph{cosine} of the argument.
 This operation always succeeds, since the value of the \texttt{cos}
 function is always in the range allowed by short floats.
 
-\Defprimop{short-float-sqrt} {}
+\Defprimop{float-sqrt} {}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{sqrt}.  It takes a single argument which
@@ -1041,7 +1009,7 @@ Forms using this primitive operation must occur in a context that does
 not require a value, such as in a \texttt{progn} other than as the
 last form.
 
-\Defprimop{short-float-aref} {array index}
+\Defprimop{float-aref} {array index}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{aref}.  The \textit{array} argument is
@@ -1053,7 +1021,7 @@ evaluate to a fixnum.  It represents a valid row-major index into
 This primitive operation returns the short float value at
 \textit{index} in \textit{array}.
 
-\Defprimop{short-float-aset} {array index short-float}
+\Defprimop{float-aset} {array index float}
 
 This primitive operation is used in the implementation of the
 \commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
@@ -1068,91 +1036,6 @@ in \textit{array}.
 Forms using this primitive operation must occur in a context that does
 not require a value, such as in a \texttt{progn} other than as the
 last form.
-
-\Defprimop{single-float-aref} {array index}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{aref}.  The \textit{array} argument is
-a form that must evaluate to a specialized array with element type
-\texttt{single-float}.  The \texttt{index} argument is a form that
-must evaluate to a fixnum.  It represents a valid row-major index into
-\textit{array}.
-
-This primitive operation returns the single float value at
-\textit{index} in \textit{array}.
-
-\Defprimop{single-float-aset} {array index single-float}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
-argument is a form that must evaluate to a specialized array with
-element type \texttt{single-float}.  The \texttt{index} argument is a
-form that must evaluate to a fixnum.  It represents a valid row-major
-index into \textit{array}.
-
-This primitive operation stores \textit{single-float} at
-\textit{index} in \textit{array}.
-
-Forms using this primitive operation must occur in a context that does
-not require a value, such as in a \texttt{progn} other than as the
-last form.
-
-\Defprimop{double-float-aref} {array index}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{aref}.  The \textit{array} argument is
-a form that must evaluate to a specialized array with element type
-\texttt{double-float}.  The \texttt{index} argument is a form that must
-evaluate to a fixnum.  It represents a valid row-major index into
-\textit{array}.
-
-This primitive operation returns the double float value at
-\textit{index} in \textit{array}.
-
-\Defprimop{double-float-aset} {array index double-float}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
-argument is a form that must evaluate to a specialized array with
-element type \texttt{double-float}.  The \texttt{index} argument is a
-form that must evaluate to a fixnum.  It represents a valid row-major
-index into \textit{array}.
-
-This primitive operation stores \textit{double-float} at \textit{index}
-in \textit{array}.
-
-Forms using this primitive operation must occur in a context that does
-not require a value, such as in a \texttt{progn} other than as the
-last form.
-
-\Defprimop{long-float-aref} {array index}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{aref}.  The \textit{array} argument is
-a form that must evaluate to a specialized array with element type
-\texttt{long-float}.  The \texttt{index} argument is a form that must
-evaluate to a fixnum.  It represents a valid row-major index into
-\textit{array}.
-
-This primitive operation returns the long float value at
-\textit{index} in \textit{array}.
-
-\Defprimop{long-float-aset} {array index long-float}
-
-This primitive operation is used in the implementation of the
-\commonlisp{} function \texttt{(setf aref)}.  The \textit{array}
-argument is a form that must evaluate to a specialized array with
-element type \texttt{long-float}.  The \texttt{index} argument is a
-form that must evaluate to a fixnum.  It represents a valid row-major
-index into \textit{array}.
-
-This primitive operation stores \textit{long-float} at \textit{index}
-in \textit{array}.
-
-Forms using this primitive operation must occur in a context that does
-not require a value, such as in a \texttt{progn} other than as the
-last form.
-
 \Defprimop{bit-aref} {array index}
 
 This primitive operation is used in the implementation of the
