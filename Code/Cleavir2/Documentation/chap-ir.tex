@@ -270,17 +270,6 @@ instructions following the \texttt{enter-instruction} are responsible
 for binding special variables and assigning default values to
 unsupplied \texttt{\&optional} and \texttt{\&key} parameters.
 
-\refFig{fig-enter-instruction} shows the Graphviz illustration of the
-\texttt{enter-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-enter-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-enter-instruction}
-\texttt{enter-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{nop-instruction}}
 \label{hir-instruction-nop}
 
@@ -302,17 +291,6 @@ instructions.  This way, these transformations do not have to be
 concerned with complex updates of the graph.  Instead a dedicated
 transformation for removing all \texttt{nop-instruction}s is provided.
 
-\refFig{fig-nop-instruction} shows the Graphviz illustration of the
-\texttt{nop-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-nop-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-nop-instruction}
-\texttt{nop-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{assignment-instruction}}
 \label{hir-instruction-assignment}
 
@@ -330,17 +308,6 @@ Number of successors & 1\\
 
 The execution of this instruction results in the input being copied to
 the output without any modification. 
-
-\refFig{fig-assignment-instruction} shows the Graphviz illustration of the
-\texttt{assignment-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-assignment-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-assignment-instruction}
-\texttt{assignment-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{funcall-instruction}}
 \label{hir-instruction-funcall}
@@ -363,17 +330,6 @@ to the callee.
 
 The single output of this instruction is a values location,
 corresponding to the values returned by the callee.
-
-\refFig{fig-funcall-instruction} shows the Graphviz illustration of the
-\texttt{funcall-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-funcall-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-funcall-instruction}
-\texttt{funcall-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{funcall-no-return-instruction}}
 \label{hir-instruction-funcall-no-return}
@@ -423,17 +379,6 @@ immediately followed by a \texttt{return-instruction} such that the
 output of the \texttt{funcall-instruction} is the input of the
 \texttt{return-instruction}.
 
-\refFig{fig-tailcall-instruction} shows the Graphviz illustration of the
-\texttt{tailcall-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-tailcall-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-tailcall-instruction}
-\texttt{tailcall-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{return-instruction}}
 \label{hir-instruction-return}
 
@@ -454,17 +399,6 @@ the values transmitted to the caller.
 
 It terminates execution of the current function and returns to the
 caller. 
-
-\refFig{fig-return-instruction} shows the Graphviz illustration of the
-\texttt{return-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-return-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-return-instruction}
-\texttt{return-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{enclose-instruction}}
 \label{hir-instruction-enclose}
@@ -488,17 +422,6 @@ instructions because it is another instruction, namely an
 The instruction takes the instruction graph of the input and creates a
 \emph{closure}.  The closure contains the current lexical runtime
 environment and the code resulting from the input instruction graph.
-
-\refFig{fig-enclose-instruction} shows the Graphviz illustration of the
-\texttt{enclose-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-enclose-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-enclose-instruction}
-\texttt{enclose-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{fdefinition-instruction}}
 \label{hir-instruction-fdefinition}
@@ -537,17 +460,6 @@ The inputs to this instruction are two arbitrary \commonlisp{}
 objects.  The first successor is chosen if the values of the inputs
 are identical.  Otherwise, the second successor is chosen.
 
-\refFig{fig-eq-instruction} shows the Graphviz illustration of the
-\texttt{eq-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-eq-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-eq-instruction}
-\texttt{eq-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{car-instruction}}
 \label{hir-instruction-car}
 
@@ -568,17 +480,6 @@ consequences are undefined if this is not the case.  For that reason,
 \emph{safe} code should have additional instructions inserted to
 ensure that this condition is respected.  The output is the contents
 of the \texttt{car} of the \texttt{cons} cell.
-
-\refFig{fig-car-instruction} shows the Graphviz illustration of the
-\texttt{car-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-car-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-car-instruction}
-\texttt{car-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{consp-instruction}}
 \label{hir-instruction-car}
@@ -608,17 +509,6 @@ way of testing whether an object is a \texttt{cons} cell can then turn
 a \texttt{typeq-instruction} with a type of \texttt{cons} into a
 \texttt{consp-instruction}.
 
-\refFig{fig-consp-instruction} shows the Graphviz illustration of the
-\texttt{consp-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-consp-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-consp-instruction}
-\texttt{consp-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{cdr-instruction}}
 \label{hir-instruction-cdr}
 
@@ -639,17 +529,6 @@ consequences are undefined if this is not the case.  For that reason,
 \emph{safe} code should have additional instructions inserted to
 ensure that this condition is respected.  The output is the contents
 of the \texttt{cdr} of the \texttt{cons} cell.
-
-\refFig{fig-cdr-instruction} shows the Graphviz illustration of the
-\texttt{cdr-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-cdr-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-cdr-instruction}
-\texttt{cdr-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{rplaca-instruction}}
 \label{hir-instruction-rplaca}
@@ -673,17 +552,6 @@ ensure that this condition is respected.  The second input can be any
 object.  The effect of the instruction is to replace the contents of
 the \texttt{car} of the \texttt{cons} cell by the second input.
 
-\refFig{fig-rplaca-instruction} shows the Graphviz illustration of the
-\texttt{rplaca-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-rplaca-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-rplaca-instruction}
-\texttt{rplaca-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{rplacd-instruction}}
 \label{hir-instruction-rplacd}
 
@@ -705,17 +573,6 @@ consequences are undefined if this is not the case.  For that reason,
 ensure that this condition is respected.  The second input can be any
 object.  The effect of the instruction is to replace the contents of
 the \texttt{cdr} of the \texttt{cons} cell by the second input.
-
-\refFig{fig-rplacd-instruction} shows the Graphviz illustration of the
-\texttt{rplacd-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-rplacd-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-rplacd-instruction}
-\texttt{rplacd-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{slot-read-instruction}}
 \label{hir-instruction-slot-read}
@@ -740,17 +597,6 @@ to ensure that this condition is respected.  The second input is a
 non-negative fixnum indicating the \emph{index} of the slot in the
 instance.  The output is the contents of the corresponding slot.
 
-\refFig{fig-slot-read-instruction} shows the Graphviz illustration of the
-\texttt{slot-read-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-slot-read-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-slot-read-instruction}
-\texttt{slot-read-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{slot-write-instruction}}
 \label{hir-instruction-slot-write}
 
@@ -774,17 +620,6 @@ to ensure that this condition is respected.  The second input is a
 fixnum indicating the \emph{index} of the slot in the instance.  The
 third input can be any object.  The effect of the instruction is to
 replace the contents of the corresponding slot by the third input.
-
-\refFig{fig-slot-write-instruction} shows the Graphviz illustration of the
-\texttt{slot-write-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-slot-write-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-slot-write-instruction}
-\texttt{slot-write-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{aref-instruction}}
 \label{hir-instruction-aref}
@@ -825,17 +660,6 @@ the corresponding element of the array.
 The output may be \emph{unboxed}, depending on the implementation
 and element-type.  If the output is unboxed, it must be used only in
 contexts where values of this type are permitted.
-
-\refFig{fig-aref-instruction} shows the Graphviz illustration of the
-\texttt{aref-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-aref-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-aref-instruction}
-\texttt{aref-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{aset-instruction}}
 \label{hir-instruction-aset}
@@ -906,17 +730,6 @@ way of testing whether an object is a \texttt{fixnum} can then turn
 a \texttt{typeq-instruction} with a type of \texttt{fixnum} into a
 \texttt{fixnump-instruction}.
 
-\refFig{fig-fixnump-instruction} shows the Graphviz illustration of the
-\texttt{fixnump-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-fixnump-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-fixnump-instruction}
-\texttt{fixnump-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{fixnum-add-instruction}}
 \label{hir-instruction-fixnum-add}
 
@@ -954,17 +767,6 @@ the two inputs, the following adjustment has to be made:
 
 The second successor is typically a \texttt{funcall-instruction} to
 some function that accomplishes this adjustment and returns a bignum.
-
-\refFig{fig-fixnum-add-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-add-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-fixnum-add-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-fixnum-add-instruction}
-\texttt{fixnum-add-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{fixnum-sub-instruction}}
 \label{hir-instruction-fixnum-sub}
@@ -1005,17 +807,6 @@ be made:
 The second successor is typically a \texttt{funcall-instruction} to
 some function that accomplishes this adjustment and returns a bignum.
 
-\refFig{fig-fixnum-sub-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-sub-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-fixnum-sub-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-fixnum-sub-instruction}
-\texttt{fixnum-sub-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{fixnum-less-instruction}}
 \label{hir-instruction-fixnum-less}
 
@@ -1037,17 +828,6 @@ only if this restriction is verified.
 
 The first successor is chosen if and only if the first input is
 strictly less than the second input.
-
-\refFig{fig-fixnum-less-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-less-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-fixnum-less-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-fixnum-less-instruction}
-\texttt{fixnum-less-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{fixnum-not-greater-instruction}}
 \label{hir-instruction-fixnum-le}
@@ -1071,17 +851,6 @@ only if this restriction is verified.
 The first successor is chosen if and only if the first input is
 less than or equal to the second input.
 
-\refFig{fig-fixnum-le-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-not-greater-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-fixnum-le-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-fixnum-le-instruction}
-\texttt{fixnum-not-greater-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{fixnum-equal-instruction}}
 \label{hir-instruction-fixnum-equal}
 
@@ -1103,17 +872,6 @@ only if this restriction is verified.
 
 The first successor is chosen if and only if the first input is equal
 to the second input.
-
-\refFig{fig-fixnum-equal-instruction} shows the Graphviz illustration of the
-\texttt{fixnum-equal-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-fixnum-equal-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-fixnum-equal-instruction}
-\texttt{fixnum-equal-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{characterp-instruction}}
 \label{hir-instruction-car}
@@ -1142,17 +900,6 @@ in an implementation-specific way.  Implementations that have a simple
 way of testing whether an object is a \texttt{character} can then turn
 a \texttt{typeq-instruction} with a type of \texttt{character} into a
 \texttt{characterp-instruction}.
-
-\refFig{fig-characterp-instruction} shows the Graphviz illustration of the
-\texttt{characterp-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-characterp-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-characterp-instruction}
-\texttt{characterp-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{phi-instruction}}
 \label{hir-instruction-phi}
@@ -1188,17 +935,6 @@ predecessor.
 
 Special care must be taken when the graph is modified so that this
 restriction is respected. 
-
-\refFig{fig-phi-instruction} shows the Graphviz illustration of the
-\texttt{phi-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-phi-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-phi-instruction}
-\texttt{phi-instruction}.}
-\end{figure}
 
 Some transformations may be easier to accomplish if there is a single
 \texttt{phi-instruction} as opposed to a cluster of several such
@@ -1269,17 +1005,6 @@ This instruction is used in a variety of situations:
   being generated, in which case the second successor would contain
   instructions to signal a correctable error.
 \end{itemize}
-
-\refFig{fig-typeq-instruction} shows the Graphviz illustration of the
-\texttt{typeq-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-typeq-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-typeq-instruction}
-\texttt{typeq-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{the-instruction}}
 \label{hir-instruction-the}
@@ -1581,17 +1306,6 @@ of type unboxed float.
 
 The output is the sum of the two inputs.
 
-\refFig{fig-float-add-instruction} shows the Graphviz illustration of the
-\texttt{float-add-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-add-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-add-instruction}
-\texttt{float-add-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{float-sub-instruction}}
 \label{hir-instruction-float-sub}
 
@@ -1621,17 +1335,6 @@ The inputs to this instruction must be of type \emph{unboxed
   float}. The output is also of type unboxed float.
 
 The output is the difference between the two inputs.
-
-\refFig{fig-float-sub-instruction} shows the Graphviz illustration of the
-\texttt{float-sub-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-sub-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-sub-instruction}
-\texttt{float-sub-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{float-mul-instruction}}
 \label{hir-instruction-float-mul}
@@ -1663,17 +1366,6 @@ The inputs to this instruction must be of type \emph{unboxed
 
 The output is the product of the two inputs.
 
-\refFig{fig-float-mul-instruction} shows the Graphviz illustration of the
-\texttt{float-mul-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-mul-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-mul-instruction}
-\texttt{float-mul-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{float-div-instruction}}
 \label{hir-instruction-float-div}
 
@@ -1703,17 +1395,6 @@ The inputs to this instruction must be of type \emph{unboxed
   float}. The output is also of type unboxed float.
 
 The output is the quotient of the two inputs.
-
-\refFig{fig-float-div-instruction} shows the Graphviz illustration of the
-\texttt{float-div-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-div-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-div-instruction}
-\texttt{float-div-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{float-less-instruction}}
 \label{hir-instruction-float-less}
@@ -1746,17 +1427,6 @@ The inputs to this instruction must be of type \emph{unboxed
 The first successor is chosen if the first input is strictly less than
 the second one; otherwise the second successor is chosen. 
 
-\refFig{fig-float-less-instruction} shows the Graphviz illustration of the
-\texttt{float-less-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-less-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-less-instruction}
-\texttt{float-less-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{float-not-greater-instruction}}
 \label{hir-instruction-float-not-greater}
 
@@ -1788,17 +1458,6 @@ The inputs to this instruction must be of type \emph{unboxed
 The first successor is chosen if the first input is less than or equal
 to the second one; otherwise the second successor is chosen.
 
-\refFig{fig-float-not-greater-instruction} shows the Graphviz illustration of the
-\texttt{float-not-greater-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-not-greater-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-not-greater-instruction}
-\texttt{float-not-greater-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{float-sin-instruction}}
 \label{hir-instruction-float-div}
 
@@ -1828,17 +1487,6 @@ The input to this instruction must be of type \emph{unboxed
   float}. The output is also of type unboxed float.
 
 The output is the sine of the input.
-
-\refFig{fig-float-sin-instruction} shows the Graphviz illustration of the
-\texttt{float-sin-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-sin-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-sin-instruction}
-\texttt{float-sin-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{float-cos-instruction}}
 \label{hir-instruction-float-div}
@@ -1870,17 +1518,6 @@ The input to this instruction must be of type \emph{unboxed
 
 The output is the cosine of the input.
 
-\refFig{fig-float-cos-instruction} shows the Graphviz illustration of the
-\texttt{float-cos-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-cos-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-cos-instruction}
-\texttt{float-cos-instruction}.}
-\end{figure}
-
 \subsection{Instruction \texttt{float-sqrt-instruction}}
 \label{hir-instruction-float-div}
 
@@ -1910,17 +1547,6 @@ The input to this instruction must be of type \emph{unboxed
   float}. The output is also of type unboxed float.
 
 The output is the square root of the input.
-
-\refFig{fig-float-sqrt-instruction} shows the Graphviz illustration of the
-\texttt{float-sqrt-instruction}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-float-sqrt-instruction.pdf_t}
-\end{center}
-\caption{\label{fig-float-sqrt-instruction}
-\texttt{float-sqrt-instruction}.}
-\end{figure}
 
 \subsection{Instruction \texttt{create-cell-instruction}}
 \label{hir-instruction-create-cell}
@@ -2027,17 +1653,6 @@ be used as an \emph{input}.
 
 The slot reader \texttt{value} can be used to access the constant. 
 
-\refFig{fig-constant-input} shows the Graphviz illustration of the
-\texttt{constant-input}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-constant-input.pdf_t}
-\end{center}
-\caption{\label{fig-constant-input}
-\texttt{constant-input}.}
-\end{figure}
-
 \subsection{Location \texttt{lexical-location}}
 
 This data type corresponds to lexical variable in the source code, and
@@ -2048,17 +1663,6 @@ The slot reader \texttt{name} can be used to access the name of the
 variables.  Notice that different lexical locations have different
 \emph{identity} (i.e, they are not \texttt{eq}), but several different
 lexical locations may have the same name, due to shadowing.
-
-\refFig{fig-lexical-location} shows the Graphviz illustration of the
-\texttt{lexical-location}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-lexical-location.pdf_t}
-\end{center}
-\caption{\label{fig-lexical-location}
-\texttt{lexical-location}.}
-\end{figure}
 
 \subsection{Location \texttt{values-location}}
 
@@ -2073,17 +1677,6 @@ output them, and they cannot be assigned.
 Because values locations are usually very temporary, there is no
 need for them to have names.
 
-\refFig{fig-values-location} shows the Graphviz illustration of the
-\texttt{values-location}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-values-location.pdf_t}
-\end{center}
-\caption{\label{fig-values-location}
-\texttt{values-location}.}
-\end{figure}
-
 \subsection{Location \texttt{simple-location}}
 
 This data type corresponds is a subtype of \texttt{lexical-location}.
@@ -2093,17 +1686,6 @@ type can be allocated in a register or on the stack.  A temporary
 variable introduced by the compiler will always turn into a datum of
 this type.
 
-\refFig{fig-simple-location} shows the Graphviz illustration of the
-\texttt{simple-location}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-simple-location.pdf_t}
-\end{center}
-\caption{\label{fig-simple-location}
-\texttt{simple-location}.}
-\end{figure}
-
 \subsection{Location \texttt{shared-location}}
 
 This data type corresponds is a subtype of \texttt{lexical-location}.
@@ -2112,17 +1694,6 @@ function, i.e., for \emph{shared} variables.  A location of this
 type can \emph{not} be allocated in a register or on the stack.
 Instead, it has to be allocated in the \emph{static runtime
   environment}. 
-
-\refFig{fig-shared-location} shows the Graphviz illustration of the
-\texttt{shared-location}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-shared-location.pdf_t}
-\end{center}
-\caption{\label{fig-shared-location}
-\texttt{shared-location}.}
-\end{figure}
 
 \section{Operations on intermediate code}
 
