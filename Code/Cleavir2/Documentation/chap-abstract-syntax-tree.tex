@@ -705,17 +705,17 @@ representing the product of the two arguments.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
-
-The arguments of this AST must evaluate to float
-values.  The value of this AST is the float value
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.  The value of this AST is
+the floating-point value of the type indicated by \texttt{subtype}
 representing the quotient of the two arguments.
 
 \subsubsection{\texttt{float-less-ast}}
@@ -725,18 +725,22 @@ representing the quotient of the two arguments.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.
 
-The arguments of this AST must evaluate to float
-values.  The value is a Boolean indicating whether the first argument
-is strictly less than the second argument.
+An AST of this type can only occur as the \texttt{test-ast} of an
+\texttt{if-ast}.  The \texttt{then-ast} of the \texttt{if-ast} is
+evaluated if the first argument is strictly less than the second
+argument.  Otherwise, the \texttt{else-ast} of the \texttt{if-ast} is
+evaluated.
 
 \subsubsection{\texttt{float-not-greater-ast}}
 \label{sec-ast-float-not-greater}
@@ -745,18 +749,22 @@ is strictly less than the second argument.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.
 
-The arguments of this AST must evaluate to float
-values.  The value is a Boolean indicating whether the first argument
-is less than or equal to the second argument.
+An AST of this type can only occur as the \texttt{test-ast} of an
+\texttt{if-ast}.  The \texttt{then-ast} of the \texttt{if-ast} is
+evaluated if the first argument is less than or equal to the second
+argument.  Otherwise, the \texttt{else-ast} of the \texttt{if-ast} is
+evaluated.
 
 \subsubsection{\texttt{float-greater-ast}}
 \label{sec-ast-float-greater}
@@ -765,18 +773,22 @@ is less than or equal to the second argument.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.
 
-The arguments of this AST must evaluate to float
-values.  The value is a Boolean indicating whether the first argument
-is strictly greater than the second argument.
+An AST of this type can only occur as the \texttt{test-ast} of an
+\texttt{if-ast}.  The \texttt{then-ast} of the \texttt{if-ast} is
+evaluated if the first argument is strictly greater than the second
+argument.  Otherwise, the \texttt{else-ast} of the \texttt{if-ast} is
+evaluated.
 
 \subsubsection{\texttt{float-not-less-ast}}
 \label{sec-ast-float-not-less}
@@ -785,18 +797,22 @@ is strictly greater than the second argument.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.
 
-The arguments of this AST must evaluate to float
-values.  The value is a Boolean indicating whether the first argument
-is greater than or equal to the second argument.
+An AST of this type can only occur as the \texttt{test-ast} of an
+\texttt{if-ast}.  The \texttt{then-ast} of the \texttt{if-ast} is
+evaluated if the first argument is greater than or equal to the second
+argument.  Otherwise, the \texttt{else-ast} of the \texttt{if-ast} is
+evaluated.
 
 \subsubsection{\texttt{float-equal-ast}}
 \label{sec-ast-float-equal}
@@ -805,18 +821,21 @@ is greater than or equal to the second argument.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.
 
-The arguments of this AST must evaluate to float
-values.  The value is a Boolean indicating whether the first argument
-is equal to the second argument.
+An AST of this type can only occur as the \texttt{test-ast} of an
+\texttt{if-ast}.  The \texttt{then-ast} of the \texttt{if-ast} is
+evaluated if the first argument is equal to the second argument.
+Otherwise, the \texttt{else-ast} of the \texttt{if-ast} is evaluated.
 
 \subsection{Abstract syntax trees for operations on conses}
 
