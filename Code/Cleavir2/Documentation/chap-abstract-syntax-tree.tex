@@ -634,8 +634,9 @@ translates to a test and a branch.
 \label{sec-ast-floating-point-arithmetic}
 
 The ASTs in this section can be used by implementation that want to
-inline floating-point arithmetic.  There are four families of ASTs,
-one for each type of floating-point precision defined by the \hs{}.
+inline floating-point arithmetic.  Each AST requires arguments and
+produces results of one and the same floating-point type.  The exact
+type is indicated in a slot of the AST.
 
 \subsubsection{\texttt{float-add-ast}}
 \label{sec-ast-float-add}
@@ -644,17 +645,17 @@ one for each type of floating-point precision defined by the \hs{}.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
-
-The arguments of this AST must evaluate to float
-values.  The value of this AST is the float value
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.  The value of this AST is
+the floating-point value of the type indicated by \texttt{subtype}
 representing the sum of the two arguments.
 
 \subsubsection{\texttt{float-sub-ast}}
@@ -664,18 +665,18 @@ representing the sum of the two arguments.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
-
-The arguments of this AST must evaluate to float
-values.  The value of this AST is the float value
-representing the difference of the two arguments.
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.  The value of this AST is
+the floating-point value of the type indicated by \texttt{subtype}
+representing the difference between the two arguments.
 
 \subsubsection{\texttt{float-mul-ast}}
 \label{sec-ast-float-mul}
@@ -684,17 +685,17 @@ representing the difference of the two arguments.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
 \texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
 \hline
 \texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
 \hline
 \end{tabular}
 
-This AST can be used by implementation that support the float
-floating-point data type.
-
-The arguments of this AST must evaluate to float
-values.  The value of this AST is the float value
+The arguments of this AST must evaluate to floating-point values of
+the type indicated by the \texttt{subtype}.  The value of this AST is
+the floating-point value of the type indicated by \texttt{subtype}
 representing the product of the two arguments.
 
 \subsubsection{\texttt{float-div-ast}}
