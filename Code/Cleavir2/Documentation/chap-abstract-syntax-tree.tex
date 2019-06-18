@@ -250,7 +250,7 @@ it hides all the implementation details of how arguments are parsed.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:items} & \texttt{items} & A list of ASTs corresponding to\\
+\texttt{:item-asts} & \texttt{item-asts} & A list of ASTs corresponding to\\
 & & the items of the \texttt{tagbody} form. \\
 \hline
 \end{tabular}
@@ -279,6 +279,10 @@ Initarg & Reader & Description\\
 \texttt{:tag-ast} & \texttt{body-ast} & The AST for the tag.\\
 \hline
 \end{tabular}
+
+The \texttt{go-ast} contains a reference to the corresponding
+\texttt{tag-ast} in the \texttt{tagbody-ast} that the \texttt{go} form
+in the source code refers to.
 
 \subsubsection{\texttt{if-ast}}
 \label{if-ast}
