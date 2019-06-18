@@ -243,6 +243,32 @@ Initarg & Reader & Description\\
 The \texttt{function-ast} is one of the more complicated ones, because
 it hides all the implementation details of how arguments are parsed.
 
+\subsubsection{\texttt{tagbody-ast}}
+\label{tagbody-ast}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:items} & \texttt{items} & A list of ASTs corresponding to\\
+& & the items of the \texttt{tagbody} form. \\
+\hline
+\end{tabular}
+
+An item can either be a \texttt{tag-ast} or an AST corresponding to
+some \texttt{statement}.
+
+\subsubsection{\texttt{tag-ast}}
+\label{tag-ast}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:name} & \texttt{name} & The name of the tag.\\
+\hline
+\end{tabular}
+
 \subsubsection{\texttt{go-ast}}
 \label{go-ast}
 
@@ -336,32 +362,6 @@ Initarg & Reader & Description\\
 This AST does not produce any value.  It must appear in a context
 where no value is required, such as one of the forms preceding the
 last form of a \texttt{progn-ast} \seesec{progn-ast}.
-
-\subsubsection{\texttt{tagbody-ast}}
-\label{tagbody-ast}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:items} & \texttt{items} & A list of ASTs corresponding to\\
-& & the items of the \texttt{tagbody} form. \\
-\hline
-\end{tabular}
-
-An item can either be a \texttt{tag-ast} or an AST corresponding to
-some \texttt{statement}.
-
-\subsubsection{\texttt{tag-ast}}
-\label{tag-ast}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:name} & \texttt{name} & The name of the tag.\\
-\hline
-\end{tabular}
 
 \subsubsection{\texttt{the-ast}}
 \label{the-ast}
