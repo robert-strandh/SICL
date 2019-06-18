@@ -16,18 +16,19 @@ An abstract syntax tree consists of a graph of standard objects.  Each
 object class corresponds to some intrinsic category of source code
 elements.
 
-Every lexical variable has been replaced by a standard object that
-contains its name, but different variables with the same name in the
-source code are represented by different object instances.  Global
-functions and special variables are similarly represented by standard
-objects that contain the name of the function or variable.  Since
-different lexical variables with different names are represented by
-different object instances, there is no need for scoping operators
-such as \texttt{let} or \texttt{let*}, which is why there are no
-classes that correspond to these source constructs.
+A lexical variable in the source code is represented in the AST by a
+standard object that contains its name, but different variables with
+the same name in the source code are represented by different object
+instances.  Global functions and special variables are similarly
+represented by standard objects that contain the name of the function
+or variable.  Since different lexical variables with different names
+are represented by different object instances, there is no need for
+scoping operators such as \texttt{let} or \texttt{let*}, which is why
+there are no classes that correspond to these source constructs.
 
-Macros and symbol macros have been expanded so that the only operators
-that remain are special operators and global functions.  
+Macros and symbol macros have been expanded, leaving a small set of
+operators for constructing and calling functions, for binding special
+variables, for assigning values to variables, etc.
 
 There are no AST classes that correspond to declarations.
 Implementations should replace type declarations by the use of
