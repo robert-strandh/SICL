@@ -837,6 +837,60 @@ An AST of this type can only occur as the \texttt{test-ast} of an
 evaluated if the first argument is equal to the second argument.
 Otherwise, the \texttt{else-ast} of the \texttt{if-ast} is evaluated.
 
+\subsubsection{\texttt{float-sin-ast}}
+\label{sec-ast-float-sin}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
+\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
+\hline
+\end{tabular}
+
+The argument of this AST must evaluate to a floating-point value of
+the type indicated by the \texttt{subtype}.  The value of this AST is
+the floating-point value of the type indicated by \texttt{subtype}
+representing the \emph{sine} of the argument.
+
+\subsubsection{\texttt{float-cos-ast}}
+\label{sec-ast-float-cos}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
+\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
+\hline
+\end{tabular}
+
+The argument of this AST must evaluate to a floating-point value of
+the type indicated by the \texttt{subtype}.  The value of this AST is
+the floating-point value of the type indicated by \texttt{subtype}
+representing the \emph{cosine} of the argument.
+
+\subsubsection{\texttt{float-sqrt-ast}}
+\label{sec-ast-float-sqrt}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:subtype} & \texttt{subtype} & The exact floating-point type.\\
+\hline
+\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
+\hline
+\end{tabular}
+
+The argument of this AST must evaluate to a floating-point value of
+the type indicated by the \texttt{subtype}.  The value of this AST is
+the floating-point value of the type indicated by \texttt{subtype}
+representing the \emph{square root} of the argument.
+
 \subsection{Abstract syntax trees for operations on conses}
 
 \subsubsection{\texttt{car-ast}}
