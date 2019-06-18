@@ -841,7 +841,10 @@ are undefined if this condition is not met.
   \hline
 \end{tabular}
 
-As \texttt{car-ast}, but with \texttt{cl:cdr}.
+This AST can be used to implement the function \texttt{cl:cdr}. However,
+it does not correspond exactly to the function \texttt{cdr}, because
+the value of the single child must be a cons cell. The consequences
+are undefined if this condition is not met.
 
 \subsubsection{\texttt{rplaca-ast}}
 \label{sec-ast-rplaca}
@@ -874,7 +877,10 @@ where a value is needed will result in an error being signaled.
   \hline
 \end{tabular}
 
-As \texttt{rplaca-ast}, but with \texttt{cl:rplacd}.
+This AST can be used to implement the function \texttt{cl:rplacd}.
+This AST differs from the function \texttt{rplacd} in that it does
+not generate any value. An attempt to compile this AST in a context
+where a value is needed will result in an error being signaled.
 
 \subsubsection{\texttt{slot-read-ast}}
 \label{sec-ast-slot-read}
