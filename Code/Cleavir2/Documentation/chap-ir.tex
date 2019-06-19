@@ -428,27 +428,6 @@ The inputs to this instruction are two arbitrary \commonlisp{}
 objects.  The first successor is chosen if the values of the inputs
 are identical.  Otherwise, the second successor is chosen.
 
-\subsection{Instruction \texttt{car-instruction}}
-\label{hir-instruction-car}
-
-\begin{tabular}{|l|l|}
-\hline
-Number of inputs & 1\\
-\hline
-Number of outputs & 1\\
-\hline
-Number of predecessors & any\\
-\hline
-Number of successors & 1\\
-\hline
-\end{tabular}
-
-The input to this instruction must be a \texttt{cons} cell. The
-consequences are undefined if this is not the case.  For that reason,
-\emph{safe} code should have additional instructions inserted to
-ensure that this condition is respected.  The output is the contents
-of the \texttt{car} of the \texttt{cons} cell.
-
 \subsection{Instruction \texttt{consp-instruction}}
 \label{hir-instruction-car}
 
@@ -476,6 +455,27 @@ in an implementation-specific way.  Implementations that have a simple
 way of testing whether an object is a \texttt{cons} cell can then turn
 a \texttt{typeq-instruction} with a type of \texttt{cons} into a
 \texttt{consp-instruction}.
+
+\subsection{Instruction \texttt{car-instruction}}
+\label{hir-instruction-car}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a \texttt{cons} cell. The
+consequences are undefined if this is not the case.  For that reason,
+\emph{safe} code should have additional instructions inserted to
+ensure that this condition is respected.  The output is the contents
+of the \texttt{car} of the \texttt{cons} cell.
 
 \subsection{Instruction \texttt{cdr-instruction}}
 \label{hir-instruction-cdr}
