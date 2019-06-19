@@ -90,48 +90,9 @@ for functions.
 
 Each instruction is generated as a result of compiling a particular
 function.  The \texttt{enter-instruction} corresponding to that
-function is called the \emph{owner} of the instruction.
-
-Most of the time, the successor $J$ of some instruction $I$ has the
-same owner as $I$, but this is not always the case.  The following
-code:
-
-\begin{verbatim}
-(defun f (...)
-  (flet ((g (x) (return-from b x)))
-    ...))
-\end{verbatim}
-
-shows an example where this is not the case.  The compilation of the
-\texttt{return-from} form will result in an
-\texttt{unwind-instruction}, owned by the \texttt{enter-instruction}
-corresponding to the function \texttt{g}, but its successor will be an
-instruction owned by the \texttt{enter-instruction} corresponding to
-the function \texttt{f}.
-
-While it might seem reasonable to think that a particular instruction
-$I$ is always reachable from its owner following successor, this is
-not the case.  The following code:
-
-\begin{verbatim}
-(defun f (...)
-  (let (g)
-    (tagbody
-        (setf g (lambda () (go a)))
-        (funcall g)
-        (go b)
-      a
-        (print "hello")
-      b)))
-\end{verbatim}
-
-shows an example of this situation.  The instructions generated from
-the \texttt{print} form are owned by the \texttt{enter-instruction}
-corresponding to the function \texttt{f}, but those instructions are
-not reachable by following successors from that
-\texttt{enter-instruction}.  The only way to reach those instructions
-are by following the \texttt{unwind-instruction} generated as a result
-of compiling the form \texttt{(go a)}.
+function is called the \emph{owner} of the instruction.  Ownership is
+transitive, in that the successor $J$ of some instruction $I$ has the
+same owner as $I$.
 
 The owner of a datum $D$ is the outermost \texttt{enter-instruction}
 of all the owners of all the instructions using $D$.
