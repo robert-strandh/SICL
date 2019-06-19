@@ -20,7 +20,11 @@ value or a \emph{location} (also called a ``variable'').%
   \texttt{enclose-instruction} has an \texttt{enter-instruction} as
   its input.}  An output may only be a location.
 
-There are two types of location: \emph{lexical} locations and \emph{values} locations. The former is used for most instructions, while the latter represents collections of an unknown number of \commonlisp{} values, as output for example by \texttt{funcall} in general.
+There are two types of location: \emph{lexical} locations and
+\emph{values} locations. The former is used for most instructions,
+while the latter represents collections of an unknown number of
+\commonlisp{} values, as output for example by \texttt{funcall} in
+general.
 
 The execution of an instruction consists of generating the outputs as
 a function of the inputs, and also of choosing a successor based on
@@ -80,7 +84,9 @@ located \emph{further out} than J.
 The \texttt{enter-instruction}s of the tree correspond directly to the
 functions in the source code.  Some of these functions are introduced
 by \texttt{flet} or \texttt{labels}, and some are anonymous and
-introduced by \texttt{lambda}.
+introduced by \texttt{lambda}.  Yet some are introduced by
+\texttt{let} or \texttt{let*}, which are considered syntactic sugar
+for functions.
 
 Each instruction is generated as a result of compiling a particular
 function.  The \texttt{enter-instruction} corresponding to that
