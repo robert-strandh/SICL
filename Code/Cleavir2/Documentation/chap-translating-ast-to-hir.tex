@@ -41,6 +41,29 @@ This class is the base class for compilation contexts.
 
 \Definitarg {:results}
 
+This initialization argument can be:
+
+\begin{itemize}
+\item A list of lexical locations.
+\item A single values location.
+\end{itemize}
+
+If it is a list, then the number of lexical locations in the list
+indicates how many values are required.  The main different cases are:
+
+\begin{itemize}
+\item If the list is empty, this means that no values are required.
+  Forms inside a \texttt{progn} other than the last one are compiled
+  in a context with an empty list of results.  Also, forms used in the
+  test form of an \texttt{if} are compiled in a context with an empty
+  list of results.
+\item If the list is a singleton, then exactly one value is required.
+  Arguments to function calls are examples of forms that are compiled
+  in a context with a singleton \texttt{results} list.
+\item If the list has more than one element, then that many values are
+  required.
+\end{itemize}
+
 \Definitarg {:successors}
 
 This argument must be a proper list containing zero, one, or two
