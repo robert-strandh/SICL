@@ -83,6 +83,9 @@
   ((%origin :initform *origin* :reader origin))
   (:default-initargs :dynamic-environment-location *dynamic-environment-location*))
 
+(stealth-mixin:define-stealth-mixin location-mixin () cleavir-ir:datum
+  ((%origin :initform *origin* :initarg :origin :reader origin)))
+
 (defmethod compile-ast :around (ast context)
   (let ((*dynamic-environment-location* (dynamic-environment-location context))
         (*origin* (cleavir-cst-to-ast::origin ast)))
