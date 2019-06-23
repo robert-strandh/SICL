@@ -496,7 +496,7 @@
     (let ((lambda-expression (cst:parse-macro client
                                               name-cst
                                               lambda-list-cst
-                                              `(progn ,@(cst:raw body-cst))
+                                              (cst:raw body-cst)
                                               environment)))
       (eval client
             lambda-expression
