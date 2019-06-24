@@ -75,6 +75,7 @@
 (defclass enclose-instruction (instruction one-successor-mixin
                                allocation-mixin)
   ((%code :initarg :code :accessor code)
+   ;; Points to the instruction which initializes the closure environment.
    (%initializer :initarg :initializer :accessor initializer :initform nil)))  
 
 (defun make-enclose-instruction (output successor code)
