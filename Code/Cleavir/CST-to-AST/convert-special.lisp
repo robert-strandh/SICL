@@ -475,7 +475,7 @@
     (let ((lambda-expression (cst:parse-macro system
                                               name-cst
                                               lambda-list-cst
-                                              `(progn ,@(cst:raw body-cst))
+                                              (cst:raw body-cst)
                                               environment)))
       (cleavir-env:eval lambda-expression
                         (cleavir-env:compile-time environment)
