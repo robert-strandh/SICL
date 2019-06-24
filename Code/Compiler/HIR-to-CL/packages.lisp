@@ -5,5 +5,5 @@
   (:export #:hir-to-cl
            #:cst-eval
            #:fill-environment
-           #:function-finder
+           #:make-function-cell-finder
            #:*dynamic-environment*))

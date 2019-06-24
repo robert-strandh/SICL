@@ -22,7 +22,7 @@
     (coerce (list* nil static-environment-values)
             'vector)))
 
-(defun function-finder (environment)
+(defun make-function-cell-finder (environment)
   (lambda (name)
     (sicl-genv:function-cell name environment)))
 

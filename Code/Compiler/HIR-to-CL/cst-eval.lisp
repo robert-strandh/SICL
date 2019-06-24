@@ -10,4 +10,4 @@
          (fun (compile nil cl))
          (*dynamic-environment* '())
          (global-environment (trucler-reference:global-environment environment)))
-    (funcall fun (function-finder global-environment))))
+    (funcall fun (make-function-cell-finder global-environment))))
