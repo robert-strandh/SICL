@@ -149,6 +149,6 @@
 	   :compiler-macro (compiler-macro-function function-name env)
 	   :inline (function-inline function-name env)
 	   :type (function-type function-name env)
-	   :ast (function-ast function-name env)))
+	   :inline-data (function-ast function-name env)))
 	(t
 	 nil)))

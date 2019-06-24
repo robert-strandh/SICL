@@ -242,19 +242,6 @@
                          :align-x :center :align-y :center
                        :ink clim:+dark-blue+)))))
 
-(defmethod draw-datum ((datum cleavir-ir:load-time-value-input) pane)
-  (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos
-                     (floor datum-width 2) (floor datum-height 2)
-                     :filled nil)
-    (let ((label (princ-to-string (cleavir-ir:form datum))))
-      (clim:with-text-size (pane :small)
-        (clim:draw-text* pane
-                         (subseq label 0 (min 15 (length label)))
-                         hpos vpos
-                         :align-x :center :align-y :center
-                       :ink clim:+dark-blue+)))))
-
 (defvar *dynamic-environment-locations*)
 
 (defun draw-data (pane)

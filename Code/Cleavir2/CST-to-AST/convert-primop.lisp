@@ -12,8 +12,8 @@
 ;;; code which is then converted again.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:ast)) cst lexical-environment)
-  (declare (ignore client lexical-environment))
+    (client (symbol (eql 'cleavir-primop:ast)) cst environment)
+  (declare (ignore client environment))
   (check-simple-primop-syntax cst 1)
   (cst:db origin (primop-cst ast-cst) cst
     (declare (ignore primop-cst))
@@ -24,25 +24,25 @@
 ;;; Converting CLEAVIR-PRIMOP:EQ.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:eq)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:eq)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (eq-cst arg1-cst arg2-cst) cst
     (declare (ignore eq-cst))
     (cleavir-ast:make-ast 'cleavir-ast:eq-ast
-     :arg1-ast (convert client arg1-cst lexical-environment)
-     :arg2-ast (convert client arg2-cst lexical-environment))))
+     :arg1-ast (convert client arg1-cst environment)
+     :arg2-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:TYPEQ.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:typeq)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:typeq)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (typeq-cst arg1-cst arg2-cst) cst
     (declare (ignore typeq-cst))
     (cleavir-ast:make-ast 'cleavir-ast:typeq-ast
-     :form-ast (convert client arg1-cst lexical-environment)
+     :form-ast (convert client arg1-cst environment)
      :type-specifier (cst:raw arg2-cst))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -56,14 +56,14 @@
 ;;; FIXED-TO-MULTIPLE-INSTRUCTION.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:values)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:values)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (cst:db origin (values-cst . arguments-cst) cst
     (declare (ignore values-cst))
     (cleavir-ast:make-ast 'cleavir-ast:values-ast
      :argument-asts (mapcar
-		     (lambda (cst) (convert client cst lexical-environment))
-		     (cst:listify arguments-cst)))))
+                     (lambda (cst) (convert client cst environment))
+                     (cst:listify arguments-cst)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -76,7 +76,7 @@
 ;;; appear as a MULTIPLE-TO-FIXED-INSTRUCTION.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:multiple-value-setq)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:multiple-value-setq)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 2 2)
   (cst:db origin (mvs-cst variables-cst form-cst) cst
@@ -85,155 +85,155 @@
     (let ((lexes
             (loop for var in (cst:raw variables-cst)
                   do (assert (symbolp var))
-                  collect (let ((info (trucler:describe-variable client lexical-environment var)))
+                  collect (let ((info (trucler:describe-variable client environment var)))
                             (assert (typep info 'trucler:lexical-variable-description))
                             info))))
       (cleavir-ast:make-ast 'cleavir-ast:multiple-value-setq-ast
        :lhs-asts (mapcar #'trucler:identity lexes)
-       :form-ast (convert client form-cst lexical-environment)))))
+       :form-ast (convert client form-cst environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:CAR.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:car)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:car)) cst environment)
   (check-simple-primop-syntax cst 1)
   (cst:db origin (car-cst arg-cst) cst
     (declare (ignore car-cst))
     (cleavir-ast:make-ast 'cleavir-ast:car-ast
-      :cons-ast (convert client arg-cst lexical-environment))))
+      :cons-ast (convert client arg-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:CDR.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:cdr)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:cdr)) cst environment)
   (check-simple-primop-syntax cst 1)
   (cst:db origin (cdr-cst arg-cst) cst
     (declare (ignore cdr-cst))
     (cleavir-ast:make-ast 'cleavir-ast:cdr-ast
-      :cons-ast (convert client arg-cst lexical-environment))))
+      :cons-ast (convert client arg-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:RPLACA.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:rplaca)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:rplaca)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplaca-cst arg1-cst arg2-cst) cst
     (declare (ignore rplaca-cst))
     (cleavir-ast:make-ast 'cleavir-ast:rplaca-ast
-      :cons-ast (convert client arg1-cst lexical-environment)
-      :object-ast (convert client arg2-cst lexical-environment))))
+      :cons-ast (convert client arg1-cst environment)
+      :object-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:RPLACD.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:rplacd)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:rplacd)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (rplacd-cst arg1-cst arg2-cst) cst
     (declare (ignore rplacd-cst))
     (cleavir-ast:make-ast 'cleavir-ast:rplacd-ast
-      :cons-ast (convert client arg1-cst lexical-environment)
-      :object-ast (convert client arg2-cst lexical-environment))))
+      :cons-ast (convert client arg1-cst environment)
+      :object-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-ADD.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:fixnum-add)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:fixnum-add)) cst environment)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (add-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore add-cst))
     (cleavir-ast:make-ast 'cleavir-ast:fixnum-add-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment)
-      :variable-ast (convert client variable-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment)
+      :variable-ast (convert client variable-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-SUB.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:fixnum-sub)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:fixnum-sub)) cst environment)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (sub-cst arg1-cst arg2-cst variable-cst) cst
     (declare (ignore sub-cst))
     (cleavir-ast:make-ast 'cleavir-ast:fixnum-sub-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment)
-      :variable-ast (convert client variable-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment)
+      :variable-ast (convert client variable-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-LESS.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:fixnum-less)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:fixnum-less)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (less-cst arg1-cst arg2-cst) cst
     (declare (ignore less-cst))
     (cleavir-ast:make-ast 'cleavir-ast:fixnum-less-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-NOT-GREATER.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:fixnum-not-greater)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:fixnum-not-greater)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (not-greater-cst arg1-cst arg2-cst) cst
     (declare (ignore not-greater-cst))
     (cleavir-ast:make-ast 'cleavir-ast:fixnum-not-greater-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-GREATER.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:fixnum-greater)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:fixnum-greater)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (greater-cst arg1-cst arg2-cst) cst
     (declare (ignore greater-cst))
     (cleavir-ast:make-ast 'cleavir-ast:fixnum-greater-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-NOT-LESS.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:fixnum-not-less)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:fixnum-not-less)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (not-less-cst arg1-cst arg2-cst) cst
     (declare (ignore not-less-cst))
     (cleavir-ast:make-ast 'cleavir-ast:fixnum-not-less-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-EQUAL.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:fixnum-equal)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:fixnum-equal)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (equal-cst arg1-cst arg2-cst) cst
     (declare (ignore equal-cst))
     (cleavir-ast:make-ast 'cleavir-ast:fixnum-equal-ast
-      :arg1-ast (convert client arg1-cst lexical-environment)
-      :arg2-ast (convert client arg2-cst lexical-environment))))
+      :arg1-ast (convert client arg1-cst environment)
+      :arg2-ast (convert client arg2-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -250,14 +250,14 @@
 ;;; are used in the forms, or else things will fail spectacularly.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:let-uninitialized)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:let-uninitialized)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (let-cst variables-cst . body-cst) cst
     (declare (ignore let-cst))
     (assert (cst:proper-list-p variables-cst))
     (assert (every #'symbolp (cst:raw variables-cst)))
-    (let ((new-env lexical-environment))
+    (let ((new-env environment))
       (loop for rest-cst = variables-cst then (cst:rest rest-cst)
             until (cst:null rest-cst)
             do (let* ((variable-cst (cst:first rest-cst))
@@ -283,17 +283,17 @@
 ;;; a function and then calls this primop.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:funcall)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:funcall)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (funcall-cst function-cst . arguments-cst) cst
     (declare (ignore funcall-cst))
     (cleavir-ast:make-ast 'cleavir-ast:call-ast
-     :callee-ast (convert client function-cst lexical-environment)
+     :callee-ast (convert client function-cst environment)
      :argument-asts (loop for remaining = arguments-cst
                             then (cst:rest remaining)
                           until (cst:null remaining)
-                          collect (convert client (cst:first remaining) lexical-environment)))))
+                          collect (convert client (cst:first remaining) environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -309,16 +309,16 @@
 ;;; already a function and then calls this primop.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:multiple-value-call)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:multiple-value-call)) cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (multiple-value-call-cst function-cst . arguments-cst) cst
     (declare (ignore multiple-value-call-cst))
     (cleavir-ast:make-ast 'cleavir-ast:multiple-value-call-ast
-     :function-form-ast (convert client function-cst lexical-environment)
+     :function-form-ast (convert client function-cst environment)
      :form-asts (loop for remaining = arguments-cst then (cst:rest remaining)
                       until (cst:null remaining)
-                      collect (convert client (cst:first remaining) lexical-environment)))))
+                      collect (convert client (cst:first remaining) environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -330,13 +330,13 @@
 ;;; number to be read.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:slot-read)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:slot-read)) cst environment)
   (check-simple-primop-syntax cst 2)
   (cst:db origin (slot-read-cst instance-cst slot-number-cst) cst
     (declare (ignore slot-read-cst))
     (cleavir-ast:make-ast 'cleavir-ast:slot-read-ast
-     :object-ast (convert client instance-cst lexical-environment)
-     :slot-number-ast (convert client slot-number-cst lexical-environment))))
+     :object-ast (convert client instance-cst environment)
+     :slot-number-ast (convert client slot-number-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -349,14 +349,14 @@
 ;;; to the object that will be written to the slot.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:slot-write)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:slot-write)) cst environment)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (slot-write-cst instance-cst slot-number-cst value-cst) cst
     (declare (ignore slot-write-cst))
     (cleavir-ast:make-ast 'cleavir-ast:slot-write-ast
-     :object-ast (convert client instance-cst lexical-environment)
-     :stot-number-ast (convert client slot-number-cst lexical-environment)
-     :value-ast (convert client value-cst lexical-environment))))
+     :object-ast (convert client instance-cst environment)
+     :stot-number-ast (convert client slot-number-cst environment)
+     :value-ast (convert client value-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -370,13 +370,13 @@
 ;;; boxed.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:aref)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:aref)) cst environment)
   (check-simple-primop-syntax cst 5)
   (cst:db origin (aref-cst array-cst index-cst type-cst simple-p-cst boxed-p-cst) cst
     (declare (ignore aref-cst))
     (cleavir-ast:make-ast 'cleavir-ast:aref-ast
-      :array-ast (convert client array-cst lexical-environment)
-      :index-ast (convert client index-cst lexical-environment)
+      :array-ast (convert client array-cst environment)
+      :index-ast (convert client index-cst environment)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst))))
@@ -395,15 +395,15 @@
 ;;; the last form.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:aset)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:aset)) cst environment)
   (check-simple-primop-syntax cst 6)
   (cst:db origin (aset-cst array-cst index-cst object-cst type-cst simple-p-cst boxed-p-cst)
       cst
     (declare (ignore aset-cst))
     (cleavir-ast:make-ast 'cleavir-ast:aset-ast
-      :array-ast (convert client array-cst lexical-environment)
-      :index-ast (convert client index-cst lexical-environment)
-      :element-ast (convert client object-cst lexical-environment)
+      :array-ast (convert client array-cst environment)
+      :index-ast (convert client index-cst environment)
+      :element-ast (convert client object-cst environment)
       :element-type (cst:raw type-cst)
       :simple-p (cst:raw simple-p-cst)
       :boxed-p (cst:raw boxed-p-cst))))
@@ -412,14 +412,14 @@
 ;;; CONVERT-SPECIAL for binary floating-point primops.
 (defmacro define-float-binop (primop ast)
   `(defmethod convert-special
-       (client (symbol (eql ',primop)) cst lexical-environment)
+       (client (symbol (eql ',primop)) cst environment)
      (check-simple-primop-syntax cst 3)
      (cst:db origin (op-cst type-cst arg1-cst arg2-cst) cst
        (declare (ignore op-cst))
        (cleavir-ast:make-ast ',ast
          :subtype (cst:raw type-cst)
-         :arg1-ast (convert client arg1-cst lexical-environment)
-         :arg2-ast (convert client arg2-cst lexical-environment)))))
+         :arg1-ast (convert client arg1-cst environment)
+         :arg2-ast (convert client arg2-cst environment)))))
 
 (define-float-binop cleavir-primop:float-add
   cleavir-ast:float-add-ast)
@@ -444,13 +444,13 @@
 ;;; CONVERT-SPECIAL for unatry floating-point primops.
 (defmacro define-float-unop (primop ast)
   `(defmethod convert-special
-       (client (symbol (eql ',primop)) cst lexical-environment)
+       (client (symbol (eql ',primop)) cst environment)
      (check-simple-primop-syntax cst 2)
      (cst:db origin (op-cst type-cst arg-cst) cst
        (declare (ignore op-cst))
        (cleavir-ast:make-ast ',ast
          :subtype (cst:raw type-cst)
-         :arg-ast (convert client arg-cst lexical-environment)))))
+         :arg-ast (convert client arg-cst environment)))))
 
 (define-float-unop cleavir-primop:float-sin
   cleavir-ast:float-sin-ast)
@@ -476,13 +476,13 @@
 ;;; as well as for arithmetic contagion.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:coerce)) cst lexical-environment)
+    (client (symbol (eql 'cleavir-primop:coerce)) cst environment)
   (check-simple-primop-syntax cst 3)
   (cst:db origin (op-cst type1-cst type2-cst form-cst) cst
     (declare (ignore op-cst))
     (cleavir-ast:make-ast 'cleavir-ast:coerce-ast
      :from (cst:raw type1-cst) :to (cst:raw type2-cst)
-     :arg-ast (convert client form-cst lexical-environment))))
+     :arg-ast (convert client form-cst environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -492,7 +492,7 @@
 ;;; should be impossible.
 
 (defmethod convert-special
-    (client (symbol (eql 'cleavir-primop:unreachable)) cst lexical-environment)
-  (declare (ignore client lexical-environment))
+    (client (symbol (eql 'cleavir-primop:unreachable)) cst environment)
+  (declare (ignore client environment))
   (check-simple-primop-syntax cst 0)
   (cleavir-ast:make-ast 'cleavir-ast:unreachable-ast))

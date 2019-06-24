@@ -1,7 +1,7 @@
 (cl:in-package #:cleavir-cst-to-ast)
 
-(defun describe-function (client lexical-environment function-name)
-  (let ((result (trucler:describe-function client lexical-environment function-name)))
+(defun describe-function (client environment function-name)
+  (let ((result (trucler:describe-function client environment function-name)))
     (loop while (null result)
           do (restart-case (error 'trucler:no-function-description
                                   :name function-name)
@@ -18,13 +18,12 @@
                  :interactive (lambda ()
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
-                 (setq result (trucler:describe-function client
-                                                         lexical-environment
-                                                         new-function-name)))))
+                 (setq result (trucler:describe-function
+			       client environment new-function-name)))))
     result))
 
-(defun describe-tag (client lexical-environment tag-name)
-  (let ((result (trucler:describe-tag client lexical-environment tag-name)))
+(defun describe-tag (client environment tag-name)
+  (let ((result (trucler:describe-tag client environment tag-name)))
     (loop while (null result)
           do (restart-case (error 'trucler:no-tag-description
                                   :name tag-name)
@@ -34,7 +33,6 @@
                  :interactive (lambda ()
                                 (format *query-io* "Enter new name: ")
                                 (list (read *query-io*)))
-                 (setq result (trucler:describe-tag client
-                                                    lexical-environment
-                                                    new-tag-name)))))
+                 (setq result (trucler:describe-tag
+			       client environment new-tag-name)))))
     result))

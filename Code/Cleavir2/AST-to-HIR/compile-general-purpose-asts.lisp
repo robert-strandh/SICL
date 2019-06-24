@@ -849,22 +849,3 @@
                         :successor (make-instance 'cleavir-ir:eq-instruction
                                      :inputs (list temp1 temp2)
                                      :successors successors))))))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a LOAD-TIME-VALUE-AST.
-;;;
-;;; The LOAD-TIME-VALUE-AST is a subclass of ONE-VALUE-AST-MIXIN, so
-;;; the :AROUND method on COMPILE-AST has adapted the context so that
-;;; it has a single result.
-
-(defmethod compile-ast ((ast cleavir-ast:load-time-value-ast) context)
-  (with-accessors ((results results)
-                   (successors successors))
-      context
-    (make-instance 'cleavir-ir:assignment-instruction
-     :input (cleavir-ir:make-load-time-value-input
-             ;; FIXME: the FORM-AST should be compiled.
-             (cleavir-ast:form-ast ast) (cleavir-ast:read-only-p ast))
-     :output (first results)
-     :successor (first successors))))

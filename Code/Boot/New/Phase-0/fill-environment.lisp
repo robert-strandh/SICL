@@ -7,7 +7,6 @@
         (constantly environment))
   (define-defmacro environment)
   (define-backquote-macros environment)
-  (define-default-setf-expander environment)
   (define-setf-macro-function environment)
   (flet ((ld (relative-file-name)
            (format *trace-output* "Loading file ~a~%" relative-file-name)

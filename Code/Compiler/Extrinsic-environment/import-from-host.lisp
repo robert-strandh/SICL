@@ -1,107 +1,114 @@
 (cl:in-package #:sicl-extrinsic-environment)
 
-(defun package-relevant-p (package)
-  (or (eq package (find-package '#:common-lisp))
-      (eq package (find-package '#:closer-mop))
-      (let* ((name (package-name package))
-             (name-length (length name)))
-        (or (and (>= name-length 8)
-                 (string-equal (subseq name 0 8) "cleavir-"))
-            (and (>= name-length 5)
-                 (string-equal (subseq name 0 5) "sicl-"))))))
+(defparameter *imported-functions*
+  '(;; Functions on CONS cells.
+    cons car cdr rplaca rplacd consp atom null
+    ;; Functions for arithmetic
+    + - * / floor ceiling round evenp oddp = /= < <= > >=
+    ;; Various functions
+    eq values
+    ;; Funcions related to symbols
+    gensym symbolp
+    ;; Functions for calling functions
+    funcall apply
+    sicl-genv:find-package
+    sicl-genv:get-setf-expansion
+    (setf sicl-genv:function-type)
+    (setf sicl-genv:function-lambda-list)
+    (setf sicl-genv:fdefinition)
+    cleavir-environment:global-environment
+    cleavir-environment:symbol-macro-expansion
+    cleavir-environment:macro-function
+    cleavir-code-utilities:parse-macro
+    cleavir-code-utilities:parse-deftype
+    cleavir-code-utilities:separate-ordinary-body
+    cleavir-code-utilities:list-structure
+    sicl-conditionals:or-expander
+    sicl-conditionals:and-expander
+    sicl-conditionals:cond-expander
+    sicl-conditionals:case-expander
+    sicl-conditionals:ecase-expander
+    sicl-conditionals:ccase-expander
+    sicl-conditionals:typecase-expander
+    sicl-conditionals:etypecase-expander
+    sicl-conditionals:ctypecase-expander
+    sicl-standard-environment-macros:defconstant-expander
+    sicl-standard-environment-macros:defvar-expander
+    sicl-standard-environment-macros:defparameter-expander
+    sicl-standard-environment-macros:deftype-expander
+    sicl-standard-environment-macros:define-compiler-macro-expander
+    sicl-data-and-control-flow:shiftf-expander
+    sicl-data-and-control-flow:defun-expander
+    sicl-data-and-control-flow:psetf-expander
+    sicl-data-and-control-flow:rotatef-expander
+    sicl-data-and-control-flow:destructuring-bind-expander
+    sicl-evaluation-and-compilation:declaim-expander
+    sicl-cons:pushnew-expander
+    sicl-cons:push-expander
+    sicl-cons:pop-expander
+    sicl-cons:remf-expander
+    sicl-iteration:dolist-expander
+    sicl-iteration:dotimes-expander
+    sicl-iteration:do-dostar-expander
+    sicl-loop:expand-body))
 
-(defun import-function-from-host (function-name environment)
-  (setf (sicl-genv:fdefinition function-name environment)
+(defparameter *imported-variables*
+  '(*package* *macroexpand-hook*))
+
+(defparameter *imported-packages*
+  '(#:common-lisp
+    #:sicl-evaluation-and-compilation
+    #:sicl-global-environment
+    #:sicl-data-and-control-flow
+    #:sicl-conditionals
+    #:sicl-arithmetic
+    #:sicl-loop
+    #:sicl-cons
+    #:sicl-iteration
+    #:sicl-standard-environment-macros
+    #:sicl-standard-environment-functions))
+
+(defun import-function-from-host (function-name to-environment)
+  (setf (sicl-genv:fdefinition function-name to-environment)
         (fdefinition function-name)))
 
-(defun import-functions-from-package-symbols (package environment)
-  (do-symbols (symbol package)
-    (when (eq (symbol-package symbol) (find-package package))
-      (when (and (fboundp symbol)
-                 (not (special-operator-p symbol))
-                 (null (macro-function symbol)))
-        (import-function-from-host symbol environment))
-      (when (fboundp `(setf ,symbol))
-        (import-function-from-host `(setf ,symbol) environment)))))
-
-(defun import-functions-from-host (environment)
-  (loop for package in '(sicl-genv
-                         cleavir-environment
-                         sicl-loop
-                         sicl-conditionals
-                         cleavir-code-utilities
-                         sicl-data-and-control-flow
-                         sicl-cons
-                         sicl-iteration
-                         sicl-clos
-                         sicl-evaluation-and-compilation
-                         sicl-standard-environment-macros
-                         sicl-environment)
-        do (import-functions-from-package-symbols package environment))
-  (loop for name in '(symbol-value
-                      (setf symbol-value))
-        do (import-function-from-host name environment)))
-
-(defun import-cons-related-functions (environment)
-  (loop for name in '(cons car cdr (setf car) (setf cdr)
-                      consp listp list list* append make-list
-                      first second third fourth fifth
-                      rest last butlast nth
-                      rplaca rplacd cadr cddr reverse member-if-not
-                      (setf cadr) (setf cddr) caddr
-                      cdddr reduce union assoc mapc intersection
-                      get-properties adjoin
-                      copy-list set-difference set-exclusive-or)
-        do (import-function-from-host name environment)))
-
-(defun import-hash-table-related-functions (environment)
-  (loop for name in '(gethash (setf gethash) remhash maphash make-hash-table)
-        do (import-function-from-host name environment)))
-
-(defun import-number-related-functions (environment)
-  (loop for name in '(+ - * / = < <= > >= /= evenp zerop 1+ 1-
-                      floor ceiling)
-        do (import-function-from-host name environment)))
-
-(defun import-sequence-related-functions (environment)
-  (loop for name in '(count remove-duplicates remove-if-not)
-        do (import-function-from-host name environment)))
-
-(defun import-from-common-lisp (environment)
-  (import-cons-related-functions environment)
-  (import-hash-table-related-functions environment)
-  (import-number-related-functions environment)
-  (import-sequence-related-functions environment)
-  (loop for name in '(find-package funcall gensym
-                      not null coerce symbolp atom stringp
-                      apply vector eq eql equal values mapcar keywordp
-                      endp length every find-if-not remove find find-if
-                      position subseq
-                      member sort
-                      getf typep class-of format
-                      print warn proclaim compile
-                      ensure-generic-function)
-        do (import-function-from-host name environment)))
+(defun import-package-from-host (package-name to-environment)
+  (push (find-package package-name)
+        (sicl-genv:packages to-environment)))
 
 (defun import-from-host (environment)
-  (host-load "../../Data-and-control-flow/defun-support.lisp")
-  (host-load "../../Data-and-control-flow/shiftf-support.lisp")
-  ;; Import available packages in the host to ENVIRONMENT.
-  (setf (sicl-genv:packages environment)
-        (remove-if-not #'package-relevant-p (list-all-packages)))
-  (import-from-common-lisp environment)
-  (import-functions-from-host environment)
-  (do-all-symbols (symbol)
-    (when (package-relevant-p (symbol-package symbol))
-      ;; Import all constant variables in the host to ENVIRONMENT.
-      (when (constantp symbol)
-        (setf (sicl-genv:constant-variable symbol environment)
-              (cl:symbol-value symbol)))
-      ;; Import all special operators in the host to ENVIRONMENT
-      (when (special-operator-p symbol)
-        (setf (sicl-genv:special-operator symbol environment) t))
-      ;; Import special variables.
-      (loop for symbol in '(*package* *macroexpand-hook*)
-            for boundp = (boundp symbol)
-            do (setf (sicl-genv:special-variable symbol environment boundp)
-                     (if boundp (cl:symbol-value symbol) nil))))))
+  (host-load "Data-and-control-flow/defun-support.lisp")
+  (host-load "Data-and-control-flow/shiftf-support.lisp")
+  (host-load "Data-and-control-flow/psetf-support.lisp")
+  (host-load "Data-and-control-flow/rotatef-support.lisp")
+  (host-load "Data-and-control-flow/destructuring-bind-support.lisp")
+  (host-load "Conditionals/support.lisp")
+  (host-load "Environment/macro-support.lisp")
+  (loop for name in *imported-functions*
+        do (import-function-from-host name environment))
+  ;; We can't import (SETF CAR) and (SETF CDR) etc directly, because
+  ;; they might not be defined as functions.  They could be SETF
+  ;; expanders.
+  (setf (sicl-genv:fdefinition '(setf car) environment)
+        (lambda (new-value cons)
+          (setf (car cons) new-value)))
+  (setf (sicl-genv:fdefinition '(setf cdr) environment)
+        (lambda (new-value cons)
+          (setf (cdr cons) new-value)))
+  (setf (sicl-genv:fdefinition '(setf cadr) environment)
+        (lambda (new-value cons)
+          (setf (cadr cons) new-value)))
+  (setf (sicl-genv:fdefinition '(setf cddr) environment)
+        (lambda (new-value cons)
+          (setf (cddr cons) new-value)))
+  (loop for symbol in *imported-variables*
+        for boundp = (boundp symbol)
+        do (setf (sicl-genv:special-variable symbol environment boundp)
+                 (if boundp (cl:symbol-value symbol) nil)))
+  ;; Import all standard special operators
+  (do-symbols (symbol (find-package '#:common-lisp) nil)
+    (when (special-operator-p symbol)
+      (setf (sicl-genv:special-operator symbol environment) t)))
+  ;; Import some packages
+  (loop for name in *imported-packages*
+        do (import-package-from-host name environment)))

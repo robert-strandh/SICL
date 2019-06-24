@@ -9,7 +9,7 @@
          (cl (sicl-hir-to-cl:hir-to-cl nil hir))
          (fun (compile nil cl))
          (sicl-hir-to-cl:*dynamic-environment* '()))
-    (funcall fun (sicl-hir-to-cl:function-finder environment))))
+    (funcall fun (sicl-hir-to-cl:make-function-cell-finder environment))))
 
 (defun import-function-from-host (name environment)
   (setf (sicl-genv:fdefinition name environment)

@@ -2,7 +2,7 @@
 
 (defun data (instruction)
   (append (cleavir-ir:inputs instruction)
-	  (cleavir-ir:outputs instruction)))
+          (cleavir-ir:outputs instruction)))
 
 ;;; By SEGREGATING lexical locations, we mean taking each lexical
 ;;; location and determining whether it is an exclusive location or a
@@ -47,11 +47,11 @@
 ;;; to date.
 (defun functions-using-location (location instruction-owners)
   (let ((instructions (append (cleavir-ir:defining-instructions location)
-			      (cleavir-ir:using-instructions location)))
-	(result '()))
+                              (cleavir-ir:using-instructions location)))
+        (result '()))
     (loop for instruction in instructions
-	  do (pushnew (gethash instruction instruction-owners) result
-		      :test #'eq))
+          do (pushnew (gethash instruction instruction-owners) result
+                      :test #'eq))
     result))
 
 ;;; Given a list of ENTER-INSTRUCTIONs, return an alist mapping each
@@ -60,7 +60,7 @@
 ;;; location to be eliminated.
 (defun allocate-cell-locations (enter-instructions)
   (loop for enter-instruction in enter-instructions
-	collect (cons enter-instruction
+        collect (cons enter-instruction
                       (cleavir-ir:new-temporary "CELL"))))
 
 ;;; Given an ENCLOSE-INSTRUCTION and the exclusive lexical location
@@ -125,9 +125,9 @@
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
   ;; ENTER-INSTRUCTION of that entry.
   (loop with dag-nodes = (dag-nodes function-dag)
-	for (enter . cell-location) in cell-locations
-	unless (eq enter owner)
-	  do (loop for node in (gethash enter dag-nodes)
+        for (enter . cell-location) in cell-locations
+        unless (eq enter owner)
+          do (loop for node in (gethash enter dag-nodes)
                    for enclose = (enclose-instruction node)
                    for parents = (parents node)
                    do (loop for parent in parents
@@ -219,21 +219,21 @@
 (defun process-location
     (location function-dag instruction-owners owner)
   (let* (;; Determine all the functions (represented by
-	 ;; ENTER-INSTRUCTIONs) that use (read or write) the location.
-	 (users (functions-using-location location instruction-owners))
-	 ;; To that set, add the intermediate functions.
-	 (enters (add-intermediate-functions users function-dag owner))
-	 ;; Compute a dictionary that associates each
-	 ;; ENTER-INSTRUCTION with a cell location.
-	 (cell-locations (allocate-cell-locations enters)))
+         ;; ENTER-INSTRUCTIONs) that use (read or write) the location.
+         (users (functions-using-location location instruction-owners))
+         ;; To that set, add the intermediate functions.
+         (enters (add-intermediate-functions users function-dag owner))
+         ;; Compute a dictionary that associates each
+         ;; ENTER-INSTRUCTION with a cell location.
+         (cell-locations (allocate-cell-locations enters)))
     (loop for instruction in (cleavir-ir:using-instructions location)
-	  for instruction-owner = (gethash instruction instruction-owners)
-	  for cell-location = (cdr (assoc instruction-owner cell-locations))
-	  do (replace-inputs location cell-location instruction))
+          for instruction-owner = (gethash instruction instruction-owners)
+          for cell-location = (cdr (assoc instruction-owner cell-locations))
+          do (replace-inputs location cell-location instruction))
     (loop for instruction in (cleavir-ir:defining-instructions location)
-	  for instruction-owner = (gethash instruction instruction-owners)
-	  for cell-location = (cdr (assoc instruction-owner cell-locations))
-	  do (replace-outputs location cell-location instruction))
+          for instruction-owner = (gethash instruction instruction-owners)
+          for cell-location = (cdr (assoc instruction-owner cell-locations))
+          do (replace-outputs location cell-location instruction))
     ;; We do this step last, so that we are sure that the CREATE-CELL
     ;; and FETCH instructions are inserted immediately after the ENTER
     ;; instruction.
@@ -243,16 +243,16 @@
   ;; Make sure everything is up to date.
   (cleavir-ir:reinitialize-data initial-instruction)
   (let* ((instruction-owners (compute-instruction-owners initial-instruction))
-	 (location-owners (compute-location-owners initial-instruction))
-	 (function-dag (build-function-dag initial-instruction))
-	 (shared-locations
-	   (segregate-lexicals initial-instruction location-owners)))
+         (location-owners (compute-location-owners initial-instruction))
+         (function-dag (build-function-dag initial-instruction))
+         (shared-locations
+           (segregate-lexicals initial-instruction location-owners)))
     (loop for shared-location in shared-locations
-	  for owner = (gethash shared-location location-owners)
-	  do (process-location shared-location
-			       function-dag
-			       instruction-owners
-			       owner))))
+          for owner = (gethash shared-location location-owners)
+          do (process-location shared-location
+                               function-dag
+                               instruction-owners
+                               owner))))
 
 (defun segregate-only (initial-instruction)
   ;; Make sure everything is up to date.

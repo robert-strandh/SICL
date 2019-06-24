@@ -34,7 +34,7 @@
 ;;; We convert a LET form CST by transforming it into an equivalent
 ;;; LAMBDA form CST.
 
-(defmethod convert-let (client cst lexical-environment)
+(defmethod convert-let (client cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (let-cst bindings-cst . body-forms-cst) cst
@@ -60,14 +60,14 @@
                                 (cst:cons (cst:cstify variable-csts)
                                           body-forms-cst))
                :rest (cst:cstify initform-csts))))
-      (convert client lambda-form-cst lexical-environment))))
+      (convert client lambda-form-cst environment))))
 
 ;;; We convert a LET* form CST by transforming it into nested LET form
 ;;; CSTs and then converting those instead.  This is not trivial,
 ;;; because we need to associate the right declarations with the
 ;;; corresponding LET form CST.
 
-(defmethod convert-let* (client cst lexical-environment)
+(defmethod convert-let* (client cst environment)
   (check-cst-proper-list cst 'form-must-be-proper-list)
   (check-argument-count cst 1 nil)
   (cst:db origin (let*-cst bindings-cst . body-forms-cst) cst
@@ -111,4 +111,4 @@
                                          result))
                                     :source origin)
                           :source origin))
-                finally (return (convert client result lexical-environment))))))))
+                finally (return (convert client result environment))))))))

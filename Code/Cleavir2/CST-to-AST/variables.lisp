@@ -51,11 +51,14 @@
 ;;;
 ;;; Variables that control certain behavior of the compiler.
 
-;;; This variable should be bound by client code to one of the symbols
-;;; CL:COMPILE, CL:COMPILE-FILE, or CL:EVAL before the main entry
-;;; point is called.
-(defvar *compiler*)
+;;; This variable should be bound to a true value if this system is
+;;; called from teh file compiler.
+(defparameter *use-file-compilation-sematics-p* nil)
 
 ;;; This variable indicates whether a form should be evaluated in
 ;;; addition to be being processed by the compiler.
 (defvar *compile-time-too*)
+
+;;; During the conversion of a single CST, the value of this variable
+;;; is the source location of that CST.
+(defvar *origin*)

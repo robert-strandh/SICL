@@ -20,6 +20,8 @@
 (defun enable-object-initialization (boot)
   (with-accessors ((e2 sicl-boot:e2)
                    (e3 sicl-boot:e3)) boot
+    ;; The function CLASS-OF is called by SHARED-INITIALIZE in order
+    ;; to get the slot-definition metaobjects.
     (define-class-of e3)
     ;; The support code for SHARED-INITIALIZE in phase 3 will need to
     ;; access various slots of class metaobjects and slot-definition

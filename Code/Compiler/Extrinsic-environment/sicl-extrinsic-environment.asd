@@ -14,25 +14,6 @@
 ;;;; phases, but that environment could then be distinct from the
 ;;;; compilation environment we are talking about here.
 ;;;;
-;;;; Perhaps the most important extrinsic compiler is the extrinsic
-;;;; FILE COMPILER, often called the CROSS COMPILER.  In this
-;;;; compiler, processing beyond creating an abstract syntax tree
-;;;; consists of generating target code in a FASL file.  The FASL file
-;;;; is then loaded into the native target system.
-;;;;
-;;;; As it is, this environment is only designed to handle the usual
-;;;; top-level defining forms such as DEFUN, DEFGENERIC, DEFMETHOD,
-;;;; DEFCLASS, DEFVAR, DEFPARAMETER, and DEFCONSTANT.  It can of
-;;;; course evaluate any top-level form at compile time, but since
-;;;; most functions in the environment come from the host, they may
-;;;; not have the desired effect.  For instance, an attempt to call
-;;;; (SETF CL:FDEFINITION) will set the function definition in the
-;;;; host environment, rather than in this environment.  Client code
-;;;; that needs to evaluate more sophisticated top-level forms must
-;;;; first evaluate forms in this environment that create the correct
-;;;; function definitions that are needed.  It is not hard to do that,
-;;;; of course.  Basically, it suffices to load a file containing such
-;;;; function definitions into this environment.
 
 ;;;; Extrinsic compilation imposes some non-trivial requirements on
 ;;;; the extrinsic environment:
@@ -96,7 +77,7 @@
 ;;;; system as an explicit mechanism.  Client code that needs this
 ;;;; functionality must provide it.
 
-(defsystem :sicl-extrinsic-environment
+(defsystem sicl-extrinsic-environment
   :depends-on (:concrete-syntax-tree
                :trivial-gray-streams
                :sicl-simple-environment
@@ -105,19 +86,11 @@
                :sicl-arithmetic
                :sicl-cons-support
                :sicl-clos-support
-               :sicl-clos-macro-support
                :sicl-type-support
-               :sicl-environment-support
                :sicl-conditions
                :closer-mop
-               :cleavir-generate-ast
-               :cleavir-cst-to-ast
-               :cleavir-ast-transformations
-               :cleavir-ast-to-hir
-               :cleavir-hir
-               :cleavir-hir-transformations
-               :cleavir-remove-useless-instructions
-               :cleavir-basic-blocks
+               :cleavir2-cst-to-ast
+               :cleavir2-ast-transformations
                :cleavir-meter
                :sicl-evaluation-and-compilation-support
                :sicl-data-and-control-flow-support
@@ -125,32 +98,10 @@
                :sicl-iteration-support
                :sicl-source-tracking
                :eclector
-               :eclector-concrete-syntax-tree
-               :cleavir-equivalent-lexical-locations
-               :cleavir-simple-value-numbering)
+               :eclector-concrete-syntax-tree)
   :serial t
   :components
   ((:file "packages")
    (:file "host-load")
-   (:file "runtime-environment")
-   (:file "symbol-value")
-   (:file "traced-funcall")
-   (:file "parse-arguments")
-   (:file "translate-hir")
-   (:file "environment-defclass")
-   (:file "customization")
-   (:file "cst-customization")
-   (:file "eval")
-   (:file "cst-eval")
-   (:file "repl")
-   (:file "cst-repl")
-   (:file "load")
-   (:file "load-file-defun")
-   (:file "import-from-host")
-   (:file "import-from-sicl-global-environment")
-   (:file "define-defmacro")
-   (:file "define-in-package")
-   (:file "define-default-setf-expander")
-   (:file "define-backquote-macros")
-   (:file "fill")
-   (:file "initialization")))
+   (:file "environment")
+   (:file "import-from-host")))

@@ -1,10 +1,31 @@
 (cl:in-package #:asdf-user)
 
+;;;; This system takes HIR code and translates it to a very simple
+;;;; form of Common Lisp code for execution in a host Common Lisp
+;;;; system.
+;;;;
+;;;; In addition to being very simple, this code behaves in many ways
+;;;; like native SICL code.  In particular, it is "untied", meaning
+;;;; that it is not tied to a particular environment.  Instead, the
+;;;; code has a top-level function that, when executed, ties it to a
+;;;; particular environment, as described below.  When executed, The
+;;;; top-level function accomplishes all the actions that must be
+;;;; taken at load time.  In particular, top-level forms in the
+;;;; original source code are then evaluated.
+;;;;
+;;;; In order for the generated Common Lisp code to be tied to a
+;;;; particular environment, the top-level function is called with a
+;;;; single argument, namely a function called the
+;;;; FUNCTION-CELL-FINDER.  The FUNCTION-CELL-FINDER closes over some
+;;;; environment E, and takes a single argument which is the name of a
+;;;; function.  FUNCTION-CELL-FINDER returns the function cell in E
+;;;; corresponding to the name given as an argument.
+
 (defsystem #:sicl-hir-to-cl
   :depends-on (#:cleavir2-hir
                #:cleavir2-ast-to-hir
                #:sicl-hir-transformations
-               #:sicl-alternative-extrinsic-environment
+               #:sicl-extrinsic-environment
                #:sicl-ast-to-hir
                #:closer-mop)
   :serial t

@@ -22,7 +22,7 @@
     (coerce (list* nil static-environment-values)
             'vector)))
 
-(defun function-finder (environment)
+(defun make-function-cell-finder (environment)
   (lambda (name)
     (sicl-genv:function-cell name environment)))
 
@@ -37,7 +37,11 @@
                  (sicl-genv:special-variable symbol environment)
                (if boundp
                    (return value)
-                   (error "Unbound variable ~s" symbol))))))
+                   (multiple-value-bind (value boundp)
+                       (sicl-genv:constant-variable symbol environment)
+                     (if boundp
+                         (return value)
+                         (error "Unbound variable ~s" symbol))))))))
 
 (defun set-symbol-value-function (environment)
   (lambda (symbol value)

@@ -1,13 +1,13 @@
 (cl:in-package #:sicl-hir-to-cl-test)
 
 (defmethod trucler-reference:global-environment
-    ((environment sicl-alternative-extrinsic-environment:environment))
+    ((environment sicl-extrinsic-environment:environment))
   environment)
 
 (defun make-environment ()
   (let ((environment
-          (make-instance 'sicl-alternative-extrinsic-environment:environment)))
-    (sicl-alternative-extrinsic-environment::import-from-host environment)
+          (make-instance 'sicl-extrinsic-environment:environment)))
+    (sicl-extrinsic-environment::import-from-host environment)
     (sicl-hir-to-cl::fill-environment environment)
     environment))
 

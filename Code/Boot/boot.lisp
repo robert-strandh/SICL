@@ -47,8 +47,10 @@
 ;;; global value cell in case the variable is not bound in the dynamic
 ;;; run-time environment.
 (defmethod cleavir-cst-to-ast:convert-special-variable
-    (cst (info cleavir-env:special-variable-info) (env environment) system)
-  (declare (ignore system))
+    (cst
+     (info cleavir-env:special-variable-info)
+     (env environment)
+     client)
   (cleavir-ast:make-call-ast
    (cleavir-ast:make-car-ast
     (cleavir-ast:make-load-time-value-ast

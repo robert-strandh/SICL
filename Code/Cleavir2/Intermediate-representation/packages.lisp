@@ -6,7 +6,6 @@
    #:datum
    #:replace-datum
    #:immediate-input #:make-immediate-input
-   #:load-time-value-input #:make-load-time-value-input
    #:form #:read-only-p
    #:word-input
    #:float-location #:make-float-location #:size

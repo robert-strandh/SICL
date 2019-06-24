@@ -100,6 +100,34 @@
 
 (cl:defvar *global-environment*)
 
+;;; We do not use backquotes in this function, because we sometimes
+;;; need to read and compile this code in the host during
+;;; bootstrapping, but have the result be used by the extrinsic
+;;; compiler.  However, the extrinsic compiler uses the Eclector
+;;; version of the backquote macro, and that is not necessarily
+;;; compatible with that of the host.
+(defmethod initialize-instance :after ((instance simple-environment) &key)
+  (setf (default-setf-expander instance)
+        (lambda (form environment)
+          (declare (ignore environment))
+          (if (symbolp form)
+              (let ((new (gensym)))
+                (values '()
+                        '()
+                        (list new)
+                        (list 'setq form new)
+                        form))
+              (let ((temps (loop for arg in (rest form) collect (gensym)))
+                    (new (gensym)))
+                (values temps
+                        (rest form)
+                        (list new)
+                        (list* 'funcall
+                               (list 'function (list 'setf (first form)))
+                               new
+                               temps)
+                        (cons (first form) temps)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods to keep the policy consistent with the optimize values.

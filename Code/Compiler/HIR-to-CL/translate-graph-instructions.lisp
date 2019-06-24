@@ -110,7 +110,7 @@
              ,@(loop for optional-parameter in optional-parameters
                      collect `(setq ,(cleavir-ir:name (first optional-parameter))
                                     (pop ,remaining-variable))
-                     collect `(setq ,(cleavir-ir:name (first optional-parameter))
+                     collect `(setq ,(cleavir-ir:name (second optional-parameter))
                                     t))
              ,@(if (null rest-parameter)
                    '()
