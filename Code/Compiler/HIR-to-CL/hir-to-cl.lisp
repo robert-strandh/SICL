@@ -58,6 +58,7 @@
           do (setf (gethash enter-instruction (function-names context))
                    (gensym "code")))
     `(lambda (,*top-level-function-parameter*)
+       #+sbcl(declare (sb-ext:muffle-conditions sb-ext:compiler-note))
        (let* ((,(static-env-function-var context)
                 (car (funcall ,*top-level-function-parameter* 'static-environment-function)))
               ,@(all-values-location-names (values-locations context))
