@@ -4026,38 +4026,3 @@
 			 :datum plist
 			 :name 'getf))
 		(return (values nil nil nil))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro remf
-
-;;; FIXME, I guess macros such as remf should check that 
-;;; store-vars has a length of 1.
-
-(defmacro remf (place indicator &environment env)
-  (let ((indicator-var (gensym)))
-    (multiple-value-bind (vars vals store-vars writer-form reader-form)
-	(get-setf-expansion place env)
-      `(let (,@(mapcar #'list vars vals)
-	     (,indicator-var ,indicator))
-	 (let ((,(car store-vars) ,reader-form))
-	   (if (null ,(car store-vars))
-	       nil
-	       (if (eq (car ,(car store-vars)) ,indicator-var)
-		   (progn (setf ,(car store-vars) (cddr ,(car store-vars)))
-			  ,writer-form
-			  t)
-		   (loop for rest on (cdr ,(car store-vars)) by #'cddr
-			 when (null (cdr rest))
-			   return nil
-			 do (unless (consp (cddr rest))
-			      (error 'must-be-property-list
-				     :datum ,(car store-vars)
-				     :name 'getf))
-			 when (eq (cadr rest) ,indicator-var)
-			   do (setf (cdr rest) (cdddr rest))
-			      (return t)
-			 finally (unless (null rest)
-				   (error 'must-be-property-list
-					  :datum ,(car store-vars)
-					  :name 'getf))))))))))
