@@ -90,7 +90,8 @@
            (let (,@(mapcar #'cleavir-ir:name lexical-locations)
                  (source nil)
                  (,remaining-variable ,arguments-variable))
-             (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)))
+             (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)
+                                 ,remaining-variable))
              ;; Check that enough arguments were passed.
              ,@(if (null required-parameters)
                    '()
