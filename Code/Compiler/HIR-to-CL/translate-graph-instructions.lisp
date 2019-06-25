@@ -119,6 +119,7 @@
                      collect `(multiple-value-bind (indicator value tail)
                                   (get-properties ,remaining-variable
                                                   '(,(first key-parameter)))
+                                (declare (ignorable indicator value tail))
                                 (unless (null tail)
                                   (setf ,(cleavir-ir:name (second key-parameter))
                                         value)

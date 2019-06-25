@@ -73,6 +73,7 @@
                              ,*static-environment-variable*))
          (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)))
          (declare (ignorable ,(static-env-function-var context)))
+         (declare (ignorable ,@(all-values-location-names (values-locations context))))
          (block ,(block-name context)
            (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
               ,@(loop with dynamic-environment-location
