@@ -278,28 +278,22 @@ A code object contains the following information:
   corresponds to a line of code.
 \item Information about the file that contains the source code of the
   compilation unit of which this code object is part.
-\item A table mapping values of the program counter to \emph{source
-  locations}, i.e. line and column information corresponding to the
-  location in the source code of the expression being evaluated.
-\item A table mapping values of the program counter to \emph{variable
-  liveness information}.
 \item The \emph{concrete syntax tree} corresponding to the source code
   of the compilation unit of which this code object is part.
 \end{itemize}
 
-The three tables providing support for the \emph{step} commands of the
-debugger each maps values $P$ of the program counter to either
-another value $N$ of the program counter, or to a list of such values.
-The values correspond either to the beginning or to the end of a form
-to be evaluated.  Each table is sorted by the value of $P$, so that a
-binary search can be used to find an entry corresponding to some
-current value of the program counter.  The value $N$ is a singleton
-when there is only one execution path from $P$ to the next program
-point to step to.  The entry contains a list of such values when there
-are several possible such execution paths to different program points,
-for example at the end of the condition form in an \texttt{if} special
-form.  Each table provides support for one of the debugger commands
-\emph{step in}, \emph{step out}, and \emph{step over}.
+The following tables are used for debugger support:
+
+\begin{itemize}
+\item A table mapping source locations (i.e. line and column
+  information corresponding to the location in the source code of the
+  expression being evaluated) to values of the program counter.  When
+  the user of the debugger sets a breakpoint at a particular source
+  location, the debugger uses this information to determine a value of
+  the program counter at which the program should stop its execution.
+\item A table mapping values of the program counter to \emph{variable
+  liveness information}.
+\end{itemize}
 
 \section{Rigid instances}
 \label{sec-data-representation-rigid-instances}
