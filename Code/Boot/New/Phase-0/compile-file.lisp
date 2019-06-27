@@ -1,5 +1,19 @@
 (cl:in-package #:sicl-boot-phase-0)
 
+(defun read-model-object (stream char)
+  (declare (ignore char))
+  (apply #'make-instance (read-delimited-list #\] stream t)))
+
+(set-macro-character #\[ #'read-model-object nil)
+(set-syntax-from-char #\] #\))
+
+(defmethod make-load-form ((object sicl-source-tracking:source-position) &optional environment)
+  (declare (ignore environment))
+  `(make-instance 'sicl-source-tracking:source-position
+     :lines ,(sicl-source-tracking:lines object)
+     :line-index ,(sicl-source-tracking:line-index object)
+     :character-index ,(sicl-source-tracking:character-index object)))
+
 (defun compile-file (client relative-pathname environment)
   (let ((*package* *package*)
         (input-pathname (asdf:system-relative-pathname '#:sicl relative-pathname)))
@@ -34,4 +48,20 @@
                                                       filename))
                (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname)))
           (ensure-directories-exist output-pathname)
-          (cleavir-io:write-model output-pathname "V0" ast))))))
+          (cleavir-io:write-model output-pathname "V0" ast))
+        (let* ((dot-pos (position #\. relative-pathname))
+               (prefix (subseq relative-pathname 0 dot-pos))
+               (filename (concatenate 'string prefix ".lisp"))
+               (output-relative-pathname (concatenate 'string
+                                                      "Boot/New/Host-FASLs/"
+                                                      filename))
+               (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname)))
+          (ensure-directories-exist output-pathname)
+          (let* ((hir (sicl-ast-to-hir:ast-to-hir ast))
+                 (cl (sicl-hir-to-cl:hir-to-cl nil hir))
+                 (wrapped-cl `(defparameter *top-level-function* ,cl)))
+            (with-open-file (stream output-pathname
+                                    :direction :output
+                                    :if-exists :supersede)
+              (cleavir-io:write-model output-pathname nil wrapped-cl)
+              (cl:compile-file output-pathname))))))))
