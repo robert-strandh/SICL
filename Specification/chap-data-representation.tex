@@ -244,9 +244,8 @@ A code object contains the following information:
 \begin{itemize}
 \item The executable native instructions in the form of a vector of
   unsigned bytes.
-\item Three tables providing support for the \emph{step} commands of
-  the debugger.  See below for more detailed information about these
-  tables.
+\item Tables providing support for commands of the debugger.  See
+  below for more detailed information about these tables.
 \item A table mapping a value of the program counter to a \emph{frame
   map}.  This is a bitmap containing information that is used by the
   garbage collector to determine which stack locations may contain
