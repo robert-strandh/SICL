@@ -3,7 +3,9 @@
 ;;; Cut and paste a function to inline - i.e. don't copy much of anything, which is nice,
 ;;; but means the original is destroyed.
 (defun interpolate-function (call enter)
-  (let ((returns '())
+  (let (;; We need to alter these. We find them before doing any alteration-
+        ;; interleaving modification and finds results in unfortunate effects.
+        (returns '())
         (unwinds '())
         (target-enter (instruction-owner call))
         (old-dynenv (cleavir-ir:dynamic-environment enter))
@@ -28,17 +30,21 @@
        (when (typep instruction 'cleavir-ir:return-instruction)
          (push instruction returns))
        (when (typep instruction 'cleavir-ir:unwind-instruction)
-         (push instruction unwinds)))
+         (push instruction unwinds))
+       (when (typep instruction 'cleavir-ir:funcall-instruction)
+         (push instruction *destinies-worklist*)))
      enter)
-    ;; We need to alter these. We find them before doing any alteration-
-    ;; interleaving modification and finds results in unfortunate effects.
     ;; Make appropriate assignments to do the ENTER's task.
     (loop with cleavir-ir:*policy* = (cleavir-ir:policy call)
           with cleavir-ir:*dynamic-environment* = call-dynenv
           for location in (cleavir-ir:parameters enter)
           for arg in (rest (cleavir-ir:inputs call))
-          for assign = (cleavir-ir:make-assignment-instruction arg location)
-          do (cleavir-ir:insert-instruction-before assign call))
+          for assign = (cleavir-ir:make-assignment-instruction arg location) 
+          do (when (cleavir-ir:using-instructions location)
+               (let ((binding-assign (first (cleavir-ir:using-instructions location))))
+                 (change-class binding-assign 'binding-assignment-instruction)
+                 (push binding-assign *binding-assignments*)))
+             (cleavir-ir:insert-instruction-before assign call))
     ;; Turn any unwinds in the body to the function being inlined into
     ;; into direct control transfers.
     (loop with target-enter = (instruction-owner call)
@@ -96,7 +102,13 @@
                  for arg in (rest (cleavir-ir:inputs call))
                  for temp = (cleavir-ir:new-temporary)
                  for assign = (cleavir-ir:make-assignment-instruction arg temp)
-                 do (cleavir-ir:insert-instruction-before assign call)
+                 do (when (cleavir-ir:using-instructions location)
+                      (let ((binding-assign (first (cleavir-ir:using-instructions location))))
+                        ;; Don't have to push these onto the binding
+                        ;; assignment list, because only the clones
+                        ;; will end up needing cells.
+                        (change-class binding-assign 'binding-assignment-instruction)))
+                    (cleavir-ir:insert-instruction-before assign call)
                     (setf (instruction-owner assign) *target-enter-instruction*)
                     (add-to-mapping mapping location temp)
                     (setf (location-owner temp) *target-enter-instruction*)

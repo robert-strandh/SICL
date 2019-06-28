@@ -68,8 +68,8 @@
 ;;;
 ;;; We add the import to the end of the import list in order to
 ;;; preserve the index of cells in the static environment.
-(defun transmit-dynamic-location (enclose initializers import instruction-owners)
-  (let ((initializer (gethash enclose initializers)))
+(defun transmit-dynamic-location (enclose import instruction-owners)
+  (let ((initializer (cleavir-ir:initializer enclose)))
     (unless initializer
       (let ((cleavir-ir:*policy* (cleavir-ir:policy enclose))
             (cleavir-ir:*dynamic-environment*
@@ -79,7 +79,7 @@
                (first (cleavir-ir:outputs enclose))
                nil)))
       (cleavir-ir:insert-instruction-after initializer enclose)
-      (setf (gethash enclose initializers) initializer)
+      (setf (cleavir-ir:initializer enclose) initializer)
       (setf (gethash initializer instruction-owners)
             (gethash enclose instruction-owners)))
     ;; Start by adding the new import to the end of the existing
@@ -129,7 +129,7 @@
 ;;; every other ENTER-INSTRUCTION in DYNAMIC-LOCATIONS we add a FETCH
 ;;; instruction after it, and we import the dynamic location of the
 ;;; parent function into the corresponding ENCLOSE-INSTRUCTION.
-(defun ensure-dynamic-location-available (function-dag dynamic-locations initializers owner read-only-location-p instruction-owners)
+(defun ensure-dynamic-location-available (function-dag dynamic-locations owner read-only-location-p instruction-owners)
   (unless read-only-location-p
     ;; Start by creating a CREATE-CELL-INSTRUCTION after the owner of
     ;; the static lexical location to be eliminated.
@@ -151,7 +151,7 @@
                    do (loop for parent in parents
                             for parent-enter = (enter-instruction parent)
                             for import = (cdr (assoc parent-enter dynamic-locations))
-                            do (transmit-dynamic-location enclose initializers import instruction-owners)))
+                            do (transmit-dynamic-location enclose import instruction-owners)))
              (add-fetch enter dynamic-location)))
 
 ;;; Given a list of ENTER-INSTRUCTIONs representing the functions that
@@ -247,7 +247,7 @@
 ;;; table mapping an instruction to its owner.  OWNER is the owner of
 ;;; LOCATION.
 (defun process-location
-    (location function-dag instruction-owners initializers owner)
+    (location function-dag instruction-owners owner)
   (let* (;; Determine all the functions (represented by
 	 ;; ENTER-INSTRUCTIONs) that use (read or write) the location.
 	 (users (functions-using-location location instruction-owners))
@@ -272,7 +272,7 @@
     ;; We do this step last, so that we are sure that the CREATE-CELL
     ;; and FETCH instructions are inserted immediately after the ENTER
     ;; instruction.
-    (ensure-dynamic-location-available function-dag dynamic-locations initializers owner read-only-location-p instruction-owners)))
+    (ensure-dynamic-location-available function-dag dynamic-locations owner read-only-location-p instruction-owners)))
 
 (defun process-captured-variables (initial-instruction)
   ;; Make sure everything is up to date.
@@ -281,14 +281,12 @@
 	 (location-owners (compute-location-owners initial-instruction))
 	 (function-dag (build-function-dag initial-instruction))
 	 (static-locations
-	   (segregate-lexicals initial-instruction location-owners))
-         (initializers (make-hash-table :test #'eq)))
+	   (segregate-lexicals initial-instruction location-owners)))
     (loop for static-location in static-locations
 	  for owner = (gethash static-location location-owners)
 	  do (process-location static-location
 			       function-dag
 			       instruction-owners
-                               initializers
 			       owner))))
 
 (defun segregate-only (initial-instruction)

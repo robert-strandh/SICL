@@ -13,6 +13,7 @@
    #:type-inference
    #:process-captured-variables
    #:segregate-only
+   #:read-only-location-p
    #:simplify-boxes
    #:compute-instruction-owners
    #:compute-location-owners
@@ -20,7 +21,9 @@
    #:hir-transformations
    #:introduce-intermediate
    #:eliminate-superfluous-temporaries
-   #:maybe-eliminate)
+   #:maybe-eliminate
+   #:replace-inputs
+   #:replace-outputs)
   (:export
    #:compute-destinies
    #:find-enclose-destinies
