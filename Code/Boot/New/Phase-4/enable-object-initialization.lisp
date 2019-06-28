@@ -54,9 +54,6 @@
                    (class (funcall class-of instance))
                    (class-slots (sicl-genv:fdefinition 'sicl-clos:class-slots e3))
                    (slots (funcall class-slots class)))
-              (format *trace-output* "~%4Initargs: ~s~%" initargs)
-              (when (eq (getf initargs :name) 'symbol)
-                (break))
               (apply (sicl-genv:fdefinition
                       'sicl-clos::shared-initialize-default-using-class-and-slots
                       e3)
