@@ -93,12 +93,13 @@
 
 (defun compute-applicable-methods-default (generic-function arguments)
   (let ((classes-of-arguments (mapcar #'class-of arguments)))
-    (sort
-     (loop for method in (generic-function-methods generic-function)
-           when (definitely-applicable-p method arguments)
-             collect method)
-     (lambda (method1 method2)
-       (method-more-specific-p method1 method2 classes-of-arguments)))))
+    (let ((result (sort
+                   (loop for method in (generic-function-methods generic-function)
+                         when (definitely-applicable-p method arguments)
+                           collect method)
+                   (lambda (method1 method2)
+                     (method-more-specific-p method1 method2 classes-of-arguments)))))
+      result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -116,13 +117,14 @@
     (generic-function classes-of-arguments)
   (block b
     (values
-     (sort
-      (loop for method in (generic-function-methods generic-function)
-            when (let ((a (maybe-applicable-p method classes-of-arguments)))
-                   (if (eq a :somtimes)
-                       (return-from b (values '() nil))
-                       a))
-              collect method)
-      (lambda (method1 method2)
-        (method-more-specific-p method1 method2 classes-of-arguments)))
+     (let ((result (sort
+                    (loop for method in (generic-function-methods generic-function)
+                          when (let ((a (maybe-applicable-p method classes-of-arguments)))
+                                 (if (eq a :somtimes)
+                                     (return-from b (values '() nil))
+                                     a))
+                            collect method)
+                    (lambda (method1 method2)
+                      (method-more-specific-p method1 method2 classes-of-arguments)))))
+       result)
      t)))
