@@ -38,3 +38,10 @@
   (format stream
           "~s is a constant, and cannot have its type proclaimed"
           (name condition)))
+
+(defmethod acclimation:report-condition
+    ((condition undefined-function) stream (language acclimation:english))
+  (format stream
+          "The function ~s is undefined in the environment ~s"
+          (cell-error-name condition)
+          (environment condition)))
