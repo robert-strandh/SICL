@@ -6,5 +6,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "short-description")
    (:file "display-object")
    (:file "gui")))
