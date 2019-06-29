@@ -5,5 +5,6 @@
   (:shadow #:type
 	   #:inline #:notinline
 	   #:constantp
-	   #:macro-function #:compiler-macro-function)
+	   #:macro-function #:compiler-macro-function
+           #:undefined-function)
   (:export #:simple-environment))
