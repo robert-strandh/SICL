@@ -60,5 +60,5 @@
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (when (typep instruction 'cleavir-ir:set-symbol-value-instruction)
-       (convert-one-symbol-value instruction)))
+       (convert-one-set-symbol-value instruction)))
    initial-instruction))
