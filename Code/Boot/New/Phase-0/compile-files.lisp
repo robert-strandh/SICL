@@ -161,6 +161,7 @@
     (cf "CLOS/allocate-instance-support.lisp")
     (cf "CLOS/allocate-instance-defmethods.lisp")
     (cf "CLOS/slot-bound-using-index.lisp")
+    (cf "CLOS/slot-value-etc-defuns.lisp")
     (cf "CLOS/slot-value-etc-defgenerics.lisp")
     (cf "CLOS/slot-value-etc-support.lisp")
     (cf "CLOS/slot-value-etc-defmethods.lisp")
