@@ -567,9 +567,39 @@
 ;;;
 ;;; Compile a SET-SYMBOL-VALUE-AST.
 
-(define-compile-functional-ast
-    cleavir-ast:set-symbol-value-ast cleavir-ir:set-symbol-value-instruction
-  (cleavir-ast:name-ast cleavir-ast:value-ast))
+(defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
+  (let ((name-ast (cleavir-ast:name-ast ast))
+        (value-ast (cleavir-ast:value-ast ast)))
+    (if (typep name-ast 'cleavir-ast:constant-ast)
+        (let ((value-temp (make-temp)))
+          (compile-ast
+           value-ast
+           (clone-context
+            context
+            :result value-temp
+            :successor
+            (make-instance 'cleavir-ir:set-symbol-value-instruction
+              :inputs (list (make-instance 'cleavir-ir:constant-input
+                              :value (cleavir-ast:value name-ast))
+                            value-temp)
+              :successor (first (successors context))))))
+        (let ((variable-temp (make-temp))
+              (value-temp (make-temp)))
+          (compile-ast
+           name-ast
+           (clone-context
+            context
+            :result variable-temp
+            :successor
+            (compile-ast
+             value-ast
+             (clone-context
+              context
+              :result value-temp
+              :successor
+              (make-instance 'cleavir-ir:set-symbol-value-instruction
+                :inputs (list variable-temp value-temp)
+                :successor (first (successors context)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
