@@ -25,48 +25,46 @@
 ;;; An inline here is a list (enter call uniquep), where uniquep expresses whether the function
 ;;; is not used for anything but this call.
 (defun one-potential-inline (dag destinies)
-  (let ((trappers (cleavir-hir-transformations:discern-trappers dag destinies)))
-    (labels ((maybe-return-inline (node)
-               (let ((enter (cleavir-hir-transformations:enter-instruction node)))
-                 (when (and (all-parameters-required-p enter)
-                            (gethash enter trappers))
-                   ;; function's environment does not escape.
-                   ;; Now we just need to pick off any recursive uses, direct or indirect.
-                   (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
-                         with result
-                         with enclose-destinies = (gethash enclose destinies)
-                         with enclose-unique-p = (= (length enclose-destinies) 1)
-                         with enter-unique-p = (enter-unique-p enter dag)
-                         for caller in enclose-destinies
-                         when (eq caller :escape)
-                           return nil
-                         when (parent-node-p node (instruction-owner caller)) ; recursive
-                           return nil
-                         unless (call-valid-p enter caller) return nil
+  (labels ((maybe-return-inline (node)
+             (let ((enter (cleavir-hir-transformations:enter-instruction node)))
+               (when (all-parameters-required-p enter)
+                 ;; function's environment does not escape.
+                 ;; Now we just need to pick off any recursive uses, direct or indirect.
+                 (loop with enclose = (cleavir-hir-transformations:enclose-instruction node)
+                       with result
+                       with enclose-destinies = (gethash enclose destinies)
+                       with enclose-unique-p = (= (length enclose-destinies) 1)
+                       with enter-unique-p = (enter-unique-p enter dag)
+                       for caller in enclose-destinies
+                       when (eq caller :escape)
+                         return nil
+                       when (parent-node-p node (instruction-owner caller)) ; recursive
+                         return nil
+                       unless (call-valid-p enter caller) return nil
                          ;; We're all good, but keep looking through for escapes and recursivity.
                          do (setf result (list enter caller node enclose-unique-p enter-unique-p))
-                         finally (return-from one-potential-inline result)))))
-             (parent-node-p (parent enter)
-               ;; parent is a node (i.e. enclose), enter is an enter instruction
-               ;; we return T iff the enter is enclosed by a node that has parent
-               ;; as an ancestor.
-               (let ((todo (gethash enter (cleavir-hir-transformations:dag-nodes dag))))
-                 (loop until (null todo)
-                       do (let ((test (pop todo)))
-                            (cond ((eq test dag) (return nil)) ; recursed all the way up
-                                  ((eq test parent) (return t))
-                                  (t (setf todo
-                                           (append todo
-                                                   (cleavir-hir-transformations:parents test)))))))))
-             (depth-first-search (node)
-               (maybe-return-inline node)
-               ;; It didn't return, so keep going.
-               (mapc #'depth-first-search (cleavir-hir-transformations:children node))))
-      ;; We don't call maybe-return-inline on the toplevel function itself, since it obviously can't
-      ;; be inlined, and doesn't have an enclose-instruction, etc.
-      (mapc #'depth-first-search (cleavir-hir-transformations:children dag))
-      ;; No dice.
-      nil)))
+                       finally (return-from one-potential-inline result)))))
+           (parent-node-p (parent enter)
+             ;; parent is a node (i.e. enclose), enter is an enter instruction
+             ;; we return T iff the enter is enclosed by a node that has parent
+             ;; as an ancestor.
+             (let ((todo (gethash enter (cleavir-hir-transformations:dag-nodes dag))))
+               (loop until (null todo)
+                     do (let ((test (pop todo)))
+                          (cond ((eq test dag) (return nil)) ; recursed all the way up
+                                ((eq test parent) (return t))
+                                (t (setf todo
+                                         (append todo
+                                                 (cleavir-hir-transformations:parents test)))))))))
+           (depth-first-search (node)
+             (maybe-return-inline node)
+             ;; It didn't return, so keep going.
+             (mapc #'depth-first-search (cleavir-hir-transformations:children node))))
+    ;; We don't call maybe-return-inline on the toplevel function itself, since it obviously can't
+    ;; be inlined, and doesn't have an enclose-instruction, etc.
+    (mapc #'depth-first-search (cleavir-hir-transformations:children dag))
+    ;; No dice.
+    nil))
 
 (defun update-destinies-map (worklist destinies-map)
   (let ((encloses '()))
@@ -81,6 +79,29 @@
       (setf (gethash enclose destinies-map)
             (cleavir-hir-transformations:find-enclose-destinies enclose)))))
 
+;;; Returns whether the location needs an explicit cell.
+(defun explicit-cell-p (location)
+  (let ((owner (gethash location *location-ownerships*)))
+    (and (not (cleavir-hir-transformations:read-only-location-p location))
+         (dolist (user (cleavir-ir:using-instructions location))
+           (unless (eq (gethash user *instruction-ownerships*) owner)
+             (return t))))))
+
+;;; Introduce cells for those bound locations which need them.
+(defun convert-binding-instructions (binding-assignments)
+  (dolist (binding-assignment binding-assignments)
+    (let ((location (first (cleavir-ir:outputs binding-assignment))))
+      (when (and location (explicit-cell-p location))
+        (let ((create (make-instance 'cleavir-ir:create-cell-instruction
+                                     :policy (cleavir-ir:policy binding-assignment)
+                                     :dynamic-environment (cleavir-ir:dynamic-environment binding-assignment))))
+          (dolist (user (cleavir-ir:using-instructions location))
+            (cleavir-hir-transformations:replace-inputs location location user))
+          (dolist (definer (cleavir-ir:defining-instructions location))
+            (cleavir-hir-transformations:replace-outputs location location definer))
+          (cleavir-ir:insert-instruction-after create binding-assignment)
+          (setf (cleavir-ir:outputs create) (list location)))))))
+
 (defun do-inlining (initial-instruction)
   ;; Need to remove all useless instructions first for incremental
   ;; r-u-i to catch everything.
@@ -92,6 +113,7 @@
         with *function-dag* = (cleavir-hir-transformations:build-function-dag initial-instruction)
         with *destinies-map* = (cleavir-hir-transformations:compute-destinies initial-instruction)
         with *destinies-worklist* = '()
+        with *binding-assignments* = '()
         for inline = (one-potential-inline *function-dag* *destinies-map*)
         until (null inline)
         do (destructuring-bind (enter call node enclose-unique-p enter-unique-p) inline
@@ -113,5 +135,13 @@
                (update-destinies-map (cons (cleavir-hir-transformations:enclose-instruction node)
                                            *destinies-worklist*)
                                      destinies-map)
-               (setf *destinies-worklist* nil))))
-  (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction))
+               (setf *destinies-worklist* nil)))
+        finally
+           (cleavir-remove-useless-instructions:remove-useless-instructions initial-instruction)
+           ;; We must reinitialize data here, because some data may
+           ;; still have instruction references from instructions in
+           ;; the unreachable portion of the graph. It is important
+           ;; because read-only analysis depends on accurate data
+           ;; information.
+           (cleavir-ir:reinitialize-data initial-instruction)
+           (convert-binding-instructions *binding-assignments*)))

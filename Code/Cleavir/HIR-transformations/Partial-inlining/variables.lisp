@@ -41,6 +41,10 @@
 ;;; This variable keeps track of which INSTRUCTIONs affect the destinies-map.
 (defvar *destinies-worklist*)
 
+;;; This variable keeps a list of all binding assignments introduced
+;;; by the inliner.
+(defvar *binding-assignments*)
+
 ;;; Interface.
 (defun instruction-owner (instruction)
   (gethash instruction *instruction-ownerships*))

@@ -1,5 +1,15 @@
 (cl:in-package #:cleavir-partial-inlining)
 
+;;; This instruction is needed to distinguish assignments which arise
+;;; from actual bindings. Since the inliner removes enter-instructions
+;;; which serve to denote new variable bindings, we need to introduce
+;;; this instruction so that the inliner knows how to introduce cells
+;;; at the correct point of definition for those lexical variables
+;;; which need them. The read-only variable closure optimization
+;;; prevents us from double allocating cells unnecessarily, since
+;;; introduced cells are read-only locations.
+(defclass binding-assignment-instruction (cleavir-ir:assignment-instruction) ())
+
 ;;; Remove data references to old enter and call instructions for.
 (defun disconnect-enter-call-data (enter-instruction call-instruction)
   (dolist (input (cleavir-ir:inputs call-instruction))
@@ -96,6 +106,11 @@
     (pushnew instruction *destinies-worklist*)
     (pushnew result *destinies-worklist*)
     result))
+
+(defmethod copy-instruction :around ((instruction binding-assignment-instruction) mapping)
+  (let ((copy (call-next-method)))
+    (push copy *binding-assignments*)
+    copy))
 
 (defmethod copy-instruction (instruction mapping)
   (cleavir-ir:clone-instruction instruction
