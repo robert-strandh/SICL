@@ -21,3 +21,6 @@
 
 (define-condition attempt-to-proclaim-type-of-constant (attempt-to-proclaim-type)
   ((%name :initarg :name :reader name)))
+
+(define-condition undefined-function (cl:undefined-function acclimation:condition)
+  ((%environment :initarg :environment :reader environment)))
