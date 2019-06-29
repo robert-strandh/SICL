@@ -1,7 +1,8 @@
 (cl:in-package #:sicl-boot-inspector)
 
 (clim:define-application-frame inspector ()
-    ((%object-stack :initarg :object-stack :accessor object-stack))
+    ((%boot :initarg :boot :reader boot)
+     (%object-stack :initarg :object-stack :accessor object-stack))
   (:panes (application
            :application
            :scroll-bars nil
@@ -12,7 +13,7 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-(defun inspect (object &key new-process-p)
+(defun inspect (object boot &key new-process-p)
   (let ((frame (clim:make-application-frame 'inspector
                   :object-stack (list object))))
     (flet ((run ()
