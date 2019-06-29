@@ -57,11 +57,11 @@
    (%variable-entries :initform '() :accessor variable-entries)
    ;; This slot holds an #'EQUAL hash table of function entries.
    (%function-entries :initform (make-hash-table :test #'equal)
-		      :accessor function-entries)
+                      :accessor function-entries)
    ;; This slot holds an #'EQ hash table mapping a function object to
    ;; a list of names of that function in this environment
    (%function-names :initform (make-hash-table :test #'eq)
-		    :accessor function-names)
+                    :accessor function-names)
    ;; This slot holds an association list, mapping function names to
    ;; compiler-macro functions.
    (%compiler-macro-expanders :initform '() :accessor compiler-macro-expanders)
@@ -83,16 +83,16 @@
    ;; An EQ hash table that acts as a dictionary, recording
    ;; proclamations of DECLARATION.
    (%declarations :initform (make-hash-table :test #'eq)
-		  :reader declarations)
+                  :reader declarations)
    ;; An EQ hash table containing property lists for symbols.
    (%property-lists :initform (make-hash-table :test #'eq)
-		    :reader property-lists)
+                    :reader property-lists)
    ;; An association list where each element is of the form
    ;; (QUALITY-NAME VALUE) for each OPTIMIZE quality allowed in this
    ;; environment.
    (%optimize-quality-values
     :initform '((speed 0) (compilation-speed 0)
-		(space 0) (debug 3) (safety 3))
+                (space 0) (debug 3) (safety 3))
     :accessor sicl-global-environment:optimize-quality-values)
    ;; A compilation policy.
    (%policy
@@ -137,16 +137,16 @@
     ((instance simple-environment) slot-names &key)
   (declare (ignore slot-names))
   (setf (slot-value instance '%policy)
-	(cleavir-policy:compute-policy
-	 (sicl-genv:optimize-quality-values instance)
-	 instance)))
+        (cleavir-policy:compute-policy
+         (sicl-genv:optimize-quality-values instance)
+         instance)))
 
 (defmethod (setf sicl-genv:optimize-quality-values) :after
     (values (environment simple-environment))
   (setf (slot-value environment '%policy)
-	(cleavir-policy:compute-policy
-	 (sicl-genv:optimize-quality-values environment)
-	 environment)))
+        (cleavir-policy:compute-policy
+         (sicl-genv:optimize-quality-values environment)
+         environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -233,9 +233,9 @@
   (let ((entry (find-variable-entry environment name)))
     (when (null entry)
       (setf entry
-	    (make-instance 'variable-entry :name name))
+            (make-instance 'variable-entry :name name))
       (setf (car (value-cell entry))
-	    (unbound environment))
+            (unbound environment))
       (push entry (variable-entries environment)))
     entry))
 
@@ -292,11 +292,12 @@
 ;;; created.  We also need to set the CAR of the FUNCTION-CELL to the
 ;;; newly created function.
 (defmethod initialize-instance :after ((entry function-entry)
-				       &key &allow-other-keys)
+                                       &key environment
+                                       &allow-other-keys)
   (let* ((name (name entry))
          (fun (lambda (&rest args)
                 (declare (ignore args))
-                (error 'undefined-function :name name))))
+                (error 'undefined-function :name name :environment environment))))
     (reinitialize-instance entry :unbound fun)
     (setf (car (function-cell entry)) fun)))
 
@@ -310,19 +311,20 @@
 
 (defun find-function-entry (environment name)
   (assert (or (symbolp name)
-	      (and (consp name)
-		   (consp (cdr name))
-		   (null (cddr name))
-		   (eq (car name) 'setf)
-		   (symbolp (cadr name)))))
+              (and (consp name)
+                   (consp (cdr name))
+                   (null (cddr name))
+                   (eq (car name) 'setf)
+                   (symbolp (cadr name)))))
   (gethash name (function-entries environment)))
 
 (defun ensure-function-entry (environment name)
   (let ((entry (find-function-entry environment name)))
     (when (null entry)
       (setf entry
-	    (make-instance 'function-entry
-	      :name name))
+            (make-instance 'function-entry
+              :name name
+              :environment environment))
       (setf (gethash name (function-entries environment)) entry))
     entry))
 
