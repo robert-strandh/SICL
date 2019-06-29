@@ -12,11 +12,6 @@
                        (4/5 (clim:scrolling () application))
                        (1/5 (clim:scrolling () interactor))))))
 
-(defun display-object (frame pane)
-  (let* ((stack (object-stack frame))
-         (object (first stack)))
-    (format pane "~s" object)))
-
 (defun inspect (object &key new-process-p)
   (let ((frame (clim:make-application-frame 'inspector
                   :object-stack (list object))))
