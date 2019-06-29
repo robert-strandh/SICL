@@ -11,6 +11,8 @@
        cdr
        (setf cdr)
        rplacd
+       +
+       member
        cddr
        symbolp)
      e4)
