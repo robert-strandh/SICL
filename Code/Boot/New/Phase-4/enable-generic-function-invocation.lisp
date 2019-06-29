@@ -105,6 +105,13 @@
     (define-no-applicable-method e4)
     (define-general-instance-access boot)
     (define-set-funcallable-instance-function e4)
+    (import-functions-from-host
+     '((setf sicl-genv:fdefinition)
+       (setf sicl-genv:macro-function)
+       sicl-genv:macro-function
+       sicl-genv:get-setf-expansion
+       cadr consp = first)
+     e4)
     (do-symbols (symbol (find-package '#:common-lisp))
       (when (special-operator-p symbol)
         (setf (sicl-genv:special-operator symbol e4) t)))
@@ -120,4 +127,5 @@
     (load-fasl "Evaluation-and-compilation/lambda.fasl" e4)
     (load-fasl "Data-and-control-flow/setf.fasl" e4)
     (define-find-class e3 e4)
-    (define-compute-discriminating-function e4)))
+    (define-compute-discriminating-function e4)
+    (import-functions-from-host '(apply endp cons eq coerce) e4)))
