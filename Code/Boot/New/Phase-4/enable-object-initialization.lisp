@@ -59,11 +59,12 @@
                       e3)
                      instance slot-names class slots initargs))))
     (import-functions-from-host
-     '(list append
+     '(list append length member consp
+       cleavir-code-utilities:proper-list-p
        (setf sicl-genv:fdefinition))
      e4)
     (import-functions-from-host
-     '(atom cddr (setf cdr))
+     '(atom cddr (setf cdr) <)
      e3)
     (load-fasl "CLOS/shared-initialize-defgenerics.fasl" e4)
     (load-fasl "CLOS/shared-initialize-defmethods.fasl" e4)
