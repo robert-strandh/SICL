@@ -44,7 +44,7 @@
                          (error "Unbound variable ~s" symbol))))))))
 
 (defun set-symbol-value-function (environment)
-  (lambda (symbol value)
+  (lambda (value symbol)
     (loop for entry in *dynamic-environment*
           when (and (typep entry 'special-variable-entry)
                     (eq (name entry) symbol))
