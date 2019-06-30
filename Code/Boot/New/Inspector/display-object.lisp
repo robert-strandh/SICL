@@ -1,6 +1,11 @@
 (cl:in-package #:sicl-boot-inspector)
 
-(defun display-object (frame pane)
+(defgeneric display-object (object frame pane))
+
+(defun display-stack-top (frame pane)
   (let* ((stack (object-stack frame))
          (object (first stack)))
-    (format pane "~a" (short-description object))))
+    (display-object object frame pane)))
+
+(defmethod display-object (object frame pane)
+  (format pane "~a" (short-description object)))
