@@ -1,5 +1,7 @@
 (cl:in-package #:sicl-boot-inspector)
 
+(defclass inspectable-object () ())
+
 (defgeneric display-object (object frame pane))
 
 (defun display-stack-top (frame pane)
@@ -27,7 +29,10 @@
 
 (defun display-element (element index frame pane)
   (declare (ignore frame))
-  (format pane "~s: ~s~%" index (short-description element)))
+  (format pane "~s: " index)
+  (clim:with-output-as-presentation (pane element 'inspectable-object)
+    (format pane "~s" (short-description element)))
+  (format pane "~%"))
 
 (defun display-proper-list (object frame pane)
   (format pane "A host proper list~%")
