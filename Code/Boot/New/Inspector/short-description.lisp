@@ -5,6 +5,18 @@
 (defmethod short-description (object)
   (format nil "[an instance of ~s]" (class-of object)))
 
+(defmethod short-description ((object character))
+  object)
+
+(defmethod short-description ((object number))
+  object)
+
+(defmethod short-description ((object symbol))
+  object)
+
+(defmethod short-description ((object string))
+  object)
+
 (defmethod short-description ((object sicl-boot-phase-3::header))
   (cond ((typep (slot-value object 'sicl-boot-phase-3::%class)
                 'sicl-boot-phase-3::header)
