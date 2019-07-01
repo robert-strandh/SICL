@@ -9,6 +9,9 @@
           return t
         do (setf (gethash remaining table) t)))
 
+(defun proper-list-p (object)
+  (numberp (ignore-errors (list-length object))))
+
 ;;; Return true if and only if the number of characters required to
 ;;; print OBJECT is known to be at most N.  We allow ourselves some
 ;;; approximation, in that we only consider certain types of objects,
