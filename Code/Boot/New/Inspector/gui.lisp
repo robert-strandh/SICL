@@ -26,4 +26,10 @@
 (define-inspector-command (com-quit :name t) ()
   (clim:frame-exit clim:*application-frame*))
 
-                 
+(define-inspector-command (com-inspect-object :name t)
+    ((object 'inspectable-object :gesture :select))
+  (push object (object-stack clim:*application-frame*)))
+
+(define-inspector-command (com-last :name t) ()
+  (unless (null (rest (object-stack clim:*application-frame*)))
+    (pop (object-stack clim:*application-frame*))))
