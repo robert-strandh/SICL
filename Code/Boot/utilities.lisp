@@ -3,7 +3,7 @@
 ;; (defun load-fasl (relative-pathname environment)
 ;;   (format *trace-output* "Loading file ~s~%" relative-pathname)
 ;;   (let* ((prefixed (concatenate 'string "ASTs/" relative-pathname))
-;;          (pathname (asdf:system-relative-pathname '#:sicl-new-boot prefixed))
+;;          (pathname (asdf:system-relative-pathname '#:sicl-boot prefixed))
 ;;          (ast (cleavir-io:read-model pathname '(v0)))
 ;;          (hir (sicl-ast-to-hir:ast-to-hir ast))
 ;;          (cl (sicl-hir-to-cl:hir-to-cl nil hir))
@@ -16,7 +16,7 @@
 (defun load-fasl (relative-pathname environment)
   (format *trace-output* "Loading file ~s~%" relative-pathname)
   (let* ((prefixed (concatenate 'string "Host-FASLs/" relative-pathname))
-         (pathname (asdf:system-relative-pathname '#:sicl-new-boot prefixed))
+         (pathname (asdf:system-relative-pathname '#:sicl-boot prefixed))
          (sicl-hir-to-cl:*dynamic-environment* '()))
     (load pathname)
     (funcall *top-level-function*

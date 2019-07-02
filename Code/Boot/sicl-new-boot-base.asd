@@ -1,6 +1,6 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-new-boot-base
+(defsystem #:sicl-boot-base
   :depends-on (#:sicl-extrinsic-environment
                #:sicl-ast-to-hir
                #:sicl-hir-to-cl)

@@ -1,13 +1,13 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-new-boot
+(defsystem #:sicl-boot
   :depends-on (#:sicl-hir-to-cl
-               #:sicl-new-boot-phase-0
-               #:sicl-new-boot-phase-1
-               #:sicl-new-boot-phase-2
-               #:sicl-new-boot-phase-3
-               #:sicl-new-boot-phase-4
-               #:sicl-new-boot-phase-5)
+               #:sicl-boot-phase-0
+               #:sicl-boot-phase-1
+               #:sicl-boot-phase-2
+               #:sicl-boot-phase-3
+               #:sicl-boot-phase-4
+               #:sicl-boot-phase-5)
   :serial t
   :components
   ((:file "packages")

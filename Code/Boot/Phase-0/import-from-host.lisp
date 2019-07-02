@@ -102,7 +102,7 @@
   (host-load "CLOS/defclass-support.lisp")
   (host-load "CLOS/defgeneric-support.lisp")
   (host-load "CLOS/make-method-lambda-support.lisp")
-  (host-load "Boot/New/Phase-0/create-method-lambda.lisp")
+  (host-load "Boot/Phase-0/create-method-lambda.lisp")
   (host-load "CLOS/defmethod-support.lisp")
   (import-standard-common-lisp-functions environment)
   (define-standard-common-lisp-variables environment)

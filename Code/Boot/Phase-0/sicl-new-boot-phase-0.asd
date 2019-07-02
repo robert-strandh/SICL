@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
-(defsystem #:sicl-new-boot-phase-0
-  :depends-on (#:sicl-new-boot-base
+(defsystem #:sicl-boot-phase-0
+  :depends-on (#:sicl-boot-base
                #:sicl-hir-to-cl
                #:sicl-source-tracking
                #:sicl-data-and-control-flow-support

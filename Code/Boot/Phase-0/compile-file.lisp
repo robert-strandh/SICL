@@ -44,7 +44,7 @@
                (prefix (subseq relative-pathname 0 dot-pos))
                (filename (concatenate 'string prefix ".fasl"))
                (output-relative-pathname (concatenate 'string
-                                                      "Boot/New/ASTs/"
+                                                      "Boot/ASTs/"
                                                       filename))
                (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname)))
           (ensure-directories-exist output-pathname)
@@ -54,10 +54,10 @@
                (filename (concatenate 'string prefix ".lisp"))
                (fasl-filename (concatenate 'string prefix ".fasl"))
                (output-relative-pathname (concatenate 'string
-                                                      "Boot/New/Host-FASLs/"
+                                                      "Boot/Host-FASLs/"
                                                       filename))
                (fasl-relative-pathname (concatenate 'string
-                                                    "Boot/New/Host-FASLs/"
+                                                    "Boot/Host-FASLs/"
                                                     fasl-filename))
                (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname))
                (fasl-pathname (asdf:system-relative-pathname '#:sicl fasl-relative-pathname)))
