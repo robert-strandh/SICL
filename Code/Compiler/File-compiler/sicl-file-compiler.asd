@@ -7,7 +7,6 @@
                #:cleavir-code-utilities
                #:cleavir-generate-ast
                #:sicl-simple-environment
-               #:sicl-minimal-extrinsic-environment
                #:cleavir-cst-to-ast)
   :serial t
   :components
