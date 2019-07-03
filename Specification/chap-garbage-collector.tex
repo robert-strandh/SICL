@@ -152,7 +152,7 @@ run the garbage collector on behalf of the application thread.
 
 The global collector maintains two bitmaps, one for black objects and
 one for gray objects.  Each bitmap contains a bit for every dyad.  In
-addition, the gray bitmap have a multi-level \emph{index}, making it
+addition, the gray bitmap has a multi-level \emph{index}, making it
 possible to find an arbitrary gray object in only a few cycles.  For
 each 64-bit word in the primary bitmap, a bit in a secondary bitmap is
 maintained.  The bit in the secondary bitmap is set if there is at
