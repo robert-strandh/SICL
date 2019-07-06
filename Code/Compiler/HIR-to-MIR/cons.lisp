@@ -1,8 +1,7 @@
 (cl:in-package #:sicl-hir-to-mir)
 
-(defgeneric process-car-instruction (client instruction))
-
-(defmethod process-car-instruction (client instruction)
+(defmethod process-instruction (client
+                                (instruction cleavir-ir:car-instruction))
   (change-class instruction 'cleavir-ir:memref2-instruction
                 :offset -1
                 :inputs (cleavir-ir:inputs instruction)
