@@ -7,5 +7,6 @@
   ((:file "packages")
    (:file "generic-functions")
    (:file "cons")
+   (:file "cell")
    (:file "general-instance")
    (:file "hir-to-mir")))
