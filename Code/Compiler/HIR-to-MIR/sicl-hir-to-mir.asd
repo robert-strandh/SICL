@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "cons")
-   (:file "general-instance")))
+   (:file "general-instance")
+   (:file "hir-to-mir")))
