@@ -5,6 +5,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "generic-functions")
    (:file "cons")
    (:file "general-instance")
    (:file "hir-to-mir")))
