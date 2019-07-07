@@ -10,4 +10,5 @@
    (:file "cons")
    (:file "cell")
    (:file "general-instance")
+   (:file "array")
    (:file "hir-to-mir")))
