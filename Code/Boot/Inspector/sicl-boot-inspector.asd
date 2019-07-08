@@ -5,4 +5,5 @@
                #:new-inspector)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "function")))
