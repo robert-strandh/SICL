@@ -1,4 +1,4 @@
-NAME=sicl
+NAME=sicl-specification
 
 TEXFILES=$(NAME).tex $(shell ./tex-dependencies $(NAME).tex)
 BIBFILES=$(NAME).bib
