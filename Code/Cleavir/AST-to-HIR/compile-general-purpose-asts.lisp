@@ -231,6 +231,9 @@
                    (invocation invocation))
       context
     (let* ((after (first successors))
+           (receive (cleavir-ir:make-receive-instruction
+                     (if (listp results) results (list results))
+                     after))
            ;; The name is gone by now, so unlike TAGBODY
            ;; we can't name the catch output.
            (continuation (cleavir-ir:make-lexical-location
@@ -241,7 +244,7 @@
            (catch (cleavir-ir:make-catch-instruction
                    continuation
                    dynenv-out
-                   (list after)))
+                   (list receive)))
            (cleavir-ir:*dynamic-environment* dynenv-out))
       (setf (block-info ast) (list context continuation catch))
       ;; Now just hook up the catch to go to the body normally.
@@ -287,9 +290,21 @@
           ;; simple case: we are returning locally.
 	  (compile-ast (cleavir-ast:form-ast ast) block-context)
           ;; harder case: unwind.
-	  (let* ((new-successor (cleavir-ir:make-unwind-instruction
-                                 continuation destination 1))
-		 (new-context (context results
+	  (let* (;; Copy the block context's results to get
+                 ;; locations local to this function, passed to
+                 ;; the unwind.
+                 (new-results
+                   (if (typep results 'cleavir-ir:values-location)
+                       (cleavir-ir:make-values-location)
+                       (loop for lex in results
+                             collect (cleavir-ir:make-lexical-location
+                                      (cleavir-ir:name lex)))))
+                 (new-successor (cleavir-ir:make-unwind-instruction
+                                 continuation destination 1
+                                 (if (listp new-results)
+                                     new-results
+                                     (list new-results))))
+		 (new-context (context new-results
 				       (list new-successor)
 				       (invocation context))))
 	    (compile-ast (cleavir-ast:form-ast ast) new-context))))))

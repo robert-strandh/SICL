@@ -229,6 +229,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction RECEIVE-INSTRUCTION.
+;;;
+;;; This instruction indicates the transfer of values from another
+;;; function by BLOCK/RETURN-FROM. It has one successor, no inputs,
+;;; and either zero or more lexical locations or one values location
+;;; as outputs. The outputs must match the inputs to the
+;;; corresponding UNWIND-INSTRUCTION.
+;;;
+;;; When control has been transferred abnormally to a
+;;; CATCH-INSTRUCTION, a RECEIVE-INSTRUCTION in the corresponding
+;;; alternate successor path outputs the inputs given to the UNWIND.
+
+(defclass receive-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-receive-instruction (outputs successor)
+  (make-instance 'receive-instruction
+    :inputs nil :outputs outputs
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction UNWIND-INSTRUCTION.
 ;;;
 ;;; This instruction is used to indicate a lexical non-local transfer
@@ -237,9 +259,11 @@
 ;;; The process of unwinding may involve dynamically determined side
 ;;; effects due to UNWIND-PROTECT.
 ;;;
-;;; The instruction has two inputs: the continuation output by a
-;;; CATCH-INSTRUCTION (see its comment for details) and the dynamic
-;;; environment.
+;;; The instruction has at least one input: the continuation output
+;;; by a CATCH-INSTRUCTION (see its comment for details).
+;;; Any further inputs represent returned values, and must match
+;;; the corresponding RECEIVE-INSTRUCTION. As such they can consist
+;;; of zero or more lexical locations, or one values location.
 
 (defclass unwind-instruction
     (instruction no-successors-mixin side-effect-mixin)
@@ -250,9 +274,10 @@
    (%destination :initarg :destination :accessor destination)
    (%index :initarg :index :accessor unwind-index)))
 
-(defun make-unwind-instruction (continuation destination index)
+(defun make-unwind-instruction (continuation destination index
+                                &optional returned-values)
   (make-instance 'unwind-instruction
-    :inputs (list continuation)
+    :inputs (list* continuation returned-values)
     :destination destination
     :index index))
 
