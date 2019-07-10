@@ -210,6 +210,28 @@
 (defclass unsigned-not-greater-instruction (instruction multiple-successors-mixin)
   ())
 
+(defmethod shared-initialize :around
+    ((instruction unsigned-not-greater-instruction) slot-names
+     &key
+       inputs argument1 argument2
+       outputs output
+       successors true-successor false-successor)
+  (assert (or (and (null argument1) (null argument2))
+              (and (not (null argument1)) (not (null argument2)))))
+  (assert (or (and (null true-successor) (null false-successor))
+              (and (not (null true-successor)) (not (null false-successor)))))
+  (let ((inputs (if (and (null argument1) (null argument2))
+                    inputs
+                    (list argument1 argument2)))
+        (outputs (if (null output)
+                     outputs
+                     (list output)))
+        (successors (if (and (null true-successor) (null false-successor))
+                        successors
+                        (list true-successor false-successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
 (defun make-unsigned-not-greater-instruction
     (&key
        ((:input1 i1) nil i1-p)
