@@ -36,6 +36,28 @@
 (defclass signed-sub-instruction (instruction multiple-successors-mixin)
   ())
 
+(defmethod shared-initialize :around
+    ((instruction signed-sub-instruction) slot-names
+     &key
+       inputs minuend subtrahend
+       outputs output
+       successors normal-successor overflow-successor)
+  (assert (or (and (null minuend) (null subtrahend))
+              (and (not (null minuend)) (not (null subtrahend)))))
+  (assert (or (and (null normal-successor) (null overflow-successor))
+              (and (not (null normal-successor)) (not (null overflow-successor)))))
+  (let ((inputs (if (and (null minuend) (null subtrahend))
+                    inputs
+                    (list minuend subtrahend)))
+        (outputs (if (null output)
+                     outputs
+                     (list output)))
+        (successors (if (and (null normal-successor) (null overflow-successor))
+                        successors
+                        (list normal-successor overflow-successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
 (defun make-signed-sub-instruction
     (&key
        ((:input1 i1) nil i1-p)
