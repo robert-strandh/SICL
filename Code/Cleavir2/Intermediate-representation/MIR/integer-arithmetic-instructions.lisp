@@ -7,6 +7,28 @@
 (defclass signed-add-instruction (instruction multiple-successors-mixin)
   ())
 
+(defmethod shared-initialize :around
+    ((instruction signed-add-instruction) slot-names
+     &key
+       inputs augend addend
+       outputs output
+       successors normal-successor overflow-successor)
+  (assert (or (and (null augend) (null addend))
+              (and (not (null augend)) (not (null addend)))))
+  (assert (or (and (null normal-successor) (null overflow-successor))
+              (and (not (null normal-successor)) (not (null overflow-successor)))))
+  (let ((inputs (if (and (null augend) (null addend))
+                    inputs
+                    (list augend addend)))
+        (outputs (if (null output)
+                     outputs
+                     (list output)))
+        (successors (if (and (null normal-successor) (null overflow-successor))
+                        successors
+                        (list normal-successor overflow-successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
 (defun make-signed-add-instruction
     (&key
        ((:input1 i1) nil i1-p)
