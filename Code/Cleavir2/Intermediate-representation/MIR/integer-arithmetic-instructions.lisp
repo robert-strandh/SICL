@@ -152,6 +152,28 @@
 (defclass unsigned-sub-instruction (instruction multiple-successors-mixin)
   ())
 
+(defmethod shared-initialize :around
+    ((instruction unsigned-sub-instruction) slot-names
+     &key
+       inputs minuend subtrahend
+       outputs output
+       successors normal-successor carry-successor)
+  (assert (or (and (null minuend) (null subtrahend))
+              (and (not (null minuend)) (not (null subtrahend)))))
+  (assert (or (and (null normal-successor) (null carry-successor))
+              (and (not (null normal-successor)) (not (null carry-successor)))))
+  (let ((inputs (if (and (null minuend) (null subtrahend))
+                    inputs
+                    (list minuend subtrahend)))
+        (outputs (if (null output)
+                     outputs
+                     (list output)))
+        (successors (if (and (null normal-successor) (null carry-successor))
+                        successors
+                        (list normal-successor carry-successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
 (defun make-unsigned-sub-instruction
     (&key
        ((:input1 i1) nil i1-p)
