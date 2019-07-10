@@ -15,11 +15,9 @@
        successors normal-successor overflow-successor)
   (assert (both-or-none augend addend))
   (assert (both-or-none normal-successor overflow-successor))
-  (let ((inputs (if (none augend addend) inputs (list augend addend)))
+  (let ((inputs (combine inputs augend addend))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null normal-successor) (null overflow-successor))
-                        successors
-                        (list normal-successor overflow-successor))))
+        (successors (combine successors normal-successor overflow-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -38,11 +36,9 @@
        successors normal-successor overflow-successor)
   (assert (both-or-none minuend subtrahend))
   (assert (both-or-none normal-successor overflow-successor))
-  (let ((inputs (if (none minuend subtrahend) inputs (list minuend subtrahend)))
+  (let ((inputs (combine inputs minuend subtrahend))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null normal-successor) (null overflow-successor))
-                        successors
-                        (list normal-successor overflow-successor))))
+        (successors (combine successors normal-successor overflow-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -61,11 +57,9 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+  (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null true-successor) (null false-successor))
-                        successors
-                        (list true-successor false-successor))))
+        (successors (combine successors true-successor false-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -84,11 +78,9 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+  (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null true-successor) (null false-successor))
-                        successors
-                        (list true-successor false-successor))))
+        (successors (combine successors true-successor false-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -107,11 +99,9 @@
        successors normal-successor carry-successor)
   (assert (both-or-none augend addend))
   (assert (both-or-none normal-successor carry-successor))
-  (let ((inputs (if (none augend addend) inputs (list augend addend)))
+  (let ((inputs (combine inputs augend addend))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null normal-successor) (null carry-successor))
-                        successors
-                        (list normal-successor carry-successor))))
+        (successors (combine successors normal-successor carry-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -130,11 +120,9 @@
        successors normal-successor carry-successor)
   (assert (both-or-none minuend subtrahend))
   (assert (both-or-none normal-successor carry-successor))
-  (let ((inputs (if (none minuend subtrahend) inputs (list minuend subtrahend)))
+  (let ((inputs (combine inputs minuend subtrahend))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null normal-successor) (null carry-successor))
-                        successors
-                        (list normal-successor carry-successor))))
+        (successors (combine successors normal-successor carry-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -153,11 +141,9 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+  (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null true-successor) (null false-successor))
-                        successors
-                        (list true-successor false-successor))))
+        (successors (combine successors true-successor false-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -176,11 +162,9 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+  (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null true-successor) (null false-successor))
-                        successors
-                        (list true-successor false-successor))))
+        (successors (combine successors true-successor false-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
@@ -199,10 +183,8 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+  (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
-        (successors (if (and (null true-successor) (null false-successor))
-                        successors
-                        (list true-successor false-successor))))
+        (successors (combine successors true-successor false-successor)))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
