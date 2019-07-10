@@ -15,12 +15,8 @@
        successors normal-successor overflow-successor)
   (assert (both-or-none augend addend))
   (assert (both-or-none normal-successor overflow-successor))
-  (let ((inputs (if (and (null augend) (null addend))
-                    inputs
-                    (list augend addend)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none augend addend) inputs (list augend addend)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null normal-successor) (null overflow-successor))
                         successors
                         (list normal-successor overflow-successor))))
@@ -42,12 +38,8 @@
        successors normal-successor overflow-successor)
   (assert (both-or-none minuend subtrahend))
   (assert (both-or-none normal-successor overflow-successor))
-  (let ((inputs (if (and (null minuend) (null subtrahend))
-                    inputs
-                    (list minuend subtrahend)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none minuend subtrahend) inputs (list minuend subtrahend)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null normal-successor) (null overflow-successor))
                         successors
                         (list normal-successor overflow-successor))))
@@ -69,12 +61,8 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (and (null argument1) (null argument2))
-                    inputs
-                    (list argument1 argument2)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null true-successor) (null false-successor))
                         successors
                         (list true-successor false-successor))))
@@ -96,12 +84,8 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (and (null argument1) (null argument2))
-                    inputs
-                    (list argument1 argument2)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null true-successor) (null false-successor))
                         successors
                         (list true-successor false-successor))))
@@ -123,12 +107,8 @@
        successors normal-successor carry-successor)
   (assert (both-or-none augend addend))
   (assert (both-or-none normal-successor carry-successor))
-  (let ((inputs (if (and (null augend) (null addend))
-                    inputs
-                    (list augend addend)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none augend addend) inputs (list augend addend)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null normal-successor) (null carry-successor))
                         successors
                         (list normal-successor carry-successor))))
@@ -150,12 +130,8 @@
        successors normal-successor carry-successor)
   (assert (both-or-none minuend subtrahend))
   (assert (both-or-none normal-successor carry-successor))
-  (let ((inputs (if (and (null minuend) (null subtrahend))
-                    inputs
-                    (list minuend subtrahend)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none minuend subtrahend) inputs (list minuend subtrahend)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null normal-successor) (null carry-successor))
                         successors
                         (list normal-successor carry-successor))))
@@ -177,12 +153,8 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (and (null argument1) (null argument2))
-                    inputs
-                    (list argument1 argument2)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null true-successor) (null false-successor))
                         successors
                         (list true-successor false-successor))))
@@ -204,12 +176,8 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (and (null argument1) (null argument2))
-                    inputs
-                    (list argument1 argument2)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null true-successor) (null false-successor))
                         successors
                         (list true-successor false-successor))))
@@ -231,12 +199,8 @@
        successors true-successor false-successor)
   (assert (both-or-none argument1 argument2))
   (assert (both-or-none true-successor false-successor))
-  (let ((inputs (if (and (null argument1) (null argument2))
-                    inputs
-                    (list argument1 argument2)))
-        (outputs (if (null output)
-                     outputs
-                     (list output)))
+  (let ((inputs (if (none argument1 argument2) inputs (list argument1 argument2)))
+        (outputs (if (null output) outputs (list output)))
         (successors (if (and (null true-successor) (null false-successor))
                         successors
                         (list true-successor false-successor))))
