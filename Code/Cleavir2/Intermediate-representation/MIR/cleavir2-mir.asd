@@ -7,5 +7,5 @@
   ((:file "utilities")
    (:file "data")
    (:file "memory-access-instructions")
-   (:file "general")
+   (:file "integer-arithmetic-instructions")
    (:file "conditions")))
