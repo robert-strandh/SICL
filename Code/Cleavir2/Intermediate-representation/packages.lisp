@@ -93,19 +93,6 @@
    #:rplacd-instruction
    #:slot-read-instruction
    #:slot-write-instruction
-   #:memref1-instruction
-   #:memref2-instruction
-   #:memset1-instruction
-   #:memset2-instruction
-   #:signed-add-instruction
-   #:signed-sub-instruction
-   #:signed-less-instruction
-   #:signed-not-greater-instruction
-   #:unsigned-add-instruction
-   #:unsigned-sub-instruction
-   #:unsigned-less-instruction
-   #:unsigned-not-greater-instruction
-   #:equal-instruction
    #:multiple-to-fixed-instruction
    #:fixed-to-multiple-instruction
    #:multiple-value-call-instruction
@@ -127,4 +114,26 @@
    #:map-local-instructions #:filter-local-instructions
    #:local-instructions-of-type
    #:set-predecessors
-   #:offset))
+   #:offset
+   ;; MIR instructions
+   #:memref1-instruction
+   #:memref2-instruction
+   #:memset1-instruction
+   #:memset2-instruction
+   #:signed-add-instruction
+   #:signed-sub-instruction
+   #:signed-less-instruction
+   #:signed-not-greater-instruction
+   #:unsigned-add-instruction
+   #:unsigned-sub-instruction
+   #:unsigned-less-instruction
+   #:unsigned-not-greater-instruction
+   #:equal-instruction
+   #:shift-left-instruction
+   #:logic-shift-right-instruction
+   #:arithmetic-shift-right-instruction
+   #:shifted-input #:shift-count
+   #:bitwise-and-instruction
+   #:bitwise-or-instruction
+   #:bitwise-exclusive-or-instruction
+   #:bitwise-not-instruction))
