@@ -42,3 +42,25 @@
 
 (defclass bitwise-exclusive-or-instruction (binary-bitwise-instruction)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MIR instruction BITWISE-NOT-INSTRUCTION.
+
+(defclass bitwise-not-instruction (instruction one-successor-mixin)
+  ())
+
+(defmethod shared-initialize :around
+    ((instruction bitwise-not-instruction) slot-names
+     &key
+       inputs argument
+       outputs output
+       successors successor)
+  (let ((inputs (if (null argument) inputs (list argument)))
+        (outputs (if (null output) outputs (list output)))
+        (successors (if (null successor) successors (list successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
+(defmethod argument ((instruction bitwise-not-instruction))
+  (first (inputs instruction)))
