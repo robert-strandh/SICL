@@ -36,6 +36,19 @@
 (defclass memref2-instruction (instruction one-successor-mixin)
   ((%offset :initarg :offset :reader offset)))
 
+(defmethod shared-initialize :around
+    ((instruction memref2-instruction) slot-names
+     &key
+       inputs base-address offset
+       outputs output
+       successors successor)
+  (assert (both-or-none base-address offset))
+  (let ((inputs (combine inputs base-address offset))
+        (outputs (if (null output) outputs (list output)))
+        (successors (if (null successor) successors (list successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
 (defun make-memref2-instruction (base-address offset output &optional successor)
   (make-instance 'memref2-instruction
     :inputs (list base-address)
