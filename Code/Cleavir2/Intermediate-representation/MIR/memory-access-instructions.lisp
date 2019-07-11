@@ -12,6 +12,18 @@
 (defclass memref1-instruction (instruction one-successor-mixin)
   ())
 
+(defmethod shared-initialize :around
+    ((instruction memref1-instruction) slot-names
+     &key
+       inputs address
+       outputs output
+       successors successor)
+  (let ((inputs (if (null address) inputs (list address)))
+        (outputs (if (null output) outputs (list output)))
+        (successors (if (null successor) successors (list successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
 (defun make-memref1-instruction (address output &optional successor)
   (make-instance 'memref1-instruction
     :inputs (list address)
