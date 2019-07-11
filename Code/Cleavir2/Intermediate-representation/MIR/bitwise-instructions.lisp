@@ -9,7 +9,7 @@
        inputs argument1 argument2
        outputs output
        successors successor)
-  (assert (both-or-none argument1 argument2))
+  (assert (all-or-none argument1 argument2))
   (let ((inputs (combine inputs argument1 argument2))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successor))))

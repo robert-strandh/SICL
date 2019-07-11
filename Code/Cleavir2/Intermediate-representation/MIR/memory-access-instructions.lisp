@@ -44,7 +44,7 @@
        inputs base-address offset
        outputs output
        successors successor)
-  (assert (both-or-none base-address offset))
+  (assert (all-or-none base-address offset))
   (let ((inputs (combine inputs base-address offset))
         (outputs (if (null output) outputs (list output)))
         (successors (if (null successor) successors (list successor))))
@@ -70,7 +70,7 @@
        inputs address value
        outputs output
        successors successor)
-  (assert (both-or-none address value))
+  (assert (all-or-none address value))
   (assert (null outputs))
   (assert (null output))
   (let ((inputs (combine inputs address value))

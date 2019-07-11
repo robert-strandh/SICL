@@ -1,13 +1,16 @@
 (cl:in-package #:cleavir-ir)
 
-(defun both (x y)
-  (and (not (null x)) (not (null y))))
+(defun all (&rest arguments)
+  (notany #'null arguments))
 
-(defun none (x y)
-  (and (null x) (null y)))
+(defun none (&rest arguments)
+  (every #'null arguments))
 
-(defun both-or-none (x y)
-  (or (both x y) (none x y)))
+(defun all-or-none (&rest arguments)
+  (or (apply #'all arguments)
+      (apply #'null arguments)))
 
-(defun combine (xy x y)
-  (if (none x y) xy (list x y)))
+(defun combine (combination &rest arguments)
+  (if (apply #'none arguments)
+      combination
+      (copy-list arguments)))
