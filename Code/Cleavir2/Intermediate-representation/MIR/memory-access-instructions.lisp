@@ -49,13 +49,6 @@
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
-(defun make-memref2-instruction (base-address offset output &optional successor)
-  (make-instance 'memref2-instruction
-    :inputs (list base-address)
-    :offset offset
-    :outputs (list output)
-    :successors (if (null successor) '() (list successor))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; MIR instruction MEMSET1-INSTRUCTION
