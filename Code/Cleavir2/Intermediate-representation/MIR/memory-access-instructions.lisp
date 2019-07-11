@@ -76,12 +76,6 @@
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
-(defun make-memset1-instruction (address value &optional successor)
-  (make-instance 'memset1-instruction
-    :inputs (list address value)
-    :outputs '()
-    :successors (if (null successor) '() (list successor))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; MIR instruction MEMSET2-INSTRUCTION
