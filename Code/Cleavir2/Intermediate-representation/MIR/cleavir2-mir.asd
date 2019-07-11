@@ -9,4 +9,5 @@
    (:file "memory-access-instructions")
    (:file "integer-arithmetic-instructions")
    (:file "shift-instructions")
+   (:file "bitwise-instructions")
    (:file "conditions")))
