@@ -105,10 +105,3 @@
         (successors (if (null successor) successors (list successor))))
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
-
-(defun make-memset2-instruction (base-address offset value &optional successor)
-  (make-instance 'memset2-instruction
-    :inputs (list base-address value)
-    :offset offset
-    :outputs '()
-    :successors (if (null successor) '() (list successor))))
