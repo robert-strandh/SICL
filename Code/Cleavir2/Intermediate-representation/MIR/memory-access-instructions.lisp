@@ -24,12 +24,6 @@
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
-(defun make-memref1-instruction (address output &optional successor)
-  (make-instance 'memref1-instruction
-    :inputs (list address)
-    :outputs (list output)
-    :successors (if (null successor) '() (list successor))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; MIR instruction MEMREF2-INSTRUCTION
