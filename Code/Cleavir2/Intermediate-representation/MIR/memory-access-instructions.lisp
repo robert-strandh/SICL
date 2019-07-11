@@ -61,6 +61,21 @@
 (defclass memset1-instruction (instruction one-successor-mixin)
   ())
 
+
+(defmethod shared-initialize :around
+    ((instruction memset1-instruction) slot-names
+     &key
+       inputs address value
+       outputs output
+       successors successor)
+  (assert (both-or-none address value))
+  (assert (null outputs))
+  (assert (null output))
+  (let ((inputs (combine inputs address value))
+        (successors (if (null successor) successors (list successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
 (defun make-memset1-instruction (address value &optional successor)
   (make-instance 'memset1-instruction
     :inputs (list address value)
