@@ -1,10 +1,10 @@
 (cl:in-package #:cleavir-ir)
 
-(defclass bitwise-instruction (instruction one-successor-mixin)
+(defclass binary-bitwise-instruction (instruction one-successor-mixin)
   ())
 
 (defmethod shared-initialize :around
-    ((instruction bitwise-instruction) slot-names
+    ((instruction binary-bitwise-instruction) slot-names
      &key
        inputs argument1 argument2
        outputs output
@@ -16,29 +16,29 @@
     (call-next-method instruction slot-names
                       :inputs inputs :outputs outputs :successors successors)))
 
-(defmethod argument1 ((instruction bitwise-instruction))
+(defmethod argument1 ((instruction binary-bitwise-instruction))
   (first (inputs instruction)))
 
-(defmethod argument2 ((instruction bitwise-instruction))
+(defmethod argument2 ((instruction binary-bitwise-instruction))
   (second (inputs instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; MIR instruction BITWISE-AND-INSTRUCTION.
 
-(defclass bitwise-and-instruction (bitwise-instruction)
+(defclass bitwise-and-instruction (binary-bitwise-instruction)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; MIR instruction BITWISE-OR-INSTRUCTION.
 
-(defclass bitwise-or-instruction (bitwise-instruction)
+(defclass bitwise-or-instruction (binary-bitwise-instruction)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; MIR instruction BITWISE-EXCLUSIVE-OR-INSTRUCTION.
 
-(defclass bitwise-exclusive-or-instruction (bitwise-instruction)
+(defclass bitwise-exclusive-or-instruction (binary-bitwise-instruction)
   ())
