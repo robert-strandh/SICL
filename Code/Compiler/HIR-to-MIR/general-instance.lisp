@@ -44,10 +44,11 @@
 ;;; a list of dimensions.  Other arrays contain information about fill
 ;;; pointers and displacement.  This function takes an integer
 ;;; representing the number of words in this prefix, and it returns an
-;;; immediate input corresponding to those words, i.e. the argument
-;;; multiplied by 8.
+;;; immediate input with an offset corresponding to those words,
+;;; i.e. the argument multiplied by 8 minus the tag value of a rack
+;;; pointer, which is 7.
 (defun make-rack-prefix-offset (prefix-size)
-  (make-instance 'cleavir-ir:immediate-input :value (* prefix-size 8)))
+  (make-instance 'cleavir-ir:immediate-input :value (- (* prefix-size 8) 7)))
 
 (defmethod  process-instruction (client
                                  (instruction cleavir-ir:slot-read-instruction))
