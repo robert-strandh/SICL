@@ -1,14 +1,14 @@
 (cl:in-package #:sicl-hir-to-mir)
 
-;;; Given a location L containing a slot number, and and in struction
+;;; Given a location L containing a slot number, and and instruction
 ;;; I, insert an instruction J before I, such that J computes a new
-;;; location M containing the contents of L shifted left by 8
+;;; location M containing the contents of L shifted left by 3
 ;;; positions to obtain a slot offset.  The location M is returned.
 (defun compute-slot-offset (slot-number-location instruction)
   (let ((offset-location (make-instance 'cleavir-ir:lexical-location
                            :name '#:slot-offset-location))
         (shift-count-input (make-instance 'cleavir-ir:immediate-input
-                             :value 8)))
+                             :value 3)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:shift-left-instruction
        :shifted-input offset-location
