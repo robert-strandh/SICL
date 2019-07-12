@@ -292,20 +292,22 @@
           ;; harder case: unwind.
 	  (let* (;; Copy the block context's results to get
                  ;; locations local to this function, passed to
-                 ;; the unwind.
+                 ;; the send.
                  (new-results
                    (if (typep results 'cleavir-ir:values-location)
                        (cleavir-ir:make-values-location)
                        (loop for lex in results
                              collect (cleavir-ir:make-lexical-location
                                       (cleavir-ir:name lex)))))
-                 (new-successor (cleavir-ir:make-unwind-instruction
-                                 continuation destination 1
-                                 (if (listp new-results)
-                                     new-results
-                                     (list new-results))))
+                 (unwind (cleavir-ir:make-unwind-instruction
+                          continuation destination 1))
+                 (send (cleavir-ir:make-send-instruction
+                        (if (listp new-results)
+                            new-results
+                            (list new-results))
+                        unwind))
 		 (new-context (context new-results
-				       (list new-successor)
+				       (list send)
 				       (invocation context))))
 	    (compile-ast (cleavir-ast:form-ast ast) new-context))))))
 

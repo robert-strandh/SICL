@@ -235,7 +235,7 @@
 ;;; function by BLOCK/RETURN-FROM. It has one successor, no inputs,
 ;;; and either zero or more lexical locations or one values location
 ;;; as outputs. The outputs must match the inputs to the
-;;; corresponding UNWIND-INSTRUCTION.
+;;; corresponding SEND-INSTRUCTION.
 ;;;
 ;;; When control has been transferred abnormally to a
 ;;; CATCH-INSTRUCTION, a RECEIVE-INSTRUCTION in the corresponding
@@ -251,6 +251,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction SEND-INSTRUCTION.
+;;;
+;;; The other component of a BLOCK/RETURN-FROM. It has one successor,
+;;; no output, and either zero or more lexical locations or one
+;;; values location as inputs. The inputs must match the outputs to
+;;; the corresponding RECEIVE-INSTRUCTION.
+
+(defclass send-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-send-instruction (inputs successor)
+  (make-instance 'send-instruction
+    :outputs nil :inputs inputs
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction UNWIND-INSTRUCTION.
 ;;;
 ;;; This instruction is used to indicate a lexical non-local transfer
@@ -259,11 +276,8 @@
 ;;; The process of unwinding may involve dynamically determined side
 ;;; effects due to UNWIND-PROTECT.
 ;;;
-;;; The instruction has at least one input: the continuation output
+;;; The instruction has one input: the continuation output
 ;;; by a CATCH-INSTRUCTION (see its comment for details).
-;;; Any further inputs represent returned values, and must match
-;;; the corresponding RECEIVE-INSTRUCTION. As such they can consist
-;;; of zero or more lexical locations, or one values location.
 
 (defclass unwind-instruction
     (instruction no-successors-mixin side-effect-mixin)
