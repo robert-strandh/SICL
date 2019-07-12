@@ -1,15 +1,7 @@
 (cl:in-package #:sicl-hir-to-mir)
 
 (defun find-slot (object-location slot-number slot-address instruction)
-  (let ((rack-location (make-instance 'cleavir-ir:lexical-location
-                        :name '#:rack-location)))
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:memref2-instruction
-       :offset 3
-       :inputs (list object-location)
-       :outputs (list rack-location)
-       :successors (list instruction))
-     instruction)
+  (let ((rack-location (find-rack instruction object-location)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:unsigned-add-instruction
        :inputs (list rack-location slot-number)
