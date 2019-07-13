@@ -11,11 +11,12 @@
 
 (defmethod process-instruction (client
                                 (instruction cleavir-ir:cdr-instruction))
-  (change-class instruction 'cleavir-ir:memref2-instruction
-                :offset 7
-                :inputs (cleavir-ir:inputs instruction)
-                :outputs (cleavir-ir:outputs instruction)
-                :successors (cleavir-ir:successors instruction)))
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input 7)))
+    (change-class instruction 'cleavir-ir:memref1-instruction
+                  :input raw-pointer-location
+                  :outputs (cleavir-ir:outputs instruction)
+                  :successors (cleavir-ir:successors instruction))))
 
 (defmethod process-instruction (client
                                 (instruction cleavir-ir:rplaca-instruction))
