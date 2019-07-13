@@ -30,13 +30,14 @@
 ;;; a tagged pointer, and its tag is #b111.
 
 (defun find-rack (instruction general-instance-location)
-  (let ((offset-input (make-instance 'cleavir-ir:immediate-input :value 3))
+  (let* ((raw-pointer-location (raw-pointer-from-tagged-pointer instruction
+                                                                general-instance-location
+                                                                3))
         (rack-location (make-instance 'cleavir-ir:lexical-location
                          :name '#:rack-location)))
     (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:memref2-instruction
-       :base-address general-instance-location
-       :offset offset-input
+     (make-instance 'cleavir-ir:memref1-instruction
+       :input raw-pointer-location
        :output rack-location
        :successor instruction)
      instruction)
