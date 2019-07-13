@@ -12,7 +12,7 @@
                          'cleavir-ir:unsigned-sub-instruction
                          'cleavir-ir:unsigned-add-instruction))
          (offset-input (make-instance 'cleavir-ir:immediate-input :value (abs offset)))
-         (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input offset-input)))
+         (raw-pointer-location (make-instance 'cleavir-ir:raw-integer :size 64)))
     (cleavir-ir:insert-instruction-before
      (make-instance class-name
        :inputs (list tagged-pointer-location offset-input)
