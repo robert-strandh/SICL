@@ -10,24 +10,24 @@
                              :value 3)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:shift-left-instruction
-       :shifted-input offset-location
+       :shifted-input slot-number-location
        :shift-count shift-count-input
+       :output offset-location
        :successor instruction)
      instruction)
     offset-location))
 
-;;; This function computes the location of a slot, except that the
-;;; rack prefix is not included in the resulting value.  It takes two
-;;; locations, the first one contains the address of the beginning of
-;;; the rack, and the second one contains a slot offset, where offset
-;;; 0 indicates the first slot.  It returns a location containing the
+;;; This function computes the location of a slot.  It takes two
+;;; locations, the first one contains the address of the first slot,
+;;; and the second one contains a slot offset, where offset 0
+;;; indicates the first slot.  It returns a location containing the
 ;;; sum of the values of the two input locations.
-(defun compute-slot-location (rack-location slot-offset-location instruction)
+(defun compute-slot-location (first-slot-location slot-offset-location instruction)
   (let ((slot-location (make-instance 'cleavir-ir:lexical-location
                          :name '#:slot-location)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:unsigned-add-instruction
-       :augend rack-location
+       :augend first-slot-location
        :addend slot-offset-location
        :output slot-location
        :successor instruction)
@@ -54,22 +54,21 @@
   (destructuring-bind (object-location slot-number-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
+           (first-slot-location (skip-rack-prefix instruction rack-location 2))
            (slot-offset-location (compute-slot-offset slot-number-location instruction))
-           (slot-location (compute-slot-location rack-location slot-offset-location instruction))
-           (rack-prefix-input (make-rack-prefix-offset 2)))
-      (change-class instruction 'cleavir-ir:memref2-instruction
-                    :base-address slot-location
-                    :offset rack-prefix-input))))
+           (slot-location (compute-slot-location first-slot-location slot-offset-location instruction)))
+      (change-class instruction 'cleavir-ir:memref1-instruction
+                    :input slot-location
+                    :outputs (cleavir-ir:outputs instruction)))))
+
 
 (defmethod  process-instruction (client
                                  (instruction cleavir-ir:slot-write-instruction))
-  (destructuring-bind (object-location slot-number value-location)
+  (destructuring-bind (object-location slot-number-location value-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
+           (first-slot-location (skip-rack-prefix instruction rack-location 2))
            (slot-offset-location (compute-slot-offset slot-number-location instruction))
-           (slot-location (compute-slot-location rack-location slot-offset-location instruction))
-           (rack-prefix-input (make-rack-prefix-offset 2)))
-      (change-class instruction 'cleavir-ir:memset2-instruction
-                    :base-address slot-location
-                    :offset rack-prefix-location
-                    :value value-location))))
+           (slot-location (compute-slot-location first-slot-location slot-offset-location instruction)))
+      (change-class instruction 'cleavir-ir:memset1-instruction
+                    :inputs (list slot-location value-location)))))
