@@ -2,15 +2,8 @@
 
 (defmethod process-instruction (client
                                 (instruction cleavir-ir:car-instruction))
-  (let ((offset-input (make-instance 'cleavir-ir:immediate-input :value 1))
-        (raw-pointer-location (make-instance 'cleavir-ir:raw-integer :size 64)))
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:unsigned-sub-instruction
-       :minuend (first (cleavir-ir:inputs instruction))
-       :subtrahend offset-input
-       :output raw-pointer-location
-       :successor instruction)
-     instruction)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input -1)))
     (change-class instruction 'cleavir-ir:memref1-instruction
                   :input raw-pointer-location
                   :outputs (cleavir-ir:outputs instruction)
