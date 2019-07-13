@@ -5,8 +5,7 @@
 ;;; location M containing the contents of L shifted left by 3
 ;;; positions to obtain a slot offset.  The location M is returned.
 (defun compute-slot-offset (slot-number-location instruction)
-  (let ((offset-location (make-instance 'cleavir-ir:lexical-location
-                           :name '#:slot-offset-location))
+  (let ((offset-location (make-instance 'cleavir-ir:raw-integer :size 64))
         (shift-count-input (make-instance 'cleavir-ir:immediate-input
                              :value 3)))
     (cleavir-ir:insert-instruction-before
