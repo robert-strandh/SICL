@@ -42,3 +42,15 @@
        :successor instruction)
      instruction)
     rack-location))
+
+(defun skip-rack-prefix (instruction rack-location prefix-size)
+  (let ((addend (- (* prefix-size 8) 7))
+        (raw-pointer-location (make-instance 'cleavir-ir:raw-integer :size 64)))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:unsigned-add-instruction
+       :augend rack-location
+       :addend addend
+       :output raw-pointer-location
+       :successors instruction)
+     instruction)
+    raw-pointer-location))
