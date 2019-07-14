@@ -49,26 +49,30 @@
 (defun make-rack-prefix-offset (prefix-size)
   (make-instance 'cleavir-ir:immediate-input :value (- (* prefix-size 8) 7)))
 
-(defmethod  process-instruction (client
-                                 (instruction cleavir-ir:slot-read-instruction))
+(defmethod  process-instruction
+    (client (instruction cleavir-ir:slot-read-instruction))
   (destructuring-bind (object-location slot-number-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
            (first-slot-location (skip-rack-prefix instruction rack-location 2))
            (slot-offset-location (compute-slot-offset slot-number-location instruction))
-           (slot-location (compute-slot-location first-slot-location slot-offset-location instruction)))
+           (slot-location (compute-slot-location first-slot-location
+                                                 slot-offset-location
+                                                 instruction)))
       (change-class instruction 'cleavir-ir:memref1-instruction
                     :input slot-location
                     :outputs (cleavir-ir:outputs instruction)))))
 
 
-(defmethod  process-instruction (client
-                                 (instruction cleavir-ir:slot-write-instruction))
+(defmethod  process-instruction
+    (client (instruction cleavir-ir:slot-write-instruction))
   (destructuring-bind (object-location slot-number-location value-location)
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
            (first-slot-location (skip-rack-prefix instruction rack-location 2))
            (slot-offset-location (compute-slot-offset slot-number-location instruction))
-           (slot-location (compute-slot-location first-slot-location slot-offset-location instruction)))
+           (slot-location (compute-slot-location first-slot-location
+                                                 slot-offset-location
+                                                 instruction)))
       (change-class instruction 'cleavir-ir:memset1-instruction
                     :inputs (list slot-location value-location)))))
