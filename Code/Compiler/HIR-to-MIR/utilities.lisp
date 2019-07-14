@@ -54,3 +54,21 @@
        :successors instruction)
      instruction)
     raw-pointer-location))
+
+;;; Given a location L containing a slot number, and and instruction
+;;; I, insert an instruction J before I, such that J computes a new
+;;; location M containing the contents of L shifted left by
+;;; SHIFT-COUNT positions to obtain a slot offset.  The location M is
+;;; returned.
+(defun compute-slot-offset (slot-number-location instruction shift-count)
+  (let ((offset-location (make-instance 'cleavir-ir:raw-integer :size 64))
+        (shift-count-input (make-instance 'cleavir-ir:immediate-input
+                             :value shift-count)))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:shift-left-instruction
+       :shifted-input slot-number-location
+       :shift-count shift-count-input
+       :output offset-location
+       :successor instruction)
+     instruction)
+    offset-location))

@@ -1,22 +1,5 @@
 (cl:in-package #:sicl-hir-to-mir)
 
-;;; Given a location L containing a slot number, and and instruction
-;;; I, insert an instruction J before I, such that J computes a new
-;;; location M containing the contents of L shifted left by 3
-;;; positions to obtain a slot offset.  The location M is returned.
-(defun compute-slot-offset (slot-number-location instruction)
-  (let ((offset-location (make-instance 'cleavir-ir:raw-integer :size 64))
-        (shift-count-input (make-instance 'cleavir-ir:immediate-input
-                             :value 3)))
-    (cleavir-ir:insert-instruction-before
-     (make-instance 'cleavir-ir:shift-left-instruction
-       :shifted-input slot-number-location
-       :shift-count shift-count-input
-       :output offset-location
-       :successor instruction)
-     instruction)
-    offset-location))
-
 ;;; This function computes the location of a slot.  It takes two
 ;;; locations, the first one contains the address of the first slot,
 ;;; and the second one contains a slot offset, where offset 0
@@ -55,7 +38,9 @@
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
            (first-slot-location (skip-rack-prefix instruction rack-location 2))
-           (slot-offset-location (compute-slot-offset slot-number-location instruction))
+           (slot-offset-location (compute-slot-offset slot-number-location
+                                                      instruction
+                                                      3))
            (slot-location (compute-slot-location first-slot-location
                                                  slot-offset-location
                                                  instruction)))
@@ -70,7 +55,9 @@
       (cleavir-ir:inputs instruction)
     (let* ((rack-location (find-rack instruction object-location))
            (first-slot-location (skip-rack-prefix instruction rack-location 2))
-           (slot-offset-location (compute-slot-offset slot-number-location instruction))
+           (slot-offset-location (compute-slot-offset slot-number-location
+                                                      instruction
+                                                      3))
            (slot-location (compute-slot-location first-slot-location
                                                  slot-offset-location
                                                  instruction)))
