@@ -9,7 +9,7 @@
    (:file "fetch")
    (:file "cons")
    (:file "cell")
-   (:file "utlities")
+   (:file "utilities")
    (:file "general-instance")
    (:file "array")
    (:file "hir-to-mir")))
