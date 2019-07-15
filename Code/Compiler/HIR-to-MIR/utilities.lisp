@@ -72,3 +72,20 @@
        :successor instruction)
      instruction)
     offset-location))
+
+;;; This function computes the location of a slot.  It takes two
+;;; locations, the first one contains the address of the first slot,
+;;; and the second one contains a slot offset, where offset 0
+;;; indicates the first slot.  It returns a location containing the
+;;; sum of the values of the two input locations.
+(defun compute-slot-location (first-slot-location slot-offset-location instruction)
+  (let ((slot-location (make-instance 'cleavir-ir:lexical-location
+                         :name '#:slot-location)))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:unsigned-add-instruction
+       :augend first-slot-location
+       :addend slot-offset-location
+       :output slot-location
+       :successor instruction)
+     instruction)
+    slot-location))
