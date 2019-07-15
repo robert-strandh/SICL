@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-sequence
   (:use #:common-lisp)
+  (:import-from #:sealable-metaobjects #:define-sealable-generic-function)
   (:shadow
    . #1=
    (#:copy-seq

@@ -20,5 +20,6 @@
      (values spec spec))
     ((cons symbol (cons symbol null))
      (values (first spec) (second spec)))
-    (error "Malformed ONCE-ONLY spec: ~S" spec)))
+    (otherwise
+     (error "Malformed ONCE-ONLY spec: ~S" spec))))
 

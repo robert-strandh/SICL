@@ -10,6 +10,7 @@
             (flet ((,name (,e) (funcall ,f ,e)))
               ,@body))))))
 
+(declaim (inline canonicalize-test-and-test-not))
 (defun canonicalize-test-and-test-not (test test-not)
   (cond ((and (not (null test))
               (not (null test-not)))
@@ -46,8 +47,9 @@
          (mapcan #'class-subclasses
                  (closer-mop:class-direct-subclasses class))))
 
-(defmacro replicate-for-each-relevant-vector-subclass (symbol &body body)
+(defmacro replicate-for-each-relevant-vectoroid (symbol &body body)
   `(progn
-     ,@(loop for class in (class-subclasses (find-class 'vector))
+     ,@(loop for class in (list* (find-class 'sequence)
+                                 (class-subclasses (find-class 'vector)))
              unless (subtypep (class-name class) '(array nil))
-               collect (subst class symbol `(progn ,@body)))))
+               append (subst class symbol body))))
