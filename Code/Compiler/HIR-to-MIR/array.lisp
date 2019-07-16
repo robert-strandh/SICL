@@ -36,3 +36,11 @@
         (change-class instruction 'cleavir-ir:memref1-instruction
                       :input slot-location
                       :outputs (cleavir-ir:outputs instruction))))))
+
+(defmethod process-instruction
+    (client (instruction cleavir-ir:aref-instruction))
+  (let ((element-type (cleavir-ir:element-type instruction)))
+    (cond ((equal element-type 'bit)
+           (process-bit-aref-instruction instruction))
+          (t
+           (process-simple-aref-instruction instruction)))))
