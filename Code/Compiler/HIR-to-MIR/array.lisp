@@ -103,3 +103,60 @@
                                                    instruction)))
         (change-class instruction 'cleavir-ir:memset1-instruction
                       :inputs (list slot-location value-location))))))
+
+(defun process-bit-aset-instruction (instruction)
+  (destructuring-bind (object-location index-location value-location)
+      (cleavir-ir:inputs instruction)
+    (let* ((rack-location (find-rack instruction object-location))
+           (first-slot-location (skip-rack-prefix instruction rack-location 2))
+           (word-index-location (make-instance 'cleavir-ir:raw-integer :size 64))
+           (word-element-location (make-instance 'cleavir-ir:raw-integer :size 64))
+           (modified-word-element-location (make-instance 'cleavir-ir:raw-integer :size 64))
+           (expanded-value-location (make-instance 'cleavir-ir:raw-integer :size 64))
+           (shifted-value-location (make-instance 'cleavir-ir:raw-integer :size 64))
+           (index-mask-input (make-instance 'cleavir-ir:immediate-input :value 63))
+           (shift-count-input (make-instance 'cleavir-ir:immediate-input :value 6))
+           (bit-index-location (make-instance 'cleavir-ir:raw-integer :size 64)))
+      (cleavir-ir:insert-instruction-before
+       (make-instance 'cleavir-ir:logic-shift-right-instruction
+         :shifted-input index-location
+         :shift-count shift-count-input
+         :output word-element-location
+         :successor instruction)
+       instruction)
+      (let ((slot-location (compute-slot-location first-slot-location
+                                                  word-index-location
+                                                  instruction)))
+        (cleavir-ir:insert-instruction-before
+         (make-instance 'cleavir-ir:memref1-instruction
+           :input slot-location
+           :output word-element-location
+           :successor instruction)
+         instruction)
+        (cleavir-ir:insert-instruction-before
+         (make-instance 'cleavir-ir:bitwise-and-instruction
+           :inputs (list index-location index-mask-input)
+           :output bit-index-location
+           :successor instruction)
+         instruction)
+        (cleavir-ir:insert-instruction-before
+         (make-instance 'cleavir-ir:assignment-instruction
+           :input value-location
+           :output expanded-value-location
+           :successor instruction)
+         instruction)
+        (cleavir-ir:insert-instruction-before
+         (make-instance 'cleavir-ir:shift-left-instruction
+           :shifted-input expanded-value-location
+           :shift-count bit-index-location
+           :output shifted-value-location
+           :successor instruction)
+         instruction)
+        (cleavir-ir:insert-instruction-before
+         (make-instance 'cleavir-ir:bitwise-or-instruction
+           :inputs (list word-element-location shifted-value-location)
+           :output modified-word-element-location
+           :successor instruction)
+         instruction)
+      (change-class instruction 'cleavir-ir:memset1-instruction
+                    :inputs (list word-element-location modified-word-element-location))))))
