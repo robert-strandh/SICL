@@ -10,4 +10,5 @@
    (:file "integer-arithmetic-instructions")
    (:file "shift-instructions")
    (:file "bitwise-instructions")
+   (:file "sign-extend-instruction")
    (:file "conditions")))
