@@ -63,7 +63,8 @@
           ((member element-type
                    '((signed-byte 8)
                      (signed-byte 16)
-                     (signed-byte 32)))
+                     (signed-byte 32))
+                   :test #'equal)
            (box-signed-integer instruction))
           ((eq element-type 'single-float)
            (box-single-float instruction))
