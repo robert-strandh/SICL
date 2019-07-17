@@ -12,4 +12,5 @@
    (:file "utilities")
    (:file "general-instance")
    (:file "array")
+   (:file "boxing")
    (:file "hir-to-mir")))
