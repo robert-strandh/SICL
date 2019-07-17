@@ -97,3 +97,21 @@
     (change-class instruction 'cleavir-ir:assignment-instruction
                   :input word-location
                   :outputs (cleavir-ir:outputs instruction))))
+
+(defmethod process-instructino
+    (client (instruction cleavir-ir:unbox-instruction))
+  (let ((element-type (cleavir-ir:element-type instruction)))
+    (cond ((member element-type
+                   '(bit
+                     (unsigned-byte 8)
+                     (unsigned-byte 16)
+                     (unsigned-byte 32)
+                     (signed-byte 8)
+                     (signed-byte 16)
+                     (signed-byte 32))
+                   :test #'equal)
+           (unbox-integer instruction))
+          ((eq element-type 'single-float)
+           (unbox-single-float instruction))
+          (t
+           (error "Don't know how to unbox ~s" element-type)))))
