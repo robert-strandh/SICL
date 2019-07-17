@@ -69,3 +69,17 @@
            (box-single-float instruction))
           (t
            (error "Don't know how to box ~s" element-type)))))
+
+(defun unbox-integer (instruction)
+  (let ((word-location (make-instance 'cleavir-ir:raw-integer :size 64))
+        (shift-count-input (make-instance 'cleavir-ir:immediate-input :value 1)))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:arithmetic-shift-right-instruction
+       :shifted-input (first (cleavir-ir:inputs instruction))
+       :shift-count shift-count-input
+       :output word-location
+       :successor instruction)
+     instruction)
+    (change-class instruction 'cleavir-ir:assignment-instruction
+                  :input word-location
+                  :outputs (cleavir-ir:outputs instruction))))
