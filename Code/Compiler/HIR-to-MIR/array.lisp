@@ -87,3 +87,19 @@
            (process-bit-aref-instruction instruction))
           (t
            (process-simple-aref-instruction instruction)))))
+
+(defun process-simple-aset-instruction (instruction)
+  (let* ((element-type (cleavir-ir:element-type instruction))
+         (shift-count (shift-count element-type)))
+    (destructuring-bind (object-location index-location value-location)
+        (cleavir-ir:inputs instruction)
+      (let* ((rack-location (find-rack instruction object-location))
+             (first-slot-location (skip-rack-prefix instruction rack-location 2))
+             (slot-offset-location (compute-slot-offset index-location
+                                                        instruction
+                                                        shift-count))
+             (slot-location (compute-slot-location first-slot-location
+                                                   slot-offset-location
+                                                   instruction)))
+        (change-class instruction 'cleavir-ir:memset1-instruction
+                      :inputs (list slot-location value-location))))))
