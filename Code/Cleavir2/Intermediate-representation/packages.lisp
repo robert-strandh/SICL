@@ -137,6 +137,7 @@
    #:bitwise-or-instruction
    #:bitwise-exclusive-or-instruction
    #:bitwise-not-instruction
+   #:sign-extend-instruction
    ;; MIR data
    #:raw-datum
    #:raw-integer
