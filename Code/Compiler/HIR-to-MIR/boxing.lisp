@@ -49,3 +49,23 @@
     (change-class instruction 'cleavir-ir:bitwise-or-instruction
                   :inputs (list word-location-2 tag-input)
                   :outputs (cleavir-ir:outputs instruction))))
+
+(defmethod process-instructino
+    (client (instruction cleavir-ir:box-instruction))
+  (let ((element-type (cleavir-ir:element-type instruction)))
+    (cond ((member element-type
+                   '(bit
+                     (unsigned-byte 8)
+                     (unsigned-byte 16)
+                     (unsigned-byte 32))
+                   :test #'equal)
+           (box-unsigned-integer instruction))
+          ((member element-type
+                   '((signed-byte 8)
+                     (signed-byte 16)
+                     (signed-byte 32)))
+           (box-signed-integer instruction))
+          ((eq element-type 'single-float)
+           (box-single-float instruction))
+          (t
+           (error "Don't know how to box ~s" element-type)))))
