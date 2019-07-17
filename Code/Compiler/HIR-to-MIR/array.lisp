@@ -160,3 +160,11 @@
          instruction)
       (change-class instruction 'cleavir-ir:memset1-instruction
                     :inputs (list word-element-location modified-word-element-location))))))
+
+(defmethod process-instruction
+    (client (instruction cleavir-ir:aset-instruction))
+  (let ((element-type (cleavir-ir:element-type instruction)))
+    (cond ((equal element-type 'bit)
+           (process-bit-aset-instruction instruction))
+          (t
+           (process-simple-aset-instruction instruction)))))
