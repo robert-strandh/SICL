@@ -83,14 +83,14 @@ The global collector cycles through the following phases:
   live objects.
 \item Collecting unmarked dyads.  In this phase, the global collector
   scans the dyads and collects the unmarked ones into a linked list.
-\item Freeing racks.  In this phase, the global collector iterates
-  through the collected list of unmarked dyads and frees the rack
-  belonging to each of the general instance headers in the list.
+\item Freeing unmarked racks.  In this phase, the global collector
+  iterates through the allocated racks in the rack part of the heap
+  and frees unmarked racks.
 \item Merging free lists.  In this phase, the global collector merges
   the newly created linked list of unmarked dyads with the existing
   free list.
-\item Clearing bitmaps.  In this final phase, the bitmaps used during
-  collection are cleared.
+\item Clearing mark bits.  In this final phase, the mark bits used for
+  marking objects as live are cleared.
 \end{enumerate}
 
 \subsection{Idle phase}
