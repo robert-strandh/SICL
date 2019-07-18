@@ -77,7 +77,8 @@ The global collector cycles through the following phases:
   its behalf.
 \item Waiting for roots.  In this phase, the global collector waits
   for each application thread or each spawned thread to finish
-  indicating its part of the global root set.
+  indicating its part of the global root set.  Dyads and racks are
+  treated as independent objects.
 \item Mark.  In this phase, the global collector traces and marks the
   live objects.
 \item Collecting unmarked dyads.  In this phase, the global collector
