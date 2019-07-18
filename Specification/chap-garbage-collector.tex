@@ -151,15 +151,15 @@ the global heap. For application threads that are blocked, for example
 waiting for input or output, the global collector spawns a thread to
 run the garbage collector on behalf of the application thread.
 
-The global collector maintains two bitmaps, one for black objects and
-one for gray objects.  Each bitmap contains a bit for every dyad.  In
-addition, the gray bitmap has a multi-level \emph{index}, making it
-possible to find an arbitrary gray object in only a few cycles.  For
-each 64-bit word in the primary bitmap, a bit in a secondary bitmap is
-maintained.  The bit in the secondary bitmap is set if there is at
-least one bit set in the 64-bit word in the primary bitmap.
-Additional levels of index exist until the last level fits in a single
-64-bit word.
+The global collector maintains two bitmaps for the purpose of marking
+dyads, one for black objects and one for gray objects.  Each bitmap
+contains a bit for every dyad.  In addition, the gray bitmap has a
+multi-level \emph{index}, making it possible to find an arbitrary gray
+object in only a few cycles.  For each 64-bit word in the primary
+bitmap, a bit in a secondary bitmap is maintained.  The bit in the
+secondary bitmap is set if there is at least one bit set in the 64-bit
+word in the primary bitmap.  Additional levels of index exist until
+the last level fits in a single 64-bit word.
 
 To include an object in the set of gray objects, the address is used
 to determine a bit position in the primary bitmap.  Before the
