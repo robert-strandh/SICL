@@ -80,7 +80,7 @@ The global collector cycles through the following phases:
   indicating its part of the global root set.  Dyads and racks are
   treated as independent objects.
 \item Mark.  In this phase, the global collector traces and marks the
-  live objects.
+  live objects starting with the marked roots.
 \item Collecting unmarked dyads.  In this phase, the global collector
   scans the dyads and collects the unmarked ones into a linked list.
 \item Freeing unmarked racks.  In this phase, the global collector
