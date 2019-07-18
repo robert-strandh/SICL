@@ -214,18 +214,17 @@ If the number of dyads recovered is insufficient, i.e. a new
 allocation would be triggered very soon, more memory is requested from
 the system and used for dyads.
 
-\subsection{Freeing racks}
+\subsection{Freeing unmarked racks}
 
-During this phase, the free list of unmarked dyads is traversed, and
-whenever the dyad is a general instance, the corresponding rack is
-freed.
+During this phase, the racks that are indicated as allocated are
+traversed, and any rack that is unmarked is freed.
 
 \subsection{Merging free lists}
 
 Once the racks of unmarked dyads have been freed, the two free lists
 are merged into a single one.
 
-\subsection{Clearing bitmaps}
+\subsection{Clearing mark bits}
 
 Finally, we clear all the bitmaps used for marking, and we either
 enter the idle phase, or start a new collection, depending on the
