@@ -190,6 +190,19 @@ the cache).  The cache could for instance be a vector with around a
 million elements.  Such a vector would occupy only 8 megabytes of
 memory which is comparable to the space taken up by the gray bitmaps.
 
+Every rack has a (single) mark bit as well.  Since there is plenty of
+room in the chunk that is used for the rack, there is no need to use
+separate bitmaps for the mark bits of the racks.  Instead, a bit in
+the \emph{size} field described in \refApp{app-memory-allocator} is
+used.
+
+Each rack has a single mark bit, so it can be only black or white.
+This invariant is simply maintained by the recursive scanning of its
+contained object, whenever it is found to be live.  The reason for not
+allowing racks to be gray is that we would then need to scan the
+entire rack zone for gray objects, or maintain additional separate
+mark bits with indices, just as we do for dyads.
+
 \subsection{Collecting unmarked dyads}
 
 We collect unmarked dyads into a list that is separate from the free
