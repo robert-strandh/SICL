@@ -1,0 +1,51 @@
+\chapter{Hash tables}
+
+\section{Classes}
+
+Every class in this section has \texttt{built-in-class} as its
+metaclass.
+
+\Defclass {hash-table}
+
+This class is the base class of all hash tables.  It is a subclass of
+the class \texttt{t}.
+
+\Defclass {eq-hash-table-mixin}
+
+This mixin class is a superclass of every hash tables class that uses
+\texttt{eq} as its test function.  It is a subclass of the class
+\texttt{t}.
+
+\Defclass {eql-hash-table-mixin}
+
+This mixin class is a superclass of every hash tables class that uses
+\texttt{eql} as its test function.  It is a subclass of the class
+\texttt{t}.
+
+\Defclass {equal-hash-table-mixin}
+
+This mixin class is a superclass of every hash tables class that uses
+\texttt{equal} as its test function.  It is a subclass of the class
+\texttt{t}.
+
+\Defclass {equalp-hash-table-mixin}
+
+This mixin class is a superclass of every hash tables class that uses
+\texttt{equalp} as its test function.  It is a subclass of the class
+\texttt{t}.
+
+\Defclass {standard-hash-table}
+
+This class is a subclass of the class \texttt{hash-table}.
+
+\Definitarg {:contents}
+
+This initialization argument is accepted by all instances of
+\texttt{standard-hash-table}
+
+\Defgeneric {contents} {standard-hash-table}
+
+Given an instance of the class \texttt{standard-hash-table}, this
+generic function returns the value that was supplied as the
+\texttt{:contents} initialization argument when the instance was
+created.
