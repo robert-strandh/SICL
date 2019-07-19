@@ -1,6 +1,10 @@
 \chapter{Hash tables}
 
-\section{Classes}
+\section{Package}
+
+The package for all symbols in this chapter is \texttt{sicl-hash-table}.
+
+\section{Protocol}
 
 Every class in this section has \texttt{built-in-class} as its
 metaclass.
@@ -34,6 +38,37 @@ This mixin class is a superclass of every hash tables class that uses
 \texttt{equalp} as its test function.  It is a subclass of the class
 \texttt{t}.
 
+{\small\Defgeneric {hash-table-p} {hash-table}
+}
+
+This generic function returns a generalized Boolean value, where a
+\textsl{true} value indicates that \textit{hash-table} is an instance
+of the class \texttt{hash-table}, and \textsl{false} indicates that
+\textit{hash-table} is \emph{not} an instance of the class
+\texttt{hash-table}.
+
+{\small\Defgeneric {hash-table-count} {hash-table}
+}
+
+This generic function returns a non-negative integer indicating the
+number of entries in \textit{hash-table}.
+
+{\small\Defgeneric {gethash} {key hash-table \optional default}
+}
+
+This generic function returns two values.  The first value is the
+value in \textit{hash-table} associated with \textit{key}, or
+\texttt{nil} if no value in \textit{hash-table} is associated with
+\textit{key}.  The second value is a generalized Boolean value, where
+a \textsl{true} value indicates that the first value is indeed present
+in \textit{hash-table}, and \textsl{false} indicates that no value is
+associated with \textit{key} in \textit{hash-table}.
+
+{\small\Defgeneric {(setf gethash)} {new-value key hash-table \optional default}
+}
+
+\section{Implementation}
+
 \Defclass {standard-hash-table}
 
 This class is a subclass of the class \texttt{hash-table}.
@@ -43,7 +78,8 @@ This class is a subclass of the class \texttt{hash-table}.
 This initialization argument is accepted by all instances of
 \texttt{standard-hash-table}
 
-\Defgeneric {contents} {standard-hash-table}
+{\small\Defgeneric {contents} {standard-hash-table}
+}
 
 Given an instance of the class \texttt{standard-hash-table}, this
 generic function returns the value that was supplied as the
