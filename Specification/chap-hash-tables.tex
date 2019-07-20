@@ -47,6 +47,14 @@ associated with \textit{key} in \textit{hash-table}.
 {\small\Defgeneric {hash-table-test} {hash-table}
 }
 
+{\small\Defgeneric {remhash} {key hash-table}
+}
+
+This generic function removes the entry associated with \textit{key}
+in \textit{hash-table}.  It returns a \textsl{true} value an entry
+associated with \textit{key} existed and was removed.  Otherwise,
+it returns \textsl{false}.
+
 \section{Implementation}
 
 \Defclass {eq-hash-table-mixin}
