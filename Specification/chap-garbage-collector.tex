@@ -202,6 +202,16 @@ contained object, whenever it is found to be live.  The reason for not
 allowing racks to be gray is that we would then need to scan the
 entire rack zone for gray objects, or maintain additional separate
 mark bits with indices, just as we do for dyads.
+\footnote{We could allow for a rack to be gray, provided there is room
+  for it in the fixed-size cache.  We could even evict a dyad from the
+  cache to make room for a rack.  If the global collector never colors
+  a rack gray, and instead always recursively scans it and colors the
+  object it contains gray instead, then the only situation where a
+  rack is colored gray would be when the mutator has a pointer to a
+  rack with no pointer to the header, so there will be very few racks
+  that are gray.  The reason we would like to allow for a rack to be
+  gray sometimes is so that the mutator will not have unbounded pauses
+  when it is asked for roots.}
 
 \subsection{Collecting unmarked dyads}
 
