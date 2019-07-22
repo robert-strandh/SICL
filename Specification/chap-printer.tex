@@ -5,6 +5,8 @@ performance penalty.  We intend to supply standard methods for
 \texttt{print-object}, and code for functions such as \texttt{princ},
 \texttt{prin1}, and \texttt{print}. 
 
-We are planning to use the method created by Burger and Dybvig
+Initially, we were planning to use the method created by Burger and Dybvig
 \cite{Burger:1996:PFN:231379.231397} to print floating-point numbers
-so that they can be read back to the exact same number.
+so that they can be read back to the exact same number.  But more
+recent work \cite{Adams:2018:RFF:3296979.3192369} claims even better
+techniques.  We need to compare these new techniques.
