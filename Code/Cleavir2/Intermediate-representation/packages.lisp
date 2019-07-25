@@ -117,6 +117,7 @@
    #:set-predecessors
    #:offset
    #:compute-argument-count-instruction
+   #:argument-instruction
    ;; MIR instructions
    #:memref1-instruction
    #:memref2-instruction
