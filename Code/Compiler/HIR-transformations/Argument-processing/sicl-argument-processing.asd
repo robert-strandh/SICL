@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "call-error")
+   (:file "check-minimum-argument-count")
    (:file "initialize-required-parameters")))
