@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-argument-processing
   (:use #:common-lisp)
-  (:export))
+  (:export #:initialize-required-parameters))
