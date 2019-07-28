@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "call-error")
    (:file "initialize-required-parameters")))
