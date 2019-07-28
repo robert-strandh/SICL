@@ -1,5 +1,17 @@
 (cl:in-package #:sicl-argument-processing)
 
+;;; This function takes two arguments.  The first argument must be a
+;;; non-empty list of lexical locations corresponding to the required
+;;; parameters of a function.  The second argument must be a lexical
+;;; location that holds the dynamic environment in which this code is
+;;; to be executed.
+;;;
+;;; This function creates a chain of ARGUMENT-INSTRUCTIONs, each one
+;;; initializing a single lexical location for one parameter.
+
+;;; This function returns two values, the first and the last
+;;; instruction in the chain.
+
 (defun initialize-required-parameters
     (lexical-locations dynamic-environment-location)
   (let ((count (length lexical-locations))
@@ -20,5 +32,3 @@
                                    (make-one-instruction i location first))
                           finally (return first))))
         (values first last)))))
-                 
-
