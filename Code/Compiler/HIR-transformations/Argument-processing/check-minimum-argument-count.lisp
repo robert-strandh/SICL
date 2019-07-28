@@ -10,8 +10,10 @@
                             error-function-location
                             dynamic-environment-location
                             argument-count-location
-                            required-argument-count-input)))
-    (make-instance 'cleavir-ir:fixnum-less-instruction
-      :dynamic-environment-location dynamic-environment-location
-      :inputs (list argument-count-location required-argument-count-input)
-      :successors (list error error))))
+                            required-argument-count-input))
+         (nop (make-instance 'cleavir-ir:nop-instruction)))
+    (values (make-instance 'cleavir-ir:fixnum-less-instruction
+              :dynamic-environment-location dynamic-environment-location
+              :inputs (list argument-count-location required-argument-count-input)
+              :successors (list error nop))
+            nop)))
