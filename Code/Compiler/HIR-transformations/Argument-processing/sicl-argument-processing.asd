@@ -4,4 +4,5 @@
   :depends-on (:cleavir2-hir)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "initialize-required-parameters")))
