@@ -1,19 +1,19 @@
 (cl:in-package #:sicl-argument-processing)
 
 (defun check-minimum-argument-count (argument-count-location
-                                     required-argument-count
+                                     minimum-argument-count
                                      dynamic-environment-location
                                      error-function-location)
-  (let* ((required-argument-count-input (make-instance 'cleavir-ir:constant-input
-                                          :value required-argument-count))
+  (let* ((minimum-argument-count-input (make-instance 'cleavir-ir:constant-input
+                                         :value minimum-argument-count))
          (error (call-error 'too-few-arguments
                             error-function-location
                             dynamic-environment-location
                             argument-count-location
-                            required-argument-count-input))
+                            minimum-argument-count-input))
          (nop (make-instance 'cleavir-ir:nop-instruction)))
     (values (make-instance 'cleavir-ir:fixnum-less-instruction
               :dynamic-environment-location dynamic-environment-location
-              :inputs (list argument-count-location required-argument-count-input)
+              :inputs (list argument-count-location minimum-argument-count-input)
               :successors (list error nop))
             nop)))
