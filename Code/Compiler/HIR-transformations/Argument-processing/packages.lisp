@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-argument-processing
   (:use #:common-lisp)
-  (:export #:initialize-required-parameters))
+  (:export #:check-minimum-argument-count
+           #:initialize-required-parameters))
