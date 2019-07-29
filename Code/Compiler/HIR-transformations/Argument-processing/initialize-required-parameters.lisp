@@ -16,7 +16,6 @@
     (lexical-locations dynamic-environment-location)
   (let ((count (length lexical-locations))
         (locations (reverse lexical-locations)))
-    (assert (plusp count))
     (flet ((make-one-instruction (index location successor)
              (let ((input (make-instance 'cleavir-ir:constant-input :value index)))
                (make-instance 'cleavir-ir:argument-instruction
@@ -24,10 +23,10 @@
                  :input input
                  :output location
                  :successor successor))))
-      (let* ((last (make-one-instruction (1- count) (first locations) nil))
+      (let* ((last (make-instance 'cleavir-ir:nop-instruction))
              (first (loop with first = last
-                          for i downfrom (- count 2)
-                          for location in (rest locations)
+                          for i downfrom (1- count)
+                          for location in locations
                           do (setf first
                                    (make-one-instruction i location first))
                           finally (return first))))
