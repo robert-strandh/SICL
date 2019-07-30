@@ -40,3 +40,30 @@
              :dynamic-environment-location dynamic-environment-location)))
     (values assign-nil-to-parameter test)))
              
+(defun initialize-optional-parameters
+    (lexical-locations argument-count-location dynamic-environment-location end-index)
+  (let* ((no-more-branch (make-instance 'cleavir-ir:nop-instruction
+                           :dynamic-environment-location dynamic-environment-location))
+         (nop-no-more no-more-branch)
+         (more-branch (make-instance 'cleavir-ir:nop-instruction
+                        :dynamic-environment-location dynamic-environment-location))
+         (nop-more more-branch)
+         (test
+           (make-instance 'cleavir-ir:fixnum-not-greater-instruction
+             :inputs (list argument-count-location
+                           (make-instance 'cleavir-ir:constant-input :value end-index))
+             :successors (list no-more-branch more-branch)
+             :dynamic-environment-location dynamic-environment-location)))
+    (loop for index downfrom (1- end-index)
+          for location in (reverse lexical-locations)
+          do (multiple-value-bind (no-more more)
+                 (add-one-optional-layer no-more-branch
+                                         test
+                                         (first location)
+                                         (second location)
+                                         argument-count-location
+                                         index
+                                         dynamic-environment-location)
+               (setf no-more-branch no-more)
+               (setf more-branch more)))
+    (values more-branch nop-no-more nop-more)))
