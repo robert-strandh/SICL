@@ -8,4 +8,5 @@
    (:file "call-error")
    (:file "check-minimum-argument-count")
    (:file "check-maximum-argument-count")
-   (:file "initialize-required-parameters")))
+   (:file "initialize-required-parameters")
+   (:file "initialize-optional-parameters")))
