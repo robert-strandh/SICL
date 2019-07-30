@@ -55,12 +55,12 @@
              :successors (list no-more-branch more-branch)
              :dynamic-environment-location dynamic-environment-location)))
     (loop for index downfrom (1- end-index)
-          for location in (reverse lexical-locations)
+          for (optional supplied-p) in (reverse lexical-locations)
           do (multiple-value-bind (no-more more)
                  (add-one-optional-layer no-more-branch
                                          test
-                                         (first location)
-                                         (second location)
+                                         optional
+                                         supplied-p
                                          argument-count-location
                                          index
                                          dynamic-environment-location)
