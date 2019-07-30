@@ -16,4 +16,3 @@
                                 :output key
                                 :successor first)))
         finally (return (values first nop))))
-        
