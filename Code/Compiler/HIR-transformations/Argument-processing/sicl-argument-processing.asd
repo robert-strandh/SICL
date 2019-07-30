@@ -9,4 +9,5 @@
    (:file "check-minimum-argument-count")
    (:file "check-maximum-argument-count")
    (:file "initialize-required-parameters")
-   (:file "initialize-optional-parameters")))
+   (:file "initialize-optional-parameters")
+   (:file "initialize-keyword-parameters-to-nil")))
