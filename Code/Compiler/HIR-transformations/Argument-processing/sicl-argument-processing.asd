@@ -11,4 +11,7 @@
    (:file "initialize-required-parameters")
    (:file "initialize-optional-parameters")
    (:file "initialize-keyword-parameters-to-nil")
-   (:file "create-rest-parameter")))
+   (:file "create-rest-parameter")
+   (:file "initialize-keyword-parameters")))
+
+
