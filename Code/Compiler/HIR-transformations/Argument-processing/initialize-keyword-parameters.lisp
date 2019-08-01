@@ -234,3 +234,52 @@
               :successor first
               :dynamic-environment-location dynamic-environment-location))
       (values first nop))))
+
+(defun process-keyword-arguments (parameters
+                                  argument-count-location
+                                  dynamic-environment-location
+                                  error-function-location
+                                  first-index
+                                  allow-other-keys-p)
+  (let* ((nop (make-instance 'cleavir-ir:nop-instruction
+                :dynamic-environment-location dynamic-environment-location))
+         (first nil))
+    (if allow-other-keys-p
+        (setf first nop)
+        (multiple-value-bind (first-a last-a)
+            (check-keywords-valid (mapcar #'first parameters)
+                                  argument-count-location
+                                  dynamic-environment-location
+                                  error-function-location
+                                  first-index)
+          (setf (cleavir-ir:successors last-a)
+                (list nop))
+          (multiple-value-bind (first-b last-b-true last-b-false)
+              (check-for-allow-other-keys argument-count-location
+                                          dynamic-environment-location
+                                          first-index)
+            (setf (cleavir-ir:successors last-b-true)
+                  (list first-a))
+            (setf (cleavir-ir:successors last-b-false)
+                  (list nop))
+            (setf first first-b))))
+    (loop for (keyword value-location supplied-p-location) in parameters
+          do (multiple-value-bind (first-c last-c)
+                 (initialize-one-keyword-parameter keyword
+                                                   argument-count-location
+                                                   value-location
+                                                   supplied-p-location
+                                                   dynamic-environment-location
+                                                   first-index)
+               (setf (cleavir-ir:successors last-c)
+                     (list first))
+               (setf first first-c)))
+    (multiple-value-bind (first-d last-d)
+        (check-even-number-of-keyword-arguments argument-count-location
+                                                dynamic-environment-location
+                                                error-function-location
+                                                first-index)
+      (setf (cleavir-ir:successors last-d)
+            (list first))
+      (setf first first-d))
+    (values first nop)))
