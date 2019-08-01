@@ -10,7 +10,7 @@
         (constant-1-input (make-instance 'cleavir-ir:constant-input :value 1))
         (constant-cons-input (make-instance 'cleavir-ir:constant-input :value 'cons))
         (values-location (make-instance 'cleavir-ir:values-location))
-        (first-index-location (make-instance 'cleavir-ir:constant-input :value first-index))
+        (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
         (nop (make-instance 'cleavir-ir:nop-instruction
                :dynamic-environment-location dynamic-environment-location)))
     (let* ((first (make-instance 'cleavir-ir:fixnum-sub-instruction
@@ -39,7 +39,7 @@
               :dynamic-environment-location dynamic-environment-location))
       (setf first
             (make-instance 'cleavir-ir:fixnum-less-instruction
-              :inputs (list index-location first-index-location)
+              :inputs (list index-location first-index-input)
               :successors (list nop first)
               :dynamic-environment-location dynamic-environment-location))
       (setf (cleavir-ir:successors temp)
