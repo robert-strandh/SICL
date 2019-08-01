@@ -152,3 +152,85 @@
             :successor first
             :dynamic-environment-location dynamic-environment-location))
     (values first nop-false nop-true)))
+
+(defun initialize-one-keyword-parameter (keyword
+                                         argument-count-location
+                                         keyword-value-location
+                                         supplied-p-location
+                                         dynamic-environment-location
+                                         first-index)
+  (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name 'keyword))
+         (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
+         (index-location (make-instance 'cleavir-ir:lexical-location :name 'index))
+         (nop (make-instance 'cleavir-ir:nop-instruction
+                :dynamic-environment-location dynamic-environment-location))
+         (temp-location (make-instance 'cleavir-ir:lexical-location :name 'temp))
+         (constant-input-1
+           (make-instance 'cleavir-ir:constant-input :value 1))
+         (constant-input-2
+           (make-instance 'cleavir-ir:constant-input :value 2))
+         (constant-input-nil
+           (make-instance 'cleavir-ir:constant-input :value nil))
+         (constant-input-t
+           (make-instance 'cleavir-ir:constant-input :value t))
+         (constant-input-keyword
+           (make-instance 'cleavir-ir:constant-input :value keyword))
+         (add-2 (make-instance 'cleavir-ir:fixnum-add-instruction
+                  :inputs (list index-location constant-input-2)
+                  :dynamic-environment-location dynamic-environment-location))
+         (false-branch nop)
+         (true-branch nop))
+    (setf true-branch
+          (make-instance 'cleavir-ir:assignment-instruction
+            :input constant-input-nil
+            :output supplied-p-location
+            :successor true-branch
+            :dynamic-environment-location dynamic-environment-location))
+    (setf true-branch
+          (make-instance 'cleavir-ir:assignment-instruction
+            :input constant-input-nil
+            :output keyword-value-location
+            :successor true-branch
+            :dynamic-environment-location dynamic-environment-location))
+    (setf false-branch
+          (make-instance 'cleavir-ir:assignment-instruction
+            :input constant-input-t
+            :output supplied-p-location
+            :successor false-branch
+            :dynamic-environment-location dynamic-environment-location))
+    (setf false-branch
+          (make-instance 'cleavir-ir:argument-instruction
+            :input temp-location
+            :output keyword-value-location
+            :successor false-branch
+            :dynamic-environment-location dynamic-environment-location))
+    (setf false-branch
+          (make-instance 'cleavir-ir:fixnum-add-instruction
+            :input constant-input-1
+            :output temp-location
+            :successors (list false-branch false-branch)
+            :dynamic-environment-location dynamic-environment-location))
+    (setf false-branch
+          (make-instance 'cleavir-ir:eq-instruction
+            :inputs (list constant-input-keyword keyword-location)
+            :successors (list false-branch add-2)
+            :dynamic-environment-location dynamic-environment-location))
+    (setf false-branch
+          (make-instance 'cleavir-ir:argument-instruction
+            :input index-location
+            :output keyword-value-location
+            :successor false-branch
+            :dynamic-environment-location dynamic-environment-location))
+    (let ((first (make-instance 'cleavir-ir:fixnum-not-greater-instruction
+                   :inputs (list argument-count-location index-location)
+                   :successors (list false-branch false-branch)
+                   :dynamic-environment-location dynamic-environment-location)))
+      (setf (cleavir-ir:successors add-2)
+            (list first first))
+      (setf first
+            (make-instance 'cleavir-ir:assignment-instruction
+              :input first-index-input
+              :output index-location
+              :successor first
+              :dynamic-environment-location dynamic-environment-location))
+      (values first nop))))
