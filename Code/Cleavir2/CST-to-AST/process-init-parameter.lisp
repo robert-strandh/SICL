@@ -44,14 +44,15 @@
 ;;; implementation-specific argument-parsing code is responsible for
 ;;; assigning to those LEXICAL-ASTs according to what arguments were
 ;;; given to the function.
-(defun process-init-parameter (client
-			       var-cst
-			       var-ast
-			       supplied-p-cst
-			       supplied-p-ast
-			       init-ast
-			       environment
-			       body-function)
+(defun process-init-parameter
+    (client
+     var-cst
+     var-ast
+     supplied-p-cst
+     supplied-p-ast
+     init-ast
+     environment
+     body-function)
   (let ((origin (cst:source var-cst)))
     (process-progn
      (list (make-initialization-ast
