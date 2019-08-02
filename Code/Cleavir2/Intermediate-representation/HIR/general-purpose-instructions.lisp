@@ -170,6 +170,9 @@
 (defclass catch-instruction (instruction multiple-successors-mixin)
   ())
 
+(defmethod dynamic-environment-output ((instruction catch-instruction))
+  (second (outputs instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction UNWIND-INSTRUCTION.
@@ -215,6 +218,9 @@
 (defclass bind-instruction
     (instruction one-successor-mixin side-effect-mixin)
   ())
+
+(defmethod dynamic-environment-output ((instruction bind-instruction))
+  (first (outputs instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
