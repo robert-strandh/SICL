@@ -16,6 +16,26 @@ advantages:
   etc.
 \end{itemize}
 
+Each type of parameter is is handled by a different module.  In
+addition, because of the complexity of initializing keyword
+parameters, that module is is further subdivided.
+
+Two new HIR instructions are used in order to accomplish the argument
+processing:
+
+\begin{itemize}
+\item The \texttt{compute-argument-count-instruction} has no inputs,
+  and a single output.  It is responsible for computing the total
+  number of arguments passed to the function.
+\item The \texttt{argument-instruction} has one input and one output.
+  The input is a datum that must be a non-negative fixnum.  The output
+  is the argument with an index represented by the value of the input,
+  starting at $0$ for the first argument.
+\end{itemize}
+
+The overall organization of the modules for initializing parameters is
+shown in \refFig{fig-process-arguments}.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-process-arguments.pdf_t}
