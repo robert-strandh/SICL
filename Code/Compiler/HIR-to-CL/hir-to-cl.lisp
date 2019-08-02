@@ -67,7 +67,7 @@
               (source nil)
               (,*static-environment-variable*
                 (vector nil)))
-         (declare (ignore ,(cleavir-ir:name
+         (declare (ignorable ,(cleavir-ir:name
                             (cleavir-ir:dynamic-environment-location initial-instruction))))
          (declare (ignorable ,(cleavir-ir:name
                                (first (cleavir-ir:outputs initial-instruction)))
