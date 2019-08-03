@@ -59,6 +59,15 @@ illustrated by \refFig{fig-check-minimum-argument-count}.
 Checking minimum argument count.}
 \end{figure}
 
+As figure \refFig{fig-process-arguments} shows, this test is only
+inserted when the number of required parameters is strictly greater
+than $0$.  The input labeled ``Nr'' in
+\refFig{fig-check-minimum-argument-count} is a constant input (known
+at compile time) representing the number of required parameters, and
+the input labeled ``AC'' is the lexical location computed by the
+\texttt{compute-argument-count} instruction in
+\refFig{fig-process-arguments}.
+
 \section{Checking the maximum argument count}
 
 \begin{figure}
