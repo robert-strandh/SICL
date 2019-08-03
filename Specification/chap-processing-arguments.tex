@@ -76,6 +76,13 @@ the input labeled ``AC'' is the lexical location computed by the
 
 \section{Checking the maximum argument count}
 
+Unless there is a \texttt{\&rest} parameter or there are
+\texttt{\&key} parameters, there is a maximum allowed value for the
+argument count, and it is equal to the sum of the number of required
+parameters and the number of optional parameters.  The HIR code for
+this check is also simple, and is illustrated by
+\refFig{fig-check-maximum-argument-count}.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-check-maximum-argument-count.pdf_t}
@@ -83,6 +90,16 @@ the input labeled ``AC'' is the lexical location computed by the
 \caption{\label{fig-check-maximum-argument-count}
 Checking maximum argument count.}
 \end{figure}
+
+As figure \refFig{fig-process-arguments} shows, this test is only
+inserted when there is no \texttt{\&rest} parameter and no
+\texttt{\&key} parameters. The input labeled ``Nr+No'' in
+\refFig{fig-check-maximum-argument-count} is a constant input (known
+at compile time) representing the number of required parameters plus
+the number of optional parameters, and the input labeled ``AC'' is
+again the lexical location computed by the
+\texttt{compute-argument-count} instruction in
+\refFig{fig-process-arguments}.
 
 \begin{figure}
 \begin{center}
