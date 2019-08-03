@@ -44,6 +44,13 @@ shown in \refFig{fig-process-arguments}.
 Processing all arguments.}
 \end{figure}
 
+\section{Checking the minimum argument count}
+
+Unless there are no required parameters, there is a minimum allowed
+value for the argument count, and it is equal to the number of
+required parameters.  The HIR code for this check is simple and is
+illustrated by \refFig{fig-check-minimum-argument-count}.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-check-minimum-argument-count.pdf_t}
@@ -51,6 +58,8 @@ Processing all arguments.}
 \caption{\label{fig-check-minimum-argument-count}
 Checking minimum argument count.}
 \end{figure}
+
+\section{Checking the maximum argument count}
 
 \begin{figure}
 \begin{center}
