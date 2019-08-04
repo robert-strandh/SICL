@@ -39,4 +39,7 @@
    (:file "convert-special")
    (:file "convert-primop")
    (:file "convert-cst")
+   (:file "similarity-keys")
+   (:file "make-load-form-using-client")
+   (:file "trivial-constant-p")
    (:file "cst-to-ast")))

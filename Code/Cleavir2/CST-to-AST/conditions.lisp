@@ -305,6 +305,15 @@
     (odd-keyword-portion argument-mismatch-style-warning)
   ())
 
+(define-condition circular-dependencies-in-creation-form
+    (compilation-program-error acclimation:condition)
+  ((%object :initarg :object :reader object)
+   (%creation-form :initarg :creation-form :reader creation-form)))
+
+(define-condition object-not-externalizable
+    (compilation-program-error acclimation:condition)
+  ((%object :initarg :object :reader object)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Encapsulation conditions.

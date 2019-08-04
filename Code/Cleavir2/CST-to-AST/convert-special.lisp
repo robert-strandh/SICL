@@ -447,20 +447,41 @@
   (check-argument-count cst 1 2)
   (cst:db origin (load-time-value-cst form-cst . remaining-cst) cst
     (declare (ignore load-time-value-cst))
-    (cleavir-ast:make-ast 'cleavir-ast:load-time-value-ast
-      :form-ast (convert client
-                 form-cst
-                 environment)
-      :read-only-p
-      (if (cst:null remaining-cst)
-          nil
-          (let ((read-only-p (cst:raw (cst:first remaining-cst))))
-            (if (member read-only-p '(nil t))
-                read-only-p
-                ;; The HyperSpec specifically requires a "boolean"
-                ;; and not a "generalized boolean".
-                (error 'read-only-p-must-be-boolean
-                       :cst (cst:first remaining-cst))))))))
+    ;; FIXME: We only check whether the read-only-p flag is well formed,
+    ;; but we don't use it for anything.
+    (unless (cst:null remaining-cst)
+      (let ((read-only-p (cst:raw (cst:first remaining-cst))))
+        (if (member read-only-p '(nil t))
+            read-only-p
+            ;; The HyperSpec specifically requires a "boolean"
+            ;; and not a "generalized boolean".
+            (error 'read-only-p-must-be-boolean
+                   :cst (cst:first remaining-cst)))))
+    ;; LOAD-TIME-VALUE forms are treated differently, depending on whether
+    ;; we are performing file compilation, or whether we are using
+    ;; CL:COMPILE.  In the former case, we must arrange that the execution
+    ;; of the form occurs at load time in a null lexical environment.  In
+    ;; the latter case, the form is evaluated in a null lexical environment
+    ;; at compile time, and the result is used instead as a literal object.
+    (if *use-file-compilation-sematics-p*
+        (let ((lexical-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
+                             :name (gensym))))
+          (push (cleavir-ast:make-ast 'cleavir-ast:setq-ast
+                  :lhs-ast lexical-ast
+                  :value-ast
+                  (convert
+                   client
+                   form-cst
+                   (make-instance 'trucler-reference:environment
+                     :global-environment
+                     (trucler:global-environment client environment))))
+                *prologue*)
+          lexical-ast)
+        (convert-constant
+         client
+         (cst:cst-from-expression
+          (cst-eval client form-cst environment))
+         environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

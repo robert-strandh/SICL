@@ -12,4 +12,12 @@
         (trucler-environment
           (make-instance 'trucler-reference:environment
             :global-environment lexical-environment)))
-    (convert client cst trucler-environment)))
+    (if (not *use-file-compilation-sematics-p*)
+        (convert client cst trucler-environment)
+        (let ((*similarity-table* (make-similarity-table))
+              (*prologue* '()))
+          (let ((top-level-ast (convert client cst trucler-environment)))
+            (cleavir-ast:make-ast 'cleavir-ast:progn-ast
+              :origin (origin top-level-ast)
+              :form-asts (append (reverse *prologue*)
+                                 (list top-level-ast))))))))
