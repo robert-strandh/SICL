@@ -48,7 +48,10 @@ Processing all arguments.}
 
 To minimize the clutter in many of the figures in this chapter, when
 an error situation is detected, a box labeled ``error'' is shown.  But
-this box is slightly more complicated than a single instruction.
+this box is slightly more complicated than a single instruction.  The
+complete sequence of instructions is shown in
+\refFig{fig-call-error}.
+
 
 \begin{figure}
 \begin{center}
@@ -57,6 +60,23 @@ this box is slightly more complicated than a single instruction.
 \caption{\label{fig-call-error}
 Calling \texttt{error}.}
 \end{figure}
+
+As \refFig{fig-call-error} shows, the sequences consists of two
+instructions.
+
+The first instruction is a \texttt{funcall-instruction} that calls the
+function \texttt{error} as computed by the first instruction in
+\refFig{fig-process-arguments}.  This instruction takes more arguments
+to be passed to \texttt{error}.  The first additional argument is a
+constant input containing the name of the condition class to signal.
+Remaining additional arguments are initialization arguments for the
+particular condition class.
+
+The second instruction is an \texttt{unreachable-instruction}.  An
+additional instruction is required, because the
+\texttt{funcall-instruction} has a single successor.  The
+\texttt{unreachable-instruction} indicates that control can not reach
+this point.  This instruction has no successors.
 
 \section{Checking the minimum argument count}
 
