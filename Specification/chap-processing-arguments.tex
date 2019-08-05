@@ -129,6 +129,11 @@ again the lexical location computed by the
 \texttt{compute-argument-count} instruction in
 \refFig{fig-process-arguments}.
 
+\section{Initializing required parameters}
+
+\refFig{fig-initialize-required-parameters} illustrates the HIR code
+for initializing required parameters.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-initialize-required-parameters.pdf_t}
@@ -136,6 +141,14 @@ again the lexical location computed by the
 \caption{\label{fig-initialize-required-parameters}
 Initializing required parameters.}
 \end{figure}
+
+The number of stages is determined at compile time and is equal to the
+number of required parameters.  For each parameter, the next argument
+(starting with $0$) is assigned to that parameter.
+
+As \refFig{fig-process-arguments} suggests, this procedure can be
+applied even when there are no required parameters.  In this case, the
+result consists only of the final \texttt{nop-instruction}.
 
 \begin{figure}
 \begin{center}
