@@ -71,6 +71,8 @@
   (loop for name in '((setf sicl-genv:fdefinition)
                       (setf sicl-genv:function-type)
                       (setf sicl-genv:function-lambda-list)
+                      (setf sicl-genv:special-variable)
+                      (setf sicl-genv:constant-variable)
                       sicl-genv:get-setf-expansion)
         do (setf (sicl-genv:fdefinition name environment)
                  (fdefinition name))))
