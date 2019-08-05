@@ -150,6 +150,11 @@ As \refFig{fig-process-arguments} suggests, this procedure can be
 applied even when there are no required parameters.  In this case, the
 result consists only of the final \texttt{nop-instruction}.
 
+\section{Initializing optional parameters}
+
+\refFig{fig-initialize-optional-parameters} illustrates the HIR code
+for initializing optional parameters.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-initialize-optional-parameters.pdf_t}
@@ -157,6 +162,14 @@ result consists only of the final \texttt{nop-instruction}.
 \caption{\label{fig-initialize-optional-parameters}
 Initializing optional parameters.}
 \end{figure}
+
+As \refFig{fig-initialize-optional-parameters} shows, there are two
+main branches in this code, the \emph{left} branch and the
+\emph{right} branch.  The control flow starts in the \emph{right}
+branch, and continues in that branch if until there are no more
+arguments.  At that point, control is transferred to the \emph{left}
+branch where the remaining optional parameters are initialized to
+\texttt{nil}.
 
 \begin{figure}
 \begin{center}
