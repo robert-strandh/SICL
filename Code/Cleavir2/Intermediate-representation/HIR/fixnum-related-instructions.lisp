@@ -45,5 +45,5 @@
 ;;; the remainder.  The slot ROUNDING-MODE one of the symbols
 ;;; CL:FLOOR, CL:CEILING, CL:TRUNCATE, and CL:ROUND.
 
-(defclass fixnum-divide-instruction (instruction one-successors-mixin)
+(defclass fixnum-divide-instruction (instruction one-successor-mixin)
   ((%rounding-mode :initarg :rounding-mode :reader rounding-mode)))
