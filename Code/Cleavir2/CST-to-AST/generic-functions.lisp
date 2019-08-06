@@ -51,3 +51,22 @@
 
 ;;; This function returns the contents of the ORIGIN slot of an AST.
 (defgeneric origin (ast))
+
+;;; Returns whether OBJECT is so simple that we never need to hoist it.
+(defgeneric trivial-constant-p (client object))
+
+;;; Returns up to two values, where the first value is a list of equal
+;;; keys, and where the second value is a list of equalp keys.
+;;;
+;;; Two objects o1 and o2 are considered similar if their equal keys have a
+;;; common element in the sense of EQUAL, or if their equalp keys have a
+;;; common element in the sense of EQUALP.  Clients that want to write
+;;; additional methods for this function are encouraged to have a look at
+;;; the auxiliary functions EQUAL-REPRESENTATION and EQUALP-REPRESENTATION.
+(defgeneric similarity-keys (client literal-object))
+
+;;; Similar to CL:MAKE-LOAD-FORM, but with an additional client argument.
+;;; Another difference to CL:MAKE-LOAD-FORM is that OBJECT is not
+;;; necessarily a generalized instance of STANDARD-OBJECT,
+;;; STRUCTURE-OBJECT, or CONDITION.
+(defgeneric make-load-form-using-client (client object environment))

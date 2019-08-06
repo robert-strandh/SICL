@@ -29,7 +29,8 @@
                          collect cst))
              (cst (cst:cons (cst:cst-from-expression 'progn)
                             (apply #'cst:list csts)))
-             (ast (let ((cleavir-cst-to-ast::*origin* nil))
+             (ast (let ((cleavir-cst-to-ast::*origin* nil)
+                        (cleavir-cst-to-ast:*use-file-compilation-sematics-p* t))
                     (handler-bind
                         ((trucler:no-function-description
                            (lambda (condition)

@@ -52,7 +52,7 @@
 ;;; Variables that control certain behavior of the compiler.
 
 ;;; This variable should be bound to a true value if this system is
-;;; called from teh file compiler.
+;;; called from the file compiler.
 (defparameter *use-file-compilation-sematics-p* nil)
 
 ;;; This variable indicates whether a form should be evaluated in
@@ -62,3 +62,12 @@
 ;;; During the conversion of a single CST, the value of this variable
 ;;; is the source location of that CST.
 (defvar *origin*)
+
+;;; This variable is bound by CST-TO-AST:CST-TO-AST and is used to track
+;;; that literal objects are only processed once, and that similar literal
+;;; objects are suitably coalesced.
+(defvar *similarity-table*)
+
+;;; A list of ASTs - one for each occurrence of MAKE-LOAD-FORM, and for
+;;; each creation form and initialization form of a literal object.
+(defvar *prologue*)
