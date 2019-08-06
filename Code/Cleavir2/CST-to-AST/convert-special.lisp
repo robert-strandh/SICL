@@ -472,9 +472,7 @@
                   (convert
                    client
                    form-cst
-                   (make-instance 'trucler-reference:environment
-                     :global-environment
-                     (trucler:global-environment client environment))))
+                   (trucler:global-environment client environment)))
                 *prologue*)
           lexical-ast)
         (convert-constant

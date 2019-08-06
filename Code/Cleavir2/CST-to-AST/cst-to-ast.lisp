@@ -6,17 +6,14 @@
 (cleavir-io:define-save-info ast-mixin
   (:origin origin))
 
-(defun cst-to-ast (client cst lexical-environment)
+(defun cst-to-ast (client cst environment)
   (let ((*subforms-are-top-level-p* t)
-        (*compile-time-too* nil)
-        (trucler-environment
-          (make-instance 'trucler-reference:environment
-            :global-environment lexical-environment)))
+        (*compile-time-too* nil))
     (if (not *use-file-compilation-sematics-p*)
-        (convert client cst trucler-environment)
+        (convert client cst environment)
         (let ((*similarity-table* (make-similarity-table))
               (*prologue* '()))
-          (let ((top-level-ast (convert client cst trucler-environment)))
+          (let ((top-level-ast (convert client cst environment)))
             (cleavir-ast:make-ast 'cleavir-ast:progn-ast
               :origin (origin top-level-ast)
               :form-asts (append (reverse *prologue*)
