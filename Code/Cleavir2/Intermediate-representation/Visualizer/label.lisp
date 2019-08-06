@@ -90,6 +90,8 @@
 
 (defmethod label ((instruction cleavir-ir:fixnum-equal-instruction)) "fixnum =")
 
+(defmethod label ((instruction cleavir-ir:fixnum-divide-instruction)) "fixnum /")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Array instructions.
