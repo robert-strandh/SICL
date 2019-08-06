@@ -23,7 +23,8 @@
                  :input input
                  :output location
                  :successor successor))))
-      (let* ((last (make-instance 'cleavir-ir:nop-instruction))
+      (let* ((last (make-instance 'cleavir-ir:nop-instruction
+                     :dynamic-environment-location dynamic-environment-location))
              (first (loop with first = last
                           for i downfrom (1- count)
                           for location in locations

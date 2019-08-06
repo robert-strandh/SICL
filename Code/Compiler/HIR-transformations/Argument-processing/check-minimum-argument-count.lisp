@@ -11,7 +11,8 @@
                             dynamic-environment-location
                             argument-count-location
                             minimum-argument-count-input))
-         (nop (make-instance 'cleavir-ir:nop-instruction)))
+         (nop (make-instance 'cleavir-ir:nop-instruction
+                :dynamic-environment-location dynamic-environment-location)))
     (values (make-instance 'cleavir-ir:fixnum-less-instruction
               :dynamic-environment-location dynamic-environment-location
               :inputs (list argument-count-location minimum-argument-count-input)
