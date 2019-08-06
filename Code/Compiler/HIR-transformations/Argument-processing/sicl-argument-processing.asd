@@ -12,6 +12,5 @@
    (:file "initialize-optional-parameters")
    (:file "initialize-keyword-parameters-to-nil")
    (:file "create-rest-parameter")
-   (:file "initialize-keyword-parameters")))
-
-
+   (:file "initialize-keyword-parameters")
+   (:file "process-parameters")))
