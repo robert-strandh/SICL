@@ -218,12 +218,12 @@
     (setf false-branch
           (make-instance 'cleavir-ir:argument-instruction
             :input index-location
-            :output keyword-value-location
+            :output keyword-location
             :successor false-branch
             :dynamic-environment-location dynamic-environment-location))
     (let ((first (make-instance 'cleavir-ir:fixnum-not-greater-instruction
                    :inputs (list argument-count-location index-location)
-                   :successors (list false-branch false-branch)
+                   :successors (list true-branch false-branch)
                    :dynamic-environment-location dynamic-environment-location)))
       (setf (cleavir-ir:successors add-2)
             (list first first))
