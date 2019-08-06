@@ -92,13 +92,13 @@
 
 (defun convert-constant (client constant-cst environment)
   (let ((object (cst:raw constant-cst)))
-    (cond ((not *use-file-compilation-sematics-p*)
+    (cond ((not *use-file-compilation-semantics-p*)
            (cleavir-ast:make-ast 'cleavir-ast:constant-ast
              :value object))
           ((trivial-constant-p client object)
            (cleavir-ast:make-ast 'cleavir-ast:constant-ast
              :value object))
-          (*use-file-compilation-sematics-p*
+          (*use-file-compilation-semantics-p*
            (constant-lexical-ast
             client
             (cst:raw constant-cst)

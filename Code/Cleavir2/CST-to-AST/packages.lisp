@@ -4,7 +4,6 @@
   (:use #:common-lisp)
   (:shadow #:eval)
   (:export #:cst-to-ast
-           #:*use-file-compilation-sematics-p*
            #:convert
            #:convert-constant
            #:convert-constant-to-immediate

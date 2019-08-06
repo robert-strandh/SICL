@@ -53,7 +53,7 @@
 
 ;;; This variable should be bound to a true value if this system is
 ;;; called from the file compiler.
-(defparameter *use-file-compilation-sematics-p* nil)
+(defvar *use-file-compilation-semantics-p*)
 
 ;;; This variable indicates whether a form should be evaluated in
 ;;; addition to be being processed by the compiler.

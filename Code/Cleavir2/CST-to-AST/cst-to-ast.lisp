@@ -6,10 +6,11 @@
 (cleavir-io:define-save-info ast-mixin
   (:origin origin))
 
-(defun cst-to-ast (client cst environment)
+(defun cst-to-ast (client cst environment &key file-compilation-semantics)
   (let ((*subforms-are-top-level-p* t)
-        (*compile-time-too* nil))
-    (if (not *use-file-compilation-sematics-p*)
+        (*compile-time-too* nil)
+        (*use-file-compilation-semantics-p* file-compilation-semantics))
+    (if (not *use-file-compilation-semantics-p*)
         (convert client cst environment)
         (let ((*similarity-table* (make-similarity-table))
               (*prologue* '()))

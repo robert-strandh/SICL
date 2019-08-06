@@ -29,8 +29,7 @@
                          collect cst))
              (cst (cst:cons (cst:cst-from-expression 'progn)
                             (apply #'cst:list csts)))
-             (ast (let ((cleavir-cst-to-ast::*origin* nil)
-                        (cleavir-cst-to-ast:*use-file-compilation-sematics-p* t))
+             (ast (let ((cleavir-cst-to-ast::*origin* nil))
                     (handler-bind
                         ((trucler:no-function-description
                            (lambda (condition)
@@ -40,7 +39,9 @@
                            (lambda (condition)
                              (declare (ignore condition))
                              (invoke-restart 'cleavir-cst-to-ast:consider-special))))
-                      (cleavir-cst-to-ast:cst-to-ast client cst environment)))))
+                      (cleavir-cst-to-ast:cst-to-ast
+                       client cst environment
+                       :file-compilation-semantics t)))))
         (let* ((dot-pos (position #\. relative-pathname))
                (prefix (subseq relative-pathname 0 dot-pos))
                (filename (concatenate 'string prefix ".fasl"))

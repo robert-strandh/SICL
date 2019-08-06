@@ -119,7 +119,7 @@
     (cst:db s (eval-when-cst situations-cst . body-cst) cst
       (declare (ignore eval-when-cst))
       (let ((situations (cst:raw situations-cst)))
-        (if (or (not *use-file-compilation-sematics-p*)
+        (if (or (not *use-file-compilation-semantics-p*)
                 (not *current-form-is-top-level-p*))
             (if (or (member :execute situations)
                     (member 'cl:eval situations))
@@ -463,7 +463,7 @@
     ;; of the form occurs at load time in a null lexical environment.  In
     ;; the latter case, the form is evaluated in a null lexical environment
     ;; at compile time, and the result is used instead as a literal object.
-    (if *use-file-compilation-sematics-p*
+    (if *use-file-compilation-semantics-p*
         (let ((lexical-ast (cleavir-ast:make-ast 'cleavir-ast:lexical-ast
                              :name (gensym))))
           (push (cleavir-ast:make-ast 'cleavir-ast:setq-ast
