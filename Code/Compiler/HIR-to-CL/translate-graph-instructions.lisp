@@ -49,7 +49,7 @@
          (static-environment-output (first outputs))
          (dynamic-environment-output (second outputs))
          (successor (first (cleavir-ir:successors enter-instruction)))
-         (arguments-variable (gensym "arguments"))
+         (*arguments-variable* (gensym "arguments"))
          (origin (cleavir-ast-to-hir:origin enter-instruction))
          (static-environment-variable (cleavir-ir:name static-environment-output))
          (*static-environment-variable* static-environment-variable)
@@ -78,7 +78,7 @@
                           rest-parameter
                           key-parameters)
         (split-lambda-list lambda-list)
-      `(lambda (,arguments-variable
+      `(lambda (,*arguments-variable*
                 ,static-environment-variable
                 ,dynamic-environment-variable)
          (declare (ignorable ,static-environment-variable
@@ -86,22 +86,22 @@
          (block ,(block-name context)
            (let (,@(mapcar #'cleavir-ir:name lexical-locations)
                  (source nil)
-                 (,remaining-variable ,arguments-variable))
+                 (,remaining-variable ,*arguments-variable*))
              (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)
                                  ,remaining-variable))
              ;; Check that enough arguments were passed.
              ,@(if (null required-parameters)
                    '()
-                   `((when (< (length ,arguments-variable)
+                   `((when (< (length ,*arguments-variable*)
                               ,(length required-parameters))
                        (error "Not enough arguments"))))
              ;; Check that not too many arguments were passed
              ;; ,@(if (and (null rest-parameter) (null key-parameters))
              ;;       '()
-             ;;       `((when (> (length ,arguments-variable)
+             ;;       `((when (> (length ,*arguments-variable*)
              ;;                  ,(+ (length required-parameters)
              ;;                      (length optional-parameters)))
-             ;;           (error "Too many arguments ~s ~s" ,arguments-variable ,origin))))
+             ;;           (error "Too many arguments ~s ~s" ,*arguments-variable* ,origin))))
              ,@(loop for required-parameter in required-parameters
                      collect `(setq ,(cleavir-ir:name required-parameter)
                                     (pop ,remaining-variable)))
