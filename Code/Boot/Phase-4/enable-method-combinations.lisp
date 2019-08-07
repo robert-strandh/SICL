@@ -12,7 +12,7 @@
        apply)
      e4)
     (import-functions-from-host
-     '(gensym values rest second
+     '(gensym values rest second error
        sicl-conditionals:cond-expander
        sicl-conditionals:and-expander)
      e3)
