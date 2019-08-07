@@ -23,7 +23,9 @@
   (let* ((values-location (first (cleavir-ir:outputs instruction)))
          (name (gethash values-location (values-locations context)))
          (inputs (cleavir-ir:inputs instruction)))
-    `((setq ,name
+    `((setq *dynamic-environment*
+            ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))
+      (setq ,name
              (multiple-value-list
               (funcall ,@(mapcar #'translate-input inputs)))))))
 
@@ -42,7 +44,6 @@
     `((let ((entry (make-instance 'special-variable-entry
                      :name ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
                      :value ,(cleavir-ir:name (second (cleavir-ir:inputs instruction))))))
-        (push-entry entry)
         (setq ,(cleavir-ir:name (cleavir-ir:dynamic-environment-output instruction))
               (cons entry
                     ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))))
@@ -65,10 +66,8 @@
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (eq ,(translate-input input1) ,(translate-input input2))
-              (progn ,@(compute-dynamic-environment-pops successor1)
-                     (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops successor2)
-                     (go ,else-tag))))))))
+              (progn (go ,then-tag))
+              (progn (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:consp-instruction)
@@ -79,10 +78,8 @@
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (consp ,(translate-input input))
-              (progn ,@(compute-dynamic-environment-pops successor1)
-                     (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops successor2)
-                     (go ,else-tag))))))))
+              (progn (go ,then-tag))
+              (progn (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:fixnump-instruction)
@@ -93,10 +90,8 @@
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (typep ,(translate-input input) 'fixnum)
-              (progn ,@(compute-dynamic-environment-pops successor1)
-                     (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops successor2)
-                     (go ,else-tag))))))))
+              (progn (go ,then-tag))
+              (progn (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:characterp-instruction)
@@ -107,14 +102,14 @@
       (let ((then-tag (tag-of-basic-block (basic-block-of-leader successor1)))
             (else-tag (tag-of-basic-block (basic-block-of-leader successor2))))
         `((if (characterp ,(translate-input input))
-              (progn ,@(compute-dynamic-environment-pops successor1)
-                     (go ,then-tag))
-              (progn ,@(compute-dynamic-environment-pops successor2)
-                     (go ,else-tag))))))))
+              (progn (go ,then-tag))
+              (progn (go ,else-tag))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:unwind-instruction)
                                         constext)
-  `((unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
+  `((setq *dynamic-environment*
+          ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))
+    (unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
             ,(cleavir-ir:unwind-index instruction)
             ',(cleavir-ast-to-hir:origin instruction))))

@@ -11,10 +11,8 @@
         `((setq ,(cleavir-ir:name output)
                 (+ ,(translate-input input1) ,(translate-input input2)))
           (if (typep ,(cleavir-ir:name output) 'fixnum)
-              (progn ,@(compute-dynamic-environment-pops successor1)
-                     (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
-              (progn ,@(compute-dynamic-environment-pops successor2)
-                     (go (tag-of-basic-block (basic-block-of-leader successor2))))))))))
+              (progn (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
+              (progn (go ,(tag-of-basic-block (basic-block-of-leader successor2))))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:fixnum-sub-instruction)
@@ -27,10 +25,8 @@
         `((setq ,(cleavir-ir:name output)
                 (- ,(translate-input input1) ,(translate-input input2)))
           (if (typep ,(cleavir-ir:name output) 'fixnum)
-              (progn ,@(compute-dynamic-environment-pops successor1)
-                     (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
-              (progn ,@(compute-dynamic-environment-pops successor2)
-                     (go (tag-of-basic-block (basic-block-of-leader successor2))))))))))
+              (progn (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
+              (progn (go ,(tag-of-basic-block (basic-block-of-leader successor2))))))))))
 
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:fixnum-equal-instruction)
@@ -40,10 +36,8 @@
     (destructuring-bind (successor1 successor2)
         (cleavir-ir:successors instruction)
       `((if (= ,(translate-input input1) ,(translate-input input2))
-            (progn ,@(compute-dynamic-environment-pops successor1)
-                   (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
-            (progn ,@(compute-dynamic-environment-pops successor2)
-                   (go (tag-of-basic-block (basic-block-of-leader successor2)))))))))
+            (progn (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
+            (progn (go ,(tag-of-basic-block (basic-block-of-leader successor2)))))))))
 
 
 (defmethod translate-final-instruction (client
@@ -54,10 +48,8 @@
     (destructuring-bind (successor1 successor2)
         (cleavir-ir:successors instruction)
       `((if (< ,(translate-input input1) ,(translate-input input2))
-            (progn ,@(compute-dynamic-environment-pops successor1)
-                   (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
-            (progn ,@(compute-dynamic-environment-pops successor2)
-                   (go (tag-of-basic-block (basic-block-of-leader successor2)))))))))
+            (progn (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
+            (progn (go ,(tag-of-basic-block (basic-block-of-leader successor2)))))))))
 
 
 (defmethod translate-final-instruction (client
@@ -68,7 +60,5 @@
     (destructuring-bind (successor1 successor2)
         (cleavir-ir:successors instruction)
       `((if (<= ,(translate-input input1) ,(translate-input input2))
-            (progn ,@(compute-dynamic-environment-pops successor1)
-                   (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
-            (progn ,@(compute-dynamic-environment-pops successor2)
-                   (go (tag-of-basic-block (basic-block-of-leader successor2)))))))))
+            (progn (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
+            (progn (go ,(tag-of-basic-block (basic-block-of-leader successor2)))))))))

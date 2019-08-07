@@ -5,8 +5,7 @@
         for i from 0
         for basic-block = (basic-block-of-leader successor)
         for tag = (tag-of-basic-block basic-block)
-        collect `(,i ,@(compute-dynamic-environment-pops successor)
-                     (go ,tag))))
+        collect `(,i (go ,tag))))
 
 (defmethod translate-final-instruction (client (instruction cleavir-ir:catch-instruction) context)
   (let* ((dynamic-environment-output-location
@@ -20,7 +19,6 @@
     `((setq ,(cleavir-ir:name continuation-output) (gensym))
       (let ((entry (make-instance 'block/tagbody-entry
                      :identifier ,(cleavir-ir:name continuation-output))))
-        (push-entry entry)
         (setq ,(cleavir-ir:name (cleavir-ir:dynamic-environment-output instruction))
               (cons entry
                     ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))))

@@ -8,14 +8,6 @@
                 source ',(cleavir-ast-to-hir:origin instruction)))
         (call-next-method)))
 
-(defun compute-dynamic-environment-pops (successor)
-  (let* ((dynamic-environment-location
-           (cleavir-ir:dynamic-environment-location successor))
-         (pos (position dynamic-environment-location
-                        *dynamic-environment-stack*)))
-    (loop repeat pos
-          collect `(pop-entry))))
-
 ;;; Default method on TRANSLATE-FINAL-INSTRUCTION.  It is used when
 ;;; the final instruction is a simple instruction with a single
 ;;; successor that happened to be the final instruction of a basic
@@ -25,7 +17,6 @@
          (successor-block (basic-block-of-leader successor))
          (tag (tag-of-basic-block successor-block)))
     (append (translate client instruction context)
-            (compute-dynamic-environment-pops successor)
             `((go ,tag)))))
 
 (defmethod translate-final-instruction (client
