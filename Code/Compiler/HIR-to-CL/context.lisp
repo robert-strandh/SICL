@@ -13,19 +13,6 @@
 (defvar *top-level-function-parameter*)
 
 ;;; When a single function is translated, the value of this special
-;;; variable is an EQ hash table.  Each key of that hash table is a
-;;; basic block.  The value is the lexical location corresponding to
-;;; the dynamic environment in which the instructions of that basic
-;;; block will be executed at run time.
-(defvar *dynamic-environment-of-basic-block*)
-
-;;; Given a basic block, return the lexical location corresponding to
-;;; the dynamic environment in which the instructions of that basic
-;;; block will be executed at run time.
-(defun dynamic-environment-of-basic-block (basic-block)
-  (gethash basic-block *dynamic-environment-of-basic-block*))
-
-;;; When a single function is translated, the value of this special
 ;;; variable is an EQ hash table.  Each key in that hash table is a
 ;;; lexical location of that single function, corresponding to a
 ;;; dynamic environment.  The value is a list of basic blocks of that
