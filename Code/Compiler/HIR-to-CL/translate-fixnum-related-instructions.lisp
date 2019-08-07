@@ -57,3 +57,18 @@
       `((if (<= ,(translate-input input1) ,(translate-input input2))
             (progn (go ,(tag-of-basic-block (basic-block-of-leader successor1))))
             (progn (go ,(tag-of-basic-block (basic-block-of-leader successor2)))))))))
+
+(defmethod translate
+    (client (instruction cleavir-ir:fixnum-divide-instruction) context)
+  (let ((quotient-var (gensym))
+        (remainder-var (gensym)))
+    (destructuring-bind (dividend-input divisor-input)
+        (cleavir-ir:inputs instruction)
+      (destructuring-bind (quotient-location remainder-location)
+          (cleavir-ir:outputs instruction)
+        `((multiple-value-bind (,quotient-var ,remainder-var)
+              (funcall ',(cleavir-ir:rounding-mode instruction)
+                       ,(translate-input dividend-input)
+                       ,(translate-input divisor-input))
+            (setf ,(cleavir-ir:name quotient-location) ,quotient-var)
+            (setf ,(cleavir-ir:name remainder-location) ,remainder-var)))))))
