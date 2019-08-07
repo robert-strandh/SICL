@@ -53,12 +53,11 @@
                  until (eq temp entry)
                  when (typep temp 'exit-point)
                    do (setf (valid-p temp) nil))
-           (loop for top = (first *dynamic-environment*)
-                 until (eq top entry)
-                 when (typep top 'unwind-protect-entry)
-                   do (funcall (thunk entry))
-                 do (pop *dynamic-environment*))
-           (throw (identifier (first *dynamic-environment*)) continuation)))))
+           (loop for element in *dynamic-environment*
+                 until (eq element entry)
+                 when (typep element 'unwind-protect-entry)
+                   do (funcall (thunk element)))
+           (throw (identifier entry) continuation)))))
 
 (defun compute-source-info (old new)
   (if (null new) old new))
