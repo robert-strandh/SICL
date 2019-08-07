@@ -18,8 +18,12 @@
          (*dynamic-environment-stack*
            (cons dynamic-environment-output-location *dynamic-environment-stack*)))
     `((setq ,(cleavir-ir:name continuation-output) (gensym))
-      (push-entry (make-instance 'block/tagbody-entry
-                    :identifier ,(cleavir-ir:name continuation-output)))
+      (let ((entry (make-instance 'block/tagbody-entry
+                     :identifier ,(cleavir-ir:name continuation-output))))
+        (push-entry entry)
+        (setq ,(cleavir-ir:name (cleavir-ir:dynamic-environment-output instruction))
+              (cons entry
+                    ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))))
       (tagbody
          ,@(loop for basic-block in basic-blocks
                  for tag = (tag-of-basic-block basic-block)

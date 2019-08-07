@@ -23,7 +23,7 @@
   (let* ((values-location (first (cleavir-ir:outputs instruction)))
          (name (gethash values-location (values-locations context)))
          (inputs (cleavir-ir:inputs instruction)))
-     `((setq ,name
+    `((setq ,name
              (multiple-value-list
               (funcall ,@(mapcar #'translate-input inputs)))))))
 
@@ -39,9 +39,13 @@
                         dynamic-environment-output-location))
          (*dynamic-environment-stack*
            (cons dynamic-environment-output-location *dynamic-environment-stack*)))
-    `((push-entry (make-instance 'special-variable-entry
-                    :name ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
-                    :value ,(cleavir-ir:name (second (cleavir-ir:inputs instruction)))))
+    `((let ((entry (make-instance 'special-variable-entry
+                     :name ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
+                     :value ,(cleavir-ir:name (second (cleavir-ir:inputs instruction))))))
+        (push-entry entry)
+        (setq ,(cleavir-ir:name (cleavir-ir:dynamic-environment-output instruction))
+              (cons entry
+                    ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))))
       (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
          ,@(loop for basic-block in basic-blocks
                  for tag = (tag-of-basic-block basic-block)
