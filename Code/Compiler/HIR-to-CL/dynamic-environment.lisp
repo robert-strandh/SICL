@@ -36,24 +36,24 @@
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~s" (thunk object))))
 
-(defun find-entry (identifier)
-  (loop for entry in *dynamic-environment*
+(defun find-entry (identifier dynamic-environment)
+  (loop for entry in dynamic-environment
         when (and (typep entry 'block/tagbody-entry)
                   (eq (identifier entry) identifier))
           return entry))
 
-(defun unwind (identifier continuation origin)
-  (let ((entry (find-entry identifier)))
+(defun unwind (identifier continuation dynamic-environment)
+  (let ((entry (find-entry identifier dynamic-environment)))
     (cond ((null entry)
            (error "Attempt to unwind to a non-existing exit point."))
           ((not (valid-p entry))
            (error "Attempt to unwind to an expired exit point."))
           (t
-           (loop for temp in *dynamic-environment*
+           (loop for temp in dynamic-environment
                  until (eq temp entry)
                  when (typep temp 'exit-point)
                    do (setf (valid-p temp) nil))
-           (loop for element in *dynamic-environment*
+           (loop for element in dynamic-environment
                  until (eq element entry)
                  when (typep element 'unwind-protect-entry)
                    do (funcall (thunk element)))

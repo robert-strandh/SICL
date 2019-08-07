@@ -108,8 +108,6 @@
 (defmethod translate-final-instruction (client
                                         (instruction cleavir-ir:unwind-instruction)
                                         constext)
-  `((setq *dynamic-environment*
-          ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))
-    (unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
+  `((unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
             ,(cleavir-ir:unwind-index instruction)
-            ',(cleavir-ast-to-hir:origin instruction))))
+            ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))))
