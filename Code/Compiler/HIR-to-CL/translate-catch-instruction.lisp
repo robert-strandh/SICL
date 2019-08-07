@@ -13,9 +13,7 @@
          (continuation-output
            (first (cleavir-ir:outputs instruction)))
          (basic-blocks (basic-blocks-in-dynamic-environment
-                        dynamic-environment-output-location))
-         (*dynamic-environment-stack*
-           (cons dynamic-environment-output-location *dynamic-environment-stack*)))
+                        dynamic-environment-output-location)))
     `((setq ,(cleavir-ir:name continuation-output) (gensym))
       (let ((entry (make-instance 'block/tagbody-entry
                      :identifier ,(cleavir-ir:name continuation-output))))

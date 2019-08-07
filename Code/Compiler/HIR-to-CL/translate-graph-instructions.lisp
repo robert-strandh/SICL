@@ -134,12 +134,10 @@
                              dynamic-environment-location)
                         for basic-block in basic-blocks
                         collect (tag-of-basic-block basic-block)
-                        append (let ((*dynamic-environment-stack*
-                                       (list dynamic-environment-location)))
-                                 (translate-basic-block
-                                  client
-                                  basic-block
-                                  context))))))))))
+                        append (translate-basic-block
+                                client
+                                basic-block
+                                context)))))))))
 
 (defmethod translate (client (instruction cleavir-ir:enclose-instruction) context)
   (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))

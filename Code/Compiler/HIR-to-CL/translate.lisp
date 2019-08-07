@@ -38,9 +38,7 @@
          (dynamic-environment-output-location
            (first (cleavir-ir:outputs instruction)))
          (basic-blocks (basic-blocks-in-dynamic-environment
-                        dynamic-environment-output-location))
-         (*dynamic-environment-stack*
-           (cons dynamic-environment-output-location *dynamic-environment-stack*)))
+                        dynamic-environment-output-location)))
     `((let ((entry (make-instance 'special-variable-entry
                      :name ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
                      :value ,(cleavir-ir:name (second (cleavir-ir:inputs instruction))))))
