@@ -211,7 +211,7 @@
       context
     (let* ((continuation (cleavir-ir:make-lexical-location
                           '#:tagbody-continuation))
-           (dynenv-out (cleavir-ir:make-lexical-location '#:tagbody))
+           (dynenv-out (cleavir-ir:make-lexical-location (gensym "tagbody")))
            (catch (make-instance 'cleavir-ir:catch-instruction
                     :outputs (list continuation dynenv-out)
                     :successors '()))
@@ -288,7 +288,7 @@
 (defmethod compile-ast ((ast cleavir-ast:bind-ast) context)
   (let* ((name-temp (make-temp))
          (value-temp (make-temp))
-         (dynenv (cleavir-ir:make-lexical-location '#:bind))
+         (dynenv (cleavir-ir:make-lexical-location (gensym "bind")))
          (new-context (clone-context
                        context
                        :dynamic-environment-location dynenv))
@@ -395,7 +395,7 @@
 ;;; their final values.
 (defmethod compile-function ((ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-         (dynenv (cleavir-ir:make-lexical-location '#:function))
+         (dynenv (cleavir-ir:make-lexical-location (gensym "function")))
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (values (cleavir-ir:make-values-location))
@@ -654,7 +654,7 @@
         (*function-info* (make-hash-table :test #'eq)))
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-           (dynenv (cleavir-ir:make-lexical-location '#:top))
+           (dynenv (cleavir-ir:make-lexical-location (gensym "top")))
            (forms (cleavir-ast:forms ast))
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (values (cleavir-ir:make-values-location))
@@ -677,7 +677,7 @@
         (*location-info* (make-hash-table :test #'eq))
         (*function-info* (make-hash-table :test #'eq)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-           (dynenv (cleavir-ir:make-lexical-location '#:topnh))
+           (dynenv (cleavir-ir:make-lexical-location (gensym "topnh")))
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (values (cleavir-ir:make-values-location))
            (return (make-instance 'cleavir-ir:return-instruction
