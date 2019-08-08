@@ -171,6 +171,20 @@ arguments.  At that point, control is transferred to the \emph{left}
 branch where the remaining optional parameters are initialized to
 \texttt{nil}.
 
+As \refFig{fig-initialize-optional-parameters} also shows, the code
+ends with a test to check whether there are no more argument, even
+though this test is not required in order to decide how any more
+optional parameters should be initialized (because there are no more
+at that point).  The reason for the existence of this test is so that
+the left branch (no more arguments) can be used to determine whether
+all keyword parameters should be initialized to \texttt{nil}, as
+illustrated by \refFig{fig-process-arguments}.
+
+As with the required parameters, this procedure can be applied even
+when there are no optional parameters.  In this case, it degenerates
+into the last test, i.e. it determines whether there are more
+arguments than required parameters.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-no-more-arguments.pdf_t}
