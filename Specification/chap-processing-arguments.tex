@@ -185,6 +185,13 @@ when there are no optional parameters.  In this case, it degenerates
 into the last test, i.e. it determines whether there are more
 arguments than required parameters.
 
+\section{Initializing keyword parameters to \texttt{nil}}
+
+When there are no more arguments after all the required and all the
+optional parameters have been initialized, then, if there are keyword
+parameters, then they can all be initialized to \texttt{nil}.
+This procedure is shown in \refFig{fig-no-more-arguments}.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-no-more-arguments.pdf_t}
@@ -192,6 +199,9 @@ arguments than required parameters.
 \caption{\label{fig-no-more-arguments}
 Initializing keyword parameters to \texttt{nil}.}
 \end{figure}
+
+As \refFig{fig-process-arguments} shows, this HIR code is added only
+if the lambda list contains \texttt{\&key} parameters.
 
 \begin{figure}
 \begin{center}
