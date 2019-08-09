@@ -109,3 +109,7 @@
   `((unwind ,(cleavir-ir:name (first (cleavir-ir:inputs instruction)))
             ,(cleavir-ir:unwind-index instruction)
             ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))))
+
+(defmethod translate
+    (client (instruction cleavir-ir:unreachable-instruction) context)
+  '())
