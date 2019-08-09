@@ -152,6 +152,11 @@
   (cleavir-ir:map-instructions-arbitrary-order
    (lambda (instruction)
      (when (and (typep instruction 'cleavir-ir:enter-instruction)
-                (not (typep instruction 'cleavir-ir:top-level-enter-instruction)))
+                (not (eq instruction top-level-enter-instruction)))
        (process-enter-instruction instruction)))
+   top-level-enter-instruction)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (loop for successor in (cleavir-ir:successors instruction)
+           do (pushnew instruction (cleavir-ir:predecessors successor))))
    top-level-enter-instruction))
