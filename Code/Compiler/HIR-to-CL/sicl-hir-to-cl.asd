@@ -27,6 +27,7 @@
                #:sicl-hir-transformations
                #:sicl-extrinsic-environment
                #:sicl-ast-to-hir
+               #:sicl-argument-processing
                #:closer-mop)
   :serial t
   :components
