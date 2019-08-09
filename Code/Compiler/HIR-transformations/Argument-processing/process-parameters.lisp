@@ -44,7 +44,7 @@
                       t
                       nil))))))
 
-(defun process-parameters (enter-instruction)
+(defun process-enter-instruction (enter-instruction)
   (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
          (required-parameters (extract-required-parameters lambda-list))
          (optional-parameters (extract-optional-parameters lambda-list))
