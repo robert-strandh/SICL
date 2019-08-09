@@ -203,6 +203,11 @@ Initializing keyword parameters to \texttt{nil}.}
 As \refFig{fig-process-arguments} shows, this HIR code is added only
 if the lambda list contains \texttt{\&key} parameters.
 
+\section{Creating the \texttt{\&rest} parameter}
+
+\refFig{fig-create-rest-parameter} illustrates how the \texttt{\&rest}
+parameter is created.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-create-rest-parameter.pdf_t}
@@ -210,6 +215,17 @@ if the lambda list contains \texttt{\&key} parameters.
 \caption{\label{fig-create-rest-parameter}
 Creating the rest parameter.}
 \end{figure}
+
+As \refFig{fig-create-rest-parameter} shows, there is a loop that
+starts with the last argument and ends with the first remaining
+argument after the required and the optional parameters have been
+initialized.  In each iteration of the loop, the function
+\texttt{cons} is called in order to add another argument to the
+beginning of the list.
+
+As shown in \refFig{fig-process-arguments}, the \texttt{\&rest}
+parameter, if present, has already been initialized to \texttt{nil}
+before this HIR code is executed.
 
 \begin{figure}
 \begin{center}
