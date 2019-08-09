@@ -147,3 +147,11 @@
               :dynamic-environment-location dynamic-environment-location))
       (setf (cleavir-ir:successors enter-instruction)
             (list more-arguments-branch)))))
+
+(defun process-parameters (top-level-enter-instruction)
+  (cleavir-ir:map-instructions-arbitrary-order
+   (lambda (instruction)
+     (when (and (typep instruction 'cleavir-ir:enter-instruction)
+                (not (typep instruction 'cleavir-ir:top-level-enter-instruction)))
+       (process-enter-instruction instruction)))
+   top-level-enter-instruction))
