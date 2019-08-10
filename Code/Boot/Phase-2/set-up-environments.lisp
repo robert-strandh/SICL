@@ -5,6 +5,7 @@
                    (e3 sicl-boot:e3))
       boot
     (sicl-boot:import-function-from-host 'funcall e2)
+    (sicl-boot:import-function-from-host 'cons e2)
     (sicl-boot:import-function-from-host 'funcall e3)
     (sicl-boot:import-function-from-host '(setf sicl-genv:function-lambda-list) e3)
     (sicl-boot:import-function-from-host '(setf sicl-genv:function-type) e3)
