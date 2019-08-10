@@ -110,6 +110,6 @@
             ,(cleavir-ir:unwind-index instruction)
             ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))))
 
-(defmethod translate
+(defmethod translate-final-instruction
     (client (instruction cleavir-ir:unreachable-instruction) context)
-  '())
+  '((error "Reaching unreachable instruction")))
