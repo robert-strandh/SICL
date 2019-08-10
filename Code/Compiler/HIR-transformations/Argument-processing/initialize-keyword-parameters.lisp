@@ -210,7 +210,7 @@
             :dynamic-environment-location dynamic-environment-location))
     (setf false-branch
           (make-instance 'cleavir-ir:fixnum-add-instruction
-            :input constant-input-1
+            :inputs (list constant-input-1 index-location)
             :output temp-location
             :successors (list false-branch false-branch)
             :dynamic-environment-location dynamic-environment-location))
