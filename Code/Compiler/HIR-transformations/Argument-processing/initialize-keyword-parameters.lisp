@@ -5,11 +5,11 @@
                                                error-function-location
                                                first-index)
   (let* ((remaining-argument-count-location
-           (make-instance 'cleavir-ir:lexical-location :name 'remaining-argument-count))
+           (make-instance 'cleavir-ir:lexical-location :name (gensym "remaining-argument-count")))
          (quotient-location
-           (make-instance 'cleavir-ir:lexical-location :name 'quotient))
+           (make-instance 'cleavir-ir:lexical-location :name (gensym "quotient")))
          (remainder-location
-           (make-instance 'cleavir-ir:lexical-location :name 'remainder))
+           (make-instance 'cleavir-ir:lexical-location :name (gensym "remainder")))
          (constant-input-2
            (make-instance 'cleavir-ir:constant-input :value 2))
          (constant-input-0
@@ -36,7 +36,7 @@
       (setf first
             (make-instance 'cleavir-ir:fixnum-sub-instruction
               :inputs (list argument-count-location first-index-input)
-              :outputs (list quotient-location remainder-location)
+              :output remaining-argument-count-location
               :successors (list first first)
               :dynamic-environment-location dynamic-environment-location))
       (values first nop))))
@@ -46,9 +46,9 @@
                              dynamic-environment-location
                              error-function-location
                              first-index)
-  (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name 'keyword))
+  (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name (gensym "keyword")))
          (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
-         (index-location (make-instance 'cleavir-ir:lexical-location :name 'index))
+         (index-location (make-instance 'cleavir-ir:lexical-location :name (gensym "index")))
          (constant-input-2
            (make-instance 'cleavir-ir:constant-input :value 2))
          (nop (make-instance 'cleavir-ir:nop-instruction
@@ -92,11 +92,11 @@
 (defun check-for-allow-other-keys (argument-count-location
                                    dynamic-environment-location
                                    first-index)
-  (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name 'keyword))
-         (value-location (make-instance 'cleavir-ir:lexical-location :name 'value))
+  (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name (gensym "keyword")))
+         (value-location (make-instance 'cleavir-ir:lexical-location :name (gensym "value")))
          (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
-         (index-location (make-instance 'cleavir-ir:lexical-location :name 'index))
-         (temp-location (make-instance 'cleavir-ir:lexical-location :name 'temp))
+         (index-location (make-instance 'cleavir-ir:lexical-location :name (gensym "index")))
+         (temp-location (make-instance 'cleavir-ir:lexical-location :name (gensym "temp")))
          (constant-input-1
            (make-instance 'cleavir-ir:constant-input :value 1))
          (constant-input-2
@@ -162,12 +162,12 @@
                                          supplied-p-location
                                          dynamic-environment-location
                                          first-index)
-  (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name 'keyword))
+  (let* ((keyword-location (make-instance 'cleavir-ir:lexical-location :name (gensym "keyword")))
          (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
-         (index-location (make-instance 'cleavir-ir:lexical-location :name 'index))
+         (index-location (make-instance 'cleavir-ir:lexical-location :name (gensym "index")))
          (nop (make-instance 'cleavir-ir:nop-instruction
                 :dynamic-environment-location dynamic-environment-location))
-         (temp-location (make-instance 'cleavir-ir:lexical-location :name 'temp))
+         (temp-location (make-instance 'cleavir-ir:lexical-location :name (gensym "temp")))
          (constant-input-1
            (make-instance 'cleavir-ir:constant-input :value 1))
          (constant-input-2
