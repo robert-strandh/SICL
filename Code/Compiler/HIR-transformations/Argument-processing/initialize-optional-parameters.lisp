@@ -31,7 +31,6 @@
              :output parameter-location
              :successor assign-t-to-supplied-p
              :dynamic-environment-location dynamic-environment-location))
-         
          (test
            (make-instance 'cleavir-ir:fixnum-not-greater-instruction
              :inputs (list argument-count-location
@@ -42,23 +41,22 @@
              
 (defun initialize-optional-parameters
     (lexical-locations argument-count-location dynamic-environment-location end-index)
-  (let* ((no-more-branch (make-instance 'cleavir-ir:nop-instruction
-                           :dynamic-environment-location dynamic-environment-location))
-         (nop-no-more no-more-branch)
-         (more-branch (make-instance 'cleavir-ir:nop-instruction
+  (let* ((nop-no-more (make-instance 'cleavir-ir:nop-instruction
                         :dynamic-environment-location dynamic-environment-location))
-         (nop-more more-branch)
-         (test
+         (no-more-branch nop-no-more)
+         (nop-more (make-instance 'cleavir-ir:nop-instruction
+                     :dynamic-environment-location dynamic-environment-location))
+         (more-branch
            (make-instance 'cleavir-ir:fixnum-not-greater-instruction
              :inputs (list argument-count-location
                            (make-instance 'cleavir-ir:constant-input :value end-index))
-             :successors (list no-more-branch more-branch)
+             :successors (list nop-no-more nop-more)
              :dynamic-environment-location dynamic-environment-location)))
     (loop for index downfrom (1- end-index)
           for (optional supplied-p) in (reverse lexical-locations)
           do (multiple-value-bind (no-more more)
                  (add-one-optional-layer no-more-branch
-                                         test
+                                         more-branch
                                          optional
                                          supplied-p
                                          argument-count-location
