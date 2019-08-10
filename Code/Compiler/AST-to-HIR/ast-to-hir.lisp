@@ -11,6 +11,7 @@
                         :lambda-list '()
                         :body-ast hoisted-ast))
          (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted wrapped-ast)))
+    (sicl-argument-processing:process-parameters hir)
     (sicl-hir-transformations:convert-symbol-value hir)
     (sicl-hir-transformations:convert-set-symbol-value hir)
     (sicl-hir-transformations:hoist-fdefinitions hir)
