@@ -22,12 +22,13 @@
 (defmethod translate (client (instruction cleavir-ir:funcall-instruction) context)
   (let* ((values-location (first (cleavir-ir:outputs instruction)))
          (name (gethash values-location (values-locations context)))
-         (inputs (cleavir-ir:inputs instruction)))
+         (inputs (cleavir-ir:inputs instruction))
+         (funcall `(funcall ,@(mapcar #'translate-input inputs))))
     `((setq *dynamic-environment*
             ,(cleavir-ir:name (cleavir-ir:dynamic-environment-location instruction)))
-      (setq ,name
-             (multiple-value-list
-              (funcall ,@(mapcar #'translate-input inputs)))))))
+      ,(if (null name)
+           funcall
+           `(setq ,name (multiple-value-list ,funcall))))))
 
 (defmethod translate (client (instruction cleavir-ir:nop-instruction) context)
   (declare (ignore context))
