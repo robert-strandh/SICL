@@ -60,6 +60,7 @@
                        keyword-location)))
     (let ((add-2 (make-instance 'cleavir-ir:fixnum-add-instruction
                    :inputs (list index-location constant-input-2)
+                   :output index-location
                    :dynamic-environment-location dynamic-environment-location)))
       (loop for keyword in (cons :allow-other-keys (reverse keywords))
             for input = (make-instance 'cleavir-ir:constant-input :value keyword)
@@ -106,6 +107,7 @@
            (make-instance 'cleavir-ir:constant-input :value :allow-other-keys))
          (add-2 (make-instance 'cleavir-ir:fixnum-add-instruction
                   :inputs (list index-location constant-input-2)
+                  :output index-location
                   :dynamic-environment-location dynamic-environment-location))
          (nop-false (make-instance 'cleavir-ir:nop-instruction
                       :dynamic-environment-location dynamic-environment-location))
@@ -145,6 +147,7 @@
             :inputs (list argument-count-location index-location)
             :successors (list nop-false first)
             :dynamic-environment-location dynamic-environment-location))
+    (setf (cleavir-ir:successors add-2) (list first first))
     (setf first
           (make-instance 'cleavir-ir:assignment-instruction
             :input first-index-input
@@ -177,6 +180,7 @@
            (make-instance 'cleavir-ir:constant-input :value keyword))
          (add-2 (make-instance 'cleavir-ir:fixnum-add-instruction
                   :inputs (list index-location constant-input-2)
+                  :output index-location
                   :dynamic-environment-location dynamic-environment-location))
          (false-branch nop)
          (true-branch nop))
