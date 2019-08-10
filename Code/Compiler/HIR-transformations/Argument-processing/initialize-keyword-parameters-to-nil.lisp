@@ -14,5 +14,7 @@
                    :successor (make-instance 'cleavir-ir:assignment-instruction
                                 :input nil-location
                                 :output key
-                                :successor first)))
+                                :successor first
+                                :dynamic-environment-location dynamic-environment-location)
+                   :dynamic-environment-location dynamic-environment-location))
         finally (return (values first nop))))
