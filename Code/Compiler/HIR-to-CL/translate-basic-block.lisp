@@ -19,9 +19,8 @@
     (append (translate client instruction context)
             `((go ,tag)))))
 
-(defmethod translate-final-instruction (client
-                                       (instruction cleavir-ir:return-instruction)
-                                       context)
+(defmethod translate-final-instruction
+    (client (instruction cleavir-ir:return-instruction) context)
   (let* ((values-location (first (cleavir-ir:inputs instruction)))
          (name (gethash values-location (values-locations context))))
     `((return-from ,(block-name context)
