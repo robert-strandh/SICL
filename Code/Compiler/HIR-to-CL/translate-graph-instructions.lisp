@@ -44,17 +44,14 @@
                   exclude))
 
 (defun translate-enter-instruction (client enter-instruction context)
-  (let* ((lambda-list (cleavir-ir:lambda-list enter-instruction))
-         (outputs (cleavir-ir:outputs enter-instruction))
+  (let* ((outputs (cleavir-ir:outputs enter-instruction))
          (static-environment-output (first outputs))
          (dynamic-environment-output (second outputs))
          (successor (first (cleavir-ir:successors enter-instruction)))
          (*arguments-variable* (gensym "arguments"))
-         (origin (cleavir-ast-to-hir:origin enter-instruction))
          (static-environment-variable (cleavir-ir:name static-environment-output))
          (*static-environment-variable* static-environment-variable)
          (dynamic-environment-variable (cleavir-ir:name dynamic-environment-output))
-         (remaining-variable (gensym))
          (lexical-locations (find-valid-lexical-locations
                              enter-instruction (list static-environment-output
                                                      dynamic-environment-output)))
@@ -73,68 +70,28 @@
                    basic-block)
              (setf (gethash basic-block *tag-of-basic-block*)
                    (gensym)))
-    (multiple-value-bind (required-parameters
-                          optional-parameters
-                          rest-parameter
-                          key-parameters)
-        (split-lambda-list lambda-list)
-      `(lambda (,*arguments-variable*
-                ,static-environment-variable
-                ,dynamic-environment-variable)
-         (declare (ignorable ,static-environment-variable
-                             ,dynamic-environment-variable))
-         (block ,(block-name context)
-           (let (,@(mapcar #'cleavir-ir:name lexical-locations)
-                 (source nil)
-                 (,remaining-variable ,*arguments-variable*))
-             (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)
-                                 ,remaining-variable))
-             ;; Check that enough arguments were passed.
-             ,@(if (null required-parameters)
-                   '()
-                   `((when (< (length ,*arguments-variable*)
-                              ,(length required-parameters))
-                       (error "Not enough arguments"))))
-             ;; Check that not too many arguments were passed
-             ;; ,@(if (and (null rest-parameter) (null key-parameters))
-             ;;       '()
-             ;;       `((when (> (length ,*arguments-variable*)
-             ;;                  ,(+ (length required-parameters)
-             ;;                      (length optional-parameters)))
-             ;;           (error "Too many arguments ~s ~s" ,*arguments-variable* ,origin))))
-             ,@(loop for required-parameter in required-parameters
-                     collect `(setq ,(cleavir-ir:name required-parameter)
-                                    (pop ,remaining-variable)))
-             ,@(loop for optional-parameter in optional-parameters
-                     collect `(setq ,(cleavir-ir:name (first optional-parameter))
-                                    (pop ,remaining-variable))
-                     collect `(setq ,(cleavir-ir:name (second optional-parameter))
-                                    t))
-             ,@(if (null rest-parameter)
-                   '()
-                   `((setq ,(cleavir-ir:name rest-parameter) ,remaining-variable)))
-             ,@(loop for key-parameter in key-parameters
-                     collect `(multiple-value-bind (indicator value tail)
-                                  (get-properties ,remaining-variable
-                                                  '(,(first key-parameter)))
-                                (declare (ignorable indicator value tail))
-                                (unless (null tail)
-                                  (setf ,(cleavir-ir:name (second key-parameter))
-                                        value)
-                                  (setf ,(cleavir-ir:name (third key-parameter))
-                                        t))))
-             (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
-                ,@(loop with dynamic-environment-location
-                          = (cleavir-ir:dynamic-environment-location successor)
-                        with basic-blocks
-                          = (basic-blocks-in-dynamic-environment
-                             dynamic-environment-location)
-                        for basic-block in basic-blocks
-                        collect (tag-of-basic-block basic-block)
-                        append (translate-basic-block
-                                client
-                                basic-block
-                                context)))))))))
+    `(lambda (,*arguments-variable*
+              ,static-environment-variable
+              ,dynamic-environment-variable)
+       (declare (ignorable ,static-environment-variable
+                           ,dynamic-environment-variable))
+       (block ,(block-name context)
+         (let (,@(mapcar #'cleavir-ir:name lexical-locations)
+               (source nil))
+           (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)
+                               ))
+           (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
+              ,@(loop with dynamic-environment-location
+                        = (cleavir-ir:dynamic-environment-location successor)
+                      with basic-blocks
+                        = (basic-blocks-in-dynamic-environment
+                           dynamic-environment-location)
+                      for basic-block in basic-blocks
+                      collect (tag-of-basic-block basic-block)
+                      append (translate-basic-block
+                              client
+                              basic-block
+                              context))))))))
 
 (defmethod translate (client (instruction cleavir-ir:enclose-instruction) context)
   (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))
