@@ -21,6 +21,7 @@
            (call-error 'odd-number-of-keyword-arguments
                        error-function-location
                        dynamic-environment-location
+                       (make-instance 'cleavir-ir:constant-input :value :argument-count)
                        remaining-argument-count-location)))
     (let ((first (make-instance 'cleavir-ir:fixnum-equal-instruction
                    :inputs (list constant-input-0 remainder-location)
@@ -57,6 +58,7 @@
            (call-error 'invalid-keyword
                        error-function-location
                        dynamic-environment-location
+                       (make-instance 'cleavir-ir:constant-input :value :keyword)
                        keyword-location)))
     (let ((add-2 (make-instance 'cleavir-ir:fixnum-add-instruction
                    :inputs (list index-location constant-input-2)

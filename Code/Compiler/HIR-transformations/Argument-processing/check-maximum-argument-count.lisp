@@ -9,7 +9,9 @@
          (error (call-error 'too-manu-arguments
                             error-function-location
                             dynamic-environment-location
+                            (make-instance 'cleavir-ir:constant-input :value :argument-count)
                             argument-count-location
+                            (make-instance 'cleavir-ir:constant-input :value :maximum-argument-count)
                             maximum-argument-count-input))
          (nop (make-instance 'cleavir-ir:nop-instruction
                 :dynamic-environment-location dynamic-environment-location)))
