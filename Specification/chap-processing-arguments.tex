@@ -227,6 +227,11 @@ As shown in \refFig{fig-process-arguments}, the \texttt{\&rest}
 parameter, if present, has already been initialized to \texttt{nil}
 before this HIR code is executed.
 
+\section{Initializing keyword parameters}
+
+\refFig{fig-process-keyword-arguments} illustrates how keyword
+parameters are initialized.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-process-keyword-arguments.pdf_t}
@@ -234,6 +239,15 @@ before this HIR code is executed.
 \caption{\label{fig-process-keyword-arguments}
 Processing keyword arguments.}
 \end{figure}
+
+As \refFig{fig-process-keyword-arguments} shows, we subdivide the
+initialization of keyword arguments further.  We start by checking
+that there is an even number of keyword argument.  After that, each
+keyword parameter is initialized in turn by a separate traversal of
+the remaining arguments.  Finally, if required, we check whether the
+keyword \texttt{:allow-other-keys} is present in the argument list,
+and if so, what value it has.  We end the process by checking the
+validity of each keyword argument, again only if required.
 
 \begin{figure}
 \begin{center}
