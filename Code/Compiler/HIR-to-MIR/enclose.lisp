@@ -18,6 +18,9 @@
         (cons-function-location 
           (make-instance 'cleavir-ir:lexical-location
             :name (gensym "cons-function")))
+        (nil-location
+          (make-instance 'cleavir-ir:lexical-location
+            :name (gensym "nil")))
         ;; FIXME: do this better
         (entry-point-input
           (make-instance 'cleavir-ir:constant-input
@@ -64,12 +67,21 @@
        :successor enclose-instruction
        :dynamic-environment-location dynamic-environment-location)
      enclose-instruction)
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:fetch-instruction
+       :input (make-instance 'cleavir-ir:immediate-input
+                :value (- *nil-index* *fixed-position-count*))
+       :output nil-location
+       :successor enclose-instruction
+       :dynamic-environment-location dynamic-environment-location)
+     enclose-instruction)
     (change-class enclose-instruction
                   'cleavir-ir:funcall-instruction
                   :inputs (list* entry-point-input
                                  code-object-location
                                  enclose-function-cell-location
                                  cons-function-cell-location
+                                 nil-location
                                  (cleavir-ir:inputs enclose-instruction))
                   :output values-location)
     (cleavir-ir:insert-instruction-after
