@@ -12,6 +12,7 @@
    (:file "fetch")
    (:file "cons")
    (:file "cell")
+   (:file "create-cell")
    (:file "utilities")
    (:file "general-instance")
    (:file "array")
