@@ -7,6 +7,7 @@
   :components
   ((:file "packages")
    (:file "generic-functions")
+   (:file "variables")
    (:file "fetch")
    (:file "cons")
    (:file "cell")
