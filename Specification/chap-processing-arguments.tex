@@ -275,6 +275,9 @@ have an even number of remaining arguments.  Otherwise, we call
 
 \subsection{Initializing a single keyword parameter}
 
+\refFig{fig-initialize-one-keyword-parameter} illustrates how a single
+keyword parameter is initialized.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-initialize-one-keyword-parameter.pdf_t}
@@ -282,6 +285,21 @@ have an even number of remaining arguments.  Otherwise, we call
 \caption{\label{fig-initialize-one-keyword-parameter}
 Initializing one keyword parameter.}
 \end{figure}
+
+As \refFig{fig-initialize-one-keyword-parameter} shows, the essence of
+the code consists of a loop over the remaining arguments, starting
+from the beginning.  Each time around the loop, $2$ is added to the
+index.
+
+When an \texttt{eq} comparison between the argument a the constant
+symbol representing the keyword in question yields true, then the loop
+is exited, and the argument immediately following the keyword is used
+to initialize the parameter, and the constant value \texttt{t} is used
+to initialize the \texttt{supplied-p} parameter.
+
+If the loop reaches the end without the \texttt{eq} comparison
+yielding true, \texttt{nil} is used to initialize both the keyword
+parameter and the \texttt{supplied-p} parameter.
 
 \subsection{Checking the presence of \texttt{:allow-other-keys}}
 
