@@ -251,6 +251,13 @@ validity of each keyword argument, again only if required.
 
 \subsection{Checking that the number of arguments is even}
 
+\refFig{fig-check-even-keyword-arguments} illustrates the technique
+for checking that there is an even number of arguments to be used for
+initializing keyword parameters.  Recall from
+\refFig{fig-process-arguments} that this code is executed only when
+there are more arguments than the sum of the number of required and
+the number of optional parameters.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-check-even-keyword-arguments.pdf_t}
@@ -258,6 +265,13 @@ validity of each keyword argument, again only if required.
 \caption{\label{fig-check-even-keyword-arguments}
 Checking that there is an even number of keyword arguments.}
 \end{figure}
+
+As \refFig{fig-check-even-keyword-arguments} shows, we simply subtract
+the sum of the number of required and the number of optional
+parameters from the argument count, and then take the remainder when
+this difference is divided by $2$.  If that remainder is 0, then we
+have an even number of remaining arguments.  Otherwise, we call
+\texttt{error} with an appropriate condition type.
 
 \subsection{Initializing a single keyword parameter}
 
