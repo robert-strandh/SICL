@@ -11,22 +11,7 @@
     `((setq ,output-name
             (aref ,static-environment-input-name ,(+ index 1))))))
 
-(defmethod translate (client (instruction cleavir-ir:read-cell-instruction) context)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (input-name (cleavir-ir:name input))
-         (output (first (cleavir-ir:outputs instruction)))
-         (output-name (cleavir-ir:name output)))
-    `((setq ,output-name (car ,input-name)))))
-
 (defmethod translate (client (instruction cleavir-ir:create-cell-instruction) context)
   (let* ((output (first (cleavir-ir:outputs instruction)))
          (output-name (cleavir-ir:name output)))
     `((setq ,output-name (list nil)))))
-
-(defmethod translate (client (instruction cleavir-ir:write-cell-instruction) context)
-  (let* ((inputs (cleavir-ir:inputs instruction))
-         (cons-input (first inputs))
-         (object-input (second inputs))
-         (cons-name (cleavir-ir:name cons-input))
-         (object-name (cleavir-ir:name object-input)))
-    `((rplaca ,cons-name ,object-name))))
