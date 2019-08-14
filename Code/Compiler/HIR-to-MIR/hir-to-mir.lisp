@@ -10,7 +10,5 @@
 (defun hir-to-mir (client top-level-enter-instruction)
   (process-enclose-instructions top-level-enter-instruction)
   (process-create-cell-instruction top-level-enter-instruction)
-  (process-read-cell-instruction top-level-enter-instruction)
-  (process-write-cell-instruction top-level-enter-instruction)
   (process-fetch top-level-enter-instruction)
   (process-instructions client top-level-enter-instruction))
