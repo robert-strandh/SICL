@@ -4,4 +4,6 @@
   (:use #:common-lisp)
   (:export #:hoist-fdefinitions
            #:convert-symbol-value
-           #:convert-set-symbol-value))
+           #:convert-set-symbol-value
+           #:eliminate-read-cell-instructions
+           #:eliminate-write-cell-instructions))
