@@ -19,9 +19,7 @@
   (make-instance 'funcallable-standard-object
     :entry-point entry-point
     :static-environment
-    ;; At some point, we will add more stuff to the static
-    ;; environment.  For now, we just put NIL in there.
-    (coerce (list* code-object nil nil nil static-environment-values)
+    (coerce (list* code-object #'enclose #'cons nil static-environment-values)
             'vector)))
 
 (defun make-function-cell-finder (environment)
