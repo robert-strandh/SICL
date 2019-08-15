@@ -9,7 +9,7 @@
          (output (first (cleavir-ir:outputs instruction)))
          (output-name (cleavir-ir:name output)))
     `((setq ,output-name
-            (aref ,static-environment-input-name ,(+ index 1))))))
+            (aref ,static-environment-input-name ,(+ index 4))))))
 
 (defmethod translate (client (instruction cleavir-ir:create-cell-instruction) context)
   (let* ((output (first (cleavir-ir:outputs instruction)))
