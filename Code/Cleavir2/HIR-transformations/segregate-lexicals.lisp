@@ -83,7 +83,7 @@
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:fetch-instruction
        :inputs (list env-location
-                (cleavir-ir:make-immediate-input new-index))
+                (make-instance 'cleavir-ir:constant-input :value new-index))
        :output dloc
        :dynamic-environment-location
        (cleavir-ir:dynamic-environment-output enter))
