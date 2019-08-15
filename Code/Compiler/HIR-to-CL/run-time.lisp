@@ -6,7 +6,7 @@
 (defgeneric static-environment (function))
 
 (defclass funcallable-standard-object (closer-mop:funcallable-standard-object)
-  ((%code :initarg :code :reader code)
+  ((%entry-point :initarg :entry-point :reader entry-point)
    (%static-environment :initarg :static-environment :reader static-environment))
   (:metaclass closer-mop:funcallable-standard-class))
 
@@ -15,9 +15,9 @@
      (superclass closer-mop:funcallable-standard-object))
   t)
 
-(defun enclose (code &rest static-environment-values)
+(defun enclose (entry-point &rest static-environment-values)
   (make-instance 'funcallable-standard-object
-    :code code
+    :entry-point entry-point
     :static-environment
     ;; At some point, we will add more stuff to the static
     ;; environment.  For now, we just put NIL in there.
