@@ -98,6 +98,7 @@
         (enter (cleavir-ir:code instruction)))
     `((setq ,name
             (enclose ,(gethash enter (function-names context))
+                     ,*static-environment-variable*
                      ,@(mapcar #'cleavir-ir:name
                                (cleavir-ir:inputs instruction))))
       (closer-mop:set-funcallable-instance-function
