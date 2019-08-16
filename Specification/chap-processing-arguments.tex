@@ -303,6 +303,13 @@ parameter and the \texttt{supplied-p} parameter.
 
 \subsection{Checking the presence of \texttt{:allow-other-keys}}
 
+\refFig{fig-check-allow-other-keys} illustrates how the check is made
+whether the keyword argument \texttt{:allow-other-keys} is present,
+and if so, whether it has a true value.  As
+\refFig{fig-process-keyword-arguments} shows, this check is only
+performed when the lambda list does not have the lambda-list keyword
+\texttt{\&allow-other-keys} in it.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-check-allow-other-keys.pdf_t}
@@ -310,6 +317,21 @@ parameter and the \texttt{supplied-p} parameter.
 \caption{\label{fig-check-allow-other-keys}
 Checking for \texttt{:allow-other-keys}}
 \end{figure}
+
+The way the HIR code in \refFig{fig-check-allow-other-keys} works, is
+similar to the way the HIR code of
+{fig-initialize-one-keyword-parameter} for initializing a single
+keyword parameter works.  The difference is that there is no
+\texttt{suppolied-p} parameter, and the value of the argument is not
+kept.  Instead, the value, if the keyword is present, is just compared
+for equality to \texttt{nil}.  If the keyword is not present, or if
+the value is \texttt{nil}, then the left branch is chosen.  Otherwise,
+the right branch is chosen.
+
+Notice that the semantics correspond to that of ordinary keyword
+arguments, in that if there are several occurrences of the keyword in
+the argument list, then it is the value of the first occurrence that
+determines the result.
 
 \subsection{Checking the validity of every keyword}
 
