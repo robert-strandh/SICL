@@ -335,6 +335,10 @@ determines the result.
 
 \subsection{Checking the validity of every keyword}
 
+The final step of processing keyword arguments is to verify that each
+keyword given is valid.  This step is illustrated by
+\refFig{fig-check-every-keyword}.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-check-every-keyword.pdf_t}
@@ -342,3 +346,9 @@ determines the result.
 \caption{\label{fig-check-every-keyword}
 Checking the validity of every keyword.}
 \end{figure}
+
+As shown in \refFig{fig-process-arguments}, this step is executed only
+when the lambda list keyword \texttt{\&allow-other-keys} is absent
+from the lambda list, \emph{emph} either the keyword
+\texttt{:allow-other-keys} is absent from the arguments or it has the
+value \texttt{nil}.
