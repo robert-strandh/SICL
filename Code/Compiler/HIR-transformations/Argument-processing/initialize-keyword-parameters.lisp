@@ -260,13 +260,13 @@
                                   first-index)
           (setf (cleavir-ir:successors last-a)
                 (list nop))
-          (multiple-value-bind (first-b last-b-true last-b-false)
+          (multiple-value-bind (first-b last-b-false last-b-true)
               (check-for-allow-other-keys argument-count-location
                                           dynamic-environment-location
                                           first-index)
-            (setf (cleavir-ir:successors last-b-true)
-                  (list first-a))
             (setf (cleavir-ir:successors last-b-false)
+                  (list first-a))
+            (setf (cleavir-ir:successors last-b-true)
                   (list nop))
             (setf first first-b))))
     (loop for (keyword value-location supplied-p-location) in parameters
