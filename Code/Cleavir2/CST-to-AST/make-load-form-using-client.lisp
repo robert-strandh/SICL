@@ -18,11 +18,11 @@
 
 (defmethod make-load-form-using-client
     (client (bignum integer) environment)
-  (let* ((size (load-time-value
-                (loop for size = 1 then (* size 2)
-                      while (and (typep (+ (expt 2 size)) 'fixnum)
-                                 (typep (- (expt 2 size)) 'fixnum))
-                      maximize size)))
+  ;; We conservatively use a block size of 16 bits here because that is the
+  ;; minimal size of a fixnum that is guaranteed by the standard.  Clients
+  ;; are encouraged to override this method with one that takes the actual
+  ;; fixnum size of the target into account.
+  (let* ((size 16)
          (sign (signum bignum))
          (blocks (ceiling (integer-length bignum) size)))
     (loop for block from blocks downto 0
