@@ -62,8 +62,7 @@
               ,@(make-code-bindings client initial-instruction context)
               ,@(mapcar #'cleavir-ir:name lexical-locations)
               (source nil)
-              (,*static-environment-variable*
-                (vector nil)))
+              (,*static-environment-variable* (vector nil)))
          (declare (ignorable ,(cleavir-ir:name
                             (cleavir-ir:dynamic-environment-location initial-instruction))))
          (declare (ignorable ,(cleavir-ir:name
