@@ -29,12 +29,15 @@
   (gethash values-location (values-locations context)))
 
 (defun hir-to-cl (client initial-instruction)
-  (let* ((enter-instructions (sort-functions initial-instruction))
+  (let* ((outputs (cleavir-ir:outputs initial-instruction))
+         (static-environment-output (first outputs))
+         (dynamic-environment-output (second outputs))
+         (enter-instructions (sort-functions initial-instruction))
          (values-locations (find-values-locations initial-instruction))
          (context (make-instance 'context :values-locations values-locations))
          (lexical-locations (find-lexical-locations initial-instruction))
          (successor (first (cleavir-ir:successors initial-instruction)))
-         (*static-environment-variable* (gensym "static-environment"))
+         (*static-environment-variable* (cleavir-ir:name static-environment-output))
          (*top-level-function-parameter* (gensym "function-cell"))
          (basic-blocks (compute-basic-blocks initial-instruction))
          (*basic-blocks-in-dynamic-environment* (make-hash-table :test #'eq))
@@ -61,29 +64,31 @@
               ,@(all-values-location-names (values-locations context))
               ,@(make-code-bindings client initial-instruction context)
               ,@(mapcar #'cleavir-ir:name lexical-locations)
-              (source nil)
-              (,*static-environment-variable* (vector nil)))
+              (source nil))
+         (declare (ignore ,*static-environment-variable*))
          (declare (ignorable ,(cleavir-ir:name
-                            (cleavir-ir:dynamic-environment-location initial-instruction))))
+                               (cleavir-ir:dynamic-environment-location initial-instruction))))
          (declare (ignorable ,(cleavir-ir:name
                                (first (cleavir-ir:outputs initial-instruction)))
                              ,*static-environment-variable*))
          (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)))
          (declare (ignorable ,(static-env-function-var context)))
          (declare (ignorable ,@(all-values-location-names (values-locations context))))
-         (block ,(block-name context)
-           (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
-              ,@(loop with dynamic-environment-location
-                        = (cleavir-ir:dynamic-environment-location successor)
-                      with basic-blocks
-                        = (basic-blocks-in-dynamic-environment
-                           dynamic-environment-location)
-                      for basic-block in basic-blocks
-                      collect (tag-of-basic-block basic-block)
-                      append (translate-basic-block
-                              client
-                              basic-block
-                              context))))))))
+         (let ((,*static-environment-variable* (vector nil)))
+           (declare (ignorable ,*static-environment-variable*))
+           (block ,(block-name context)
+             (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
+                ,@(loop with dynamic-environment-location
+                          = (cleavir-ir:dynamic-environment-location successor)
+                        with basic-blocks
+                          = (basic-blocks-in-dynamic-environment
+                             dynamic-environment-location)
+                        for basic-block in basic-blocks
+                        collect (tag-of-basic-block basic-block)
+                        append (translate-basic-block
+                                client
+                                basic-block
+                                context)))))))))
 
 (defmethod translate
     (client (instruction sicl-hir-transformations::find-function-cell-instruction) context)
