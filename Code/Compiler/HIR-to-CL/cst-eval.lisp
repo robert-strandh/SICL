@@ -10,4 +10,6 @@
          (cl (hir-to-cl client hir))
          (fun (compile nil cl))
          (*dynamic-environment* '()))
-    (funcall fun (make-function-cell-finder global-environment))))
+    (funcall fun
+             (make-function-cell-finder global-environment)
+             (vector nil))))

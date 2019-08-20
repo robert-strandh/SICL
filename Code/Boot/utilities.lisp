@@ -20,7 +20,8 @@
          (sicl-hir-to-cl:*dynamic-environment* '()))
     (load pathname)
     (funcall *top-level-function*
-             (sicl-hir-to-cl:make-function-cell-finder environment))))
+             (sicl-hir-to-cl:make-function-cell-finder environment)
+             (vector nil))))
 
 (defun import-function-from-host (name environment)
   (setf (sicl-genv:fdefinition name environment)
