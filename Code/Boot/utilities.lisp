@@ -21,7 +21,7 @@
     (load pathname)
     (funcall *top-level-function*
              (sicl-hir-to-cl:make-function-cell-finder environment)
-             (vector nil))))
+             (vector nil #'sicl-hir-to-cl::enclose #'cons nil))))
 
 (defun import-function-from-host (name environment)
   (setf (sicl-genv:fdefinition name environment)
