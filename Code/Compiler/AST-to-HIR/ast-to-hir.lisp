@@ -1,5 +1,8 @@
 (cl:in-package #:sicl-ast-to-hir)
 
+(defclass top-level-enter-instruction (cleavir-ir:top-level-enter-instruction)
+  ((%constants :initform '() :accessor constants)))
+
 (defun ast-to-hir (ast)
   ;; Wrap the AST in a FUNCTION-AST that will be called at load time
   ;; with a single argument, namely a function that, given a function
@@ -11,6 +14,7 @@
                         :lambda-list '()
                         :body-ast hoisted-ast))
          (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted wrapped-ast)))
+    (change-class hir 'top-level-enter-instruction)
     (sicl-argument-processing:process-parameters hir)
     (sicl-hir-transformations:convert-symbol-value hir)
     (sicl-hir-transformations:convert-set-symbol-value hir)
