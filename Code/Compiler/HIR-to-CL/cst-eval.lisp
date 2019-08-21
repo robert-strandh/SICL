@@ -12,4 +12,9 @@
          (*dynamic-environment* '()))
     (funcall fun
              (make-function-cell-finder global-environment)
-             (vector nil))))
+             (apply #'vector
+                    nil ; Ultimately, replace with code object.
+                    #'enclose
+                    #'cons
+                    nil
+                    (sicl-ast-to-hir:constants hir)))))
