@@ -65,3 +65,16 @@
                  basic-block)
            (setf (gethash basic-block *tag-of-basic-block*)
                  (gensym))))
+
+(defun tagged-basic-blocks (instruction client context)
+  (loop with dynamic-environment-location
+          = (cleavir-ir:dynamic-environment-location instruction)
+        with basic-blocks
+          = (basic-blocks-in-dynamic-environment
+             dynamic-environment-location)
+        for basic-block in basic-blocks
+        collect (tag-of-basic-block basic-block)
+        append (translate-basic-block
+                client
+                basic-block
+                context)))
