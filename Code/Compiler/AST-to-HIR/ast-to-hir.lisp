@@ -20,6 +20,7 @@
     (sicl-hir-transformations:convert-set-symbol-value hir)
     (sicl-hir-transformations:hoist-fdefinitions hir)
     (cleavir-hir-transformations::process-captured-variables hir)
+    (sicl-hir-transformations:eliminate-create-cell-instructions hir)
     (sicl-hir-transformations:eliminate-read-cell-instructions hir)
     (sicl-hir-transformations:eliminate-write-cell-instructions hir)
     hir))
