@@ -34,7 +34,6 @@
 (defun hir-to-cl (client initial-instruction)
   (let* ((static-environment-output
            (cleavir-ir:static-environment initial-instruction))
-         ;; (enter-instructions (sort-functions initial-instruction))
          (values-locations (find-values-locations initial-instruction))
          (context (make-instance 'context :values-locations values-locations))
          (lexical-locations (find-valid-lexical-locations
