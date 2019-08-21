@@ -30,13 +30,16 @@
 
 (defun hir-to-cl (client initial-instruction)
   (let* ((outputs (cleavir-ir:outputs initial-instruction))
+         (static-environment-output (first outputs))
          (dynamic-environment-output (second outputs))
          (enter-instructions (sort-functions initial-instruction))
          (values-locations (find-values-locations initial-instruction))
          (context (make-instance 'context :values-locations values-locations))
-         (lexical-locations (find-lexical-locations initial-instruction))
+         (lexical-locations (find-valid-lexical-locations
+                             initial-instruction static-environment-output))
+         (lexical-location-names (mapcar #'cleavir-ir:name lexical-locations))
          (successor (first (cleavir-ir:successors initial-instruction)))
-         (*static-environment-variable* (gensym "static-environment"))
+         (*static-environment-variable* (cleavir-ir:name static-environment-output))
          (*top-level-function-parameter* (gensym "function-cell"))
          (basic-blocks (compute-basic-blocks initial-instruction))
          (*basic-blocks-in-dynamic-environment* (make-hash-table :test #'eq))
@@ -63,13 +66,11 @@
                 (car (funcall ,*top-level-function-parameter* 'static-environment-function)))
               ,@(all-values-location-names (values-locations context))
               ,@(make-code-bindings client initial-instruction context)
-              ,@(mapcar #'cleavir-ir:name lexical-locations)
+              ,@lexical-location-names
               (source nil))
          (declare (ignorable ,(cleavir-ir:name
                                (cleavir-ir:dynamic-environment-location initial-instruction))))
-         (declare (ignorable ,(cleavir-ir:name
-                               (first (cleavir-ir:outputs initial-instruction)))))
-         (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)))
+         (declare (ignorable ,@lexical-location-names))
          (declare (ignorable ,(static-env-function-var context)))
          (declare (ignorable ,@(all-values-location-names (values-locations context))))
          (block ,(block-name context)

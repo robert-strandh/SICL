@@ -52,6 +52,7 @@
                              enter-instruction
                              static-environment-output
                              dynamic-environment-output))
+         (lexical-location-names (mapcar #'cleavir-ir:name lexical-locations))
          (basic-blocks (compute-basic-blocks enter-instruction))
          (*basic-blocks-in-dynamic-environment* (make-hash-table :test #'eq))
          (*basic-block-of-leader* (make-hash-table :test #'eq))
@@ -73,10 +74,9 @@
        (declare (ignorable ,static-environment-variable
                            ,dynamic-environment-variable))
        (block ,(block-name context)
-         (let (,@(mapcar #'cleavir-ir:name lexical-locations)
+         (let (,@lexical-location-names
                (source nil))
-           (declare (ignorable ,@(mapcar #'cleavir-ir:name lexical-locations)
-                               ))
+           (declare (ignorable ,@lexical-location-names))
            (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
               ,@(loop with dynamic-environment-location
                         = (cleavir-ir:dynamic-environment-location successor)
