@@ -49,8 +49,9 @@
          (*static-environment-variable* static-environment-variable)
          (dynamic-environment-variable (cleavir-ir:name dynamic-environment-output))
          (lexical-locations (find-valid-lexical-locations
-                             enter-instruction (list static-environment-output
-                                                     dynamic-environment-output)))
+                             enter-instruction
+                             static-environment-output
+                             dynamic-environment-output))
          (basic-blocks (compute-basic-blocks enter-instruction))
          (*basic-blocks-in-dynamic-environment* (make-hash-table :test #'eq))
          (*basic-block-of-leader* (make-hash-table :test #'eq))

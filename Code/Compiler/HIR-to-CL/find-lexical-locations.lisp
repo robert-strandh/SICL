@@ -13,6 +13,6 @@
      enter-instruction)
     result))
 
-(defun find-valid-lexical-locations (enter-instruction exclude)
+(defun find-valid-lexical-locations (enter-instruction &rest exclude)
   (set-difference (find-lexical-locations enter-instruction)
                   exclude))
