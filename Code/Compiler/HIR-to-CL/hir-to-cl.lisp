@@ -36,6 +36,7 @@
            (cleavir-ir:static-environment initial-instruction))
          (values-locations (find-values-locations initial-instruction))
          (context (make-instance 'context :values-locations values-locations))
+         (values-location-names (all-values-location-names values-locations))
          (lexical-locations (find-valid-lexical-locations
                              initial-instruction static-environment-output))
          (lexical-location-names (mapcar #'cleavir-ir:name lexical-locations))
@@ -52,7 +53,7 @@
        (declare (ignorable ,*static-environment-variable*))
        (let* ((,(static-env-function-var context)
                 (car (funcall ,*top-level-function-parameter* 'static-environment-function)))
-              ,@(all-values-location-names (values-locations context))
+              ,@values-location-names
               ,@(make-code-bindings client initial-instruction context)
               ,@lexical-location-names
               (source nil))
@@ -60,7 +61,7 @@
                                (cleavir-ir:dynamic-environment-location initial-instruction))))
          (declare (ignorable ,@lexical-location-names))
          (declare (ignorable ,(static-env-function-var context)))
-         (declare (ignorable ,@(all-values-location-names (values-locations context))))
+         (declare (ignorable ,@values-location-names))
          (block ,(block-name context)
            (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
               ,@(loop with dynamic-environment-location
