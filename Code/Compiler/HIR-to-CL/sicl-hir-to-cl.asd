@@ -31,8 +31,8 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "basic-block")
    (:file "context")
+   (:file "basic-block")
    (:file "dynamic-environment")
    (:file "run-time")
    (:file "sort-functions")
