@@ -29,9 +29,8 @@
   (gethash values-location (values-locations context)))
 
 (defun hir-to-cl (client initial-instruction)
-  (let* ((outputs (cleavir-ir:outputs initial-instruction))
-         (static-environment-output (first outputs))
-         (dynamic-environment-output (second outputs))
+  (let* ((static-environment-output
+           (cleavir-ir:static-environment initial-instruction))
          (enter-instructions (sort-functions initial-instruction))
          (values-locations (find-values-locations initial-instruction))
          (context (make-instance 'context :values-locations values-locations))
