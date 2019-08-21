@@ -69,17 +69,7 @@
                (source nil))
            (declare (ignorable ,@lexical-location-names))
            (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
-              ,@(loop with dynamic-environment-location
-                        = (cleavir-ir:dynamic-environment-location successor)
-                      with basic-blocks
-                        = (basic-blocks-in-dynamic-environment
-                           dynamic-environment-location)
-                      for basic-block in basic-blocks
-                      collect (tag-of-basic-block basic-block)
-                      append (translate-basic-block
-                              client
-                              basic-block
-                              context))))))))
+              ,@(tagged-basic-blocks successor client context)))))))
 
 (defmethod translate (client (instruction cleavir-ir:enclose-instruction) context)
   (let ((name (cleavir-ir:name (first (cleavir-ir:outputs instruction))))
