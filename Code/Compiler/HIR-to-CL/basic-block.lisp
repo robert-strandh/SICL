@@ -52,3 +52,16 @@
                              (return basic-block)))))
       (loop for leader in leaders
             collect (compute-basic-block leader)))))
+
+(defun process-basic-blocks (basic-blocks)
+  (loop for basic-block in basic-blocks
+        for leader = (first (instructions basic-block))
+        for dynamic-environment-location
+          = (cleavir-ir:dynamic-environment-location leader)
+        do (push basic-block
+                 (gethash dynamic-environment-location
+                          *basic-blocks-in-dynamic-environment*))
+           (setf (gethash leader *basic-block-of-leader*)
+                 basic-block)
+           (setf (gethash basic-block *tag-of-basic-block*)
+                 (gensym))))
