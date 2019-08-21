@@ -58,17 +58,7 @@
          (*basic-blocks-in-dynamic-environment* (make-hash-table :test #'eq))
          (*basic-block-of-leader* (make-hash-table :test #'eq))
          (*tag-of-basic-block* (make-hash-table :test #'eq)))
-    (loop for basic-block in basic-blocks
-          for leader = (first (instructions basic-block))
-          for dynamic-environment-location
-            = (cleavir-ir:dynamic-environment-location leader)
-          do (push basic-block
-                   (gethash dynamic-environment-location
-                            *basic-blocks-in-dynamic-environment*))
-             (setf (gethash leader *basic-block-of-leader*)
-                   basic-block)
-             (setf (gethash basic-block *tag-of-basic-block*)
-                   (gensym)))
+    (process-basic-blocks basic-blocks)
     `(lambda (,*arguments-variable*
               ,static-environment-variable
               ,dynamic-environment-variable)

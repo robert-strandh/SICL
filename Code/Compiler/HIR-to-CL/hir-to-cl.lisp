@@ -3,6 +3,9 @@
 (defun make-code-bindings (client initial-instruction context)
   (let ((enter-instructions (sort-functions initial-instruction)))
     (loop for enter-instruction in (butlast enter-instructions)
+          do (setf (gethash enter-instruction (function-names context))
+                   (gensym "code")))
+    (loop for enter-instruction in (butlast enter-instructions)
           collect `(,(gethash enter-instruction (function-names context))
                     ,(translate-enter-instruction client enter-instruction context)))))
 
@@ -31,7 +34,7 @@
 (defun hir-to-cl (client initial-instruction)
   (let* ((static-environment-output
            (cleavir-ir:static-environment initial-instruction))
-         (enter-instructions (sort-functions initial-instruction))
+         ;; (enter-instructions (sort-functions initial-instruction))
          (values-locations (find-values-locations initial-instruction))
          (context (make-instance 'context :values-locations values-locations))
          (lexical-locations (find-valid-lexical-locations
@@ -44,20 +47,7 @@
          (*basic-blocks-in-dynamic-environment* (make-hash-table :test #'eq))
          (*basic-block-of-leader* (make-hash-table :test #'eq))
          (*tag-of-basic-block* (make-hash-table :test #'eq)))
-    (loop for basic-block in basic-blocks
-          for leader = (first (instructions basic-block))
-          for dynamic-environment-location
-            = (cleavir-ir:dynamic-environment-location leader)
-          do (push basic-block
-                   (gethash dynamic-environment-location
-                            *basic-blocks-in-dynamic-environment*))
-             (setf (gethash leader *basic-block-of-leader*)
-                   basic-block)
-             (setf (gethash basic-block *tag-of-basic-block*)
-                   (gensym)))
-    (loop for enter-instruction in (butlast enter-instructions)
-          do (setf (gethash enter-instruction (function-names context))
-                   (gensym "code")))
+    (process-basic-blocks basic-blocks)
     `(lambda (,*top-level-function-parameter* ,*static-environment-variable*)
        #+sbcl(declare (sb-ext:muffle-conditions sb-ext:compiler-note))
        (declare (ignorable ,*static-environment-variable*))
