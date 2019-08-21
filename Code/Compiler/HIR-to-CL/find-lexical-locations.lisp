@@ -12,3 +12,7 @@
                do (pushnew output result)))
      enter-instruction)
     result))
+
+(defun find-valid-lexical-locations (enter-instruction exclude)
+  (set-difference (find-lexical-locations enter-instruction)
+                  exclude))

@@ -39,10 +39,6 @@
               rest-parameter
               (reverse key-parameters)))))
 
-(defun find-valid-lexical-locations (enter-instruction exclude)
-  (set-difference (find-lexical-locations enter-instruction)
-                  exclude))
-
 (defun translate-enter-instruction (client enter-instruction context)
   (let* ((outputs (cleavir-ir:outputs enter-instruction))
          (static-environment-output (first outputs))
