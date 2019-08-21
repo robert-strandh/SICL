@@ -44,7 +44,7 @@
            (cleavir-ir:static-environment enter-instruction))
          (dynamic-environment-output
            (cleavir-ir:dynamic-environment-output enter-instruction))
-                  (successor (first (cleavir-ir:successors enter-instruction)))
+         (successor (first (cleavir-ir:successors enter-instruction)))
          (*arguments-variable* (gensym "arguments"))
          (static-environment-variable (cleavir-ir:name static-environment-output))
          (*static-environment-variable* static-environment-variable)
