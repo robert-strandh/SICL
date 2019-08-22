@@ -39,7 +39,6 @@
    (:file "find-lexical-locations")
    (:file "translate")
    (:file "translate-cons-related-instructions")
-   (:file "translate-environment-related-instructions")
    (:file "translate-multiple-value-related-instructions")
    (:file "translate-graph-instructions")
    (:file "translate-basic-block")
