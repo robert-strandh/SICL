@@ -25,6 +25,13 @@
                     #'cons
                     nil
                     static-environment-values))))
+    (closer-mop:set-funcallable-instance-function
+     closure
+     (lambda (&rest args)
+       (funcall entry-point
+                args
+                (static-environment closure)
+                *dynamic-environment*)))
     closure))
 
 (defun make-function-cell-finder (environment)
