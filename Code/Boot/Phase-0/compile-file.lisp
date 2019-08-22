@@ -66,7 +66,10 @@
           (ensure-directories-exist output-pathname)
           (let* ((hir (sicl-ast-to-hir:ast-to-hir ast))
                  (cl (sicl-hir-to-cl:hir-to-cl nil hir))
-                 (wrapped-cl `(defparameter sicl-boot::*top-level-function* ,cl)))
+                 (wrapped-cl `(progn (defparameter sicl-boot::*top-level-function*
+                                       ,cl)
+                                     (defparameter sicl-boot::*constants*
+                                       ,(sicl-ast-to-hir:constants hir)))))
             (unless (and (probe-file fasl-pathname)
                          (> (file-write-date fasl-pathname)
                             (file-write-date input-pathname)))
