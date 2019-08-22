@@ -16,11 +16,16 @@
   t)
 
 (defun enclose (entry-point code-object &rest static-environment-values)
-  (make-instance 'funcallable-standard-object
-    :entry-point entry-point
-    :static-environment
-    (coerce (list* code-object #'enclose #'cons nil static-environment-values)
-            'vector)))
+  (let ((closure (make-instance 'funcallable-standard-object
+                   :entry-point entry-point
+                   :static-environment
+                   (apply #'vector
+                    code-object
+                    #'enclose
+                    #'cons
+                    nil
+                    static-environment-values))))
+    closure))
 
 (defun make-function-cell-finder (environment)
   (lambda (name)
