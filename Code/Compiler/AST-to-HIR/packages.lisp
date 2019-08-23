@@ -2,5 +2,4 @@
 
 (defpackage #:sicl-ast-to-hir
   (:use #:common-lisp)
-  (:export #:ast-to-hir
-           #:constants))
+  (:export #:ast-to-hir))
