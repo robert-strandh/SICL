@@ -17,4 +17,4 @@
                     #'enclose
                     #'cons
                     nil
-                    (sicl-ast-to-hir:constants hir)))))
+                    (sicl-hir-transformations:constants hir)))))

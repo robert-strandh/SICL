@@ -69,7 +69,7 @@
                  (wrapped-cl `(progn (defparameter sicl-boot::*top-level-function*
                                        ,cl)
                                      (defparameter sicl-boot::*constants*
-                                       ,(sicl-ast-to-hir:constants hir)))))
+                                       ',(sicl-hir-transformations:constants hir)))))
             (unless (and (probe-file fasl-pathname)
                          (> (file-write-date fasl-pathname)
                             (file-write-date input-pathname)))
