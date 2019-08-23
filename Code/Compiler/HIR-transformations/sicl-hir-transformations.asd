@@ -10,4 +10,5 @@
    (:file "hoist-fdefinitions")
    (:file "eliminate-create-cell")
    (:file "eliminate-fetch")
-   (:file "eliminate-cell-access")))
+   (:file "eliminate-cell-access")
+   (:file "hoist-constant-inputs")))
