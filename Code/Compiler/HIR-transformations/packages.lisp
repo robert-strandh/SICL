@@ -8,4 +8,7 @@
            #:eliminate-create-cell-instructions
            #:eliminate-fetch-instructions
            #:eliminate-read-cell-instructions
-           #:eliminate-write-cell-instructions))
+           #:eliminate-write-cell-instructions
+           #:constants
+           #:top-level-enter-instruction
+           #:hoist-constant-inputs))
