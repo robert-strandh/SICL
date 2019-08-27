@@ -10,7 +10,6 @@
    (:file "variables")
    (:file "enclose")
    (:file "cons")
-   (:file "create-cell")
    (:file "utilities")
    (:file "general-instance")
    (:file "array")
