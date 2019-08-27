@@ -9,7 +9,6 @@
    (:file "generic-functions")
    (:file "variables")
    (:file "enclose")
-   (:file "fetch")
    (:file "cons")
    (:file "create-cell")
    (:file "utilities")
