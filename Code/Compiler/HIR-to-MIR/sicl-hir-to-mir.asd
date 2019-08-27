@@ -8,7 +8,6 @@
   ((:file "packages")
    (:file "generic-functions")
    (:file "variables")
-   (:file "enclose")
    (:file "cons")
    (:file "utilities")
    (:file "general-instance")
