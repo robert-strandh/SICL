@@ -13,4 +13,5 @@
    (:file "general-instance")
    (:file "array")
    (:file "boxing")
+   (:file "eliminate-enclose-instructions")
    (:file "hir-to-mir")))
