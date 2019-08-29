@@ -2,8 +2,12 @@
 
 (defgeneric process-instruction (instruction lexical-locations))
 
+(defmethod process-instruction (instruction lexical-locations)
+  (declare (ignore lexical-locations))
+  (error "Don't know how to process instruction ~s" instruction))
+
 (defmethod process-instruction
-    (instruction cleavir-ir:assignment-instruction lexical-locations)
+    ((instruction cleavir-ir:assignment-instruction) lexical-locations)
   (let ((dynamic-environment-location
           (cleavir-ir:dynamic-environment-location instruction))
         (input (first (cleavir-ir:inputs instruction)))
