@@ -39,3 +39,29 @@
                            :inputs (list *r11* input)
                            :outputs '())))
           (t (error "Can't handle input ~s and output ~s" input output)))))
+
+(defun insert-memref-before
+    (instruction lexical-location register lexical-locations)
+  (let ((immediate-input
+          (make-instance 'cleavir-ir:immediate-input
+            :value (+ (gethash lexical-location lexical-locations) 8)))
+        (dynamic-environment-location
+          (cleavir-ir:dynamic-environment-location instruction)))
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:assignment-instruction
+       :input *rbp*
+       :output *r11*
+       :dynamic-environment-location dynamic-environment-location)
+     instruction)
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:unsigned-sub-instruction
+       :inputs (list *r11* immediate-input)
+       :output *r11*
+       :dynamic-environment-location dynamic-environment-location)
+     instruction)
+    (cleavir-ir:insert-instruction-before
+     (make-instance 'cleavir-ir:memref1-instruction
+       :input *r11*
+       :output register
+       :dynamic-environment-location dynamic-environment-location)
+     instruction)))
