@@ -28,10 +28,85 @@
 ;;;; 16. Subtract 8 from R13.
 ;;;; 17. While R12 < R13
 ;;;;   17.1 Load the contents of the stack at address R12 to R14.
-;;;;   17.2 Store R15 to the stack at address R11.
+;;;;   17.2 Store R14 to the stack at address R11.
 ;;;;   17.3 Add 8 to R11.
 ;;;;   17.2 Add 8 to R12.
 ;;;;
 ;;;; At this point, all the arguments are on top of the stack, in
 ;;;; order.  Between the arguments an the base pointer there is now
 ;;;; room for the lexical variables.
+
+(defun insert-while-loop (enter-instruction)
+  (let* ((dynamic-environment-location
+           (cleavir-ir:dynamic-environment-location enter-instruction))
+         (immediate-input-8
+           (make-instance 'cleavir-ir:immediate-input :value 8))
+         (add-8-to-r12
+           (make-instance 'cleavir-ir:unsigned-add-instruction
+             :inputs (list *r12* immediate-input-8)
+             :output *r12*
+             :successors '() ; temporarily
+             :dynamic-environment-location dynamic-environment-location))
+         (add-8-to-r11
+           (make-instance 'cleavir-ir:unsigned-add-instruction
+             :inputs (list *r11* immediate-input-8)
+             :output *r11*
+             :successor add-8-to-r12
+             :dynamic-environment-location dynamic-environment-location))
+         (store-r14-on-stack
+           (make-instance 'cleavir-ir:memset1-instruction
+             :inputs (list *r11* *r14*)
+             :outputs '()
+             :successor add-8-to-r11
+             :dynamic-environment-location dynamic-environment-location))
+         (load-r14-from-stack
+           (make-instance 'cleavir-ir:memref1-instruction
+             :input *r12*
+             :output *r14*
+             :successor store-r14-on-stack
+             :dynamic-environment-location dynamic-environment-location))
+         (loop-test
+           (make-instance 'cleavir-ir:unsigned-less-instruction
+             :inputs (list *r12* *r13*)
+             :outputs '()
+             :successors
+             (list load-r14-from-stack (first (cleavir-ir:successors enter-instruction)))
+             :dynamic-environment-location dynamic-environment-location)))
+    (setf (cleavir-ir:predecessors (first (cleavir-ir:successors enter-instruction)))
+          (list loop-test))
+    (setf (cleavir-ir:successors add-8-to-r12)
+          (list loop-test))
+    (setf (cleavir-ir:successors enter-instruction)
+          (list loop-test))
+    (setf (cleavir-ir:predecessors loop-test)
+          (list enter-instruction))
+    (cleavir-ir:insert-instruction-after
+     (make-instance 'cleavir-ir:unsigned-sub-instruction
+       :inputs (list *r13* immediate-input-8)
+       :output *r13*
+       :dynamic-environment-location dynamic-environment-location)
+     enter-instruction)
+    (cleavir-ir:insert-instruction-after
+     (make-instance 'cleavir-ir:assignment-instruction
+       :input *rbp*
+       :output *r13*
+       :dynamic-environment-location dynamic-environment-location)
+     enter-instruction)))
+
+(defun save-register-arguments (enter-instruction)
+  (let ((dynamic-environment-location
+          (cleavir-ir:dynamic-environment-location enter-instruction))
+        (immediate-input-8
+          (make-instance 'cleavir-ir:immediate-input :value 8)))
+    (loop for register in (list *r8* *rcx* *rdx* *rsi* *rdi*)
+          do (cleavir-ir:insert-instruction-after
+              (make-instance 'cleavir-ir:unsigned-add-instruction
+                :inputs (list *r11* immediate-input-8)
+                :output *r11*
+                :dynamic-environment-location dynamic-environment-location)
+              enter-instruction)
+             (cleavir-ir:insert-instruction-after
+              (make-instance 'cleavir-ir:memset1-instruction
+                :inputs (list *r11* register)
+                :dynamic-environment-location dynamic-environment-location)
+              enter-instruction))))
