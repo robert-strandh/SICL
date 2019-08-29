@@ -4,4 +4,5 @@
   :depends-on (:cleavir2-ir)
   :serial t
   :components
-  ((:file "general")))
+  ((:file "general")
+   (:file "stack-instructions")))
