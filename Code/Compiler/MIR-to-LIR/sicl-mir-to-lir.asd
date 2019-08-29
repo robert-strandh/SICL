@@ -8,4 +8,6 @@
   ((:file "packages")
    (:file "registers")
    (:file "move-return-address")
-   (:file "save-arguments")))
+   (:file "save-arguments")
+   (:file "process-instructions")))
+
