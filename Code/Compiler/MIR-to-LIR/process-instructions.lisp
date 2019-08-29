@@ -91,3 +91,25 @@
        :output *r11*
        :dynamic-environment-location dynamic-environment-location)
      instruction)))
+
+(defun process-comparison (instruction lexical-locations)
+  (destructuring-bind (input1 input2)
+      (cleavir-ir:inputs instruction)
+    (when (typep input1 'cleavir-ir:lexical-location)
+      (insert-memref-before input1 *r11* input1 lexical-locations)
+      (setf (first (cleavir-ir:inputs instruction)) *r11*))
+    (when (typep input2 'cleavir-ir:lexical-location)
+      (insert-memref-before input1 *r12* input1 lexical-locations)
+      (setf (second (cleavir-ir:inputs instruction)) *r12*))))
+
+(defmethod process-instruction
+    ((instruction cleavir-ir:unsigned-less-instruction) lexical-locations)
+  (process-comparison instruction lexical-locations))
+
+(defmethod process-instruction
+    ((instruction cleavir-ir:unsigned-not-greater-instruction) lexical-locations)
+  (process-comparison instruction lexical-locations))
+
+(defmethod process-instruction
+    ((instruction cleavir-ir:eq-instruction) lexical-locations)
+  (process-comparison instruction lexical-locations))
