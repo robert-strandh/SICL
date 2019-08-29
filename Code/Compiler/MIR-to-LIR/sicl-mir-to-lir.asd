@@ -5,5 +5,6 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "registers")
    (:file "move-return-address")
    (:file "save-arguments")))
