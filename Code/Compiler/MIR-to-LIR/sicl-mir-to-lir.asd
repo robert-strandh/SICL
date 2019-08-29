@@ -2,6 +2,7 @@
 
 (defsystem #:sicl-mir-to-lir
   :depends-on (#:cleavir2-lir
+               #:cleavir2-mir
                #:cleavir2-hir)
   :serial t
   :components
