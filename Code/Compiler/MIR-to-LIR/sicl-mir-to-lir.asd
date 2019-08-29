@@ -4,4 +4,5 @@
   :depends-on (#:cleavir2-lir)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "save-arguments")))
