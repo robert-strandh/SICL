@@ -68,6 +68,7 @@
          (let (,@lexical-location-names
                (source nil))
            (declare (ignorable ,@lexical-location-names))
+           (declare (ignorable source))
            (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
               ,@(tagged-basic-blocks successor client context)))))))
 

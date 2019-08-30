@@ -62,6 +62,7 @@
          (declare (ignorable ,@lexical-location-names))
          (declare (ignorable ,(static-env-function-var context)))
          (declare (ignorable ,@values-location-names))
+         (declare (ignorable source))
          (block ,(block-name context)
            (tagbody (go ,(tag-of-basic-block (basic-block-of-leader successor)))
               ,@(tagged-basic-blocks successor client context)))))))
