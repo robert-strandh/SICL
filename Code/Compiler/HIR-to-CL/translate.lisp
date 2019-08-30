@@ -3,10 +3,11 @@
 (defgeneric translate (client instruction context))
 
 (defmethod translate :around (client instruction context)
-  (cons `(setq source
-               (compute-source-info
-                source ',(cleavir-ast-to-hir:origin instruction)))
-        (call-next-method)))
+  (let ((origin (cleavir-ast-to-hir:origin instruction)))
+    (if (null origin)
+        (call-next-method)
+        (cons `(setq source (compute-source-info source ',origin))
+              (call-next-method)))))
 
 (defun translate-input (input)
   (if (typep input 'cleavir-ir:constant-input)

@@ -3,10 +3,11 @@
 (defgeneric translate-final-instruction (client instruction context))
 
 (defmethod translate-final-instruction :around (client instruction context)
-  (cons `(setq source
-               (compute-source-info
-                source ',(cleavir-ast-to-hir:origin instruction)))
-        (call-next-method)))
+  (let ((origin (cleavir-ast-to-hir:origin instruction)))
+    (if (null origin)
+        (call-next-method)
+        (cons `(setq source (compute-source-info source ',origin))
+              (call-next-method)))))
 
 ;;; Default method on TRANSLATE-FINAL-INSTRUCTION.  It is used when
 ;;; the final instruction is a simple instruction with a single
