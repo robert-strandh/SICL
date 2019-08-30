@@ -6,7 +6,7 @@
         (function-name-input
           (make-instance 'cleavir-ir:constant-input
             :value 'symbol-value))
-        (values-location (cleavir-ir:make-values-location)))
+        (values-location (make-instance 'cleavir-ir:values-location)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
        :input function-name-input
@@ -38,7 +38,7 @@
         (function-name-input
           (make-instance 'cleavir-ir:constant-input
             :value '(setf symbol-value)))
-        (values-location (cleavir-ir:make-values-location)))
+        (values-location (make-instance 'cleavir-ir:values-location)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
        :input function-name-input
