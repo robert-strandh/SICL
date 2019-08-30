@@ -398,7 +398,7 @@
          (dynenv (cleavir-ir:make-lexical-location (gensym "function")))
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
-         (values (cleavir-ir:make-values-location))
+         (values (make-instance 'cleavir-ir:values-location))
          (return (make-instance 'cleavir-ir:return-instruction
                    :inputs (list values)
                    :dynamic-environment-location dynenv))
@@ -453,7 +453,7 @@
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
   (let ((locations (mapcar #'find-or-create-location
                            (cleavir-ast:lhs-asts ast)))
-        (vtemp (cleavir-ir:make-values-location)))
+        (vtemp (make-instance 'cleavir-ir:values-location)))
     (compile-ast
      (cleavir-ast:form-ast ast)
      (clone-context
@@ -657,7 +657,7 @@
            (dynenv (cleavir-ir:make-lexical-location (gensym "top")))
            (forms (cleavir-ast:forms ast))
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
-           (values (cleavir-ir:make-values-location))
+           (values (make-instance 'cleavir-ir:values-location))
            (return (make-instance 'cleavir-ir:return-instruction
                      :inputs (list values)
                      :dynamic-environment-location dynenv))
@@ -679,7 +679,7 @@
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (cleavir-ir:make-lexical-location (gensym "topnh")))
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
-           (values (cleavir-ir:make-values-location))
+           (values (make-instance 'cleavir-ir:values-location))
            (return (make-instance 'cleavir-ir:return-instruction
                      :inputs (list values)
                      :dynamic-environment-location dynenv))
@@ -756,7 +756,7 @@
     (assert-context ast context nil 1)
     (let* ((function-temp (cleavir-ir:new-temporary))
            (form-temps (loop repeat (length (cleavir-ast:form-asts ast))
-                             collect (cleavir-ir:make-values-location)))
+                             collect (make-instance 'cleavir-ir:values-location)))
            (inputs (list* function-temp form-temps))
            (successor
              (if (typep results 'cleavir-ir:values-location)

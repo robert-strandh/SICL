@@ -26,7 +26,7 @@
 (defun invoke-thunk-at-load-time (thunk &optional (outputs '()))
   (let ((nop (make-instance 'cleavir-ir:nop-instruction))
         (enclosed-thunk (cleavir-ir:new-temporary))
-        (funcall-result (cleavir-ir:make-values-location)))
+        (funcall-result (make-instance 'cleavir-ir:values-location)))
     (emit-instruction (make-instance 'cleavir-ir:enclose-instruction
                         :output enclosed-thunk
                         :successor nop

@@ -1,7 +1,7 @@
 (cl:in-package #:cleavir-value-hoisting-test)
 
 (defun hir-funcall (lexical-location &rest constants)
-  (let ((values-location (cleavir-ir:make-values-location)))
+  (let ((values-location (make-instance 'cleavir-ir:values-location)))
     (cleavir-ir:make-enter-instruction
      '()
      (cleavir-ir:dynamic-environment-location lexical-location)
