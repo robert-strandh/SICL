@@ -83,9 +83,6 @@
 (defclass values-location (datum)
   ())
 
-(defun make-values-location ()
-  (make-instance 'values-location))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Helper function VARIABLE-P.

@@ -14,7 +14,7 @@
    #:lexical-location #:make-lexical-location
    #:new-temporary
    #:name
-   #:values-location #:make-values-location
+   #:values-location
    #:variable-p
    #:external-input #:make-external-input
    #:register-location
