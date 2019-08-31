@@ -28,9 +28,6 @@
   (loop for name being each hash-value of table
         collect name))
 
-(defun values-location-name (values-location context)
-  (gethash values-location (values-locations context)))
-
 (defun hir-to-cl (client initial-instruction)
   (let* ((static-environment-output
            (cleavir-ir:static-environment initial-instruction))
