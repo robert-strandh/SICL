@@ -65,16 +65,12 @@
                (fasl-pathname (asdf:system-relative-pathname '#:sicl fasl-relative-pathname)))
           (ensure-directories-exist output-pathname)
           (let* ((hir (sicl-ast-to-hir:ast-to-hir ast))
-                 (cl (sicl-hir-to-cl:hir-to-cl nil hir))
-                 (wrapped-cl `(progn (defparameter sicl-boot::*top-level-function*
-                                       ,cl)
-                                     (defparameter sicl-boot::*constants*
-                                       ',(sicl-hir-transformations:constants hir)))))
+                 (cl (sicl-hir-to-cl:hir-to-cl-for-file-compilation nil hir)))
             (unless (and (probe-file fasl-pathname)
                          (> (file-write-date fasl-pathname)
                             (file-write-date input-pathname)))
               (with-open-file (stream output-pathname
                                       :direction :output
                                       :if-exists :supersede)
-                (cleavir-io:write-model output-pathname nil wrapped-cl)
+                (cleavir-io:write-model output-pathname nil cl)
                 (cl:compile-file output-pathname)))))))))
