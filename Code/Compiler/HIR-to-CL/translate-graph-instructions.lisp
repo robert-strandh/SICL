@@ -64,6 +64,7 @@
               ,dynamic-environment-variable)
        (declare (ignorable ,static-environment-variable
                            ,dynamic-environment-variable))
+       (declare (type simple-vector ,static-environment-variable))
        (block ,(block-name context)
          (let (,@lexical-location-names
                (source nil))
