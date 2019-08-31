@@ -8,7 +8,7 @@
                 (cleavir-cst-to-ast:cst-to-ast client cst global-environment)))
          (hir (sicl-ast-to-hir:ast-to-hir ast))
          (cl (hir-to-cl client hir))
-         (fun (compile nil cl))
+         (fun (eval cl))
          (*dynamic-environment* '()))
     (funcall fun
              (make-function-cell-finder global-environment)
