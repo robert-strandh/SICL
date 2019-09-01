@@ -10,4 +10,5 @@
    (:file "array-related-instructions")
    (:file "boxing-related-instructions")
    (:file "cons-related-instructions")
+   (:file "fixnum-related-instructions")
    (:file "hir-interpreter")))
