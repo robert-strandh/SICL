@@ -193,21 +193,6 @@
                        :align-x :center :align-y :center
                        :ink clim:+dark-green+))))
 
-(defmethod draw-datum ((datum cleavir-ir:values-location) pane)
-  (multiple-value-bind (hpos vpos) (datum-position datum)
-    (clim:draw-oval* pane hpos vpos
-                     (floor datum-width 2) (floor datum-height 2)
-                     :ink clim:+light-blue+
-                     :filled t)
-    (clim:draw-oval* pane hpos vpos
-                     (floor datum-width 2) (floor datum-height 2)
-                     :filled nil)
-    (clim:with-text-size (pane :small)
-      (clim:draw-text* pane "values"
-                       hpos vpos
-                       :align-x :center :align-y :center
-                       :ink clim:+dark-blue+))))
-
 (defmethod draw-datum ((datum cleavir-ir:constant-input) pane)
   (multiple-value-bind (hpos vpos) (datum-position datum)
     (clim:draw-oval* pane hpos vpos
