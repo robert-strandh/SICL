@@ -81,7 +81,10 @@
    (%outputs :initform '() :initarg :outputs :accessor outputs)
    (%dynamic-environment-location
     :initarg :dynamic-environment-location
-    :accessor dynamic-environment-location)))
+    :accessor dynamic-environment-location)
+   (%values-environment-location
+    :initarg :values-environment-location
+    :accessor values-environment-location)))
 
 (defmethod initialize-instance :after ((obj instruction) &key input output successor)
   (let ((inputs (if (null input) (inputs obj) (list input)))
