@@ -9,4 +9,5 @@
    (:file "argument-processing-instructions")
    (:file "array-related-instructions")
    (:file "boxing-related-instructions")
+   (:file "cons-related-instructions")
    (:file "hir-interpreter")))
