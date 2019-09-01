@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "utilities")
    (:file "argument-processing-instructions")
+   (:file "array-related-instructions")
    (:file "hir-interpreter")))
