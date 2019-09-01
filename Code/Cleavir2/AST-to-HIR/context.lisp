@@ -44,24 +44,22 @@
 ;;; The following combinations of SUCCESSORS and RESULTS can occur:
 ;;;
 ;;;   SUCCESSORS has one element.  then RESULTS can be a list of
-;;;   lexical locations or a single values location.
+;;;   lexical locations or the keyword symbol :VALUES.
 ;;;
 ;;;      If RESULTS is the empty list, this means that no values are
 ;;;      required.  Forms inside a PROGN other than the last are
 ;;;      compiled in a context like this.
 ;;;
-;;;      If RESULTS has a single element, then a single value is
+;;;      If RESULTS is a singleton list, then a single value is
 ;;;      required.  Arguments to function calls are examples of ASTs
 ;;;      that are compiled in a context like this.
 ;;;
-;;;      If RESULTS has more than one element, then that many values
-;;;      are required.  The VALUES-FORM-AST of MULTIPLE-VALUE-BIND-AST
-;;;      is compiled in a context like this.
+;;;      If RESULTS is alist with more than one element, then that
+;;;      many values are required.  The VALUES-FORM-AST of
+;;;      MULTIPLE-VALUE-BIND-AST is compiled in a context like this.
 ;;;
-;;;      If RESULTS is a values location, then all values are
-;;;      required.  An example of the use of this context is for
-;;;      compiling the FIRST-FORM of a MULTIPLE-VALUE-PROG1 special
-;;;      form.
+;;;      If RESULTS is the symbol :VALUES, then all values are
+;;;      required and will be stored in the global values location.
 ;;;
 ;;;   SUCCESSOR has two elements.  Then RESULTS is the empty list,
 ;;;   meaning that no values are required.  The TEST-AST of an IF-AST
@@ -70,6 +68,8 @@
 ;;;   SUCCESSORS has more than two elements.  This possibility is
 ;;;   currently not used.  It is meant to be used for forms like CASE,
 ;;;   TYPECASE, etc.  Again, the RESULTS would be the empty list.
+;;;   FIXME: check whether this possibility is used when the
+;;;   CATCH-INSTRUCTION is generated.
 
 (defclass context ()
   ((%results :initarg :results :reader results)
