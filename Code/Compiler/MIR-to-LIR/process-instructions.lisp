@@ -8,9 +8,7 @@
 
 (defmethod process-instruction
     ((instruction cleavir-ir:assignment-instruction) lexical-locations)
-  (let ((dynamic-environment-location
-          (cleavir-ir:dynamic-environment-location instruction))
-        (input (first (cleavir-ir:inputs instruction)))
+  (let ((input (first (cleavir-ir:inputs instruction)))
         (output (first (cleavir-ir:outputs instruction))))
     (cond ((and (typep input 'cleavir-ir:register-location)
                 (typep output 'cleavir-ir:register-location))
@@ -25,14 +23,12 @@
              (cleavir-ir:insert-instruction-before
               (make-instance 'cleavir-ir:assignment-instruction
                 :input *rbp*
-                :output *r11*
-                :dynamic-environment-location dynamic-environment-location)
+                :output *r11*)
               instruction)
              (cleavir-ir:insert-instruction-before
               (make-instance 'cleavir-ir:unsigned-sub-instruction
                 :inputs (list *r11* immediate-input)
-                :output *r11*
-                :dynamic-environment-location dynamic-environment-location)
+                :output *r11*)
               instruction)
              (change-class instruction
                            'cleavir-ir:memset1-instruction
@@ -44,52 +40,42 @@
     (instruction lexical-location register lexical-locations)
   (let ((immediate-input
           (make-instance 'cleavir-ir:immediate-input
-            :value (+ (gethash lexical-location lexical-locations) 8)))
-        (dynamic-environment-location
-          (cleavir-ir:dynamic-environment-location instruction)))
+            :value (+ (gethash lexical-location lexical-locations) 8))))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:assignment-instruction
        :input *rbp*
-       :output *r11*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *r11*)
      instruction)
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:unsigned-sub-instruction
        :inputs (list *r11* immediate-input)
-       :output *r11*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *r11*)
      instruction)
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:memref1-instruction
        :input *r11*
-       :output register
-       :dynamic-environment-location dynamic-environment-location)
+       :output register)
      instruction)))
 
 (defun insert-memset-after
     (instruction register lexical-location lexical-locations)
   (let ((immediate-input
           (make-instance 'cleavir-ir:immediate-input
-            :value (+ (gethash lexical-location lexical-locations) 8)))
-        (dynamic-environment-location
-          (cleavir-ir:dynamic-environment-location instruction)))
+            :value (+ (gethash lexical-location lexical-locations) 8))))
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:memset1-instruction
        :inputs (list *r11* register)
-       :output register
-       :dynamic-environment-location dynamic-environment-location)
+       :output register)
      instruction)
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:unsigned-sub-instruction
        :inputs (list *r11* immediate-input)
-       :output *r11*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *r11*)
      instruction)
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:assignment-instruction
        :input *rbp*
-       :output *r11*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *r11*)
      instruction)))
 
 (defun process-comparison (instruction lexical-locations)

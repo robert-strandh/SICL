@@ -9,37 +9,30 @@
 ;;;; 4. Store R11 to the stack at the address indicated by R12.
 
 (defun move-return-address (enter-instruction)
-  (let ((dynamic-environment-location
-          (cleavir-ir:dynamic-environment-location enter-instruction))
-        (immediate-input-8
+  (let ((immediate-input-8
           (make-instance 'cleavir-ir:immediate-input :value 8)))
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:memset1-instruction
        :inputs (list *r12* *r11*)
-       :outputs '()
-       :dynamic-environment-location dynamic-environment-location)
+       :outputs '())
      enter-instruction)
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:unsigned-sub-instruction
        :inputs (list *r12* immediate-input-8)
-       :output *r12*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *r12*)
      enter-instruction)
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:assignment-instruction
        :input *rbp*
-       :output *r12*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *r12*)
      enter-instruction)
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:unsigned-add-instruction
        :input (list *rsp* immediate-input-8)
-       :output *rsp*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *rsp*)
      enter-instruction)
     (cleavir-ir:insert-instruction-after
      (make-instance 'cleavir-ir:memref1-instruction
        :input *rsp*
-       :output *r11*
-       :dynamic-environment-location dynamic-environment-location)
+       :output *r11*)
      enter-instruction)))

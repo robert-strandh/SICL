@@ -84,9 +84,7 @@
      (make-instance 'cleavir-ir:fetch-instruction
        :inputs (list env-location
                 (make-instance 'cleavir-ir:constant-input :value new-index))
-       :output dloc
-       :dynamic-environment-location
-       (cleavir-ir:dynamic-environment-output enter))
+       :output dloc)
      enter)
     ;; Make sure we keep track of the closure vector expansion.
     (setf (cleavir-ir:closure-size enter) (1+ new-index))))
@@ -118,8 +116,7 @@
   (cleavir-ir:insert-instruction-after
    (make-instance 'cleavir-ir:create-cell-instruction
      :inputs '()
-     :output (cdr (assoc owner cell-locations))
-     :dynamic-environment-location (cleavir-ir:dynamic-environment-output owner))
+     :output (cdr (assoc owner cell-locations)))
    owner)
   ;; Next, for each entry in CELL-LOCATIONS other than OWNER, transmit
   ;; the cell from the corresponding ENCLOSE-INSTRUCTION to the
@@ -173,9 +170,7 @@
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:read-cell-instruction
        :input cloc
-       :output d
-       :dynamic-environment-location
-       (cleavir-ir:dynamic-environment-location instruction))
+       :output d)
      instruction)
     (cleavir-ir:substitute-input d sloc instruction)))
 
@@ -196,19 +191,13 @@
         (cleavir-ir:insert-instruction-between
          (make-instance 'cleavir-ir:write-cell-instruction
            :inputs (list cloc d)
-           :outputs '()
-           :dynamic-environment-location
-           (cleavir-ir:dynamic-environment-location
-            (first (cleavir-ir:successors instruction))))
+           :outputs '())
          instruction
          (first (cleavir-ir:successors instruction)))
         (cleavir-ir:insert-instruction-after
          (make-instance 'cleavir-ir:write-cell-instruction
            :inputs (list cloc d)
-           :outputs '()
-           :dynamic-environment-location
-           (cleavir-ir:dynamic-environment-location
-            (first (cleavir-ir:successors instruction))))
+           :outputs '())
          instruction))))
 
 ;;; Given a single shared lexical location LOCATION, eliminate it by

@@ -10,8 +10,6 @@
      (when (typep instruction 'cleavir-ir:enclose-instruction)
        (let ((static-environment-location
                (cleavir-ir:static-environment owner))
-             (dynamic-environment-location
-               (cleavir-ir:dynamic-environment-location instruction))
              (enclose-function-lexical-location
                (make-instance 'cleavir-ir:lexical-location
                  :name (gensym "enclose-function")))
@@ -28,13 +26,11 @@
             :simple-p t
             :element-type t
             :inputs (list static-environment-location static-input-1)
-            :output enclose-function-lexical-location
-            :dynamic-environment-location dynamic-environment-location)
+            :output enclose-function-lexical-location)
           instruction)
          (cleavir-ir:insert-instruction-after
           (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-            :output (first (cleavir-ir:outputs instruction))
-            :dynamic-environment-location dynamic-environment-location)
+            :output (first (cleavir-ir:outputs instruction)))
           instruction)
          (change-class instruction
                        'cleavir-ir:funcall-instruction

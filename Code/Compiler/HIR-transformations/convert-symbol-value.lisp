@@ -9,15 +9,11 @@
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
        :input function-name-input
-       :output function-temp
-       :dynamic-environment-location
-       (cleavir-ir:dynamic-environment-location instruction))
+       :output function-temp)
      instruction)
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:funcall-instruction
-       :inputs (list function-temp variable-name-input)
-       :dynamic-environment-location
-       (cleavir-ir:dynamic-environment-location instruction))
+       :inputs (list function-temp variable-name-input))
      instruction)
     (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
                   :outputs '())))
@@ -39,15 +35,11 @@
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
        :input function-name-input
-       :output function-temp
-       :dynamic-environment-location
-       (cleavir-ir:dynamic-environment-location instruction))
+       :output function-temp)
      instruction)
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:funcall-instruction
-       :inputs (list function-temp value-input variable-name-input)
-       :dynamic-environment-location
-       (cleavir-ir:dynamic-environment-location instruction))
+       :inputs (list function-temp value-input variable-name-input))
      instruction)
     (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
                   :inputs '())))

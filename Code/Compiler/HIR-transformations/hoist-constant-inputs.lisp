@@ -17,8 +17,6 @@
 
 (defun hoist-constant-inputs (initial-instruction)
   (let ((locations '())
-        (dynamic-environment-location
-          (cleavir-ir:dynamic-environment-output initial-instruction))
         (static-environment-location
           (cleavir-ir:static-environment initial-instruction)))
     (with-accessors ((constants constants))
@@ -43,9 +41,7 @@
                              :inputs (list static-environment-location
                                            (make-instance 'cleavir-ir:constant-input
                                              :value pos))
-                             :output location
-                             :dynamic-environment-location
-                             dynamic-environment-location)
+                             :output location)
                            initial-instruction)))
                       (setf (first remaining)
                             (nth pos locations))))))

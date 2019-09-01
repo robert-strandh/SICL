@@ -2,8 +2,6 @@
 
 (defun eliminate-create-cell-instruction (instruction owner)
   (let ((static-environment-location (cleavir-ir:static-environment owner))
-        (dynamic-environment-location
-          (cleavir-ir:dynamic-environment-location instruction))
         (nil-location
           (make-instance 'cleavir-ir:lexical-location :name (gensym "nil")))
         (cons-function-offset-input
@@ -17,15 +15,13 @@
      (make-instance 'cleavir-ir:fetch-instruction
        :inputs (list static-environment-location cons-function-offset-input)
        :output cons-function-location
-       :successor instruction
-       :dynamic-environment-location dynamic-environment-location)
+       :successor instruction)
      instruction)
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fetch-instruction
        :inputs (list static-environment-location nil-offset-input)
        :output nil-location
-       :successor instruction
-       :dynamic-environment-location dynamic-environment-location)
+       :successor instruction)
      instruction)
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:funcall-instruction
@@ -33,8 +29,7 @@
                 cons-function-location
                 nil-location
                 nil-location)
-       :successor instruction
-       :dynamic-environment-location dynamic-environment-location)
+       :successor instruction)
      instruction)
     (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
                   :inputs '())))
