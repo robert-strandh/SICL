@@ -4,15 +4,15 @@
 ;;;
 ;;; Instruction MULTIPLE-TO-FIXED-INSTRUCTION.
 ;;;
-;;; This instruction takes a single input of type VALUES-LOCATION and
-;;; a list of outputs that are LEXICAL-LOCATIONs.  The purpose is to
-;;; assign multiple values to one or more ordinary lexical locations.
-;;; The assignment is done so that if fewer ordinary lexical locations
-;;; are required than there are values contained in the
-;;; VALUES-LOCATION, then the remaining values are ignored, and if
-;;; more ordinary lexical locations are required than there are values
-;;; contained in the VALUES-LOCATION, then the remaining ordinary
-;;; lexical locations are assigned to NIL.
+;;; This instruction takes zero inputs and a list of outputs that are
+;;; LEXICAL-LOCATIONs.  The purpose is to assign multiple values taken
+;;; from the global values location to one or more ordinary lexical
+;;; locations.  The assignment is done so that if fewer ordinary
+;;; lexical locations are required than there are values contained in
+;;; the global values location, then the remaining values are ignored,
+;;; and if more ordinary lexical locations are required than there are
+;;; values contained in the global values location, then the remaining
+;;; ordinary lexical locations are assigned to NIL.
 
 (defclass multiple-to-fixed-instruction (instruction one-successor-mixin)
   ())
@@ -22,11 +22,11 @@
 ;;; Instruction FIXED-TO-MULTIPLE-INSTRUCTION.
 ;;;
 ;;; This instruction takes a list of inputs that are LEXICAL-LOCATIONs
-;;; and a single output of type VALUES-LOCATION.  The purpose is to
-;;; assign one or more values, each contained in a LEXICAL-LOCATION to
-;;; a location containing multiple values.  The assignment is done so
-;;; that all the inputs are preserved, and the number of inputs is
-;;; kept with the output.
+;;; and a zero outputs.  The purpose is to assign one or more values,
+;;; each contained in a LEXICAL-LOCATION to a the global values
+;;; location.  The assignment is done so that all the inputs are
+;;; preserved, and the number of inputs is kept with the global values
+;;; location.
 
 (defclass fixed-to-multiple-instruction (instruction one-successor-mixin)
   ())
@@ -35,11 +35,13 @@
 ;;;
 ;;; Instruction MULTIPLE-VALUE-CALL-INSTRUCTION.
 ;;;
-;;; The first input of this instruction is an ordinary lexical
-;;; location.  The remaining inputs are of type VALUES-LOCATION, and
-;;; each represents multiple values returned form the evaluation of
-;;; some form.  This instruction has a single output, also of the type
-;;; VALUES-LOCATION.
+;;; This instruction has a single input which is a lexical location
+;;; holding a function to call.  The VALUES-ENVIRONMENT-LOCATION of
+;;; this instruction holds any number of entries, each holding an
+;;; arbitrary number of multiple values.  The top of the environment
+;;; stack contains the values returned by the last sub-form of the
+;;; MULTIPLE-VALUE-CALL form.  The values returned by the function
+;;; call are stored in the global values location.
 
 (defclass multiple-value-call-instruction
     (instruction one-successor-mixin side-effect-mixin)
@@ -49,11 +51,12 @@
 ;;;
 ;;; Instruction THE-VALUES-INSTRUCTION.
 ;;;
-;;; This is like THE-INSTRUCTION, but takes a VALUES-LOCATION
-;;; as input instead of a lexical one, and correspondingly, a
-;;; (decomposed) values type instead of a single-value type.
-;;; A separate instruction is useful because values locations can
-;;; have an unknown or varying number of values.
+;;; This is like THE-INSTRUCTION, but takes a multiple value inputs
+;;; stored in the global values location, rather than the lexical
+;;; locations that the THE-INSTRUCTION takes.  This instruction also
+;;; has a (decomposed) values type instead of a single-value type.  A
+;;; separate instruction is useful because the global values location
+;;; can have an unknown or varying number of values.
 
 (defclass the-values-instruction (instruction one-successor-mixin)
   ((%required-types :initarg :required :reader required-types)
