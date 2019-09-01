@@ -5,7 +5,7 @@
 ;;; Compilation context.
 ;;;
 ;;; Each AST is compiled in a particular COMPILATION CONTEXT or
-;;; CONTEXT for short.  A context object has three components:
+;;; CONTEXT for short.  A context object has five components:
 ;;;
 ;;; 1. SUCCESSORS, which is a proper list containing one or two
 ;;; elements.  These elements are instructions resulting from the
@@ -30,6 +30,16 @@
 ;;;
 ;;; 3. INVOCATION, always an ENTER-INSTRUCTION.  It indicates the
 ;;; function to which the code to be compiled belongs.
+;;;
+;;; 4. DYNAMIC-ENVIRONMENT-LOCATION, which is a lexical location that
+;;; indicates in which dynamic environment an instruction is executed.
+;;; The value of this component is stored in the corresponding slot in
+;;; each instruction.
+;;;
+;;; 5. VALUES-ENVIRONMENT-LOCATION, which is a lexical location that
+;;; indicates in which environment for multiple values the instruction
+;;; is executed.  The value of this component is stored in the
+;;; corresponding slot in each instruction.
 ;;;
 ;;; The following combinations of SUCCESSORS and RESULTS can occur:
 ;;;
@@ -67,7 +77,10 @@
    (%invocation :initarg :invocation :reader invocation)
    (%dynamic-environment-location
     :initarg :dynamic-environment-location
-    :reader dynamic-environment-location)))
+    :reader dynamic-environment-location)
+   (%values-environment-location
+    :initarg :values-environment-location
+    :reader values-environment-location)))
 
 (defmethod initialize-instance :after ((context context) &key result successor)
   (let ((successors (if (null successor) (successors context) (list successor)))
