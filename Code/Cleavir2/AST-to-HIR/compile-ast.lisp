@@ -17,12 +17,11 @@
                    (successors successors))
       context
     (assert-context ast context nil 1)
-    ;; We have a context with one successor, so RESULTS can be a
-    ;; list of any length, or it can be a values location,
-    ;; indicating that all results are needed.
-    (cond ((typep results 'cleavir-ir:values-location)
-           ;; The context is such that all multiple values are
-           ;; required.
+    ;; We have a context with one successor, so RESULTS can be a list
+    ;; of any length, or it can be the symbol :VALUES indicating that
+    ;; all results are needed.
+    (cond ((eq results :values)
+           ;; The context is such that all values are required.
            (let ((temp (make-temp)))
              (call-next-method
               ast
@@ -32,14 +31,15 @@
                :successor
                (make-instance 'cleavir-ir:fixed-to-multiple-instruction
                  :inputs (list temp)
-                 :output results
                  :successor (first successors)
                  :dynamic-environment-location
-                 (dynamic-environment-location context))))))
+                 (dynamic-environment-location context)
+                 :values-environment-location
+                 (values-environment-location context))))))
           ((null results)
            ;; We don't need the result.  This situation typically
-           ;; happens when we compile a form other than the last of
-           ;; a PROGN-AST.
+           ;; happens when we compile a form other than the last of a
+           ;; PROGN-AST.
            (if (cleavir-ast:side-effect-free-p ast)
                (progn
                  ;; For now, we do not emit this warning.  It is a bit
