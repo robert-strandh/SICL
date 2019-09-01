@@ -39,6 +39,7 @@
    ;; FIXME: check that these two are still needed.
    #:dynamic-environment #:*dynamic-environment*
    #:dynamic-environment-location
+   #:values-environment-location
    #:symbol-value-instruction
    #:set-symbol-value-instruction
    #:fdefinition-instruction
@@ -96,6 +97,8 @@
    #:slot-write-instruction
    #:multiple-to-fixed-instruction
    #:fixed-to-multiple-instruction
+   #:save-values-instruction
+   #:restore-values-instruction
    #:multiple-value-call-instruction
    #:create-cell-instruction
    #:fetch-instruction
