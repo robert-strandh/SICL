@@ -12,8 +12,7 @@
           (make-instance 'cleavir-ir:constant-input :value -1))
         (cons-function-location
           (make-instance 'cleavir-ir:lexical-location
-            :name (gensym "cons-function")))
-        (values-location (make-instance 'cleavir-ir:values-location)))
+            :name (gensym "cons-function"))))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fetch-instruction
        :inputs (list static-environment-location cons-function-offset-input)
@@ -34,12 +33,11 @@
                 cons-function-location
                 nil-location
                 nil-location)
-       :output values-location
        :successor instruction
        :dynamic-environment-location dynamic-environment-location)
      instruction)
     (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
-                  :inputs (list values-location))))
+                  :inputs '())))
 
 (defun eliminate-create-cell-instructions (initial-instruction)
   (cleavir-ir:map-instructions-with-owner

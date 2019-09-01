@@ -5,8 +5,7 @@
         (function-temp (cleavir-ast-to-hir:make-temp))
         (function-name-input
           (make-instance 'cleavir-ir:constant-input
-            :value 'symbol-value))
-        (values-location (make-instance 'cleavir-ir:values-location)))
+            :value 'symbol-value)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
        :input function-name-input
@@ -17,12 +16,11 @@
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:funcall-instruction
        :inputs (list function-temp variable-name-input)
-       :output values-location
        :dynamic-environment-location
        (cleavir-ir:dynamic-environment-location instruction))
      instruction)
     (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
-                  :inputs (list values-location))))
+                  :outputs '())))
 
 (defun convert-symbol-value (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
@@ -37,8 +35,7 @@
         (function-temp (cleavir-ast-to-hir:make-temp))
         (function-name-input
           (make-instance 'cleavir-ir:constant-input
-            :value '(setf symbol-value)))
-        (values-location (make-instance 'cleavir-ir:values-location)))
+            :value '(setf symbol-value))))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:fdefinition-instruction
        :input function-name-input
@@ -49,12 +46,11 @@
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:funcall-instruction
        :inputs (list function-temp value-input variable-name-input)
-       :output values-location
        :dynamic-environment-location
        (cleavir-ir:dynamic-environment-location instruction))
      instruction)
     (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
-                  :inputs (list values-location))))
+                  :inputs '())))
 
 (defun convert-set-symbol-value (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order

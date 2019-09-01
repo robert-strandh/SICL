@@ -15,8 +15,6 @@
              (enclose-function-lexical-location
                (make-instance 'cleavir-ir:lexical-location
                  :name (gensym "enclose-function")))
-             (values-location
-               (make-instance 'cleavir-ir:values-location))
              (static-input-1
                (make-instance 'cleavir-ir:constant-input
                  :value 1))
@@ -35,7 +33,6 @@
           instruction)
          (cleavir-ir:insert-instruction-after
           (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-            :input values-location
             :output (first (cleavir-ir:outputs instruction))
             :dynamic-environment-location dynamic-environment-location)
           instruction)
@@ -43,6 +40,5 @@
                        'cleavir-ir:funcall-instruction
                        :inputs (list* enclose-function-lexical-location
                                       entry-point-input
-                                      (cleavir-ir:inputs instruction))
-                       :outputs (list values-location)))))
+                                      (cleavir-ir:inputs instruction))))))
    top-level-enter-instruction))

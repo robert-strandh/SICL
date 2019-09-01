@@ -9,7 +9,6 @@
         (index-location (make-instance 'cleavir-ir:lexical-location :name (gensym "index")))
         (constant-1-input (make-instance 'cleavir-ir:constant-input :value 1))
         (constant-cons-input (make-instance 'cleavir-ir:constant-input :value 'cons))
-        (values-location (make-instance 'cleavir-ir:values-location))
         (first-index-input (make-instance 'cleavir-ir:constant-input :value first-index))
         (nop (make-instance 'cleavir-ir:nop-instruction
                :dynamic-environment-location dynamic-environment-location)))
@@ -20,7 +19,6 @@
            (temp first))
       (setf first
             (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-              :input values-location
               :output rest-parameter-location
               :successor first
               :dynamic-environment-location dynamic-environment-location))
@@ -28,7 +26,6 @@
             (make-instance 'cleavir-ir:funcall-instruction
               :inputs
               (list cons-location argument-location rest-parameter-location)
-              :output values-location
               :successor first
               :dynamic-environment-location dynamic-environment-location))
       (setf first
