@@ -9,6 +9,11 @@
 ;;; predecessor.  For every existing predecessor P of E, P will become
 ;;; a predecessor of N and N will replace E as a successor of P.
 (defun insert-instruction-before (new existing)
+  (reinitialize-instance new
+    :dynamic-environment-location
+    (dynamic-environment-location existing)
+    :values-environment-location
+    (values-environment-location existing))
   (setf (predecessors new) (predecessors existing))
   (loop for pred in (predecessors existing)
 	do (nsubstitute new existing (successors pred) :test #'eq))
@@ -21,6 +26,11 @@
 ;;; the sole predecessor of N, and E2 becomes the sole successor of N.
 ;;; N replaces E2 as a successor of E1, and E1 as a predecessor of E2.
 (defun insert-instruction-between (new existing1 existing2)
+  (reinitialize-instance new
+    :dynamic-environment-location
+    (dynamic-environment-location existing2)
+    :values-environment-location
+    (values-environment-location existing2))
   (setf (predecessors new) (list existing1))
   (setf (successors new) (list existing2))
   (nsubstitute new existing2 (successors existing1))
