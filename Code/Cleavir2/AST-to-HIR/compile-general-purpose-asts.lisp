@@ -325,20 +325,14 @@
       (compile-arguments
        all-args
        temps
-       (if (typep results 'cleavir-ir:values-location)
-           (make-instance 'cleavir-ir:funcall-instruction
-             :inputs inputs
-             :outputs (list results)
-             :successors successors)
-           (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
-             (make-instance 'cleavir-ir:funcall-instruction
-               :inputs inputs
-               :outputs (list values-temp)
-               :successors
-               (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-                       :input values-temp
-                       :outputs results
-                       :successor (first successors))))))
+       (make-instance 'cleavir-ir:funcall-instruction
+         :inputs inputs
+         :successors
+         (if (eq results :values)
+             successors
+             (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                     :outputs results
+                     :successor (first successors)))))
        context))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -398,11 +392,9 @@
          (dynenv (cleavir-ir:make-lexical-location (gensym "function")))
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
-         (values (make-instance 'cleavir-ir:values-location))
          (return (make-instance 'cleavir-ir:return-instruction
-                   :inputs (list values)
                    :dynamic-environment-location dynenv))
-         (body-context (context values (list return) enter dynenv))
+         (body-context (context :values (list return) enter dynenv))
          (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
     enter))
@@ -452,15 +444,13 @@
 
 (defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
   (let ((locations (mapcar #'find-or-create-location
-                           (cleavir-ast:lhs-asts ast)))
-        (vtemp (make-instance 'cleavir-ir:values-location)))
+                           (cleavir-ast:lhs-asts ast))))
     (compile-ast
      (cleavir-ast:form-ast ast)
      (clone-context
       context
-      :results vtemp
+      :results :values
       :successor (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-                   :input vtemp
                    :outputs locations
                    :successor (first (successors context)))))))
 
@@ -486,13 +476,12 @@
           (rest (cleavir-ast:rest-type ast))
           (successor (first successors)))
       (cond
-        ((typep results 'cleavir-ir:values-location)
+        ((eq results :values)
          (compile-ast form-ast
                       (clone-context
                        context
                        :successor
                        (make-instance 'cleavir-ir:the-values-instruction
-                         :input results
                          :successor successor
                          :required required
                          :optional optional
@@ -657,11 +646,9 @@
            (dynenv (cleavir-ir:make-lexical-location (gensym "top")))
            (forms (cleavir-ast:forms ast))
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
-           (values (make-instance 'cleavir-ir:values-location))
            (return (make-instance 'cleavir-ir:return-instruction
-                     :inputs (list values)
                      :dynamic-environment-location dynenv))
-           (body-context (context values (list return) enter dynenv))
+           (body-context (context :values (list return) enter dynenv))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.
@@ -679,11 +666,9 @@
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (cleavir-ir:make-lexical-location (gensym "topnh")))
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
-           (values (make-instance 'cleavir-ir:values-location))
            (return (make-instance 'cleavir-ir:return-instruction
-                     :inputs (list values)
                      :dynamic-environment-location dynenv))
-           (body-context (context values (list return) enter dynenv))
+           (body-context (context :values (list return) enter dynenv))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.
@@ -755,33 +740,28 @@
       context
     (assert-context ast context nil 1)
     (let* ((function-temp (cleavir-ir:new-temporary))
-           (form-temps (loop repeat (length (cleavir-ast:form-asts ast))
-                             collect (make-instance 'cleavir-ir:values-location)))
            (inputs (list* function-temp form-temps))
            (successor
-             (if (typep results 'cleavir-ir:values-location)
-                 (make-instance 'cleavir-ir:multiple-value-call-instruction
-                   :inputs inputs
-                   :outputs (list results)
-                   :successors successors)
-                 (let* ((values-temp (make-instance 'cleavir-ir:values-location)))
-                   (make-instance 'cleavir-ir:multiple-value-call-instruction
-                     :inputs inputs
-                     :outputs (list values-temp)
-                     :successors
-                     (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-                             :input values-temp
-                             :outputs results
-                             :successor (first successors))))))))
+             (make-instance 'cleavir-ir:multiple-value-call-instruction
+               :inputs inputs
+               :outputs (list values-temp)
+               :successors
+               (if (eq results :values)
+                   successors
+                   (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                           :input values-temp
+                           :outputs results
+                           :successor (first successors)))))))
       (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
-            for form-temp in (reverse form-temps)
             do (setf successor
                      (compile-ast
                       form-ast
                       (clone-context
                        context
                        :results form-temp
-                       :successor successor))))
+                       :successor
+                       (make-instance 'save-values-instruction
+                         :successor successor)))))
       (compile-ast
        (cleavir-ast:function-form-ast ast)
        (clone-context
@@ -811,12 +791,12 @@
       context
     (assert-context ast context nil 1)
     (let ((arguments (cleavir-ast:argument-asts ast)))
-      (cond ((typep results 'cleavir-ir:values-location)
+      (cond ((eq results :values)
              (let ((temps (make-temps arguments)))
                (compile-arguments
                 arguments temps
                 (make-instance 'cleavir-ir:fixed-to-multiple-instruction
-                 :inputs temps :output results :successor (first successors))
+                 :inputs temps :successor (first successors))
                 context)))
             (t ;lexical locations
              ;; this is a bit tricky because there may be more or less
