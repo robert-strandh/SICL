@@ -1632,19 +1632,6 @@ variables.  Notice that different lexical locations have different
 \emph{identity} (i.e, they are not \texttt{eq}), but several different
 lexical locations may have the same name, due to shadowing.
 
-\subsection{Location \texttt{values-location}}
-
-This data type corresponds to locations where an unknown number of
-values, in the \commonlisp{} sense, exist. An example of this is
-the return values from a call to an unknown function.
-
-Values locations can be used as both inputs and outputs, but are
-more restricted than lexical locations. Fewer instructions accept or
-output them, and they cannot be assigned.
-
-Because values locations are usually very temporary, there is no
-need for them to have names.
-
 \subsection{Location \texttt{simple-location}}
 
 This data type corresponds is a subtype of \texttt{lexical-location}.
