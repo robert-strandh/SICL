@@ -8,4 +8,5 @@
    (:file "utilities")
    (:file "argument-processing-instructions")
    (:file "array-related-instructions")
+   (:file "boxing-related-instructions")
    (:file "hir-interpreter")))
