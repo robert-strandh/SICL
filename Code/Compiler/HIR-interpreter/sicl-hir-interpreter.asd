@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "utilities")
+   (:file "argument-processing-instructions")
    (:file "hir-interpreter")))
