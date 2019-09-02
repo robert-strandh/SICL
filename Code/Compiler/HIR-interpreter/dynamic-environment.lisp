@@ -66,4 +66,4 @@
 
 (defparameter *values-environment* '())
 
-(defvar *global-values-location)
+(defvar *global-values-location*)
