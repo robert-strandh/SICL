@@ -63,3 +63,7 @@
   (if (null new) old new))
 
 (declaim (notinline compute-source-info))
+
+(defparameter *values-environment* '())
+
+(defvar *global-values-location)
