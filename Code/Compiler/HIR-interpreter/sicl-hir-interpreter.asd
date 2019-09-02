@@ -8,6 +8,7 @@
   ((:file "packages")
    (:file "utilities")
    (:file "dynamic-environment")
+   (:file "run-time")
    (:file "argument-processing-instructions")
    (:file "array-related-instructions")
    (:file "boxing-related-instructions")
