@@ -68,8 +68,10 @@
 ;;;   SUCCESSORS has more than two elements.  This possibility is
 ;;;   currently not used.  It is meant to be used for forms like CASE,
 ;;;   TYPECASE, etc.  Again, the RESULTS would be the empty list.
-;;;   FIXME: check whether this possibility is used when the
-;;;   CATCH-INSTRUCTION is generated.
+;;;   Notice that We do have instructions with more than two
+;;;   successors.  The CATCH-INSTRUCTION is such an instruction.  But
+;;;   those successors are not generated as a result of the SUCCESSORS
+;;;   information in the compilation context.
 
 (defclass context ()
   ((%results :initarg :results :reader results)
