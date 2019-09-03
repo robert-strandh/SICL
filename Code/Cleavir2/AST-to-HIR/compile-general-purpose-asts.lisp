@@ -86,13 +86,13 @@
 ;;; The code generated from the BLOCK-AST consists of a
 ;;; CATCH-INSTRUCTION with two successors.  The first successor is the
 ;;; code resulting from the compilation of the BODY-AST of the
-;;; BLOCK-AST, and the second successor is the successor of the
-;;; context in which the BLOCK-AST is compiled, in other words, the
-;;; code to be executed after the block.  The BODY-AST is compiled in
-;;; a context where the dynamic environment is augmented with respect
-;;; to the dynamic environment in which the BLOCK-AST is compiled.
-;;; The lexical location that holds this augmented dynamic environment
-;;; becomes the second output of the CATCH-INSTRUCTION.
+;;; BLOCK-AST.  The second successor is the successor of the context
+;;; in which the BLOCK-AST is compiled, i.e. the code to be executed
+;;; after the block.  The BODY-AST is compiled in a context where the
+;;; dynamic environment is augmented with respect to the dynamic
+;;; environment in which the BLOCK-AST is compiled.  The lexical
+;;; location that holds this augmented dynamic environment becomes the
+;;; second output of the CATCH-INSTRUCTION.
 ;;;
 ;;; A hash table in *BLOCK-INFO* is used to store information about
 ;;; the BLOCK-AST being compiled.  The information consists of a list
@@ -112,7 +112,7 @@
 ;;; CATCH-INSTRUCTION itself, called the DESTINATION.  It is stored in
 ;;; a slot of the UNWIND-INSTRUCTION.
 
-(defparameter *block-info* nil)
+(defvar *block-info*)
 
 (defun block-info (block-ast)
   (gethash block-ast *block-info*))
