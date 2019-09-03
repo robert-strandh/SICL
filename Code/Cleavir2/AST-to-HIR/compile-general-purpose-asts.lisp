@@ -83,15 +83,34 @@
 ;;;
 ;;; Compile a BLOCK-AST.
 ;;;
-;;; A BLOCK-AST is compiled by inserting a CATCH-INSTRUCTION,
-;;; which has as first successor the compilation of the body
-;;; in the same context as the block-ast itself, and as second
-;;; successor the successor of the block-ast context.
-;;; The context, the continuation, and the destination are stored in
-;;; the *BLOCK-INFO* hash table using the block-ast as a key, so that
-;;; a RETURN-FROM-AST that refers to this block can be compiled
-;;; either in the block's context if it's local, and to unwind
-;;; using the correct continuation otherwise.
+;;; The code generated from the BLOCK-AST consists of a
+;;; CATCH-INSTRUCTION with two successors.  The first successor is the
+;;; code resulting from the compilation of the BODY-AST of the
+;;; BLOCK-AST, and the second successor is the successor of the
+;;; context in which the BLOCK-AST is compiled, in other words, the
+;;; code to be executed after the block.  The BODY-AST is compiled in
+;;; a context where the dynamic environment is augmented with respect
+;;; to the dynamic environment in which the BLOCK-AST is compiled.
+;;; The lexical location that holds this augmented dynamic environment
+;;; becomes the second output of the CATCH-INSTRUCTION.
+;;;
+;;; A hash table in *BLOCK-INFO* is used to store information about
+;;; the BLOCK-AST being compiled.  The information consists of a list
+;;; of three elements.  The first element is the context in which the
+;;; BLOCK-AST is compiled.  This information is used when a
+;;; RETURN-FROM-AST for this BLOCK-AST is compiled.  Specifically, the
+;;; RESULTS information of that context is used to compile the
+;;; FORM-AST of the RETURN-FROM-AST so as to get the values of the
+;;; RETURN-FROM-AST in the right places.  The second element of the
+;;; list is called the CONTINUATION, and it is a lexical location that
+;;; becomes the first output of the CATCH-INSTRUCTION.  At run-time,
+;;; the CONTINUATION indicates dynamic information such as register
+;;; contents that is required to restore the execution state to what
+;;; it needs to be in order to execute the code following the block.
+;;; The UNWIND-INSTRUCTION has this CONTINUATION location as its
+;;; input.  Finally, the third element of the list is the
+;;; CATCH-INSTRUCTION itself, called the DESTINATION.  It is stored in
+;;; a slot of the UNWIND-INSTRUCTION.
 
 (defparameter *block-info* nil)
 
