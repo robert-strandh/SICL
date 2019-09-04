@@ -43,3 +43,15 @@
             function-cell-finder)
       (catch 'return
         (interpret-hir client enter-instruction lexical-environment)))))
+
+(defmethod interpret-instruction
+    (client
+     (instruction sicl-hir-transformations:find-function-cell-instruction)
+     lexical-environment)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (input-value (input-value input lexical-environment))
+         (output (first (cleavir-ir:outputs instruction))))
+    (setf (gethash output lexical-environment)
+          (funcall (gethash 'function-cell-finder lexical-environment)
+                   input-value)))
+  (first (cleavir-ir:successors instruction)))
