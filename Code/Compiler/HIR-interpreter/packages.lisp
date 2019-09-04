@@ -2,4 +2,5 @@
 
 (defpackage #:sicl-hir-interpreter
   (:use #:common-lisp)
-  (:export))
+  (:export #:cst-eval
+           #:top-level-hir-to-host-function))
