@@ -44,23 +44,6 @@
                   (eq (identifier entry) identifier))
           return entry))
 
-(defun unwind (identifier continuation dynamic-environment)
-  (let ((entry (find-entry identifier dynamic-environment)))
-    (cond ((null entry)
-           (error "Attempt to unwind to a non-existing exit point."))
-          ((not (valid-p entry))
-           (error "Attempt to unwind to an expired exit point."))
-          (t
-           (loop for temp in dynamic-environment
-                 until (eq temp entry)
-                 when (typep temp 'exit-point)
-                   do (setf (valid-p temp) nil))
-           (loop for element in dynamic-environment
-                 until (eq element entry)
-                 when (typep element 'unwind-protect-entry)
-                   do (funcall (thunk element)))
-           (throw (identifier entry) continuation)))))
-
 (defun compute-source-info (old new)
   (if (null new) old new))
 
@@ -69,3 +52,31 @@
 (defparameter *values-environment* '())
 
 (defvar *global-values-location*)
+
+(defvar *previous-instruction*)
+
+(defmethod interpret-instruction :before
+    (client instruction lexical-environment)
+  (let ((env1 (gethash (cleavir-ir:dynamic-environment-location
+                        *previous-instruction*)
+                       lexical-environment))
+        (env2 (gethash (cleavir-ir:dynamic-environment-location
+                        instruction)
+                       lexical-environment)))
+    (loop for env = env1 then (rest env)
+          for entry = (first env)
+          until (eq env env2)
+          do (setf (valid-p entry) nil))
+    (let ((last-block/tagbody
+            (loop with result = nil
+                  for env = env1 then (rest env)
+                  for entry = (first env)
+                  until (eq env env2)
+                  when (typep entry 'unwind-protect-entry)
+                    do (funcall (thunk entry))
+                  when (typep entry 'block/tagbody-entry)
+                    do (setf result entry)
+                  finally (return result))))
+      (unless (null last-block/tagbody)
+        (throw (abandon-tag last-block/tagbody)
+          instruction)))))
