@@ -8,11 +8,13 @@
   ((%valid-p :initform t :accessor valid-p)))
 
 (defclass block/tagbody-entry (exit-point)
-  ((%identifier :initarg :identifier :reader identifier)))
+  ((%transfer-tag :initarg :transfer-tag :reader transfer-tag)
+   (%abandoon-tag :initarg :abandoon-tag :reader abandoon-tag)))
 
 (defmethod print-object ((object block/tagbody-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s" (identifier object))))
+    (format stream "~s ~s"
+            (abandoon-tag object))))
 
 (defclass catch-entry (exit-point)
   ((%tag :initarg :tag :reader tag)))
