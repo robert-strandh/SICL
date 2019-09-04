@@ -65,8 +65,6 @@
 
 (defun fill-environment (environment)
   (setf (sicl-genv:fdefinition 'enclose environment) #'enclose)
-  (setf (sicl-genv:fdefinition 'static-environment-function environment)
-        #'static-environment)
   (setf (sicl-genv:fdefinition 'symbol-value environment)
         (symbol-value-function environment))
   (setf (sicl-genv:fdefinition '(setf symbol-value) environment)
