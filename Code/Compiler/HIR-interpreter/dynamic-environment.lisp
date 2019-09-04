@@ -9,12 +9,13 @@
 
 (defclass block/tagbody-entry (exit-point)
   ((%transfer-tag :initarg :transfer-tag :reader transfer-tag)
-   (%abandoon-tag :initarg :abandoon-tag :reader abandoon-tag)))
+   (%abandon-tag :initarg :abandon-tag :reader abandon-tag)))
 
 (defmethod print-object ((object block/tagbody-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~s ~s"
-            (abandoon-tag object))))
+            (transfer-tag object)
+            (abandon-tag object))))
 
 (defclass catch-entry (exit-point)
   ((%tag :initarg :tag :reader tag)))
@@ -37,15 +38,6 @@
 (defmethod print-object ((object unwind-protect-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
     (format stream "~s" (thunk object))))
-
-(defun find-entry (identifier dynamic-environment)
-  (loop for entry in dynamic-environment
-        when (and (typep entry 'block/tagbody-entry)
-                  (eq (identifier entry) identifier))
-          return entry))
-
-(defun compute-source-info (old new)
-  (if (null new) old new))
 
 (declaim (notinline compute-source-info))
 
