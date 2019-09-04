@@ -4,11 +4,27 @@
     (client
      (instruction cleavir-ir:catch-instruction)
      lexical-environment)
-  (let ((output (first (cleavir-ir:outputs instruction)))
-        (successors (cleavir-ir:successors instruction))
-        (tag (list nil)))
-    (setf (gethash output lexical-environment) tag)
-    (nth (catch tag
-           (interpret-instructions client (first successors) lexical-environment)
-           (1- (length successors)))
-         successors)))
+  (destructuring-bind (continuation-output dynamic-environment-output)
+      (cleavir-ir:outputs instruction)
+    (let* ((successors (cleavir-ir:successors instruction))
+           (transfer-tag (list nil))
+           (abandon-tag (list nil)))
+      (setf (gethash continuation-output lexical-environment)
+            (cons (make-instance 'block/tagbody-entry
+                    :transfer-tag transfer-tag
+                    :abandon-tag abandon-tag)
+                  (gethash (cleavir-ir:dynamic-environment-location instruction)
+                           lexical-environment)))
+      (setf (gethash continuation-output lexical-environment)
+            transfer-tag)
+      (setf (gethash dynamic-environment-output lexical-environment)
+            (cons (make-instance 'block/tagbody-entry
+                    :transfer-tag transfer-tag
+                    :abandon-tag abandon-tag)
+                  (gethash (cleavir-ir:dynamic-environment-location instruction)
+                           lexical-environment)))
+      (catch abandon-tag
+        (loop for index = 0
+                then  (catch transfer-tag
+                        (interpret-instructions client successor lexical-environment))
+              for successor = (nth index successors))))))
