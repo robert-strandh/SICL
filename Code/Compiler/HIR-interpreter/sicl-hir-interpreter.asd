@@ -19,4 +19,5 @@
    (:file "multiple-value-related-instructions")
    (:file "catch-instruction")
    (:file "unwind-instruction")
+   (:file "bind-instruction")
    (:file "hir-interpreter")))
