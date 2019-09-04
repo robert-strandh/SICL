@@ -10,16 +10,9 @@
            (transfer-tag (list nil))
            (abandon-tag (list nil)))
       (setf (gethash continuation-output lexical-environment)
-            (cons (make-instance 'block/tagbody-entry
-                    :transfer-tag transfer-tag
-                    :abandon-tag abandon-tag)
-                  (gethash (cleavir-ir:dynamic-environment-location instruction)
-                           lexical-environment)))
-      (setf (gethash continuation-output lexical-environment)
             transfer-tag)
       (setf (gethash dynamic-environment-output lexical-environment)
             (cons (make-instance 'block/tagbody-entry
-                    :transfer-tag transfer-tag
                     :abandon-tag abandon-tag)
                   (gethash (cleavir-ir:dynamic-environment-location instruction)
                            lexical-environment)))
