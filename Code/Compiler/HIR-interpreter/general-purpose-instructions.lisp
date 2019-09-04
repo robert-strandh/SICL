@@ -17,3 +17,13 @@
     (setf *global-values-location*
           (multiple-value-list (apply #'funcall input-values))))
   (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
+     (instruction cleavir-ir:assignment-instruction)
+     lexical-environment)
+  (let* ((input (first (cleavir-ir:inputs instruction)))
+         (output (first (cleavir-ir:outputs instruction))))
+    (setf (gethash output lexical-environment)
+          (input-value input lexical-environment)))
+  (first (cleavir-ir:successors instruction)))
