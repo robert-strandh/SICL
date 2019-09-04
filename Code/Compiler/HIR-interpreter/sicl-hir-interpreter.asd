@@ -10,6 +10,7 @@
    (:file "utilities")
    (:file "dynamic-environment")
    (:file "run-time")
+   (:file "general-purpose-instructions")
    (:file "argument-processing-instructions")
    (:file "array-related-instructions")
    (:file "boxing-related-instructions")
