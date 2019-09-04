@@ -15,9 +15,31 @@
             (cleavir-ir:dynamic-environment-output enter-instruction)))
       (setf (gethash static-environment-output lexical-environment)
             static-environment)
+      (setf (gethash 'static-environment lexical-environment)
+            static-environment)
       (setf (gethash dynamic-environment-output lexical-environment)
             dynamic-environment)
       (setf (gethash 'arguments lexical-environment)
             arguments)
+      (catch 'return
+        (interpret-hir client enter-instruction lexical-environment)))))
+
+(defun top-level-hir-to-host-function (client enter-instruction)
+  (lambda (function-cell-finder static-environment)
+    (let ((lexical-environment (make-hash-table :test #'eq))
+          (static-environment-output
+            (cleavir-ir:static-environment enter-instruction))
+          (dynamic-environment-output
+            (cleavir-ir:dynamic-environment-output enter-instruction)))
+      (setf (gethash static-environment-output lexical-environment)
+            static-environment)
+      (setf (gethash 'static-environment lexical-environment)
+            static-environment)
+      (setf (gethash dynamic-environment-output lexical-environment)
+            '())
+      (setf (gethash 'arguments lexical-environment)
+            '())
+      (setf (gethash 'function-cell-finder lexical-environment)
+            function-cell-finder)
       (catch 'return
         (interpret-hir client enter-instruction lexical-environment)))))
