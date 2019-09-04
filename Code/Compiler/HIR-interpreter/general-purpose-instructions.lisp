@@ -68,3 +68,9 @@
     (if (characterp (input-value input lexical-environment))
         (first successors)
         (second successors))))
+
+(defmethod interpret-instruction
+    (client
+     (instruction cleavir-ir:nop-instruction)
+     lexical-environment)
+  (first (cleavir-ir:successors instruction)))
