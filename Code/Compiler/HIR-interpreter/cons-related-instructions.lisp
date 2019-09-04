@@ -36,7 +36,7 @@
 
 (defmethod interpret-instruction
     (client
-     (instruction cleavir-ir:rplaca-instruction)
+     (instruction cleavir-ir:rplacd-instruction)
      lexical-environment)
   (let* ((inputs (cleavir-ir:inputs instruction))
          (successor (first (cleavir-ir:successors instruction))))
