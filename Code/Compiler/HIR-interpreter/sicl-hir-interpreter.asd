@@ -20,4 +20,5 @@
    (:file "catch-instruction")
    (:file "unwind-instruction")
    (:file "bind-instruction")
-   (:file "hir-interpreter")))
+   (:file "hir-interpreter")
+   (:file "enclose-instruction")))
