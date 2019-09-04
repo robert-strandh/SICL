@@ -16,7 +16,7 @@
        :inputs (list function-temp variable-name-input))
      instruction)
     (change-class instruction 'cleavir-ir:multiple-to-fixed-instruction
-                  :outputs '())))
+                  :inputs '())))
 
 (defun convert-symbol-value (initial-instruction)
   (cleavir-ir:map-instructions-arbitrary-order
