@@ -3,6 +3,7 @@
 (defpackage sicl-hir-transformations
   (:use #:common-lisp)
   (:export #:hoist-fdefinitions
+           #:find-function-cell-instruction
            #:convert-symbol-value
            #:convert-set-symbol-value
            #:eliminate-create-cell-instructions
