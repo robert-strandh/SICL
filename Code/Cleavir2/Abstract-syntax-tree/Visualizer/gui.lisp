@@ -147,8 +147,8 @@
 
 (define-visualizer-command (com-inspect-ast :name t)
     ((ast 'cleavir-ast:ast))
-  (clouseau:inspector ast))
+  (clouseau:inspect ast))
 
 (define-visualizer-command (com-inspect-layout :name t)
     ((layout 'layout))
-  (clouseau:inspector layout))
+  (clouseau:inspect layout))
