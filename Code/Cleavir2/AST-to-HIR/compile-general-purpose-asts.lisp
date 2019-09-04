@@ -409,11 +409,18 @@
 (defmethod compile-function ((ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
          (dynenv (cleavir-ir:make-lexical-location (gensym "function")))
+         (values-environment-location
+           (cleavir-ir:make-lexical-location (gensym "values")))
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (return (make-instance 'cleavir-ir:return-instruction
                    :dynamic-environment-location dynenv))
-         (body-context (context :values (list return) enter dynenv))
+         (body-context (context
+                        :values
+                        (list return)
+                        enter
+                        dynenv
+                        values-environment-location))
          (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
     enter))
@@ -663,11 +670,18 @@
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (cleavir-ir:make-lexical-location (gensym "top")))
+           (values-environment-location
+             (cleavir-ir:make-lexical-location (gensym "values")))
            (forms (cleavir-ast:forms ast))
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (return (make-instance 'cleavir-ir:return-instruction
                      :dynamic-environment-location dynenv))
-           (body-context (context :values (list return) enter dynenv))
+           (body-context (context
+                          :values
+                          (list return)
+                          enter
+                          dynenv
+                          values-environment-location))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.
@@ -684,10 +698,17 @@
         (*function-info* (make-hash-table :test #'eq)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (cleavir-ir:make-lexical-location (gensym "topnh")))
+           (values-environment-location
+             (cleavir-ir:make-lexical-location (gensym "values")))
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (return (make-instance 'cleavir-ir:return-instruction
                      :dynamic-environment-location dynenv))
-           (body-context (context :values (list return) enter dynenv))
+           (body-context (context
+                          :values
+                          (list return)
+                          enter
+                          dynenv
+                          values-environment-location))
            (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.
@@ -759,16 +780,15 @@
       context
     (assert-context ast context nil 1)
     (let* ((function-temp (cleavir-ir:new-temporary))
-           (inputs (list* function-temp form-temps))
            (successor
              (make-instance 'cleavir-ir:multiple-value-call-instruction
-               :inputs inputs
-               :outputs (list values-temp)
+               :input function-temp
+               :outputs '()
                :successors
                (if (eq results :values)
                    successors
                    (list (make-instance 'cleavir-ir:multiple-to-fixed-instruction
-                           :input values-temp
+                           :inputs '()
                            :outputs results
                            :successor (first successors)))))))
       (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
@@ -777,7 +797,7 @@
                       form-ast
                       (clone-context
                        context
-                       :results form-temp
+                       :results :values
                        :successor
                        (make-instance 'save-values-instruction
                          :successor successor)))))
