@@ -20,7 +20,7 @@
       (setf (gethash dynamic-environment-output lexical-environment)
             dynamic-environment)
       (setf (gethash 'arguments lexical-environment)
-            arguments)
+            (coerce arguments 'vector))
       (catch 'return
         (interpret-hir client enter-instruction lexical-environment)))))
 
@@ -38,7 +38,7 @@
       (setf (gethash dynamic-environment-output lexical-environment)
             '())
       (setf (gethash 'arguments lexical-environment)
-            '())
+            (vector))
       (setf (gethash 'function-cell-finder lexical-environment)
             function-cell-finder)
       (catch 'return
@@ -48,10 +48,9 @@
     (client
      (instruction sicl-hir-transformations:find-function-cell-instruction)
      lexical-environment)
-  (let* ((input (first (cleavir-ir:inputs instruction)))
-         (input-value (input-value input lexical-environment))
+  (let* ((function-name (sicl-hir-transformations:name instruction))
          (output (first (cleavir-ir:outputs instruction))))
     (setf (gethash output lexical-environment)
           (funcall (gethash 'function-cell-finder lexical-environment)
-                   input-value)))
+                   function-name)))
   (first (cleavir-ir:successors instruction)))
