@@ -3,6 +3,9 @@
 (defsystem #:sicl-hir-interpreter
   :depends-on (#:closer-mop
                #:cleavir2-hir
+               #:cleavir2-cst-to-ast
+               #:sicl-ast-to-hir
+               #:sicl-hir-transformations
                #:sicl-global-environment)
   :serial t
   :components
@@ -21,4 +24,5 @@
    (:file "unwind-instruction")
    (:file "bind-instruction")
    (:file "hir-interpreter")
-   (:file "enclose-instruction")))
+   (:file "enclose-instruction")
+   (:file "cst-eval")))
