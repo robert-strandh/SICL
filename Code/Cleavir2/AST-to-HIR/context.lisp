@@ -106,22 +106,32 @@
     (unless (typep (dynamic-environment-location context) 'cleavir-ir:lexical-location)
       (error "Illegal dynamic environment location ~s"
              (dynamic-environment-location context)))
+    (unless (typep (values-environment-location context) 'cleavir-ir:lexical-location)
+      (error "Illegal values environment location ~s"
+             (values-environment-location context)))
     (reinitialize-instance context
       :results results
       :successors successors)))
 
-(defun context (results successors invocation dynamic-environment-location)
+(defun context
+    (results
+     successors
+     invocation
+     dynamic-environment-location
+     values-environment-location)
   (make-instance 'context
     :results results
     :successors successors
     :invocation invocation
-    :dynamic-environment-location dynamic-environment-location))
+    :dynamic-environment-location dynamic-environment-location
+    :values-environment-location values-environment-location))
 
 (defmethod print-object ((obj context) stream)
   (print-unreadable-object (obj stream)
     (format stream " results: ~s" (results obj))
     (format stream " successors: ~s" (successors obj))
-    (format stream " dynenv: ~s" (dynamic-environment-location obj))))
+    (format stream " dynenv: ~s" (dynamic-environment-location obj))
+    (format stream " valuesenv: ~s" (values-environment-location obj))))
 
 (defun clone-context (context &rest keyword-arguments)
   (apply #'make-instance 'context
@@ -131,4 +141,6 @@
                 :successors (successors context)
                 :invocation (invocation context)
                 :dynamic-environment-location
-                (dynamic-environment-location context)))))
+                (dynamic-environment-location context)
+                :values-environment-location
+                (values-environment-location context)))))
