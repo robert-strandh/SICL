@@ -15,4 +15,5 @@
          (input-values (loop for input in inputs
                              collect (input-value input lexical-environment))))
     (setf *global-values-location*
-          (multiple-value-list (apply #'funcall input-values)))))
+          (multiple-value-list (apply #'funcall input-values))))
+  (first (cleavir-ir:successors instruction)))
