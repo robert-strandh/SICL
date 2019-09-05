@@ -1,7 +1,7 @@
 (cl:in-package #:asdf-user)
 
 (defsystem #:sicl-boot
-  :depends-on (#:sicl-hir-to-cl
+  :depends-on (#:sicl-hir-interpreter
                #:sicl-boot-phase-0
                #:sicl-boot-phase-1
                #:sicl-boot-phase-2
