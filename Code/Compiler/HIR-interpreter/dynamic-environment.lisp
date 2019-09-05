@@ -8,14 +8,11 @@
   ((%valid-p :initform t :accessor valid-p)))
 
 (defclass block/tagbody-entry (exit-point)
-  ((%transfer-tag :initarg :transfer-tag :reader transfer-tag)
-   (%abandon-tag :initarg :abandon-tag :reader abandon-tag)))
+  ((%abandon-tag :initarg :abandon-tag :reader abandon-tag)))
 
 (defmethod print-object ((object block/tagbody-entry) stream)
   (print-unreadable-object (object stream :type t :identity t)
-    (format stream "~s ~s"
-            (transfer-tag object)
-            (abandon-tag object))))
+    (format stream "~s" (abandon-tag object))))
 
 (defclass catch-entry (exit-point)
   ((%tag :initarg :tag :reader tag)))
@@ -55,20 +52,22 @@
         (env2 (gethash (cleavir-ir:dynamic-environment-location
                         instruction)
                        lexical-environment)))
-    (loop for env = env1 then (rest env)
-          for entry = (first env)
-          until (eq env env2)
-          do (setf (valid-p entry) nil))
-    (let ((last-block/tagbody
-            (loop with result = nil
-                  for env = env1 then (rest env)
-                  for entry = (first env)
-                  until (eq env env2)
-                  when (typep entry 'unwind-protect-entry)
-                    do (funcall (thunk entry))
-                  when (typep entry 'block/tagbody-entry)
-                    do (setf result entry)
-                  finally (return result))))
-      (unless (null last-block/tagbody)
-        (throw (abandon-tag last-block/tagbody)
-          instruction)))))
+    (unless (or (eq env1 env2)
+                (> (length env2) (length env1)))
+      (loop for env = env1 then (rest env)
+            for entry = (first env)
+            until (eq env env2)
+            do (setf (valid-p entry) nil))
+      (let ((last-block/tagbody
+              (loop with result = nil
+                    for env = env1 then (rest env)
+                    for entry = (first env)
+                    until (eq env env2)
+                    when (typep entry 'unwind-protect-entry)
+                      do (funcall (thunk entry))
+                    when (typep entry 'block/tagbody-entry)
+                      do (setf result entry)
+                    finally (return result))))
+        (unless (null last-block/tagbody)
+          (throw (abandon-tag last-block/tagbody)
+            instruction))))))
