@@ -180,13 +180,25 @@
     (setf (sicl-genv:special-operator 'if environment) t)
     (assert (equal (eval client form environment) '(nil t)))))
 
-(defun test-multiple-value-prog1 (client)
+(defun test-multiple-value-prog1-1 (client)
   (let ((environment (make-environment))
         (form '(multiple-value-prog1 (ff 10) (ff 30))))
     (setf (sicl-genv:fdefinition 'ff environment)
           (lambda (x) (values 20 x)))
     (assert (equal (multiple-value-list (eval client form environment))
                    '(20 10)))))
+
+(defun test-multiple-value-prog1-2 (client)
+  (let ((environment (make-environment))
+        (form '(let ((x (multiple-value-prog1 (ff 10) (ff 30)))) x)))
+    (setf (sicl-genv:fdefinition 'ff environment)
+          (lambda (y) (values 20 y)))
+    (assert (equal (multiple-value-list (eval client form environment))
+                   '(20)))))
+
+(defun test-multiple-value-prog1 (client)
+  (test-multiple-value-prog1-1 client)
+  (test-multiple-value-prog1-2 client))
 
 (defun test-multiple-value-call (client)
   (let ((environment (make-environment))
@@ -214,4 +226,5 @@
     (test-rplacd client)
     (test-eq client)
     (test-labels client)
+    (test-multiple-value-prog1 client)
     (test-multiple-value-call client)))
