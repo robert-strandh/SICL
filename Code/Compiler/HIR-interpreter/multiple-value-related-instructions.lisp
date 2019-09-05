@@ -31,6 +31,13 @@
 
 (defmethod interpret-instruction
     (client
+     (instruction cleavir-ir:restore-values-instruction)
+     lexical-environment)
+  (setf *global-values-location* (pop *values-environment*))
+  (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
      (instruction cleavir-ir:multiple-value-call-instruction)
      lexical-environment)
   (let ((input-value (input-value (first (cleavir-ir:inputs instruction))
