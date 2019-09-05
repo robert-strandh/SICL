@@ -1,30 +1,21 @@
 (cl:in-package #:sicl-boot)
 
-;; (defun load-fasl (relative-pathname environment)
-;;   (format *trace-output* "Loading file ~s~%" relative-pathname)
-;;   (let* ((prefixed (concatenate 'string "ASTs/" relative-pathname))
-;;          (pathname (asdf:system-relative-pathname '#:sicl-boot prefixed))
-;;          (ast (cleavir-io:read-model pathname '(v0)))
-;;          (hir (sicl-ast-to-hir:ast-to-hir ast))
-;;          (cl (sicl-hir-to-cl:hir-to-cl nil hir))
-;;          (fun (compile nil cl))
-;;          (sicl-hir-to-cl:*dynamic-environment* '()))
-;;     (funcall fun (sicl-hir-to-cl:make-function-cell-finder environment))))
-
-(defun load-fasl (relative-pathname environment)
+(defun load-fasl (relative-pathname global-environment)
   (format *trace-output* "Loading file ~s~%" relative-pathname)
-  (let* ((prefixed (concatenate 'string "Host-FASLs/" relative-pathname))
+  (let* ((prefixed (concatenate 'string "ASTs/" relative-pathname))
          (pathname (asdf:system-relative-pathname '#:sicl-boot prefixed))
-         (sicl-hir-to-cl:*dynamic-environment* '()))
-    (load pathname)
-    (funcall sicl-hir-to-cl:*top-level-function*
-             (sicl-hir-to-cl:make-function-cell-finder environment)
+         (ast (cleavir-io:read-model pathname '(v0)))
+         (hir (sicl-ast-to-hir:ast-to-hir ast))
+         (fun (sicl-hir-interpreter:top-level-hir-to-host-function nil hir))
+         (sicl-hir-interpreter:*dynamic-environment* '()))
+    (funcall fun
+             (sicl-hir-interpreter:make-function-cell-finder global-environment)
              (apply #'vector
-                    nil
-                    #'sicl-hir-to-cl::enclose
+                    nil ; Ultimately, replace with code object.
+                    #'sicl-hir-interpreter:enclose
                     #'cons
                     nil
-                    sicl-hir-to-cl:*constants*))))
+                    (sicl-hir-transformations:constants hir)))))
 
 (defun import-function-from-host (name environment)
   (setf (sicl-genv:fdefinition name environment)

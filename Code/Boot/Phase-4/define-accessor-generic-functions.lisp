@@ -97,7 +97,7 @@
     (import-functions-from-host
      '(listp)
      (sicl-boot:e3 boot))
-    (sicl-hir-to-cl:fill-environment e5)
+    (sicl-hir-interpreter:fill-environment e5)
     (import-function-from-host 'funcall e5)
     (import-function-from-host '(setf sicl-genv:function-lambda-list) e5)
     (import-function-from-host '(setf sicl-genv:function-type) e5)

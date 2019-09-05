@@ -12,4 +12,4 @@
       (loop with eof-marker = (list nil)
             for cst = (eclector.concrete-syntax-tree:cst-read stream nil eof-marker)
             until (eq cst eof-marker)
-            do (sicl-hir-to-cl:cst-eval client cst environment)))))
+            do (sicl-hir-interpreter:cst-eval client cst environment)))))

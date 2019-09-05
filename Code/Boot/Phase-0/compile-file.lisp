@@ -50,27 +50,4 @@
                                                       filename))
                (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname)))
           (ensure-directories-exist output-pathname)
-          (cleavir-io:write-model output-pathname "V0" ast))
-        (let* ((dot-pos (position #\. relative-pathname))
-               (prefix (subseq relative-pathname 0 dot-pos))
-               (filename (concatenate 'string prefix ".lisp"))
-               (fasl-filename (concatenate 'string prefix ".fasl"))
-               (output-relative-pathname (concatenate 'string
-                                                      "Boot/Host-FASLs/"
-                                                      filename))
-               (fasl-relative-pathname (concatenate 'string
-                                                    "Boot/Host-FASLs/"
-                                                    fasl-filename))
-               (output-pathname (asdf:system-relative-pathname '#:sicl output-relative-pathname))
-               (fasl-pathname (asdf:system-relative-pathname '#:sicl fasl-relative-pathname)))
-          (ensure-directories-exist output-pathname)
-          (let* ((hir (sicl-ast-to-hir:ast-to-hir ast))
-                 (cl (sicl-hir-to-cl:hir-to-cl-for-file-compilation nil hir)))
-            (unless (and (probe-file fasl-pathname)
-                         (> (file-write-date fasl-pathname)
-                            (file-write-date input-pathname)))
-              (with-open-file (stream output-pathname
-                                      :direction :output
-                                      :if-exists :supersede)
-                (cleavir-io:write-model output-pathname nil cl)
-                (cl:compile-file output-pathname)))))))))
+          (cleavir-io:write-model output-pathname "V0" ast))))))
