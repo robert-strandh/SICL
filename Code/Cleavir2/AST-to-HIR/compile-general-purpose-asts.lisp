@@ -799,7 +799,7 @@
                        context
                        :results :values
                        :successor
-                       (make-instance 'save-values-instruction
+                       (make-instance 'cleavir-ir:save-values-instruction
                          :successor successor)))))
       (compile-ast
        (cleavir-ast:function-form-ast ast)
