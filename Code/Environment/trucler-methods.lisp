@@ -18,7 +18,7 @@
     (declare (ignore value))
     (if (not special-variable-p)
         nil
-        (make-instance 'trucler:special-variable-description
+        (make-instance 'trucler:global-special-variable-description
           :name name
           :type (variable-type name environment)))))
 
