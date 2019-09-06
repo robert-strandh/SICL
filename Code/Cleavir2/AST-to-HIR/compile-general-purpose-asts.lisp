@@ -277,10 +277,6 @@
 ;;;
 ;;; Compile a GO-AST.
 ;;;
-;;; We obtain the GO-INFO that was stored when the TAG-AST of this
-;;; GO-AST was compiled.  This info is a cons. The CAR is the CATCH
-;;; instruction for the tag. The CDR is the INVOCATION of the tagbody.
-;;;
 ;;; The INVOCATION of the parameter CONTEXT is compared to the
 ;;; tagbody invocation. If they are the same, we have a local transfer
 ;;; of control, so we just return the NOP instruction that the CATCH
