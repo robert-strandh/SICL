@@ -235,9 +235,10 @@
                     :outputs (list continuation dynenv-out)
                     :successors '()))
            (catch-successors nil))
-      ;; In the first loop, we make a NOP for each tag, which will be the
-      ;; destination for any GO or UNWIND to that tag. It's put in the go-info
-      ;; with the invocation, and also put as one of the catch's successors.
+      ;; In the first loop, we make a NOP for each tag, which will be
+      ;; the destination for any GO or UNWIND to that tag.  The NOP is
+      ;; put in the go-info with the invocation, and also put as one
+      ;; of the catch's successors.
       (loop with index = 0
             for item-ast in (cleavir-ast:item-asts ast)
             when (typep item-ast 'cleavir-ast:tag-ast)
@@ -246,20 +247,22 @@
                               :dynamic-environment-location dynenv-out)))
                    (push nop catch-successors)
                    (incf index)
-                   (setf (go-info item-ast) (list invocation continuation nop catch index))))
+                   (setf (go-info item-ast)
+                         (list invocation continuation nop catch index))))
       ;; Now we actually compile the items, in reverse order (like PROGN).
       (loop with next = (first successors)
             for item-ast in (reverse (cleavir-ast:item-asts ast))
-            ;; if an item is a tag, we set the catch's NOP to succeed
-            ;; to the right place (the current NEXT).
-            ;; We also include the NOP in the normal sequence (i.e. make it NEXT).
-            ;; This isn't strictly necessary, but if we don't it makes a pointless
-            ;; basic block.
+            ;; If an item is a tag, we set the successor of the
+            ;; correspondign NOP of the CATCH to the right place (the
+            ;; current NEXT).  We also include the NOP in the normal
+            ;; sequence (i.e. make it NEXT).  This isn't strictly
+            ;; necessary, but if we don't it makes a pointless basic
+            ;; block.
             if (typep item-ast 'cleavir-ast:tag-ast)
               do (let ((nop (third (go-info item-ast))))
                    (setf (cleavir-ir:successors nop) (list next)
                          next nop))
-            ;; if it's not a tag, we compile it, expecting no values.
+            ;; If it's not a tag, we compile it, expecting no values.
             else do (setf next
                           (compile-ast item-ast
                                        (clone-context
@@ -267,8 +270,8 @@
                                         :results '()
                                         :successor next
                                         :dynamic-environment-location dynenv-out)))
-            ;; lastly we hook up the main CATCH to go to the item code the first
-            ; time through. (As the first successor.)
+            ;; Lastly we hook up the main CATCH to go to the item code
+            ;; the first time through. (As the first successor.)
             finally (setf (cleavir-ir:successors catch) (list next)))
       (setf (rest (cleavir-ir:successors catch)) (nreverse catch-successors))
       catch)))
