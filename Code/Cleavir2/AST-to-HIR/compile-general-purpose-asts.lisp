@@ -205,10 +205,10 @@
 
 ;;; During AST-to-HIR translation, this variable contains a hash table
 ;;; that maps a TAG-AST to information about the tag.  The information
-;;; is a cons.  The car is the NOP instruction that will be the target
-;;; of any GO instruction to that tag.  The second element is the
-;;; INVOCATION of the compilation context, which is used to determine
-;;; whether the GO to this tag is local or non-local.
+;;; about the tag is a list of five elements: INVICATION,
+;;; CONTINUATION, NOP, CATCH, and INDEX.  The INVOCATION of the
+;;; compilation context is used to determine whether the GO to this
+;;; tag is local or non-local.
 (defparameter *go-info* nil)
 
 (defun go-info (tag-ast)
