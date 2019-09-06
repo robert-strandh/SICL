@@ -289,10 +289,8 @@
 ;;; continuation.
 
 (defmethod compile-ast ((ast cleavir-ast:go-ast) context)
-  (let* ((info (go-info (cleavir-ast:tag-ast ast)))
-         (invocation (first info)) (continuation (second info))
-         (nop (third info))
-         (destination (fourth info)) (index (fifth info)))
+  (destructuring-bind (invocation continuation nop destination index)
+      (go-info (cleavir-ast:tag-ast ast))
     (if (eq invocation (invocation context))
         nop
         (make-instance 'cleavir-ir:unwind-instruction
