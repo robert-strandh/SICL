@@ -3,5 +3,4 @@
 (defpackage #:sicl-boot-phase-0
   (:use #:common-lisp)
   (:shadow #:load-file #:compile-file)
-  (:export #:boot
-           #:client))
+  (:export #:boot))
