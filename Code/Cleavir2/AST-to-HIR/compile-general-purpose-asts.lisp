@@ -859,6 +859,7 @@
       (cond ((eq results :values)
              (let ((temps (make-temps arguments)))
                (compile-arguments
+                client
                 arguments temps
                 (make-instance 'cleavir-ir:fixed-to-multiple-instruction
                  :inputs temps :successor (first successors))
@@ -873,6 +874,7 @@
                ;; Now we know which match, so compile those.
                ;; Note also we have to preserve left-to-right evaluation order.
                (compile-arguments
+                client
                 args
                 results
                 ;; Obviously at most one of valueless and nils can be non-null.
