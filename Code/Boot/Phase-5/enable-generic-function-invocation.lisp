@@ -73,7 +73,7 @@
           (assert (null name))
           (assert (not (null definition)))
           (let* ((cst (cst:cst-from-expression definition))
-                 (client (make-instance 'sicl-boot-phase-0:client)))
+                 (client (make-instance 'sicl-boot:client)))
             (sicl-hir-interpreter:cst-eval client cst e5)))))
 
 (defun define-no-applicable-method (e5)
