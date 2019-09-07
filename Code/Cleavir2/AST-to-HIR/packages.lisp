@@ -13,4 +13,7 @@
    #:context
    #:compile-arguments
    #:invocation
+   #:results
+   #:successors
+   #:clone-context
    #:origin))
