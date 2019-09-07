@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-ast-to-hir)
 
-(defun ast-to-hir (ast)
+(defun ast-to-hir (client ast)
   ;; Wrap the AST in a FUNCTION-AST that will be called at load time
   ;; with a single argument, namely a function that, given a function
   ;; name, returns the function cell from the environment the code
@@ -10,7 +10,7 @@
          (wrapped-ast (make-instance 'cleavir-ast:function-ast
                         :lambda-list '()
                         :body-ast hoisted-ast))
-         (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted wrapped-ast)))
+         (hir (cleavir-ast-to-hir:compile-toplevel-unhoisted client wrapped-ast)))
     (change-class hir 'sicl-hir-transformations:top-level-enter-instruction)
     (sicl-argument-processing:process-parameters hir)
     (sicl-hir-transformations:convert-symbol-value hir)
