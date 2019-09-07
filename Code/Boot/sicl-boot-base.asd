@@ -9,4 +9,5 @@
   ((:file "packages")
    (:file "environment")
    (:file "boot-class")
+   (:file "client")
    (:file "utilities")))
