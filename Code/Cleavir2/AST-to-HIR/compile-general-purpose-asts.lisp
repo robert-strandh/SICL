@@ -25,12 +25,13 @@
                          (temp (first remaining-temps))
                          (rest-temps (rest remaining-temps)))
                      `(compile-ast
+                       client
                        (,reader ast)
                        (clone-context
                         context
                         :result ,temp
                         :successor ,(recur rest-readers rest-temps)))))))
-      `(defmethod compile-ast ((ast ,ast) context)
+      `(defmethod compile-ast (client (ast ,ast) context)
          (let (,@(loop for temp in temps
                        collect `(,temp (make-temp))))
            ,(recur ast-readers temps))))))
@@ -44,10 +45,11 @@
 ;;; branch.  The two branches are compiled in the same context as the
 ;;; IF-AST itself.
 
-(defmethod compile-ast ((ast cleavir-ast:if-ast) context)
-  (let ((then-branch (compile-ast (cleavir-ast:then-ast ast) context))
-        (else-branch (compile-ast (cleavir-ast:else-ast ast) context)))
-    (compile-ast (cleavir-ast:test-ast ast)
+(defmethod compile-ast (client (ast cleavir-ast:if-ast) context)
+  (let ((then-branch (compile-ast client (cleavir-ast:then-ast ast) context))
+        (else-branch (compile-ast client (cleavir-ast:else-ast ast) context)))
+    (compile-ast client
+                 (cleavir-ast:test-ast ast)
                  (clone-context
                   context
                   :results '()
@@ -66,13 +68,14 @@
 ;;; every PROGN-AST has at least one FORM-AST in it.  Otherwise a
 ;;; different AST is generated instead.
 
-(defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:progn-ast) context)
   (let ((form-asts (cleavir-ast:form-asts ast)))
     (assert (not (null form-asts)))
-    (let ((next (compile-ast (car (last form-asts)) context)))
+    (let ((next (compile-ast client (car (last form-asts)) context)))
       (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
             do (setf next
-                     (compile-ast sub-ast
+                     (compile-ast client
+                                  sub-ast
                                   (clone-context
                                    context
                                    :results '()
@@ -120,7 +123,7 @@
 (defun (setf block-info) (new-info block-ast)
   (setf (gethash block-ast *block-info*) new-info))
 
-(defmethod compile-ast ((ast cleavir-ast:block-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:block-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -138,7 +141,7 @@
                          :dynamic-environment-location dynenv-out)))
       (setf (block-info ast) (list context continuation catch))
       ;; Now just hook up the catch to go to the body normally.
-      (push (compile-ast (cleavir-ast:body-ast ast) new-context)
+      (push (compile-ast client (cleavir-ast:body-ast ast) new-context)
             (cleavir-ir:successors catch))
       catch)))
 
@@ -167,7 +170,7 @@
 ;;; UNWIND-INSTRUCTION is the successor of the context in which the
 ;;; BLOCK-AST was compiled.
 
-(defmethod compile-ast ((ast cleavir-ast:return-from-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:return-from-ast) context)
   (let* ((block-info (block-info (cleavir-ast:block-ast ast)))
          (block-context (first block-info))
          (continuation (second block-info))
@@ -177,7 +180,8 @@
         block-context
       (if (eq (invocation context) invocation)
           ;; simple case: we are returning locally.
-          (compile-ast (cleavir-ast:form-ast ast)
+          (compile-ast client
+                       (cleavir-ast:form-ast ast)
                        (clone-context
                         context
                         :results (results block-context)
@@ -191,7 +195,7 @@
                                context
                                :results (results block-context)
                                :successor new-successor)))
-            (compile-ast (cleavir-ast:form-ast ast) new-context))))))
+            (compile-ast client (cleavir-ast:form-ast ast) new-context))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -223,7 +227,7 @@
 ;;; The CATCH instruction abnormal successors are NOPs that have the appropriate
 ;;; items as successors.
 ;;; To accomplish this, we make the main NOP, then loop over the body twice.
-(defmethod compile-ast ((ast cleavir-ast:tagbody-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:tagbody-ast) context)
   (with-accessors ((results results)
                    (successors successors)
                    (invocation invocation))
@@ -264,7 +268,8 @@
                          next nop))
             ;; If it's not a tag, we compile it, expecting no values.
             else do (setf next
-                          (compile-ast item-ast
+                          (compile-ast client
+                                       item-ast
                                        (clone-context
                                         context
                                         :results '()
@@ -287,7 +292,7 @@
 ;;; an UNWIND-INSTRUCTION with the CATCH as its destination and using its
 ;;; continuation.
 
-(defmethod compile-ast ((ast cleavir-ast:go-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:go-ast) context)
   (destructuring-bind (invocation continuation nop destination index)
       (go-info (cleavir-ast:tag-ast ast))
     (if (eq invocation (invocation context))
@@ -301,24 +306,26 @@
 ;;;
 ;;; Compile a BIND-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:bind-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:bind-ast) context)
   (let* ((name-temp (make-temp))
          (value-temp (make-temp))
          (dynenv (cleavir-ir:make-lexical-location (gensym "bind")))
          (new-context (clone-context
                        context
                        :dynamic-environment-location dynenv))
-         (body (compile-ast (cleavir-ast:body-ast ast) new-context))
+         (body (compile-ast client (cleavir-ast:body-ast ast) new-context))
          (wrapped-body (make-instance 'cleavir-ir:bind-instruction
                          :inputs (list name-temp value-temp)
                          :output dynenv
                          :successor body)))
-    (compile-ast (cleavir-ast:name-ast ast)
+    (compile-ast client
+                 (cleavir-ast:name-ast ast)
                  (clone-context
                   context
                   :result name-temp
                   :successor
-                  (compile-ast (cleavir-ast:value-ast ast)
+                  (compile-ast client
+                               (cleavir-ast:value-ast ast)
                                (clone-context
                                 context
                                 :result value-temp
@@ -328,7 +335,7 @@
 ;;;
 ;;; Compile a CALL-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:call-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:call-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -339,6 +346,7 @@
            ;; In case they diverge at some point.
            (inputs temps))
       (compile-arguments
+       client
        all-args
        temps
        (make-instance 'cleavir-ir:funcall-instruction
@@ -390,7 +398,7 @@
 ;;; FUNCTION-AST. Users that subclass FUNCTION-AST
 ;;; can define methods on it.
 
-(defgeneric compile-function (ast))
+(defgeneric compile-function (client ast))
 
 ;;; The logic of this method is a bit twisted.  The reason is that we
 ;;; must create the ENTER-INSTRUCTION before we compile the body of
@@ -403,7 +411,7 @@
 ;;; dummy successor.  Once the body has been compiled, we call
 ;;; REINITIALIZE-INSTANCE on the ENTER-INSTRUCTION to set the slots to
 ;;; their final values.
-(defmethod compile-function ((ast cleavir-ast:function-ast))
+(defmethod compile-function (client (ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
          (dynenv (cleavir-ir:make-lexical-location (gensym "function")))
          (values-environment-location
@@ -418,17 +426,17 @@
                         enter
                         dynenv
                         values-environment-location))
-         (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
+         (body (compile-ast client (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
     enter))
 
 (defvar *function-info*)
 
-(defmethod compile-ast ((ast cleavir-ast:function-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:function-ast) context)
   ;; As per above comment concerning inlining, we memoize here.
   (let ((enter (or (gethash ast *function-info*)
                    (setf (gethash ast *function-info*)
-                         (compile-function ast)))))
+                         (compile-function client ast)))))
     (make-instance 'cleavir-ir:enclose-instruction
      :output (first (results context))
      :successor (first (successors context))
@@ -438,9 +446,10 @@
 ;;;
 ;;; Compile a SETQ-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:setq-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:setq-ast) context)
   (let ((location (find-or-create-location (cleavir-ast:lhs-ast ast))))
     (compile-ast
+     client
      (cleavir-ast:value-ast ast)
      (clone-context context :result location))))
 
@@ -448,7 +457,7 @@
 ;;;
 ;;; Compile a MULTIPLE-VALUE-PROG1-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:multiple-value-prog1-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:multiple-value-prog1-ast) context)
   (let ((successor (first (successors context))))
     (when (eq (results context) :values)
       (setf successor
@@ -456,7 +465,8 @@
               :successor successor)))
     (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
           do (setf successor
-                   (compile-ast form-ast
+                   (compile-ast client
+                                form-ast
                                 (clone-context
                                  context
                                  :results '()
@@ -465,17 +475,19 @@
       (setf successor
             (make-instance 'cleavir-ir:save-values-instruction
               :successor successor)))
-    (compile-ast (cleavir-ast:first-form-ast ast)
+    (compile-ast client
+                 (cleavir-ast:first-form-ast ast)
                  (clone-context context :successor successor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a MULTIPLE-VALUE-SETQ-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:multiple-value-setq-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:multiple-value-setq-ast) context)
   (let ((locations (mapcar #'find-or-create-location
                            (cleavir-ast:lhs-asts ast))))
     (compile-ast
+     client
      (cleavir-ast:form-ast ast)
      (clone-context
       context
@@ -495,7 +507,7 @@
     :successor successor
     :value-type type-specifier))
 
-(defmethod compile-ast ((ast cleavir-ast:the-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:the-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -507,7 +519,8 @@
           (successor (first successors)))
       (cond
         ((eq results :values)
-         (compile-ast form-ast
+         (compile-ast client
+                      form-ast
                       (clone-context
                        context
                        :successor
@@ -525,13 +538,13 @@
                           :value-type (cond (required (pop required))
                                             (optional (pop optional))
                                             (t rest)))))
-         (compile-ast form-ast (clone-context context :successor successor)))))))
+         (compile-ast client form-ast (clone-context context :successor successor)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a DYNAMIC-ALLOCATION-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:dynamic-allocation-ast)
+(defmethod compile-ast (client (ast cleavir-ast:dynamic-allocation-ast)
                         context)
   (with-accessors ((results results)
                    (successors successors))
@@ -539,6 +552,7 @@
     (assert-context ast context nil 1)
     ;; It's a ONE-VALUE-AST-MIXIN, so RESULTS is one lexical loc.
     (compile-ast
+     client
      (cleavir-ast:form-ast ast)
      (clone-context
       context
@@ -552,7 +566,7 @@
 ;;;
 ;;; Compile an UNREACHABLE-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:unreachable-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:unreachable-ast) context)
   ;; Code like (foo (unreachable)) is possible. In this case
   ;; the context will be expecting a value. But we don't have
   ;; anything to assign. So the location will be uninitialized.
@@ -565,7 +579,7 @@
 ;;;
 ;;; Compile a SYMBOL-VALUE-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:symbol-value-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:symbol-value-ast) context)
   (let ((name-ast (cleavir-ast:name-ast ast)))
     (if (typep name-ast 'cleavir-ast:constant-ast)
         (make-instance 'cleavir-ir:symbol-value-instruction
@@ -574,7 +588,8 @@
           :output (first (results context))
           :successor (first (successors context)))
         (let ((temp (make-temp)))
-          (compile-ast name-ast
+          (compile-ast client
+                       name-ast
                        (clone-context
                         context
                         :result temp
@@ -586,12 +601,13 @@
 ;;;
 ;;; Compile a SET-SYMBOL-VALUE-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:set-symbol-value-ast) context)
   (let ((name-ast (cleavir-ast:name-ast ast))
         (value-ast (cleavir-ast:value-ast ast)))
     (if (typep name-ast 'cleavir-ast:constant-ast)
         (let ((value-temp (make-temp)))
           (compile-ast
+           client
            value-ast
            (clone-context
             context
@@ -605,12 +621,14 @@
         (let ((variable-temp (make-temp))
               (value-temp (make-temp)))
           (compile-ast
+           client
            name-ast
            (clone-context
             context
             :result variable-temp
             :successor
             (compile-ast
+             client
              value-ast
              (clone-context
               context
@@ -632,13 +650,14 @@
 ;;;
 ;;; Compile a TYPEQ-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:typeq-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:typeq-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
     (assert-context ast context 0 2)
     (let ((temp (make-temp)))
       (compile-ast
+       client
        (cleavir-ast:form-ast ast)
        (clone-context
         context
@@ -654,7 +673,7 @@
 ;;;
 ;;; This AST has ONE-VALUE-AST-MIXIN as a superclass.
 
-(defmethod compile-ast ((ast cleavir-ast:lexical-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:lexical-ast) context)
   (make-instance 'cleavir-ir:assignment-instruction
    :input (find-or-create-location ast)
    :output (first (results context))
@@ -666,7 +685,7 @@
 ;;;
 ;;; This is the main entry point.
 
-(defun compile-toplevel (ast)
+(defun compile-toplevel (client ast)
   (let ((*block-info* (make-hash-table :test #'eq))
         (*go-info* (make-hash-table :test #'eq))
         (*location-info* (make-hash-table :test #'eq))
@@ -686,7 +705,7 @@
                           enter
                           dynenv
                           values-environment-location))
-           (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
+           (body (compile-ast client (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.
       (reinitialize-instance enter :successors (list body))
@@ -695,7 +714,7 @@
       (cleavir-ir:set-predecessors enter)
       enter)))
 
-(defun compile-toplevel-unhoisted (ast)
+(defun compile-toplevel-unhoisted (client ast)
   (let ((*block-info* (make-hash-table :test #'eq))
         (*go-info* (make-hash-table :test #'eq))
         (*location-info* (make-hash-table :test #'eq))
@@ -713,7 +732,7 @@
                           enter
                           dynenv
                           values-environment-location))
-           (body (compile-ast (cleavir-ast:body-ast ast) body-context)))
+           (body (compile-ast client (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.
       (reinitialize-instance enter :successors (list body))
@@ -731,7 +750,7 @@
 ;;; on that type of AST that turns the ENTER-INSTRUCTION into a
 ;;; TOP-LEVEL-ENTER-INSTRUCTION.
 
-(defmethod compile-ast :around ((ast cleavir-ast:top-level-function-ast) context)
+(defmethod compile-ast :around (client (ast cleavir-ast:top-level-function-ast) context)
   (declare (ignore context))
   (let* ((enclose (call-next-method))
          (enter (cleavir-ir:code enclose)))
@@ -746,11 +765,12 @@
   (loop for argument in arguments
         collect (make-temp)))
 
-(defun compile-arguments (arguments temps successor context)
+(defun compile-arguments (client arguments temps successor context)
   (loop with succ = successor
         for arg in (reverse arguments)
         for temp in (reverse temps)
-        do (setf succ (compile-ast arg
+        do (setf succ (compile-ast client
+                                   arg
                                    (clone-context
                                     context
                                     :result temp
@@ -765,7 +785,7 @@
 ;;; :AROUND method on COMPILE-AST has adapted the context so that it
 ;;; has a single result.
 
-(defmethod compile-ast ((ast cleavir-ast:constant-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:constant-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -778,7 +798,7 @@
 ;;;
 ;;; Compile a MULTIPLE-VALUE-CALL-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:multiple-value-call-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:multiple-value-call-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -798,6 +818,7 @@
       (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
             do (setf successor
                      (compile-ast
+                      client
                       form-ast
                       (clone-context
                        context
@@ -806,6 +827,7 @@
                        (make-instance 'cleavir-ir:save-values-instruction
                          :successor successor)))))
       (compile-ast
+       client
        (cleavir-ast:function-form-ast ast)
        (clone-context
         context
@@ -828,7 +850,7 @@
             (nthcdr min list1)
             (nthcdr min list2))))
 
-(defmethod compile-ast ((ast cleavir-ast:values-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:values-ast) context)
   (with-accessors ((results results)
                    (successors successors))
       context
@@ -857,7 +879,8 @@
                 (cond (valueless
                        (loop with succ = (first successors)
                              for arg in (reverse valueless)
-                             do (setf succ (compile-ast arg
+                             do (setf succ (compile-ast client
+                                                        arg
                                                         (clone-context
                                                          context
                                                          :results '()
@@ -871,12 +894,13 @@
 ;;;
 ;;; Compile an EQ-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:eq-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:eq-ast) context)
   (with-accessors ((successors successors))
       context
     (ecase (length successors)
       (1
-       (compile-ast (make-instance 'cleavir-ast:if-ast
+       (compile-ast client
+                    (make-instance 'cleavir-ast:if-ast
                       :test-ast ast
                       :then-ast (make-instance 'cleavir-ast:constant-ast
                                   :value (list 'quote t))
@@ -890,11 +914,13 @@
              (temp1 (cleavir-ir:new-temporary))
              (temp2 (cleavir-ir:new-temporary)))
          (compile-ast
+          client
           arg1-ast
           (clone-context
            context
            :result temp1
            :successor (compile-ast
+                       client
                        arg2-ast
                        (clone-context
                         context

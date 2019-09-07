@@ -12,7 +12,7 @@
 ;;;
 ;;; Compile an AREF-AST
 
-(defmethod compile-ast ((ast cleavir-ast:aref-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:aref-ast) context)
   (assert-context ast context 1 1)
   (let* ((array-temp (make-temp))
          (index-temp (make-temp))
@@ -25,11 +25,13 @@
                    (successors context)
                    (list (box-for-type type unboxed context)))))
     (compile-ast
+     client
      (cleavir-ast:array-ast ast)
      (clone-context
       context
       :result array-temp
       :successor (compile-ast
+                  client
                   (cleavir-ast:index-ast ast)
                   (clone-context
                    context
@@ -53,7 +55,7 @@
 ;;;
 ;;; Compile an ASET-AST
 
-(defmethod compile-ast ((ast cleavir-ast:aset-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:aset-ast) context)
   (let* ((array-temp (make-temp))
          (index-temp (make-temp))
          (element-temp (make-temp))
@@ -66,18 +68,21 @@
                  :outputs (results context)
                  :successors (successors context))))
     (compile-ast
+     client
      (cleavir-ast:array-ast ast)
      (clone-context
       context
       :result array-temp
       :successor
       (compile-ast
+       client
        (cleavir-ast:index-ast ast)
        (clone-context
         context
         :result index-temp
         :successor
         (compile-ast
+         client
          (cleavir-ast:element-ast ast)
          (if (cleavir-ast:boxed-p ast)
              ;; simple case: no unbox required

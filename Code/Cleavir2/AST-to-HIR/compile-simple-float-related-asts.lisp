@@ -7,7 +7,7 @@
 ;;; compiled in a context with a single successor and a single result.
 
 (defun compile-and-unbox-arguments
-    (arguments temps element-type successor context)
+    (client arguments temps element-type successor context)
   (loop with succ = successor
         for arg in (reverse arguments)
         for temp in (reverse temps)
@@ -19,7 +19,9 @@
                    :outputs (list temp)
                    :successors (list succ)))
            (setf succ
-                 (compile-ast arg (clone-context
+                 (compile-ast client
+                              arg
+                              (clone-context
                                    context
                                    :result inter
                                    :successor succ)))
@@ -31,7 +33,7 @@
 
 (defmacro compile-simple-float-arithmetic-ast
     (ast-class instruction-class)
-  `(defmethod compile-ast ((ast ,ast-class) context)
+  `(defmethod compile-ast (client (ast ,ast-class) context)
      (let* ((arguments (cleavir-ast:children ast))
             (temps (make-temps arguments))
             (temp (cleavir-ir:new-temporary))
@@ -41,6 +43,7 @@
                          :outputs (results context)
                          :successors (successors context))))
        (compile-and-unbox-arguments
+        client
         arguments
         temps
         (cleavir-ast:subtype ast)
@@ -78,12 +81,13 @@
 
 (defmacro compile-simple-float-comparison-ast
     (ast-class instruction-class input-transformer)
-  `(defmethod compile-ast ((ast ,ast-class) context)
+  `(defmethod compile-ast (client (ast ,ast-class) context)
      (assert-context ast context 0 2)
      (let* ((subtype (cleavir-ast:subtype ast))
             (arguments (cleavir-ast:children ast))
             (temps (make-temps arguments)))
        (compile-and-unbox-arguments
+        client
         arguments
         temps
         subtype
@@ -118,13 +122,14 @@
 ;;;
 ;;; Compile a COERCE-AST.
 
-(defmethod compile-ast ((ast cleavir-ast:coerce-ast) context)
+(defmethod compile-ast (client (ast cleavir-ast:coerce-ast) context)
   (let ((from (cleavir-ast:from-type ast)) (to (cleavir-ast:to-type ast))
         (arg (cleavir-ast:arg-ast ast))
         (input (cleavir-ir:new-temporary))
         (unboxed-input (cleavir-ir:new-temporary))
         (unboxed-output (cleavir-ir:new-temporary)))
     (compile-ast
+     client
      arg
      (clone-context
       context
