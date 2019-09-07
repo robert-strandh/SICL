@@ -15,7 +15,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "client")
    (:file "eval")
    (:file "compile-file")
    (:file "host-load")
