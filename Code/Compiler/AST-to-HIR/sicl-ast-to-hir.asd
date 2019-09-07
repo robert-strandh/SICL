@@ -9,4 +9,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "ast-to-hir")))
+   (:file "ast-to-hir")
+   (:file "breakpoint-instruction")))
