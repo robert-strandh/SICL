@@ -2,11 +2,12 @@
 
 (defun load-fasl (relative-pathname global-environment)
   (format *trace-output* "Loading file ~s~%" relative-pathname)
-  (let* ((prefixed (concatenate 'string "ASTs/" relative-pathname))
+  (let* ((client (make-instance 'client))
+         (prefixed (concatenate 'string "ASTs/" relative-pathname))
          (pathname (asdf:system-relative-pathname '#:sicl-boot prefixed))
          (ast (cleavir-io:read-model pathname '(v0)))
-         (hir (sicl-ast-to-hir:ast-to-hir ast))
-         (fun (sicl-hir-interpreter:top-level-hir-to-host-function nil hir))
+         (hir (sicl-ast-to-hir:ast-to-hir client ast))
+         (fun (sicl-hir-interpreter:top-level-hir-to-host-function client hir))
          (sicl-hir-interpreter:*dynamic-environment* '()))
     (funcall fun
              (sicl-hir-interpreter:make-function-cell-finder global-environment)
