@@ -28,6 +28,7 @@
            #:entries-from-parameter-group
            #:lambda-list-from-parameter-group
            #:eval #:cst-eval
+           #:origin
            ;; Names of conditions.
            #:compilation-condition
            #:compilation-program-error
