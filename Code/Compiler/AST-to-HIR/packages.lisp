@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export #:client
            #:breakpoint-instruction
+           #:debug-information
            #:ast-to-hir))
