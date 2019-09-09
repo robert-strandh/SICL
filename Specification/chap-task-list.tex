@@ -1,0 +1,87 @@
+\chapter{List of tasks of limited size}
+
+In this chapter, we give a list of tasks that can be accomplished in a
+shorter period of time, typically between a few days and a few weeks.
+The tasks in this list are meant for people who would like to
+contribute to \sysname{}, but who either lack a significant amount of
+time, or the knowledge, to intervene in more complex tasks.
+
+Each task in this list is meant to be interesting to the person who
+decides to take it on.  Thus, we have avoided trivial tasks such as
+untabifying source code, fixing grammar in comments, and generally
+altering code to conform to the guidelines in the previous two
+chapters.
+
+\section{Implement hash tables}
+
+Hash tables have not yet been implemented in \sysname{}.  We would
+like to investigate several possible implementations, and perhaps
+propose several such implementations, with different characteristics,
+in the code base of \sysname{}.
+
+Since \sysname{} has a very efficient technique for generic dispatch,
+we think that there could be a hierarchy of classes with different
+characteristics, all implementing the standard protocol for hash
+tables specified by the \commonlisp{} standard.
+
+In general, we want hash tables to be thread safe.  If it is possible
+to make them lock free, that is even better.
+
+The code should be structured so that it looks ``natural'' in
+intrinsic setting, i.e. when the code is loaded into \sysname{}.
+However, we would like for the code to be structured such that it can
+be tested in an extrinsic setting as well.
+
+The code should contain a separate \texttt{test} system, probably using
+extensive testing through the use of randomly generated operations.
+
+\subsection{Implementation using a list}
+
+We would like a simple implementation where elements of the table are
+kept in an ordinary list.  Such an implementation avoids the entire
+question of hashing functions.  As such, it is particularly well
+suited to serve during bootstrapping
+
+\subsection{Implementation using open hashing}
+
+\subsection{Implementation using vector buckets}
+
+\section{Implement streams}
+
+Streams have non yet been implemented in \sysname{}.  The full set of
+streams defined by the standard must be implemented at some point.
+
+Initially, we are not concerned with extreme performance
+requirements.  For that reason, we think that the protocol functions
+can be implemented on top of the Gray-streams protocol.
+
+The code should be structured so that it looks ``natural'' in
+intrinsic setting, i.e. when the code is loaded into \sysname{}.
+However, we would like for the code to be structured such that it can
+be tested in an extrinsic setting as well.
+
+\section{Better error messages for the \texttt{loop} module}
+
+The parser for the \texttt{loop} macro uses a home-grown version of
+combinator parsing.  Since \texttt{loop} clauses do not need
+backtracking, this feature of normal combinator parsing is not
+included.
+
+However, we think that combinator parsing is perhaps not a well suited
+technique when good error messages are a requirement.
+
+This task consists of investigating whether good error messages can be
+obtained with the current technique, while maintaining a reasonable
+structure of the code.  Or whether some other technique might be
+better suited.  We are thinking that Earley parsong might be a good
+candidate.
+
+\section{Better error messages by the lambda-list parser}
+
+The parser for the \texttt{loop} macro uses a home-grown
+implementation of the Earley parsing technique.  In theory, this
+technique should be excellent when it comes to generating good error
+messages in case of parse failures.  However, we have not implemented
+such error messages yet.
+
+This task consists of adding such error messages.
