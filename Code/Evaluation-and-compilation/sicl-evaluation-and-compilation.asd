@@ -10,7 +10,7 @@
 
 (defsystem :sicl-evaluation-and-compilation
   :depends-on (:acclimation
-	       :sicl-environment)
+               :sicl-environment)
   :serial t
   :components
   ((:file "packages")
