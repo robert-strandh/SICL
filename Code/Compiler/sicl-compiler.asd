@@ -4,7 +4,6 @@
   :depends-on (:cleavir-code-utilities
 	       :sicl-global-environment
 	       :eclector
-	       :cleavir-generate-ast
 	       :cleavir-ast
 	       :cleavir-primop)
   :serial t
