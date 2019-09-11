@@ -77,7 +77,8 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
-              (cst:canonicalize-declarations system declaration-csts))
+               (cst:canonicalize-declarations
+                system (cleavir-env:declarations environment) declaration-csts))
              (binding-csts (cst:listify bindings-cst))
              (variable-csts
                (loop for binding-cst in binding-csts

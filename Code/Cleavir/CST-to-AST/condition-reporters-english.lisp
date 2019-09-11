@@ -218,6 +218,14 @@
 	  (cst:raw (cst condition))))
 
 (defmethod acclimation:report-condition
+    ((condition special-symbol-macro)
+     stream
+     (language acclimation:english))
+  (format stream
+          "A symbol macro was declared SPECIAL:~%~s"
+          (cst:raw (cst condition))))
+
+(defmethod acclimation:report-condition
     ((condition variable-name-unknown)
      stream
      (language acclimation:english))

@@ -466,6 +466,7 @@
              (canonicalized-dspecs
                (cst:canonicalize-declaration-specifiers
                 system
+                (cleavir-env:declarations env)
                 declaration-specifiers))
              ;; Note that lambda-list-from-parameter-groups makes ASTs,
              ;; so this needs to be bound around that call.
