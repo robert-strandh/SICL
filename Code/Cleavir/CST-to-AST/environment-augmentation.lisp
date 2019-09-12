@@ -118,11 +118,14 @@
   ;; be added to the environment.
   (let ((info (cleavir-env:variable-info
                environment (cst:raw (cst:first declaration-data-cst)))))
-    (if (and (typep info 'cleavir-env:special-variable-info)
-             (cleavir-env:global-p info))
-        environment
-        (cleavir-env:add-special-variable
-         environment (cst:raw (cst:first declaration-data-cst))))))
+    (cond ((typep info 'cleavir-env:symbol-macro-info)
+           (error 'special-symbol-macro
+                  :cst (cst:first declaration-data-cst)))
+          ((and (typep info 'cleavir-env:special-variable-info)
+                (cleavir-env:global-p info))
+           environment)
+          (t (cleavir-env:add-special-variable
+              environment (cst:raw (cst:first declaration-data-cst)))))))
 
 (defmethod augment-environment-with-declaration
     ((declaration-identifier (eql 'type))

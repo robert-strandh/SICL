@@ -216,6 +216,13 @@
     (compilation-program-error)
   ())
 
+;;; This condition is signaled when a SPECIAL declaration is
+;;; encountered, but one of the variables it applies to is a symbol
+;;; macro.
+(define-condition special-symbol-macro
+    (compilation-program-error)
+  ())
+
 ;;; This condition is signaled when a symbol in a variable position is
 ;;; encountered during compilation, but it does not have a definition
 ;;; in the environment in which the symbol is compiled.

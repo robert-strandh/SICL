@@ -284,7 +284,8 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations system declaration-csts))
+               (cst:canonicalize-declarations
+                system (cleavir-env:declarations env) declaration-csts))
              (defs (convert-local-functions definitions-cst env system))
              (new-env (augment-environment-from-fdefs env definitions-cst))
              (init-asts
@@ -313,7 +314,8 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations system declaration-csts))
+               (cst:canonicalize-declarations
+                system (cleavir-env:declarations env) declaration-csts))
              (new-env (augment-environment-from-fdefs env definitions-cst))
              (defs (convert-local-functions definitions-cst new-env system))
              (init-asts
@@ -698,7 +700,8 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations system declaration-csts))
+               (cst:canonicalize-declarations
+                system (cleavir-env:declarations environment) declaration-csts))
              (new-env (augment-environment-with-declarations
                        environment canonical-declaration-specifiers)))
         (with-preserved-toplevel-ness
