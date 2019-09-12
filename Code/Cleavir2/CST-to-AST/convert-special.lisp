@@ -281,7 +281,10 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations client declaration-csts))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+               (cst:canonicalize-declarations client '() declaration-csts))
              (defs (convert-local-functions client
                                             definitions-cst
                                             environment))
@@ -318,7 +321,10 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations client declaration-csts))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+               (cst:canonicalize-declarations client '() declaration-csts))
              (new-environment
                (augment-environment-from-fdefs client
                                                environment
@@ -823,7 +829,10 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
-               (cst:canonicalize-declarations client declaration-csts))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+               (cst:canonicalize-declarations client '() declaration-csts))
              (new-environment
                (augment-environment-with-declarations
                 client environment canonical-declaration-specifiers)))

@@ -76,7 +76,10 @@
     (multiple-value-bind (declaration-csts forms-cst)
         (cst:separate-ordinary-body body-forms-cst)
       (let* ((canonical-declaration-specifiers
-              (cst:canonicalize-declarations client declaration-csts))
+               ;; FIXME: replace the second argument with the result
+               ;; of calling DECLARATIONS in the global environment,
+               ;; once that protocol is in place.
+              (cst:canonicalize-declarations client '() declaration-csts))
              (binding-csts (cst:listify bindings-cst))
              (variable-csts
                (loop for binding-cst in binding-csts
@@ -107,7 +110,7 @@
                                         (cst:list result)
                                         (cst:list
                                          (cst:cons (make-atom-cst 'declare)
-                                                   (cst:cstify declaration-csts))
+                                                   (cst:cstify (mapcar #'cst:rest declaration-csts)))
                                          result))
                                     :source origin)
                           :source origin))

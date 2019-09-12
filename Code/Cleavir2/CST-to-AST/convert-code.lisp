@@ -467,6 +467,7 @@
              (canonicalized-dspecs
                (cst:canonicalize-declaration-specifiers
                 client
+                '()
                 declaration-specifiers)))
         (multiple-value-bind (idspecs rdspecs)
             (itemize-declaration-specifiers-by-parameter-group
