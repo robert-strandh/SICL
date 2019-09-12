@@ -108,7 +108,7 @@
                                         (cst:list result)
                                         (cst:list
                                          (cst:cons (make-atom-cst 'declare)
-                                                   (cst:cstify declaration-csts))
+                                                   (cst:cstify (mapcar #'cst:rest declaration-csts)))
                                          result))
                                     :source origin)
                           :source origin))
