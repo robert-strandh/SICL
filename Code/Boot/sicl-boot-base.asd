@@ -3,7 +3,8 @@
 (defsystem #:sicl-boot-base
   :depends-on (#:sicl-extrinsic-environment
                #:sicl-ast-to-hir
-               #:sicl-hir-interpreter)
+               #:sicl-hir-interpreter
+               #:sicl-hir-to-mir)
   :serial t
   :components
   ((:file "packages")
