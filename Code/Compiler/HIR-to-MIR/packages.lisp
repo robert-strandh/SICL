@@ -2,4 +2,4 @@
 
 (defpackage #:sicl-hir-to-mir
   (:use #:common-lisp)
-  (:export))
+  (:export #:hir-to-mir))
