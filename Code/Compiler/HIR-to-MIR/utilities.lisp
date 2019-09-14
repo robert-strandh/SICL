@@ -51,7 +51,7 @@
        :augend rack-location
        :addend addend
        :output raw-pointer-location
-       :successors instruction)
+       :successors (list instruction instruction))
      instruction)
     raw-pointer-location))
 
