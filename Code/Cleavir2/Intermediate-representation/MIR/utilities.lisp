@@ -8,7 +8,7 @@
 
 (defun all-or-none (&rest arguments)
   (or (apply #'all arguments)
-      (apply #'null arguments)))
+      (apply #'none arguments)))
 
 (defun combine (combination &rest arguments)
   (if (apply #'none arguments)
