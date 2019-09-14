@@ -44,7 +44,8 @@
     rack-location))
 
 (defun skip-rack-prefix (instruction rack-location prefix-size)
-  (let ((addend (- (* prefix-size 8) 7))
+  (let ((addend (make-instance 'cleavir-ir:immediate-input
+                  :value (- (* prefix-size 8) 7)))
         (raw-pointer-location (make-instance 'cleavir-ir:raw-integer :size 64)))
     (cleavir-ir:insert-instruction-before
      (make-instance 'cleavir-ir:unsigned-add-instruction
