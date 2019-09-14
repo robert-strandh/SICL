@@ -2,10 +2,13 @@
 
 (defun convert-one-function (client enter-instruction)
   (eliminate-enclose-instructions client enter-instruction)
-  (cleavir-ir:map-local-instructions
-   (lambda (instruction)
-     (process-instruction client instruction))
-   enter-instruction))
+  (let ((instructions '()))
+    (cleavir-ir:map-local-instructions
+     (lambda (instruction)
+       (push instruction instructions))
+     enter-instruction)
+    (loop for instruction in instructions
+          do (process-instruction client instruction))))
 
 (defun hir-to-mir (client top-level-enter-instruction)
   (let ((enter-instructions
