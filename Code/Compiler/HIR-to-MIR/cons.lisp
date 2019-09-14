@@ -5,7 +5,7 @@
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input -1)))
     (change-class instruction 'cleavir-ir:memref1-instruction
-                  :input raw-pointer-location
+                  :inputs (list raw-pointer-location)
                   :outputs (cleavir-ir:outputs instruction)
                   :successors (cleavir-ir:successors instruction))))
 
@@ -14,7 +14,7 @@
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (raw-pointer-location (raw-pointer-from-tagged-pointer instruction input 7)))
     (change-class instruction 'cleavir-ir:memref1-instruction
-                  :input raw-pointer-location
+                  :inputs (list raw-pointer-location)
                   :outputs (cleavir-ir:outputs instruction)
                   :successors (cleavir-ir:successors instruction))))
 
