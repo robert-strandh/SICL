@@ -50,7 +50,7 @@
                   :inputs (list word-location-2 tag-input)
                   :outputs (cleavir-ir:outputs instruction))))
 
-(defmethod process-instructino
+(defmethod process-instruction
     (client (instruction cleavir-ir:box-instruction))
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((member element-type
@@ -99,7 +99,7 @@
                   :input word-location
                   :outputs (cleavir-ir:outputs instruction))))
 
-(defmethod process-instructino
+(defmethod process-instruction
     (client (instruction cleavir-ir:unbox-instruction))
   (let ((element-type (cleavir-ir:element-type instruction)))
     (cond ((member element-type
