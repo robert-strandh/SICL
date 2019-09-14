@@ -25,7 +25,7 @@
                                                    slot-offset-location
                                                    instruction)))
         (change-class instruction 'cleavir-ir:memref1-instruction
-                      :input slot-location
+                      :inputs (list slot-location)
                       :outputs (cleavir-ir:outputs instruction))))))
 
 (defun process-bit-aref-instruction (instruction)
