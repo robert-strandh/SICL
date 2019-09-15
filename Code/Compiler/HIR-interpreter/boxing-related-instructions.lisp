@@ -8,7 +8,7 @@
                                    lexical-environment))
          (output (first (cleavir-ir:outputs instruction)))
          (successor (first (cleavir-ir:successors instruction))))
-    (setf (gethash output lexical-environment)
+    (setf (lexical-value output lexical-environment)
           input-value)
     successor))
 
@@ -20,6 +20,6 @@
                                    lexical-environment))
          (output (first (cleavir-ir:outputs instruction)))
          (successor (first (cleavir-ir:successors instruction))))
-    (setf (gethash output lexical-environment)
+    (setf (lexical-value output lexical-environment)
           input-value)
     successor))

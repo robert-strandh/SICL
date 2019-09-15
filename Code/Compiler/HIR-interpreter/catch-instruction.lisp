@@ -9,13 +9,13 @@
     (let* ((successors (cleavir-ir:successors instruction))
            (transfer-tag (list nil))
            (abandon-tag (list nil)))
-      (setf (gethash continuation-output lexical-environment)
+      (setf (lexical-value continuation-output lexical-environment)
             transfer-tag)
-      (setf (gethash dynamic-environment-output lexical-environment)
+      (setf (lexical-value dynamic-environment-output lexical-environment)
             (cons (make-instance 'block/tagbody-entry
                     :abandon-tag abandon-tag)
-                  (gethash (cleavir-ir:dynamic-environment-location instruction)
-                           lexical-environment)))
+                  (lexical-value (cleavir-ir:dynamic-environment-location instruction)
+                                 lexical-environment)))
       (catch abandon-tag
         (loop for index = 0
                 then  (catch transfer-tag

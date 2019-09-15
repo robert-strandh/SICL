@@ -46,12 +46,12 @@
 
 (defmethod interpret-instruction :before
     (client instruction lexical-environment)
-  (let ((env1 (gethash (cleavir-ir:dynamic-environment-location
-                        *previous-instruction*)
-                       lexical-environment))
-        (env2 (gethash (cleavir-ir:dynamic-environment-location
-                        instruction)
-                       lexical-environment)))
+  (let ((env1 (lexical-value (cleavir-ir:dynamic-environment-location
+                              *previous-instruction*)
+                             lexical-environment))
+        (env2 (lexical-value (cleavir-ir:dynamic-environment-location
+                              instruction)
+                             lexical-environment)))
     (unless (or (eq env1 env2)
                 (> (length env2) (length env1)))
       (loop for env = env1 then (rest env)

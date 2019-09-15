@@ -7,7 +7,7 @@
   (let ((outputs (cleavir-ir:outputs instruction))
         (successor (first (cleavir-ir:successors instruction))))
     (loop for output in outputs
-          do (setf (gethash output lexical-environment)
+          do (setf (lexical-value output lexical-environment)
                    (pop *global-values-location*)))
     successor))
 

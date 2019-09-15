@@ -7,7 +7,7 @@
   (let* ((inputs (cleavir-ir:inputs instruction))
          (output (first (cleavir-ir:outputs instruction)))
          (successors (cleavir-ir:successors instruction)))
-    (setf (gethash output lexical-environment)
+    (setf (lexical-value output lexical-environment)
           (+ (input-value (first inputs) lexical-environment)
              (input-value (second inputs) lexical-environment)))
     ;; Assume the result is always a fixnum.
@@ -20,7 +20,7 @@
   (let* ((inputs (cleavir-ir:inputs instruction))
          (output (first (cleavir-ir:outputs instruction)))
          (successors (cleavir-ir:successors instruction)))
-    (setf (gethash output lexical-environment)
+    (setf (lexical-value output lexical-environment)
           (- (input-value (first inputs) lexical-environment)
              (input-value (second inputs) lexical-environment)))
     ;; Assume the result is always a fixnum.
@@ -71,6 +71,6 @@
           (funcall (cleavir-ir:rounding-mode instruction)
                    (input-value dividend-input lexical-environment)
                    (input-value divisor-input lexical-environment))
-        (setf (gethash quotient-location lexical-environment) quotient)
-        (setf (gethash remainder-location lexical-environment) remainder))))
+        (setf (lexical-value quotient-location lexical-environment) quotient)
+        (setf (lexical-value remainder-location lexical-environment) remainder))))
   (first (cleavir-ir:successors instruction)))

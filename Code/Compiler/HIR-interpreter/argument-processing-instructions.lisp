@@ -6,8 +6,8 @@
      lexical-environment)
   (let ((output (first (cleavir-ir:outputs instruction)))
         (successor (first (cleavir-ir:successors instruction))))
-    (setf (gethash output lexical-environment)
-          (length (gethash 'arguments lexical-environment)))
+    (setf (lexical-value output lexical-environment)
+          (length (lexical-value 'arguments lexical-environment)))
     successor))
 
 (defmethod interpret-instruction
@@ -18,6 +18,6 @@
                                   lexical-environment))
         (output (first (cleavir-ir:outputs instruction)))
         (successor (first (cleavir-ir:successors instruction))))
-    (setf (gethash output lexical-environment)
-          (aref (gethash 'arguments lexical-environment) input-value))
+    (setf (lexical-value output lexical-environment)
+          (aref (lexical-value 'arguments lexical-environment) input-value))
     successor))

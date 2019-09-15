@@ -15,8 +15,8 @@
          (input-values (loop for input in inputs
                              collect (input-value input lexical-environment))))
     (let ((*dynamic-environment*
-            (gethash (cleavir-ir:dynamic-environment-location instruction)
-                     lexical-environment)))
+            (lexical-value (cleavir-ir:dynamic-environment-location instruction)
+                           lexical-environment)))
       (setf *global-values-location*
             (multiple-value-list (apply #'funcall input-values)))))
   (first (cleavir-ir:successors instruction)))
@@ -27,7 +27,7 @@
      lexical-environment)
   (let* ((input (first (cleavir-ir:inputs instruction)))
          (output (first (cleavir-ir:outputs instruction))))
-    (setf (gethash output lexical-environment)
+    (setf (lexical-value output lexical-environment)
           (input-value input lexical-environment)))
   (first (cleavir-ir:successors instruction)))
 
