@@ -2,7 +2,6 @@
 
 (defun interpret-hir (client enter-instruction lexical-environment)
   (let ((instruction (first (cleavir-ir:successors enter-instruction))))
-    (setf *previous-instruction* instruction)
     (loop do (setf instruction
                    (interpret-instruction client instruction lexical-environment)))))
 
