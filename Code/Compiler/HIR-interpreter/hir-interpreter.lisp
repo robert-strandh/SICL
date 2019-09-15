@@ -44,14 +44,3 @@
             function-cell-finder)
       (catch 'return
         (interpret-hir client enter-instruction lexical-environment)))))
-
-(defmethod interpret-instruction
-    (client
-     (instruction sicl-hir-transformations:find-function-cell-instruction)
-     lexical-environment)
-  (let* ((function-name (sicl-hir-transformations:name instruction))
-         (output (first (cleavir-ir:outputs instruction))))
-    (setf (lexical-value output lexical-environment)
-          (funcall (lexical-value 'function-cell-finder lexical-environment)
-                   function-name)))
-  (first (cleavir-ir:successors instruction)))
