@@ -42,13 +42,9 @@
 
 (defvar *global-values-location*)
 
-(defvar *previous-instruction*)
-
 (defmethod interpret-instruction :before
     (client instruction lexical-environment)
-  (let ((env1 (lexical-value (cleavir-ir:dynamic-environment-location
-                              *previous-instruction*)
-                             lexical-environment))
+  (let ((env1 (lexical-value 'dynamic-environment lexical-environment))
         (env2 (lexical-value (cleavir-ir:dynamic-environment-location
                               instruction)
                              lexical-environment)))
@@ -71,3 +67,11 @@
         (unless (null last-block/tagbody)
           (throw (abandon-tag last-block/tagbody)
             instruction))))))
+
+(defmethod interpret-instruction :after
+    (client instruction lexical-environment)
+  (declare (ignore client lexical-environment))
+  (setf (lexical-value 'dynamic-environment lexical-environment)
+        (lexical-value (cleavir-ir:dynamic-environment-location
+                        instruction)
+                       lexical-environment)))

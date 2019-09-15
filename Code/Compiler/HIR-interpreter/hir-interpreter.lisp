@@ -19,6 +19,7 @@
             static-environment)
       (setf (lexical-value dynamic-environment-output lexical-environment)
             dynamic-environment)
+      (setf (lexical-value 'dynamic-environment lexical-environment) dynamic-environment)
       (setf (lexical-value 'arguments lexical-environment)
             (coerce arguments 'vector))
       (catch 'return
@@ -37,6 +38,7 @@
             static-environment)
       (setf (lexical-value dynamic-environment-output lexical-environment)
             '())
+      (setf (lexical-value 'dynamic-environment lexical-environment) '())
       (setf (lexical-value 'arguments lexical-environment)
             (vector))
       (setf (lexical-value 'function-cell-finder lexical-environment)
