@@ -1,8 +1,5 @@
 (cl:in-package #:sicl-hir-transformations)
 
-(defclass find-function-cell-instruction (cleavir-ir:instruction)
-  ((%name :initarg :name :reader name)))
-
 (defun insert-find-function-cell (function-name output successor)
   (let ((zero (make-instance 'cleavir-ir:constant-input :value 0))
         (function-name-input
