@@ -40,7 +40,7 @@
             '())
       (setf (lexical-value 'dynamic-environment lexical-environment) '())
       (setf (lexical-value 'arguments lexical-environment)
-            (vector))
+            (vector function-cell-finder))
       (setf (lexical-value 'function-cell-finder lexical-environment)
             function-cell-finder)
       (catch 'return
