@@ -3,7 +3,7 @@
 (defun lexical-value (name lexical-environment)
   (multiple-value-bind (value present-p)
       (gethash name lexical-environment)
-    ;; (assert present-p)
+    (assert present-p)
     value))
 
 (defun (setf lexical-value) (value name lexical-environment)
