@@ -13,6 +13,7 @@
    (:file "general-instance")
    (:file "array")
    (:file "boxing")
+   (:file "fixnum")
    (:file "eliminate-enclose-instructions")
    (:file "gather-enter-instructions")
    (:file "hir-to-mir")))
