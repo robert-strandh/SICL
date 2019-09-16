@@ -128,6 +128,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; MIR instruction UNSIGNED-DIV-INSTRUCTION
+
+(defclass unsigned-div-instruction (instruction multiple-successors-mixin)
+  ())
+
+(defmethod shared-initialize :around
+    ((instruction unsigned-div-instruction) slot-names
+     &key
+       inputs dividend divisor
+       outputs quotient remainder
+       successors successor)
+  (assert (all-or-none dividend divisor))
+  (let ((inputs (combine inputs dividend divisor))
+        (outputs (combine outputs quotient remainder))
+        (successors (if (null successor) successors (list successor))))
+    (call-next-method instruction slot-names
+                      :inputs inputs :outputs outputs :successors successors)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; MIR instruction UNSIGNED-LESS-INSTRUCTION
 
 (defclass unsigned-less-instruction (instruction multiple-successors-mixin)
