@@ -130,6 +130,7 @@
    #:signed-not-greater-instruction
    #:unsigned-add-instruction
    #:unsigned-sub-instruction
+   #:unsigned-div-instruction
    #:unsigned-less-instruction
    #:unsigned-not-greater-instruction
    #:equal-instruction
