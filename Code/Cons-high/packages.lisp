@@ -57,17 +57,3 @@
 		 #:push #:pop
 		 #:remf #:pushnew))
   (:export #:reverse-list . #1#))
-
-;;; In the test package, we want to import all symbols of the
-;;; COMMON-LISP package, except the ones that were shadowed in
-;;; the package that we are testing.  We do that by programatically
-;;; getting the list of those symbols using the function 
-;;; package-shadowing symbols.  But since defpackage doesn't evaluate
-;;; the symbols in the :shadowing-import-from list, we need to 
-;;; have the reader produce that list, hence the use of the #. reader
-;;; macro and again of the consing dot followed by a list. 
-(defpackage #:sicl-cons-high-test
-    (:shadowing-import-from #:sicl-cons-high .
-                            #.(package-shadowing-symbols '#:sicl-cons-high))
-    (:use #:sicl-cons-high #:cl #:lisp-unit))
-
