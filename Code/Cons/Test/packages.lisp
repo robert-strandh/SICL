@@ -10,5 +10,5 @@
 ;;; macro and again of the consing dot followed by a list. 
 (defpackage #:sicl-cons-test
     (:shadowing-import-from #:sicl-cons .
-                            #.(package-shadowing-symbols '#:sicl-cons-high))
+                            #.(package-shadowing-symbols '#:sicl-cons))
     (:use #:sicl-cons #:cl #:lisp-unit))
