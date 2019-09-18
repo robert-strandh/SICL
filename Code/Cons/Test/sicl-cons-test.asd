@@ -18,5 +18,6 @@
 
 (defsystem :sicl-cons-test
   :depends-on (:sicl-cons)
+  :serial t
   :components
-  ((:file "test" :depends-on ())))
+  ((:file "test")))
