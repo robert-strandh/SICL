@@ -20,4 +20,5 @@
   :depends-on (:sicl-cons)
   :serial t
   :components
-  ((:file "test")))
+  ((:file "packages")
+   (:file "test")))
