@@ -16,7 +16,7 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
 
-(defsystem :sicl-cons-high-test
-  :depends-on (:sicl-cons-high)
+(defsystem :sicl-cons-test
+  :depends-on (:sicl-cons)
   :components
   ((:file "test" :depends-on ())))
