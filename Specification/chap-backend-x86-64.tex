@@ -219,32 +219,39 @@ Return from callee to caller with more than $4$ values:
 
 \section{Use of the dynamic environment}
 
-The dynamic environment is a simply linked sequence of entries
-allocated in the stack rather than on the heap.  The first entry is
-pointed to by the register \texttt{RBX}.
-\seesec{sec-backend-x86-84-register-use} The following entry types
-exist:
+The dynamic environment is an ordinary list of \emph{entries}
+allocated in the stack rather than on the heap.  The head of the list
+is pointed to by the register \texttt{RBX}.
+\seesec{sec-backend-x86-84-register-use} Entries are instances of the
+built-in class \texttt{dynamic-environment-entry}.  The following
+entry subclasses exist:
 
 \begin{itemize}
   \item An entry representing the binding of a special variable.  This
-    entry contains two fields; the symbol to be bound and the value.
-    The type code for this entry is $1$.
+    entry contains two slots; the symbol to be bound and the value.
+    The class of this entry is \texttt{special-binding-entry}.
 
   \item An entry representing a \texttt{catch} tag.  The entry
-    contains a single field containing the \texttt{catch} tag.
-    The type code for this entry is $2$.
+    contains two slots.  One slot contains the \texttt{catch} tag.
+    The second slot is a Boolean value indicating whether this entry
+    is valid. The class of this entry is \texttt{catch-entry}.
 
   \item An entry representing a \texttt{block} or a \texttt{tagbody}.
     It is similar to the entry representing a \texttt{catch} tag.  The
-    entry contains a single field containing a time stamp represented
-    as a fixnum.  This time stamp becomes part of the static
-    environment of any function nested inside the \texttt{block} or
-    \texttt{tagbody} form that contains a \texttt{return-from} or a
-    \texttt{go} to this form. The type code for this entry is $3$.
+    entry has a slot containing a time stamp represented as a fixnum.
+    This time stamp becomes part of the static environment of any
+    function nested inside the \texttt{block} or \texttt{tagbody} form
+    that contains a \texttt{return-from} or a \texttt{go} to this
+    form.  This entry has a second slot containing a Boolean value
+    indicating whether this entry is valid.  The class of this entry
+    is \texttt{block/tagbody-entry}.
 
   \item An entry representing an \texttt{unwind-protect} form.  This
-    entry contains a thunk containing the cleanup forms of the
-    \texttt{unwind-protect} form. The type code for this entry is $4$.
+    entry has a slot containing a thunk that, when called, executes
+    the cleanup forms of the \texttt{unwind-protect} form.
+    This entry has a second slot containing a Boolean value
+    indicating whether this entry is valid.  The class of this entry
+    is \texttt{unwind-protect-entry}.
 \end{itemize}
 
 In addition to their own fields, each entry contains a pointer to the
