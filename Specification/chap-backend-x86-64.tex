@@ -261,24 +261,12 @@ accomplished by setting the \texttt{valid-p} slot to \texttt{nil}.
 
 \texttt{catch} is implemented as a call to a function.  This function
 establishes a \texttt{catch} tag and calls a thunk containing the body
-of the \texttt{catch} form.  The \texttt{catch} tag is established by
-allocating (as dynamic local data on the stack) an entry of the second
-type as shown in \refFig{fig-x86-64-catch}
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-x86-64-catch.pdf_t}
-\end{center}
-\caption{\label{fig-x86-64-catch}
-\texttt{catch} tag for the x86-64 backend.}
-\end{figure}
+of the \texttt{catch} form.
 
 \texttt{throw} searches the dynamic environment for an entry with the
-right \texttt{catch} tag.  If one is found, then it must also be
-valid, simply because if it had been invalidated, it would no longer
-have the type for \texttt{catch} tag.  The point to which control is
-to be transferred is stored as the return value of the stack frame
-containing the \texttt{catch} tag.
+right \texttt{catch} tag which is also valid.  The point to which
+control is to be transferred is stored as the return value of the
+stack frame containing the \texttt{catch} tag.
 
 A \texttt{block} form may establish an exit point.  In the most
 general case, a \texttt{return-from} is executed from a function
