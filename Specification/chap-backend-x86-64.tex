@@ -254,18 +254,10 @@ entry subclasses exist:
     is \texttt{unwind-protect-entry}.
 \end{itemize}
 
-In addition to their own fields, each entry contains a pointer to the
-next entry in the sequence, and a field indicating what type of entry
-it is.
-
 Of the four types of entries above, the \texttt{catch} and the
 \texttt{block}/\texttt{tagbody} entries represent exit points.  When
-an exit point expires, the entry must be invalidated.  An entry
-representing a \texttt{block} or \texttt{tagbody} is invalidated by
-storing 0 as the value of the time stamp.  An entry repesenting a
-\texttt{catch} tag is invalidated by changing its type field so that
-it is a an entry representing a \texttt{block} or \texttt{tagbody} and
-storing 0 in the field for the \texttt{catch} tag.
+an exit point expires, the entry must be invalidated.  Invalidation is
+accomplished by setting the \texttt{valid-p} slot to \texttt{nil}.
 
 \texttt{catch} is implemented as a call to a function.  This function
 establishes a \texttt{catch} tag and calls a thunk containing the body
