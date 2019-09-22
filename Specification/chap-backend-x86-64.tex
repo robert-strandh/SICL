@@ -223,8 +223,27 @@ The dynamic environment is an ordinary list of \emph{entries}
 allocated in the stack rather than on the heap.  The head of the list
 is pointed to by the register \texttt{RBX}.
 \seesec{sec-backend-x86-84-register-use} Entries are instances of the
-built-in class \texttt{dynamic-environment-entry}.  The following
-entry subclasses exist:
+built-in class \texttt{dynamic-environment-entry}.  The different
+subclasses of this class are described below.
+
+\Defclass {valid-p-mixin}
+
+This class is a superclass of every entry class that can be either
+valid or invalid.  A newly created instance of this class is valid.
+
+\Defgeneric {valid-p} {valid-p-mixin}
+
+This generic function returns \textit{true} if and only if
+\textit{valid-p-mixin} is valid, i.e. if it has not been invalidated
+since its creation.
+
+\Defgeneric {invalidate} {valid-p-mixin}
+
+This generic function invalidates the entry \textit{valid-p-mixin}.
+After this function has been called, a call to \texttt{valid-p} with
+\textit{valid-p-mixin} as an argument always returns \textit{false}.
+
+\Defclass {special-binding-entry}
 
 \begin{itemize}
   \item An entry representing the binding of a special variable.  This
@@ -278,18 +297,9 @@ executed, the point to which control is to be transferred is known
 statically.  The time stamp is also stored in a lexical variable in
 the static environment of closures established inside the
 \texttt{block} form that may execute a corresponding
-\texttt{return-from} form.  \refFig{fig-x86-64-block-tag} shows this
-situation.  When the \texttt{block} form is exited normally, the
+\texttt{return-from} form.  When the \texttt{block} form is exited normally, the
 \texttt{block}/\texttt{tagbody} entry is popped off the stack and off
 the dynamic environment.
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-x86-64-block-tag.pdf_t}
-\end{center}
-\caption{\label{fig-x86-64-block-tag}
-\texttt{block} tag for the x86-64 backend.}
-\end{figure}
 
 \texttt{return-from} accesses the time stamp from the static
 environment and then searches the dynamic environment for a
@@ -307,8 +317,7 @@ executed, the point to which control is to be transferred is known
 statically.  The time stamp is also stored in a lexical variable in
 the static environment of closures established inside the
 \texttt{tagbody} form that may execute a corresponding \texttt{go}
-form.  \refFig{fig-x86-64-block-tag} shows this situation.  When the
-\texttt{tagbody} form is exited normally, the
+form.  When the \texttt{tagbody} form is exited normally, the
 \texttt{block}/\texttt{tagbody} entry is popped off the stack and off
 the dynamic environment.
 
