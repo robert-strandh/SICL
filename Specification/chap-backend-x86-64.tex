@@ -220,11 +220,14 @@ Return from callee to caller with more than $4$ values:
 \section{Use of the dynamic environment}
 
 The dynamic environment is an ordinary list of \emph{entries}
-allocated in the stack rather than on the heap.  The head of the list
+allocated on the stack rather than on the heap.  The head of the list
 is pointed to by the register \texttt{RBX}.
-\seesec{sec-backend-x86-84-register-use} Entries are instances of the
-built-in class \texttt{dynamic-environment-entry}.  The different
-subclasses of this class are described below.
+\seesec{sec-backend-x86-84-register-use}
+
+\Defclass {dynamic-environment-entry}
+
+This class is the base class of all entry classes of the dynamic
+environment.
 
 \Defclass {valid-p-mixin}
 
@@ -245,15 +248,53 @@ After this function has been called, a call to \texttt{valid-p} with
 
 \Defclass {special-binding-entry}
 
-\begin{itemize}
-  \item An entry representing the binding of a special variable.  This
-    entry contains two slots; the symbol to be bound and the value.
-    The class of this entry is \texttt{special-binding-entry}.
+Instances of this class are used to represent the binding of a special
+variable.  It is a subclass of the class named
+\texttt{dynamic-environment-entry}.
 
-  \item An entry representing a \texttt{catch} tag.  The entry
-    contains two slots.  One slot contains the \texttt{catch} tag.
-    The second slot is a Boolean value indicating whether this entry
-    is valid. The class of this entry is \texttt{catch-entry}.
+\Definitarg {:symbol}
+
+The value of this initarg is the symbol representing the special
+variable to be bound.
+
+\Definitarg {:value}
+
+The value of this initarg is the value to which the special variable
+is to be bound.
+
+\Defgeneric {symbol} {special-binding-entry}
+
+This generic function returns the symbol passed as the value of the
+initarg \texttt{:symbol} when the entry \textit{special-binding-entry}
+was created.
+
+\Defgeneric {value} {special-binding-entry}
+
+This generic function returns the current value of the special
+variable represented by \textit{special-binding-entry}.
+
+\Defgeneric {(setf value)} {new-value special-binding-entry}
+
+This generic function sets the current value of the special
+variable represented by \textit{special-binding-entry}.
+
+\Defclass {catch-entry}
+
+An instance of this class is used to represent a \texttt{catch} tag.
+It is a subclass of the class named \texttt{dynamic-environment-entry}
+and of the class named \texttt{valid-p-mixin}.
+
+\Definitarg {:tag}
+
+The value of this initarg is the \texttt{catch} tag represented by
+this entry.
+
+\Defgeneric {tag} {catch-entry}
+
+This generic function returns the value of the \texttt{:tag} initarg
+that was given when \textit{catch-entry} was created.
+
+\begin{itemize}
 
   \item An entry representing a \texttt{block} or a \texttt{tagbody}.
     It is similar to the entry representing a \texttt{catch} tag.  The
