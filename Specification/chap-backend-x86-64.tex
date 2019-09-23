@@ -323,20 +323,15 @@ The value returned by a call to this generic function is the
 identifier of the \texttt{block/tagbody-entry} as given by the initarg
 \texttt{:identifier} when the entry was created.
 
-\begin{itemize}
+\Defclass {unwind-protect-entry}
 
-  \item An entry representing an \texttt{unwind-protect} form.  This
-    entry has a slot containing a thunk that, when called, executes
-    the cleanup forms of the \texttt{unwind-protect} form.
-    This entry has a second slot containing a Boolean value
-    indicating whether this entry is valid.  The class of this entry
-    is \texttt{unwind-protect-entry}.
-\end{itemize}
+This class is a subclass of the class named
+\texttt{dynamic-environment-entry}.
 
-Of the four types of entries above, the \texttt{catch} and the
-\texttt{block}/\texttt{tagbody} entries represent exit points.  When
-an exit point expires, the entry must be invalidated.  Invalidation is
-accomplished by setting the \texttt{valid-p} slot to \texttt{nil}.
+\Definitarg {:cleanup-thunk}
+
+The value of this initarg is a thunk that encapsulates the cleanup
+forms of the \texttt{unwind-protect} form.
 
 \texttt{catch} is implemented as a call to a function.  This function
 establishes a \texttt{catch} tag and calls a thunk containing the body
