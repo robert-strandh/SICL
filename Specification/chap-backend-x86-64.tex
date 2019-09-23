@@ -229,22 +229,33 @@ is pointed to by the register \texttt{RBX}.
 This class is the base class of all entry classes of the dynamic
 environment.
 
-\Defclass {valid-p-mixin}
+\Defclass {exit-point-entry}
 
-This class is a superclass of every entry class that can be either
-valid or invalid.  A newly created instance of this class is valid.
+This class is a subclass of the class named
+\texttt{dynamic-environment-entry}.  It is a superclass of all entries
+that represent \emph{exit points}.  The \commonlisp{} standard is
+somewhat unclear as to what constitutes and exit point.  The glossary
+includes \texttt{unwind-protect} in the set of exit points.  However,
+section 5.2 suggests otherwise.  Step 1 of the procedure described in
+section 5.2 is to ``abandon'' all intermediate exit points.  But with
+the definition in the glossary, the exit points representing
+\texttt{unwind-protect} forms would also be ``abandoned'', whatever
+that might mean.
 
-\Defgeneric {valid-p} {valid-p-mixin}
+Here, we restrict the term \emph{exit point} to be program points
+established by \texttt{catch}, \texttt{block}, and \texttt{tagbody}.
+
+\Defgeneric {valid-p} {exit-point}
 
 This generic function returns \textit{true} if and only if
-\textit{valid-p-mixin} is valid, i.e. if it has not been invalidated
-since its creation.
+\textit{exit-point} is valid, i.e. if it has not been invalidated (or
+``abandoned'') since its creation.
 
-\Defgeneric {invalidate} {valid-p-mixin}
+\Defgeneric {invalidate} {exit-point}
 
-This generic function invalidates the entry \textit{valid-p-mixin}.
+This generic function invalidates the entry \textit{exit-point}.
 After this function has been called, a call to \texttt{valid-p} with
-\textit{valid-p-mixin} as an argument always returns \textit{false}.
+\textit{exit-point} as an argument always returns \textit{false}.
 
 \Defclass {special-binding-entry}
 
@@ -281,8 +292,7 @@ variable represented by \textit{special-binding-entry}.
 \Defclass {catch-entry}
 
 An instance of this class is used to represent a \texttt{catch} tag.
-It is a subclass of the class named \texttt{dynamic-environment-entry}
-and of the class named \texttt{valid-p-mixin}.
+It is a subclass of the class named \texttt{exit-point}.
 
 \Definitarg {:tag}
 
@@ -298,8 +308,7 @@ that was given when \textit{catch-entry} was created.
 
 An instance of this class is used to represent an exit point created
 by \texttt{block} or \texttt{tagbody}.  It is a subclass of the class
-named \texttt{dynamic-environment-entry} and of the class named
-\texttt{valid-p-mixin}.
+named \texttt{exit-point}.
 
 \Definitarg {:identifier}
 
