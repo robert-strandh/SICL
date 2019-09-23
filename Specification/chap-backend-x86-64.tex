@@ -294,17 +294,27 @@ this entry.
 This generic function returns the value of the \texttt{:tag} initarg
 that was given when \textit{catch-entry} was created.
 
-\begin{itemize}
+\Defclass {block/tagbody-entry}
 
-  \item An entry representing a \texttt{block} or a \texttt{tagbody}.
-    It is similar to the entry representing a \texttt{catch} tag.  The
-    entry has a slot containing a time stamp represented as a fixnum.
-    This time stamp becomes part of the static environment of any
-    function nested inside the \texttt{block} or \texttt{tagbody} form
-    that contains a \texttt{return-from} or a \texttt{go} to this
-    form.  This entry has a second slot containing a Boolean value
-    indicating whether this entry is valid.  The class of this entry
-    is \texttt{block/tagbody-entry}.
+An instance of this class is used to represent an exit point created
+by \texttt{block} or \texttt{tagbody}.  It is a subclass of the class
+named \texttt{dynamic-environment-entry} and of the class named
+\texttt{valid-p-mixin}.
+
+\Definitarg {:identifier}
+
+The value of this initarg is a unique identifier for this entry.  This
+identifier becomes part of the static environment of any function
+nested inside the \texttt{block} or \texttt{tagbody} form that
+contains a \texttt{return-from} or a \texttt{go} to this form.
+
+\Defgeneric {identifier} {block/tagbody-entry}
+
+The value returned by a call to this generic function is the
+identifier of the \texttt{block/tagbody-entry} as given by the initarg
+\texttt{:identifier} when the entry was created.
+
+\begin{itemize}
 
   \item An entry representing an \texttt{unwind-protect} form.  This
     entry has a slot containing a thunk that, when called, executes
