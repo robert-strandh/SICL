@@ -333,6 +333,12 @@ This class is a subclass of the class named
 The value of this initarg is a thunk that encapsulates the cleanup
 forms of the \texttt{unwind-protect} form.
 
+\Defgeneric {cleanup-thunk} {unwind-protect-entry}
+
+A call to this generic function returns the cleanup thunk of
+\textit{unwind-protect-entry} that was supplied as the value of the
+initarg \texttt{:cleanup-thunk} when the entry was created.
+
 \texttt{catch} is implemented as a call to a function.  This function
 establishes a \texttt{catch} tag and calls a thunk containing the body
 of the \texttt{catch} form.
