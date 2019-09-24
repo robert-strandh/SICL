@@ -47,6 +47,16 @@
 
 (defmethod interpret-instruction
     (client
+     (instruction cleavir-ir:append-values-instruction)
+     lexical-environment)
+  (let ((output (first (cleavir-ir:outputs instruction))))
+    (setf (lexical-value output lexical-environment)
+	  (append (lexical-value output lexical-environment)
+		  *global-values-location*)))
+  (first (cleavir-ir:successors instruction)))
+
+(defmethod interpret-instruction
+    (client
      (instruction cleavir-ir:multiple-value-call-instruction)
      lexical-environment)
   (let ((input-value (input-value (first (cleavir-ir:inputs instruction))
