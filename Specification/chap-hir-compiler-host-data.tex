@@ -1,83 +1,13 @@
-\chapter{HIR compiler with host data}
-
-\section{Characteristics}
+\chapter{HIR interpreter}
 
 This backend is characterized by the fact that source code is compiled
-to the high-level intermediate representation (HIR), and then
-translated to very rudimentary \commonlisp{} which is compiled using
-the host compiler.  Recall that the high-level intermediate code only
-manipulates \commonlisp{} objects so that all address calculations are
-implicit.  All objects such as symbols, numbers, packages, etc. are
-host objects.
+to the high-level intermediate representation (HIR).  The HIR code is
+then interpreted by a \commonlisp{} program.  Recall that the
+high-level intermediate code only manipulates \commonlisp{} objects so
+that all address calculations are implicit.
 
 At the center of this backend is a \sysname{} first-class global
 environment represented as a host class instance.  This environment
 contains mappings from names to all objects that are part of any
 global environment, such as functions, macros, variables, classes,
 packages, types, \texttt{setf} expanders, etc.
-
-\section{Bootstrapping}
-
-A host function can be imported into the target environment.  However,
-such imports must be temporary, because if a host function detects an
-error, it will call the host function \texttt{error} which uses the
-binding stack of the host to search for handlers.  Therefore, in the
-complete backend, as many host functions as possible must be replaced
-by equivalent target functions.
-
-Notice that it is not generally possible to import host \emph{macros}
-into the target environment.  The reason is that host macros might
-expand into host-specific code, which the target environment can not
-process.  Some host macros (such as some simple conditional macros)
-expand into completely portable code, but since this set can vary
-between different hosts, to be on the safe side, we use only target
-macros.
-
-This backend is created as follows:
-
-\begin{enumerate}
-\item All standard \commonlisp{} functions are imported from the host
-  and given the same name in the target environment.
-\item Similarly, all generic functions that are part of the protocol
-  for first-class global environments are imported.  The names of
-  these functions are in the package named
-  \texttt{sicl-global-environment}, aliased \texttt{sicl-genv}.
-\item The target macro \texttt{defmacro} is created artificially by
-  creating an explicit host macro function and associating it with the
-  name \texttt{defmacro} in the target environment.
-\item Using the now-existing macro \texttt{defmacro}, other macros
-  that are needed early are created, such as \texttt{defun},
-  \texttt{defparameter}, etc.  If any new macros need support code in
-  the form of functions, these functions are imported first as host
-  functions.
-\item Remaining macros such as the conditional macros and
-  \texttt{setf}-related macros, are created the same way.
-\item Functions that manipulate the environment are defined as target
-  functions using the \texttt{defun} macro.  Examples of such
-  functions are \texttt{fdefinition}, \texttt{(setf fdefinition)},
-  \texttt{fboundp}, etc.  These functions call the host functions
-  imported in step 2.
-\item A temporary simplified version of the function
-  \texttt{ensure-generic-function} is created as a target function.
-  We can not use the equivalent host function, because the
-  specifications for this function include the creation of a function
-  binding in the environment.  In some sense, it is therefore in the
-  same category as the other environment-manipulating functions.  This
-  version always creates a new generic function by calling the
-  imported host function \texttt{make-instance} on the class named
-  \texttt{standard-generic-function}.
-\item The temporary function is used to create
-  \texttt{ensure-generic-function-using-class}, after which the
-  temporary function is replaced by the final version which calls the
-  function \texttt{ensure-generic-function-using-class}.
-\item Essential generic functions such as \texttt{make-instance},
-  \texttt{initialize-instance}, and \texttt{shared-initialize} are
-  created.  The function \texttt{make-instance} calls the host
-  function \texttt{allocate-instance} and the function
-  \texttt{shared-initialize} calls the host functions
-  \texttt{standard-instance-access} and \texttt{(setf
-    standard-instance-access)}.
-\item The target function \texttt{ensure-class} and the target generic
-  function \texttt{ensure-class-using-class} are created.
-\item The macro \texttt{defclass} is created.
-\end{enumerate}
