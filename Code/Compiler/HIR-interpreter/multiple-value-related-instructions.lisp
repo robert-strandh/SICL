@@ -59,14 +59,10 @@
     (client
      (instruction cleavir-ir:multiple-value-call-instruction)
      lexical-environment)
-  (let ((input-value (input-value (first (cleavir-ir:inputs instruction))
-                                  lexical-environment))
-        (successor (first (cleavir-ir:successors instruction))))
+  (destructuring-bind (function-location values-location)
+      (cleavir-ir:inputs instruction)
     (setf *global-values-location*
           (multiple-value-list
-           (apply input-value
-                  (loop until (null *values-environment*)
-                        for result = '()
-                          then (append (pop *values-environment*) result)
-                        finally (return result)))))
-    successor))
+           (apply (input-value function-location lexical-environment)
+		  (input-value values-location lexical-environment)))))
+  (first (cleavir-ir:successors instruction)))
