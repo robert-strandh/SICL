@@ -109,3 +109,16 @@
 
 (defclass initialize-values-instruction (instruction one-successor-mixin)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction APPEND-VALUES-INSTRUCTION.
+;;;
+;;; This instruction has no inputs and a single output.  It is used in
+;;; association with the MULTIPLE-VALUE-CALL-INSTRUCTION to append the
+;;; values in the global values location to the suite of values
+;;; accumulated in the lexical location that is the output of this
+;;; instruction.
+
+(defclass append-values-instruction (instruction one-successor-mixin)
+  ())
