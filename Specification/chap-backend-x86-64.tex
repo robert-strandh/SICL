@@ -245,17 +245,17 @@ that might mean.
 Here, we restrict the term \emph{exit point} to be program points
 established by \texttt{catch}, \texttt{block}, and \texttt{tagbody}.
 
-\Defgeneric {valid-p} {exit-point}
+\Defgeneric {valid-p} {exit-point-entry}
 
 This generic function returns \textit{true} if and only if
-\textit{exit-point} is valid, i.e. if it has not been invalidated (or
+\textit{exit-point-entry} is valid, i.e. if it has not been invalidated (or
 ``abandoned'') since its creation.
 
-\Defgeneric {invalidate} {exit-point}
+\Defgeneric {invalidate} {exit-point-entry}
 
-This generic function invalidates the entry \textit{exit-point}.
+This generic function invalidates the entry \textit{exit-point-entry}.
 After this function has been called, a call to \texttt{valid-p} with
-\textit{exit-point} as an argument always returns \textit{false}.
+\textit{exit-point-entry} as an argument always returns \textit{false}.
 
 \Defclass {special-binding-entry}
 
@@ -292,7 +292,7 @@ variable represented by \textit{special-binding-entry}.
 \Defclass {catch-entry}
 
 An instance of this class is used to represent a \texttt{catch} tag.
-It is a subclass of the class named \texttt{exit-point}.
+It is a subclass of the class named \texttt{exit-point-entry}.
 
 \Definitarg {:tag}
 
@@ -308,7 +308,7 @@ that was given when \textit{catch-entry} was created.
 
 An instance of this class is used to represent an exit point created
 by \texttt{block} or \texttt{tagbody}.  It is a subclass of the class
-named \texttt{exit-point}.
+named \texttt{exit-point-entry}.
 
 \Definitarg {:identifier}
 
