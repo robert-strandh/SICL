@@ -22,6 +22,8 @@
     cleavir-ir:multiple-value-call-instruction
     cleavir-ir:save-values-instruction
     cleavir-ir:restore-values-instruction
+    cleavir-ir:initialize-values-instruction
+    cleavir-ir:append-values-instruction
     ;; FIXME: this instruction should be processed
     cleavir-ir:fixnum-divide-instruction))
 
