@@ -98,6 +98,8 @@
    #:save-values-instruction
    #:restore-values-instruction
    #:multiple-value-call-instruction
+   #:initialize-values-instruction
+   #:append-values-instruction
    #:create-cell-instruction
    #:fetch-instruction
    #:read-cell-instruction
