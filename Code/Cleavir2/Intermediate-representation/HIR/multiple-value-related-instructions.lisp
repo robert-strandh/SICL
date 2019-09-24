@@ -95,3 +95,17 @@
 
 (defclass restore-values-instruction (instruction one-successor-mixin)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction INITIALIZE-VALUES-INSTRUCTION.
+;;;
+;;; This instruction has no inputs and a single output.  It is used in
+;;; association with the MULTIPLE-VALUE-CALL-INSTRUCTION to initialize
+;;; a suite of multiple values in a lexical location.  After the
+;;; evaluation of each sub-form of the MULTIPLE-VALUE-CALL form, an
+;;; APPEND-VALUES-INSTRUCTION takes the values of the sub-form and
+;;; appends them to the accumulated values in the lexical output.
+
+(defclass initialize-values-instruction (instruction one-successor-mixin)
+  ())
