@@ -353,19 +353,19 @@ general case, a \texttt{return-from} is executed from a function
 lexically-enclosed inside the \texttt{block} with an arbitrary number
 of intervening stack frames.  When this is the case, upon entry to the
 \texttt{block} form, a \texttt{block}/\texttt{tagbody} entry with a
-fresh time stamp is established.  When a \texttt{return-from} is
+fresh identifier is established.  When a \texttt{return-from} is
 executed, the point to which control is to be transferred is known
-statically.  The time stamp is also stored in a lexical variable in
+statically.  The identifier is also stored in a lexical variable in
 the static environment of closures established inside the
 \texttt{block} form that may execute a corresponding
 \texttt{return-from} form.  When the \texttt{block} form is exited normally, the
 \texttt{block}/\texttt{tagbody} entry is popped off the stack and off
 the dynamic environment.
 
-\texttt{return-from} accesses the time stamp from the static
+\texttt{return-from} accesses the identifier from the static
 environment and then searches the dynamic environment for a
-corresponding time stamp in a \texttt{block}/\texttt{tagbody} entry.
-If one with the right time stamp is found, the lexical environment is
+corresponding identifier in a \texttt{block}/\texttt{tagbody} entry.
+If one with the right identifier is found, the lexical environment is
 restored, and control is transferred to the statically known address.
 
 A \texttt{tagbody} may establish several exit points.  In the most
@@ -373,19 +373,19 @@ general case, a \texttt{go} is executed from a function
 lexically-enclosed inside the \texttt{tagbody} with an arbitrary
 number of intervening stack frames.  When this is the case, upon entry
 to the \texttt{tagbody} form, a \texttt{block}/\texttt{tagbody} entry
-with a fresh time stamp is established.  When a \texttt{go} is
+with a fresh identifier is established.  When a \texttt{go} is
 executed, the point to which control is to be transferred is known
-statically.  The time stamp is also stored in a lexical variable in
+statically.  The identifier is also stored in a lexical variable in
 the static environment of closures established inside the
 \texttt{tagbody} form that may execute a corresponding \texttt{go}
 form.  When the \texttt{tagbody} form is exited normally, the
 \texttt{block}/\texttt{tagbody} entry is popped off the stack and off
 the dynamic environment.
 
-\texttt{go} accesses the time stamp from the static environment and
-then searches the dynamic environment for a corresponding time stamp
+\texttt{go} accesses the identifier from the static environment and
+then searches the dynamic environment for a corresponding identifier
 in a \texttt{block}/\texttt{tagbody} entry.  If one with the right
-time stamp is found, the lexical environment is restored, and control
+identifier is found, the lexical environment is restored, and control
 is transferred to the statically known address.
 
 \section{Transfer of control to an exit point}
