@@ -804,9 +804,10 @@
       context
     (assert-context ast context nil 1)
     (let* ((function-temp (cleavir-ir:new-temporary))
+	   (values-temp (cleavir-ir:new-temporary))
            (successor
              (make-instance 'cleavir-ir:multiple-value-call-instruction
-               :input function-temp
+               :inputs (list function-temp values-temp)
                :outputs '()
                :successors
                (if (eq results :values)
@@ -824,7 +825,8 @@
                        context
                        :results :values
                        :successor
-                       (make-instance 'cleavir-ir:save-values-instruction
+                       (make-instance 'cleavir-ir:append-values-instruction
+			 :output values-temp
                          :successor successor)))))
       (compile-ast
        client
@@ -832,7 +834,10 @@
        (clone-context
         context
         :result function-temp
-        :successor successor)))))
+        :successor
+	(make-instance 'cleavir-ir:initialize-values-instruction
+	  :output values-temp
+	  :successor successor))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
