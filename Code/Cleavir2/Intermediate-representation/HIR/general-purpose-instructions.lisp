@@ -128,11 +128,11 @@
 ;;;
 ;;; Instruction DYNAMIC-ALLOCATION-INSTRUCTION.
 ;;;
-;;; This instruction has no operational effect, like THE.
-;;; It informs the escape analysis machinery that values in its
-;;; input will not escape the function that owns the instruction.
-;;; In other words, values input to this instruction
-;;; can be allocated in the local function's stack frame.
+;;; This instruction has no operational effect, like THE.  It informs
+;;; the escape analysis machinery that values in its input will not
+;;; escape the function that owns the instruction.  In other words,
+;;; values input to this instruction can be allocated in the stack
+;;; frame of the local function.
 
 (defclass dynamic-allocation-instruction
     (instruction one-successor-mixin)
@@ -152,9 +152,10 @@
 ;;; "continuation".
 
 ;;; If this continuation is used as input to an UNWIND-INSTRUCTION,
-;;; the catch-instruction's stack frame is put back into place, and
-;;; control proceeds to one of the catch-instruction's later
-;;; successors (stored in the unwind-instruction).
+;;; the stack frame of the catch-instruction is put back into place,
+;;; and control proceeds to one of the later successors of the
+;;; catch-instruction.  Which successor is to be used, is indicated by
+;;; the INDEX of the UNWIND-INSTRUCTION.
 ;;;
 ;;; The continuation can only be used once, and cannot be used after the
 ;;; function containing the CATCH has returned or been unwound from.
