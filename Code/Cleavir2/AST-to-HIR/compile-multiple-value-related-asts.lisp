@@ -4,7 +4,7 @@
 ;;;
 ;;; Compile a MULTIPLE-VALUE-PROG1-AST.
 
-(defun compile-mulitple-value-prog1-body (client form-asts context)
+(defun compile-multiple-value-prog1-body (client form-asts context)
   (loop with result-context = context
         for form-ast in (reverse form-asts)
         for successor = (compile-ast client form-ast result-context)
