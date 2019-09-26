@@ -12,7 +12,7 @@
                  (clone-context
                   context
                   :successor successor))
-        finally (return successor)))
+        finally (return (first (successors result-context)))))
 
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-prog1-ast) context)
   (let ((successor (first (successors context))))
@@ -20,14 +20,11 @@
       (setf successor
             (make-instance 'cleavir-ir:restore-values-instruction
               :successor successor)))
-    (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
-          do (setf successor
-                   (compile-ast client
-                                form-ast
-                                (clone-context
-                                 context
-                                 :results '()
-                                 :successor successor))))
+    (setf successor
+          (compile-multiple-value-prog1-body
+           client
+           (cleavir-ast:form-asts ast)
+           (clone-context context :results '() :successor successor)))
     (when (eq (results context) :values)
       (setf successor
             (make-instance 'cleavir-ir:save-values-instruction
