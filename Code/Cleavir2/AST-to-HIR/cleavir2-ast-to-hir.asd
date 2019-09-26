@@ -22,6 +22,7 @@
    (:file "utilities")
    (:file "compile-ast")
    (:file "compile-general-purpose-asts")
+   (:file "compile-multiple-value-related-asts")
    (:file "compile-fixnum-related-asts")
    (:file "compile-simple-float-related-asts")
    (:file "compile-cons-related-asts")

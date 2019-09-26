@@ -1,0 +1,102 @@
+(cl:in-package #:cleavir-ast-to-hir)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MULTIPLE-VALUE-PROG1-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:multiple-value-prog1-ast) context)
+  (let ((successor (first (successors context))))
+    (when (eq (results context) :values)
+      (setf successor
+            (make-instance 'cleavir-ir:restore-values-instruction
+              :successor successor)))
+    (loop for form-ast in (reverse (cleavir-ast:form-asts ast))
+          do (setf successor
+                   (compile-ast client
+                                form-ast
+                                (clone-context
+                                 context
+                                 :results '()
+                                 :successor successor))))
+    (when (eq (results context) :values)
+      (setf successor
+            (make-instance 'cleavir-ir:save-values-instruction
+              :successor successor)))
+    (compile-ast client
+                 (cleavir-ast:first-form-ast ast)
+                 (clone-context context :successor successor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MULTIPLE-VALUE-SETQ-AST.
+
+(defmethod compile-ast (client (ast cleavir-ast:multiple-value-setq-ast) context)
+  (let ((locations (mapcar #'find-or-create-location
+                           (cleavir-ast:lhs-asts ast))))
+    (compile-ast
+     client
+     (cleavir-ast:form-ast ast)
+     (clone-context
+      context
+      :results :values
+      :successor (make-instance 'cleavir-ir:multiple-to-fixed-instruction
+                   :outputs locations
+                   :successor (first (successors context)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a VALUES-AST.
+
+(defun split-lists (list1 list2)
+  ;; Returns maximal prefixes of the same length,
+  ;; and then suffixes. E.g.:
+  ;; (s-l '(1 2) '(3 4 5)) => (1 2), (3 4), nil, (5)
+  ;; (s-l '(1 2 3) '(4 5)) => (1 2), (4 5), (3), nil
+  ;; (s-l '(1 2) '(3 4)) => (1 2), (3 4), nil, nil
+  (let ((min (min (length list1) (length list2))))
+    (values (subseq list1 0 min)
+            (subseq list2 0 min)
+            (nthcdr min list1)
+            (nthcdr min list2))))
+
+(defmethod compile-ast (client (ast cleavir-ast:values-ast) context)
+  (with-accessors ((results results)
+                   (successors successors))
+      context
+    (assert-context ast context nil 1)
+    (let ((arguments (cleavir-ast:argument-asts ast)))
+      (cond ((eq results :values)
+             (let ((temps (make-temps arguments)))
+               (compile-arguments
+                client
+                arguments temps
+                (make-instance 'cleavir-ir:fixed-to-multiple-instruction
+                 :inputs temps :successor (first successors))
+                context)))
+            (t ;lexical locations
+             ;; this is a bit tricky because there may be more or less
+             ;; arguments than results, in which case we must compile
+             ;; for effect or nil-fill.
+             ;; First we collect those that match.
+             (multiple-value-bind (args results valueless nils)
+                 (split-lists arguments results)
+               ;; Now we know which match, so compile those.
+               ;; Note also we have to preserve left-to-right evaluation order.
+               (compile-arguments
+                client
+                args
+                results
+                ;; Obviously at most one of valueless and nils can be non-null.
+                (cond (valueless
+                       (loop with succ = (first successors)
+                             for arg in (reverse valueless)
+                             do (setf succ (compile-ast client
+                                                        arg
+                                                        (clone-context
+                                                         context
+                                                         :results '()
+                                                         :successor succ)))
+                             finally (return succ)))
+                      (nils (nil-fill nils (first successors)))
+                      (t (first successors)))
+                context)))))))
