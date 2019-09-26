@@ -4,6 +4,15 @@
 ;;;
 ;;; Compile a MULTIPLE-VALUE-PROG1-AST.
 
+(defun compile-mulitple-value-prog1-body (client form-asts context)
+  (loop with result-context = context
+        for form-ast in (reverse form-asts)
+        for successor = (compile-ast client form-ast result-context)
+        do (setf result-context
+                 (clone-context
+                  context
+                  :successor successor))))
+
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-prog1-ast) context)
   (let ((successor (first (successors context))))
     (when (eq (results context) :values)
