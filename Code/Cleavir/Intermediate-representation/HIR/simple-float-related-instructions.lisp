@@ -170,4 +170,4 @@
     :successors (list successor)))
 
 (defmethod clone-initargs append ((instruction coerce-instruction))
-  (list :from-type (from-type instruction) :to-type (to-type instruction)))
+  (list :from (from-type instruction) :to (to-type instruction)))
