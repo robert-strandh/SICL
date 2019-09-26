@@ -70,7 +70,7 @@
 
 (defmethod interpret-instruction :after
     (client instruction lexical-environment)
-  (declare (ignore client lexical-environment))
+  (declare (ignore client))
   (setf (lexical-value 'dynamic-environment lexical-environment)
         (lexical-value (cleavir-ir:dynamic-environment-location
                         instruction)
