@@ -11,7 +11,8 @@
         do (setf result-context
                  (clone-context
                   context
-                  :successor successor))))
+                  :successor successor))
+        finally (return successor)))
 
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-prog1-ast) context)
   (let ((successor (first (successors context))))
