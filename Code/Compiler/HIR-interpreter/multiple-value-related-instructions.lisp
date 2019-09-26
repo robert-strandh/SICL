@@ -26,6 +26,10 @@
     (client
      (instruction cleavir-ir:save-values-instruction)
      lexical-environment)
+  (let ((output (first (cleavir-ir:outputs instruction))))
+    (setf (lexical-value output lexical-environment)
+          (lexical-value (cleavir-ir:dynamic-environment-location instruction)
+                         lexical-environment)))
   (push *global-values-location* *values-environment*)
   (first (cleavir-ir:successors instruction)))
 
