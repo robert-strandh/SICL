@@ -28,16 +28,18 @@
      lexical-environment)
   (let ((output (first (cleavir-ir:outputs instruction))))
     (setf (lexical-value output lexical-environment)
-          (lexical-value (cleavir-ir:dynamic-environment-location instruction)
-                         lexical-environment)))
-  (push *global-values-location* *values-environment*)
+          (cons *global-values-location*
+                (lexical-value (cleavir-ir:dynamic-environment-location instruction)
+                               lexical-environment))))
   (first (cleavir-ir:successors instruction)))
 
 (defmethod interpret-instruction
     (client
      (instruction cleavir-ir:restore-values-instruction)
      lexical-environment)
-  (setf *global-values-location* (pop *values-environment*))
+  (setf *global-values-location*
+        (first (lexical-value (cleavir-ir:dynamic-environment-location instruction)
+                              lexical-environment)))
   (first (cleavir-ir:successors instruction)))
 
 (defmethod interpret-instruction
