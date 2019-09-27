@@ -4,8 +4,17 @@
 
 (defclass entry () ())
 
+(defgeneric invalidate-entry (entry))
+
+(defmethod invalidate-entry (entry)
+  (declare (ignore entry))
+  nil)
+
 (defclass exit-point (entry)
   ((%valid-p :initform t :accessor valid-p)))
+
+(defmethod invalidate-entry ((entry exit-point))
+  (setf (valid-p entry) nil))
 
 (defclass block/tagbody-entry (exit-point)
   ((%abandon-tag :initarg :abandon-tag :reader abandon-tag)))
@@ -53,7 +62,7 @@
       (loop for env = env1 then (rest env)
             for entry = (first env)
             until (eq env env2)
-            do (setf (valid-p entry) nil))
+            do (invalidate-entry entry))
       (let ((last-block/tagbody
               (loop with result = nil
                     for env = env1 then (rest env)
