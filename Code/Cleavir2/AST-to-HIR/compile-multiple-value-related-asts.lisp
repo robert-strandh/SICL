@@ -15,23 +15,39 @@
         finally (return (first (successors result-context)))))
 
 (defmethod compile-ast (client (ast cleavir-ast:multiple-value-prog1-ast) context)
-  (let ((successor (first (successors context))))
-    (when (eq (results context) :values)
-      (setf successor
-            (make-instance 'cleavir-ir:restore-values-instruction
-              :successor successor)))
-    (setf successor
+  (compile-ast
+   client
+   (cleavir-ast:first-form-ast ast)
+   (clone-context
+    context
+    :successor
+    (if (eq (results context) :values)
+        (let* ((dynamic-environment-location
+                 (cleavir-ir:make-lexical-location (gensym "values")))
+               (new-context
+                 (clone-context
+                  context
+                  :results '()
+                  :dynamic-environment-location dynamic-environment-location)))
+          (make-instance 'cleavir-ir:save-values-instruction
+            :output dynamic-environment-location
+            :successor
+            (compile-multiple-value-prog1-body
+             client
+             (cleavir-ast:form-asts ast)
+             (clone-context
+              new-context
+              :successor
+              (make-instance 'cleavir-ir:restore-values-instruction
+                :successor (first (successors context))
+                :dynamic-environment-location dynamic-environment-location)))))
+        (let ((new-context (clone-context context :results '())))
           (compile-multiple-value-prog1-body
            client
            (cleavir-ast:form-asts ast)
-           (clone-context context :results '() :successor successor)))
-    (when (eq (results context) :values)
-      (setf successor
-            (make-instance 'cleavir-ir:save-values-instruction
-              :successor successor)))
-    (compile-ast client
-                 (cleavir-ast:first-form-ast ast)
-                 (clone-context context :successor successor))))
+           (clone-context
+            new-context
+            :successor (first (successors context)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
