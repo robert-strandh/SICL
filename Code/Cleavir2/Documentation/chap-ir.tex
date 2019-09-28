@@ -1076,7 +1076,7 @@ The name of this instruction is sometimes abbreviated ``M->F''.
   \hline
   Number of inputs & any\\
   \hline
-  Number of outputs & 1\\
+  Number of outputs & 0\\
   \hline
   Number of predecessors & any\\
   \hline
@@ -1084,11 +1084,11 @@ The name of this instruction is sometimes abbreviated ``M->F''.
   \hline
 \end{tabular}
 
-This instruction converts zero or more lexical locations into a single
-values location. It is used in context where a fixed number of values
-is provided but an unknown number of values is required, e.g. a
-lexical variable access (one value) being the return value of a
-function (unknown values).
+This instruction converts zero or more lexical locations into values
+in the global values location. It is used in context where a fixed
+number of values is provided but an unknown number of values is
+required, e.g. a lexical variable access (one value) being the return
+value of a function (unknown values).
 
 The name of this instruction is sometimes abbreviated ``F->M''.
 
