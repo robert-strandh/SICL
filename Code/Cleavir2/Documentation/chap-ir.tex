@@ -1046,7 +1046,7 @@ the implicit \rest behavior of \texttt{cl:the}.
 
 \begin{tabular}{|l|l|}
   \hline
-  Number of inputs & 1\\
+  Number of inputs & 0\\
   \hline
   Number of outputs & any\\
   \hline
@@ -1056,14 +1056,13 @@ the implicit \rest behavior of \texttt{cl:the}.
   \hline
 \end{tabular}
 
-This instruction converts a values location to zero or more lexical
-locations. It is used in contexts where a fixed number of values is
-expected but an unknown number of values is provided, such as the
-result of a call (unknown values) being used as an argument to a
-function (one value).
+This instruction converts the values in the global values location
+to zero or more lexical locations. It is used in contexts where a
+fixed number of values is expected but an unknown number of values is
+provided in the global values location.
 
 If fewer ordinary lexical locations are required than there are values
-contained in the values location, then the remaining values are
+contained in the global values location, then the remaining values are
 ignored. If more ordinary lexical locations are required than there
 are values contained in the values location, then the remaining
 ordinary lexical locations are assigned the value \texttt{nil}.
