@@ -1097,9 +1097,9 @@ The name of this instruction is sometimes abbreviated ``F->M''.
 
 \begin{tabular}{|l|l|}
   \hline
-  Number of inputs & any\\
+  Number of inputs & 2\\
   \hline
-  Number of outputs & 1\\
+  Number of outputs & 0\\
   \hline
   Number of predecessors & any\\
   \hline
@@ -1109,9 +1109,10 @@ The name of this instruction is sometimes abbreviated ``F->M''.
 
 This instruction represents the full generality of
 \texttt{cl:multiple-value-call}, i.e. a call where the number of
-values in the arguments is not known statically. The first input is
-a lexical location, the callee. The remainder are values locations,
-the arguments. The output is a values location.
+values in the arguments is not known statically. The first input is a
+lexical location holding the function to call.  The second input holds
+all the values to be passed as arguments to the callee.  The values
+resulting from the call are stored in the global values location.
 
 Because this instruction is more involved than
 \texttt{funcall-instruction}, implementations should endeavor to
