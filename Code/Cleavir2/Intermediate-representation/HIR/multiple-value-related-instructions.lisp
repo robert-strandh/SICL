@@ -36,11 +36,7 @@
 ;;; Instruction MULTIPLE-VALUE-CALL-INSTRUCTION.
 ;;;
 ;;; This instruction has a single input which is a lexical location
-;;; holding a function to call.  The VALUES-ENVIRONMENT-LOCATION of
-;;; this instruction holds any number of entries, each holding an
-;;; arbitrary number of multiple values.  The top of the environment
-;;; stack contains the values returned by the last sub-form of the
-;;; MULTIPLE-VALUE-CALL form.  The values returned by the function
+;;; holding a function to call.  The values returned by the function
 ;;; call are stored in the global values location.
 
 (defclass multiple-value-call-instruction
@@ -74,10 +70,10 @@
 ;;; Instruction SAVE-VALUES-INSTRUCTION.
 ;;;
 ;;; This instruction has a single output which is a lexical location
-;;; holding a values environment.  The instruction takes the values in
-;;; the global values location and creates a new values entry to be
-;;; the top of the values environment stack.  The output holds the
-;;; augmented values environment.
+;;; holding a the dynamic environment.  The instruction takes the
+;;; values in the global values location and creates a new values
+;;; entry to be the top of the dynamic environment.  The output holds
+;;; the augmented dynamic environment.
 
 (defclass save-values-instruction (instruction one-successor-mixin)
   ())
@@ -87,11 +83,9 @@
 ;;; Instruction RESTORE-VALUES-INSTRUCTION.
 ;;;
 ;;; This instruction has no inputs and no outputs.  It takes the top
-;;; entry of the values environment stored in the
-;;; VALUES-ENVIRONMENT-LOCATION of this instruction, and stores that
-;;; entry in the global values location.  The lexical location
-;;; indicated in the VALUES-ENVIROMENT-LOCATION is then never used by
-;;; any instruction executed after this one.
+;;; entry of the dynamic environment stored in the
+;;; DYNAMIC-ENVIRONMENT-LOCATION of this instruction, and stores that
+;;; entry in the global values location.
 
 (defclass restore-values-instruction (instruction one-successor-mixin)
   ())
