@@ -47,8 +47,6 @@
 
 (declaim (notinline compute-source-info))
 
-(defparameter *values-environment* '())
-
 (defvar *global-values-location*)
 
 (defmethod interpret-instruction :before
