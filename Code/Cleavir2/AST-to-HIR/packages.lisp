@@ -16,6 +16,5 @@
    #:results
    #:successors
    #:clone-context
-   #:values-environment-location
    #:dynamic-environment-location
    #:origin))

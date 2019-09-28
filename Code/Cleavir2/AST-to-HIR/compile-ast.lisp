@@ -34,9 +34,7 @@
                  :inputs (list temp)
                  :successor (first successors)
                  :dynamic-environment-location
-                 (dynamic-environment-location context)
-                 :values-environment-location
-                 (values-environment-location context))))))
+                 (dynamic-environment-location context))))))
           ((null results)
            ;; We don't need the result.  This situation typically
            ;; happens when we compile a form other than the last of a
@@ -82,18 +80,14 @@
 
 (defvar *dynamic-environment-location* nil)
 
-(defvar *values-environment-location* nil)
-
 (stealth-mixin:define-stealth-mixin instruction-mixin () cleavir-ir:instruction
   ((%origin :initform *origin* :reader origin))
-  (:default-initargs :dynamic-environment-location *dynamic-environment-location*
-                     :values-environment-location *values-environment-location*))
+  (:default-initargs :dynamic-environment-location *dynamic-environment-location*))
 
 (stealth-mixin:define-stealth-mixin location-mixin () cleavir-ir:datum
   ((%origin :initform *origin* :initarg :origin :reader origin)))
 
 (defmethod compile-ast :around (client ast context)
   (let ((*dynamic-environment-location* (dynamic-environment-location context))
-        (*values-environment-location* (values-environment-location context))
         (*origin* (cleavir-cst-to-ast::origin ast)))
     (call-next-method)))

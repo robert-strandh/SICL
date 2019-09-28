@@ -414,8 +414,6 @@
 (defmethod compile-function (client (ast cleavir-ast:function-ast))
   (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
          (dynenv (cleavir-ir:make-lexical-location (gensym "function")))
-         (values-environment-location
-           (cleavir-ir:make-lexical-location (gensym "values")))
          ;; Note the ENTER gets its own output as its dynamic environment.
          (enter (cleavir-ir:make-enter-instruction ll dynenv))
          (return (make-instance 'cleavir-ir:return-instruction
@@ -424,8 +422,7 @@
                         :values
                         (list return)
                         enter
-                        dynenv
-                        values-environment-location))
+                        dynenv))
          (body (compile-ast client (cleavir-ast:body-ast ast) body-context)))
     (reinitialize-instance enter :successors (list body))
     enter))
@@ -650,8 +647,6 @@
     (check-type ast cleavir-ast:top-level-function-ast)
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (cleavir-ir:make-lexical-location (gensym "top")))
-           (values-environment-location
-             (cleavir-ir:make-lexical-location (gensym "values")))
            (forms (cleavir-ast:forms ast))
            (enter (cleavir-ir:make-top-level-enter-instruction ll forms dynenv))
            (return (make-instance 'cleavir-ir:return-instruction
@@ -660,8 +655,7 @@
                           :values
                           (list return)
                           enter
-                          dynenv
-                          values-environment-location))
+                          dynenv))
            (body (compile-ast client (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.
@@ -678,8 +672,6 @@
         (*function-info* (make-hash-table :test #'eq)))
     (let* ((ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
            (dynenv (cleavir-ir:make-lexical-location (gensym "topnh")))
-           (values-environment-location
-             (cleavir-ir:make-lexical-location (gensym "values")))
            (enter (cleavir-ir:make-enter-instruction ll dynenv))
            (return (make-instance 'cleavir-ir:return-instruction
                      :dynamic-environment-location dynenv))
@@ -687,8 +679,7 @@
                           :values
                           (list return)
                           enter
-                          dynenv
-                          values-environment-location))
+                          dynenv))
            (body (compile-ast client (cleavir-ast:body-ast ast) body-context)))
       ;; Now we must set the successors of the ENTER-INSTRUCTION to a
       ;; list of the result of compiling the AST.

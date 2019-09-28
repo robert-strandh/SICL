@@ -11,9 +11,7 @@
 (defun insert-instruction-before (new existing)
   (reinitialize-instance new
     :dynamic-environment-location
-    (dynamic-environment-location existing)
-    :values-environment-location
-    (values-environment-location existing))
+    (dynamic-environment-location existing))
   (setf (predecessors new) (predecessors existing))
   (loop for pred in (predecessors existing)
 	do (nsubstitute new existing (successors pred) :test #'eq))
@@ -28,9 +26,7 @@
 (defun insert-instruction-between (new existing1 existing2)
   (reinitialize-instance new
     :dynamic-environment-location
-    (dynamic-environment-location existing2)
-    :values-environment-location
-    (values-environment-location existing2))
+    (dynamic-environment-location existing2))
   (setf (predecessors new) (list existing1))
   (setf (successors new) (list existing2))
   (nsubstitute new existing2 (successors existing1))

@@ -79,10 +79,7 @@
    (%invocation :initarg :invocation :reader invocation)
    (%dynamic-environment-location
     :initarg :dynamic-environment-location
-    :reader dynamic-environment-location)
-   (%values-environment-location
-    :initarg :values-environment-location
-    :reader values-environment-location)))
+    :reader dynamic-environment-location)))
 
 (defmethod initialize-instance :after ((context context) &key result successor)
   (let ((successors (if (null successor) (successors context) (list successor)))
@@ -106,9 +103,6 @@
     (unless (typep (dynamic-environment-location context) 'cleavir-ir:lexical-location)
       (error "Illegal dynamic environment location ~s"
              (dynamic-environment-location context)))
-    (unless (typep (values-environment-location context) 'cleavir-ir:lexical-location)
-      (error "Illegal values environment location ~s"
-             (values-environment-location context)))
     (reinitialize-instance context
       :results results
       :successors successors)))
@@ -117,21 +111,18 @@
     (results
      successors
      invocation
-     dynamic-environment-location
-     values-environment-location)
+     dynamic-environment-location)
   (make-instance 'context
     :results results
     :successors successors
     :invocation invocation
-    :dynamic-environment-location dynamic-environment-location
-    :values-environment-location values-environment-location))
+    :dynamic-environment-location dynamic-environment-location))
 
 (defmethod print-object ((obj context) stream)
   (print-unreadable-object (obj stream)
     (format stream " results: ~s" (results obj))
     (format stream " successors: ~s" (successors obj))
-    (format stream " dynenv: ~s" (dynamic-environment-location obj))
-    (format stream " valuesenv: ~s" (values-environment-location obj))))
+    (format stream " dynenv: ~s" (dynamic-environment-location obj))))
 
 (defun clone-context (context &rest keyword-arguments)
   (apply #'make-instance 'context
@@ -141,6 +132,4 @@
                 :successors (successors context)
                 :invocation (invocation context)
                 :dynamic-environment-location
-                (dynamic-environment-location context)
-                :values-environment-location
-                (values-environment-location context)))))
+                (dynamic-environment-location context)))))

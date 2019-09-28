@@ -37,7 +37,6 @@
    ;; FIXME: check that these two are still needed.
    #:dynamic-environment #:*dynamic-environment*
    #:dynamic-environment-location
-   #:values-environment-location
    #:symbol-value-instruction
    #:set-symbol-value-instruction
    #:fdefinition-instruction
