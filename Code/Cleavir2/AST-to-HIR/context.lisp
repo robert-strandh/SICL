@@ -36,11 +36,6 @@
 ;;; The value of this component is stored in the corresponding slot in
 ;;; each instruction.
 ;;;
-;;; 5. VALUES-ENVIRONMENT-LOCATION, which is a lexical location that
-;;; indicates in which environment for multiple values the instruction
-;;; is executed.  The value of this component is stored in the
-;;; corresponding slot in each instruction.
-;;;
 ;;; The following combinations of SUCCESSORS and RESULTS can occur:
 ;;;
 ;;;   SUCCESSORS has one element.  then RESULTS can be a list of
